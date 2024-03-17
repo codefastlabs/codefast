@@ -3,6 +3,7 @@
 import { cn } from "./utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /* The name of the app that the button is in. */
   appName: string;
 }
 
