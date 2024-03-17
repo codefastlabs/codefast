@@ -1,7 +1,7 @@
 {
   "name": "@codefast/eslint-config",
   "version": "0.0.0",
-  "private": true,
+  "license": "MIT",
   "files": [
     "library.js",
     "next.js",
@@ -18,5 +18,8 @@
     "eslint-config-turbo": "^1.12.5",
     "eslint-plugin-only-warn": "^1.1.0",
     "typescript": "^5.4.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
