@@ -1,5 +1,5 @@
 {
-  "name": "@repo/eslint-config",
+  "name": "@codefast/eslint-config",
   "version": "0.0.0",
   "private": true,
   "files": [
@@ -7,13 +7,16 @@
     "next.js",
     "react-internal.js"
   ],
+  "scripts": {
+    "clean": "rm -rf node_modules"
+  },
   "devDependencies": {
-    "@vercel/style-guide": "^5.2.0",
-    "eslint-config-turbo": "^1.12.4",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vercel/style-guide": "^6.0.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-config-turbo": "^1.12.5",
     "eslint-plugin-only-warn": "^1.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   }
 }
