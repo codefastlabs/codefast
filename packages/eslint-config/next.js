@@ -27,6 +27,7 @@ module.exports = {
   ],
   plugins: ["only-warn"],
   rules: {
+    curly: ["error", "all"],
     "import/no-default-export": "off",
   },
   settings: {
