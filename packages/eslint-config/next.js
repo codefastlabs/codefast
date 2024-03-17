@@ -19,7 +19,15 @@ module.exports = {
     React: true,
     JSX: true,
   },
-  ignorePatterns: [".*.js", "node_modules/"],
+  ignorePatterns: [
+    ".*.js",
+    "*.config.js",
+    "*.config.mjs",
+    "*.config.cjs",
+    "*.config.ts",
+    "node_modules/",
+    ".next/",
+  ],
   overrides: [
     {
       files: ["*.js?(x)", "*.ts?(x)"],
