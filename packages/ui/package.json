@@ -31,7 +31,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "tailwind.config.ts"
   ],
   "scripts": {
     "build": "tsup",
