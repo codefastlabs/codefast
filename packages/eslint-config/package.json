@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "files": [
     "library.js",
