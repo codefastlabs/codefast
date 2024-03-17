@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.3
+
+### Patch Changes
+
+- Refactor button component and remove unused utility function
+
 ## 0.0.2
 
 ### Patch Changes
