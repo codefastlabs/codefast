@@ -1,5 +1,5 @@
 import { type VariantProps } from "cva";
-import { cva } from "./cva";
+import { cva } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Variant: Badge

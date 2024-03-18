@@ -1,7 +1,7 @@
 import { ChevronRightIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Slot } from "@radix-ui/react-slot";
 import { forwardRef } from "react";
-import { cx } from "./cva";
+import { cx } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
