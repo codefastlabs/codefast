@@ -2,32 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --accent: 210 40% 96.1%; /* slate.100 */
+    --accent-foreground: 222.2 47.4% 11.2%; /* slate.900 */
+    --background: 0 0% 100; /* white */
+    --border: 214.3 31.8% 91.4%; /* slate.200 */
+    --card: 0 0% 100; /* white */
+    --card-foreground: 222.2 84% 4.9%; /* slate.950 */
+    --destructive: 0 84.2% 60.2%; /*red.500 */
+    --destructive-foreground: 210 40% 98%; /* slate.50 */
+    --foreground: 222.2 84% 4.9%; /* slate.950 */
+    --info: ;
+    --info-foreground: ;
+    --input: 214.3 31.8% 91.4%; /* slate.200 */
+    --muted: 210 40% 96.1%; /* slate.100 */
+    --muted-foreground: 215.4 16.3% 46.9%; /* slate.500 */
+    --popover: 0 0% 100; /* white */
+    --popover-foreground: 222.2 84% 4.9%; /* slate.950 */
+    --primary: 221.2 83.2% 53.3%; /* blue.600 */
+    --primary-foreground: 210 40% 98%; /* slate.50 */
+    --radius: 0.25rem;
+    --ring: 221.2 83.2% 53.3%; /* blue.600 */
+    --secondary: 210 40% 96.1%; /* slate.100 */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* slate.900 */
+    --success: ;
+    --success-foreground: ;
+    --warning: ;
+    --warning-foreground: ;
   }
-}
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  .dark {
+    --accent: 217.2 32.6% 17.5%; /* slate.800 */
+    --accent-foreground: 210 40% 98%; /* slate.50 */
+    --background: 222.2 84% 4.9%; /* slate.950 */
+    --border: 217.2 32.6% 17.5%; /* slate.800 */
+    --card: 222.2 84% 4.9%; /* slate.950 */
+    --card-foreground: 210 40% 98%; /* slate.50 */
+    --destructive: 0 62.8% 30.6%; /* red.900 */
+    --destructive-foreground: 210 40% 98%; /* slate.50 */
+    --foreground: 210 40% 98%; /* slate.50 */
+    --info: ;
+    --info-foreground: ;
+    --input: 217.2 32.6% 17.5%; /* slate.800 */
+    --muted: 217.2 32.6% 17.5%; /* slate.800 */
+    --muted-foreground: 215 20.2% 65.1%; /* slate.400 */
+    --popover: 222.2 84% 4.9%; /* slate.950 */
+    --popover-foreground: 210 40% 98%; /* slate.50 */
+    --primary: 217.2 91.2% 59.8%; /* blue.500 */
+    --primary-foreground: 222.2 47.4% 11.2%; /* slate.900 */
+    --ring: 224.3 76.3% 48%; /* blue.700 */
+    --secondary: 217.2 32.6% 17.5%; /* slate.800 */
+    --secondary-foreground: 210 40% 98%; /* slate.50 */
+    --success: ;
+    --success-foreground: ;
+    --warning: ;
+    --warning-foreground: ;
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground;
   }
 }
