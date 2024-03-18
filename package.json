@@ -1,5 +1,5 @@
 {
-  "name": "codefix",
+  "name": "codefast",
   "private": true,
   "scripts": {
     "build": "turbo build",
