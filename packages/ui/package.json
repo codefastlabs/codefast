@@ -6,6 +6,11 @@
     "**/*.css"
   ],
   "exports": {
+    "./badge": {
+      "types": "./src/badge.tsx",
+      "import": "./dist/badge.mjs",
+      "require": "./dist/badge.js"
+    },
     "./alert": {
       "types": "./src/alert.tsx",
       "import": "./dist/alert.mjs",
@@ -15,11 +20,6 @@
       "types": "./src/button.tsx",
       "import": "./dist/button.mjs",
       "require": "./dist/button.js"
-    },
-    "./code": {
-      "types": "./src/code.tsx",
-      "import": "./dist/code.mjs",
-      "require": "./dist/code.js"
     },
     "./utils": {
       "types": "./src/utils.ts",
