@@ -1,118 +1,105 @@
 import { ChevronRightIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Slot } from "@radix-ui/react-slot";
-import { forwardRef } from "react";
+import * as React from "react";
 import { cx } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
-  separator?: React.ReactNode;
-}
-
-const Breadcrumb = forwardRef<HTMLElement, BreadcrumbProps>(
-  ({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />,
-);
-
+const Breadcrumb = React.forwardRef<
+  HTMLElement,
+  React.HTMLAttributes<HTMLElement> & {
+    separator?: React.ReactNode;
+  }
+>(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />);
 Breadcrumb.displayName = "Breadcrumb";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbList
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbListProps = React.OlHTMLAttributes<HTMLOListElement>;
-
-const BreadcrumbList = forwardRef<HTMLOListElement, BreadcrumbListProps>(
-  ({ className, ...props }, ref) => (
-    <ol
-      ref={ref}
-      className={cx(
-        "text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2.5",
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
-
+const BreadcrumbList = React.forwardRef<
+  HTMLOListElement,
+  React.OlHTMLAttributes<HTMLOListElement>
+>(({ className, ...props }, ref) => (
+  <ol
+    ref={ref}
+    className={cx(
+      "text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2.5",
+      className,
+    )}
+    {...props}
+  />
+));
 BreadcrumbList.displayName = "BreadcrumbList";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbItem
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbItemProps = React.LiHTMLAttributes<HTMLLIElement>;
-
-const BreadcrumbItem = forwardRef<HTMLLIElement, BreadcrumbItemProps>(
-  ({ className, ...props }, ref) => (
-    <li
-      ref={ref}
-      className={cx("inline-flex items-center gap-1.5", className)}
-      {...props}
-    />
-  ),
-);
-
+const BreadcrumbItem = React.forwardRef<
+  HTMLLIElement,
+  React.LiHTMLAttributes<HTMLLIElement>
+>(({ className, ...props }, ref) => (
+  <li
+    ref={ref}
+    className={cx("inline-flex items-center gap-1.5", className)}
+    {...props}
+  />
+));
 BreadcrumbItem.displayName = "BreadcrumbItem";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbLink
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  asChild?: boolean;
-}
+const BreadcrumbLink = React.forwardRef<
+  HTMLAnchorElement,
+  React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    asChild?: boolean;
+  }
+>(({ asChild, className, ...props }, ref) => {
+  const Comp = asChild ? Slot : "a";
 
-const BreadcrumbLink = forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
-  ({ asChild, className, ...props }, ref) => {
-    const Comp = asChild ? Slot : "a";
-
-    return (
-      <Comp
-        ref={ref}
-        className={cx("hover:text-foreground transition-colors", className)}
-        {...props}
-      />
-    );
-  },
-);
-
+  return (
+    <Comp
+      ref={ref}
+      className={cx("hover:text-foreground transition-colors", className)}
+      {...props}
+    />
+  );
+});
 BreadcrumbLink.displayName = "BreadcrumbLink";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbPage
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbPageProps = React.HTMLAttributes<HTMLSpanElement>;
-
-const BreadcrumbPage = forwardRef<HTMLSpanElement, BreadcrumbPageProps>(
-  ({ className, ...props }, ref) => (
-    <span
-      ref={ref}
-      role="link"
-      aria-disabled="true"
-      aria-current="page"
-      className={cx("text-foreground font-normal", className)}
-      {...props}
-    />
-  ),
-);
-
+const BreadcrumbPage = React.forwardRef<
+  HTMLSpanElement,
+  React.HTMLAttributes<HTMLSpanElement>
+>(({ className, ...props }, ref) => (
+  <span
+    ref={ref}
+    role="link"
+    aria-disabled="true"
+    aria-current="page"
+    className={cx("text-foreground font-normal", className)}
+    {...props}
+  />
+));
 BreadcrumbPage.displayName = "BreadcrumbPage";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbSeparator
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbSeparatorProps = React.LiHTMLAttributes<HTMLLIElement>;
-
 function BreadcrumbSeparator({
   children,
   className,
   ...props
-}: BreadcrumbSeparatorProps): React.JSX.Element {
+}: React.LiHTMLAttributes<HTMLLIElement>): React.JSX.Element {
   return (
     <li
       role="presentation"
@@ -124,19 +111,16 @@ function BreadcrumbSeparator({
     </li>
   );
 }
-
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbEllipsis
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbEllipsisProps = React.HTMLAttributes<HTMLSpanElement>;
-
 function BreadcrumbEllipsis({
   className,
   ...props
-}: BreadcrumbEllipsisProps): React.JSX.Element {
+}: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element {
   return (
     <span
       role="presentation"
@@ -149,7 +133,6 @@ function BreadcrumbEllipsis({
     </span>
   );
 }
-
 BreadcrumbEllipsis.displayName = "BreadcrumbElipssis";
 
 /* -----------------------------------------------------------------------------
