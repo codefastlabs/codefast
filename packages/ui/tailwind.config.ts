@@ -1,12 +1,18 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   darkMode: ["class"],
-  plugins: [],
+  plugins: [tailwindcssAnimate],
   theme: {
     extend: {
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
+      },
       borderRadius: {
         inherit: "inherit",
         sm: "calc(var(--radius, 0.25rem) - 0.125px)", // 2px
@@ -66,6 +72,32 @@ const config: Config = {
       },
       fontFamily: {
         sans: `var(--font-sans, ${fontFamily.sans.join(", ")})`,
+      },
+      keyframes: {
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+        "caret-blink": {
+          "0%,70%,100%": {
+            opacity: "1",
+          },
+          "20%,50%": {
+            opacity: "0",
+          },
+        },
       },
     },
   },
