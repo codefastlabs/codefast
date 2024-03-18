@@ -6,15 +6,15 @@
     "**/*.css"
   ],
   "exports": {
+    "./alert": {
+      "types": "./src/alert.tsx",
+      "import": "./dist/alert.mjs",
+      "require": "./dist/alert.js"
+    },
     "./button": {
       "types": "./src/button.tsx",
       "import": "./dist/button.mjs",
       "require": "./dist/button.js"
-    },
-    "./card": {
-      "types": "./src/card.tsx",
-      "import": "./dist/card.mjs",
-      "require": "./dist/card.js"
     },
     "./code": {
       "types": "./src/code.tsx",
