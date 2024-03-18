@@ -1,6 +1,6 @@
 import { type VariantProps } from "cva";
 import { forwardRef } from "react";
-import { cva, cx } from "./cva";
+import { cva, cx } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Variant: Alert

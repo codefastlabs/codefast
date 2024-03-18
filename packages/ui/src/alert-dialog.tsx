@@ -17,7 +17,7 @@ import {
 } from "@radix-ui/react-alert-dialog";
 import { forwardRef } from "react";
 import { buttonVariants } from "./button";
-import { cx } from "./cva";
+import { cx } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog

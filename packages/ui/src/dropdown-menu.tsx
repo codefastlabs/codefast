@@ -29,7 +29,7 @@ import {
   DotFilledIcon,
 } from "@radix-ui/react-icons";
 import React, { forwardRef } from "react";
-import { cx } from "./cva";
+import { cx } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenu
