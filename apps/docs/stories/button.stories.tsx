@@ -1,9 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "@codefast/ui/button";
+import { type Meta, type StoryObj } from "@storybook/react";
 
 const meta = {
   argTypes: {
     variant: {
+      control: { type: "inline-radio" },
+      description: "The variant of the button.",
       options: [
         "default",
         "secondary",
@@ -12,11 +14,11 @@ const meta = {
         "ghost",
         "link",
       ],
-      control: { type: "inline-radio" },
     },
     size: {
-      options: ["sm", "default", "lg"],
       control: { type: "inline-radio" },
+      description: "The size of the button.",
+      options: ["sm", "default", "lg"],
     },
     disabled: {
       control: { type: "boolean" },
