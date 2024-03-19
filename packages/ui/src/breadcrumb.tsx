@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronRightIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { cx } from "./utils";
+import { cn } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
@@ -25,7 +25,7 @@ const BreadcrumbList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ol
     ref={ref}
-    className={cx(
+    className={cn(
       "text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2.5",
       className,
     )}
@@ -44,7 +44,7 @@ const BreadcrumbItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <li
     ref={ref}
-    className={cx("inline-flex items-center gap-1.5", className)}
+    className={cn("inline-flex items-center gap-1.5", className)}
     {...props}
   />
 ));
@@ -65,7 +65,7 @@ const BreadcrumbLink = React.forwardRef<
   return (
     <Comp
       ref={ref}
-      className={cx("hover:text-foreground transition-colors", className)}
+      className={cn("hover:text-foreground transition-colors", className)}
       {...props}
     />
   );
@@ -85,7 +85,7 @@ const BreadcrumbPage = React.forwardRef<
     role="link"
     aria-disabled="true"
     aria-current="page"
-    className={cx("text-foreground font-normal", className)}
+    className={cn("text-foreground font-normal", className)}
     {...props}
   />
 ));
@@ -104,14 +104,13 @@ function BreadcrumbSeparator({
     <li
       role="presentation"
       aria-hidden="true"
-      className={cx("[&>svg]:size-3.5", className)}
+      className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
       {children ?? <ChevronRightIcon />}
     </li>
   );
 }
-BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
 
 /* -----------------------------------------------------------------------------
  * Component: BreadcrumbEllipsis
@@ -125,7 +124,7 @@ function BreadcrumbEllipsis({
     <span
       role="presentation"
       aria-hidden="true"
-      className={cx("flex size-9 items-center justify-center", className)}
+      className={cn("flex size-9 items-center justify-center", className)}
       {...props}
     >
       <DotsHorizontalIcon className="size-4" />
@@ -133,7 +132,6 @@ function BreadcrumbEllipsis({
     </span>
   );
 }
-BreadcrumbEllipsis.displayName = "BreadcrumbElipssis";
 
 /* -----------------------------------------------------------------------------
  * Exports

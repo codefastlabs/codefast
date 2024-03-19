@@ -1,7 +1,9 @@
+"use client";
+
 import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { buttonVariants } from "./button";
-import { cx } from "./utils";
+import { cn } from "./utils";
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog
@@ -30,7 +32,7 @@ const AlertDialogOverlay = React.forwardRef<
   AlertDialogPrimitive.AlertDialogOverlayProps
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
-    className={cx(
+    className={cn(
       "fixed inset-0 z-50 bg-black/80",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0",
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
@@ -54,7 +56,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
-      className={cx(
+      className={cn(
         "bg-background fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg",
         "data-[state=open]:animate-in data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
         "data-[state=closed]:slide-out-to-top-[48%] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2",
@@ -76,7 +78,7 @@ function AlertDialogHeader({
 }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
   return (
     <div
-      className={cx(
+      className={cn(
         "flex flex-col space-y-2 text-center sm:text-left",
         className,
       )}
@@ -95,7 +97,7 @@ function AlertDialogFooter({
 }: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
   return (
     <div
-      className={cx(
+      className={cn(
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
         className,
       )}
@@ -114,7 +116,7 @@ const AlertDialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title
     ref={ref}
-    className={cx("text-lg font-semibold", className)}
+    className={cn("text-lg font-semibold", className)}
     {...props}
   />
 ));
@@ -130,7 +132,7 @@ const AlertDialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
-    className={cx("text-muted-foreground text-sm", className)}
+    className={cn("text-muted-foreground text-sm", className)}
     {...props}
   />
 ));
