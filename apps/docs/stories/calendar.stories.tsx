@@ -14,13 +14,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
-    const [date, setDate] = useState<Date | undefined>(new Date());
+    const [selected, setSelected] = useState<Date>();
 
     return (
       <Calendar
         mode="single"
-        selected={date}
-        onSelect={setDate}
+        selected={selected}
+        // @ts-expect-error -- TS doesn't know about the onSelect prop
+        onSelect={setSelected}
         className="rounded-md border shadow"
         {...args}
       />
