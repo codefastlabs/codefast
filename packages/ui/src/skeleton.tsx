@@ -1,15 +1,24 @@
-"use client";
-
-import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio";
+import * as React from "react";
+import { cn } from "./utils";
 
 /* -----------------------------------------------------------------------------
- * Component: AspectRatio
+ * Component: Skeleton
  * -------------------------------------------------------------------------- */
 
-const AspectRatio = AspectRatioPrimitive.Root;
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+  return (
+    <div
+      className={cn("bg-primary/10 animate-pulse rounded-md", className)}
+      {...props}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { AspectRatio };
+export { Skeleton };

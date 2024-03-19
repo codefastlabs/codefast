@@ -14,7 +14,6 @@ const config: Config = {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
       borderRadius: {
-        inherit: "inherit",
         sm: "calc(var(--radius, 0.25rem) - 0.125px)", // 2px
         DEFAULT: "var(--radius, 0.25rem)", // 4px
         md: "calc(var(--radius, 0.25rem) + 0.125rem)", // 6px
