@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.4
+
+### Patch Changes
+
+- Add new UI
+
 ## 0.0.3
 
 ### Patch Changes
