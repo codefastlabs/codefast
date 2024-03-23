@@ -22,6 +22,10 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   render: (args) => (
     <AlertDialog {...args}>
