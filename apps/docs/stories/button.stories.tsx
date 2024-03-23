@@ -1,5 +1,11 @@
 import { Button } from "@codefast/ui/button";
 import { type Meta, type StoryObj } from "@storybook/react";
+import {
+  ChevronRightIcon,
+  EnvelopeOpenIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
+import Link from "next/link";
 
 const meta = {
   argTypes: {
@@ -38,11 +44,19 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: {
     children: "Click me",
   },
 };
+
+/* -----------------------------------------------------------------------------
+ * Story: Secondary
+ * -------------------------------------------------------------------------- */
 
 export const Secondary: Story = {
   args: {
@@ -51,12 +65,20 @@ export const Secondary: Story = {
   },
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Outline
+ * -------------------------------------------------------------------------- */
+
 export const Outline: Story = {
   args: {
     variant: "outline",
     children: "Outline Button",
   },
 };
+
+/* -----------------------------------------------------------------------------
+ * Story: Destructive
+ * -------------------------------------------------------------------------- */
 
 export const Destructive: Story = {
   args: {
@@ -65,6 +87,10 @@ export const Destructive: Story = {
   },
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Ghost
+ * -------------------------------------------------------------------------- */
+
 export const Ghost: Story = {
   args: {
     variant: "ghost",
@@ -72,12 +98,20 @@ export const Ghost: Story = {
   },
 };
 
-export const Link: Story = {
+/* -----------------------------------------------------------------------------
+ * Story: Link
+ * -------------------------------------------------------------------------- */
+
+export const AsLink: Story = {
   args: {
     variant: "link",
     children: "Link Button",
   },
 };
+
+/* -----------------------------------------------------------------------------
+ * Story: Small
+ * -------------------------------------------------------------------------- */
 
 export const Small: Story = {
   args: {
@@ -86,9 +120,62 @@ export const Small: Story = {
   },
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Large
+ * -------------------------------------------------------------------------- */
+
 export const Large: Story = {
   args: {
     size: "lg",
     children: "Large Button",
   },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Icon
+ * -------------------------------------------------------------------------- */
+
+export const Icon: Story = {
+  render: (args) => (
+    <Button variant="outline" size="icon" {...args}>
+      <ChevronRightIcon className="size-4" />
+    </Button>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: With Icon
+ * -------------------------------------------------------------------------- */
+
+export const WithIcon: Story = {
+  render: (args) => (
+    <Button {...args}>
+      <EnvelopeOpenIcon className="mr-2 size-4" /> Login with Email
+    </Button>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
+export const Loading: Story = {
+  render: (args) => (
+    <Button disabled {...args}>
+      <ReloadIcon className="mr-2 size-4 animate-spin" />
+      Please wait
+    </Button>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: As Child
+ * -------------------------------------------------------------------------- */
+
+export const AsChild: Story = {
+  render: (args) => (
+    <Button {...args} asChild>
+      <Link href="/">Login</Link>
+    </Button>
+  ),
 };

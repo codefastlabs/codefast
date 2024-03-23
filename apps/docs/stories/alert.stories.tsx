@@ -22,6 +22,10 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   render: (args) => (
     <Alert {...args}>
@@ -34,12 +38,13 @@ export const Default: Story = {
   ),
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Destructive
+ * -------------------------------------------------------------------------- */
+
 export const Destructive: Story = {
-  args: {
-    variant: "destructive",
-  },
   render: (args) => (
-    <Alert {...args}>
+    <Alert variant="destructive" {...args}>
       <ExclamationTriangleIcon className="size-4" />
       <AlertTitle>Error</AlertTitle>
       <AlertDescription>

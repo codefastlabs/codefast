@@ -16,14 +16,17 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: {
     type: "single",
     collapsible: true,
-    className: "w-96",
   },
   render: (args) => (
-    <Accordion {...args}>
+    <Accordion className="w-96" {...args}>
       <AccordionItem value="item-1">
         <AccordionTrigger>Is it accessible?</AccordionTrigger>
         <AccordionContent>
