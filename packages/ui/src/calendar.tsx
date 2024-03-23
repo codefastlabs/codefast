@@ -5,6 +5,7 @@ import {
   DayPicker,
   type DayPickerProps,
   type StyledComponent,
+  type DateRange,
 } from "react-day-picker";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { buttonVariants } from "./button";
@@ -91,4 +92,4 @@ function Calendar({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Calendar };
+export { Calendar, type DateRange };

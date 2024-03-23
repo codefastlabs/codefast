@@ -112,7 +112,7 @@ const SheetContent = React.forwardRef<
           "data-[state=open]:bg-secondary",
         )}
       >
-        <Cross2Icon className="h-4 w-4" />
+        <Cross2Icon className="size-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
     </SheetPrimitive.Content>

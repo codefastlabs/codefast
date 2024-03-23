@@ -107,13 +107,17 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "bg-popover text-popover-foreground relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border shadow-md",
+        "bg-popover text-popover-foreground relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] overflow-hidden rounded-md border shadow-md",
         "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+        "data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
+        "data-[state=open]:data-[side=right]:slide-in-from-left-2",
+        "data-[state=open]:data-[side=bottom]:slide-in-from-top-2",
+        "data-[state=open]:data-[side=left]:slide-in-from-right-2",
         "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-        "data-[side=top]:slide-in-from-bottom-2",
-        "data-[side=right]:slide-in-from-left-2",
-        "data-[side=bottom]:slide-in-from-top-2",
-        "data-[side=left]:slide-in-from-right-2",
+        "data-[state=closed]:data-[side=top]:slide-out-to-bottom-2",
+        "data-[state=closed]:data-[side=left]:slide-out-to-right-2",
+        "data-[state=closed]:data-[side=bottom]:slide-out-to-top-2",
+        "data-[state=closed]:data-[side=right]:slide-out-to-left-2",
         position === "popper" && [
           "data-[side=top]:-translate-y-1",
           "data-[side=right]:translate-x-1",
@@ -126,13 +130,7 @@ const SelectContent = React.forwardRef<
       {...props}
     >
       <SelectScrollUpButton />
-      <SelectPrimitive.Viewport
-        className={cn(
-          "p-1",
-          position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
-        )}
-      >
+      <SelectPrimitive.Viewport className="p-1">
         {children}
       </SelectPrimitive.Viewport>
       <SelectScrollDownButton />
@@ -169,7 +167,7 @@ const SelectItem = React.forwardRef<
     ref={ref}
     className={cn(
       "focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none",
-      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "aria-disabled:pointer-events-none aria-disabled:opacity-50",
       className,
     )}
     {...props}
