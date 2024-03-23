@@ -15,18 +15,26 @@ const meta = {
   component: Carousel,
   tags: ["autodocs"],
   title: "UIs/Carousel",
+  decorators: [
+    (Story) => (
+      <div className="p-10">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof Carousel>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
-  args: {
-    className: "w-full max-w-xs",
-  },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel className="w-full max-w-xs" {...args}>
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
@@ -47,15 +55,19 @@ export const Default: Story = {
   ),
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
-  args: {
-    opts: {
-      align: "start",
-    },
-    className: "w-full max-w-sm",
-  },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel
+      opts={{
+        align: "start",
+      }}
+      className="w-full max-w-sm"
+      {...args}
+    >
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
@@ -76,12 +88,13 @@ export const Sizes: Story = {
   ),
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Spacing
+ * -------------------------------------------------------------------------- */
+
 export const Spacing: Story = {
-  args: {
-    className: "w-full max-w-sm",
-  },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel className="w-full max-w-sm" {...args}>
       <CarouselContent className="-ml-1">
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
@@ -102,42 +115,45 @@ export const Spacing: Story = {
   ),
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Orientation
+ * -------------------------------------------------------------------------- */
+
 export const Orientation: Story = {
-  args: {
-    opts: {
-      align: "start",
-    },
-    orientation: "vertical",
-    className: "w-full max-w-xs",
-  },
   render: (args) => (
-    <div className="py-20">
-      <Carousel {...args}>
-        <CarouselContent className="-mt-1 h-[200px]">
-          {Array.from({ length: 5 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- okay for static content
-            <CarouselItem key={index} className="pt-1 md:basis-1/2">
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex items-center justify-center p-6">
-                    <span className="text-3xl font-semibold">{index + 1}</span>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    </div>
+    <Carousel
+      opts={{
+        align: "start",
+      }}
+      orientation="vertical"
+      className="w-full max-w-xs"
+      {...args}
+    >
+      <CarouselContent className="-mt-1 h-[200px]">
+        {Array.from({ length: 5 }).map((_, index) => (
+          // eslint-disable-next-line react/no-array-index-key -- okay for static content
+          <CarouselItem key={index} className="pt-1 md:basis-1/2">
+            <div className="p-1">
+              <Card>
+                <CardContent className="flex items-center justify-center p-6">
+                  <span className="text-3xl font-semibold">{index + 1}</span>
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
   ),
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: API
+ * -------------------------------------------------------------------------- */
+
 export const API: Story = {
-  args: {
-    className: "w-full max-w-xs",
-  },
   render: (args) => {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
@@ -158,7 +174,7 @@ export const API: Story = {
 
     return (
       <div>
-        <Carousel setApi={setApi} {...args}>
+        <Carousel setApi={setApi} className="w-full max-w-xs" {...args}>
           <CarouselContent>
             {Array.from({ length: 5 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key -- okay for static content
@@ -185,6 +201,10 @@ export const API: Story = {
     );
   },
 };
+
+/* -----------------------------------------------------------------------------
+ * Story: Plugins
+ * -------------------------------------------------------------------------- */
 
 export const Plugins: Story = {
   render: (args) => {

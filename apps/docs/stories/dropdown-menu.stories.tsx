@@ -30,6 +30,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 type Checked = ComponentProps<typeof DropdownMenuCheckboxItem>["checked"];
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   render: (args) => (
     <DropdownMenu {...args}>
@@ -90,6 +94,10 @@ export const Default: Story = {
   ),
 };
 
+/* -----------------------------------------------------------------------------
+ * Story: Checkboxes
+ * -------------------------------------------------------------------------- */
+
 export const Checkboxes: Story = {
   render: (args) => {
     const [showStatusBar, setShowStatusBar] = useState<Checked>(true);
@@ -128,6 +136,10 @@ export const Checkboxes: Story = {
     );
   },
 };
+
+/* -----------------------------------------------------------------------------
+ * Story: Radio Group
+ * -------------------------------------------------------------------------- */
 
 export const RadioGroup: Story = {
   render: (args) => {
