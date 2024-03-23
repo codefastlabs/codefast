@@ -1,8 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { DashIcon } from "@radix-ui/react-icons";
-import { OTPInput, type OTPInputProps, type SlotProps } from "input-otp";
+import { DotFilledIcon } from "@radix-ui/react-icons";
+import {
+  OTPInput,
+  OTPInputContext,
+  REGEXP_ONLY_DIGITS_AND_CHARS,
+} from "input-otp";
 import { cn } from "./utils";
 
 /* -----------------------------------------------------------------------------
@@ -11,11 +15,15 @@ import { cn } from "./utils";
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
-  OTPInputProps
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof OTPInput>
+>(({ className, containerClassName, ...props }, ref) => (
   <OTPInput
     ref={ref}
-    containerClassName={cn("flex items-center gap-2", className)}
+    containerClassName={cn(
+      "flex items-center gap-2 has-[:disabled]:opacity-50",
+      containerClassName,
+    )}
+    className={cn("disabled:cursor-not-allowed", className)}
     {...props}
   />
 ));
@@ -39,20 +47,23 @@ InputOTPGroup.displayName = "InputOTPGroup";
 
 const InputOTPSlot = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & SlotProps
->(({ char, hasFakeCaret, isActive, className, ...props }, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & { index: number }
+>(({ index, className, ...props }, ref) => {
+  const inputOTPContext = React.useContext(OTPInputContext);
+  const slot = inputOTPContext.slots[index];
+
   return (
     <div
       ref={ref}
       className={cn(
-        "border-input relative flex h-9 w-9 items-center justify-center border-y border-r text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
-        isActive && "ring-ring z-10 ring-1",
+        "border-input relative flex h-10 w-10 items-center justify-center border-y border-r text-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
+        slot?.isActive && "ring-ring ring-offset-background z-10 ring-2",
         className,
       )}
       {...props}
     >
-      {char}
-      {hasFakeCaret ? (
+      {slot?.char}
+      {slot?.hasFakeCaret ? (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="animate-caret-blink bg-foreground h-4 w-px duration-1000" />
         </div>
@@ -71,7 +82,7 @@ const InputOTPSeparator = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ ...props }, ref) => (
   <div ref={ref} role="separator" {...props}>
-    <DashIcon />
+    <DotFilledIcon />
   </div>
 ));
 InputOTPSeparator.displayName = "InputOTPSeparator";
@@ -80,4 +91,10 @@ InputOTPSeparator.displayName = "InputOTPSeparator";
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
+export {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  REGEXP_ONLY_DIGITS_AND_CHARS,
+};

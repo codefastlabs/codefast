@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { Toaster as Sonner } from "sonner";
+import { Toaster as Sonner, toast } from "sonner";
 
 /* -----------------------------------------------------------------------------
  * Component: Sonner
@@ -38,4 +38,4 @@ function Toaster({ ...props }: ToasterProps): React.JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Toaster };
+export { Toaster, toast };
