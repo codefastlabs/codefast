@@ -154,6 +154,9 @@ export const Orientation: Story = {
  * -------------------------------------------------------------------------- */
 
 export const API: Story = {
+  parameters: {
+    layout: "centered",
+  },
   render: (args) => {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
