@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { DotFilledIcon } from "@radix-ui/react-icons";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { cn } from "./utils";
 
@@ -35,13 +34,16 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "border-compound text-compound-foreground ring-offset-background focus-visible:ring-ring group aspect-square size-4 rounded-full border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-        "aria-checked:border-primary",
+        "border-compound text-compound-foreground focus-visible:ring-offset-background focus-visible:ring-ring aria-checked:border-primary group aspect-square size-4 rounded-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}
     >
-      <RadioGroupPrimitive.Indicator className="after:bg-primary relative flex h-full w-full items-center justify-center after:block after:size-2.5 after:rounded-full" />
+      <RadioGroupPrimitive.Indicator
+        className={cn(
+          "after:bg-primary relative flex h-full w-full items-center justify-center after:block after:size-2.5 after:rounded-full",
+        )}
+      />
     </RadioGroupPrimitive.Item>
   );
 });

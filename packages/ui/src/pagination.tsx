@@ -48,9 +48,7 @@ PaginationContent.displayName = "PaginationContent";
 const PaginationItem = React.forwardRef<
   HTMLLIElement,
   React.LiHTMLAttributes<HTMLLIElement>
->(({ className, ...props }, ref) => (
-  <li ref={ref} className={cn("", className)} {...props} />
-));
+>((props, ref) => <li ref={ref} {...props} />);
 PaginationItem.displayName = "PaginationItem";
 
 /* -----------------------------------------------------------------------------
@@ -138,7 +136,7 @@ function PaginationEllipsis({
   return (
     <span
       aria-hidden
-      className={cn("flex h-9 w-9 items-center justify-center", className)}
+      className={cn("flex size-10 items-center justify-center", className)}
       {...props}
     >
       <DotsHorizontalIcon className="size-4" />

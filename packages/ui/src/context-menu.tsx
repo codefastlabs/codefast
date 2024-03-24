@@ -28,12 +28,6 @@ const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
 const ContextMenuGroup = ContextMenuPrimitive.Group;
 
 /* -----------------------------------------------------------------------------
- * Component: ContextMenuPortal
- * -------------------------------------------------------------------------- */
-
-const ContextMenuPortal = ContextMenuPrimitive.Portal;
-
-/* -----------------------------------------------------------------------------
  * Component: ContextMenuSub
  * -------------------------------------------------------------------------- */
 
@@ -58,8 +52,7 @@ const ContextMenuSubTrigger = React.forwardRef<
   <ContextMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "focus:bg-accent focus:text-accent-foreground flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-      "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
+      "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm focus:outline-none",
       inset && "pl-8",
       className,
     )}
@@ -79,24 +72,16 @@ const ContextMenuSubContent = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.SubContent>,
   ContextMenuPrimitive.ContextMenuSubContentProps
 >(({ className, ...props }, ref) => (
-  <ContextMenuPrimitive.SubContent
-    ref={ref}
-    className={cn(
-      "bg-popover text-popover-foreground z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-lg",
-      "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
-      "data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
-      "data-[state=open]:data-[side=right]:slide-in-from-left-2",
-      "data-[state=open]:data-[side=bottom]:slide-in-from-top-2",
-      "data-[state=open]:data-[side=left]:slide-in-from-right-2",
-      "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-      "data-[state=closed]:data-[side=top]:slide-out-to-bottom-2",
-      "data-[state=closed]:data-[side=right]:slide-out-to-left-2",
-      "data-[state=closed]:data-[side=bottom]:slide-out-to-top-2",
-      "data-[state=closed]:data-[side=left]:slide-out-to-right-2",
-      className,
-    )}
-    {...props}
-  />
+  <ContextMenuPrimitive.Portal>
+    <ContextMenuPrimitive.SubContent
+      ref={ref}
+      className={cn(
+        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 z-50 min-w-[8rem] rounded-md border p-1 shadow-md focus:outline-none",
+        className,
+      )}
+      {...props}
+    />
+  </ContextMenuPrimitive.Portal>
 ));
 ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName;
 
@@ -112,17 +97,7 @@ const ContextMenuContent = React.forwardRef<
     <ContextMenuPrimitive.Content
       ref={ref}
       className={cn(
-        "bg-popover text-popover-foreground z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md",
-        "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
-        "data-[state=open]:data-[side=top]:slide-in-from-bottom-2",
-        "data-[state=open]:data-[side=right]:slide-in-from-left-2",
-        "data-[state=open]:data-[side=bottom]:slide-in-from-top-2",
-        "data-[state=open]:data-[side=left]:slide-in-from-right-2",
-        "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
-        "data-[state=closed]:data-[side=top]:slide-out-to-bottom-2",
-        "data-[state=closed]:data-[side=right]:slide-out-to-left-2",
-        "data-[state=closed]:data-[side=bottom]:slide-out-to-top-2",
-        "data-[state=closed]:data-[side=left]:slide-out-to-right-2",
+        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 z-50 min-w-[8rem] rounded-md border p-1 shadow-md focus:outline-none",
         className,
       )}
       {...props}
@@ -144,8 +119,7 @@ const ContextMenuItem = React.forwardRef<
   <ContextMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-      "aria-disabled:pointer-events-none aria-disabled:opacity-50",
+      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50",
       inset && "pl-8",
       className,
     )}
@@ -165,8 +139,7 @@ const ContextMenuCheckboxItem = React.forwardRef<
   <ContextMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
-      "aria-disabled:pointer-events-none aria-disabled:opacity-50",
+      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50",
       className,
     )}
     checked={checked}
@@ -194,8 +167,7 @@ const ContextMenuRadioItem = React.forwardRef<
   <ContextMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
-      "aria-disabled:pointer-events-none aria-disabled:opacity-50",
+      "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50",
       className,
     )}
     {...props}
@@ -268,6 +240,22 @@ function ContextMenuShortcut({
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: ContextMenuArrow
+ * -------------------------------------------------------------------------- */
+
+const ContextMenuArrow = React.forwardRef<
+  React.ElementRef<typeof ContextMenuPrimitive.Arrow>,
+  ContextMenuPrimitive.ContextMenuArrowProps
+>(({ className, ...props }, ref) => (
+  <ContextMenuPrimitive.Arrow
+    ref={ref}
+    className={cn("fill-border", className)}
+    {...props}
+  />
+));
+ContextMenuArrow.displayName = ContextMenuPrimitive.Arrow.displayName;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
@@ -282,9 +270,9 @@ export {
   ContextMenuSeparator,
   ContextMenuShortcut,
   ContextMenuGroup,
-  ContextMenuPortal,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuRadioGroup,
+  ContextMenuArrow,
 };

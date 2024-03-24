@@ -27,32 +27,10 @@ function Drawer({
 const DrawerTrigger = DrawerPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
- * Component: DrawerPortal
- * -------------------------------------------------------------------------- */
-
-const DrawerPortal = DrawerPrimitive.Portal;
-
-/* -----------------------------------------------------------------------------
  * Component: DrawerClose
  * -------------------------------------------------------------------------- */
 
 const DrawerClose = DrawerPrimitive.Close;
-
-/* -----------------------------------------------------------------------------
- * Component: DrawerOverlay
- * -------------------------------------------------------------------------- */
-
-const DrawerOverlay = React.forwardRef<
-  React.ElementRef<typeof DrawerPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DrawerPrimitive.Overlay
-    ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
-    {...props}
-  />
-));
-DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: DrawerContent
@@ -62,8 +40,8 @@ const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
+  <DrawerPrimitive.Portal>
+    <DrawerPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80" />
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
@@ -75,7 +53,7 @@ const DrawerContent = React.forwardRef<
       <div className="bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full" />
       {children}
     </DrawerPrimitive.Content>
-  </DrawerPortal>
+  </DrawerPrimitive.Portal>
 ));
 DrawerContent.displayName = "DrawerContent";
 
@@ -152,8 +130,6 @@ DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
 
 export {
   Drawer,
-  DrawerPortal,
-  DrawerOverlay,
   DrawerTrigger,
   DrawerClose,
   DrawerContent,
