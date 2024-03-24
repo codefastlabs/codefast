@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import {
   Tooltip,
+  TooltipArrow,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  TooltipArrow,
-  TooltipPortal,
 } from "@codefast/ui/tooltip";
 import { Button } from "@codefast/ui/button";
 
@@ -26,15 +25,14 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <TooltipProvider>
-      <Tooltip open {...args}>
+      <Tooltip {...args}>
         <TooltipTrigger asChild>
           <Button variant="outline">Hover</Button>
         </TooltipTrigger>
-        <TooltipPortal>
-          <TooltipContent>
-            <p>Add to library</p>
-          </TooltipContent>
-        </TooltipPortal>
+        <TooltipContent>
+          <p>Add to library</p>
+          <TooltipArrow />
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   ),

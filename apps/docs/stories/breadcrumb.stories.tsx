@@ -16,7 +16,7 @@ import {
 } from "@codefast/ui/dropdown-menu";
 import { ChevronDownIcon, SlashIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -55,7 +55,7 @@ export const Default: Story = {
         <BreadcrumbItem>
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1">
-              <BreadcrumbEllipsis className="size-4" />
+              <BreadcrumbEllipsis />
               <span className="sr-only">Toggle menu</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
@@ -233,9 +233,9 @@ export const ResponsiveBreadcrumb: Story = {
               {items[0].label}
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
           {items.length > ITEMS_TO_DISPLAY ? (
             <>
+              <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isDesktop ? (
                   <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -243,7 +243,7 @@ export const ResponsiveBreadcrumb: Story = {
                       className="flex items-center gap-1"
                       aria-label="Toggle menu"
                     >
-                      <BreadcrumbEllipsis className="h-4 w-4" />
+                      <BreadcrumbEllipsis />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       {items.slice(1, -2).map((item, index) => (
@@ -259,7 +259,7 @@ export const ResponsiveBreadcrumb: Story = {
                 ) : (
                   <Drawer open={open} onOpenChange={setOpen}>
                     <DrawerTrigger aria-label="Toggle Menu">
-                      <BreadcrumbEllipsis className="h-4 w-4" />
+                      <BreadcrumbEllipsis />
                     </DrawerTrigger>
                     <DrawerContent>
                       <DrawerHeader className="text-left">
@@ -289,28 +289,27 @@ export const ResponsiveBreadcrumb: Story = {
                   </Drawer>
                 )}
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
             </>
           ) : null}
           {items.slice(-ITEMS_TO_DISPLAY + 1).map((item, index) => (
             // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
-            <BreadcrumbItem key={index}>
-              {item.href ? (
-                <>
+            <Fragment key={index}>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {item.href ? (
                   <BreadcrumbLink
                     asChild
                     className="max-w-20 truncate md:max-w-none"
                   >
                     <Link href={item.href}>{item.label}</Link>
                   </BreadcrumbLink>
-                  <BreadcrumbSeparator />
-                </>
-              ) : (
-                <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
-                  {item.label}
-                </BreadcrumbPage>
-              )}
-            </BreadcrumbItem>
+                ) : (
+                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
+                    {item.label}
+                  </BreadcrumbPage>
+                )}
+              </BreadcrumbItem>
+            </Fragment>
           ))}
         </BreadcrumbList>
       </Breadcrumb>

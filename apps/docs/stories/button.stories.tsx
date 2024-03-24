@@ -136,8 +136,8 @@ export const Large: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Icon: Story = {
-  render: (args) => (
-    <Button variant="outline" size="icon" {...args}>
+  render: () => (
+    <Button variant="outline" size="icon">
       <ChevronRightIcon className="size-4" />
     </Button>
   ),
