@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ScrollArea, ScrollBar } from "@codefast/ui/scroll-area";
+import { ScrollArea } from "@codefast/ui/scroll-area";
 import { Separator } from "@codefast/ui/separator";
 import Image from "next/image";
 

@@ -18,7 +18,7 @@ import { cn } from "@codefast/ui/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { Button } from "@codefast/ui/button";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { Toaster, toast } from "@codefast/ui/sonner";
+import { toast, Toaster } from "@codefast/ui/sonner";
 
 const meta = {
   tags: ["autodocs"],
