@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.6
+
+### Patch Changes
+
+- Update dependencies and fix CSS class names
+
 ## 0.0.5
 
 ### Patch Changes
