@@ -31,7 +31,6 @@ export const Default: Story = {
         </TooltipTrigger>
         <TooltipContent>
           <p>Add to library</p>
-          <TooltipArrow />
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

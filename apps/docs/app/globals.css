@@ -9,11 +9,11 @@
     /* slate.900 */
     --accent-foreground: 222.2deg 47.4% 11.2%;
     /* white */
-    --background: 0deg 0% 100;
+    --background: 0deg 0% 100%;
     /* slate.200 */
     --border: 214.3deg 31.8% 91.4%;
     /* white */
-    --card: 0deg 0% 100;
+    --card: 0deg 0% 100%;
     /* slate.950 */
     --card-foreground: 222.2deg 84% 4.9%;
     /*red.500 */
@@ -31,7 +31,7 @@
     /* slate.500 */
     --muted-foreground: 215.4deg 16.3% 46.9%;
     /* white */
-    --popover: 0deg 0% 100;
+    --popover: 0deg 0% 100%;
     /* slate.950 */
     --popover-foreground: 222.2deg 84% 4.9%;
     /* blue.600 */

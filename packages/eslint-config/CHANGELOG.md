@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.5
+
+### Patch Changes
+
+- Update @typescript-eslint versions
+
 ## 0.0.4
 
 ### Patch Changes

@@ -249,7 +249,7 @@ const ContextMenuArrow = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ContextMenuPrimitive.Arrow
     ref={ref}
-    className={cn("fill-border", className)}
+    className={cn("fill-popover", className)}
     {...props}
   />
 ));
