@@ -3,32 +3,16 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@codefast/ui/table";
-import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  type SortingState,
-  useReactTable,
-  type VisibilityState,
-} from "@tanstack/react-table";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { Button } from "@codefast/ui/button";
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -37,6 +21,22 @@ import {
 } from "@codefast/ui/dropdown-menu";
 import { Input } from "@codefast/ui/input";
 import { useState } from "react";
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  DataTableColumnHeader,
+  DataTablePagination,
+  DataTableViewOptions,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+  type VisibilityState,
+} from "@codefast/ui/data-table";
+import { faker } from "@faker-js/faker";
 
 const meta = {
   tags: ["autodocs"],
@@ -58,38 +58,17 @@ interface Payment {
   email: string;
 }
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-];
+const data: Payment[] = Array.from({ length: 100 }, () => ({
+  id: faker.string.uuid(),
+  amount: faker.number.int({ min: 100, max: 10000 }),
+  status: faker.helpers.arrayElement([
+    "pending",
+    "processing",
+    "success",
+    "failed",
+  ]),
+  email: faker.internet.email(),
+}));
 
 const columns: ColumnDef<Payment>[] = [
   {
@@ -128,15 +107,7 @@ const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "email",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => {
-          column.toggleSorting(column.getIsSorted() === "asc");
-        }}
-      >
-        Email
-        <CaretSortIcon className="ml-2 size-4" />
-      </Button>
+      <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
@@ -162,29 +133,32 @@ const columns: ColumnDef<Payment>[] = [
       const payment = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="size-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                void navigator.clipboard.writeText(payment.id);
-              }}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="text-right">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-xs">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  void navigator.clipboard.writeText(payment.id);
+                }}
+              >
+                Copy payment ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View customer</DropdownMenuItem>
+              <DropdownMenuItem>View payment details</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
+    meta: {},
   },
 ];
 
@@ -198,16 +172,16 @@ export const Default: Story = {
     const [rowSelection, setRowSelection] = useState({});
 
     const table = useReactTable({
-      data,
       columns,
-      onSortingChange: setSorting,
-      onColumnFiltersChange: setColumnFilters,
+      data,
       getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
       getSortedRowModel: getSortedRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
+      onColumnFiltersChange: setColumnFilters,
       onColumnVisibilityChange: setColumnVisibility,
       onRowSelectionChange: setRowSelection,
+      onSortingChange: setSorting,
       state: {
         sorting,
         columnFilters,
@@ -225,32 +199,10 @@ export const Default: Story = {
             onChange={(event) =>
               table.getColumn("email")?.setFilterValue(event.target.value)
             }
+            inputSize="sm"
             className="max-w-sm"
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDownIcon className="ml-2 size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => {
-                      column.toggleVisibility(Boolean(value));
-                    }}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DataTableViewOptions table={table} />
         </div>
         <div className="rounded-md border">
           <Table>
@@ -298,36 +250,25 @@ export const Default: Story = {
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableFooter>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="text-muted-foreground flex-1 text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                table.previousPage();
-              }}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                table.nextPage();
-              }}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        <DataTablePagination table={table} className="py-4" />
       </div>
     );
   },
