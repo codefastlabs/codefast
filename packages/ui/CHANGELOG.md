@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.7
+
+### Patch Changes
+
+- Add data-table and react-table dependencies
+
 ## 0.0.6
 
 ### Patch Changes
