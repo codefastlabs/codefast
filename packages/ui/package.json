@@ -6,6 +6,11 @@
     "**/*.css"
   ],
   "exports": {
+    "./data-table": {
+      "types": "./src/data-table.tsx",
+      "import": "./dist/data-table.mjs",
+      "require": "./dist/data-table.js"
+    },
     "./form": {
       "types": "./src/form.tsx",
       "import": "./dist/form.mjs",
@@ -274,13 +279,14 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@tanstack/react-table": "^8.15.3",
     "cmdk": "^1.0.0",
     "cva": "1.0.0-beta.1",
     "embla-carousel-react": "^8.0.0",
     "input-otp": "^1.2.3",
     "next-themes": "^0.3.0",
     "react-day-picker": "^8.10.0",
-    "react-hook-form": "^7.51.1",
+    "react-hook-form": "^7.51.2",
     "react-resizable-panels": "^2.0.16",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
