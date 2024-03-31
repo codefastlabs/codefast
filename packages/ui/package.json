@@ -6,6 +6,66 @@
     "**/*.css"
   ],
   "exports": {
+		"./container": {
+		  "types": "./src/container.tsx",
+		  "import": "./dist/container.mjs",
+		  "require": "./dist/container.js"
+		},
+		"./section": {
+		  "types": "./src/section.tsx",
+		  "import": "./dist/section.mjs",
+		  "require": "./dist/section.js"
+		},
+		"./box": {
+		  "types": "./src/box.tsx",
+		  "import": "./dist/box.mjs",
+		  "require": "./dist/box.js"
+		},
+		"./strong": {
+		  "types": "./src/strong.tsx",
+		  "import": "./dist/strong.mjs",
+		  "require": "./dist/strong.js"
+		},
+		"./quote": {
+		  "types": "./src/quote.tsx",
+		  "import": "./dist/quote.mjs",
+		  "require": "./dist/quote.js"
+		},
+		"./blockquote": {
+		  "types": "./src/blockquote.tsx",
+		  "import": "./dist/blockquote.mjs",
+		  "require": "./dist/blockquote.js"
+		},
+		"./kbd": {
+		  "types": "./src/kbd.tsx",
+		  "import": "./dist/kbd.mjs",
+		  "require": "./dist/kbd.js"
+		},
+		"./em": {
+		  "types": "./src/em.tsx",
+		  "import": "./dist/em.mjs",
+		  "require": "./dist/em.js"
+		},
+		"./code": {
+		  "types": "./src/code.tsx",
+		  "import": "./dist/code.mjs",
+		  "require": "./dist/code.js"
+		},
+		"./pre": {
+		  "types": "./src/pre.tsx",
+		  "import": "./dist/pre.mjs",
+		  "require": "./dist/pre.js"
+		},
+		"./heading": {
+		  "types": "./src/heading.tsx",
+		  "import": "./dist/heading.mjs",
+		  "require": "./dist/heading.js"
+		},
+		"./text": {
+		  "types": "./src/text.tsx",
+		  "import": "./dist/text.mjs",
+		  "require": "./dist/text.js"
+		},
     "./data-table": {
       "types": "./src/data-table.tsx",
       "import": "./dist/data-table.mjs",
@@ -297,7 +357,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@turbo/gen": "^1.13.0",
     "@types/eslint": "^8.56.6",
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.2",
     "@types/react": "^18.2.73",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
