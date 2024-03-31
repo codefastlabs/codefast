@@ -15,6 +15,9 @@ import {
   FormMessage,
 } from "@codefast/ui/form";
 import { Button } from "@codefast/ui/button";
+import { Box } from "@codefast/ui/box";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   component: RadioGroup,
@@ -36,18 +39,18 @@ export const Default: Story = {
 
     return (
       <RadioGroup defaultValue="comfortable">
-        <div className="flex items-center space-x-2">
+        <Box className="flex items-center space-x-2">
           <RadioGroupItem value="default" id={`r1-${id}`} />
           <Label htmlFor={`r1-${id}`}>Default</Label>
-        </div>
-        <div className="flex items-center space-x-2">
+        </Box>
+        <Box className="flex items-center space-x-2">
           <RadioGroupItem value="comfortable" id={`r2-${id}`} />
           <Label htmlFor={`r2-${id}`}>Comfortable</Label>
-        </div>
-        <div className="flex items-center space-x-2">
+        </Box>
+        <Box className="flex items-center space-x-2">
           <RadioGroupItem value="compact" id={`r3-${id}`} />
           <Label htmlFor={`r3-${id}`}>Compact</Label>
-        </div>
+        </Box>
       </RadioGroup>
     );
   },
@@ -80,9 +83,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.success("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }

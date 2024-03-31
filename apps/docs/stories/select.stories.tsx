@@ -23,6 +23,8 @@ import {
 } from "@codefast/ui/form";
 import Link from "next/link";
 import { Button } from "@codefast/ui/button";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   component: Select,
@@ -157,9 +159,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }

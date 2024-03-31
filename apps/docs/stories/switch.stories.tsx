@@ -15,6 +15,10 @@ import {
   FormLabel,
 } from "@codefast/ui/form";
 import { Button } from "@codefast/ui/button";
+import { Box } from "@codefast/ui/box";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
+import { Heading } from "@codefast/ui/heading";
 
 const meta = {
   component: Switch,
@@ -35,10 +39,10 @@ export const Default: Story = {
     const id = useId();
 
     return (
-      <div className="flex items-center space-x-2">
+      <Box className="flex items-center space-x-2">
         <Switch id={`airplane-mode-${id}`} {...args} />
         <Label htmlFor={`airplane-mode-${id}`}>Airplane Mode</Label>
-      </div>
+      </Box>
     );
   },
 };
@@ -72,9 +76,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }
@@ -85,22 +89,24 @@ export const ReactHookForm: Story = {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-6"
         >
-          <div>
-            <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
-            <div className="space-y-4">
+          <Box>
+            <Heading as="h3" className="mb-4 text-lg font-medium">
+              Email Notifications
+            </Heading>
+            <Box className="space-y-4">
               <FormField
                 control={form.control}
                 name="marketing_emails"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
+                    <Box className="space-y-0.5">
                       <FormLabel className="text-base">
                         Marketing emails
                       </FormLabel>
                       <FormDescription>
                         Receive emails about new products, features, and more.
                       </FormDescription>
-                    </div>
+                    </Box>
                     <FormControl>
                       <Switch
                         checked={field.value}
@@ -115,14 +121,14 @@ export const ReactHookForm: Story = {
                 name="security_emails"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
+                    <Box className="space-y-0.5">
                       <FormLabel className="text-base">
                         Security emails
                       </FormLabel>
                       <FormDescription>
                         Receive emails about your account security.
                       </FormDescription>
-                    </div>
+                    </Box>
                     <FormControl>
                       <Switch
                         checked={field.value}
@@ -134,8 +140,8 @@ export const ReactHookForm: Story = {
                   </FormItem>
                 )}
               />
-            </div>
-          </div>
+            </Box>
+          </Box>
           <Button type="submit">Submit</Button>
         </form>
       </Form>

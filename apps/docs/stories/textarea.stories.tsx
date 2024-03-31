@@ -16,6 +16,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@codefast/ui/form";
+import { Box } from "@codefast/ui/box";
+import { Text } from "@codefast/ui/text";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   component: Textarea,
@@ -56,14 +60,14 @@ export const WithLabel: Story = {
     const id = useId();
 
     return (
-      <div className="grid w-full gap-1.5">
+      <Box className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
         <Textarea
           placeholder="Type your message here."
           id={`message-${id}`}
           {...args}
         />
-      </div>
+      </Box>
     );
   },
 };
@@ -77,17 +81,17 @@ export const WithText: Story = {
     const id = useId();
 
     return (
-      <div className="grid w-full gap-1.5">
+      <Box className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
         <Textarea
           placeholder="Type your message here."
           id={`message-${id}`}
           {...args}
         />
-        <p className="text-muted-foreground text-sm">
+        <Text className="text-muted-foreground text-sm">
           Your message will be copied to the support team.
-        </p>
-      </div>
+        </Text>
+      </Box>
     );
   },
 };
@@ -99,10 +103,10 @@ export const WithText: Story = {
 export const WithButton: Story = {
   render: (args) => {
     return (
-      <div className="grid w-full gap-2">
+      <Box className="grid w-full gap-2">
         <Textarea placeholder="Type your message here." {...args} />
         <Button>Send message</Button>
-      </div>
+      </Box>
     );
   },
 };
@@ -139,9 +143,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }
@@ -166,7 +170,8 @@ export const ReactHookForm: Story = {
                   />
                 </FormControl>
                 <FormDescription>
-                  You can <span>@mention</span> other users and organizations.
+                  You can <Box as="span">@mention</Box> other users and
+                  organizations.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

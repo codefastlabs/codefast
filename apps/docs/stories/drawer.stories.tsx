@@ -24,6 +24,7 @@ import {
 import { cn } from "@codefast/ui/utils";
 import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
+import { Box } from "@codefast/ui/box";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 const meta = {
@@ -96,15 +97,15 @@ export const Default: Story = {
           <Button variant="outline">Open Drawer</Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mx-auto w-full max-w-sm">
+          <Box className="mx-auto w-full max-w-sm">
             <DrawerHeader>
               <DrawerTitle>Move Goal</DrawerTitle>
               <DrawerDescription>
                 Set your daily activity goal.
               </DrawerDescription>
             </DrawerHeader>
-            <div className="p-4 pb-0">
-              <div className="flex items-center justify-center space-x-2">
+            <Box className="p-4 pb-0">
+              <Box className="flex items-center justify-center space-x-2">
                 <Button
                   variant="outline"
                   size="icon"
@@ -115,16 +116,18 @@ export const Default: Story = {
                   disabled={goal <= 200}
                 >
                   <Minus className="h-4 w-4" />
-                  <span className="sr-only">Decrease</span>
+                  <Box as="span" className="sr-only">
+                    Decrease
+                  </Box>
                 </Button>
-                <div className="flex-1 text-center">
-                  <div className="text-7xl font-bold tracking-tighter">
+                <Box className="flex-1 text-center">
+                  <Box className="text-7xl font-bold tracking-tighter">
                     {goal}
-                  </div>
-                  <div className="text-muted-foreground text-[0.70rem] uppercase">
+                  </Box>
+                  <Box className="text-muted-foreground text-[0.70rem] uppercase">
                     Calories/day
-                  </div>
-                </div>
+                  </Box>
+                </Box>
                 <Button
                   variant="outline"
                   size="icon"
@@ -135,10 +138,12 @@ export const Default: Story = {
                   disabled={goal >= 400}
                 >
                   <Plus className="h-4 w-4" />
-                  <span className="sr-only">Increase</span>
+                  <Box as="span" className="sr-only">
+                    Increase
+                  </Box>
                 </Button>
-              </div>
-              <div className="mt-3 h-[120px]">
+              </Box>
+              <Box className="mt-3 h-[120px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data}>
                     <Bar
@@ -152,15 +157,15 @@ export const Default: Story = {
                     />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-            </div>
+              </Box>
+            </Box>
             <DrawerFooter>
               <Button>Submit</Button>
               <DrawerClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DrawerClose>
             </DrawerFooter>
-          </div>
+          </Box>
         </DrawerContent>
       </Drawer>
     );
@@ -176,14 +181,14 @@ function ProfileForm({
 }: React.FormHTMLAttributes<HTMLFormElement>): React.JSX.Element {
   return (
     <form className={cn("grid items-start gap-4", className)}>
-      <div className="grid gap-2">
+      <Box className="grid gap-2">
         <Label htmlFor="email">Email</Label>
         <Input type="email" id="email" defaultValue="codefast@example.com" />
-      </div>
-      <div className="grid gap-2">
+      </Box>
+      <Box className="grid gap-2">
         <Label htmlFor="username">Username</Label>
         <Input id="username" defaultValue="@codefast" />
-      </div>
+      </Box>
       <Button type="submit">Save changes</Button>
     </form>
   );

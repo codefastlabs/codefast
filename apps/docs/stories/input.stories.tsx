@@ -16,6 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@codefast/ui/form";
+import { Box } from "@codefast/ui/box";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   component: Input,
@@ -47,10 +50,10 @@ export const File: Story = {
     const id = useId();
 
     return (
-      <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Box className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Picture</Label>
         <Input id={id} type="file" {...args} />
-      </div>
+      </Box>
     );
   },
 };
@@ -75,10 +78,10 @@ export const WithLabel: Story = {
     const id = useId();
 
     return (
-      <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Box className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Email</Label>
         <Input type="email" placeholder="Email" id={id} {...args} />
-      </div>
+      </Box>
     );
   },
 };
@@ -89,10 +92,10 @@ export const WithLabel: Story = {
 
 export const WithButton: Story = {
   render: (args) => (
-    <div className="flex w-full max-w-sm items-center space-x-2">
+    <Box className="flex w-full max-w-sm items-center space-x-2">
       <Input type="email" placeholder="Email" {...args} />
       <Button type="submit">Subscribe</Button>
-    </div>
+    </Box>
   ),
 };
 
@@ -126,9 +129,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }

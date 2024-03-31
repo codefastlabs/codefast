@@ -7,6 +7,9 @@ import {
 import { Button } from "@codefast/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { CalendarDays } from "lucide-react";
+import { Text } from "@codefast/ui/text";
+import { Box } from "@codefast/ui/box";
+import { Heading } from "@codefast/ui/heading";
 
 const meta = {
   component: HoverCard,
@@ -17,9 +20,9 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="pb-40">
+      <Box className="pb-40">
         <Story />
-      </div>
+      </Box>
     ),
   ],
 } satisfies Meta<typeof HoverCard>;
@@ -39,24 +42,26 @@ export const Default: Story = {
         <Button variant="link">@nextjs</Button>
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
-        <div className="flex justify-between space-x-4">
+        <Box className="flex justify-between space-x-4">
           <Avatar>
             <AvatarImage src="https://github.com/vercel.png" />
             <AvatarFallback>VC</AvatarFallback>
           </Avatar>
-          <div className="space-y-1">
-            <h4 className="text-sm font-semibold">@nextjs</h4>
-            <p className="text-sm">
+          <Box className="space-y-1">
+            <Heading as="h4" className="text-sm font-semibold">
+              @nextjs
+            </Heading>
+            <Text className="text-sm">
               The React Framework – created and maintained by @vercel.
-            </p>
-            <div className="flex items-center pt-2">
+            </Text>
+            <Box className="flex items-center pt-2">
               <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-              <span className="text-muted-foreground text-xs">
+              <Box as="span" className="text-muted-foreground text-xs">
                 Joined December 2021
-              </span>
-            </div>
-          </div>
-        </div>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       </HoverCardContent>
     </HoverCard>
   ),

@@ -26,6 +26,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@codefast/ui/form";
+import { Box } from "@codefast/ui/box";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   component: Popover,
@@ -55,7 +58,7 @@ export const Default: Story = {
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            {date ? format(date, "PPP") : <Box as="span">Pick a date</Box>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
@@ -83,7 +86,7 @@ export const DateRangePicker: Story = {
     });
 
     return (
-      <div className="grid gap-2">
+      <Box className="grid gap-2">
         <Popover {...args}>
           <PopoverTrigger asChild>
             <Button
@@ -105,7 +108,7 @@ export const DateRangePicker: Story = {
                   format(date.from, "LLL dd, y")
                 )
               ) : (
-                <span>Pick a date</span>
+                <Box as="span">Pick a date</Box>
               )}
             </Button>
           </PopoverTrigger>
@@ -120,7 +123,7 @@ export const DateRangePicker: Story = {
             />
           </PopoverContent>
         </Popover>
-      </div>
+      </Box>
     );
   },
 };
@@ -144,7 +147,7 @@ export const WithPresets: Story = {
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, "PPP") : <span>Pick a date</span>}
+            {date ? format(date, "PPP") : <Box as="span">Pick a date</Box>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
@@ -163,9 +166,9 @@ export const WithPresets: Story = {
               <SelectItem value="7">In a week</SelectItem>
             </SelectContent>
           </Select>
-          <div className="rounded-md border">
+          <Box className="rounded-md border">
             <Calendar mode="single" selected={date} onSelect={setDate} />
-          </div>
+          </Box>
         </PopoverContent>
       </Popover>
     );
@@ -199,9 +202,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }
@@ -228,7 +231,7 @@ export const ReactHookForm: Story = {
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <Box as="span">Pick a date</Box>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
