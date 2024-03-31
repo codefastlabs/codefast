@@ -13,6 +13,7 @@ import { Button } from "@codefast/ui/button";
 import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
 import { useId } from "react";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Sheet,
@@ -45,8 +46,8 @@ export const Default: Story = {
               done.
             </SheetDescription>
           </SheetHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+          <Box className="grid gap-4 py-4">
+            <Box className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor={`name-${id}`} className="text-right">
                 Name
               </Label>
@@ -55,8 +56,8 @@ export const Default: Story = {
                 value="Pedro Duarte"
                 className="col-span-3"
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            </Box>
+            <Box className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor={`username-${id}`} className="text-right">
                 Username
               </Label>
@@ -65,8 +66,8 @@ export const Default: Story = {
                 value="@peduarte"
                 className="col-span-3"
               />
-            </div>
-          </div>
+            </Box>
+          </Box>
           <SheetFooter>
             <SheetClose asChild>
               <Button type="submit">Save changes</Button>
@@ -89,7 +90,7 @@ export const Side: Story = {
     const id = useId();
 
     return (
-      <div className="grid grid-cols-2 gap-2">
+      <Box className="grid grid-cols-2 gap-2">
         {SHEET_SIDES.map((side) => (
           <Sheet key={side} {...args}>
             <SheetTrigger asChild>
@@ -103,8 +104,8 @@ export const Side: Story = {
                   you&apos;`re done.
                 </SheetDescription>
               </SheetHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
+              <Box className="grid gap-4 py-4">
+                <Box className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor={`name-${side}-${id}`} className="text-right">
                     Name
                   </Label>
@@ -113,8 +114,8 @@ export const Side: Story = {
                     value="Pedro Duarte"
                     className="col-span-3"
                   />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
+                </Box>
+                <Box className="grid grid-cols-4 items-center gap-4">
                   <Label
                     htmlFor={`username-${side}-${id}`}
                     className="text-right"
@@ -126,8 +127,8 @@ export const Side: Story = {
                     value="@peduarte"
                     className="col-span-3"
                   />
-                </div>
-              </div>
+                </Box>
+              </Box>
               <SheetFooter>
                 <SheetClose asChild>
                   <Button type="submit">Save changes</Button>
@@ -136,7 +137,7 @@ export const Side: Story = {
             </SheetContent>
           </Sheet>
         ))}
-      </div>
+      </Box>
     );
   },
 };

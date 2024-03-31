@@ -10,6 +10,7 @@ import {
 } from "@codefast/ui/carousel";
 import { useEffect, useRef, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Carousel,
@@ -17,9 +18,9 @@ const meta = {
   title: "UIs/Carousel",
   decorators: [
     (Story) => (
-      <div className="p-10">
+      <Box className="p-10">
         <Story />
-      </div>
+      </Box>
     ),
   ],
 } satisfies Meta<typeof Carousel>;
@@ -39,13 +40,15 @@ export const Default: Story = {
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index}>
-            <div className="p-1">
+            <Box className="p-1">
               <Card>
                 <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
+                  <Box as="span" className="text-4xl font-semibold">
+                    {index + 1}
+                  </Box>
                 </CardContent>
               </Card>
-            </div>
+            </Box>
           </CarouselItem>
         ))}
       </CarouselContent>
@@ -72,13 +75,15 @@ export const Sizes: Story = {
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-            <div className="p-1">
+            <Box className="p-1">
               <Card>
                 <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-3xl font-semibold">{index + 1}</span>
+                  <Box as="span" className="text-3xl font-semibold">
+                    {index + 1}
+                  </Box>
                 </CardContent>
               </Card>
-            </div>
+            </Box>
           </CarouselItem>
         ))}
       </CarouselContent>
@@ -99,13 +104,15 @@ export const Spacing: Story = {
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
-            <div className="p-1">
+            <Box className="p-1">
               <Card>
                 <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-2xl font-semibold">{index + 1}</span>
+                  <Box as="span" className="text-2xl font-semibold">
+                    {index + 1}
+                  </Box>
                 </CardContent>
               </Card>
-            </div>
+            </Box>
           </CarouselItem>
         ))}
       </CarouselContent>
@@ -133,13 +140,15 @@ export const Orientation: Story = {
         {Array.from({ length: 5 }).map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index} className="pt-1 md:basis-1/2">
-            <div className="p-1">
+            <Box className="p-1">
               <Card>
                 <CardContent className="flex items-center justify-center p-6">
-                  <span className="text-3xl font-semibold">{index + 1}</span>
+                  <Box as="span" className="text-3xl font-semibold">
+                    {index + 1}
+                  </Box>
                 </CardContent>
               </Card>
-            </div>
+            </Box>
           </CarouselItem>
         ))}
       </CarouselContent>
@@ -176,31 +185,31 @@ export const API: Story = {
     }, [api]);
 
     return (
-      <div>
+      <Box>
         <Carousel setApi={setApi} className="w-full max-w-xs" {...args}>
           <CarouselContent>
             {Array.from({ length: 5 }).map((_, index) => (
               // eslint-disable-next-line react/no-array-index-key -- okay for static content
               <CarouselItem key={index}>
-                <div className="p-1">
+                <Box className="p-1">
                   <Card>
                     <CardContent className="flex aspect-square items-center justify-center p-6">
-                      <span className="text-4xl font-semibold">
+                      <Box as="span" className="text-4xl font-semibold">
                         {index + 1}
-                      </span>
+                      </Box>
                     </CardContent>
                   </Card>
-                </div>
+                </Box>
               </CarouselItem>
             ))}
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
-        <div className="text-muted-foreground py-2 text-center text-sm">
+        <Box className="text-muted-foreground py-2 text-center text-sm">
           Slide {current} of {count}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   },
 };
@@ -225,13 +234,15 @@ export const Plugins: Story = {
           {Array.from({ length: 5 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key -- okay for static content
             <CarouselItem key={index}>
-              <div className="p-1">
+              <Box className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-6">
-                    <span className="text-4xl font-semibold">{index + 1}</span>
+                    <Box as="span" className="text-4xl font-semibold">
+                      {index + 1}
+                    </Box>
                   </CardContent>
                 </Card>
-              </div>
+              </Box>
             </CarouselItem>
           ))}
         </CarouselContent>

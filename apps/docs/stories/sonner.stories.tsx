@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { toast, Toaster } from "@codefast/ui/sonner";
 import { Button } from "@codefast/ui/button";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Toaster,
@@ -18,7 +19,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div className="pb-40">
+    <Box className="pb-40">
       <Button
         variant="outline"
         onClick={() =>
@@ -37,6 +38,6 @@ export const Default: Story = {
         Show Toast
       </Button>
       <Toaster />
-    </div>
+    </Box>
   ),
 };

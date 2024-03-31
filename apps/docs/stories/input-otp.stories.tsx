@@ -21,6 +21,9 @@ import {
   FormMessage,
 } from "@codefast/ui/form";
 import { Button } from "@codefast/ui/button";
+import { Box } from "@codefast/ui/box";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   tags: ["autodocs"],
@@ -109,7 +112,7 @@ export const Controlled: Story = {
     const [value, setValue] = useState("");
 
     return (
-      <div className="space-y-2">
+      <Box className="space-y-2">
         <InputOTP
           maxLength={6}
           value={value}
@@ -126,14 +129,14 @@ export const Controlled: Story = {
             <InputOTPSlot index={5} />
           </InputOTPGroup>
         </InputOTP>
-        <div className="text-center text-sm">
+        <Box className="text-center text-sm">
           {value === "" ? (
             <>Enter your one-time password.</>
           ) : (
             <>You entered: {value}</>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   },
 };
@@ -168,9 +171,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }

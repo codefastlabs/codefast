@@ -4,6 +4,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@codefast/ui/resizable";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   tags: ["autodocs"],
@@ -26,23 +27,29 @@ export const Default: Story = {
       {...args}
     >
       <ResizablePanel defaultSize={50}>
-        <div className="flex h-[200px] items-center justify-center p-6">
-          <span className="font-semibold">One</span>
-        </div>
+        <Box className="flex h-[200px] items-center justify-center p-6">
+          <Box as="span" className="font-semibold">
+            One
+          </Box>
+        </Box>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel defaultSize={50}>
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={25}>
-            <div className="flex h-full items-center justify-center p-6">
-              <span className="font-semibold">Two</span>
-            </div>
+            <Box className="flex h-full items-center justify-center p-6">
+              <Box as="span" className="font-semibold">
+                Two
+              </Box>
+            </Box>
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={75}>
-            <div className="flex h-full items-center justify-center p-6">
-              <span className="font-semibold">Three</span>
-            </div>
+            <Box className="flex h-full items-center justify-center p-6">
+              <Box as="span" className="font-semibold">
+                Three
+              </Box>
+            </Box>
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
@@ -62,15 +69,19 @@ export const Vertical: Story = {
       {...args}
     >
       <ResizablePanel defaultSize={25}>
-        <div className="flex h-full items-center justify-center p-6">
-          <span className="font-semibold">Header</span>
-        </div>
+        <Box className="flex h-full items-center justify-center p-6">
+          <Box as="span" className="font-semibold">
+            Header
+          </Box>
+        </Box>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel defaultSize={75}>
-        <div className="flex h-full items-center justify-center p-6">
-          <span className="font-semibold">Content</span>
-        </div>
+        <Box className="flex h-full items-center justify-center p-6">
+          <Box as="span" className="font-semibold">
+            Content
+          </Box>
+        </Box>
       </ResizablePanel>
     </ResizablePanelGroup>
   ),
@@ -88,15 +99,19 @@ export const Handle: Story = {
       {...args}
     >
       <ResizablePanel defaultSize={25}>
-        <div className="flex h-full items-center justify-center p-6">
-          <span className="font-semibold">Sidebar</span>
-        </div>
+        <Box className="flex h-full items-center justify-center p-6">
+          <Box as="span" className="font-semibold">
+            Sidebar
+          </Box>
+        </Box>
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={75}>
-        <div className="flex h-full items-center justify-center p-6">
-          <span className="font-semibold">Content</span>
-        </div>
+        <Box className="flex h-full items-center justify-center p-6">
+          <Box as="span" className="font-semibold">
+            Content
+          </Box>
+        </Box>
       </ResizablePanel>
     </ResizablePanelGroup>
   ),

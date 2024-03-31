@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ScrollArea } from "@codefast/ui/scroll-area";
 import { Separator } from "@codefast/ui/separator";
 import Image from "next/image";
+import { Heading } from "@codefast/ui/heading";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: ScrollArea,
@@ -24,17 +26,19 @@ const tags = Array.from({ length: 50 }).map(
 export const Default: Story = {
   render: (args) => (
     <ScrollArea className="h-72 w-48 rounded-md border" {...args}>
-      <div className="p-4">
-        <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
+      <Box className="p-4">
+        <Heading as="h4" className="mb-4 text-sm font-medium leading-none">
+          Tags
+        </Heading>
         {tags.map((tag) => (
           <>
-            <div key={tag} className="text-sm">
+            <Box key={tag} className="text-sm">
               {tag}
-            </div>
+            </Box>
             <Separator className="my-2" />
           </>
         ))}
-      </div>
+      </Box>
     </ScrollArea>
   ),
 };
@@ -66,10 +70,10 @@ const works: Artwork[] = [
 export const HorizontalScrolling: Story = {
   render: (args) => (
     <ScrollArea className="w-96 whitespace-nowrap rounded-md border" {...args}>
-      <div className="flex w-max space-x-4 p-4">
+      <Box className="flex w-max space-x-4 p-4">
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
-            <div className="overflow-hidden rounded-md">
+            <Box className="overflow-hidden rounded-md">
               <Image
                 src={artwork.art}
                 alt={`Photo by ${artwork.artist}`}
@@ -77,16 +81,16 @@ export const HorizontalScrolling: Story = {
                 width={300}
                 height={400}
               />
-            </div>
+            </Box>
             <figcaption className="text-muted-foreground pt-2 text-xs">
               Photo by{" "}
-              <span className="text-foreground font-semibold">
+              <Box as="span" className="text-foreground font-semibold">
                 {artwork.artist}
-              </span>
+              </Box>
             </figcaption>
           </figure>
         ))}
-      </div>
+      </Box>
     </ScrollArea>
   ),
 };

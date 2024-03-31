@@ -19,6 +19,8 @@ import {
 import { Button } from "@codefast/ui/button";
 import { BellIcon, CheckIcon } from "@radix-ui/react-icons";
 import { Switch } from "@codefast/ui/switch";
+import { Box } from "@codefast/ui/box";
+import { Text } from "@codefast/ui/text";
 
 const meta = {
   component: Card,
@@ -43,12 +45,12 @@ export const Default: Story = {
       </CardHeader>
       <CardContent>
         <form>
-          <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
+          <Box className="grid w-full items-center gap-4">
+            <Box className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Name</Label>
               <Input id="name" placeholder="Name of your project" />
-            </div>
-            <div className="flex flex-col space-y-1.5">
+            </Box>
+            <Box className="flex flex-col space-y-1.5">
               <Label htmlFor="framework">Framework</Label>
               <Select>
                 <SelectTrigger id="framework">
@@ -61,8 +63,8 @@ export const Default: Story = {
                   <SelectItem value="nuxt">Nuxt.js</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
+            </Box>
+          </Box>
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
@@ -103,36 +105,39 @@ export const Examples: Story = {
         <CardDescription>You have 3 unread messages.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className=" flex items-center space-x-4 rounded-md border p-4">
+        <Box className=" flex items-center space-x-4 rounded-md border p-4">
           <BellIcon />
-          <div className="flex-1 space-y-1">
-            <p className="text-sm font-medium leading-none">
+          <Box className="flex-1 space-y-1">
+            <Text className="text-sm font-medium leading-none">
               Push Notifications
-            </p>
-            <p className="text-muted-foreground text-sm">
+            </Text>
+            <Text className="text-muted-foreground text-sm">
               Send notifications to device.
-            </p>
-          </div>
+            </Text>
+          </Box>
           <Switch />
-        </div>
-        <div>
+        </Box>
+        <Box>
           {notifications.map((notification) => (
-            <div
+            <Box
               key={notification.id}
               className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
             >
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
+              <Box
+                as="span"
+                className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500"
+              />
+              <Box className="space-y-1">
+                <Text className="text-sm font-medium leading-none">
                   {notification.title}
-                </p>
-                <p className="text-muted-foreground text-sm">
+                </Text>
+                <Text className="text-muted-foreground text-sm">
                   {notification.description}
-                </p>
-              </div>
-            </div>
+                </Text>
+              </Box>
+            </Box>
           ))}
-        </div>
+        </Box>
       </CardContent>
       <CardFooter>
         <Button className="w-full">
