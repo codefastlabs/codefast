@@ -53,6 +53,11 @@ import {
   FormMessage,
 } from "@codefast/ui/form";
 import { Drawer, DrawerContent, DrawerTrigger } from "@codefast/ui/drawer";
+import { Box } from "@codefast/ui/box";
+import { Badge } from "@codefast/ui/badge";
+import { Pre } from "@codefast/ui/pre";
+import { Text } from "@codefast/ui/text";
+import { Code } from "@codefast/ui/code";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 const meta = {
@@ -193,8 +198,8 @@ export const WithPopover: Story = {
     const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
 
     return (
-      <div className="flex items-center space-x-4">
-        <p className="text-muted-foreground text-sm">Status</p>
+      <Box className="flex items-center space-x-4">
+        <Text className="text-muted-foreground text-sm">Status</Text>
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
             <Button
@@ -218,7 +223,7 @@ export const WithPopover: Story = {
               <CommandList>
                 <CommandEmpty>No results found.</CommandEmpty>
                 <CommandGroup>
-                  {statuses.map((status) => (
+                  {statuses.map(({ icon: Icon, ...status }) => (
                     <CommandItem
                       key={status.value}
                       value={status.value}
@@ -231,7 +236,7 @@ export const WithPopover: Story = {
                         setOpen(false);
                       }}
                     >
-                      <status.icon
+                      <Icon
                         className={cn(
                           "mr-2 size-4",
                           status.value === selectedStatus?.value
@@ -239,7 +244,7 @@ export const WithPopover: Story = {
                             : "opacity-40",
                         )}
                       />
-                      <span>{status.label}</span>
+                      <Box as="span">{status.label}</Box>
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -247,7 +252,7 @@ export const WithPopover: Story = {
             </Command>
           </PopoverContent>
         </Popover>
-      </div>
+      </Box>
     );
   },
 };
@@ -272,13 +277,13 @@ export const WithDropdownMenu: Story = {
     const [open, setOpen] = useState(false);
 
     return (
-      <div className="flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
-        <p className="text-sm font-medium leading-none">
-          <span className="bg-primary text-primary-foreground mr-2 rounded-lg px-2 py-1 text-xs">
-            {currentLabel}
-          </span>
-          <span className="text-muted-foreground">Create a new project</span>
-        </p>
+      <Box className="flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
+        <Text className="text-sm font-medium leading-none">
+          <Badge className="mr-2 rounded-full">{currentLabel}</Badge>
+          <Box as="span" className="text-muted-foreground">
+            Create a new project
+          </Box>
+        </Text>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm">
@@ -334,7 +339,7 @@ export const WithDropdownMenu: Story = {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </Box>
     );
   },
 };
@@ -408,12 +413,12 @@ export const ResponsiveCombobox: Story = {
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mt-4 border-t">
+          <Box className="mt-4 border-t">
             <StatusList
               setOpen={setOpen}
               setSelectedStatus={setSelectedStatus}
             />
-          </div>
+          </Box>
         </DrawerContent>
       </Drawer>
     );
@@ -459,9 +464,9 @@ export const WithReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }

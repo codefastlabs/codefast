@@ -37,6 +37,7 @@ import {
   type VisibilityState,
 } from "@codefast/ui/data-table";
 import { faker } from "@faker-js/faker";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   tags: ["autodocs"],
@@ -101,7 +102,7 @@ const columns: ColumnDef<Payment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <Box className="capitalize">{row.getValue("status")}</Box>
     ),
   },
   {
@@ -109,11 +110,11 @@ const columns: ColumnDef<Payment>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <Box className="lowercase">{row.getValue("email")}</Box>,
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: () => <Box className="text-right">Amount</Box>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
 
@@ -123,7 +124,7 @@ const columns: ColumnDef<Payment>[] = [
         currency: "USD",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <Box className="text-right font-medium">{formatted}</Box>;
     },
   },
   {
@@ -133,11 +134,13 @@ const columns: ColumnDef<Payment>[] = [
       const payment = row.original;
 
       return (
-        <div className="text-right">
+        <Box className="text-right">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon-xs">
-                <span className="sr-only">Open menu</span>
+                <Box as="span" className="sr-only">
+                  Open menu
+                </Box>
                 <DotsHorizontalIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -155,7 +158,7 @@ const columns: ColumnDef<Payment>[] = [
               <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </Box>
       );
     },
     meta: {},
@@ -191,8 +194,8 @@ export const Default: Story = {
     });
 
     return (
-      <div className="w-full">
-        <div className="flex items-center py-4">
+      <Box className="w-full">
+        <Box className="flex items-center py-4">
           <Input
             placeholder="Filter emails..."
             value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -203,8 +206,8 @@ export const Default: Story = {
             className="max-w-sm"
           />
           <DataTableViewOptions table={table} />
-        </div>
-        <div className="rounded-md border">
+        </Box>
+        <Box className="rounded-md border">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -267,9 +270,9 @@ export const Default: Story = {
               ))}
             </TableFooter>
           </Table>
-        </div>
+        </Box>
         <DataTablePagination table={table} className="py-4" />
-      </div>
+      </Box>
     );
   },
 };

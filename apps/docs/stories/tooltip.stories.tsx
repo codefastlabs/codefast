@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@codefast/ui/tooltip";
 import { Button } from "@codefast/ui/button";
+import { Text } from "@codefast/ui/text";
 
 const meta = {
   component: Tooltip,
@@ -24,13 +25,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={300}>
       <Tooltip {...args}>
         <TooltipTrigger asChild>
           <Button variant="outline">Hover</Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Add to library</p>
+          <Text>Add to library</Text>
+          <TooltipArrow />
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

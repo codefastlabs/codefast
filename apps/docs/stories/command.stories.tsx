@@ -19,6 +19,9 @@ import {
   User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Box } from "@codefast/ui/box";
+import { Text } from "@codefast/ui/text";
+import { Kbd } from "@codefast/ui/kbd";
 
 const meta = {
   component: Command,
@@ -43,32 +46,32 @@ export const Default: Story = {
         <CommandGroup heading="Suggestions">
           <CommandItem>
             <Calendar className="mr-2 size-4" />
-            <span>Calendar</span>
+            <Box as="span">Calendar</Box>
           </CommandItem>
           <CommandItem>
             <Smile className="mr-2 size-4" />
-            <span>Search Emoji</span>
+            <Box as="span">Search Emoji</Box>
           </CommandItem>
           <CommandItem>
             <Calculator className="mr-2 size-4" />
-            <span>Calculator</span>
+            <Box as="span">Calculator</Box>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Settings">
           <CommandItem>
             <User className="mr-2 size-4" />
-            <span>Profile</span>
+            <Box as="span">Profile</Box>
             <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <CreditCard className="mr-2 size-4" />
-            <span>Billing</span>
+            <Box as="span">Billing</Box>
             <CommandShortcut>⌘B</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <Settings className="mr-2 size-4" />
-            <span>Settings</span>
+            <Box as="span">Settings</Box>
             <CommandShortcut>⌘S</CommandShortcut>
           </CommandItem>
         </CommandGroup>
@@ -102,12 +105,12 @@ export const WithDialog: Story = {
 
     return (
       <>
-        <p className="text-muted-foreground text-sm">
+        <Text className="text-muted-foreground text-sm">
           Press{" "}
-          <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100">
-            <span className="text-xs">⌘</span>J
-          </kbd>
-        </p>
+          <Kbd>
+            <Box as="span">⌘</Box>J
+          </Kbd>
+        </Text>
         <CommandDialog open={open} onOpenChange={setOpen}>
           <CommandInput placeholder="Type a command or search..." />
           <CommandList>
@@ -115,32 +118,32 @@ export const WithDialog: Story = {
             <CommandGroup heading="Suggestions">
               <CommandItem>
                 <Calendar className="mr-2 h-4 w-4" />
-                <span>Calendar</span>
+                <Box as="span">Calendar</Box>
               </CommandItem>
               <CommandItem>
                 <Smile className="mr-2 h-4 w-4" />
-                <span>Search Emoji</span>
+                <Box as="span">Search Emoji</Box>
               </CommandItem>
               <CommandItem>
                 <Calculator className="mr-2 h-4 w-4" />
-                <span>Calculator</span>
+                <Box as="span">Calculator</Box>
               </CommandItem>
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Settings">
               <CommandItem>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+                <Box as="span">Profile</Box>
                 <CommandShortcut>⌘P</CommandShortcut>
               </CommandItem>
               <CommandItem>
                 <CreditCard className="mr-2 h-4 w-4" />
-                <span>Billing</span>
+                <Box as="span">Billing</Box>
                 <CommandShortcut>⌘B</CommandShortcut>
               </CommandItem>
               <CommandItem>
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <Box as="span">Settings</Box>
                 <CommandShortcut>⌘S</CommandShortcut>
               </CommandItem>
             </CommandGroup>

@@ -19,6 +19,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { Button } from "@codefast/ui/button";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { toast, Toaster } from "@codefast/ui/sonner";
+import { Box } from "@codefast/ui/box";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
 
 const meta = {
   tags: ["autodocs"],
@@ -76,9 +79,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-full rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }
@@ -105,7 +108,7 @@ export const ReactHookForm: Story = {
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
-                          <span>Pick a date</span>
+                          <Box as="span">Pick a date</Box>
                         )}
                         <CalendarIcon className="ml-auto size-4 opacity-50" />
                       </Button>

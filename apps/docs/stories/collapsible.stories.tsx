@@ -7,6 +7,8 @@ import {
 import { useState } from "react";
 import { Button } from "@codefast/ui/button";
 import { CaretSortIcon } from "@radix-ui/react-icons";
+import { Heading } from "@codefast/ui/heading";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Collapsible,
@@ -33,27 +35,29 @@ export const Default: Story = {
         className="w-[350px] space-y-2"
         {...args}
       >
-        <div className="flex items-center justify-between space-x-4 px-4">
-          <h4 className="text-sm font-semibold">
+        <Box className="flex items-center justify-between space-x-4 px-4">
+          <Heading as="h4" className="text-sm font-semibold">
             @peduarte starred 3 repositories
-          </h4>
+          </Heading>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm">
               <CaretSortIcon className="size-4" />
-              <span className="sr-only">Toggle</span>
+              <Box as="span" className="sr-only">
+                Toggle
+              </Box>
             </Button>
           </CollapsibleTrigger>
-        </div>
-        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+        </Box>
+        <Box className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
           @radix-ui/primitives
-        </div>
+        </Box>
         <CollapsibleContent className="space-y-2">
-          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+          <Box className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
             @radix-ui/colors
-          </div>
-          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+          </Box>
+          <Box className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
             @stitches/react
-          </div>
+          </Box>
         </CollapsibleContent>
       </Collapsible>
     );

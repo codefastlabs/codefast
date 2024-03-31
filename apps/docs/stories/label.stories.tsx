@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Label } from "@codefast/ui/label";
 import { Checkbox } from "@codefast/ui/checkbox";
 import { useId } from "react";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Label,
@@ -22,12 +23,12 @@ export const Default: Story = {
     const id = useId();
 
     return (
-      <div className="flex items-center space-x-2">
+      <Box className="flex items-center space-x-2">
         <Checkbox id={id} />
         <Label htmlFor={id} {...args}>
           Accept terms and conditions
         </Label>
-      </div>
+      </Box>
     );
   },
 };

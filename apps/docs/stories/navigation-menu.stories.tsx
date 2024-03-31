@@ -12,6 +12,8 @@ import { type AnchorHTMLAttributes, forwardRef } from "react";
 import { cn } from "@codefast/ui/utils";
 import Link from "next/link";
 import { SettingsIcon } from "lucide-react";
+import { Box } from "@codefast/ui/box";
+import { Text } from "@codefast/ui/text";
 
 const meta = {
   component: NavigationMenu,
@@ -19,9 +21,9 @@ const meta = {
   title: "UIs/Navigation Menu",
   decorators: [
     (Story) => (
-      <div className="h-96">
+      <Box className="h-96">
         <Story />
-      </div>
+      </Box>
     ),
   ],
 } satisfies Meta<typeof NavigationMenu>;
@@ -87,10 +89,10 @@ const ListItem = forwardRef<
           )}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+          <Box className="text-sm font-medium leading-none">{title}</Box>
+          <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">
             {children}
-          </p>
+          </Text>
         </a>
       </NavigationMenuLink>
     </li>
@@ -113,14 +115,14 @@ export const Default: Story = {
                     href="/"
                   >
                     <SettingsIcon className="h-6 w-6" />
-                    <div className="mb-2 mt-4 text-lg font-medium">
+                    <Box className="mb-2 mt-4 text-lg font-medium">
                       shadcn/ui
-                    </div>
-                    <p className="text-muted-foreground text-sm leading-tight">
+                    </Box>
+                    <Text className="text-muted-foreground text-sm leading-tight">
                       Beautifully designed components that you can copy and
                       paste into your apps. Accessible. Customizable. Open
                       Source.
-                    </p>
+                    </Text>
                   </a>
                 </NavigationMenuLink>
               </li>

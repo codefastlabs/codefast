@@ -16,6 +16,11 @@ import { toast, Toaster } from "@codefast/ui/sonner";
 import Link from "next/link";
 import { Button } from "@codefast/ui/button";
 import { useId } from "react";
+import { Box } from "@codefast/ui/box";
+import { Label } from "@codefast/ui/label";
+import { Pre } from "@codefast/ui/pre";
+import { Code } from "@codefast/ui/code";
+import { Text } from "@codefast/ui/text";
 
 const meta = {
   component: Checkbox,
@@ -36,20 +41,15 @@ export const Default: Story = {
     const id = useId();
 
     return (
-      <div className="items-top flex space-x-2">
+      <Box className="items-top flex space-x-2">
         <Checkbox id={id} {...args} />
-        <div className="grid gap-1.5 leading-none">
-          <label
-            htmlFor={id}
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Accept terms and conditions
-          </label>
-          <p className="text-muted-foreground text-sm">
+        <Box className="grid gap-1.5 leading-none">
+          <Label htmlFor={id}>Accept terms and conditions</Label>
+          <Text className="text-muted-foreground text-sm">
             You agree to our Terms of Service and Privacy Policy.
-          </p>
-        </div>
-      </div>
+          </Text>
+        </Box>
+      </Box>
     );
   },
 };
@@ -63,15 +63,10 @@ export const Disabled: Story = {
     const id = useId();
 
     return (
-      <div className="flex items-center space-x-2">
+      <Box className="flex items-center space-x-2">
         <Checkbox id={id} disabled {...args} />
-        <label
-          htmlFor={id}
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          Accept terms and conditions
-        </label>
-      </div>
+        <Label htmlFor={id}>Accept terms and conditions</Label>
+      </Box>
     );
   },
 };
@@ -104,9 +99,9 @@ export const ReactHookForm: Story = {
     function onSubmit(data: z.infer<typeof FormSchema>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }
@@ -126,7 +121,7 @@ export const ReactHookForm: Story = {
                     {...args}
                   />
                 </FormControl>
-                <div className="space-y-1 leading-none">
+                <Box className="space-y-1 leading-none">
                   <FormLabel>
                     Use different settings for my mobile devices
                   </FormLabel>
@@ -134,7 +129,7 @@ export const ReactHookForm: Story = {
                     You can manage your mobile notifications in the{" "}
                     <Link href="/">mobile settings</Link> page.
                   </FormDescription>
-                </div>
+                </Box>
               </FormItem>
             )}
           />
@@ -202,9 +197,9 @@ export const ReactHookForm2: Story = {
     function onSubmit(data: z.infer<typeof FormSchema2>): void {
       toast.message("You submitted the following values:", {
         description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-          </pre>
+          <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          </Pre>
         ),
       });
     }
@@ -217,12 +212,12 @@ export const ReactHookForm2: Story = {
             name="items"
             render={() => (
               <FormItem>
-                <div className="mb-4">
+                <Box className="mb-4">
                   <FormLabel className="text-base">Sidebar</FormLabel>
                   <FormDescription>
                     Select the items you want to display in the sidebar.
                   </FormDescription>
-                </div>
+                </Box>
                 {items2.map((item) => (
                   <FormField
                     key={item.id}

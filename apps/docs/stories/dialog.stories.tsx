@@ -13,6 +13,7 @@ import { Button } from "@codefast/ui/button";
 import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
 import { Copy } from "lucide-react";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Dialog,
@@ -41,8 +42,8 @@ export const Default: Story = {
             Make changes to your profile here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
+        <Box className="grid gap-4 py-4">
+          <Box className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
@@ -51,8 +52,8 @@ export const Default: Story = {
               defaultValue="Pedro Duarte"
               className="col-span-3"
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          </Box>
+          <Box className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
               Username
             </Label>
@@ -61,8 +62,8 @@ export const Default: Story = {
               defaultValue="@peduarte"
               className="col-span-3"
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
         <DialogFooter>
           <Button type="submit">Save changes</Button>
         </DialogFooter>
@@ -88,8 +89,8 @@ export const CustomCloseButton: Story = {
             Anyone who has this link will be able to view this.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2">
-          <div className="grid flex-1 gap-2">
+        <Box className="flex items-center space-x-2">
+          <Box className="grid flex-1 gap-2">
             <Label htmlFor="link" className="sr-only">
               Link
             </Label>
@@ -98,12 +99,14 @@ export const CustomCloseButton: Story = {
               defaultValue="https://ui.shadcn.com/docs/installation"
               readOnly
             />
-          </div>
+          </Box>
           <Button size="icon">
-            <span className="sr-only">Copy</span>
+            <Box as="span" className="sr-only">
+              Copy
+            </Box>
             <Copy className="h-4 w-4" />
           </Button>
-        </div>
+        </Box>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
             <Button type="button" variant="secondary">

@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Separator } from "@codefast/ui/separator";
+import { Box } from "@codefast/ui/box";
+import { Text } from "@codefast/ui/text";
+import { Heading } from "@codefast/ui/heading";
 
 const meta = {
   component: Separator,
@@ -17,21 +20,23 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <div>
-      <div className="space-y-1">
-        <h4 className="text-sm font-medium leading-none">Radix Primitives</h4>
-        <p className="text-muted-foreground text-sm">
+    <Box>
+      <Box className="space-y-1">
+        <Heading as="h4" className="text-sm font-medium leading-none">
+          Radix Primitives
+        </Heading>
+        <Text className="text-muted-foreground text-sm">
           An open-source UI component library.
-        </p>
-      </div>
+        </Text>
+      </Box>
       <Separator className="my-4" />
-      <div className="flex h-5 items-center space-x-4 text-sm">
-        <div>Blog</div>
+      <Box className="flex h-5 items-center space-x-4 text-sm">
+        <Box>Blog</Box>
         <Separator orientation="vertical" />
-        <div>Docs</div>
+        <Box>Docs</Box>
         <Separator orientation="vertical" />
-        <div>Source</div>
-      </div>
-    </div>
+        <Box>Source</Box>
+      </Box>
+    </Box>
   ),
 };

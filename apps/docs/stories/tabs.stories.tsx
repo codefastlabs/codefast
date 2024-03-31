@@ -11,6 +11,7 @@ import {
 import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
 import { Button } from "@codefast/ui/button";
+import { Box } from "@codefast/ui/box";
 
 const meta = {
   component: Tabs,
@@ -43,14 +44,14 @@ export const Default: Story = {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
+            <Box className="space-y-1">
               <Label htmlFor="name">Name</Label>
               <Input id="name" defaultValue="Pedro Duarte" />
-            </div>
-            <div className="space-y-1">
+            </Box>
+            <Box className="space-y-1">
               <Label htmlFor="username">Username</Label>
               <Input id="username" defaultValue="@peduarte" />
-            </div>
+            </Box>
           </CardContent>
           <CardFooter>
             <Button>Save changes</Button>
@@ -66,14 +67,14 @@ export const Default: Story = {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="space-y-1">
+            <Box className="space-y-1">
               <Label htmlFor="current">Current password</Label>
               <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
+            </Box>
+            <Box className="space-y-1">
               <Label htmlFor="new">New password</Label>
               <Input id="new" type="password" />
-            </div>
+            </Box>
           </CardContent>
           <CardFooter>
             <Button>Save password</Button>
