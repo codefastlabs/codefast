@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "storybook build",
+    "build": "next build",
     "build-storybook": "storybook build",
     "clean": "rm -rf .next && rm -rf .turbo && rm -rf storybook-static && rm -rf node_modules",
-    "dev": "storybook dev -p 6006 --no-open",
-    "lint": "eslint . --max-warnings 0",
+    "dev": "next dev",
+    "dev-storybook": "storybook dev -p 6006 --no-open",
+    "lint": "next lint",
     "start": "serve storybook-static",
     "storybook": "storybook dev -p 6006"
   },
