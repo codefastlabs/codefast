@@ -1,71 +1,71 @@
 {
   "name": "@codefast/ui",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "sideEffects": [
     "**/*.css"
   ],
   "exports": {
-		"./container": {
-		  "types": "./src/container.tsx",
-		  "import": "./dist/container.mjs",
-		  "require": "./dist/container.js"
-		},
-		"./section": {
-		  "types": "./src/section.tsx",
-		  "import": "./dist/section.mjs",
-		  "require": "./dist/section.js"
-		},
-		"./box": {
-		  "types": "./src/box.tsx",
-		  "import": "./dist/box.mjs",
-		  "require": "./dist/box.js"
-		},
-		"./strong": {
-		  "types": "./src/strong.tsx",
-		  "import": "./dist/strong.mjs",
-		  "require": "./dist/strong.js"
-		},
-		"./quote": {
-		  "types": "./src/quote.tsx",
-		  "import": "./dist/quote.mjs",
-		  "require": "./dist/quote.js"
-		},
-		"./blockquote": {
-		  "types": "./src/blockquote.tsx",
-		  "import": "./dist/blockquote.mjs",
-		  "require": "./dist/blockquote.js"
-		},
-		"./kbd": {
-		  "types": "./src/kbd.tsx",
-		  "import": "./dist/kbd.mjs",
-		  "require": "./dist/kbd.js"
-		},
-		"./em": {
-		  "types": "./src/em.tsx",
-		  "import": "./dist/em.mjs",
-		  "require": "./dist/em.js"
-		},
-		"./code": {
-		  "types": "./src/code.tsx",
-		  "import": "./dist/code.mjs",
-		  "require": "./dist/code.js"
-		},
-		"./pre": {
-		  "types": "./src/pre.tsx",
-		  "import": "./dist/pre.mjs",
-		  "require": "./dist/pre.js"
-		},
-		"./heading": {
-		  "types": "./src/heading.tsx",
-		  "import": "./dist/heading.mjs",
-		  "require": "./dist/heading.js"
-		},
-		"./text": {
-		  "types": "./src/text.tsx",
-		  "import": "./dist/text.mjs",
-		  "require": "./dist/text.js"
-		},
+    "./container": {
+      "types": "./src/container.tsx",
+      "import": "./dist/container.mjs",
+      "require": "./dist/container.js"
+    },
+    "./section": {
+      "types": "./src/section.tsx",
+      "import": "./dist/section.mjs",
+      "require": "./dist/section.js"
+    },
+    "./box": {
+      "types": "./src/box.tsx",
+      "import": "./dist/box.mjs",
+      "require": "./dist/box.js"
+    },
+    "./strong": {
+      "types": "./src/strong.tsx",
+      "import": "./dist/strong.mjs",
+      "require": "./dist/strong.js"
+    },
+    "./quote": {
+      "types": "./src/quote.tsx",
+      "import": "./dist/quote.mjs",
+      "require": "./dist/quote.js"
+    },
+    "./blockquote": {
+      "types": "./src/blockquote.tsx",
+      "import": "./dist/blockquote.mjs",
+      "require": "./dist/blockquote.js"
+    },
+    "./kbd": {
+      "types": "./src/kbd.tsx",
+      "import": "./dist/kbd.mjs",
+      "require": "./dist/kbd.js"
+    },
+    "./em": {
+      "types": "./src/em.tsx",
+      "import": "./dist/em.mjs",
+      "require": "./dist/em.js"
+    },
+    "./code": {
+      "types": "./src/code.tsx",
+      "import": "./dist/code.mjs",
+      "require": "./dist/code.js"
+    },
+    "./pre": {
+      "types": "./src/pre.tsx",
+      "import": "./dist/pre.mjs",
+      "require": "./dist/pre.js"
+    },
+    "./heading": {
+      "types": "./src/heading.tsx",
+      "import": "./dist/heading.mjs",
+      "require": "./dist/heading.js"
+    },
+    "./text": {
+      "types": "./src/text.tsx",
+      "import": "./dist/text.mjs",
+      "require": "./dist/text.js"
+    },
     "./data-table": {
       "types": "./src/data-table.tsx",
       "import": "./dist/data-table.mjs",
