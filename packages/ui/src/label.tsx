@@ -7,9 +7,10 @@ import { cn } from "./utils";
  * Component: Label
  * -------------------------------------------------------------------------- */
 
+type LabelProps = LabelPrimitive.LabelProps;
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  LabelPrimitive.LabelProps
+  LabelProps
 >(({ className, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
@@ -26,4 +27,4 @@ Label.displayName = LabelPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Label };
+export { Label, type LabelProps };

@@ -8,24 +8,28 @@ import { cn } from "./utils";
  * Component: Popover
  * -------------------------------------------------------------------------- */
 
+type PopoverProps = PopoverPrimitive.PopoverProps;
 const Popover = PopoverPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverTrigger
  * -------------------------------------------------------------------------- */
 
+type PopoverTriggerProps = PopoverPrimitive.PopoverTriggerProps;
 const PopoverTrigger = PopoverPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverAnchor
  * -------------------------------------------------------------------------- */
 
+type PopoverAnchorProps = PopoverPrimitive.PopoverAnchorProps;
 const PopoverAnchor = PopoverPrimitive.Anchor;
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverContent
  * -------------------------------------------------------------------------- */
 
+type PopoverContentProps = PopoverPrimitive.PopoverContentProps;
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   PopoverPrimitive.PopoverContentProps
@@ -49,9 +53,10 @@ PopoverContent.displayName = PopoverPrimitive.Content.displayName;
  * Component: PopoverArrow
  * -------------------------------------------------------------------------- */
 
+type PopoverArrowProps = PopoverPrimitive.PopoverArrowProps;
 const PopoverArrow = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Arrow>,
-  PopoverPrimitive.PopoverArrowProps
+  PopoverArrowProps
 >(({ className, ...props }, ref) => (
   <PopoverPrimitive.Arrow
     ref={ref}
@@ -65,4 +70,15 @@ PopoverArrow.displayName = PopoverPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor, PopoverArrow };
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverAnchor,
+  PopoverArrow,
+  type PopoverProps,
+  type PopoverTriggerProps,
+  type PopoverContentProps,
+  type PopoverAnchorProps,
+  type PopoverArrowProps,
+};

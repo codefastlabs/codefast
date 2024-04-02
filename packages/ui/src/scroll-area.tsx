@@ -8,9 +8,10 @@ import { cn } from "./utils";
  * Component: ScrollArea
  * -------------------------------------------------------------------------- */
 
+type ScrollAreaProps = ScrollAreaPrimitive.ScrollAreaProps;
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  ScrollAreaPrimitive.ScrollAreaProps
+  ScrollAreaProps
 >(({ className, children, ...props }, ref) => (
   <ScrollAreaPrimitive.Root
     ref={ref}
@@ -20,22 +21,23 @@ const ScrollArea = React.forwardRef<
     <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit]">
       {children}
     </ScrollAreaPrimitive.Viewport>
-    <ScrollBar orientation="vertical" />
-    <ScrollBar orientation="horizontal" />
+    <ScrollAreaScrollbar orientation="vertical" />
+    <ScrollAreaScrollbar orientation="horizontal" />
     <ScrollAreaPrimitive.Corner />
   </ScrollAreaPrimitive.Root>
 ));
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------
- * Component: ScrollBar
+ * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-const ScrollBar = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
-  ScrollAreaPrimitive.ScrollAreaScrollbarProps
+type ScrollAreaScrollbarProps = ScrollAreaPrimitive.ScrollAreaScrollbarProps;
+const ScrollAreaScrollbar = React.forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.Scrollbar>,
+  ScrollAreaScrollbarProps
 >(({ className, orientation = "vertical", ...props }, ref) => (
-  <ScrollAreaPrimitive.ScrollAreaScrollbar
+  <ScrollAreaPrimitive.Scrollbar
     ref={ref}
     orientation={orientation}
     className={cn(
@@ -49,12 +51,17 @@ const ScrollBar = React.forwardRef<
     {...props}
   >
     <ScrollAreaPrimitive.ScrollAreaThumb className="bg-border relative flex-1 rounded-full" />
-  </ScrollAreaPrimitive.ScrollAreaScrollbar>
+  </ScrollAreaPrimitive.Scrollbar>
 ));
-ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
+ScrollAreaScrollbar.displayName = ScrollAreaPrimitive.Scrollbar.displayName;
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { ScrollArea, ScrollBar };
+export {
+  ScrollArea,
+  ScrollAreaScrollbar,
+  type ScrollAreaProps,
+  type ScrollAreaScrollbarProps,
+};

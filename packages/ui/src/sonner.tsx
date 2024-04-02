@@ -40,4 +40,4 @@ function Toaster({ ...props }: ToasterProps): React.JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Toaster, toast };
+export { Toaster, toast, type ToasterProps };

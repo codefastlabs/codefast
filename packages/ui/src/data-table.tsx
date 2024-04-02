@@ -36,11 +36,12 @@ import { cn } from "./utils";
  * Component: DataTableViewOptions
  * -------------------------------------------------------------------------- */
 
+interface DataTableViewOptionsProps<TData> {
+  table: ReactTable.Table<TData>;
+}
 function DataTableViewOptions<TData>({
   table,
-}: {
-  table: ReactTable.Table<TData>;
-}): React.JSX.Element {
+}: DataTableViewOptionsProps<TData>): React.JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -85,13 +86,15 @@ function DataTableViewOptions<TData>({
  * Component: DataTablePagination
  * -------------------------------------------------------------------------- */
 
+interface DataTablePaginationProps<TData>
+  extends React.HTMLAttributes<HTMLDivElement> {
+  table: ReactTable.Table<TData>;
+}
 function DataTablePagination<TData>({
   table,
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  table: ReactTable.Table<TData>;
-}): React.JSX.Element {
+}: DataTablePaginationProps<TData>): React.JSX.Element {
   return (
     <div
       className={cn("flex items-center justify-between px-2", className)}
@@ -183,14 +186,16 @@ function DataTablePagination<TData>({
  * Component: DataTableColumnHeader
  * -------------------------------------------------------------------------- */
 
+interface DataTableColumnHeaderProps<TData, TValue>
+  extends React.HTMLAttributes<HTMLDivElement> {
+  column: ReactTable.Column<TData, TValue>;
+  title: string;
+}
 function DataTableColumnHeader<TData, TValue>({
   column,
   title,
   className,
-}: React.HTMLAttributes<HTMLDivElement> & {
-  column: ReactTable.Column<TData, TValue>;
-  title: string;
-}): React.JSX.Element {
+}: DataTableColumnHeaderProps<TData, TValue>): React.JSX.Element {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
@@ -250,6 +255,13 @@ function DataTableColumnHeader<TData, TValue>({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { DataTableViewOptions, DataTablePagination, DataTableColumnHeader };
+export {
+  DataTableViewOptions,
+  DataTablePagination,
+  DataTableColumnHeader,
+  type DataTableViewOptionsProps,
+  type DataTablePaginationProps,
+  type DataTableColumnHeaderProps,
+};
 
 export * from "@tanstack/react-table";

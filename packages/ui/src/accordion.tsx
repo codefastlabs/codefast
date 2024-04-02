@@ -9,15 +9,17 @@ import { cn } from "./utils";
  * Component: Accordion
  * -------------------------------------------------------------------------- */
 
+type AccordionProps = React.ComponentProps<typeof AccordionPrimitive.Root>;
 const Accordion = AccordionPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
+type AccordionItemProps = AccordionPrimitive.AccordionItemProps;
 const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
-  AccordionPrimitive.AccordionItemProps
+  AccordionItemProps
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
@@ -31,9 +33,10 @@ AccordionItem.displayName = AccordionPrimitive.Item.displayName;
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
+type AccordionTriggerProps = AccordionPrimitive.AccordionTriggerProps;
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  AccordionPrimitive.AccordionTriggerProps
+  AccordionTriggerProps
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Header className="flex">
     <AccordionPrimitive.Trigger
@@ -55,9 +58,10 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */
 
+type AccordionContentProps = AccordionPrimitive.AccordionContentProps;
 const AccordionContent = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Content>,
-  AccordionPrimitive.AccordionContentProps
+  AccordionContentProps
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
@@ -73,4 +77,13 @@ AccordionContent.displayName = AccordionPrimitive.Content.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  type AccordionProps,
+  type AccordionItemProps,
+  type AccordionTriggerProps,
+  type AccordionContentProps,
+};

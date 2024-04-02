@@ -5,20 +5,20 @@ import { Slot } from "@radix-ui/react-slot";
  * Component: Section
  * -------------------------------------------------------------------------- */
 
-const Section = React.forwardRef<
-  HTMLElement,
-  React.HTMLAttributes<HTMLElement> & {
-    asChild?: boolean;
-  }
->(({ asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "section";
+interface SectionProps extends React.HTMLAttributes<HTMLElement> {
+  asChild?: boolean;
+}
+const Section = React.forwardRef<HTMLElement, SectionProps>(
+  ({ asChild, ...props }, ref) => {
+    const Comp = asChild ? Slot : "section";
 
-  return <Comp ref={ref} {...props} />;
-});
+    return <Comp ref={ref} {...props} />;
+  },
+);
 Section.displayName = "Section";
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Section };
+export { Section, type SectionProps };

@@ -8,9 +8,10 @@ import { cn } from "./utils";
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
+type SeparatorProps = SeparatorPrimitive.SeparatorProps;
 const Separator = React.forwardRef<
   React.ElementRef<typeof SeparatorPrimitive.Root>,
-  SeparatorPrimitive.SeparatorProps
+  SeparatorProps
 >(
   (
     { className, orientation = "horizontal", decorative = true, ...props },
@@ -35,4 +36,4 @@ Separator.displayName = SeparatorPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Separator };
+export { Separator, type SeparatorProps };

@@ -11,10 +11,11 @@ import { type ButtonProps, buttonVariants } from "./button";
  * Component: Pagination
  * -------------------------------------------------------------------------- */
 
+type PaginationProps = React.HTMLAttributes<HTMLElement>;
 function Pagination({
   className,
   ...props
-}: React.ComponentProps<"nav">): React.JSX.Element {
+}: PaginationProps): React.JSX.Element {
   return (
     <nav
       role="navigation"
@@ -29,9 +30,10 @@ function Pagination({
  * Component: PaginationContent
  * -------------------------------------------------------------------------- */
 
+type PaginationContentProps = React.HTMLAttributes<HTMLUListElement>;
 const PaginationContent = React.forwardRef<
   HTMLUListElement,
-  React.HTMLAttributes<HTMLUListElement>
+  PaginationContentProps
 >(({ className, ...props }, ref) => (
   <ul
     ref={ref}
@@ -45,10 +47,10 @@ PaginationContent.displayName = "PaginationContent";
  * Component: PaginationItem
  * -------------------------------------------------------------------------- */
 
-const PaginationItem = React.forwardRef<
-  HTMLLIElement,
-  React.LiHTMLAttributes<HTMLLIElement>
->((props, ref) => <li ref={ref} {...props} />);
+type PaginationItemProps = React.LiHTMLAttributes<HTMLLIElement>;
+const PaginationItem = React.forwardRef<HTMLLIElement, PaginationItemProps>(
+  (props, ref) => <li ref={ref} {...props} />,
+);
 PaginationItem.displayName = "PaginationItem";
 
 /* -----------------------------------------------------------------------------
@@ -87,10 +89,11 @@ function PaginationLink({
  * Component: PaginationPrevious
  * -------------------------------------------------------------------------- */
 
+type PaginationPreviousProps = PaginationLinkProps;
 function PaginationPrevious({
   className,
   ...props
-}: PaginationLinkProps): React.JSX.Element {
+}: PaginationPreviousProps): React.JSX.Element {
   return (
     <PaginationLink
       aria-label="Go to previous page"
@@ -108,10 +111,11 @@ function PaginationPrevious({
  * Component: PaginationNext
  * -------------------------------------------------------------------------- */
 
+type PaginationNextProps = PaginationLinkProps;
 function PaginationNext({
   className,
   ...props
-}: PaginationLinkProps): React.JSX.Element {
+}: PaginationNextProps): React.JSX.Element {
   return (
     <PaginationLink
       aria-label="Go to next page"
@@ -129,10 +133,11 @@ function PaginationNext({
  * Component: PaginationEllipsis
  * -------------------------------------------------------------------------- */
 
+type PaginationEllipsisProps = React.HTMLAttributes<HTMLSpanElement>;
 function PaginationEllipsis({
   className,
   ...props
-}: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element {
+}: PaginationEllipsisProps): React.JSX.Element {
   return (
     <span
       aria-hidden
@@ -157,4 +162,11 @@ export {
   PaginationPrevious,
   PaginationNext,
   PaginationEllipsis,
+  type PaginationProps,
+  type PaginationContentProps,
+  type PaginationLinkProps,
+  type PaginationItemProps,
+  type PaginationPreviousProps,
+  type PaginationNextProps,
+  type PaginationEllipsisProps,
 };

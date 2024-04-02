@@ -8,9 +8,10 @@ import { cn } from "./utils";
  * Component: Progress
  * -------------------------------------------------------------------------- */
 
+type ProgressProps = ProgressPrimitive.ProgressProps;
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
-  ProgressPrimitive.ProgressProps
+  ProgressProps
 >(({ className, value, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
@@ -23,7 +24,7 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Indicator
       className="bg-primary h-full w-full flex-1 transition-all"
       style={{
-        transform: `translateX(-${100 - (value ?? 0)}%)`,
+        transform: `translateX(-${String(100 - (value ?? 0))}%)`,
       }}
     />
   </ProgressPrimitive.Root>
@@ -34,4 +35,4 @@ Progress.displayName = ProgressPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Progress };
+export { Progress, type ProgressProps };

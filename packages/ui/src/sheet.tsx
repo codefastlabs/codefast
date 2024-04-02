@@ -27,31 +27,37 @@ const sheetVariants = cva({
   },
 });
 
+type SheetVariantsProps = VariantProps<typeof sheetVariants>;
+
 /* -----------------------------------------------------------------------------
  * Component: Sheet
  * -------------------------------------------------------------------------- */
 
+type SheetProps = SheetPrimitive.DialogProps;
 const Sheet = SheetPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: SheetTrigger
  * -------------------------------------------------------------------------- */
 
+type SheetTriggerProps = SheetPrimitive.DialogTriggerProps;
 const SheetTrigger = SheetPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: SheetClose
  * -------------------------------------------------------------------------- */
 
+type SheetCloseProps = SheetPrimitive.DialogCloseProps;
 const SheetClose = SheetPrimitive.Close;
 
 /* -----------------------------------------------------------------------------
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
+type SheetContentProps = SheetPrimitive.DialogContentProps & SheetVariantsProps;
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
-  SheetPrimitive.DialogContentProps & VariantProps<typeof sheetVariants>
+  SheetContentProps
 >(({ side = "right", className, children, ...props }, ref) => (
   <SheetPrimitive.Portal>
     <SheetPrimitive.Overlay
@@ -82,10 +88,11 @@ SheetContent.displayName = SheetPrimitive.Content.displayName;
  * Component: SheetHeader
  * -------------------------------------------------------------------------- */
 
+type SheetHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 function SheetHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: SheetHeaderProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -101,10 +108,11 @@ function SheetHeader({
  * Component: SheetFooter
  * -------------------------------------------------------------------------- */
 
+type SheetFooterProps = React.HTMLAttributes<HTMLDivElement>;
 function SheetFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: SheetFooterProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -121,9 +129,10 @@ SheetFooter.displayName = "SheetFooter";
  * Component: SheetTitle
  * -------------------------------------------------------------------------- */
 
+type SheetTitleProps = SheetPrimitive.DialogTitleProps;
 const SheetTitle = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Title>,
-  SheetPrimitive.DialogTitleProps
+  SheetTitleProps
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
@@ -137,9 +146,10 @@ SheetTitle.displayName = SheetPrimitive.Title.displayName;
  * Component: SheetDescription
  * -------------------------------------------------------------------------- */
 
+type SheetDescriptionProps = SheetPrimitive.DialogDescriptionProps;
 const SheetDescription = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Description>,
-  SheetPrimitive.DialogDescriptionProps
+  SheetDescriptionProps
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
@@ -162,4 +172,12 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
+  type SheetProps,
+  type SheetTriggerProps,
+  type SheetCloseProps,
+  type SheetContentProps,
+  type SheetHeaderProps,
+  type SheetFooterProps,
+  type SheetTitleProps,
+  type SheetDescriptionProps,
 };
