@@ -8,9 +8,10 @@ import { cn } from "./utils";
  * Component: Switch
  * -------------------------------------------------------------------------- */
 
+type SwitchProps = SwitchPrimitives.SwitchProps;
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
-  SwitchPrimitives.SwitchProps
+  SwitchProps
 >(({ className, ...props }, ref) => (
   <SwitchPrimitives.Root
     className={cn(
@@ -29,4 +30,4 @@ Switch.displayName = SwitchPrimitives.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Switch };
+export { Switch, type SwitchProps };

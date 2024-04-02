@@ -8,10 +8,11 @@ import { cn } from "./utils";
  * Component: Drawer
  * -------------------------------------------------------------------------- */
 
+type DrawerProps = React.ComponentProps<typeof DrawerPrimitive.Root>;
 function Drawer({
   shouldScaleBackground = true,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>): React.JSX.Element {
+}: DrawerProps): React.JSX.Element {
   return (
     <DrawerPrimitive.Root
       shouldScaleBackground={shouldScaleBackground}
@@ -24,21 +25,26 @@ function Drawer({
  * Component: DrawerTrigger
  * -------------------------------------------------------------------------- */
 
+type DrawerTriggerProps = React.ComponentProps<typeof DrawerPrimitive.Trigger>;
 const DrawerTrigger = DrawerPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: DrawerClose
  * -------------------------------------------------------------------------- */
 
+type DrawerCloseProps = React.ComponentProps<typeof DrawerPrimitive.Close>;
 const DrawerClose = DrawerPrimitive.Close;
 
 /* -----------------------------------------------------------------------------
  * Component: DrawerContent
  * -------------------------------------------------------------------------- */
 
+type DrawerContentProps = React.ComponentPropsWithoutRef<
+  typeof DrawerPrimitive.Content
+>;
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
+  DrawerContentProps
 >(({ className, children, ...props }, ref) => (
   <DrawerPrimitive.Portal>
     <DrawerPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80" />
@@ -61,10 +67,11 @@ DrawerContent.displayName = "DrawerContent";
  * Component: DrawerHeader
  * -------------------------------------------------------------------------- */
 
+type DrawerHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 function DrawerHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: DrawerHeaderProps): React.JSX.Element {
   return (
     <div
       className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
@@ -77,10 +84,11 @@ function DrawerHeader({
  * Component: DrawerFooter
  * -------------------------------------------------------------------------- */
 
+type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement>;
 function DrawerFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: DrawerFooterProps): React.JSX.Element {
   return (
     <div
       className={cn("mt-auto flex flex-col gap-2 p-4", className)}
@@ -93,9 +101,12 @@ function DrawerFooter({
  * Component: DrawerTitle
  * -------------------------------------------------------------------------- */
 
+type DrawerTitleProps = React.ComponentPropsWithoutRef<
+  typeof DrawerPrimitive.Title
+>;
 const DrawerTitle = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
+  DrawerTitleProps
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Title
     ref={ref}
@@ -112,9 +123,12 @@ DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
  * Component: DrawerDescription
  * -------------------------------------------------------------------------- */
 
+type DrawerDescriptionProps = React.ComponentPropsWithoutRef<
+  typeof DrawerPrimitive.Description
+>;
 const DrawerDescription = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
+  DrawerDescriptionProps
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Description
     ref={ref}
@@ -137,4 +151,12 @@ export {
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
+  type DrawerProps,
+  type DrawerTriggerProps,
+  type DrawerCloseProps,
+  type DrawerContentProps,
+  type DrawerHeaderProps,
+  type DrawerFooterProps,
+  type DrawerTitleProps,
+  type DrawerDescriptionProps,
 };

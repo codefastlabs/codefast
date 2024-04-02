@@ -29,12 +29,13 @@ function ChevronRight({
   return <ChevronRightIcon className="size-4" {...props} />;
 }
 
+type CalendarProps = DayPickerProps;
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
   ...props
-}: DayPickerProps): React.JSX.Element {
+}: CalendarProps): React.JSX.Element {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -91,4 +92,4 @@ function Calendar({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Calendar, type DateRange };
+export { Calendar, type CalendarProps, type DateRange };

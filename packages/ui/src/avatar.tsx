@@ -8,6 +8,7 @@ import { cn } from "./utils";
  * Component: Avatar
  * -------------------------------------------------------------------------- */
 
+type AvatarProps = AvatarPrimitive.AvatarProps;
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
   AvatarPrimitive.AvatarProps
@@ -27,9 +28,10 @@ Avatar.displayName = AvatarPrimitive.Root.displayName;
  * Component: AvatarImage
  * -------------------------------------------------------------------------- */
 
+type AvatarImageProps = AvatarPrimitive.AvatarImageProps;
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
-  AvatarPrimitive.AvatarImageProps
+  AvatarImageProps
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}
@@ -43,9 +45,10 @@ AvatarImage.displayName = AvatarPrimitive.Image.displayName;
  * Component: AvatarFallback
  * -------------------------------------------------------------------------- */
 
+type AvatarFallbackProps = AvatarPrimitive.AvatarFallbackProps;
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  AvatarPrimitive.AvatarFallbackProps
+  AvatarFallbackProps
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Fallback
     ref={ref}
@@ -62,4 +65,11 @@ AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Avatar, AvatarImage, AvatarFallback };
+export {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  type AvatarProps,
+  type AvatarImageProps,
+  type AvatarFallbackProps,
+};

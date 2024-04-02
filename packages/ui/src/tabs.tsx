@@ -8,15 +8,17 @@ import { cn } from "./utils";
  * Component: Tabs
  * -------------------------------------------------------------------------- */
 
+type TabsProps = TabsPrimitive.TabsProps;
 const Tabs = TabsPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: TabsList
  * -------------------------------------------------------------------------- */
 
+type TabsListProps = TabsPrimitive.TabsListProps;
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
-  TabsPrimitive.TabsListProps
+  TabsListProps
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.List
     ref={ref}
@@ -33,9 +35,10 @@ TabsList.displayName = TabsPrimitive.List.displayName;
  * Component: TabsTrigger
  * -------------------------------------------------------------------------- */
 
+type TabsTriggerProps = TabsPrimitive.TabsTriggerProps;
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
-  TabsPrimitive.TabsTriggerProps
+  TabsTriggerProps
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
@@ -52,9 +55,10 @@ TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
  * Component: TabsContent
  * -------------------------------------------------------------------------- */
 
+type TabsContentProps = TabsPrimitive.TabsContentProps;
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
-  TabsPrimitive.TabsContentProps
+  TabsContentProps
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
@@ -71,4 +75,13 @@ TabsContent.displayName = TabsPrimitive.Content.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  type TabsProps,
+  type TabsListProps,
+  type TabsTriggerProps,
+  type TabsContentProps,
+};

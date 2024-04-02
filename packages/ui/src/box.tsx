@@ -30,4 +30,4 @@ Box.displayName = "Box";
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Box };
+export { Box, type BoxProps };

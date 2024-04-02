@@ -9,21 +9,24 @@ import { cn } from "./utils";
  * Component: AlertDialog
  * -------------------------------------------------------------------------- */
 
+type AlertDialogProps = AlertDialogPrimitive.AlertDialogProps;
 const AlertDialog = AlertDialogPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialogTrigger
  * -------------------------------------------------------------------------- */
 
+type AlertDialogTriggerProps = AlertDialogPrimitive.AlertDialogTriggerProps;
 const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialogContent
  * -------------------------------------------------------------------------- */
 
+type AlertDialogContentProps = AlertDialogPrimitive.AlertDialogContentProps;
 const AlertDialogContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
-  AlertDialogPrimitive.AlertDialogContentProps
+  AlertDialogContentProps
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Portal>
     <AlertDialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 fixed inset-0 z-50 bg-black/80" />
@@ -43,10 +46,11 @@ AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
  * Component: AlertDialogHeader
  * -------------------------------------------------------------------------- */
 
+type AlertDialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 function AlertDialogHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: AlertDialogHeaderProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -62,10 +66,11 @@ function AlertDialogHeader({
  * Component: AlertDialogFooter
  * -------------------------------------------------------------------------- */
 
+type AlertDialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
 function AlertDialogFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: AlertDialogFooterProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -81,9 +86,10 @@ function AlertDialogFooter({
  * Component: AlertDialogTitle
  * -------------------------------------------------------------------------- */
 
+type AlertDialogTitleProps = AlertDialogPrimitive.AlertDialogTitleProps;
 const AlertDialogTitle = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Title>,
-  AlertDialogPrimitive.AlertDialogTitleProps
+  AlertDialogTitleProps
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title
     ref={ref}
@@ -97,9 +103,11 @@ AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
  * Component: AlertDialogDescription
  * -------------------------------------------------------------------------- */
 
+type AlertDialogDescriptionProps =
+  AlertDialogPrimitive.AlertDialogDescriptionProps;
 const AlertDialogDescription = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Description>,
-  AlertDialogPrimitive.AlertDialogDescriptionProps
+  AlertDialogDescriptionProps
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
@@ -114,9 +122,10 @@ AlertDialogDescription.displayName =
  * Component: AlertDialogAction
  * -------------------------------------------------------------------------- */
 
+type AlertDialogActionProps = AlertDialogPrimitive.AlertDialogActionProps;
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
-  AlertDialogPrimitive.AlertDialogActionProps
+  AlertDialogActionProps
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
@@ -130,9 +139,10 @@ AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
  * Component: AlertDialogCancel
  * -------------------------------------------------------------------------- */
 
+type AlertDialogCancelProps = AlertDialogPrimitive.AlertDialogCancelProps;
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
-  AlertDialogPrimitive.AlertDialogCancelProps
+  AlertDialogCancelProps
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
@@ -156,4 +166,13 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  type AlertDialogProps,
+  type AlertDialogTriggerProps,
+  type AlertDialogContentProps,
+  type AlertDialogHeaderProps,
+  type AlertDialogFooterProps,
+  type AlertDialogTitleProps,
+  type AlertDialogDescriptionProps,
+  type AlertDialogActionProps,
+  type AlertDialogCancelProps,
 };

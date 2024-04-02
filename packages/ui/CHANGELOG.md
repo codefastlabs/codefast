@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.9
+
+### Patch Changes
+
+- Update exports in UI components
+
 ## 0.0.8
 
 ### Patch Changes

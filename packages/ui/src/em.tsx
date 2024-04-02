@@ -5,18 +5,20 @@ import { Slot } from "@radix-ui/react-slot";
  * Component: Em
  * -------------------------------------------------------------------------- */
 
-const Em = React.forwardRef<
-  HTMLElement,
-  React.HTMLAttributes<HTMLElement> & { asChild?: boolean }
->(({ asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "em";
+interface EmProps extends React.HTMLAttributes<HTMLElement> {
+  asChild?: boolean;
+}
+const Em = React.forwardRef<HTMLElement, EmProps>(
+  ({ asChild, ...props }, ref) => {
+    const Comp = asChild ? Slot : "em";
 
-  return <Comp ref={ref} {...props} />;
-});
+    return <Comp ref={ref} {...props} />;
+  },
+);
 Em.displayName = "Em";
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Em };
+export { Em, type EmProps };

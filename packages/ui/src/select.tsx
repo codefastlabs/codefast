@@ -14,27 +14,31 @@ import { cn } from "./utils";
  * Component: Select
  * -------------------------------------------------------------------------- */
 
+type SelectProps = SelectPrimitive.SelectProps;
 const Select = SelectPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: SelectGroup
  * -------------------------------------------------------------------------- */
 
+type SelectGroupProps = SelectPrimitive.SelectGroupProps;
 const SelectGroup = SelectPrimitive.Group;
 
 /* -----------------------------------------------------------------------------
  * Component: SelectValue
  * -------------------------------------------------------------------------- */
 
+type SelectValueProps = SelectPrimitive.SelectValueProps;
 const SelectValue = SelectPrimitive.Value;
 
 /* -----------------------------------------------------------------------------
  * Component: SelectTrigger
  * -------------------------------------------------------------------------- */
 
+type SelectTriggerProps = SelectPrimitive.SelectTriggerProps;
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  SelectPrimitive.SelectTriggerProps
+  SelectTriggerProps
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
@@ -56,9 +60,10 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
  * Component: SelectScrollUpButton
  * -------------------------------------------------------------------------- */
 
+type SelectScrollUpButtonProps = SelectPrimitive.SelectScrollUpButtonProps;
 const SelectScrollUpButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
-  SelectPrimitive.SelectScrollUpButtonProps
+  SelectScrollUpButtonProps
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
@@ -77,9 +82,10 @@ SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
  * Component: SelectScrollDownButton
  * -------------------------------------------------------------------------- */
 
+type SelectScrollDownButtonProps = SelectPrimitive.SelectScrollDownButtonProps;
 const SelectScrollDownButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
-  SelectPrimitive.SelectScrollDownButtonProps
+  SelectScrollDownButtonProps
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
@@ -99,9 +105,10 @@ SelectScrollDownButton.displayName =
  * Component: SelectContent
  * -------------------------------------------------------------------------- */
 
+type SelectContentProps = SelectPrimitive.SelectContentProps;
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
-  SelectPrimitive.SelectContentProps
+  SelectContentProps
 >(({ className, children, position = "popper", ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
@@ -135,9 +142,10 @@ SelectContent.displayName = SelectPrimitive.Content.displayName;
  * Component: SelectLabel
  * -------------------------------------------------------------------------- */
 
+type SelectLabelProps = SelectPrimitive.SelectLabelProps;
 const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
-  SelectPrimitive.SelectLabelProps
+  SelectLabelProps
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
@@ -151,9 +159,10 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
  * Component: SelectItem
  * -------------------------------------------------------------------------- */
 
+type SelectItemProps = SelectPrimitive.SelectItemProps;
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
-  SelectPrimitive.SelectItemProps
+  SelectItemProps
 >(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
@@ -177,9 +186,10 @@ SelectItem.displayName = SelectPrimitive.Item.displayName;
  * Component: SelectSeparator
  * -------------------------------------------------------------------------- */
 
+type SelectSeparatorProps = SelectPrimitive.SelectSeparatorProps;
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
-  SelectPrimitive.SelectSeparatorProps
+  SelectSeparatorProps
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
@@ -204,4 +214,14 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
+  type SelectProps,
+  type SelectGroupProps,
+  type SelectValueProps,
+  type SelectTriggerProps,
+  type SelectContentProps,
+  type SelectLabelProps,
+  type SelectItemProps,
+  type SelectSeparatorProps,
+  type SelectScrollUpButtonProps,
+  type SelectScrollDownButtonProps,
 };

@@ -17,9 +17,10 @@ const navigationMenuTriggerStyle = cva({
  * Component: NavigationMenu
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuProps = NavigationMenuPrimitive.NavigationMenuProps;
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
-  NavigationMenuPrimitive.NavigationMenuProps
+  NavigationMenuProps
 >(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Root
     ref={ref}
@@ -39,9 +40,10 @@ NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
  * Component: NavigationMenuList
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuListProps = NavigationMenuPrimitive.NavigationMenuListProps;
 const NavigationMenuList = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.List>,
-  NavigationMenuPrimitive.NavigationMenuListProps
+  NavigationMenuListProps
 >(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.List
     ref={ref}
@@ -58,12 +60,15 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
  * Component: NavigationMenuItem
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuItemProps = NavigationMenuPrimitive.NavigationMenuItemProps;
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuTriggerProps =
+  NavigationMenuPrimitive.NavigationMenuTriggerProps;
 const NavigationMenuTrigger = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
   NavigationMenuPrimitive.NavigationMenuTriggerProps
@@ -90,9 +95,11 @@ NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuContentProps =
+  NavigationMenuPrimitive.NavigationMenuContentProps;
 const NavigationMenuContent = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Content>,
-  NavigationMenuPrimitive.NavigationMenuContentProps
+  NavigationMenuContentProps
 >(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.Content
     ref={ref}
@@ -109,15 +116,18 @@ NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
  * Component: NavigationMenuLink
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuLinkProps = NavigationMenuPrimitive.NavigationMenuLinkProps;
 const NavigationMenuLink = NavigationMenuPrimitive.Link;
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenuViewport
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuViewportProps =
+  NavigationMenuPrimitive.NavigationMenuViewportProps;
 const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
-  NavigationMenuPrimitive.NavigationMenuViewportProps
+  NavigationMenuViewportProps
 >(({ className, ...props }, ref) => (
   <div
     className={cn(
@@ -141,9 +151,11 @@ NavigationMenuViewport.displayName =
  * Component: NavigationMenuIndicator
  * -------------------------------------------------------------------------- */
 
+type NavigationMenuIndicatorProps =
+  NavigationMenuPrimitive.NavigationMenuIndicatorProps;
 const NavigationMenuIndicator = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Indicator>,
-  NavigationMenuPrimitive.NavigationMenuIndicatorProps
+  NavigationMenuIndicatorProps
 >(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.Indicator
     ref={ref}
@@ -173,4 +185,12 @@ export {
   NavigationMenuLink,
   NavigationMenuIndicator,
   NavigationMenuViewport,
+  type NavigationMenuProps,
+  type NavigationMenuListProps,
+  type NavigationMenuItemProps,
+  type NavigationMenuContentProps,
+  type NavigationMenuTriggerProps,
+  type NavigationMenuLinkProps,
+  type NavigationMenuIndicatorProps,
+  type NavigationMenuViewportProps,
 };

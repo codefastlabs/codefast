@@ -35,9 +35,10 @@ type ToggleVariantsProps = VariantProps<typeof toggleVariants>;
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
+type ToggleProps = TogglePrimitive.ToggleProps & ToggleVariantsProps;
 const Toggle = React.forwardRef<
   React.ElementRef<typeof TogglePrimitive.Root>,
-  TogglePrimitive.ToggleProps & ToggleVariantsProps
+  ToggleProps
 >(({ className, variant, size, ...props }, ref) => (
   <TogglePrimitive.Root
     ref={ref}
@@ -50,4 +51,4 @@ Toggle.displayName = TogglePrimitive.Root.displayName;
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
-export { Toggle, toggleVariants, type ToggleVariantsProps };
+export { Toggle, toggleVariants, type ToggleProps, type ToggleVariantsProps };

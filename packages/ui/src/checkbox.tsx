@@ -9,9 +9,10 @@ import { cn } from "./utils";
  * Component: Checkbox
  * -------------------------------------------------------------------------- */
 
+type CheckboxProps = CheckboxPrimitive.CheckboxProps;
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
-  CheckboxPrimitive.CheckboxProps
+  CheckboxProps
 >(({ className, ...props }, ref) => (
   <CheckboxPrimitive.Root
     ref={ref}
@@ -32,4 +33,4 @@ Checkbox.displayName = CheckboxPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Checkbox };
+export { Checkbox, type CheckboxProps };

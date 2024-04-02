@@ -5,18 +5,20 @@ import { Slot } from "@radix-ui/react-slot";
  * Component: Code
  * -------------------------------------------------------------------------- */
 
-const Code = React.forwardRef<
-  HTMLElement,
-  React.HTMLAttributes<HTMLElement> & { asChild?: boolean }
->(({ asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "code";
+interface CodeProps extends React.HTMLAttributes<HTMLElement> {
+  asChild?: boolean;
+}
+const Code = React.forwardRef<HTMLElement, CodeProps>(
+  ({ asChild, ...props }, ref) => {
+    const Comp = asChild ? Slot : "code";
 
-  return <Comp ref={ref} {...props} />;
-});
+    return <Comp ref={ref} {...props} />;
+  },
+);
 Code.displayName = "Code";
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Code };
+export { Code, type CodeProps };

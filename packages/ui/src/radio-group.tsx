@@ -8,9 +8,10 @@ import { cn } from "./utils";
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
+type RadioGroupProps = RadioGroupPrimitive.RadioGroupProps;
 const RadioGroup = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  RadioGroupPrimitive.RadioGroupProps
+  RadioGroupProps
 >(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Root
@@ -26,9 +27,10 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
+type RadioGroupItemProps = RadioGroupPrimitive.RadioGroupItemProps;
 const RadioGroupItem = React.forwardRef<
   React.ElementRef<typeof RadioGroupPrimitive.Item>,
-  RadioGroupPrimitive.RadioGroupItemProps
+  RadioGroupItemProps
 >(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Item
@@ -53,4 +55,9 @@ RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { RadioGroup, RadioGroupItem };
+export {
+  RadioGroup,
+  RadioGroupItem,
+  type RadioGroupProps,
+  type RadioGroupItemProps,
+};

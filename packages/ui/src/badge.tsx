@@ -1,3 +1,4 @@
+import * as React from "react";
 import { type VariantProps } from "cva";
 import { cva } from "./utils";
 
@@ -21,16 +22,18 @@ const badgeVariants = cva({
   },
 });
 
+type BadgeVariantsProps = VariantProps<typeof badgeVariants>;
+
 /* -----------------------------------------------------------------------------
  * Component: Badge
  * -------------------------------------------------------------------------- */
 
+type BadgeProps = React.HTMLAttributes<HTMLDivElement> & BadgeVariantsProps;
 function Badge({
   className,
   variant,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof badgeVariants>): React.JSX.Element {
+}: BadgeProps): React.JSX.Element {
   return <div className={badgeVariants({ variant, className })} {...props} />;
 }
 
@@ -38,4 +41,4 @@ function Badge({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Badge };
+export { Badge, type BadgeProps };

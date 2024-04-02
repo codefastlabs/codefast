@@ -8,9 +8,10 @@ import { cn } from "./utils";
  * Component: Slider
  * -------------------------------------------------------------------------- */
 
+type SliderProps = SliderPrimitive.SliderProps;
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
-  SliderPrimitive.SliderProps
+  SliderProps
 >(({ className, ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
@@ -32,4 +33,4 @@ Slider.displayName = SliderPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Slider };
+export { Slider, type SliderProps };
