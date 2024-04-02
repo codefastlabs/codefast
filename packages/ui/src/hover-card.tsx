@@ -8,21 +8,24 @@ import { cn } from "./utils";
  * Component: HoverCard
  * -------------------------------------------------------------------------- */
 
+type HoverCardProps = HoverCardPrimitive.HoverCardProps;
 const HoverCard = HoverCardPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardTrigger
  * -------------------------------------------------------------------------- */
 
+type HoverCardTriggerProps = HoverCardPrimitive.HoverCardTriggerProps;
 const HoverCardTrigger = HoverCardPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardContent
  * -------------------------------------------------------------------------- */
 
+type HoverCardContentProps = HoverCardPrimitive.HoverCardContentProps;
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
-  HoverCardPrimitive.HoverCardContentProps
+  HoverCardContentProps
 >(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
   <HoverCardPrimitive.Portal>
     <HoverCardPrimitive.Content
@@ -43,4 +46,11 @@ HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { HoverCard, HoverCardTrigger, HoverCardContent };
+export {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+  type HoverCardProps,
+  type HoverCardTriggerProps,
+  type HoverCardContentProps,
+};

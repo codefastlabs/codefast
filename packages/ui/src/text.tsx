@@ -31,4 +31,4 @@ Text.displayName = "Text";
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Text };
+export { Text, type TextProps };

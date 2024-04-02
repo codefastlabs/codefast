@@ -21,28 +21,30 @@ const inputVariants = cva({
   },
 });
 
+type InputVariantsProps = VariantProps<typeof inputVariants>;
+
 /* -----------------------------------------------------------------------------
  * Component: Input
  * -------------------------------------------------------------------------- */
 
-const Input = React.forwardRef<
-  HTMLInputElement,
-  Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> &
-    VariantProps<typeof inputVariants>
->(({ className, inputSize, ...props }, ref) => {
-  return (
-    <input
-      type="text"
-      className={inputVariants({ className, inputSize })}
-      ref={ref}
-      {...props}
-    />
-  );
-});
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
+  InputVariantsProps;
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, inputSize, ...props }, ref) => {
+    return (
+      <input
+        type="text"
+        className={inputVariants({ className, inputSize })}
+        ref={ref}
+        {...props}
+      />
+    );
+  },
+);
 Input.displayName = "Input";
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Input };
+export { Input, type InputProps };

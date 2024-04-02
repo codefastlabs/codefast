@@ -8,27 +8,31 @@ import { cn } from "./utils";
  * Component: TooltipProvider
  * -------------------------------------------------------------------------- */
 
+type TooltipProviderProps = TooltipPrimitive.TooltipProviderProps;
 const TooltipProvider = TooltipPrimitive.Provider;
 
 /* -----------------------------------------------------------------------------
  * Component: Tooltip
  * -------------------------------------------------------------------------- */
 
+type TooltipProps = TooltipPrimitive.TooltipProps;
 const Tooltip = TooltipPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipTrigger
  * -------------------------------------------------------------------------- */
 
+type TooltipTriggerProps = TooltipPrimitive.TooltipTriggerProps;
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipContent
  * -------------------------------------------------------------------------- */
 
+type TooltipContentProps = TooltipPrimitive.TooltipContentProps;
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
-  TooltipPrimitive.TooltipContentProps
+  TooltipContentProps
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <TooltipPrimitive.Portal>
     <TooltipPrimitive.Content
@@ -48,9 +52,10 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
  * Component: TooltipArrow
  * -------------------------------------------------------------------------- */
 
+type TooltipArrowProps = TooltipPrimitive.TooltipArrowProps;
 const TooltipArrow = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Arrow>,
-  TooltipPrimitive.TooltipArrowProps
+  TooltipArrowProps
 >(({ className, ...props }, ref) => (
   <TooltipPrimitive.Arrow
     ref={ref}
@@ -70,4 +75,9 @@ export {
   TooltipTrigger,
   TooltipContent,
   TooltipArrow,
+  type TooltipProviderProps,
+  type TooltipProps,
+  type TooltipTriggerProps,
+  type TooltipContentProps,
+  type TooltipArrowProps,
 };

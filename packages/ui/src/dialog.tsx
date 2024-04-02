@@ -9,27 +9,31 @@ import { cn } from "./utils";
  * Component: Dialog
  * -------------------------------------------------------------------------- */
 
+type DialogProps = DialogPrimitive.DialogProps;
 const Dialog = DialogPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
+type DialogTriggerProps = DialogPrimitive.DialogTriggerProps;
 const DialogTrigger = DialogPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: DialogClose
  * -------------------------------------------------------------------------- */
 
+type DialogCloseProps = DialogPrimitive.DialogCloseProps;
 const DialogClose = DialogPrimitive.Close;
 
 /* -----------------------------------------------------------------------------
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
+type DialogContentProps = DialogPrimitive.DialogContentProps;
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  DialogPrimitive.DialogContentProps
+  DialogContentProps
 >(({ className, children, ...props }, ref) => (
   <DialogPrimitive.Portal>
     <DialogPrimitive.Overlay
@@ -63,10 +67,11 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
  * Component: DialogHeader
  * -------------------------------------------------------------------------- */
 
+type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 function DialogHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: DialogHeaderProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -82,10 +87,11 @@ function DialogHeader({
  * Component: DialogFooter
  * -------------------------------------------------------------------------- */
 
+type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
 function DialogFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>): React.JSX.Element {
+}: DialogFooterProps): React.JSX.Element {
   return (
     <div
       className={cn(
@@ -101,9 +107,10 @@ function DialogFooter({
  * Component: DialogTitle
  * -------------------------------------------------------------------------- */
 
+type DialogTitleProps = DialogPrimitive.DialogTitleProps;
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
-  DialogPrimitive.DialogTitleProps
+  DialogTitleProps
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
@@ -120,9 +127,10 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
+type DialogDescriptionProps = DialogPrimitive.DialogDescriptionProps;
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
-  DialogPrimitive.DialogDescriptionProps
+  DialogDescriptionProps
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
@@ -145,4 +153,12 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  type DialogProps,
+  type DialogTriggerProps,
+  type DialogCloseProps,
+  type DialogContentProps,
+  type DialogHeaderProps,
+  type DialogFooterProps,
+  type DialogTitleProps,
+  type DialogDescriptionProps,
 };
