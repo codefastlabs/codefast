@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.6
+
+### Patch Changes
+
+- Update devDependencies in eslint-config package.json
+
 ## 0.0.5
 
 ### Patch Changes
