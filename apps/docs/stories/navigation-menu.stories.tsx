@@ -6,7 +6,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
+  navigationMenuTriggerVariants,
 } from "@codefast/ui/navigation-menu";
 import { type AnchorHTMLAttributes, forwardRef } from "react";
 import { cn } from "@codefast/ui/utils";
@@ -40,14 +40,12 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Alert Dialog",
     href: "/",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+    description: "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
     title: "Hover Card",
     href: "/",
-    description:
-      "For sighted users to preview content available behind a link.",
+    description: "For sighted users to preview content available behind a link.",
   },
   {
     title: "Progress",
@@ -63,8 +61,7 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Tabs",
     href: "/",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   },
   {
     title: "Tooltip",
@@ -74,30 +71,27 @@ const components: { title: string; href: string; description: string }[] = [
   },
 ];
 
-const ListItem = forwardRef<
-  HTMLAnchorElement,
-  AnchorHTMLAttributes<HTMLAnchorElement>
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors",
-            className,
-          )}
-          {...props}
-        >
-          <Box className="text-sm font-medium leading-none">{title}</Box>
-          <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </Text>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+const ListItem = forwardRef<HTMLAnchorElement, AnchorHTMLAttributes<HTMLAnchorElement>>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors",
+              className,
+            )}
+            {...props}
+          >
+            <Box className="text-sm font-medium leading-none">{title}</Box>
+            <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</Text>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  },
+);
 ListItem.displayName = "ListItem";
 
 export const Default: Story = {
@@ -115,13 +109,10 @@ export const Default: Story = {
                     href="/"
                   >
                     <SettingsIcon className="h-6 w-6" />
-                    <Box className="mb-2 mt-4 text-lg font-medium">
-                      shadcn/ui
-                    </Box>
+                    <Box className="mb-2 mt-4 text-lg font-medium">shadcn/ui</Box>
                     <Text className="text-muted-foreground text-sm leading-tight">
-                      Beautifully designed components that you can copy and
-                      paste into your apps. Accessible. Customizable. Open
-                      Source.
+                      Beautifully designed components that you can copy and paste into your apps. Accessible.
+                      Customizable. Open Source.
                     </Text>
                   </a>
                 </NavigationMenuLink>
@@ -143,11 +134,7 @@ export const Default: Story = {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
+                <ListItem key={component.title} title={component.title} href={component.href}>
                   {component.description}
                 </ListItem>
               ))}
@@ -156,9 +143,7 @@ export const Default: Story = {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Documentation
-            </NavigationMenuLink>
+            <NavigationMenuLink className={navigationMenuTriggerVariants()}>Documentation</NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
