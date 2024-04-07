@@ -7,11 +7,11 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "dev": "turbo dev",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
-    "setup": "pnpm install",
     "lint": "turbo lint",
-    "reinstall": "pnpm run clean && pnpm install",
+    "package:install": "pnpm install",
+    "package:reinstall": "pnpm run clean && pnpm install",
+    "package:update": "pnpm update --latest --interactive --recursive",
     "release": "turbo run build --filter=docs^... && changeset publish",
-    "update": "pnpm update --latest --interactive --recursive",
     "version-packages": "changeset version"
   },
   "prettier": {
@@ -19,6 +19,7 @@
       "prettier-plugin-packagejson",
       "prettier-plugin-tailwindcss"
     ],
+    "printWidth": 120,
     "tailwindFunctions": [
       "cx",
       "cva"
