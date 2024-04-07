@@ -1,10 +1,7 @@
 import { Button } from "@codefast/ui/button";
+import { Spinner } from "@codefast/ui/spinner";
 import { type Meta, type StoryObj } from "@storybook/react";
-import {
-  ChevronRightIcon,
-  EnvelopeOpenIcon,
-  ReloadIcon,
-} from "@radix-ui/react-icons";
+import { ChevronRightIcon, EnvelopeOpenIcon, ReloadIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
 const meta = {
@@ -12,14 +9,7 @@ const meta = {
     variant: {
       control: { type: "inline-radio" },
       description: "The variant of the button.",
-      options: [
-        "default",
-        "secondary",
-        "outline",
-        "destructive",
-        "ghost",
-        "link",
-      ],
+      options: ["default", "secondary", "outline", "destructive", "ghost", "link"],
     },
     size: {
       control: { type: "inline-radio" },
@@ -29,11 +19,15 @@ const meta = {
     disabled: {
       control: { type: "boolean" },
     },
+    loading: {
+      control: { type: "boolean" },
+    },
   },
   args: {
     variant: "default",
     size: "default",
     disabled: false,
+    loading: false,
   },
   component: Button,
   tags: ["autodocs"],
@@ -136,8 +130,12 @@ export const Large: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Icon: Story = {
-  render: () => (
-    <Button variant="outline" size="icon">
+  args: {
+    variant: "outline",
+    size: "icon",
+  },
+  render: (args) => (
+    <Button {...args}>
       <ChevronRightIcon className="size-4" />
     </Button>
   ),
@@ -150,7 +148,7 @@ export const Icon: Story = {
 export const WithIcon: Story = {
   render: (args) => (
     <Button {...args}>
-      <EnvelopeOpenIcon className="mr-2 size-4" /> Login with Email
+      <EnvelopeOpenIcon className="size-4" /> Login with Email
     </Button>
   ),
 };
@@ -160,9 +158,23 @@ export const WithIcon: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Loading: Story = {
+  args: {
+    loading: true,
+  },
+  render: (args) => <Button {...args}>Please wait</Button>,
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: LoadingSpinner
+ * -------------------------------------------------------------------------- */
+
+export const LoadingSpinner: Story = {
+  args: {
+    disabled: true,
+  },
   render: (args) => (
-    <Button disabled {...args}>
-      <ReloadIcon className="mr-2 size-4 animate-spin" />
+    <Button {...args}>
+      <Spinner />
       Please wait
     </Button>
   ),
@@ -173,8 +185,11 @@ export const Loading: Story = {
  * -------------------------------------------------------------------------- */
 
 export const AsChild: Story = {
+  args: {
+    asChild: true,
+  },
   render: (args) => (
-    <Button {...args} asChild>
+    <Button {...args}>
       <Link href="/">Login</Link>
     </Button>
   ),
