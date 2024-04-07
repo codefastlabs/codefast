@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import type * as ReactTable from "@tanstack/react-table";
+import { type SortDirection } from "@tanstack/react-table";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -23,13 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "./dropdown-menu";
 import { Button } from "./button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
 import { cn } from "./utils";
 
 /* -----------------------------------------------------------------------------
@@ -39,17 +34,12 @@ import { cn } from "./utils";
 interface DataTableViewOptionsProps<TData> {
   table: ReactTable.Table<TData>;
 }
-function DataTableViewOptions<TData>({
-  table,
-}: DataTableViewOptionsProps<TData>): React.JSX.Element {
+
+function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>): React.JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto hidden h-8 lg:flex"
-        >
+        <Button variant="outline" size="sm" className="ml-auto hidden h-8 lg:flex">
           <MixerHorizontalIcon className="mr-2 size-4" />
           View
         </Button>
@@ -59,10 +49,7 @@ function DataTableViewOptions<TData>({
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter(
-            (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide(),
-          )
+          .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem
@@ -86,23 +73,19 @@ function DataTableViewOptions<TData>({
  * Component: DataTablePagination
  * -------------------------------------------------------------------------- */
 
-interface DataTablePaginationProps<TData>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DataTablePaginationProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
   table: ReactTable.Table<TData>;
 }
+
 function DataTablePagination<TData>({
   table,
   className,
   ...props
 }: DataTablePaginationProps<TData>): React.JSX.Element {
   return (
-    <div
-      className={cn("flex items-center justify-between px-2", className)}
-      {...props}
-    >
+    <div className={cn("flex items-center justify-between px-2", className)} {...props}>
       <div className="text-muted-foreground flex-1 text-sm">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+        {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
@@ -126,8 +109,7 @@ function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -186,11 +168,11 @@ function DataTablePagination<TData>({
  * Component: DataTableColumnHeader
  * -------------------------------------------------------------------------- */
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   column: ReactTable.Column<TData, TValue>;
   title: string;
 }
+
 function DataTableColumnHeader<TData, TValue>({
   column,
   title,
@@ -204,19 +186,9 @@ function DataTableColumnHeader<TData, TValue>({
     <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="xs"
-            className="data-[state=open]:bg-accent -ml-3"
-          >
+          <Button variant="ghost" size="xs" className="data-[state=open]:bg-accent -ml-3">
             <span>{title}</span>
-            {column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" />
-            ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" />
-            ) : (
-              <CaretSortIcon className="ml-2 size-4" />
-            )}
+            <SortIcon sorted={column.getIsSorted()} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -249,6 +221,17 @@ function DataTableColumnHeader<TData, TValue>({
       </DropdownMenu>
     </div>
   );
+}
+
+function SortIcon({ sorted }: { sorted: false | SortDirection }): React.JSX.Element {
+  switch (sorted) {
+    case "desc":
+      return <ArrowDownIcon className="ml-2 size-4" />;
+    case "asc":
+      return <ArrowUpIcon className="ml-2 size-4" />;
+    default:
+      return <CaretSortIcon className="ml-2 size-4" />;
+  }
 }
 
 /* -----------------------------------------------------------------------------

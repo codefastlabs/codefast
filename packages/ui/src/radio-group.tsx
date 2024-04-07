@@ -8,35 +8,29 @@ import { cn } from "./utils";
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
-type RadioGroupProps = RadioGroupPrimitive.RadioGroupProps;
-const RadioGroup = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  RadioGroupProps
->(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
-      {...props}
-      ref={ref}
-    />
-  );
+type RadioGroupElement = React.ElementRef<typeof RadioGroupPrimitive.Root>;
+type RadioGroupProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
+
+const RadioGroup = React.forwardRef<RadioGroupElement, RadioGroupProps>(({ className, ...props }, ref) => {
+  return <RadioGroupPrimitive.Root className={cn("grid gap-2", className)} {...props} ref={ref} />;
 });
+
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
-type RadioGroupItemProps = RadioGroupPrimitive.RadioGroupItemProps;
-const RadioGroupItem = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Item>,
-  RadioGroupItemProps
->(({ className, ...props }, ref) => {
+type RadioGroupItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
+type RadioGroupItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
+
+const RadioGroupItem = React.forwardRef<RadioGroupItemElement, RadioGroupItemProps>(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "border-compound text-compound-foreground focus-visible:ring-offset-background focus-visible:ring-ring aria-checked:border-primary group aspect-square size-4 rounded-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "border-compound/70 hover:border-compound text-compound-foreground aria-checked:border-primary group peer aspect-square size-4 rounded-full border disabled:cursor-not-allowed disabled:opacity-50",
+        "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         className,
       )}
       {...props}
@@ -49,15 +43,11 @@ const RadioGroupItem = React.forwardRef<
     </RadioGroupPrimitive.Item>
   );
 });
+
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  RadioGroup,
-  RadioGroupItem,
-  type RadioGroupProps,
-  type RadioGroupItemProps,
-};
+export { RadioGroup, RadioGroupItem, type RadioGroupProps, type RadioGroupItemProps };

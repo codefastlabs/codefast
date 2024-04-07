@@ -9,15 +9,18 @@ import { cn } from "./utils";
  * Component: Checkbox
  * -------------------------------------------------------------------------- */
 
-type CheckboxProps = CheckboxPrimitive.CheckboxProps;
-const Checkbox = React.forwardRef<
-  React.ElementRef<typeof CheckboxPrimitive.Root>,
-  CheckboxProps
->(({ className, ...props }, ref) => (
+type CheckboxElement = React.ElementRef<typeof CheckboxPrimitive.Root>;
+type CheckboxProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>;
+
+const Checkbox = React.forwardRef<CheckboxElement, CheckboxProps>(({ className, ...props }, ref) => (
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "border-compound focus-visible:ring-ring aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer size-4 shrink-0 rounded-sm border shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "border-compound/70 peer size-4 shrink-0 rounded-sm border shadow",
+      "hover:border-compound",
+      "aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground",
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
       className,
     )}
     {...props}
@@ -27,6 +30,7 @@ const Checkbox = React.forwardRef<
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ));
+
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------

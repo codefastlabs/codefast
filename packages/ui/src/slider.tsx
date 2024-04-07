@@ -8,25 +8,27 @@ import { cn } from "./utils";
  * Component: Slider
  * -------------------------------------------------------------------------- */
 
-type SliderProps = SliderPrimitive.SliderProps;
-const Slider = React.forwardRef<
-  React.ElementRef<typeof SliderPrimitive.Root>,
-  SliderProps
->(({ className, ...props }, ref) => (
+type SliderElement = React.ElementRef<typeof SliderPrimitive.Root>;
+type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>;
+
+const Slider = React.forwardRef<SliderElement, SliderProps>(({ className, ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
-    className={cn(
-      "relative flex w-full touch-none select-none items-center",
-      className,
-    )}
+    className={cn("relative flex w-full touch-none select-none items-center", className)}
     {...props}
   >
     <SliderPrimitive.Track className="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
       <SliderPrimitive.Range className="bg-primary absolute h-full" />
     </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="border-primary/50 bg-background focus-visible:ring-ring focus-visible:ring-offset-background block size-4 rounded-full border shadow transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" />
+    <SliderPrimitive.Thumb
+      className={cn(
+        "border-primary/50 bg-background block size-4 rounded-full border shadow transition-colors disabled:pointer-events-none disabled:opacity-50",
+        "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+      )}
+    />
   </SliderPrimitive.Root>
 ));
+
 Slider.displayName = SliderPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------

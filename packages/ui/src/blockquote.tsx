@@ -5,17 +5,18 @@ import { Slot } from "@radix-ui/react-slot";
  * Component: Blockquote
  * -------------------------------------------------------------------------- */
 
-interface BlockquoteProps
-  extends React.BlockquoteHTMLAttributes<HTMLQuoteElement> {
+type BlockquoteElement = HTMLQuoteElement;
+
+interface BlockquoteProps extends React.BlockquoteHTMLAttributes<HTMLQuoteElement> {
   asChild?: boolean;
 }
-const Blockquote = React.forwardRef<HTMLQuoteElement, BlockquoteProps>(
-  ({ asChild, ...props }, ref) => {
-    const Comp = asChild ? Slot : "blockquote";
 
-    return <Comp ref={ref} {...props} />;
-  },
-);
+const Blockquote = React.forwardRef<BlockquoteElement, BlockquoteProps>(({ asChild, ...props }, ref) => {
+  const Comp = asChild ? Slot : "blockquote";
+
+  return <Comp ref={ref} {...props} />;
+});
+
 Blockquote.displayName = "Blockquote";
 
 /* -----------------------------------------------------------------------------
