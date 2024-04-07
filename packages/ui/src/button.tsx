@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps } from "cva";
+import { Spinner } from "./spinner";
 import { cva } from "./utils";
 
 /* -----------------------------------------------------------------------------
@@ -8,18 +9,19 @@ import { cva } from "./utils";
  * -------------------------------------------------------------------------- */
 
 const buttonVariants = cva({
-  base: "focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  base: [
+    "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors",
+    "disabled:pointer-events-none disabled:opacity-50",
+    "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+  ],
   variants: {
     variant: {
       default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow",
-      destructive:
-        "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
+      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
       ghost: "hover:bg-accent hover:text-accent-foreground",
       link: "text-primary underline-offset-4 hover:underline",
-      outline:
-        "border-input bg-background hover:bg-accent hover:text-accent-foreground border shadow-sm",
-      secondary:
-        "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
+      outline: "border-input bg-background hover:bg-accent hover:text-accent-foreground border shadow-sm",
+      secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
     },
     size: {
       default: "h-10 px-4",
@@ -31,10 +33,14 @@ const buttonVariants = cva({
       "icon-sm": "size-9",
       "icon-lg": "size-11",
     },
+    loading: {
+      true: "relative",
+    },
   },
   defaultVariants: {
     size: "default",
     variant: "default",
+    loading: false,
   },
 });
 
@@ -44,26 +50,47 @@ type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
  * Component: Button
  * -------------------------------------------------------------------------- */
 
-interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    ButtonVariantsProps {
+type ButtonElement = HTMLButtonElement;
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, ButtonVariantsProps {
   asChild?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = React.forwardRef<ButtonElement, ButtonProps>(
+  ({ children, className, variant, size, loading = false, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
+    const disabled = loading || props.disabled;
 
     return (
       <Comp
         ref={ref}
         type={asChild ? undefined : "button"}
-        className={buttonVariants({ variant, size, className })}
+        className={buttonVariants({ variant, size, loading, className })}
         {...props}
-      />
+        disabled={disabled}
+      >
+        {loading ? (
+          <>
+            <span
+              aria-hidden
+              className="invisible contents"
+              // Workaround to use `inert` until https://github.com/facebook/react/pull/24730 is merged.
+              {...{ inert: "" }}
+            >
+              {children}
+            </span>
+            <span className="absolute inset-0 flex items-center justify-center">
+              <Spinner />
+            </span>
+          </>
+        ) : (
+          children
+        )}
+      </Comp>
     );
   },
 );
+
 Button.displayName = "Button";
 
 /* -----------------------------------------------------------------------------

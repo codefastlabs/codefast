@@ -5,6 +5,8 @@ import { Slot } from "@radix-ui/react-slot";
  * Component: Box
  * -------------------------------------------------------------------------- */
 
+type BoxElement = HTMLDivElement;
+
 interface BoxDivProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: "div";
 }
@@ -17,13 +19,12 @@ type BoxProps = (BoxDivProps | BoxSpanProps) & {
   asChild?: boolean;
 };
 
-const Box = React.forwardRef<HTMLDivElement, BoxProps>(
-  ({ as: Tag = "div", asChild, ...props }, ref) => {
-    const Comp = asChild ? Slot : Tag;
+const Box = React.forwardRef<BoxElement, BoxProps>(({ as: Tag = "div", asChild, ...props }, ref) => {
+  const Comp = asChild ? Slot : Tag;
 
-    return <Comp ref={ref} {...props} />;
-  },
-);
+  return <Comp ref={ref} {...props} />;
+});
+
 Box.displayName = "Box";
 
 /* -----------------------------------------------------------------------------

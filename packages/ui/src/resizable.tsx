@@ -12,13 +12,10 @@ import { cn } from "./utils";
 function ResizablePanelGroup({
   className,
   ...props
-}: ResizablePrimitive.PanelGroupProps): React.JSX.Element {
+}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>): React.JSX.Element {
   return (
     <ResizablePrimitive.PanelGroup
-      className={cn(
-        "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
-        className,
-      )}
+      className={cn("flex h-full w-full", "data-[panel-group-direction=vertical]:flex-col", className)}
       {...props}
     />
   );
@@ -38,13 +35,14 @@ function ResizableHandle({
   withHandle,
   className,
   ...props
-}: ResizablePrimitive.PanelResizeHandleProps & {
+}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
   withHandle?: boolean;
 }): React.JSX.Element {
   return (
     <ResizablePrimitive.PanelResizeHandle
       className={cn(
-        "bg-border focus-visible:ring-ring focus-visible:ring-offset-background relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
+        "bg-border relative flex w-px items-center justify-center after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
+        "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         className,
       )}
       {...props}

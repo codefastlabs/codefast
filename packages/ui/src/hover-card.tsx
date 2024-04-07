@@ -8,38 +8,40 @@ import { cn } from "./utils";
  * Component: HoverCard
  * -------------------------------------------------------------------------- */
 
-type HoverCardProps = HoverCardPrimitive.HoverCardProps;
+type HoverCardProps = React.ComponentProps<typeof HoverCardPrimitive.Root>;
 const HoverCard = HoverCardPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardTrigger
  * -------------------------------------------------------------------------- */
 
-type HoverCardTriggerProps = HoverCardPrimitive.HoverCardTriggerProps;
+type HoverCardTriggerProps = React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Trigger>;
 const HoverCardTrigger = HoverCardPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardContent
  * -------------------------------------------------------------------------- */
 
-type HoverCardContentProps = HoverCardPrimitive.HoverCardContentProps;
-const HoverCardContent = React.forwardRef<
-  React.ElementRef<typeof HoverCardPrimitive.Content>,
-  HoverCardContentProps
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <HoverCardPrimitive.Portal>
-    <HoverCardPrimitive.Content
-      ref={ref}
-      align={align}
-      sideOffset={sideOffset}
-      className={cn(
-        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 z-50 min-w-[8rem] rounded-md border p-4 shadow-md focus:outline-none",
-        className,
-      )}
-      {...props}
-    />
-  </HoverCardPrimitive.Portal>
-));
+type HoverCardContentElement = React.ElementRef<typeof HoverCardPrimitive.Content>;
+type HoverCardContentProps = React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>;
+
+const HoverCardContent = React.forwardRef<HoverCardContentElement, HoverCardContentProps>(
+  ({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+    <HoverCardPrimitive.Portal>
+      <HoverCardPrimitive.Content
+        ref={ref}
+        align={align}
+        sideOffset={sideOffset}
+        className={cn(
+          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 z-50 min-w-[8rem] rounded-md border p-4 shadow-md focus:outline-none",
+          className,
+        )}
+        {...props}
+      />
+    </HoverCardPrimitive.Portal>
+  ),
+);
+
 HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;
 
 /* -----------------------------------------------------------------------------

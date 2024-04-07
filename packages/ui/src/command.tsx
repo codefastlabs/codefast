@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { type DialogProps } from "@radix-ui/react-dialog";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "./utils";
@@ -11,11 +10,10 @@ import { Dialog, DialogContent } from "./dialog";
  * Component: Command
  * -------------------------------------------------------------------------- */
 
+type CommandElement = React.ElementRef<typeof CommandPrimitive>;
 type CommandProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive>;
-const Command = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive>,
-  CommandProps
->(({ className, ...props }, ref) => (
+
+const Command = React.forwardRef<CommandElement, CommandProps>(({ className, ...props }, ref) => (
   <CommandPrimitive
     ref={ref}
     className={cn(
@@ -25,21 +23,20 @@ const Command = React.forwardRef<
     {...props}
   />
 ));
+
 Command.displayName = CommandPrimitive.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandDialog
  * -------------------------------------------------------------------------- */
 
-type CommandDialogProps = DialogProps;
-function CommandDialog({
-  children,
-  ...props
-}: CommandDialogProps): React.JSX.Element {
+type CommandDialogProps = React.ComponentProps<typeof Dialog>;
+
+function CommandDialog({ children, ...props }: CommandDialogProps): React.JSX.Element {
   return (
     <Dialog {...props}>
-      <DialogContent className="overflow-hidden p-0">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+      <DialogContent className="p-0">
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground focus:outline-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
           {children}
         </Command>
       </DialogContent>
@@ -51,13 +48,10 @@ function CommandDialog({
  * Component: CommandInput
  * -------------------------------------------------------------------------- */
 
-type CommandInputProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Input
->;
-const CommandInput = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Input>,
-  CommandInputProps
->(({ className, ...props }, ref) => (
+type CommandInputElement = React.ElementRef<typeof CommandPrimitive.Input>;
+type CommandInputProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>;
+
+const CommandInput = React.forwardRef<CommandInputElement, CommandInputProps>(({ className, ...props }, ref) => (
   <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="">
     <MagnifyingGlassIcon className="size-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
@@ -70,57 +64,47 @@ const CommandInput = React.forwardRef<
     />
   </div>
 ));
+
 CommandInput.displayName = CommandPrimitive.Input.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandList
  * -------------------------------------------------------------------------- */
 
-type CommandListProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.List
->;
-const CommandList = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.List>,
-  CommandListProps
->(({ className, ...props }, ref) => (
+type CommandListElement = React.ElementRef<typeof CommandPrimitive.List>;
+type CommandListProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>;
+
+const CommandList = React.forwardRef<CommandListElement, CommandListProps>(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
     className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
     {...props}
   />
 ));
+
 CommandList.displayName = CommandPrimitive.List.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandEmpty
  * -------------------------------------------------------------------------- */
 
-type CommandEmptyProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Empty
->;
-const CommandEmpty = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Empty>,
-  CommandEmptyProps
->((props, ref) => (
-  <CommandPrimitive.Empty
-    ref={ref}
-    className="py-6 text-center text-sm"
-    {...props}
-  />
+type CommandEmptyElement = React.ElementRef<typeof CommandPrimitive.Empty>;
+type CommandEmptyProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>;
+
+const CommandEmpty = React.forwardRef<CommandEmptyElement, CommandEmptyProps>((props, ref) => (
+  <CommandPrimitive.Empty ref={ref} className="py-6 text-center text-sm" {...props} />
 ));
+
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandGroup
  * -------------------------------------------------------------------------- */
 
-type CommandGroupProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Group
->;
-const CommandGroup = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Group>,
-  CommandGroupProps
->(({ className, ...props }, ref) => (
+type CommandGroupElement = React.ElementRef<typeof CommandPrimitive.Group>;
+type CommandGroupProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>;
+
+const CommandGroup = React.forwardRef<CommandGroupElement, CommandGroupProps>(({ className, ...props }, ref) => (
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
@@ -130,38 +114,32 @@ const CommandGroup = React.forwardRef<
     {...props}
   />
 ));
+
 CommandGroup.displayName = CommandPrimitive.Group.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandSeparator
  * -------------------------------------------------------------------------- */
 
-type CommandSeparatorProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Separator
->;
-const CommandSeparator = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Separator>,
-  CommandSeparatorProps
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Separator
-    ref={ref}
-    className={cn("bg-border -mx-1 h-px", className)}
-    {...props}
-  />
-));
+type CommandSeparatorElement = React.ElementRef<typeof CommandPrimitive.Separator>;
+type CommandSeparatorProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>;
+
+const CommandSeparator = React.forwardRef<CommandSeparatorElement, CommandSeparatorProps>(
+  ({ className, ...props }, ref) => (
+    <CommandPrimitive.Separator ref={ref} className={cn("bg-border -mx-1 h-px", className)} {...props} />
+  ),
+);
+
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandItem
  * -------------------------------------------------------------------------- */
 
-type CommandItemProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Item
->;
-const CommandItem = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Item>,
-  CommandItemProps
->(({ className, ...props }, ref) => (
+type CommandItemElement = React.ElementRef<typeof CommandPrimitive.Item>;
+type CommandItemProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>;
+
+const CommandItem = React.forwardRef<CommandItemElement, CommandItemProps>(({ className, ...props }, ref) => (
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
@@ -171,25 +149,20 @@ const CommandItem = React.forwardRef<
     {...props}
   />
 ));
+
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
 /* -----------------------------------------------------------------------------
  * Component: CommandLoading
  * -------------------------------------------------------------------------- */
 
-type CommandLoadingProps = React.ComponentPropsWithoutRef<
-  typeof CommandPrimitive.Loading
->;
-const CommandLoading = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive.Loading>,
-  CommandLoadingProps
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Loading
-    ref={ref}
-    className={cn("flex justify-center p-2", className)}
-    {...props}
-  />
+type CommandLoadingElement = React.ElementRef<typeof CommandPrimitive.Loading>;
+type CommandLoadingProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Loading>;
+
+const CommandLoading = React.forwardRef<CommandLoadingElement, CommandLoadingProps>(({ className, ...props }, ref) => (
+  <CommandPrimitive.Loading ref={ref} className={cn("flex justify-center p-2", className)} {...props} />
 ));
+
 CommandLoading.displayName = CommandPrimitive.Loading.displayName;
 
 /* -----------------------------------------------------------------------------
@@ -197,19 +170,9 @@ CommandLoading.displayName = CommandPrimitive.Loading.displayName;
  * -------------------------------------------------------------------------- */
 
 type CommandShortcutProps = React.HTMLAttributes<HTMLSpanElement>;
-function CommandShortcut({
-  className,
-  ...props
-}: CommandShortcutProps): React.JSX.Element {
-  return (
-    <span
-      className={cn(
-        "text-muted-foreground ml-auto text-xs tracking-widest",
-        className,
-      )}
-      {...props}
-    />
-  );
+
+function CommandShortcut({ className, ...props }: CommandShortcutProps): React.JSX.Element {
+  return <span className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
