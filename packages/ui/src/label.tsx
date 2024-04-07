@@ -7,11 +7,10 @@ import { cn } from "./utils";
  * Component: Label
  * -------------------------------------------------------------------------- */
 
-type LabelProps = LabelPrimitive.LabelProps;
-const Label = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  LabelProps
->(({ className, ...props }, ref) => (
+type LabelElement = React.ElementRef<typeof LabelPrimitive.Root>;
+type LabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
+
+const Label = React.forwardRef<LabelElement, LabelProps>(({ className, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
     className={cn(
@@ -21,6 +20,7 @@ const Label = React.forwardRef<
     {...props}
   />
 ));
+
 Label.displayName = LabelPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------

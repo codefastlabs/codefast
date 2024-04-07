@@ -8,17 +8,13 @@ import { cn } from "./utils";
  * Component: Progress
  * -------------------------------------------------------------------------- */
 
-type ProgressProps = ProgressPrimitive.ProgressProps;
-const Progress = React.forwardRef<
-  React.ElementRef<typeof ProgressPrimitive.Root>,
-  ProgressProps
->(({ className, value, ...props }, ref) => (
+type ProgressElement = React.ElementRef<typeof ProgressPrimitive.Root>;
+type ProgressProps = React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>;
+
+const Progress = React.forwardRef<ProgressElement, ProgressProps>(({ className, value, ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
-    className={cn(
-      "bg-primary/20 relative h-2 w-full overflow-hidden rounded-full",
-      className,
-    )}
+    className={cn("bg-primary/20 relative h-2 w-full overflow-hidden rounded-full", className)}
     {...props}
   >
     <ProgressPrimitive.Indicator
@@ -29,6 +25,7 @@ const Progress = React.forwardRef<
     />
   </ProgressPrimitive.Root>
 ));
+
 Progress.displayName = ProgressPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------

@@ -12,8 +12,7 @@ const badgeVariants = cva({
     variant: {
       default: "bg-primary text-primary-foreground border-transparent shadow",
       secondary: "bg-secondary text-secondary-foreground border-transparent",
-      destructive:
-        "bg-destructive text-destructive-foreground border-transparent shadow",
+      destructive: "bg-destructive text-destructive-foreground border-transparent shadow",
       outline: "text-foreground",
     },
   },
@@ -29,11 +28,8 @@ type BadgeVariantsProps = VariantProps<typeof badgeVariants>;
  * -------------------------------------------------------------------------- */
 
 type BadgeProps = React.HTMLAttributes<HTMLDivElement> & BadgeVariantsProps;
-function Badge({
-  className,
-  variant,
-  ...props
-}: BadgeProps): React.JSX.Element {
+
+function Badge({ className, variant, ...props }: BadgeProps): React.JSX.Element {
   return <div className={badgeVariants({ variant, className })} {...props} />;
 }
 
