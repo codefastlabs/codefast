@@ -39,17 +39,21 @@ export const Default: Story = {
 
     return (
       <RadioGroup defaultValue="comfortable">
-        <Box className="flex items-center space-x-2">
+        <Box className="flex items-center gap-2">
           <RadioGroupItem value="default" id={`r1-${id}`} />
           <Label htmlFor={`r1-${id}`}>Default</Label>
         </Box>
-        <Box className="flex items-center space-x-2">
+        <Box className="flex items-center gap-2">
           <RadioGroupItem value="comfortable" id={`r2-${id}`} />
           <Label htmlFor={`r2-${id}`}>Comfortable</Label>
         </Box>
-        <Box className="flex items-center space-x-2">
+        <Box className="flex items-center gap-2">
           <RadioGroupItem value="compact" id={`r3-${id}`} />
           <Label htmlFor={`r3-${id}`}>Compact</Label>
+        </Box>
+        <Box className="flex items-center gap-2">
+          <RadioGroupItem value="disabled" id={`r4-${id}`} disabled />
+          <Label htmlFor={`r4-${id}`}>Disabled</Label>
         </Box>
       </RadioGroup>
     );
