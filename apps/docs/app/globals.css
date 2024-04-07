@@ -113,4 +113,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  :focus-visible {
+    @apply outline-primary;
+  }
 }
