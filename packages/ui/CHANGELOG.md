@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.13
+
+### Patch Changes
+
+- Remove Turbo/Gen component generator
+
 ## 0.0.12
 
 ### Patch Changes
