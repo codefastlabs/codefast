@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.12
+
+### Patch Changes
+
+- Remove Segmented component from UI package
+
 ## 0.0.11
 
 ### Patch Changes
