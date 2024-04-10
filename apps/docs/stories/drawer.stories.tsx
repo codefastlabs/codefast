@@ -100,9 +100,7 @@ export const Default: Story = {
           <Box className="mx-auto w-full max-w-sm">
             <DrawerHeader>
               <DrawerTitle>Move Goal</DrawerTitle>
-              <DrawerDescription>
-                Set your daily activity goal.
-              </DrawerDescription>
+              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
             </DrawerHeader>
             <Box className="p-4 pb-0">
               <Box className="flex items-center justify-center space-x-2">
@@ -121,12 +119,8 @@ export const Default: Story = {
                   </Box>
                 </Button>
                 <Box className="flex-1 text-center">
-                  <Box className="text-7xl font-bold tracking-tighter">
-                    {goal}
-                  </Box>
-                  <Box className="text-muted-foreground text-[0.70rem] uppercase">
-                    Calories/day
-                  </Box>
+                  <Box className="text-7xl font-bold tracking-tighter">{goal}</Box>
+                  <Box className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</Box>
                 </Box>
                 <Button
                   variant="outline"
@@ -176,9 +170,7 @@ export const Default: Story = {
  * Story: Responsive Dialog
  * -------------------------------------------------------------------------- */
 
-function ProfileForm({
-  className,
-}: React.FormHTMLAttributes<HTMLFormElement>): React.JSX.Element {
+function ProfileForm({ className }: React.FormHTMLAttributes<HTMLFormElement>): React.JSX.Element {
   return (
     <form className={cn("grid items-start gap-4", className)}>
       <Box className="grid gap-2">
@@ -208,9 +200,7 @@ export const ResponsiveDialog: Story = {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Edit profile</DialogTitle>
-              <DialogDescription>
-                Make changes to your profile here. Click save when you're done.
-              </DialogDescription>
+              <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
             </DialogHeader>
             <ProfileForm />
           </DialogContent>
@@ -226,10 +216,7 @@ export const ResponsiveDialog: Story = {
         <DrawerContent>
           <DrawerHeader className="text-left">
             <DrawerTitle>Edit profile</DrawerTitle>
-            <DrawerDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DrawerDescription>
+            <DrawerDescription>Make changes to your profile here. Click save when you&apos;re done.</DrawerDescription>
           </DrawerHeader>
           <ProfileForm className="px-4" />
           <DrawerFooter className="pt-2">
