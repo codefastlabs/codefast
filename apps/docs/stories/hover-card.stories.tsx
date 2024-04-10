@@ -1,9 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@codefast/ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@codefast/ui/hover-card";
 import { Button } from "@codefast/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { CalendarDays } from "lucide-react";
@@ -51,9 +47,7 @@ export const Default: Story = {
             <Heading as="h4" className="text-sm font-semibold">
               @nextjs
             </Heading>
-            <Text className="text-sm">
-              The React Framework – created and maintained by @vercel.
-            </Text>
+            <Text className="text-sm">The React Framework – created and maintained by @vercel.</Text>
             <Box className="flex items-center pt-2">
               <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
               <Box as="span" className="text-muted-foreground text-xs">

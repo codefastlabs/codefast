@@ -17,14 +17,7 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@codefast/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
 import { cn } from "@codefast/ui/utils";
 import {
   DropdownMenu,
@@ -43,15 +36,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast, Toaster } from "@codefast/ui/sonner";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@codefast/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
 import { Drawer, DrawerContent, DrawerTrigger } from "@codefast/ui/drawer";
 import { Box } from "@codefast/ui/box";
 import { Badge } from "@codefast/ui/badge";
@@ -109,15 +94,8 @@ export const Default: Story = {
     return (
       <Popover open={open} onOpenChange={setOpen} {...args}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-[200px] justify-between"
-          >
-            {value
-              ? frameworks.find((framework) => framework.value === value)?.label
-              : "Select framework..."}
+          <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
+            {value ? frameworks.find((framework) => framework.value === value)?.label : "Select framework..."}
             <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -136,12 +114,7 @@ export const Default: Story = {
                       setOpen(false);
                     }}
                   >
-                    <Check
-                      className={cn(
-                        "mr-2 size-4",
-                        value === framework.value ? "opacity-100" : "opacity-0",
-                      )}
-                    />
+                    <Check className={cn("mr-2 size-4", value === framework.value ? "opacity-100" : "opacity-0")} />
                     {framework.label}
                   </CommandItem>
                 ))}
@@ -202,11 +175,7 @@ export const WithPopover: Story = {
         <Text className="text-muted-foreground text-sm">Status</Text>
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-[150px] justify-start"
-            >
+            <Button variant="outline" size="sm" className="w-[150px] justify-start">
               {selectedStatus ? (
                 <>
                   <selectedStatus.icon className="mr-2 size-4 shrink-0" />
@@ -228,20 +197,14 @@ export const WithPopover: Story = {
                       key={status.value}
                       value={status.value}
                       onSelect={(value) => {
-                        setSelectedStatus(
-                          statuses.find(
-                            (priority) => priority.value === value,
-                          ) ?? null,
-                        );
+                        setSelectedStatus(statuses.find((priority) => priority.value === value) ?? null);
                         setOpen(false);
                       }}
                     >
                       <Icon
                         className={cn(
                           "mr-2 size-4",
-                          status.value === selectedStatus?.value
-                            ? "opacity-100"
-                            : "opacity-40",
+                          status.value === selectedStatus?.value ? "opacity-100" : "opacity-40",
                         )}
                       />
                       <Box as="span">{status.label}</Box>
@@ -261,15 +224,7 @@ export const WithPopover: Story = {
  * Story: Dropdown Menu
  * -------------------------------------------------------------------------- */
 
-const labels = [
-  "feature",
-  "bug",
-  "enhancement",
-  "documentation",
-  "design",
-  "question",
-  "maintenance",
-];
+const labels = ["feature", "bug", "enhancement", "documentation", "design", "question", "maintenance"];
 
 export const WithDropdownMenu: Story = {
   render: (args) => {
@@ -366,9 +321,7 @@ function StatusList({
               key={status.value}
               value={status.value}
               onSelect={(value) => {
-                setSelectedStatus(
-                  statuses.find((priority) => priority.value === value) || null,
-                );
+                setSelectedStatus(statuses.find((priority) => priority.value === value) || null);
                 setOpen(false);
               }}
             >
@@ -396,10 +349,7 @@ export const ResponsiveCombobox: Story = {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0" align="start">
-            <StatusList
-              setOpen={setOpen}
-              setSelectedStatus={setSelectedStatus}
-            />
+            <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
           </PopoverContent>
         </Popover>
       );
@@ -414,10 +364,7 @@ export const ResponsiveCombobox: Story = {
         </DrawerTrigger>
         <DrawerContent>
           <Box className="mt-4 border-t">
-            <StatusList
-              setOpen={setOpen}
-              setSelectedStatus={setSelectedStatus}
-            />
+            <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
           </Box>
         </DrawerContent>
       </Drawer>
@@ -486,15 +433,10 @@ export const WithReactHookForm: Story = {
                       <Button
                         variant="outline"
                         role="combobox"
-                        className={cn(
-                          "w-[200px] justify-between",
-                          !field.value && "text-muted-foreground",
-                        )}
+                        className={cn("w-[200px] justify-between", !field.value && "text-muted-foreground")}
                       >
                         {field.value
-                          ? languages.find(
-                              (language) => language.value === field.value,
-                            )?.label
+                          ? languages.find((language) => language.value === field.value)?.label
                           : "Select language"}
                         <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
                       </Button>
@@ -517,9 +459,7 @@ export const WithReactHookForm: Story = {
                               <Check
                                 className={cn(
                                   "mr-2 size-4",
-                                  language.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0",
+                                  language.value === field.value ? "opacity-100" : "opacity-0",
                                 )}
                               />
                               {language.label}
@@ -530,9 +470,7 @@ export const WithReactHookForm: Story = {
                     </Command>
                   </PopoverContent>
                 </Popover>
-                <FormDescription>
-                  This is the language that will be used in the dashboard.
-                </FormDescription>
+                <FormDescription>This is the language that will be used in the dashboard.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

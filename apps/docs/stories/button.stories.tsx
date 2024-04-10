@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Spinner } from "@codefast/ui/spinner";
 import { type Meta, type StoryObj } from "@storybook/react";
-import { ChevronRightIcon, EnvelopeOpenIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { ChevronRightIcon, EnvelopeOpenIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
 const meta = {

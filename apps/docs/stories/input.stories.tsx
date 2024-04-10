@@ -7,15 +7,7 @@ import { toast, Toaster } from "@codefast/ui/sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@codefast/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
 import { Box } from "@codefast/ui/box";
 import { Pre } from "@codefast/ui/pre";
 import { Code } from "@codefast/ui/code";
@@ -138,10 +130,7 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
           <FormField
             control={form.control}
             name="username"
@@ -151,9 +140,7 @@ export const ReactHookForm: Story = {
                 <FormControl>
                   <Input placeholder="codefast" {...field} {...args} />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
+                <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
