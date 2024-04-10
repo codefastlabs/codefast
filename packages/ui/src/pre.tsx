@@ -12,9 +12,9 @@ interface PreProps extends React.HTMLAttributes<HTMLPreElement> {
 }
 
 const Pre = React.forwardRef<PreElement, PreProps>(({ asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "pre";
+  const Component = asChild ? Slot : "pre";
 
-  return <Comp ref={ref} {...props} />;
+  return <Component ref={ref} {...props} />;
 });
 
 Pre.displayName = "Pre";

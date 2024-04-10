@@ -13,9 +13,9 @@ interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Container = React.forwardRef<ContainerElement, ContainerProps>(({ className, asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "div";
+  const Component = asChild ? Slot : "div";
 
-  return <Comp ref={ref} className={cn("container", className)} {...props} />;
+  return <Component ref={ref} className={cn("container", className)} {...props} />;
 });
 
 Container.displayName = "Container";

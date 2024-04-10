@@ -1,4 +1,5 @@
 import * as React from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { cn } from "./utils";
 
 /* -----------------------------------------------------------------------------
@@ -51,15 +52,10 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
 
     return (
       <span className="relative">
-        <span
-          aria-hidden
-          className="invisible contents"
-          // Workaround to use `inert` until https://github.com/facebook/react/pull/24730 is merged.
-          {...{ inert: "" }}
-        >
+        <span aria-hidden className="invisible contents">
           {children}
         </span>
-
+        <VisuallyHidden>{children}</VisuallyHidden>
         <span className="absolute inset-0 flex items-center justify-center">{spinner}</span>
       </span>
     );

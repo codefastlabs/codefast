@@ -65,9 +65,9 @@ interface BreadcrumbLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorEleme
 
 const BreadcrumbLink = React.forwardRef<BreadcrumbLinkElement, BreadcrumbLinkProps>(
   ({ asChild, className, ...props }, ref) => {
-    const Comp = asChild ? Slot : "a";
+    const Component = asChild ? Slot : "a";
 
-    return <Comp ref={ref} className={cn("transition-colors", "hover:text-foreground", className)} {...props} />;
+    return <Component ref={ref} className={cn("transition-colors", "hover:text-foreground", className)} {...props} />;
   },
 );
 

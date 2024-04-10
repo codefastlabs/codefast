@@ -12,9 +12,9 @@ interface StrongProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Strong = React.forwardRef<StrongElement, StrongProps>(({ asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "strong";
+  const Component = asChild ? Slot : "strong";
 
-  return <Comp ref={ref} {...props} />;
+  return <Component ref={ref} {...props} />;
 });
 
 Strong.displayName = "Strong";
