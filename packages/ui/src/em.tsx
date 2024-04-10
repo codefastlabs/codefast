@@ -12,9 +12,9 @@ interface EmProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Em = React.forwardRef<EmElement, EmProps>(({ asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : "em";
+  const Component = asChild ? Slot : "em";
 
-  return <Comp ref={ref} {...props} />;
+  return <Component ref={ref} {...props} />;
 });
 
 Em.displayName = "Em";

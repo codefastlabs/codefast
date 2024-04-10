@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps } from "cva";
+import { Fragment } from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Spinner } from "./spinner";
 import { cva } from "./utils";
 
@@ -58,11 +60,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, But
 
 const Button = React.forwardRef<ButtonElement, ButtonProps>(
   ({ children, className, variant, size, loading = false, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
+    const Component = asChild ? Slot : "button";
+    const ComponentLoading = asChild ? "span" : Fragment;
     const disabled = loading || props.disabled;
 
     return (
-      <Comp
+      <Component
         ref={ref}
         type={asChild ? undefined : "button"}
         className={buttonVariants({ variant, size, loading, className })}
@@ -70,23 +73,19 @@ const Button = React.forwardRef<ButtonElement, ButtonProps>(
         disabled={disabled}
       >
         {loading ? (
-          <>
-            <span
-              aria-hidden
-              className="invisible contents"
-              // Workaround to use `inert` until https://github.com/facebook/react/pull/24730 is merged.
-              {...{ inert: "" }}
-            >
+          <ComponentLoading>
+            <span aria-hidden className="invisible contents">
               {children}
             </span>
+            <VisuallyHidden>{children}</VisuallyHidden>
             <span className="absolute inset-0 flex items-center justify-center">
               <Spinner />
             </span>
-          </>
+          </ComponentLoading>
         ) : (
           children
         )}
-      </Comp>
+      </Component>
     );
   },
 );

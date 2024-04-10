@@ -13,10 +13,10 @@ interface KbdProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Kbd = React.forwardRef<KbdElement, KbdProps>(({ asChild, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : "kbd";
+  const Component = asChild ? Slot : "kbd";
 
   return (
-    <Comp
+    <Component
       ref={ref}
       className={cn(
         "bg-muted text-muted-foreground inline-flex h-5 select-none items-center gap-1 rounded border px-1.5 font-mono text-xs font-medium",
