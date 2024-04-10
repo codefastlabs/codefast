@@ -20,9 +20,9 @@ type TextProps = (TextParagraphProps | TextSpanProps) & {
 };
 
 const Text = React.forwardRef<TextElement, TextProps>(({ as: Tag = "p", asChild, ...props }, ref) => {
-  const Comp = asChild ? Slot : Tag;
+  const Component = asChild ? Slot : Tag;
 
-  return <Comp ref={ref} {...props} />;
+  return <Component ref={ref} {...props} />;
 });
 
 Text.displayName = "Text";
