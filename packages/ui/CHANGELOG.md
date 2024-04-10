@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.11
+
+### Patch Changes
+
+- Add Segmented and SegmentedItem components
+
 ## 0.0.10
 
 ### Patch Changes
