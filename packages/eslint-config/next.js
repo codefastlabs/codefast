@@ -4,10 +4,6 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  env: {
-    node: true,
-    browser: true,
-  },
   extends: [
     require.resolve("@vercel/style-guide/eslint/browser"),
     require.resolve("@vercel/style-guide/eslint/typescript"),
@@ -19,20 +15,10 @@ module.exports = {
     React: true,
     JSX: true,
   },
-  ignorePatterns: [
-    ".*.js",
-    "*.config.js",
-    "*.config.mjs",
-    "*.config.cjs",
-    "*.config.ts",
-    "node_modules/",
-    ".next/",
-  ],
-  overrides: [
-    {
-      files: ["*.js?(x)", "*.ts?(x)"],
-    },
-  ],
+  ignorePatterns: ["node_modules/", ".next/", ".eslintrc.js", "*.config.js"],
+  parserOptions: {
+    project,
+  },
   plugins: ["only-warn"],
   rules: {
     curly: ["error", "all"],
