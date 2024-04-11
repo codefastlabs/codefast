@@ -91,7 +91,7 @@ function DataTablePagination<TData>({
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={String(table.getState().pagination.pageSize)}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
@@ -246,5 +246,3 @@ export {
   type DataTablePaginationProps,
   type DataTableColumnHeaderProps,
 };
-
-export * from "@tanstack/react-table";
