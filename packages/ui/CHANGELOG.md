@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.16
+
+### Patch Changes
+
+- Add gap and truncate to select UI component
+
 ## 0.0.15
 
 ### Patch Changes
