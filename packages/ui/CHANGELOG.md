@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.15
+
+### Patch Changes
+
+- Update UI components and Tailwind config
+
 ## 0.0.14
 
 ### Patch Changes
