@@ -1,17 +1,17 @@
 "use client";
 
 import { Calendar, type DateRange } from "@codefast/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { addDays, format } from "date-fns";
 import { type HTMLAttributes, type JSX, useState } from "react";
 import { cn } from "@codefast/ui/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { Button } from "@codefast/ui/button";
 import { CalendarIcon } from "@radix-ui/react-icons";
 
-export function CalendarDateRangePicker({ className }: HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2023, 0, 20),
-    to: addDays(new Date(2023, 0, 20), 20),
+    from: new Date(2024, 0, 20),
+    to: addDays(new Date(2024, 0, 20), 20),
   });
 
   return (
@@ -21,9 +21,9 @@ export function CalendarDateRangePicker({ className }: HTMLAttributes<HTMLDivEle
           <Button
             id="date"
             variant="outline"
-            className={cn("w-[260px] justify-start text-left font-normal", !date && "text-muted-foreground")}
+            className={cn("justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
-            <CalendarIcon className="mr-2 size-4" />
+            <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from && date.to ? (
               <>
                 {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
@@ -35,7 +35,7 @@ export function CalendarDateRangePicker({ className }: HTMLAttributes<HTMLDivEle
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="end">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             initialFocus
             mode="range"
