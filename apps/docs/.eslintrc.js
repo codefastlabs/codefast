@@ -1,10 +1,10 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  root: true,
   extends: ["@codefast/eslint-config/next.js", "plugin:storybook/recommended"],
+  ignorePatterns: ["storybook-static"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: true,
   },
-  ignorePatterns: ["storybook-static"],
+  root: true,
 };
