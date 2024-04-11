@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
-import tailwindcssAnimate from "tailwindcss-animate";
 import plugin from "tailwindcss/plugin";
+import tailwindcssAnimate from "./animate.plugin";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
@@ -108,6 +108,9 @@ const config: Config = {
             opacity: "0",
           },
         },
+      },
+      transitionDuration: {
+        250: "250ms",
       },
     },
   },
