@@ -78,9 +78,9 @@ const NavigationMenuTrigger = React.forwardRef<NavigationMenuTriggerElement, Nav
       })}
       {...props}
     >
-      {children}{" "}
+      {children}
       <ChevronDownIcon
-        className={cn("relative top-px ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180")}
+        className={cn("relative top-px ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180")}
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>
@@ -131,7 +131,7 @@ const NavigationMenuViewport = React.forwardRef<NavigationMenuViewportElement, N
     <div className={cn("perspective-[2000px] absolute left-0 top-full flex justify-center")}>
       <NavigationMenuPrimitive.Viewport
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border shadow md:w-[var(--radix-navigation-menu-viewport-width)]",
+          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border shadow transition-[width,height] duration-200 md:w-[var(--radix-navigation-menu-viewport-width)]",
           className,
         )}
         ref={ref}

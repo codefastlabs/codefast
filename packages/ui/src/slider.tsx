@@ -20,12 +20,15 @@ const Slider = React.forwardRef<SliderElement, SliderProps>(({ className, ...pro
     <SliderPrimitive.Track className="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
       <SliderPrimitive.Range className="bg-primary absolute h-full" />
     </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb
-      className={cn(
-        "border-primary/50 bg-background block size-4 rounded-full border shadow transition-colors disabled:pointer-events-none disabled:opacity-50",
-        "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-      )}
-    />
+
+    {(props.value ?? props.defaultValue ?? []).map((value, index) => (
+      <SliderPrimitive.Thumb
+        // eslint-disable-next-line react/no-array-index-key -- index is stable
+        key={index}
+        className="border-primary/50 bg-background focus-visible:ring-ring block size-4 rounded-full border shadow transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        {...(props.tabIndex !== undefined ? { tabIndex: props.tabIndex } : undefined)}
+      />
+    ))}
   </SliderPrimitive.Root>
 ));
 
