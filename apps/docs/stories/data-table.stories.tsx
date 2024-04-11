@@ -13,12 +13,12 @@ import {
 } from "@codefast/ui/dropdown-menu";
 import { Input } from "@codefast/ui/input";
 import { useState } from "react";
+import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from "@codefast/ui/data-table";
+import { faker } from "@faker-js/faker";
+import { Box } from "@codefast/ui/box";
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  DataTableColumnHeader,
-  DataTablePagination,
-  DataTableViewOptions,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -27,9 +27,7 @@ import {
   type SortingState,
   useReactTable,
   type VisibilityState,
-} from "@codefast/ui/data-table";
-import { faker } from "@faker-js/faker";
-import { Box } from "@codefast/ui/box";
+} from "@tanstack/react-table";
 
 const meta = {
   tags: ["autodocs"],
@@ -176,7 +174,7 @@ export const Default: Story = {
         <Box className="flex items-center py-4">
           <Input
             placeholder="Filter emails..."
-            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+            value={String(table.getColumn("email")?.getFilterValue())}
             onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
             inputSize="sm"
             className="max-w-sm"
