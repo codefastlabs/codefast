@@ -33,8 +33,7 @@ const CheckboxCardsItem = React.forwardRef<CheckboxCardsItemElement, CheckboxCar
     return (
       <label
         className={cn(
-          "border-compound/70 flex items-center justify-center gap-4 rounded-md border p-4",
-          "hover:border-compound",
+          "border-compound/70 hover:border-compound flex items-center justify-center gap-4 rounded-md border p-4",
           className,
         )}
       >
@@ -42,10 +41,7 @@ const CheckboxCardsItem = React.forwardRef<CheckboxCardsItemElement, CheckboxCar
         <CheckboxGroupPrimitive.Item
           ref={ref}
           className={cn(
-            "border-compound/70 peer size-4 shrink-0 cursor-default rounded-sm border shadow",
-            "aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            "focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+            "border-compound/70 aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground focus-visible:ring-ring peer size-4 shrink-0 cursor-default rounded-sm border shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             checkboxClassName,
           )}
           {...props}

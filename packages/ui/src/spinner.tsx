@@ -29,10 +29,7 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
         {Array.from({ length: spinnerCount }, (_, i) => (
           <span
             key={i}
-            className={cn(
-              "absolute h-full rotate-[var(--spinner-rotate)]",
-              "before:fade-out-25 before:animate-out before:repeat-infinite before:block before:h-1/3 before:w-full before:rounded-full before:bg-current before:[animation-delay:var(--spinner-delay)] before:[animation-duration:var(--spinner-duration)]",
-            )}
+            className="before:fade-out-25 before:animate-out before:animation-repeat-infinite before:animation-delay-[var(--spinner-delay)] before:animation-duration-[var(--spinner-duration)] absolute h-full rotate-[var(--spinner-rotate)] before:block before:h-1/3 before:w-full before:rounded-full before:bg-current"
             style={
               {
                 width: `${(100 / spinnerCount).toString()}%`,
