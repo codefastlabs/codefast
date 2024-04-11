@@ -8,9 +8,9 @@ import { TeamSwitcher } from "@/app/examples/dashboard/components/team-switcher"
 import { MainNav } from "@/app/examples/dashboard/components/main-nav";
 import { Search } from "@/app/examples/dashboard/components/search";
 import { UserNav } from "@/app/examples/dashboard/components/user-nav";
-import { CalendarDateRangePicker } from "@/app/examples/dashboard/components/date-range-picker";
 import { Overview } from "@/app/examples/dashboard/components/overview";
 import { RecentSales } from "@/app/examples/dashboard/components/recent-sales";
+import { DatePickerWithRange } from "@/components/date-picker-with-range";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -51,7 +51,7 @@ export default function DashboardPage(): JSX.Element {
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2">
-              <CalendarDateRangePicker />
+              <DatePickerWithRange />
               <Button>Download</Button>
             </div>
           </div>
