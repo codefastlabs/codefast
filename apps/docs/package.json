@@ -6,7 +6,7 @@
     "build": "next build",
     "build-storybook": "storybook build",
     "clean": "rm -rf .next && rm -rf .turbo && rm -rf storybook-static && rm -rf node_modules",
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "dev-storybook": "storybook dev -p 6006 --no-open",
     "lint": "next lint",
     "start": "serve storybook-static",
