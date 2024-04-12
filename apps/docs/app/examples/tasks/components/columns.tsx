@@ -74,7 +74,7 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    filterFn: (row, id, value: string) => value.includes(row.getValue(id)),
   },
   {
     accessorKey: "priority",
@@ -95,7 +95,7 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       );
     },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    filterFn: (row, id, value: string) => value.includes(row.getValue(id)),
   },
   {
     id: "actions",

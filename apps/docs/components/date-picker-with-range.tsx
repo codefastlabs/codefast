@@ -24,15 +24,7 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
             className={cn("justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from && date.to ? (
-              <>
-                {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
-              </>
-            ) : date?.from ? (
-              format(date.from, "LLL dd, y")
-            ) : (
-              <span>Pick a date</span>
-            )}
+            <ButtonValue date={date} />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -48,4 +40,17 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
       </Popover>
     </div>
   );
+}
+
+function ButtonValue({ date }: { date: DateRange | undefined }): JSX.Element {
+  if (date?.from && date.to) {
+    return (
+      <>
+        {format(date.from, "LLL dd, y")} - {format(date.to, "LLL dd, y")}
+      </>
+    );
+  } else if (date?.from) {
+    return <>{format(date.from, "LLL dd, y")}</>;
+  }
+  return <span>Pick a date</span>;
 }
