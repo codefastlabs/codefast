@@ -98,7 +98,7 @@ export function DemoPaymentMethod(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 10 }, (_, i) => (
-                  <SelectItem key={i} value={`${new Date().getFullYear() + i}`}>
+                  <SelectItem key={i} value={String(new Date().getFullYear() + i)}>
                     {new Date().getFullYear() + i}
                   </SelectItem>
                 ))}
