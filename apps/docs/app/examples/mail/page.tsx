@@ -8,8 +8,8 @@ export default function MailPage(): JSX.Element {
   const layout = cookies().get("react-resizable-panels:layout");
   const collapsed = cookies().get("react-resizable-panels:collapsed");
 
-  const defaultLayout: number[] = layout ? JSON.parse(layout.value) : undefined;
-  const defaultCollapsed: boolean = collapsed ? JSON.parse(collapsed.value) : undefined;
+  const defaultLayout = (layout ? JSON.parse(layout.value) : undefined) as number[];
+  const defaultCollapsed = (collapsed ? JSON.parse(collapsed.value) : undefined) as boolean;
 
   return (
     <>
