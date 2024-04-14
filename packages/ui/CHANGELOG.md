@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.18
+
+### Patch Changes
+
+- Update react-table and react types versions
+
 ## 0.0.17
 
 ### Patch Changes
