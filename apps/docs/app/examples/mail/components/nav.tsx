@@ -21,6 +21,7 @@ export function Nav({ links, isCollapsed }: NavProps): JSX.Element {
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) =>
           isCollapsed ? (
+            // eslint-disable-next-line react/no-array-index-key -- we don't expect the links to change
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
@@ -43,6 +44,7 @@ export function Nav({ links, isCollapsed }: NavProps): JSX.Element {
             </Tooltip>
           ) : (
             <Link
+              // eslint-disable-next-line react/no-array-index-key -- we don't expect the links to change
               key={index}
               href="#"
               className={cn(

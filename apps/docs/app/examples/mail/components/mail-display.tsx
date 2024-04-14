@@ -14,7 +14,7 @@ import { Switch } from "@codefast/ui/switch";
 import { type Mail } from "@/app/examples/mail/data/data";
 
 interface MailDisplayProps {
-  mail: Mail | null;
+  mail: Mail | null | undefined;
 }
 
 export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
