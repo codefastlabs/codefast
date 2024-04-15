@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import React from "react";
+import { Toaster } from "@codefast/ui/sonner";
 import { inter } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
 }>): React.JSX.Element {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>{children}</body>
+      <body className={inter.variable}>
+        <div vaul-drawer-wrapper="">{children}</div>
+        <Toaster />
+      </body>
     </html>
   );
 }
