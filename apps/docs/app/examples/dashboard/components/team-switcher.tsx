@@ -89,8 +89,8 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
           <Command>
+            <CommandInput placeholder="Search team..." />
             <CommandList>
-              <CommandInput placeholder="Search team..." />
               <CommandEmpty>No team found.</CommandEmpty>
               {groups.map((group) => (
                 <CommandGroup key={group.label} heading={group.label}>

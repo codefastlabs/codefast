@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Archive,
   ArchiveX,
+  File,
   Inbox,
   MessagesSquare,
   Search,
@@ -15,7 +16,6 @@ import {
   ShoppingCart,
   Trash2,
   Users2,
-  File,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { Input } from "@codefast/ui/input";
@@ -174,7 +174,7 @@ export function Mail({
             <div className="bg-background/95 supports-[backdrop-filter]:bg-background/60 p-4 backdrop-blur">
               <form>
                 <div className="relative">
-                  <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4" />
+                  <Search className="text-muted-foreground absolute left-2 top-2.5 size-4" />
                   <Input placeholder="Search" className="pl-8" />
                 </div>
               </form>
