@@ -23,6 +23,7 @@ module.exports = {
   rules: {
     curly: ["error", "all"],
     "import/no-default-export": "off",
+    "react/no-unknown-property": ["error", { ignore: ["vaul-drawer-wrapper", "cmdk-input-wrapper"] }],
   },
   settings: {
     "import/resolver": {

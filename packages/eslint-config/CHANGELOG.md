@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.10
+
+### Patch Changes
+
+- Add new rule to eslint-config
+
 ## 0.0.9
 
 ### Patch Changes
