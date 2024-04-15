@@ -2,7 +2,7 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { cn } from "@codefast/ui/utils";
-import { type ReactNode, useState, type JSX } from "react";
+import { type JSX, type ReactNode, useState } from "react";
 
 interface AccountSwitcherProps {
   isCollapsed: boolean;
@@ -35,7 +35,7 @@ export function AccountSwitcher({ isCollapsed, accounts }: AccountSwitcherProps)
       <SelectContent>
         {accounts.map((account) => (
           <SelectItem key={account.email} value={account.email}>
-            <div className="[&_svg]:text-foreground flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0">
+            <div className="[&_svg]:text-foreground flex items-center gap-3 [&_svg]:size-4 [&_svg]:shrink-0">
               {account.icon}
               {account.email}
             </div>
