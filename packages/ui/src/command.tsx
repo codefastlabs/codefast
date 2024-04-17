@@ -53,7 +53,7 @@ type CommandInputProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.
 
 const CommandInput = React.forwardRef<CommandInputElement, CommandInputProps>(({ className, ...props }, ref) => (
   <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="">
-    <MagnifyingGlassIcon className="size-4 shrink-0 opacity-50" />
+    <MagnifyingGlassIcon className="size-5 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -75,11 +75,7 @@ type CommandListElement = React.ElementRef<typeof CommandPrimitive.List>;
 type CommandListProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>;
 
 const CommandList = React.forwardRef<CommandListElement, CommandListProps>(({ className, ...props }, ref) => (
-  <CommandPrimitive.List
-    ref={ref}
-    className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
-    {...props}
-  />
+  <CommandPrimitive.List ref={ref} className={cn("max-h-72 overflow-y-auto overflow-x-hidden", className)} {...props} />
 ));
 
 CommandList.displayName = CommandPrimitive.List.displayName;

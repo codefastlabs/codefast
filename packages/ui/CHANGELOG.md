@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.20
+
+### Patch Changes
+
+- Refactor CSS classes in UI components
+
 ## 0.0.19
 
 ### Patch Changes
