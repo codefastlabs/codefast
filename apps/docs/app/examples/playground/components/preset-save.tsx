@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -36,7 +37,9 @@ export function PresetSave(): JSX.Element {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Save</Button>
+          <DialogClose asChild>
+            <Button type="submit">Save</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
