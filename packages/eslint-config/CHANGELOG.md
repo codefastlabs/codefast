@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.12
+
+### Patch Changes
+
+- Update eslint rule for unknown prop
+
 ## 0.0.11
 
 ### Patch Changes
