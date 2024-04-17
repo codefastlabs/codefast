@@ -64,7 +64,7 @@ export function AppearanceForm(): JSX.Element {
                     <option value="system">System</option>
                   </select>
                 </FormControl>
-                <ChevronDownIcon className="absolute right-3 top-2.5 h-4 w-4 opacity-50" />
+                <ChevronDownIcon className="absolute right-3 top-2.5 size-4 opacity-50" />
               </div>
               <FormDescription>Set the font you want to use in the dashboard.</FormDescription>
               <FormMessage />
@@ -96,11 +96,11 @@ export function AppearanceForm(): JSX.Element {
                           <div className="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
                         </div>
                         <div className="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
-                          <div className="h-4 w-4 rounded-full bg-[#ecedef]" />
+                          <div className="size-4 rounded-full bg-[#ecedef]" />
                           <div className="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
                         </div>
                         <div className="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
-                          <div className="h-4 w-4 rounded-full bg-[#ecedef]" />
+                          <div className="size-4 rounded-full bg-[#ecedef]" />
                           <div className="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
                         </div>
                       </div>
@@ -120,11 +120,11 @@ export function AppearanceForm(): JSX.Element {
                           <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
                         </div>
                         <div className="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                          <div className="h-4 w-4 rounded-full bg-slate-400" />
+                          <div className="size-4 rounded-full bg-slate-400" />
                           <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
                         </div>
                         <div className="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                          <div className="h-4 w-4 rounded-full bg-slate-400" />
+                          <div className="size-4 rounded-full bg-slate-400" />
                           <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
                         </div>
                       </div>

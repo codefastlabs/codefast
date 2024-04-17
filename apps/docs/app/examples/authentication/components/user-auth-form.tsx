@@ -55,7 +55,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
         </div>
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? <Spinner className="mr-2" /> : <Icons.GitHub className="mr-2 h-4 w-4" />} GitHub
+        {isLoading ? <Spinner className="mr-2" /> : <Icons.GitHub className="mr-2 size-4" />} GitHub
       </Button>
     </div>
   );
