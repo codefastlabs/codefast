@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.19
+
+### Patch Changes
+
+- Update various package versions in UI
+
 ## 0.0.18
 
 ### Patch Changes
