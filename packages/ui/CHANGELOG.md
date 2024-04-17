@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.22
+
+### Patch Changes
+
+- Add HoverCardArrow component to HoverCard
+
 ## 0.0.21
 
 ### Patch Changes
