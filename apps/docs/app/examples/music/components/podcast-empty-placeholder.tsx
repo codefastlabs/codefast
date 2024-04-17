@@ -23,7 +23,7 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="2"
-          className="text-muted-foreground h-10 w-10"
+          className="text-muted-foreground size-10"
           viewBox="0 0 24 24"
         >
           <circle cx="12" cy="11" r="1" />
