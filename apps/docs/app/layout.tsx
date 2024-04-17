@@ -3,6 +3,7 @@ import "@/app/globals.css";
 import React from "react";
 import { Toaster } from "@codefast/ui/sonner";
 import { inter } from "@/lib/fonts";
+import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.variable}>
-        <div vaul-drawer-wrapper="">{children}</div>
+        <div vaul-drawer-wrapper="">
+          <Providers>{children}</Providers>
+        </div>
         <Toaster />
       </body>
     </html>

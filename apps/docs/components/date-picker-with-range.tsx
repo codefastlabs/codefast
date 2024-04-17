@@ -42,7 +42,11 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
   );
 }
 
-function ButtonValue({ date }: { date: DateRange | undefined }): JSX.Element {
+interface ButtonValueProps {
+  date: DateRange | undefined;
+}
+
+function ButtonValue({ date }: ButtonValueProps): JSX.Element {
   if (date?.from && date.to) {
     return (
       <>
