@@ -25,7 +25,7 @@ import { toast } from "@codefast/ui/sonner";
 import { type JSX, useState } from "react";
 
 export function PresetActions(): JSX.Element {
-  const [open, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
@@ -40,7 +40,7 @@ export function PresetActions(): JSX.Element {
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             onSelect={() => {
-              setIsOpen(true);
+              setOpen(true);
             }}
           >
             Content filter preferences
@@ -56,7 +56,7 @@ export function PresetActions(): JSX.Element {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Dialog open={open} onOpenChange={setIsOpen}>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Content filter preferences</DialogTitle>
@@ -81,7 +81,7 @@ export function PresetActions(): JSX.Element {
             <Button
               variant="secondary"
               onClick={() => {
-                setIsOpen(false);
+                setOpen(false);
               }}
             >
               Close
