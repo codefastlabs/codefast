@@ -78,7 +78,7 @@ export const ReactHookForm: Story = {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>): void {
-      toast.success("You submitted the following values:", {
+      toast.message("You submitted the following values:", {
         description: (
           <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
