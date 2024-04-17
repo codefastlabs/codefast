@@ -46,7 +46,7 @@ export default function MusicPage(): JSX.Element {
                       </TabsList>
                       <div className="ml-auto mr-4">
                         <Button>
-                          <PlusCircledIcon className="mr-2 h-4 w-4" />
+                          <PlusCircledIcon className="mr-2 size-4" />
                           Add music
                         </Button>
                       </div>
