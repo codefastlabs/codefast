@@ -104,15 +104,21 @@ interface ModelItemProps {
 function ModelItem({ model, isSelected, onSelect, onPeek }: ModelItemProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
 
-  useMutationObserver(ref, (mutations) => {
-    for (const mutation of mutations) {
-      if (mutation.type === "attributes") {
-        if (mutation.attributeName === "aria-selected") {
-          onPeek(model);
+  useMutationObserver(
+    ref,
+    (mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === "attributes") {
+          if (mutation.attributeName === "aria-selected") {
+            onPeek(model);
+          }
         }
       }
-    }
-  });
+    },
+    {
+      attributeFilter: ["aria-selected"],
+    },
+  );
 
   return (
     <CommandItem

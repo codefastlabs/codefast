@@ -45,7 +45,7 @@ export default function PlaygroundPage(): JSX.Element {
         />
       </div>
       <div className="hidden h-full flex-col md:flex">
-        <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+        <div className="container mx-auto flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
           <h2 className="text-lg font-semibold">Playground</h2>
           <div className="ml-auto flex w-full space-x-2 sm:justify-end">
             <PresetSelector presets={presets} />
@@ -59,7 +59,7 @@ export default function PlaygroundPage(): JSX.Element {
         </div>
         <Separator />
         <Tabs defaultValue="complete" className="flex-1">
-          <div className="container h-full py-6">
+          <div className="container mx-auto h-full py-6">
             <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_200px]">
               <div className="hidden flex-col space-y-4 sm:flex md:order-2">
                 <div className="grid gap-2">

@@ -23,15 +23,7 @@ export function TopPSelector({ defaultValue }: TopPSelectorProps): JSX.Element {
                 {value}
               </span>
             </div>
-            <Slider
-              id="top-p"
-              max={1}
-              defaultValue={value}
-              step={0.1}
-              onValueChange={setValue}
-              className="[&_[role=slider]]:size-4"
-              aria-label="Top P"
-            />
+            <Slider id="top-p" max={1} defaultValue={value} step={0.1} onValueChange={setValue} aria-label="Top P" />
           </div>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">

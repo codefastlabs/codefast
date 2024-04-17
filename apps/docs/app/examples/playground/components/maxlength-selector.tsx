@@ -29,7 +29,6 @@ export function MaxLengthSelector({ defaultValue }: MaxLengthSelectorProps): JSX
               defaultValue={value}
               step={10}
               onValueChange={setValue}
-              className="[&_[role=slider]]:size-4"
               aria-label="Maximum Length"
             />
           </div>
