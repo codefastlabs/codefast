@@ -15,7 +15,7 @@ function ResizablePanelGroup({
 }: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>): React.JSX.Element {
   return (
     <ResizablePrimitive.PanelGroup
-      className={cn("flex h-full w-full", "data-[panel-group-direction=vertical]:flex-col", className)}
+      className={cn("flex size-full data-[panel-group-direction=vertical]:flex-col", className)}
       {...props}
     />
   );

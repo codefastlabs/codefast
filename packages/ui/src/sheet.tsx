@@ -61,7 +61,7 @@ const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
   ({ side = "right", className, children, ...props }, ref) => (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay className="data-[state=open]:animate-in animation-duration-200 data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 fixed inset-0 z-50 bg-black/80" />
-      <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
+      <SheetPrimitive.Content ref={ref} className={sheetVariants({ side, className })} {...props}>
         {children}
         <SheetPrimitive.Close className="data-[state=open]:bg-secondary focus-visible:ring-ring absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none">
           <Cross2Icon className="size-4" />
