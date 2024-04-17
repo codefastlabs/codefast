@@ -21,6 +21,12 @@ module.exports = {
   rules: {
     curly: ["error", "all"],
     "import/no-default-export": "off",
+    "@typescript-eslint/restrict-template-expressions": [
+      "error",
+      {
+        allowNumber: true,
+      },
+    ],
   },
   settings: {
     "import/resolver": {

@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.13
+
+### Patch Changes
+
+- Add TypeScript rule to eslint configurations
+
 ## 0.0.12
 
 ### Patch Changes
