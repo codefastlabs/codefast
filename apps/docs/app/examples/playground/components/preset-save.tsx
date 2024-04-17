@@ -28,7 +28,7 @@ export function PresetSave(): JSX.Element {
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" autoFocus />
+            <Input id="name" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
