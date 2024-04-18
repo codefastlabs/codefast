@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "license": "MIT",
   "files": [
     "library.js",
@@ -10,14 +10,13 @@
   "scripts": {
     "clean": "rm -rf node_modules"
   },
-  "devDependencies": {
+  "dependencies": {
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",
     "@vercel/style-guide": "^6.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-turbo": "^1.13.2",
-    "eslint-plugin-only-warn": "^1.1.0",
-    "typescript": "^5.4.5"
+    "eslint-plugin-only-warn": "^1.1.0"
   },
   "publishConfig": {
     "access": "public"

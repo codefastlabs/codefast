@@ -9,6 +9,7 @@ module.exports = {
     require.resolve("@vercel/style-guide/eslint/typescript"),
     require.resolve("@vercel/style-guide/eslint/react"),
     require.resolve("@vercel/style-guide/eslint/next"),
+    "eslint-config-turbo",
   ],
   globals: {
     React: true,
