@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.24
+
+### Patch Changes
+
+- Update TailwindCSS configuration and plugins
+
 ## 0.0.23
 
 ### Patch Changes

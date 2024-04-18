@@ -1,6 +1,6 @@
 {
   "name": "@codefast/ui",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "license": "MIT",
   "sideEffects": [
     "**/*.css"
@@ -321,13 +321,16 @@
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.js"
     },
-    "./styles.css": "./dist/styles.css",
-    "./tailwind.config": "./tailwind.config.ts"
+    "./tailwind.config": {
+      "types": "./tailwind.config.ts",
+      "import": "./dist/tailwind.config.mjs",
+      "require": "./dist/tailwind.config.js"
+    },
+    "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist",
-    "src",
-    "tailwind.config.ts"
+    "src"
   ],
   "scripts": {
     "build": "tsup",

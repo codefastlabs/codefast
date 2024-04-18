@@ -3,7 +3,7 @@ import { type Config } from "tailwindcss/types/config";
 
 type Theme = <TDefaultValue = Config["theme"]>(path?: string, defaultValue?: TDefaultValue) => TDefaultValue;
 
-const tailwindcssAnimate = plugin(
+const animate = plugin(
   ({ addUtilities, matchUtilities, theme }) => {
     addUtilities({
       "@keyframes enter": {
@@ -274,4 +274,4 @@ const tailwindcssAnimate = plugin(
   },
 );
 
-export default tailwindcssAnimate;
+export default animate;
