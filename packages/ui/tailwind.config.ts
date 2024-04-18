@@ -1,21 +1,12 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
-import plugin from "tailwindcss/plugin";
-import tailwindcssAnimate from "./animate.plugin";
+import animate from "./animate.plugin";
+import perspective from "./perspective.plugin";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   darkMode: ["class"],
-  plugins: [
-    tailwindcssAnimate,
-    plugin(({ matchUtilities }) => {
-      matchUtilities({
-        perspective: (value) => ({
-          perspective: value,
-        }),
-      });
-    }),
-  ],
+  plugins: [animate, perspective],
   theme: {
     extend: {
       animation: {
