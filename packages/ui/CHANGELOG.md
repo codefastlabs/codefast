@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.23
+
+### Patch Changes
+
+- Update eslint configuration in UI package
+
 ## 0.0.22
 
 ### Patch Changes

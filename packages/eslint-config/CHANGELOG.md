@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.16
+
+### Patch Changes
+
+- Remove eslint-config-turbo and rename file
+
 ## 0.0.15
 
 ### Patch Changes

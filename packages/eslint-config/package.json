@@ -1,11 +1,11 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "files": [
     "library.js",
     "next.js",
-    "react-internal.js"
+    "react.js"
   ],
   "scripts": {
     "clean": "rm -rf node_modules"
