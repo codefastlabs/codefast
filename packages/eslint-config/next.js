@@ -35,6 +35,14 @@ module.exports = {
         allowNumber: true,
       },
     ],
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
   },
   settings: {
     "import/resolver": {

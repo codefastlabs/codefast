@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.14
+
+### Patch Changes
+
+- Add rule for misused promises in Typescript
+
 ## 0.0.13
 
 ### Patch Changes
