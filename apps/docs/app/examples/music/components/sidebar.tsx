@@ -165,6 +165,7 @@ export function Sidebar({ className, playlists }: SidebarProps): JSX.Element {
           <ScrollArea className="h-[300px] px-1">
             <div className="space-y-1 p-2">
               {playlists.map((playlist, i) => (
+                // eslint-disable-next-line react/no-array-index-key -- This is a static list
                 <Button key={`${playlist}-${i}`} variant="ghost" className="w-full justify-start font-normal">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
