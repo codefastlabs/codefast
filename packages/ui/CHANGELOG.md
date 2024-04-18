@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.25
+
+### Patch Changes
+
+- Update package.json in UI package
+
 ## 0.0.24
 
 ### Patch Changes
