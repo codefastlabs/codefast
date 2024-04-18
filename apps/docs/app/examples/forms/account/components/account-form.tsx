@@ -96,8 +96,10 @@ export function AccountForm(): JSX.Element {
                   <FormControl>
                     <Button
                       variant="outline"
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined
                       className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                     >
+                      {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined */}
                       {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                       <CalendarIcon className="ml-auto size-4 opacity-50" />
                     </Button>
