@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import React from "react";
 import { Toaster } from "@codefast/ui/sonner";
+import { cn } from "@codefast/ui/utils";
 import { inter } from "@/lib/fonts";
 import { Providers } from "@/components/providers";
 
@@ -16,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>): React.JSX.Element {
   return (
-    <html lang="en">
-      <body className={inter.variable}>
+    <html lang="en" className={cn(inter.variable, "dark")}>
+      <body>
         <div vaul-drawer-wrapper="">
           <Providers>{children}</Providers>
         </div>
