@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.15
+
+### Patch Changes
+
+- Add Jest file overrides to eslint-config
+
 ## 0.0.14
 
 ### Patch Changes

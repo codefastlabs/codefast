@@ -16,6 +16,12 @@ module.exports = {
     JSX: true,
   },
   ignorePatterns: ["node_modules/", ".next/", ".eslintrc.js", "*.config.js"],
+  overrides: [
+    {
+      extends: [require.resolve("@vercel/style-guide/eslint/jest")],
+      files: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(test).[jt]s?(x)"],
+    },
+  ],
   parserOptions: {
     project,
   },
