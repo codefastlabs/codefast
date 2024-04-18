@@ -8,6 +8,7 @@ module.exports = {
     require.resolve("@vercel/style-guide/eslint/browser"),
     require.resolve("@vercel/style-guide/eslint/typescript"),
     require.resolve("@vercel/style-guide/eslint/react"),
+    "eslint-config-turbo",
   ],
   globals: {
     JSX: true,
