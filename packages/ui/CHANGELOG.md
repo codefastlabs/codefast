@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.27
+
+### Patch Changes
+
+- Update peer dependencies in UI package
+
 ## 0.0.26
 
 ### Patch Changes
