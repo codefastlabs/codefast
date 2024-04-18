@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.26
+
+### Patch Changes
+
+- Update animation assignments and sort direction import
+
 ## 0.0.25
 
 ### Patch Changes

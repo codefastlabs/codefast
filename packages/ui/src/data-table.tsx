@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import type * as ReactTable from "@tanstack/react-table";
-import { type SortDirection } from "@tanstack/react-table";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -223,7 +222,7 @@ function DataTableColumnHeader<TData, TValue>({
   );
 }
 
-function SortIcon({ sorted }: { sorted: false | SortDirection }): React.JSX.Element {
+function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): React.JSX.Element {
   switch (sorted) {
     case "desc":
       return <ArrowDownIcon className="ml-2 size-4" />;
