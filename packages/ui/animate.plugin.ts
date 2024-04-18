@@ -62,6 +62,7 @@ const animate = plugin(
     matchUtilities(
       {
         "animation-delay": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationDelay: value,
         }),
       },
@@ -74,6 +75,7 @@ const animate = plugin(
     matchUtilities(
       {
         "animation-direction": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationDirection: value,
         }),
       },
@@ -86,6 +88,7 @@ const animate = plugin(
     matchUtilities(
       {
         "animation-duration": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationDuration: value,
         }),
       },
@@ -98,6 +101,7 @@ const animate = plugin(
     matchUtilities(
       {
         "animation-fill-mode": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationFillMode: value,
         }),
       },
@@ -110,9 +114,11 @@ const animate = plugin(
     matchUtilities(
       {
         "fade-in": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-enter-opacity": value,
         }),
         "fade-out": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-exit-opacity": value,
         }),
       },
@@ -125,6 +131,7 @@ const animate = plugin(
     matchUtilities(
       {
         "animation-repeat": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationIterationCount: value,
         }),
       },
@@ -137,9 +144,11 @@ const animate = plugin(
     matchUtilities(
       {
         "spin-in": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-enter-rotate": value,
         }),
         "spin-out": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-exit-rotate": value,
         }),
       },
@@ -152,9 +161,11 @@ const animate = plugin(
     matchUtilities(
       {
         "zoom-in": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-enter-scale": value,
         }),
         "zoom-out": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-exit-scale": value,
         }),
       },
@@ -167,6 +178,7 @@ const animate = plugin(
     matchUtilities(
       {
         "animation-ease": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationTimingFunction: value,
         }),
       },
@@ -183,6 +195,7 @@ const animate = plugin(
         }),
 
         "slide-in-from-bottom": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-enter-translate-y": value,
         }),
 
@@ -191,6 +204,7 @@ const animate = plugin(
         }),
 
         "slide-in-from-right": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-enter-translate-x": value,
         }),
 
@@ -199,6 +213,7 @@ const animate = plugin(
         }),
 
         "slide-out-to-bottom": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-exit-translate-y": value,
         }),
 
@@ -207,6 +222,7 @@ const animate = plugin(
         }),
 
         "slide-out-to-right": (value) => ({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           "--animate-exit-translate-x": value,
         }),
       },
