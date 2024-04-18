@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.18
+
+### Patch Changes
+
+- Remove "eslint-config-turbo" from ESLint configurations
+
 ## 0.0.17
 
 ### Patch Changes
