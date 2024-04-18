@@ -9,7 +9,8 @@
     "dev": "next dev --turbo",
     "dev-storybook": "storybook dev -p 6006 --no-open",
     "lint": "next lint",
-    "start": "serve storybook-static",
+    "start": "next start",
+    "start-storybook": "serve storybook-static",
     "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
