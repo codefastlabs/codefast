@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.33
+
+### Patch Changes
+
+- Added base.plugin.ts to package.json
+
 ## 0.0.32
 
 ### Patch Changes
