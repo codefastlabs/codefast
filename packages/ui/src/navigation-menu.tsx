@@ -10,7 +10,7 @@ import { cn, cva } from "./utils";
  * -------------------------------------------------------------------------- */
 
 const navigationMenuTriggerVariants = cva({
-  base: "bg-background hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent/50 data-[active]:bg-accent/50 group inline-flex h-10 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50",
+  base: "bg-background hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent/50 data-[active]:bg-accent/50 group inline-flex h-10 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition focus:outline disabled:pointer-events-none disabled:opacity-50",
 });
 
 /* -----------------------------------------------------------------------------

@@ -8,6 +8,9 @@ const base = plugin(({ addBase }) => {
     body: {
       "@apply bg-background text-foreground": "",
     },
+    ":focus-visible": {
+      "@apply outline-ring": "",
+    },
   });
 });
 
