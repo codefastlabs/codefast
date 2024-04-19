@@ -4,7 +4,15 @@ import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from "@cod
 import { useRouter } from "next/navigation";
 import { Button } from "@codefast/ui/button";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@codefast/ui/command";
 import { cn } from "@codefast/ui/utils";
 import { type JSX, useState } from "react";
 import { type Preset } from "@/app/examples/playground/data/presets";
@@ -53,7 +61,8 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
                 </CommandItem>
               ))}
             </CommandGroup>
-            <CommandGroup className="pt-0">
+            <CommandSeparator />
+            <CommandGroup>
               <CommandItem
                 onSelect={() => {
                   router.push("/examples");

@@ -19,7 +19,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter tasks..."
-          value={String(table.getColumn("title")?.getFilterValue())}
+          value={String(table.getColumn("title")?.getFilterValue() ?? "")}
           onChange={(event) => table.getColumn("title")?.setFilterValue(event.target.value)}
           className="h-8 w-[150px] lg:w-64"
         />

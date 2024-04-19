@@ -27,7 +27,7 @@ export const Default: Story = {
         <TabsTrigger value="account">Account</TabsTrigger>
         <TabsTrigger value="password">Password</TabsTrigger>
       </TabsList>
-      <TabsContent className="rounded-md" value="account">
+      <TabsContent value="account">
         <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
@@ -48,7 +48,7 @@ export const Default: Story = {
           </CardFooter>
         </Card>
       </TabsContent>
-      <TabsContent className="rounded-md" value="password">
+      <TabsContent value="password">
         <Card>
           <CardHeader>
             <CardTitle>Password</CardTitle>
