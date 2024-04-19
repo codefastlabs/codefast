@@ -2,11 +2,12 @@ import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 import animate from "./animate.plugin";
 import perspective from "./perspective.plugin";
+import base from "./base.plugin";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   darkMode: ["class"],
-  plugins: [animate, perspective],
+  plugins: [animate, perspective, base],
   theme: {
     extend: {
       animation: {
@@ -102,6 +103,15 @@ const config: Config = {
             opacity: "0",
           },
         },
+      },
+      outlineColor: {
+        DEFAULT: "hsl(var(--ring))",
+      },
+      ringColor: {
+        DEFAULT: "hsl(var(--ring))",
+      },
+      ringOffsetColor: {
+        DEFAULT: "hsl(var(--background))",
       },
       spacing: {
         0.75: "0.1875rem", // 3px
