@@ -105,16 +105,4 @@
     /* slate.500 */
     --compound: 215.4deg 16.3% 46.9%;
   }
-
-  .dark {
-    color-scheme: dark;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
-
-  :focus-visible {
-    @apply outline-primary;
-  }
 }
