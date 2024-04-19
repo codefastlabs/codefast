@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.30
+
+### Patch Changes
+
+- Update UI components with ring offset background
+
 ## 0.0.29
 
 ### Patch Changes

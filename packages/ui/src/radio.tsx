@@ -21,7 +21,7 @@ const Radio = React.forwardRef<RadioElement, RadioProps>(({ className, onValueCh
       type="radio"
       onChange={composeEventHandlers(onChange, (event) => onValueChange?.(event.currentTarget.value))}
       className={cn(
-        "before:border-compound/70 hover:before:border-compound checked:before:border-primary checked:after:bg-primary focus-visible:ring-ring peer relative flex appearance-none items-center justify-center rounded-full before:size-4 before:rounded-full before:border checked:after:absolute checked:after:size-2.5 checked:after:rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "before:border-compound/70 hover:before:border-compound checked:before:border-primary checked:after:bg-primary focus-visible:ring-ring focus-visible:ring-offset-background peer relative flex appearance-none items-center justify-center rounded-full before:size-4 before:rounded-full before:border checked:after:absolute checked:after:size-2.5 checked:after:rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}

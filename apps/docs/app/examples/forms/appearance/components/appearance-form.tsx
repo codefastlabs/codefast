@@ -5,11 +5,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@codefast/ui/sonner";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
-import { cn } from "@codefast/ui/utils";
-import { Button, buttonVariants } from "@codefast/ui/button";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { Button } from "@codefast/ui/button";
 import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
 import { type JSX } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 
 const appearanceFormSchema = z.object({
   theme: z.enum(["light", "dark"], {
@@ -53,19 +52,18 @@ export function AppearanceForm(): JSX.Element {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Font</FormLabel>
-              <div className="relative w-max">
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <select
-                    className={cn(buttonVariants({ variant: "outline" }), "w-[200px] appearance-none font-normal")}
-                    {...field}
-                  >
-                    <option value="inter">Inter</option>
-                    <option value="manrope">Manrope</option>
-                    <option value="system">System</option>
-                  </select>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select a font" />
+                  </SelectTrigger>
                 </FormControl>
-                <ChevronDownIcon className="absolute right-3 top-2.5 size-4 opacity-50" />
-              </div>
+                <SelectContent>
+                  <SelectItem value="inter">Inter</SelectItem>
+                  <SelectItem value="manrope">Manrope</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
               <FormDescription>Set the font you want to use in the dashboard.</FormDescription>
               <FormMessage />
             </FormItem>

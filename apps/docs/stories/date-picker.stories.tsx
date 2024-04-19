@@ -130,7 +130,7 @@ export const WithPresets: Story = {
             <SelectTrigger>
               <SelectValue placeholder="Select" />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent>
               <SelectItem value="0">Today</SelectItem>
               <SelectItem value="1">Tomorrow</SelectItem>
               <SelectItem value="3">In 3 days</SelectItem>

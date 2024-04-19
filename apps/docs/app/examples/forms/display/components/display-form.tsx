@@ -37,9 +37,7 @@ const items = [
 ] as const;
 
 const displayFormSchema = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
+  items: z.array(z.string().trim()).min(1, "You have to select at least one item."),
 });
 
 type DisplayFormValues = z.infer<typeof displayFormSchema>;
