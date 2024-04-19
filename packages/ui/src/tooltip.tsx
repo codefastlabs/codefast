@@ -33,7 +33,7 @@ type TooltipContentElement = React.ElementRef<typeof TooltipPrimitive.Content>;
 type TooltipContentProps = React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>;
 
 const TooltipContent = React.forwardRef<TooltipContentElement, TooltipContentProps>(
-  ({ className, sideOffset = 4, ...props }, ref) => (
+  ({ className, sideOffset = 6, ...props }, ref) => (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
         ref={ref}

@@ -101,7 +101,7 @@ type DropdownMenuContentElement = React.ElementRef<typeof DropdownMenuPrimitive.
 type DropdownMenuContentProps = React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>;
 
 const DropdownMenuContent = React.forwardRef<DropdownMenuContentElement, DropdownMenuContentProps>(
-  ({ className, sideOffset = 4, ...props }, ref) => (
+  ({ className, sideOffset = 6, ...props }, ref) => (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         ref={ref}
@@ -133,7 +133,7 @@ const DropdownMenuItem = React.forwardRef<DropdownMenuItemElement, DropdownMenuI
     <DropdownMenuPrimitive.Item
       ref={ref}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm transition-colors aria-disabled:pointer-events-none aria-disabled:opacity-50",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm transition focus:outline aria-disabled:pointer-events-none aria-disabled:opacity-50",
         inset && "pl-8",
         className,
       )}
@@ -156,7 +156,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<DropdownMenuCheckboxItemElemen
     <DropdownMenuPrimitive.CheckboxItem
       ref={ref}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm transition-colors aria-disabled:pointer-events-none aria-disabled:opacity-50",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm transition focus:outline aria-disabled:pointer-events-none aria-disabled:opacity-50",
         className,
       )}
       checked={checked}
@@ -186,7 +186,7 @@ const DropdownMenuRadioItem = React.forwardRef<DropdownMenuRadioItemElement, Dro
     <DropdownMenuPrimitive.RadioItem
       ref={ref}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm transition-colors aria-disabled:pointer-events-none aria-disabled:opacity-50",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm transition focus:outline aria-disabled:pointer-events-none aria-disabled:opacity-50",
         className,
       )}
       {...props}

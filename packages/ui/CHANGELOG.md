@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.32
+
+### Patch Changes
+
+- Simplify transition styles and increase sideOffset for UI components
+
 ## 0.0.31
 
 ### Patch Changes
