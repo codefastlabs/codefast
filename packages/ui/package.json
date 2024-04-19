@@ -1,6 +1,6 @@
 {
   "name": "@codefast/ui",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "license": "MIT",
   "sideEffects": [
     "**/*.css"
@@ -332,6 +332,7 @@
     "dist",
     "src",
     "animate.plugin.ts",
+    "base.plugin.ts",
     "perspective.plugin.ts",
     "tailwind.config.ts"
   ],
