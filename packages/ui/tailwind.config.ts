@@ -115,6 +115,7 @@ const config: Config = {
       },
       spacing: {
         0.75: "0.1875rem", // 3px
+        18: "4.5rem", // 72px
       },
       transitionDuration: {
         250: "250ms",
