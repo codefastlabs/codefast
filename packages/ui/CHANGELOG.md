@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.31
+
+### Patch Changes
+
+- Update UI components and add tailwindcss plugin
+
 ## 0.0.30
 
 ### Patch Changes
