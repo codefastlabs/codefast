@@ -14,6 +14,9 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
+      borderColor: {
+        DEFAULT: "hsl(var(--border))",
+      },
       borderRadius: {
         sm: "calc(var(--radius, 0.25rem) - 0.125px)", // 2px
         DEFAULT: "var(--radius, 0.25rem)", // 4px
