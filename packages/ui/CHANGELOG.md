@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.29
+
+### Patch Changes
+
+- Update react-resizable-panels and @types/eslint versions
+
 ## 0.0.28
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@codefast/ui",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "license": "MIT",
   "sideEffects": [
     "**/*.css"
@@ -384,7 +384,7 @@
     "next-themes": "^0.3.0",
     "react-day-picker": "^8.10.1",
     "react-hook-form": "^7.51.3",
-    "react-resizable-panels": "^2.0.17",
+    "react-resizable-panels": "^2.0.18",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
     "vaul": "^0.9.0"
@@ -392,7 +392,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@types/eslint": "^8.56.9",
+    "@types/eslint": "^8.56.10",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.79",
     "autoprefixer": "^10.4.19",
