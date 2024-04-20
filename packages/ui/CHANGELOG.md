@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.34
+
+### Patch Changes
+
+- Update minimum width and text size across UI components
+
 ## 0.0.33
 
 ### Patch Changes
