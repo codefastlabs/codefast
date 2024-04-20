@@ -1,7 +1,6 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@codefast/ui/sonner";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
@@ -14,6 +13,8 @@ import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { Calendar } from "@codefast/ui/calendar";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
 import { type JSX } from "react";
+import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form-schema";
+import updateAccount from "@/app/examples/forms/account/actions/account-form-actions";
 
 const languages = [
   { label: "English", value: "en" },
@@ -27,25 +28,6 @@ const languages = [
   { label: "Chinese", value: "zh" },
 ] as const;
 
-const accountFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Name must not be longer than 30 characters.",
-    }),
-  dob: z.date({
-    required_error: "A date of birth is required.",
-  }),
-  language: z.string({
-    required_error: "Please select a language.",
-  }),
-});
-
-type AccountFormValues = z.infer<typeof accountFormSchema>;
-
 // This can come from your database or API.
 const defaultValues: Partial<AccountFormValues> = {
   // name: "Your name",
@@ -58,15 +40,24 @@ export function AccountForm(): JSX.Element {
     defaultValues,
   });
 
-  function onSubmit(data: AccountFormValues): void {
-    toast.message("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  const onSubmit: SubmitHandler<AccountFormValues> = async (data): Promise<void> => {
+    const { message, errors, success } = await updateAccount(data);
+
+    if (success) {
+      toast.success(message);
+      return;
+    }
+
+    toast.error(message);
+
+    if (!errors) {
+      return;
+    }
+
+    Object.entries(errors).forEach(([field, error]) => {
+      form.setError(field as keyof AccountFormValues, { type: "manual", message: error[0] });
     });
-  }
+  };
 
   return (
     <Form {...form}>
@@ -78,7 +69,7 @@ export function AccountForm(): JSX.Element {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} />
+                <Input placeholder="Your name" {...field} disabled={field.disabled ?? form.formState.isSubmitting} />
               </FormControl>
               <FormDescription>This is the name that will be displayed on your profile and in emails.</FormDescription>
               <FormMessage />
@@ -97,7 +88,8 @@ export function AccountForm(): JSX.Element {
                     <Button
                       variant="outline"
                       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined
-                      className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                      className={cn("w-56 pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                      disabled={field.disabled ?? form.formState.isSubmitting}
                     >
                       {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined */}
                       {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
@@ -132,7 +124,8 @@ export function AccountForm(): JSX.Element {
                     <Button
                       variant="outline"
                       role="combobox"
-                      className={cn("w-[200px] justify-between", !field.value && "text-muted-foreground")}
+                      className={cn("w-56 justify-between", !field.value && "text-muted-foreground")}
+                      disabled={field.disabled ?? form.formState.isSubmitting}
                     >
                       {field.value
                         ? languages.find((language) => language.value === field.value)?.label
@@ -141,7 +134,7 @@ export function AccountForm(): JSX.Element {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
+                <PopoverContent className="w-56 p-0">
                   <Command>
                     <CommandInput placeholder="Search language..." />
                     <CommandList>
@@ -152,7 +145,7 @@ export function AccountForm(): JSX.Element {
                             value={language.label}
                             key={language.value}
                             onSelect={() => {
-                              form.setValue("language", language.value);
+                              field.onChange(language.value);
                             }}
                           >
                             <CheckIcon
@@ -174,7 +167,9 @@ export function AccountForm(): JSX.Element {
             </FormItem>
           )}
         />
-        <Button type="submit">Update account</Button>
+        <Button type="submit" loading={form.formState.isSubmitting}>
+          Update account
+        </Button>
       </form>
     </Form>
   );

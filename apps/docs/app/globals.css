@@ -68,10 +68,10 @@
     --card: 222.2deg 84% 4.9%;
     /* slate.50 */
     --card-foreground: 210deg 40% 98%;
-    /* red.900 */
-    --destructive: 0deg 62.8% 30.6%;
-    /* slate.50 */
-    --destructive-foreground: 210deg 40% 98%;
+    /* red.500 */
+    --destructive: 0deg 84.2% 60.2%;
+    /* slate.950 */
+    --destructive-foreground: 0deg 74.68% 15.49%;
     /* slate.50 */
     --foreground: 210deg 40% 98%;
     --info: ;
