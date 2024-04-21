@@ -29,7 +29,7 @@ interface CheckboxCardsItemProps extends React.ComponentPropsWithoutRef<typeof C
 }
 
 const CheckboxCardsItem = React.forwardRef<CheckboxCardsItemElement, CheckboxCardsItemProps>(
-  ({ className, children, checkboxClassName, ...props }, ref) => {
+  ({ children, className, checkboxClassName, ...props }, ref) => {
     return (
       <label
         className={cn(
