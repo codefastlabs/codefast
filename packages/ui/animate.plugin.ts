@@ -87,7 +87,7 @@ const animate = plugin(
     // Delay
     matchUtilities(
       {
-        "animation-delay": (value) => ({
+        "animate-delay": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationDelay: value,
         }),
@@ -100,7 +100,7 @@ const animate = plugin(
     // Direction
     matchUtilities(
       {
-        "animation-direction": (value) => ({
+        "animate-direction": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationDirection: value,
         }),
@@ -113,7 +113,7 @@ const animate = plugin(
     // Duration
     matchUtilities(
       {
-        "animation-duration": (value) => ({
+        "animate-duration": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationDuration: value,
         }),
@@ -126,7 +126,7 @@ const animate = plugin(
     // Fill mode
     matchUtilities(
       {
-        "animation-fill-mode": (value) => ({
+        "animate-fill-mode": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationFillMode: value,
         }),
@@ -156,7 +156,7 @@ const animate = plugin(
     // Repeat
     matchUtilities(
       {
-        "animation-repeat": (value) => ({
+        "animate-repeat": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationIterationCount: value,
         }),
@@ -203,7 +203,7 @@ const animate = plugin(
     // Timing function
     matchUtilities(
       {
-        "animation-ease": (value) => ({
+        "animate-ease": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
           animationTimingFunction: value,
         }),
