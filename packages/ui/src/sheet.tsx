@@ -11,7 +11,7 @@ import { cn, cva } from "./utils";
  * -------------------------------------------------------------------------- */
 
 const sheetVariants = cva({
-  base: "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out animation-ease-in-out data-[state=closed]:animation-duration-300 data-[state=open]:animation-duration-500 fixed z-50 gap-4 p-6 shadow-lg",
+  base: "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out animate-ease-in-out data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 fixed z-50 gap-4 p-6 shadow-lg",
   variants: {
     side: {
       top: "data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top inset-x-0 top-0 border-b",
@@ -60,7 +60,7 @@ type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Co
 const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
   ({ side = "right", className, children, ...props }, ref) => (
     <SheetPrimitive.Portal>
-      <SheetPrimitive.Overlay className="data-[state=open]:animate-in animation-duration-200 data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 fixed inset-0 z-50 bg-black/80" />
+      <SheetPrimitive.Overlay className="data-[state=open]:animate-in animate-duration-200 data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 fixed inset-0 z-50 bg-black/80" />
       <SheetPrimitive.Content ref={ref} className={sheetVariants({ side, className })} {...props}>
         {children}
         <SheetPrimitive.Close className="data-[state=open]:bg-secondary absolute right-4 top-4 rounded-sm opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none">
