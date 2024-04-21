@@ -11,6 +11,10 @@ const base = plugin(({ addBase }) => {
     ":focus-visible": {
       "@apply outline-ring": "",
     },
+    "button, [role='button'], input:where([type='button']), input:where([type='reset']), input:where([type='submit'])":
+      {
+        "@apply outline-transparent": "",
+      },
   });
 });
 
