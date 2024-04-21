@@ -15,7 +15,7 @@ interface SpinnerProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
-  ({ className, loading = true, children, ...props }, ref) => {
+  ({ children, className, loading = true, ...props }, ref) => {
     if (!loading) {
       return children;
     }
