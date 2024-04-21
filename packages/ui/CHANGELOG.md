@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.0.35
+
+### Patch Changes
+
+- Adjust animation durations across UI components
+- Refactor UI component styles for visual consistency
+- Update animation slide position in Dialog, Alert Dialog and Sheet
+- Refactor code to reorganize properties and adjust animation duration
+- Update animation-related class names
+- Update animation and navigation plugins in UI package
+- Refactor Accordion to Collapsible component
+
 ## 0.0.34
 
 ### Patch Changes
