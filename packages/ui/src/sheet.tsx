@@ -11,7 +11,7 @@ import { cn, cva } from "./utils";
  * -------------------------------------------------------------------------- */
 
 const sheetVariants = cva({
-  base: "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out animate-ease-in-out data-[state=open]:animate-duration-500 fixed z-50 gap-4 p-6 shadow-lg",
+  base: "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out animate-ease-in-out fixed z-50 gap-4 p-6 shadow-lg",
   variants: {
     side: {
       top: "data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top inset-x-0 top-0 border-b",
