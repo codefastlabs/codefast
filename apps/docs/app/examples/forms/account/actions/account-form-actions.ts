@@ -1,14 +1,8 @@
 "use server";
 
 import { wait } from "next/dist/lib/wait";
-import { type typeToFlattenedError as TypeToFlattenedError } from "zod";
 import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form-schema";
-
-export interface FormState<T> {
-  errors?: TypeToFlattenedError<T>["fieldErrors"];
-  message: string;
-  success: boolean;
-}
+import { type FormState } from "@/lib/types";
 
 export default async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
   try {
@@ -24,7 +18,7 @@ export default async function updateAccount(data: AccountFormValues): Promise<Fo
     }
 
     // Update the account.
-    await wait(100);
+    await wait(250);
 
     return {
       message: "Account updated successfully!",
