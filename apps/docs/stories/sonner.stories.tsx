@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Box className="pb-40">
+    <Box className="h-96">
       <Button
         variant="outline"
         onClick={() =>
