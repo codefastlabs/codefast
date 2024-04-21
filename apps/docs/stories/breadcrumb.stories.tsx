@@ -24,7 +24,7 @@ import {
 } from "@codefast/ui/drawer";
 import { Button } from "@codefast/ui/button";
 import { Box } from "@codefast/ui/box";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 
 const meta = {
   component: Breadcrumb,

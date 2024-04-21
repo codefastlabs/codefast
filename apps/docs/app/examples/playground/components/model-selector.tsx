@@ -9,7 +9,7 @@ import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
 import { cn } from "@codefast/ui/utils";
 import { type Model, type ModelType } from "@/app/examples/playground/data/models";
-import { useMutationObserver } from "@/hooks/use-mutation-observer";
+import { useMutationObserver } from "@/lib/hooks/use-mutation-observer";
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[];

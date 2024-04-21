@@ -25,7 +25,7 @@ import { cn } from "@codefast/ui/utils";
 import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
 import { Box } from "@codefast/ui/box";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 
 const meta = {
   component: Drawer,

@@ -4,13 +4,13 @@ import { wait } from "next/dist/lib/wait";
 import { type typeToFlattenedError as TypeToFlattenedError } from "zod";
 import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form-schema";
 
-export interface FormState {
-  errors?: TypeToFlattenedError<AccountFormValues>["fieldErrors"];
+export interface FormState<T> {
+  errors?: TypeToFlattenedError<T>["fieldErrors"];
   message: string;
   success: boolean;
 }
 
-export default async function updateAccount(data: AccountFormValues): Promise<FormState> {
+export default async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
   try {
     const validatedFields = accountFormSchema.safeParse(data);
 
