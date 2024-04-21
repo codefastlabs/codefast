@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import "@/app/globals.css";
+import "@/styles/globals.css";
 import React from "react";
 import { Toaster } from "@codefast/ui/sonner";
 import { cn } from "@codefast/ui/utils";
-import { inter } from "@/lib/fonts";
+import { inter } from "@/styles/fonts";
 import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
