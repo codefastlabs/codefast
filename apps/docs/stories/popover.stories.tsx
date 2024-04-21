@@ -35,22 +35,22 @@ export const Default: Story = {
             </Heading>
             <Text className="text-muted-foreground text-sm">Set the dimensions for the layer.</Text>
           </Box>
-          <Box className="grid gap-2">
+          <Box className="grid gap-3">
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="width">Width</Label>
-              <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
+              <Input id="width" defaultValue="100%" className="col-span-2" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Max. width</Label>
-              <Input id="maxWidth" defaultValue="300px" className="col-span-2 h-8" />
+              <Label htmlFor="maxWidth">Max width</Label>
+              <Input id="maxWidth" defaultValue="300px" className="col-span-2" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="height">Height</Label>
-              <Input id="height" defaultValue="25px" className="col-span-2 h-8" />
+              <Input id="height" defaultValue="25px" className="col-span-2" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="maxHeight">Max. height</Label>
-              <Input id="maxHeight" defaultValue="none" className="col-span-2 h-8" />
+              <Input id="maxHeight" defaultValue="none" className="col-span-2" />
             </Box>
           </Box>
         </Box>

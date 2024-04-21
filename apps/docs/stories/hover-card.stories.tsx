@@ -33,7 +33,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => (
-    <HoverCard {...args}>
+    <HoverCard {...args} openDelay={150} closeDelay={150}>
       <HoverCardTrigger asChild>
         <Button variant="link">@nextjs</Button>
       </HoverCardTrigger>
