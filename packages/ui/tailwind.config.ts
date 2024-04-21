@@ -11,9 +11,9 @@ const config: Config = {
   theme: {
     extend: {
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "collapsible-open": "collapsible-open 0.2s ease-in-out",
+        "collapsible-closed": "collapsible-closed 0.2s ease-in-out",
+        "caret-blink": "caret-blink 1.25s ease-in-out infinite",
       },
       borderColor: {
         DEFAULT: "hsl(var(--border))",
@@ -79,17 +79,17 @@ const config: Config = {
         sans: `var(--font-sans, ${fontFamily.sans.join(", ")})`,
       },
       keyframes: {
-        "accordion-down": {
+        "collapsible-open": {
           from: {
             height: "0",
           },
           to: {
-            height: "var(--radix-accordion-content-height)",
+            height: "var(--radix-collapsible-content-height)",
           },
         },
-        "accordion-up": {
+        "collapsible-closed": {
           from: {
-            height: "var(--radix-accordion-content-height)",
+            height: "var(--radix-collapsible-content-height)",
           },
           to: {
             height: "0",
