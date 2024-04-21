@@ -41,7 +41,7 @@ Alert.displayName = "Alert";
 type AlertTitleElement = HTMLHeadingElement;
 type AlertTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
 
-const AlertTitle = React.forwardRef<AlertTitleElement, AlertTitleProps>(({ className, children, ...props }, ref) => (
+const AlertTitle = React.forwardRef<AlertTitleElement, AlertTitleProps>(({ children, className, ...props }, ref) => (
   <h5 ref={ref} className={cn("mb-1 font-medium leading-none tracking-tight", className)} {...props}>
     {children}
   </h5>

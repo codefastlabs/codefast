@@ -34,7 +34,7 @@ type SelectTriggerElement = React.ElementRef<typeof SelectPrimitive.Trigger>;
 type SelectTriggerProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>;
 
 const SelectTrigger = React.forwardRef<SelectTriggerElement, SelectTriggerProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ children, className, ...props }, ref) => (
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
@@ -103,12 +103,12 @@ type SelectContentElement = React.ElementRef<typeof SelectPrimitive.Content>;
 type SelectContentProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>;
 
 const SelectContent = React.forwardRef<SelectContentElement, SelectContentProps>(
-  ({ className, children, position = "popper", ...props }, ref) => (
+  ({ children, className, position = "popper", ...props }, ref) => (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         ref={ref}
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 relative z-50 max-h-96 min-w-32 overflow-hidden rounded-md border shadow-md",
+          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 relative z-50 max-h-96 min-w-32 overflow-hidden rounded-md border shadow-md",
           position === "popper" &&
             "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className,
@@ -154,7 +154,7 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
 type SelectItemElement = React.ElementRef<typeof SelectPrimitive.Item>;
 type SelectItemProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>;
 
-const SelectItem = React.forwardRef<SelectItemElement, SelectItemProps>(({ className, children, ...props }, ref) => (
+const SelectItem = React.forwardRef<SelectItemElement, SelectItemProps>(({ children, className, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
     className={cn(

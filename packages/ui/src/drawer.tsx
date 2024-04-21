@@ -36,7 +36,7 @@ type DrawerContentElement = React.ElementRef<typeof DrawerPrimitive.Content>;
 type DrawerContentProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>;
 
 const DrawerContent = React.forwardRef<DrawerContentElement, DrawerContentProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ children, className, ...props }, ref) => (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80" />
       <DrawerPrimitive.Content

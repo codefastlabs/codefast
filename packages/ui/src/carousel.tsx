@@ -49,7 +49,7 @@ type CarouselProps = React.HTMLAttributes<HTMLDivElement> & BaseCarouselProps;
 
 const Carousel = React.forwardRef<CarouselElement, CarouselProps>(
   (
-    { __scopeCarousel, orientation, opts, setApi, plugins, className, children, ...props }: ScopedProps<CarouselProps>,
+    { __scopeCarousel, children, orientation, opts, setApi, plugins, className, ...props }: ScopedProps<CarouselProps>,
     ref,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(

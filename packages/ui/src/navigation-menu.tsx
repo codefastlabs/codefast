@@ -21,7 +21,7 @@ type NavigationMenuElement = React.ElementRef<typeof NavigationMenuPrimitive.Roo
 type NavigationMenuProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>;
 
 const NavigationMenu = React.forwardRef<NavigationMenuElement, NavigationMenuProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ children, className, ...props }, ref) => (
     <NavigationMenuPrimitive.Root
       ref={ref}
       className={cn("relative z-10 flex max-w-max flex-1 items-center justify-center", className)}
@@ -73,7 +73,7 @@ type NavigationMenuTriggerElement = React.ElementRef<typeof NavigationMenuPrimit
 type NavigationMenuTriggerProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>;
 
 const NavigationMenuTrigger = React.forwardRef<NavigationMenuTriggerElement, NavigationMenuTriggerProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ children, className, ...props }, ref) => (
     <NavigationMenuPrimitive.Trigger
       ref={ref}
       className={navigationMenuTriggerVariants({

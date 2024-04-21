@@ -33,7 +33,7 @@ type AccordionTriggerElement = React.ElementRef<typeof AccordionPrimitive.Trigge
 type AccordionTriggerProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
 
 const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTriggerProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ children, className, ...props }, ref) => (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         ref={ref}
@@ -41,7 +41,7 @@ const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTrig
         {...props}
       >
         {children}
-        <ChevronDownIcon className="text-muted-foreground size-4 shrink-0 transition duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronDownIcon className="text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-180" />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   ),
@@ -57,7 +57,7 @@ type AccordionContentElement = React.ElementRef<typeof AccordionPrimitive.Conten
 type AccordionContentProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>;
 
 const AccordionContent = React.forwardRef<AccordionContentElement, AccordionContentProps>(
-  ({ className, children, ...props }, ref) => (
+  ({ children, className, ...props }, ref) => (
     <AccordionPrimitive.Content
       ref={ref}
       className="data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden text-sm"
