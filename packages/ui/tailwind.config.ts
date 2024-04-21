@@ -11,9 +11,9 @@ const config: Config = {
   theme: {
     extend: {
       animation: {
-        "collapsible-open": "collapsible-open 0.2s ease-in-out",
-        "collapsible-closed": "collapsible-closed 0.2s ease-in-out",
-        "caret-blink": "caret-blink 1.25s ease-in-out infinite",
+        "collapsible-open": "collapsible-open 200ms ease",
+        "collapsible-closed": "collapsible-closed 200ms ease",
+        "caret-blink": "caret-blink 1000ms ease infinite",
       },
       borderColor: {
         DEFAULT: "hsl(var(--border))",

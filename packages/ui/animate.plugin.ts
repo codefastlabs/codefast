@@ -7,46 +7,70 @@ const animate = plugin(
   ({ addUtilities, matchUtilities, theme }) => {
     // Keyframes
     addUtilities({
-      "@keyframes enter": {
+      "@keyframes in": {
         from: {
-          opacity: "var(--animate-enter-opacity, 1)",
+          opacity: "var(--animate-in-opacity, 1)",
           transform: [
-            "translate3d(var(--animate-enter-translate-x, 0), var(--animate-enter-translate-y, 0), 0)",
-            "scale3d(var(--animate-enter-scale, 1), var(--animate-enter-scale, 1), var(--animate-enter-scale, 1))",
-            "rotate(var(--animate-enter-rotate, 0))",
+            "translate3d(var(--animate-in-translate-x, 0), var(--animate-in-translate-y, 0), 0)",
+            "scale3d(var(--animate-in-scale, 1), var(--animate-in-scale, 1), var(--animate-in-scale, 1))",
+            "rotate(var(--animate-in-rotate, 0))",
           ].join(" "),
         },
       },
 
-      "@keyframes exit": {
+      "@keyframes out": {
         to: {
-          opacity: "var(--animate-exit-opacity, 1)",
+          opacity: "var(--animate-out-opacity, 1)",
           transform: [
-            "translate3d(var(--animate-exit-translate-x, 0), var(--animate-exit-translate-y, 0), 0)",
-            "scale3d(var(--animate-exit-scale, 1), var(--animate-exit-scale, 1), var(--animate-exit-scale, 1))",
-            "rotate(var(--animate-exit-rotate, 0))",
+            "translate3d(var(--animate-out-translate-x, 0), var(--animate-out-translate-y, 0), 0)",
+            "scale3d(var(--animate-out-scale, 1), var(--animate-out-scale, 1), var(--animate-out-scale, 1))",
+            "rotate(var(--animate-out-rotate, 0))",
           ].join(" "),
+        },
+      },
+
+      "@keyframes fade-in": {
+        from: {
+          opacity: "var(--animate-in-opacity, 0)",
+        },
+      },
+
+      "@keyframes fade-out": {
+        to: {
+          opacity: "var(--animate-out-opacity, 0)",
         },
       },
 
       ".animate-in": {
-        animationName: "enter",
+        animationName: "in",
         animationDuration: theme("animationDuration.DEFAULT"),
-        "--animate-enter-opacity": "initial",
-        "--animate-enter-scale": "initial",
-        "--animate-enter-rotate": "initial",
-        "--animate-enter-translate-x": "initial",
-        "--animate-enter-translate-y": "initial",
+        "--animate-in-opacity": "initial",
+        "--animate-in-scale": "initial",
+        "--animate-in-rotate": "initial",
+        "--animate-in-translate-x": "initial",
+        "--animate-in-translate-y": "initial",
       },
 
       ".animate-out": {
-        animationName: "exit",
+        animationName: "out",
         animationDuration: theme("animationDuration.DEFAULT"),
-        "--animate-exit-opacity": "initial",
-        "--animate-exit-scale": "initial",
-        "--animate-exit-rotate": "initial",
-        "--animate-exit-translate-x": "initial",
-        "--animate-exit-translate-y": "initial",
+        "--animate-out-opacity": "initial",
+        "--animate-out-scale": "initial",
+        "--animate-out-rotate": "initial",
+        "--animate-out-translate-x": "initial",
+        "--animate-out-translate-y": "initial",
+      },
+
+      ".animate-fade-in": {
+        animationName: "fade-in",
+        animationDuration: theme("animationDuration.DEFAULT"),
+        "--animate-in-opacity": "initial",
+      },
+
+      ".animate-fade-out": {
+        animationName: "fade-out",
+        animationDuration: theme("animationDuration.DEFAULT"),
+        "--animate-out-opacity": "initial",
       },
     });
 
@@ -117,11 +141,11 @@ const animate = plugin(
       {
         "fade-in": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-enter-opacity": value,
+          "--animate-in-opacity": value,
         }),
         "fade-out": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-exit-opacity": value,
+          "--animate-out-opacity": value,
         }),
       },
       {
@@ -147,11 +171,11 @@ const animate = plugin(
       {
         "spin-in": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-enter-rotate": value,
+          "--animate-in-rotate": value,
         }),
         "spin-out": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-exit-rotate": value,
+          "--animate-out-rotate": value,
         }),
       },
       {
@@ -164,11 +188,11 @@ const animate = plugin(
       {
         "zoom-in": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-enter-scale": value,
+          "--animate-in-scale": value,
         }),
         "zoom-out": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-exit-scale": value,
+          "--animate-out-scale": value,
         }),
       },
       {
@@ -193,39 +217,39 @@ const animate = plugin(
     matchUtilities(
       {
         "slide-in-from-top": (value) => ({
-          "--animate-enter-translate-y": `-${value}`,
+          "--animate-in-translate-y": `-${value}`,
         }),
 
         "slide-in-from-bottom": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-enter-translate-y": value,
+          "--animate-in-translate-y": value,
         }),
 
         "slide-in-from-left": (value) => ({
-          "--animate-enter-translate-x": `-${value}`,
+          "--animate-in-translate-x": `-${value}`,
         }),
 
         "slide-in-from-right": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-enter-translate-x": value,
+          "--animate-in-translate-x": value,
         }),
 
         "slide-out-to-top": (value) => ({
-          "--animate-exit-translate-y": `-${value}`,
+          "--animate-out-translate-y": `-${value}`,
         }),
 
         "slide-out-to-bottom": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-exit-translate-y": value,
+          "--animate-out-translate-y": value,
         }),
 
         "slide-out-to-left": (value) => ({
-          "--animate-exit-translate-x": `-${value}`,
+          "--animate-out-translate-x": `-${value}`,
         }),
 
         "slide-out-to-right": (value) => ({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
-          "--animate-exit-translate-x": value,
+          "--animate-out-translate-x": value,
         }),
       },
       {
