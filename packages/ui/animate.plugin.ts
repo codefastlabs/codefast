@@ -5,6 +5,7 @@ type Theme = <TDefaultValue = Config["theme"]>(path?: string, defaultValue?: TDe
 
 const animate = plugin(
   ({ addUtilities, matchUtilities, theme }) => {
+    // Keyframes
     addUtilities({
       "@keyframes enter": {
         from: {
@@ -49,6 +50,7 @@ const animate = plugin(
       },
     });
 
+    // Play state
     addUtilities({
       ".animation-running": {
         animationPlayState: "running",
