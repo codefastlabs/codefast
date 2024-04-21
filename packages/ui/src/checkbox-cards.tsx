@@ -31,12 +31,7 @@ interface CheckboxCardsItemProps extends React.ComponentPropsWithoutRef<typeof C
 const CheckboxCardsItem = React.forwardRef<CheckboxCardsItemElement, CheckboxCardsItemProps>(
   ({ children, className, checkboxClassName, ...props }, ref) => {
     return (
-      <label
-        className={cn(
-          "border-compound/70 hover:border-compound flex items-center justify-center gap-4 rounded-md border p-4",
-          className,
-        )}
-      >
+      <label className={cn("flex items-center justify-center gap-4 rounded-md border p-4", className)}>
         {children}
         <CheckboxGroupPrimitive.Item
           ref={ref}

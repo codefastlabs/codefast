@@ -29,7 +29,7 @@ const RadioCardsItem = React.forwardRef<RadioCardsItemElement, RadioCardsItemPro
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "border-compound/70 text-compound-foreground hover:border-compound aria-checked:border-primary focus-visible:bg-primary/10 group peer flex cursor-default items-center justify-center rounded-md border p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "text-compound-foreground focus-visible:bg-primary/10 group peer flex cursor-default items-center justify-center rounded-md border p-4 focus-visible:outline focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50 aria-checked:outline aria-checked:outline-2",
         className,
       )}
       {...props}
