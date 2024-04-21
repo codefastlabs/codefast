@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui/tooltip";
 import { Button } from "@codefast/ui/button";
 import { Text } from "@codefast/ui/text";
 
@@ -26,7 +26,6 @@ export const Default: Story = {
         </TooltipTrigger>
         <TooltipContent>
           <Text>Add to library</Text>
-          <TooltipArrow />
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
