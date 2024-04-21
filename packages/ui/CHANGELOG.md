@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.36
+
+### Patch Changes
+
+- Add transparent outline to buttons in UI plugin
+
 ## 0.0.35
 
 ### Patch Changes
