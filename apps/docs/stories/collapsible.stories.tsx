@@ -31,7 +31,7 @@ export const Default: Story = {
             @peduarte starred 3 repositories
           </Heading>
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="icon-sm">
               <CaretSortIcon className="size-4" />
               <Box as="span" className="sr-only">
                 Toggle
