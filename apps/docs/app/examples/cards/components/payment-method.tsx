@@ -1,10 +1,10 @@
-import { type JSX } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { Label } from "@codefast/ui/label";
-import { Input } from "@codefast/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
 import { Button } from "@codefast/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { type JSX } from "react";
 import { Icons } from "@/components/icons";
 
 export function DemoPaymentMethod(): JSX.Element {

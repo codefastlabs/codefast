@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "license": "MIT",
   "files": [
     "library.js",
@@ -15,7 +15,6 @@
     "@typescript-eslint/parser": "^7.7.1",
     "@vercel/style-guide": "^6.0.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-config-turbo": "^1.13.2",
     "eslint-plugin-only-warn": "^1.1.0"
   },
   "publishConfig": {

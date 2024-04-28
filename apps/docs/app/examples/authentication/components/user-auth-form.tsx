@@ -1,11 +1,11 @@
 "use client";
 
-import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from "react";
-import { cn } from "@codefast/ui/utils";
-import { Label } from "@codefast/ui/label";
-import { Input } from "@codefast/ui/input";
 import { Button } from "@codefast/ui/button";
+import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
 import { Spinner } from "@codefast/ui/spinner";
+import { cn } from "@codefast/ui/utils";
+import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from "react";
 import { Icons } from "@/components/icons";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;

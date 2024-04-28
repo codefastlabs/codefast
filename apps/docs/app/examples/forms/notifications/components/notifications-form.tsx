@@ -1,16 +1,16 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@codefast/ui/sonner";
+import { Button } from "@codefast/ui/button";
+import { Checkbox } from "@codefast/ui/checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
 import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
+import { toast } from "@codefast/ui/sonner";
 import { Switch } from "@codefast/ui/switch";
-import { Checkbox } from "@codefast/ui/checkbox";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { Button } from "@codefast/ui/button";
 import { type JSX } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const notificationsFormSchema = z.object({
   type: z.enum(["all", "mentions", "none"], {

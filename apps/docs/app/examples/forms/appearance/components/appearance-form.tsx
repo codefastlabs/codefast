@@ -1,14 +1,14 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@codefast/ui/sonner";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
 import { Button } from "@codefast/ui/button";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
 import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { type JSX } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { toast } from "@codefast/ui/sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type JSX } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const appearanceFormSchema = z.object({
   theme: z.enum(["light", "dark"], {

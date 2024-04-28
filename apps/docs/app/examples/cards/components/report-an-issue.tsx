@@ -1,10 +1,10 @@
+import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { type JSX } from "react";
+import { Input } from "@codefast/ui/input";
 import { Label } from "@codefast/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { Input } from "@codefast/ui/input";
 import { Textarea } from "@codefast/ui/textarea";
-import { Button } from "@codefast/ui/button";
+import { type JSX } from "react";
 
 export function DemoReportAnIssue(): JSX.Element {
   return (

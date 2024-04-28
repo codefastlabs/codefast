@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { cn } from "@codefast/ui/utils";
+import Link from "next/link";
 import { type HTMLAttributes, type JSX } from "react";
 
 export function MainNav({ className, ...props }: HTMLAttributes<HTMLElement>): JSX.Element {

@@ -15,7 +15,7 @@ export default defineConfig((options) => [
   {
     clean: !options.watch,
     dts: true,
-    entry: ["tailwind.config.ts", "*.plugin.ts"],
+    entry: ["tailwind.config.ts", "plugin/**/*.ts"],
     external: ["tailwindcss"],
     format: ["cjs", "esm"],
     minify: !options.watch,

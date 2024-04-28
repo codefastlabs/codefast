@@ -1,10 +1,10 @@
+import { Toaster } from "@codefast/ui/sonner";
+import { cn } from "@codefast/ui/utils";
 import type { Metadata } from "next";
 import "@/styles/globals.css";
 import React from "react";
-import { Toaster } from "@codefast/ui/sonner";
-import { cn } from "@codefast/ui/utils";
-import { inter } from "@/styles/fonts";
 import { Providers } from "@/components/providers";
+import { inter } from "@/styles/fonts";
 
 export const metadata: Metadata = {
   title: "Create Next App",

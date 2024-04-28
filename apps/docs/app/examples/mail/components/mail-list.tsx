@@ -1,10 +1,10 @@
+import { Badge } from "@codefast/ui/badge";
 import { ScrollArea } from "@codefast/ui/scroll-area";
 import { cn } from "@codefast/ui/utils";
 import { formatDistanceToNow } from "date-fns";
-import { Badge } from "@codefast/ui/badge";
 import { type ComponentProps, type JSX } from "react";
-import { type Mail } from "@/app/examples/mail/data/data";
 import { useMail } from "@/app/examples/mail/hooks/use-mail";
+import { type Mail } from "@/app/examples/mail/data/data";
 
 interface MailListProps {
   items: Mail[];

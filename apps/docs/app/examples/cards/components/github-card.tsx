@@ -1,8 +1,5 @@
-import { type JSX } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Button } from "@codefast/ui/button";
-import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from "@radix-ui/react-icons";
-import { Separator } from "@codefast/ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,6 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@codefast/ui/dropdown-menu";
+import { Separator } from "@codefast/ui/separator";
+import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from "@radix-ui/react-icons";
+import { type JSX } from "react";
 
 export function DemoGithub(): JSX.Element {
   return (

@@ -1,7 +1,7 @@
 import { Button } from "@codefast/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
 import { type JSX } from "react";
 import { Icons } from "@/components/icons";
 

@@ -1,9 +1,11 @@
 "use client";
 
-import { TooltipProvider } from "@codefast/ui/tooltip";
+import { Input } from "@codefast/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@codefast/ui/resizable";
-import { cn } from "@codefast/ui/utils";
 import { Separator } from "@codefast/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+import { TooltipProvider } from "@codefast/ui/tooltip";
+import { cn } from "@codefast/ui/utils";
 import {
   AlertCircle,
   Archive,
@@ -17,15 +19,13 @@ import {
   Trash2,
   Users2,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-import { Input } from "@codefast/ui/input";
 import { type JSX, type ReactNode, useState } from "react";
 import { useMail } from "@/app/examples/mail/hooks/use-mail";
 import { type Mail } from "@/app/examples/mail/data/data";
-import { AccountSwitcher } from "@/app/examples/mail/components/account-switcher";
 import { Nav } from "@/app/examples/mail/components/nav";
 import { MailList } from "@/app/examples/mail/components/mail-list";
 import { MailDisplay } from "@/app/examples/mail/components/mail-display";
+import { AccountSwitcher } from "@/app/examples/mail/components/account-switcher";
 
 interface MailProps {
   accounts: {

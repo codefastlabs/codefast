@@ -1,8 +1,8 @@
 "use client";
 
-import { DataTableColumnHeader } from "@codefast/ui/data-table";
-import { Checkbox } from "@codefast/ui/checkbox";
 import { Badge } from "@codefast/ui/badge";
+import { Checkbox } from "@codefast/ui/checkbox";
+import { DataTableColumnHeader } from "@codefast/ui/data-table";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type Task } from "@/app/examples/tasks/data/schema";
 import { labels, priorities, statuses } from "@/app/examples/tasks/data/data";
