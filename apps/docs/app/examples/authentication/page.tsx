@@ -1,8 +1,8 @@
-import { type Metadata } from "next";
-import Link from "next/link";
-import { cn } from "@codefast/ui/utils";
 import { buttonVariants } from "@codefast/ui/button";
+import { cn } from "@codefast/ui/utils";
+import { type Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { type JSX } from "react";
 import { UserAuthForm } from "@/app/examples/authentication/components/user-auth-form";
 

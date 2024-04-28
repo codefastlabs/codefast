@@ -1,8 +1,7 @@
 "use client";
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
 import { DataTablePagination } from "@codefast/ui/data-table";
-import { useState, type JSX } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -17,6 +16,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
+import { type JSX, useState } from "react";
 import { DataTableToolbar } from "@/app/examples/tasks/components/data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {

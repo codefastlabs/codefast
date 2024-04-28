@@ -1,6 +1,6 @@
-import { cn } from "@codefast/ui/utils";
 import { Button } from "@codefast/ui/button";
 import { ScrollArea } from "@codefast/ui/scroll-area";
+import { cn } from "@codefast/ui/utils";
 import { type HTMLAttributes, type JSX } from "react";
 import { type Playlist } from "@/app/examples/music/data/playlists";
 

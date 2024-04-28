@@ -1,16 +1,16 @@
-import { type JSX } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
 import { Button } from "@codefast/ui/button";
-import { Archive, ArchiveX, Clock, Forward, MoreVertical, Reply, ReplyAll, Trash2 } from "lucide-react";
-import { Separator } from "@codefast/ui/separator";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
-import { addDays, addHours, format, nextSaturday } from "date-fns";
 import { Calendar } from "@codefast/ui/calendar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@codefast/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { Textarea } from "@codefast/ui/textarea";
 import { Label } from "@codefast/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { Separator } from "@codefast/ui/separator";
 import { Switch } from "@codefast/ui/switch";
+import { Textarea } from "@codefast/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@codefast/ui/tooltip";
+import { addDays, addHours, format, nextSaturday } from "date-fns";
+import { Archive, ArchiveX, Clock, Forward, MoreVertical, Reply, ReplyAll, Trash2 } from "lucide-react";
+import { type JSX } from "react";
 import { type Mail } from "@/app/examples/mail/data/data";
 
 interface MailDisplayProps {
@@ -175,8 +175,8 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
                     <Switch id="mute" aria-label="Mute thread" /> Mute this thread
                   </Label>
                   <Button
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={(event) => {
+                      event.preventDefault();
                     }}
                     size="sm"
                     className="ml-auto"
