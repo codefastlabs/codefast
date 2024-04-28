@@ -1,7 +1,7 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { type JSX } from "react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 const data = [
   {

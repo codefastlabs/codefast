@@ -1,15 +1,15 @@
 "use client";
 
-import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from "@codefast/ui/popover";
-import { type JSX, useRef, useState } from "react";
+import { Button } from "@codefast/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@codefast/ui/hover-card";
 import { Label } from "@codefast/ui/label";
-import { Button } from "@codefast/ui/button";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
+import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from "@codefast/ui/popover";
 import { cn } from "@codefast/ui/utils";
-import { type Model, type ModelType } from "@/app/examples/playground/data/models";
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
+import { type JSX, useRef, useState } from "react";
 import { useMutationObserver } from "@/lib/hooks/use-mutation-observer";
+import { type Model, type ModelType } from "@/app/examples/playground/data/models";
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[];

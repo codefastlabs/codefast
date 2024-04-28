@@ -1,19 +1,7 @@
 "use client";
 
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@codefast/ui/dialog";
-import { Button } from "@codefast/ui/button";
-import { cn } from "@codefast/ui/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { CaretSortIcon, CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+import { Button } from "@codefast/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -23,9 +11,21 @@ import {
   CommandList,
   CommandSeparator,
 } from "@codefast/ui/command";
-import { Label } from "@codefast/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@codefast/ui/dialog";
 import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { cn } from "@codefast/ui/utils";
+import { CaretSortIcon, CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { type ComponentPropsWithoutRef, type JSX, useState } from "react";
 
 const groups = [

@@ -1,9 +1,9 @@
-import { DataTableViewOptions } from "@codefast/ui/data-table";
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button } from "@codefast/ui/button";
+import { DataTableViewOptions } from "@codefast/ui/data-table";
 import { Input } from "@codefast/ui/input";
-import { type JSX } from "react";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { type Table } from "@tanstack/react-table";
+import { type JSX } from "react";
 import { priorities, statuses } from "@/app/examples/tasks/data/data";
 import { DataTableFacetedFilter } from "@/app/examples/tasks/components/data-table-faceted-filter";
 

@@ -1,17 +1,17 @@
 "use client";
 
-import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@codefast/ui/sonner";
+import { Button } from "@codefast/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
 import { Input } from "@codefast/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import Link from "next/link";
+import { toast } from "@codefast/ui/sonner";
 import { Textarea } from "@codefast/ui/textarea";
 import { cn } from "@codefast/ui/utils";
-import { Button } from "@codefast/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { type JSX } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const profileFormSchema = z.object({
   username: z

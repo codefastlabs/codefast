@@ -1,18 +1,6 @@
 "use client";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
-import { Button } from "@codefast/ui/button";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@codefast/ui/dialog";
-import { Switch } from "@codefast/ui/switch";
-import { Label } from "@codefast/ui/label";
-import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
@@ -21,7 +9,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@codefast/ui/alert-dialog";
+import { Button } from "@codefast/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@codefast/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@codefast/ui/dropdown-menu";
+import { Label } from "@codefast/ui/label";
 import { toast } from "@codefast/ui/sonner";
+import { Switch } from "@codefast/ui/switch";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { type JSX, useState } from "react";
 
 export function PresetActions(): JSX.Element {

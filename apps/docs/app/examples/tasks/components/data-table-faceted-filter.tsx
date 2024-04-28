@@ -1,8 +1,5 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
-import { Button } from "@codefast/ui/button";
-import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { Badge } from "@codefast/ui/badge";
-import { Separator } from "@codefast/ui/separator";
+import { Button } from "@codefast/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -12,9 +9,12 @@ import {
   CommandList,
   CommandSeparator,
 } from "@codefast/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { Separator } from "@codefast/ui/separator";
 import { cn } from "@codefast/ui/utils";
-import { type ComponentType, type JSX } from "react";
+import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { type Column } from "@tanstack/react-table";
+import { type ComponentType, type JSX } from "react";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;

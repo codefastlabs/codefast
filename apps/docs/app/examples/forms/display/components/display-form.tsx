@@ -1,13 +1,13 @@
 "use client";
 
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@codefast/ui/sonner";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
-import { Checkbox } from "@codefast/ui/checkbox";
 import { Button } from "@codefast/ui/button";
+import { Checkbox } from "@codefast/ui/checkbox";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
+import { toast } from "@codefast/ui/sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { type JSX } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const items = [
   {

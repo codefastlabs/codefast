@@ -1,10 +1,10 @@
-import { type JSX } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { Button } from "@codefast/ui/button";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@codefast/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
+import { type JSX } from "react";
 
 export function DemoTeamMembers(): JSX.Element {
   return (

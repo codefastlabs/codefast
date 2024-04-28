@@ -1,15 +1,15 @@
-import { type Metadata } from "next";
 import { Button } from "@codefast/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
-import { type JSX } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
+import { type Metadata } from "next";
 import Image from "next/image";
-import { TeamSwitcher } from "@/app/examples/dashboard/components/team-switcher";
+import { type JSX } from "react";
 import { MainNav } from "@/app/examples/dashboard/components/main-nav";
-import { Search } from "@/app/examples/dashboard/components/search";
-import { UserNav } from "@/app/examples/dashboard/components/user-nav";
 import { Overview } from "@/app/examples/dashboard/components/overview";
 import { RecentSales } from "@/app/examples/dashboard/components/recent-sales";
+import { Search } from "@/app/examples/dashboard/components/search";
+import { TeamSwitcher } from "@/app/examples/dashboard/components/team-switcher";
+import { UserNav } from "@/app/examples/dashboard/components/user-nav";
 import { DatePickerWithRange } from "@/components/date-picker-with-range";
 
 export const metadata: Metadata = {

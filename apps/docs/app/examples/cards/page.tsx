@@ -1,16 +1,16 @@
-import { type Metadata } from "next";
 import { cn } from "@codefast/ui/utils";
-import { type HTMLAttributes, type JSX } from "react";
+import { type Metadata } from "next";
 import Image from "next/image";
-import { DemoCreateAccount } from "@/app/examples/cards/components/create-account";
-import { DemoPaymentMethod } from "@/app/examples/cards/components/payment-method";
-import { DemoTeamMembers } from "@/app/examples/cards/components/team-members";
-import { DemoShareDocument } from "@/app/examples/cards/components/share-document";
-import { DemoDatePicker } from "@/app/examples/cards/components/date-picker";
-import { DemoNotifications } from "@/app/examples/cards/components/notifications";
-import { DemoReportAnIssue } from "@/app/examples/cards/components/report-an-issue";
-import { DemoGithub } from "@/app/examples/cards/components/github-card";
+import { type HTMLAttributes, type JSX } from "react";
 import { DemoCookieSettings } from "@/app/examples/cards/components/cookie-settings";
+import { DemoCreateAccount } from "@/app/examples/cards/components/create-account";
+import { DemoDatePicker } from "@/app/examples/cards/components/date-picker";
+import { DemoGithub } from "@/app/examples/cards/components/github-card";
+import { DemoNotifications } from "@/app/examples/cards/components/notifications";
+import { DemoPaymentMethod } from "@/app/examples/cards/components/payment-method";
+import { DemoReportAnIssue } from "@/app/examples/cards/components/report-an-issue";
+import { DemoShareDocument } from "@/app/examples/cards/components/share-document";
+import { DemoTeamMembers } from "@/app/examples/cards/components/team-members";
 
 export const metadata: Metadata = {
   title: "Cards",

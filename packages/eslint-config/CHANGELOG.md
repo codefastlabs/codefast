@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.20
+
+### Patch Changes
+
+- Remove eslint-config-turbo from package.json
+
 ## 0.0.19
 
 ### Patch Changes

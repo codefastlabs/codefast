@@ -1,9 +1,9 @@
-import { type JSX } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { Button } from "@codefast/ui/button";
-import { Label } from "@codefast/ui/label";
 import { Input } from "@codefast/ui/input";
+import { Label } from "@codefast/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
 import { CopyIcon } from "@radix-ui/react-icons";
+import { type JSX } from "react";
 
 export function PresetShare(): JSX.Element {
   return (

@@ -1,10 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
-import { type JSX } from "react";
-import { Input } from "@codefast/ui/input";
-import { Button } from "@codefast/ui/button";
-import { Separator } from "@codefast/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
+import { Button } from "@codefast/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@codefast/ui/card";
+import { Input } from "@codefast/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
+import { Separator } from "@codefast/ui/separator";
+import { type JSX } from "react";
 
 export function DemoShareDocument(): JSX.Element {
   return (

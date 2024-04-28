@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.39
+
+### Patch Changes
+
+- Move UI components from src/ to src/react/ and update utils import
+
 ## 0.0.38
 
 ### Patch Changes
