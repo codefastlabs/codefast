@@ -40,7 +40,7 @@ export const Default: Story = {
             variant="outline"
             className={cn("w-[280px] justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 size-4" />
             {date ? format(date, "PPP") : <Box as="span">Pick a date</Box>}
           </Button>
         </PopoverTrigger>
@@ -72,7 +72,7 @@ export const DateRangePicker: Story = {
               variant="outline"
               className={cn("w-[300px] justify-start text-left font-normal", !date && "text-muted-foreground")}
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="mr-2 size-4" />
               {date?.from ? (
                 date.to ? (
                   <>
@@ -117,7 +117,7 @@ export const WithPresets: Story = {
             variant="outline"
             className={cn("w-[280px] justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 size-4" />
             {date ? format(date, "PPP") : <Box as="span">Pick a date</Box>}
           </Button>
         </PopoverTrigger>
@@ -197,7 +197,7 @@ export const ReactHookForm: Story = {
                         className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
                       >
                         {field.value ? format(field.value, "PPP") : <Box as="span">Pick a date</Box>}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        <CalendarIcon className="ml-auto size-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

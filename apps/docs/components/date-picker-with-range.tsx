@@ -23,7 +23,7 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
             variant="outline"
             className={cn("justify-start text-left font-normal", !date && "text-muted-foreground")}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 size-4" />
             <ButtonValue date={date} />
           </Button>
         </PopoverTrigger>

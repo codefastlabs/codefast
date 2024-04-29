@@ -88,7 +88,7 @@ export const CustomCloseButton: Story = {
             <Box as="span" className="sr-only">
               Copy
             </Box>
-            <Copy className="h-4 w-4" />
+            <Copy className="size-4" />
           </Button>
         </Box>
         <DialogFooter className="sm:justify-start">
