@@ -103,7 +103,7 @@ export const Examples: Story = {
         <Box>
           {notifications.map((notification) => (
             <Box key={notification.id} className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-              <Box as="span" className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+              <Box as="span" className="flex size-2 translate-y-1 rounded-full bg-sky-500" />
               <Box className="space-y-1">
                 <Text className="text-sm font-medium leading-none">{notification.title}</Text>
                 <Text className="text-muted-foreground text-sm">{notification.description}</Text>

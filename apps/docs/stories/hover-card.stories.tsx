@@ -49,7 +49,7 @@ export const Default: Story = {
             </Heading>
             <Text className="text-sm">The React Framework – created and maintained by @vercel.</Text>
             <Box className="flex items-center pt-2">
-              <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+              <CalendarDays className="mr-2 size-4 opacity-70" />{" "}
               <Box as="span" className="text-muted-foreground text-xs">
                 Joined December 2021
               </Box>

@@ -110,32 +110,32 @@ export const WithDialog: Story = {
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Suggestions">
               <CommandItem>
-                <Calendar className="mr-2 h-4 w-4" />
+                <Calendar className="mr-2 size-4" />
                 <Box as="span">Calendar</Box>
               </CommandItem>
               <CommandItem>
-                <Smile className="mr-2 h-4 w-4" />
+                <Smile className="mr-2 size-4" />
                 <Box as="span">Search Emoji</Box>
               </CommandItem>
               <CommandItem>
-                <Calculator className="mr-2 h-4 w-4" />
+                <Calculator className="mr-2 size-4" />
                 <Box as="span">Calculator</Box>
               </CommandItem>
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Settings">
               <CommandItem>
-                <User className="mr-2 h-4 w-4" />
+                <User className="mr-2 size-4" />
                 <Box as="span">Profile</Box>
                 <CommandShortcut>⌘P</CommandShortcut>
               </CommandItem>
               <CommandItem>
-                <CreditCard className="mr-2 h-4 w-4" />
+                <CreditCard className="mr-2 size-4" />
                 <Box as="span">Billing</Box>
                 <CommandShortcut>⌘B</CommandShortcut>
               </CommandItem>
               <CommandItem>
-                <Settings className="mr-2 h-4 w-4" />
+                <Settings className="mr-2 size-4" />
                 <Box as="span">Settings</Box>
                 <CommandShortcut>⌘S</CommandShortcut>
               </CommandItem>
