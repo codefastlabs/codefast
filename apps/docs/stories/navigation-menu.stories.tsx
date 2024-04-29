@@ -108,7 +108,7 @@ export const Default: Story = {
                     className="from-muted/50 to-muted flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md"
                     href="/"
                   >
-                    <SettingsIcon className="h-6 w-6" />
+                    <SettingsIcon className="size-6" />
                     <Box className="mb-2 mt-4 text-lg font-medium">shadcn/ui</Box>
                     <Text className="text-muted-foreground text-sm leading-tight">
                       Beautifully designed components that you can copy and paste into your apps. Accessible.
