@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.40
+
+### Patch Changes
+
+- Refactor error handling in FormMessage
+
 ## 0.0.39
 
 ### Patch Changes
