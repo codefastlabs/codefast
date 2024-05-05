@@ -13,8 +13,8 @@ import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import { type JSX } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form-schema";
-import updateAccount from "@/app/examples/forms/account/actions/account-form-actions";
+import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form";
+import updateAccount from "@/app/examples/forms/account/actions/account-form";
 
 const languages = [
   { label: "English", value: "en" },
