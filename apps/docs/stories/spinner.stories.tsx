@@ -1,14 +1,14 @@
-import { Button } from "@codefast/ui/button";
-import { Switch } from "@codefast/ui/switch";
-import { BookmarkIcon } from "@radix-ui/react-icons";
-import type { Meta, StoryObj } from "@storybook/react";
-import { Spinner } from "@codefast/ui/spinner";
-import { Box } from "@codefast/ui/box";
+import { Button } from '@codefast/ui/button';
+import { Switch } from '@codefast/ui/switch';
+import { BookmarkIcon } from '@radix-ui/react-icons';
+import type { Meta, StoryObj } from '@storybook/react';
+import { Spinner } from '@codefast/ui/spinner';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: Spinner,
-  tags: ["autodocs"],
-  title: "UIs/Spinner",
+  tags: ['autodocs'],
+  title: 'UIs/Spinner',
 } satisfies Meta<typeof Spinner>;
 
 export default meta;

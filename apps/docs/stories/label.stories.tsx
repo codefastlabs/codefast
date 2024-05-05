@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Label } from "@codefast/ui/label";
-import { Checkbox } from "@codefast/ui/checkbox";
-import { useId } from "react";
-import { Box } from "@codefast/ui/box";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Label } from '@codefast/ui/label';
+import { Checkbox } from '@codefast/ui/checkbox';
+import { useId } from 'react';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: Label,
-  tags: ["autodocs"],
-  title: "UIs/Label",
+  tags: ['autodocs'],
+  title: 'UIs/Label',
 } satisfies Meta<typeof Label>;
 
 export default meta;

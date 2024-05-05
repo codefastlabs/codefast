@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { RadioCards, RadioCardsItem } from "@codefast/ui/radio-cards";
-import { Box } from "@codefast/ui/box";
-import { Text } from "@codefast/ui/text";
+import type { Meta, StoryObj } from '@storybook/react';
+import { RadioCards, RadioCardsItem } from '@codefast/ui/radio-cards';
+import { Box } from '@codefast/ui/box';
+import { Text } from '@codefast/ui/text';
 
 const meta = {
   component: RadioCards,
-  tags: ["autodocs"],
-  title: "UIs/Radio Cards",
+  tags: ['autodocs'],
+  title: 'UIs/Radio Cards',
 } satisfies Meta<typeof RadioCards>;
 
 export default meta;
@@ -20,7 +20,11 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <Box>
-      <RadioCards defaultValue="1" className="grid-cols-1 sm:grid-cols-3" {...args}>
+      <RadioCards
+        defaultValue="1"
+        className="grid-cols-1 sm:grid-cols-3"
+        {...args}
+      >
         <RadioCardsItem value="1">
           <Box className="flex w-full flex-col items-start">
             <Text className="font-bold">8-core CPU</Text>

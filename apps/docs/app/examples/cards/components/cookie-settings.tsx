@@ -1,8 +1,15 @@
-import { Button } from "@codefast/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Label } from "@codefast/ui/label";
-import { Switch } from "@codefast/ui/switch";
-import { type JSX } from "react";
+import { Button } from '@codefast/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@codefast/ui/card';
+import { Label } from '@codefast/ui/label';
+import { Switch } from '@codefast/ui/switch';
+import { type JSX } from 'react';
 
 export function DemoCookieSettings(): JSX.Element {
   return (
@@ -16,7 +23,8 @@ export function DemoCookieSettings(): JSX.Element {
           <Label htmlFor="necessary" className="flex flex-col space-y-1">
             <span>Strictly Necessary</span>
             <span className="text-muted-foreground font-normal leading-snug">
-              These cookies are essential in order to use the website and use its features.
+              These cookies are essential in order to use the website and use
+              its features.
             </span>
           </Label>
           <Switch id="necessary" defaultChecked />
@@ -25,7 +33,8 @@ export function DemoCookieSettings(): JSX.Element {
           <Label htmlFor="functional" className="flex flex-col space-y-1">
             <span>Functional Cookies</span>
             <span className="text-muted-foreground font-normal leading-snug">
-              These cookies allow the website to provide personalized functionality.
+              These cookies allow the website to provide personalized
+              functionality.
             </span>
           </Label>
           <Switch id="functional" />

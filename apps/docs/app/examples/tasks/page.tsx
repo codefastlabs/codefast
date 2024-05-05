@@ -1,22 +1,24 @@
-import fs from "node:fs";
-import path from "node:path";
-import { type Metadata } from "next";
-import Image from "next/image";
-import { type JSX } from "react";
-import { z } from "zod";
-import { columns } from "@/app/examples/tasks/components/columns";
-import { DataTable } from "@/app/examples/tasks/components/data-table";
-import { UserNav } from "@/app/examples/tasks/components/user-nav";
-import { type Task, taskSchema } from "@/app/examples/tasks/data/schema";
+import fs from 'node:fs';
+import path from 'node:path';
+import { type Metadata } from 'next';
+import Image from 'next/image';
+import { type JSX } from 'react';
+import { z } from 'zod';
+import { columns } from '@/app/examples/tasks/components/columns';
+import { DataTable } from '@/app/examples/tasks/components/data-table';
+import { UserNav } from '@/app/examples/tasks/components/user-nav';
+import { type Task, taskSchema } from '@/app/examples/tasks/data/schema';
 
 export const metadata: Metadata = {
-  title: "Tasks",
-  description: "A task and issue tracker build using Tanstack Table.",
+  title: 'Tasks',
+  description: 'A task and issue tracker build using Tanstack Table.',
 };
 
 // Simulate a database read for tasks.
 async function getTasks(): Promise<Task[]> {
-  const data = fs.readFileSync(path.join(process.cwd(), "app/examples/tasks/data/tasks.json"));
+  const data = fs.readFileSync(
+    path.join(process.cwd(), 'app/examples/tasks/data/tasks.json'),
+  );
 
   const tasks = JSON.parse(data.toString()) as Task[];
 
@@ -48,7 +50,9 @@ export default async function TaskPage(): Promise<JSX.Element> {
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
-            <p className="text-muted-foreground">Here&apos;s a list of your tasks for this month!</p>
+            <p className="text-muted-foreground">
+              Here&apos;s a list of your tasks for this month!
+            </p>
           </div>
           <div className="flex items-center space-x-2">
             <UserNav />

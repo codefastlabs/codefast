@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -13,12 +13,12 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "@codefast/ui/menubar";
+} from '@codefast/ui/menubar';
 
 const meta = {
   component: Menubar,
-  tags: ["autodocs"],
-  title: "UIs/Menubar",
+  tags: ['autodocs'],
+  title: 'UIs/Menubar',
 } satisfies Meta<typeof Menubar>;
 
 export default meta;
@@ -87,7 +87,9 @@ export const Default: Story = {
         <MenubarTrigger>View</MenubarTrigger>
         <MenubarContent>
           <MenubarCheckboxItem>Always Show Bookmarks Bar</MenubarCheckboxItem>
-          <MenubarCheckboxItem checked>Always Show Full URLs</MenubarCheckboxItem>
+          <MenubarCheckboxItem checked>
+            Always Show Full URLs
+          </MenubarCheckboxItem>
           <MenubarSeparator />
           <MenubarItem inset>
             Reload <MenubarShortcut>⌘R</MenubarShortcut>

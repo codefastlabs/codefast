@@ -1,6 +1,6 @@
-import * as React from "react";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { cn } from "../lib/utils";
+import * as React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { cn } from '../lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Spinner
@@ -23,7 +23,10 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
     const spinner = (
       <span
         ref={ref}
-        className={cn("relative flex size-4 items-center justify-center opacity-60", className)}
+        className={cn(
+          'relative flex size-4 items-center justify-center opacity-60',
+          className,
+        )}
         {...props}
       >
         {Array.from({ length: spinnerCount }, (_, i) => (
@@ -33,9 +36,9 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
             style={
               {
                 width: `${(100 / spinnerCount).toString()}%`,
-                "--spinner-delay": `-${((spinnerCount - i) * 100).toString()}ms`,
-                "--spinner-rotate": `${((360 / spinnerCount) * i).toString()}deg`,
-                "--spinner-duration": `${(spinnerCount * 100).toString()}ms`,
+                '--spinner-delay': `-${((spinnerCount - i) * 100).toString()}ms`,
+                '--spinner-rotate': `${((360 / spinnerCount) * i).toString()}deg`,
+                '--spinner-duration': `${(spinnerCount * 100).toString()}ms`,
               } as React.CSSProperties
             }
           />
@@ -53,13 +56,15 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
           {children}
         </span>
         <VisuallyHidden>{children}</VisuallyHidden>
-        <span className="absolute inset-0 flex items-center justify-center">{spinner}</span>
+        <span className="absolute inset-0 flex items-center justify-center">
+          {spinner}
+        </span>
       </span>
     );
   },
 );
 
-Spinner.displayName = "Spinner";
+Spinner.displayName = 'Spinner';
 
 /* -----------------------------------------------------------------------------
  * Exports

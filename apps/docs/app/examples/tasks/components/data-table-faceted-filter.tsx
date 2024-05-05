@@ -1,5 +1,5 @@
-import { Badge } from "@codefast/ui/badge";
-import { Button } from "@codefast/ui/button";
+import { Badge } from '@codefast/ui/badge';
+import { Button } from '@codefast/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -8,13 +8,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@codefast/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
-import { Separator } from "@codefast/ui/separator";
-import { cn } from "@codefast/ui/utils";
-import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { type Column } from "@tanstack/react-table";
-import { type ComponentType, type JSX } from "react";
+} from '@codefast/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { Separator } from '@codefast/ui/separator';
+import { cn } from '@codefast/ui/utils';
+import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
+import { type Column } from '@tanstack/react-table';
+import { type ComponentType, type JSX } from 'react';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -43,19 +43,29 @@ export function DataTableFacetedFilter<TData, TValue>({
           {selectedValues.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
-              <Badge variant="secondary" className="rounded-sm px-1 font-normal lg:hidden">
+              <Badge
+                variant="secondary"
+                className="rounded-sm px-1 font-normal lg:hidden"
+              >
                 {selectedValues.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
                 {selectedValues.size > 2 ? (
-                  <Badge variant="secondary" className="rounded-sm px-1 font-normal">
+                  <Badge
+                    variant="secondary"
+                    className="rounded-sm px-1 font-normal"
+                  >
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
                   options
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
-                      <Badge variant="secondary" key={option.value} className="rounded-sm px-1 font-normal">
+                      <Badge
+                        variant="secondary"
+                        key={option.value}
+                        className="rounded-sm px-1 font-normal"
+                      >
                         {option.label}
                       </Badge>
                     ))
@@ -83,20 +93,24 @@ export function DataTableFacetedFilter<TData, TValue>({
                         selectedValues.add(option.value);
                       }
                       const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(filterValues.length ? filterValues : undefined);
+                      column?.setFilterValue(
+                        filterValues.length ? filterValues : undefined,
+                      );
                     }}
                   >
                     <div
                       className={cn(
-                        "border-compound mr-2 flex size-4 items-center justify-center rounded-sm border",
+                        'border-compound mr-2 flex size-4 items-center justify-center rounded-sm border',
                         isSelected
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible",
+                          ? 'bg-primary border-primary text-primary-foreground'
+                          : 'opacity-50 [&_svg]:invisible',
                       )}
                     >
-                      <CheckIcon className={cn("size-4")} />
+                      <CheckIcon className={cn('size-4')} />
                     </div>
-                    {Icon ? <Icon className="text-muted-foreground mr-2 size-4" /> : null}
+                    {Icon ? (
+                      <Icon className="text-muted-foreground mr-2 size-4" />
+                    ) : null}
                     <span>{option.label}</span>
                     {facets?.get(option.value) ? (
                       <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">

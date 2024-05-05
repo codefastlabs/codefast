@@ -1,4 +1,4 @@
-import { type MutableRefObject, useEffect } from "react";
+import { type MutableRefObject, useEffect } from 'react';
 
 export const useMutationObserver = (
   ref: MutableRefObject<HTMLElement | null>,

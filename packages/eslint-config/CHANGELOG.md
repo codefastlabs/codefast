@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.21
+
+### Patch Changes
+
+- Update @typescript-eslint dependencies to version 7.8.0
+
 ## 0.0.20
 
 ### Patch Changes

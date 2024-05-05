@@ -1,29 +1,44 @@
-import { Button } from "@codefast/ui/button";
-import { ScrollArea } from "@codefast/ui/scroll-area";
-import { Separator } from "@codefast/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
-import { type Metadata } from "next";
-import Image from "next/image";
-import { type JSX } from "react";
-import { playlists } from "@/app/examples/music/data/playlists";
-import { listenNowAlbums, madeForYouAlbums } from "@/app/examples/music/data/albums";
-import { Sidebar } from "@/app/examples/music/components/sidebar";
-import { PodcastEmptyPlaceholder } from "@/app/examples/music/components/podcast-empty-placeholder";
-import { Menu } from "@/app/examples/music/components/menu";
-import { AlbumArtwork } from "@/app/examples/music/components/album-artwork";
+import { Button } from '@codefast/ui/button';
+import { ScrollArea } from '@codefast/ui/scroll-area';
+import { Separator } from '@codefast/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
+import { type Metadata } from 'next';
+import Image from 'next/image';
+import { type JSX } from 'react';
+import { playlists } from '@/app/examples/music/data/playlists';
+import {
+  listenNowAlbums,
+  madeForYouAlbums,
+} from '@/app/examples/music/data/albums';
+import { Sidebar } from '@/app/examples/music/components/sidebar';
+import { PodcastEmptyPlaceholder } from '@/app/examples/music/components/podcast-empty-placeholder';
+import { Menu } from '@/app/examples/music/components/menu';
+import { AlbumArtwork } from '@/app/examples/music/components/album-artwork';
 
 export const metadata: Metadata = {
-  title: "Music App",
-  description: "Example music app using the components.",
+  title: 'Music App',
+  description: 'Example music app using the components.',
 };
 
 export default function MusicPage(): JSX.Element {
   return (
     <>
       <div className="md:hidden">
-        <Image src="/examples/music-light.png" width={1280} height={1114} alt="Music" className="block dark:hidden" />
-        <Image src="/examples/music-dark.png" width={1280} height={1114} alt="Music" className="hidden dark:block" />
+        <Image
+          src="/examples/music-light.png"
+          width={1280}
+          height={1114}
+          alt="Music"
+          className="block dark:hidden"
+        />
+        <Image
+          src="/examples/music-dark.png"
+          width={1280}
+          height={1114}
+          alt="Music"
+          className="hidden dark:block"
+        />
       </div>
       <div className="hidden md:block">
         <Menu />
@@ -51,11 +66,18 @@ export default function MusicPage(): JSX.Element {
                         </Button>
                       </div>
                     </div>
-                    <TabsContent value="music" className="border-none p-0 outline-none">
+                    <TabsContent
+                      value="music"
+                      className="border-none p-0 outline-none"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <h2 className="text-2xl font-semibold tracking-tight">Listen Now</h2>
-                          <p className="text-muted-foreground text-sm">Top picks for you. Updated daily.</p>
+                          <h2 className="text-2xl font-semibold tracking-tight">
+                            Listen Now
+                          </h2>
+                          <p className="text-muted-foreground text-sm">
+                            Top picks for you. Updated daily.
+                          </p>
                         </div>
                       </div>
                       <Separator className="my-4" />
@@ -76,8 +98,12 @@ export default function MusicPage(): JSX.Element {
                         </ScrollArea>
                       </div>
                       <div className="mt-6 space-y-1">
-                        <h2 className="text-2xl font-semibold tracking-tight">Made for You</h2>
-                        <p className="text-muted-foreground text-sm">Your personal playlists. Updated daily.</p>
+                        <h2 className="text-2xl font-semibold tracking-tight">
+                          Made for You
+                        </h2>
+                        <p className="text-muted-foreground text-sm">
+                          Your personal playlists. Updated daily.
+                        </p>
                       </div>
                       <Separator className="my-4" />
                       <div className="relative">
@@ -97,11 +123,18 @@ export default function MusicPage(): JSX.Element {
                         </ScrollArea>
                       </div>
                     </TabsContent>
-                    <TabsContent value="podcasts" className="h-full flex-col border-none p-0 data-[state=active]:flex">
+                    <TabsContent
+                      value="podcasts"
+                      className="h-full flex-col border-none p-0 data-[state=active]:flex"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <h2 className="text-2xl font-semibold tracking-tight">New Episodes</h2>
-                          <p className="text-muted-foreground text-sm">Your favorite podcasts. Updated daily.</p>
+                          <h2 className="text-2xl font-semibold tracking-tight">
+                            New Episodes
+                          </h2>
+                          <p className="text-muted-foreground text-sm">
+                            Your favorite podcasts. Updated daily.
+                          </p>
                         </div>
                       </div>
                       <Separator className="my-4" />

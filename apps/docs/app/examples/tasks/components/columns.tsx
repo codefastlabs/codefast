@@ -1,19 +1,22 @@
-"use client";
+'use client';
 
-import { Badge } from "@codefast/ui/badge";
-import { Checkbox } from "@codefast/ui/checkbox";
-import { DataTableColumnHeader } from "@codefast/ui/data-table";
-import { type ColumnDef } from "@tanstack/react-table";
-import { type Task } from "@/app/examples/tasks/data/schema";
-import { labels, priorities, statuses } from "@/app/examples/tasks/data/data";
-import { DataTableRowActions } from "@/app/examples/tasks/components/data-table-row-actions";
+import { Badge } from '@codefast/ui/badge';
+import { Checkbox } from '@codefast/ui/checkbox';
+import { DataTableColumnHeader } from '@codefast/ui/data-table';
+import { type ColumnDef } from '@tanstack/react-table';
+import { type Task } from '@/app/examples/tasks/data/schema';
+import { labels, priorities, statuses } from '@/app/examples/tasks/data/data';
+import { DataTableRowActions } from '@/app/examples/tasks/components/data-table-row-actions';
 
 export const columns: ColumnDef<Task>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
@@ -35,31 +38,41 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Task" />,
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+    accessorKey: 'id',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Task" />
+    ),
+    cell: ({ row }) => <div className="w-[80px]">{row.getValue('id')}</div>,
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "title",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+    accessorKey: 'title',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Title" />
+    ),
     cell: ({ row }) => {
       const label = labels.find(({ value }) => value === row.original.label);
 
       return (
         <div className="flex space-x-2">
           {label ? <Badge variant="outline">{label.label}</Badge> : null}
-          <span className="max-w-[500px] truncate font-medium">{row.getValue("title")}</span>
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue('title')}
+          </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "status",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    accessorKey: 'status',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
     cell: ({ row }) => {
-      const status = statuses.find(({ value }) => value === row.getValue("status"));
+      const status = statuses.find(
+        ({ value }) => value === row.getValue('status'),
+      );
 
       if (!status) {
         return null;
@@ -77,10 +90,14 @@ export const columns: ColumnDef<Task>[] = [
     filterFn: (row, id, value: string) => value.includes(row.getValue(id)),
   },
   {
-    accessorKey: "priority",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Priority" />,
+    accessorKey: 'priority',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Priority" />
+    ),
     cell: ({ row }) => {
-      const priority = priorities.find(({ value }) => value === row.getValue("priority"));
+      const priority = priorities.find(
+        ({ value }) => value === row.getValue('priority'),
+      );
 
       if (!priority) {
         return null;
@@ -98,7 +115,7 @@ export const columns: ColumnDef<Task>[] = [
     filterFn: (row, id, value: string) => value.includes(row.getValue(id)),
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

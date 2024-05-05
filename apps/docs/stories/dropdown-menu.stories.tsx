@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react";
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -14,20 +14,20 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
-import { Button } from "@codefast/ui/button";
-import { type ComponentProps, useState } from "react";
+} from '@codefast/ui/dropdown-menu';
+import { Button } from '@codefast/ui/button';
+import { type ComponentProps, useState } from 'react';
 
 const meta = {
   component: DropdownMenu,
-  tags: ["autodocs"],
-  title: "UIs/Dropdown Menu",
+  tags: ['autodocs'],
+  title: 'UIs/Dropdown Menu',
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
-type Checked = ComponentProps<typeof DropdownMenuCheckboxItem>["checked"];
+type Checked = ComponentProps<typeof DropdownMenuCheckboxItem>['checked'];
 
 /* -----------------------------------------------------------------------------
  * Story: Default
@@ -109,13 +109,23 @@ export const Checkboxes: Story = {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Appearance</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
+          <DropdownMenuCheckboxItem
+            checked={showStatusBar}
+            onCheckedChange={setShowStatusBar}
+          >
             Status Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem checked={showActivityBar} onCheckedChange={setShowActivityBar} disabled>
+          <DropdownMenuCheckboxItem
+            checked={showActivityBar}
+            onCheckedChange={setShowActivityBar}
+            disabled
+          >
             Activity Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
+          <DropdownMenuCheckboxItem
+            checked={showPanel}
+            onCheckedChange={setShowPanel}
+          >
             Panel
           </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
@@ -130,7 +140,7 @@ export const Checkboxes: Story = {
 
 export const RadioGroup: Story = {
   render: (args) => {
-    const [position, setPosition] = useState("bottom");
+    const [position, setPosition] = useState('bottom');
 
     return (
       <DropdownMenu {...args}>

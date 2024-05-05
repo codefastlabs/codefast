@@ -1,18 +1,33 @@
-import { Button } from "@codefast/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { type JSX } from "react";
-import { Icons } from "@/components/icons";
+import { Button } from '@codefast/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@codefast/ui/card';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@codefast/ui/select';
+import { type JSX } from 'react';
+import { Icons } from '@/components/icons';
 
 export function DemoPaymentMethod(): JSX.Element {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Payment Method</CardTitle>
-        <CardDescription>Add a new payment method to your account.</CardDescription>
+        <CardDescription>
+          Add a new payment method to your account.
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
         <RadioGroup defaultValue="card" className="grid grid-cols-3 gap-4">
@@ -39,7 +54,11 @@ export function DemoPaymentMethod(): JSX.Element {
             </Label>
           </div>
           <div>
-            <RadioGroupItem value="paypal" id="paypal" className="peer sr-only" />
+            <RadioGroupItem
+              value="paypal"
+              id="paypal"
+              className="peer sr-only"
+            />
             <Label
               htmlFor="paypal"
               className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 p-4"
@@ -98,7 +117,10 @@ export function DemoPaymentMethod(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 10 }, (_, i) => (
-                  <SelectItem key={i} value={String(new Date().getFullYear() + i)}>
+                  <SelectItem
+                    key={i}
+                    value={String(new Date().getFullYear() + i)}
+                  >
                     {new Date().getFullYear() + i}
                   </SelectItem>
                 ))}

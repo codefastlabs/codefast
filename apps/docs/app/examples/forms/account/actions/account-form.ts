@@ -1,10 +1,15 @@
-"use server";
+'use server';
 
-import { wait } from "next/dist/lib/wait";
-import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form";
-import { type FormState } from "@/lib/types";
+import { wait } from 'next/dist/lib/wait';
+import {
+  accountFormSchema,
+  type AccountFormValues,
+} from '@/app/examples/forms/account/schemata/account-form';
+import { type FormState } from '@/lib/types';
 
-export default async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
+export default async function updateAccount(
+  data: AccountFormValues,
+): Promise<FormState<AccountFormValues>> {
   try {
     const validatedFields = accountFormSchema.safeParse(data);
 
@@ -12,7 +17,7 @@ export default async function updateAccount(data: AccountFormValues): Promise<Fo
     if (!validatedFields.success) {
       return {
         errors: validatedFields.error.flatten().fieldErrors,
-        message: "There are errors in the form.",
+        message: 'There are errors in the form.',
         success: false,
       };
     }
@@ -21,12 +26,12 @@ export default async function updateAccount(data: AccountFormValues): Promise<Fo
     await wait(250);
 
     return {
-      message: "Account updated successfully!",
+      message: 'Account updated successfully!',
       success: true,
     };
   } catch (error) {
     return {
-      message: "An error occurred while updating the account.",
+      message: 'An error occurred while updating the account.',
       success: false,
     };
   }

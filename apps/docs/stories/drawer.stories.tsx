@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Drawer,
   DrawerClose,
@@ -8,11 +8,11 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@codefast/ui/drawer";
-import { useState } from "react";
-import { Button } from "@codefast/ui/button";
-import { Minus, Plus } from "lucide-react";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
+} from '@codefast/ui/drawer';
+import { useState } from 'react';
+import { Button } from '@codefast/ui/button';
+import { Minus, Plus } from 'lucide-react';
+import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 import {
   Dialog,
   DialogContent,
@@ -20,17 +20,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@codefast/ui/dialog";
-import { cn } from "@codefast/ui/utils";
-import { Label } from "@codefast/ui/label";
-import { Input } from "@codefast/ui/input";
-import { Box } from "@codefast/ui/box";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
+} from '@codefast/ui/dialog';
+import { cn } from '@codefast/ui/utils';
+import { Label } from '@codefast/ui/label';
+import { Input } from '@codefast/ui/input';
+import { Box } from '@codefast/ui/box';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 const meta = {
   component: Drawer,
-  tags: ["autodocs"],
-  title: "UIs/Drawer",
+  tags: ['autodocs'],
+  title: 'UIs/Drawer',
 } satisfies Meta<typeof Drawer>;
 
 export default meta;
@@ -100,7 +100,9 @@ export const Default: Story = {
           <Box className="mx-auto w-full max-w-sm">
             <DrawerHeader>
               <DrawerTitle>Move Goal</DrawerTitle>
-              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+              <DrawerDescription>
+                Set your daily activity goal.
+              </DrawerDescription>
             </DrawerHeader>
             <Box className="p-4 pb-0">
               <Box className="flex items-center justify-center space-x-2">
@@ -119,8 +121,12 @@ export const Default: Story = {
                   </Box>
                 </Button>
                 <Box className="flex-1 text-center">
-                  <Box className="text-7xl font-bold tracking-tighter">{goal}</Box>
-                  <Box className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</Box>
+                  <Box className="text-7xl font-bold tracking-tighter">
+                    {goal}
+                  </Box>
+                  <Box className="text-muted-foreground text-[0.70rem] uppercase">
+                    Calories/day
+                  </Box>
                 </Box>
                 <Button
                   variant="outline"
@@ -144,7 +150,7 @@ export const Default: Story = {
                       dataKey="goal"
                       style={
                         {
-                          fill: "hsl(var(--foreground))",
+                          fill: 'hsl(var(--foreground))',
                           opacity: 0.9,
                         } as React.CSSProperties
                       }
@@ -170,9 +176,11 @@ export const Default: Story = {
  * Story: Responsive Dialog
  * -------------------------------------------------------------------------- */
 
-function ProfileForm({ className }: React.FormHTMLAttributes<HTMLFormElement>): React.JSX.Element {
+function ProfileForm({
+  className,
+}: React.FormHTMLAttributes<HTMLFormElement>): React.JSX.Element {
   return (
-    <form className={cn("grid items-start gap-4", className)}>
+    <form className={cn('grid items-start gap-4', className)}>
       <Box className="grid gap-2">
         <Label htmlFor="email">Email</Label>
         <Input type="email" id="email" defaultValue="codefast@example.com" />
@@ -188,7 +196,7 @@ function ProfileForm({ className }: React.FormHTMLAttributes<HTMLFormElement>): 
 
 export const ResponsiveDialog: Story = {
   render: (args) => {
-    const isDesktop = useMediaQuery("(min-width: 768px)");
+    const isDesktop = useMediaQuery('(min-width: 768px)');
     const [open, setOpen] = useState(false);
 
     if (isDesktop) {
@@ -200,7 +208,9 @@ export const ResponsiveDialog: Story = {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Edit profile</DialogTitle>
-              <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
+              <DialogDescription>
+                Make changes to your profile here. Click save when you're done.
+              </DialogDescription>
             </DialogHeader>
             <ProfileForm />
           </DialogContent>
@@ -216,7 +226,10 @@ export const ResponsiveDialog: Story = {
         <DrawerContent>
           <DrawerHeader className="text-left">
             <DrawerTitle>Edit profile</DrawerTitle>
-            <DrawerDescription>Make changes to your profile here. Click save when you&apos;re done.</DrawerDescription>
+            <DrawerDescription>
+              Make changes to your profile here. Click save when you&apos;re
+              done.
+            </DrawerDescription>
           </DrawerHeader>
           <ProfileForm className="px-4" />
           <DrawerFooter className="pt-2">

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { type JSX, type ReactNode } from "react";
-import { Provider as JotaiProvider } from "jotai";
+import { type JSX, type ReactNode } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
 
 interface ProvidersProps {
   children?: ReactNode | undefined;

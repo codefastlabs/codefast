@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -13,13 +13,13 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "@codefast/ui/context-menu";
-import { useState } from "react";
+} from '@codefast/ui/context-menu';
+import { useState } from 'react';
 
 const meta = {
   component: ContextMenu,
-  tags: ["autodocs"],
-  title: "UIs/Context Menu",
+  tags: ['autodocs'],
+  title: 'UIs/Context Menu',
 } satisfies Meta<typeof ContextMenu>;
 
 export default meta;
@@ -34,7 +34,7 @@ export const Default: Story = {
   render: (args) => {
     const [bookmarksChecked, setBookmarksChecked] = useState(true);
     const [urlsChecked, setUrlsChecked] = useState(false);
-    const [person, setPerson] = useState("pedro");
+    const [person, setPerson] = useState('pedro');
 
     return (
       <ContextMenu {...args}>
@@ -68,17 +68,25 @@ export const Default: Story = {
             </ContextMenuSubContent>
           </ContextMenuSub>
           <ContextMenuSeparator />
-          <ContextMenuCheckboxItem checked={bookmarksChecked} onCheckedChange={setBookmarksChecked}>
+          <ContextMenuCheckboxItem
+            checked={bookmarksChecked}
+            onCheckedChange={setBookmarksChecked}
+          >
             Show Bookmarks Bar
             <ContextMenuShortcut>⌘⇧B</ContextMenuShortcut>
           </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem checked={urlsChecked} onCheckedChange={setUrlsChecked}>
+          <ContextMenuCheckboxItem
+            checked={urlsChecked}
+            onCheckedChange={setUrlsChecked}
+          >
             Show Full URLs
           </ContextMenuCheckboxItem>
           <ContextMenuSeparator />
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuRadioGroup value={person} onValueChange={setPerson}>
-            <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+            <ContextMenuRadioItem value="pedro">
+              Pedro Duarte
+            </ContextMenuRadioItem>
             <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
           </ContextMenuRadioGroup>
         </ContextMenuContent>

@@ -1,21 +1,29 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { useId } from "react";
-import { Button } from "@codefast/ui/button";
-import { toast, Toaster } from "@codefast/ui/sonner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
-import { Box } from "@codefast/ui/box";
-import { Pre } from "@codefast/ui/pre";
-import { Code } from "@codefast/ui/code";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { useId } from 'react';
+import { Button } from '@codefast/ui/button';
+import { toast, Toaster } from '@codefast/ui/sonner';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@codefast/ui/form';
+import { Box } from '@codefast/ui/box';
+import { Pre } from '@codefast/ui/pre';
+import { Code } from '@codefast/ui/code';
 
 const meta = {
   component: Input,
-  tags: ["autodocs"],
-  title: "UIs/Input",
+  tags: ['autodocs'],
+  title: 'UIs/Input',
 } satisfies Meta<typeof Input>;
 
 export default meta;
@@ -28,8 +36,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    type: "email",
-    placeholder: "Email",
+    type: 'email',
+    placeholder: 'Email',
   },
 };
 
@@ -97,7 +105,7 @@ export const WithButton: Story = {
 
 const FormSchema = z.object({
   username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: 'Username must be at least 2 characters.',
   }),
 });
 
@@ -114,12 +122,12 @@ export const ReactHookForm: Story = {
     const form = useForm<z.infer<typeof FormSchema>>({
       resolver: zodResolver(FormSchema),
       defaultValues: {
-        username: "",
+        username: '',
       },
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>): void {
-      toast.message("You submitted the following values:", {
+      toast.message('You submitted the following values:', {
         description: (
           <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
@@ -130,7 +138,10 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-2/3 space-y-6"
+        >
           <FormField
             control={form.control}
             name="username"
@@ -140,7 +151,9 @@ export const ReactHookForm: Story = {
                 <FormControl>
                   <Input placeholder="codefast" {...field} {...args} />
                 </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

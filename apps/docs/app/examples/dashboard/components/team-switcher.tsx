@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { Button } from "@codefast/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { Button } from '@codefast/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@codefast/ui/command";
+} from '@codefast/ui/command';
 import {
   Dialog,
   DialogContent,
@@ -19,41 +19,51 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@codefast/ui/dialog";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@codefast/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { cn } from "@codefast/ui/utils";
-import { CaretSortIcon, CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { type ComponentPropsWithoutRef, type JSX, useState } from "react";
+} from '@codefast/ui/dialog';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@codefast/ui/select';
+import { cn } from '@codefast/ui/utils';
+import {
+  CaretSortIcon,
+  CheckIcon,
+  PlusCircledIcon,
+} from '@radix-ui/react-icons';
+import { type ComponentPropsWithoutRef, type JSX, useState } from 'react';
 
 const groups = [
   {
-    label: "Personal Account",
+    label: 'Personal Account',
     teams: [
       {
-        label: "Alicia Koch",
-        value: "personal",
+        label: 'Alicia Koch',
+        value: 'personal',
       },
     ],
   },
   {
-    label: "Teams",
+    label: 'Teams',
     teams: [
       {
-        label: "Acme Inc.",
-        value: "acme-inc",
+        label: 'Acme Inc.',
+        value: 'acme-inc',
       },
       {
-        label: "Monsters Inc.",
-        value: "monsters",
+        label: 'Monsters Inc.',
+        value: 'monsters',
       },
     ],
   },
 ];
 
-type Team = (typeof groups)[number]["teams"][number];
+type Team = (typeof groups)[number]['teams'][number];
 
 type PopoverTriggerProps = ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
@@ -73,7 +83,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn("w-[200px] justify-between", className)}
+            className={cn('w-[200px] justify-between', className)}
           >
             <Avatar className="mr-2 size-5">
               <AvatarImage
@@ -114,8 +124,10 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
                       {team.label}
                       <CheckIcon
                         className={cn(
-                          "ml-auto size-4",
-                          selectedTeam.value === team.value ? "opacity-100" : "opacity-0",
+                          'ml-auto size-4',
+                          selectedTeam.value === team.value
+                            ? 'opacity-100'
+                            : 'opacity-0',
                         )}
                       />
                     </CommandItem>
@@ -145,7 +157,9 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>Add a new team to manage products and customers.</DialogDescription>
+          <DialogDescription>
+            Add a new team to manage products and customers.
+          </DialogDescription>
         </DialogHeader>
         <div>
           <div className="space-y-4 py-2 pb-4">
@@ -161,12 +175,16 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">
-                    <span className="font-medium">Free</span> -{" "}
-                    <span className="text-muted-foreground">Trial for two weeks</span>
+                    <span className="font-medium">Free</span> -{' '}
+                    <span className="text-muted-foreground">
+                      Trial for two weeks
+                    </span>
                   </SelectItem>
                   <SelectItem value="pro">
-                    <span className="font-medium">Pro</span> -{" "}
-                    <span className="text-muted-foreground">$9/month per user</span>
+                    <span className="font-medium">Pro</span> -{' '}
+                    <span className="text-muted-foreground">
+                      $9/month per user
+                    </span>
                   </SelectItem>
                 </SelectContent>
               </Select>

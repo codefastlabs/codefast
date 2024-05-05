@@ -1,50 +1,60 @@
-"use client";
+'use client';
 
-import { Button } from "@codefast/ui/button";
-import { Checkbox } from "@codefast/ui/checkbox";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
-import { toast } from "@codefast/ui/sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type JSX } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from '@codefast/ui/button';
+import { Checkbox } from '@codefast/ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@codefast/ui/form';
+import { toast } from '@codefast/ui/sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type JSX } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const items = [
   {
-    id: "recents",
-    label: "Recents",
+    id: 'recents',
+    label: 'Recents',
   },
   {
-    id: "home",
-    label: "Home",
+    id: 'home',
+    label: 'Home',
   },
   {
-    id: "applications",
-    label: "Applications",
+    id: 'applications',
+    label: 'Applications',
   },
   {
-    id: "desktop",
-    label: "Desktop",
+    id: 'desktop',
+    label: 'Desktop',
   },
   {
-    id: "downloads",
-    label: "Downloads",
+    id: 'downloads',
+    label: 'Downloads',
   },
   {
-    id: "documents",
-    label: "Documents",
+    id: 'documents',
+    label: 'Documents',
   },
 ] as const;
 
 const displayFormSchema = z.object({
-  items: z.array(z.string().trim()).min(1, "You have to select at least one item."),
+  items: z
+    .array(z.string().trim())
+    .min(1, 'You have to select at least one item.'),
 });
 
 type DisplayFormValues = z.infer<typeof displayFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<DisplayFormValues> = {
-  items: ["recents", "home"],
+  items: ['recents', 'home'],
 };
 
 export function DisplayForm(): JSX.Element {
@@ -54,7 +64,7 @@ export function DisplayForm(): JSX.Element {
   });
 
   function onSubmit(data: DisplayFormValues): void {
-    toast.message("You submitted the following values:", {
+    toast.message('You submitted the following values:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -73,7 +83,9 @@ export function DisplayForm(): JSX.Element {
             <FormItem>
               <div className="mb-4">
                 <FormLabel className="text-base">Sidebar</FormLabel>
-                <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
+                <FormDescription>
+                  Select the items you want to display in the sidebar.
+                </FormDescription>
               </div>
               {items.map((item) => (
                 <FormField
@@ -82,18 +94,27 @@ export function DisplayForm(): JSX.Element {
                   name="items"
                   render={({ field }) => {
                     return (
-                      <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormItem
+                        key={item.id}
+                        className="flex flex-row items-start space-x-3 space-y-0"
+                      >
                         <FormControl>
                           <Checkbox
                             checked={field.value.includes(item.id)}
                             onCheckedChange={(checked) => {
                               checked
                                 ? field.onChange([...field.value, item.id])
-                                : field.onChange(field.value.filter((value) => value !== item.id));
+                                : field.onChange(
+                                    field.value.filter(
+                                      (value) => value !== item.id,
+                                    ),
+                                  );
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">{item.label}</FormLabel>
+                        <FormLabel className="font-normal">
+                          {item.label}
+                        </FormLabel>
                       </FormItem>
                     );
                   }}

@@ -1,12 +1,12 @@
-import { type Meta, type StoryObj } from "@storybook/react";
-import { AspectRatio } from "@codefast/ui/aspect-ratio";
-import Image from "next/image";
-import { Box } from "@codefast/ui/box";
+import { type Meta, type StoryObj } from '@storybook/react';
+import { AspectRatio } from '@codefast/ui/aspect-ratio';
+import Image from 'next/image';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: AspectRatio,
-  tags: ["autodocs"],
-  title: "UIs/Aspect Ratio",
+  tags: ['autodocs'],
+  title: 'UIs/Aspect Ratio',
 } satisfies Meta<typeof AspectRatio>;
 
 export default meta;

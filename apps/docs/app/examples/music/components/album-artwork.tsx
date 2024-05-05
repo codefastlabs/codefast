@@ -7,31 +7,31 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "@codefast/ui/context-menu";
-import { cn } from "@codefast/ui/utils";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
-import { type HTMLAttributes, type JSX } from "react";
-import { playlists } from "@/app/examples/music/data/playlists";
-import { type Album } from "@/app/examples/music/data/albums";
+} from '@codefast/ui/context-menu';
+import { cn } from '@codefast/ui/utils';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
+import Image from 'next/image';
+import { type HTMLAttributes, type JSX } from 'react';
+import { playlists } from '@/app/examples/music/data/playlists';
+import { type Album } from '@/app/examples/music/data/albums';
 
 interface AlbumArtworkProps extends HTMLAttributes<HTMLDivElement> {
   album: Album;
-  aspectRatio?: "portrait" | "square";
+  aspectRatio?: 'portrait' | 'square';
   width?: number;
   height?: number;
 }
 
 export function AlbumArtwork({
   album,
-  aspectRatio = "portrait",
+  aspectRatio = 'portrait',
   width,
   height,
   className,
   ...props
 }: AlbumArtworkProps): JSX.Element {
   return (
-    <div className={cn("space-y-3", className)} {...props}>
+    <div className={cn('space-y-3', className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md">
@@ -41,8 +41,8 @@ export function AlbumArtwork({
               width={width}
               height={height}
               className={cn(
-                "h-auto w-auto object-cover transition-all hover:scale-105",
-                aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square",
+                'h-auto w-auto object-cover transition-all hover:scale-105',
+                aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square',
               )}
             />
           </div>

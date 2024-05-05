@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { ToggleGroup, ToggleGroupItem } from "@codefast/ui/toggle-group";
-import { Bold, Italic, Underline } from "lucide-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
+import { Bold, Italic, Underline } from 'lucide-react';
 
 const meta = {
-  tags: ["autodocs"],
-  title: "UIs/Toggle Group",
+  tags: ['autodocs'],
+  title: 'UIs/Toggle Group',
 } satisfies Meta<typeof ToggleGroup>;
 
 export default meta;

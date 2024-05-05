@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from "@storybook/react";
-import { Card, CardContent } from "@codefast/ui/card";
+import { type Meta, type StoryObj } from '@storybook/react';
+import { Card, CardContent } from '@codefast/ui/card';
 import {
   Carousel,
   type CarouselApi,
@@ -7,15 +7,15 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@codefast/ui/carousel";
-import { useEffect, useRef, useState } from "react";
-import Autoplay from "embla-carousel-autoplay";
-import { Box } from "@codefast/ui/box";
+} from '@codefast/ui/carousel';
+import { useEffect, useRef, useState } from 'react';
+import Autoplay from 'embla-carousel-autoplay';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: Carousel,
-  tags: ["autodocs"],
-  title: "UIs/Carousel",
+  tags: ['autodocs'],
+  title: 'UIs/Carousel',
   decorators: [
     (Story) => (
       <Box className="p-10">
@@ -66,7 +66,7 @@ export const Sizes: Story = {
   render: (args) => (
     <Carousel
       opts={{
-        align: "start",
+        align: 'start',
       }}
       className="w-full max-w-sm"
       {...args}
@@ -130,7 +130,7 @@ export const Orientation: Story = {
   render: (args) => (
     <Carousel
       opts={{
-        align: "start",
+        align: 'start',
       }}
       orientation="vertical"
       className="w-full max-w-xs"
@@ -164,7 +164,7 @@ export const Orientation: Story = {
 
 export const API: Story = {
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
   render: (args) => {
     const [api, setApi] = useState<CarouselApi>();
@@ -179,7 +179,7 @@ export const API: Story = {
       setCount(api.scrollSnapList().length);
       setCurrent(api.selectedScrollSnap() + 1);
 
-      api.on("select", () => {
+      api.on('select', () => {
         setCurrent(api.selectedScrollSnap() + 1);
       });
     }, [api]);

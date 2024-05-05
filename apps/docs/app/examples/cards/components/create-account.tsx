@@ -1,16 +1,25 @@
-import { Button } from "@codefast/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { type JSX } from "react";
-import { Icons } from "@/components/icons";
+import { Button } from '@codefast/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@codefast/ui/card';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { type JSX } from 'react';
+import { Icons } from '@/components/icons';
 
 export function DemoCreateAccount(): JSX.Element {
   return (
     <Card>
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl">Create an account</CardTitle>
-        <CardDescription>Enter your email below to create your account</CardDescription>
+        <CardDescription>
+          Enter your email below to create your account
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-2 gap-6">
@@ -28,7 +37,9 @@ export function DemoCreateAccount(): JSX.Element {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background text-muted-foreground px-2">Or continue with</span>
+            <span className="bg-background text-muted-foreground px-2">
+              Or continue with
+            </span>
           </div>
         </div>
         <div className="grid gap-2">

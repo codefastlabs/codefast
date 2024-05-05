@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
 
 /* -----------------------------------------------------------------------------
  * Component: Box
@@ -8,24 +8,26 @@ import { Slot } from "@radix-ui/react-slot";
 type BoxElement = HTMLDivElement;
 
 interface BoxDivProps extends React.HTMLAttributes<HTMLDivElement> {
-  as?: "div";
+  as?: 'div';
 }
 
 interface BoxSpanProps extends React.HTMLAttributes<HTMLSpanElement> {
-  as: "span";
+  as: 'span';
 }
 
 type BoxProps = (BoxDivProps | BoxSpanProps) & {
   asChild?: boolean;
 };
 
-const Box = React.forwardRef<BoxElement, BoxProps>(({ as: Tag = "div", asChild, ...props }, ref) => {
-  const Component = asChild ? Slot : Tag;
+const Box = React.forwardRef<BoxElement, BoxProps>(
+  ({ as: Tag = 'div', asChild, ...props }, ref) => {
+    const Component = asChild ? Slot : Tag;
 
-  return <Component ref={ref} {...props} />;
-});
+    return <Component ref={ref} {...props} />;
+  },
+);
 
-Box.displayName = "Box";
+Box.displayName = 'Box';
 
 /* -----------------------------------------------------------------------------
  * Exports

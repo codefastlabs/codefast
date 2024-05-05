@@ -1,21 +1,28 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { RadioGroup, RadioGroupItem } from "@codefast/ui/radio-group";
-import { Label } from "@codefast/ui/label";
-import { useId } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast, Toaster } from "@codefast/ui/sonner";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
-import { Button } from "@codefast/ui/button";
-import { Box } from "@codefast/ui/box";
-import { Pre } from "@codefast/ui/pre";
-import { Code } from "@codefast/ui/code";
+import type { Meta, StoryObj } from '@storybook/react';
+import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
+import { Label } from '@codefast/ui/label';
+import { useId } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast, Toaster } from '@codefast/ui/sonner';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@codefast/ui/form';
+import { Button } from '@codefast/ui/button';
+import { Box } from '@codefast/ui/box';
+import { Pre } from '@codefast/ui/pre';
+import { Code } from '@codefast/ui/code';
 
 const meta = {
   component: RadioGroup,
-  tags: ["autodocs"],
-  title: "UIs/Radio Group",
+  tags: ['autodocs'],
+  title: 'UIs/Radio Group',
 } satisfies Meta<typeof RadioGroup>;
 
 export default meta;
@@ -58,8 +65,8 @@ export const Default: Story = {
  * -------------------------------------------------------------------------- */
 
 const FormSchema = z.object({
-  type: z.enum(["all", "mentions", "none"], {
-    required_error: "You need to select a notification type.",
+  type: z.enum(['all', 'mentions', 'none'], {
+    required_error: 'You need to select a notification type.',
   }),
 });
 
@@ -78,7 +85,7 @@ export const ReactHookForm: Story = {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>): void {
-      toast.message("You submitted the following values:", {
+      toast.message('You submitted the following values:', {
         description: (
           <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
@@ -89,7 +96,10 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-2/3 space-y-6"
+        >
           <FormField
             control={form.control}
             name="type"
@@ -106,13 +116,17 @@ export const ReactHookForm: Story = {
                       <FormControl>
                         <RadioGroupItem value="all" />
                       </FormControl>
-                      <FormLabel className="font-normal">All new messages</FormLabel>
+                      <FormLabel className="font-normal">
+                        All new messages
+                      </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>
                         <RadioGroupItem value="mentions" />
                       </FormControl>
-                      <FormLabel className="font-normal">Direct messages and mentions</FormLabel>
+                      <FormLabel className="font-normal">
+                        Direct messages and mentions
+                      </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>

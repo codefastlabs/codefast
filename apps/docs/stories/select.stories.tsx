@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Select,
   SelectContent,
@@ -7,21 +7,29 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@codefast/ui/select";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast, Toaster } from "@codefast/ui/sonner";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@codefast/ui/form";
-import Link from "next/link";
-import { Button } from "@codefast/ui/button";
-import { Pre } from "@codefast/ui/pre";
-import { Code } from "@codefast/ui/code";
+} from '@codefast/ui/select';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast, Toaster } from '@codefast/ui/sonner';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@codefast/ui/form';
+import Link from 'next/link';
+import { Button } from '@codefast/ui/button';
+import { Pre } from '@codefast/ui/pre';
+import { Code } from '@codefast/ui/code';
 
 const meta = {
   component: Select,
-  tags: ["autodocs"],
-  title: "UIs/Select",
+  tags: ['autodocs'],
+  title: 'UIs/Select',
 } satisfies Meta<typeof Select>;
 
 export default meta;
@@ -79,7 +87,9 @@ export const Scrollable: Story = {
           <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
           <SelectItem value="cet">Central European Time (CET)</SelectItem>
           <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
-          <SelectItem value="west">Western European Summer Time (WEST)</SelectItem>
+          <SelectItem value="west">
+            Western European Summer Time (WEST)
+          </SelectItem>
           <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
           <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
         </SelectGroup>
@@ -90,13 +100,21 @@ export const Scrollable: Story = {
           <SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
           <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
           <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
-          <SelectItem value="ist_indonesia">Indonesia Central Standard Time (WITA)</SelectItem>
+          <SelectItem value="ist_indonesia">
+            Indonesia Central Standard Time (WITA)
+          </SelectItem>
         </SelectGroup>
         <SelectGroup>
           <SelectLabel>Australia & Pacific</SelectLabel>
-          <SelectItem value="awst">Australian Western Standard Time (AWST)</SelectItem>
-          <SelectItem value="acst">Australian Central Standard Time (ACST)</SelectItem>
-          <SelectItem value="aest">Australian Eastern Standard Time (AEST)</SelectItem>
+          <SelectItem value="awst">
+            Australian Western Standard Time (AWST)
+          </SelectItem>
+          <SelectItem value="acst">
+            Australian Central Standard Time (ACST)
+          </SelectItem>
+          <SelectItem value="aest">
+            Australian Eastern Standard Time (AEST)
+          </SelectItem>
           <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
           <SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
         </SelectGroup>
@@ -119,7 +137,7 @@ export const Scrollable: Story = {
 const FormSchema = z.object({
   email: z
     .string({
-      required_error: "Please select an email to display.",
+      required_error: 'Please select an email to display.',
     })
     .email(),
 });
@@ -139,7 +157,7 @@ export const ReactHookForm: Story = {
     });
 
     function onSubmit(data: z.infer<typeof FormSchema>): void {
-      toast.message("You submitted the following values:", {
+      toast.message('You submitted the following values:', {
         description: (
           <Pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
             <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
@@ -150,14 +168,21 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-2/3 space-y-6"
+        >
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} {...args}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  {...args}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a verified email to display" />
@@ -170,7 +195,8 @@ export const ReactHookForm: Story = {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  You can manage email addresses in your <Link href="/">email settings</Link>.
+                  You can manage email addresses in your{' '}
+                  <Link href="/">email settings</Link>.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
