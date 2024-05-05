@@ -1,17 +1,32 @@
-import { Button } from "@codefast/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { Textarea } from "@codefast/ui/textarea";
-import { type JSX } from "react";
+import { Button } from '@codefast/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@codefast/ui/card';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@codefast/ui/select';
+import { Textarea } from '@codefast/ui/textarea';
+import { type JSX } from 'react';
 
 export function DemoReportAnIssue(): JSX.Element {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Report an issue</CardTitle>
-        <CardDescription>What area are you having problems with?</CardDescription>
+        <CardDescription>
+          What area are you having problems with?
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
         <div className="grid grid-cols-2 gap-4">
@@ -51,7 +66,10 @@ export function DemoReportAnIssue(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" placeholder="Please include all information relevant to your issue." />
+          <Textarea
+            id="description"
+            placeholder="Please include all information relevant to your issue."
+          />
         </div>
       </CardContent>
       <CardFooter className="justify-between space-x-2">

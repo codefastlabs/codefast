@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Radio } from "@codefast/ui/radio";
-import { Box } from "@codefast/ui/box";
-import { Label } from "@codefast/ui/label";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Radio } from '@codefast/ui/radio';
+import { Box } from '@codefast/ui/box';
+import { Label } from '@codefast/ui/label';
 
 const meta = {
   component: Radio,
-  tags: ["autodocs"],
-  title: "UIs/Radio",
+  tags: ['autodocs'],
+  title: 'UIs/Radio',
 } satisfies Meta<typeof Radio>;
 
 export default meta;

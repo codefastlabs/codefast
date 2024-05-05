@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Toggle } from "@codefast/ui/toggle";
-import { Bold, Italic, Underline } from "lucide-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Toggle } from '@codefast/ui/toggle';
+import { Bold, Italic, Underline } from 'lucide-react';
 
 const meta = {
   component: Toggle,
-  tags: ["autodocs"],
-  title: "UIs/Toggle",
+  tags: ['autodocs'],
+  title: 'UIs/Toggle',
 } satisfies Meta<typeof Toggle>;
 
 export default meta;

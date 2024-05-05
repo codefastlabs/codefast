@@ -1,4 +1,4 @@
-import { Button } from "@codefast/ui/button";
+import { Button } from '@codefast/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,24 +11,29 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { type Row } from "@tanstack/react-table";
-import { type JSX } from "react";
-import { taskSchema } from "@/app/examples/tasks/data/schema";
-import { labels } from "@/app/examples/tasks/data/data";
+} from '@codefast/ui/dropdown-menu';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { type Row } from '@tanstack/react-table';
+import { type JSX } from 'react';
+import { taskSchema } from '@/app/examples/tasks/data/schema';
+import { labels } from '@/app/examples/tasks/data/data';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
-export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>): JSX.Element {
+export function DataTableRowActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>): JSX.Element {
   const task = taskSchema.parse(row.original);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="data-[state=open]:bg-muted flex size-8 p-0">
+        <Button
+          variant="ghost"
+          className="data-[state=open]:bg-muted flex size-8 p-0"
+        >
           <DotsHorizontalIcon className="size-4" />
           <span className="sr-only">Open menu</span>
         </Button>

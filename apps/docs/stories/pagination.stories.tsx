@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Pagination,
   PaginationContent,
@@ -7,12 +7,12 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@codefast/ui/pagination";
+} from '@codefast/ui/pagination';
 
 const meta = {
   component: Pagination,
-  tags: ["autodocs"],
-  title: "UIs/Pagination",
+  tags: ['autodocs'],
+  title: 'UIs/Pagination',
 } satisfies Meta<typeof Pagination>;
 
 export default meta;

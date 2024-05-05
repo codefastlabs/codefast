@@ -1,7 +1,11 @@
-import { type JSX, type ReactNode } from "react";
-import { ExamplesNav } from "@/components/examples-nav";
+import { type JSX, type ReactNode } from 'react';
+import { ExamplesNav } from '@/components/examples-nav';
 
-export default function ExamplesLayout({ children }: { children: ReactNode }): JSX.Element {
+export default function ExamplesLayout({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element {
   return (
     <section className="divide-y">
       <div className="px-4 py-2">

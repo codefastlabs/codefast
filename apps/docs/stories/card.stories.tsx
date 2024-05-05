@@ -1,18 +1,31 @@
-import { type Meta, type StoryObj } from "@storybook/react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Label } from "@codefast/ui/label";
-import { Input } from "@codefast/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { Button } from "@codefast/ui/button";
-import { BellIcon, CheckIcon } from "@radix-ui/react-icons";
-import { Switch } from "@codefast/ui/switch";
-import { Box } from "@codefast/ui/box";
-import { Text } from "@codefast/ui/text";
+import { type Meta, type StoryObj } from '@storybook/react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@codefast/ui/card';
+import { Label } from '@codefast/ui/label';
+import { Input } from '@codefast/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@codefast/ui/select';
+import { Button } from '@codefast/ui/button';
+import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
+import { Switch } from '@codefast/ui/switch';
+import { Box } from '@codefast/ui/box';
+import { Text } from '@codefast/ui/text';
 
 const meta = {
   component: Card,
-  tags: ["autodocs"],
-  title: "UIs/Card",
+  tags: ['autodocs'],
+  title: 'UIs/Card',
 } satisfies Meta<typeof Card>;
 
 export default meta;
@@ -69,18 +82,18 @@ export const Default: Story = {
 const notifications = [
   {
     id: 1,
-    title: "Your call has been confirmed.",
-    description: "1 hour ago",
+    title: 'Your call has been confirmed.',
+    description: '1 hour ago',
   },
   {
     id: 2,
-    title: "You have a new message!",
-    description: "1 hour ago",
+    title: 'You have a new message!',
+    description: '1 hour ago',
   },
   {
     id: 3,
-    title: "Your subscription is expiring soon!",
-    description: "2 hours ago",
+    title: 'Your subscription is expiring soon!',
+    description: '2 hours ago',
   },
 ];
 
@@ -95,18 +108,32 @@ export const Examples: Story = {
         <Box className=" flex items-center space-x-4 rounded-md border p-4">
           <BellIcon />
           <Box className="flex-1 space-y-1">
-            <Text className="text-sm font-medium leading-none">Push Notifications</Text>
-            <Text className="text-muted-foreground text-sm">Send notifications to device.</Text>
+            <Text className="text-sm font-medium leading-none">
+              Push Notifications
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              Send notifications to device.
+            </Text>
           </Box>
           <Switch />
         </Box>
         <Box>
           {notifications.map((notification) => (
-            <Box key={notification.id} className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-              <Box as="span" className="flex size-2 translate-y-1 rounded-full bg-sky-500" />
+            <Box
+              key={notification.id}
+              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
+            >
+              <Box
+                as="span"
+                className="flex size-2 translate-y-1 rounded-full bg-sky-500"
+              />
               <Box className="space-y-1">
-                <Text className="text-sm font-medium leading-none">{notification.title}</Text>
-                <Text className="text-muted-foreground text-sm">{notification.description}</Text>
+                <Text className="text-sm font-medium leading-none">
+                  {notification.title}
+                </Text>
+                <Text className="text-muted-foreground text-sm">
+                  {notification.description}
+                </Text>
               </Box>
             </Box>
           ))}

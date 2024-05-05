@@ -1,4 +1,4 @@
-import { Button } from "@codefast/ui/button";
+import { Button } from '@codefast/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,10 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@codefast/ui/dialog";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { type JSX } from "react";
+} from '@codefast/ui/dialog';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { type JSX } from 'react';
 
 export function PodcastEmptyPlaceholder(): JSX.Element {
   return (
@@ -32,7 +32,9 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
         </svg>
 
         <h3 className="mt-4 text-lg font-semibold">No episodes added</h3>
-        <p className="text-muted-foreground mb-4 mt-2 text-sm">You have not added any podcasts. Add one below.</p>
+        <p className="text-muted-foreground mb-4 mt-2 text-sm">
+          You have not added any podcasts. Add one below.
+        </p>
         <Dialog>
           <DialogTrigger asChild>
             <Button size="sm" className="relative">
@@ -42,7 +44,9 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Podcast</DialogTitle>
-              <DialogDescription>Copy and paste the podcast feed URL to import.</DialogDescription>
+              <DialogDescription>
+                Copy and paste the podcast feed URL to import.
+              </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">

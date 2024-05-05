@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Skeleton } from "@codefast/ui/skeleton";
-import { Box } from "@codefast/ui/box";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Skeleton } from '@codefast/ui/skeleton';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: Skeleton,
-  tags: ["autodocs"],
-  title: "UIs/Skeleton",
+  tags: ['autodocs'],
+  title: 'UIs/Skeleton',
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
 } satisfies Meta<typeof Skeleton>;
 

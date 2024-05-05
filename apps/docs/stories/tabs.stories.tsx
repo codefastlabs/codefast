@@ -1,15 +1,22 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@codefast/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui/card";
-import { Label } from "@codefast/ui/label";
-import { Input } from "@codefast/ui/input";
-import { Button } from "@codefast/ui/button";
-import { Box } from "@codefast/ui/box";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@codefast/ui/card';
+import { Label } from '@codefast/ui/label';
+import { Input } from '@codefast/ui/input';
+import { Button } from '@codefast/ui/button';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: Tabs,
-  tags: ["autodocs"],
-  title: "UIs/Tabs",
+  tags: ['autodocs'],
+  title: 'UIs/Tabs',
 } satisfies Meta<typeof Tabs>;
 
 export default meta;
@@ -31,7 +38,10 @@ export const Default: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
-            <CardDescription>Make changes to your account here. Click save when you&apos;re done.</CardDescription>
+            <CardDescription>
+              Make changes to your account here. Click save when you&apos;re
+              done.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Box className="space-y-1">
@@ -52,7 +62,9 @@ export const Default: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Password</CardTitle>
-            <CardDescription>Change your password here. After saving, you'll be logged out.</CardDescription>
+            <CardDescription>
+              Change your password here. After saving, you'll be logged out.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <Box className="space-y-1">

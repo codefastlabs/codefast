@@ -1,18 +1,22 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@codefast/ui/hover-card";
-import { Button } from "@codefast/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui/avatar";
-import { CalendarDays } from "lucide-react";
-import { Text } from "@codefast/ui/text";
-import { Box } from "@codefast/ui/box";
-import { Heading } from "@codefast/ui/heading";
+import type { Meta, StoryObj } from '@storybook/react';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@codefast/ui/hover-card';
+import { Button } from '@codefast/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { CalendarDays } from 'lucide-react';
+import { Text } from '@codefast/ui/text';
+import { Box } from '@codefast/ui/box';
+import { Heading } from '@codefast/ui/heading';
 
 const meta = {
   component: HoverCard,
-  tags: ["autodocs"],
-  title: "UIs/Hover Card",
+  tags: ['autodocs'],
+  title: 'UIs/Hover Card',
   parameters: {
-    layout: "centered",
+    layout: 'centered',
   },
   decorators: [
     (Story) => (
@@ -47,9 +51,11 @@ export const Default: Story = {
             <Heading as="h4" className="text-sm font-semibold">
               @nextjs
             </Heading>
-            <Text className="text-sm">The React Framework – created and maintained by @vercel.</Text>
+            <Text className="text-sm">
+              The React Framework – created and maintained by @vercel.
+            </Text>
             <Box className="flex items-center pt-2">
-              <CalendarDays className="mr-2 size-4 opacity-70" />{" "}
+              <CalendarDays className="mr-2 size-4 opacity-70" />{' '}
               <Box as="span" className="text-muted-foreground text-xs">
                 Joined December 2021
               </Box>

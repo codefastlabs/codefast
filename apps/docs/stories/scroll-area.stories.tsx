@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { ScrollArea } from "@codefast/ui/scroll-area";
-import { Separator } from "@codefast/ui/separator";
-import Image from "next/image";
-import { Heading } from "@codefast/ui/heading";
-import { Box } from "@codefast/ui/box";
+import type { Meta, StoryObj } from '@storybook/react';
+import { ScrollArea } from '@codefast/ui/scroll-area';
+import { Separator } from '@codefast/ui/separator';
+import Image from 'next/image';
+import { Heading } from '@codefast/ui/heading';
+import { Box } from '@codefast/ui/box';
 
 const meta = {
   component: ScrollArea,
-  tags: ["autodocs"],
-  title: "UIs/Scroll Area",
+  tags: ['autodocs'],
+  title: 'UIs/Scroll Area',
 } satisfies Meta<typeof ScrollArea>;
 
 export default meta;
@@ -19,7 +19,9 @@ type Story = StoryObj<typeof meta>;
  * Story: Default
  * -------------------------------------------------------------------------- */
 
-const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
+const tags = Array.from({ length: 50 }).map(
+  (_, i, a) => `v1.2.0-beta.${a.length - i}`,
+);
 
 export const Default: Story = {
   render: (args) => (
@@ -52,16 +54,16 @@ interface Artwork {
 
 const works: Artwork[] = [
   {
-    artist: "Ornella Binni",
-    art: "https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80",
+    artist: 'Ornella Binni',
+    art: 'https://images.unsplash.com/photo-1465869185982-5a1a7522cbcb?auto=format&fit=crop&w=300&q=80',
   },
   {
-    artist: "Tom Byrom",
-    art: "https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80",
+    artist: 'Tom Byrom',
+    art: 'https://images.unsplash.com/photo-1548516173-3cabfa4607e9?auto=format&fit=crop&w=300&q=80',
   },
   {
-    artist: "Vladimir Malyavko",
-    art: "https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80",
+    artist: 'Vladimir Malyavko',
+    art: 'https://images.unsplash.com/photo-1494337480532-3725c85fd2ab?auto=format&fit=crop&w=300&q=80',
   },
 ];
 
@@ -81,7 +83,7 @@ export const HorizontalScrolling: Story = {
               />
             </Box>
             <figcaption className="text-muted-foreground pt-2 text-xs">
-              Photo by{" "}
+              Photo by{' '}
               <Box as="span" className="text-foreground font-semibold">
                 {artwork.artist}
               </Box>

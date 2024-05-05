@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Progress } from "@codefast/ui/progress";
-import { useEffect, useState } from "react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { Progress } from '@codefast/ui/progress';
+import { useEffect, useState } from 'react';
 
 const meta = {
   component: Progress,
-  tags: ["autodocs"],
-  title: "UIs/Progress",
+  tags: ['autodocs'],
+  title: 'UIs/Progress',
 } satisfies Meta<typeof Progress>;
 
 export default meta;

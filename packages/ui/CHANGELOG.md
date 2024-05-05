@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.41
+
+### Patch Changes
+
+- Refactor syntax to use single quotes across multiple UI components
+
 ## 0.0.40
 
 ### Patch Changes

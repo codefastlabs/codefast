@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react";
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,13 +9,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@codefast/ui/alert-dialog";
-import { Button } from "@codefast/ui/button";
+} from '@codefast/ui/alert-dialog';
+import { Button } from '@codefast/ui/button';
 
 const meta = {
   component: AlertDialog,
-  tags: ["autodocs"],
-  title: "UIs/Alert Dialog",
+  tags: ['autodocs'],
+  title: 'UIs/Alert Dialog',
 } satisfies Meta<typeof AlertDialog>;
 
 export default meta;
@@ -36,8 +36,8 @@ export const Default: Story = {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your account and remove your data from our
-            servers.
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

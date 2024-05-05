@@ -1,10 +1,10 @@
-import { atom, type SetStateAction, useAtom } from "jotai";
-import { type Mail, mails } from "@/app/examples/mail/data/data";
+import { atom, type SetStateAction, useAtom } from 'jotai';
+import { type Mail, mails } from '@/app/examples/mail/data/data';
 
 type SetAtom<Args extends unknown[], Result> = (...args: Args) => Result;
 
 interface Config {
-  selected: Mail["id"] | null;
+  selected: Mail['id'] | null;
 }
 
 const configAtom = atom<Config>({

@@ -1,11 +1,20 @@
-import { cn } from "@codefast/ui/utils";
-import Link from "next/link";
-import { type HTMLAttributes, type JSX } from "react";
+import { cn } from '@codefast/ui/utils';
+import Link from 'next/link';
+import { type HTMLAttributes, type JSX } from 'react';
 
-export function MainNav({ className, ...props }: HTMLAttributes<HTMLElement>): JSX.Element {
+export function MainNav({
+  className,
+  ...props
+}: HTMLAttributes<HTMLElement>): JSX.Element {
   return (
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)} {...props}>
-      <Link href="/examples/dashboard" className="hover:text-primary text-sm font-medium transition-colors">
+    <nav
+      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
+      {...props}
+    >
+      <Link
+        href="/examples/dashboard"
+        className="hover:text-primary text-sm font-medium transition-colors"
+      >
         Overview
       </Link>
       <Link

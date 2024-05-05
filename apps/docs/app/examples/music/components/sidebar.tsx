@@ -1,8 +1,8 @@
-import { Button } from "@codefast/ui/button";
-import { ScrollArea } from "@codefast/ui/scroll-area";
-import { cn } from "@codefast/ui/utils";
-import { type HTMLAttributes, type JSX } from "react";
-import { type Playlist } from "@/app/examples/music/data/playlists";
+import { Button } from '@codefast/ui/button';
+import { ScrollArea } from '@codefast/ui/scroll-area';
+import { cn } from '@codefast/ui/utils';
+import { type HTMLAttributes, type JSX } from 'react';
+import { type Playlist } from '@/app/examples/music/data/playlists';
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {
   playlists: Playlist[];
@@ -10,10 +10,12 @@ interface SidebarProps extends HTMLAttributes<HTMLDivElement> {
 
 export function Sidebar({ className, playlists }: SidebarProps): JSX.Element {
   return (
-    <div className={cn("pb-12", className)}>
+    <div className={cn('pb-12', className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Discover</h2>
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+            Discover
+          </h2>
           <div className="space-y-1">
             <Button variant="secondary" className="w-full justify-start">
               <svg
@@ -71,7 +73,9 @@ export function Sidebar({ className, playlists }: SidebarProps): JSX.Element {
           </div>
         </div>
         <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Library</h2>
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+            Library
+          </h2>
           <div className="space-y-1">
             <Button variant="ghost" className="w-full justify-start">
               <svg
@@ -161,12 +165,18 @@ export function Sidebar({ className, playlists }: SidebarProps): JSX.Element {
           </div>
         </div>
         <div className="py-2">
-          <h2 className="relative px-7 text-lg font-semibold tracking-tight">Playlists</h2>
+          <h2 className="relative px-7 text-lg font-semibold tracking-tight">
+            Playlists
+          </h2>
           <ScrollArea className="h-[300px] px-1">
             <div className="space-y-1 p-2">
               {playlists.map((playlist, i) => (
                 // eslint-disable-next-line react/no-array-index-key -- This is a static list
-                <Button key={`${playlist}-${i}`} variant="ghost" className="w-full justify-start font-normal">
+                <Button
+                  key={`${playlist}-${i}`}
+                  variant="ghost"
+                  className="w-full justify-start font-normal"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"

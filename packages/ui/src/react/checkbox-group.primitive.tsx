@@ -1,25 +1,26 @@
-import * as React from "react";
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { createCheckboxScope } from "@radix-ui/react-checkbox";
-import { createContextScope, type Scope } from "@radix-ui/react-context";
-import * as RovingFocusGroup from "@radix-ui/react-roving-focus";
-import { createRovingFocusGroupScope } from "@radix-ui/react-roving-focus";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import { useDirection } from "@radix-ui/react-direction";
-import { Primitive } from "@radix-ui/react-primitive";
+import * as React from 'react';
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import { createCheckboxScope } from '@radix-ui/react-checkbox';
+import { createContextScope, type Scope } from '@radix-ui/react-context';
+import * as RovingFocusGroup from '@radix-ui/react-roving-focus';
+import { createRovingFocusGroupScope } from '@radix-ui/react-roving-focus';
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useDirection } from '@radix-ui/react-direction';
+import { Primitive } from '@radix-ui/react-primitive';
 
 /* -------------------------------------------------------------------------------------------------
  * Component: CheckboxGroup
  * -----------------------------------------------------------------------------------------------*/
 
-const CHECKBOX_GROUP_NAME = "CheckboxGroup";
+const CHECKBOX_GROUP_NAME = 'CheckboxGroup';
 
 type ScopedProps<P> = P & { __scopeCheckboxGroup?: Scope };
 
-const [createCheckboxGroupContext, createCheckboxGroupScope] = createContextScope(CHECKBOX_GROUP_NAME, [
-  createRovingFocusGroupScope,
-  createCheckboxScope,
-]);
+const [createCheckboxGroupContext, createCheckboxGroupScope] =
+  createContextScope(CHECKBOX_GROUP_NAME, [
+    createRovingFocusGroupScope,
+    createCheckboxScope,
+  ]);
 
 const useRovingFocusGroupScope = createRovingFocusGroupScope();
 const useCheckboxScope = createCheckboxScope();
@@ -38,19 +39,27 @@ const [CheckboxGroupProvider, useCheckboxGroupContext] =
 
 type CheckboxGroupElement = React.ElementRef<typeof Primitive.div>;
 
-interface CheckboxGroupProps extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  name?: CheckboxGroupContextValue["name"];
-  required?: React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>["required"];
-  disabled?: React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>["disabled"];
-  dir?: RovingFocusGroup.RovingFocusGroupProps["dir"];
-  orientation?: RovingFocusGroup.RovingFocusGroupProps["orientation"];
-  loop?: RovingFocusGroup.RovingFocusGroupProps["loop"];
+interface CheckboxGroupProps
+  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+  name?: CheckboxGroupContextValue['name'];
+  required?: React.ComponentPropsWithoutRef<
+    typeof CheckboxPrimitive.Root
+  >['required'];
+  disabled?: React.ComponentPropsWithoutRef<
+    typeof CheckboxPrimitive.Root
+  >['disabled'];
+  dir?: RovingFocusGroup.RovingFocusGroupProps['dir'];
+  orientation?: RovingFocusGroup.RovingFocusGroupProps['orientation'];
+  loop?: RovingFocusGroup.RovingFocusGroupProps['loop'];
   defaultValue?: string[];
-  value?: CheckboxGroupContextValue["value"];
+  value?: CheckboxGroupContextValue['value'];
   onValueChange?: (value: string[]) => void;
 }
 
-const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
+const CheckboxGroup = React.forwardRef<
+  CheckboxGroupElement,
+  CheckboxGroupProps
+>(
   (
     {
       __scopeCheckboxGroup,
@@ -67,7 +76,8 @@ const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>
     }: ScopedProps<CheckboxGroupProps>,
     ref,
   ) => {
-    const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
+    const rovingFocusGroupScope =
+      useRovingFocusGroupScope(__scopeCheckboxGroup);
     const direction = useDirection(dir);
     const [value = [], setValue] = useControllableState({
       prop: valueProp,
@@ -84,7 +94,9 @@ const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>
 
     const handleItemUncheck = React.useCallback(
       (itemValue: string) => {
-        setValue((prevValue = []) => prevValue.filter((val) => val !== itemValue));
+        setValue((prevValue = []) =>
+          prevValue.filter((val) => val !== itemValue),
+        );
       },
       [setValue],
     );
@@ -99,9 +111,21 @@ const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>
         onItemCheck={handleItemCheck}
         onItemUncheck={handleItemUncheck}
       >
-        <RovingFocusGroup.Root asChild {...rovingFocusGroupScope} orientation={orientation} dir={direction} loop={loop}>
+        <RovingFocusGroup.Root
+          asChild
+          {...rovingFocusGroupScope}
+          orientation={orientation}
+          dir={direction}
+          loop={loop}
+        >
           {/* eslint-disable-next-line react/jsx-pascal-case -- radix-ui */}
-          <Primitive.div ref={ref} role="group" data-disabled={disabled ? "" : undefined} dir={direction} {...props} />
+          <Primitive.div
+            ref={ref}
+            role="group"
+            data-disabled={disabled ? '' : undefined}
+            dir={direction}
+            {...props}
+          />
         </RovingFocusGroup.Root>
       </CheckboxGroupProvider>
     );
@@ -121,21 +145,37 @@ type CheckboxGroupItemElement = React.ElementRef<typeof CheckboxPrimitive.Root>;
 interface CheckboxGroupItemProps
   extends Omit<
     React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
-    "checked" | "defaultChecked" | "onCheckedChange" | "name"
+    'checked' | 'defaultChecked' | 'onCheckedChange' | 'name'
   > {
   value: string;
 }
 
-const CheckboxGroupItem = React.forwardRef<CheckboxGroupItemElement, CheckboxGroupItemProps>(
-  ({ __scopeCheckboxGroup, disabled, ...props }: ScopedProps<CheckboxGroupItemProps>, ref) => {
+const CheckboxGroupItem = React.forwardRef<
+  CheckboxGroupItemElement,
+  CheckboxGroupItemProps
+>(
+  (
+    {
+      __scopeCheckboxGroup,
+      disabled,
+      ...props
+    }: ScopedProps<CheckboxGroupItemProps>,
+    ref,
+  ) => {
     const context = useCheckboxGroupContext(ITEM_NAME, __scopeCheckboxGroup);
     const isDisabled = context.disabled || disabled;
-    const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
+    const rovingFocusGroupScope =
+      useRovingFocusGroupScope(__scopeCheckboxGroup);
     const checkboxScope = useCheckboxScope(__scopeCheckboxGroup);
     const checked = context.value?.includes(props.value);
 
     return (
-      <RovingFocusGroup.Item asChild {...rovingFocusGroupScope} focusable={!isDisabled} active={checked}>
+      <RovingFocusGroup.Item
+        asChild
+        {...rovingFocusGroupScope}
+        focusable={!isDisabled}
+        active={checked}
+      >
         <CheckboxPrimitive.Root
           ref={ref}
           name={context.name}
@@ -165,13 +205,28 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 
 const INDICATOR_NAME = `${CHECKBOX_GROUP_NAME}Indicator`;
 
-type CheckboxGroupIndicatorElement = React.ElementRef<typeof CheckboxPrimitive.Indicator>;
-type CheckboxGroupIndicatorProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Indicator>;
+type CheckboxGroupIndicatorElement = React.ElementRef<
+  typeof CheckboxPrimitive.Indicator
+>;
+type CheckboxGroupIndicatorProps = React.ComponentPropsWithoutRef<
+  typeof CheckboxPrimitive.Indicator
+>;
 
-const CheckboxGroupIndicator = React.forwardRef<CheckboxGroupIndicatorElement, CheckboxGroupIndicatorProps>(
-  ({ __scopeCheckboxGroup, ...props }: ScopedProps<CheckboxGroupIndicatorProps>, ref) => {
+const CheckboxGroupIndicator = React.forwardRef<
+  CheckboxGroupIndicatorElement,
+  CheckboxGroupIndicatorProps
+>(
+  (
+    {
+      __scopeCheckboxGroup,
+      ...props
+    }: ScopedProps<CheckboxGroupIndicatorProps>,
+    ref,
+  ) => {
     const checkboxScope = useCheckboxScope(__scopeCheckboxGroup);
-    return <CheckboxPrimitive.Indicator ref={ref} {...checkboxScope} {...props} />;
+    return (
+      <CheckboxPrimitive.Indicator ref={ref} {...checkboxScope} {...props} />
+    );
   },
 );
 
