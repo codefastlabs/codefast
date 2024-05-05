@@ -28,6 +28,7 @@ import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { type JSX } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
+import isNil from 'lodash/isNil';
 import {
   accountFormSchema,
   type AccountFormValues,
@@ -119,7 +120,7 @@ export function AccountForm(): JSX.Element {
                       variant="outline"
                       className={cn(
                         'w-56 pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground',
+                        isNil(field.value) && 'text-muted-foreground',
                       )}
                       disabled={field.disabled ?? form.formState.isSubmitting}
                     >
