@@ -1,8 +1,14 @@
-"use client";
+'use client';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui/select";
-import { cn } from "@codefast/ui/utils";
-import { type JSX, type ReactNode, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@codefast/ui/select';
+import { cn } from '@codefast/ui/utils';
+import { type JSX, type ReactNode, useState } from 'react';
 
 interface AccountSwitcherProps {
   isCollapsed: boolean;
@@ -13,22 +19,31 @@ interface AccountSwitcherProps {
   }[];
 }
 
-export function AccountSwitcher({ isCollapsed, accounts }: AccountSwitcherProps): JSX.Element {
-  const [selectedAccount, setSelectedAccount] = useState<string>(accounts[0].email);
+export function AccountSwitcher({
+  isCollapsed,
+  accounts,
+}: AccountSwitcherProps): JSX.Element {
+  const [selectedAccount, setSelectedAccount] = useState<string>(
+    accounts[0].email,
+  );
 
   return (
     <Select defaultValue={selectedAccount} onValueChange={setSelectedAccount}>
       <SelectTrigger
         className={cn(
-          "flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:size-4 [&_svg]:shrink-0",
-          isCollapsed && "flex size-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden",
+          'flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:size-4 [&_svg]:shrink-0',
+          isCollapsed &&
+            'flex size-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden',
         )}
         aria-label="Select account"
       >
         <SelectValue placeholder="Select an account">
           {accounts.find((account) => account.email === selectedAccount)?.icon}
-          <span className={cn("ml-2", isCollapsed && "hidden")}>
-            {accounts.find((account) => account.email === selectedAccount)?.label}
+          <span className={cn('ml-2', isCollapsed && 'hidden')}>
+            {
+              accounts.find((account) => account.email === selectedAccount)
+                ?.label
+            }
           </span>
         </SelectValue>
       </SelectTrigger>

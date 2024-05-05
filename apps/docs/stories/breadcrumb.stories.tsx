@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from "@storybook/react";
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -7,11 +7,16 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@codefast/ui/breadcrumb";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@codefast/ui/dropdown-menu";
-import { ChevronDownIcon, SlashIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
-import { Fragment, useState } from "react";
+} from '@codefast/ui/breadcrumb';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@codefast/ui/dropdown-menu';
+import { ChevronDownIcon, SlashIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
+import { Fragment, useState } from 'react';
 import {
   Drawer,
   DrawerClose,
@@ -21,15 +26,15 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@codefast/ui/drawer";
-import { Button } from "@codefast/ui/button";
-import { Box } from "@codefast/ui/box";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
+} from '@codefast/ui/drawer';
+import { Button } from '@codefast/ui/button';
+import { Box } from '@codefast/ui/box';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 
 const meta = {
   component: Breadcrumb,
-  tags: ["autodocs"],
-  title: "UIs/Breadcrumb",
+  tags: ['autodocs'],
+  title: 'UIs/Breadcrumb',
 } satisfies Meta<typeof Breadcrumb>;
 
 export default meta;
@@ -65,7 +70,9 @@ export const Default: Story = {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">Components</BreadcrumbLink>
+          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">
+            Components
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -91,7 +98,9 @@ export const CustomSeparator: Story = {
           <SlashIcon />
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">Components</BreadcrumbLink>
+          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">
+            Components
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <SlashIcon />
@@ -159,7 +168,9 @@ export const Collapsed: Story = {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">Components</BreadcrumbLink>
+          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">
+            Components
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -203,25 +214,27 @@ export const AsLink: Story = {
  * -------------------------------------------------------------------------- */
 
 const items = [
-  { href: "#", label: "Home" },
-  { href: "#", label: "Documentation" },
-  { href: "#", label: "Building Your Application" },
-  { href: "#", label: "Data Fetching" },
-  { label: "Caching and Revalidating" },
+  { href: '#', label: 'Home' },
+  { href: '#', label: 'Documentation' },
+  { href: '#', label: 'Building Your Application' },
+  { href: '#', label: 'Data Fetching' },
+  { label: 'Caching and Revalidating' },
 ];
 
 const ITEMS_TO_DISPLAY = 3;
 
 export const ResponsiveBreadcrumb: Story = {
   render: (args) => {
-    const isDesktop = useMediaQuery("(min-width: 768px)");
+    const isDesktop = useMediaQuery('(min-width: 768px)');
     const [open, setOpen] = useState(false);
 
     return (
       <Breadcrumb {...args}>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href={items[0].href}>{items[0].label}</BreadcrumbLink>
+            <BreadcrumbLink href={items[0].href}>
+              {items[0].label}
+            </BreadcrumbLink>
           </BreadcrumbItem>
           {items.length > ITEMS_TO_DISPLAY ? (
             <>
@@ -229,14 +242,19 @@ export const ResponsiveBreadcrumb: Story = {
               <BreadcrumbItem>
                 {isDesktop ? (
                   <DropdownMenu open={open} onOpenChange={setOpen}>
-                    <DropdownMenuTrigger className="flex items-center gap-1" aria-label="Toggle menu">
+                    <DropdownMenuTrigger
+                      className="flex items-center gap-1"
+                      aria-label="Toggle menu"
+                    >
                       <BreadcrumbEllipsis />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       {items.slice(1, -2).map((item, index) => (
                         // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
                         <DropdownMenuItem key={index}>
-                          <Link href={item.href ? item.href : "#"}>{item.label}</Link>
+                          <Link href={item.href ? item.href : '#'}>
+                            {item.label}
+                          </Link>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -249,14 +267,16 @@ export const ResponsiveBreadcrumb: Story = {
                     <DrawerContent>
                       <DrawerHeader className="text-left">
                         <DrawerTitle>Navigate to</DrawerTitle>
-                        <DrawerDescription>Select a page to navigate to.</DrawerDescription>
+                        <DrawerDescription>
+                          Select a page to navigate to.
+                        </DrawerDescription>
                       </DrawerHeader>
                       <Box className="grid gap-1 px-4">
                         {items.slice(1, -2).map((item, index) => (
                           <Link
                             // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
                             key={index}
-                            href={item.href ? item.href : "#"}
+                            href={item.href ? item.href : '#'}
                             className="py-1 text-sm"
                           >
                             {item.label}
@@ -280,11 +300,16 @@ export const ResponsiveBreadcrumb: Story = {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {item.href ? (
-                  <BreadcrumbLink asChild className="max-w-20 truncate md:max-w-none">
+                  <BreadcrumbLink
+                    asChild
+                    className="max-w-20 truncate md:max-w-none"
+                  >
                     <Link href={item.href}>{item.label}</Link>
                   </BreadcrumbLink>
                 ) : (
-                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">{item.label}</BreadcrumbPage>
+                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
+                    {item.label}
+                  </BreadcrumbPage>
                 )}
               </BreadcrumbItem>
             </Fragment>

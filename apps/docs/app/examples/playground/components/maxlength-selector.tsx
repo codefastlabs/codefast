@@ -1,15 +1,21 @@
-"use client";
+'use client';
 
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@codefast/ui/hover-card";
-import { Label } from "@codefast/ui/label";
-import { Slider, type SliderProps } from "@codefast/ui/slider";
-import { type JSX, useState } from "react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@codefast/ui/hover-card';
+import { Label } from '@codefast/ui/label';
+import { Slider, type SliderProps } from '@codefast/ui/slider';
+import { type JSX, useState } from 'react';
 
 interface MaxLengthSelectorProps {
-  defaultValue: SliderProps["defaultValue"];
+  defaultValue: SliderProps['defaultValue'];
 }
 
-export function MaxLengthSelector({ defaultValue }: MaxLengthSelectorProps): JSX.Element {
+export function MaxLengthSelector({
+  defaultValue,
+}: MaxLengthSelectorProps): JSX.Element {
   const [value, setValue] = useState(defaultValue);
 
   return (
@@ -34,8 +40,9 @@ export function MaxLengthSelector({ defaultValue }: MaxLengthSelectorProps): JSX
           </div>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          The maximum number of tokens to generate. Requests can use up to 2,048 or 4,000 tokens, shared between prompt
-          and completion. The exact limit varies by model.
+          The maximum number of tokens to generate. Requests can use up to 2,048
+          or 4,000 tokens, shared between prompt and completion. The exact limit
+          varies by model.
         </HoverCardContent>
       </HoverCard>
     </div>

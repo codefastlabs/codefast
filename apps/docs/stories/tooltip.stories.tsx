@@ -1,12 +1,17 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui/tooltip";
-import { Button } from "@codefast/ui/button";
-import { Text } from "@codefast/ui/text";
+import type { Meta, StoryObj } from '@storybook/react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@codefast/ui/tooltip';
+import { Button } from '@codefast/ui/button';
+import { Text } from '@codefast/ui/text';
 
 const meta = {
   component: Tooltip,
-  tags: ["autodocs"],
-  title: "UIs/Tooltip",
+  tags: ['autodocs'],
+  title: 'UIs/Tooltip',
 } satisfies Meta<typeof Tooltip>;
 
 export default meta;

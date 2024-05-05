@@ -1,4 +1,4 @@
-import plugin from "tailwindcss/plugin";
+import plugin from 'tailwindcss/plugin';
 
 const perspective = plugin(({ matchUtilities }) => {
   matchUtilities({

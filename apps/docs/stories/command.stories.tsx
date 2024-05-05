@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from '@storybook/react';
 import {
   Command,
   CommandDialog,
@@ -9,17 +9,24 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "@codefast/ui/command";
-import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Box } from "@codefast/ui/box";
-import { Text } from "@codefast/ui/text";
-import { Kbd } from "@codefast/ui/kbd";
+} from '@codefast/ui/command';
+import {
+  Calculator,
+  Calendar,
+  CreditCard,
+  Settings,
+  Smile,
+  User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Box } from '@codefast/ui/box';
+import { Text } from '@codefast/ui/text';
+import { Kbd } from '@codefast/ui/kbd';
 
 const meta = {
   component: Command,
-  tags: ["autodocs"],
-  title: "UIs/Command",
+  tags: ['autodocs'],
+  title: 'UIs/Command',
 } satisfies Meta<typeof Command>;
 
 export default meta;
@@ -83,23 +90,23 @@ export const WithDialog: Story = {
 
     useEffect(() => {
       const down = (e: KeyboardEvent): void => {
-        if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+        if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
           e.preventDefault();
           setOpen((prev) => !prev);
         }
       };
 
-      document.addEventListener("keydown", down);
+      document.addEventListener('keydown', down);
 
       return () => {
-        document.removeEventListener("keydown", down);
+        document.removeEventListener('keydown', down);
       };
     }, []);
 
     return (
       <>
         <Text className="text-muted-foreground text-sm">
-          Press{" "}
+          Press{' '}
           <Kbd>
             <Box as="span">⌘</Box>J
           </Kbd>

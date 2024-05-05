@@ -13,8 +13,8 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "@codefast/ui/menubar";
-import { type JSX } from "react";
+} from '@codefast/ui/menubar';
+import { type JSX } from 'react';
 
 export function Menu(): JSX.Element {
   return (
@@ -89,7 +89,7 @@ export function Menu(): JSX.Element {
           <MenubarItem disabled>Burn Playlist to Disc...</MenubarItem>
           <MenubarSeparator />
           <MenubarItem>
-            Show in Finder <MenubarShortcut>⇧⌘R</MenubarShortcut>{" "}
+            Show in Finder <MenubarShortcut>⇧⌘R</MenubarShortcut>{' '}
           </MenubarItem>
           <MenubarItem>Convert</MenubarItem>
           <MenubarSeparator />
@@ -127,7 +127,7 @@ export function Menu(): JSX.Element {
           </MenubarItem>
           <MenubarSeparator />
           <MenubarItem>
-            Smart Dictation...{" "}
+            Smart Dictation...{' '}
             <MenubarShortcut>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +145,7 @@ export function Menu(): JSX.Element {
             </MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
-            Emoji & Symbols{" "}
+            Emoji & Symbols{' '}
             <MenubarShortcut>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

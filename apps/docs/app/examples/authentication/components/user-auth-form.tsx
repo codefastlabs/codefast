@@ -1,16 +1,24 @@
-"use client";
+'use client';
 
-import { Button } from "@codefast/ui/button";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { Spinner } from "@codefast/ui/spinner";
-import { cn } from "@codefast/ui/utils";
-import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from "react";
-import { Icons } from "@/components/icons";
+import { Button } from '@codefast/ui/button';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { Spinner } from '@codefast/ui/spinner';
+import { cn } from '@codefast/ui/utils';
+import {
+  type HTMLAttributes,
+  type JSX,
+  type SyntheticEvent,
+  useState,
+} from 'react';
+import { Icons } from '@/components/icons';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.Element {
+export function UserAuthForm({
+  className,
+  ...props
+}: UserAuthFormProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function onSubmit(event: SyntheticEvent): void {
@@ -23,7 +31,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn('grid gap-6', className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -51,11 +59,18 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background text-muted-foreground px-2">Or continue with</span>
+          <span className="bg-background text-muted-foreground px-2">
+            Or continue with
+          </span>
         </div>
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? <Spinner className="mr-2" /> : <Icons.GitHub className="mr-2 size-4" />} GitHub
+        {isLoading ? (
+          <Spinner className="mr-2" />
+        ) : (
+          <Icons.GitHub className="mr-2 size-4" />
+        )}{' '}
+        GitHub
       </Button>
     </div>
   );

@@ -1,8 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@codefast/ui/table";
-import { Checkbox } from "@codefast/ui/checkbox";
-import { Button } from "@codefast/ui/button";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import type { Meta, StoryObj } from '@storybook/react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@codefast/ui/table';
+import { Checkbox } from '@codefast/ui/checkbox';
+import { Button } from '@codefast/ui/button';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +18,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@codefast/ui/dropdown-menu";
-import { Input } from "@codefast/ui/input";
-import { useState } from "react";
-import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from "@codefast/ui/data-table";
-import { faker } from "@faker-js/faker";
-import { Box } from "@codefast/ui/box";
+} from '@codefast/ui/dropdown-menu';
+import { Input } from '@codefast/ui/input';
+import { useState } from 'react';
+import {
+  DataTableColumnHeader,
+  DataTablePagination,
+  DataTableViewOptions,
+} from '@codefast/ui/data-table';
+import { faker } from '@faker-js/faker';
+import { Box } from '@codefast/ui/box';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -27,11 +39,11 @@ import {
   type SortingState,
   useReactTable,
   type VisibilityState,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
 const meta = {
-  tags: ["autodocs"],
-  title: "UIs/Data Table",
+  tags: ['autodocs'],
+  title: 'UIs/Data Table',
 } satisfies Meta<typeof Table>;
 
 export default meta;
@@ -45,23 +57,31 @@ type Story = StoryObj<typeof meta>;
 interface Payment {
   id: string;
   amount: number;
-  status: "pending" | "processing" | "success" | "failed";
+  status: 'pending' | 'processing' | 'success' | 'failed';
   email: string;
 }
 
 const data: Payment[] = Array.from({ length: 100 }, () => ({
   id: faker.string.uuid(),
   amount: faker.number.int({ min: 100, max: 10000 }),
-  status: faker.helpers.arrayElement(["pending", "processing", "success", "failed"]),
+  status: faker.helpers.arrayElement([
+    'pending',
+    'processing',
+    'success',
+    'failed',
+  ]),
   email: faker.internet.email(),
 }));
 
 const columns: ColumnDef<Payment>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
@@ -81,32 +101,36 @@ const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <Box className="capitalize">{row.getValue("status")}</Box>,
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => (
+      <Box className="capitalize">{row.getValue('status')}</Box>
+    ),
   },
   {
-    accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    cell: ({ row }) => <Box className="lowercase">{row.getValue("email")}</Box>,
+    accessorKey: 'email',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
+    cell: ({ row }) => <Box className="lowercase">{row.getValue('email')}</Box>,
   },
   {
-    accessorKey: "amount",
+    accessorKey: 'amount',
     header: () => <Box className="text-right">Amount</Box>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = parseFloat(row.getValue('amount'));
 
       // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
+      const formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
       }).format(amount);
 
       return <Box className="text-right font-medium">{formatted}</Box>;
     },
   },
   {
-    id: "actions",
+    id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original;
@@ -147,7 +171,9 @@ export const Default: Story = {
   render: () => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+      {},
+    );
     const [rowSelection, setRowSelection] = useState({});
 
     const table = useReactTable({
@@ -174,8 +200,10 @@ export const Default: Story = {
         <Box className="flex items-center py-4">
           <Input
             placeholder="Filter emails..."
-            value={String(table.getColumn("email")?.getFilterValue())}
-            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
+            value={String(table.getColumn('email')?.getFilterValue())}
+            onChange={(event) =>
+              table.getColumn('email')?.setFilterValue(event.target.value)
+            }
             inputSize="sm"
             className="max-w-sm"
           />
@@ -188,7 +216,12 @@ export const Default: Story = {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -197,15 +230,26 @@ export const Default: Story = {
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
                     No results.
                   </TableCell>
                 </TableRow>
@@ -216,7 +260,12 @@ export const Default: Story = {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>

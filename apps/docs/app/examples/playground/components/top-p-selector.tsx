@@ -1,12 +1,16 @@
-"use client";
+'use client';
 
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@codefast/ui/hover-card";
-import { Label } from "@codefast/ui/label";
-import { Slider, type SliderProps } from "@codefast/ui/slider";
-import { type JSX, useState } from "react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@codefast/ui/hover-card';
+import { Label } from '@codefast/ui/label';
+import { Slider, type SliderProps } from '@codefast/ui/slider';
+import { type JSX, useState } from 'react';
 
 interface TopPSelectorProps {
-  defaultValue: SliderProps["defaultValue"];
+  defaultValue: SliderProps['defaultValue'];
 }
 
 export function TopPSelector({ defaultValue }: TopPSelectorProps): JSX.Element {
@@ -23,11 +27,19 @@ export function TopPSelector({ defaultValue }: TopPSelectorProps): JSX.Element {
                 {value}
               </span>
             </div>
-            <Slider id="top-p" max={1} defaultValue={value} step={0.1} onValueChange={setValue} aria-label="Top P" />
+            <Slider
+              id="top-p"
+              max={1}
+              defaultValue={value}
+              step={0.1}
+              onValueChange={setValue}
+              aria-label="Top P"
+            />
           </div>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          Control diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.
+          Control diversity via nucleus sampling: 0.5 means half of all
+          likelihood-weighted options are considered.
         </HoverCardContent>
       </HoverCard>
     </div>

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@codefast/ui/button";
+import { Button } from '@codefast/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -9,19 +9,27 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@codefast/ui/command";
-import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from "@codefast/ui/popover";
-import { cn } from "@codefast/ui/utils";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
-import { type JSX, useState } from "react";
-import { type Preset } from "@/app/examples/playground/data/presets";
+} from '@codefast/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  type PopoverProps,
+  PopoverTrigger,
+} from '@codefast/ui/popover';
+import { cn } from '@codefast/ui/utils';
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
+import { useRouter } from 'next/navigation';
+import { type JSX, useState } from 'react';
+import { type Preset } from '@/app/examples/playground/data/presets';
 
 interface PresetSelectorProps extends PopoverProps {
   presets: Preset[];
 }
 
-export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.Element {
+export function PresetSelector({
+  presets,
+  ...props
+}: PresetSelectorProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<Preset>();
   const router = useRouter();
@@ -36,7 +44,7 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
           aria-expanded={open}
           className="flex-1 justify-between md:max-w-[200px] lg:max-w-[300px]"
         >
-          {selectedPreset ? selectedPreset.name : "Load a preset..."}
+          {selectedPreset ? selectedPreset.name : 'Load a preset...'}
           <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -56,7 +64,12 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
                 >
                   {preset.name}
                   <CheckIcon
-                    className={cn("ml-auto size-4", selectedPreset?.id === preset.id ? "opacity-100" : "opacity-0")}
+                    className={cn(
+                      'ml-auto size-4',
+                      selectedPreset?.id === preset.id
+                        ? 'opacity-100'
+                        : 'opacity-0',
+                    )}
                   />
                 </CommandItem>
               ))}
@@ -65,7 +78,7 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
             <CommandGroup>
               <CommandItem
                 onSelect={() => {
-                  router.push("/examples");
+                  router.push('/examples');
                 }}
               >
                 More examples

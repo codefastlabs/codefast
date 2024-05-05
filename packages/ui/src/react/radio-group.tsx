@@ -1,19 +1,29 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-import { cn } from "../lib/utils";
+import * as React from 'react';
+import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import { cn } from '../lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
 type RadioGroupElement = React.ElementRef<typeof RadioGroupPrimitive.Root>;
-type RadioGroupProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
+type RadioGroupProps = React.ComponentPropsWithoutRef<
+  typeof RadioGroupPrimitive.Root
+>;
 
-const RadioGroup = React.forwardRef<RadioGroupElement, RadioGroupProps>(({ className, ...props }, ref) => {
-  return <RadioGroupPrimitive.Root className={cn("grid gap-2", className)} {...props} ref={ref} />;
-});
+const RadioGroup = React.forwardRef<RadioGroupElement, RadioGroupProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <RadioGroupPrimitive.Root
+        className={cn('grid gap-2', className)}
+        {...props}
+        ref={ref}
+      />
+    );
+  },
+);
 
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -22,14 +32,19 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 type RadioGroupItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
-type RadioGroupItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
+type RadioGroupItemProps = React.ComponentPropsWithoutRef<
+  typeof RadioGroupPrimitive.Item
+>;
 
-const RadioGroupItem = React.forwardRef<RadioGroupItemElement, RadioGroupItemProps>(({ className, ...props }, ref) => {
+const RadioGroupItem = React.forwardRef<
+  RadioGroupItemElement,
+  RadioGroupItemProps
+>(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "border-compound/70 hover:border-compound text-compound-foreground aria-checked:border-primary group peer aspect-square size-4 rounded-full border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        'border-compound/70 hover:border-compound text-compound-foreground aria-checked:border-primary group peer aspect-square size-4 rounded-full border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}
@@ -45,4 +60,9 @@ RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { RadioGroup, RadioGroupItem, type RadioGroupProps, type RadioGroupItemProps };
+export {
+  RadioGroup,
+  RadioGroupItem,
+  type RadioGroupProps,
+  type RadioGroupItemProps,
+};

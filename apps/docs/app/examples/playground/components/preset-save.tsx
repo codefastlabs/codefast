@@ -1,4 +1,4 @@
-import { Button } from "@codefast/ui/button";
+import { Button } from '@codefast/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -8,10 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@codefast/ui/dialog";
-import { Input } from "@codefast/ui/input";
-import { Label } from "@codefast/ui/label";
-import { type JSX } from "react";
+} from '@codefast/ui/dialog';
+import { Input } from '@codefast/ui/input';
+import { Label } from '@codefast/ui/label';
+import { type JSX } from 'react';
 
 export function PresetSave(): JSX.Element {
   return (
@@ -23,7 +23,8 @@ export function PresetSave(): JSX.Element {
         <DialogHeader>
           <DialogTitle>Save preset</DialogTitle>
           <DialogDescription>
-            This will save the current playground state as a preset which you can access later or share with others.
+            This will save the current playground state as a preset which you
+            can access later or share with others.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
