@@ -1,7 +1,7 @@
 "use server";
 
 import { wait } from "next/dist/lib/wait";
-import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form-schema";
+import { accountFormSchema, type AccountFormValues } from "@/app/examples/forms/account/schemata/account-form";
 import { type FormState } from "@/lib/types";
 
 export default async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
