@@ -31,8 +31,8 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import {
   accountFormSchema,
   type AccountFormValues,
-} from '@/app/examples/forms/account/schemata/account-form';
-import updateAccount from '@/app/examples/forms/account/actions/account-form';
+} from '@/app/examples/forms/account/schemata/account';
+import updateAccount from '@/app/examples/forms/account/actions/account';
 
 const languages = [
   { label: 'English', value: 'en' },
@@ -117,7 +117,6 @@ export function AccountForm(): JSX.Element {
                   <FormControl>
                     <Button
                       variant="outline"
-                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined
                       className={cn(
                         'w-56 pl-3 text-left font-normal',
                         !field.value && 'text-muted-foreground',
