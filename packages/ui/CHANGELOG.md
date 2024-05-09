@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.43
+
+### Patch Changes
+
+- Update button text colors in UI
+
 ## 0.0.42
 
 ### Patch Changes
