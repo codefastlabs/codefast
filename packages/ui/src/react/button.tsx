@@ -14,7 +14,7 @@ const buttonVariants = cva({
   base: 'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
   variants: {
     variant: {
-      default: 'bg-primary text-foreground hover:bg-primary/90 shadow',
+      default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow',
       destructive:
         'bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm',
       ghost: 'text-foreground hover:bg-accent hover:text-accent-foreground',
