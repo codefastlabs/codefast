@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.42
+
+### Patch Changes
+
+- Add primary text styling for links in BasePlugin
+
 ## 0.0.41
 
 ### Patch Changes
