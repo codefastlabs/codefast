@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.45
+
+### Patch Changes
+
+- Add useMutationObserver and useMediaQuery hooks, update Checkbox, Radio, and more
+
 ## 0.0.44
 
 ### Patch Changes
