@@ -2,7 +2,7 @@ import { Button } from '@codefast/ui/button';
 import { ScrollArea } from '@codefast/ui/scroll-area';
 import { cn } from '@codefast/ui/utils';
 import { type HTMLAttributes, type JSX } from 'react';
-import { type Playlist } from '@/app/examples/music/data/playlists';
+import { type Playlist } from '@/app/examples/music/_data/playlists';
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {
   playlists: Playlist[];

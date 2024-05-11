@@ -4,9 +4,9 @@ import { Badge } from '@codefast/ui/badge';
 import { Checkbox } from '@codefast/ui/checkbox';
 import { DataTableColumnHeader } from '@codefast/ui/data-table';
 import { type ColumnDef } from '@tanstack/react-table';
-import { type Task } from '@/app/examples/tasks/data/schema';
-import { labels, priorities, statuses } from '@/app/examples/tasks/data/data';
-import { DataTableRowActions } from '@/app/examples/tasks/components/data-table-row-actions';
+import { type Task } from '@/app/examples/tasks/_data/schema';
+import { labels, priorities, statuses } from '@/app/examples/tasks/_data/data';
+import { DataTableRowActions } from '@/app/examples/tasks/_components/data-table-row-actions';
 
 export const columns: ColumnDef<Task>[] = [
   {

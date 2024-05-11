@@ -1,6 +1,6 @@
 import { Separator } from '@codefast/ui/separator';
 import { type JSX } from 'react';
-import { AppearanceForm } from '@/app/examples/forms/appearance/components/appearance-form';
+import { AppearanceForm } from '@/app/examples/forms/appearance/_components/appearance-form';
 
 export default function SettingsAppearancePage(): JSX.Element {
   return (

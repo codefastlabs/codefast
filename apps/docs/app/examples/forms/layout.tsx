@@ -2,7 +2,7 @@ import { Separator } from '@codefast/ui/separator';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX, type ReactNode } from 'react';
-import { SidebarNav } from '@/app/examples/forms/components/sidebar-nav';
+import { SidebarNav } from '@/app/examples/forms/_components/sidebar-nav';
 
 export const metadata: Metadata = {
   title: 'Forms',

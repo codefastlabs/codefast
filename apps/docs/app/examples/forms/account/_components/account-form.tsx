@@ -32,8 +32,8 @@ import isNil from 'lodash/isNil';
 import {
   accountFormSchema,
   type AccountFormValues,
-} from '@/app/examples/forms/account/schemata/account';
-import updateAccount from '@/app/examples/forms/account/actions/account';
+} from '@/app/examples/forms/account/_lib/account-schema';
+import updateAccount from '@/app/examples/forms/account/_lib/account-action';
 
 const languages = [
   { label: 'English', value: 'en' },

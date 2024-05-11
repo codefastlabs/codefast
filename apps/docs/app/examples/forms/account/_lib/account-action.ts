@@ -4,7 +4,7 @@ import { wait } from 'next/dist/lib/wait';
 import {
   accountFormSchema,
   type AccountFormValues,
-} from '@/app/examples/forms/account/schemata/account';
+} from '@/app/examples/forms/account/_lib/account-schema';
 import { type FormState } from '@/lib/types';
 
 export default async function updateAccount(

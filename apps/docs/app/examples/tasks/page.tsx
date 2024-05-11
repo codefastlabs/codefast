@@ -4,10 +4,10 @@ import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX } from 'react';
 import { z } from 'zod';
-import { columns } from '@/app/examples/tasks/components/columns';
-import { DataTable } from '@/app/examples/tasks/components/data-table';
-import { UserNav } from '@/app/examples/tasks/components/user-nav';
-import { type Task, taskSchema } from '@/app/examples/tasks/data/schema';
+import { columns } from '@/app/examples/tasks/_components/columns';
+import { DataTable } from '@/app/examples/tasks/_components/data-table';
+import { UserNav } from '@/app/examples/tasks/_components/user-nav';
+import { type Task, taskSchema } from '@/app/examples/tasks/_data/schema';
 
 export const metadata: Metadata = {
   title: 'Tasks',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 // Simulate a database read for tasks.
 async function getTasks(): Promise<Task[]> {
   const data = fs.readFileSync(
-    path.join(process.cwd(), 'app/examples/tasks/data/tasks.json'),
+    path.join(process.cwd(), 'app/examples/tasks/_data/tasks.json'),
   );
 
   const tasks = JSON.parse(data.toString()) as Task[];

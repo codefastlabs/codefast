@@ -37,7 +37,7 @@ export function SidebarNav({
             className: [
               pathname === item.href
                 ? 'bg-muted hover:bg-muted'
-                : 'hover:bg-transparent hover:underline',
+                : 'hover:bg-muted/70',
               'justify-start',
             ],
           })}

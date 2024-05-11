@@ -24,12 +24,12 @@ import {
   Users2,
 } from 'lucide-react';
 import { type JSX, type ReactNode, useState } from 'react';
-import { useMail } from '@/app/examples/mail/hooks/use-mail';
-import { type Mail } from '@/app/examples/mail/data/data';
-import { Nav } from '@/app/examples/mail/components/nav';
-import { MailList } from '@/app/examples/mail/components/mail-list';
-import { MailDisplay } from '@/app/examples/mail/components/mail-display';
-import { AccountSwitcher } from '@/app/examples/mail/components/account-switcher';
+import { useMail } from '@/app/examples/mail/_hooks/use-mail';
+import { type Mail } from '@/app/examples/mail/_data/data';
+import { Nav } from '@/app/examples/mail/_components/nav';
+import { MailList } from '@/app/examples/mail/_components/mail-list';
+import { MailDisplay } from '@/app/examples/mail/_components/mail-display';
+import { AccountSwitcher } from '@/app/examples/mail/_components/account-switcher';
 
 interface MailProps {
   accounts: {
