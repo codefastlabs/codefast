@@ -6,15 +6,15 @@ import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX } from 'react';
-import { playlists } from '@/app/examples/music/data/playlists';
+import { playlists } from '@/app/examples/music/_data/playlists';
 import {
   listenNowAlbums,
   madeForYouAlbums,
-} from '@/app/examples/music/data/albums';
-import { Sidebar } from '@/app/examples/music/components/sidebar';
-import { PodcastEmptyPlaceholder } from '@/app/examples/music/components/podcast-empty-placeholder';
-import { Menu } from '@/app/examples/music/components/menu';
-import { AlbumArtwork } from '@/app/examples/music/components/album-artwork';
+} from '@/app/examples/music/_data/albums';
+import { Sidebar } from '@/app/examples/music/_components/sidebar';
+import { PodcastEmptyPlaceholder } from '@/app/examples/music/_components/podcast-empty-placeholder';
+import { Menu } from '@/app/examples/music/_components/menu';
+import { AlbumArtwork } from '@/app/examples/music/_components/album-artwork';
 
 export const metadata: Metadata = {
   title: 'Music App',

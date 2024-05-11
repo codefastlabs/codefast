@@ -28,7 +28,7 @@ import { useMutationObserver } from '@/lib/hooks/use-mutation-observer';
 import {
   type Model,
   type ModelType,
-} from '@/app/examples/playground/data/models';
+} from '@/app/examples/playground/_data/models';
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[];

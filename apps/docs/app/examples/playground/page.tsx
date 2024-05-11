@@ -12,17 +12,17 @@ import { CounterClockwiseClockIcon } from '@radix-ui/react-icons';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX } from 'react';
-import { CodeViewer } from '@/app/examples/playground/components/code-viewer';
-import { MaxLengthSelector } from '@/app/examples/playground/components/maxlength-selector';
-import { ModelSelector } from '@/app/examples/playground/components/model-selector';
-import { PresetActions } from '@/app/examples/playground/components/preset-actions';
-import { PresetSave } from '@/app/examples/playground/components/preset-save';
-import { PresetSelector } from '@/app/examples/playground/components/preset-selector';
-import { PresetShare } from '@/app/examples/playground/components/preset-share';
-import { TemperatureSelector } from '@/app/examples/playground/components/temperature-selector';
-import { TopPSelector } from '@/app/examples/playground/components/top-p-selector';
-import { models, types } from '@/app/examples/playground/data/models';
-import { presets } from '@/app/examples/playground/data/presets';
+import { CodeViewer } from '@/app/examples/playground/_components/code-viewer';
+import { MaxLengthSelector } from '@/app/examples/playground/_components/maxlength-selector';
+import { ModelSelector } from '@/app/examples/playground/_components/model-selector';
+import { PresetActions } from '@/app/examples/playground/_components/preset-actions';
+import { PresetSave } from '@/app/examples/playground/_components/preset-save';
+import { PresetSelector } from '@/app/examples/playground/_components/preset-selector';
+import { PresetShare } from '@/app/examples/playground/_components/preset-share';
+import { TemperatureSelector } from '@/app/examples/playground/_components/temperature-selector';
+import { TopPSelector } from '@/app/examples/playground/_components/top-p-selector';
+import { models, types } from '@/app/examples/playground/_data/models';
+import { presets } from '@/app/examples/playground/_data/presets';
 
 export const metadata: Metadata = {
   title: 'Playground',
