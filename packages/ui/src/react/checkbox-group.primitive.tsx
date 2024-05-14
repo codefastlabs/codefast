@@ -224,6 +224,7 @@ const CheckboxGroupIndicator = React.forwardRef<
     ref,
   ) => {
     const checkboxScope = useCheckboxScope(__scopeCheckboxGroup);
+
     return (
       <CheckboxPrimitive.Indicator ref={ref} {...checkboxScope} {...props} />
     );

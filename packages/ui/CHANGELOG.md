@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.46
+
+### Patch Changes
+
+- Update UI package components and styles
+
 ## 0.0.45
 
 ### Patch Changes

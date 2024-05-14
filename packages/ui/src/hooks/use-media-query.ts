@@ -9,6 +9,7 @@ export function useMediaQuery(query: string): boolean {
     }
 
     const result = matchMedia(query);
+
     result.addEventListener('change', onChange);
     setValue(result.matches);
 
