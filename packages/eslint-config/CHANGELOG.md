@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.22
+
+### Patch Changes
+
+- Update ESLint configurations and package dependencies
+
 ## 0.0.21
 
 ### Patch Changes

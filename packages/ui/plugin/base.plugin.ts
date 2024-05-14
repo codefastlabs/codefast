@@ -15,9 +15,6 @@ const base = plugin(({ addBase }) => {
       {
         '@apply outline-transparent': '',
       },
-    a: {
-      '@apply text-primary': '',
-    },
   });
 });
 
