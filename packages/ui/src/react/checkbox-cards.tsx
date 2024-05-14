@@ -59,7 +59,7 @@ const CheckboxCardsItem = React.forwardRef<
       <CheckboxGroupPrimitive.Item
         ref={ref}
         className={cn(
-          'border-input aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 cursor-default rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          'border-input aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 cursor-pointer rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
           checkboxClassName,
         )}
         {...props}
