@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.47
+
+### Patch Changes
+
+- Update cursor style from default to pointer across UI components
+
 ## 0.0.46
 
 ### Patch Changes
