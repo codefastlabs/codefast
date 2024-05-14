@@ -66,6 +66,7 @@ export function AccountForm(): JSX.Element {
 
     if (success) {
       toast.success(message);
+
       return;
     }
 

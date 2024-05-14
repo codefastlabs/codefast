@@ -58,7 +58,7 @@ import { Badge } from '@codefast/ui/badge';
 import { Pre } from '@codefast/ui/pre';
 import { Text } from '@codefast/ui/text';
 import { Code } from '@codefast/ui/code';
-import { useMediaQuery } from '@/lib/hooks/use-media-query';
+import { useMediaQuery } from '@codefast/ui/use-media-query';
 
 const meta = {
   tags: ['autodocs'],
@@ -278,12 +278,12 @@ export const WithDropdownMenu: Story = {
 
     return (
       <Box className="flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
-        <Text className="text-sm font-medium leading-none">
+        <Box className="text-sm font-medium leading-none">
           <Badge className="mr-2 rounded-full">{currentLabel}</Badge>
           <Box as="span" className="text-muted-foreground">
             Create a new project
           </Box>
-        </Text>
+        </Box>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm">

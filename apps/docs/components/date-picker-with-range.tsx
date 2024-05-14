@@ -61,5 +61,6 @@ function ButtonValue({ date }: ButtonValueProps): JSX.Element {
   } else if (date?.from) {
     return <>{format(date.from, 'LLL dd, y')}</>;
   }
+
   return <span>Pick a date</span>;
 }
