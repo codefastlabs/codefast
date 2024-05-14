@@ -83,6 +83,7 @@ export function DataTableFacetedFilter<TData, TValue>({
             <CommandGroup>
               {options.map(({ icon: Icon, ...option }) => {
                 const isSelected = selectedValues.has(option.value);
+
                 return (
                   <CommandItem
                     key={option.value}
@@ -92,7 +93,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                       } else {
                         selectedValues.add(option.value);
                       }
+
                       const filterValues = Array.from(selectedValues);
+
                       column?.setFilterValue(
                         filterValues.length ? filterValues : undefined,
                       );

@@ -1,17 +1,8 @@
 import type { Preview } from '@storybook/react';
 import '@/styles/globals.css';
-import { withThemeByClassName } from '@storybook/addon-themes';
 
 const preview: Preview = {
-  decorators: [
-    withThemeByClassName({
-      themes: {
-        light: '',
-        dark: 'dark',
-      },
-      defaultTheme: 'light',
-    }),
-  ],
+  tags: ['autodocs'],
   parameters: {
     controls: {
       matchers: {

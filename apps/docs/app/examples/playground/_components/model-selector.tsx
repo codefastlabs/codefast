@@ -24,7 +24,7 @@ import {
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { type JSX, useRef, useState } from 'react';
-import { useMutationObserver } from '@/lib/hooks/use-mutation-observer';
+import { useMutationObserver } from '@codefast/ui/use-mutation-observer';
 import {
   type Model,
   type ModelType,
