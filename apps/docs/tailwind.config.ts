@@ -3,7 +3,7 @@ import sharedConfig from '@codefast/ui/tailwind.config';
 import plugin from 'tailwindcss/plugin';
 import { colors } from '@codefast/ui/colors';
 
-const config: Config = {
+const tailwindcssConfig: Config = {
   content: [
     './stories/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -83,4 +83,4 @@ const config: Config = {
   },
 };
 
-export default config;
+export default tailwindcssConfig;

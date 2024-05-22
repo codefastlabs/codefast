@@ -4,7 +4,7 @@ import animate from './plugin/animate.plugin';
 import perspective from './plugin/perspective.plugin';
 import base from './plugin/base.plugin';
 
-const config: Config = {
+const tailwindcssConfig: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   darkMode: ['class'],
   plugins: [animate, perspective, base],
@@ -123,4 +123,4 @@ const config: Config = {
   },
 };
 
-export default config;
+export default tailwindcssConfig;
