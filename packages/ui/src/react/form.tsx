@@ -7,9 +7,11 @@ import {
   Controller,
   type ControllerProps,
   type FieldError,
+  type FieldErrorsImpl,
   type FieldPath,
   type FieldValues,
   FormProvider,
+  type Merge,
   useFormContext,
 } from 'react-hook-form';
 import { cn } from '../lib/utils';
@@ -37,16 +39,16 @@ const FormFieldContext = React.createContext<FormFieldContextValue | null>(
 const FormItemContext = React.createContext<FormItemContextValue | null>(null);
 
 const useFormField = (): {
+  error?: FieldError | Merge<FieldError, FieldErrorsImpl> | undefined;
+  formDescriptionId: string;
+  formItemId: string;
+  formMessageId: string;
+  id: string;
   invalid: boolean;
   isDirty: boolean;
   isTouched: boolean;
   isValidating: boolean;
-  error?: FieldError | undefined;
-  id: string;
   name: string;
-  formItemId: string;
-  formDescriptionId: string;
-  formMessageId: string;
 } => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
@@ -207,7 +209,7 @@ type FormMessageProps = React.HTMLAttributes<HTMLParagraphElement>;
 const FormMessage = React.forwardRef<FormMessageElement, FormMessageProps>(
   ({ children, className, ...props }, ref) => {
     const { error, formMessageId } = useFormField();
-    const body = error?.message ? error.message : children;
+    const body = error?.message ? String(error.message) : children;
 
     if (!body) {
       return null;
