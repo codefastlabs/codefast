@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.49
+
+### Patch Changes
+
+- Update button UI variants styling
+
 ## 0.0.48
 
 ### Patch Changes
