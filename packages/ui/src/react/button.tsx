@@ -11,7 +11,7 @@ import { Spinner } from './spinner';
  * -------------------------------------------------------------------------- */
 
 const buttonVariants = cva({
-  base: 'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  base: 'inline-flex select-none items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
   variants: {
     variant: {
       default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow',
@@ -25,11 +25,11 @@ const buttonVariants = cva({
         'bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm',
     },
     size: {
-      default: 'h-10 px-4',
-      xs: 'h-8 px-2',
-      sm: 'h-9 px-3',
-      lg: 'h-11 px-8',
-      icon: 'size-10',
+      default: 'h-10 px-4 gap-2',
+      xs: 'h-8 px-2 gap-1',
+      sm: 'h-9 px-3 gap-2',
+      lg: 'h-11 px-8 gap-2',
+      icon: 'size-10 gap-2',
       'icon-xs': 'size-8',
       'icon-sm': 'size-9',
       'icon-lg': 'size-11',
