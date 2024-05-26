@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.50
+
+### Patch Changes
+
+- Update button icon styles in UI package
+
 ## 0.0.49
 
 ### Patch Changes
