@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@codefast/ui/resizable';
 import { Box } from '@codefast/ui/box';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],

@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Sheet,
   SheetClose,
@@ -14,6 +13,7 @@ import { Label } from '@codefast/ui/label';
 import { Input } from '@codefast/ui/input';
 import { useId } from 'react';
 import { Box } from '@codefast/ui/box';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Sheet,

@@ -36,7 +36,8 @@ import {
   CheckIcon,
   PlusCircledIcon,
 } from '@radix-ui/react-icons';
-import { type ComponentPropsWithoutRef, type JSX, useState } from 'react';
+import { useState } from 'react';
+import type { ComponentPropsWithoutRef, JSX} from 'react';
 
 const groups = [
   {

@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Switch } from '@codefast/ui/switch';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
@@ -19,6 +18,7 @@ import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { Heading } from '@codefast/ui/heading';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Switch,

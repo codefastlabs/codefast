@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
@@ -19,6 +18,7 @@ import {
 import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Input,

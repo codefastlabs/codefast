@@ -6,8 +6,10 @@ import {
   HoverCardTrigger,
 } from '@codefast/ui/hover-card';
 import { Label } from '@codefast/ui/label';
-import { Slider, type SliderProps } from '@codefast/ui/slider';
-import { type JSX, useState } from 'react';
+import { Slider } from '@codefast/ui/slider';
+import { useState } from 'react';
+import type { SliderProps } from '@codefast/ui/slider';
+import type { JSX} from 'react';
 
 interface MaxLengthSelectorProps {
   defaultValue: SliderProps['defaultValue'];

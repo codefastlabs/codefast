@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@codefast/ui/select';
 import { Textarea } from '@codefast/ui/textarea';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function DemoReportAnIssue(): JSX.Element {
   return (

@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@codefast/ui/select';
 import { Separator } from '@codefast/ui/separator';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function DemoShareDocument(): JSX.Element {
   return (

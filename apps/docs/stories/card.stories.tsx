@@ -1,26 +1,13 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@codefast/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Label } from '@codefast/ui/label';
 import { Input } from '@codefast/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@codefast/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Button } from '@codefast/ui/button';
 import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
 import { Switch } from '@codefast/ui/switch';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Card,
@@ -105,35 +92,21 @@ export const Examples: Story = {
         <CardDescription>You have 3 unread messages.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Box className=" flex items-center space-x-4 rounded-md border p-4">
+        <Box className="flex items-center space-x-4 rounded-md border p-4">
           <BellIcon />
           <Box className="flex-1 space-y-1">
-            <Text className="text-sm font-medium leading-none">
-              Push Notifications
-            </Text>
-            <Text className="text-muted-foreground text-sm">
-              Send notifications to device.
-            </Text>
+            <Text className="text-sm font-medium leading-none">Push Notifications</Text>
+            <Text className="text-muted-foreground text-sm">Send notifications to device.</Text>
           </Box>
           <Switch />
         </Box>
         <Box>
           {notifications.map((notification) => (
-            <Box
-              key={notification.id}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
-            >
-              <Box
-                as="span"
-                className="flex size-2 translate-y-1 rounded-full bg-sky-500"
-              />
+            <Box key={notification.id} className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+              <Box as="span" className="flex size-2 translate-y-1 rounded-full bg-sky-500" />
               <Box className="space-y-1">
-                <Text className="text-sm font-medium leading-none">
-                  {notification.title}
-                </Text>
-                <Text className="text-muted-foreground text-sm">
-                  {notification.description}
-                </Text>
+                <Text className="text-sm font-medium leading-none">{notification.title}</Text>
+                <Text className="text-muted-foreground text-sm">{notification.description}</Text>
               </Box>
             </Box>
           ))}

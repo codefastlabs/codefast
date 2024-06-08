@@ -14,7 +14,7 @@ module.exports = {
     React: true,
     JSX: true,
   },
-  ignorePatterns: ['node_modules/', '.next/', '.eslintrc.js', '*.config.js'],
+  ignorePatterns: ['node_modules/', '.next/'],
   overrides: [
     {
       extends: [require.resolve('@vercel/style-guide/eslint/jest')],
@@ -26,6 +26,14 @@ module.exports = {
   },
   plugins: ['only-warn'],
   rules: {
+    '@typescript-eslint/consistent-type-imports': [
+      'warn',
+      {
+        disallowTypeAnnotations: true,
+        fixStyle: 'separate-type-imports',
+        prefer: 'type-imports',
+      },
+    ],
     '@typescript-eslint/no-misused-promises': [
       'error',
       {
@@ -42,32 +50,60 @@ module.exports = {
     ],
     curly: ['error', 'all'],
     'import/no-default-export': 'off',
+    'import/order': [
+      'warn',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'newlines-between': 'never',
+        pathGroups: [
+          {
+            pattern: '@/**',
+            group: 'internal',
+          },
+        ],
+      },
+    ],
     'padding-line-between-statements': [
       'error',
       {
         blankLine: 'always',
-        prev: '*',
         next: 'return',
+        prev: '*',
       },
       {
         blankLine: 'always',
-        prev: ['const', 'let', 'var'],
         next: '*',
+        prev: ['const', 'let', 'var'],
       },
       {
         blankLine: 'any',
-        prev: ['const', 'let', 'var'],
         next: ['const', 'let', 'var'],
+        prev: ['const', 'let', 'var'],
       },
       {
         blankLine: 'always',
-        prev: 'block-like',
         next: '*',
+        prev: 'block-like',
       },
       {
         blankLine: 'always',
-        prev: '*',
         next: 'block-like',
+        prev: '*',
+      },
+      {
+        blankLine: 'always',
+        next: '*',
+        prev: 'directive',
+      },
+      {
+        blankLine: 'any',
+        next: 'directive',
+        prev: 'directive',
+      },
+      {
+        blankLine: 'always',
+        next: '*',
+        prev: ['case', 'default'],
       },
     ],
     'react/no-unknown-property': [

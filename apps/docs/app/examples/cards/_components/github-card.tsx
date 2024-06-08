@@ -22,7 +22,7 @@ import {
   PlusIcon,
   StarIcon,
 } from '@radix-ui/react-icons';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function DemoGithub(): JSX.Element {
   return (

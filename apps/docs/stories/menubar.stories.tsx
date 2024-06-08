@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -14,6 +13,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from '@codefast/ui/menubar';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Menubar,

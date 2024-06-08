@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Tooltip,
   TooltipContent,
@@ -7,6 +6,7 @@ import {
 } from '@codefast/ui/tooltip';
 import { Button } from '@codefast/ui/button';
 import { Text } from '@codefast/ui/text';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Tooltip,

@@ -19,13 +19,11 @@ type BoxProps = (BoxDivProps | BoxSpanProps) & {
   asChild?: boolean;
 };
 
-const Box = React.forwardRef<BoxElement, BoxProps>(
-  ({ as: Tag = 'div', asChild, ...props }, ref) => {
-    const Component = asChild ? Slot : Tag;
+const Box = React.forwardRef<BoxElement, BoxProps>(({ as: Tag = 'div', asChild, ...props }, ref) => {
+  const Component = asChild ? Slot : Tag;
 
-    return <Component ref={ref} {...props} />;
-  },
-);
+  return <Component ref={ref} {...props} />;
+});
 
 Box.displayName = 'Box';
 

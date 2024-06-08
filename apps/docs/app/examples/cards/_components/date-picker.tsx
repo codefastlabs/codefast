@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@codefast/ui/card';
 import { Label } from '@codefast/ui/label';
-import { type JSX } from 'react';
 import { DatePickerWithRange } from '@/components/date-picker-with-range';
+import type { JSX } from 'react';
 
 export function DemoDatePicker(): JSX.Element {
   return (

@@ -16,9 +16,9 @@ import { toast } from '@codefast/ui/sonner';
 import { Switch } from '@codefast/ui/switch';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { type JSX } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import type { JSX } from 'react';
 
 const notificationsFormSchema = z.object({
   type: z.enum(['all', 'mentions', 'none'], {

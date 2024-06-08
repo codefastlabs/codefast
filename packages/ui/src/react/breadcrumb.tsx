@@ -13,9 +13,9 @@ interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   separator?: React.ReactNode;
 }
 
-const Breadcrumb = React.forwardRef<BreadcrumbElement, BreadcrumbProps>(
-  ({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />,
-);
+const Breadcrumb = React.forwardRef<BreadcrumbElement, BreadcrumbProps>(({ ...props }, ref) => (
+  <nav ref={ref} aria-label="breadcrumb" {...props} />
+));
 
 Breadcrumb.displayName = 'Breadcrumb';
 
@@ -26,10 +26,7 @@ Breadcrumb.displayName = 'Breadcrumb';
 type BreadcrumbListElement = HTMLOListElement;
 type BreadcrumbListProps = React.OlHTMLAttributes<HTMLOListElement>;
 
-const BreadcrumbList = React.forwardRef<
-  BreadcrumbListElement,
-  BreadcrumbListProps
->(({ className, ...props }, ref) => (
+const BreadcrumbList = React.forwardRef<BreadcrumbListElement, BreadcrumbListProps>(({ className, ...props }, ref) => (
   <ol
     ref={ref}
     className={cn(
@@ -49,15 +46,8 @@ BreadcrumbList.displayName = 'BreadcrumbList';
 type BreadcrumbItemElement = HTMLLIElement;
 type BreadcrumbItemProps = React.LiHTMLAttributes<HTMLLIElement>;
 
-const BreadcrumbItem = React.forwardRef<
-  BreadcrumbItemElement,
-  BreadcrumbItemProps
->(({ className, ...props }, ref) => (
-  <li
-    ref={ref}
-    className={cn('inline-flex items-center gap-1.5', className)}
-    {...props}
-  />
+const BreadcrumbItem = React.forwardRef<BreadcrumbItemElement, BreadcrumbItemProps>(({ className, ...props }, ref) => (
+  <li ref={ref} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
 ));
 
 BreadcrumbItem.displayName = 'BreadcrumbItem';
@@ -68,25 +58,17 @@ BreadcrumbItem.displayName = 'BreadcrumbItem';
 
 type BreadcrumbLinkElement = HTMLAnchorElement;
 
-interface BreadcrumbLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface BreadcrumbLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   asChild?: boolean;
 }
 
-const BreadcrumbLink = React.forwardRef<
-  BreadcrumbLinkElement,
-  BreadcrumbLinkProps
->(({ asChild, className, ...props }, ref) => {
-  const Component = asChild ? Slot : 'a';
+const BreadcrumbLink = React.forwardRef<BreadcrumbLinkElement, BreadcrumbLinkProps>(
+  ({ asChild, className, ...props }, ref) => {
+    const Component = asChild ? Slot : 'a';
 
-  return (
-    <Component
-      ref={ref}
-      className={cn('transition', 'hover:text-foreground', className)}
-      {...props}
-    />
-  );
-});
+    return <Component ref={ref} className={cn('transition', 'hover:text-foreground', className)} {...props} />;
+  },
+);
 
 BreadcrumbLink.displayName = 'BreadcrumbLink';
 
@@ -97,10 +79,7 @@ BreadcrumbLink.displayName = 'BreadcrumbLink';
 type BreadcrumbPageElement = HTMLSpanElement;
 type BreadcrumbPageProps = React.HTMLAttributes<HTMLSpanElement>;
 
-const BreadcrumbPage = React.forwardRef<
-  BreadcrumbPageElement,
-  BreadcrumbPageProps
->(({ className, ...props }, ref) => (
+const BreadcrumbPage = React.forwardRef<BreadcrumbPageElement, BreadcrumbPageProps>(({ className, ...props }, ref) => (
   <span
     ref={ref}
     role="link"
@@ -119,18 +98,9 @@ BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 type BreadcrumbSeparatorProps = React.LiHTMLAttributes<HTMLLIElement>;
 
-function BreadcrumbSeparator({
-  children,
-  className,
-  ...props
-}: BreadcrumbSeparatorProps): React.JSX.Element {
+function BreadcrumbSeparator({ children, className, ...props }: BreadcrumbSeparatorProps): React.JSX.Element {
   return (
-    <li
-      role="presentation"
-      aria-hidden="true"
-      className={cn('[&>svg]:size-3.5', className)}
-      {...props}
-    >
+    <li role="presentation" aria-hidden="true" className={cn('[&>svg]:size-3.5', className)} {...props}>
       {children ?? <ChevronRightIcon />}
     </li>
   );
@@ -142,10 +112,7 @@ function BreadcrumbSeparator({
 
 type BreadcrumbEllipsisProps = React.HTMLAttributes<HTMLSpanElement>;
 
-function BreadcrumbEllipsis({
-  className,
-  ...props
-}: BreadcrumbEllipsisProps): React.JSX.Element {
+function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): React.JSX.Element {
   return (
     <span
       role="presentation"
