@@ -6,24 +6,23 @@
     "changeset": "changeset",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
-    "lint": "turbo lint -- --fix",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint -- --fix",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm run clean && pnpm install",
     "package:update": "pnpm update --latest --interactive --recursive",
+    "prettier:check": "prettier --check --ignore-unknown .",
+    "prettier:write": "prettier --write --ignore-unknown .",
     "release": "turbo run build --filter=docs^... && changeset publish",
     "version-packages": "changeset version"
   },
   "prettier": {
-    "endOfLine": "lf",
     "plugins": [
       "prettier-plugin-packagejson",
       "prettier-plugin-tailwindcss"
     ],
-    "printWidth": 80,
-    "singleQuote": true,
-    "tabWidth": 2,
-    "useTabs": false
+    "printWidth": 120,
+    "singleQuote": true
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.5",
@@ -31,8 +30,8 @@
     "@codefast/typescript-config": "workspace:*",
     "prettier": "^3.3.1",
     "prettier-plugin-packagejson": "^2.5.0",
-    "prettier-plugin-tailwindcss": "^0.6.1",
-    "turbo": "^2.0.1"
+    "prettier-plugin-tailwindcss": "^0.6.2",
+    "turbo": "^2.0.3"
   },
   "packageManager": "pnpm@9.1.4",
   "engines": {
