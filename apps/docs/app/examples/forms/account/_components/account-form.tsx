@@ -2,23 +2,8 @@
 
 import { Button } from '@codefast/ui/button';
 import { Calendar } from '@codefast/ui/calendar';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@codefast/ui/command';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@codefast/ui/form';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { Input } from '@codefast/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { toast } from '@codefast/ui/sonner';
@@ -28,12 +13,10 @@ import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import isNil from 'lodash/isNil';
-import {
-  accountFormSchema,
-  type AccountFormValues,
-} from '@/app/examples/forms/account/_lib/account-schema';
+import type { AccountFormValues } from '@/app/examples/forms/account/_lib/account-schema';
+import { accountFormSchema } from '@/app/examples/forms/account/_lib/account-schema';
 import updateAccount from '@/app/examples/forms/account/_lib/account-action';
-import type { SubmitHandler} from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
 import type { JSX } from 'react';
 
 const languages = [
@@ -60,9 +43,7 @@ export function AccountForm(): JSX.Element {
     defaultValues,
   });
 
-  const onSubmit: SubmitHandler<AccountFormValues> = async (
-    data,
-  ): Promise<void> => {
+  const onSubmit: SubmitHandler<AccountFormValues> = async (data): Promise<void> => {
     const { message, errors, success } = await updateAccount(data);
 
     if (success) {
@@ -95,16 +76,9 @@ export function AccountForm(): JSX.Element {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Your name"
-                  {...field}
-                  disabled={field.disabled ?? form.formState.isSubmitting}
-                />
+                <Input placeholder="Your name" {...field} disabled={field.disabled ?? form.formState.isSubmitting} />
               </FormControl>
-              <FormDescription>
-                This is the name that will be displayed on your profile and in
-                emails.
-              </FormDescription>
+              <FormDescription>This is the name that will be displayed on your profile and in emails.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -120,18 +94,11 @@ export function AccountForm(): JSX.Element {
                   <FormControl>
                     <Button
                       variant="outline"
-                      className={cn(
-                        'w-56 pl-3 text-left font-normal',
-                        isNil(field.value) && 'text-muted-foreground',
-                      )}
+                      className={cn('w-56 pl-3 text-left font-normal', isNil(field.value) && 'text-muted-foreground')}
                       disabled={field.disabled ?? form.formState.isSubmitting}
                     >
                       {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined */}
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
                       <CalendarIcon className="ml-auto size-4 opacity-50" />
                     </Button>
                   </FormControl>
@@ -141,16 +108,12 @@ export function AccountForm(): JSX.Element {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date('1900-01-01')
-                    }
+                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                     initialFocus
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
+              <FormDescription>Your date of birth is used to calculate your age.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -167,16 +130,11 @@ export function AccountForm(): JSX.Element {
                     <Button
                       variant="outline"
                       role="combobox"
-                      className={cn(
-                        'w-56 justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
+                      className={cn('w-56 justify-between', !field.value && 'text-muted-foreground')}
                       disabled={field.disabled ?? form.formState.isSubmitting}
                     >
                       {field.value
-                        ? languages.find(
-                            (language) => language.value === field.value,
-                          )?.label
+                        ? languages.find((language) => language.value === field.value)?.label
                         : 'Select language'}
                       <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
                     </Button>
@@ -199,9 +157,7 @@ export function AccountForm(): JSX.Element {
                             <CheckIcon
                               className={cn(
                                 'mr-2 size-4',
-                                language.value === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
+                                language.value === field.value ? 'opacity-100' : 'opacity-0',
                               )}
                             />
                             {language.label}
@@ -212,9 +168,7 @@ export function AccountForm(): JSX.Element {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                This is the language that will be used in the dashboard.
-              </FormDescription>
+              <FormDescription>This is the language that will be used in the dashboard.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

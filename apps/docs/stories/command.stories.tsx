@@ -9,14 +9,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@codefast/ui/command';
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from 'lucide-react';
+import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
