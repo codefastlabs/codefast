@@ -5,20 +5,13 @@ import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Spinner } from '@codefast/ui/spinner';
 import { cn } from '@codefast/ui/utils';
-import {
-  type HTMLAttributes,
-  type JSX,
-  type SyntheticEvent,
-  useState,
-} from 'react';
+import { useState } from 'react';
 import { Icons } from '@/components/icons';
+import type { HTMLAttributes, JSX, SyntheticEvent } from 'react';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 
-export function UserAuthForm({
-  className,
-  ...props
-}: UserAuthFormProps): JSX.Element {
+export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function onSubmit(event: SyntheticEvent): void {
@@ -59,18 +52,11 @@ export function UserAuthForm({
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background text-muted-foreground px-2">
-            Or continue with
-          </span>
+          <span className="bg-background text-muted-foreground px-2">Or continue with</span>
         </div>
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-          <Spinner className="mr-2" />
-        ) : (
-          <Icons.GitHub className="mr-2 size-4" />
-        )}{' '}
-        GitHub
+        {isLoading ? <Spinner className="mr-2" /> : <Icons.GitHub className="mr-2 size-4" />} GitHub
       </Button>
     </div>
   );

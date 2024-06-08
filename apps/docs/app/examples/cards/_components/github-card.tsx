@@ -1,11 +1,5 @@
 import { Button } from '@codefast/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@codefast/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -16,12 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
 import { Separator } from '@codefast/ui/separator';
-import {
-  ChevronDownIcon,
-  CircleIcon,
-  PlusIcon,
-  StarIcon,
-} from '@radix-ui/react-icons';
+import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from '@radix-ui/react-icons';
 import type { JSX } from 'react';
 
 export function DemoGithub(): JSX.Element {
@@ -31,8 +20,8 @@ export function DemoGithub(): JSX.Element {
         <div className="space-y-1">
           <CardTitle>shadcn/ui</CardTitle>
           <CardDescription>
-            Beautifully designed components that you can copy and paste into
-            your apps. Accessible. Customizable. Open Source.
+            Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open
+            Source.
           </CardDescription>
         </div>
         <div className="bg-secondary text-secondary-foreground flex items-center space-x-1 rounded-md">
@@ -47,17 +36,10 @@ export function DemoGithub(): JSX.Element {
                 <ChevronDownIcon className="text-secondary-foreground size-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              alignOffset={-5}
-              className="w-[200px]"
-              forceMount
-            >
+            <DropdownMenuContent align="end" alignOffset={-5} className="w-[200px]" forceMount>
               <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>
-                Future Ideas
-              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem checked>Future Ideas</DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem>My Stack</DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem>Inspiration</DropdownMenuCheckboxItem>
               <DropdownMenuSeparator />
