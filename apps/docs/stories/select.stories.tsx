@@ -11,15 +11,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@codefast/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import Link from 'next/link';
 import { Button } from '@codefast/ui/button';
 import { Pre } from '@codefast/ui/pre';
@@ -87,9 +79,7 @@ export const Scrollable: Story = {
           <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
           <SelectItem value="cet">Central European Time (CET)</SelectItem>
           <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
-          <SelectItem value="west">
-            Western European Summer Time (WEST)
-          </SelectItem>
+          <SelectItem value="west">Western European Summer Time (WEST)</SelectItem>
           <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
           <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
         </SelectGroup>
@@ -100,21 +90,13 @@ export const Scrollable: Story = {
           <SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
           <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
           <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
-          <SelectItem value="ist_indonesia">
-            Indonesia Central Standard Time (WITA)
-          </SelectItem>
+          <SelectItem value="ist_indonesia">Indonesia Central Standard Time (WITA)</SelectItem>
         </SelectGroup>
         <SelectGroup>
           <SelectLabel>Australia & Pacific</SelectLabel>
-          <SelectItem value="awst">
-            Australian Western Standard Time (AWST)
-          </SelectItem>
-          <SelectItem value="acst">
-            Australian Central Standard Time (ACST)
-          </SelectItem>
-          <SelectItem value="aest">
-            Australian Eastern Standard Time (AEST)
-          </SelectItem>
+          <SelectItem value="awst">Australian Western Standard Time (AWST)</SelectItem>
+          <SelectItem value="acst">Australian Central Standard Time (ACST)</SelectItem>
+          <SelectItem value="aest">Australian Eastern Standard Time (AEST)</SelectItem>
           <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
           <SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
         </SelectGroup>
@@ -168,21 +150,14 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  {...args}
-                >
+                <Select onValueChange={field.onChange} defaultValue={field.value} {...args}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a verified email to display" />
@@ -195,8 +170,7 @@ export const ReactHookForm: Story = {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  You can manage email addresses in your{' '}
-                  <Link href="/">email settings</Link>.
+                  You can manage email addresses in your <Link href="/">email settings</Link>.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

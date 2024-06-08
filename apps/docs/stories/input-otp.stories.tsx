@@ -10,15 +10,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@codefast/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
@@ -130,11 +122,7 @@ export const Controlled: Story = {
           </InputOTPGroup>
         </InputOTP>
         <Box className="text-center text-sm">
-          {value === '' ? (
-            <>Enter your one-time password.</>
-          ) : (
-            <>You entered: {value}</>
-          )}
+          {value === '' ? <>Enter your one-time password.</> : <>You entered: {value}</>}
         </Box>
       </Box>
     );
@@ -180,10 +168,7 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
           <FormField
             control={form.control}
             name="pin"
@@ -202,9 +187,7 @@ export const ReactHookForm: Story = {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
-                <FormDescription>
-                  Please enter the one-time password sent to your phone.
-                </FormDescription>
+                <FormDescription>Please enter the one-time password sent to your phone.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

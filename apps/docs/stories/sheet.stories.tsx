@@ -41,31 +41,20 @@ export const Default: Story = {
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
-            <SheetDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </SheetDescription>
+            <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
           </SheetHeader>
           <Box className="grid gap-4 py-4">
             <Box className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor={`name-${id}`} className="text-right">
                 Name
               </Label>
-              <Input
-                id={`name-${id}`}
-                value="Pedro Duarte"
-                className="col-span-3"
-              />
+              <Input id={`name-${id}`} value="Pedro Duarte" className="col-span-3" />
             </Box>
             <Box className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor={`username-${id}`} className="text-right">
                 Username
               </Label>
-              <Input
-                id={`username-${id}`}
-                value="@peduarte"
-                className="col-span-3"
-              />
+              <Input id={`username-${id}`} value="@peduarte" className="col-span-3" />
             </Box>
           </Box>
           <SheetFooter>
@@ -100,8 +89,7 @@ export const Side: Story = {
               <SheetHeader>
                 <SheetTitle>Edit profile</SheetTitle>
                 <SheetDescription>
-                  Make changes to your profile here. Click save when
-                  you&apos;`re done.
+                  Make changes to your profile here. Click save when you&apos;`re done.
                 </SheetDescription>
               </SheetHeader>
               <Box className="grid gap-4 py-4">
@@ -109,24 +97,13 @@ export const Side: Story = {
                   <Label htmlFor={`name-${side}-${id}`} className="text-right">
                     Name
                   </Label>
-                  <Input
-                    id={`name-${side}-${id}`}
-                    value="Pedro Duarte"
-                    className="col-span-3"
-                  />
+                  <Input id={`name-${side}-${id}`} value="Pedro Duarte" className="col-span-3" />
                 </Box>
                 <Box className="grid grid-cols-4 items-center gap-4">
-                  <Label
-                    htmlFor={`username-${side}-${id}`}
-                    className="text-right"
-                  >
+                  <Label htmlFor={`username-${side}-${id}`} className="text-right">
                     Username
                   </Label>
-                  <Input
-                    id={`username-${side}-${id}`}
-                    value="@peduarte"
-                    className="col-span-3"
-                  />
+                  <Input id={`username-${side}-${id}`} value="@peduarte" className="col-span-3" />
                 </Box>
               </Box>
               <SheetFooter>

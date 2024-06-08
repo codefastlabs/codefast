@@ -1,46 +1,24 @@
 'use client';
 
 import { Button } from '@codefast/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@codefast/ui/command';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@codefast/ui/hover-card';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
 import { Label } from '@codefast/ui/label';
-import {
-  Popover,
-  PopoverContent,
-  type PopoverProps,
-  PopoverTrigger,
-} from '@codefast/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRef, useState } from 'react';
 import { useMutationObserver } from '@codefast/ui/use-mutation-observer';
-import {
-  type Model,
-  type ModelType,
-} from '@/app/examples/playground/_data/models';
-import type { JSX} from 'react';
+import type { Model, ModelType } from '@/app/examples/playground/_data/models';
+import type { PopoverProps } from '@codefast/ui/popover';
+import type { JSX } from 'react';
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[];
   models: Model[];
 }
 
-export function ModelSelector({
-  models,
-  types,
-  ...props
-}: ModelSelectorProps): JSX.Element {
+export function ModelSelector({ models, types, ...props }: ModelSelectorProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState<Model>(models[0]);
   const [peekedModel, setPeekedModel] = useState<Model>(models[0]);
@@ -52,8 +30,8 @@ export function ModelSelector({
           <Label htmlFor="model">Model</Label>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          The model which will generate the completion. Some models are suitable
-          for natural language tasks, others specialize in code. Learn more.
+          The model which will generate the completion. Some models are suitable for natural language tasks, others
+          specialize in code. Learn more.
         </HoverCardContent>
       </HoverCard>
       <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -71,25 +49,14 @@ export function ModelSelector({
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 p-0">
           <HoverCard openDelay={0}>
-            <HoverCardContent
-              side="left"
-              align="start"
-              forceMount
-              className="min-h-[280px] w-64"
-            >
+            <HoverCardContent side="left" align="start" forceMount className="min-h-[280px] w-64">
               <div className="grid gap-2">
                 <h4 className="font-medium leading-none">{peekedModel.name}</h4>
-                <div className="text-muted-foreground text-sm">
-                  {peekedModel.description}
-                </div>
+                <div className="text-muted-foreground text-sm">{peekedModel.description}</div>
                 {peekedModel.strengths ? (
                   <div className="mt-4 grid gap-2">
-                    <h5 className="text-sm font-medium leading-none">
-                      Strengths
-                    </h5>
-                    <ul className="text-muted-foreground text-sm">
-                      {peekedModel.strengths}
-                    </ul>
+                    <h5 className="text-sm font-medium leading-none">Strengths</h5>
+                    <ul className="text-muted-foreground text-sm">{peekedModel.strengths}</ul>
                   </div>
                 ) : null}
               </div>
@@ -136,12 +103,7 @@ interface ModelItemProps {
   onPeek: (model: Model) => void;
 }
 
-function ModelItem({
-  model,
-  isSelected,
-  onSelect,
-  onPeek,
-}: ModelItemProps): JSX.Element {
+function ModelItem({ model, isSelected, onSelect, onPeek }: ModelItemProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
 
   useMutationObserver(
@@ -168,12 +130,7 @@ function ModelItem({
       className="aria-selected:bg-primary aria-selected:text-primary-foreground"
     >
       {model.name}
-      <CheckIcon
-        className={cn(
-          'ml-auto size-4',
-          isSelected ? 'opacity-100' : 'opacity-0',
-        )}
-      />
+      <CheckIcon className={cn('ml-auto size-4', isSelected ? 'opacity-100' : 'opacity-0')} />
     </CommandItem>
   );
 }

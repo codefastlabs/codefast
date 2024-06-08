@@ -43,6 +43,7 @@ import { Pre } from '@codefast/ui/pre';
 import { Text } from '@codefast/ui/text';
 import { Code } from '@codefast/ui/code';
 import { useMediaQuery } from '@codefast/ui/use-media-query';
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
@@ -309,7 +310,7 @@ function StatusList({
 }: {
   setOpen: (open: boolean) => void;
   setSelectedStatus: (status: Status | null) => void;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <Command>
       <CommandInput placeholder="Filter status..." />

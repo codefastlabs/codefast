@@ -33,9 +33,7 @@ export const Default: Story = {
             <Heading as="h4" className="font-medium leading-none">
               Dimensions
             </Heading>
-            <Text className="text-muted-foreground text-sm">
-              Set the dimensions for the layer.
-            </Text>
+            <Text className="text-muted-foreground text-sm">Set the dimensions for the layer.</Text>
           </Box>
           <Box className="grid gap-3">
             <Box className="grid grid-cols-3 items-center gap-4">
@@ -44,11 +42,7 @@ export const Default: Story = {
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="maxWidth">Max width</Label>
-              <Input
-                id="maxWidth"
-                defaultValue="300px"
-                className="col-span-2"
-              />
+              <Input id="maxWidth" defaultValue="300px" className="col-span-2" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="height">Height</Label>
@@ -56,11 +50,7 @@ export const Default: Story = {
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="maxHeight">Max. height</Label>
-              <Input
-                id="maxHeight"
-                defaultValue="none"
-                className="col-span-2"
-              />
+              <Input id="maxHeight" defaultValue="none" className="col-span-2" />
             </Box>
           </Box>
         </Box>

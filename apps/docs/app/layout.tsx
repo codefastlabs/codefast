@@ -1,9 +1,9 @@
 import { Toaster } from '@codefast/ui/sonner';
 import { cn } from '@codefast/ui/utils';
 import '@/styles/globals.css';
-import React from 'react';
 import { Providers } from '@/components/providers';
 import { inter } from '@/styles/fonts';
+import type { JSX, ReactNode } from 'react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
-}>): React.JSX.Element {
+  children: ReactNode;
+}>): JSX.Element {
   return (
     <html lang="en" className={cn(inter.variable, 'dark')}>
       <body>

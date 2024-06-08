@@ -1,12 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@codefast/ui/table';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@codefast/ui/table';
 import { Checkbox } from '@codefast/ui/checkbox';
 import { Button } from '@codefast/ui/button';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
@@ -20,11 +12,7 @@ import {
 } from '@codefast/ui/dropdown-menu';
 import { Input } from '@codefast/ui/input';
 import { useState } from 'react';
-import {
-  DataTableColumnHeader,
-  DataTablePagination,
-  DataTableViewOptions,
-} from '@codefast/ui/data-table';
+import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from '@codefast/ui/data-table';
 import { faker } from '@faker-js/faker';
 import { Box } from '@codefast/ui/box';
 import {
@@ -65,12 +53,7 @@ interface Payment {
 const data: Payment[] = Array.from({ length: 100 }, () => ({
   id: faker.string.uuid(),
   amount: faker.number.int({ min: 100, max: 10000 }),
-  status: faker.helpers.arrayElement([
-    'pending',
-    'processing',
-    'success',
-    'failed',
-  ]),
+  status: faker.helpers.arrayElement(['pending', 'processing', 'success', 'failed']),
   email: faker.internet.email(),
 }));
 
@@ -79,10 +62,7 @@ const columns: ColumnDef<Payment>[] = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
@@ -104,15 +84,11 @@ const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => (
-      <Box className="capitalize">{row.getValue('status')}</Box>
-    ),
+    cell: ({ row }) => <Box className="capitalize">{row.getValue('status')}</Box>,
   },
   {
     accessorKey: 'email',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
     cell: ({ row }) => <Box className="lowercase">{row.getValue('email')}</Box>,
   },
   {
@@ -172,9 +148,7 @@ export const Default: Story = {
   render: () => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-      {},
-    );
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState({});
 
     const table = useReactTable({
@@ -204,9 +178,7 @@ export const Default: Story = {
             <Input
               placeholder="Filter emails..."
               value={String(table.getColumn('email')?.getFilterValue() ?? '')}
-              onChange={(event) =>
-                table.getColumn('email')?.setFilterValue(event.target.value)
-              }
+              onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
               inputSize="sm"
               className="max-w-sm pl-10"
             />
@@ -220,12 +192,7 @@ export const Default: Story = {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -234,26 +201,15 @@ export const Default: Story = {
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                  >
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
@@ -264,12 +220,7 @@ export const Default: Story = {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   ))}
                 </TableRow>

@@ -8,8 +8,7 @@ export default function SettingsAccountPage(): JSX.Element {
       <div>
         <h3 className="text-lg font-medium">Account</h3>
         <p className="text-muted-foreground text-sm">
-          Update your account settings. Set your preferred language and
-          timezone.
+          Update your account settings. Set your preferred language and timezone.
         </p>
       </div>
       <Separator />

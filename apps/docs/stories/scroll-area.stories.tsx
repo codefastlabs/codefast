@@ -19,9 +19,7 @@ type Story = StoryObj<typeof meta>;
  * Story: Default
  * -------------------------------------------------------------------------- */
 
-const tags = Array.from({ length: 50 }).map(
-  (_, i, a) => `v1.2.0-beta.${a.length - i}`,
-);
+const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
 
 export const Default: Story = {
   render: (args) => (

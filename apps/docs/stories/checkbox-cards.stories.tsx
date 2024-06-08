@@ -20,11 +20,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <Box>
-      <CheckboxCards
-        defaultValue={['1']}
-        className="grid-cols-1 sm:grid-cols-3"
-        {...args}
-      >
+      <CheckboxCards defaultValue={['1']} className="grid-cols-1 sm:grid-cols-3" {...args}>
         <CheckboxCardsItem value="1">
           <Box className="flex w-full flex-col items-start">
             <Text className="font-bold">8-core CPU</Text>
