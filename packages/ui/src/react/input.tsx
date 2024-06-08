@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { type VariantProps } from 'cva';
 import { cva } from '../lib/utils';
+import type { VariantProps } from 'cva';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input
@@ -28,21 +28,11 @@ type InputVariantsProps = VariantProps<typeof inputVariants>;
  * -------------------------------------------------------------------------- */
 
 type InputElement = HTMLInputElement;
-type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
-  InputVariantsProps;
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & InputVariantsProps;
 
-const Input = React.forwardRef<InputElement, InputProps>(
-  ({ className, inputSize, ...props }, ref) => {
-    return (
-      <input
-        type="text"
-        className={inputVariants({ className, inputSize })}
-        ref={ref}
-        {...props}
-      />
-    );
-  },
-);
+const Input = React.forwardRef<InputElement, InputProps>(({ className, inputSize, ...props }, ref) => {
+  return <input type="text" className={inputVariants({ className, inputSize })} ref={ref} {...props} />;
+});
 
 Input.displayName = 'Input';
 

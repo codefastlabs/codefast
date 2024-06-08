@@ -12,13 +12,11 @@ interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   asChild?: boolean;
 }
 
-const Heading = React.forwardRef<HeadingElement, HeadingProps>(
-  ({ asChild, as: Tag = 'h1', ...props }, ref) => {
-    const Component = asChild ? Slot : Tag;
+const Heading = React.forwardRef<HeadingElement, HeadingProps>(({ asChild, as: Tag = 'h1', ...props }, ref) => {
+  const Component = asChild ? Slot : Tag;
 
-    return <Component ref={ref} {...props} />;
-  },
-);
+  return <Component ref={ref} {...props} />;
+});
 
 Heading.displayName = 'Heading';
 

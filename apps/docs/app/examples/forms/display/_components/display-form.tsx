@@ -13,9 +13,9 @@ import {
 } from '@codefast/ui/form';
 import { toast } from '@codefast/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type JSX } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import type { JSX } from 'react';
 
 const items = [
   {

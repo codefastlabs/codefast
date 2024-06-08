@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { CheckboxGroup, CheckboxGroupItem } from '@codefast/ui/checkbox-group';
 import { useId } from 'react';
 import { Label } from '@codefast/ui/label';
@@ -18,6 +17,7 @@ import {
   FormMessage,
 } from '@codefast/ui/form';
 import { Button } from '@codefast/ui/button';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: CheckboxGroup,

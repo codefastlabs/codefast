@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  type DateRange,
-  DayPicker,
-  type DayPickerProps,
-  type StyledComponent,
-} from 'react-day-picker';
+import { type DateRange, DayPicker, type DayPickerProps, type StyledComponent } from 'react-day-picker';
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import { cn } from '../lib/utils';
 import { buttonVariants } from './button';
@@ -15,28 +10,17 @@ import { buttonVariants } from './button';
  * Component: Calendar
  * -------------------------------------------------------------------------- */
 
-function ChevronLeft({
-  children: _,
-  ...props
-}: StyledComponent): React.JSX.Element {
+function ChevronLeft({ children: _, ...props }: StyledComponent): React.JSX.Element {
   return <ChevronLeftIcon className="size-4" {...props} />;
 }
 
-function ChevronRight({
-  children: _,
-  ...props
-}: StyledComponent): React.JSX.Element {
+function ChevronRight({ children: _, ...props }: StyledComponent): React.JSX.Element {
   return <ChevronRightIcon className="size-4" {...props} />;
 }
 
 type CalendarProps = DayPickerProps;
 
-function Calendar({
-  className,
-  classNames,
-  showOutsideDays = true,
-  ...props
-}: CalendarProps): React.JSX.Element {
+function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps): React.JSX.Element {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -75,8 +59,7 @@ function Calendar({
         day_outside:
           'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
         day_disabled: 'text-muted-foreground opacity-50',
-        day_range_middle:
-          'aria-selected:bg-accent aria-selected:text-accent-foreground',
+        day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
         day_hidden: 'invisible',
         ...classNames,
       }}

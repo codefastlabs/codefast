@@ -9,21 +9,11 @@ import { cn } from '../lib/utils';
  * -------------------------------------------------------------------------- */
 
 type RadioGroupElement = React.ElementRef<typeof RadioGroupPrimitive.Root>;
-type RadioGroupProps = React.ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Root
->;
+type RadioGroupProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
-const RadioGroup = React.forwardRef<RadioGroupElement, RadioGroupProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <RadioGroupPrimitive.Root
-        className={cn('grid gap-2', className)}
-        {...props}
-        ref={ref}
-      />
-    );
-  },
-);
+const RadioGroup = React.forwardRef<RadioGroupElement, RadioGroupProps>(({ className, ...props }, ref) => {
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={ref} />;
+});
 
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -32,14 +22,9 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 type RadioGroupItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
-type RadioGroupItemProps = React.ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Item
->;
+type RadioGroupItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
-const RadioGroupItem = React.forwardRef<
-  RadioGroupItemElement,
-  RadioGroupItemProps
->(({ className, ...props }, ref) => {
+const RadioGroupItem = React.forwardRef<RadioGroupItemElement, RadioGroupItemProps>(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Item
       ref={ref}
@@ -60,9 +45,4 @@ RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  RadioGroup,
-  RadioGroupItem,
-  type RadioGroupProps,
-  type RadioGroupItemProps,
-};
+export { RadioGroup, RadioGroupItem, type RadioGroupProps, type RadioGroupItemProps };

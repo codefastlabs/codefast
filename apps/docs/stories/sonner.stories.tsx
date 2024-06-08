@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Toaster,

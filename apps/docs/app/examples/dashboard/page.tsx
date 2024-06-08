@@ -7,9 +7,7 @@ import {
   CardTitle,
 } from '@codefast/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
-import { type Metadata } from 'next';
 import Image from 'next/image';
-import { type JSX } from 'react';
 import { MainNav } from '@/app/examples/dashboard/_components/main-nav';
 import { Overview } from '@/app/examples/dashboard/_components/overview';
 import { RecentSales } from '@/app/examples/dashboard/_components/recent-sales';
@@ -17,6 +15,8 @@ import { Search } from '@/app/examples/dashboard/_components/search';
 import { TeamSwitcher } from '@/app/examples/dashboard/_components/team-switcher';
 import { UserNav } from '@/app/examples/dashboard/_components/user-nav';
 import { DatePickerWithRange } from '@/components/date-picker-with-range';
+import type { JSX } from 'react';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Dashboard',

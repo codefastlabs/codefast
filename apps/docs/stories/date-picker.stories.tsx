@@ -1,10 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Button } from '@codefast/ui/button';
 import { cn } from '@codefast/ui/utils';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { addDays, format } from 'date-fns';
-import { Calendar, type DateRange } from '@codefast/ui/calendar';
+import { Calendar } from '@codefast/ui/calendar';
 import { useState } from 'react';
 import {
   Select,
@@ -29,6 +28,8 @@ import {
 import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
+import type { DateRange } from '@codefast/ui/calendar';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Popover,
@@ -47,6 +48,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => {
     const [date, setDate] = useState<Date>();
+
     return (
       <Popover {...args}>
         <PopoverTrigger asChild>

@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Toggle } from '@codefast/ui/toggle';
 import { Bold, Italic, Underline } from 'lucide-react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Toggle,

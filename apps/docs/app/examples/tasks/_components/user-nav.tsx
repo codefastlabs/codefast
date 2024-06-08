@@ -10,7 +10,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function UserNav(): JSX.Element {
   return (
@@ -27,9 +27,7 @@ export function UserNav(): JSX.Element {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">codefast</p>
-            <p className="text-muted-foreground text-xs leading-none">
-              m@example.com
-            </p>
+            <p className="text-muted-foreground text-xs leading-none">m@example.com</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

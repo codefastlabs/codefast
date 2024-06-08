@@ -1,10 +1,7 @@
 import plugin from 'tailwindcss/plugin';
-import { type Config } from 'tailwindcss/types/config';
+import type { Config } from 'tailwindcss/types/config';
 
-type Theme = <TDefaultValue = Config['theme']>(
-  path?: string,
-  defaultValue?: TDefaultValue,
-) => TDefaultValue;
+type Theme = <TDefaultValue = Config['theme']>(path?: string, defaultValue?: TDefaultValue) => TDefaultValue;
 
 const animate = plugin(
   ({ addUtilities, matchUtilities, theme }) => {

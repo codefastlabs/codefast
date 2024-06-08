@@ -10,26 +10,20 @@ import {
   CommandList,
   CommandSeparator,
 } from '@codefast/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  type PopoverProps,
-  PopoverTrigger,
-} from '@codefast/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
-import { type JSX, useState } from 'react';
-import { type Preset } from '@/app/examples/playground/_data/presets';
+import { useState } from 'react';
+import type { Preset } from '@/app/examples/playground/_data/presets';
+import type { PopoverProps } from '@codefast/ui/popover';
+import type { JSX } from 'react';
 
 interface PresetSelectorProps extends PopoverProps {
   presets: Preset[];
 }
 
-export function PresetSelector({
-  presets,
-  ...props
-}: PresetSelectorProps): JSX.Element {
+export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<Preset>();
   const router = useRouter();
@@ -64,12 +58,7 @@ export function PresetSelector({
                 >
                   {preset.name}
                   <CheckIcon
-                    className={cn(
-                      'ml-auto size-4',
-                      selectedPreset?.id === preset.id
-                        ? 'opacity-100'
-                        : 'opacity-0',
-                    )}
+                    className={cn('ml-auto size-4', selectedPreset?.id === preset.id ? 'opacity-100' : 'opacity-0')}
                   />
                 </CommandItem>
               ))}

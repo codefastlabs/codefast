@@ -23,12 +23,13 @@ import {
 } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { type JSX, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useMutationObserver } from '@codefast/ui/use-mutation-observer';
 import {
   type Model,
   type ModelType,
 } from '@/app/examples/playground/_data/models';
+import type { JSX} from 'react';
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[];

@@ -26,14 +26,15 @@ import { cn } from '@codefast/ui/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import { type JSX } from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import isNil from 'lodash/isNil';
 import {
   accountFormSchema,
   type AccountFormValues,
 } from '@/app/examples/forms/account/_lib/account-schema';
 import updateAccount from '@/app/examples/forms/account/_lib/account-action';
+import type { SubmitHandler} from 'react-hook-form';
+import type { JSX } from 'react';
 
 const languages = [
   { label: 'English', value: 'en' },

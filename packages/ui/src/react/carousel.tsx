@@ -1,13 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import useEmblaCarousel, {
-  type UseEmblaCarouselType,
-} from 'embla-carousel-react';
+import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
-import { createContextScope, type Scope } from '@radix-ui/react-context';
+import { createContextScope } from '@radix-ui/react-context';
 import { cn } from '../lib/utils';
-import { Button, type ButtonProps } from './button';
+import { Button } from './button';
+import type { ButtonProps } from './button';
+import type { Scope } from '@radix-ui/react-context';
 
 /* -----------------------------------------------------------------------------
  * Context: Carousel
@@ -40,8 +40,7 @@ type CarouselContextValue = {
   canScrollNext: boolean;
 } & BaseCarouselProps;
 
-const [CarouselProvider, useCarouselContext] =
-  createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
+const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel
@@ -52,16 +51,7 @@ type CarouselProps = React.HTMLAttributes<HTMLDivElement> & BaseCarouselProps;
 
 const Carousel = React.forwardRef<CarouselElement, CarouselProps>(
   (
-    {
-      __scopeCarousel,
-      children,
-      orientation,
-      opts,
-      setApi,
-      plugins,
-      className,
-      ...props
-    }: ScopedProps<CarouselProps>,
+    { __scopeCarousel, children, orientation, opts, setApi, plugins, className, ...props }: ScopedProps<CarouselProps>,
     ref,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
@@ -133,9 +123,7 @@ const Carousel = React.forwardRef<CarouselElement, CarouselProps>(
         carouselRef={carouselRef}
         api={api}
         opts={opts}
-        orientation={
-          orientation ?? (opts?.axis === 'y' ? 'vertical' : 'horizontal')
-        }
+        orientation={orientation ?? (opts?.axis === 'y' ? 'vertical' : 'horizontal')}
         scrollPrev={scrollPrev}
         scrollNext={scrollNext}
         canScrollPrev={canScrollPrev}
@@ -167,28 +155,15 @@ const CAROUSEL_CONTENT_NAME = 'CarouselContent';
 type CarouselContentElement = HTMLDivElement;
 type CarouselContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-const CarouselContent = React.forwardRef<
-  CarouselContentElement,
-  CarouselContentProps
->(
-  (
-    { __scopeCarousel, className, ...props }: ScopedProps<CarouselContentProps>,
-    ref,
-  ) => {
-    const { carouselRef, orientation } = useCarouselContext(
-      CAROUSEL_CONTENT_NAME,
-      __scopeCarousel,
-    );
+const CarouselContent = React.forwardRef<CarouselContentElement, CarouselContentProps>(
+  ({ __scopeCarousel, className, ...props }: ScopedProps<CarouselContentProps>, ref) => {
+    const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
     return (
       <div ref={carouselRef} className="overflow-hidden">
         <div
           ref={ref}
-          className={cn(
-            'flex',
-            orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
-            className,
-          )}
+          className={cn('flex', orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col', className)}
           {...props}
         />
       </div>
@@ -208,25 +183,15 @@ type CarouselItemElement = HTMLDivElement;
 type CarouselItemProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CarouselItem = React.forwardRef<CarouselItemElement, CarouselItemProps>(
-  (
-    { __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>,
-    ref,
-  ) => {
-    const { orientation } = useCarouselContext(
-      CAROUSEL_ITEM_NAME,
-      __scopeCarousel,
-    );
+  ({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>, ref) => {
+    const { orientation } = useCarouselContext(CAROUSEL_ITEM_NAME, __scopeCarousel);
 
     return (
       <div
         ref={ref}
         role="group"
         aria-roledescription="slide"
-        className={cn(
-          'min-w-0 shrink-0 grow-0 basis-full',
-          orientation === 'horizontal' ? 'pl-4' : 'pt-4',
-          className,
-        )}
+        className={cn('min-w-0 shrink-0 grow-0 basis-full', orientation === 'horizontal' ? 'pl-4' : 'pt-4', className)}
         {...props}
       />
     );
@@ -244,24 +209,12 @@ const CAROUSEL_PREVIOUS_NAME = 'CarouselPrevious';
 type CarouselPreviousElement = HTMLButtonElement;
 type CarouselPreviousProps = ButtonProps;
 
-const CarouselPrevious = React.forwardRef<
-  CarouselPreviousElement,
-  CarouselPreviousProps
->(
+const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPreviousProps>(
   (
-    {
-      __scopeCarousel,
-      className,
-      variant = 'outline',
-      size = 'icon',
-      ...props
-    }: ScopedProps<CarouselPreviousProps>,
+    { __scopeCarousel, className, variant = 'outline', size = 'icon', ...props }: ScopedProps<CarouselPreviousProps>,
     ref,
   ) => {
-    const { orientation, scrollPrev, canScrollPrev } = useCarouselContext(
-      CAROUSEL_PREVIOUS_NAME,
-      __scopeCarousel,
-    );
+    const { orientation, scrollPrev, canScrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
 
     return (
       <Button
@@ -299,19 +252,10 @@ type CarouselNextProps = ButtonProps;
 
 const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
   (
-    {
-      __scopeCarousel,
-      className,
-      variant = 'outline',
-      size = 'icon',
-      ...props
-    }: ScopedProps<CarouselNextProps>,
+    { __scopeCarousel, className, variant = 'outline', size = 'icon', ...props }: ScopedProps<CarouselNextProps>,
     ref,
   ) => {
-    const { orientation, scrollNext, canScrollNext } = useCarouselContext(
-      CAROUSEL_NEXT_NAME,
-      __scopeCarousel,
-    );
+    const { orientation, scrollNext, canScrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
 
     return (
       <Button

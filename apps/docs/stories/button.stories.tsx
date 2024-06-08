@@ -1,22 +1,15 @@
 import { Button } from '@codefast/ui/button';
 import { Spinner } from '@codefast/ui/spinner';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { ChevronRightIcon, EnvelopeOpenIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   argTypes: {
     variant: {
       control: { type: 'inline-radio' },
       description: 'The variant of the button.',
-      options: [
-        'default',
-        'secondary',
-        'outline',
-        'destructive',
-        'ghost',
-        'link',
-      ],
+      options: ['default', 'secondary', 'outline', 'destructive', 'ghost', 'link'],
     },
     size: {
       control: { type: 'inline-radio' },

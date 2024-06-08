@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.25
+
+### Patch Changes
+
+- Update ESLint settings for import order and type imports
+
 ## 0.0.24
 
 ### Patch Changes

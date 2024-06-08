@@ -24,8 +24,8 @@ import {
   ReplyAll,
   Trash2,
 } from 'lucide-react';
-import { type JSX } from 'react';
-import { type Mail } from '@/app/examples/mail/_data/data';
+import type { Mail } from '@/app/examples/mail/_data/data';
+import type { JSX } from 'react';
 
 interface MailDisplayProps {
   mail: Mail | null | undefined;

@@ -1,9 +1,9 @@
 import { buttonVariants } from '@codefast/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import { cn } from '@codefast/ui/utils';
-import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type JSX } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import type { JSX } from 'react';
 
 interface NavProps {
   isCollapsed: boolean;

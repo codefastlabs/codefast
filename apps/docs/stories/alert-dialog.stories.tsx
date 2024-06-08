@@ -1,4 +1,3 @@
-import { type Meta, type StoryObj } from '@storybook/react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +10,7 @@ import {
   AlertDialogTrigger,
 } from '@codefast/ui/alert-dialog';
 import { Button } from '@codefast/ui/button';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: AlertDialog,
@@ -36,8 +36,8 @@ export const Default: Story = {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This action cannot be undone. This will permanently delete your account and remove your data from our
+            servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -9,7 +9,7 @@ import {
 } from '@codefast/ui/card';
 import { Label } from '@codefast/ui/label';
 import { Switch } from '@codefast/ui/switch';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function DemoCookieSettings(): JSX.Element {
   return (

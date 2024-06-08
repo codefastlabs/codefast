@@ -17,7 +17,7 @@ import {
 } from '@codefast/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function DemoTeamMembers(): JSX.Element {
   return (

@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Textarea } from '@codefast/ui/textarea';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
@@ -20,6 +19,7 @@ import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Textarea,

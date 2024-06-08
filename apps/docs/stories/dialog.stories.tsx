@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Dialog,
   DialogClose,
@@ -14,6 +13,7 @@ import { Label } from '@codefast/ui/label';
 import { Input } from '@codefast/ui/input';
 import { Copy } from 'lucide-react';
 import { Box } from '@codefast/ui/box';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Dialog,

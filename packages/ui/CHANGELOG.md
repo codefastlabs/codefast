@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.52
+
+### Patch Changes
+
+- Refactor components for readability and consistency
+
 ## 0.0.51
 
 ### Patch Changes

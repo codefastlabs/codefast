@@ -1,8 +1,8 @@
-import type { Config } from 'tailwindcss';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import animate from './plugin/animate.plugin';
-import perspective from './plugin/perspective.plugin';
 import base from './plugin/base.plugin';
+import perspective from './plugin/perspective.plugin';
+import type { Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],

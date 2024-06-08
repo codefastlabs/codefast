@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   HoverCard,
   HoverCardContent,
@@ -10,6 +9,7 @@ import { CalendarDays } from 'lucide-react';
 import { Text } from '@codefast/ui/text';
 import { Box } from '@codefast/ui/box';
 import { Heading } from '@codefast/ui/heading';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: HoverCard,

@@ -8,7 +8,8 @@ import {
   SelectValue,
 } from '@codefast/ui/select';
 import { cn } from '@codefast/ui/utils';
-import { type JSX, type ReactNode, useState } from 'react';
+import { useState } from 'react';
+import type { JSX, ReactNode} from 'react';
 
 interface AccountSwitcherProps {
   isCollapsed: boolean;

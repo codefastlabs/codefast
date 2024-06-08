@@ -23,9 +23,9 @@ import { Textarea } from '@codefast/ui/textarea';
 import { cn } from '@codefast/ui/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { type JSX } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import type { JSX } from 'react';
 
 const profileFormSchema = z.object({
   username: z

@@ -4,7 +4,7 @@ import { buttonVariants } from '@codefast/ui/button';
 import { cn } from '@codefast/ui/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { type HTMLAttributes, type JSX } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 interface SidebarNavProps extends HTMLAttributes<HTMLElement> {
   items: {

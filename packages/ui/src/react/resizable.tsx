@@ -12,15 +12,10 @@ import { cn } from '../lib/utils';
 function ResizablePanelGroup({
   className,
   ...props
-}: React.ComponentProps<
-  typeof ResizablePrimitive.PanelGroup
->): React.JSX.Element {
+}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>): React.JSX.Element {
   return (
     <ResizablePrimitive.PanelGroup
-      className={cn(
-        'flex size-full data-[panel-group-direction=vertical]:flex-col',
-        className,
-      )}
+      className={cn('flex size-full data-[panel-group-direction=vertical]:flex-col', className)}
       {...props}
     />
   );

@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from '@codefast/ui/card';
 import { BellIcon, EyeNoneIcon, PersonIcon } from '@radix-ui/react-icons';
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
 export function DemoNotifications(): JSX.Element {
   return (

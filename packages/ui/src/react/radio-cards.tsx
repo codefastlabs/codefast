@@ -9,21 +9,11 @@ import { cn } from '../lib/utils';
  * -------------------------------------------------------------------------- */
 
 type RadioCardsElement = React.ElementRef<typeof RadioGroupPrimitive.Root>;
-type RadioCardsProps = React.ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Root
->;
+type RadioCardsProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
-const RadioCards = React.forwardRef<RadioCardsElement, RadioCardsProps>(
-  ({ className, ...props }, ref) => {
-    return (
-      <RadioGroupPrimitive.Root
-        className={cn('grid gap-2', className)}
-        {...props}
-        ref={ref}
-      />
-    );
-  },
-);
+const RadioCards = React.forwardRef<RadioCardsElement, RadioCardsProps>(({ className, ...props }, ref) => {
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={ref} />;
+});
 
 RadioCards.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -32,14 +22,9 @@ RadioCards.displayName = RadioGroupPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 type RadioCardsItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
-type RadioCardsItemProps = React.ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Item
->;
+type RadioCardsItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
-const RadioCardsItem = React.forwardRef<
-  RadioCardsItemElement,
-  RadioCardsItemProps
->(({ className, ...props }, ref) => {
+const RadioCardsItem = React.forwardRef<RadioCardsItemElement, RadioCardsItemProps>(({ className, ...props }, ref) => {
   return (
     <RadioGroupPrimitive.Item
       ref={ref}
@@ -58,9 +43,4 @@ RadioCardsItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  RadioCards,
-  RadioCardsItem,
-  type RadioCardsProps,
-  type RadioCardsItemProps,
-};
+export { RadioCards, RadioCardsItem, type RadioCardsProps, type RadioCardsItemProps };

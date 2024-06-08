@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Slider } from '@codefast/ui/slider';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Slider,

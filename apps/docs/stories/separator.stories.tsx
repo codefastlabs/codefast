@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { Separator } from '@codefast/ui/separator';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { Heading } from '@codefast/ui/heading';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Separator,
