@@ -11,8 +11,8 @@
     "package:install": "pnpm install",
     "package:reinstall": "pnpm run clean && pnpm install",
     "package:update": "pnpm update --latest --interactive --recursive",
+    "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
-    "prettier:write": "prettier --write --ignore-unknown .",
     "release": "turbo run build --filter=docs^... && changeset publish",
     "version-packages": "changeset version"
   },
