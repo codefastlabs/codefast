@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   Table,
   TableBody,
@@ -9,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@codefast/ui/table';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Table,

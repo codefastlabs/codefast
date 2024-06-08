@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: Avatar,

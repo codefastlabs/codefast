@@ -1,4 +1,3 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
@@ -18,6 +17,7 @@ import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   component: RadioGroup,

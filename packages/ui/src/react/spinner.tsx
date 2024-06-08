@@ -23,10 +23,7 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
     const spinner = (
       <span
         ref={ref}
-        className={cn(
-          'relative flex size-4 items-center justify-center opacity-60',
-          className,
-        )}
+        className={cn('relative flex size-4 items-center justify-center opacity-60', className)}
         {...props}
       >
         {Array.from({ length: spinnerCount }, (_, i) => (
@@ -56,9 +53,7 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
           {children}
         </span>
         <VisuallyHidden>{children}</VisuallyHidden>
-        <span className="absolute inset-0 flex items-center justify-center">
-          {spinner}
-        </span>
+        <span className="absolute inset-0 flex items-center justify-center">{spinner}</span>
       </span>
     );
   },

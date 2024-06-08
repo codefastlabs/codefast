@@ -1,15 +1,10 @@
 'use server';
 
 import { wait } from 'next/dist/lib/wait';
-import {
-  accountFormSchema,
-  type AccountFormValues,
-} from '@/app/examples/forms/account/_lib/account-schema';
-import { type FormState } from '@/lib/types';
+import { accountFormSchema, type AccountFormValues } from '@/app/examples/forms/account/_lib/account-schema';
+import type { FormState } from '@/lib/types';
 
-export default async function updateAccount(
-  data: AccountFormValues,
-): Promise<FormState<AccountFormValues>> {
+export default async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
   try {
     const validatedFields = accountFormSchema.safeParse(data);
 

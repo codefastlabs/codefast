@@ -1,11 +1,7 @@
 'use client';
 
 import { Input } from '@codefast/ui/input';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@codefast/ui/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/ui/resizable';
 import { Separator } from '@codefast/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
 import { TooltipProvider } from '@codefast/ui/tooltip';
@@ -23,13 +19,14 @@ import {
   Trash2,
   Users2,
 } from 'lucide-react';
-import { type JSX, type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
-import { type Mail } from '@/app/examples/mail/_data/data';
 import { Nav } from '@/app/examples/mail/_components/nav';
 import { MailList } from '@/app/examples/mail/_components/mail-list';
 import { MailDisplay } from '@/app/examples/mail/_components/mail-display';
 import { AccountSwitcher } from '@/app/examples/mail/_components/account-switcher';
+import type { Mail } from '@/app/examples/mail/_data/data';
+import type { JSX, ReactNode } from 'react';
 
 interface MailProps {
   accounts: {
@@ -76,17 +73,9 @@ export function Mail({
             setIsCollapsed(false);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
           }}
-          className={cn(
-            isCollapsed &&
-              'min-w-[50px] transition-all duration-300 ease-in-out',
-          )}
+          className={cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')}
         >
-          <div
-            className={cn(
-              'flex h-[56px] items-center justify-center',
-              isCollapsed ? 'h-[52px]' : 'px-2',
-            )}
-          >
+          <div className={cn('flex h-[56px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}>
             <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} />
           </div>
           <Separator />
@@ -174,16 +163,10 @@ export function Mail({
             <div className="flex items-center px-4 py-2">
               <h1 className="text-xl font-bold">Inbox</h1>
               <TabsList className="ml-auto">
-                <TabsTrigger
-                  value="all"
-                  className="text-zinc-600 dark:text-zinc-200"
-                >
+                <TabsTrigger value="all" className="text-zinc-600 dark:text-zinc-200">
                   All mail
                 </TabsTrigger>
-                <TabsTrigger
-                  value="unread"
-                  className="text-zinc-600 dark:text-zinc-200"
-                >
+                <TabsTrigger value="unread" className="text-zinc-600 dark:text-zinc-200">
                   Unread
                 </TabsTrigger>
               </TabsList>

@@ -1,16 +1,16 @@
 'use client';
 
-import { Calendar, type DateRange } from '@codefast/ui/calendar';
+import { Calendar } from '@codefast/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { addDays, format } from 'date-fns';
-import { type HTMLAttributes, type JSX, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@codefast/ui/utils';
 import { Button } from '@codefast/ui/button';
 import { CalendarIcon } from '@radix-ui/react-icons';
+import type { HTMLAttributes, JSX } from 'react';
+import type { DateRange } from '@codefast/ui/calendar';
 
-export function DatePickerWithRange({
-  className,
-}: HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(2024, 0, 20),
     to: addDays(new Date(2024, 0, 20), 20),
@@ -23,10 +23,7 @@ export function DatePickerWithRange({
           <Button
             id="date"
             variant="outline"
-            className={cn(
-              'justify-start text-left font-normal',
-              !date && 'text-muted-foreground',
-            )}
+            className={cn('justify-start text-left font-normal', !date && 'text-muted-foreground')}
           >
             <CalendarIcon className="mr-2 size-4" />
             <ButtonValue date={date} />

@@ -1,7 +1,7 @@
-import type { Config } from 'tailwindcss';
 import sharedConfig from '@codefast/ui/tailwind.config';
 import plugin from 'tailwindcss/plugin';
 import { colors } from '@codefast/ui/colors';
+import type { Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {
   content: [
@@ -76,8 +76,7 @@ const tailwindcssConfig: Config = {
     extend: {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
   },

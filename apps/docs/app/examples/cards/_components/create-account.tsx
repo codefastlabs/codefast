@@ -9,8 +9,8 @@ import {
 } from '@codefast/ui/card';
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
-import { type JSX } from 'react';
 import { Icons } from '@/components/icons';
+import type { JSX } from 'react';
 
 export function DemoCreateAccount(): JSX.Element {
   return (
