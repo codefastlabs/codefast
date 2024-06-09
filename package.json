@@ -7,7 +7,6 @@
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "lint:fix": "turbo lint -- --fix",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm run clean && pnpm install",
     "package:update": "pnpm update --latest --interactive --recursive",
