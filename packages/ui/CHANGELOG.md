@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.58
+
+### Patch Changes
+
+- Update dialog elements and modify scroll-area defaults
+
 ## 0.0.57
 
 ### Patch Changes

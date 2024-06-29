@@ -24,7 +24,7 @@ type ScrollAreaElement = React.ElementRef<typeof ScrollAreaPrimitive.Root>;
 type ScrollAreaProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
 
 const ScrollArea = React.forwardRef<ScrollAreaElement, ScrollAreaProps>(
-  ({ __scopeScrollArea, children, className, size = '1', ...props }: ScopedProps<ScrollAreaProps>, ref) => (
+  ({ __scopeScrollArea, children, className, size = '2', ...props }: ScopedProps<ScrollAreaProps>, ref) => (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root ref={ref} className={cn('relative overflow-hidden', className)} {...props}>
         <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit] [&>*]:min-h-full">
