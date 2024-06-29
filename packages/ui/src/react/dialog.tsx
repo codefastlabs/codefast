@@ -36,21 +36,22 @@ type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.
 const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>(
   ({ children, className, ...props }, ref) => (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="data-[state=open]:animate-duration-200 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 bg-black/80" />
-      <DialogPrimitive.Content
-        ref={ref}
-        className={cn(
-          'bg-background data-[state=open]:animate-in data-[state=open]:animate-duration-200 data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg',
-          className,
-        )}
-        {...props}
-      >
-        {children}
-        <DialogPrimitive.Close className="data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 rounded-sm opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none">
-          <Cross2Icon className="size-4" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      </DialogPrimitive.Content>
+      <DialogPrimitive.Overlay className="data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8">
+        <DialogPrimitive.Content
+          ref={ref}
+          className={cn(
+            'bg-background data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
+            className,
+          )}
+          {...props}
+        >
+          {children}
+          <DialogPrimitive.Close className="data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 rounded-sm p-1 opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none">
+            <Cross2Icon className="size-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Overlay>
     </DialogPrimitive.Portal>
   ),
 );
@@ -64,7 +65,22 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Element {
-  return <div className={cn('flex flex-col space-y-1.5 text-center sm:text-left', className)} {...props} />;
+  return (
+    <header
+      className={cn('flex shrink-0 flex-col space-y-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: DialogBody
+ * -------------------------------------------------------------------------- */
+
+type DialogBodyProps = React.HTMLAttributes<HTMLDivElement>;
+
+function DialogBody({ className, ...props }: DialogFooterProps): React.JSX.Element {
+  return <main className={cn('grow overflow-y-auto px-6 py-2', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -74,7 +90,12 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Ele
 type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DialogFooter({ className, ...props }: DialogFooterProps): React.JSX.Element {
-  return <div className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />;
+  return (
+    <footer
+      className={cn('flex shrink-0 flex-col-reverse px-6 pb-6 pt-4 sm:flex-row sm:justify-end sm:space-x-2', className)}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -119,6 +140,7 @@ export {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogBody,
   DialogFooter,
   DialogTitle,
   DialogDescription,
@@ -127,6 +149,7 @@ export {
   type DialogCloseProps,
   type DialogContentProps,
   type DialogHeaderProps,
+  type DialogBodyProps,
   type DialogFooterProps,
   type DialogTitleProps,
   type DialogDescriptionProps,
