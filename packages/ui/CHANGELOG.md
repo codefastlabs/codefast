@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.57
+
+### Patch Changes
+
+- Update ScrollArea to support varying sizes
+
 ## 0.0.56
 
 ### Patch Changes
