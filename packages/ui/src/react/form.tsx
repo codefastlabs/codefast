@@ -13,9 +13,9 @@ import {
   type Merge,
   useFormContext,
 } from 'react-hook-form';
+import type * as LabelPrimitive from '@radix-ui/react-label';
 import { cn } from '../lib/utils';
 import { Label } from './label';
-import type * as LabelPrimitive from '@radix-ui/react-label';
 
 /* -----------------------------------------------------------------------------
  * Context: Form

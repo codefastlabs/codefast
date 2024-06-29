@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { type VariantProps } from 'cva';
 import { cva } from '../lib/utils';
 import { Spinner } from './spinner';
-import type { VariantProps } from 'cva';
 
 /* -----------------------------------------------------------------------------
  * Variant: Button

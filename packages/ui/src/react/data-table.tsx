@@ -12,6 +12,7 @@ import {
   EyeNoneIcon,
   MixerHorizontalIcon,
 } from '@radix-ui/react-icons';
+import type * as ReactTable from '@tanstack/react-table';
 import { cn } from '../lib/utils';
 import {
   DropdownMenu,
@@ -24,7 +25,6 @@ import {
 } from './dropdown-menu';
 import { Button } from './button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
-import type * as ReactTable from '@tanstack/react-table';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions

@@ -4,14 +4,13 @@ import { Button } from '@codefast/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
 import { Label } from '@codefast/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger, type PopoverProps } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRef, useState } from 'react';
 import { useMutationObserver } from '@codefast/ui/use-mutation-observer';
-import type { Model, ModelType } from '@/app/examples/playground/_data/models';
-import type { PopoverProps } from '@codefast/ui/popover';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
+import { type Model, type ModelType } from '@/app/examples/playground/_data/models';
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[];

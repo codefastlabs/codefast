@@ -28,7 +28,7 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],

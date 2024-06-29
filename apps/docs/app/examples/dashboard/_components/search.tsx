@@ -1,5 +1,5 @@
 import { Input } from '@codefast/ui/input';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function Search(): JSX.Element {
   return (

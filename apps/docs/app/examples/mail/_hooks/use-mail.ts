@@ -1,7 +1,5 @@
-import { atom, useAtom } from 'jotai';
-import { mails } from '@/app/examples/mail/_data/data';
-import type { Mail } from '@/app/examples/mail/_data/data';
-import type { SetStateAction } from 'jotai';
+import { atom, useAtom, type SetStateAction } from 'jotai';
+import { mails, type Mail } from '@/app/examples/mail/_data/data';
 
 type SetAtom<Args extends unknown[], Result> = (...args: Args) => Result;
 

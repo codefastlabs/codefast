@@ -1,7 +1,7 @@
 import { AspectRatio } from '@codefast/ui/aspect-ratio';
 import Image from 'next/image';
 import { Box } from '@codefast/ui/box';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: AspectRatio,

@@ -4,14 +4,14 @@ import { Separator } from '@codefast/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
+import { type JSX } from 'react';
+import { type Metadata } from 'next';
 import { playlists } from '@/app/examples/music/_data/playlists';
 import { listenNowAlbums, madeForYouAlbums } from '@/app/examples/music/_data/albums';
 import { Sidebar } from '@/app/examples/music/_components/sidebar';
 import { PodcastEmptyPlaceholder } from '@/app/examples/music/_components/podcast-empty-placeholder';
 import { Menu } from '@/app/examples/music/_components/menu';
 import { AlbumArtwork } from '@/app/examples/music/_components/album-artwork';
-import type { JSX } from 'react';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Music App',

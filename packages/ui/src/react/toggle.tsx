@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
+import { type VariantProps } from 'cva';
 import { cva } from '../lib/utils';
-import type { VariantProps } from 'cva';
 
 /* -----------------------------------------------------------------------------
  * Variant: Toggle

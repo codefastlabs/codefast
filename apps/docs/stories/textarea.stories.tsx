@@ -11,7 +11,7 @@ import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Textarea,

@@ -18,14 +18,6 @@ module.exports = {
   },
   plugins: ['only-warn'],
   rules: {
-    '@typescript-eslint/consistent-type-imports': [
-      'warn',
-      {
-        disallowTypeAnnotations: true,
-        fixStyle: 'separate-type-imports',
-        prefer: 'type-imports',
-      },
-    ],
     '@typescript-eslint/restrict-template-expressions': [
       'error',
       {
@@ -37,7 +29,14 @@ module.exports = {
     'import/order': [
       'warn',
       {
-        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        groups: [
+          'builtin', // Node.js built-in modules
+          'external', // Packages
+          'internal', // Aliased modules
+          'parent', // Relative parent
+          'sibling', // Relative sibling
+          'index', // Relative index
+        ],
         'newlines-between': 'never',
         pathGroups: [
           {

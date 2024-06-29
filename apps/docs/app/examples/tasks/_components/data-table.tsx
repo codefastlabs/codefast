@@ -16,9 +16,8 @@ import {
   useReactTable,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { DataTableToolbar } from '@/app/examples/tasks/_components/data-table-toolbar';
-import type { JSX } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

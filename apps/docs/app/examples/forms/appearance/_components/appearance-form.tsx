@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Code } from '@codefast/ui/code';
 import { Pre } from '@codefast/ui/pre';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 const appearanceFormSchema = z.object({
   theme: z.enum(['light', 'dark'], {

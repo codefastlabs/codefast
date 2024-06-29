@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from '@codefast/ui/alert-dialog';
 import { Button } from '@codefast/ui/button';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: AlertDialog,

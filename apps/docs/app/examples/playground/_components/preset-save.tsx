@@ -11,7 +11,7 @@ import {
 } from '@codefast/ui/dialog';
 import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function PresetSave(): JSX.Element {
   return (

@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@codefast/ui/dialog';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function CodeViewer(): JSX.Element {
   return (

@@ -3,7 +3,7 @@ import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { CopyIcon } from '@radix-ui/react-icons';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function PresetShare(): JSX.Element {
   return (

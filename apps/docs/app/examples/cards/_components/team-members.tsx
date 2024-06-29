@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@code
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function DemoTeamMembers(): JSX.Element {
   return (

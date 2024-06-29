@@ -10,14 +10,13 @@ import {
   CommandList,
   CommandSeparator,
 } from '@codefast/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger, type PopoverProps } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { Preset } from '@/app/examples/playground/_data/presets';
-import type { PopoverProps } from '@codefast/ui/popover';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
+import { type Preset } from '@/app/examples/playground/_data/presets';
 
 interface PresetSelectorProps extends PopoverProps {
   presets: Preset[];

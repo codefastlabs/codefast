@@ -1,5 +1,5 @@
 import { Badge } from '@codefast/ui/badge';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   argTypes: {

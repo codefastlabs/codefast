@@ -2,10 +2,9 @@
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
 import { Label } from '@codefast/ui/label';
-import { Slider } from '@codefast/ui/slider';
+import { Slider, type SliderProps } from '@codefast/ui/slider';
 import { useState } from 'react';
-import type { SliderProps } from '@codefast/ui/slider';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 interface TemperatureSelectorProps {
   defaultValue: SliderProps['defaultValue'];

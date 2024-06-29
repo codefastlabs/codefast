@@ -12,7 +12,7 @@ import { Label } from '@codefast/ui/label';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { Text } from '@codefast/ui/text';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Checkbox,

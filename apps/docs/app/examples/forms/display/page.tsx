@@ -1,6 +1,6 @@
 import { Separator } from '@codefast/ui/separator';
+import { type JSX } from 'react';
 import { DisplayForm } from '@/app/examples/forms/display/_components/display-form';
-import type { JSX } from 'react';
 
 export default function SettingsDisplayPage(): JSX.Element {
   return (

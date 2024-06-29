@@ -13,7 +13,7 @@ import { toast, Toaster } from '@codefast/ui/sonner';
 import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],

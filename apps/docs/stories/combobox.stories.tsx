@@ -1,5 +1,5 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { Button } from '@codefast/ui/button';
 import {
   ArrowUpCircle,
@@ -43,8 +43,7 @@ import { Pre } from '@codefast/ui/pre';
 import { Text } from '@codefast/ui/text';
 import { Code } from '@codefast/ui/code';
 import { useMediaQuery } from '@codefast/ui/use-media-query';
-import type { JSX } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],

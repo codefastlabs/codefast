@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { Kbd } from '@codefast/ui/kbd';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Command,

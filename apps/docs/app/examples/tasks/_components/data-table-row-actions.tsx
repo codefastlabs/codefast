@@ -13,10 +13,10 @@ import {
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { type Row } from '@tanstack/react-table';
+import { type JSX } from 'react';
 import { taskSchema } from '@/app/examples/tasks/_data/schema';
 import { labels } from '@/app/examples/tasks/_data/data';
-import type { Row } from '@tanstack/react-table';
-import type { JSX } from 'react';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

@@ -1,7 +1,7 @@
 import { CheckboxCards, CheckboxCardsItem } from '@codefast/ui/checkbox-cards';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: CheckboxCards,

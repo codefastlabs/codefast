@@ -19,14 +19,13 @@ import {
   Trash2,
   Users2,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type JSX, type ReactNode } from 'react';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 import { Nav } from '@/app/examples/mail/_components/nav';
 import { MailList } from '@/app/examples/mail/_components/mail-list';
 import { MailDisplay } from '@/app/examples/mail/_components/mail-display';
 import { AccountSwitcher } from '@/app/examples/mail/_components/account-switcher';
-import type { Mail } from '@/app/examples/mail/_data/data';
-import type { JSX, ReactNode } from 'react';
+import { type Mail } from '@/app/examples/mail/_data/data';
 
 interface MailProps {
   accounts: {
