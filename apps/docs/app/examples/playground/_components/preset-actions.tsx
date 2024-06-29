@@ -22,8 +22,7 @@ import { Label } from '@codefast/ui/label';
 import { toast } from '@codefast/ui/sonner';
 import { Switch } from '@codefast/ui/switch';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
-import type { JSX } from 'react';
+import { useState, type JSX } from 'react';
 
 export function PresetActions(): JSX.Element {
   const [open, setOpen] = useState(false);

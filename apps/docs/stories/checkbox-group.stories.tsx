@@ -10,7 +10,7 @@ import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { Button } from '@codefast/ui/button';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: CheckboxGroup,

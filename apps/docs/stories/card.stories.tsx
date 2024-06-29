@@ -7,7 +7,7 @@ import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
 import { Switch } from '@codefast/ui/switch';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Card,

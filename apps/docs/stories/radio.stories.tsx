@@ -2,7 +2,7 @@ import { Radio } from '@codefast/ui/radio';
 import { Box } from '@codefast/ui/box';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Radio,

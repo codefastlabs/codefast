@@ -1,6 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
 import { Bold, Italic, Underline } from 'lucide-react';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],

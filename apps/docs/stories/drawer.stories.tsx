@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
-import { useState } from 'react';
+import { useState, type CSSProperties, type FormHTMLAttributes, type JSX } from 'react';
 import { Button } from '@codefast/ui/button';
 import { Minus, Plus } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
@@ -25,8 +25,7 @@ import { Label } from '@codefast/ui/label';
 import { Input } from '@codefast/ui/input';
 import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/ui/use-media-query';
-import type { CSSProperties, FormHTMLAttributes, JSX } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Drawer,

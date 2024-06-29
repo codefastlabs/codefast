@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
 import { Textarea } from '@codefast/ui/textarea';
 import { CounterClockwiseClockIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
+import { type JSX } from 'react';
+import { type Metadata } from 'next';
 import { CodeViewer } from '@/app/examples/playground/_components/code-viewer';
 import { MaxLengthSelector } from '@/app/examples/playground/_components/maxlength-selector';
 import { ModelSelector } from '@/app/examples/playground/_components/model-selector';
@@ -17,8 +19,6 @@ import { TemperatureSelector } from '@/app/examples/playground/_components/tempe
 import { TopPSelector } from '@/app/examples/playground/_components/top-p-selector';
 import { models, types } from '@/app/examples/playground/_data/models';
 import { presets } from '@/app/examples/playground/_data/presets';
-import type { JSX } from 'react';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Playground',

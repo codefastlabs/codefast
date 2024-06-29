@@ -1,4 +1,4 @@
-import type { typeToFlattenedError as TypeToFlattenedError } from 'zod';
+import { type typeToFlattenedError as TypeToFlattenedError } from 'zod';
 
 export interface FormState<T> {
   errors?: TypeToFlattenedError<T>['fieldErrors'];

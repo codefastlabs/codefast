@@ -24,7 +24,7 @@ import {
 import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/ui/use-media-query';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Breadcrumb,

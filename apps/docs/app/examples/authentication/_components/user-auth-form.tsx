@@ -5,9 +5,8 @@ import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Spinner } from '@codefast/ui/spinner';
 import { cn } from '@codefast/ui/utils';
-import { useState } from 'react';
+import { useState, type HTMLAttributes, type JSX, type SyntheticEvent } from 'react';
 import { Icons } from '@/components/icons';
-import type { HTMLAttributes, JSX, SyntheticEvent } from 'react';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 

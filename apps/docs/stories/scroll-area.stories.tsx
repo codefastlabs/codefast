@@ -3,7 +3,7 @@ import { Separator } from '@codefast/ui/separator';
 import Image from 'next/image';
 import { Heading } from '@codefast/ui/heading';
 import { Box } from '@codefast/ui/box';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: ScrollArea,

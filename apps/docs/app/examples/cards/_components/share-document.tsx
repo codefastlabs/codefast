@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@code
 import { Input } from '@codefast/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Separator } from '@codefast/ui/separator';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function DemoShareDocument(): JSX.Element {
   return (

@@ -26,8 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
-import type { ComponentPropsWithoutRef, JSX } from 'react';
+import { useState, type ComponentPropsWithoutRef, type JSX } from 'react';
 
 const groups = [
   {
