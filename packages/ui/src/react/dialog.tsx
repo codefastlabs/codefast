@@ -67,7 +67,7 @@ type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Element {
   return (
     <header
-      className={cn('flex shrink-0 flex-col space-y-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
       {...props}
     />
   );
@@ -80,7 +80,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Ele
 type DialogBodyProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DialogBody({ className, ...props }: DialogFooterProps): React.JSX.Element {
-  return <main className={cn('grow overflow-y-auto px-6 py-2', className)} {...props} />;
+  return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

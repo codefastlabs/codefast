@@ -1,5 +1,6 @@
 import {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -38,25 +39,30 @@ export const Default: Story = {
         <SheetTrigger asChild>
           <Button variant="outline">Open</Button>
         </SheetTrigger>
+
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
             <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
           </SheetHeader>
-          <Box className="grid gap-4 py-4">
-            <Box className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={`name-${id}`} className="text-right">
-                Name
-              </Label>
-              <Input id={`name-${id}`} value="Pedro Duarte" className="col-span-3" />
+
+          <SheetBody>
+            <Box className="grid gap-4">
+              <Box className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor={`name-${id}`} className="text-right">
+                  Name
+                </Label>
+                <Input id={`name-${id}`} value="Pedro Duarte" className="col-span-3" />
+              </Box>
+              <Box className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor={`username-${id}`} className="text-right">
+                  Username
+                </Label>
+                <Input id={`username-${id}`} value="@peduarte" className="col-span-3" />
+              </Box>
             </Box>
-            <Box className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={`username-${id}`} className="text-right">
-                Username
-              </Label>
-              <Input id={`username-${id}`} value="@peduarte" className="col-span-3" />
-            </Box>
-          </Box>
+          </SheetBody>
+
           <SheetFooter>
             <SheetClose asChild>
               <Button type="submit">Save changes</Button>
@@ -85,6 +91,7 @@ export const Side: Story = {
             <SheetTrigger asChild>
               <Button variant="outline">{side}</Button>
             </SheetTrigger>
+
             <SheetContent side={side}>
               <SheetHeader>
                 <SheetTitle>Edit profile</SheetTitle>
@@ -92,20 +99,24 @@ export const Side: Story = {
                   Make changes to your profile here. Click save when you&apos;`re done.
                 </SheetDescription>
               </SheetHeader>
-              <Box className="grid gap-4 py-4">
-                <Box className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor={`name-${side}-${id}`} className="text-right">
-                    Name
-                  </Label>
-                  <Input id={`name-${side}-${id}`} value="Pedro Duarte" className="col-span-3" />
+
+              <SheetBody>
+                <Box className="grid gap-4">
+                  <Box className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor={`name-${side}-${id}`} className="text-right">
+                      Name
+                    </Label>
+                    <Input id={`name-${side}-${id}`} value="Pedro Duarte" className="col-span-3" />
+                  </Box>
+                  <Box className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor={`username-${side}-${id}`} className="text-right">
+                      Username
+                    </Label>
+                    <Input id={`username-${side}-${id}`} value="@peduarte" className="col-span-3" />
+                  </Box>
                 </Box>
-                <Box className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor={`username-${side}-${id}`} className="text-right">
-                    Username
-                  </Label>
-                  <Input id={`username-${side}-${id}`} value="@peduarte" className="col-span-3" />
-                </Box>
-              </Box>
+              </SheetBody>
+
               <SheetFooter>
                 <SheetClose asChild>
                   <Button type="submit">Save changes</Button>
@@ -117,4 +128,90 @@ export const Side: Story = {
       </Box>
     );
   },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Scrollable
+ * -------------------------------------------------------------------------- */
+
+export const Scrollable: Story = {
+  render: (args) => (
+    <Box className="grid grid-cols-2 gap-2">
+      {SHEET_SIDES.map((side) => (
+        <Sheet key={side} {...args}>
+          <SheetTrigger asChild>
+            <Button variant="outline">{side}</Button>
+          </SheetTrigger>
+
+          <SheetContent side={side}>
+            <SheetHeader>
+              <SheetTitle>Share link</SheetTitle>
+              <SheetDescription>Anyone who has this link will be able to view this.</SheetDescription>
+            </SheetHeader>
+
+            <SheetBody className="grow overflow-auto border-y">
+              <div className="grid gap-2">
+                {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
+                  <p key={id}>
+                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
+                    officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
+                    quos totam voluptas voluptatibus.
+                  </p>
+                ))}
+              </div>
+            </SheetBody>
+
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">Close</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      ))}
+    </Box>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: ScrollingLongContent
+ * -------------------------------------------------------------------------- */
+
+export const ScrollingLongContent: Story = {
+  render: (args) => (
+    <Box className="grid grid-cols-2 gap-2">
+      {SHEET_SIDES.map((side) => (
+        <Sheet key={side} {...args}>
+          <SheetTrigger asChild>
+            <Button variant="outline">{side}</Button>
+          </SheetTrigger>
+
+          <SheetContent side={side}>
+            <SheetHeader>
+              <SheetTitle>Share link</SheetTitle>
+              <SheetDescription>Anyone who has this link will be able to view this.</SheetDescription>
+            </SheetHeader>
+
+            <SheetBody className="border-y">
+              <div className="grid gap-2">
+                {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
+                  <p key={id}>
+                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
+                    officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
+                    quos totam voluptas voluptatibus.
+                  </p>
+                ))}
+              </div>
+            </SheetBody>
+
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">Close</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      ))}
+    </Box>
+  ),
 };
