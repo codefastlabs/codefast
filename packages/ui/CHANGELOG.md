@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.60
+
+### Patch Changes
+
+- Update CSS classes in scroll area components
+
 ## 0.0.59
 
 ### Patch Changes
