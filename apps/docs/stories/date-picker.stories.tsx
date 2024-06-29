@@ -3,7 +3,7 @@ import { Button } from '@codefast/ui/button';
 import { cn } from '@codefast/ui/utils';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { addDays, format } from 'date-fns';
-import { Calendar } from '@codefast/ui/calendar';
+import { Calendar, type DateRange } from '@codefast/ui/calendar';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { useForm } from 'react-hook-form';
@@ -14,8 +14,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
-import type { DateRange } from '@codefast/ui/calendar';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Popover,

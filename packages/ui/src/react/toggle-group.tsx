@@ -3,11 +3,9 @@
 import * as React from 'react';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
-import { createContextScope } from '@radix-ui/react-context';
+import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { cn } from '../lib/utils';
-import { toggleVariants } from './toggle';
-import type { ToggleVariantsProps } from './toggle';
-import type { Scope } from '@radix-ui/react-context';
+import { toggleVariants, type ToggleVariantsProps } from './toggle';
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroup

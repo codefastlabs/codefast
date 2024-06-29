@@ -4,7 +4,7 @@ import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Textarea } from '@codefast/ui/textarea';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function DemoReportAnIssue(): JSX.Element {
   return (

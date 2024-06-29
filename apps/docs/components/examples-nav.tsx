@@ -4,7 +4,7 @@ import { cn } from '@codefast/ui/utils';
 import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@codefast/ui/scroll-area';
 import Link from 'next/link';
-import type { HTMLAttributes, JSX } from 'react';
+import { type HTMLAttributes, type JSX } from 'react';
 
 const examples = [
   {

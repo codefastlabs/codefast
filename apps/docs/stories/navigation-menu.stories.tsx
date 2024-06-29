@@ -7,14 +7,13 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerVariants,
 } from '@codefast/ui/navigation-menu';
-import { forwardRef } from 'react';
+import { forwardRef, type AnchorHTMLAttributes } from 'react';
 import { cn } from '@codefast/ui/utils';
 import Link from 'next/link';
 import { SettingsIcon } from 'lucide-react';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
-import type { AnchorHTMLAttributes } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: NavigationMenu,

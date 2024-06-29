@@ -2,13 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Image from 'next/image';
 import { z } from 'zod';
+import { type JSX } from 'react';
+import { type Metadata } from 'next';
 import { columns } from '@/app/examples/tasks/_components/columns';
 import { DataTable } from '@/app/examples/tasks/_components/data-table';
 import { UserNav } from '@/app/examples/tasks/_components/user-nav';
-import { taskSchema } from '@/app/examples/tasks/_data/schema';
-import type { Task } from '@/app/examples/tasks/_data/schema';
-import type { JSX } from 'react';
-import type { Metadata } from 'next';
+import { taskSchema, type Task } from '@/app/examples/tasks/_data/schema';
 
 export const metadata: Metadata = {
   title: 'Tasks',

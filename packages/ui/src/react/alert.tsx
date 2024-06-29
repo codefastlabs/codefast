@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { type VariantProps } from 'cva';
 import { cn, cva } from '../lib/utils';
-import type { VariantProps } from 'cva';
 
 /* -----------------------------------------------------------------------------
  * Variant: Alert

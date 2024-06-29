@@ -11,7 +11,7 @@ import {
 } from '@codefast/ui/dropdown-menu';
 import { Separator } from '@codefast/ui/separator';
 import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from '@radix-ui/react-icons';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function DemoGithub(): JSX.Element {
   return (

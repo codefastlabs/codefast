@@ -2,9 +2,9 @@ import { buttonVariants } from '@codefast/ui/button';
 import { cn } from '@codefast/ui/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { type JSX } from 'react';
+import { type Metadata } from 'next';
 import { UserAuthForm } from '@/app/examples/authentication/_components/user-auth-form';
-import type { JSX } from 'react';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Authentication',

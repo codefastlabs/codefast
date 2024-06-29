@@ -3,7 +3,7 @@ import { Switch } from '@codefast/ui/switch';
 import { BookmarkIcon } from '@radix-ui/react-icons';
 import { Spinner } from '@codefast/ui/spinner';
 import { Box } from '@codefast/ui/box';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Spinner,

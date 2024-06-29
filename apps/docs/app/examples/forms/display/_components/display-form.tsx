@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 const items = [
   {

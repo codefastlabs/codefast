@@ -1,14 +1,12 @@
 'use client';
 
-import { Calendar } from '@codefast/ui/calendar';
+import { Calendar, type DateRange } from '@codefast/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { addDays, format } from 'date-fns';
-import { useState } from 'react';
+import { useState, type HTMLAttributes, type JSX } from 'react';
 import { cn } from '@codefast/ui/utils';
 import { Button } from '@codefast/ui/button';
 import { CalendarIcon } from '@radix-ui/react-icons';
-import type { HTMLAttributes, JSX } from 'react';
-import type { DateRange } from '@codefast/ui/calendar';
 
 export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement>): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({

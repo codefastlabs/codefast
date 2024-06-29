@@ -4,7 +4,7 @@ import { Label } from '@codefast/ui/label';
 import { Input } from '@codefast/ui/input';
 import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
-import type { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Tabs,

@@ -14,7 +14,7 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from '@codefast/ui/menubar';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function Menu(): JSX.Element {
   return (

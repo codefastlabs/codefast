@@ -10,7 +10,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
-import type { JSX } from 'react';
+import { type JSX } from 'react';
 
 export function UserNav(): JSX.Element {
   return (

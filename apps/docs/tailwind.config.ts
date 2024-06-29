@@ -1,7 +1,7 @@
 import sharedConfig from '@codefast/ui/tailwind.config';
 import plugin from 'tailwindcss/plugin';
 import { colors } from '@codefast/ui/colors';
-import type { Config } from 'tailwindcss';
+import { type Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {
   content: [
