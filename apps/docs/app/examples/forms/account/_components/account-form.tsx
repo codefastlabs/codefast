@@ -15,7 +15,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import isNil from 'lodash/isNil';
 import { type JSX } from 'react';
 import { type AccountFormValues, accountFormSchema } from '@/app/examples/forms/account/_lib/account-schema';
-import updateAccount from '@/app/examples/forms/account/_lib/account-action';
+import { updateAccount } from '@/app/examples/forms/account/_actions/account-actions';
 
 const languages = [
   { label: 'English', value: 'en' },
