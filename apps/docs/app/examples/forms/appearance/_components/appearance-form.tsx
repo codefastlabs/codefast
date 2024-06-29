@@ -8,6 +8,8 @@ import { toast } from '@codefast/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Code } from '@codefast/ui/code';
+import { Pre } from '@codefast/ui/pre';
 import type { JSX } from 'react';
 
 const appearanceFormSchema = z.object({
@@ -36,9 +38,9 @@ export function AppearanceForm(): JSX.Element {
   function onSubmit(data: AppearanceFormValues): void {
     toast.message('You submitted the following values:', {
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <Pre className="w-full rounded-md bg-slate-950 p-4">
+          <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+        </Pre>
       ),
     });
   }
