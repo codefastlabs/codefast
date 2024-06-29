@@ -183,7 +183,7 @@ const animate = plugin(
       },
     );
 
-    // Scale - Zoom
+    // Scale – Zoom
     matchUtilities(
       {
         'zoom-in': (value) => ({
