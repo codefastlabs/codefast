@@ -125,24 +125,24 @@ export const CustomCloseButton: Story = {
 };
 
 /* -----------------------------------------------------------------------------
- * Story: ScrollingLongContent
+ * Story: Scrollable
  * -------------------------------------------------------------------------- */
 
-export const ScrollingLongContent: Story = {
+export const Scrollable: Story = {
   render: (args) => (
     <Dialog {...args}>
       <DialogTrigger asChild>
         <Button variant="outline">Share</Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="max-h-full overflow-auto">
         <DialogHeader>
           <DialogTitle>Share link</DialogTitle>
           <DialogDescription>Anyone who has this link will be able to view this.</DialogDescription>
         </DialogHeader>
 
-        <DialogBody>
-          <div className="grid gap-2">
+        <DialogBody className="border-y">
+          <div className="grid gap-2 py-4">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
                 {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
@@ -166,24 +166,24 @@ export const ScrollingLongContent: Story = {
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Scrollable
+ * Story: Scrolling Long Content
  * -------------------------------------------------------------------------- */
 
-export const Scrollable: Story = {
+export const ScrollingLongContent: Story = {
   render: (args) => (
     <Dialog {...args}>
       <DialogTrigger asChild>
         <Button variant="outline">Share</Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-full overflow-auto">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Share link</DialogTitle>
           <DialogDescription>Anyone who has this link will be able to view this.</DialogDescription>
         </DialogHeader>
 
-        <DialogBody className="border-y">
-          <div className="grid gap-2 py-4">
+        <DialogBody>
+          <div className="grid gap-2">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
                 {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est

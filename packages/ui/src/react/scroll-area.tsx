@@ -45,7 +45,7 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 const scrollAreaScrollbarVariants = cva({
-  base: 'flex touch-none select-none transition p-px',
+  base: 'flex touch-none select-none p-px transition',
   variants: {
     orientation: {
       vertical: 'h-full flex-row border-l border-l-transparent',
