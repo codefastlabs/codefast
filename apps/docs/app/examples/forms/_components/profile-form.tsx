@@ -11,6 +11,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Pre } from '@codefast/ui/pre';
+import { Code } from '@codefast/ui/code';
 import type { JSX } from 'react';
 
 const profileFormSchema = z.object({
@@ -60,9 +62,9 @@ export function ProfileForm(): JSX.Element {
   function onSubmit(data: ProfileFormValues): void {
     toast.message('You submitted the following values:', {
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <Pre className="w-full rounded-md bg-slate-950 p-4">
+          <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+        </Pre>
       ),
     });
   }

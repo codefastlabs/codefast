@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.55
+
+### Patch Changes
+
+- Update UI package dependencies and toast UI styling
+
 ## 0.0.54
 
 ### Patch Changes
