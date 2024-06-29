@@ -9,7 +9,7 @@
     "clean": "rm -rf .next && rm -rf .turbo && rm -rf storybook-static && rm -rf node_modules",
     "dev": "concurrently -k -p \"[{name}]\" -n \"next,storybook\" -c \"cyan,yellow\" \"pnpm run dev-next\" \"pnpm run dev-storybook\"",
     "dev-next": "next dev --turbo",
-    "dev-storybook": "storybook dev -p 6006 --no-open --quiet",
+    "dev-storybook": "pnpm storybook",
     "lint": "next lint --fix --max-warnings 0",
     "start": "next start",
     "start-storybook": "serve storybook-static",
