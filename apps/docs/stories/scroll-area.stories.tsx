@@ -17,7 +17,7 @@ const meta = {
     },
   },
   args: {
-    size: '1',
+    size: '2',
   },
 } satisfies Meta<typeof ScrollArea>;
 
