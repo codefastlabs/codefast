@@ -9,6 +9,16 @@ const meta = {
   component: ScrollArea,
   tags: ['autodocs'],
   title: 'UIs/Scroll Area',
+  argTypes: {
+    size: {
+      control: { type: 'inline-radio' },
+      description: 'The size of the scroll area',
+      options: ['none', '1', '2', '3'],
+    },
+  },
+  args: {
+    size: '1',
+  },
 } satisfies Meta<typeof ScrollArea>;
 
 export default meta;
@@ -20,6 +30,7 @@ type Story = StoryObj<typeof meta>;
  * -------------------------------------------------------------------------- */
 
 const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
+const tagCount = tags.length;
 
 export const Default: Story = {
   render: (args) => (
@@ -28,12 +39,12 @@ export const Default: Story = {
         <Heading as="h4" className="mb-4 text-sm font-medium leading-none">
           Tags
         </Heading>
-        {tags.map((tag) => (
+        {tags.map((tag, index) => (
           <>
             <Box key={tag} className="text-sm">
               {tag}
             </Box>
-            <Separator className="my-2" />
+            {index < tagCount - 1 && <Separator className="my-2" />}
           </>
         ))}
       </Box>
