@@ -79,7 +79,7 @@ const works: Artwork[] = [
 export const HorizontalScrolling: Story = {
   render: (args) => (
     <ScrollArea className="w-96 whitespace-nowrap rounded-md border" {...args}>
-      <Box className="flex w-max space-x-4 p-4">
+      <Box className="flex w-max gap-4 p-4">
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
             <Box className="overflow-hidden rounded-md">
