@@ -4,11 +4,11 @@ import { wait } from 'next/dist/lib/wait';
 import { type AccountFormValues, accountFormSchema } from '@/app/examples/forms/account/_lib/account-schema';
 import { type FormState } from '@/lib/types';
 
-export default async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
+export async function updateAccount(data: AccountFormValues): Promise<FormState<AccountFormValues>> {
   try {
     const validatedFields = accountFormSchema.safeParse(data);
 
-    // If the fields are not valid, return the errors.
+    // If the fields aren't valid, return the errors.
     if (!validatedFields.success) {
       return {
         errors: validatedFields.error.flatten().fieldErrors,
