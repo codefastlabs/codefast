@@ -13,7 +13,6 @@ import {
 import { Input } from '@codefast/ui/input';
 import { useState } from 'react';
 import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from '@codefast/ui/data-table';
-import { faker } from '@faker-js/faker';
 import { Box } from '@codefast/ui/box';
 import {
   type ColumnDef,
@@ -29,6 +28,7 @@ import {
 } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import data from '@/mocks/data-table.json';
 
 const meta = {
   tags: ['autodocs'],
@@ -50,12 +50,7 @@ interface Payment {
   email: string;
 }
 
-const data: Payment[] = Array.from({ length: 100 }, () => ({
-  id: faker.string.uuid(),
-  amount: faker.number.int({ min: 100, max: 10000 }),
-  status: faker.helpers.arrayElement(['pending', 'processing', 'success', 'failed']),
-  email: faker.internet.email(),
-}));
+const payments = data as Payment[];
 
 const columns: ColumnDef<Payment>[] = [
   {
@@ -153,7 +148,7 @@ export const Default: Story = {
 
     const table = useReactTable({
       columns,
-      data,
+      data: payments,
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
