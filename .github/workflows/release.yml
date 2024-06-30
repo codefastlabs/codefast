@@ -11,53 +11,51 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repo
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Fetch full history for creating changelogs
 
-      - name: Setup Node.js 20.x
+      - name: Setup Node.js 20.x Environment
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20  # Use Node.js version 20
 
-      - uses: pnpm/action-setup@v3
-        name: Install pnpm
+      - name: Install pnpm Package Manager
+        uses: pnpm/action-setup@v4
         with:
-          version: 9
-          run_install: false
+          version: 9  # Set pnpm version
+          run_install: false  # Don't automatically run install
 
-      - name: Get pnpm store directory
+      - name: Get pnpm Store Directory
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV  # Store pnpm cache path in environment variable
 
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
+      - name: Cache pnpm Store Directory
+        uses: actions/cache@v4
         with:
-          path: ${{ env.STORE_PATH }}
+          path: ${{ env.STORE_PATH }}  # Use pnpm cache path
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          restore-keys: ${{ runner.os }}-pnpm-store-  # Restore keys for caching
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install Project Dependencies
+        run: pnpm install  # Install dependencies
 
-      - name: Create Release Pull Request or Publish to npm
+      - name: Create Release Pull Request or Publish Package
         id: changesets
         uses: changesets/action@v1
         with:
-          # This expects you to have a script called release which does a build for your packages and calls changeset publish
-          publish: pnpm release
+          publish: pnpm release  # Custom release script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # npm token for publishing
 
-      - name: Run Chromatic
+      - name: Run Chromatic Visual Tests
         uses: chromaui/action@latest
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: apps/docs
-          onlyChanged: true
-          zip: true
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}  # Chromatic project token
+          workingDir: apps/docs  # Specify the working directory
+          onlyChanged: true  # Run only on changed files
+          zip: true  # Use zip compression for artifacts
