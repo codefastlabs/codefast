@@ -23,7 +23,7 @@ jobs:
       - uses: pnpm/action-setup@v3
         name: Install pnpm
         with:
-          version: 8
+          version: 9
           run_install: false
 
       - name: Get pnpm store directory
@@ -51,3 +51,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/docs
+          onlyChanged: true
+          zip: true
