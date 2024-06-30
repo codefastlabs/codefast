@@ -26,7 +26,6 @@ jobs:
       - name: Install pnpm Package Manager
         uses: pnpm/action-setup@v4
         with:
-          version: 9  # Set pnpm version
           run_install: false  # Don't automatically run install
 
       - name: Get pnpm Store Directory
