@@ -132,6 +132,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
+      chromatic:
+        specifier: ^11.5.4
+        version: 11.5.4
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
