@@ -12,9 +12,9 @@ type PaginationProps = React.HTMLAttributes<HTMLElement>;
 function Pagination({ className, ...props }: PaginationProps): React.JSX.Element {
   return (
     <nav
-      role="navigation"
       aria-label="pagination"
       className={cn('mx-auto flex w-full justify-center', className)}
+      role="navigation"
       {...props}
     />
   );
@@ -88,8 +88,8 @@ function PaginationPrevious({ className, ...props }: PaginationPreviousProps): R
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default"
       className={cn('gap-1 pl-2.5', className)}
+      size="default"
       {...props}
     >
       <ChevronLeftIcon className="size-4" />
@@ -106,7 +106,7 @@ type PaginationNextProps = PaginationLinkProps;
 
 function PaginationNext({ className, ...props }: PaginationNextProps): React.JSX.Element {
   return (
-    <PaginationLink aria-label="Go to next page" size="default" className={cn('gap-1 pr-2.5', className)} {...props}>
+    <PaginationLink aria-label="Go to next page" className={cn('gap-1 pr-2.5', className)} size="default" {...props}>
       <span>Next</span>
       <ChevronRightIcon className="size-4" />
     </PaginationLink>

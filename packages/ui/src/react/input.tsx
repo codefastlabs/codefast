@@ -31,7 +31,7 @@ type InputElement = HTMLInputElement;
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & InputVariantsProps;
 
 const Input = React.forwardRef<InputElement, InputProps>(({ className, inputSize, ...props }, ref) => {
-  return <input type="text" className={inputVariants({ className, inputSize })} ref={ref} {...props} />;
+  return <input ref={ref} className={inputVariants({ className, inputSize })} type="text" {...props} />;
 });
 
 Input.displayName = 'Input';

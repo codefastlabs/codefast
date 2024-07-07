@@ -29,7 +29,7 @@ type AlertElement = HTMLDivElement;
 type AlertProps = React.HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
 
 const Alert = React.forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, ref) => (
-  <div ref={ref} role="alert" className={alertVariants({ variant, className })} {...props} />
+  <div ref={ref} className={alertVariants({ variant, className })} role="alert" {...props} />
 ));
 
 Alert.displayName = 'Alert';

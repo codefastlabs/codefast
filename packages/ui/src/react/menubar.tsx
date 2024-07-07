@@ -137,11 +137,11 @@ const MenubarContent = React.forwardRef<MenubarContentElement, MenubarContentPro
         ref={ref}
         align={align}
         alignOffset={alignOffset}
-        sideOffset={sideOffset}
         className={cn(
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
           className,
         )}
+        sideOffset={sideOffset}
         {...props}
       />
     </MenubarPrimitive.Portal>
@@ -185,11 +185,11 @@ const MenubarCheckboxItem = React.forwardRef<MenubarCheckboxItemElement, Menubar
   ({ children, className, checked, ...props }, ref) => (
     <MenubarPrimitive.CheckboxItem
       ref={ref}
+      checked={checked}
       className={cn(
         'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
       )}
-      checked={checked}
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">

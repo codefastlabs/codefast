@@ -87,8 +87,8 @@ const ScrollAreaScrollbar = React.forwardRef<ScrollAreaScrollbarElement, ScrollA
     return (
       <ScrollAreaPrimitive.Scrollbar
         ref={ref}
-        orientation={orientation}
         className={scrollAreaScrollbarVariants({ orientation, size, className })}
+        orientation={orientation}
         {...props}
       >
         <ScrollAreaPrimitive.ScrollAreaThumb className="bg-border relative flex-1 rounded-full" />

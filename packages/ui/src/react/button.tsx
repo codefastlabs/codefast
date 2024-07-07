@@ -64,8 +64,8 @@ const Button = React.forwardRef<ButtonElement, ButtonProps>(
     return (
       <Component
         ref={ref}
-        type={asChild ? undefined : 'button'}
         className={buttonVariants({ variant, size, loading, className })}
+        type={asChild ? undefined : 'button'}
         {...props}
         disabled={disabled}
       >
