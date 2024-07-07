@@ -17,12 +17,12 @@ import { type Column } from '@tanstack/react-table';
 import { type ComponentType, type JSX } from 'react';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
-  column?: Column<TData, TValue>;
   options: {
-    icon?: ComponentType<{ className?: string }>;
     label: string;
     value: string;
+    icon?: ComponentType<{ className?: string }>;
   }[];
+  column?: Column<TData, TValue>;
   title?: string;
 }
 

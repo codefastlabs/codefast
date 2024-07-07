@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.30
+
+### Patch Changes
+
+- Update eslint-config for typescript sort keys
+
 ## 0.0.29
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.62
+
+### Patch Changes
+
+- Update eslint-config for typescript sort keys
+
 ## 0.0.61
 
 ### Patch Changes

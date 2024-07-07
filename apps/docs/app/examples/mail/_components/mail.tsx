@@ -33,10 +33,10 @@ interface MailProps {
     icon: ReactNode;
     label: string;
   }[];
-  defaultCollapsed?: boolean;
   defaultLayout: number[] | undefined;
   mails: Mail[];
   navCollapsedSize: number;
+  defaultCollapsed?: boolean;
 }
 
 export function Mail({

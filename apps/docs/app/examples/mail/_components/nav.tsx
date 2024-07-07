@@ -9,9 +9,9 @@ interface NavProps {
   isCollapsed: boolean;
   links: {
     icon: LucideIcon;
-    label?: string;
     title: string;
     variant: 'default' | 'ghost';
+    label?: string;
   }[];
 }
 

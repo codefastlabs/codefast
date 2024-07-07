@@ -37,7 +37,6 @@ const FormFieldContext = React.createContext<FormFieldContextValue | null>(null)
 const FormItemContext = React.createContext<FormItemContextValue | null>(null);
 
 const useFormField = (): {
-  error?: FieldError | Merge<FieldError, FieldErrorsImpl> | undefined;
   formDescriptionId: string;
   formItemId: string;
   formMessageId: string;
@@ -47,6 +46,7 @@ const useFormField = (): {
   isTouched: boolean;
   isValidating: boolean;
   name: string;
+  error?: FieldError | Merge<FieldError, FieldErrorsImpl> | undefined;
 } => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);

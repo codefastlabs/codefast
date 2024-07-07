@@ -122,7 +122,13 @@ module.exports = {
         ignore: ['vaul-drawer-wrapper'],
       },
     ],
-    'typescript-sort-keys/interface': 'warn',
+    'typescript-sort-keys/interface': [
+      'warn',
+      'asc',
+      {
+        requiredFirst: true,
+      },
+    ],
     'typescript-sort-keys/string-enum': 'warn',
   },
   settings: {
