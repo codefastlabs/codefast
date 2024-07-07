@@ -16,8 +16,8 @@ function Toaster({ ...props }: ToasterProps): React.JSX.Element {
 
   return (
     <Sonner
-      theme={theme}
       className="toaster group"
+      theme={theme}
       toastOptions={{
         classNames: {
           actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',

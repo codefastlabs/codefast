@@ -23,7 +23,6 @@ type CalendarProps = DayPickerProps;
 function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps): React.JSX.Element {
   return (
     <DayPicker
-      showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
@@ -67,6 +66,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         IconLeft: ChevronLeft,
         IconRight: ChevronRight,
       }}
+      showOutsideDays={showOutsideDays}
       {...props}
     />
   );
