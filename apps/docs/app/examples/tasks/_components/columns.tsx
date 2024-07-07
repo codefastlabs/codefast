@@ -13,22 +13,22 @@ export const columns: ColumnDef<Task>[] = [
     id: 'select',
     header: ({ table }) => (
       <Checkbox
+        aria-label="Select all"
         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        className="translate-y-0.5"
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
-        aria-label="Select all"
-        className="translate-y-0.5"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
+        aria-label="Select row"
         checked={row.getIsSelected()}
+        className="translate-y-0.5"
         onCheckedChange={(value) => {
           row.toggleSelected(Boolean(value));
         }}
-        aria-label="Select row"
-        className="translate-y-0.5"
       />
     ),
     enableSorting: false,

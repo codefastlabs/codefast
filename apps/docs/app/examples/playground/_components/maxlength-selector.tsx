@@ -25,12 +25,12 @@ export function MaxLengthSelector({ defaultValue }: MaxLengthSelectorProps): JSX
               </span>
             </div>
             <Slider
+              aria-label="Maximum Length"
+              defaultValue={value}
               id="maxlength"
               max={4000}
-              defaultValue={value}
               step={10}
               onValueChange={setValue}
-              aria-label="Maximum Length"
             />
           </div>
         </HoverCardTrigger>

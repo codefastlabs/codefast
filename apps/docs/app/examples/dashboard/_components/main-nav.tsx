@@ -5,24 +5,24 @@ import { type HTMLAttributes, type JSX } from 'react';
 export function MainNav({ className, ...props }: HTMLAttributes<HTMLElement>): JSX.Element {
   return (
     <nav className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
-      <Link href="/examples/dashboard" className="hover:text-primary text-sm font-medium transition-colors">
+      <Link className="hover:text-primary text-sm font-medium transition-colors" href="/examples/dashboard">
         Overview
       </Link>
       <Link
-        href="/examples/dashboard"
         className="text-muted-foreground hover:text-primary text-sm font-medium transition-colors"
+        href="/examples/dashboard"
       >
         Customers
       </Link>
       <Link
-        href="/examples/dashboard"
         className="text-muted-foreground hover:text-primary text-sm font-medium transition-colors"
+        href="/examples/dashboard"
       >
         Products
       </Link>
       <Link
-        href="/examples/dashboard"
         className="text-muted-foreground hover:text-primary text-sm font-medium transition-colors"
+        href="/examples/dashboard"
       >
         Settings
       </Link>

@@ -16,24 +16,24 @@ export default function AuthenticationPage(): JSX.Element {
     <>
       <div className="md:hidden">
         <Image
-          src="/examples/authentication-light.png"
-          width={1280}
-          height={843}
           alt="Authentication"
           className="block dark:hidden"
+          height={843}
+          src="/examples/authentication-light.png"
+          width={1280}
         />
         <Image
-          src="/examples/authentication-dark.png"
-          width={1280}
-          height={843}
           alt="Authentication"
           className="hidden dark:block"
+          height={843}
+          src="/examples/authentication-dark.png"
+          width={1280}
         />
       </div>
       <div className="container relative mx-auto hidden h-dvh flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          href="/examples/authentication"
           className={cn(buttonVariants({ variant: 'ghost' }), 'absolute right-4 top-4 md:right-8 md:top-8')}
+          href="/examples/authentication"
         >
           Login
         </Link>
@@ -41,14 +41,14 @@ export default function AuthenticationPage(): JSX.Element {
           <div className="absolute inset-0 bg-zinc-900" />
           <div className="relative z-20 flex items-center text-lg font-medium">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
+              className="mr-2 size-6"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="mr-2 size-6"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
@@ -73,11 +73,11 @@ export default function AuthenticationPage(): JSX.Element {
             <UserAuthForm />
             <p className="text-muted-foreground px-8 text-center text-sm">
               By clicking continue, you agree to our{' '}
-              <Link href="/terms" className="hover:text-primary underline underline-offset-4">
+              <Link className="hover:text-primary underline underline-offset-4" href="/terms">
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link href="/privacy" className="hover:text-primary underline underline-offset-4">
+              <Link className="hover:text-primary underline underline-offset-4" href="/privacy">
                 Privacy Policy
               </Link>
               .

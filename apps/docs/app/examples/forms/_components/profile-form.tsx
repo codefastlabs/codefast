@@ -71,7 +71,7 @@ export function ProfileForm(): JSX.Element {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="username"
@@ -95,7 +95,7 @@ export function ProfileForm(): JSX.Element {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select defaultValue={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a verified email to display" />
@@ -121,7 +121,7 @@ export function ProfileForm(): JSX.Element {
             <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
-                <Textarea placeholder="Tell us a little bit about yourself" className="resize-none" {...field} />
+                <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
               </FormControl>
               <FormDescription>
                 You can <span>@mention</span> other users and organizations to link to them.
@@ -133,8 +133,8 @@ export function ProfileForm(): JSX.Element {
         <div>
           {fields.map(({ id }, index) => (
             <FormField
-              control={form.control}
               key={id}
+              control={form.control}
               name={`urls.${index}.value`}
               render={({ field }) => (
                 <FormItem>
@@ -151,10 +151,10 @@ export function ProfileForm(): JSX.Element {
             />
           ))}
           <Button
+            className="mt-2"
+            size="sm"
             type="button"
             variant="outline"
-            size="sm"
-            className="mt-2"
             onClick={() => {
               append({ value: '' });
             }}

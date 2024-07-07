@@ -40,8 +40,8 @@ export default function SettingsLayout({ children }: SettingsLayoutProps): JSX.E
   return (
     <>
       <div className="md:hidden">
-        <Image src="/examples/forms-light.png" width={1280} height={791} alt="Forms" className="block dark:hidden" />
-        <Image src="/examples/forms-dark.png" width={1280} height={791} alt="Forms" className="hidden dark:block" />
+        <Image alt="Forms" className="block dark:hidden" height={791} src="/examples/forms-light.png" width={1280} />
+        <Image alt="Forms" className="hidden dark:block" height={791} src="/examples/forms-dark.png" width={1280} />
       </div>
       <div className="hidden space-y-6 p-10 pb-16 md:block">
         <div className="space-y-0.5">

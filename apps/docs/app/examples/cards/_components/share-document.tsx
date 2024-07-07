@@ -15,8 +15,8 @@ export function DemoShareDocument(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className="flex space-x-2">
-          <Input value="http://example.com/link/to/document" readOnly />
-          <Button variant="secondary" className="shrink-0">
+          <Input readOnly value="https://example.com/link/to/document" />
+          <Button className="shrink-0" variant="secondary">
             Copy Link
           </Button>
         </div>

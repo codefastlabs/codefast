@@ -18,23 +18,23 @@
   },
   "dependencies": {
     "@codefast/ui": "workspace:*",
-    "@hookform/resolvers": "^3.6.0",
+    "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-icons": "^1.3.0",
-    "@tanstack/react-table": "^8.17.0",
+    "@tanstack/react-table": "^8.19.2",
     "date-fns": "^3.6.0",
-    "embla-carousel-autoplay": "^8.1.5",
+    "embla-carousel-autoplay": "^8.1.6",
     "jotai": "^2.8.4",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.399.0",
+    "lucide-react": "^0.400.0",
     "next": "14.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.52.0",
+    "react-hook-form": "^7.52.1",
     "recharts": "^2.12.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^1.6.0",
+    "@chromatic-com/storybook": "^1.6.1",
     "@codefast/eslint-config": "workspace:*",
     "@faker-js/faker": "^8.4.1",
     "@next/eslint-plugin-next": "^14.2.4",
@@ -48,7 +48,7 @@
     "@storybook/test": "^8.1.11",
     "@types/eslint": "^8.56.10",
     "@types/lodash": "^4.17.6",
-    "@types/node": "^20.14.9",
+    "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
@@ -57,10 +57,10 @@
     "eslint": "^8.57.0",
     "eslint-config-turbo": "^2.0.6",
     "eslint-plugin-storybook": "^0.8.0",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.39",
     "serve": "^14.2.3",
     "storybook": "^8.1.11",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.3"
   }
 }
