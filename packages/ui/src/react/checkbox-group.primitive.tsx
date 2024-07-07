@@ -26,10 +26,10 @@ const useCheckboxScope = createCheckboxScope();
 
 interface CheckboxGroupContextValue {
   disabled: boolean;
-  name?: string;
   onItemCheck: (value: string) => void;
   onItemUncheck: (value: string) => void;
   required: boolean;
+  name?: string;
   value?: string[];
 }
 

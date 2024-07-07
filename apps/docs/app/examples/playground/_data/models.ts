@@ -6,8 +6,8 @@ export interface Model<Type = string> {
   description: string;
   id: string;
   name: string;
-  strengths?: string;
   type: Type;
+  strengths?: string;
 }
 
 export const models: Model<ModelType>[] = [
