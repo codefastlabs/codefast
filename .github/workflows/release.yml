@@ -16,45 +16,45 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history for creating changelogs
+          fetch-depth: 0 # Fetch full history for creating changelogs
 
       - name: Setup Node.js 20.x Environment
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # Use Node.js version 20
+          node-version: 20 # Use Node.js version 20
 
       - name: Install pnpm Package Manager
         uses: pnpm/action-setup@v4
         with:
-          run_install: false  # Don't automatically run install
+          run_install: false # Don't automatically run install
 
       - name: Get pnpm Store Directory
         shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV  # Store pnpm cache path in environment variable
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV # Store pnpm cache path in environment variable
 
       - name: Cache pnpm Store Directory
         uses: actions/cache@v4
         with:
-          path: ${{ env.STORE_PATH }}  # Use pnpm cache path
+          path: ${{ env.STORE_PATH }} # Use pnpm cache path
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-pnpm-store-  # Restore keys for caching
+          restore-keys: ${{ runner.os }}-pnpm-store- # Restore keys for caching
 
       - name: Install Project Dependencies
-        run: pnpm install  # Install dependencies
+        run: pnpm install # Install dependencies
 
       - name: Create Release Pull Request or Publish Package
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release  # Custom release script
+          publish: pnpm release # Custom release script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # npm token for publishing
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub token for authentication
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npm token for publishing
 
       - name: Run Chromatic Visual Tests
         uses: chromaui/action@latest
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}  # Chromatic project token
-          workingDir: apps/docs  # Specify the working directory
-          onlyChanged: true  # Run only on changed files
-          zip: true  # Use zip compression for artifacts
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }} # Chromatic project token
+          workingDir: apps/docs # Specify the working directory
+          onlyChanged: true # Run only on changed files
+          zip: true # Use zip compression for artifacts
