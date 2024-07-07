@@ -38,7 +38,7 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-auto hidden h-8 lg:flex">
+        <Button className="ml-auto hidden h-8 lg:flex" size="sm" variant="outline">
           <MixerHorizontalIcon className="mr-2 size-4" />
           View
         </Button>
@@ -53,8 +53,8 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                className="capitalize"
                 checked={column.getIsVisible()}
+                className="capitalize"
                 onCheckedChange={(value) => {
                   column.toggleVisibility(Boolean(value));
                 }}
@@ -112,47 +112,47 @@ function DataTablePagination<TData>({
         </div>
         <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
-            size="icon-xs"
             className="hidden lg:flex"
+            disabled={!table.getCanPreviousPage()}
+            size="icon-xs"
+            variant="outline"
             onClick={() => {
               table.setPageIndex(0);
             }}
-            disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to first page</span>
             <DoubleArrowLeftIcon className="size-4" />
           </Button>
           <Button
-            variant="outline"
+            disabled={!table.getCanPreviousPage()}
             size="icon-xs"
+            variant="outline"
             onClick={() => {
               table.previousPage();
             }}
-            disabled={!table.getCanPreviousPage()}
           >
             <span className="sr-only">Go to previous page</span>
             <ChevronLeftIcon className="size-4" />
           </Button>
           <Button
-            variant="outline"
+            disabled={!table.getCanNextPage()}
             size="icon-xs"
+            variant="outline"
             onClick={() => {
               table.nextPage();
             }}
-            disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Go to next page</span>
             <ChevronRightIcon className="size-4" />
           </Button>
           <Button
-            variant="outline"
-            size="icon-xs"
             className="hidden lg:flex"
+            disabled={!table.getCanNextPage()}
+            size="icon-xs"
+            variant="outline"
             onClick={() => {
               table.setPageIndex(table.getPageCount() - 1);
             }}
-            disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">Go to last page</span>
             <DoubleArrowRightIcon className="size-4" />
@@ -185,7 +185,7 @@ function DataTableColumnHeader<TData, TValue>({
     <div className={cn('flex items-center space-x-2', className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="xs" className="data-[state=open]:bg-accent -ml-3">
+          <Button className="data-[state=open]:bg-accent -ml-3" size="xs" variant="ghost">
             <span>{title}</span>
             <SortIcon sorted={column.getIsSorted()} />
           </Button>

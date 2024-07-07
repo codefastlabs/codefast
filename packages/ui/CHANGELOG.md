@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.61
+
+### Patch Changes
+
+- Rearrange code for clarity and consistency
+
 ## 0.0.60
 
 ### Patch Changes

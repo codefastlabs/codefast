@@ -144,9 +144,9 @@ const FormControl = React.forwardRef<FormControlElement, FormControlProps>(({ ..
   return (
     <Slot
       ref={ref}
-      id={formItemId}
       aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
       aria-invalid={Boolean(error)}
+      id={formItemId}
       {...props}
     />
   );
@@ -165,7 +165,7 @@ const FormDescription = React.forwardRef<FormDescriptionElement, FormDescription
   ({ className, ...props }, ref) => {
     const { formDescriptionId } = useFormField();
 
-    return <p ref={ref} id={formDescriptionId} className={cn('text-muted-foreground text-xs', className)} {...props} />;
+    return <p ref={ref} className={cn('text-muted-foreground text-xs', className)} id={formDescriptionId} {...props} />;
   },
 );
 
@@ -187,7 +187,7 @@ const FormMessage = React.forwardRef<FormMessageElement, FormMessageProps>(({ ch
   }
 
   return (
-    <p ref={ref} id={formMessageId} className={cn('text-destructive text-xs font-medium', className)} {...props}>
+    <p ref={ref} className={cn('text-destructive text-xs font-medium', className)} id={formMessageId} {...props}>
       {body}
     </p>
   );

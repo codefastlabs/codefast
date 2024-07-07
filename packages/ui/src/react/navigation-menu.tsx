@@ -83,8 +83,8 @@ const NavigationMenuTrigger = React.forwardRef<NavigationMenuTriggerElement, Nav
     >
       {children}
       <ChevronDownIcon
-        className="relative top-px ml-1 size-3 transition group-data-[state=open]:rotate-180"
         aria-hidden="true"
+        className="relative top-px ml-1 size-3 transition group-data-[state=open]:rotate-180"
       />
     </NavigationMenuPrimitive.Trigger>
   ),
@@ -133,11 +133,11 @@ const NavigationMenuViewport = React.forwardRef<NavigationMenuViewportElement, N
   ({ className, ...props }, ref) => (
     <div className="perspective-[125rem] absolute left-0 top-full flex justify-center">
       <NavigationMenuPrimitive.Viewport
+        ref={ref}
         className={cn(
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border transition-[width,height] sm:w-[var(--radix-navigation-menu-viewport-width)]',
           className,
         )}
-        ref={ref}
         {...props}
       />
     </div>
