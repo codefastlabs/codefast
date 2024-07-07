@@ -16,15 +16,15 @@ module.exports = {
   parserOptions: {
     project,
   },
-  plugins: ['only-warn'],
+  plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
     '@typescript-eslint/restrict-template-expressions': [
-      'error',
+      'warn',
       {
         allowNumber: true,
       },
     ],
-    curly: ['error', 'all'],
+    curly: ['warn', 'all'],
     'import/no-default-export': 'off',
     'import/order': [
       'warn',
@@ -47,7 +47,7 @@ module.exports = {
       },
     ],
     'padding-line-between-statements': [
-      'error',
+      'warn',
       {
         blankLine: 'always',
         next: 'return',
@@ -89,6 +89,19 @@ module.exports = {
         prev: ['case', 'default'],
       },
     ],
+    'react/jsx-sort-props': [
+      'warn',
+      {
+        callbacksLast: true,
+        shorthandFirst: true,
+        shorthandLast: false,
+        ignoreCase: true,
+        noSortAlphabetically: false,
+        reservedFirst: true,
+      },
+    ],
+    'typescript-sort-keys/interface': 'warn',
+    'typescript-sort-keys/string-enum': 'warn',
   },
   settings: {
     'import/resolver': {
