@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.29
+
+### Patch Changes
+
+- Update ESLint rules and plugins
+
 ## 0.0.28
 
 ### Patch Changes
