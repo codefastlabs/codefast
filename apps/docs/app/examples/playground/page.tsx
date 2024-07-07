@@ -30,18 +30,18 @@ export default function PlaygroundPage(): JSX.Element {
     <>
       <div className="md:hidden">
         <Image
-          src="/examples/playground-light.png"
-          width={1280}
-          height={916}
           alt="Playground"
           className="block dark:hidden"
+          height={916}
+          src="/examples/playground-light.png"
+          width={1280}
         />
         <Image
-          src="/examples/playground-dark.png"
-          width={1280}
-          height={916}
           alt="Playground"
           className="hidden dark:block"
+          height={916}
+          src="/examples/playground-dark.png"
+          width={1280}
         />
       </div>
       <div className="hidden h-full flex-col md:flex">
@@ -58,7 +58,7 @@ export default function PlaygroundPage(): JSX.Element {
           </div>
         </div>
         <Separator />
-        <Tabs defaultValue="complete" className="flex-1">
+        <Tabs className="flex-1" defaultValue="complete">
           <div className="container mx-auto h-full py-6">
             <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_200px]">
               <div className="hidden flex-col space-y-4 sm:flex md:order-2">
@@ -77,38 +77,38 @@ export default function PlaygroundPage(): JSX.Element {
                   <TabsList className="grid grid-cols-3">
                     <TabsTrigger value="complete">
                       <span className="sr-only">Complete</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className="size-5">
-                        <rect x="4" y="3" width="12" height="2" rx="1" fill="currentColor" />
-                        <rect x="4" y="7" width="12" height="2" rx="1" fill="currentColor" />
-                        <rect x="4" y="11" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="4" y="15" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="8.5" y="11" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="8.5" y="15" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="13" y="11" width="3" height="2" rx="1" fill="currentColor" />
+                      <svg className="size-5" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="3" />
+                        <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="7" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="4" y="11" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="4" y="15" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="8.5" y="11" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="8.5" y="15" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="13" y="11" />
                       </svg>
                     </TabsTrigger>
                     <TabsTrigger value="insert">
                       <span className="sr-only">Insert</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className="size-5">
+                      <svg className="size-5" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path
-                          fillRule="evenodd"
                           clipRule="evenodd"
                           d="M14.491 7.769a.888.888 0 0 1 .287.648.888.888 0 0 1-.287.648l-3.916 3.667a1.013 1.013 0 0 1-.692.268c-.26 0-.509-.097-.692-.268L5.275 9.065A.886.886 0 0 1 5 8.42a.889.889 0 0 1 .287-.64c.181-.17.427-.267.683-.269.257-.002.504.09.69.258L8.903 9.87V3.917c0-.243.103-.477.287-.649.183-.171.432-.268.692-.268.26 0 .509.097.692.268a.888.888 0 0 1 .287.649V9.87l2.245-2.102c.183-.172.432-.269.692-.269.26 0 .508.097.692.269Z"
                           fill="currentColor"
+                          fillRule="evenodd"
                         />
-                        <rect x="4" y="15" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="8.5" y="15" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="13" y="15" width="3" height="2" rx="1" fill="currentColor" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="4" y="15" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="8.5" y="15" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="13" y="15" />
                       </svg>
                     </TabsTrigger>
                     <TabsTrigger value="edit">
                       <span className="sr-only">Edit</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className="size-5">
-                        <rect x="4" y="3" width="12" height="2" rx="1" fill="currentColor" />
-                        <rect x="4" y="7" width="12" height="2" rx="1" fill="currentColor" />
-                        <rect x="4" y="11" width="3" height="2" rx="1" fill="currentColor" />
-                        <rect x="4" y="15" width="4" height="2" rx="1" fill="currentColor" />
-                        <rect x="8.5" y="11" width="3" height="2" rx="1" fill="currentColor" />
+                      <svg className="size-5" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="3" />
+                        <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="7" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="4" y="11" />
+                        <rect fill="currentColor" height="2" rx="1" width="4" x="4" y="15" />
+                        <rect fill="currentColor" height="2" rx="1" width="3" x="8.5" y="11" />
                         <path
                           d="M17.154 11.346a1.182 1.182 0 0 0-1.671 0L11 15.829V17.5h1.671l4.483-4.483a1.182 1.182 0 0 0 0-1.671Z"
                           fill="currentColor"
@@ -117,17 +117,17 @@ export default function PlaygroundPage(): JSX.Element {
                     </TabsTrigger>
                   </TabsList>
                 </div>
-                <ModelSelector types={types} models={models} />
+                <ModelSelector models={models} types={types} />
                 <TemperatureSelector defaultValue={[0.56]} />
                 <MaxLengthSelector defaultValue={[256]} />
                 <TopPSelector defaultValue={[0.9]} />
               </div>
               <div className="md:order-1">
-                <TabsContent value="complete" className="mt-0 border-0 p-0">
+                <TabsContent className="mt-0 border-0 p-0" value="complete">
                   <div className="flex h-full flex-col space-y-4">
                     <Textarea
-                      placeholder="Write a tagline for an ice cream shop"
                       className="min-h-[400px] flex-1 p-4 md:min-h-[700px] lg:min-h-[700px]"
+                      placeholder="Write a tagline for an ice cream shop"
                     />
                     <div className="flex items-center space-x-2">
                       <Button>Submit</Button>
@@ -138,12 +138,12 @@ export default function PlaygroundPage(): JSX.Element {
                     </div>
                   </div>
                 </TabsContent>
-                <TabsContent value="insert" className="mt-0 border-0 p-0">
+                <TabsContent className="mt-0 border-0 p-0" value="insert">
                   <div className="flex flex-col space-y-4">
                     <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
                       <Textarea
-                        placeholder="We're writing to [inset]. Congrats from OpenAI!"
                         className="h-full min-h-[300px] lg:min-h-[700px] xl:min-h-[700px]"
+                        placeholder="We're writing to [inset]. Congrats from OpenAI!"
                       />
                       <div className="bg-muted rounded-md border" />
                     </div>
@@ -156,16 +156,16 @@ export default function PlaygroundPage(): JSX.Element {
                     </div>
                   </div>
                 </TabsContent>
-                <TabsContent value="edit" className="mt-0 border-0 p-0">
+                <TabsContent className="mt-0 border-0 p-0" value="edit">
                   <div className="flex flex-col space-y-4">
                     <div className="grid h-full gap-6 lg:grid-cols-2">
                       <div className="flex flex-col space-y-4">
                         <div className="flex flex-1 flex-col space-y-2">
                           <Label htmlFor="input">Input</Label>
                           <Textarea
+                            className="flex-1 lg:min-h-[580px]"
                             id="input"
                             placeholder="We is going to the market."
-                            className="flex-1 lg:min-h-[580px]"
                           />
                         </div>
                         <div className="flex flex-col space-y-2">

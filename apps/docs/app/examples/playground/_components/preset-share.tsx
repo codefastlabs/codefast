@@ -20,17 +20,17 @@ export function PresetShare(): JSX.Element {
         </div>
         <div className="flex items-center space-x-2 pt-4">
           <div className="grid flex-1 gap-2">
-            <Label htmlFor="link" className="sr-only">
+            <Label className="sr-only" htmlFor="link">
               Link
             </Label>
             <Input
-              id="link"
-              defaultValue="https://platform.openai.com/playground/p/7bbKYQvsVkNmVb8NGcdUOLae?model=text-davinci-003"
               readOnly
               className="h-9"
+              defaultValue="https://platform.openai.com/playground/p/7bbKYQvsVkNmVb8NGcdUOLae?model=text-davinci-003"
+              id="link"
             />
           </div>
-          <Button type="submit" size="sm" className="px-3">
+          <Button className="px-3" size="sm" type="submit">
             <span className="sr-only">Copy</span>
             <CopyIcon className="size-4" />
           </Button>

@@ -1,14 +1,14 @@
 import { type JSX } from 'react';
 
 export interface Mail {
-  id: string;
-  name: string;
+  date: string;
   email: string;
+  id: string;
+  labels: string[];
+  name: string;
+  read: boolean;
   subject: string;
   text: string;
-  date: string;
-  read: boolean;
-  labels: string[];
 }
 
 export const mails = [
@@ -185,9 +185,9 @@ export const mails = [
 ];
 
 export interface Account {
-  label: string;
   email: string;
   icon: JSX.Element;
+  label: string;
 }
 
 export const accounts = [
@@ -230,8 +230,8 @@ export const accounts = [
 ];
 
 export interface Contact {
-  name: string;
   email: string;
+  name: string;
 }
 
 export const contacts = [

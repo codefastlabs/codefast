@@ -1,7 +1,7 @@
 export interface Album {
-  name: string;
   artist: string;
   cover: string;
+  name: string;
 }
 
 export const listenNowAlbums: Album[] = [

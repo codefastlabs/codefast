@@ -30,18 +30,18 @@ export default async function TaskPage(): Promise<JSX.Element> {
     <>
       <div className="md:hidden">
         <Image
-          src="/examples/tasks-light.png"
-          width={1280}
-          height={998}
           alt="Playground"
           className="block dark:hidden"
+          height={998}
+          src="/examples/tasks-light.png"
+          width={1280}
         />
         <Image
-          src="/examples/tasks-dark.png"
-          width={1280}
-          height={998}
           alt="Playground"
           className="hidden dark:block"
+          height={998}
+          src="/examples/tasks-dark.png"
+          width={1280}
         />
       </div>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
@@ -54,7 +54,7 @@ export default async function TaskPage(): Promise<JSX.Element> {
             <UserNav />
           </div>
         </div>
-        <DataTable data={tasks} columns={columns} />
+        <DataTable columns={columns} data={tasks} />
       </div>
     </>
   );

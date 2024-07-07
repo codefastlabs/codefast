@@ -13,8 +13,8 @@ import { type JSX } from 'react';
 import { type Model, type ModelType } from '@/app/examples/playground/_data/models';
 
 interface ModelSelectorProps extends PopoverProps {
-  types: readonly ModelType[];
   models: Model[];
+  types: readonly ModelType[];
 }
 
 export function ModelSelector({ models, types, ...props }: ModelSelectorProps): JSX.Element {
@@ -36,11 +36,11 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
       <Popover open={open} onOpenChange={setOpen} {...props}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
-            role="combobox"
             aria-expanded={open}
             aria-label="Select a model"
             className="w-full justify-between"
+            role="combobox"
+            variant="outline"
           >
             {selectedModel.name ? selectedModel.name : 'Select a model...'}
             <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
@@ -48,7 +48,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 p-0">
           <HoverCard openDelay={0}>
-            <HoverCardContent side="left" align="start" forceMount className="min-h-[280px] w-64">
+            <HoverCardContent forceMount align="start" className="min-h-[280px] w-64" side="left">
               <div className="grid gap-2">
                 <h4 className="font-medium leading-none">{peekedModel.name}</h4>
                 <div className="text-muted-foreground text-sm">{peekedModel.description}</div>
@@ -72,8 +72,8 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
                         .map((model) => (
                           <ModelItem
                             key={model.id}
-                            model={model}
                             isSelected={selectedModel.id === model.id}
+                            model={model}
                             onPeek={(currentModel) => {
                               setPeekedModel(currentModel);
                             }}
@@ -96,10 +96,10 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
 }
 
 interface ModelItemProps {
-  model: Model;
   isSelected: boolean;
-  onSelect: () => void;
+  model: Model;
   onPeek: (model: Model) => void;
+  onSelect: () => void;
 }
 
 function ModelItem({ model, isSelected, onSelect, onPeek }: ModelItemProps): JSX.Element {
@@ -124,9 +124,9 @@ function ModelItem({ model, isSelected, onSelect, onPeek }: ModelItemProps): JSX
   return (
     <CommandItem
       key={model.id}
-      onSelect={onSelect}
       ref={ref}
       className="aria-selected:bg-primary aria-selected:text-primary-foreground"
+      onSelect={onSelect}
     >
       {model.name}
       <CheckIcon className={cn('ml-auto size-4', isSelected ? 'opacity-100' : 'opacity-0')} />

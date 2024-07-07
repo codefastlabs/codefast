@@ -19,22 +19,22 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            className={cn('justify-start text-left font-normal', !date && 'text-muted-foreground')}
             id="date"
             variant="outline"
-            className={cn('justify-start text-left font-normal', !date && 'text-muted-foreground')}
           >
             <CalendarIcon className="mr-2 size-4" />
             <ButtonValue date={date} />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent align="start" className="w-auto p-0">
           <Calendar
             initialFocus
-            mode="range"
             defaultMonth={date?.from}
+            mode="range"
+            numberOfMonths={2}
             selected={date}
             onSelect={setDate}
-            numberOfMonths={2}
           />
         </PopoverContent>
       </Popover>

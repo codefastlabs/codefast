@@ -5,12 +5,12 @@ import { cn } from '@codefast/ui/utils';
 import { useState, type JSX, type ReactNode } from 'react';
 
 interface AccountSwitcherProps {
-  isCollapsed: boolean;
   accounts: {
-    label: string;
     email: string;
     icon: ReactNode;
+    label: string;
   }[];
+  isCollapsed: boolean;
 }
 
 export function AccountSwitcher({ isCollapsed, accounts }: AccountSwitcherProps): JSX.Element {
@@ -19,11 +19,11 @@ export function AccountSwitcher({ isCollapsed, accounts }: AccountSwitcherProps)
   return (
     <Select defaultValue={selectedAccount} onValueChange={setSelectedAccount}>
       <SelectTrigger
+        aria-label="Select account"
         className={cn(
           'flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:size-4 [&_svg]:shrink-0',
           isCollapsed && 'flex size-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden',
         )}
-        aria-label="Select account"
       >
         <SelectValue placeholder="Select an account">
           {accounts.find((account) => account.email === selectedAccount)?.icon}

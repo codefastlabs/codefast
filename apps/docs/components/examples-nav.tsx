@@ -52,7 +52,6 @@ export function ExamplesNav({ className, ...props }: ExamplesNavProps): JSX.Elem
         <div className={cn('flex items-center gap-1 p-2', className)} {...props}>
           {examples.map((example, index) => (
             <Link
-              href={example.href}
               key={example.href}
               className={cn(
                 'hover:text-primary flex h-7 items-center justify-center rounded-full px-4 text-center text-sm transition-colors',
@@ -60,6 +59,7 @@ export function ExamplesNav({ className, ...props }: ExamplesNavProps): JSX.Elem
                   ? 'bg-muted text-primary font-medium'
                   : 'text-muted-foreground',
               )}
+              href={example.href}
             >
               {example.name}
             </Link>

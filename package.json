@@ -6,7 +6,8 @@
     "changeset": "changeset",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo dev",
-    "lint": "turbo lint",
+    "lint": "turbo lint -- --fix",
+    "lint:check": "turbo lint",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm run clean && pnpm install",
     "package:update": "pnpm update --latest --interactive --recursive",
@@ -27,7 +28,7 @@
     ]
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.6",
+    "@changesets/cli": "^2.27.7",
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "prettier": "^3.3.2",

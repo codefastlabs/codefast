@@ -25,12 +25,12 @@ export function TemperatureSelector({ defaultValue }: TemperatureSelectorProps):
               </span>
             </div>
             <Slider
+              aria-label="Temperature"
+              defaultValue={value}
               id="temperature"
               max={1}
-              defaultValue={value}
               step={0.1}
               onValueChange={setValue}
-              aria-label="Temperature"
             />
           </div>
         </HoverCardTrigger>

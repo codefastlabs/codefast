@@ -17,7 +17,7 @@ export default function RootLayout({
   children: ReactNode;
 }>): JSX.Element {
   return (
-    <html lang="en" className={cn(inter.variable, 'dark')}>
+    <html className={cn(inter.variable, 'dark')} lang="en">
       <body>
         <div vaul-drawer-wrapper="">
           <Providers>{children}</Providers>

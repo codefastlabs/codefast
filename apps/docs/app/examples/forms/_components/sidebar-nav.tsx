@@ -21,11 +21,11 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps): JSX
       {items.map((item) => (
         <Link
           key={item.href}
-          href={item.href}
           className={buttonVariants({
             variant: 'ghost',
             className: [pathname === item.href ? 'bg-muted hover:bg-muted' : 'hover:bg-muted/70', 'justify-start'],
           })}
+          href={item.href}
         >
           {item.title}
         </Link>

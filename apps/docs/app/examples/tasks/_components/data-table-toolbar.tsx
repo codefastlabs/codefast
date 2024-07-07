@@ -18,24 +18,24 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
+          className="h-8 w-[150px] lg:w-64"
           placeholder="Filter tasks..."
           value={String(table.getColumn('title')?.getFilterValue() ?? '')}
           onChange={(event) => table.getColumn('title')?.setFilterValue(event.target.value)}
-          className="h-8 w-[150px] lg:w-64"
         />
         {table.getColumn('status') && (
-          <DataTableFacetedFilter column={table.getColumn('status')} title="Status" options={statuses} />
+          <DataTableFacetedFilter column={table.getColumn('status')} options={statuses} title="Status" />
         )}
         {table.getColumn('priority') && (
-          <DataTableFacetedFilter column={table.getColumn('priority')} title="Priority" options={priorities} />
+          <DataTableFacetedFilter column={table.getColumn('priority')} options={priorities} title="Priority" />
         )}
         {isFiltered ? (
           <Button
+            className="h-8 px-2 lg:px-3"
             variant="ghost"
             onClick={() => {
               table.resetColumnFilters();
             }}
-            className="h-8 px-2 lg:px-3"
           >
             Reset
             <Cross2Icon className="ml-2 size-4" />
