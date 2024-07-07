@@ -69,17 +69,17 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
-            role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
             className={cn('w-[200px] justify-between', className)}
+            role="combobox"
+            variant="outline"
           >
             <Avatar className="mr-2 size-5">
               <AvatarImage
-                src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
                 alt={selectedTeam.label}
                 className="grayscale"
+                src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
               />
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
@@ -97,17 +97,17 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
                   {group.teams.map((team) => (
                     <CommandItem
                       key={team.value}
+                      className="text-sm"
                       onSelect={() => {
                         setSelectedTeam(team);
                         setOpen(false);
                       }}
-                      className="text-sm"
                     >
                       <Avatar className="mr-2 size-5">
                         <AvatarImage
-                          src={`https://avatar.vercel.sh/${team.value}.png`}
                           alt={team.label}
                           className="grayscale"
+                          src={`https://avatar.vercel.sh/${team.value}.png`}
                         />
                         <AvatarFallback>SC</AvatarFallback>
                       </Avatar>

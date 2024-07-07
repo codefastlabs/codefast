@@ -27,11 +27,11 @@ export function DemoTeamMembers(): JSX.Element {
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button className="ml-auto" variant="outline">
                 Owner <ChevronDownIcon className="text-muted-foreground ml-2 size-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-0" align="end">
+            <PopoverContent align="end" className="p-0">
               <Command>
                 <CommandInput placeholder="Select new role..." />
                 <CommandList>
@@ -72,11 +72,11 @@ export function DemoTeamMembers(): JSX.Element {
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button className="ml-auto" variant="outline">
                 Member <ChevronDownIcon className="text-muted-foreground ml-2 size-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-0" align="end">
+            <PopoverContent align="end" className="p-0">
               <Command>
                 <CommandInput placeholder="Select new role..." />
                 <CommandList>

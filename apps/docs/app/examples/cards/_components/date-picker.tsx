@@ -8,7 +8,7 @@ export function DemoDatePicker(): JSX.Element {
     <Card>
       <CardContent className="pt-6">
         <div className="space-y-2">
-          <Label htmlFor="date" className="shrink-0">
+          <Label className="shrink-0" htmlFor="date">
             Pick a date
           </Label>
           <DatePickerWithRange className="[&>button]:w-64" />

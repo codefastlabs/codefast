@@ -31,13 +31,13 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
               Email
             </Label>
             <Input
-              id="email"
-              placeholder="name@example.com"
-              type="email"
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              id="email"
+              placeholder="name@example.com"
+              type="email"
             />
           </div>
           <Button disabled={isLoading} type="submit">
@@ -54,7 +54,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
           <span className="bg-background text-muted-foreground px-2">Or continue with</span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+      <Button disabled={isLoading} type="button" variant="outline">
         {isLoading ? <Spinner className="mr-2" /> : <Icons.GitHub className="mr-2 size-4" />} GitHub
       </Button>
     </div>

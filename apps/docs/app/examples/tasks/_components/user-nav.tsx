@@ -16,14 +16,14 @@ export function UserNav(): JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative size-8 rounded-full">
+        <Button className="relative size-8 rounded-full" variant="ghost">
           <Avatar className="size-9">
-            <AvatarImage src="/avatars/03.png" alt="@codefast" />
+            <AvatarImage alt="@codefast" src="/avatars/03.png" />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent forceMount align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">codefast</p>

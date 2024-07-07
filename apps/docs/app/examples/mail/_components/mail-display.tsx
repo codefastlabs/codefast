@@ -26,7 +26,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
         <div className="flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button disabled={!mail} size="icon" variant="ghost">
                 <Archive className="size-4" />
                 <span className="sr-only">Archive</span>
               </Button>
@@ -35,7 +35,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button disabled={!mail} size="icon" variant="ghost">
                 <ArchiveX className="size-4" />
                 <span className="sr-only">Move to junk</span>
               </Button>
@@ -44,19 +44,19 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button disabled={!mail} size="icon" variant="ghost">
                 <Trash2 className="size-4" />
                 <span className="sr-only">Move to trash</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>Move to trash</TooltipContent>
           </Tooltip>
-          <Separator orientation="vertical" className="mx-1 h-6" />
+          <Separator className="mx-1 h-6" orientation="vertical" />
           <Tooltip>
             <Popover>
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" disabled={!mail}>
+                  <Button disabled={!mail} size="icon" variant="ghost">
                     <Clock className="size-4" />
                     <span className="sr-only">Snooze</span>
                   </Button>
@@ -66,19 +66,19 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
                 <div className="flex flex-col gap-2 border-r px-2 py-4">
                   <div className="px-4 text-sm font-medium">Snooze until</div>
                   <div className="grid min-w-64 gap-1">
-                    <Button variant="ghost" className="justify-start font-normal">
+                    <Button className="justify-start font-normal" variant="ghost">
                       Later today{' '}
                       <span className="text-muted-foreground ml-auto">{format(addHours(today, 4), 'E, h:m b')}</span>
                     </Button>
-                    <Button variant="ghost" className="justify-start font-normal">
+                    <Button className="justify-start font-normal" variant="ghost">
                       Tomorrow
                       <span className="text-muted-foreground ml-auto">{format(addDays(today, 1), 'E, h:m b')}</span>
                     </Button>
-                    <Button variant="ghost" className="justify-start font-normal">
+                    <Button className="justify-start font-normal" variant="ghost">
                       This weekend
                       <span className="text-muted-foreground ml-auto">{format(nextSaturday(today), 'E, h:m b')}</span>
                     </Button>
-                    <Button variant="ghost" className="justify-start font-normal">
+                    <Button className="justify-start font-normal" variant="ghost">
                       Next week
                       <span className="text-muted-foreground ml-auto">{format(addDays(today, 7), 'E, h:m b')}</span>
                     </Button>
@@ -95,7 +95,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
         <div className="ml-auto flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button disabled={!mail} size="icon" variant="ghost">
                 <Reply className="size-4" />
                 <span className="sr-only">Reply</span>
               </Button>
@@ -104,7 +104,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button disabled={!mail} size="icon" variant="ghost">
                 <ReplyAll className="size-4" />
                 <span className="sr-only">Reply all</span>
               </Button>
@@ -113,7 +113,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" disabled={!mail}>
+              <Button disabled={!mail} size="icon" variant="ghost">
                 <Forward className="size-4" />
                 <span className="sr-only">Forward</span>
               </Button>
@@ -121,10 +121,10 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
             <TooltipContent>Forward</TooltipContent>
           </Tooltip>
         </div>
-        <Separator orientation="vertical" className="mx-2 h-6" />
+        <Separator className="mx-2 h-6" orientation="vertical" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" disabled={!mail}>
+            <Button disabled={!mail} size="icon" variant="ghost">
               <MoreVertical className="size-4" />
               <span className="sr-only">More</span>
             </Button>
@@ -171,15 +171,15 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
               <div className="grid gap-4">
                 <Textarea className="p-4" placeholder={`Reply ${mail.name}...`} />
                 <div className="flex items-center">
-                  <Label htmlFor="mute" className="flex items-center gap-2 text-xs font-normal">
-                    <Switch id="mute" aria-label="Mute thread" /> Mute this thread
+                  <Label className="flex items-center gap-2 text-xs font-normal" htmlFor="mute">
+                    <Switch aria-label="Mute thread" id="mute" /> Mute this thread
                   </Label>
                   <Button
+                    className="ml-auto"
+                    size="sm"
                     onClick={(event) => {
                       event.preventDefault();
                     }}
-                    size="sm"
-                    className="ml-auto"
                   >
                     Send
                   </Button>

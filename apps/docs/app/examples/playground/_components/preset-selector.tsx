@@ -31,11 +31,11 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
     <Popover open={open} onOpenChange={setOpen} {...props}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
-          role="combobox"
-          aria-label="Load a preset..."
           aria-expanded={open}
+          aria-label="Load a preset..."
           className="flex-1 justify-between md:max-w-[200px] lg:max-w-[300px]"
+          role="combobox"
+          variant="outline"
         >
           {selectedPreset ? selectedPreset.name : 'Load a preset...'}
           <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />

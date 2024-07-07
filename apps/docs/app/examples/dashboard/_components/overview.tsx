@@ -56,17 +56,17 @@ const data = [
 
 export function Overview(): JSX.Element {
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <ResponsiveContainer height={350} width="100%">
       <BarChart data={data}>
-        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+        <XAxis axisLine={false} dataKey="name" fontSize={12} stroke="#888888" tickLine={false} />
         <YAxis
-          stroke="#888888"
-          fontSize={12}
-          tickLine={false}
           axisLine={false}
+          fontSize={12}
+          stroke="#888888"
           tickFormatter={(value: string) => `$${value}`}
+          tickLine={false}
         />
-        <Bar dataKey="total" fill="currentColor" radius={[4, 4, 0, 0]} className="fill-primary" />
+        <Bar className="fill-primary" dataKey="total" fill="currentColor" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

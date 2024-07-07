@@ -18,8 +18,8 @@ import { type Album } from '@/app/examples/music/_data/albums';
 interface AlbumArtworkProps extends HTMLAttributes<HTMLDivElement> {
   album: Album;
   aspectRatio?: 'portrait' | 'square';
-  width?: number;
   height?: number;
+  width?: number;
 }
 
 export function AlbumArtwork({
@@ -36,14 +36,14 @@ export function AlbumArtwork({
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md">
             <Image
-              src={album.cover}
               alt={album.name}
-              width={width}
-              height={height}
               className={cn(
                 'h-auto w-auto object-cover transition-all hover:scale-105',
                 aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square',
               )}
+              height={height}
+              src={album.cover}
+              width={width}
             />
           </div>
         </ContextMenuTrigger>
@@ -60,14 +60,14 @@ export function AlbumArtwork({
               {playlists.map((playlist) => (
                 <ContextMenuItem key={playlist}>
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-2 size-4"
                     fill="none"
                     stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    className="mr-2 size-4"
                     viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM12 12H3M16 6H3M12 18H3" />
                   </svg>

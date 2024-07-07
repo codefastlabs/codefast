@@ -4,7 +4,7 @@ import { type JSX } from 'react';
 export function Search(): JSX.Element {
   return (
     <div>
-      <Input type="search" placeholder="Search..." className="md:w-[100px] lg:w-[300px]" />
+      <Input className="md:w-[100px] lg:w-[300px]" placeholder="Search..." type="search" />
     </div>
   );
 }

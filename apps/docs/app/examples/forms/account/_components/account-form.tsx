@@ -66,7 +66,7 @@ export function AccountForm(): JSX.Element {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
@@ -91,9 +91,9 @@ export function AccountForm(): JSX.Element {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant="outline"
                       className={cn('w-56 pl-3 text-left font-normal', isNil(field.value) && 'text-muted-foreground')}
                       disabled={field.disabled ?? form.formState.isSubmitting}
+                      variant="outline"
                     >
                       {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined */}
                       {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
@@ -101,13 +101,13 @@ export function AccountForm(): JSX.Element {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent align="start" className="w-auto p-0">
                   <Calendar
+                    initialFocus
+                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -126,10 +126,10 @@ export function AccountForm(): JSX.Element {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant="outline"
-                      role="combobox"
                       className={cn('w-56 justify-between', !field.value && 'text-muted-foreground')}
                       disabled={field.disabled ?? form.formState.isSubmitting}
+                      role="combobox"
+                      variant="outline"
                     >
                       {field.value
                         ? languages.find((language) => language.value === field.value)?.label
@@ -146,8 +146,8 @@ export function AccountForm(): JSX.Element {
                       <CommandGroup>
                         {languages.map((language) => (
                           <CommandItem
-                            value={language.label}
                             key={language.value}
+                            value={language.label}
                             onSelect={() => {
                               field.onChange(language.value);
                             }}
@@ -171,7 +171,7 @@ export function AccountForm(): JSX.Element {
             </FormItem>
           )}
         />
-        <Button type="submit" loading={form.formState.isSubmitting}>
+        <Button loading={form.formState.isSubmitting} type="submit">
           Update account
         </Button>
       </form>
