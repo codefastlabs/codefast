@@ -2,15 +2,14 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { type VariantProps } from 'cva';
-import { cva } from '../lib/utils';
+import { tv, type VariantProps } from 'tailwind-variants';
 import { Spinner } from './spinner';
 
 /* -----------------------------------------------------------------------------
  * Variant: Button
  * -------------------------------------------------------------------------- */
 
-const buttonVariants = cva({
+const buttonVariants = tv({
   base: 'inline-flex select-none items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
   variants: {
     variant: {

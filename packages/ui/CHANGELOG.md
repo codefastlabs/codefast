@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.64
+
+### Patch Changes
+
+- Replace a cva library with tailwind-variants
+
 ## 0.0.63
 
 ### Patch Changes

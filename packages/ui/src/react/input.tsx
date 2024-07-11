@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { type VariantProps } from 'cva';
-import { cva } from '../lib/utils';
+import { tv, type VariantProps } from 'tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input
  * -------------------------------------------------------------------------- */
 
-const inputVariants = cva({
+const inputVariants = tv({
   base: 'border-input placeholder:text-muted-foreground flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm transition file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
   variants: {
     inputSize: {

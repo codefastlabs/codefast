@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { type VariantProps } from 'cva';
-import { cva } from '../lib/utils';
+import { tv, type VariantProps } from 'tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Badge
  * -------------------------------------------------------------------------- */
 
-const badgeVariants = cva({
+const badgeVariants = tv({
   base: 'inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition',
   variants: {
     variant: {

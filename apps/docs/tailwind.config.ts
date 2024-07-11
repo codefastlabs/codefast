@@ -8,7 +8,7 @@ const tailwindcssConfig: Config = {
     './stories/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@codefast/ui/dist/**/*.mjs',
+    './node_modules/@codefast/ui/dist/**/*.js',
   ],
   plugins: [
     plugin(({ addBase }) => {
