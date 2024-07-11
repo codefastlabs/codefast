@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { type VariantProps } from 'cva';
-import { cn, cva } from '../lib/utils';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { cn } from '../lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Alert
  * -------------------------------------------------------------------------- */
 
-const alertVariants = cva({
+const alertVariants = tv({
   base: '[&>svg+div]:-translate-y-0.75 relative w-full rounded-lg border p-4 text-sm [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7',
   variants: {
     variant: {

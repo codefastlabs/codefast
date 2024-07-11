@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { type VariantProps } from 'cva';
-import { cn, cva } from '../lib/utils';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { cn } from '../lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -31,7 +31,7 @@ const SheetClose = SheetPrimitive.Close;
  * Variant: SheetContent
  * -------------------------------------------------------------------------- */
 
-const sheetContentVariants = cva({
+const sheetContentVariants = tv({
   base: 'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 animate-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
   variants: {
     side: {

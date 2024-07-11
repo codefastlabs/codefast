@@ -1,12 +1,6 @@
 import { twMerge } from 'tailwind-merge';
-import { defineConfig } from 'cva';
+import { type ClassValue, clsx } from 'clsx';
 
-export const {
-  cva,
-  cx: cn,
-  compose,
-} = defineConfig({
-  hooks: {
-    onComplete: (className) => twMerge(className),
-  },
-});
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
+}
