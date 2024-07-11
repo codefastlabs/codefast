@@ -7,14 +7,14 @@
     "incremental": false,
     "isolatedModules": true,
     "lib": ["dom", "dom.iterable", "es2022"],
-    "module": "nodeNext",
+    "module": "esnext",
     "moduleDetection": "force",
-    "moduleResolution": "nodeNext",
+    "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2022"
+    "target": "esnext"
   },
   "display": "Default"
 }

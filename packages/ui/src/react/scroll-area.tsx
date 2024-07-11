@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
-import { type VariantProps } from 'cva';
-import { cn, cva } from '../lib/utils';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { cn } from '../lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
@@ -44,7 +44,7 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
  * Variant: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-const scrollAreaScrollbarVariants = cva({
+const scrollAreaScrollbarVariants = tv({
   base: 'flex touch-none select-none p-px transition',
   variants: {
     orientation: {
