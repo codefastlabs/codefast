@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.63
+
+### Patch Changes
+
+- Update dialog animation and Tailwind Merge package
+
 ## 0.0.62
 
 ### Patch Changes
