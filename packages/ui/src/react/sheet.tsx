@@ -108,7 +108,7 @@ type SheetFooterProps = React.HTMLAttributes<HTMLDivElement>;
 function SheetFooter({ className, ...props }: SheetFooterProps): React.JSX.Element {
   return (
     <footer
-      className={cn('flex shrink-0 flex-col-reverse px-6 pb-6 pt-4 sm:flex-row sm:justify-end sm:space-x-2', className)}
+      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
       {...props}
     />
   );

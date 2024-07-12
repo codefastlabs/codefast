@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.65
+
+### Patch Changes
+
+- Update dialog, breadcrumb, alert dialog, and sheet components
+
 ## 0.0.64
 
 ### Patch Changes

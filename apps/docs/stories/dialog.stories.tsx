@@ -47,21 +47,24 @@ export const Default: Story = {
         <DialogBody>
           <Box className="grid gap-4 py-4">
             <Box className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+              <Label className="text-right" htmlFor="name">
                 Name
               </Label>
-              <Input id="name" defaultValue="Pedro Duarte" className="col-span-3" />
+              <Input className="col-span-3" defaultValue="Pedro Duarte" id="name" />
             </Box>
             <Box className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
+              <Label className="text-right" htmlFor="username">
                 Username
               </Label>
-              <Input id="username" defaultValue="@peduarte" className="col-span-3" />
+              <Input className="col-span-3" defaultValue="@peduarte" id="username" />
             </Box>
           </Box>
         </DialogBody>
 
         <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="secondary">Cancel</Button>
+          </DialogClose>
           <DialogClose asChild>
             <Button type="submit">Save changes</Button>
           </DialogClose>
@@ -91,10 +94,10 @@ export const CustomCloseButton: Story = {
         <DialogBody>
           <Box className="flex items-center gap-2">
             <Box className="grid flex-1 gap-2">
-              <Label htmlFor="link" className="sr-only">
+              <Label className="sr-only" htmlFor="link">
                 Link
               </Label>
-              <Input id="link" defaultValue="https://ui.shadcn.com/docs/installation" readOnly />
+              <Input readOnly defaultValue="https://ui.shadcn.com/docs/installation" id="link" />
             </Box>
             <TooltipProvider delayDuration={250}>
               <Tooltip>
