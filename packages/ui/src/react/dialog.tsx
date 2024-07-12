@@ -40,7 +40,7 @@ const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            'bg-background data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out relative z-50 flex w-full max-w-lg origin-top flex-col rounded-lg border shadow-lg',
+            'bg-background data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
             className,
           )}
           {...props}
@@ -79,7 +79,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Ele
 
 type DialogBodyProps = React.HTMLAttributes<HTMLDivElement>;
 
-function DialogBody({ className, ...props }: DialogFooterProps): React.JSX.Element {
+function DialogBody({ className, ...props }: DialogBodyProps): React.JSX.Element {
   return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
 }
 
@@ -92,7 +92,7 @@ type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
 function DialogFooter({ className, ...props }: DialogFooterProps): React.JSX.Element {
   return (
     <footer
-      className={cn('flex shrink-0 flex-col-reverse px-6 pb-6 pt-4 sm:flex-row sm:justify-end sm:space-x-2', className)}
+      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
       {...props}
     />
   );
