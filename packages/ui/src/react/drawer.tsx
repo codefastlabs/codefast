@@ -36,11 +36,11 @@ type DrawerContentElement = React.ElementRef<typeof DrawerPrimitive.Content>;
 type DrawerContentProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>;
 
 const DrawerContent = React.forwardRef<DrawerContentElement, DrawerContentProps>(
-  ({ children, className, ...props }, ref) => (
+  ({ children, className, ...props }, forwardedRef) => (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80" />
       <DrawerPrimitive.Content
-        ref={ref}
+        ref={forwardedRef}
         className={cn(
           'bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-xl border',
           className,
@@ -83,9 +83,9 @@ function DrawerFooter({ className, ...props }: DrawerFooterProps): React.JSX.Ele
 type DrawerTitleElement = React.ElementRef<typeof DrawerPrimitive.Title>;
 type DrawerTitleProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>;
 
-const DrawerTitle = React.forwardRef<DrawerTitleElement, DrawerTitleProps>(({ className, ...props }, ref) => (
+const DrawerTitle = React.forwardRef<DrawerTitleElement, DrawerTitleProps>(({ className, ...props }, forwardedRef) => (
   <DrawerPrimitive.Title
-    ref={ref}
+    ref={forwardedRef}
     className={cn('text-lg font-semibold leading-none tracking-tight', className)}
     {...props}
   />
@@ -101,8 +101,12 @@ type DrawerDescriptionElement = React.ElementRef<typeof DrawerPrimitive.Descript
 type DrawerDescriptionProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>;
 
 const DrawerDescription = React.forwardRef<DrawerDescriptionElement, DrawerDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <DrawerPrimitive.Description ref={ref} className={cn('text-muted-foreground text-sm', className)} {...props} />
+  ({ className, ...props }, forwardedRef) => (
+    <DrawerPrimitive.Description
+      ref={forwardedRef}
+      className={cn('text-muted-foreground text-sm', className)}
+      {...props}
+    />
   ),
 );
 

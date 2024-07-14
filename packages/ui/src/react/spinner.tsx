@@ -15,14 +15,14 @@ interface SpinnerProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
-  ({ children, className, loading = true, ...props }, ref) => {
+  ({ children, className, loading = true, ...props }, forwardedRef) => {
     if (!loading) {
       return children;
     }
 
     const spinner = (
       <span
-        ref={ref}
+        ref={forwardedRef}
         className={cn('relative flex size-4 items-center justify-center opacity-60', className)}
         {...props}
       >

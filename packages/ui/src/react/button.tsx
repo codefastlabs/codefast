@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Fragment } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { tv, type VariantProps } from 'tailwind-variants';
@@ -55,14 +54,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, But
 }
 
 const Button = React.forwardRef<ButtonElement, ButtonProps>(
-  ({ children, className, variant, size, loading = false, asChild = false, ...props }, ref) => {
+  ({ children, className, variant, size, loading = false, asChild = false, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'button';
-    const ComponentLoading = asChild ? 'span' : Fragment;
+    const ComponentLoading = asChild ? 'span' : React.Fragment;
     const disabled = loading || props.disabled;
 
     return (
       <Component
-        ref={ref}
+        ref={forwardedRef}
         className={buttonVariants({ variant, size, loading, className })}
         type={asChild ? undefined : 'button'}
         {...props}
