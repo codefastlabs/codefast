@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.66
+
+### Patch Changes
+
+- Add TextInput component and update dependencies
+
 ## 0.0.65
 
 ### Patch Changes
