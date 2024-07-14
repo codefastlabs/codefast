@@ -20,13 +20,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@codefast/ui/dialog';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { useState, type ComponentPropsWithoutRef, type JSX } from 'react';
+import { type ComponentPropsWithoutRef, type JSX, useState } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const groups = [
   {
@@ -151,7 +151,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
           <div className="space-y-4 py-2 pb-4">
             <div className="space-y-2">
               <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
+              <TextInput id="name" placeholder="Acme Inc." />
             </div>
             <div className="space-y-2">
               <Label htmlFor="plan">Subscription plan</Label>

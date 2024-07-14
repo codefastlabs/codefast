@@ -1,6 +1,5 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Label } from '@codefast/ui/label';
-import { Input } from '@codefast/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Button } from '@codefast/ui/button';
 import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
@@ -8,6 +7,7 @@ import { Switch } from '@codefast/ui/switch';
 import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Card,
@@ -35,7 +35,7 @@ export const Default: Story = {
           <Box className="grid w-full items-center gap-4">
             <Box className="flex flex-col space-y-1.5">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Name of your project" />
+              <TextInput id="name" placeholder="Name of your project" />
             </Box>
             <Box className="flex flex-col space-y-1.5">
               <Label htmlFor="framework">Framework</Label>

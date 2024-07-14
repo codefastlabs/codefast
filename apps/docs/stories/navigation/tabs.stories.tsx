@@ -1,10 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Label } from '@codefast/ui/label';
-import { Input } from '@codefast/ui/input';
 import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Tabs,
@@ -36,11 +36,11 @@ export const Default: Story = {
           <CardContent className="space-y-2">
             <Box className="space-y-1">
               <Label htmlFor="name">Name</Label>
-              <Input defaultValue="Pedro Duarte" id="name" />
+              <TextInput defaultValue="Pedro Duarte" id="name" />
             </Box>
             <Box className="space-y-1">
               <Label htmlFor="username">Username</Label>
-              <Input defaultValue="@peduarte" id="username" />
+              <TextInput defaultValue="@peduarte" id="username" />
             </Box>
           </CardContent>
           <CardFooter>
@@ -57,11 +57,11 @@ export const Default: Story = {
           <CardContent className="space-y-2">
             <Box className="space-y-1">
               <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
+              <TextInput id="current" type="password" />
             </Box>
             <Box className="space-y-1">
               <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
+              <TextInput id="new" type="password" />
             </Box>
           </CardContent>
           <CardFooter>

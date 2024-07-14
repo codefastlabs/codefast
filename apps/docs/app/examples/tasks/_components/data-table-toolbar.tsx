@@ -1,9 +1,9 @@
 import { Button } from '@codefast/ui/button';
 import { DataTableViewOptions } from '@codefast/ui/data-table';
-import { Input } from '@codefast/ui/input';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { type Table } from '@tanstack/react-table';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 import { priorities, statuses } from '@/app/examples/tasks/_data/data';
 import { DataTableFacetedFilter } from '@/app/examples/tasks/_components/data-table-faceted-filter';
 
@@ -17,7 +17,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-        <Input
+        <TextInput
           className="h-8 w-[150px] lg:w-64"
           placeholder="Filter tasks..."
           value={String(table.getColumn('title')?.getFilterValue() ?? '')}

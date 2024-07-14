@@ -11,10 +11,10 @@ import {
 } from '@codefast/ui/sheet';
 import { Button } from '@codefast/ui/button';
 import { Label } from '@codefast/ui/label';
-import { Input } from '@codefast/ui/input';
 import { useId } from 'react';
 import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Sheet,
@@ -52,13 +52,13 @@ export const Default: Story = {
                 <Label className="text-right" htmlFor={`name-${id}`}>
                   Name
                 </Label>
-                <Input className="col-span-3" id={`name-${id}`} value="Pedro Duarte" />
+                <TextInput className="col-span-3" id={`name-${id}`} value="Pedro Duarte" />
               </Box>
               <Box className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor={`username-${id}`}>
                   Username
                 </Label>
-                <Input className="col-span-3" id={`username-${id}`} value="@peduarte" />
+                <TextInput className="col-span-3" id={`username-${id}`} value="@peduarte" />
               </Box>
             </Box>
           </SheetBody>
@@ -106,13 +106,13 @@ export const Side: Story = {
                     <Label className="text-right" htmlFor={`name-${side}-${id}`}>
                       Name
                     </Label>
-                    <Input className="col-span-3" id={`name-${side}-${id}`} value="Pedro Duarte" />
+                    <TextInput className="col-span-3" id={`name-${side}-${id}`} value="Pedro Duarte" />
                   </Box>
                   <Box className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right" htmlFor={`username-${side}-${id}`}>
                       Username
                     </Label>
-                    <Input className="col-span-3" id={`username-${side}-${id}`} value="@peduarte" />
+                    <TextInput className="col-span-3" id={`username-${side}-${id}`} value="@peduarte" />
                   </Box>
                 </Box>
               </SheetBody>

@@ -1,4 +1,3 @@
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
 import { Button } from '@codefast/ui/button';
@@ -11,12 +10,15 @@ import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { MailIcon, UserIcon } from 'lucide-react';
+import { TextInput } from '@codefast/ui/text-input';
+import { wait } from 'next/dist/lib/wait';
 
 const meta = {
-  component: Input,
+  component: TextInput,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Input',
-} satisfies Meta<typeof Input>;
+  title: 'Components/Inputs/Text Input',
+} satisfies Meta<typeof TextInput>;
 
 export default meta;
 
@@ -31,6 +33,9 @@ export const Default: Story = {
     type: 'email',
     placeholder: 'Email',
   },
+  render: (args) => {
+    return <TextInput {...args} />;
+  },
 };
 
 /* -----------------------------------------------------------------------------
@@ -44,7 +49,7 @@ export const File: Story = {
     return (
       <Box className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Picture</Label>
-        <Input id={id} type="file" {...args} />
+        <TextInput id={id} type="file" {...args} />
       </Box>
     );
   },
@@ -59,6 +64,9 @@ export const Disabled: Story = {
     ...Default.args,
     disabled: true,
   },
+  render: (args) => {
+    return <TextInput {...args} />;
+  },
 };
 
 /* -----------------------------------------------------------------------------
@@ -72,7 +80,7 @@ export const WithLabel: Story = {
     return (
       <Box className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Email</Label>
-        <Input id={id} placeholder="Email" type="email" {...args} />
+        <TextInput id={id} placeholder="Email" prefix={<MailIcon />} type="email" {...args} />
       </Box>
     );
   },
@@ -85,7 +93,7 @@ export const WithLabel: Story = {
 export const WithButton: Story = {
   render: (args) => (
     <Box className="flex w-full max-w-sm items-center space-x-2">
-      <Input placeholder="Email" type="email" {...args} />
+      <TextInput placeholder="Email" type="email" {...args} />
       <Button type="submit">Subscribe</Button>
     </Box>
   ),
@@ -118,7 +126,8 @@ export const ReactHookForm: Story = {
       },
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>): void {
+    async function onSubmit(data: z.infer<typeof FormSchema>): Promise<void> {
+      await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
@@ -138,14 +147,24 @@ export const ReactHookForm: Story = {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="codefast" {...field} {...args} />
+                  <TextInput
+                    disabled={form.formState.isSubmitting}
+                    loaderPosition="suffix"
+                    loading={form.formState.isSubmitting}
+                    placeholder="codefast"
+                    prefix={<UserIcon />}
+                    {...field}
+                    {...args}
+                  />
                 </FormControl>
                 <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button disabled={form.formState.isSubmitting} type="submit">
+            Submit
+          </Button>
         </form>
       </Form>
     );
