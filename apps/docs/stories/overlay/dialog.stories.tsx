@@ -11,11 +11,11 @@ import {
 } from '@codefast/ui/dialog';
 import { Button } from '@codefast/ui/button';
 import { Label } from '@codefast/ui/label';
-import { Input } from '@codefast/ui/input';
 import { Copy } from 'lucide-react';
 import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui/tooltip';
+import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Dialog,
@@ -50,13 +50,13 @@ export const Default: Story = {
               <Label className="text-right" htmlFor="name">
                 Name
               </Label>
-              <Input className="col-span-3" defaultValue="Pedro Duarte" id="name" />
+              <TextInput className="col-span-3" defaultValue="Pedro Duarte" id="name" />
             </Box>
             <Box className="grid grid-cols-4 items-center gap-4">
               <Label className="text-right" htmlFor="username">
                 Username
               </Label>
-              <Input className="col-span-3" defaultValue="@peduarte" id="username" />
+              <TextInput className="col-span-3" defaultValue="@peduarte" id="username" />
             </Box>
           </Box>
         </DialogBody>
@@ -97,7 +97,7 @@ export const CustomCloseButton: Story = {
               <Label className="sr-only" htmlFor="link">
                 Link
               </Label>
-              <Input readOnly defaultValue="https://ui.shadcn.com/docs/installation" id="link" />
+              <TextInput readOnly defaultValue="https://ui.shadcn.com/docs/installation" id="link" />
             </Box>
             <TooltipProvider delayDuration={250}>
               <Tooltip>

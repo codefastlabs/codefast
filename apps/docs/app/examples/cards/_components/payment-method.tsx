@@ -1,10 +1,10 @@
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 import { Icons } from '@/components/icons';
 
 export function DemoPaymentMethod(): JSX.Element {
@@ -61,11 +61,11 @@ export function DemoPaymentMethod(): JSX.Element {
         </RadioGroup>
         <div className="grid gap-2">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" placeholder="First Last" />
+          <TextInput id="name" placeholder="First Last" />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="number">Card number</Label>
-          <Input id="number" placeholder="" />
+          <TextInput id="number" placeholder="" />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="grid gap-2">
@@ -107,7 +107,7 @@ export function DemoPaymentMethod(): JSX.Element {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="cvc">CVC</Label>
-            <Input id="cvc" placeholder="CVC" />
+            <TextInput id="cvc" placeholder="CVC" />
           </div>
         </div>
       </CardContent>

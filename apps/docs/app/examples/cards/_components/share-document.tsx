@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Separator } from '@codefast/ui/separator';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 
 export function DemoShareDocument(): JSX.Element {
   return (
@@ -15,7 +15,7 @@ export function DemoShareDocument(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className="flex space-x-2">
-          <Input readOnly value="https://example.com/link/to/document" />
+          <TextInput readOnly value="https://example.com/link/to/document" />
           <Button className="shrink-0" variant="secondary">
             Copy Link
           </Button>
