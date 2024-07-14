@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { cn } from '../lib/utils';
-import { buttonVariants, type ButtonProps } from './button';
+import { type ButtonProps, buttonVariants } from './button';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
@@ -28,8 +28,8 @@ type PaginationContentElement = HTMLUListElement;
 type PaginationContentProps = React.HTMLAttributes<HTMLUListElement>;
 
 const PaginationContent = React.forwardRef<PaginationContentElement, PaginationContentProps>(
-  ({ className, ...props }, ref) => (
-    <ul ref={ref} className={cn('flex flex-row items-center gap-1', className)} {...props} />
+  ({ className, ...props }, forwardedRef) => (
+    <ul ref={forwardedRef} className={cn('flex flex-row items-center gap-1', className)} {...props} />
   ),
 );
 
@@ -42,8 +42,8 @@ PaginationContent.displayName = 'PaginationContent';
 type PaginationItemElement = HTMLLIElement;
 type PaginationItemProps = React.LiHTMLAttributes<HTMLLIElement>;
 
-const PaginationItem = React.forwardRef<PaginationItemElement, PaginationItemProps>((props, ref) => (
-  <li ref={ref} {...props} />
+const PaginationItem = React.forwardRef<PaginationItemElement, PaginationItemProps>((props, forwardedRef) => (
+  <li ref={forwardedRef} {...props} />
 ));
 
 PaginationItem.displayName = 'PaginationItem';

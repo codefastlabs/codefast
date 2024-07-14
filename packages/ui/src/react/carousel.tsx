@@ -50,7 +50,7 @@ type CarouselProps = React.HTMLAttributes<HTMLDivElement> & BaseCarouselProps;
 const Carousel = React.forwardRef<CarouselElement, CarouselProps>(
   (
     { __scopeCarousel, children, orientation, opts, setApi, plugins, className, ...props }: ScopedProps<CarouselProps>,
-    ref,
+    forwardedRef,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
       {
@@ -128,7 +128,7 @@ const Carousel = React.forwardRef<CarouselElement, CarouselProps>(
         scrollPrev={scrollPrev}
       >
         <div
-          ref={ref}
+          ref={forwardedRef}
           aria-roledescription="carousel"
           className={cn('relative', className)}
           role="region"
@@ -154,13 +154,13 @@ type CarouselContentElement = HTMLDivElement;
 type CarouselContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CarouselContent = React.forwardRef<CarouselContentElement, CarouselContentProps>(
-  ({ __scopeCarousel, className, ...props }: ScopedProps<CarouselContentProps>, ref) => {
+  ({ __scopeCarousel, className, ...props }: ScopedProps<CarouselContentProps>, forwardedRef) => {
     const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
     return (
       <div ref={carouselRef} className="overflow-hidden">
         <div
-          ref={ref}
+          ref={forwardedRef}
           className={cn('flex', orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col', className)}
           {...props}
         />
@@ -181,12 +181,12 @@ type CarouselItemElement = HTMLDivElement;
 type CarouselItemProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CarouselItem = React.forwardRef<CarouselItemElement, CarouselItemProps>(
-  ({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>, ref) => {
+  ({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>, forwardedRef) => {
     const { orientation } = useCarouselContext(CAROUSEL_ITEM_NAME, __scopeCarousel);
 
     return (
       <div
-        ref={ref}
+        ref={forwardedRef}
         aria-roledescription="slide"
         className={cn('min-w-0 shrink-0 grow-0 basis-full', orientation === 'horizontal' ? 'pl-4' : 'pt-4', className)}
         role="group"
@@ -210,13 +210,13 @@ type CarouselPreviousProps = ButtonProps;
 const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPreviousProps>(
   (
     { __scopeCarousel, className, variant = 'outline', size = 'icon', ...props }: ScopedProps<CarouselPreviousProps>,
-    ref,
+    forwardedRef,
   ) => {
     const { orientation, scrollPrev, canScrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
 
     return (
       <Button
-        ref={ref}
+        ref={forwardedRef}
         className={cn(
           'absolute size-8 rounded-full',
           orientation === 'horizontal'
@@ -251,13 +251,13 @@ type CarouselNextProps = ButtonProps;
 const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
   (
     { __scopeCarousel, className, variant = 'outline', size = 'icon', ...props }: ScopedProps<CarouselNextProps>,
-    ref,
+    forwardedRef,
   ) => {
     const { orientation, scrollNext, canScrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
 
     return (
       <Button
-        ref={ref}
+        ref={forwardedRef}
         className={cn(
           'absolute size-8 rounded-full',
           orientation === 'horizontal'

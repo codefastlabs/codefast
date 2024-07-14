@@ -12,9 +12,11 @@ import * as CheckboxGroupPrimitive from './checkbox-group.primitive';
 type CheckboxGroupElement = React.ElementRef<typeof CheckboxGroupPrimitive.Root>;
 type CheckboxGroupProps = React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Root>;
 
-const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>(({ className, ...props }, ref) => {
-  return <CheckboxGroupPrimitive.Root ref={ref} className={cn('grid gap-2', className)} {...props} />;
-});
+const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
+  ({ className, ...props }, forwardedRef) => {
+    return <CheckboxGroupPrimitive.Root ref={forwardedRef} className={cn('grid gap-2', className)} {...props} />;
+  },
+);
 
 CheckboxGroup.displayName = 'CheckboxGroup';
 
@@ -26,10 +28,10 @@ type CheckboxGroupItemElement = React.ElementRef<typeof CheckboxGroupPrimitive.I
 type CheckboxGroupItemProps = React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>;
 
 const CheckboxGroupItem = React.forwardRef<CheckboxGroupItemElement, CheckboxGroupItemProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, ...props }, forwardedRef) => {
     return (
       <CheckboxGroupPrimitive.Item
-        ref={ref}
+        ref={forwardedRef}
         className={cn(
           'border-input hover:border-primary aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
           className,

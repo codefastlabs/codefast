@@ -12,11 +12,13 @@ interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
 }
 
-const Container = React.forwardRef<ContainerElement, ContainerProps>(({ className, asChild, ...props }, ref) => {
-  const Component = asChild ? Slot : 'div';
+const Container = React.forwardRef<ContainerElement, ContainerProps>(
+  ({ className, asChild, ...props }, forwardedRef) => {
+    const Component = asChild ? Slot : 'div';
 
-  return <Component ref={ref} className={cn('container', className)} {...props} />;
-});
+    return <Component ref={forwardedRef} className={cn('container', className)} {...props} />;
+  },
+);
 
 Container.displayName = 'Container';
 

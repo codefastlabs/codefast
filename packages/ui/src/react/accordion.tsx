@@ -19,9 +19,11 @@ const Accordion = AccordionPrimitive.Root;
 type AccordionItemElement = React.ElementRef<typeof AccordionPrimitive.Item>;
 type AccordionItemProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>;
 
-const AccordionItem = React.forwardRef<AccordionItemElement, AccordionItemProps>(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item ref={ref} className={cn('border-b', className)} {...props} />
-));
+const AccordionItem = React.forwardRef<AccordionItemElement, AccordionItemProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <AccordionPrimitive.Item ref={forwardedRef} className={cn('border-b', className)} {...props} />
+  ),
+);
 
 AccordionItem.displayName = AccordionPrimitive.Item.displayName;
 
@@ -33,10 +35,10 @@ type AccordionTriggerElement = React.ElementRef<typeof AccordionPrimitive.Trigge
 type AccordionTriggerProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
 
 const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTriggerProps>(
-  ({ children, className, ...props }, ref) => (
+  ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
-        ref={ref}
+        ref={forwardedRef}
         className={cn('group flex flex-1 items-center justify-between py-4 text-sm font-medium', className)}
         {...props}
       >
@@ -57,9 +59,9 @@ type AccordionContentElement = React.ElementRef<typeof AccordionPrimitive.Conten
 type AccordionContentProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>;
 
 const AccordionContent = React.forwardRef<AccordionContentElement, AccordionContentProps>(
-  ({ children, className, ...props }, ref) => (
+  ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Content
-      ref={ref}
+      ref={forwardedRef}
       className="data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden text-sm"
       {...props}
     >

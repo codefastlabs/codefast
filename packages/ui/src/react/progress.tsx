@@ -11,9 +11,9 @@ import { cn } from '../lib/utils';
 type ProgressElement = React.ElementRef<typeof ProgressPrimitive.Root>;
 type ProgressProps = React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>;
 
-const Progress = React.forwardRef<ProgressElement, ProgressProps>(({ className, value, ...props }, ref) => (
+const Progress = React.forwardRef<ProgressElement, ProgressProps>(({ className, value, ...props }, forwardedRef) => (
   <ProgressPrimitive.Root
-    ref={ref}
+    ref={forwardedRef}
     className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', className)}
     {...props}
   >

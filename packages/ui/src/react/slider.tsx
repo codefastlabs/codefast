@@ -11,9 +11,9 @@ import { cn } from '../lib/utils';
 type SliderElement = React.ElementRef<typeof SliderPrimitive.Root>;
 type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>;
 
-const Slider = React.forwardRef<SliderElement, SliderProps>(({ className, ...props }, ref) => (
+const Slider = React.forwardRef<SliderElement, SliderProps>(({ className, ...props }, forwardedRef) => (
   <SliderPrimitive.Root
-    ref={ref}
+    ref={forwardedRef}
     className={cn('relative flex w-full touch-none select-none items-center', className)}
     {...props}
   >

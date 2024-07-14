@@ -26,9 +26,9 @@ type CollapsibleContentElement = React.ElementRef<typeof CollapsiblePrimitive.Co
 type CollapsibleContentProps = React.ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleContent>;
 
 const CollapsibleContent = React.forwardRef<CollapsibleContentElement, CollapsibleContentProps>(
-  ({ className, ...props }, ref) => (
+  ({ className, ...props }, forwardedRef) => (
     <CollapsiblePrimitive.CollapsibleContent
-      ref={ref}
+      ref={forwardedRef}
       className={cn(
         'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden',
         className,
