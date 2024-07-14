@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
-import { Input } from '@codefast/ui/input';
 import { useState } from 'react';
 import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from '@codefast/ui/data-table';
 import { Box } from '@codefast/ui/box';
@@ -28,6 +27,7 @@ import {
 } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { TextInput } from '@codefast/ui/text-input';
 import data from '@/mocks/data-table.json';
 
 const meta = {
@@ -170,7 +170,7 @@ export const Default: Story = {
         <Box className="flex items-center py-4">
           <Box className="relative flex grow items-center">
             <SearchIcon className="text-muted-foreground absolute left-3 size-4" />
-            <Input
+            <TextInput
               className="max-w-sm pl-10"
               inputSize="sm"
               placeholder="Filter emails..."

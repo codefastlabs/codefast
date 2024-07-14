@@ -1,10 +1,10 @@
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { Textarea } from '@codefast/ui/textarea';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 
 export function DemoReportAnIssue(): JSX.Element {
   return (
@@ -47,7 +47,7 @@ export function DemoReportAnIssue(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="subject">Subject</Label>
-          <Input id="subject" placeholder="I need help with..." />
+          <TextInput id="subject" placeholder="I need help with..." />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="description">Description</Label>

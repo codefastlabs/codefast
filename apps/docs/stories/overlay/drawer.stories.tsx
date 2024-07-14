@@ -22,10 +22,10 @@ import {
 } from '@codefast/ui/dialog';
 import { cn } from '@codefast/ui/utils';
 import { Label } from '@codefast/ui/label';
-import { Input } from '@codefast/ui/input';
 import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/ui/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Drawer,
@@ -175,11 +175,11 @@ function ProfileForm({ className }: FormHTMLAttributes<HTMLFormElement>): JSX.El
     <form className={cn('grid items-start gap-4', className)}>
       <Box className="grid gap-2">
         <Label htmlFor="email">Email</Label>
-        <Input defaultValue="codefast@example.com" id="email" type="email" />
+        <TextInput defaultValue="codefast@example.com" id="email" type="email" />
       </Box>
       <Box className="grid gap-2">
         <Label htmlFor="username">Username</Label>
-        <Input defaultValue="@codefast" id="username" />
+        <TextInput defaultValue="@codefast" id="username" />
       </Box>
       <Button type="submit">Save changes</Button>
     </form>

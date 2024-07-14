@@ -1,6 +1,7 @@
 import { Button } from '@codefast/ui/button';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -22,7 +23,7 @@ export function CodeViewer(): JSX.Element {
             You can use the following code to start integrating your current prompt and settings into your application.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4">
+        <DialogBody className="grid gap-4 pb-6">
           <div className="rounded-md bg-black p-6">
             <pre>
               <code className="text-muted-foreground grid gap-1 text-sm [&_span]:h-4">
@@ -78,7 +79,7 @@ export function CodeViewer(): JSX.Element {
               your key to your applications.
             </p>
           </div>
-        </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

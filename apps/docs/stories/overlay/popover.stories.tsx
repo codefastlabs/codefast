@@ -1,11 +1,11 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Button } from '@codefast/ui/button';
 import { Label } from '@codefast/ui/label';
-import { Input } from '@codefast/ui/input';
 import { Text } from '@codefast/ui/text';
 import { Box } from '@codefast/ui/box';
 import { Heading } from '@codefast/ui/heading';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Popover,
@@ -38,19 +38,19 @@ export const Default: Story = {
           <Box className="grid gap-3">
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="width">Width</Label>
-              <Input className="col-span-2" defaultValue="100%" id="width" />
+              <TextInput className="col-span-2" defaultValue="100%" id="width" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="maxWidth">Max width</Label>
-              <Input className="col-span-2" defaultValue="300px" id="maxWidth" />
+              <TextInput className="col-span-2" defaultValue="300px" id="maxWidth" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="height">Height</Label>
-              <Input className="col-span-2" defaultValue="25px" id="height" />
+              <TextInput className="col-span-2" defaultValue="25px" id="height" />
             </Box>
             <Box className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="maxHeight">Max. height</Label>
-              <Input className="col-span-2" defaultValue="none" id="maxHeight" />
+              <TextInput className="col-span-2" defaultValue="none" id="maxHeight" />
             </Box>
           </Box>
         </Box>

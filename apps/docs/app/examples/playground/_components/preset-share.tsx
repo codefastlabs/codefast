@@ -1,9 +1,9 @@
 import { Button } from '@codefast/ui/button';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { CopyIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 
 export function PresetShare(): JSX.Element {
   return (
@@ -23,7 +23,7 @@ export function PresetShare(): JSX.Element {
             <Label className="sr-only" htmlFor="link">
               Link
             </Label>
-            <Input
+            <TextInput
               readOnly
               className="h-9"
               defaultValue="https://platform.openai.com/playground/p/7bbKYQvsVkNmVb8NGcdUOLae?model=text-davinci-003"

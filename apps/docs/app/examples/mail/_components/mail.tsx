@@ -1,6 +1,5 @@
 'use client';
 
-import { Input } from '@codefast/ui/input';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/ui/resizable';
 import { Separator } from '@codefast/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
@@ -13,13 +12,14 @@ import {
   File,
   Inbox,
   MessagesSquare,
-  Search,
+  SearchIcon,
   Send,
   ShoppingCart,
   Trash2,
   Users2,
 } from 'lucide-react';
-import { useState, type JSX, type ReactNode } from 'react';
+import { type JSX, type ReactNode, useState } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 import { Nav } from '@/app/examples/mail/_components/nav';
 import { MailList } from '@/app/examples/mail/_components/mail-list';
@@ -173,10 +173,7 @@ export function Mail({
             <Separator />
             <div className="bg-background/95 supports-[backdrop-filter]:bg-background/60 p-4 backdrop-blur">
               <form>
-                <div className="relative">
-                  <Search className="text-muted-foreground absolute left-2 top-2.5 size-4" />
-                  <Input className="pl-8" placeholder="Search" />
-                </div>
+                <TextInput placeholder="Search" prefix={<SearchIcon className="text-muted-foreground" />} />
               </form>
             </div>
             <TabsContent className="m-0" value="all">

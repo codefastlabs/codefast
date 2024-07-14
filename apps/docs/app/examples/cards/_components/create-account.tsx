@@ -1,8 +1,8 @@
 import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 import { Icons } from '@/components/icons';
 
 export function DemoCreateAccount(): JSX.Element {
@@ -33,11 +33,11 @@ export function DemoCreateAccount(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" placeholder="m@example.com" type="email" />
+          <TextInput id="email" placeholder="m@example.com" type="email" />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" />
+          <TextInput id="password" type="password" />
         </div>
       </CardContent>
       <CardFooter>

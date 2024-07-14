@@ -2,7 +2,6 @@
 
 import { Button } from '@codefast/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Input } from '@codefast/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { toast } from '@codefast/ui/sonner';
 import { Textarea } from '@codefast/ui/textarea';
@@ -14,6 +13,7 @@ import { z } from 'zod';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 
 const profileFormSchema = z.object({
   username: z
@@ -79,7 +79,7 @@ export function ProfileForm(): JSX.Element {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <TextInput placeholder="shadcn" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name. It can be your real name or a pseudonym. You can only change this once
@@ -143,7 +143,7 @@ export function ProfileForm(): JSX.Element {
                     Add links to your website, blog, or social media profiles.
                   </FormDescription>
                   <FormControl>
-                    <Input {...field} />
+                    <TextInput {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

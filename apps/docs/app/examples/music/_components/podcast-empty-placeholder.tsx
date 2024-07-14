@@ -1,6 +1,7 @@
 import { Button } from '@codefast/ui/button';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -8,9 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@codefast/ui/dialog';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { type JSX } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 
 export function PodcastEmptyPlaceholder(): JSX.Element {
   return (
@@ -44,12 +45,12 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
               <DialogTitle>Add Podcast</DialogTitle>
               <DialogDescription>Copy and paste the podcast feed URL to import.</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <DialogBody className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="url">Podcast URL</Label>
-                <Input id="url" placeholder="https://example.com/feed.xml" />
+                <TextInput id="url" placeholder="https://example.com/feed.xml" />
               </div>
-            </div>
+            </DialogBody>
             <DialogFooter>
               <Button>Import Podcast</Button>
             </DialogFooter>

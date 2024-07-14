@@ -4,17 +4,17 @@ import { Button } from '@codefast/ui/button';
 import { Calendar } from '@codefast/ui/calendar';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Input } from '@codefast/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { toast } from '@codefast/ui/sonner';
 import { cn } from '@codefast/ui/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import isNil from 'lodash/isNil';
 import { type JSX } from 'react';
-import { type AccountFormValues, accountFormSchema } from '@/app/examples/forms/account/_lib/account-schema';
+import { TextInput } from '@codefast/ui/text-input';
+import { accountFormSchema, type AccountFormValues } from '@/app/examples/forms/account/_lib/account-schema';
 import { updateAccount } from '@/app/examples/forms/account/_actions/account-actions';
 
 const languages = [
@@ -74,7 +74,11 @@ export function AccountForm(): JSX.Element {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} disabled={field.disabled ?? form.formState.isSubmitting} />
+                <TextInput
+                  placeholder="Your name"
+                  {...field}
+                  disabled={field.disabled ?? form.formState.isSubmitting}
+                />
               </FormControl>
               <FormDescription>This is the name that will be displayed on your profile and in emails.</FormDescription>
               <FormMessage />

@@ -1,11 +1,11 @@
 'use client';
 
 import { Button } from '@codefast/ui/button';
-import { Input } from '@codefast/ui/input';
 import { Label } from '@codefast/ui/label';
 import { Spinner } from '@codefast/ui/spinner';
 import { cn } from '@codefast/ui/utils';
-import { useState, type HTMLAttributes, type JSX, type SyntheticEvent } from 'react';
+import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from 'react';
+import { TextInput } from '@codefast/ui/text-input';
 import { Icons } from '@/components/icons';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
@@ -30,7 +30,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
-            <Input
+            <TextInput
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
