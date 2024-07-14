@@ -58,10 +58,10 @@ type SheetContentElement = React.ElementRef<typeof SheetPrimitive.Content>;
 type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
 
 const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
-  ({ children, side = 'right', className, ...props }, ref) => (
+  ({ children, side = 'right', className, ...props }, forwardedRef) => (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay className="data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 bg-black/80" />
-      <SheetPrimitive.Content ref={ref} className={sheetContentVariants({ side, className })} {...props}>
+      <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ side, className })} {...props}>
         {children}
         <SheetPrimitive.Close className="data-[state=open]:bg-secondary absolute right-4 top-4 rounded-sm p-1 opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none">
           <Cross2Icon className="size-4" />
@@ -123,8 +123,12 @@ SheetFooter.displayName = 'SheetFooter';
 type SheetTitleElement = React.ElementRef<typeof SheetPrimitive.Title>;
 type SheetTitleProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>;
 
-const SheetTitle = React.forwardRef<SheetTitleElement, SheetTitleProps>(({ className, ...props }, ref) => (
-  <SheetPrimitive.Title ref={ref} className={cn('text-foreground text-lg font-semibold', className)} {...props} />
+const SheetTitle = React.forwardRef<SheetTitleElement, SheetTitleProps>(({ className, ...props }, forwardedRef) => (
+  <SheetPrimitive.Title
+    ref={forwardedRef}
+    className={cn('text-foreground text-lg font-semibold', className)}
+    {...props}
+  />
 ));
 
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
@@ -137,8 +141,12 @@ type SheetDescriptionElement = React.ElementRef<typeof SheetPrimitive.Descriptio
 type SheetDescriptionProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>;
 
 const SheetDescription = React.forwardRef<SheetDescriptionElement, SheetDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <SheetPrimitive.Description ref={ref} className={cn('text-muted-foreground text-sm', className)} {...props} />
+  ({ className, ...props }, forwardedRef) => (
+    <SheetPrimitive.Description
+      ref={forwardedRef}
+      className={cn('text-muted-foreground text-sm', className)}
+      {...props}
+    />
   ),
 );
 

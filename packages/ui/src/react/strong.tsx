@@ -11,10 +11,10 @@ interface StrongProps extends React.HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Strong = React.forwardRef<StrongElement, StrongProps>(({ asChild, ...props }, ref) => {
+const Strong = React.forwardRef<StrongElement, StrongProps>(({ asChild, ...props }, forwardedRef) => {
   const Component = asChild ? Slot : 'strong';
 
-  return <Component ref={ref} {...props} />;
+  return <Component ref={forwardedRef} {...props} />;
 });
 
 Strong.displayName = 'Strong';

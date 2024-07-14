@@ -11,10 +11,10 @@ interface QuoteProps extends React.QuoteHTMLAttributes<HTMLQuoteElement> {
   asChild?: boolean;
 }
 
-const Quote = React.forwardRef<QuoteElement, QuoteProps>(({ asChild, ...props }, ref) => {
+const Quote = React.forwardRef<QuoteElement, QuoteProps>(({ asChild, ...props }, forwardedRef) => {
   const Component = asChild ? Slot : 'q';
 
-  return <Component ref={ref} {...props} />;
+  return <Component ref={forwardedRef} {...props} />;
 });
 
 Quote.displayName = 'Quote';

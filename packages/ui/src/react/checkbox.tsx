@@ -12,11 +12,11 @@ import { cn } from '../lib/utils';
 type CheckboxElement = React.ElementRef<typeof CheckboxPrimitive.Root>;
 type CheckboxProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>;
 
-const Checkbox = React.forwardRef<CheckboxElement, CheckboxProps>(({ className, ...props }, ref) => (
+const Checkbox = React.forwardRef<CheckboxElement, CheckboxProps>(({ className, ...props }, forwardedRef) => (
   <CheckboxPrimitive.Root
-    ref={ref}
+    ref={forwardedRef}
     className={cn(
-      'border-input hover:border-primary aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+      'border-input hover:border-primary aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-default disabled:opacity-50',
       className,
     )}
     {...props}

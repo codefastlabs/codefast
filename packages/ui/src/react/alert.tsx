@@ -28,8 +28,8 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
 type AlertElement = HTMLDivElement;
 type AlertProps = React.HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
 
-const Alert = React.forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, ref) => (
-  <div ref={ref} className={alertVariants({ variant, className })} role="alert" {...props} />
+const Alert = React.forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, forwardedRef) => (
+  <div ref={forwardedRef} className={alertVariants({ variant, className })} role="alert" {...props} />
 ));
 
 Alert.displayName = 'Alert';
@@ -41,11 +41,13 @@ Alert.displayName = 'Alert';
 type AlertTitleElement = HTMLHeadingElement;
 type AlertTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
 
-const AlertTitle = React.forwardRef<AlertTitleElement, AlertTitleProps>(({ children, className, ...props }, ref) => (
-  <h5 ref={ref} className={cn('mb-1 font-medium leading-none tracking-tight', className)} {...props}>
-    {children}
-  </h5>
-));
+const AlertTitle = React.forwardRef<AlertTitleElement, AlertTitleProps>(
+  ({ children, className, ...props }, forwardedRef) => (
+    <h5 ref={forwardedRef} className={cn('mb-1 font-medium leading-none tracking-tight', className)} {...props}>
+      {children}
+    </h5>
+  ),
+);
 
 AlertTitle.displayName = 'AlertTitle';
 
@@ -57,8 +59,8 @@ type AlertDescriptionElement = HTMLDivElement;
 type AlertDescriptionProps = React.HTMLAttributes<HTMLDivElement>;
 
 const AlertDescription = React.forwardRef<AlertDescriptionElement, AlertDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('text-sm [&_p]:leading-relaxed', className)} {...props} />
+  ({ className, ...props }, forwardedRef) => (
+    <div ref={forwardedRef} className={cn('text-sm [&_p]:leading-relaxed', className)} {...props} />
   ),
 );
 

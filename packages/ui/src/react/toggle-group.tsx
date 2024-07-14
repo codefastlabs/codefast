@@ -25,13 +25,16 @@ type ToggleGroupElement = React.ElementRef<typeof ToggleGroupPrimitive.Root>;
 type ToggleGroupProps = React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
 
 const ToggleGroup = React.forwardRef<ToggleGroupElement, ToggleGroupProps>(
-  ({ __scopeToggleGroup, children, className, variant, size, ...props }: ScopedProps<ToggleGroupProps>, ref) => {
+  (
+    { __scopeToggleGroup, children, className, variant, size, ...props }: ScopedProps<ToggleGroupProps>,
+    forwardedRef,
+  ) => {
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
     return (
       <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
         <ToggleGroupPrimitive.Root
-          ref={ref}
+          ref={forwardedRef}
           className={cn('flex items-center justify-center gap-1', className)}
           {...toggleGroupScope}
           {...props}
@@ -55,13 +58,13 @@ type ToggleGroupItemElement = React.ElementRef<typeof ToggleGroupPrimitive.Item>
 type ToggleGroupItemProps = React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>;
 
 const ToggleGroupItem = React.forwardRef<ToggleGroupItemElement, ToggleGroupItemProps>(
-  ({ __scopeToggleGroup, children, className, ...props }: ScopedProps<ToggleGroupItemProps>, ref) => {
+  ({ __scopeToggleGroup, children, className, ...props }: ScopedProps<ToggleGroupItemProps>, forwardedRef) => {
     const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
     return (
       <ToggleGroupPrimitive.Item
-        ref={ref}
+        ref={forwardedRef}
         className={toggleVariants({ ...context, className })}
         {...toggleGroupScope}
         {...props}

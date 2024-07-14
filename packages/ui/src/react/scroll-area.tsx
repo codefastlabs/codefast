@@ -24,9 +24,9 @@ type ScrollAreaElement = React.ElementRef<typeof ScrollAreaPrimitive.Root>;
 type ScrollAreaProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
 
 const ScrollArea = React.forwardRef<ScrollAreaElement, ScrollAreaProps>(
-  ({ __scopeScrollArea, children, className, size = '2', ...props }: ScopedProps<ScrollAreaProps>, ref) => (
+  ({ __scopeScrollArea, children, className, size = '2', ...props }: ScopedProps<ScrollAreaProps>, forwardedRef) => (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root ref={ref} className={cn('relative overflow-hidden', className)} {...props}>
+      <ScrollAreaPrimitive.Root ref={forwardedRef} className={cn('relative overflow-hidden', className)} {...props}>
         <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit] [&>*]:h-full">
           {children}
         </ScrollAreaPrimitive.Viewport>
@@ -80,13 +80,13 @@ type ScrollAreaScrollbarProps = React.ComponentPropsWithoutRef<typeof ScrollArea
 const ScrollAreaScrollbar = React.forwardRef<ScrollAreaScrollbarElement, ScrollAreaScrollbarProps>(
   (
     { __scopeScrollArea, className, orientation = 'vertical', ...props }: ScopedProps<ScrollAreaScrollbarProps>,
-    ref,
+    forwardedRef,
   ) => {
     const { size } = useCarouselContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
     return (
       <ScrollAreaPrimitive.Scrollbar
-        ref={ref}
+        ref={forwardedRef}
         className={scrollAreaScrollbarVariants({ orientation, size, className })}
         orientation={orientation}
         {...props}
