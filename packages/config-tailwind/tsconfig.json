@@ -1,8 +1,9 @@
 {
   "extends": "@codefast/typescript-config/react-library.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }
