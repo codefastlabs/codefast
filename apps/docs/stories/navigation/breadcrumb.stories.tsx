@@ -23,7 +23,7 @@ import {
 } from '@codefast/ui/drawer';
 import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
-import { useMediaQuery } from '@codefast/ui/use-media-query';
+import { useMediaQuery } from '@codefast/hooks/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

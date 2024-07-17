@@ -17,6 +17,7 @@
     "storybook": "storybook dev -p 6006"
   },
   "dependencies": {
+    "@codefast/hooks": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-icons": "^1.3.0",
