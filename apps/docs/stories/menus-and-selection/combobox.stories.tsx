@@ -42,7 +42,7 @@ import { Badge } from '@codefast/ui/badge';
 import { Pre } from '@codefast/ui/pre';
 import { Text } from '@codefast/ui/text';
 import { Code } from '@codefast/ui/code';
-import { useMediaQuery } from '@codefast/ui/use-media-query';
+import { useMediaQuery } from '@codefast/hooks/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
