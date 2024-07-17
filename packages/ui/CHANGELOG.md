@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.68
+
+### Patch Changes
+
+- Update package naming in TypeScript and ESLint configs
+
 ## 0.0.67
 
 ### Patch Changes

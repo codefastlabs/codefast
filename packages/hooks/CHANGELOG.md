@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.0.3
+
+### Patch Changes
+
+- Update config dependencies in hooks package
+
 ## 0.0.2
 
 ### Patch Changes
