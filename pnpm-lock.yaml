@@ -166,6 +166,43 @@ importers:
         specifier: ^5.5.3
         version: 5.5.3
 
+  packages/config-tailwind:
+    dependencies:
+      autoprefixer:
+        specifier: ^10.4.19
+        version: 10.4.19(postcss@8.4.39)
+      postcss:
+        specifier: ^8.4.39
+        version: 8.4.39
+      tailwindcss:
+        specifier: ^3.4.4
+        version: 3.4.4
+    devDependencies:
+      '@codefast/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/eslint':
+        specifier: ^8.56.10
+        version: 8.56.10
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.14.10
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.3
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      tsup:
+        specifier: ^8.1.0
+        version: 8.1.0(postcss@8.4.39)(typescript@5.5.3)
+      typescript:
+        specifier: ^5.5.3
+        version: 5.5.3
+
   packages/eslint-config:
     dependencies:
       '@typescript-eslint/eslint-plugin':
