@@ -89,17 +89,6 @@ module.exports = {
         prev: ['case', 'default'],
       },
     ],
-    'react/jsx-sort-props': [
-      'warn',
-      {
-        callbacksLast: true,
-        shorthandFirst: true,
-        shorthandLast: false,
-        ignoreCase: true,
-        noSortAlphabetically: false,
-        reservedFirst: true,
-      },
-    ],
     'typescript-sort-keys/interface': [
       'warn',
       'asc',
