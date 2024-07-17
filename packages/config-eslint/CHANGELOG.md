@@ -1,3 +1,11 @@
+# @codefast/config-eslint
+
+## 0.0.1
+
+### Patch Changes
+
+- Rename eslint-config package to config-eslint
+
 # @codefast/eslint-config
 
 ## 0.0.32

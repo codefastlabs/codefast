@@ -1,6 +1,6 @@
 {
-  "name": "@codefast/typescript-config",
-  "version": "0.0.4",
+  "name": "@codefast/config-typescript",
+  "version": "0.0.1",
   "license": "MIT",
   "files": [
     "base.json",
