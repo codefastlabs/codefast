@@ -1,3 +1,11 @@
+# @codefast/config-typescript
+
+## 0.0.1
+
+### Patch Changes
+
+- Rename typescript-config package to config-typescript
+
 # @codefast/typescript-config
 
 ## 0.0.4
