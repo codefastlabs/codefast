@@ -1,6 +1,6 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: ['@codefast/config-eslint/next', 'plugin:storybook/recommended', 'eslint-config-turbo'],
+  extends: ['@codefast/eslint-config/next', 'plugin:storybook/recommended', 'eslint-config-turbo'],
   ignorePatterns: ['storybook-static'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
