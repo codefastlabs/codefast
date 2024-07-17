@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.32
+
+### Patch Changes
+
+- Add Tailwind config package
+
 ## 0.0.31
 
 ### Patch Changes

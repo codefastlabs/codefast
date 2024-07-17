@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.0.4
+
+### Patch Changes
+
+- Add Tailwind config package
+
 ## 0.0.3
 
 ### Patch Changes
