@@ -330,10 +330,7 @@
     "./styles.css": "./dist/styles.css"
   },
   "files": [
-    "dist",
-    "src",
-    "plugin",
-    "tailwind.config.ts"
+    "dist"
   ],
   "scripts": {
     "build": "tsup",
@@ -405,16 +402,6 @@
     "tailwindcss": "^3.4.4",
     "tsup": "8.1.0",
     "typescript": "^5.5.3"
-  },
-  "peerDependencies": {
-    "@types/react": "^18.2.79",
-    "react": "^18.2.0",
-    "tailwindcss": "^3.4.3"
-  },
-  "peerDependenciesMeta": {
-    "@types/react": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "public"
