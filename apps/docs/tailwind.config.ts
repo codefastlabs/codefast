@@ -1,6 +1,6 @@
-import sharedConfig from '@codefast/ui/tailwind.config';
+import sharedConfig from '@codefast/config-tailwind/tailwind.config';
+import { colors } from '@codefast/config-tailwind/colors';
 import plugin from 'tailwindcss/plugin';
-import { colors } from '@codefast/ui/colors';
 import { type Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {
