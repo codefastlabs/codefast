@@ -23,7 +23,7 @@ import {
 import { cn } from '@codefast/ui/utils';
 import { Label } from '@codefast/ui/label';
 import { Box } from '@codefast/ui/box';
-import { useMediaQuery } from '@codefast/ui/use-media-query';
+import { useMediaQuery } from '@codefast/hooks/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { TextInput } from '@codefast/ui/text-input';
 

@@ -32,6 +32,9 @@ importers:
 
   apps/docs:
     dependencies:
+      '@codefast/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@codefast/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -183,6 +186,33 @@ importers:
       eslint-plugin-typescript-sort-keys:
         specifier: ^3.2.0
         version: 3.2.0(@typescript-eslint/parser@7.16.0(eslint@9.7.0)(typescript@5.5.3))(eslint@9.7.0)(typescript@5.5.3)
+
+  packages/hooks:
+    devDependencies:
+      '@codefast/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/eslint':
+        specifier: ^8.56.10
+        version: 8.56.10
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.14.10
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.3
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      tsup:
+        specifier: ^8.1.0
+        version: 8.1.0(postcss@8.4.39)(typescript@5.5.3)
+      typescript:
+        specifier: ^5.5.3
+        version: 5.5.3
 
   packages/typescript-config: {}
 
