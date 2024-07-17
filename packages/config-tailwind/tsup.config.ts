@@ -4,8 +4,7 @@ export default defineConfig((options) => [
   {
     clean: !options.watch,
     dts: true,
-    entry: ['src/**/*.{ts,tsx}'],
-    external: ['react'],
+    entry: ['src/**/*.ts'],
     format: ['cjs', 'esm'],
     minify: !options.watch,
     sourcemap: true,
