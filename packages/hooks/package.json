@@ -1,0 +1,40 @@
+{
+  "name": "@codefast/hooks",
+  "version": "0.0.1",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./use-media-query": {
+      "types": "./dist/use-media-query.d.ts",
+      "import": "./dist/use-media-query.js",
+      "require": "./dist/use-media-query.cjs"
+    },
+    "./use-mutation-observer": {
+      "types": "./dist/use-mutation-observer.d.ts",
+      "import": "./dist/use-mutation-observer.js",
+      "require": "./dist/use-mutation-observer.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@types/eslint": "^8.56.10",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "eslint": "^8.57.0",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
