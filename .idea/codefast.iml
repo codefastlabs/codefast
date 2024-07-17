@@ -11,6 +11,10 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/docs/storybook-static" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ui/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ui/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/config-tailwind/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/config-tailwind/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
