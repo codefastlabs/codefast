@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.0.4
+
+### Patch Changes
+
+- Update eslint package name and version
+
 ## 0.0.3
 
 ### Patch Changes

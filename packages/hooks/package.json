@@ -1,6 +1,6 @@
 {
   "name": "@codefast/hooks",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -25,8 +25,8 @@
     "lint": "eslint . --max-warnings 0"
   },
   "devDependencies": {
-    "@codefast/config-eslint": "workspace:*",
     "@codefast/config-typescript": "workspace:*",
+    "@codefast/eslint-config": "workspace:*",
     "@types/eslint": "^8.56.10",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
