@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Input, type InputProps, InputSlot, type InputSlotProps } from './input';
+import { Input, type InputProps, InputSlot, type InputSlotProps } from '@/react/input';
 
 /* -----------------------------------------------------------------------------
  * Component: TextInput

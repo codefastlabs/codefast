@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { tv, type VariantProps } from 'tailwind-variants';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
