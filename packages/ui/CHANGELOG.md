@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.70
+
+### Patch Changes
+
+- Update tsup version in package dependencies
+
 ## 0.0.69
 
 ### Patch Changes

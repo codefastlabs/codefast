@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.0.5
+
+### Patch Changes
+
+- Update tsup version in package dependencies
+
 ## 0.0.4
 
 ### Patch Changes
