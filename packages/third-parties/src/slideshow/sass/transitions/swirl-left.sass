@@ -1,0 +1,17 @@
+/*******************************************/
+/* swirlLeft transition
+/*******************************************/
+
+.slideshow-transition-swirlLeft,
+.slideshow-transition-swirlLeft2
+  transform: scale($slideshow-swirl-scale) rotate($slideshow-swirl-degree)
+  opacity: 0
+
+.slideshow-transition-swirlLeft-in,
+.slideshow-transition-swirlLeft2-in
+  transform: scale(1) rotate(0deg)
+  opacity: 1
+
+.slideshow-transition-swirlLeft2-out
+  transform: scale($slideshow-swirl-scale) rotate(-$slideshow-swirl-degree)
+  opacity: 0
