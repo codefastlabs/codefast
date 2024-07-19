@@ -10,11 +10,12 @@
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "type": "module",
   "exports": {
-    "./vegas": {
-      "types": "./dist/vegas.d.ts",
-      "import": "./dist/vegas.js",
-      "require": "./dist/vegas.cjs"
-    }
+    "./slideshow": {
+      "types": "./dist/slideshow.d.ts",
+      "import": "./dist/slideshow.js",
+      "require": "./dist/slideshow.cjs"
+    },
+    "./slideshow.css": "./dist/slideshow.css"
   },
   "files": [
     "dist"

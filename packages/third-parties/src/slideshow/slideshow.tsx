@@ -1,26 +1,27 @@
 'use client';
 
 import * as React from 'react';
-import { Slideshow as SlideshowMaster, type SlideshowSettings } from '@/slideshow/lib/slideshow';
-import '@/slideshow/sass/slideshow.sass';
+import '@/slideshow/_lib/vegas/sass/vegas.sass';
+import { Vegas, type VegasSettings } from '@/slideshow/_lib/vegas/vegas';
 
-interface VegasProps {
-  options: Partial<SlideshowSettings>;
+interface SlideshowProps {
+  options: Partial<VegasSettings>;
+  className?: string;
 }
 
-export function Slideshow({ options }: VegasProps): React.JSX.Element {
+export function Slideshow({ options, ...props }: SlideshowProps): React.JSX.Element {
   const slideshowRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (slideshowRef.current) {
-      const slideshowInstance = new SlideshowMaster(slideshowRef.current, options);
+      const vegas = new Vegas(slideshowRef.current, options);
 
       // Cleanup on unmounting
       return () => {
-        slideshowInstance.destroySlideshow();
+        vegas.destroy();
       };
     }
   }, [options]);
 
-  return <div ref={slideshowRef} className="slideshow-element" />;
+  return <div ref={slideshowRef} {...props} />;
 }

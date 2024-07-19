@@ -35,6 +35,9 @@ importers:
       '@codefast/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
+      '@codefast/third-parties':
+        specifier: workspace:*
+        version: link:../../packages/third-parties
       '@codefast/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -113,7 +116,7 @@ importers:
         version: 8.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9)))
       '@storybook/nextjs':
         specifier: ^8.2.2
-        version: 8.2.4(esbuild@0.21.5)(next@14.2.5(@babel/core@7.24.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8)(storybook@8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9)))(type-fest@2.19.0)(typescript@5.5.3)(webpack-hot-middleware@2.26.1)(webpack@5.93.0(esbuild@0.21.5))
+        version: 8.2.4(esbuild@0.21.5)(next@14.2.5(@babel/core@7.24.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass-embedded@1.77.8)(sass@1.77.8)(storybook@8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9)))(type-fest@2.19.0)(typescript@5.5.3)(webpack-hot-middleware@2.26.1)(webpack@5.93.0(esbuild@0.21.5))
       '@storybook/react':
         specifier: ^8.2.2
         version: 8.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9)))(typescript@5.5.3)
@@ -10096,7 +10099,7 @@ snapshots:
     dependencies:
       storybook: 8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9))
 
-  '@storybook/nextjs@8.2.4(esbuild@0.21.5)(next@14.2.5(@babel/core@7.24.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8)(storybook@8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9)))(type-fest@2.19.0)(typescript@5.5.3)(webpack-hot-middleware@2.26.1)(webpack@5.93.0(esbuild@0.21.5))':
+  '@storybook/nextjs@8.2.4(esbuild@0.21.5)(next@14.2.5(@babel/core@7.24.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.8))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass-embedded@1.77.8)(sass@1.77.8)(storybook@8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9)))(type-fest@2.19.0)(typescript@5.5.3)(webpack-hot-middleware@2.26.1)(webpack@5.93.0(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.24.9
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.24.9)
@@ -10133,7 +10136,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-refresh: 0.14.2
       resolve-url-loader: 5.0.0
-      sass-loader: 12.6.0(sass@1.77.8)(webpack@5.93.0(esbuild@0.21.5))
+      sass-loader: 12.6.0(sass-embedded@1.77.8)(sass@1.77.8)(webpack@5.93.0(esbuild@0.21.5))
       semver: 7.6.3
       storybook: 8.2.4(@babel/preset-env@7.24.8(@babel/core@7.24.9))
       style-loader: 3.3.4(webpack@5.93.0(esbuild@0.21.5))
@@ -14410,13 +14413,14 @@ snapshots:
       sass-embedded-win32-ia32: 1.77.8
       sass-embedded-win32-x64: 1.77.8
 
-  sass-loader@12.6.0(sass@1.77.8)(webpack@5.93.0(esbuild@0.21.5)):
+  sass-loader@12.6.0(sass-embedded@1.77.8)(sass@1.77.8)(webpack@5.93.0(esbuild@0.21.5)):
     dependencies:
       klona: 2.0.6
       neo-async: 2.6.2
       webpack: 5.93.0(esbuild@0.21.5)
     optionalDependencies:
       sass: 1.77.8
+      sass-embedded: 1.77.8
 
   sass@1.77.8:
     dependencies:
