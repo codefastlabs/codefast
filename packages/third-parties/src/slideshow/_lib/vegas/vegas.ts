@@ -84,6 +84,12 @@ export interface VegasSettings extends VegasBase, VegasCallback {
   firstTransitionDuration?: number;
 }
 
+export interface VegasSupport {
+  objectFit: boolean;
+  transition: boolean;
+  video: boolean;
+}
+
 const defaults: VegasSettings = {
   slide: 0,
   delay: 5000,
@@ -122,11 +128,7 @@ export class Vegas {
   private first: boolean;
   private readonly transitions: Transition[];
   private readonly animations: Animation[];
-  private support: {
-    objectFit: boolean;
-    transition: boolean;
-    video: boolean;
-  };
+  private support: VegasSupport;
 
   constructor(element: HTMLElement, options: Partial<VegasSettings>) {
     this.element = element;
@@ -151,11 +153,15 @@ export class Vegas {
       this.shuffle();
     }
 
-    this._init();
+    this.init();
   }
 
   static isVideoCompatible(): boolean {
     return !/(?<userAgent>Android|webOS|Phone|iPad|iPod|BlackBerry|Windows Phone)/i.test(navigator.userAgent);
+  }
+
+  static random<T>(array: T[]): T {
+    return array[Math.floor(Math.random() * array.length)] as T;
   }
 
   public shuffle(): void {
@@ -178,7 +184,7 @@ export class Vegas {
   }
 
   public pause(): void {
-    this._timer(false);
+    this.timer(false);
     this.paused = true;
     this.callCallback('onPause');
   }
@@ -211,7 +217,7 @@ export class Vegas {
     }
 
     this.slide = number;
-    this._goto(this.slide);
+    this.goto(this.slide);
   }
 
   public next(): void {
@@ -219,7 +225,7 @@ export class Vegas {
 
     if (this.slide >= this.total) {
       if (!this.settings.loop) {
-        this._end();
+        this.end();
 
         return;
       }
@@ -227,7 +233,7 @@ export class Vegas {
       this.slide = 0;
     }
 
-    this._goto(this.slide);
+    this.goto(this.slide);
   }
 
   public previous(): void {
@@ -243,7 +249,7 @@ export class Vegas {
       this.slide = this.total - 1;
     }
 
-    this._goto(this.slide);
+    this.goto(this.slide);
   }
 
   public destroy(): void {
@@ -325,7 +331,7 @@ export class Vegas {
     return defaultAnimations.concat(this.settings.animationRegister as Animation[]);
   }
 
-  private setupSupport(): { objectFit: boolean; transition: boolean; video: boolean } {
+  private setupSupport(): VegasSupport {
     return {
       objectFit: 'objectFit' in document.body.style,
       transition: 'transition' in document.body.style || 'WebkitTransition' in document.body.style,
@@ -333,11 +339,11 @@ export class Vegas {
     };
   }
 
-  private _init(): void {
+  private init(): void {
     const { timer, overlay } = this.settings;
 
     // Preloading
-    this._preload();
+    this.preloadSlides();
 
     // Timer
     if (timer && this.support.transition) {
@@ -371,7 +377,7 @@ export class Vegas {
 
     requestAnimationFrame(() => {
       this.callCallback('onInit');
-      this._goto(this.slide);
+      this.goto(this.slide);
 
       if (this.settings.autoplay) {
         this.callCallback('onPlay');
@@ -379,7 +385,7 @@ export class Vegas {
     });
   }
 
-  private _preload(): void {
+  private preloadSlides(): void {
     for (const slide of this.settings.slides) {
       if (this.settings.preload || this.settings.preloadImage) {
         if (slide.src) {
@@ -392,28 +398,24 @@ export class Vegas {
       if (this.settings.preload || this.settings.preloadVideo) {
         if (this.support.video && slide.video) {
           if (Array.isArray(slide.video)) {
-            this._video(slide.video);
+            this.preloadVideo(slide.video);
           } else {
-            this._video(slide.video.src);
+            this.preloadVideo(slide.video.src);
           }
         }
       }
     }
   }
 
-  private _random<T>(array: T[]): T {
-    return array[Math.floor(Math.random() * array.length)] as T;
-  }
-
-  private _slideShow(): void {
+  private slideShow(): void {
     if (this.total > 1 && !this.ended && !this.paused && !this.noShow) {
       this.timeout = setTimeout(() => {
         this.next();
-      }, this._options('delay'));
+      }, this.options('delay'));
     }
   }
 
-  private _timer(state: boolean): void {
+  private timer(state: boolean): void {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
@@ -442,7 +444,7 @@ export class Vegas {
           const timerElement = this.timerElement.querySelector('div');
 
           if (timerElement) {
-            const delay = this._options('delay');
+            const delay = this.options('delay');
 
             if (delay) {
               timerElement.style.transitionDuration = `${delay - timeout}ms`;
@@ -453,7 +455,7 @@ export class Vegas {
     }
   }
 
-  private _video(vSources: string | string[]): HTMLVideoElement {
+  private preloadVideo(vSources: string | string[]): HTMLVideoElement {
     let videoSources = vSources;
 
     const cacheKey = videoSources.toString();
@@ -482,39 +484,38 @@ export class Vegas {
     return video;
   }
 
-  private _fadeOutSound(video: HTMLVideoElement, duration: number): void {
+  private fadeOutSound(video: HTMLVideoElement, duration: number): void {
+    this.adjustVolume(video, duration, 0.09, 'decrease');
+  }
+
+  private fadeInSound(video: HTMLVideoElement, duration: number): void {
+    this.adjustVolume(video, duration, 0.09, 'increase');
+  }
+
+  private adjustVolume(
+    video: HTMLVideoElement,
+    duration: number,
+    step: number,
+    direction: 'increase' | 'decrease',
+  ): void {
     const delay = duration / 10;
-    const volume = video.volume - 0.09;
+    const volume = direction === 'increase' ? video.volume + step : video.volume - step;
 
-    if (volume > 0) {
+    if ((direction === 'increase' && volume < 1) || (direction === 'decrease' && volume > 0)) {
       video.volume = volume;
-
       setTimeout(() => {
-        this._fadeOutSound(video, duration);
+        this.adjustVolume(video, duration, step, direction);
       }, delay);
-    } else {
+    } else if (direction === 'decrease') {
       video.pause();
     }
   }
 
-  private _fadeInSound(video: HTMLVideoElement, duration: number): void {
-    const delay = duration / 10;
-    const volume = video.volume + 0.09;
-
-    if (volume < 1) {
-      video.volume = volume;
-
-      setTimeout(() => {
-        this._fadeInSound(video, duration);
-      }, delay);
-    }
-  }
-
-  private _options<K extends keyof VegasSettings>(key: K): VegasSettings[K] {
+  private options<K extends keyof VegasSettings>(key: K): VegasSettings[K] {
     return this.settings[key];
   }
 
-  private _goto(number: number): void {
+  private goto(number: number): void {
     let nb = number;
 
     if (typeof this.settings.slides[nb] === 'undefined') {
@@ -525,17 +526,17 @@ export class Vegas {
 
     const src = this.settings.slides[nb]?.src;
     const videoSettings = this.settings.slides[nb]?.video;
-    const delay = this._options('delay');
-    const align = this._options('align');
-    const alignVertical = this._options('alignVertical');
-    let cover = this._options('cover');
-    const color = this._options('color') ?? getComputedStyle(this.element).backgroundColor;
+    const delay = this.options('delay');
+    const align = this.options('align');
+    const alignVertical = this.options('alignVertical');
+    let cover = this.options('cover');
+    const color = this.options('color') ?? getComputedStyle(this.element).backgroundColor;
     let video: HTMLVideoElement | null = null;
 
-    let transition = this._options('transition');
-    let transitionDuration = this._options('transitionDuration');
-    let animation = this._options('animation');
-    let animationDuration = this._options('animationDuration');
+    let transition = this.options('transition');
+    let transitionDuration = this.options('transitionDuration');
+    let animation = this.options('animation');
+    let animationDuration = this.options('animationDuration');
 
     if (this.settings.firstTransition && this.first) {
       transition = this.settings.firstTransition ?? transition;
@@ -554,11 +555,11 @@ export class Vegas {
     }
 
     if (transition === 'random' || Array.isArray(transition)) {
-      transition = Array.isArray(transition) ? this._random(transition) : this._random(this.transitions);
+      transition = Array.isArray(transition) ? Vegas.random(transition) : Vegas.random(this.transitions);
     }
 
     if (animation === 'random' || Array.isArray(animation)) {
-      animation = Array.isArray(animation) ? this._random(animation) : this._random(this.animations);
+      animation = Array.isArray(animation) ? Vegas.random(animation) : Vegas.random(this.animations);
     }
 
     if (transitionDuration === 'auto' || (transitionDuration && delay && transitionDuration > delay)) {
@@ -579,7 +580,7 @@ export class Vegas {
 
     // Video
     if (this.support.video && videoSettings) {
-      video = Array.isArray(videoSettings) ? this._video(videoSettings) : this._video(videoSettings.src);
+      video = Array.isArray(videoSettings) ? this.preloadVideo(videoSettings) : this.preloadVideo(videoSettings.src);
       video.loop = videoSettings.loop ?? true;
       video.muted = videoSettings.mute ?? true;
 
@@ -587,7 +588,7 @@ export class Vegas {
         video.volume = 0;
 
         if (transitionDuration) {
-          this._fadeInSound(video, transitionDuration);
+          this.fadeInSound(video, transitionDuration);
         }
       } else {
         video.pause();
@@ -662,10 +663,10 @@ export class Vegas {
       }
     });
 
-    this._timer(false);
+    this.timer(false);
 
     const go = (): void => {
-      this._timer(true);
+      this.timer(true);
       const timeout = 100;
 
       setTimeout(() => {
@@ -678,7 +679,7 @@ export class Vegas {
 
               if (videoElement) {
                 if (transitionDuration) {
-                  videoElement.volume > 0 && this._fadeOutSound(videoElement, transitionDuration);
+                  videoElement.volume > 0 && this.fadeOutSound(videoElement, transitionDuration);
                 }
               }
             });
@@ -698,7 +699,7 @@ export class Vegas {
 
         this.callCallback('onWalk');
 
-        this._slideShow();
+        this.slideShow();
       }, timeout);
     };
 
@@ -717,9 +718,9 @@ export class Vegas {
     }
   }
 
-  private _end(): void {
+  private end(): void {
     this.ended = !this.settings.autoplay;
-    this._timer(false);
+    this.timer(false);
     this.callCallback('onEnd');
   }
 }
