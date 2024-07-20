@@ -110,14 +110,14 @@ const defaults: VegasSettings = {
 export class Vegas {
   private static videoCache: Record<string, HTMLVideoElement> = {};
   private readonly element: HTMLElement;
-  private settings: VegasSettings;
+  private readonly settings: VegasSettings;
   private slide: number;
-  private total: number;
-  private noShow: boolean;
+  private readonly total: number;
+  private readonly noShow: boolean;
   private paused: boolean;
   private ended: boolean;
-  private $timer: HTMLElement | null;
-  private $overlay: HTMLElement | null;
+  private timerElement: HTMLElement | null;
+  private overlayElement: HTMLElement | null;
   private timeout: NodeJS.Timeout | null;
   private first: boolean;
   private readonly transitions: Transition[];
@@ -139,8 +139,8 @@ export class Vegas {
     this.noShow = this.total < 2;
     this.paused = !this.settings.autoplay || this.noShow;
     this.ended = false;
-    this.$timer = null;
-    this.$overlay = null;
+    this.timerElement = null;
+    this.overlayElement = null;
     this.timeout = null;
     this.first = true;
 
@@ -318,12 +318,12 @@ export class Vegas {
       slide.remove();
     });
 
-    if (this.settings.timer && this.$timer) {
-      this.$timer.remove();
+    if (this.settings.timer && this.timerElement) {
+      this.timerElement.remove();
     }
 
-    if (this.settings.overlay && this.$overlay) {
-      this.$overlay.remove();
+    if (this.settings.overlay && this.overlayElement) {
+      this.overlayElement.remove();
     }
   }
 
@@ -342,7 +342,7 @@ export class Vegas {
 
       $progress.className = 'vegas-timer-progress';
       $timer.appendChild($progress);
-      this.$timer = $timer;
+      this.timerElement = $timer;
       this.element.prepend($timer);
     }
 
@@ -356,7 +356,7 @@ export class Vegas {
         $overlay.style.backgroundImage = `url(${overlay})`;
       }
 
-      this.$overlay = $overlay;
+      this.overlayElement = $overlay;
       this.element.prepend($overlay);
     }
 
@@ -416,12 +416,12 @@ export class Vegas {
       clearTimeout(this.timeout);
     }
 
-    if (!this.$timer) {
+    if (!this.timerElement) {
       return;
     }
 
-    this.$timer.classList.remove('vegas-timer-running');
-    const divElement = this.$timer.querySelector('div');
+    this.timerElement.classList.remove('vegas-timer-running');
+    const divElement = this.timerElement.querySelector('div');
 
     if (divElement) {
       divElement.style.transitionDuration = '0ms';
@@ -433,9 +433,9 @@ export class Vegas {
 
     if (state) {
       setTimeout(() => {
-        if (this.$timer) {
-          this.$timer.classList.add('vegas-timer-running');
-          const timerElement = this.$timer.querySelector('div');
+        if (this.timerElement) {
+          this.timerElement.classList.add('vegas-timer-running');
+          const timerElement = this.timerElement.querySelector('div');
 
           if (timerElement) {
             const delay = this._options('delay');
@@ -565,10 +565,15 @@ export class Vegas {
       animationDuration = delay;
     }
 
-    const slideElement = document.createElement('div');
+    const $slide = document.createElement('div');
 
-    slideElement.className = `vegas-slide vegas-transition-${transition}`;
+    $slide.className = `vegas-slide`;
 
+    if (this.support.transition && transition) {
+      $slide.classList.add(`vegas-transition-${transition}`);
+    }
+
+    // Video
     if (this.support.video && videoSettings) {
       video = Array.isArray(videoSettings) ? this._video(videoSettings) : this._video(videoSettings.src);
       video.loop = videoSettings.loop ?? true;
@@ -584,62 +589,63 @@ export class Vegas {
         video.pause();
       }
 
-      slideElement.classList.add('vegas-video');
+      $slide.classList.add('vegas-video');
 
-      slideElement.style.backgroundColor = color;
+      $slide.style.backgroundColor = color;
 
       if (this.support.objectFit) {
-        slideElement.style.objectPosition = `${align} ${alignVertical}`;
-        slideElement.style.objectFit = cover;
-        slideElement.style.width = '100%';
-        slideElement.style.height = '100%';
+        $slide.style.objectPosition = `${align} ${alignVertical}`;
+        $slide.style.objectFit = cover;
+        $slide.style.width = '100%';
+        $slide.style.height = '100%';
       } else if (cover === 'contain') {
-        slideElement.style.width = '100%';
-        slideElement.style.height = '100%';
+        $slide.style.width = '100%';
+        $slide.style.height = '100%';
       }
 
-      slideElement.appendChild(video);
+      $slide.appendChild(video);
     } else {
+      // Image
       if (src) {
         const img = new Image();
 
         img.src = src;
       }
 
-      const $inner = document.createElement('div');
+      const innerElement = document.createElement('div');
 
-      $inner.className = `vegas-slide-inner vegas-animation-${animation}`;
-      $inner.style.backgroundImage = `url("${src}")`;
-      $inner.style.backgroundColor = color;
-      $inner.style.backgroundPosition = `${align} ${alignVertical}`;
-      $inner.style.animationDuration = `${animationDuration}ms`;
+      innerElement.className = `vegas-slide-inner vegas-animation-${animation}`;
+      innerElement.style.backgroundImage = `url("${src}")`;
+      innerElement.style.backgroundColor = color;
+      innerElement.style.backgroundPosition = `${align} ${alignVertical}`;
+      innerElement.style.animationDuration = `${animationDuration}ms`;
 
       if (cover === 'repeat') {
-        $inner.style.backgroundRepeat = 'repeat';
+        innerElement.style.backgroundRepeat = 'repeat';
       } else {
-        $inner.style.backgroundSize = cover;
+        innerElement.style.backgroundSize = cover;
       }
 
-      slideElement.appendChild($inner);
+      $slide.appendChild(innerElement);
     }
 
     if (!this.support.transition) {
-      slideElement.style.display = 'none';
+      $slide.style.display = 'none';
     }
 
-    const slideElements = Array.from(this.element.children).filter((child) => child.classList.contains('vegas-slide'));
+    const $slides = this.element.querySelectorAll<HTMLElement>('.vegas-slide');
 
-    if (slideElements.length) {
-      const lastSlideElement = slideElements[slideElements.length - 1];
+    if ($slides.length) {
+      const lastSlideElement = $slides[$slides.length - 1];
 
       if (lastSlideElement) {
-        this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
+        this.element.insertBefore($slide, lastSlideElement.nextSibling);
       }
     } else {
-      this.element.prepend(slideElement);
+      this.element.prepend($slide);
     }
 
-    slideElements.forEach((slide) => {
+    $slides.forEach((slide) => {
       slide.className = 'vegas-slide';
 
       if (slide.tagName === 'VIDEO') {
@@ -660,7 +666,8 @@ export class Vegas {
       setTimeout(() => {
         if (transition) {
           if (this.support.transition) {
-            slideElements.forEach((slide) => {
+            $slides.forEach((slide) => {
+              slide.style.transition = `all ${transitionDuration}ms`;
               slide.classList.add(`vegas-transition-${transition}-out`);
               const videoElement = slide.querySelector('video');
 
@@ -671,15 +678,18 @@ export class Vegas {
               }
             });
 
-            slideElement.classList.add(`vegas-transition-${transition}-in`);
+            $slide.style.transition = `all ${transitionDuration}ms`;
+            $slide.classList.add(`vegas-transition-${transition}-in`);
           } else {
-            (slideElement as HTMLElement).style.display = 'block';
+            ($slide as HTMLElement).style.display = 'block';
           }
         }
 
-        slideElements.slice(0, slideElements.length - this.settings.slidesToKeep).forEach((slide) => {
-          slide.remove();
-        });
+        Array.from($slides)
+          .slice(0, $slides.length - this.settings.slidesToKeep)
+          .forEach((slide) => {
+            slide.remove();
+          });
 
         const currentSlide = this.settings.slides[this.slide];
 

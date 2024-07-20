@@ -14,7 +14,7 @@
     "lint": "next lint --fix --max-warnings 0",
     "start": "next start",
     "start-storybook": "serve storybook-static",
-    "storybook": "storybook dev -p 6006 --no-open"
+    "storybook": "storybook dev -p 6006 --no-open --quiet"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",
