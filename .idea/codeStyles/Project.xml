@@ -61,6 +61,7 @@
     <codeStyleSettings language="TypeScript">
       <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
       <option name="BLOCK_COMMENT_ADD_SPACE" value="true" />
+      <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
       <option name="WRAP_COMMENTS" value="true" />
       <option name="SOFT_MARGINS" value="120" />
       <indentOptions>
