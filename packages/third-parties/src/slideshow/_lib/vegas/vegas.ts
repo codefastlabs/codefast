@@ -256,18 +256,6 @@ export class Vegas {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
-
-    this.element.querySelectorAll('.vegas-slide').forEach((slide) => {
-      slide.remove();
-    });
-
-    if (this.settings.timer && this.timerElement) {
-      this.timerElement.remove();
-    }
-
-    if (this.settings.overlay && this.overlayElement) {
-      this.overlayElement.remove();
-    }
   }
 
   private callCallback(callback: keyof VegasCallback): void {
@@ -340,41 +328,19 @@ export class Vegas {
   }
 
   private init(): void {
-    const { timer, overlay } = this.settings;
-
     // Preloading
     this.preloadSlides();
 
     // Timer
-    if (timer && this.support.transition) {
-      const $timer = document.createElement('div');
-
-      $timer.className = 'vegas-timer';
-      const $progress = document.createElement('div');
-
-      $progress.className = 'vegas-timer-progress';
-      $timer.appendChild($progress);
-      this.timerElement = $timer;
-      this.element.prepend($timer);
-    }
+    this.setupTimer();
 
     // Overlay
-    if (overlay) {
-      const $overlay = document.createElement('div');
-
-      $overlay.className = 'vegas-overlay';
-
-      if (typeof overlay === 'string') {
-        $overlay.style.backgroundImage = `url(${overlay})`;
-      }
-
-      this.overlayElement = $overlay;
-      this.element.prepend($overlay);
-    }
+    this.setupOverlay();
 
     // Container
     this.element.classList.add('vegas-container');
 
+    // Slides
     requestAnimationFrame(() => {
       this.callCallback('onInit');
       this.goto(this.slide);
@@ -383,6 +349,32 @@ export class Vegas {
         this.callCallback('onPlay');
       }
     });
+  }
+
+  private setupTimer(): void {
+    if (this.settings.timer && this.support.transition) {
+      this.timerElement = this.createElement('div', 'vegas-timer', this.element);
+      this.createElement('div', 'vegas-timer-progress', this.timerElement);
+    }
+  }
+
+  private setupOverlay(): void {
+    if (this.settings.overlay) {
+      this.overlayElement = this.createElement('div', 'vegas-overlay', this.element);
+
+      if (typeof this.settings.overlay === 'string') {
+        this.overlayElement.style.backgroundImage = `url(${this.settings.overlay})`;
+      }
+    }
+  }
+
+  private createElement(tag: string, className: string, parent: HTMLElement): HTMLElement {
+    const element = document.createElement(tag);
+
+    element.className = className;
+    parent.appendChild(element);
+
+    return element;
   }
 
   private preloadSlides(): void {
