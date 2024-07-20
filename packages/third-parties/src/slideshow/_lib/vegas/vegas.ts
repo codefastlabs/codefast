@@ -363,7 +363,7 @@ export class Vegas {
     // Container
     this.element.classList.add('vegas-container');
 
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       this.settings.onInit?.(this.settings);
       this._goto(this.slide);
 
@@ -374,7 +374,7 @@ export class Vegas {
           this.settings.onPlay?.(this.slide, currentSlide);
         }
       }
-    }, 1);
+    });
   }
 
   private _preload(): void {
@@ -432,6 +432,8 @@ export class Vegas {
     }
 
     if (state) {
+      const timeout = 100;
+
       setTimeout(() => {
         if (this.timerElement) {
           this.timerElement.classList.add('vegas-timer-running');
@@ -441,11 +443,11 @@ export class Vegas {
             const delay = this._options('delay');
 
             if (delay) {
-              timerElement.style.transitionDuration = `${delay - 100}ms`;
+              timerElement.style.transitionDuration = `${delay - timeout}ms`;
             }
           }
         }
-      }, 100);
+      }, timeout);
     }
   }
 
@@ -662,6 +664,7 @@ export class Vegas {
 
     const go = (): void => {
       this._timer(true);
+      const timeout = 100;
 
       setTimeout(() => {
         if (transition) {
@@ -681,7 +684,7 @@ export class Vegas {
             $slide.style.transition = `all ${transitionDuration}ms`;
             $slide.classList.add(`vegas-transition-${transition}-in`);
           } else {
-            ($slide as HTMLElement).style.display = 'block';
+            $slide.style.display = 'block';
           }
         }
 
@@ -698,7 +701,7 @@ export class Vegas {
         }
 
         this._slideShow();
-      }, 100);
+      }, timeout);
     };
 
     if (video) {
