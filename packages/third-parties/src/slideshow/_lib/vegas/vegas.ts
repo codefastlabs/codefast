@@ -67,7 +67,7 @@ export interface VegasSlide extends VegasBase {
 }
 
 export interface VegasSettings extends VegasBase, VegasCallback {
-  animationRegister: Animation[];
+  animationRegister: string[];
   autoplay: boolean;
   loop: boolean;
   overlay: boolean | string;
@@ -79,7 +79,7 @@ export interface VegasSettings extends VegasBase, VegasCallback {
   slides: VegasSlide[];
   slidesToKeep: number;
   timer: boolean;
-  transitionRegister: Transition[];
+  transitionRegister: string[];
   firstTransition?: Transition;
   firstTransitionDuration?: number;
 }
@@ -143,64 +143,9 @@ export class Vegas {
     this.overlayElement = null;
     this.timeout = null;
     this.first = true;
-
-    this.transitions = [
-      'fade',
-      'fade2',
-      'blur',
-      'blur2',
-      'flash',
-      'flash2',
-      'negative',
-      'negative2',
-      'burn',
-      'burn2',
-      'slideLeft',
-      'slideLeft2',
-      'slideRight',
-      'slideRight2',
-      'slideUp',
-      'slideUp2',
-      'slideDown',
-      'slideDown2',
-      'zoomIn',
-      'zoomIn2',
-      'zoomOut',
-      'zoomOut2',
-      'swirlLeft',
-      'swirlLeft2',
-      'swirlRight',
-      'swirlRight2',
-    ];
-
-    this.animations = [
-      'kenburns',
-      'kenburnsLeft',
-      'kenburnsRight',
-      'kenburnsUp',
-      'kenburnsUpLeft',
-      'kenburnsUpRight',
-      'kenburnsDown',
-      'kenburnsDownLeft',
-      'kenburnsDownRight',
-    ];
-
-    if (!Array.isArray(this.settings.transitionRegister)) {
-      this.settings.transitionRegister = [this.settings.transitionRegister];
-    }
-
-    if (!Array.isArray(this.settings.animationRegister)) {
-      this.settings.animationRegister = [this.settings.animationRegister];
-    }
-
-    this.transitions = this.transitions.concat(this.settings.transitionRegister);
-    this.animations = this.animations.concat(this.settings.animationRegister);
-
-    this.support = {
-      objectFit: 'objectFit' in document.body.style,
-      transition: 'transition' in document.body.style || 'WebkitTransition' in document.body.style,
-      video: Vegas.isVideoCompatible(),
-    };
+    this.transitions = this.setupTransitions();
+    this.animations = this.setupAnimations();
+    this.support = this.setupSupport();
 
     if (this.settings.shuffle) {
       this.shuffle();
@@ -228,22 +173,14 @@ export class Vegas {
     if (this.paused) {
       this.paused = false;
       this.next();
-      const currentSlide = this.settings.slides[this.slide];
-
-      if (currentSlide) {
-        this.settings.onPlay?.(this.slide, currentSlide);
-      }
+      this.callCallback('onPlay');
     }
   }
 
   public pause(): void {
     this._timer(false);
     this.paused = true;
-    const currentSlide = this.settings.slides[this.slide];
-
-    if (currentSlide) {
-      this.settings.onPause?.(this.slide, currentSlide);
-    }
+    this.callCallback('onPause');
   }
 
   public toggle(): void {
@@ -327,6 +264,75 @@ export class Vegas {
     }
   }
 
+  private callCallback(callback: keyof VegasCallback): void {
+    const currentSlide = this.settings.slides[this.slide];
+
+    if (currentSlide) {
+      if (callback === 'onInit') {
+        this.settings[callback]?.(this.settings);
+      } else {
+        this.settings[callback]?.(this.slide, currentSlide);
+      }
+    }
+  }
+
+  private setupTransitions(): Transition[] {
+    const defaultTransitions: Transition[] = [
+      'fade',
+      'fade2',
+      'blur',
+      'blur2',
+      'flash',
+      'flash2',
+      'negative',
+      'negative2',
+      'burn',
+      'burn2',
+      'slideLeft',
+      'slideLeft2',
+      'slideRight',
+      'slideRight2',
+      'slideUp',
+      'slideUp2',
+      'slideDown',
+      'slideDown2',
+      'zoomIn',
+      'zoomIn2',
+      'zoomOut',
+      'zoomOut2',
+      'swirlLeft',
+      'swirlLeft2',
+      'swirlRight',
+      'swirlRight2',
+    ];
+
+    return defaultTransitions.concat(this.settings.transitionRegister as Transition[]);
+  }
+
+  private setupAnimations(): Animation[] {
+    const defaultAnimations: Animation[] = [
+      'kenburns',
+      'kenburnsLeft',
+      'kenburnsRight',
+      'kenburnsUp',
+      'kenburnsUpLeft',
+      'kenburnsUpRight',
+      'kenburnsDown',
+      'kenburnsDownLeft',
+      'kenburnsDownRight',
+    ];
+
+    return defaultAnimations.concat(this.settings.animationRegister as Animation[]);
+  }
+
+  private setupSupport(): { objectFit: boolean; transition: boolean; video: boolean } {
+    return {
+      objectFit: 'objectFit' in document.body.style,
+      transition: 'transition' in document.body.style || 'WebkitTransition' in document.body.style,
+      video: Vegas.isVideoCompatible(),
+    };
+  }
+
   private _init(): void {
     const { timer, overlay } = this.settings;
 
@@ -364,15 +370,11 @@ export class Vegas {
     this.element.classList.add('vegas-container');
 
     requestAnimationFrame(() => {
-      this.settings.onInit?.(this.settings);
+      this.callCallback('onInit');
       this._goto(this.slide);
 
       if (this.settings.autoplay) {
-        const currentSlide = this.settings.slides[this.slide];
-
-        if (currentSlide) {
-          this.settings.onPlay?.(this.slide, currentSlide);
-        }
+        this.callCallback('onPlay');
       }
     });
   }
@@ -694,11 +696,7 @@ export class Vegas {
             slide.remove();
           });
 
-        const currentSlide = this.settings.slides[this.slide];
-
-        if (currentSlide) {
-          this.settings.onWalk?.(this.slide, currentSlide);
-        }
+        this.callCallback('onWalk');
 
         this._slideShow();
       }, timeout);
@@ -722,10 +720,6 @@ export class Vegas {
   private _end(): void {
     this.ended = !this.settings.autoplay;
     this._timer(false);
-    const currentSlide = this.settings.slides[this.slide];
-
-    if (currentSlide) {
-      this.settings.onEnd?.(this.slide, currentSlide);
-    }
+    this.callCallback('onEnd');
   }
 }
