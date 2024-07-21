@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import '@/slideshow/_lib/vegas/sass/vegas.sass';
-import { Vegas, type VegasSettings } from '@/slideshow/_lib/vegas/vegas';
+import { Vegas } from '@/slideshow/_lib/vegas/vegas';
+import { type VegasSettings } from '@/slideshow/_lib/vegas/types';
 
 interface SlideshowProps {
   options: Partial<VegasSettings>;

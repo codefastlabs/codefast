@@ -1,94 +1,11 @@
-type Transition =
-  | 'fade'
-  | 'fade2'
-  | 'blur'
-  | 'blur2'
-  | 'flash'
-  | 'flash2'
-  | 'negative'
-  | 'negative2'
-  | 'burn'
-  | 'burn2'
-  | 'slideLeft'
-  | 'slideLeft2'
-  | 'slideRight'
-  | 'slideRight2'
-  | 'slideUp'
-  | 'slideUp2'
-  | 'slideDown'
-  | 'slideDown2'
-  | 'zoomIn'
-  | 'zoomIn2'
-  | 'zoomOut'
-  | 'zoomOut2'
-  | 'swirlLeft'
-  | 'swirlLeft2'
-  | 'swirlRight'
-  | 'swirlRight2';
-
-type Animation =
-  | 'kenburns'
-  | 'kenburnsLeft'
-  | 'kenburnsRight'
-  | 'kenburnsUp'
-  | 'kenburnsUpLeft'
-  | 'kenburnsUpRight'
-  | 'kenburnsDown'
-  | 'kenburnsDownLeft'
-  | 'kenburnsDownRight';
-
-export interface VegasBase {
-  align?: string;
-  alignVertical?: string;
-  animation?: 'random' | Animation | Animation[];
-  animationDuration?: number | 'auto';
-  color?: string;
-  cover?: boolean | string;
-  delay?: number;
-  transition?: 'random' | Transition | Transition[];
-  transitionDuration?: 'auto' | number;
-}
-
-export interface VegasCallback {
-  onEnd?: (index: number, slide: VegasSlide) => void;
-  onInit?: (settings: VegasSettings) => void;
-  onPause?: (index: number, slide: VegasSlide) => void;
-  onPlay?: (index: number, slide: VegasSlide) => void;
-  onWalk?: (index: number, slide: VegasSlide) => void;
-}
-
-export interface VegasSlide extends VegasBase {
-  src?: string;
-  video?: {
-    src: string[];
-    loop?: boolean;
-    mute?: boolean;
-  };
-}
-
-export interface VegasSettings extends VegasBase, VegasCallback {
-  animationRegister: string[];
-  autoplay: boolean;
-  loop: boolean;
-  overlay: boolean | string;
-  preload: boolean;
-  preloadImage: boolean;
-  preloadVideo: boolean;
-  shuffle: boolean;
-  slide: number;
-  slides: VegasSlide[];
-  slidesToKeep: number;
-  timer: boolean;
-  transitionRegister: string[];
-  firstTransition?: Transition;
-  firstTransitionDuration?: number;
-}
-
-export interface VegasSupport {
-  objectFit: boolean;
-  transition: boolean;
-  video: boolean;
-}
+import {
+  type Animation,
+  type Transition,
+  type VegasCallback,
+  type VegasSettings,
+  type VegasSlide,
+  type VegasSupport,
+} from '@/slideshow/_lib/vegas/types';
 
 const defaults: VegasSettings = {
   slide: 0,
@@ -403,7 +320,7 @@ export class Vegas {
     if (this.total > 1 && !this.ended && !this.paused && !this.noShow) {
       this.timeout = setTimeout(() => {
         this.next();
-      }, this.options('delay'));
+      }, this.settings.delay);
     }
   }
 
@@ -436,7 +353,7 @@ export class Vegas {
           const timerElement = this.timerElement.querySelector('div');
 
           if (timerElement) {
-            const delay = this.options('delay');
+            const delay = this.settings.delay;
 
             if (delay) {
               timerElement.style.transitionDuration = `${delay - timeout}ms`;
@@ -503,10 +420,6 @@ export class Vegas {
     }
   }
 
-  private options<K extends keyof VegasSettings>(key: K): VegasSettings[K] {
-    return this.settings[key];
-  }
-
   private goto(number: number): void {
     let nb = number;
 
@@ -518,17 +431,17 @@ export class Vegas {
 
     const src = this.settings.slides[nb]?.src;
     const videoSettings = this.settings.slides[nb]?.video;
-    const delay = this.options('delay');
-    const align = this.options('align');
-    const alignVertical = this.options('alignVertical');
-    let cover = this.options('cover');
-    const color = this.options('color') ?? getComputedStyle(this.element).backgroundColor;
+    const delay = this.settings.delay;
+    const align = this.settings.align;
+    const alignVertical = this.settings.alignVertical;
+    let cover = this.settings.cover;
+    const color = this.settings.color ?? getComputedStyle(this.element).backgroundColor;
     let video: HTMLVideoElement | null = null;
 
-    let transition = this.options('transition');
-    let transitionDuration = this.options('transitionDuration');
-    let animation = this.options('animation');
-    let animationDuration = this.options('animationDuration');
+    let transition = this.settings.transition;
+    let transitionDuration = this.settings.transitionDuration;
+    let animation = this.settings.animation;
+    let animationDuration = this.settings.animationDuration;
 
     if (this.settings.firstTransition && this.first) {
       transition = this.settings.firstTransition ?? transition;
