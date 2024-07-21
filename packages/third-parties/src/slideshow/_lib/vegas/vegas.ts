@@ -8,7 +8,7 @@ import {
 } from '@/slideshow/_lib/vegas/types';
 
 const defaults: VegasSettings = {
-  slide: 0,
+  slideIndex: 0,
   delay: 5000,
   loop: true,
   preload: false,
@@ -34,7 +34,7 @@ export class Vegas {
   private static videoCache: Record<string, HTMLVideoElement> = {};
   private readonly element: HTMLElement;
   private readonly settings: VegasSettings;
-  private slide: number;
+  private slideIndex: number;
   private readonly total: number;
   private readonly noShow: boolean;
   private paused: boolean;
@@ -53,7 +53,7 @@ export class Vegas {
       ...defaults,
       ...options,
     };
-    this.slide = this.settings.slide;
+    this.slideIndex = this.settings.slideIndex;
     this.total = this.settings.slides.length;
     this.noShow = this.total < 2;
     this.paused = !this.settings.autoplay || this.noShow;
@@ -115,44 +115,44 @@ export class Vegas {
   }
 
   public jump(number: number): void {
-    if (number < 0 || number > this.total - 1 || number === this.slide) {
+    if (number < 0 || number > this.total - 1 || number === this.slideIndex) {
       return;
     }
 
-    this.slide = number;
-    this.goto(this.slide);
+    this.slideIndex = number;
+    this.goto(this.slideIndex);
   }
 
   public next(): void {
-    this.slide++;
+    this.slideIndex++;
 
-    if (this.slide >= this.total) {
+    if (this.slideIndex >= this.total) {
       if (!this.settings.loop) {
         this.end();
 
         return;
       }
 
-      this.slide = 0;
+      this.slideIndex = 0;
     }
 
-    this.goto(this.slide);
+    this.goto(this.slideIndex);
   }
 
   public previous(): void {
-    this.slide--;
+    this.slideIndex--;
 
-    if (this.slide < 0) {
+    if (this.slideIndex < 0) {
       if (!this.settings.loop) {
-        this.slide++;
+        this.slideIndex++;
 
         return;
       }
 
-      this.slide = this.total - 1;
+      this.slideIndex = this.total - 1;
     }
 
-    this.goto(this.slide);
+    this.goto(this.slideIndex);
   }
 
   public destroy(): void {
@@ -162,13 +162,13 @@ export class Vegas {
   }
 
   private callCallback(callback: keyof VegasCallback): void {
-    const currentSlide = this.settings.slides[this.slide];
+    const currentSlide = this.settings.slides[this.slideIndex];
 
     if (currentSlide) {
       if (callback === 'onInit') {
         this.settings[callback]?.(this.settings);
       } else {
-        this.settings[callback]?.(this.slide, currentSlide);
+        this.settings[callback]?.(this.slideIndex, currentSlide);
       }
     }
   }
@@ -246,7 +246,7 @@ export class Vegas {
     // Slides
     requestAnimationFrame(() => {
       this.callCallback('onInit');
-      this.goto(this.slide);
+      this.goto(this.slideIndex);
 
       if (this.settings.autoplay) {
         this.callCallback('onPlay');
@@ -363,66 +363,72 @@ export class Vegas {
       videoSources = [videoSources];
     }
 
-    const video = document.createElement('video');
+    const videoElement = document.createElement('video');
 
-    video.preload = 'auto';
+    videoElement.preload = 'auto';
 
     for (const src of videoSources) {
       const source = document.createElement('source');
 
       source.src = src;
-      video.appendChild(source);
+      videoElement.appendChild(source);
     }
 
-    Vegas.videoCache[cacheKey] = video;
+    Vegas.videoCache[cacheKey] = videoElement;
 
-    return video;
+    return videoElement;
   }
 
-  private fadeOutSound(video: HTMLVideoElement, duration: number): void {
-    this.adjustVolume(video, duration, 0.09, 'decrease');
+  private fadeOutSound(videoElement: HTMLVideoElement, duration: number): void {
+    this.adjustVolume(videoElement, duration, 0.09, 'decrease');
   }
 
-  private fadeInSound(video: HTMLVideoElement, duration: number): void {
-    this.adjustVolume(video, duration, 0.09, 'increase');
+  private fadeInSound(videoElement: HTMLVideoElement, duration: number): void {
+    this.adjustVolume(videoElement, duration, 0.09, 'increase');
   }
 
   private adjustVolume(
-    video: HTMLVideoElement,
+    videoElement: HTMLVideoElement,
     duration: number,
     step: number,
     direction: 'increase' | 'decrease',
   ): void {
     const delay = duration / 10;
-    const volume = direction === 'increase' ? video.volume + step : video.volume - step;
+    const volume = direction === 'increase' ? videoElement.volume + step : videoElement.volume - step;
 
     if ((direction === 'increase' && volume < 1) || (direction === 'decrease' && volume > 0)) {
-      video.volume = volume;
+      videoElement.volume = volume;
       setTimeout(() => {
-        this.adjustVolume(video, duration, step, direction);
+        this.adjustVolume(videoElement, duration, step, direction);
       }, delay);
     } else if (direction === 'decrease') {
-      video.pause();
+      videoElement.pause();
     }
   }
 
-  private goto(number: number): void {
-    let nb = number;
+  private goto(index: number): void {
+    let slideIndex = index;
 
-    if (typeof this.settings.slides[nb] === 'undefined') {
-      nb = 0;
+    if (typeof this.settings.slides[slideIndex] === 'undefined') {
+      slideIndex = 0;
     }
 
-    this.slide = nb;
+    this.slideIndex = slideIndex;
 
-    const src = this.settings.slides[nb]?.src;
-    const videoSettings = this.settings.slides[nb]?.video;
+    const currentSlide = this.settings.slides[slideIndex];
+
+    if (!currentSlide) {
+      return;
+    }
+
+    const { src, video } = currentSlide;
+
     const delay = this.settings.delay;
     const align = this.settings.align;
     const alignVertical = this.settings.alignVertical;
     let cover = this.settings.cover;
     const color = this.settings.color ?? getComputedStyle(this.element).backgroundColor;
-    let video: HTMLVideoElement | null = null;
+    let videoElement: HTMLVideoElement | null = null;
 
     let transition = this.settings.transition;
     let transitionDuration = this.settings.transitionDuration;
@@ -470,19 +476,19 @@ export class Vegas {
     }
 
     // Video
-    if (this.support.video && videoSettings) {
-      video = Array.isArray(videoSettings) ? this.preloadVideo(videoSettings) : this.preloadVideo(videoSettings.src);
-      video.loop = videoSettings.loop ?? true;
-      video.muted = videoSettings.mute ?? true;
+    if (this.support.video && video) {
+      videoElement = Array.isArray(video) ? this.preloadVideo(video) : this.preloadVideo(video.src);
+      videoElement.loop = video.loop ?? true;
+      videoElement.muted = video.mute ?? true;
 
-      if (!video.muted) {
-        video.volume = 0;
+      if (!videoElement.muted) {
+        videoElement.volume = 0;
 
         if (transitionDuration) {
-          this.fadeInSound(video, transitionDuration);
+          this.fadeInSound(videoElement, transitionDuration);
         }
       } else {
-        video.pause();
+        videoElement.pause();
       }
 
       slideElement.classList.add('vegas-video');
@@ -499,7 +505,7 @@ export class Vegas {
         slideElement.style.height = '100%';
       }
 
-      slideElement.appendChild(video);
+      slideElement.appendChild(videoElement);
     } else {
       // Image
       if (src) {
@@ -594,12 +600,12 @@ export class Vegas {
       }, timeout);
     };
 
-    if (video) {
-      if (video.readyState === 4) {
-        video.currentTime = 0;
+    if (videoElement) {
+      if (videoElement.readyState === 4) {
+        videoElement.currentTime = 0;
       }
 
-      void video.play();
+      void videoElement.play();
       go();
     } else if (src) {
       const img = new Image();

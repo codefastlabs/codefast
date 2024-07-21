@@ -77,7 +77,7 @@ export interface VegasSettings extends VegasBase, VegasCallback {
   preloadImage: boolean;
   preloadVideo: boolean;
   shuffle: boolean;
-  slide: number;
+  slideIndex: number;
   slides: VegasSlide[];
   slidesToKeep: number;
   timer: boolean;
