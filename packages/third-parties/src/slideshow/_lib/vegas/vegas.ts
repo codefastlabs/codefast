@@ -114,20 +114,6 @@ export class Vegas {
     return !this.paused && !this.noShow;
   }
 
-  public current(advanced = false):
-    | number
-    | {
-        data: VegasSlide | undefined;
-        slide: number;
-      } {
-    return advanced
-      ? {
-          slide: this.slide,
-          data: this.settings.slides[this.slide],
-        }
-      : this.slide;
-  }
-
   public jump(number: number): void {
     if (number < 0 || number > this.total - 1 || number === this.slide) {
       return;
