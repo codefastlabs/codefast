@@ -461,12 +461,12 @@ export class Vegas {
       animationDuration = delay;
     }
 
-    const $slide = document.createElement('div');
+    const slideElement = document.createElement('div');
 
-    $slide.className = `vegas-slide`;
+    slideElement.className = `vegas-slide`;
 
     if (this.support.transition && transition) {
-      $slide.classList.add(`vegas-transition-${transition}`);
+      slideElement.classList.add(`vegas-transition-${transition}`);
     }
 
     // Video
@@ -485,21 +485,21 @@ export class Vegas {
         video.pause();
       }
 
-      $slide.classList.add('vegas-video');
+      slideElement.classList.add('vegas-video');
 
-      $slide.style.backgroundColor = color;
+      slideElement.style.backgroundColor = color;
 
       if (this.support.objectFit) {
-        $slide.style.objectPosition = `${align} ${alignVertical}`;
-        $slide.style.objectFit = cover;
-        $slide.style.width = '100%';
-        $slide.style.height = '100%';
+        slideElement.style.objectPosition = `${align} ${alignVertical}`;
+        slideElement.style.objectFit = cover;
+        slideElement.style.width = '100%';
+        slideElement.style.height = '100%';
       } else if (cover === 'contain') {
-        $slide.style.width = '100%';
-        $slide.style.height = '100%';
+        slideElement.style.width = '100%';
+        slideElement.style.height = '100%';
       }
 
-      $slide.appendChild(video);
+      slideElement.appendChild(video);
     } else {
       // Image
       if (src) {
@@ -522,11 +522,11 @@ export class Vegas {
         innerElement.style.backgroundSize = cover;
       }
 
-      $slide.appendChild(innerElement);
+      slideElement.appendChild(innerElement);
     }
 
     if (!this.support.transition) {
-      $slide.style.display = 'none';
+      slideElement.style.display = 'none';
     }
 
     const $slides = this.element.querySelectorAll<HTMLElement>('.vegas-slide');
@@ -535,10 +535,10 @@ export class Vegas {
       const lastSlideElement = $slides[$slides.length - 1];
 
       if (lastSlideElement) {
-        this.element.insertBefore($slide, lastSlideElement.nextSibling);
+        this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
       }
     } else {
-      this.element.prepend($slide);
+      this.element.prepend(slideElement);
     }
 
     $slides.forEach((slide) => {
@@ -575,10 +575,10 @@ export class Vegas {
               }
             });
 
-            $slide.style.transition = `all ${transitionDuration}ms`;
-            $slide.classList.add(`vegas-transition-${transition}-in`);
+            slideElement.style.transition = `all ${transitionDuration}ms`;
+            slideElement.classList.add(`vegas-transition-${transition}-in`);
           } else {
-            $slide.style.display = 'block';
+            slideElement.style.display = 'block';
           }
         }
 
