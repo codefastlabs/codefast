@@ -529,10 +529,10 @@ export class Vegas {
       slideElement.style.display = 'none';
     }
 
-    const $slides = this.element.querySelectorAll<HTMLElement>('.vegas-slide');
+    const slideElements = this.element.querySelectorAll<HTMLElement>('.vegas-slide');
 
-    if ($slides.length) {
-      const lastSlideElement = $slides[$slides.length - 1];
+    if (slideElements.length) {
+      const lastSlideElement = slideElements[slideElements.length - 1];
 
       if (lastSlideElement) {
         this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
@@ -541,7 +541,7 @@ export class Vegas {
       this.element.prepend(slideElement);
     }
 
-    $slides.forEach((slide) => {
+    slideElements.forEach((slide) => {
       slide.className = 'vegas-slide';
 
       if (slide.tagName === 'VIDEO') {
@@ -563,7 +563,7 @@ export class Vegas {
       setTimeout(() => {
         if (transition) {
           if (this.support.transition) {
-            $slides.forEach((slide) => {
+            slideElements.forEach((slide) => {
               slide.style.transition = `all ${transitionDuration}ms`;
               slide.classList.add(`vegas-transition-${transition}-out`);
               const videoElement = slide.querySelector('video');
@@ -582,8 +582,8 @@ export class Vegas {
           }
         }
 
-        Array.from($slides)
-          .slice(0, $slides.length - this.settings.slidesToKeep)
+        Array.from(slideElements)
+          .slice(0, slideElements.length - this.settings.slidesToKeep)
           .forEach((slide) => {
             slide.remove();
           });
