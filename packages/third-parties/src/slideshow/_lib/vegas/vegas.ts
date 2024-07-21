@@ -572,12 +572,10 @@ export class Vegas {
             slideElements.forEach((slide) => {
               slide.style.transition = `all ${transitionDuration}ms`;
               slide.classList.add(`vegas-transition-${transition}-out`);
-              const videoElement = slide.querySelector('video');
+              const activeVideo = slide.querySelector('video');
 
-              if (videoElement) {
-                if (transitionDuration) {
-                  videoElement.volume > 0 && this.fadeOutSound(videoElement, transitionDuration);
-                }
+              if (activeVideo && transitionDuration) {
+                activeVideo.volume > 0 && this.fadeOutSound(activeVideo, transitionDuration);
               }
             });
 
@@ -588,11 +586,7 @@ export class Vegas {
           }
         }
 
-        Array.from(slideElements)
-          .slice(0, slideElements.length - this.settings.slidesToKeep)
-          .forEach((slide) => {
-            slide.remove();
-          });
+        this.removeOldSlides(slideElements, this.settings.slidesToKeep);
 
         this.callCallback('onWalk');
 
@@ -613,6 +607,14 @@ export class Vegas {
       img.src = src;
       img.complete ? go() : (img.onload = go);
     }
+  }
+
+  private removeOldSlides(slideElements: NodeListOf<HTMLElement>, slidesToKeep: number): void {
+    Array.from(slideElements)
+      .slice(0, slideElements.length - slidesToKeep)
+      .forEach((slide) => {
+        slide.remove();
+      });
   }
 
   private end(): void {
