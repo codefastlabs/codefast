@@ -57,13 +57,15 @@ export interface VegasCallback {
   onWalk?: (index: number, slide: VegasSlide) => void;
 }
 
+export interface VegasVideo {
+  src: string[];
+  loop?: boolean;
+  mute?: boolean;
+}
+
 export interface VegasSlide extends VegasBase {
   src?: string;
-  video?: {
-    src: string[];
-    loop?: boolean;
-    mute?: boolean;
-  };
+  video?: VegasVideo;
 }
 
 export interface VegasSettings extends VegasBase, VegasCallback {
