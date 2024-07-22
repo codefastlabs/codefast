@@ -1,10 +1,13 @@
 import {
   type Animation,
   type Transition,
+  type VegasAnimation,
   type VegasCallback,
   type VegasSettings,
   type VegasSlide,
   type VegasSupport,
+  type VegasTransition,
+  type VegasVideo,
 } from '@/slideshow/_lib/vegas/types';
 import { isVideoCompatible, random } from '@/slideshow/_lib/vegas/utils';
 
@@ -413,7 +416,6 @@ export class Vegas {
 
   private goto(index: number): void {
     const slideIndex = this.getValidSlideIndex(index);
-
     const currentSlide = this.settings.slides[slideIndex];
 
     if (!currentSlide) {
@@ -421,15 +423,10 @@ export class Vegas {
     }
 
     this.slideIndex = slideIndex;
-
     const { src, video } = currentSlide;
 
-    const delay = this.settings.delay;
-    const align = this.settings.align;
-    const alignVertical = this.settings.alignVertical;
     let cover = this.settings.cover;
-    const color = this.settings.color ?? getComputedStyle(this.element).backgroundColor;
-    let videoElement: HTMLVideoElement | null = null;
+    const { delay, align, alignVertical, color = getComputedStyle(this.element).backgroundColor } = this.settings;
 
     let transition = this.settings.transition;
     let transitionDuration = this.settings.transitionDuration;
@@ -452,13 +449,8 @@ export class Vegas {
       cover = cover === true ? 'cover' : 'contain';
     }
 
-    if (transition === 'random' || Array.isArray(transition)) {
-      transition = Array.isArray(transition) ? random(transition) : random(this.transitions);
-    }
-
-    if (animation === 'random' || Array.isArray(animation)) {
-      animation = Array.isArray(animation) ? random(animation) : random(this.animations);
-    }
+    transition = this.getRandomTransition(transition);
+    animation = this.getRandomAnimation(animation);
 
     if (transitionDuration === 'auto' || (transitionDuration && delay && transitionDuration > delay)) {
       transitionDuration = delay;
@@ -468,6 +460,46 @@ export class Vegas {
       animationDuration = delay;
     }
 
+    const slideElement = this.createSlideElement(color, align, alignVertical, cover, transition);
+    const videoElement = this.setupSlideContent(
+      slideElement,
+      src,
+      video,
+      color,
+      align,
+      alignVertical,
+      cover,
+      animation,
+      animationDuration,
+      transitionDuration,
+    );
+
+    this.handleSlideTransition(slideElement, transition, transitionDuration, videoElement, src);
+  }
+
+  private getRandomTransition(transition?: VegasTransition): Transition | undefined {
+    if (transition === 'random') {
+      return random(this.transitions);
+    }
+
+    return transition;
+  }
+
+  private getRandomAnimation(animation?: VegasAnimation): Animation | undefined {
+    if (animation === 'random') {
+      return random(this.animations);
+    }
+
+    return animation;
+  }
+
+  private createSlideElement(
+    color: string,
+    align: string | undefined,
+    alignVertical: string | undefined,
+    cover: string,
+    transition: Transition | undefined,
+  ): HTMLElement {
     const slideElement = document.createElement('div');
 
     slideElement.className = `vegas-slide`;
@@ -476,62 +508,120 @@ export class Vegas {
       slideElement.classList.add(`vegas-transition-${transition}`);
     }
 
-    // Video
+    slideElement.style.backgroundColor = color;
+    slideElement.style.backgroundPosition = `${align} ${alignVertical}`;
+    slideElement.style.backgroundSize = cover === 'repeat' ? 'auto' : cover;
+
+    return slideElement;
+  }
+
+  private setupSlideContent(
+    slideElement: HTMLElement,
+    src: string | undefined,
+    video: VegasVideo | undefined,
+    color: string,
+    align: string | undefined,
+    alignVertical: string | undefined,
+    cover: string,
+    animation: VegasAnimation | undefined,
+    animationDuration: number | undefined,
+    transitionDuration: number | undefined,
+  ): HTMLVideoElement | null {
+    let videoElement: HTMLVideoElement | null = null;
+
     if (this.support.video && video) {
-      videoElement = Array.isArray(video) ? this.preloadVideo(video) : this.preloadVideo(video.src);
-      videoElement.loop = video.loop ?? true;
-      videoElement.muted = video.mute ?? true;
-
-      if (!videoElement.muted) {
-        videoElement.volume = 0;
-
-        if (transitionDuration) {
-          this.fadeInSound(videoElement, transitionDuration);
-        }
-      } else {
-        videoElement.pause();
-      }
-
-      slideElement.classList.add('vegas-video');
-
-      slideElement.style.backgroundColor = color;
-
-      if (this.support.objectFit) {
-        slideElement.style.objectPosition = `${align} ${alignVertical}`;
-        slideElement.style.objectFit = cover;
-        slideElement.style.width = '100%';
-        slideElement.style.height = '100%';
-      } else if (cover === 'contain') {
-        slideElement.style.width = '100%';
-        slideElement.style.height = '100%';
-      }
-
-      slideElement.appendChild(videoElement);
-    } else {
-      // Image
-      if (src) {
-        const img = new Image();
-
-        img.src = src;
-      }
-
-      const innerElement = document.createElement('div');
-
-      innerElement.className = `vegas-slide-inner vegas-animation-${animation}`;
-      innerElement.style.backgroundImage = `url("${src}")`;
-      innerElement.style.backgroundColor = color;
-      innerElement.style.backgroundPosition = `${align} ${alignVertical}`;
-      innerElement.style.animationDuration = `${animationDuration}ms`;
-
-      if (cover === 'repeat') {
-        innerElement.style.backgroundRepeat = 'repeat';
-      } else {
-        innerElement.style.backgroundSize = cover;
-      }
-
-      slideElement.appendChild(innerElement);
+      videoElement = this.setupVideoElement(
+        slideElement,
+        video,
+        color,
+        align,
+        alignVertical,
+        cover,
+        transitionDuration,
+      );
+    } else if (src) {
+      this.setupImageElement(slideElement, src, color, align, alignVertical, cover, animation, animationDuration);
     }
 
+    return videoElement;
+  }
+
+  private setupVideoElement(
+    slideElement: HTMLElement,
+    video: VegasVideo,
+    color: string,
+    align: string | undefined,
+    alignVertical: string | undefined,
+    cover: string,
+    transitionDuration: number | undefined,
+  ): HTMLVideoElement {
+    const videoElement = Array.isArray(video.src) ? this.preloadVideo(video.src) : this.preloadVideo(video.src);
+
+    videoElement.loop = video.loop ?? true;
+    videoElement.muted = video.mute ?? true;
+
+    if (!videoElement.muted) {
+      videoElement.volume = 0;
+
+      if (transitionDuration) {
+        this.fadeInSound(videoElement, transitionDuration);
+      }
+    } else {
+      videoElement.pause();
+    }
+
+    slideElement.classList.add('vegas-video');
+    slideElement.style.backgroundColor = color;
+
+    if (this.support.objectFit) {
+      slideElement.style.objectPosition = `${align} ${alignVertical}`;
+      slideElement.style.objectFit = cover;
+      slideElement.style.width = '100%';
+      slideElement.style.height = '100%';
+    } else if (cover === 'contain') {
+      slideElement.style.width = '100%';
+      slideElement.style.height = '100%';
+    }
+
+    slideElement.appendChild(videoElement);
+
+    return videoElement;
+  }
+
+  private setupImageElement(
+    slideElement: HTMLElement,
+    src: string,
+    color: string,
+    align: string | undefined,
+    alignVertical: string | undefined,
+    cover: string,
+    animation: VegasAnimation | undefined,
+    animationDuration: number | undefined,
+  ): void {
+    const innerElement = document.createElement('div');
+
+    innerElement.className = `vegas-slide-inner vegas-animation-${animation}`;
+    innerElement.style.backgroundImage = `url("${src}")`;
+    innerElement.style.backgroundColor = color;
+    innerElement.style.backgroundPosition = `${align} ${alignVertical}`;
+    innerElement.style.animationDuration = `${animationDuration}ms`;
+
+    if (cover === 'repeat') {
+      innerElement.style.backgroundRepeat = 'repeat';
+    } else {
+      innerElement.style.backgroundSize = cover;
+    }
+
+    slideElement.appendChild(innerElement);
+  }
+
+  private handleSlideTransition(
+    slideElement: HTMLElement,
+    transition: Transition | undefined,
+    transitionDuration: number | undefined,
+    videoElement: HTMLVideoElement | null,
+    src: string | undefined,
+  ): void {
     if (!this.support.transition) {
       slideElement.style.display = 'none';
     }
@@ -579,7 +669,6 @@ export class Vegas {
                 activeVideo.volume > 0 && this.fadeOutSound(activeVideo, transitionDuration);
               }
             });
-
             slideElement.style.transition = `all ${transitionDuration}ms`;
             slideElement.classList.add(`vegas-transition-${transition}-in`);
           } else {
@@ -588,9 +677,7 @@ export class Vegas {
         }
 
         this.removeOldSlides(slideElements, this.settings.slidesToKeep);
-
         this.callCallback('onWalk');
-
         this.slideShow();
       }, timeout);
     };

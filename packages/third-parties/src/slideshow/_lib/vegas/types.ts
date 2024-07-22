@@ -37,15 +37,19 @@ export type Animation =
   | 'kenburnsDownLeft'
   | 'kenburnsDownRight';
 
+export type VegasTransition = 'random' | Transition;
+
+export type VegasAnimation = 'random' | Animation;
+
 export interface VegasBase {
   align?: string;
   alignVertical?: string;
-  animation?: 'random' | Animation | Animation[];
+  animation?: VegasAnimation;
   animationDuration?: number | 'auto';
   color?: string;
   cover?: boolean | string;
   delay?: number;
-  transition?: 'random' | Transition | Transition[];
+  transition?: VegasTransition;
   transitionDuration?: 'auto' | number;
 }
 
@@ -68,6 +72,12 @@ export interface VegasSlide extends VegasBase {
   video?: VegasVideo;
 }
 
+export interface VegasSupport {
+  objectFit: boolean;
+  transition: boolean;
+  video: boolean;
+}
+
 export interface VegasSettings extends VegasBase, VegasCallback {
   animationRegister: string[];
   autoplay: boolean;
@@ -84,10 +94,4 @@ export interface VegasSettings extends VegasBase, VegasCallback {
   transitionRegister: string[];
   firstTransition?: Transition;
   firstTransitionDuration?: number;
-}
-
-export interface VegasSupport {
-  objectFit: boolean;
-  transition: boolean;
-  video: boolean;
 }
