@@ -16,6 +16,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
