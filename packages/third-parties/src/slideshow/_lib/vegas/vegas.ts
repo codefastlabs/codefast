@@ -6,6 +6,7 @@ import {
   type VegasSlide,
   type VegasSupport,
 } from '@/slideshow/_lib/vegas/types';
+import { isVideoCompatible, random } from '@/slideshow/_lib/vegas/utils';
 
 const defaults: VegasSettings = {
   slideIndex: 0,
@@ -30,6 +31,9 @@ const defaults: VegasSettings = {
   slides: [],
 };
 
+/**
+ * Vegas class to handle slideshow functionality.
+ */
 export class Vegas {
   private static videoCache: Record<string, HTMLVideoElement> = {};
   private readonly element: HTMLElement;
@@ -47,6 +51,11 @@ export class Vegas {
   private readonly animations: Animation[];
   private support: VegasSupport;
 
+  /**
+   * Constructor for Vegas class.
+   * @param element - The DOM element to apply the slideshow to.
+   * @param options - Partial settings to customize the slideshow.
+   */
   constructor(element: HTMLElement, options: Partial<VegasSettings>) {
     this.element = element;
     this.settings = {
@@ -71,14 +80,6 @@ export class Vegas {
     }
 
     this.init();
-  }
-
-  static isVideoCompatible(): boolean {
-    return !/(?<userAgent>Android|webOS|Phone|iPad|iPod|BlackBerry|Windows Phone)/i.test(navigator.userAgent);
-  }
-
-  static random<T>(array: T[]): T {
-    return array[Math.floor(Math.random() * array.length)] as T;
   }
 
   public shuffle(): void {
@@ -226,7 +227,7 @@ export class Vegas {
     return {
       objectFit: 'objectFit' in document.body.style,
       transition: 'transition' in document.body.style || 'WebkitTransition' in document.body.style,
-      video: Vegas.isVideoCompatible(),
+      video: isVideoCompatible(),
     };
   }
 
@@ -406,20 +407,20 @@ export class Vegas {
     }
   }
 
+  private getValidSlideIndex(index: number): number {
+    return typeof this.settings.slides[index] !== 'undefined' ? index : 0;
+  }
+
   private goto(index: number): void {
-    let slideIndex = index;
-
-    if (typeof this.settings.slides[slideIndex] === 'undefined') {
-      slideIndex = 0;
-    }
-
-    this.slideIndex = slideIndex;
+    const slideIndex = this.getValidSlideIndex(index);
 
     const currentSlide = this.settings.slides[slideIndex];
 
     if (!currentSlide) {
       return;
     }
+
+    this.slideIndex = slideIndex;
 
     const { src, video } = currentSlide;
 
@@ -452,11 +453,11 @@ export class Vegas {
     }
 
     if (transition === 'random' || Array.isArray(transition)) {
-      transition = Array.isArray(transition) ? Vegas.random(transition) : Vegas.random(this.transitions);
+      transition = Array.isArray(transition) ? random(transition) : random(this.transitions);
     }
 
     if (animation === 'random' || Array.isArray(animation)) {
-      animation = Array.isArray(animation) ? Vegas.random(animation) : Vegas.random(this.animations);
+      animation = Array.isArray(animation) ? random(animation) : random(this.animations);
     }
 
     if (transitionDuration === 'auto' || (transitionDuration && delay && transitionDuration > delay)) {
