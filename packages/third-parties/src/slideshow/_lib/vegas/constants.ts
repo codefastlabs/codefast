@@ -1,4 +1,4 @@
-import { type VegasTransition, type VegasAnimation, type VegasSettings } from '@/slideshow/_lib/vegas/types';
+import { type VegasAnimation, type VegasSettings, type VegasTransition } from '@/slideshow/_lib/vegas/types';
 
 export const DEFAULT_TRANSITIONS: VegasTransition[] = [
   'fade',
@@ -42,6 +42,10 @@ export const DEFAULT_ANIMATIONS: VegasAnimation[] = [
 ];
 
 export const DEFAULT_SETTINGS: VegasSettings = {
+  firstTransition: null,
+  firstTransitionDuration: 0,
+  animation: 'random',
+  color: '',
   slideIndex: 0,
   delay: 5000,
   loop: true,

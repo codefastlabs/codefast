@@ -42,15 +42,15 @@ export type VegasTransitionWithRandom = 'random' | VegasTransition;
 export type VegasAnimationWithRandom = 'random' | VegasAnimation;
 
 export interface VegasBase {
-  align?: string;
-  alignVertical?: string;
-  animation?: VegasAnimationWithRandom;
-  animationDuration?: number | 'auto';
-  color?: string;
-  cover?: boolean | string;
-  delay?: number;
-  transition?: VegasTransitionWithRandom;
-  transitionDuration?: 'auto' | number;
+  align: string;
+  alignVertical: string;
+  animation: VegasAnimationWithRandom;
+  animationDuration: number | 'auto';
+  color: string;
+  cover: boolean | string;
+  delay: number;
+  transition: VegasTransitionWithRandom;
+  transitionDuration: number | 'auto';
 }
 
 export interface VegasCallback {
@@ -67,7 +67,7 @@ export interface VegasVideo {
   mute?: boolean;
 }
 
-export interface VegasSlide extends VegasBase {
+export interface VegasSlide extends Partial<VegasBase> {
   src?: string;
   video?: VegasVideo;
 }
@@ -81,6 +81,8 @@ export interface VegasSupport {
 export interface VegasSettings extends VegasBase, VegasCallback {
   animationRegister: string[];
   autoplay: boolean;
+  firstTransition: VegasTransition | null;
+  firstTransitionDuration: number | 'auto';
   loop: boolean;
   overlay: boolean | string;
   preload: boolean;
@@ -92,6 +94,4 @@ export interface VegasSettings extends VegasBase, VegasCallback {
   slidesToKeep: number;
   timer: boolean;
   transitionRegister: string[];
-  firstTransition?: VegasTransition;
-  firstTransitionDuration?: number;
 }

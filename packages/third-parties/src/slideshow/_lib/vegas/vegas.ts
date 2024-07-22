@@ -1,11 +1,11 @@
 import {
   type VegasAnimation,
-  type VegasTransition,
   type VegasAnimationWithRandom,
   type VegasCallback,
   type VegasSettings,
   type VegasSlide,
   type VegasSupport,
+  type VegasTransition,
   type VegasTransitionWithRandom,
   type VegasVideo,
 } from '@/slideshow/_lib/vegas/types';
@@ -140,6 +140,30 @@ export class Vegas {
     }
   }
 
+  public init(): void {
+    // Preloading
+    this.preloadSlides();
+
+    // Timer
+    this.setupTimer();
+
+    // Overlay
+    this.setupOverlay();
+
+    // Container
+    this.element.classList.add('vegas-container');
+
+    // Slides
+    requestAnimationFrame(() => {
+      this.callCallback('onInit');
+      this.goto(this.slideIndex);
+
+      if (this.settings.autoplay) {
+        this.callCallback('onPlay');
+      }
+    });
+  }
+
   private callCallback(callback: keyof VegasCallback): void {
     const currentSlide = this.settings.slides[this.slideIndex];
 
@@ -166,30 +190,6 @@ export class Vegas {
       transition: 'transition' in document.body.style || 'WebkitTransition' in document.body.style,
       video: isVideoCompatible(),
     };
-  }
-
-  public init(): void {
-    // Preloading
-    this.preloadSlides();
-
-    // Timer
-    this.setupTimer();
-
-    // Overlay
-    this.setupOverlay();
-
-    // Container
-    this.element.classList.add('vegas-container');
-
-    // Slides
-    requestAnimationFrame(() => {
-      this.callCallback('onInit');
-      this.goto(this.slideIndex);
-
-      if (this.settings.autoplay) {
-        this.callCallback('onPlay');
-      }
-    });
   }
 
   private setupTimer(): void {
@@ -352,43 +352,28 @@ export class Vegas {
     this.slideIndex = slideIndex;
     const { src, video } = currentSlide;
 
-    let cover = this.settings.cover;
-    const { delay, align, alignVertical, color = getComputedStyle(this.element).backgroundColor } = this.settings;
+    const {
+      delay,
+      align,
+      alignVertical,
+      color = getComputedStyle(this.element).backgroundColor,
+      firstTransition,
+      firstTransitionDuration,
+      transition: defaultTransition,
+      transitionDuration: defaultTransitionDuration,
+      animation: defaultAnimation,
+      animationDuration: defaultAnimationDuration,
+      cover: defaultCover,
+    } = this.settings;
 
-    let transition = this.settings.transition;
-    let transitionDuration = this.settings.transitionDuration;
-    let animation = this.settings.animation;
-    let animationDuration = this.settings.animationDuration;
+    const cover = this.getCoverSetting(defaultCover);
+    const transition = this.getTransition(firstTransition, defaultTransition);
+    const transitionDuration = this.getTransitionDuration(firstTransitionDuration, defaultTransitionDuration, delay);
+    const animation = this.getAnimation(defaultAnimation);
+    const animationDuration = this.getAnimationDuration(defaultAnimationDuration, delay);
 
-    if (this.settings.firstTransition && this.first) {
-      transition = this.settings.firstTransition ?? transition;
-    }
-
-    if (this.settings.firstTransitionDuration && this.first) {
-      transitionDuration = this.settings.firstTransitionDuration || transitionDuration;
-    }
-
-    if (this.first) {
-      this.first = false;
-    }
-
-    if (cover !== 'repeat') {
-      cover = cover === true ? 'cover' : 'contain';
-    }
-
-    transition = this.getRandomTransition(transition);
-    animation = this.getRandomAnimation(animation);
-
-    if (transitionDuration === 'auto' || (transitionDuration && delay && transitionDuration > delay)) {
-      transitionDuration = delay;
-    }
-
-    if (animationDuration === 'auto') {
-      animationDuration = delay;
-    }
-
-    const slideElement = this.createSlideElement(color, align, alignVertical, cover, transition);
-    const videoElement = this.setupSlideContent(
+    const slideElement = this.createSlideElement({ color, align, alignVertical, cover, transition });
+    const videoElement = this.setupSlideContent({
       slideElement,
       src,
       video,
@@ -399,12 +384,68 @@ export class Vegas {
       animation,
       animationDuration,
       transitionDuration,
-    );
+    });
 
-    this.handleSlideTransition(slideElement, transition, transitionDuration, videoElement, src);
+    this.handleSlideTransition({ slideElement, transition, transitionDuration, videoElement, src });
   }
 
-  private getRandomTransition(transition?: VegasTransitionWithRandom): VegasTransition | undefined {
+  private getCoverSetting(cover: string | boolean): string {
+    if (cover !== 'repeat') {
+      return cover === true ? 'cover' : 'contain';
+    }
+
+    return cover;
+  }
+
+  private getTransition(
+    firstTransition: VegasTransition | null,
+    defaultTransition: VegasTransitionWithRandom,
+  ): VegasTransition {
+    if (this.first) {
+      this.first = false;
+
+      return this.getRandomTransition(firstTransition ?? defaultTransition);
+    }
+
+    return this.getRandomTransition(defaultTransition);
+  }
+
+  private getTransitionDuration(
+    firstTransitionDuration: number | 'auto',
+    defaultTransitionDuration: number | 'auto',
+    delay: number,
+  ): number {
+    if (this.first) {
+      if (firstTransitionDuration && firstTransitionDuration !== 'auto') {
+        return firstTransitionDuration;
+      }
+
+      return delay;
+    }
+
+    if (
+      defaultTransitionDuration === 'auto' ||
+      (defaultTransitionDuration && delay && defaultTransitionDuration > delay)
+    ) {
+      return delay;
+    }
+
+    return defaultTransitionDuration;
+  }
+
+  private getAnimation(defaultAnimation: VegasAnimationWithRandom): VegasAnimation {
+    return this.getRandomAnimation(defaultAnimation);
+  }
+
+  private getAnimationDuration(defaultAnimationDuration: number | 'auto', delay: number): number {
+    if (defaultAnimationDuration === 'auto') {
+      return delay;
+    }
+
+    return defaultAnimationDuration;
+  }
+
+  private getRandomTransition(transition: VegasTransitionWithRandom): VegasTransition {
     if (transition === 'random') {
       return random(this.transitions);
     }
@@ -412,7 +453,7 @@ export class Vegas {
     return transition;
   }
 
-  private getRandomAnimation(animation?: VegasAnimationWithRandom): VegasAnimation | undefined {
+  private getRandomAnimation(animation: VegasAnimationWithRandom): VegasAnimation {
     if (animation === 'random') {
       return random(this.animations);
     }
@@ -420,13 +461,19 @@ export class Vegas {
     return animation;
   }
 
-  private createSlideElement(
-    color: string,
-    align: string | undefined,
-    alignVertical: string | undefined,
-    cover: string,
-    transition: VegasTransition | undefined,
-  ): HTMLElement {
+  private createSlideElement({
+    align,
+    alignVertical,
+    color,
+    cover,
+    transition,
+  }: {
+    align: string;
+    alignVertical: string;
+    color: string;
+    cover: string;
+    transition: VegasTransition | null;
+  }): HTMLElement {
     const slideElement = document.createElement('div');
 
     slideElement.className = `vegas-slide`;
@@ -442,22 +489,33 @@ export class Vegas {
     return slideElement;
   }
 
-  private setupSlideContent(
-    slideElement: HTMLElement,
-    src: string | undefined,
-    video: VegasVideo | undefined,
-    color: string,
-    align: string | undefined,
-    alignVertical: string | undefined,
-    cover: string,
-    animation: VegasAnimationWithRandom | undefined,
-    animationDuration: number | undefined,
-    transitionDuration: number | undefined,
-  ): HTMLVideoElement | null {
+  private setupSlideContent({
+    align,
+    alignVertical,
+    animation,
+    animationDuration,
+    color,
+    cover,
+    slideElement,
+    src,
+    transitionDuration,
+    video,
+  }: {
+    align: string;
+    alignVertical: string;
+    animation: VegasAnimationWithRandom;
+    animationDuration: number;
+    color: string;
+    cover: string;
+    slideElement: HTMLElement;
+    transitionDuration: number;
+    src?: string | undefined;
+    video?: VegasVideo | undefined;
+  }): HTMLVideoElement | null {
     let videoElement: HTMLVideoElement | null = null;
 
     if (this.support.video && video) {
-      videoElement = this.setupVideoElement(
+      videoElement = this.setupVideoElement({
         slideElement,
         video,
         color,
@@ -465,7 +523,7 @@ export class Vegas {
         alignVertical,
         cover,
         transitionDuration,
-      );
+      });
     } else if (src) {
       this.setupImageElement(slideElement, src, color, align, alignVertical, cover, animation, animationDuration);
     }
@@ -473,15 +531,23 @@ export class Vegas {
     return videoElement;
   }
 
-  private setupVideoElement(
-    slideElement: HTMLElement,
-    video: VegasVideo,
-    color: string,
-    align: string | undefined,
-    alignVertical: string | undefined,
-    cover: string,
-    transitionDuration: number | undefined,
-  ): HTMLVideoElement {
+  private setupVideoElement({
+    slideElement,
+    video,
+    color,
+    align,
+    alignVertical,
+    cover,
+    transitionDuration,
+  }: {
+    align: string;
+    alignVertical: string;
+    color: string;
+    cover: string;
+    slideElement: HTMLElement;
+    transitionDuration: number;
+    video: VegasVideo;
+  }): HTMLVideoElement {
     const videoElement = Array.isArray(video.src) ? this.preloadVideo(video.src) : this.preloadVideo(video.src);
 
     videoElement.loop = video.loop ?? true;
@@ -519,11 +585,11 @@ export class Vegas {
     slideElement: HTMLElement,
     src: string,
     color: string,
-    align: string | undefined,
-    alignVertical: string | undefined,
+    align: string,
+    alignVertical: string,
     cover: string,
-    animation: VegasAnimationWithRandom | undefined,
-    animationDuration: number | undefined,
+    animation: VegasAnimationWithRandom,
+    animationDuration: number,
   ): void {
     const innerElement = document.createElement('div');
 
@@ -542,13 +608,19 @@ export class Vegas {
     slideElement.appendChild(innerElement);
   }
 
-  private handleSlideTransition(
-    slideElement: HTMLElement,
-    transition: VegasTransition | undefined,
-    transitionDuration: number | undefined,
-    videoElement: HTMLVideoElement | null,
-    src: string | undefined,
-  ): void {
+  private handleSlideTransition({
+    slideElement,
+    transition,
+    transitionDuration,
+    videoElement,
+    src,
+  }: {
+    slideElement: HTMLElement;
+    transition: VegasTransition | null;
+    transitionDuration: number;
+    videoElement: HTMLVideoElement | null;
+    src?: string | undefined;
+  }): void {
     if (!this.support.transition) {
       slideElement.style.display = 'none';
     }
