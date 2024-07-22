@@ -269,9 +269,7 @@ export class Vegas {
     }
 
     if (state) {
-      const timeout = 100;
-
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         if (this.timerElement) {
           this.timerElement.classList.add('vegas-timer-running');
           const timerElement = this.timerElement.querySelector('div');
@@ -280,27 +278,22 @@ export class Vegas {
             const delay = this.settings.delay;
 
             if (delay) {
-              timerElement.style.transitionDuration = `${delay - timeout}ms`;
+              timerElement.style.transitionDuration = `${delay}ms`;
             }
           }
         }
-      }, timeout);
+      });
     }
   }
 
   private preloadVideo(vSources: string | string[]): HTMLVideoElement {
-    let videoSources = vSources;
-
-    const cacheKey = videoSources.toString();
+    const cacheKey = Array.isArray(vSources) ? vSources.toString() : vSources;
 
     if (Vegas.videoCache[cacheKey]) {
       return Vegas.videoCache[cacheKey];
     }
 
-    if (!Array.isArray(videoSources)) {
-      videoSources = [videoSources];
-    }
-
+    const videoSources = Array.isArray(vSources) ? vSources : [vSources];
     const videoElement = document.createElement('video');
 
     videoElement.preload = 'auto';
@@ -589,9 +582,8 @@ export class Vegas {
 
     const go = (): void => {
       this.timer(true);
-      const timeout = 100;
 
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         if (transition) {
           if (this.support.transition) {
             slideElements.forEach((slide) => {
@@ -613,7 +605,7 @@ export class Vegas {
         this.removeOldSlides(slideElements, this.settings.slidesToKeep);
         this.callCallback('onWalk');
         this.scheduleNextSlide();
-      }, timeout);
+      });
     };
 
     if (videoElement) {
