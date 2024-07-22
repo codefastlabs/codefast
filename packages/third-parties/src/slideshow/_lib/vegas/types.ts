@@ -1,4 +1,4 @@
-export type Transition =
+export type VegasTransition =
   | 'fade'
   | 'fade2'
   | 'blur'
@@ -26,7 +26,7 @@ export type Transition =
   | 'swirlRight'
   | 'swirlRight2';
 
-export type Animation =
+export type VegasAnimation =
   | 'kenburns'
   | 'kenburnsLeft'
   | 'kenburnsRight'
@@ -37,19 +37,19 @@ export type Animation =
   | 'kenburnsDownLeft'
   | 'kenburnsDownRight';
 
-export type VegasTransition = 'random' | Transition;
+export type VegasTransitionWithRandom = 'random' | VegasTransition;
 
-export type VegasAnimation = 'random' | Animation;
+export type VegasAnimationWithRandom = 'random' | VegasAnimation;
 
 export interface VegasBase {
   align?: string;
   alignVertical?: string;
-  animation?: VegasAnimation;
+  animation?: VegasAnimationWithRandom;
   animationDuration?: number | 'auto';
   color?: string;
   cover?: boolean | string;
   delay?: number;
-  transition?: VegasTransition;
+  transition?: VegasTransitionWithRandom;
   transitionDuration?: 'auto' | number;
 }
 
@@ -92,6 +92,6 @@ export interface VegasSettings extends VegasBase, VegasCallback {
   slidesToKeep: number;
   timer: boolean;
   transitionRegister: string[];
-  firstTransition?: Transition;
+  firstTransition?: VegasTransition;
   firstTransitionDuration?: number;
 }

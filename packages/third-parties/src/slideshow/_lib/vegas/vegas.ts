@@ -1,38 +1,16 @@
 import {
-  type Animation,
-  type Transition,
   type VegasAnimation,
+  type VegasTransition,
+  type VegasAnimationWithRandom,
   type VegasCallback,
   type VegasSettings,
   type VegasSlide,
   type VegasSupport,
-  type VegasTransition,
+  type VegasTransitionWithRandom,
   type VegasVideo,
 } from '@/slideshow/_lib/vegas/types';
 import { isVideoCompatible, random } from '@/slideshow/_lib/vegas/utils';
-
-const defaults: VegasSettings = {
-  slideIndex: 0,
-  delay: 5000,
-  loop: true,
-  preload: false,
-  preloadImage: false,
-  preloadVideo: false,
-  timer: true,
-  overlay: false,
-  autoplay: true,
-  shuffle: false,
-  cover: true,
-  align: 'center',
-  alignVertical: 'center',
-  transition: 'fade',
-  transitionDuration: 1000,
-  transitionRegister: [],
-  animationDuration: 'auto',
-  animationRegister: [],
-  slidesToKeep: 1,
-  slides: [],
-};
+import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/vegas/constants';
 
 /**
  * Vegas class to handle slideshow functionality.
@@ -50,8 +28,8 @@ export class Vegas {
   private overlayElement: HTMLElement | null;
   private timeout: NodeJS.Timeout | null;
   private first: boolean;
-  private readonly transitions: Transition[];
-  private readonly animations: Animation[];
+  private readonly transitions: VegasTransition[];
+  private readonly animations: VegasAnimation[];
   private support: VegasSupport;
 
   /**
@@ -61,10 +39,7 @@ export class Vegas {
    */
   constructor(element: HTMLElement, options: Partial<VegasSettings>) {
     this.element = element;
-    this.settings = {
-      ...defaults,
-      ...options,
-    };
+    this.settings = { ...DEFAULT_SETTINGS, ...options };
     this.slideIndex = this.settings.slideIndex;
     this.total = this.settings.slides.length;
     this.noShow = this.total < 2;
@@ -79,13 +54,13 @@ export class Vegas {
     this.support = this.setupSupport();
 
     if (this.settings.shuffle) {
-      this.shuffle();
+      this.shuffleSlides();
     }
 
     this.init();
   }
 
-  public shuffle(): void {
+  public shuffleSlides(): void {
     for (let index = this.total - 1; index > 0; index--) {
       const rand = Math.floor(Math.random() * (index + 1));
 
@@ -99,7 +74,7 @@ export class Vegas {
   public play(): void {
     if (this.paused) {
       this.paused = false;
-      this.next();
+      this.nextSlide();
       this.callCallback('onPlay');
     }
   }
@@ -110,15 +85,15 @@ export class Vegas {
     this.callCallback('onPause');
   }
 
-  public toggle(): void {
+  public togglePlayPause(): void {
     this.paused ? this.play() : this.pause();
   }
 
-  public playing(): boolean {
+  public isPlaying(): boolean {
     return !this.paused && !this.noShow;
   }
 
-  public jump(number: number): void {
+  public jumpToSlide(number: number): void {
     if (number < 0 || number > this.total - 1 || number === this.slideIndex) {
       return;
     }
@@ -127,7 +102,7 @@ export class Vegas {
     this.goto(this.slideIndex);
   }
 
-  public next(): void {
+  public nextSlide(): void {
     this.slideIndex++;
 
     if (this.slideIndex >= this.total) {
@@ -143,7 +118,7 @@ export class Vegas {
     this.goto(this.slideIndex);
   }
 
-  public previous(): void {
+  public previousSlide(): void {
     this.slideIndex--;
 
     if (this.slideIndex < 0) {
@@ -177,53 +152,12 @@ export class Vegas {
     }
   }
 
-  private setupTransitions(): Transition[] {
-    const defaultTransitions: Transition[] = [
-      'fade',
-      'fade2',
-      'blur',
-      'blur2',
-      'flash',
-      'flash2',
-      'negative',
-      'negative2',
-      'burn',
-      'burn2',
-      'slideLeft',
-      'slideLeft2',
-      'slideRight',
-      'slideRight2',
-      'slideUp',
-      'slideUp2',
-      'slideDown',
-      'slideDown2',
-      'zoomIn',
-      'zoomIn2',
-      'zoomOut',
-      'zoomOut2',
-      'swirlLeft',
-      'swirlLeft2',
-      'swirlRight',
-      'swirlRight2',
-    ];
-
-    return defaultTransitions.concat(this.settings.transitionRegister as Transition[]);
+  private setupTransitions(): VegasTransition[] {
+    return [...DEFAULT_TRANSITIONS, ...(this.settings.transitionRegister as VegasTransition[])];
   }
 
-  private setupAnimations(): Animation[] {
-    const defaultAnimations: Animation[] = [
-      'kenburns',
-      'kenburnsLeft',
-      'kenburnsRight',
-      'kenburnsUp',
-      'kenburnsUpLeft',
-      'kenburnsUpRight',
-      'kenburnsDown',
-      'kenburnsDownLeft',
-      'kenburnsDownRight',
-    ];
-
-    return defaultAnimations.concat(this.settings.animationRegister as Animation[]);
+  private setupAnimations(): VegasAnimation[] {
+    return [...DEFAULT_ANIMATIONS, ...(this.settings.animationRegister as VegasAnimation[])];
   }
 
   private setupSupport(): VegasSupport {
@@ -234,7 +168,7 @@ export class Vegas {
     };
   }
 
-  private init(): void {
+  public init(): void {
     // Preloading
     this.preloadSlides();
 
@@ -306,10 +240,10 @@ export class Vegas {
     }
   }
 
-  private slideShow(): void {
+  private scheduleNextSlide(): void {
     if (this.total > 1 && !this.ended && !this.paused && !this.noShow) {
       this.timeout = setTimeout(() => {
-        this.next();
+        this.nextSlide();
       }, this.settings.delay);
     }
   }
@@ -477,7 +411,7 @@ export class Vegas {
     this.handleSlideTransition(slideElement, transition, transitionDuration, videoElement, src);
   }
 
-  private getRandomTransition(transition?: VegasTransition): Transition | undefined {
+  private getRandomTransition(transition?: VegasTransitionWithRandom): VegasTransition | undefined {
     if (transition === 'random') {
       return random(this.transitions);
     }
@@ -485,7 +419,7 @@ export class Vegas {
     return transition;
   }
 
-  private getRandomAnimation(animation?: VegasAnimation): Animation | undefined {
+  private getRandomAnimation(animation?: VegasAnimationWithRandom): VegasAnimation | undefined {
     if (animation === 'random') {
       return random(this.animations);
     }
@@ -498,7 +432,7 @@ export class Vegas {
     align: string | undefined,
     alignVertical: string | undefined,
     cover: string,
-    transition: Transition | undefined,
+    transition: VegasTransition | undefined,
   ): HTMLElement {
     const slideElement = document.createElement('div');
 
@@ -523,7 +457,7 @@ export class Vegas {
     align: string | undefined,
     alignVertical: string | undefined,
     cover: string,
-    animation: VegasAnimation | undefined,
+    animation: VegasAnimationWithRandom | undefined,
     animationDuration: number | undefined,
     transitionDuration: number | undefined,
   ): HTMLVideoElement | null {
@@ -595,7 +529,7 @@ export class Vegas {
     align: string | undefined,
     alignVertical: string | undefined,
     cover: string,
-    animation: VegasAnimation | undefined,
+    animation: VegasAnimationWithRandom | undefined,
     animationDuration: number | undefined,
   ): void {
     const innerElement = document.createElement('div');
@@ -617,7 +551,7 @@ export class Vegas {
 
   private handleSlideTransition(
     slideElement: HTMLElement,
-    transition: Transition | undefined,
+    transition: VegasTransition | undefined,
     transitionDuration: number | undefined,
     videoElement: HTMLVideoElement | null,
     src: string | undefined,
@@ -678,7 +612,7 @@ export class Vegas {
 
         this.removeOldSlides(slideElements, this.settings.slidesToKeep);
         this.callCallback('onWalk');
-        this.slideShow();
+        this.scheduleNextSlide();
       }, timeout);
     };
 
