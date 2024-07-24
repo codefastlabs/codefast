@@ -9,7 +9,7 @@ import {
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
 } from 'input-otp';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp

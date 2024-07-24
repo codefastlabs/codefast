@@ -6,6 +6,10 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "storybook-static/**"]
     },
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
