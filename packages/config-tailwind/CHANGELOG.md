@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.0.5
+
+### Patch Changes
+
+- Update TS config and import paths
+
 ## 0.0.4
 
 ### Patch Changes

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Radio

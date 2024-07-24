@@ -14,10 +14,11 @@
     "lint": "next lint --fix --max-warnings 0",
     "start": "next start",
     "start-storybook": "serve storybook-static",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006 --no-open --quiet"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",
+    "@codefast/third-parties": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-icons": "^1.3.0",
