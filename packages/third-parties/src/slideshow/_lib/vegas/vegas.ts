@@ -656,24 +656,7 @@ export class Vegas {
       this.timer(true);
 
       requestAnimationFrame(() => {
-        if (transition) {
-          if (this.support.transition) {
-            slideElements.forEach((slide) => {
-              slide.style.transition = `all ${transitionDuration}ms`;
-              slide.classList.add(`vegas-transition-${transition}-out`);
-              const activeVideo = slide.querySelector('video');
-
-              if (activeVideo && transitionDuration) {
-                activeVideo.volume > 0 && this.fadeOutSound(activeVideo, transitionDuration);
-              }
-            });
-            slideElement.style.transition = `all ${transitionDuration}ms`;
-            slideElement.classList.add(`vegas-transition-${transition}-in`);
-          } else {
-            slideElement.style.display = 'block';
-          }
-        }
-
+        this.performTransition(transition, slideElements, transitionDuration, slideElement);
         this.removeOldSlides(slideElements, this.settings.slidesToKeep);
         this.callCallback('onWalk');
         this.scheduleNextSlide();
@@ -681,17 +664,55 @@ export class Vegas {
     };
 
     if (videoElement) {
-      if (videoElement.readyState === 4) {
-        videoElement.currentTime = 0;
-      }
-
-      void videoElement.play();
-      go();
+      this.handleVideoElement(videoElement, go);
     } else if (src) {
-      const img = new Image();
+      this.handleImageElement(src, go);
+    }
+  }
 
-      img.src = src;
-      img.complete ? go() : (img.onload = go);
+  private performTransition(
+    transition: VegasTransition | null,
+    slideElements: NodeListOf<HTMLElement>,
+    transitionDuration: number,
+    slideElement: HTMLElement,
+  ): void {
+    if (transition) {
+      if (this.support.transition) {
+        slideElements.forEach((slide) => {
+          slide.style.transition = `all ${transitionDuration}ms`;
+          slide.classList.add(`vegas-transition-${transition}-out`);
+          const activeVideo = slide.querySelector('video');
+
+          if (activeVideo && transitionDuration) {
+            activeVideo.volume > 0 && this.fadeOutSound(activeVideo, transitionDuration);
+          }
+        });
+        slideElement.style.transition = `all ${transitionDuration}ms`;
+        slideElement.classList.add(`vegas-transition-${transition}-in`);
+      } else {
+        slideElement.style.display = 'block';
+      }
+    }
+  }
+
+  private handleVideoElement(videoElement: HTMLVideoElement, callback: () => void): void {
+    if (videoElement.readyState === 4) {
+      videoElement.currentTime = 0;
+    }
+
+    void videoElement.play();
+    callback();
+  }
+
+  private handleImageElement(src: string, callback: () => void): void {
+    const img = new Image();
+
+    img.src = src;
+
+    if (img.complete) {
+      callback();
+    } else {
+      img.onload = callback;
     }
   }
 
