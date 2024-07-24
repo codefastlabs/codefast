@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.0.6
+
+### Patch Changes
+
+- Update TS config and import paths
+
 ## 0.0.5
 
 ### Patch Changes

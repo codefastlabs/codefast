@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.71
+
+### Patch Changes
+
+- Update import paths across multiple components
+
 ## 0.0.70
 
 ### Patch Changes

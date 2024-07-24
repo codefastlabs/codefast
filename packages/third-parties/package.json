@@ -1,0 +1,44 @@
+{
+  "name": "@codefast/third-parties",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codefastlabs/codefast",
+    "directory": "packages/third-parties"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "type": "module",
+  "exports": {
+    "./slideshow": {
+      "types": "./dist/slideshow.d.ts",
+      "import": "./dist/slideshow.js",
+      "require": "./dist/slideshow.cjs"
+    },
+    "./slideshow.css": "./dist/slideshow.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@codefast/config-typescript": "workspace:*",
+    "@codefast/eslint-config": "workspace:*",
+    "@types/eslint": "^8.56.10",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "esbuild-sass-plugin": "^3.3.1",
+    "eslint": "^8.57.0",
+    "react": "^18.3.1",
+    "tsup": "^8.1.2",
+    "typescript": "^5.5.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

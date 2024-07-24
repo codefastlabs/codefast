@@ -4,7 +4,7 @@ import * as React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
-import { Spinner } from './spinner';
+import { Spinner } from '@/react/spinner';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

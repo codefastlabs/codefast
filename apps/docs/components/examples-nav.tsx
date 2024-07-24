@@ -39,6 +39,10 @@ const examples = [
     name: 'Authentication',
     href: '/examples/authentication',
   },
+  {
+    name: 'Slideshow',
+    href: '/examples/slideshow',
+  },
 ];
 
 type ExamplesNavProps = HTMLAttributes<HTMLDivElement>;

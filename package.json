@@ -14,6 +14,7 @@
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "release": "turbo run build --filter=docs^... && changeset publish",
+    "start": "turbo start",
     "version-packages": "changeset version"
   },
   "prettier": {

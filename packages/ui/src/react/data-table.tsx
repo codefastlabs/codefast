@@ -13,7 +13,7 @@ import {
   MixerHorizontalIcon,
 } from '@radix-ui/react-icons';
 import type * as ReactTable from '@tanstack/react-table';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -22,9 +22,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './dropdown-menu';
-import { Button } from './button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+} from '@/react/dropdown-menu';
+import { Button } from '@/react/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/react/select';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions
