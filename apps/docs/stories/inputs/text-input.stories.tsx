@@ -18,6 +18,16 @@ const meta = {
   component: TextInput,
   tags: ['autodocs'],
   title: 'Components/Inputs/Text Input',
+  argTypes: {
+    inputSize: {
+      control: { type: 'inline-radio' },
+      description: 'The size of the button.',
+      options: ['xs', 'sm', 'default', 'lg'],
+    },
+  },
+  args: {
+    inputSize: 'default',
+  },
 } satisfies Meta<typeof TextInput>;
 
 export default meta;

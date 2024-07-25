@@ -7,27 +7,32 @@ import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { Spinner } from '@/react/spinner';
 
 /* -----------------------------------------------------------------------------
- * Variant: Input
+ * Variant: InputRoot
  * -------------------------------------------------------------------------- */
 
 const inputVariants = tv({
   slots: {
-    root: 'border-input inline-flex w-full cursor-text items-center gap-3 rounded-md border bg-transparent px-3 shadow-sm transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 has-[input[disabled]]:cursor-default has-[input[disabled]]:opacity-50 [&_svg]:size-4',
-    slot: 'placeholder:text-muted-foreground size-full flex-1 bg-transparent text-sm outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-default',
+    root: 'border-input inline-flex w-full cursor-text items-center gap-3 rounded-md border bg-transparent px-3 shadow-sm transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 has-[[disabled]]:cursor-default has-[[type=file]]:cursor-pointer has-[[disabled]]:opacity-50 [&_svg]:size-4',
+    input:
+      'placeholder:text-muted-foreground size-full flex-1 bg-transparent text-sm outline-none file:cursor-pointer file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-default',
   },
   variants: {
     inputSize: {
       default: {
         root: 'h-10',
+        input: 'file:py-2.25',
       },
       xs: {
         root: 'h-8',
+        input: 'file:py-1.25',
       },
       sm: {
         root: 'h-9',
+        input: 'file:py-1.75',
       },
       lg: {
         root: 'h-11',
+        input: 'file:py-2.75',
       },
     },
   },
@@ -38,29 +43,29 @@ const inputVariants = tv({
 
 type InputVariantsProps = VariantProps<typeof inputVariants>;
 
-const { root, slot } = inputVariants();
+const { root, input } = inputVariants();
 
 /* -----------------------------------------------------------------------------
- * Context: Input
+ * Context: InputRoot
  * -------------------------------------------------------------------------- */
 
-const INPUT_NAME = 'Input';
+const INPUT_ROOT_NAME = 'InputRoot';
 
-type ScopedProps<P> = P & { __scopeInput?: Scope };
-const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
+type ScopedProps<P> = P & { __scopeInputRoot?: Scope };
+const [createInputRootContext, createInputRootScope] = createContextScope(INPUT_ROOT_NAME);
 
-interface InputContextValue {
+interface InputRootContextValue {
   inputRef: React.RefObject<HTMLInputElement>;
-  disabled?: boolean;
+  inputSize?: InputVariantsProps['inputSize'];
 }
 
-const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
+const [InputRootProvider, useInputRootContext] = createInputRootContext<InputRootContextValue>(INPUT_ROOT_NAME);
 
 /* -----------------------------------------------------------------------------
- * Component: Input
+ * Component: InputRoot
  * -------------------------------------------------------------------------- */
 
-interface InputProps extends React.PropsWithChildren, InputVariantsProps {
+interface InputRootProps extends React.PropsWithChildren, InputVariantsProps {
   className?: string | undefined;
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
@@ -68,8 +73,8 @@ interface InputProps extends React.PropsWithChildren, InputVariantsProps {
   suffix?: React.ReactNode;
 }
 
-function Input({
-  __scopeInput,
+function InputRoot({
+  __scopeInputRoot,
   className,
   prefix,
   suffix,
@@ -78,7 +83,7 @@ function Input({
   inputSize,
   children,
   ...props
-}: ScopedProps<InputProps>): React.JSX.Element {
+}: ScopedProps<InputRootProps>): React.JSX.Element {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -95,51 +100,58 @@ function Input({
     }
 
     requestAnimationFrame(() => {
+      // if the input is a file input, we need to trigger a click event
+      if (inputElement.type === 'file') {
+        inputElement.click();
+
+        return;
+      }
+
       inputElement.focus();
     });
   };
 
   return (
-    <InputProvider inputRef={inputRef} scope={__scopeInput}>
+    <InputRootProvider inputRef={inputRef} inputSize={inputSize} scope={__scopeInputRoot}>
       <div className={root({ inputSize, className })} {...props} role="presentation" onPointerDown={handlePointerDown}>
         {loading && loaderPosition === 'prefix' ? <Spinner /> : prefix}
         {children}
         {loading && loaderPosition === 'suffix' ? <Spinner /> : suffix}
       </div>
-    </InputProvider>
+    </InputRootProvider>
   );
 }
 
 /* -----------------------------------------------------------------------------
- * Component: InputSlot
+ * Component: Input
  * -------------------------------------------------------------------------- */
 
-const INPUT_SLOT_NAME = 'InputSlot';
+const INPUT_NAME = 'Input';
 
-type InputSlotElement = HTMLInputElement;
-type InputSlotProps = React.InputHTMLAttributes<HTMLInputElement>;
+type InputElement = HTMLInputElement;
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-const InputSlot = React.forwardRef<InputSlotElement, InputSlotProps>(
-  ({ __scopeInput, className, ...props }: ScopedProps<InputSlotProps>, forwardedRef) => {
-    const context = useInputContext(INPUT_SLOT_NAME, __scopeInput);
-    const composedInputRef = useComposedRefs(forwardedRef, context.inputRef);
+const Input = React.forwardRef<InputElement, InputProps>(
+  ({ __scopeInputRoot, className, ...props }: ScopedProps<InputProps>, forwardedRef) => {
+    const { inputSize, inputRef } = useInputRootContext(INPUT_NAME, __scopeInputRoot);
+    const composedInputRef = useComposedRefs(forwardedRef, inputRef);
 
-    return <input ref={composedInputRef} className={slot({ className })} type="text" {...props} />;
+    return <input ref={composedInputRef} className={input({ inputSize, className })} type="text" {...props} />;
   },
 );
 
-InputSlot.displayName = 'Input';
+Input.displayName = 'Input';
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
 export {
-  createInputScope,
+  createInputRootScope,
+  InputRoot,
   Input,
-  InputSlot,
   inputVariants,
+  type InputRootProps,
   type InputProps,
-  type InputSlotProps,
   type InputVariantsProps,
 };
