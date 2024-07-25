@@ -152,11 +152,6 @@
       "import": "./dist/react/hover-card.js",
       "require": "./dist/react/hover-card.cjs"
     },
-    "./input": {
-      "types": "./dist/react/input.d.ts",
-      "import": "./dist/react/input.js",
-      "require": "./dist/react/input.cjs"
-    },
     "./input-otp": {
       "types": "./dist/react/input-otp.d.ts",
       "import": "./dist/react/input-otp.js",

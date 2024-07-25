@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { CheckIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
-import * as CheckboxGroupPrimitive from '@/react/checkbox-group.primitive';
+import * as CheckboxGroupPrimitive from '@/react/primitive/checkbox-group';
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroup
