@@ -1,19 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { Input, type InputProps, InputSlot, type InputSlotProps } from '@/react/input';
+import { Input, type InputProps, InputRoot, type InputRootProps } from '@/react/primitive/input';
 
 /* -----------------------------------------------------------------------------
  * Component: TextInput
  * -------------------------------------------------------------------------- */
 
 type TextInputElement = HTMLInputElement;
-interface TextInputProps extends InputProps, Omit<InputSlotProps, 'prefix'> {}
+interface TextInputProps extends InputRootProps, Omit<InputProps, 'prefix'> {}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
   ({ className, loading, loaderPosition, prefix, suffix, inputSize, ...props }, ref) => {
     return (
-      <Input
+      <InputRoot
         className={className}
         inputSize={inputSize}
         loaderPosition={loaderPosition}
@@ -21,8 +21,8 @@ const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
         prefix={prefix}
         suffix={suffix}
       >
-        <InputSlot ref={ref} {...props} />
-      </Input>
+        <Input ref={ref} {...props} />
+      </InputRoot>
     );
   },
 );
