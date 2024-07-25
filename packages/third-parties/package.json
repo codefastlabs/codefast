@@ -29,14 +29,14 @@
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/eslint": "8.56.10",
-    "@types/node": "20.14.10",
+    "@types/eslint": "9.6.0",
+    "@types/node": "20.14.12",
     "@types/react": "18.3.3",
     "esbuild-sass-plugin": "3.3.1",
     "eslint": "8.57.0",
     "react": "18.3.1",
     "tsup": "8.1.2",
-    "typescript": "5.5.3"
+    "typescript": "5.5.4"
   },
   "publishConfig": {
     "access": "public"
