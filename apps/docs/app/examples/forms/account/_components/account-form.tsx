@@ -107,7 +107,6 @@ export function AccountForm(): JSX.Element {
                 </PopoverTrigger>
                 <PopoverContent align="start" className="w-auto p-0">
                   <Calendar
-                    initialFocus
                     disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                     mode="single"
                     selected={field.value}
