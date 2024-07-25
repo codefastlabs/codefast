@@ -188,18 +188,14 @@ CheckboxGroupIndicator.displayName = INDICATOR_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-const Root = CheckboxGroup;
-const Item = CheckboxGroupItem;
-const Indicator = CheckboxGroupIndicator;
-
 export {
   createCheckboxGroupScope,
   CheckboxGroup,
   CheckboxGroupItem,
   CheckboxGroupIndicator,
-  Root,
-  Item,
-  Indicator,
+  CheckboxGroup as Root,
+  CheckboxGroupItem as Item,
+  CheckboxGroupIndicator as Indicator,
   type CheckboxGroupProps,
   type CheckboxGroupItemProps,
   type CheckboxGroupIndicatorProps,

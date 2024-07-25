@@ -7,7 +7,7 @@ import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { Spinner } from '@/react/spinner';
 
 /* -----------------------------------------------------------------------------
- * Variant: InputRoot
+ * Variant: Input
  * -------------------------------------------------------------------------- */
 
 const inputVariants = tv({
@@ -49,17 +49,17 @@ const { root, input } = inputVariants();
  * Context: InputRoot
  * -------------------------------------------------------------------------- */
 
-const INPUT_ROOT_NAME = 'InputRoot';
+const INPUT_NAME = 'Input';
 
 type ScopedProps<P> = P & { __scopeInputRoot?: Scope };
-const [createInputRootContext, createInputRootScope] = createContextScope(INPUT_ROOT_NAME);
+const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
 
-interface InputRootContextValue {
+interface InputContextValue {
   inputRef: React.RefObject<HTMLInputElement>;
   inputSize?: InputVariantsProps['inputSize'];
 }
 
-const [InputRootProvider, useInputRootContext] = createInputRootContext<InputRootContextValue>(INPUT_ROOT_NAME);
+const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: InputRoot
@@ -112,46 +112,48 @@ function InputRoot({
   };
 
   return (
-    <InputRootProvider inputRef={inputRef} inputSize={inputSize} scope={__scopeInputRoot}>
+    <InputProvider inputRef={inputRef} inputSize={inputSize} scope={__scopeInputRoot}>
       <div className={root({ inputSize, className })} {...props} role="presentation" onPointerDown={handlePointerDown}>
         {loading && loaderPosition === 'prefix' ? <Spinner /> : prefix}
         {children}
         {loading && loaderPosition === 'suffix' ? <Spinner /> : suffix}
       </div>
-    </InputRootProvider>
+    </InputProvider>
   );
 }
 
 /* -----------------------------------------------------------------------------
- * Component: Input
+ * Component: InputItem
  * -------------------------------------------------------------------------- */
 
-const INPUT_NAME = 'Input';
+const INPUT_ITEM_NAME = 'InputItem';
 
-type InputElement = HTMLInputElement;
-type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type InputItemElement = HTMLInputElement;
+type InputItemProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-const Input = React.forwardRef<InputElement, InputProps>(
-  ({ __scopeInputRoot, className, ...props }: ScopedProps<InputProps>, forwardedRef) => {
-    const { inputSize, inputRef } = useInputRootContext(INPUT_NAME, __scopeInputRoot);
+const InputItem = React.forwardRef<InputItemElement, InputItemProps>(
+  ({ __scopeInputRoot, className, ...props }: ScopedProps<InputItemProps>, forwardedRef) => {
+    const { inputSize, inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInputRoot);
     const composedInputRef = useComposedRefs(forwardedRef, inputRef);
 
     return <input ref={composedInputRef} className={input({ inputSize, className })} type="text" {...props} />;
   },
 );
 
-Input.displayName = 'Input';
+InputItem.displayName = INPUT_ITEM_NAME;
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
 export {
-  createInputRootScope,
+  createInputScope,
   InputRoot,
-  Input,
+  InputRoot as Root,
+  InputItem,
+  InputItem as Item,
   inputVariants,
   type InputRootProps,
-  type InputProps,
+  type InputItemProps,
   type InputVariantsProps,
 };
