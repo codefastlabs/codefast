@@ -58,7 +58,7 @@
     "chromatic": "11.5.5",
     "concurrently": "8.2.2",
     "eslint": "8.57.0",
-    "eslint-config-turbo": "2.0.6",
+    "eslint-config-turbo": "2.0.9",
     "eslint-plugin-storybook": "0.8.0",
     "postcss": "8.4.39",
     "serve": "14.2.3",
