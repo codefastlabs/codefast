@@ -11,7 +11,7 @@ type TextInputElement = HTMLInputElement;
 interface TextInputProps extends InputRootProps, Omit<InputItemProps, 'prefix'> {}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
-  ({ className, loading, loaderPosition, prefix, suffix, inputSize, ...props }, ref) => {
+  ({ className, loading, loaderPosition, prefix, suffix, inputSize, ...props }, forwardedRef) => {
     return (
       <InputRoot
         className={className}
@@ -21,7 +21,7 @@ const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
         prefix={prefix}
         suffix={suffix}
       >
-        <InputItem ref={ref} {...props} />
+        <InputItem ref={forwardedRef} {...props} />
       </InputRoot>
     );
   },
