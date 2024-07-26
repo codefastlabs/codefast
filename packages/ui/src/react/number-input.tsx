@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { InputItem, type InputItemProps } from '@/react/primitive/input';
-import { NumberInputButton, NumberInputRoot, type NumberInputRootProps } from '@/react/primitive/number-input';
+import * as InputPrimitive from '@/react/primitive/input';
+import * as NumberInputPrimitive from '@/react/primitive/number-input';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -9,12 +9,12 @@ import { cn } from '@/lib/utils';
 
 type NumberInputElement = HTMLInputElement;
 interface NumberInputProps
-  extends Omit<NumberInputRootProps, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'>,
-    Omit<InputItemProps, 'prefix'> {}
+  extends Omit<NumberInputPrimitive.NumberInputRootProps, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'>,
+    Omit<InputPrimitive.InputItemProps, 'prefix'> {}
 
 export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
   ({ className, inputSize, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props }, forwardedRef) => (
-    <NumberInputRoot
+    <NumberInputPrimitive.Root
       className={cn('pr-0', className)}
       decrementAriaLabel={decrementAriaLabel}
       formatOptions={formatOptions}
@@ -22,13 +22,21 @@ export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps
       inputSize={inputSize}
       suffix={
         <div className="grid h-full divide-y rounded-r-md border-l">
-          <NumberInputButton className="h-full rounded-none rounded-tr-md" iconType="chevron" slot="increment" />
-          <NumberInputButton className="h-full rounded-none rounded-br-md" iconType="chevron" slot="decrement" />
+          <NumberInputPrimitive.Button
+            className="h-full rounded-none rounded-tr-md"
+            iconType="chevron"
+            slot="increment"
+          />
+          <NumberInputPrimitive.Button
+            className="h-full rounded-none rounded-br-md"
+            iconType="chevron"
+            slot="decrement"
+          />
         </div>
       }
     >
-      <InputItem ref={forwardedRef} inputMode="numeric" {...props} />
-    </NumberInputRoot>
+      <InputPrimitive.Item ref={forwardedRef} inputMode="numeric" {...props} />
+    </NumberInputPrimitive.Root>
   ),
 );
 
