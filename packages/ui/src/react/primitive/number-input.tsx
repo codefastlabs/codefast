@@ -13,7 +13,7 @@ const NUMBER_INPUT_NAME = 'NumberInput';
 
 type ScopedProps<P> = P & { __scopeNumberInput?: Scope };
 const [createNumberInputContext] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
-const useInputRootScope = createInputScope();
+const useInputScope = createInputScope();
 
 interface NumberInputRootContextValue {
   decrementAriaLabel: string;
@@ -37,7 +37,7 @@ interface NumberInputRootProps extends InputPrimitive.InputProps {
 function NumberInputRoot(numberInputRootProps: NumberInputRootProps): React.JSX.Element {
   const { __scopeNumberInput, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props } =
     numberInputRootProps as ScopedProps<NumberInputRootProps>;
-  const inputRootScope = useInputRootScope(__scopeNumberInput);
+  const inputRootScope = useInputScope(__scopeNumberInput);
 
   return (
     <NumberInputRootProvider
