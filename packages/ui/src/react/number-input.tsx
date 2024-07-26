@@ -8,10 +8,13 @@ import { cn } from '@/lib/utils';
  * Component: NumberInput
  * -------------------------------------------------------------------------- */
 
-type NumberInputElement = HTMLInputElement;
+type NumberInputElement = React.ElementRef<typeof NumberInputPrimitive.Item>;
 interface NumberInputProps
-  extends Omit<NumberInputPrimitive.NumberInputRootProps, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'>,
-    Omit<NumberInputPrimitive.ItemProps, 'prefix'> {}
+  extends Omit<
+      React.ComponentProps<typeof NumberInputPrimitive.Root>,
+      'prefix' | 'suffix' | 'loading' | 'loaderPosition'
+    >,
+    Omit<React.ComponentPropsWithoutRef<typeof NumberInputPrimitive.Item>, 'prefix'> {}
 
 export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
   ({ className, inputSize, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props }, forwardedRef) => (

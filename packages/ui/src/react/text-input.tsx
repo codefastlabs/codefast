@@ -7,8 +7,10 @@ import * as InputPrimitive from '@/react/primitive/input';
  * Component: TextInput
  * -------------------------------------------------------------------------- */
 
-type TextInputElement = HTMLInputElement;
-interface TextInputProps extends InputPrimitive.InputProps, Omit<InputPrimitive.InputItemProps, 'prefix'> {}
+type TextInputElement = React.ElementRef<typeof InputPrimitive.Item>;
+interface TextInputProps
+  extends React.ComponentProps<typeof InputPrimitive.Root>,
+    Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix'> {}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
   ({ className, loading, loaderPosition, prefix, suffix, inputSize, ...props }, forwardedRef) => {
