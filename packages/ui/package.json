@@ -3,7 +3,7 @@
   "version": "0.0.71",
   "license": "MIT",
   "sideEffects": [
-    "**/*.css"
+    "*.css"
   ],
   "type": "module",
   "exports": {
@@ -176,6 +176,11 @@
       "types": "./dist/react/navigation-menu.d.ts",
       "import": "./dist/react/navigation-menu.js",
       "require": "./dist/react/navigation-menu.cjs"
+    },
+    "./number-input": {
+      "types": "./dist/react/number-input.d.ts",
+      "import": "./dist/react/number-input.js",
+      "require": "./dist/react/number-input.cjs"
     },
     "./pagination": {
       "types": "./dist/react/pagination.d.ts",
