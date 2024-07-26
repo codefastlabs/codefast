@@ -148,6 +148,8 @@ export {
   InputItem as Item,
   inputVariants,
   type InputProps,
+  type InputProps as RootProps,
   type InputItemProps,
+  type InputItemProps as ItemProps,
   type InputVariantsProps,
 };

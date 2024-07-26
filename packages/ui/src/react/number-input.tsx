@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as InputPrimitive from '@/react/primitive/input';
 import * as NumberInputPrimitive from '@/react/primitive/number-input';
 import { cn } from '@/lib/utils';
 
@@ -12,7 +11,7 @@ import { cn } from '@/lib/utils';
 type NumberInputElement = HTMLInputElement;
 interface NumberInputProps
   extends Omit<NumberInputPrimitive.NumberInputRootProps, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'>,
-    Omit<InputPrimitive.InputItemProps, 'prefix'> {}
+    Omit<NumberInputPrimitive.ItemProps, 'prefix'> {}
 
 export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
   ({ className, inputSize, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props }, forwardedRef) => (
@@ -23,7 +22,7 @@ export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps
       incrementAriaLabel={incrementAriaLabel}
       inputSize={inputSize}
       suffix={
-        <div className="grid h-full divide-y rounded-r-md border-l">
+        <div className="ml-auto grid h-full divide-y rounded-r-md border-l">
           <NumberInputPrimitive.Button
             className="h-full rounded-none rounded-tr-md"
             iconType="chevron"
@@ -37,7 +36,7 @@ export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps
         </div>
       }
     >
-      <InputPrimitive.Item ref={forwardedRef} inputMode="numeric" {...props} />
+      <NumberInputPrimitive.Item ref={forwardedRef} inputMode="numeric" {...props} />
     </NumberInputPrimitive.Root>
   ),
 );

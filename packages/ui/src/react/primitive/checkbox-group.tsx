@@ -197,12 +197,15 @@ CheckboxGroupIndicator.displayName = INDICATOR_NAME;
 export {
   createCheckboxGroupScope,
   CheckboxGroup,
-  CheckboxGroupItem,
-  CheckboxGroupIndicator,
   CheckboxGroup as Root,
+  CheckboxGroupItem,
   CheckboxGroupItem as Item,
+  CheckboxGroupIndicator,
   CheckboxGroupIndicator as Indicator,
   type CheckboxGroupProps,
+  type CheckboxGroupProps as RootProps,
   type CheckboxGroupItemProps,
+  type CheckboxGroupItemProps as ItemProps,
   type CheckboxGroupIndicatorProps,
+  type CheckboxGroupIndicatorProps as IndicatorProps,
 };
