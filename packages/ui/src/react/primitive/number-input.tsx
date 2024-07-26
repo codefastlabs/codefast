@@ -14,7 +14,7 @@ import { createInputScope } from '@/react/primitive/input';
 const NUMBER_INPUT_NAME = 'NumberInput';
 
 type ScopedProps<P> = P & { __scopeNumberInput?: Scope };
-const [createNumberInputContext] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
+const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
 interface NumberInputRootContextValue {
@@ -39,7 +39,7 @@ interface NumberInputRootProps extends InputPrimitive.InputProps {
 function NumberInputRoot(numberInputRootProps: NumberInputRootProps): React.JSX.Element {
   const { __scopeNumberInput, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props } =
     numberInputRootProps as ScopedProps<NumberInputRootProps>;
-  const inputRootScope = useInputScope(__scopeNumberInput);
+  const inputScope = useInputScope(__scopeNumberInput);
 
   return (
     <NumberInputRootProvider
@@ -48,12 +48,31 @@ function NumberInputRoot(numberInputRootProps: NumberInputRootProps): React.JSX.
       incrementAriaLabel={incrementAriaLabel ?? 'Decrease'}
       scope={__scopeNumberInput}
     >
-      <InputPrimitive.Root {...inputRootScope} {...props} />
+      <InputPrimitive.Root {...inputScope} {...props} />
     </NumberInputRootProvider>
   );
 }
 
 NumberInputRoot.displayName = NUMBER_INPUT_NAME;
+
+/* -----------------------------------------------------------------------------
+ * Component: NumberInputItem
+ * -------------------------------------------------------------------------- */
+
+const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
+
+type NumberInputItemElement = React.ElementRef<typeof InputPrimitive.Item>;
+type NumberInputItemProps = InputPrimitive.ItemProps;
+
+const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItemProps>(
+  ({ __scopeNumberInput, ...props }: ScopedProps<NumberInputItemProps>, forwardedRef): React.JSX.Element => {
+    const inputScope = useInputScope(__scopeNumberInput);
+
+    return <InputPrimitive.Item ref={forwardedRef} {...inputScope} {...props} />;
+  },
+);
+
+NumberInputItem.displayName = NUMBER_INPUT_ITEM_NAME;
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInputIcon
@@ -112,13 +131,21 @@ NumberInputButton.displayName = NUMBER_INPUT_BUTTON_NAME;
  * -------------------------------------------------------------------------- */
 
 export {
+  createNumberInputScope,
   NumberInputRoot,
   NumberInputRoot as Root,
+  NumberInputItem,
+  NumberInputItem as Item,
   NumberInputButton,
   NumberInputButton as Button,
   NumberInputIcon,
   NumberInputIcon as Icon,
   type NumberInputRootProps,
+  type NumberInputRootProps as RootProps,
+  type NumberInputItemProps,
+  type NumberInputItemProps as ItemProps,
   type NumberInputButtonProps,
+  type NumberInputButtonProps as ButtonProps,
   type NumberInputIconProps,
+  type NumberInputIconProps as IconProps,
 };
