@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import * as InputPrimitive from '@/react/primitive/input';
 import * as NumberInputPrimitive from '@/react/primitive/number-input';

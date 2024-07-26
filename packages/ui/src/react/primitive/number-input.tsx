@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { ChevronDownIcon, ChevronUpIcon, MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
