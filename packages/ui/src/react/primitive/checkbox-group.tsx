@@ -9,7 +9,7 @@ import { useDirection } from '@radix-ui/react-direction';
 import { Primitive } from '@radix-ui/react-primitive';
 
 /* -------------------------------------------------------------------------------------------------
- * Component: CheckboxGroup
+ * Context: CheckboxGroup
  * -----------------------------------------------------------------------------------------------*/
 
 const CHECKBOX_GROUP_NAME = 'CheckboxGroup';
@@ -35,6 +35,10 @@ interface CheckboxGroupContextValue {
 
 const [CheckboxGroupProvider, useCheckboxGroupContext] =
   createCheckboxGroupContext<CheckboxGroupContextValue>(CHECKBOX_GROUP_NAME);
+
+/* -------------------------------------------------------------------------------------------------
+ * Component: CheckboxGroup
+ * -----------------------------------------------------------------------------------------------*/
 
 type CheckboxGroupElement = React.ElementRef<typeof Primitive.div>;
 
@@ -120,7 +124,7 @@ CheckboxGroup.displayName = CHECKBOX_GROUP_NAME;
  * Component: CheckboxGroupItem
  * -----------------------------------------------------------------------------------------------*/
 
-const ITEM_NAME = `${CHECKBOX_GROUP_NAME}Item`;
+const ITEM_NAME = 'CheckboxGroupItem';
 
 type CheckboxGroupItemElement = React.ElementRef<typeof CheckboxPrimitive.Root>;
 
@@ -169,7 +173,7 @@ CheckboxGroupItem.displayName = ITEM_NAME;
  * Component: CheckboxGroupIndicator
  * -----------------------------------------------------------------------------------------------*/
 
-const INDICATOR_NAME = `${CHECKBOX_GROUP_NAME}Indicator`;
+const INDICATOR_NAME = 'CheckboxGroupIndicator';
 
 type CheckboxGroupIndicatorElement = React.ElementRef<typeof CheckboxPrimitive.Indicator>;
 type CheckboxGroupIndicatorProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Indicator>;

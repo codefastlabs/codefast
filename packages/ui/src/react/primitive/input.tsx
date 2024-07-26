@@ -12,7 +12,7 @@ import { Spinner } from '@/react/spinner';
 
 const inputVariants = tv({
   slots: {
-    root: 'border-input inline-flex w-full cursor-text items-center gap-3 rounded-md border bg-transparent px-3 shadow-sm transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 has-[[disabled]]:cursor-default has-[[type=file]]:cursor-pointer has-[[disabled]]:opacity-50 [&_svg]:size-4',
+    root: 'border-input inline-flex w-full cursor-text items-center gap-3 rounded-md border bg-transparent px-3 shadow-sm transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-0 has-[[disabled]]:cursor-default has-[[type=file]]:cursor-pointer has-[[disabled]]:opacity-50 [&_svg]:size-4',
     input:
       'placeholder:text-muted-foreground size-full flex-1 bg-transparent text-sm outline-none file:cursor-pointer file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:cursor-default',
   },
@@ -49,9 +49,9 @@ const { root, input } = inputVariants();
  * Context: InputRoot
  * -------------------------------------------------------------------------- */
 
-const INPUT_NAME = 'Input';
+const INPUT_NAME = 'InputRoot';
 
-type ScopedProps<P> = P & { __scopeInputRoot?: Scope };
+type ScopedProps<P> = P & { __scopeInput?: Scope };
 const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
 
 interface InputContextValue {
@@ -73,17 +73,9 @@ interface InputRootProps extends React.PropsWithChildren, InputVariantsProps {
   suffix?: React.ReactNode;
 }
 
-function InputRoot({
-  __scopeInputRoot,
-  className,
-  prefix,
-  suffix,
-  loading,
-  loaderPosition,
-  inputSize,
-  children,
-  ...props
-}: ScopedProps<InputRootProps>): React.JSX.Element {
+function InputRoot(inputRootProps: InputRootProps): React.JSX.Element {
+  const { __scopeInput, className, prefix, suffix, loading, loaderPosition, inputSize, children, ...props } =
+    inputRootProps as ScopedProps<InputRootProps>;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -112,8 +104,8 @@ function InputRoot({
   };
 
   return (
-    <InputProvider inputRef={inputRef} inputSize={inputSize} scope={__scopeInputRoot}>
-      <div className={root({ inputSize, className })} {...props} role="presentation" onPointerDown={handlePointerDown}>
+    <InputProvider inputRef={inputRef} inputSize={inputSize} scope={__scopeInput}>
+      <div className={root({ inputSize, className })} role="presentation" onPointerDown={handlePointerDown} {...props}>
         {loading && loaderPosition === 'prefix' ? <Spinner /> : prefix}
         {children}
         {loading && loaderPosition === 'suffix' ? <Spinner /> : suffix}
@@ -121,6 +113,8 @@ function InputRoot({
     </InputProvider>
   );
 }
+
+InputRoot.displayName = INPUT_NAME;
 
 /* -----------------------------------------------------------------------------
  * Component: InputItem
@@ -132,8 +126,8 @@ type InputItemElement = HTMLInputElement;
 type InputItemProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const InputItem = React.forwardRef<InputItemElement, InputItemProps>(
-  ({ __scopeInputRoot, className, ...props }: ScopedProps<InputItemProps>, forwardedRef) => {
-    const { inputSize, inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInputRoot);
+  ({ __scopeInput, className, ...props }: ScopedProps<InputItemProps>, forwardedRef) => {
+    const { inputSize, inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
     const composedInputRef = useComposedRefs(forwardedRef, inputRef);
 
     return <input ref={composedInputRef} className={input({ inputSize, className })} type="text" {...props} />;
