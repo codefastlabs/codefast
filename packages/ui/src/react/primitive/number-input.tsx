@@ -10,13 +10,14 @@ import { createInputScope, InputRoot, type InputRootProps } from '@/react/primit
 
 const NUMBER_INPUT_NAME = 'NumberInput';
 
-type ScopedProps<P> = P & { __scopeNumberInputRoot?: Scope };
+type ScopedProps<P> = P & { __scopeNumberInput?: Scope };
 const [createNumberInputContext] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputRootScope = createInputScope();
 
 interface NumberInputRootContextValue {
   decrementAriaLabel: string;
   incrementAriaLabel: string;
+  formatOptions?: Intl.NumberFormatOptions;
 }
 
 const [NumberInputRootProvider, useNumberInputRootContext] =
@@ -32,24 +33,24 @@ interface NumberInputRootProps extends InputRootProps {
   incrementAriaLabel?: string;
 }
 
-function NumberInputRoot({
-  __scopeNumberInputRoot,
-  decrementAriaLabel,
-  incrementAriaLabel,
-  ...props
-}: ScopedProps<NumberInputRootProps>): React.JSX.Element {
-  const inputRootScope = useInputRootScope(__scopeNumberInputRoot);
+function NumberInputRoot(numberInputRootProps: NumberInputRootProps): React.JSX.Element {
+  const { __scopeNumberInput, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props } =
+    numberInputRootProps as ScopedProps<NumberInputRootProps>;
+  const inputRootScope = useInputRootScope(__scopeNumberInput);
 
   return (
     <NumberInputRootProvider
       decrementAriaLabel={decrementAriaLabel ?? 'Increase'}
+      formatOptions={formatOptions}
       incrementAriaLabel={incrementAriaLabel ?? 'Decrease'}
-      scope={__scopeNumberInputRoot}
+      scope={__scopeNumberInput}
     >
       <InputRoot {...inputRootScope} {...props} />
     </NumberInputRootProvider>
   );
 }
+
+NumberInputRoot.displayName = NUMBER_INPUT_NAME;
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInputButtonIcon
@@ -79,16 +80,22 @@ type NumberInputButtonProps = NumberInputButtonIconProps;
 
 const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInputButtonProps>(
   (
-    { __scopeNumberInputRoot, slot, iconType, ...props }: ScopedProps<NumberInputButtonProps>,
+    { __scopeNumberInput, slot, iconType, ...props }: ScopedProps<NumberInputButtonProps>,
     forwardedRef,
   ): React.JSX.Element => {
     const { incrementAriaLabel, decrementAriaLabel } = useNumberInputRootContext(
       NUMBER_INPUT_BUTTON_NAME,
-      __scopeNumberInputRoot,
+      __scopeNumberInput,
     );
 
     return (
-      <Button ref={forwardedRef} aria-label={slot === 'increment' ? incrementAriaLabel : decrementAriaLabel} {...props}>
+      <Button
+        ref={forwardedRef}
+        aria-label={slot === 'increment' ? incrementAriaLabel : decrementAriaLabel}
+        size="icon"
+        variant="ghost"
+        {...props}
+      >
         <NumberInputButtonIcon iconType={iconType} slot={slot} />
       </Button>
     );
