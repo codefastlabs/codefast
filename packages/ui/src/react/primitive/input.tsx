@@ -46,10 +46,10 @@ type InputVariantsProps = VariantProps<typeof inputVariants>;
 const { root, input } = inputVariants();
 
 /* -----------------------------------------------------------------------------
- * Context: InputRoot
+ * Context: Input
  * -------------------------------------------------------------------------- */
 
-const INPUT_NAME = 'InputRoot';
+const INPUT_NAME = 'Input';
 
 type ScopedProps<P> = P & { __scopeInput?: Scope };
 const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
@@ -62,10 +62,10 @@ interface InputContextValue {
 const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
 /* -----------------------------------------------------------------------------
- * Component: InputRoot
+ * Component: Input
  * -------------------------------------------------------------------------- */
 
-interface InputRootProps extends React.PropsWithChildren, InputVariantsProps {
+interface InputProps extends React.PropsWithChildren, InputVariantsProps {
   className?: string | undefined;
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
@@ -73,9 +73,9 @@ interface InputRootProps extends React.PropsWithChildren, InputVariantsProps {
   suffix?: React.ReactNode;
 }
 
-function InputRoot(inputRootProps: InputRootProps): React.JSX.Element {
+function Input(inputProps: InputProps): React.JSX.Element {
   const { __scopeInput, className, prefix, suffix, loading, loaderPosition, inputSize, children, ...props } =
-    inputRootProps as ScopedProps<InputRootProps>;
+    inputProps as ScopedProps<InputProps>;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -114,7 +114,7 @@ function InputRoot(inputRootProps: InputRootProps): React.JSX.Element {
   );
 }
 
-InputRoot.displayName = INPUT_NAME;
+Input.displayName = INPUT_NAME;
 
 /* -----------------------------------------------------------------------------
  * Component: InputItem
@@ -142,12 +142,12 @@ InputItem.displayName = INPUT_ITEM_NAME;
 
 export {
   createInputScope,
-  InputRoot,
-  InputRoot as Root,
+  Input,
+  Input as Root,
   InputItem,
   InputItem as Item,
   inputVariants,
-  type InputRootProps,
+  type InputProps,
   type InputItemProps,
   type InputVariantsProps,
 };
