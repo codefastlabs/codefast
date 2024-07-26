@@ -2,10 +2,11 @@ import * as React from 'react';
 import { ChevronDownIcon, ChevronUpIcon, MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { Button, type ButtonProps } from '@/react/button';
-import { createInputScope, InputRoot, type InputRootProps } from '@/react/primitive/input';
+import * as InputPrimitive from '@/react/primitive/input';
+import { createInputScope } from '@/react/primitive/input';
 
 /* -----------------------------------------------------------------------------
- * Context: NumberInputRoot
+ * Context: NumberInput
  * -------------------------------------------------------------------------- */
 
 const NUMBER_INPUT_NAME = 'NumberInput';
@@ -27,7 +28,7 @@ const [NumberInputRootProvider, useNumberInputRootContext] =
  * Component: NumberInputRoot
  * -------------------------------------------------------------------------- */
 
-interface NumberInputRootProps extends InputRootProps {
+interface NumberInputRootProps extends InputPrimitive.InputProps {
   decrementAriaLabel?: string;
   formatOptions?: Intl.NumberFormatOptions;
   incrementAriaLabel?: string;
@@ -45,7 +46,7 @@ function NumberInputRoot(numberInputRootProps: NumberInputRootProps): React.JSX.
       incrementAriaLabel={incrementAriaLabel ?? 'Decrease'}
       scope={__scopeNumberInput}
     >
-      <InputRoot {...inputRootScope} {...props} />
+      <InputPrimitive.Root {...inputRootScope} {...props} />
     </NumberInputRootProvider>
   );
 }
@@ -53,15 +54,15 @@ function NumberInputRoot(numberInputRootProps: NumberInputRootProps): React.JSX.
 NumberInputRoot.displayName = NUMBER_INPUT_NAME;
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInputButtonIcon
+ * Component: NumberInputIcon
  * -------------------------------------------------------------------------- */
 
-interface NumberInputButtonIconProps extends ButtonProps {
+interface NumberInputIconProps extends ButtonProps {
   slot: 'decrement' | 'increment';
   iconType?: 'chevron' | 'default';
 }
 
-function NumberInputButtonIcon({ slot, iconType }: NumberInputButtonIconProps): React.JSX.Element {
+function NumberInputIcon({ slot, iconType }: NumberInputIconProps): React.JSX.Element {
   if (iconType === 'chevron') {
     return slot === 'increment' ? <ChevronUpIcon /> : <ChevronDownIcon />;
   }
@@ -76,7 +77,7 @@ function NumberInputButtonIcon({ slot, iconType }: NumberInputButtonIconProps): 
 const NUMBER_INPUT_BUTTON_NAME = 'NumberInputButton';
 
 type NumberInputButtonElement = React.ElementRef<typeof Button>;
-type NumberInputButtonProps = NumberInputButtonIconProps;
+type NumberInputButtonProps = NumberInputIconProps;
 
 const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInputButtonProps>(
   (
@@ -96,7 +97,7 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
         variant="ghost"
         {...props}
       >
-        <NumberInputButtonIcon iconType={iconType} slot={slot} />
+        <NumberInputIcon iconType={iconType} slot={slot} />
       </Button>
     );
   },
@@ -113,9 +114,9 @@ export {
   NumberInputRoot as Root,
   NumberInputButton,
   NumberInputButton as Button,
-  NumberInputButtonIcon,
-  NumberInputButtonIcon as ButtonIcon,
+  NumberInputIcon,
+  NumberInputIcon as Icon,
   type NumberInputRootProps,
   type NumberInputButtonProps,
-  type NumberInputButtonIconProps,
+  type NumberInputIconProps,
 };
