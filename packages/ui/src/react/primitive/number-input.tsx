@@ -19,10 +19,10 @@ const [createNumberInputContext, createNumberInputScope] = createContextScope(NU
 const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
-  decrementAriaLabel: string;
-  incrementAriaLabel: string;
   inputRef: React.RefObject<HTMLInputElement>;
+  decrementAriaLabel?: string;
   formatOptions?: Intl.NumberFormatOptions;
+  incrementAriaLabel?: string;
 }
 
 const [NumberInputProvider, useNumberInputContext] =
@@ -46,9 +46,9 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
 
   return (
     <NumberInputProvider
-      decrementAriaLabel={decrementAriaLabel ?? 'Increase'}
+      decrementAriaLabel={decrementAriaLabel}
       formatOptions={formatOptions}
-      incrementAriaLabel={incrementAriaLabel ?? 'Decrease'}
+      incrementAriaLabel={incrementAriaLabel}
       inputRef={inputRef}
       scope={__scopeNumberInput}
     >
