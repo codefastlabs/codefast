@@ -9,7 +9,7 @@ import * as InputPrimitive from '@/react/primitive/input';
 import { createInputScope } from '@/react/primitive/input';
 
 /* -----------------------------------------------------------------------------
- * Context: NumberInput
+ * Component: NumberInput
  * -------------------------------------------------------------------------- */
 
 const NUMBER_INPUT_NAME = 'NumberInput';
@@ -27,10 +27,6 @@ interface NumberInputContextValue {
 
 const [NumberInputProvider, useNumberInputContext] =
   createNumberInputContext<NumberInputContextValue>(NUMBER_INPUT_NAME);
-
-/* -----------------------------------------------------------------------------
- * Component: NumberInput
- * -------------------------------------------------------------------------- */
 
 interface NumberInputProps extends InputPrimitive.InputProps {
   decrementAriaLabel?: string;

@@ -8,14 +8,14 @@ import { cn } from '@/lib/utils';
 import { Button, type ButtonProps } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
- * Context: Carousel
+ * Component: Carousel
  * -------------------------------------------------------------------------- */
 
 const CAROUSEL_NAME = 'Carousel';
 
 type ScopedProps<P> = P & { __scopeCarousel?: Scope };
 
-const [createCarouselContext] = createContextScope(CAROUSEL_NAME);
+const [createCarouselContext, createCarouselScope] = createContextScope(CAROUSEL_NAME);
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -39,10 +39,6 @@ type CarouselContextValue = {
 } & BaseCarouselProps;
 
 const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
-
-/* -----------------------------------------------------------------------------
- * Component: Carousel
- * -------------------------------------------------------------------------- */
 
 type CarouselElement = HTMLDivElement;
 type CarouselProps = React.HTMLAttributes<HTMLDivElement> & BaseCarouselProps;
@@ -285,12 +281,13 @@ CarouselNext.displayName = CAROUSEL_NEXT_NAME;
  * -------------------------------------------------------------------------- */
 
 export {
-  type CarouselApi,
+  createCarouselScope,
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  type CarouselApi,
   type CarouselProps,
   type CarouselContentProps,
   type CarouselItemProps,

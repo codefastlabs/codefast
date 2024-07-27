@@ -11,7 +11,7 @@ import { useDirection } from '@radix-ui/react-direction';
 import { Primitive } from '@radix-ui/react-primitive';
 
 /* -------------------------------------------------------------------------------------------------
- * Context: CheckboxGroup
+ * Component: CheckboxGroup
  * -----------------------------------------------------------------------------------------------*/
 
 const CHECKBOX_GROUP_NAME = 'CheckboxGroup';
@@ -37,10 +37,6 @@ interface CheckboxGroupContextValue {
 
 const [CheckboxGroupProvider, useCheckboxGroupContext] =
   createCheckboxGroupContext<CheckboxGroupContextValue>(CHECKBOX_GROUP_NAME);
-
-/* -------------------------------------------------------------------------------------------------
- * Component: CheckboxGroup
- * -----------------------------------------------------------------------------------------------*/
 
 type CheckboxGroupElement = React.ElementRef<typeof Primitive.div>;
 
