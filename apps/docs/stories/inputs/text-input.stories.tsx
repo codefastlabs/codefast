@@ -40,8 +40,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    type: 'email',
+    name: 'email',
     placeholder: 'Email',
+    type: 'email',
   },
   render: (args) => {
     return <TextInput {...args} />;

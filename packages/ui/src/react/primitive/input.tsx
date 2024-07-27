@@ -46,7 +46,7 @@ type InputVariantsProps = VariantProps<typeof inputVariants>;
 const { root, input } = inputVariants();
 
 /* -----------------------------------------------------------------------------
- * Context: Input
+ * Component: Input
  * -------------------------------------------------------------------------- */
 
 const INPUT_NAME = 'Input';
@@ -60,10 +60,6 @@ interface InputContextValue {
 }
 
 const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
-
-/* -----------------------------------------------------------------------------
- * Component: Input
- * -------------------------------------------------------------------------- */
 
 interface InputProps extends React.PropsWithChildren, InputVariantsProps {
   className?: string | undefined;
