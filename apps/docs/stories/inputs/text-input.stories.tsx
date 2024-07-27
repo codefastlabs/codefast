@@ -135,6 +135,9 @@ const FormSchema = z.object({
   username: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
+  email: z.string().email({
+    message: 'Invalid email address.',
+  }),
 });
 
 export const ReactHookForm: Story = {
@@ -151,6 +154,7 @@ export const ReactHookForm: Story = {
       resolver: zodResolver(FormSchema),
       defaultValues: {
         username: '',
+        email: '',
       },
     });
 
@@ -168,28 +172,53 @@ export const ReactHookForm: Story = {
     return (
       <Form {...form}>
         <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <TextInput
-                    disabled={form.formState.isSubmitting}
-                    loaderPosition="suffix"
-                    loading={form.formState.isSubmitting}
-                    placeholder="codefast"
-                    prefix={<UserIcon />}
-                    {...field}
-                    {...args}
-                  />
-                </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <TextInput
+                      disabled={form.formState.isSubmitting}
+                      loaderPosition="suffix"
+                      loading={form.formState.isSubmitting}
+                      placeholder="codefast"
+                      prefix={<UserIcon />}
+                      {...field}
+                      {...args}
+                    />
+                  </FormControl>
+                  <FormDescription>This is your public display name.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <TextInput
+                      disabled={form.formState.isSubmitting}
+                      loaderPosition="suffix"
+                      loading={form.formState.isSubmitting}
+                      placeholder="info@codefast.one"
+                      prefix={<MailIcon />}
+                      {...field}
+                      {...args}
+                    />
+                  </FormControl>
+                  <FormDescription>This is your public display name.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <Button disabled={form.formState.isSubmitting} type="submit">
             Submit
           </Button>
