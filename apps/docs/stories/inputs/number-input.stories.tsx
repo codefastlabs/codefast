@@ -9,6 +9,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Pre } from '@codefast/ui/pre';
 import { Button } from '@codefast/ui/button';
 import { Code } from '@codefast/ui/code';
+import { useState } from 'react';
 
 const meta = {
   args: {
@@ -184,6 +185,32 @@ export const Sizes: Story = {
         <NumberInput {...args} inputSize="sm" />
         <NumberInput {...args} />
         <NumberInput {...args} inputSize="lg" />
+      </div>
+    );
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
+export const Controlled: Story = {
+  args: {
+    placeholder: 'Controlled',
+  },
+  render: (args) => {
+    const [value, setValue] = useState('50');
+
+    return (
+      <div className="space-y-4">
+        <NumberInput
+          {...args}
+          value={value}
+          onChange={(event) => {
+            setValue(event.target.value);
+          }}
+        />
+        <p>Mirrored number: {value}</p>
       </div>
     );
   },
