@@ -3,13 +3,6 @@ import { ExclamationTriangleIcon, RocketIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
-  argTypes: {
-    variant: {
-      control: { type: 'inline-radio' },
-      description: 'The variant of the alert.',
-      options: ['default', 'destructive'],
-    },
-  },
   args: {
     variant: 'default',
   },
