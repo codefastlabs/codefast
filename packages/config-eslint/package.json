@@ -1,7 +1,14 @@
 {
   "name": "@codefast/eslint-config",
   "version": "0.0.33",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codefastlabs/codefast",
+    "directory": "packages/config-eslint"
+  },
   "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "sideEffects": false,
   "files": [
     "library.js",
     "next.js",
