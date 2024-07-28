@@ -39,7 +39,15 @@ export const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps
         </div>
       }
     >
-      <NumberInputPrimitive.Item ref={forwardedRef} inputMode="numeric" {...props} />
+      <NumberInputPrimitive.Item
+        ref={forwardedRef}
+        autoCapitalize="off"
+        autoComplete="off"
+        autoCorrect="off"
+        inputMode="numeric"
+        spellCheck="false"
+        {...props}
+      />
     </NumberInputPrimitive.Root>
   ),
 );
