@@ -5,24 +5,6 @@ import Link from 'next/link';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
-  argTypes: {
-    variant: {
-      control: { type: 'inline-radio' },
-      description: 'The variant of the button.',
-      options: ['default', 'secondary', 'outline', 'destructive', 'ghost', 'link'],
-    },
-    size: {
-      control: { type: 'inline-radio' },
-      description: 'The size of the button.',
-      options: ['sm', 'default', 'lg'],
-    },
-    disabled: {
-      control: { type: 'boolean' },
-    },
-    loading: {
-      control: { type: 'boolean' },
-    },
-  },
   args: {
     variant: 'default',
     size: 'default',

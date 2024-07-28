@@ -15,19 +15,12 @@ import { TextInput } from '@codefast/ui/text-input';
 import { wait } from 'next/dist/lib/wait';
 
 const meta = {
-  component: TextInput,
-  tags: ['autodocs'],
-  title: 'Components/Inputs/Text Input',
-  argTypes: {
-    inputSize: {
-      control: { type: 'inline-radio' },
-      description: 'The size of the button.',
-      options: ['xs', 'sm', 'default', 'lg'],
-    },
-  },
   args: {
     inputSize: 'default',
   },
+  component: TextInput,
+  tags: ['autodocs'],
+  title: 'Components/Inputs/Text Input',
 } satisfies Meta<typeof TextInput>;
 
 export default meta;

@@ -11,19 +11,12 @@ import { Button } from '@codefast/ui/button';
 import { Code } from '@codefast/ui/code';
 
 const meta = {
-  component: NumberInput,
-  tags: ['autodocs'],
-  title: 'Components/Inputs/Number Input',
-  argTypes: {
-    inputSize: {
-      control: { type: 'inline-radio' },
-      description: 'The size of the button.',
-      options: ['xs', 'sm', 'default', 'lg'],
-    },
-  },
   args: {
     inputSize: 'default',
   },
+  component: NumberInput,
+  tags: ['autodocs'],
+  title: 'Components/Inputs/Number Input',
 } satisfies Meta<typeof NumberInput>;
 
 export default meta;
