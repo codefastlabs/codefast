@@ -21,14 +21,15 @@ const [createNumberInputContext, createNumberInputScope] = createContextScope(NU
 const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
+  formatOptions: Intl.NumberFormatOptions;
   formatValue: (value: number) => string;
   inputRef: React.RefObject<HTMLInputElement>;
   onDecrement: () => void;
   onIncrement: () => void;
+  parseValue: (value: string) => number;
   setValue: React.Dispatch<React.SetStateAction<number>>;
   value: number;
   decrementAriaLabel?: string;
-  formatOptions?: Intl.NumberFormatOptions;
   incrementAriaLabel?: string;
 }
 
@@ -39,32 +40,39 @@ interface NumberInputProps extends InputPrimitive.InputProps {
   decrementAriaLabel?: string;
   formatOptions?: Intl.NumberFormatOptions;
   incrementAriaLabel?: string;
+  locale?: string;
 }
 
 function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
-  const { __scopeNumberInput, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props } =
-    numberInputProps as ScopedProps<NumberInputProps>;
+  const {
+    __scopeNumberInput,
+    decrementAriaLabel,
+    incrementAriaLabel,
+    formatOptions = { style: 'decimal', minimumFractionDigits: 0 },
+    locale,
+    ...props
+  } = numberInputProps as ScopedProps<NumberInputProps>;
   const inputScope = useInputScope(__scopeNumberInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [number, setNumber] = React.useState<number>(0);
 
   const formatValue = React.useCallback(
     (value: number): string => {
-      if (formatOptions) {
-        return new Intl.NumberFormat(undefined, formatOptions).format(value);
-      }
-
-      return value.toString();
+      return new Intl.NumberFormat(locale, formatOptions).format(value);
     },
-    [formatOptions],
+    [formatOptions, locale],
   );
+
+  const parseValue = React.useCallback((value: string): number => {
+    return parseFloat(value);
+  }, []);
 
   const handleIncrement = React.useCallback(() => {
     if (!inputRef.current) {
       return;
     }
 
-    const step = parseFloat(inputRef.current.step) || (formatOptions?.style === 'percent' ? 0.01 : 1);
+    const step = parseFloat(inputRef.current.step) || (formatOptions.style === 'percent' ? 0.01 : 1);
     const max = parseFloat(inputRef.current.max);
 
     setNumber((prev) => {
@@ -72,14 +80,14 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
 
       return !isNaN(max) ? Math.min(newValue, max) : newValue;
     });
-  }, [formatOptions?.style]);
+  }, [formatOptions.style]);
 
   const handleDecrement = React.useCallback(() => {
     if (!inputRef.current) {
       return;
     }
 
-    const step = parseFloat(inputRef.current.step) || (formatOptions?.style === 'percent' ? 0.01 : 1);
+    const step = parseFloat(inputRef.current.step) || (formatOptions.style === 'percent' ? 0.01 : 1);
     const min = parseFloat(inputRef.current.min);
 
     setNumber((prev) => {
@@ -87,7 +95,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
 
       return !isNaN(min) ? Math.max(newValue, min) : newValue;
     });
-  }, [formatOptions?.style]);
+  }, [formatOptions.style]);
 
   return (
     <NumberInputProvider
@@ -96,6 +104,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       formatValue={formatValue}
       incrementAriaLabel={incrementAriaLabel}
       inputRef={inputRef}
+      parseValue={parseValue}
       scope={__scopeNumberInput}
       setValue={setNumber}
       value={number}
@@ -121,7 +130,7 @@ type NumberInputItemProps = React.ComponentPropsWithoutRef<typeof InputPrimitive
 const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItemProps>(
   ({ __scopeNumberInput, ...props }: ScopedProps<NumberInputItemProps>, forwardedRef): React.JSX.Element => {
     const inputScope = useInputScope(__scopeNumberInput);
-    const { inputRef, onIncrement, onDecrement, formatOptions, setValue, formatValue } = useNumberInputContext(
+    const { inputRef, onIncrement, onDecrement, setValue, formatValue, parseValue } = useNumberInputContext(
       NUMBER_INPUT_ITEM_NAME,
       __scopeNumberInput,
     );
@@ -129,28 +138,25 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
     const handleChange = React.useCallback<React.ChangeEventHandler<HTMLInputElement>>(
       (event) => {
-        const numericValue = parseFloat(event.target.value);
+        const numericValue = parseValue(event.target.value);
 
         if (!isNaN(numericValue)) {
           setValue(numericValue);
         }
       },
-      [setValue],
+      [parseValue, setValue],
     );
 
     const handleBlur = React.useCallback<React.FocusEventHandler<HTMLInputElement>>(
       (event) => {
-        if (!formatOptions) {
-          return;
-        }
-
-        const formattedValue = formatValue(parseFloat(event.target.value));
+        const numericValue = parseValue(event.target.value);
+        const formattedValue = formatValue(numericValue);
 
         if (formattedValue !== event.target.value) {
           event.target.value = formattedValue;
         }
       },
-      [formatOptions, formatValue],
+      [formatValue, parseValue],
     );
 
     const handleKeyDown = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
@@ -181,10 +187,6 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
     const handleKeyDownEnter = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
         if (event.key === 'Enter') {
-          if (!formatOptions) {
-            return;
-          }
-
           const numericValue = parseFloat(event.currentTarget.value);
 
           if (!isNaN(numericValue)) {
@@ -192,7 +194,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
           }
         }
       },
-      [formatOptions, formatValue],
+      [formatValue],
     );
 
     React.useEffect(() => {
@@ -273,18 +275,18 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
     { __scopeNumberInput, slot, iconType, ...props }: ScopedProps<NumberInputButtonProps>,
     forwardedRef,
   ): React.JSX.Element => {
-    const { incrementAriaLabel, decrementAriaLabel, onIncrement, onDecrement } = useNumberInputContext(
+    const { incrementAriaLabel, decrementAriaLabel, onIncrement, onDecrement, inputRef } = useNumberInputContext(
       NUMBER_INPUT_BUTTON_NAME,
       __scopeNumberInput,
     );
 
-    const handleClick = (): void => {
+    const handleClick = React.useCallback(() => {
       if (slot === 'increment') {
         onIncrement();
       } else {
         onDecrement();
       }
-    };
+    }, [onDecrement, onIncrement, slot]);
 
     return (
       <Button
@@ -293,6 +295,7 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
         size="icon"
         variant="ghost"
         {...props}
+        disabled={Boolean(inputRef.current?.readOnly) || Boolean(inputRef.current?.disabled)}
         onClick={handleClick}
       >
         <NumberInputIcon iconType={iconType} slot={slot} />
