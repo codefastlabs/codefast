@@ -140,6 +140,56 @@ export const FormatingWithUnit: Story = {
 };
 
 /* -----------------------------------------------------------------------------
+ * Story: Min and Max
+ * -------------------------------------------------------------------------- */
+
+export const MinAndMax: Story = {
+  args: {
+    placeholder: 'Min and Max',
+    defaultValue: 50,
+    min: 0,
+    max: 100,
+  },
+  render: (args) => {
+    return <NumberInput {...args} />;
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Step
+ * -------------------------------------------------------------------------- */
+
+export const Step: Story = {
+  args: {
+    placeholder: 'Step',
+    defaultValue: 50,
+    step: 10,
+  },
+  render: (args) => {
+    return <NumberInput {...args} />;
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
+export const Sizes: Story = {
+  args: {
+    placeholder: 'Sizes',
+  },
+  render: (args) => {
+    return (
+      <div className="grid place-items-center gap-4 sm:grid-cols-3">
+        <NumberInput {...args} inputSize="sm" />
+        <NumberInput {...args} />
+        <NumberInput {...args} inputSize="lg" />
+      </div>
+    );
+  },
+};
+
+/* -----------------------------------------------------------------------------
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 

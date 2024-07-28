@@ -10,8 +10,6 @@ function getAbsolutePath(value: string): any {
 }
 
 const config: StorybookConfig = {
-  stories: ['../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-
   addons: [
     getAbsolutePath('@storybook/addon-links'),
     getAbsolutePath('@storybook/addon-essentials'),
@@ -19,16 +17,15 @@ const config: StorybookConfig = {
     getAbsolutePath('@storybook/addon-themes'),
     getAbsolutePath('@chromatic-com/storybook'),
   ],
-
+  core: {
+    disableWhatsNewNotifications: true,
+    disableTelemetry: true,
+  },
   framework: {
     name: getAbsolutePath('@storybook/nextjs'),
     options: {},
   },
-
   staticDirs: ['../public'],
-
-  core: {
-    disableWhatsNewNotifications: true,
-  },
+  stories: ['../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
 };
 export default config;
