@@ -9,13 +9,6 @@ const meta = {
   component: ScrollArea,
   tags: ['autodocs'],
   title: 'Components/Misc/Scroll Area',
-  argTypes: {
-    size: {
-      control: { type: 'inline-radio' },
-      description: 'The size of the scroll area',
-      options: ['none', '1', '2', '3'],
-    },
-  },
   args: {
     size: '2',
   },
