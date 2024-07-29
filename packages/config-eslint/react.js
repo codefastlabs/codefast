@@ -18,6 +18,7 @@ module.exports = {
   },
   plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
     '@typescript-eslint/restrict-template-expressions': [
       'warn',
       {
