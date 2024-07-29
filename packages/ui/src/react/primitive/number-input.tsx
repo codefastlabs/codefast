@@ -102,31 +102,33 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   );
 
   const handleIncrement = React.useCallback(() => {
-    if (!inputRef.current || inputRef.current.disabled || inputRef.current.readOnly) {
+    const inputElement = inputRef.current;
+
+    if (!inputElement || inputElement.disabled || inputElement.readOnly) {
       return;
     }
 
-    const step = getStepValue(inputRef, formatOptions);
-
-    const max = getMaxValue(inputRef);
-    const currentValue = parseValue(inputRef.current.value) || 0;
-
+    const step = getStepValue(inputElement.step, formatOptions);
+    const max = getMaxValue(inputElement.max);
+    const currentValue = parseValue(inputElement.value) || 0;
     const newValue = Math.min(currentValue + step, max);
 
-    inputRef.current.value = formatValue(newValue);
+    inputElement.value = formatValue(newValue);
   }, [formatOptions, formatValue, parseValue]);
 
   const handleDecrement = React.useCallback(() => {
-    if (!inputRef.current || inputRef.current.disabled || inputRef.current.readOnly) {
+    const inputElement = inputRef.current;
+
+    if (!inputElement || inputElement.disabled || inputElement.readOnly) {
       return;
     }
 
-    const step = getStepValue(inputRef, formatOptions);
-    const min = getMinValue(inputRef);
-    const currentValue = parseValue(inputRef.current.value) || 0;
+    const step = getStepValue(inputElement.step, formatOptions);
+    const min = getMinValue(inputElement.min);
+    const currentValue = parseValue(inputElement.value) || 0;
     const newValue = Math.max(currentValue - step, min);
 
-    inputRef.current.value = formatValue(newValue);
+    inputElement.value = formatValue(newValue);
   }, [formatOptions, formatValue, parseValue]);
 
   return (
@@ -249,7 +251,14 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
     React.useEffect(() => {
       const handleWheel = (event: WheelEvent): void => {
-        if (!isElementActiveInput(inputRef.current)) {
+        const inputElement = inputRef.current;
+
+        if (
+          !inputElement ||
+          inputElement.disabled ||
+          inputElement.readOnly ||
+          document.activeElement !== inputElement
+        ) {
           return;
         }
 
@@ -403,25 +412,24 @@ NumberInputDecrementButton.displayName = NUMBER_INPUT_DECREMENT_BUTTON_NAME;
  * Utils
  * -------------------------------------------------------------------------- */
 
-function parseStepValue(inputRef: React.RefObject<HTMLInputElement>): number {
-  const stepValue = inputRef.current?.step;
-  const parsedValue = stepValue !== undefined ? parseFloat(stepValue) : NaN;
+function parseStepValue(step: string | undefined): number {
+  const parsedValue = step !== undefined ? parseFloat(step) : NaN;
 
   return isNaN(parsedValue) ? 1 : parsedValue;
 }
 
-function getStepValue(inputRef: React.RefObject<HTMLInputElement>, formatOptions: Intl.NumberFormatOptions): number {
-  const step = parseStepValue(inputRef);
+function getStepValue(step: string | undefined, formatOptions: Intl.NumberFormatOptions): number {
+  const stepValue = parseStepValue(step);
 
-  return formatOptions.style === 'percent' ? step / 100 : step;
+  return formatOptions.style === 'percent' ? stepValue / 100 : stepValue;
 }
 
-function getMinValue(inputRef: React.RefObject<HTMLInputElement>): number {
-  return parseFloat(inputRef.current?.min || '-Infinity');
+function getMinValue(min: string | undefined): number {
+  return parseFloat(min || '-Infinity');
 }
 
-function getMaxValue(inputRef: React.RefObject<HTMLInputElement>): number {
-  return parseFloat(inputRef.current?.max || 'Infinity');
+function getMaxValue(max: string | undefined): number {
+  return parseFloat(max || 'Infinity');
 }
 
 function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
@@ -430,12 +438,6 @@ function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (..
       callback(...args);
     }
   };
-}
-
-function isElementActiveInput(inputElement: HTMLInputElement | null): boolean {
-  return Boolean(
-    inputElement && !inputElement.disabled && !inputElement.readOnly && document.activeElement === inputElement,
-  );
 }
 
 function getNumberFormatSeparators(locale: string): { decimalSeparator: string; thousandSeparator: string } {
