@@ -63,9 +63,23 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     [formatOptions, locale],
   );
 
-  const parseValue = React.useCallback((value: string): number => {
-    return parseFloat(value);
-  }, []);
+  const parseValue = React.useCallback(
+    (value: string): number => {
+      const cleanedValue = value
+        .replace(/[^\d.,\-()]/g, '')
+        .replace(/,/g, '')
+        .replace(/[()]/g, '-');
+
+      if (formatOptions.style === 'percent') {
+        return parseFloat(cleanedValue) / 100;
+      }
+
+      const parsedValue = parseFloat(cleanedValue);
+
+      return isNaN(parsedValue) ? 0 : parsedValue;
+    },
+    [formatOptions.style],
+  );
 
   const handleIncrement = React.useCallback(() => {
     if (!inputRef.current) {
@@ -176,10 +190,14 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         event.key,
       );
       const isFunctionKey = event.key.startsWith('F') && event.key.length > 1;
-      const isOthersKey = ['Tab', 'Escape', 'Enter', 'Backspace', 'Delete'].includes(event.key);
+      const isOthersKey = ['Tab', 'Escape', 'Enter', 'Backspace', 'Delete', 'Home', 'End'].includes(event.key);
       const isAllowedKey = isNavigationKey || isFunctionKey || isModifierKey || isOthersKey;
+      const isNumberKey = !isNaN(Number(event.key));
+      const isDecimalKey = event.key === '.';
+      const isNegativeSignKey = event.key === '-';
+      const isPercentageKey = event.key === '%';
 
-      if (!isAllowedKey && isNaN(Number(event.key))) {
+      if (!isAllowedKey && !isNumberKey && !isDecimalKey && !isNegativeSignKey && !isPercentageKey) {
         event.preventDefault();
       }
     }, []);
