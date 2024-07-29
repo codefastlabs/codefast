@@ -15,7 +15,9 @@ import { createInputScope } from '@/react/primitive/input';
 
 const NUMBER_INPUT_NAME = 'NumberInput';
 
-type ScopedProps<P> = P & { __scopeNumberInput?: Scope };
+type ScopedProps<P> = P & {
+  __scopeNumberInput?: Scope;
+};
 const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
@@ -45,7 +47,10 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     __scopeNumberInput,
     decrementAriaLabel,
     incrementAriaLabel,
-    formatOptions = { style: 'decimal', minimumFractionDigits: 0 },
+    formatOptions = {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+    },
     locale,
     ...props
   } = numberInputProps as ScopedProps<NumberInputProps>;
@@ -94,11 +99,12 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   );
 
   const handleIncrement = React.useCallback(() => {
-    if (!inputRef.current) {
+    if (!inputRef.current || inputRef.current.disabled || inputRef.current.readOnly) {
       return;
     }
 
     const step = getStepValue(inputRef, formatOptions);
+
     const max = getMaxValue(inputRef);
     const currentValue = parseValue(inputRef.current.value) || 0;
 
@@ -108,7 +114,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   }, [formatOptions, formatValue, parseValue]);
 
   const handleDecrement = React.useCallback(() => {
-    if (!inputRef.current) {
+    if (!inputRef.current || inputRef.current.disabled || inputRef.current.readOnly) {
       return;
     }
 
@@ -218,14 +224,16 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
     React.useEffect(() => {
       const handleWheel = (event: WheelEvent): void => {
-        if (document.activeElement === inputRef.current) {
-          event.preventDefault();
+        if (!isElementActiveInput(inputRef.current)) {
+          return;
+        }
 
-          if (event.deltaY < 0) {
-            onIncrement();
-          } else {
-            onDecrement();
-          }
+        event.preventDefault();
+
+        if (event.deltaY < 0) {
+          onIncrement();
+        } else {
+          onDecrement();
         }
       };
 
@@ -330,8 +338,17 @@ NumberInputButton.displayName = NUMBER_INPUT_BUTTON_NAME;
  * Utils
  * -------------------------------------------------------------------------- */
 
+function parseStepValue(inputRef: React.RefObject<HTMLInputElement>): number {
+  const stepValue = inputRef.current?.step;
+  const parsedValue = stepValue !== undefined ? parseFloat(stepValue) : NaN;
+
+  return isNaN(parsedValue) ? 1 : parsedValue;
+}
+
 function getStepValue(inputRef: React.RefObject<HTMLInputElement>, formatOptions: Intl.NumberFormatOptions): number {
-  return parseFloat(inputRef.current?.step || '1') || (formatOptions.style === 'percent' ? 0.01 : 1);
+  const step = parseStepValue(inputRef);
+
+  return formatOptions.style === 'percent' ? step / 100 : step;
 }
 
 function getMinValue(inputRef: React.RefObject<HTMLInputElement>): number {
@@ -349,6 +366,12 @@ function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (..
     }
   };
 }
+
+const isElementActiveInput = (inputElement: HTMLInputElement | null): boolean => {
+  return Boolean(
+    inputElement && !inputElement.disabled && !inputElement.readOnly && document.activeElement === inputElement,
+  );
+};
 
 /* -----------------------------------------------------------------------------
  * Exports
