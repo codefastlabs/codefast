@@ -1,4 +1,5 @@
 const { resolve } = require('node:path');
+const rules = require('./common');
 
 const project = resolve(process.cwd(), 'tsconfig.json');
 
@@ -34,78 +35,6 @@ module.exports = {
         },
       },
     ],
-    '@typescript-eslint/prefer-nullish-coalescing': 'off',
-    '@typescript-eslint/restrict-template-expressions': [
-      'warn',
-      {
-        allowNumber: true,
-      },
-    ],
-    curly: ['warn', 'all'],
-    'import/no-default-export': 'off',
-    'import/order': [
-      'warn',
-      {
-        groups: [
-          'builtin', // Node.js built-in modules
-          'external', // Packages
-          'internal', // Aliased modules
-          'parent', // Relative parent
-          'sibling', // Relative sibling
-          'index', // Relative index
-        ],
-        'newlines-between': 'never',
-        pathGroups: [
-          {
-            pattern: '@/**',
-            group: 'internal',
-          },
-        ],
-      },
-    ],
-    'padding-line-between-statements': [
-      'warn',
-      {
-        blankLine: 'always',
-        next: 'return',
-        prev: '*',
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: ['const', 'let', 'var'],
-      },
-      {
-        blankLine: 'any',
-        next: ['const', 'let', 'var'],
-        prev: ['const', 'let', 'var'],
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: 'block-like',
-      },
-      {
-        blankLine: 'always',
-        next: 'block-like',
-        prev: '*',
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: 'directive',
-      },
-      {
-        blankLine: 'any',
-        next: 'directive',
-        prev: 'directive',
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: ['case', 'default'],
-      },
-    ],
     'react/jsx-pascal-case': [
       'warn',
       {
@@ -129,14 +58,7 @@ module.exports = {
         ignore: ['vaul-drawer-wrapper'],
       },
     ],
-    'typescript-sort-keys/interface': [
-      'warn',
-      'asc',
-      {
-        requiredFirst: true,
-      },
-    ],
-    'typescript-sort-keys/string-enum': 'warn',
+    ...rules,
   },
   settings: {
     'import/resolver': {
