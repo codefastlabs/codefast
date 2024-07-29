@@ -194,20 +194,32 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
     );
 
     const handleKeyDownPrevent = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>((event) => {
-      const isModifierKey = event.ctrlKey || event.altKey || event.metaKey;
-      const isNavigationKey = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown'].includes(
-        event.key,
-      );
-      const isFunctionKey = event.key.startsWith('F') && event.key.length > 1;
-      const isOthersKey = ['Tab', 'Escape', 'Enter', 'Backspace', 'Delete', 'Home', 'End'].includes(event.key);
-      const isAllowedKey = isNavigationKey || isFunctionKey || isModifierKey || isOthersKey;
-      const isNumberKey = !isNaN(Number(event.key));
-      const isDecimalKey = event.key === '.';
-      const isNegativeSignKey = event.key === '-';
-      const isPercentageKey = event.key === '%';
+      switch (event.key) {
+        case 'ArrowUp':
+        case 'ArrowDown':
+        case 'ArrowLeft':
+        case 'ArrowRight':
+        case 'PageUp':
+        case 'PageDown':
+        case 'Tab':
+        case 'Escape':
+        case 'Enter':
+        case 'Backspace':
+        case 'Delete':
+        case 'Home':
+        case 'End':
+        case '.':
+        case ',':
+        case '-':
+        case '%':
+          return;
 
-      if (!isAllowedKey && !isNumberKey && !isDecimalKey && !isNegativeSignKey && !isPercentageKey) {
-        event.preventDefault();
+        default:
+          if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
+            return;
+          }
+
+          event.preventDefault();
       }
     }, []);
 
@@ -441,6 +453,18 @@ function normalizeInputValue(value: string, thousandSeparator: string, decimalSe
     .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
     .replace(new RegExp(`\\${decimalSeparator}`), '.')
     .replace(/[()]/g, '-');
+}
+
+function isModifierKey(event: React.KeyboardEvent<HTMLInputElement>): boolean {
+  return event.ctrlKey || event.altKey || event.metaKey;
+}
+
+function isFunctionKey(key: string): boolean {
+  return key.startsWith('F') && key.length > 1;
+}
+
+function isNumberKey(key: string): boolean {
+  return !isNaN(Number(key));
 }
 
 /* -----------------------------------------------------------------------------

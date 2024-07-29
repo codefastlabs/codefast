@@ -10,6 +10,7 @@
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "sideEffects": false,
   "files": [
+    "common.js",
     "library.js",
     "next.js",
     "react.js"
