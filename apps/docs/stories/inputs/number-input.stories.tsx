@@ -73,6 +73,7 @@ export const FormatingWithDecimal: Story = {
   args: {
     placeholder: 'Decimal',
     defaultValue: 0,
+    step: 0.01,
     formatOptions: {
       signDisplay: 'exceptZero',
       minimumFractionDigits: 1,
