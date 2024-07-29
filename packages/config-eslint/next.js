@@ -34,6 +34,7 @@ module.exports = {
         },
       },
     ],
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
     '@typescript-eslint/restrict-template-expressions': [
       'warn',
       {

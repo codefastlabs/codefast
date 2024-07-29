@@ -8,7 +8,6 @@ import { composeEventHandlers } from '@radix-ui/primitive';
 import { Button, type ButtonProps } from '@/react/button';
 import * as InputPrimitive from '@/react/primitive/input';
 import { createInputScope } from '@/react/primitive/input';
-import { chain } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
@@ -92,28 +91,27 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       return;
     }
 
-    const step = parseFloat(inputRef.current.step) || (formatOptions.style === 'percent' ? 0.01 : 1);
-    const max = parseFloat(inputRef.current.max);
-
+    const step = getStepValue(inputRef, formatOptions);
+    const max = getMaxValue(inputRef);
     const currentValue = parseValue(inputRef.current.value) || 0;
-    const newValue = max ? Math.min(currentValue + step, max) : currentValue + step;
+
+    const newValue = Math.min(currentValue + step, max);
 
     inputRef.current.value = formatValue(newValue);
-  }, [formatOptions.style, formatValue, parseValue]);
+  }, [formatOptions, formatValue, parseValue]);
 
   const handleDecrement = React.useCallback(() => {
     if (!inputRef.current) {
       return;
     }
 
-    const step = parseFloat(inputRef.current.step) || (formatOptions.style === 'percent' ? 0.01 : 1);
-    const min = parseFloat(inputRef.current.min);
-
+    const step = getStepValue(inputRef, formatOptions);
+    const min = getMinValue(inputRef);
     const currentValue = parseValue(inputRef.current.value) || 0;
-    const newValue = min ? Math.max(currentValue - step, min) : currentValue - step;
+    const newValue = Math.max(currentValue - step, min);
 
     inputRef.current.value = formatValue(newValue);
-  }, [formatOptions.style, formatValue, parseValue]);
+  }, [formatOptions, formatValue, parseValue]);
 
   return (
     <NumberInputProvider
@@ -327,6 +325,30 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
 );
 
 NumberInputButton.displayName = NUMBER_INPUT_BUTTON_NAME;
+
+/* -----------------------------------------------------------------------------
+ * Utils
+ * -------------------------------------------------------------------------- */
+
+function getStepValue(inputRef: React.RefObject<HTMLInputElement>, formatOptions: Intl.NumberFormatOptions): number {
+  return parseFloat(inputRef.current?.step || '1') || (formatOptions.style === 'percent' ? 0.01 : 1);
+}
+
+function getMinValue(inputRef: React.RefObject<HTMLInputElement>): number {
+  return parseFloat(inputRef.current?.min || '-Infinity');
+}
+
+function getMaxValue(inputRef: React.RefObject<HTMLInputElement>): number {
+  return parseFloat(inputRef.current?.max || 'Infinity');
+}
+
+function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
+  return (...args: T) => {
+    for (const callback of callbacks) {
+      callback(...args);
+    }
+  };
+}
 
 /* -----------------------------------------------------------------------------
  * Exports
