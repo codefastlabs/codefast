@@ -24,10 +24,12 @@ const useInputScope = createInputScope();
 interface NumberInputContextValue {
   formatOptions: Intl.NumberFormatOptions;
   formatValue: (value: number) => string;
+  ghost: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
   onDecrement: () => void;
   onIncrement: () => void;
   parseValue: (value: string | number | readonly string[] | undefined) => number;
+  setGhost: React.Dispatch<React.SetStateAction<boolean>>;
   decrementAriaLabel?: string;
   incrementAriaLabel?: string;
 }
@@ -56,6 +58,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   } = numberInputProps as ScopedProps<NumberInputProps>;
   const inputScope = useInputScope(__scopeNumberInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const [ghost, setGhost] = React.useState(false);
 
   const formatValue = React.useCallback(
     (value: number): string => {
@@ -131,10 +134,12 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       decrementAriaLabel={decrementAriaLabel}
       formatOptions={formatOptions}
       formatValue={formatValue}
+      ghost={ghost}
       incrementAriaLabel={incrementAriaLabel}
       inputRef={inputRef}
       parseValue={parseValue}
       scope={__scopeNumberInput}
+      setGhost={setGhost}
       onDecrement={handleDecrement}
       onIncrement={handleIncrement}
     >
@@ -157,7 +162,7 @@ type NumberInputItemProps = React.ComponentPropsWithoutRef<typeof InputPrimitive
 const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItemProps>(
   ({ __scopeNumberInput, ...props }: ScopedProps<NumberInputItemProps>, forwardedRef): React.JSX.Element => {
     const inputScope = useInputScope(__scopeNumberInput);
-    const { inputRef, onIncrement, onDecrement, formatValue, parseValue } = useNumberInputContext(
+    const { inputRef, onIncrement, onDecrement, formatValue, parseValue, setGhost } = useNumberInputContext(
       NUMBER_INPUT_ITEM_NAME,
       __scopeNumberInput,
     );
@@ -250,6 +255,10 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       };
     }, [onIncrement, onDecrement, inputRef]);
 
+    React.useEffect(() => {
+      setGhost(Boolean(props.disabled) || Boolean(props.readOnly));
+    }, [props.disabled, props.readOnly, setGhost]);
+
     return (
       <InputPrimitive.Item
         ref={composedNumberInputRef}
@@ -303,7 +312,7 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
     { __scopeNumberInput, slot, iconType, ...props }: ScopedProps<NumberInputButtonProps>,
     forwardedRef,
   ): React.JSX.Element => {
-    const { incrementAriaLabel, decrementAriaLabel, onIncrement, onDecrement } = useNumberInputContext(
+    const { incrementAriaLabel, decrementAriaLabel, onIncrement, onDecrement, ghost } = useNumberInputContext(
       NUMBER_INPUT_BUTTON_NAME,
       __scopeNumberInput,
     );
@@ -321,10 +330,11 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
         ref={forwardedRef}
         aria-label={slot === 'increment' ? incrementAriaLabel : decrementAriaLabel}
         aria-live="polite"
+        disabled={ghost}
         size="icon"
         variant="ghost"
-        {...props}
         onClick={handleClick}
+        {...props}
       >
         <NumberInputIcon iconType={iconType} slot={slot} />
       </Button>
