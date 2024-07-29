@@ -25,7 +25,7 @@ interface NumberInputContextValue {
   inputRef: React.RefObject<HTMLInputElement>;
   onDecrement: () => void;
   onIncrement: () => void;
-  parseValue: (value: string) => number;
+  parseValue: (value: string | number | readonly string[] | undefined) => number;
   decrementAriaLabel?: string;
   incrementAriaLabel?: string;
 }
@@ -64,12 +64,19 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   );
 
   const parseValue = React.useCallback(
-    (value: string): number => {
-      const cleanedValue = value
-        .trim()
-        .replace(/[^\d.,\-()]/g, '')
-        .replace(/,/g, '')
-        .replace(/[()]/g, '-');
+    (value: string | number | readonly string[] | undefined): number => {
+      if (typeof value === 'number') {
+        return value;
+      }
+
+      const cleanedValue =
+        typeof value === 'string'
+          ? value
+              .trim()
+              .replace(/[^\d.,\-()]/g, '')
+              .replace(/,/g, '')
+              .replace(/[()]/g, '-')
+          : '';
 
       if (cleanedValue === '') {
         return NaN;
@@ -150,17 +157,6 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
     );
     const composedNumberInputRef = useComposedRefs(forwardedRef, inputRef);
 
-    const handleChange = React.useCallback<React.ChangeEventHandler<HTMLInputElement>>(
-      (event) => {
-        const numericValue = parseValue(event.target.value);
-
-        if (!isNaN(numericValue)) {
-          event.target.value = formatValue(numericValue);
-        }
-      },
-      [formatValue, parseValue],
-    );
-
     const handleBlur = React.useCallback<React.FocusEventHandler<HTMLInputElement>>(
       (event) => {
         const numericValue = parseValue(event.target.value);
@@ -206,15 +202,18 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
     const handleKeyDownEnter = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
-        if (event.key === 'Enter') {
-          const numericValue = parseFloat(event.currentTarget.value);
+        if (event.key !== 'Enter' || !inputRef.current) {
+          return;
+        }
 
-          if (!isNaN(numericValue)) {
-            event.currentTarget.value = formatValue(numericValue);
-          }
+        const numericValue = parseValue(inputRef.current.value);
+        const formattedValue = formatValue(numericValue);
+
+        if (formattedValue !== inputRef.current.value) {
+          inputRef.current.value = formattedValue;
         }
       },
-      [formatValue],
+      [formatValue, inputRef, parseValue],
     );
 
     React.useEffect(() => {
@@ -248,8 +247,9 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         ref={composedNumberInputRef}
         {...inputScope}
         {...props}
+        defaultValue={!props.onChange ? formatValue(parseValue(props.defaultValue)) : undefined}
+        value={props.onChange ? formatValue(parseValue(props.value)) : undefined}
         onBlur={composeEventHandlers(props.onBlur, handleBlur)}
-        onChange={composeEventHandlers(props.onChange, handleChange)}
         onKeyDown={composeEventHandlers(
           props.onKeyDown,
           React.useMemo(
