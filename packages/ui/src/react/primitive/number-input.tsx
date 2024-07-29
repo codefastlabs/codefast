@@ -182,12 +182,20 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
     const handleKeyDown = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
-        if (['ArrowUp', 'PageUp'].includes(event.key)) {
-          onIncrement();
-          event.preventDefault();
-        } else if (['ArrowDown', 'PageDown'].includes(event.key)) {
-          onDecrement();
-          event.preventDefault();
+        switch (event.key) {
+          case 'ArrowUp':
+          case 'PageUp':
+            onIncrement();
+            event.preventDefault();
+            break;
+          case 'ArrowDown':
+          case 'PageDown':
+            onDecrement();
+            event.preventDefault();
+            break;
+
+          default:
+            break;
         }
       },
       [onIncrement, onDecrement],
