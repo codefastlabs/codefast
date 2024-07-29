@@ -102,7 +102,7 @@ const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>
         onItemUncheck={handleItemUncheck}
       >
         <RovingFocusGroup.Root asChild {...rovingFocusGroupScope} dir={direction} loop={loop} orientation={orientation}>
-          {/* eslint-disable-next-line react/jsx-pascal-case -- radix-ui */}
+          {}
           <Primitive.div
             ref={forwardedRef}
             data-disabled={disabled ? '' : undefined}
@@ -199,9 +199,6 @@ export {
   CheckboxGroupIndicator,
   CheckboxGroupIndicator as Indicator,
   type CheckboxGroupProps,
-  type CheckboxGroupProps as RootProps,
   type CheckboxGroupItemProps,
-  type CheckboxGroupItemProps as ItemProps,
   type CheckboxGroupIndicatorProps,
-  type CheckboxGroupIndicatorProps as IndicatorProps,
 };

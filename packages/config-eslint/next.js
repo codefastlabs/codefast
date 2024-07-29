@@ -106,6 +106,12 @@ module.exports = {
         prev: ['case', 'default'],
       },
     ],
+    'react/jsx-pascal-case': [
+      'warn',
+      {
+        allowNamespace: true,
+      },
+    ],
     'react/jsx-sort-props': [
       'warn',
       {
