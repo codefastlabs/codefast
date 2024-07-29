@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { Primitive } from '@radix-ui/react-primitive';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -10,7 +11,7 @@ const spinnerCount = 8;
 
 type SpinnerElement = HTMLSpanElement;
 
-interface SpinnerProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface SpinnerProps extends React.ComponentProps<typeof Primitive.span> {
   loading?: boolean;
 }
 
@@ -21,13 +22,13 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
     }
 
     const spinner = (
-      <span
+      <Primitive.span
         ref={forwardedRef}
         className={cn('relative flex size-4 items-center justify-center opacity-60', className)}
         {...props}
       >
         {Array.from({ length: spinnerCount }, (_, i) => (
-          <span
+          <Primitive.span
             key={i}
             className="before:fade-out-25 before:animate-out before:animate-repeat-infinite before:animate-delay-[var(--spinner-delay)] before:animate-duration-[var(--spinner-duration)] absolute h-full rotate-[var(--spinner-rotate)] before:block before:h-1/3 before:w-full before:rounded-full before:bg-current"
             style={
@@ -40,7 +41,7 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
             }
           />
         ))}
-      </span>
+      </Primitive.span>
     );
 
     if (children === undefined) {
@@ -48,13 +49,13 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
     }
 
     return (
-      <span className="relative">
-        <span aria-hidden className="invisible contents">
+      <Primitive.span className="relative">
+        <Primitive.span aria-hidden className="invisible contents">
           {children}
-        </span>
+        </Primitive.span>
         <VisuallyHidden>{children}</VisuallyHidden>
-        <span className="absolute inset-0 flex items-center justify-center">{spinner}</span>
-      </span>
+        <Primitive.span className="absolute inset-0 flex items-center justify-center">{spinner}</Primitive.span>
+      </Primitive.span>
     );
   },
 );

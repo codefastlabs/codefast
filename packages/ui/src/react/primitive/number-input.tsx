@@ -1,11 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronDownIcon, ChevronUpIcon, MinusIcon, PlusIcon } from '@radix-ui/react-icons';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { Button, type ButtonProps } from '@/react/button';
+import { Primitive } from '@radix-ui/react-primitive';
 import * as InputPrimitive from '@/react/primitive/input';
 import { createInputScope } from '@/react/primitive/input';
 
@@ -283,59 +282,44 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 NumberInputItem.displayName = NUMBER_INPUT_ITEM_NAME;
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInputIcon
+ * Component: NumberInputImplButton
  * -------------------------------------------------------------------------- */
 
-interface NumberInputIconProps extends ButtonProps {
-  slot: 'decrement' | 'increment';
-  iconType?: 'chevron' | 'default';
+const NUMBER_INPUT_BUTTON_IMPL_NAME = 'NumberInputImplButton';
+
+type NumberInputButtonImplElement = React.ElementRef<typeof Primitive.button>;
+interface NumberInputButtonImplProps extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+  operation: 'increment' | 'decrement';
 }
 
-function NumberInputIcon({ slot, iconType }: NumberInputIconProps): React.JSX.Element {
-  if (iconType === 'chevron') {
-    return slot === 'increment' ? <ChevronUpIcon /> : <ChevronDownIcon />;
-  }
-
-  return slot === 'increment' ? <PlusIcon /> : <MinusIcon />;
-}
-
-/* -----------------------------------------------------------------------------
- * Component: NumberInputButton
- * -------------------------------------------------------------------------- */
-
-const NUMBER_INPUT_BUTTON_NAME = 'NumberInputButton';
-
-type NumberInputButtonElement = React.ElementRef<typeof Button>;
-type NumberInputButtonProps = NumberInputIconProps;
-
-const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInputButtonProps>(
+const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
   (
-    { __scopeNumberInput, slot, iconType, ...props }: ScopedProps<NumberInputButtonProps>,
+    { __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>,
     forwardedRef,
   ): React.JSX.Element => {
     const { incrementAriaLabel, decrementAriaLabel, onIncrement, onDecrement, ghost } = useNumberInputContext(
-      NUMBER_INPUT_BUTTON_NAME,
+      NUMBER_INPUT_BUTTON_IMPL_NAME,
       __scopeNumberInput,
     );
     const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const startActionInterval = React.useCallback((action: () => void) => {
+    const startActionInterval = React.useCallback((callback: () => void) => {
       const interval = 100;
 
       const repeatAction = (): void => {
-        action();
+        callback();
         timeoutIdRef.current = setTimeout(repeatAction, interval);
       };
 
-      action();
+      callback();
       timeoutIdRef.current = setTimeout(repeatAction, interval * 2);
     }, []);
 
     const handlePointerDown = React.useCallback(() => {
-      const action = slot === 'increment' ? onIncrement : onDecrement;
+      const action = operation === 'increment' ? onIncrement : onDecrement;
 
       startActionInterval(action);
-    }, [onDecrement, onIncrement, slot, startActionInterval]);
+    }, [onDecrement, onIncrement, operation, startActionInterval]);
 
     const handlePointerUp = React.useCallback(() => {
       if (timeoutIdRef.current) {
@@ -345,25 +329,55 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
     }, []);
 
     return (
-      <Button
+      <Primitive.button
         ref={forwardedRef}
-        aria-label={slot === 'increment' ? incrementAriaLabel : decrementAriaLabel}
+        aria-label={operation === 'increment' ? incrementAriaLabel : decrementAriaLabel}
         aria-live="polite"
         disabled={ghost}
-        size="icon"
-        variant="ghost"
         onPointerDown={handlePointerDown}
         onPointerLeave={handlePointerUp}
         onPointerUp={handlePointerUp}
         {...props}
-      >
-        <NumberInputIcon iconType={iconType} slot={slot} />
-      </Button>
+      />
     );
   },
 );
 
-NumberInputButton.displayName = NUMBER_INPUT_BUTTON_NAME;
+NumberInputButtonImpl.displayName = NUMBER_INPUT_BUTTON_IMPL_NAME;
+
+/* -----------------------------------------------------------------------------
+ * Component: NumberInputIncrementButton
+ * -------------------------------------------------------------------------- */
+
+const NUMBER_INPUT_INCREMENT_BUTTON_NAME = 'NumberInputIncrementButton';
+
+type NumberInputIncrementButtonElement = NumberInputButtonImplElement;
+type NumberInputIncrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
+
+const NumberInputIncrementButton = React.forwardRef<NumberInputIncrementButtonElement, NumberInputIncrementButtonProps>(
+  (props: NumberInputIncrementButtonProps, forwardedRef): React.JSX.Element => (
+    <NumberInputButtonImpl operation="increment" {...props} ref={forwardedRef} />
+  ),
+);
+
+NumberInputIncrementButton.displayName = NUMBER_INPUT_INCREMENT_BUTTON_NAME;
+
+/* -----------------------------------------------------------------------------
+ * Component: NumberInputDecrementButton
+ * -------------------------------------------------------------------------- */
+
+const NUMBER_INPUT_DECREMENT_BUTTON_NAME = 'NumberInputDecrementButton';
+
+type NumberInputDecrementButtonElement = NumberInputButtonImplElement;
+type NumberInputDecrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
+
+const NumberInputDecrementButton = React.forwardRef<NumberInputDecrementButtonElement, NumberInputDecrementButtonProps>(
+  (props: NumberInputDecrementButtonProps, forwardedRef): React.JSX.Element => (
+    <NumberInputButtonImpl operation="decrement" {...props} ref={forwardedRef} />
+  ),
+);
+
+NumberInputDecrementButton.displayName = NUMBER_INPUT_DECREMENT_BUTTON_NAME;
 
 /* -----------------------------------------------------------------------------
  * Utils
@@ -439,16 +453,12 @@ export {
   NumberInput as Root,
   NumberInputItem,
   NumberInputItem as Item,
-  NumberInputButton,
-  NumberInputButton as Button,
-  NumberInputIcon,
-  NumberInputIcon as Icon,
+  NumberInputIncrementButton,
+  NumberInputIncrementButton as IncrementButton,
+  NumberInputDecrementButton,
+  NumberInputDecrementButton as DecrementButton,
   type NumberInputProps,
-  type NumberInputProps as RootProps,
   type NumberInputItemProps,
-  type NumberInputItemProps as ItemProps,
-  type NumberInputButtonProps,
-  type NumberInputButtonProps as ButtonProps,
-  type NumberInputIconProps,
-  type NumberInputIconProps as IconProps,
+  type NumberInputIncrementButtonProps,
+  type NumberInputDecrementButtonProps,
 };
