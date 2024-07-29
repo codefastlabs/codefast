@@ -53,12 +53,14 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       style: 'decimal',
       minimumFractionDigits: 0,
     },
-    locale,
+    locale = navigator.language,
     ...props
   } = numberInputProps as ScopedProps<NumberInputProps>;
   const inputScope = useInputScope(__scopeNumberInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [ghost, setGhost] = React.useState(false);
+
+  const { thousandSeparator, decimalSeparator } = React.useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = React.useCallback(
     (value: number): string => {
@@ -77,28 +79,27 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
         return value;
       }
 
-      const cleanedValue =
-        typeof value === 'string'
-          ? value
-              .trim()
-              .replace(/[^\d.,\-()]/g, '')
-              .replace(/,/g, '')
-              .replace(/[()]/g, '-')
-          : '';
+      if (typeof value !== 'string') {
+        return NaN;
+      }
+
+      const cleanedValue = value.trim().replace(/[^\d.,\-()]/g, '');
 
       if (cleanedValue === '') {
         return NaN;
       }
 
+      const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
+
       if (formatOptions.style === 'percent') {
-        return parseFloat(cleanedValue) / 100;
+        return parseFloat(normalizedValue) / 100;
       }
 
-      const parsedValue = parseFloat(cleanedValue);
+      const parsedValue = parseFloat(normalizedValue);
 
       return isNaN(parsedValue) ? 0 : parsedValue;
     },
-    [formatOptions.style],
+    [decimalSeparator, formatOptions.style, thousandSeparator],
   );
 
   const handleIncrement = React.useCallback(() => {
@@ -377,11 +378,36 @@ function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (..
   };
 }
 
-const isElementActiveInput = (inputElement: HTMLInputElement | null): boolean => {
+function isElementActiveInput(inputElement: HTMLInputElement | null): boolean {
   return Boolean(
     inputElement && !inputElement.disabled && !inputElement.readOnly && document.activeElement === inputElement,
   );
-};
+}
+
+function getNumberFormatSeparators(locale: string): { decimalSeparator: string; thousandSeparator: string } {
+  const numberFormat = new Intl.NumberFormat(locale);
+  const parts = numberFormat.formatToParts(12345.6);
+
+  let thousandSeparator = '';
+  let decimalSeparator = '';
+
+  for (const part of parts) {
+    if (part.type === 'group') {
+      thousandSeparator = part.value;
+    } else if (part.type === 'decimal') {
+      decimalSeparator = part.value;
+    }
+  }
+
+  return { thousandSeparator, decimalSeparator };
+}
+
+function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
+  return value
+    .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
+    .replace(new RegExp(`\\${decimalSeparator}`), '.')
+    .replace(/[()]/g, '-');
+}
 
 /* -----------------------------------------------------------------------------
  * Exports
