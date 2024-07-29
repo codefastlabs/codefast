@@ -317,14 +317,32 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
       NUMBER_INPUT_BUTTON_NAME,
       __scopeNumberInput,
     );
+    const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    const handleClick = React.useCallback(() => {
-      if (slot === 'increment') {
-        onIncrement();
-      } else {
-        onDecrement();
+    const startActionInterval = React.useCallback((action: () => void) => {
+      const interval = 100;
+
+      const repeatAction = (): void => {
+        action();
+        timeoutIdRef.current = setTimeout(repeatAction, interval);
+      };
+
+      action();
+      timeoutIdRef.current = setTimeout(repeatAction, interval * 2);
+    }, []);
+
+    const handleMouseDown = React.useCallback(() => {
+      const action = slot === 'increment' ? onIncrement : onDecrement;
+
+      startActionInterval(action);
+    }, [onDecrement, onIncrement, slot, startActionInterval]);
+
+    const handleMouseUp = React.useCallback(() => {
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
       }
-    }, [onDecrement, onIncrement, slot]);
+    }, []);
 
     return (
       <Button
@@ -334,7 +352,9 @@ const NumberInputButton = React.forwardRef<NumberInputButtonElement, NumberInput
         disabled={ghost}
         size="icon"
         variant="ghost"
-        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseUp}
+        onMouseUp={handleMouseUp}
         {...props}
       >
         <NumberInputIcon iconType={iconType} slot={slot} />
