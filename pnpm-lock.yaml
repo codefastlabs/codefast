@@ -408,8 +408,8 @@ importers:
         specifier: 0.3.0
         version: 0.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-day-picker:
-        specifier: 9.0.4
-        version: 9.0.4(react@18.3.1)
+        specifier: 9.0.5
+        version: 9.0.5(react@18.3.1)
       react-hook-form:
         specifier: 7.52.1
         version: 7.52.1(react@18.3.1)
@@ -6282,8 +6282,8 @@ packages:
     peerDependencies:
       react: ^16.3.0 || ^17.0.1 || ^18.0.0
 
-  react-day-picker@9.0.4:
-    resolution: {integrity: sha512-hT4yv89vfXjxEu+TKGfRlhIDi8kipy/Z8XDglT1VeskaTzNNIGfB8eCfF2AqT/WT32rfD6et+q61hiZPJi8HZw==}
+  react-day-picker@9.0.5:
+    resolution: {integrity: sha512-hHeB+auG71OHNcas+/S6oeqzk/szQaMEKNuU1sTBg7wmpYkVJdRaqv8BIWgSkLT+3KdjmvnEdZUURaleNAKMvQ==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -14175,7 +14175,7 @@ snapshots:
       react: 18.3.1
       tween-functions: 1.2.0
 
-  react-day-picker@9.0.4(react@18.3.1):
+  react-day-picker@9.0.5(react@18.3.1):
     dependencies:
       date-fns: 3.6.0
       react: 18.3.1
