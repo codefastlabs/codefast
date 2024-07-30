@@ -95,6 +95,7 @@ export const FormatingWithPercentage: Story = {
     defaultValue: 0.5,
     formatOptions: {
       style: 'percent',
+      maximumFractionDigits: 2,
     },
   },
   render: (args) => {
