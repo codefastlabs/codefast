@@ -199,19 +199,19 @@ export const Sizes: Story = {
 export const Controlled: Story = {
   args: {
     placeholder: 'Controlled',
+    formatOptions: {
+      style: 'currency',
+      currency: 'USD',
+      currencyDisplay: 'code',
+      currencySign: 'accounting',
+    },
   },
   render: (args) => {
     const [value, setValue] = useState('50');
 
     return (
       <div className="space-y-4">
-        <NumberInput
-          {...args}
-          value={value}
-          onChange={(event) => {
-            setValue(event.target.value);
-          }}
-        />
+        <NumberInput {...args} value={value} onChange={setValue} />
         <p>Mirrored number: {value}</p>
       </div>
     );

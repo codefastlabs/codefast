@@ -13,16 +13,42 @@ import { buttonVariants } from '@/react/button';
 type NumberInputElement = React.ElementRef<typeof NumberInputPrimitive.Item>;
 interface NumberInputProps
   extends InputVariantsProps,
-    Omit<React.ComponentProps<typeof NumberInputPrimitive.Root>, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'>,
-    Omit<React.ComponentPropsWithoutRef<typeof NumberInputPrimitive.Item>, 'prefix'> {}
+    React.ComponentProps<typeof NumberInputPrimitive.Root>,
+    React.ComponentPropsWithoutRef<typeof NumberInputPrimitive.Item> {}
 
 const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
-  ({ className, inputSize, decrementAriaLabel, incrementAriaLabel, formatOptions, ...props }, forwardedRef) => (
+  (
+    {
+      className,
+      inputSize,
+      value,
+      onChange,
+      defaultValue,
+      ariaDecrementLabel,
+      ariaIncrementLabel,
+      formatOptions,
+      disabled,
+      readOnly,
+      min,
+      max,
+      step,
+      ...props
+    },
+    forwardedRef,
+  ) => (
     <NumberInputPrimitive.Root
+      ariaDecrementLabel={ariaDecrementLabel}
+      ariaIncrementLabel={ariaIncrementLabel}
       className={root({ inputSize, className: 'pr-0' })}
-      decrementAriaLabel={decrementAriaLabel}
+      defaultValue={defaultValue}
+      disabled={disabled}
       formatOptions={formatOptions}
-      incrementAriaLabel={incrementAriaLabel}
+      max={max}
+      min={min}
+      readOnly={readOnly}
+      step={step}
+      value={value}
+      onChange={onChange}
     >
       <NumberInputPrimitive.Item
         ref={forwardedRef}
