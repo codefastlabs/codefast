@@ -5,6 +5,7 @@ import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { composeEventHandlers } from '@radix-ui/primitive';
 import { Primitive } from '@radix-ui/react-primitive';
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import * as InputPrimitive from '@/react/primitive/input';
 import { createInputScope } from '@/react/primitive/input';
 
@@ -23,66 +24,85 @@ const useInputScope = createInputScope();
 interface NumberInputContextValue {
   formatOptions: Intl.NumberFormatOptions;
   formatValue: (value: number) => string;
-  ghost: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
+  onChange: (value: number) => void;
   onDecrement: () => void;
   onIncrement: () => void;
   parseValue: (value: string | number | readonly string[] | undefined) => number;
-  setGhost: React.Dispatch<React.SetStateAction<boolean>>;
-  decrementAriaLabel?: string;
-  incrementAriaLabel?: string;
+  ariaDecrementLabel?: string;
+  ariaIncrementLabel?: string;
+  disabled?: boolean;
+  max?: number;
+  min?: number;
+  readOnly?: boolean;
+  step?: number;
+  value?: number;
 }
 
 const [NumberInputProvider, useNumberInputContext] =
   createNumberInputContext<NumberInputContextValue>(NUMBER_INPUT_NAME);
 
-interface NumberInputProps extends InputPrimitive.InputProps {
-  decrementAriaLabel?: string;
+interface NumberInputProps extends Omit<InputPrimitive.InputProps, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'> {
+  ariaDecrementLabel?: string;
+  ariaIncrementLabel?: string;
+  defaultValue?: number;
+  disabled?: boolean;
   formatOptions?: Intl.NumberFormatOptions;
-  incrementAriaLabel?: string;
   locale?: string;
+  max?: number;
+  min?: number;
+  onChange?: (value: number) => void;
+  readOnly?: boolean;
+  step?: number;
+  value?: number;
 }
 
 function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   const {
     __scopeNumberInput,
-    decrementAriaLabel,
-    incrementAriaLabel,
-    formatOptions = {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-    },
+    ariaDecrementLabel,
+    ariaIncrementLabel,
+    defaultValue,
+    disabled,
+    formatOptions = { style: 'decimal', minimumFractionDigits: 0 },
     locale = navigator.language,
+    max = Infinity,
+    min = -Infinity,
+    onChange,
+    readOnly,
+    step = 1,
+    value: valueProp,
     ...props
   } = numberInputProps as ScopedProps<NumberInputProps>;
   const inputScope = useInputScope(__scopeNumberInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [ghost, setGhost] = React.useState(false);
+
+  const [value, setValue] = useControllableState({
+    prop: valueProp,
+    defaultProp: defaultValue,
+    onChange,
+  });
 
   const { thousandSeparator, decimalSeparator } = React.useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = React.useCallback(
-    (value: number): string => {
-      if (isNaN(value)) {
-        return '';
-      }
-
-      return new Intl.NumberFormat(locale, formatOptions).format(value);
+    (inputValue: number): string => {
+      return isNaN(inputValue) ? '' : new Intl.NumberFormat(locale, formatOptions).format(inputValue);
     },
     [formatOptions, locale],
   );
 
   const parseValue = React.useCallback(
-    (value: string | number | readonly string[] | undefined): number => {
-      if (typeof value === 'number') {
-        return value;
+    (inputValue: string | number | readonly string[] | undefined): number => {
+      if (typeof inputValue === 'number') {
+        return inputValue;
       }
 
-      if (typeof value !== 'string') {
+      if (typeof inputValue !== 'string') {
         return NaN;
       }
 
-      const cleanedValue = value.trim().replace(/[^\d.,\-()]/g, '');
+      const cleanedValue = inputValue.trim().replace(/[^\d.,\-()]/g, '');
 
       if (cleanedValue === '') {
         return NaN;
@@ -90,58 +110,54 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
 
       const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
 
-      if (formatOptions.style === 'percent') {
-        return parseFloat(normalizedValue) / 100;
-      }
-
       const parsedValue = parseFloat(normalizedValue);
 
       return isNaN(parsedValue) ? 0 : parsedValue;
     },
-    [decimalSeparator, formatOptions.style, thousandSeparator],
+    [decimalSeparator, thousandSeparator],
   );
 
   const handleIncrement = React.useCallback(() => {
     const inputElement = inputRef.current;
 
-    if (!inputElement || inputElement.disabled || inputElement.readOnly) {
+    if (!inputElement || disabled || readOnly) {
       return;
     }
 
-    const step = getStepValue(inputElement.step, formatOptions);
-    const max = getMaxValue(inputElement.max);
     const currentValue = parseValue(inputElement.value) || 0;
     const newValue = Math.min(currentValue + step, max);
 
-    inputElement.value = formatValue(newValue);
-  }, [formatOptions, formatValue, parseValue]);
+    setValue(newValue);
+  }, [disabled, max, parseValue, readOnly, setValue, step]);
 
   const handleDecrement = React.useCallback(() => {
     const inputElement = inputRef.current;
 
-    if (!inputElement || inputElement.disabled || inputElement.readOnly) {
+    if (!inputElement || disabled || readOnly) {
       return;
     }
 
-    const step = getStepValue(inputElement.step, formatOptions);
-    const min = getMinValue(inputElement.min);
     const currentValue = parseValue(inputElement.value) || 0;
     const newValue = Math.max(currentValue - step, min);
 
-    inputElement.value = formatValue(newValue);
-  }, [formatOptions, formatValue, parseValue]);
+    setValue(newValue);
+  }, [disabled, min, parseValue, readOnly, setValue, step]);
 
   return (
     <NumberInputProvider
-      decrementAriaLabel={decrementAriaLabel}
+      ariaDecrementLabel={ariaDecrementLabel}
+      ariaIncrementLabel={ariaIncrementLabel}
+      disabled={disabled}
       formatOptions={formatOptions}
       formatValue={formatValue}
-      ghost={ghost}
-      incrementAriaLabel={incrementAriaLabel}
       inputRef={inputRef}
+      max={max}
+      min={min}
       parseValue={parseValue}
+      readOnly={readOnly}
       scope={__scopeNumberInput}
-      setGhost={setGhost}
+      value={value}
+      onChange={setValue}
       onDecrement={handleDecrement}
       onIncrement={handleIncrement}
     >
@@ -159,15 +175,28 @@ NumberInput.displayName = NUMBER_INPUT_NAME;
 const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 
 type NumberInputItemElement = React.ElementRef<typeof InputPrimitive.Item>;
-type NumberInputItemProps = React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>;
+type NumberInputItemProps = Omit<
+  React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
+  'min' | 'max' | 'value' | 'step' | 'onChange' | 'defaultValue' | 'disabled' | 'readOnly' | 'prefix'
+>;
 
 const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItemProps>(
   ({ __scopeNumberInput, ...props }: ScopedProps<NumberInputItemProps>, forwardedRef): React.JSX.Element => {
     const inputScope = useInputScope(__scopeNumberInput);
-    const { inputRef, onIncrement, onDecrement, formatValue, parseValue, setGhost } = useNumberInputContext(
-      NUMBER_INPUT_ITEM_NAME,
-      __scopeNumberInput,
-    );
+    const {
+      inputRef,
+      min,
+      max,
+      value,
+      step,
+      onChange,
+      onIncrement,
+      onDecrement,
+      formatValue,
+      parseValue,
+      disabled,
+      readOnly,
+    } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
     const composedNumberInputRef = useComposedRefs(forwardedRef, inputRef);
 
     const handleBlur = React.useCallback<React.FocusEventHandler<HTMLInputElement>>(
@@ -218,6 +247,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         case 'Delete':
         case 'Home':
         case 'End':
+        case 'Space':
         case '.':
         case ',':
         case '-':
@@ -235,15 +265,17 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
     const handleKeyDownEnter = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
-        if (event.key !== 'Enter' || !inputRef.current) {
+        const inputElement = inputRef.current;
+
+        if (event.key !== 'Enter' || !inputElement) {
           return;
         }
 
-        const numericValue = parseValue(inputRef.current.value);
+        const numericValue = parseValue(inputElement.value);
         const formattedValue = formatValue(numericValue);
 
-        if (formattedValue !== inputRef.current.value) {
-          inputRef.current.value = formattedValue;
+        if (formattedValue !== inputElement.value) {
+          inputElement.value = formattedValue;
         }
       },
       [formatValue, inputRef, parseValue],
@@ -253,22 +285,12 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       const handleWheel = (event: WheelEvent): void => {
         const inputElement = inputRef.current;
 
-        if (
-          !inputElement ||
-          inputElement.disabled ||
-          inputElement.readOnly ||
-          document.activeElement !== inputElement
-        ) {
+        if (!inputElement || disabled || readOnly || document.activeElement !== inputElement) {
           return;
         }
 
         event.preventDefault();
-
-        if (event.deltaY < 0) {
-          onIncrement();
-        } else {
-          onDecrement();
-        }
+        event.deltaY < 0 ? onIncrement() : onDecrement();
       };
 
       const inputElement = inputRef.current;
@@ -282,20 +304,23 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
           inputElement.removeEventListener('wheel', handleWheel);
         }
       };
-    }, [onIncrement, onDecrement, inputRef]);
-
-    React.useEffect(() => {
-      setGhost(Boolean(props.disabled) || Boolean(props.readOnly));
-    }, [props.disabled, props.readOnly, setGhost]);
+    }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
     return (
       <InputPrimitive.Item
         ref={composedNumberInputRef}
         {...inputScope}
         {...props}
-        defaultValue={!props.onChange ? formatValue(parseValue(props.defaultValue)) : undefined}
-        value={props.onChange ? formatValue(parseValue(props.value)) : undefined}
+        disabled={disabled}
+        max={max}
+        min={min}
+        readOnly={readOnly}
+        step={step}
+        value={value}
         onBlur={composeEventHandlers(props.onBlur, handleBlur)}
+        onChange={(event) => {
+          onChange(parseValue(event.target.value));
+        }}
         onKeyDown={composeEventHandlers(
           props.onKeyDown,
           React.useMemo(
@@ -326,10 +351,8 @@ const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, Num
     { __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>,
     forwardedRef,
   ): React.JSX.Element => {
-    const { incrementAriaLabel, decrementAriaLabel, onIncrement, onDecrement, ghost } = useNumberInputContext(
-      NUMBER_INPUT_BUTTON_IMPL_NAME,
-      __scopeNumberInput,
-    );
+    const { ariaIncrementLabel, ariaDecrementLabel, onIncrement, onDecrement, disabled, readOnly } =
+      useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
     const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null);
 
     const startActionInterval = React.useCallback((callback: () => void) => {
@@ -360,9 +383,10 @@ const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, Num
     return (
       <Primitive.button
         ref={forwardedRef}
-        aria-label={operation === 'increment' ? incrementAriaLabel : decrementAriaLabel}
+        aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
         aria-live="polite"
-        disabled={ghost}
+        disabled={disabled || readOnly}
+        type="button"
         onPointerDown={handlePointerDown}
         onPointerLeave={handlePointerUp}
         onPointerUp={handlePointerUp}
@@ -411,26 +435,6 @@ NumberInputDecrementButton.displayName = NUMBER_INPUT_DECREMENT_BUTTON_NAME;
 /* -----------------------------------------------------------------------------
  * Utils
  * -------------------------------------------------------------------------- */
-
-function parseStepValue(step: string | undefined): number {
-  const parsedValue = step !== undefined ? parseFloat(step) : NaN;
-
-  return isNaN(parsedValue) ? 1 : parsedValue;
-}
-
-function getStepValue(step: string | undefined, formatOptions: Intl.NumberFormatOptions): number {
-  const stepValue = parseStepValue(step);
-
-  return formatOptions.style === 'percent' ? stepValue / 100 : stepValue;
-}
-
-function getMinValue(min: string | undefined): number {
-  return parseFloat(min || '-Infinity');
-}
-
-function getMaxValue(max: string | undefined): number {
-  return parseFloat(max || 'Infinity');
-}
 
 function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
   return (...args: T) => {
