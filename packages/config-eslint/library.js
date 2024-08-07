@@ -1,5 +1,4 @@
 const { resolve } = require('node:path');
-const rules = require('./common');
 
 const project = resolve(process.cwd(), 'tsconfig.json');
 
@@ -8,6 +7,7 @@ module.exports = {
   extends: [
     require.resolve('@vercel/style-guide/eslint/node'),
     require.resolve('@vercel/style-guide/eslint/typescript'),
+    require.resolve('./rules/common'),
   ],
   globals: {
     React: true,
@@ -18,9 +18,7 @@ module.exports = {
     project,
   },
   plugins: ['only-warn', 'typescript-sort-keys'],
-  rules: {
-    ...rules,
-  },
+  rules: {},
   settings: {
     'import/resolver': {
       typescript: {

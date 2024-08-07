@@ -1,5 +1,4 @@
 const { resolve } = require('node:path');
-const rules = require('./common');
 
 const project = resolve(process.cwd(), 'tsconfig.json');
 
@@ -10,6 +9,7 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/typescript'),
     require.resolve('@vercel/style-guide/eslint/react'),
     require.resolve('@vercel/style-guide/eslint/next'),
+    require.resolve('./rules/common'),
   ],
   globals: {
     React: true,
@@ -58,7 +58,6 @@ module.exports = {
         ignore: ['vaul-drawer-wrapper'],
       },
     ],
-    ...rules,
   },
   settings: {
     'import/resolver': {
