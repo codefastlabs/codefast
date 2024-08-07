@@ -207,7 +207,7 @@ export const Controlled: Story = {
     },
   },
   render: (args) => {
-    const [value, setValue] = useState('50');
+    const [value, setValue] = useState(50);
 
     return (
       <div className="space-y-4">
