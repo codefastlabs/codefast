@@ -1,5 +1,4 @@
 const { resolve } = require('node:path');
-const rules = require('./common');
 
 const project = resolve(process.cwd(), 'tsconfig.json');
 
@@ -9,6 +8,7 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/browser'),
     require.resolve('@vercel/style-guide/eslint/typescript'),
     require.resolve('@vercel/style-guide/eslint/react'),
+    require.resolve('./rules/common'),
   ],
   globals: {
     JSX: true,
@@ -42,7 +42,6 @@ module.exports = {
         ignore: ['cmdk-input-wrapper'],
       },
     ],
-    ...rules,
   },
   settings: {
     'import/resolver': {
