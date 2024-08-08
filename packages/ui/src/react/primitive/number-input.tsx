@@ -23,7 +23,7 @@ const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
   formatOptions: Intl.NumberFormatOptions;
-  formatValue: (value: number) => string;
+  formatValue: (value: number | undefined) => string;
   inputRef: React.RefObject<HTMLInputElement>;
   onChange: (value: number) => void;
   onDecrement: () => void;
@@ -86,7 +86,11 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   const { thousandSeparator, decimalSeparator } = React.useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = React.useCallback(
-    (inputValue: number): string => {
+    (inputValue: number | undefined): string => {
+      if (inputValue === undefined) {
+        return '';
+      }
+
       return isNaN(inputValue) ? '' : new Intl.NumberFormat(locale, formatOptions).format(inputValue);
     },
     [formatOptions, locale],
@@ -95,7 +99,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   const parseValue = React.useCallback(
     (inputValue: string | number | readonly string[] | undefined): number => {
       if (typeof inputValue === 'number') {
-        return inputValue;
+        return clamp(inputValue, min, max);
       }
 
       if (typeof inputValue !== 'string') {
@@ -112,9 +116,9 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
 
       const parsedValue = parseFloat(normalizedValue);
 
-      return isNaN(parsedValue) ? 0 : parsedValue;
+      return isNaN(parsedValue) ? 0 : clamp(parsedValue, min, max);
     },
-    [decimalSeparator, thousandSeparator],
+    [decimalSeparator, max, min, thousandSeparator],
   );
 
   const handleIncrement = React.useCallback(() => {
@@ -125,10 +129,11 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     }
 
     const currentValue = parseValue(inputElement.value) || 0;
-    const newValue = Math.min(currentValue + step, max);
+    const newValue = clamp(currentValue + step, min, max);
 
+    inputElement.value = formatValue(newValue);
     setValue(newValue);
-  }, [disabled, max, parseValue, readOnly, setValue, step]);
+  }, [disabled, formatValue, max, min, parseValue, readOnly, setValue, step]);
 
   const handleDecrement = React.useCallback(() => {
     const inputElement = inputRef.current;
@@ -138,10 +143,11 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     }
 
     const currentValue = parseValue(inputElement.value) || 0;
-    const newValue = Math.max(currentValue - step, min);
+    const newValue = clamp(currentValue - step, min, max);
 
+    inputElement.value = formatValue(newValue);
     setValue(newValue);
-  }, [disabled, min, parseValue, readOnly, setValue, step]);
+  }, [disabled, formatValue, max, min, parseValue, readOnly, setValue, step]);
 
   return (
     <NumberInputProvider
@@ -207,8 +213,10 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         if (formattedValue !== event.target.value) {
           event.target.value = formattedValue;
         }
+
+        onChange(numericValue);
       },
-      [formatValue, parseValue],
+      [formatValue, onChange, parseValue],
     );
 
     const handleKeyDown = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
@@ -247,7 +255,6 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         case 'Delete':
         case 'Home':
         case 'End':
-        case 'Space':
         case '.':
         case ',':
         case '-':
@@ -277,8 +284,10 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         if (formattedValue !== inputElement.value) {
           inputElement.value = formattedValue;
         }
+
+        onChange(numericValue);
       },
-      [formatValue, inputRef, parseValue],
+      [formatValue, inputRef, onChange, parseValue],
     );
 
     React.useEffect(() => {
@@ -290,7 +299,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         }
 
         event.preventDefault();
-        event.deltaY < 0 ? onIncrement() : onDecrement();
+        event.deltaY > 0 ? onIncrement() : onDecrement();
       };
 
       const inputElement = inputRef.current;
@@ -306,21 +315,26 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       };
     }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
+    React.useEffect(() => {
+      const inputElement = inputRef.current;
+
+      if (inputElement && inputElement !== document.activeElement) {
+        inputElement.value = formatValue(value);
+      }
+    }, [formatValue, inputRef, value]);
+
     return (
       <InputPrimitive.Item
         ref={composedNumberInputRef}
         {...inputScope}
         {...props}
+        defaultValue={formatValue(value)}
         disabled={disabled}
         max={max}
         min={min}
         readOnly={readOnly}
         step={step}
-        value={value}
         onBlur={composeEventHandlers(props.onBlur, handleBlur)}
-        onChange={(event) => {
-          onChange(parseValue(event.target.value));
-        }}
         onKeyDown={composeEventHandlers(
           props.onKeyDown,
           React.useMemo(
@@ -479,6 +493,10 @@ function isFunctionKey(key: string): boolean {
 
 function isNumberKey(key: string): boolean {
   return !isNaN(Number(key));
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
 }
 
 /* -----------------------------------------------------------------------------

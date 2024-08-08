@@ -212,6 +212,7 @@ export const Controlled: Story = {
     return (
       <div className="space-y-4">
         <NumberInput {...args} value={value} onChange={setValue} />
+        <NumberInput {...args} value={value} onChange={setValue} />
         <p>Mirrored number: {value}</p>
       </div>
     );
