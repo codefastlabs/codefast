@@ -304,14 +304,10 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
 
       const inputElement = inputRef.current;
 
-      if (inputElement) {
-        inputElement.addEventListener('wheel', handleWheel);
-      }
+      inputElement?.addEventListener('wheel', handleWheel);
 
       return () => {
-        if (inputElement) {
-          inputElement.removeEventListener('wheel', handleWheel);
-        }
+        inputElement?.removeEventListener('wheel', handleWheel);
       };
     }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
