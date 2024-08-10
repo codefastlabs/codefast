@@ -68,8 +68,8 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     disabled,
     formatOptions = { style: 'decimal', minimumFractionDigits: 0 },
     locale = navigator.language,
-    max = Infinity,
-    min = -Infinity,
+    max,
+    min,
     onChange,
     readOnly,
     step = 1,
@@ -89,11 +89,11 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
 
   const formatValue = React.useCallback(
     (inputValue?: number): string => {
-      if (inputValue === undefined) {
+      if (inputValue === undefined || isNaN(inputValue)) {
         return '';
       }
 
-      return isNaN(inputValue) ? '' : new Intl.NumberFormat(locale, formatOptions).format(inputValue);
+      return new Intl.NumberFormat(locale, formatOptions).format(inputValue);
     },
     [formatOptions, locale],
   );
@@ -126,63 +126,38 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     [decimalSeparator, formatOptions.style, max, min, thousandSeparator],
   );
 
+  const changeNumberValue = React.useCallback(
+    (operation: (number: number) => number) => {
+      const inputElement = inputRef.current;
+
+      if (!inputElement || disabled || readOnly) {
+        return;
+      }
+
+      const currentValue = parseValue(inputElement.value) || 0;
+      const newValue = clamp(operation(currentValue), min, max);
+
+      inputElement.value = formatValue(newValue);
+      setValue(newValue);
+    },
+    [disabled, formatValue, max, min, parseValue, readOnly, setValue],
+  );
+
   const handleIncrement = React.useCallback(() => {
-    const inputElement = inputRef.current;
-
-    if (!inputElement || disabled || readOnly) {
-      return;
-    }
-
-    const currentValue = parseValue(inputElement.value) || 0;
-    const newValue = clamp(currentValue + step, min, max);
-
-    inputElement.value = formatValue(newValue);
-    setValue(newValue);
-  }, [disabled, formatValue, max, min, parseValue, readOnly, setValue, step]);
+    changeNumberValue((number) => number + step);
+  }, [changeNumberValue, step]);
 
   const handleDecrement = React.useCallback(() => {
-    const inputElement = inputRef.current;
-
-    if (!inputElement || disabled || readOnly) {
-      return;
-    }
-
-    const currentValue = parseValue(inputElement.value) || 0;
-    const newValue = clamp(currentValue - step, min, max);
-
-    inputElement.value = formatValue(newValue);
-    setValue(newValue);
-  }, [disabled, formatValue, max, min, parseValue, readOnly, setValue, step]);
-
-  const handleDecrementToMin = React.useCallback(() => {
-    const inputElement = inputRef.current;
-
-    if (!inputElement || disabled || readOnly) {
-      return;
-    }
-
-    if (min === -Infinity) {
-      handleDecrement();
-    } else {
-      inputElement.value = formatValue(min);
-      setValue(min);
-    }
-  }, [disabled, formatValue, handleDecrement, min, readOnly, setValue]);
+    changeNumberValue((number) => number - step);
+  }, [changeNumberValue, step]);
 
   const handleIncrementToMax = React.useCallback(() => {
-    const inputElement = inputRef.current;
+    changeNumberValue((number) => max ?? number + step);
+  }, [changeNumberValue, max, step]);
 
-    if (!inputElement || disabled || readOnly) {
-      return;
-    }
-
-    if (max === Infinity) {
-      handleIncrement();
-    } else {
-      inputElement.value = formatValue(max);
-      setValue(max);
-    }
-  }, [disabled, formatValue, handleIncrement, max, readOnly, setValue]);
+  const handleDecrementToMin = React.useCallback(() => {
+    changeNumberValue((number) => min ?? number - step);
+  }, [changeNumberValue, min, step]);
 
   return (
     <NumberInputProvider
@@ -515,7 +490,7 @@ const NumberInputDecrementButton = React.forwardRef<NumberInputDecrementButtonEl
 NumberInputDecrementButton.displayName = NUMBER_INPUT_DECREMENT_BUTTON_NAME;
 
 /* -----------------------------------------------------------------------------
- * Utils
+ * Utility Functions
  * -------------------------------------------------------------------------- */
 
 function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
@@ -530,18 +505,20 @@ function getNumberFormatSeparators(locale: string): { decimalSeparator: string; 
   const numberFormat = new Intl.NumberFormat(locale);
   const parts = numberFormat.formatToParts(12345.6);
 
-  let thousandSeparator = '';
-  let decimalSeparator = '';
+  return parts.reduce(
+    (separatorOptions, part) => {
+      if (part.type === 'group') {
+        separatorOptions.thousandSeparator = part.value;
+      }
 
-  for (const part of parts) {
-    if (part.type === 'group') {
-      thousandSeparator = part.value;
-    } else if (part.type === 'decimal') {
-      decimalSeparator = part.value;
-    }
-  }
+      if (part.type === 'decimal') {
+        separatorOptions.decimalSeparator = part.value;
+      }
 
-  return { thousandSeparator, decimalSeparator };
+      return separatorOptions;
+    },
+    { thousandSeparator: '', decimalSeparator: '' },
+  );
 }
 
 function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
@@ -563,7 +540,7 @@ function isNumberKey(key: string): boolean {
   return !isNaN(Number(key));
 }
 
-function clamp(value: number, min: number, max: number): number {
+function clamp(value: number, min = -Infinity, max = Infinity): number {
   return Math.min(Math.max(value, min), max);
 }
 
