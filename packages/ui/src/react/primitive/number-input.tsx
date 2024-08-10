@@ -113,12 +113,15 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       }
 
       const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
+      let parsedValue = parseFloat(normalizedValue);
 
-      const parsedValue = parseFloat(normalizedValue);
+      if (formatOptions.style === 'percent') {
+        parsedValue /= 100;
+      }
 
       return isNaN(parsedValue) ? 0 : clamp(parsedValue, min, max);
     },
-    [decimalSeparator, max, min, thousandSeparator],
+    [decimalSeparator, formatOptions.style, max, min, thousandSeparator],
   );
 
   const handleIncrement = React.useCallback(() => {
@@ -480,7 +483,7 @@ function normalizeInputValue(value: string, thousandSeparator: string, decimalSe
 }
 
 function isModifierKey(event: React.KeyboardEvent<HTMLInputElement>): boolean {
-  return event.ctrlKey || event.altKey || event.metaKey;
+  return event.ctrlKey || event.altKey || event.metaKey || event.shiftKey;
 }
 
 function isFunctionKey(key: string): boolean {
