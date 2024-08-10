@@ -35,7 +35,7 @@
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
     "@types/eslint": "9.6.0",
-    "@types/node": "22.1.0",
+    "@types/node": "22.2.0",
     "@types/react": "18.3.3",
     "eslint": "8.57.0",
     "react": "18.3.1",

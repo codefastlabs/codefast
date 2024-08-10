@@ -97,6 +97,7 @@ export const FormatingWithPercentage: Story = {
       style: 'percent',
       maximumFractionDigits: 2,
     },
+    step: 0.02,
   },
   render: (args) => {
     return <NumberInput {...args} />;
