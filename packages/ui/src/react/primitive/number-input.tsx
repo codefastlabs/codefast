@@ -23,9 +23,9 @@ const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
   formatOptions: Intl.NumberFormatOptions;
-  formatValue: (value: number | undefined) => string;
+  formatValue: (value?: number) => string;
   inputRef: React.RefObject<HTMLInputElement>;
-  onChange: (value: number) => void;
+  onChange: (value?: number) => void;
   onDecrement: () => void;
   onDecrementToMin: () => void;
   onIncrement: () => void;
@@ -88,7 +88,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
   const { thousandSeparator, decimalSeparator } = React.useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = React.useCallback(
-    (inputValue: number | undefined): string => {
+    (inputValue?: number): string => {
       if (inputValue === undefined) {
         return '';
       }
@@ -244,6 +244,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
     } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
     const composedNumberInputRef = useComposedRefs(forwardedRef, inputRef);
 
+    // Handle blur event to format the value
     const handleBlur = React.useCallback<React.FocusEventHandler<HTMLInputElement>>(
       (event) => {
         const numericValue = parseValue(event.target.value);
@@ -258,6 +259,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       [formatValue, onChange, parseValue],
     );
 
+    // Handle keyboard events to increment/decrement the value
     const handleKeyDown = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
         switch (event.key) {
@@ -285,6 +287,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       [onIncrement, onIncrementToMax, onDecrement, onDecrementToMin],
     );
 
+    // Prevent non-numeric input
     const handleKeyDownPrevent = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>((event) => {
       switch (event.key) {
         case 'ArrowUp':
@@ -315,6 +318,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       }
     }, []);
 
+    // Handle Enter key to format the value
     const handleKeyDownEnter = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
         const inputElement = inputRef.current;
@@ -335,6 +339,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       [formatValue, inputRef, onChange, parseValue],
     );
 
+    // Handle wheel event to increment/decrement the value
     React.useEffect(() => {
       const handleWheel = (event: WheelEvent): void => {
         const inputElement = inputRef.current;
@@ -356,6 +361,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       };
     }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
+    // Format the value when the value changes
     React.useEffect(() => {
       const inputElement = inputRef.current;
 
@@ -363,6 +369,27 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         inputElement.value = formatValue(value);
       }
     }, [formatValue, inputRef, value]);
+
+    // Handle form reset
+    React.useEffect(() => {
+      const inputElement = inputRef.current;
+
+      if (!inputElement) {
+        return;
+      }
+
+      const handleReset = (): void => {
+        onChange();
+      };
+
+      const form = inputElement.form;
+
+      form?.addEventListener('reset', handleReset);
+
+      return () => {
+        form?.removeEventListener('reset', handleReset);
+      };
+    }, [inputRef, onChange]);
 
     return (
       <InputPrimitive.Item

@@ -9,6 +9,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Pre } from '@codefast/ui/pre';
 import { Button } from '@codefast/ui/button';
 import { Code } from '@codefast/ui/code';
+import { Label } from '@codefast/ui/label';
 import { useState } from 'react';
 
 const meta = {
@@ -221,6 +222,58 @@ export const Controlled: Story = {
 };
 
 /* -----------------------------------------------------------------------------
+ * Story: Form Reset
+ * -------------------------------------------------------------------------- */
+
+export const FormReset: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        <Toaster />
+      </>
+    ),
+  ],
+  args: {
+    placeholder: 'Form Reset',
+    value: 50,
+    formatOptions: {
+      style: 'currency',
+      currency: 'USD',
+      currencyDisplay: 'code',
+      currencySign: 'accounting',
+    },
+  },
+  render: (args) => {
+    return (
+      <form
+        className="space-y-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const formData = new FormData(event.target as HTMLFormElement);
+
+          toast.message('Form submitted!', {
+            description: (
+              <Pre className="w-full rounded-md bg-slate-950 p-4">
+                <Code className="text-white">{JSON.stringify(Object.fromEntries(formData.entries()), null, 2)}</Code>
+              </Pre>
+            ),
+          });
+        }}
+      >
+        <div className="space-y-2">
+          <Label>Enter a number:</Label>
+          <NumberInput name="number" {...args} />
+        </div>
+        <Button type="reset" variant="outline">
+          Reset form
+        </Button>
+      </form>
+    );
+  },
+};
+
+/* -----------------------------------------------------------------------------
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
@@ -264,7 +317,7 @@ export const ReactHookForm: Story = {
             name="age"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Age</FormLabel>
                 <FormControl>
                   <NumberInput disabled={form.formState.isSubmitting} placeholder="codefast" {...field} {...args} />
                 </FormControl>
@@ -273,9 +326,24 @@ export const ReactHookForm: Story = {
               </FormItem>
             )}
           />
-          <Button loading={form.formState.isSubmitting} type="submit">
-            Submit
-          </Button>
+          <div className="flex gap-4">
+            <Button loading={form.formState.isSubmitting} type="submit">
+              Submit
+            </Button>
+            <Button loading={form.formState.isSubmitting} type="reset" variant="outline">
+              Reset (Native)
+            </Button>
+            <Button
+              loading={form.formState.isSubmitting}
+              type="reset"
+              variant="secondary"
+              onClick={() => {
+                form.reset();
+              }}
+            >
+              Reset
+            </Button>
+          </div>
         </form>
       </Form>
     );
