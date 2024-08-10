@@ -27,7 +27,9 @@ interface NumberInputContextValue {
   inputRef: React.RefObject<HTMLInputElement>;
   onChange: (value: number) => void;
   onDecrement: () => void;
+  onDecrementToMin: () => void;
   onIncrement: () => void;
+  onIncrementToMax: () => void;
   parseValue: (value: string | number | readonly string[] | undefined) => number;
   ariaDecrementLabel?: string;
   ariaIncrementLabel?: string;
@@ -152,6 +154,36 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     setValue(newValue);
   }, [disabled, formatValue, max, min, parseValue, readOnly, setValue, step]);
 
+  const handleDecrementToMin = React.useCallback(() => {
+    const inputElement = inputRef.current;
+
+    if (!inputElement || disabled || readOnly) {
+      return;
+    }
+
+    if (min === -Infinity) {
+      handleDecrement();
+    } else {
+      inputElement.value = formatValue(min);
+      setValue(min);
+    }
+  }, [disabled, formatValue, handleDecrement, min, readOnly, setValue]);
+
+  const handleIncrementToMax = React.useCallback(() => {
+    const inputElement = inputRef.current;
+
+    if (!inputElement || disabled || readOnly) {
+      return;
+    }
+
+    if (max === Infinity) {
+      handleIncrement();
+    } else {
+      inputElement.value = formatValue(max);
+      setValue(max);
+    }
+  }, [disabled, formatValue, handleIncrement, max, readOnly, setValue]);
+
   return (
     <NumberInputProvider
       ariaDecrementLabel={ariaDecrementLabel}
@@ -168,7 +200,9 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       value={value}
       onChange={setValue}
       onDecrement={handleDecrement}
+      onDecrementToMin={handleDecrementToMin}
       onIncrement={handleIncrement}
+      onIncrementToMax={handleIncrementToMax}
     >
       <InputPrimitive.Root {...inputScope} {...props} />
     </NumberInputProvider>
@@ -201,6 +235,8 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       onChange,
       onIncrement,
       onDecrement,
+      onIncrementToMax,
+      onDecrementToMin,
       formatValue,
       parseValue,
       disabled,
@@ -226,13 +262,19 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
       (event) => {
         switch (event.key) {
           case 'ArrowUp':
-          case 'PageUp':
             onIncrement();
             event.preventDefault();
             break;
+          case 'PageUp':
+            onIncrementToMax();
+            event.preventDefault();
+            break;
           case 'ArrowDown':
-          case 'PageDown':
             onDecrement();
+            event.preventDefault();
+            break;
+          case 'PageDown':
+            onDecrementToMin();
             event.preventDefault();
             break;
 
@@ -240,7 +282,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
             break;
         }
       },
-      [onIncrement, onDecrement],
+      [onIncrement, onIncrementToMax, onDecrement, onDecrementToMin],
     );
 
     const handleKeyDownPrevent = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>((event) => {
