@@ -19,19 +19,20 @@ interface NumberInputProps
 const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
   (
     {
-      className,
-      inputSize,
-      value,
-      onChange,
-      defaultValue,
       ariaDecrementLabel,
       ariaIncrementLabel,
-      formatOptions,
+      className,
+      inputSize,
+      defaultValue,
       disabled,
-      readOnly,
-      min,
+      formatOptions,
+      id,
       max,
+      min,
+      readOnly,
       step,
+      value,
+      onChange,
       ...props
     },
     forwardedRef,
@@ -43,6 +44,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       defaultValue={defaultValue}
       disabled={disabled}
       formatOptions={formatOptions}
+      id={id}
       max={max}
       min={min}
       readOnly={readOnly}
