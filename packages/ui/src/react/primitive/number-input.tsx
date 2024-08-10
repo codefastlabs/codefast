@@ -34,6 +34,7 @@ interface NumberInputContextValue {
   ariaDecrementLabel?: string;
   ariaIncrementLabel?: string;
   disabled?: boolean;
+  id?: string;
   max?: number;
   min?: number;
   readOnly?: boolean;
@@ -50,6 +51,7 @@ interface NumberInputProps extends Omit<InputPrimitive.InputProps, 'prefix' | 's
   defaultValue?: number;
   disabled?: boolean;
   formatOptions?: Intl.NumberFormatOptions;
+  id?: string;
   locale?: string;
   max?: number;
   min?: number;
@@ -67,6 +69,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
     defaultValue,
     disabled,
     formatOptions = { style: 'decimal', minimumFractionDigits: 0 },
+    id,
     locale = navigator.language,
     max,
     min,
@@ -166,6 +169,7 @@ function NumberInput(numberInputProps: NumberInputProps): React.JSX.Element {
       disabled={disabled}
       formatOptions={formatOptions}
       formatValue={formatValue}
+      id={id}
       inputRef={inputRef}
       max={max}
       min={min}
@@ -195,7 +199,7 @@ const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 type NumberInputItemElement = React.ElementRef<typeof InputPrimitive.Item>;
 type NumberInputItemProps = Omit<
   React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
-  'min' | 'max' | 'value' | 'step' | 'onChange' | 'defaultValue' | 'disabled' | 'readOnly' | 'prefix'
+  'min' | 'max' | 'value' | 'step' | 'onChange' | 'defaultValue' | 'disabled' | 'readOnly' | 'prefix' | 'id'
 >;
 
 const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItemProps>(
@@ -203,19 +207,20 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
     const inputScope = useInputScope(__scopeNumberInput);
     const {
       inputRef,
-      min,
+      disabled,
+      id,
       max,
-      value,
+      min,
+      readOnly,
       step,
+      value,
+      formatValue,
+      parseValue,
       onChange,
       onIncrement,
       onDecrement,
       onIncrementToMax,
       onDecrementToMin,
-      formatValue,
-      parseValue,
-      disabled,
-      readOnly,
     } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
     const composedNumberInputRef = useComposedRefs(forwardedRef, inputRef);
 
@@ -373,6 +378,7 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
         {...props}
         defaultValue={formatValue(value)}
         disabled={disabled}
+        id={id}
         max={max}
         min={min}
         readOnly={readOnly}
@@ -408,7 +414,7 @@ const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, Num
     { __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>,
     forwardedRef,
   ): React.JSX.Element => {
-    const { ariaIncrementLabel, ariaDecrementLabel, onIncrement, onDecrement, disabled, readOnly } =
+    const { ariaIncrementLabel, ariaDecrementLabel, disabled, readOnly, id, onIncrement, onDecrement } =
       useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
     const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -424,29 +430,37 @@ const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, Num
       timeoutIdRef.current = setTimeout(repeatAction, interval * 2);
     }, []);
 
-    const handlePointerDown = React.useCallback(() => {
-      const action = operation === 'increment' ? onIncrement : onDecrement;
-
-      startActionInterval(action);
-    }, [onDecrement, onIncrement, operation, startActionInterval]);
-
-    const handlePointerUp = React.useCallback(() => {
+    const clearActionInterval = React.useCallback(() => {
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
         timeoutIdRef.current = null;
       }
     }, []);
 
+    const handlePointerDown = React.useCallback<React.PointerEventHandler<HTMLButtonElement>>(() => {
+      const action = operation === 'increment' ? onIncrement : onDecrement;
+
+      startActionInterval(action);
+    }, [onDecrement, onIncrement, operation, startActionInterval]);
+
+    const handleContextMenu = React.useCallback<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+      event.preventDefault();
+    }, []);
+
     return (
       <Primitive.button
         ref={forwardedRef}
+        aria-controls={id}
         aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
         aria-live="polite"
         disabled={disabled || readOnly}
+        tabIndex={-1}
         type="button"
+        onContextMenu={handleContextMenu}
+        onPointerCancel={clearActionInterval}
         onPointerDown={handlePointerDown}
-        onPointerLeave={handlePointerUp}
-        onPointerUp={handlePointerUp}
+        onPointerLeave={clearActionInterval}
+        onPointerUp={clearActionInterval}
         {...props}
       />
     );
