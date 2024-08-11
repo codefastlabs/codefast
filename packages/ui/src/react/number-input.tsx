@@ -5,6 +5,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as NumberInputPrimitive from '@/react/primitive/number-input';
 import { input, type InputVariantsProps, root } from '@/react/style/input';
 import { buttonVariants } from '@/react/button';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
@@ -40,7 +41,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
     <NumberInputPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={root({ inputSize, className: 'pr-0' })}
+      className={root({ inputSize, className: cn('pr-0', className) })}
       defaultValue={defaultValue}
       disabled={disabled}
       formatOptions={formatOptions}
@@ -57,7 +58,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className={input({ inputSize, className })}
+        className={input({ inputSize })}
         inputMode="numeric"
         spellCheck="false"
         {...props}
