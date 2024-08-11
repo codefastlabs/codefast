@@ -168,12 +168,12 @@ export const Default: Story = {
     return (
       <Box className="w-full">
         <Box className="flex items-center py-4">
-          <Box className="relative flex grow items-center">
-            <SearchIcon className="text-muted-foreground absolute left-3 size-4" />
+          <Box className="flex grow items-center">
             <TextInput
-              className="max-w-sm pl-10"
+              className="h-8 max-w-sm"
               inputSize="sm"
               placeholder="Filter emails..."
+              prefix={<SearchIcon className="text-muted-foreground" />}
               value={String(table.getColumn('email')?.getFilterValue() ?? '')}
               onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
             />
