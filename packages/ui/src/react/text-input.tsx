@@ -23,9 +23,9 @@ interface TextInputProps
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
   ({ inputSize, className, loading, loaderPosition, prefix, suffix, ...props }, forwardedRef) => {
     return (
-      <InputPrimitive.Root className={root({ inputSize })}>
+      <InputPrimitive.Root className={root({ inputSize, className })}>
         {loading && loaderPosition === 'prefix' ? <Spinner /> : prefix}
-        <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize, className })} {...props} />
+        <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize })} {...props} />
         {loading && loaderPosition === 'suffix' ? <Spinner /> : suffix}
       </InputPrimitive.Root>
     );
