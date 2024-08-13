@@ -1,15 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  type CustomComponents,
-  type DateRange,
-  DayFlag,
-  DayPicker,
-  type DayPickerProps,
-  SelectionState,
-  UI,
-} from 'react-day-picker';
+import { type CustomComponents, type DateRange, DayPicker, type DayPickerProps, UI } from 'react-day-picker';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -18,6 +10,7 @@ import {
   DotFilledIcon,
 } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
+import { Button, buttonVariants } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -43,6 +36,31 @@ function Chevron({ orientation, ...props }: React.ComponentProps<CustomComponent
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: DayButton
+ * -------------------------------------------------------------------------- */
+
+function DayButton({
+  day: _,
+  modifiers,
+  className,
+  ...props
+}: React.ComponentProps<CustomComponents['DayButton']>): React.JSX.Element {
+  return (
+    <Button
+      className={cn(
+        modifiers.today && !modifiers.selected && 'bg-accent',
+        modifiers.outside && !modifiers.selected && 'text-opacity-50',
+        className,
+      )}
+      size="icon-sm"
+      variant={modifiers.selected ? 'default' : 'ghost'}
+      {...props}
+      {...props}
+    />
+  );
+}
+
+/* -----------------------------------------------------------------------------
  * Component: Calendar
  * -------------------------------------------------------------------------- */
 
@@ -53,42 +71,32 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
-        [UI.ButtonPrevious]: 'v-ButtonPrevious',
-        [UI.ButtonNext]: 'v-ButtonNext',
-        [UI.Root]: 'v-Root inline-flex',
-        [UI.Chevron]: 'v-Chevron',
-        [UI.Day]: 'v-Day',
-        [UI.DayButton]: 'v-DayButton',
-        [UI.CaptionLabel]: 'v-CaptionLabel',
-        [UI.Dropdowns]: 'v-Dropdowns',
-        [UI.Dropdown]: 'v-Dropdown',
-        [UI.DropdownRoot]: 'v-DropdownRoot',
-        [UI.Footer]: 'v-Footer',
-        [UI.MonthGrid]: 'v-MonthGrid',
-        [UI.MonthCaption]: 'v-MonthCaption',
-        [UI.MonthsDropdown]: 'v-MonthsDropdown',
-        [UI.Month]: 'v-Month',
-        [UI.Months]: 'v-Months',
-        [UI.Nav]: 'v-Nav',
-        [UI.Week]: 'v-Week',
-        [UI.Weeks]: 'v-Weeks',
-        [UI.Weekday]: 'v-Weekday',
-        [UI.Weekdays]: 'v-Weekdays',
-        [UI.WeekNumber]: 'v-WeekNumber',
-        [UI.WeekNumberHeader]: 'v-WeekNumberHeader',
-        [UI.YearsDropdown]: 'v-YearsDropdown',
-        [SelectionState.range_end]: 'v-range_end',
-        [SelectionState.range_middle]: 'v-range_middle',
-        [SelectionState.range_start]: 'v-range_start',
-        [SelectionState.selected]: 'v-selected',
-        [DayFlag.disabled]: 'v-disabled',
-        [DayFlag.hidden]: 'v-hidden',
-        [DayFlag.outside]: 'v-outside',
-        [DayFlag.focused]: 'v-focused',
-        [DayFlag.today]: 'v-today',
+        [UI.ButtonPrevious]: buttonVariants({ size: 'icon-xs', variant: 'ghost' }),
+        [UI.ButtonNext]: buttonVariants({ size: 'icon-xs', variant: 'ghost' }),
+        [UI.Root]: 'inline-grid gap-4',
+        [UI.Chevron]: 'UI.Chevron',
+        [UI.Day]: 'UI.Day',
+        [UI.CaptionLabel]: 'inline-flex items-center',
+        [UI.Dropdowns]: 'inline-flex items-center gap-2',
+        [UI.Dropdown]: 'appearance-none opacity-0 absolute size-full',
+        [UI.DropdownRoot]: 'relative inline-flex',
+        [UI.Footer]: 'text-sm',
+        [UI.MonthGrid]: 'UI.MonthGrid',
+        [UI.MonthCaption]: 'flex text-sm font-medium',
+        [UI.MonthsDropdown]: 'UI.MonthsDropdown',
+        [UI.Month]: 'grid gap-2 grid-rows-[1.5rem_1fr]',
+        [UI.Months]: 'relative grid grid-flow-col gap-4',
+        [UI.Nav]: 'absolute end-0 grid grid-flow-col',
+        [UI.Week]: 'UI.Week',
+        [UI.Weeks]: 'UI.Weeks',
+        [UI.Weekday]: 'text-muted-foreground text-sm font-normal size-9',
+        [UI.Weekdays]: 'UI.Weekdays',
+        [UI.WeekNumber]: 'text-foreground/50 text-sm size-9 text-center',
+        [UI.WeekNumberHeader]: 'UI.WeekNumberHeader',
+        [UI.YearsDropdown]: 'UI.YearsDropdown',
         ...classNames,
       }}
-      components={{ Chevron }}
+      components={{ Chevron, DayButton }}
       {...props}
     />
   );
