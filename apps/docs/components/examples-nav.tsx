@@ -6,7 +6,10 @@ import { ScrollArea } from '@codefast/ui/scroll-area';
 import Link from 'next/link';
 import { type HTMLAttributes, type JSX } from 'react';
 
-const examples = [
+const examples: {
+  href: string;
+  name: string;
+}[] = [
   {
     name: 'Mail',
     href: '/examples/mail',
