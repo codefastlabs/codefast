@@ -84,9 +84,9 @@ const meta = {
     fixedWeeks: false,
     hideWeekdays: false,
     numberOfMonths: 1,
-    showOutsideDays: true,
+    showOutsideDays: false,
     showWeekNumber: false,
-    pagedNavigation: true,
+    pagedNavigation: false,
     reverseMonths: false,
   },
 } satisfies Meta<typeof Calendar>;
