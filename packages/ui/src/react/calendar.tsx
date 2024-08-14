@@ -84,7 +84,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.MonthGrid]: 'UI.MonthGrid',
         [UI.MonthCaption]: 'flex text-sm font-medium',
         [UI.MonthsDropdown]: 'UI.MonthsDropdown',
-        [UI.Month]: 'grid gap-2 grid-rows-[1.5rem_1fr]',
+        [UI.Month]: 'grid gap-1 grid-rows-[2rem_1fr]',
         [UI.Months]: 'relative grid grid-flow-col gap-4',
         [UI.Nav]: 'absolute end-0 grid grid-flow-col',
         [UI.Week]: 'UI.Week',
