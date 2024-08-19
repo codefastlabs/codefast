@@ -15,7 +15,7 @@ module.exports = {
     React: true,
     JSX: true,
   },
-  ignorePatterns: ['node_modules/', '.next/'],
+  ignorePatterns: ['node_modules/', '.next/', '*.js', '*.mjs', '*.cjs'],
   overrides: [
     {
       extends: [require.resolve('@vercel/style-guide/eslint/jest')],

@@ -13,7 +13,7 @@ module.exports = {
   globals: {
     JSX: true,
   },
-  ignorePatterns: ['node_modules/', 'dist/', '*.config.*'],
+  ignorePatterns: ['node_modules/', 'dist/', '*.js', '*.mjs', '*.cjs'],
   parserOptions: {
     project,
   },
