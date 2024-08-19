@@ -15,7 +15,7 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
         'caret-blink': 'caret-blink 1000ms ease infinite',
       },
       borderColor: {
-        DEFAULT: 'hsl(var(--border))',
+        DEFAULT: 'hsl(var(--border) / <alpha-value>)',
       },
       borderRadius: {
         sm: 'calc(var(--radius, 0.25rem) - 0.125px)', // 2px
@@ -103,13 +103,13 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
         },
       },
       outlineColor: {
-        DEFAULT: 'hsl(var(--ring))',
+        DEFAULT: 'hsl(var(--ring) / <alpha-value>)',
       },
       ringColor: {
-        DEFAULT: 'hsl(var(--ring))',
+        DEFAULT: 'hsl(var(--ring) / <alpha-value>)',
       },
       ringOffsetColor: {
-        DEFAULT: 'hsl(var(--background))',
+        DEFAULT: 'hsl(var(--background) / <alpha-value>)',
       },
       spacing: {
         0.75: '0.1875rem', // 3px
