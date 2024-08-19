@@ -13,12 +13,11 @@ module.exports = {
     React: true,
     JSX: true,
   },
-  ignorePatterns: ['node_modules/', 'dist/'],
+  ignorePatterns: ['node_modules/', 'dist/', '*.js', '*.mjs', '*.cjs'],
   parserOptions: {
     project,
   },
   plugins: ['only-warn', 'typescript-sort-keys'],
-  rules: {},
   settings: {
     'import/resolver': {
       typescript: {
