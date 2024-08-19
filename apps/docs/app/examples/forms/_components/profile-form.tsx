@@ -79,7 +79,7 @@ export function ProfileForm(): JSX.Element {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <TextInput placeholder="shadcn" {...field} />
+                <TextInput placeholder="codefast" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name. It can be your real name or a pseudonym. You can only change this once

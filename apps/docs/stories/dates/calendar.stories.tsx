@@ -18,19 +18,6 @@ const meta = {
   tags: ['autodocs'],
   title: 'Components/Dates/Calendar',
   argTypes: {
-    mode: {
-      control: 'inline-radio',
-      description: 'Choose the selection mode.',
-      type: {
-        name: 'enum',
-        value: ['single', 'multiple', 'range'],
-      },
-      table: {
-        defaultValue: {
-          summary: 'single',
-        },
-      },
-    },
     captionLayout: {
       control: 'inline-radio',
       description: 'Choose the layout of the month caption.',
@@ -44,13 +31,34 @@ const meta = {
         },
       },
     },
+    disableNavigation: {
+      control: 'boolean',
+      description: 'Disable the navigation buttons.',
+    },
     fixedWeeks: {
       control: 'boolean',
       description: 'Display 6 weeks per months.',
     },
+    hideNavigation: {
+      control: 'boolean',
+      description: 'Hide the navigation buttons.',
+    },
     hideWeekdays: {
       control: 'boolean',
       description: 'Hide the row displaying the weekday names.',
+    },
+    mode: {
+      control: 'inline-radio',
+      description: 'Choose the selection mode.',
+      type: {
+        name: 'enum',
+        value: ['single', 'multiple', 'range'],
+      },
+      table: {
+        defaultValue: {
+          summary: 'single',
+        },
+      },
     },
     numberOfMonths: {
       control: 'number',
@@ -61,14 +69,6 @@ const meta = {
         },
       },
     },
-    showOutsideDays: {
-      control: 'boolean',
-      description: 'Display the days falling into the other months.',
-    },
-    showWeekNumber: {
-      control: 'boolean',
-      description: 'Display the column with the week numbers.',
-    },
     pagedNavigation: {
       control: 'boolean',
       description: 'Paginate the navigation.',
@@ -77,17 +77,27 @@ const meta = {
       control: 'boolean',
       description: 'Render multiple months in reversed order.',
     },
+    showOutsideDays: {
+      control: 'boolean',
+      description: 'Display the days falling into the other months.',
+    },
+    showWeekNumber: {
+      control: 'boolean',
+      description: 'Display the column with the week numbers.',
+    },
   },
   args: {
-    mode: 'single',
     captionLayout: 'label',
+    disableNavigation: false,
     fixedWeeks: false,
+    hideNavigation: false,
     hideWeekdays: false,
+    mode: 'single',
     numberOfMonths: 1,
-    showOutsideDays: false,
-    showWeekNumber: false,
     pagedNavigation: false,
     reverseMonths: false,
+    showOutsideDays: false,
+    showWeekNumber: false,
   },
 } satisfies Meta<typeof Calendar>;
 
