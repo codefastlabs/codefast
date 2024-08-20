@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.0.34
+
+### Patch Changes
+
+- Add InputNumber component and update Calendar styles
+
 ## 0.0.33
 
 ### Patch Changes
