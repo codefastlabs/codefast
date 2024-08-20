@@ -64,11 +64,10 @@ function DayButton({
     <Button
       ref={buttonRef}
       className={cn(
-        'transition-none',
+        'focus-visible:-outline-offset-2',
         (!modifiers.selected || modifiers.range_middle) && !modifiers.today && 'hover:bg-transparent',
         modifiers.today && !modifiers.selected && 'bg-accent',
-        ((modifiers.outside && !modifiers.selected) || (modifiers.outside && modifiers.range_middle)) &&
-          'text-opacity-50',
+        modifiers.outside && (!modifiers.selected || modifiers.range_middle) && 'text-opacity-30',
         className,
       )}
       size="icon-sm"
@@ -89,10 +88,18 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
-        [UI.ButtonPrevious]: buttonVariants({ size: 'icon-xs', variant: 'ghost' }),
-        [UI.ButtonNext]: buttonVariants({ size: 'icon-xs', variant: 'ghost' }),
+        [UI.ButtonPrevious]: buttonVariants({
+          size: 'icon-xs',
+          variant: 'outline',
+          className: 'absolute shadow-none start-0 size-7',
+        }),
+        [UI.ButtonNext]: buttonVariants({
+          size: 'icon-xs',
+          variant: 'outline',
+          className: 'absolute shadow-none end-0 size-7',
+        }),
         [UI.Root]: 'inline-grid gap-4',
-        [UI.Chevron]: '[UI.Chevron]',
+        [UI.Chevron]: '',
         [UI.Day]: 'py-0',
         [UI.DayButton]: 'border border-transparent hover:border-primary',
         [UI.CaptionLabel]: 'inline-flex items-center',
@@ -101,21 +108,21 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.DropdownRoot]: 'relative inline-flex',
         [UI.Footer]: 'text-sm',
         [UI.MonthGrid]: 'block table-fixed border-collapse relative [&>thead]:block space-y-2',
-        [UI.MonthCaption]: 'flex text-sm font-medium',
-        [UI.MonthsDropdown]: '[UI.MonthsDropdown]',
-        [UI.Month]: 'grid gap-1 grid-rows-[2rem_1fr]',
-        [UI.Months]: 'relative grid grid-flow-col gap-4',
-        [UI.Nav]: 'absolute end-0 grid grid-flow-col',
+        [UI.MonthCaption]: 'flex text-sm font-medium w-full justify-center',
+        [UI.MonthsDropdown]: '',
+        [UI.Month]: 'grid gap-4 grid-rows-[1.75rem_1fr]',
+        [UI.Months]: 'relative flex flex-wrap gap-4',
+        [UI.Nav]: '-mr-4',
         [UI.Week]: 'flex',
         [UI.Weeks]: 'block space-y-2',
         [UI.Weekday]: 'text-muted-foreground text-sm font-normal flex-1',
         [UI.Weekdays]: 'flex',
         [UI.WeekNumber]: 'text-foreground/50 text-xs size-9 text-center',
-        [UI.WeekNumberHeader]: '[UI.WeekNumberHeader]',
-        [UI.YearsDropdown]: '[UI.YearsDropdown]',
-        [SelectionState.range_start]: 'bg-gradient-to-r from-50% from-black/0 to-50% to-accent rounded-l-md',
+        [UI.WeekNumberHeader]: '',
+        [UI.YearsDropdown]: '',
+        [SelectionState.range_start]: 'bg-gradient-to-r from-transparent to-50% to-accent rounded-l-md',
         [SelectionState.range_middle]: 'bg-accent first:rounded-l-md last:rounded-r-md',
-        [SelectionState.range_end]: 'bg-gradient-to-l from-50% from-black/0 to-50% to-accent rounded-r-md',
+        [SelectionState.range_end]: 'bg-gradient-to-l from-transparent to-50% to-accent rounded-r-md',
         [SelectionState.selected]: '',
         ...classNames,
       }}
