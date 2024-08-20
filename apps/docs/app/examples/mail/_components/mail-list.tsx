@@ -4,10 +4,10 @@ import { cn } from '@codefast/ui/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { type ComponentProps, type JSX } from 'react';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
-import { type Mail } from '@/app/examples/mail/_data/data';
+import { type EmailMessage } from '@/app/examples/mail/_data/data';
 
 interface MailListProps {
-  items: Mail[];
+  items: EmailMessage[];
 }
 
 export function MailList({ items }: MailListProps): JSX.Element {

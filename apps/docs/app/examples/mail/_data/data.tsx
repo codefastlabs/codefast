@@ -1,6 +1,6 @@
 import { type JSX } from 'react';
 
-export interface Mail {
+export interface EmailMessage {
   date: string;
   email: string;
   id: string;

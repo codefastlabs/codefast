@@ -11,10 +11,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import { addDays, addHours, format, nextSaturday } from 'date-fns';
 import { Archive, ArchiveX, Clock, Forward, MoreVertical, Reply, ReplyAll, Trash2 } from 'lucide-react';
 import { type JSX } from 'react';
-import { type Mail } from '@/app/examples/mail/_data/data';
+import { type EmailMessage } from '@/app/examples/mail/_data/data';
 
 interface MailDisplayProps {
-  mail: Mail | null | undefined;
+  mail: EmailMessage | null | undefined;
 }
 
 export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
