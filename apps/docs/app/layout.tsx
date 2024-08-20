@@ -1,10 +1,10 @@
 import { Toaster } from '@codefast/ui/sonner';
 import { cn } from '@codefast/ui/utils';
-import '@/styles/globals.css';
+import '@/app/globals.css';
 import { type JSX, type ReactNode } from 'react';
 import { type Metadata } from 'next';
 import { Providers } from '@/components/providers';
-import { inter } from '@/styles/fonts';
+import { inter } from '@/app/fonts';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
