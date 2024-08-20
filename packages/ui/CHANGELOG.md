@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.0.72
+
+### Patch Changes
+
+- Add InputNumber component and update Calendar styles
+
 ## 0.0.71
 
 ### Patch Changes
