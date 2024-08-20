@@ -398,7 +398,6 @@
     "@codefast/config-tailwind": "workspace:*",
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/eslint": "9.6.0",
     "@types/node": "22.4.1",
     "@types/react": "18.3.3",
     "autoprefixer": "10.4.20",
