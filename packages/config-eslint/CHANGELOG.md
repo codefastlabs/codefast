@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.1
+
+### Patch Changes
+
+- Adjust calendar button and layout styles
+
 ## 0.1.0
 
 ### Minor Changes
