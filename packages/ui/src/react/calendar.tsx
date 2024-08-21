@@ -91,12 +91,12 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.ButtonPrevious]: buttonVariants({
           size: 'icon-xs',
           variant: 'outline',
-          className: 'absolute shadow-none start-0 size-7',
+          className: 'absolute shadow-none start-0',
         }),
         [UI.ButtonNext]: buttonVariants({
           size: 'icon-xs',
           variant: 'outline',
-          className: 'absolute shadow-none end-0 size-7',
+          className: 'absolute shadow-none end-0',
         }),
         [UI.Root]: 'inline-grid gap-4',
         [UI.Chevron]: '',
@@ -110,7 +110,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.MonthGrid]: 'block table-fixed border-collapse relative [&>thead]:block space-y-2',
         [UI.MonthCaption]: 'flex text-sm font-medium w-full justify-center',
         [UI.MonthsDropdown]: '',
-        [UI.Month]: 'grid gap-4 grid-rows-[1.75rem_1fr]',
+        [UI.Month]: 'grid gap-4 grid-rows-[2rem_1fr]',
         [UI.Months]: 'relative flex flex-wrap gap-4',
         [UI.Nav]: '-mr-4',
         [UI.Week]: 'flex',
