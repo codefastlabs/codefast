@@ -1,5 +1,11 @@
 # @codefast/ui
 
+## 0.1.0
+
+### Minor Changes
+
+- Update dependencies across multiple packages
+
 ## 0.0.72
 
 ### Patch Changes

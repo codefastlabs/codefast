@@ -1,6 +1,6 @@
 {
   "name": "@codefast/third-parties",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
@@ -30,8 +30,8 @@
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/node": "22.4.1",
-    "@types/react": "18.3.3",
+    "@types/node": "22.4.2",
+    "@types/react": "18.3.4",
     "esbuild-sass-plugin": "3.3.1",
     "eslint": "8.57.0",
     "react": "18.3.1",

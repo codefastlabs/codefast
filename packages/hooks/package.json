@@ -1,6 +1,6 @@
 {
   "name": "@codefast/hooks",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
@@ -34,8 +34,8 @@
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/node": "22.4.1",
-    "@types/react": "18.3.3",
+    "@types/node": "22.4.2",
+    "@types/react": "18.3.4",
     "eslint": "8.57.0",
     "react": "18.3.1",
     "tsup": "8.2.4",

@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.0
+
+### Minor Changes
+
+- Update dependencies across multiple packages
+
 ## 0.0.6
 
 ### Patch Changes
