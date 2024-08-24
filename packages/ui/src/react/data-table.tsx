@@ -224,11 +224,13 @@ function DataTableColumnHeader<TData, TValue>({
 
 function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): React.JSX.Element {
   switch (sorted) {
-    case 'desc':
+    case 'desc': {
       return <ArrowDownIcon className="ml-2 size-4" />;
+    }
 
-    case 'asc':
+    case 'asc': {
       return <ArrowUpIcon className="ml-2 size-4" />;
+    }
 
     default:
       return <CaretSortIcon className="ml-2 size-4" />;

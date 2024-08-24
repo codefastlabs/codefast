@@ -12,10 +12,7 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/next'),
     require.resolve('./rules/common'),
   ],
-  globals: {
-    React: true,
-    JSX: true,
-  },
+  globals: { React: true, JSX: true },
   ignorePatterns: ['node_modules/', '.next/', '*.js', '*.mjs', '*.cjs'],
   overrides: [
     {
@@ -23,25 +20,11 @@ module.exports = {
       files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
     },
   ],
-  parserOptions: {
-    project,
-  },
+  parserOptions: { project },
   plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
-    '@typescript-eslint/no-misused-promises': [
-      'warn',
-      {
-        checksVoidReturn: {
-          attributes: false,
-        },
-      },
-    ],
-    'react/jsx-pascal-case': [
-      'warn',
-      {
-        allowNamespace: true,
-      },
-    ],
+    '@typescript-eslint/no-misused-promises': ['warn', { checksVoidReturn: { attributes: false } }],
+    'react/jsx-pascal-case': ['warn', { allowNamespace: true }],
     'react/jsx-sort-props': [
       'warn',
       {
@@ -53,18 +36,7 @@ module.exports = {
         reservedFirst: true,
       },
     ],
-    'react/no-unknown-property': [
-      'warn',
-      {
-        ignore: ['vaul-drawer-wrapper'],
-      },
-    ],
+    'react/no-unknown-property': ['warn', { ignore: ['vaul-drawer-wrapper'] }],
   },
-  settings: {
-    'import/resolver': {
-      typescript: {
-        project,
-      },
-    },
-  },
+  settings: { 'import/resolver': { typescript: { project } } },
 };

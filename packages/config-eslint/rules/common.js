@@ -2,12 +2,7 @@
 module.exports = {
   rules: {
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
-    '@typescript-eslint/restrict-template-expressions': [
-      'warn',
-      {
-        allowNumber: true,
-      },
-    ],
+    '@typescript-eslint/restrict-template-expressions': ['warn', { allowNumber: true }],
     '@typescript-eslint/unbound-method': 'off',
     curly: ['warn', 'all'],
     'import/no-default-export': 'off',
@@ -23,69 +18,22 @@ module.exports = {
           'index', // Relative index
         ],
         'newlines-between': 'never',
-        pathGroups: [
-          {
-            pattern: '@/**',
-            group: 'internal',
-          },
-        ],
+        pathGroups: [{ pattern: '@/**', group: 'internal' }],
       },
     ],
+    'no-fallthrough': ['error', { allowEmptyCase: true }],
     'padding-line-between-statements': [
       'warn',
-      {
-        blankLine: 'always',
-        next: 'return',
-        prev: '*',
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: ['const', 'let', 'var'],
-      },
-      {
-        blankLine: 'any',
-        next: ['const', 'let', 'var'],
-        prev: ['const', 'let', 'var'],
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: 'block-like',
-      },
-      {
-        blankLine: 'always',
-        next: 'block-like',
-        prev: '*',
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: 'directive',
-      },
-      {
-        blankLine: 'any',
-        next: 'directive',
-        prev: 'directive',
-      },
-      {
-        blankLine: 'always',
-        next: '*',
-        prev: ['case', 'default'],
-      },
-      {
-        blankLine: 'any',
-        prev: 'case',
-        next: 'case',
-      },
+      { blankLine: 'always', next: 'return', prev: '*' },
+      { blankLine: 'always', next: '*', prev: ['const', 'let', 'var'] },
+      { blankLine: 'any', next: ['const', 'let', 'var'], prev: ['const', 'let', 'var'] },
+      { blankLine: 'always', next: '*', prev: 'block-like' },
+      { blankLine: 'always', next: 'block-like', prev: '*' },
+      { blankLine: 'always', next: '*', prev: 'directive' },
+      { blankLine: 'any', next: 'directive', prev: 'directive' },
+      { blankLine: 'always', next: '*', prev: ['case', 'default'] },
     ],
-    'typescript-sort-keys/interface': [
-      'warn',
-      'asc',
-      {
-        requiredFirst: true,
-      },
-    ],
+    'typescript-sort-keys/interface': ['warn', 'asc', { requiredFirst: true }],
     'typescript-sort-keys/string-enum': 'warn',
   },
 };
