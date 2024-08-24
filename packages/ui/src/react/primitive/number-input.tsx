@@ -247,14 +247,17 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
             onIncrement();
             event.preventDefault();
             break;
+
           case 'PageUp':
             onIncrementToMax();
             event.preventDefault();
             break;
+
           case 'ArrowDown':
             onDecrement();
             event.preventDefault();
             break;
+
           case 'PageDown':
             onDecrementToMin();
             event.preventDefault();
@@ -271,21 +274,37 @@ const NumberInputItem = React.forwardRef<NumberInputItemElement, NumberInputItem
     const handleKeyDownPrevent = React.useCallback<React.KeyboardEventHandler<HTMLInputElement>>((event) => {
       switch (event.key) {
         case 'ArrowUp':
+
         case 'ArrowDown':
+
         case 'ArrowLeft':
+
         case 'ArrowRight':
+
         case 'PageUp':
+
         case 'PageDown':
+
         case 'Tab':
+
         case 'Escape':
+
         case 'Enter':
+
         case 'Backspace':
+
         case 'Delete':
+
         case 'Home':
+
         case 'End':
+
         case '.':
+
         case ',':
+
         case '-':
+
         case '%':
           return;
 

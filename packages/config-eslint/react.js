@@ -10,21 +10,12 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/react'),
     require.resolve('./rules/common'),
   ],
-  globals: {
-    JSX: true,
-  },
+  globals: { JSX: true },
   ignorePatterns: ['node_modules/', 'dist/', '*.js', '*.mjs', '*.cjs'],
-  parserOptions: {
-    project,
-  },
+  parserOptions: { project },
   plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
-    'react/jsx-pascal-case': [
-      'warn',
-      {
-        allowNamespace: true,
-      },
-    ],
+    'react/jsx-pascal-case': ['warn', { allowNamespace: true }],
     'react/jsx-sort-props': [
       'warn',
       {
@@ -36,18 +27,7 @@ module.exports = {
         reservedFirst: true,
       },
     ],
-    'react/no-unknown-property': [
-      'warn',
-      {
-        ignore: ['cmdk-input-wrapper'],
-      },
-    ],
+    'react/no-unknown-property': ['warn', { ignore: ['cmdk-input-wrapper'] }],
   },
-  settings: {
-    'import/resolver': {
-      typescript: {
-        project,
-      },
-    },
-  },
+  settings: { 'import/resolver': { typescript: { project } } },
 };

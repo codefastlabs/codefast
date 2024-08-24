@@ -25,17 +25,21 @@ import { Button, buttonVariants } from '@/react/button';
 
 function Chevron({ orientation, ...props }: React.ComponentProps<CustomComponents['Chevron']>): React.JSX.Element {
   switch (orientation) {
-    case 'up':
+    case 'up': {
       return <ChevronUpIcon className="size-4" {...props} />;
+    }
 
-    case 'down':
+    case 'down': {
       return <ChevronDownIcon className="size-4" {...props} />;
+    }
 
-    case 'left':
+    case 'left': {
       return <ChevronLeftIcon className="size-4" {...props} />;
+    }
 
-    case 'right':
+    case 'right': {
       return <ChevronRightIcon className="size-4" {...props} />;
+    }
 
     default:
       return <DotFilledIcon className="size-4" {...props} />;
