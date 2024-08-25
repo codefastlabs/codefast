@@ -23,7 +23,7 @@ const separatorVariants = tv({
     },
   },
   defaultVariants: {
-    align: 'start',
+    align: 'center',
     orientation: 'horizontal',
   },
 });
@@ -41,7 +41,7 @@ interface SeparatorProps
     Omit<SeparatorVariantsProps, 'orientation'> {}
 
 const Separator = React.forwardRef<SeparatorElement, SeparatorProps>(
-  ({ className, orientation = 'horizontal', align = 'start', decorative = true, ...props }, forwardedRef) => (
+  ({ className, orientation = 'horizontal', align, decorative = true, ...props }, forwardedRef) => (
     <SeparatorPrimitive.Root
       ref={forwardedRef}
       className={separatorVariants({ align, orientation, className })}
@@ -66,7 +66,7 @@ const SeparatorItem = React.forwardRef<SeparatorItemElement, SeparatorItemProps>
     return (
       <div
         ref={forwardedRef}
-        className={cn('bg-background text-accent-foreground absolute mx-2 px-2 text-sm font-medium', className)}
+        className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
         {...props}
       />
     );
