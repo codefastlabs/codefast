@@ -3,23 +3,21 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
+      <excludeFolder url="file://$MODULE_DIR$/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/docs/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/docs/storybook-static" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ui/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ui/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/config-tailwind/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/config-tailwind/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ui/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ui/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="ts-external-references" level="project" />
   </component>
 </module>
