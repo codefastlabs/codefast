@@ -2,20 +2,49 @@
 
 import * as React from 'react';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
+import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
+
+/* -----------------------------------------------------------------------------
+ * Variant: Separator
+ * -------------------------------------------------------------------------- */
+
+const separatorVariants = tv({
+  base: 'bg-border relative flex shrink-0 items-center',
+  variants: {
+    align: {
+      start: 'justify-start',
+      center: 'justify-center',
+      end: 'justify-end',
+    },
+    orientation: {
+      horizontal: 'h-px w-full',
+      vertical: 'h-full w-px flex-col',
+    },
+  },
+  defaultVariants: {
+    align: 'start',
+    orientation: 'horizontal',
+  },
+});
+
+type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
 type SeparatorElement = React.ElementRef<typeof SeparatorPrimitive.Root>;
-type SeparatorProps = React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>;
+
+interface SeparatorProps
+  extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>,
+    Omit<SeparatorVariantsProps, 'orientation'> {}
 
 const Separator = React.forwardRef<SeparatorElement, SeparatorProps>(
-  ({ className, orientation = 'horizontal', decorative = true, ...props }, forwardedRef) => (
+  ({ className, orientation = 'horizontal', align = 'start', decorative = true, ...props }, forwardedRef) => (
     <SeparatorPrimitive.Root
       ref={forwardedRef}
-      className={cn('bg-border shrink-0', orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px', className)}
+      className={separatorVariants({ align, orientation, className })}
       decorative={decorative}
       orientation={orientation}
       {...props}
@@ -26,7 +55,28 @@ const Separator = React.forwardRef<SeparatorElement, SeparatorProps>(
 Separator.displayName = SeparatorPrimitive.Root.displayName;
 
 /* -----------------------------------------------------------------------------
+ * Component: SeparatorItem
+ * -------------------------------------------------------------------------- */
+
+type SeparatorItemElement = HTMLDivElement;
+type SeparatorItemProps = React.HTMLAttributes<HTMLDivElement>;
+
+const SeparatorItem = React.forwardRef<SeparatorItemElement, SeparatorItemProps>(
+  ({ className, ...props }, forwardedRef) => {
+    return (
+      <div
+        ref={forwardedRef}
+        className={cn('bg-background text-accent-foreground absolute mx-2 px-2 text-sm font-medium', className)}
+        {...props}
+      />
+    );
+  },
+);
+
+SeparatorItem.displayName = 'SeparatorItem';
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Separator, type SeparatorProps };
+export { Separator, SeparatorItem, type SeparatorProps };

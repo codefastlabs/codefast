@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.3
+
+### Patch Changes
+
+- Add SeparatorItem component and variant support
+
 ## 0.1.2
 
 ### Patch Changes
