@@ -1,23 +1,23 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
+# dependencies
 node_modules
 .pnp
 .pnp.js
 
-# Local env files
+# local env files
 .env.*.local
 
-# Testing
+# testing
 coverage
 
-# Turbo
+# turbo
 .turbo
 
-# Vercel
+# vercel
 .vercel
 
-# Build Outputs
+# build Outputs
 .next/
 out/
 build
@@ -25,15 +25,20 @@ dist
 .swc/
 
 
-# Debug
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Misc
+# misc
 .DS_Store
 *.pem
 
-# Storybook
+# storybook
 storybook-static
 build-storybook.log
+
+# idea
+/.idea/dataSources/
+/.idea/dataSources*.xml
+/.idea/workspace.xml
