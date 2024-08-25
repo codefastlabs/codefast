@@ -12,6 +12,7 @@
 # next.js
 /.next/
 /out/
+/.swc/
 
 # production
 /build
@@ -34,5 +35,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
+# datasources
+/.idea/dataSources/
+/.idea/dataSources*.xml
+
+# misc
+certificates
+
+# storybook
 *storybook.log
