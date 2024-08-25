@@ -37,8 +37,3 @@ yarn-error.log*
 # storybook
 storybook-static
 build-storybook.log
-
-# idea
-/.idea/dataSources/
-/.idea/dataSources*.xml
-/.idea/workspace.xml
