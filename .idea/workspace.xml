@@ -26,10 +26,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1bffd3b4-525b-4f6f-a772-bfccf8608ced" name="Changes" comment="feat: add Git hooks and lint-staged configuration&#10;&#10;Integrated commitlint and lint-staged with simple-git-hooks in package.json. Added respective configuration files and updated dependencies to ensure Git hooks for pre-commit and commit-msg execute proper linting and commit message validation.">
-      <change afterPath="$PROJECT_DIR$/.idea/tailwindcss.xml" afterDir="false" />
+    <list default="true" id="1bffd3b4-525b-4f6f-a772-bfccf8608ced" name="Changes" comment="feat(ui): add SeparatorItem component and variant support&#10;&#10;Introduced a new SeparatorItem component and enhanced variant support for the Separator component in the UI package. Updated related storybook files and bumped version numbers for affected packages.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/stories/misc/separator.stories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/stories/misc/separator.stories.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/ui/src/react/separator.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/src/react/separator.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,33 +86,33 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "javascript.nodejs.core.library.configured.version": "20.17.0",
-    "javascript.nodejs.core.library.typings.version": "20.16.1",
-    "last_opened_file_path": "/Users/vuongphan/Projects/codefastlabs/codefast",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_interpreter_path": "node",
-    "nodejs_package_manager_path": "pnpm",
-    "npm.build.executor": "Run",
-    "npm.changeset.executor": "Run",
-    "npm.dev.executor": "Run",
-    "npm.package:install.executor": "Run",
-    "npm.package:update.executor": "Run",
-    "npm.start.executor": "Run",
-    "npm.version-packages.executor": "Run",
-    "prettierjs.PrettierConfiguration.Package": "/Users/vuongphan/Projects/codefastlabs/codefast/node_modules/prettier",
-    "rearrange.code.on.save": "true",
-    "settings.editor.selected.configurable": "configurable.tailwindcss",
-    "ts.external.directory.path": "/Users/vuongphan/Projects/codefastlabs/codefast/packages/ui/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;20.17.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.16.1&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/vuongphan/Projects/codefastlabs/codefast&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.changeset.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.package:install.executor&quot;: &quot;Run&quot;,
+    &quot;npm.package:update.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.version-packages.executor&quot;: &quot;Run&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/vuongphan/Projects/codefastlabs/codefast/node_modules/prettier&quot;,
+    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.tailwindcss&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/vuongphan/Projects/codefastlabs/codefast/packages/ui/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -205,7 +203,8 @@
       <workItem from="1724562644712" duration="194000" />
       <workItem from="1724568364274" duration="5056000" />
       <workItem from="1724574345890" duration="2925000" />
-      <workItem from="1724579088582" duration="3069000" />
+      <workItem from="1724579088582" duration="3468000" />
+      <workItem from="1724595919661" duration="50000" />
     </task>
     <task id="LOCAL-00001" summary="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup.">
       <option name="closed" value="true" />
@@ -231,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724577209980</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat(ui): add SeparatorItem component and variant support&#10;&#10;Introduced a new SeparatorItem component and enhanced variant support for the Separator component in the UI package. Updated related storybook files and bumped version numbers for affected packages.">
+      <option name="closed" value="true" />
+      <created>1724594743592</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1724594743592</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -254,7 +261,9 @@
     <MESSAGE value="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup." />
     <MESSAGE value="feat(hooks): add useStateParams hook and refactor useMutationObserver&#10;&#10;Refactor `useMutationObserver` from arrow function to standard function. Introduce new `useStateParams` hook for URL parameter manipulation, providing `push` and `replace` methods for updating browser history." />
     <MESSAGE value="feat: add Git hooks and lint-staged configuration&#10;&#10;Integrated commitlint and lint-staged with simple-git-hooks in package.json. Added respective configuration files and updated dependencies to ensure Git hooks for pre-commit and commit-msg execute proper linting and commit message validation." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add Git hooks and lint-staged configuration&#10;&#10;Integrated commitlint and lint-staged with simple-git-hooks in package.json. Added respective configuration files and updated dependencies to ensure Git hooks for pre-commit and commit-msg execute proper linting and commit message validation." />
+    <MESSAGE value="feat(ui): add SeparatorItem component and variant support&#10;&#10;Introduced a new SeparatorItem component and enhanced the Separator component with variant support using tailwind-variants. Updated stories to demonstrate new features and configurations." />
+    <MESSAGE value="feat(ui): add SeparatorItem component and variant support&#10;&#10;Introduced a new SeparatorItem component and enhanced variant support for the Separator component in the UI package. Updated related storybook files and bumped version numbers for affected packages." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(ui): add SeparatorItem component and variant support&#10;&#10;Introduced a new SeparatorItem component and enhanced variant support for the Separator component in the UI package. Updated related storybook files and bumped version numbers for affected packages." />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
