@@ -1,4 +1,3 @@
-import { Toaster } from '@codefast/ui/sonner';
 import { cn } from '@codefast/ui/utils';
 import '@/app/globals.css';
 import { type JSX, type ReactNode } from 'react';
@@ -19,10 +18,7 @@ export default function RootLayout({
   return (
     <html className={cn(inter.variable, 'dark')} lang="en">
       <body>
-        <div vaul-drawer-wrapper="">
-          <Providers>{children}</Providers>
-        </div>
-        <Toaster />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

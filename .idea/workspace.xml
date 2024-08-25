@@ -11,26 +11,49 @@
             </AIAssistantStoredInstruction>
           </value>
         </entry>
+        <entry key="AIAssistant.WriteDocumentation.JavaScript">
+          <value>
+            <AIAssistantStoredInstruction>
+              <option name="actionId" value="AIAssistant.WriteDocumentation.JavaScript" />
+              <option name="content" value="Do not return example code, do not use @author or @version or @since tags.&#10;DO NOT generate example usage.&#10;DO NOT generate usage example.&#10;DO NOT use html tags such as &lt;p&gt;, &lt;lu&gt;, &lt;li&gt;.&#10;DO NOT generate documentation for type member properties.&#10;Write TSDoc." />
+            </AIAssistantStoredInstruction>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="1bffd3b4-525b-4f6f-a772-bfccf8608ced" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codefast.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codefast.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cssdialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/ts_external_references.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/tailwindcss.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/.gitignore" afterDir="false" />
+    <list default="true" id="1bffd3b4-525b-4f6f-a772-bfccf8608ced" name="Changes" comment="feat(hooks): add useStateParams hook and refactor useMutationObserver&#10;&#10;Refactor `useMutationObserver` from arrow function to standard function. Introduce new `useStateParams` hook for URL parameter manipulation, providing `push` and `replace` methods for updating browser history.">
+      <change afterPath="$PROJECT_DIR$/apps/docs/components/example-link.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/hooks/src/use-state-params.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/_components/search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/_components/search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/app/examples/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/examples/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/components/examples-nav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/components/examples-navigation.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/components/providers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/components/providers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/config-eslint/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-eslint/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/config-eslint/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-eslint/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/config-tailwind/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-tailwind/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/config-tailwind/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-tailwind/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/config-typescript/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-typescript/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/config-typescript/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-typescript/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/hooks/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/hooks/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/hooks/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/hooks/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/hooks/src/use-mutation-observer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/hooks/src/use-mutation-observer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/third-parties/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/third-parties/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/third-parties/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/third-parties/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/ui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +63,14 @@
   <component name="ChangesViewManager">
     <option name="groupingKeys">
       <option value="directory" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
+      </list>
     </option>
   </component>
   <component name="Git.Settings">
@@ -57,10 +88,10 @@
     &quot;accountId&quot;: &quot;cec31456-58b3-4eb4-bec0-ed8f8f624a9d&quot;
   }
 }</component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="OptimizeOnSaveOptions">
     <option name="myRunOnSave" value="true" />
   </component>
@@ -68,6 +99,9 @@
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="2l8XMfIvwUGaS0OLp31v8xvv5gJ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -84,16 +118,87 @@
     "javascript.nodejs.core.library.configured.version": "20.17.0",
     "javascript.nodejs.core.library.typings.version": "20.16.1",
     "last_opened_file_path": "/Users/vuongphan/Projects/codefastlabs/codefast",
+    "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_interpreter_path": "node",
     "nodejs_package_manager_path": "pnpm",
+    "npm.build.executor": "Run",
+    "npm.changeset.executor": "Run",
+    "npm.dev.executor": "Run",
+    "npm.package:install.executor": "Run",
+    "npm.package:update.executor": "Run",
+    "npm.start.executor": "Run",
+    "npm.version-packages.executor": "Run",
     "prettierjs.PrettierConfiguration.Package": "/Users/vuongphan/Projects/codefastlabs/codefast/node_modules/prettier",
     "rearrange.code.on.save": "true",
-    "settings.editor.selected.configurable": "ml.llm.AIAssistantPromptsLibrary",
+    "settings.editor.selected.configurable": "preferences.sourceCode.JavaScript",
+    "ts.external.directory.path": "/Users/vuongphan/Projects/codefastlabs/codefast/packages/ui/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager" selected="npm.build">
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="changeset" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="changeset" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="version-packages" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="version-packages" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.version-packages" />
+        <item itemvalue="npm.changeset" />
+        <item itemvalue="npm.dev" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -115,14 +220,27 @@
       <workItem from="1709099156162" duration="33000" />
       <workItem from="1712713418514" duration="245000" />
       <workItem from="1712713770529" duration="614000" />
-      <workItem from="1724562644712" duration="164000" />
+      <workItem from="1724562644712" duration="194000" />
+      <workItem from="1724568364274" duration="5056000" />
+      <workItem from="1724574345890" duration="2366000" />
     </task>
+    <task id="LOCAL-00001" summary="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup.">
+      <option name="closed" value="true" />
+      <created>1724562831039</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1724562831039</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="Remove redundant .idea project files&#10;&#10;Deleted unnecessary `.idea` configuration files and adjusted `.gitignore` entries for cleaner project management. This simplifies the project structure and reduces clutter, making it more maintainable." />
+    <MESSAGE value="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup." />
+    <option name="LAST_COMMIT_MESSAGE" value="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup." />
   </component>
 </project>
