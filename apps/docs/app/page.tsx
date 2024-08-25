@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { type JSX } from 'react';
+import Link from 'next/link';
 
 export default function Home(): JSX.Element {
   return (
@@ -33,71 +34,58 @@ export default function Home(): JSX.Element {
       </div>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
+        <Link
           className="text-foreground group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
+          href="/examples/authentication"
         >
           <h2 className="mb-3 text-2xl font-semibold">
-            Docs{' '}
+            Examples{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
+            Explore a list of examples to help you get started with your project.
           </p>
-        </a>
-
-        <a
+        </Link>
+        <Link
           className="text-foreground group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
+          href="/examples/mail"
         >
           <h2 className="mb-3 text-2xl font-semibold">
-            Learn{' '}
+            Mail{' '}
+            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              -&gt;
+            </span>
+          </h2>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">Send emails with ease using the Mail example.</p>
+        </Link>
+        <Link
+          className="text-foreground group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          href="/examples/dashboard"
+        >
+          <h2 className="mb-3 text-2xl font-semibold">
+            Dashboard{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
+            Build a dashboard for your project with the Dashboard example.
           </p>
-        </a>
-
-        <a
+        </Link>
+        <Link
           className="text-foreground group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
+          href="/examples/forms"
         >
           <h2 className="mb-3 text-2xl font-semibold">
-            Templates{' '}
+            Forms{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          className="text-foreground group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">Learn how to create forms with the Forms example</p>
+        </Link>
       </div>
     </main>
   );

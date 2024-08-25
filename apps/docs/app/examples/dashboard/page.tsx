@@ -2,7 +2,7 @@ import { Button } from '@codefast/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
 import Image from 'next/image';
-import { type JSX } from 'react';
+import { type JSX, Suspense } from 'react';
 import { type Metadata } from 'next';
 import { MainNav } from '@/app/examples/dashboard/_components/main-nav';
 import { Overview } from '@/app/examples/dashboard/_components/overview';
@@ -42,7 +42,9 @@ export default function DashboardPage(): JSX.Element {
             <TeamSwitcher />
             <MainNav className="mx-6" />
             <div className="ml-auto flex items-center space-x-4">
-              <Search />
+              <Suspense>
+                <Search />
+              </Suspense>
               <UserNav />
             </div>
           </div>

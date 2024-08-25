@@ -33,7 +33,7 @@
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
     "prettier": "3.3.3",
-    "prettier-plugin-packagejson": "2.5.1",
+    "prettier-plugin-packagejson": "2.5.2",
     "prettier-plugin-tailwindcss": "0.6.6",
     "turbo": "2.0.14"
   },
