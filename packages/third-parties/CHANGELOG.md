@@ -1,5 +1,11 @@
 # @codefast/third-parties
 
+## 0.1.5
+
+### Patch Changes
+
+- Adjust input outline offset to improve focus state
+
 ## 0.1.4
 
 ### Patch Changes
