@@ -1,6 +1,6 @@
 {
   "name": "@codefast/hooks",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
@@ -20,6 +20,11 @@
       "types": "./dist/use-mutation-observer.d.ts",
       "import": "./dist/use-mutation-observer.js",
       "require": "./dist/use-mutation-observer.cjs"
+    },
+    "./use-state-params": {
+      "types": "./dist/use-state-params.d.ts",
+      "import": "./dist/use-state-params.js",
+      "require": "./dist/use-state-params.cjs"
     }
   },
   "files": [
@@ -34,7 +39,7 @@
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/node": "22.4.2",
+    "@types/node": "22.5.0",
     "@types/react": "18.3.4",
     "eslint": "8.57.0",
     "react": "18.3.1",

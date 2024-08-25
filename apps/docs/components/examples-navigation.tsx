@@ -1,15 +1,18 @@
 'use client';
 
 import { cn } from '@codefast/ui/utils';
-import { usePathname } from 'next/navigation';
 import { ScrollArea } from '@codefast/ui/scroll-area';
-import Link from 'next/link';
 import { type HTMLAttributes, type JSX } from 'react';
+import { ExampleLink } from '@/components/example-link';
 
 const examples: {
   href: string;
   name: string;
 }[] = [
+  {
+    name: 'Home',
+    href: '/',
+  },
   {
     name: 'Mail',
     href: '/examples/mail',
@@ -48,28 +51,17 @@ const examples: {
   },
 ];
 
-type ExamplesNavProps = HTMLAttributes<HTMLDivElement>;
+type ExamplesNavigationProps = HTMLAttributes<HTMLDivElement>;
 
-export function ExamplesNav({ className, ...props }: ExamplesNavProps): JSX.Element {
-  const pathname = usePathname();
-
+export function ExamplesNavigation({ className, ...props }: ExamplesNavigationProps): JSX.Element {
   return (
     <div className={cn('relative', className)} {...props}>
       <ScrollArea className="max-w-[600px] lg:max-w-none">
         <div className={cn('flex items-center gap-1 p-2', className)} {...props}>
-          {examples.map((example, index) => (
-            <Link
-              key={example.href}
-              className={cn(
-                'hover:text-primary flex h-7 items-center justify-center rounded-full px-4 text-center text-sm transition-colors',
-                pathname.startsWith(example.href) || (index === 0 && pathname === '/')
-                  ? 'bg-muted text-primary font-medium'
-                  : 'text-muted-foreground',
-              )}
-              href={example.href}
-            >
+          {examples.map((example) => (
+            <ExampleLink key={example.href} href={example.href}>
               {example.name}
-            </Link>
+            </ExampleLink>
           ))}
         </div>
       </ScrollArea>
