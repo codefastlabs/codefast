@@ -27,33 +27,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1bffd3b4-525b-4f6f-a772-bfccf8608ced" name="Changes" comment="feat(hooks): add useStateParams hook and refactor useMutationObserver&#10;&#10;Refactor `useMutationObserver` from arrow function to standard function. Introduce new `useStateParams` hook for URL parameter manipulation, providing `push` and `replace` methods for updating browser history.">
-      <change afterPath="$PROJECT_DIR$/apps/docs/components/example-link.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/hooks/src/use-state-params.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commitlint.config.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lint-staged.config.mjs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/_components/search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/_components/search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/examples/dashboard/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/app/examples/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/examples/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/components/examples-nav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/components/examples-navigation.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/components/providers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/components/providers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/config-eslint/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-eslint/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/config-eslint/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-eslint/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/config-tailwind/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-tailwind/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/config-tailwind/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-tailwind/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/config-typescript/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-typescript/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/config-typescript/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/config-typescript/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/hooks/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/hooks/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/hooks/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/hooks/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/hooks/src/use-mutation-observer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/hooks/src/use-mutation-observer.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/third-parties/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/third-parties/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/third-parties/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/third-parties/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/ui/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/ui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/ui/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,6 +115,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
   <component name="RunManager" selected="npm.build">
     <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
@@ -222,7 +204,7 @@
       <workItem from="1712713770529" duration="614000" />
       <workItem from="1724562644712" duration="194000" />
       <workItem from="1724568364274" duration="5056000" />
-      <workItem from="1724574345890" duration="2366000" />
+      <workItem from="1724574345890" duration="2748000" />
     </task>
     <task id="LOCAL-00001" summary="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup.">
       <option name="closed" value="true" />
@@ -232,15 +214,28 @@
       <option name="project" value="LOCAL" />
       <updated>1724562831039</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="feat(hooks): add useStateParams hook and refactor useMutationObserver&#10;&#10;Refactor `useMutationObserver` from arrow function to standard function. Introduce new `useStateParams` hook for URL parameter manipulation, providing `push` and `replace` methods for updating browser history.">
+      <option name="closed" value="true" />
+      <created>1724576793054</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1724576793054</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <MESSAGE value="Remove redundant .idea project files&#10;&#10;Deleted unnecessary `.idea` configuration files and adjusted `.gitignore` entries for cleaner project management. This simplifies the project structure and reduces clutter, making it more maintainable." />
     <MESSAGE value="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup." />
-    <option name="LAST_COMMIT_MESSAGE" value="chore: update and clean up project configuration files&#10;&#10;Removed obsolete .idea files and unnecessary gitignore entries. Updated various code style settings and project inspection profiles for better consistency. Added new workspace and misc configuration files to improve IntelliJ setup." />
+    <MESSAGE value="feat(hooks): add useStateParams hook and refactor useMutationObserver&#10;&#10;Refactor `useMutationObserver` from arrow function to standard function. Introduce new `useStateParams` hook for URL parameter manipulation, providing `push` and `replace` methods for updating browser history." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(hooks): add useStateParams hook and refactor useMutationObserver&#10;&#10;Refactor `useMutationObserver` from arrow function to standard function. Introduce new `useStateParams` hook for URL parameter manipulation, providing `push` and `replace` methods for updating browser history." />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>

@@ -6,6 +6,7 @@
     "changeset": "changeset",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo dev",
+    "postinstall": "pnpm exec simple-git-hooks",
     "lint": "turbo lint -- --fix",
     "lint:check": "turbo lint",
     "package:install": "pnpm install",
@@ -16,6 +17,10 @@
     "release": "turbo run build --filter=docs^... && changeset publish",
     "start": "turbo start",
     "version-packages": "changeset version"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm exec lint-staged",
+    "commit-msg": "pnpm exec commitlint --edit $1"
   },
   "prettier": {
     "plugins": [
@@ -32,9 +37,13 @@
     "@changesets/cli": "2.27.7",
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
+    "@commitlint/cli": "19.4.0",
+    "@commitlint/config-conventional": "19.2.2",
+    "lint-staged": "15.2.9",
     "prettier": "3.3.3",
     "prettier-plugin-packagejson": "2.5.2",
     "prettier-plugin-tailwindcss": "0.6.6",
+    "simple-git-hooks": "2.11.1",
     "turbo": "2.0.14"
   },
   "packageManager": "pnpm@9.4.0",
