@@ -16,6 +16,11 @@
       "import": "./dist/use-media-query.js",
       "require": "./dist/use-media-query.cjs"
     },
+    "./use-pagination": {
+      "types": "./dist/use-pagination.d.ts",
+      "import": "./dist/use-pagination.js",
+      "require": "./dist/use-pagination.cjs"
+    },
     "./use-mutation-observer": {
       "types": "./dist/use-mutation-observer.d.ts",
       "import": "./dist/use-mutation-observer.js",
