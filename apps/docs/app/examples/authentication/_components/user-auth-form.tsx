@@ -6,6 +6,7 @@ import { Spinner } from '@codefast/ui/spinner';
 import { cn } from '@codefast/ui/utils';
 import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
+import { type SubmitHandler } from 'react-hook-form';
 import { Icons } from '@/components/icons';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
@@ -13,14 +14,14 @@ type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  function onSubmit(event: SyntheticEvent): void {
+  const onSubmit: SubmitHandler<SyntheticEvent> = (event): void => {
     event.preventDefault();
     setIsLoading(true);
 
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
-  }
+  };
 
   return (
     <div className={cn('grid gap-6', className)} {...props}>

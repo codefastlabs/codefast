@@ -6,7 +6,7 @@ import { addDays, format } from 'date-fns';
 import { Calendar, type DateRange } from '@codefast/ui/calendar';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
@@ -144,11 +144,13 @@ export const WithPresets: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormSchema = z.object({
+const formSchema = z.object({
   dob: z.date({
     required_error: 'A date of birth is required.',
   }),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -160,19 +162,19 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<z.infer<typeof FormSchema>>({
-      resolver: zodResolver(FormSchema),
+    const form = useForm<FormValues>({
+      resolver: zodResolver(formSchema),
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>): void {
+    const onSubmit: SubmitHandler<FormValues> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
-    }
+    };
 
     return (
       <Form {...form}>

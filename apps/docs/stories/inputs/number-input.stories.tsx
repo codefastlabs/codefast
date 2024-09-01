@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { NumberInput } from '@codefast/ui/number-input';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { wait } from 'next/dist/lib/wait';
 import { toast, Toaster } from '@codefast/ui/sonner';
@@ -277,9 +277,11 @@ export const FormReset: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormSchema = z.object({
+const FormValues = z.object({
   age: z.coerce.number().int().positive().min(18).max(99),
 });
+
+type FormValues = z.infer<typeof FormValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -291,23 +293,23 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<z.infer<typeof FormSchema>>({
-      resolver: zodResolver(FormSchema),
+    const form = useForm<FormValues>({
+      resolver: zodResolver(FormValues),
       defaultValues: {
         age: 10,
       },
     });
 
-    async function onSubmit(data: z.infer<typeof FormSchema>): Promise<void> {
+    const onSubmit: SubmitHandler<FormValues> = async (values): Promise<void> => {
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
-    }
+    };
 
     return (
       <Form {...form}>

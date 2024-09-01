@@ -31,7 +31,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@codefast/ui/dropdown-menu';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
@@ -388,11 +388,13 @@ const languages = [
   { label: 'Chinese', value: 'zh' },
 ] as const;
 
-const FormSchema = z.object({
+const FormValues = z.object({
   language: z.string({
     required_error: 'Please select a language.',
   }),
 });
+
+type FormValues = z.infer<typeof FormValues>;
 
 export const WithReactHookForm: Story = {
   decorators: [
@@ -404,19 +406,19 @@ export const WithReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<z.infer<typeof FormSchema>>({
-      resolver: zodResolver(FormSchema),
+    const form = useForm<FormValues>({
+      resolver: zodResolver(FormValues),
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>): void {
+    const onSubmit: SubmitHandler<FormValues> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
-    }
+    };
 
     return (
       <Form {...form}>
