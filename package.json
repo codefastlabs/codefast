@@ -29,6 +29,9 @@
     ],
     "printWidth": 120,
     "singleQuote": true,
+    "tailwindAttributes": [
+      "classNames"
+    ],
     "tailwindFunctions": [
       "tv"
     ]

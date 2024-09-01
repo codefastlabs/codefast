@@ -5,7 +5,7 @@ import { Checkbox } from '@codefast/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { toast } from '@codefast/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
@@ -38,11 +38,11 @@ const items = [
   },
 ] as const;
 
-const displayFormSchema = z.object({
+const displayFormValues = z.object({
   items: z.array(z.string().trim()).min(1, 'You have to select at least one item.'),
 });
 
-type DisplayFormValues = z.infer<typeof displayFormSchema>;
+type DisplayFormValues = z.infer<typeof displayFormValues>;
 
 // This can come from your database or API.
 const defaultValues: Partial<DisplayFormValues> = {
@@ -51,19 +51,19 @@ const defaultValues: Partial<DisplayFormValues> = {
 
 export function DisplayForm(): JSX.Element {
   const form = useForm<DisplayFormValues>({
-    resolver: zodResolver(displayFormSchema),
+    resolver: zodResolver(displayFormValues),
     defaultValues,
   });
 
-  function onSubmit(data: DisplayFormValues): void {
+  const onSubmit: SubmitHandler<DisplayFormValues> = (values): void => {
     toast.message('You submitted the following values:', {
       description: (
         <Pre className="w-full rounded-md bg-slate-950 p-4">
-          <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
         </Pre>
       ),
     });
-  }
+  };
 
   return (
     <Form {...form}>

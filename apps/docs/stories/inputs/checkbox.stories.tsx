@@ -1,5 +1,5 @@
 import { Checkbox } from '@codefast/ui/checkbox';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
@@ -65,9 +65,11 @@ export const Disabled: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormSchema = z.object({
+const FormValues = z.object({
   mobile: z.boolean().default(false).optional(),
 });
+
+type FormValues = z.infer<typeof FormValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -79,22 +81,22 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<z.infer<typeof FormSchema>>({
-      resolver: zodResolver(FormSchema),
+    const form = useForm<FormValues>({
+      resolver: zodResolver(FormValues),
       defaultValues: {
         mobile: true,
       },
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>): void {
+    const onSubmit: SubmitHandler<FormValues> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
-    }
+    };
 
     return (
       <Form {...form}>
@@ -155,11 +157,13 @@ const items2 = [
   },
 ] as const;
 
-const FormSchema2 = z.object({
+const FormValues2 = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one item.',
   }),
 });
+
+type FormValues2 = z.infer<typeof FormValues2>;
 
 export const ReactHookForm2: Story = {
   decorators: [
@@ -171,22 +175,22 @@ export const ReactHookForm2: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<z.infer<typeof FormSchema2>>({
-      resolver: zodResolver(FormSchema2),
+    const form = useForm<FormValues2>({
+      resolver: zodResolver(FormValues2),
       defaultValues: {
         items: ['recents', 'home'],
       },
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema2>): void {
+    const onSubmit: SubmitHandler<FormValues2> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
-    }
+    };
 
     return (
       <Form {...form}>

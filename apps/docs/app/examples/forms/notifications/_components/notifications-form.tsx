@@ -8,13 +8,13 @@ import { toast } from '@codefast/ui/sonner';
 import { Switch } from '@codefast/ui/switch';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type JSX } from 'react';
 
-const notificationsFormSchema = z.object({
+const notificationsFormValues = z.object({
   type: z.enum(['all', 'mentions', 'none'], {
     required_error: 'You need to select a notification type.',
   }),
@@ -25,7 +25,7 @@ const notificationsFormSchema = z.object({
   security_emails: z.boolean(),
 });
 
-type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
+type NotificationsFormValues = z.infer<typeof notificationsFormValues>;
 
 // This can come from your database or API.
 const defaultValues: Partial<NotificationsFormValues> = {
@@ -37,19 +37,19 @@ const defaultValues: Partial<NotificationsFormValues> = {
 
 export function NotificationsForm(): JSX.Element {
   const form = useForm<NotificationsFormValues>({
-    resolver: zodResolver(notificationsFormSchema),
+    resolver: zodResolver(notificationsFormValues),
     defaultValues,
   });
 
-  function onSubmit(data: NotificationsFormValues): void {
+  const onSubmit: SubmitHandler<NotificationsFormValues> = (values): void => {
     toast.message('You submitted the following values:', {
       description: (
         <Pre className="w-full rounded-md bg-slate-950 p-4">
-          <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
         </Pre>
       ),
     });
-  }
+  };
 
   return (
     <Form {...form}>

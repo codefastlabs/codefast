@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const accountFormSchema = z.object({
+export const accountFormValues = z.object({
   name: z
     .string()
     .trim()
@@ -20,4 +20,4 @@ export const accountFormSchema = z.object({
     .trim(),
 });
 
-export type AccountFormValues = z.infer<typeof accountFormSchema>;
+export type AccountFormValues = z.infer<typeof accountFormValues>;

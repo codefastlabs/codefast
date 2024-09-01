@@ -8,14 +8,14 @@ import { Textarea } from '@codefast/ui/textarea';
 import { cn } from '@codefast/ui/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type JSX } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
 
-const profileFormSchema = z.object({
+const profileFormValues = z.object({
   username: z
     .string()
     .min(2, {
@@ -39,7 +39,7 @@ const profileFormSchema = z.object({
     .optional(),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormValues>;
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
@@ -49,7 +49,7 @@ const defaultValues: Partial<ProfileFormValues> = {
 
 export function ProfileForm(): JSX.Element {
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(profileFormValues),
     defaultValues,
     mode: 'onChange',
   });
@@ -59,15 +59,15 @@ export function ProfileForm(): JSX.Element {
     control: form.control,
   });
 
-  function onSubmit(data: ProfileFormValues): void {
+  const onSubmit: SubmitHandler<ProfileFormValues> = (values): void => {
     toast.message('You submitted the following values:', {
       description: (
         <Pre className="w-full rounded-md bg-slate-950 p-4">
-          <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
         </Pre>
       ),
     });
-  }
+  };
 
   return (
     <Form {...form}>

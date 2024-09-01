@@ -14,8 +14,8 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import isNil from 'lodash/isNil';
 import { type JSX } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
-import { accountFormSchema, type AccountFormValues } from '@/app/examples/forms/account/_lib/account-schema';
-import { updateAccount } from '@/app/examples/forms/account/_actions/account-actions';
+import { accountFormValues, type AccountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
+import { updateAccount } from '@/app/examples/forms/account/_lib/actions/account-actions';
 
 const languages = [
   { label: 'English', value: 'en' },
@@ -37,30 +37,27 @@ const defaultValues: Partial<AccountFormValues> = {
 
 export function AccountForm(): JSX.Element {
   const form = useForm<AccountFormValues>({
-    resolver: zodResolver(accountFormSchema),
+    resolver: zodResolver(accountFormValues),
     defaultValues,
   });
 
-  const onSubmit: SubmitHandler<AccountFormValues> = async (data): Promise<void> => {
-    const { message, errors, success } = await updateAccount(data);
+  const onSubmit: SubmitHandler<AccountFormValues> = async (values): Promise<void> => {
+    const response = await updateAccount(values);
 
-    if (success) {
-      toast.success(message);
+    if (response.ok) {
+      toast.success(response.data.message);
 
       return;
     }
 
-    toast.error(message);
+    toast.error(response.error.message);
 
-    if (!errors) {
+    if (!response.error.errors) {
       return;
     }
 
-    Object.entries(errors).forEach(([field, error]) => {
-      form.setError(field as keyof AccountFormValues, {
-        type: 'manual',
-        message: error[0],
-      });
+    Object.entries(response.error.errors).forEach(([field, error]) => {
+      form.setError(field as keyof AccountFormValues, { type: 'manual', message: error.at(0) });
     });
   };
 

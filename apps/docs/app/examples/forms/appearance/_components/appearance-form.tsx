@@ -6,13 +6,13 @@ import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
 import { toast } from '@codefast/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Code } from '@codefast/ui/code';
 import { Pre } from '@codefast/ui/pre';
 import { type JSX } from 'react';
 
-const appearanceFormSchema = z.object({
+const appearanceFormValues = z.object({
   theme: z.enum(['light', 'dark'], {
     required_error: 'Please select a theme.',
   }),
@@ -22,7 +22,7 @@ const appearanceFormSchema = z.object({
   }),
 });
 
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+type AppearanceFormValues = z.infer<typeof appearanceFormValues>;
 
 // This can come from your database or API.
 const defaultValues: Partial<AppearanceFormValues> = {
@@ -31,19 +31,19 @@ const defaultValues: Partial<AppearanceFormValues> = {
 
 export function AppearanceForm(): JSX.Element {
   const form = useForm<AppearanceFormValues>({
-    resolver: zodResolver(appearanceFormSchema),
+    resolver: zodResolver(appearanceFormValues),
     defaultValues,
   });
 
-  function onSubmit(data: AppearanceFormValues): void {
+  const onSubmit: SubmitHandler<AppearanceFormValues> = (values): void => {
     toast.message('You submitted the following values:', {
       description: (
         <Pre className="w-full rounded-md bg-slate-950 p-4">
-          <Code className="text-white">{JSON.stringify(data, null, 2)}</Code>
+          <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
         </Pre>
       ),
     });
-  }
+  };
 
   return (
     <Form {...form}>
