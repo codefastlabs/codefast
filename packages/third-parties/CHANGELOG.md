@@ -1,5 +1,11 @@
 # @codefast/third-parties
 
+## 0.1.7
+
+### Patch Changes
+
+- Wrap children and icon in fragment
+
 ## 0.1.6
 
 ### Patch Changes

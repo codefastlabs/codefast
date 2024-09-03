@@ -42,8 +42,10 @@ const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTrig
         className={cn('group flex flex-1 items-center justify-between py-4 text-sm font-medium', className)}
         {...props}
       >
-        {children}
-        <ChevronDownIcon className="text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-180" />
+        <>
+          {children}
+          <ChevronDownIcon className="text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-180" />
+        </>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   ),
