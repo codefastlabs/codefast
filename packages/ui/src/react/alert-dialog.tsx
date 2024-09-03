@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/react/button';
+import { buttonVariants, type ButtonVariantsProps } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog
@@ -128,11 +128,19 @@ AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayNam
  * -------------------------------------------------------------------------- */
 
 type AlertDialogActionElement = React.ElementRef<typeof AlertDialogPrimitive.Action>;
-type AlertDialogActionProps = React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>;
+
+interface AlertDialogActionProps extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> {
+  size?: ButtonVariantsProps['size'];
+  variant?: ButtonVariantsProps['variant'];
+}
 
 const AlertDialogAction = React.forwardRef<AlertDialogActionElement, AlertDialogActionProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <AlertDialogPrimitive.Action ref={forwardedRef} className={buttonVariants({ className })} {...props} />
+  ({ className, size, variant, ...props }, forwardedRef) => (
+    <AlertDialogPrimitive.Action
+      ref={forwardedRef}
+      className={buttonVariants({ className, size, variant })}
+      {...props}
+    />
   ),
 );
 
@@ -143,13 +151,17 @@ AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
  * -------------------------------------------------------------------------- */
 
 type AlertDialogCancelElement = React.ElementRef<typeof AlertDialogPrimitive.Cancel>;
-type AlertDialogCancelProps = React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>;
+
+interface AlertDialogCancelProps extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel> {
+  size?: ButtonVariantsProps['size'];
+  variant?: ButtonVariantsProps['variant'];
+}
 
 const AlertDialogCancel = React.forwardRef<AlertDialogCancelElement, AlertDialogCancelProps>(
-  ({ className, ...props }, forwardedRef) => (
+  ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
     <AlertDialogPrimitive.Cancel
       ref={forwardedRef}
-      className={buttonVariants({ variant: 'outline', className })}
+      className={buttonVariants({ className, size, variant })}
       {...props}
     />
   ),

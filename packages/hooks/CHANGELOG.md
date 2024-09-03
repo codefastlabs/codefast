@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.1.6
+
+### Patch Changes
+
+- Add size and variant props to dialog components
+
 ## 0.1.5
 
 ### Patch Changes

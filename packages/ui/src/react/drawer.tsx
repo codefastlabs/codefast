@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 import { cn } from '@/lib/utils';
+import { buttonVariants, type ButtonVariantsProps } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer
@@ -20,13 +21,6 @@ function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): React.
 
 type DrawerTriggerProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Trigger>;
 const DrawerTrigger = DrawerPrimitive.Trigger;
-
-/* -----------------------------------------------------------------------------
- * Component: DrawerClose
- * -------------------------------------------------------------------------- */
-
-type DrawerCloseProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Close>;
-const DrawerClose = DrawerPrimitive.Close;
 
 /* -----------------------------------------------------------------------------
  * Component: DrawerContent
@@ -67,13 +61,23 @@ function DrawerHeader({ className, ...props }: DrawerHeaderProps): React.JSX.Ele
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: DrawerBody
+ * -------------------------------------------------------------------------- */
+
+type DrawerBodyProps = React.HTMLAttributes<HTMLDivElement>;
+
+function DrawerBody({ className, ...props }: DrawerBodyProps): React.JSX.Element {
+  return <main className={cn('overflow-auto px-4 py-2', className)} {...props} />;
+}
+
+/* -----------------------------------------------------------------------------
  * Component: DrawerFooter
  * -------------------------------------------------------------------------- */
 
 type DrawerFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DrawerFooter({ className, ...props }: DrawerFooterProps): React.JSX.Element {
-  return <div className={cn('mt-auto flex flex-col gap-2 p-4', className)} {...props} />;
+  return <div className={cn('mt-auto flex flex-col-reverse gap-2 p-4', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -113,6 +117,25 @@ const DrawerDescription = React.forwardRef<DrawerDescriptionElement, DrawerDescr
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
 
 /* -----------------------------------------------------------------------------
+ * Component: DrawerClose
+ * -------------------------------------------------------------------------- */
+
+type DrawerCloseElement = React.ElementRef<typeof DrawerPrimitive.Close>;
+
+interface DrawerCloseProps extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Close> {
+  size?: ButtonVariantsProps['size'];
+  variant?: ButtonVariantsProps['variant'];
+}
+
+const DrawerClose = React.forwardRef<DrawerCloseElement, DrawerCloseProps>(
+  ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
+    <DrawerPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
+  ),
+);
+
+DrawerClose.displayName = DrawerPrimitive.Close.displayName;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
@@ -122,6 +145,7 @@ export {
   DrawerClose,
   DrawerContent,
   DrawerHeader,
+  DrawerBody,
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
@@ -130,6 +154,7 @@ export {
   type DrawerCloseProps,
   type DrawerContentProps,
   type DrawerHeaderProps,
+  type DrawerBodyProps,
   type DrawerFooterProps,
   type DrawerTitleProps,
   type DrawerDescriptionProps,

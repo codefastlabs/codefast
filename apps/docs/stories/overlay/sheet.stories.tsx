@@ -64,9 +64,7 @@ export const Default: Story = {
           </SheetBody>
 
           <SheetFooter>
-            <SheetClose asChild>
-              <Button type="submit">Save changes</Button>
-            </SheetClose>
+            <SheetClose variant="default">Save changes</SheetClose>
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -96,7 +94,7 @@ export const Side: Story = {
               <SheetHeader>
                 <SheetTitle>Edit profile</SheetTitle>
                 <SheetDescription>
-                  Make changes to your profile here. Click save when you&apos;`re done.
+                  Make changes to your profile here. Click save when you&apos;re done.
                 </SheetDescription>
               </SheetHeader>
 
@@ -118,9 +116,7 @@ export const Side: Story = {
               </SheetBody>
 
               <SheetFooter>
-                <SheetClose asChild>
-                  <Button type="submit">Save changes</Button>
-                </SheetClose>
+                <SheetClose variant="default">Save changes</SheetClose>
               </SheetFooter>
             </SheetContent>
           </Sheet>
@@ -162,9 +158,7 @@ export const Scrollable: Story = {
             </SheetBody>
 
             <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit">Close</Button>
-              </SheetClose>
+              <SheetClose>Close</SheetClose>
             </SheetFooter>
           </SheetContent>
         </Sheet>
@@ -205,9 +199,7 @@ export const ScrollingLongContent: Story = {
             </SheetBody>
 
             <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit">Close</Button>
-              </SheetClose>
+              <SheetClose>Close</SheetClose>
             </SheetFooter>
           </SheetContent>
         </Sheet>
