@@ -5,6 +5,7 @@ import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
+import { buttonVariants, type ButtonVariantsProps } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -19,13 +20,6 @@ const Sheet = SheetPrimitive.Root;
 
 type SheetTriggerProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Trigger>;
 const SheetTrigger = SheetPrimitive.Trigger;
-
-/* -----------------------------------------------------------------------------
- * Component: SheetClose
- * -------------------------------------------------------------------------- */
-
-type SheetCloseProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close>;
-const SheetClose = SheetPrimitive.Close;
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent
@@ -151,6 +145,25 @@ const SheetDescription = React.forwardRef<SheetDescriptionElement, SheetDescript
 );
 
 SheetDescription.displayName = SheetPrimitive.Description.displayName;
+
+/* -----------------------------------------------------------------------------
+ * Component: SheetClose
+ * -------------------------------------------------------------------------- */
+
+type SheetCloseElement = React.ElementRef<typeof SheetPrimitive.Close>;
+
+interface SheetCloseProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close> {
+  size?: ButtonVariantsProps['size'];
+  variant?: ButtonVariantsProps['variant'];
+}
+
+const SheetClose = React.forwardRef<SheetCloseElement, SheetCloseProps>(
+  ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
+    <SheetPrimitive.Close ref={forwardedRef} className={buttonVariants({ variant, size, className })} {...props} />
+  ),
+);
+
+SheetClose.displayName = SheetPrimitive.Close.displayName;
 
 /* -----------------------------------------------------------------------------
  * Exports

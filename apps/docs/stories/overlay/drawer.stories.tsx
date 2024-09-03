@@ -1,5 +1,6 @@
 import {
   Drawer,
+  DrawerBody,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
@@ -8,19 +9,21 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
-import { type CSSProperties, type FormHTMLAttributes, type JSX, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@codefast/ui/button';
 import { Minus, Plus } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 import {
   Dialog,
+  DialogBody,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@codefast/ui/dialog';
-import { cn } from '@codefast/ui/utils';
 import { Label } from '@codefast/ui/label';
 import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/hooks/use-media-query';
@@ -91,8 +94,10 @@ export const Default: Story = {
       setGoal(Math.max(200, Math.min(400, goal + adjustment)));
     }
 
+    const [open, setOpen] = useState(false);
+
     return (
-      <Drawer>
+      <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <Button variant="outline">Open Drawer</Button>
         </DrawerTrigger>
@@ -142,22 +147,18 @@ export const Default: Story = {
                   <BarChart data={data}>
                     <Bar
                       dataKey="goal"
-                      style={
-                        {
-                          fill: 'hsl(var(--foreground))',
-                          opacity: 0.9,
-                        } as CSSProperties
-                      }
+                      style={{
+                        fill: 'hsl(var(--foreground))',
+                        opacity: 0.9,
+                      }}
                     />
                   </BarChart>
                 </ResponsiveContainer>
               </Box>
             </Box>
             <DrawerFooter>
-              <Button>Submit</Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
+              <DrawerClose>Cancel</DrawerClose>
+              <DrawerClose variant="default">Submit</DrawerClose>
             </DrawerFooter>
           </Box>
         </DrawerContent>
@@ -169,22 +170,6 @@ export const Default: Story = {
 /* -----------------------------------------------------------------------------
  * Story: Responsive Dialog
  * -------------------------------------------------------------------------- */
-
-function ProfileForm({ className }: FormHTMLAttributes<HTMLFormElement>): JSX.Element {
-  return (
-    <form className={cn('grid items-start gap-4', className)}>
-      <Box className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <TextInput defaultValue="codefast@example.com" id="email" type="email" />
-      </Box>
-      <Box className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
-        <TextInput defaultValue="@codefast" id="username" />
-      </Box>
-      <Button type="submit">Save changes</Button>
-    </form>
-  );
-}
 
 export const ResponsiveDialog: Story = {
   render: (args) => {
@@ -198,11 +183,41 @@ export const ResponsiveDialog: Story = {
             <Button variant="outline">Edit Profile</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit profile</DialogTitle>
-              <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
-            </DialogHeader>
-            <ProfileForm />
+            <form>
+              <DialogHeader>
+                <DialogTitle>Edit profile</DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you&apos;re done.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogBody className="grid items-start gap-4">
+                <Box className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <TextInput defaultValue="codefast@example.com" id="email" type="email" />
+                </Box>
+                <Box className="grid gap-2">
+                  <Label htmlFor="username">Username</Label>
+                  <TextInput defaultValue="@codefast" id="username" />
+                </Box>
+              </DialogBody>
+              <DialogFooter>
+                <DialogClose
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  Cancel
+                </DialogClose>
+                <DialogClose
+                  variant="default"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  Save changes
+                </DialogClose>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       );
@@ -214,16 +229,28 @@ export const ResponsiveDialog: Story = {
           <Button variant="outline">Edit Profile</Button>
         </DrawerTrigger>
         <DrawerContent>
-          <DrawerHeader className="text-left">
-            <DrawerTitle>Edit profile</DrawerTitle>
-            <DrawerDescription>Make changes to your profile here. Click save when you&apos;re done.</DrawerDescription>
-          </DrawerHeader>
-          <ProfileForm className="px-4" />
-          <DrawerFooter className="pt-2">
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
+          <form>
+            <DrawerHeader className="text-left">
+              <DrawerTitle>Edit profile</DrawerTitle>
+              <DrawerDescription>
+                Make changes to your profile here. Click save when you&apos;re done.
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerBody className="grid items-start gap-4">
+              <Box className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <TextInput defaultValue="codefast@example.com" id="email" type="email" />
+              </Box>
+              <Box className="grid gap-2">
+                <Label htmlFor="username">Username</Label>
+                <TextInput defaultValue="@codefast" id="username" />
+              </Box>
+            </DrawerBody>
+            <DrawerFooter className="pt-2">
+              <DrawerClose>Cancel</DrawerClose>
+              <DrawerClose variant="default">Save changes</DrawerClose>
+            </DrawerFooter>
+          </form>
         </DrawerContent>
       </Drawer>
     );

@@ -6,6 +6,7 @@ import {
   type DateRange,
   DayPicker,
   type DayPickerProps,
+  type Matcher,
   SelectionState,
   UI,
 } from 'react-day-picker';
@@ -140,4 +141,4 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Calendar, type CalendarProps, type DateRange };
+export { Calendar, type CalendarProps, type DateRange, type Matcher };
