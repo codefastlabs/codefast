@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
-import { type ButtonProps, buttonVariants } from '@/react/button';
+import { buttonVariants, type ButtonVariantsProps } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
@@ -52,7 +52,7 @@ PaginationItem.displayName = 'PaginationItem';
  * Component: PaginationLink
  * -------------------------------------------------------------------------- */
 
-interface PaginationLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>, Pick<ButtonProps, 'size'> {
+interface PaginationLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>, Pick<ButtonVariantsProps, 'size'> {
   isActive?: boolean;
 }
 

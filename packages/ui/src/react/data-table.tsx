@@ -23,7 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/react/dropdown-menu';
-import { Button } from '@/react/button';
+import { Button, buttonVariants } from '@/react/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/react/select';
 
 /* -----------------------------------------------------------------------------
@@ -37,11 +37,11 @@ interface DataTableViewOptionsProps<TData> {
 function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>): React.JSX.Element {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button className="ml-auto hidden h-8 lg:flex" size="sm" variant="outline">
-          <MixerHorizontalIcon className="mr-2 size-4" />
-          View
-        </Button>
+      <DropdownMenuTrigger
+        className={buttonVariants({ className: 'hidden h-8 lg:flex', size: 'sm', variant: 'outline' })}
+      >
+        <MixerHorizontalIcon className="size-4" />
+        View
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
