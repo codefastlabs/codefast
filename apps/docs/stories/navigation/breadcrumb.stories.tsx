@@ -21,7 +21,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
-import { Button } from '@codefast/ui/button';
 import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/hooks/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -264,9 +263,7 @@ export const ResponsiveBreadcrumb: Story = {
                         ))}
                       </Box>
                       <DrawerFooter className="pt-4">
-                        <DrawerClose asChild>
-                          <Button variant="outline">Close</Button>
-                        </DrawerClose>
+                        <DrawerClose>Close</DrawerClose>
                       </DrawerFooter>
                     </DrawerContent>
                   </Drawer>

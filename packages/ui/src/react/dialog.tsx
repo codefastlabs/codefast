@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
+import { buttonVariants, type ButtonVariantsProps } from '@/react/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -18,13 +19,6 @@ const Dialog = DialogPrimitive.Root;
 
 type DialogTriggerProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Trigger>;
 const DialogTrigger = DialogPrimitive.Trigger;
-
-/* -----------------------------------------------------------------------------
- * Component: DialogClose
- * -------------------------------------------------------------------------- */
-
-type DialogCloseProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close>;
-const DialogClose = DialogPrimitive.Close;
 
 /* -----------------------------------------------------------------------------
  * Component: DialogContent
@@ -133,6 +127,25 @@ const DialogDescription = React.forwardRef<DialogDescriptionElement, DialogDescr
 );
 
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
+
+/* -----------------------------------------------------------------------------
+ * Component: DialogClose
+ * -------------------------------------------------------------------------- */
+
+type DialogCloseElement = React.ElementRef<typeof DialogPrimitive.Close>;
+
+interface DialogCloseProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
+  size?: ButtonVariantsProps['size'];
+  variant?: ButtonVariantsProps['variant'];
+}
+
+const DialogClose = React.forwardRef<DialogCloseElement, DialogCloseProps>(
+  ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
+    <DialogPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
+  ),
+);
+
+DialogClose.displayName = DialogPrimitive.Close.displayName;
 
 /* -----------------------------------------------------------------------------
  * Exports

@@ -16,6 +16,7 @@ import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui/tooltip';
 import { TextInput } from '@codefast/ui/text-input';
+import { useState } from 'react';
 
 const meta = {
   component: Dialog,
@@ -32,46 +33,53 @@ type Story = StoryObj<typeof meta>;
  * -------------------------------------------------------------------------- */
 
 export const Default: Story = {
-  render: (args) => (
-    <Dialog {...args}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
-      </DialogTrigger>
+  render: (args) => {
+    const [open, setOpen] = useState(false);
 
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
-        </DialogHeader>
+    return (
+      <Dialog open={open} onOpenChange={setOpen} {...args}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Edit Profile</Button>
+        </DialogTrigger>
 
-        <DialogBody>
-          <Box className="grid gap-4 py-4">
-            <Box className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right" htmlFor="name">
-                Name
-              </Label>
-              <TextInput className="col-span-3" defaultValue="Pedro Duarte" id="name" />
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
+          </DialogHeader>
+
+          <DialogBody>
+            <Box className="grid gap-4 py-4">
+              <Box className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right" htmlFor="name">
+                  Name
+                </Label>
+                <TextInput className="col-span-3" defaultValue="Pedro Duarte" id="name" />
+              </Box>
+              <Box className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right" htmlFor="username">
+                  Username
+                </Label>
+                <TextInput className="col-span-3" defaultValue="@peduarte" id="username" />
+              </Box>
             </Box>
-            <Box className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right" htmlFor="username">
-                Username
-              </Label>
-              <TextInput className="col-span-3" defaultValue="@peduarte" id="username" />
-            </Box>
-          </Box>
-        </DialogBody>
+          </DialogBody>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary">Cancel</Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button type="submit">Save changes</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  ),
+          <DialogFooter>
+            <DialogClose>Cancel</DialogClose>
+            <Button
+              type="submit"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  },
 };
 
 /* -----------------------------------------------------------------------------
@@ -115,12 +123,8 @@ export const CustomCloseButton: Story = {
           </Box>
         </DialogBody>
 
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
+        <DialogFooter>
+          <DialogClose>Close</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -156,12 +160,8 @@ export const Scrollable: Story = {
           </div>
         </DialogBody>
 
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
+        <DialogFooter>
+          <DialogClose>Close</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -197,12 +197,8 @@ export const ScrollingLongContent: Story = {
           </div>
         </DialogBody>
 
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
+        <DialogFooter>
+          <DialogClose>Close</DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
