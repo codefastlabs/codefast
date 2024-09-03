@@ -32,11 +32,7 @@ const sidebarNavItems = [
   },
 ];
 
-interface SettingsLayoutProps {
-  children: ReactNode;
-}
-
-export default function SettingsLayout({ children }: SettingsLayoutProps): JSX.Element {
+export default function SettingsLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
   return (
     <>
       <div className="md:hidden">

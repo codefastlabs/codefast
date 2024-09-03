@@ -1,6 +1,6 @@
 {
   "name": "@codefast/config-tailwind",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
@@ -11,11 +11,6 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./colors": {
-      "types": "./dist/colors.d.ts",
-      "import": "./dist/colors.js",
-      "require": "./dist/colors.cjs"
-    },
     "./tailwind.config": {
       "types": "./dist/tailwind.config.d.ts",
       "import": "./dist/tailwind.config.js",
