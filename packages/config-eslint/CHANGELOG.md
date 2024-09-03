@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.8
+
+### Patch Changes
+
+- Remove unused color definitions
+
 ## 0.1.7
 
 ### Patch Changes

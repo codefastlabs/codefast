@@ -1,3 +1,85 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --accent: 210deg 40% 96.1%; /* slate.100 */
+    --accent-foreground: 222.2deg 47.4% 11.2%; /* slate.900 */
+
+    --background: 210deg 40% 98.04%; /* slate.50 */
+    --foreground: 228.57deg 84% 4.9%; /* slate.950 */
+
+    --border: 214.3deg 31.8% 91.4%; /* slate.200 */
+    --input: 214.3deg 31.8% 91.4%; /* slate.200 */
+    --ring: 211.7deg 96.4% 78.4%; /* blue.300 */
+
+    --card: 0deg 0% 100%; /* white */
+    --card-foreground: 228.57deg 84% 4.9%; /* slate.950 */
+
+    --destructive: 0deg 84.2% 60.2%; /* red.500 */
+    --destructive-foreground: 0deg 85.7% 97.3%; /* red.50 */
+
+    --info: 188.7deg 94.5% 42.7%; /* cyan.500 */
+    --info-foreground: 183.2deg 100% 96.3%; /* cyan.50 */
+
+    --muted: 210deg 40% 96.1%; /* slate.100 */
+    --muted-foreground: 215.4deg 16.3% 46.9%; /* slate.500 */
+
+    --popover: 0deg 0% 100%; /* white */
+    --popover-foreground: 228.57deg 84% 4.9%; /* slate.950 */
+
+    --primary: 217.2deg 91.2% 59.8%; /* blue.500 */
+    --primary-foreground: 210deg 40% 98%; /* slate.50 */
+
+    --secondary: 210deg 40% 96.1%; /* slate.100 */
+    --secondary-foreground: 222.2deg 47.4% 11.2%; /* slate.900 */
+
+    --success: 142.1deg 70.6% 45.3%; /* green.500 */
+    --success-foreground: 138.46deg 76.47% 96.67%; /* green.50 */
+
+    --warning: 45.4deg 93.4% 47.5%; /* yellow.500 */
+    --warning-foreground: 54.5deg 91.7% 95.3%; /* yellow.50 */
+
+    --radius: 0.25rem;
+  }
+
+  .dark {
+    --accent: 0deg 0% 9%; /* neutral.900 */
+    --accent-foreground: 0deg 0% 96.1%; /* neutral.100 */
+
+    --background: 228.57deg 84% 4.9%; /* slate.950 */
+    --foreground: 0deg 0% 98%; /* neutral.50 */
+
+    --border: 0deg 0% 14.9%; /* neutral.800 */
+    --input: 0deg 0% 14.9%; /* neutral.800 */
+    --ring: 224.3deg 76.3% 48%; /* blue.700 */
+
+    --card: 0deg 0% 3.9%; /* neutral.950 */
+    --card-foreground: 0deg 0% 98%; /* neutral.50 */
+
+    --destructive: 0deg 84.2% 60.2%; /* red.500 */
+    --destructive-foreground: 0deg 74.7% 15.5%; /* red.950 */
+
+    --info: 188.7deg 94.5% 42.7%; /* cyan.500 */
+    --info-foreground: 197deg 78.9% 14.9%; /* cyan.950 */
+
+    --muted: 0deg 0% 9%; /* neutral.900 */
+    --muted-foreground: 0deg 0% 45.1%; /* neutral.500 */
+
+    --popover: 0deg 0% 3.9%; /* neutral.950 */
+    --popover-foreground: 0deg 0% 98%; /* neutral.50 */
+
+    --primary: 217.2deg 91.2% 59.8%; /* blue.500 */
+    --primary-foreground: 0deg 0% 3.9%; /* neutral.950 */
+
+    --secondary: 0deg 0% 9%; /* neutral.100 */
+    --secondary-foreground: 0deg 0% 96.1%; /* neutral.100 */
+
+    --success: 142.1deg 70.6% 45.3%; /* green.500 */
+    --success-foreground: 144.9deg 80.4% 10%; /* green.950 */
+
+    --warning: 45.4deg 93.4% 47.5%; /* yellow.500 */
+    --warning-foreground: 26deg 83.3% 14.1%; /* yellow.950 */
+  }
+}
