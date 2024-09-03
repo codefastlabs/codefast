@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.10
+
+### Patch Changes
+
+- Utilize buttonVariants across components
+
 ## 0.1.9
 
 ### Patch Changes

@@ -57,7 +57,9 @@ const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
       <SheetPrimitive.Overlay className="data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 bg-black/80" />
       <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ side, className })} {...props}>
         {children}
-        <SheetPrimitive.Close className="data-[state=open]:bg-secondary absolute right-4 top-4 rounded-sm p-1 opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none">
+        <SheetPrimitive.Close
+          className={buttonVariants({ size: 'icon-2xs', variant: 'ghost', className: 'absolute right-4 top-4' })}
+        >
           <Cross2Icon className="size-4" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>

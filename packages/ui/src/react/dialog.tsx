@@ -40,7 +40,9 @@ const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>
           {...props}
         >
           {children}
-          <DialogPrimitive.Close className="data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 rounded-sm p-1 opacity-70 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none">
+          <DialogPrimitive.Close
+            className={buttonVariants({ size: 'icon-2xs', variant: 'ghost', className: 'absolute right-4 top-4' })}
+          >
             <Cross2Icon className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
