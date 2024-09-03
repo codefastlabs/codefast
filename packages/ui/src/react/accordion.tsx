@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { ChevronRightIcon } from '@radix-ui/react-icons';
+import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -16,16 +17,35 @@ const Accordion = AccordionPrimitive.Root;
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
-type AccordionItemElement = React.ElementRef<typeof AccordionPrimitive.Item>;
 type AccordionItemProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>;
+const AccordionItem = AccordionPrimitive.Item;
 
-const AccordionItem = React.forwardRef<AccordionItemElement, AccordionItemProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <AccordionPrimitive.Item ref={forwardedRef} className={cn('border-b', className)} {...props} />
-  ),
-);
+/* -----------------------------------------------------------------------------
+ * Component: AccordionIcon
+ * -------------------------------------------------------------------------- */
 
-AccordionItem.displayName = AccordionPrimitive.Item.displayName;
+interface AccordionIconProps extends React.ComponentPropsWithoutRef<typeof Slot> {
+  asChild?: boolean;
+  className?: string;
+}
+
+function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): React.JSX.Element {
+  if (asChild) {
+    return (
+      <Slot
+        className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
+        {...props}
+      />
+    );
+  }
+
+  return (
+    <ChevronRightIcon
+      aria-hidden
+      className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionTrigger
@@ -35,18 +55,13 @@ type AccordionTriggerElement = React.ElementRef<typeof AccordionPrimitive.Trigge
 type AccordionTriggerProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
 
 const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTriggerProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+  ({ className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         ref={forwardedRef}
-        className={cn('group flex flex-1 items-center justify-between py-4 text-sm font-medium', className)}
+        className={cn('group flex flex-1 items-center py-4 text-left text-sm font-medium', className)}
         {...props}
-      >
-        <>
-          {children}
-          <ChevronDownIcon className="text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-180" />
-        </>
-      </AccordionPrimitive.Trigger>
+      />
     </AccordionPrimitive.Header>
   ),
 );
@@ -83,8 +98,10 @@ export {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
+  AccordionIcon,
   type AccordionProps,
   type AccordionItemProps,
   type AccordionTriggerProps,
   type AccordionContentProps,
+  type AccordionIconProps,
 };
