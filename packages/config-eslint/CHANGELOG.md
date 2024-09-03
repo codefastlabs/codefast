@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.9
+
+### Patch Changes
+
+- Add AccordionIcon component and update icons
+
 ## 0.1.8
 
 ### Patch Changes
