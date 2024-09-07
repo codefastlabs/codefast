@@ -5,7 +5,7 @@ import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-reac
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { cn } from '@/lib/utils';
-import { Button, type ButtonProps } from '@/react/button';
+import { Button, type ButtonProps } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel

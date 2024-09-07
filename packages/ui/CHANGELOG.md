@@ -1,5 +1,13 @@
 # @codefast/ui
 
+## 0.1.12
+
+### Patch Changes
+
+- Rename `react` folder to `components`
+- Updated dependencies
+  - @codefast/primitive@0.1.12
+
 ## 0.1.11
 
 ### Patch Changes

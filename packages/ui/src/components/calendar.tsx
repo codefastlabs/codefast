@@ -18,7 +18,7 @@ import {
   DotFilledIcon,
 } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/react/button';
+import { Button, buttonVariants } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron

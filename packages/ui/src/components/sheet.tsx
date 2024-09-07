@@ -5,7 +5,7 @@ import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
-import { buttonVariants, type ButtonVariantsProps } from '@/react/button';
+import { buttonVariants, type ButtonVariantsProps } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
