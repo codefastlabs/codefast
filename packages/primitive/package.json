@@ -1,0 +1,62 @@
+{
+  "name": "@codefast/primitive",
+  "version": "0.1.11",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codefastlabs/codefast",
+    "directory": "packages/primitive"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    "./checkbox-group": {
+      "types": "./dist/checkbox-group.d.ts",
+      "import": "./dist/checkbox-group.js",
+      "require": "./dist/checkbox-group.cjs"
+    },
+    "./input": {
+      "types": "./dist/input.d.ts",
+      "import": "./dist/input.js",
+      "require": "./dist/input.cjs"
+    },
+    "./number-input": {
+      "types": "./dist/number-input.d.ts",
+      "import": "./dist/number-input.js",
+      "require": "./dist/number-input.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@radix-ui/primitive": "1.1.0",
+    "@radix-ui/react-checkbox": "1.1.1",
+    "@radix-ui/react-compose-refs": "1.1.0",
+    "@radix-ui/react-context": "1.1.0",
+    "@radix-ui/react-direction": "1.1.0",
+    "@radix-ui/react-primitive": "2.0.0",
+    "@radix-ui/react-roving-focus": "1.1.0",
+    "@radix-ui/react-use-controllable-state": "1.1.0"
+  },
+  "devDependencies": {
+    "@codefast/config-typescript": "workspace:*",
+    "@codefast/eslint-config": "workspace:*",
+    "@types/node": "22.5.4",
+    "@types/react": "18.3.5",
+    "eslint": "8.57.0",
+    "react": "18.3.1",
+    "tsup": "8.2.4",
+    "typescript": "5.5.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
