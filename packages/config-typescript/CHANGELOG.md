@@ -1,5 +1,11 @@
 # @codefast/config-typescript
 
+## 0.1.11
+
+### Patch Changes
+
+- Add primitive package
+
 ## 0.1.10
 
 ### Patch Changes

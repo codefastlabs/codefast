@@ -1,13 +1,11 @@
-'use client';
-
 import * as React from 'react';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { composeEventHandlers } from '@radix-ui/primitive';
 import { Primitive } from '@radix-ui/react-primitive';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import * as InputPrimitive from '@/react/primitive/input';
-import { createInputScope } from '@/react/primitive/input';
+import * as InputPrimitive from '@/input';
+import { createInputScope } from '@/input';
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput

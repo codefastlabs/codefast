@@ -1,5 +1,13 @@
 # @codefast/ui
 
+## 0.1.11
+
+### Patch Changes
+
+- Add primitive package
+- Updated dependencies
+  - @codefast/primitive@0.1.11
+
 ## 0.1.10
 
 ### Patch Changes

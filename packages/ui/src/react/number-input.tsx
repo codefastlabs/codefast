@@ -2,10 +2,12 @@
 
 import * as React from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import * as NumberInputPrimitive from '@/react/primitive/number-input';
-import { input, type InputVariantsProps, root } from '@/react/style/input';
+import * as NumberInputPrimitive from '@codefast/primitive/number-input';
 import { buttonVariants } from '@/react/button';
 import { cn } from '@/lib/utils';
+import { inputVariants, type InputVariantsProps } from '@/react/text-input';
+
+const { root, input } = inputVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
