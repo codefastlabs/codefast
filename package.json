@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "build:force": "turbo build --force",
     "changeset": "changeset",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo dev",
