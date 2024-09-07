@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import * as InputPrimitive from '@codefast/primitive/input';
-import { Spinner } from '@/react/spinner';
+import { Spinner } from '@/components/spinner';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

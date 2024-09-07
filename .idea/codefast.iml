@@ -16,6 +16,8 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ui/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ui/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

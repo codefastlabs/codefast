@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { tv, type VariantProps } from 'tailwind-variants';
-import { Spinner } from '@/react/spinner';
+import { Spinner } from '@/components/spinner';
 
 /* -----------------------------------------------------------------------------
  * Variant: Button

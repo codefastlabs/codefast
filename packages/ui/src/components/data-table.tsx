@@ -22,9 +22,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/react/dropdown-menu';
-import { Button, buttonVariants } from '@/react/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/react/select';
+} from '@/components/dropdown-menu';
+import { Button, buttonVariants } from '@/components/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions

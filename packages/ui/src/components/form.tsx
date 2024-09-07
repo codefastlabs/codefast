@@ -13,7 +13,7 @@ import {
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { cn } from '@/lib/utils';
-import { Label } from '@/react/label';
+import { Label } from '@/components/label';
 
 /* -----------------------------------------------------------------------------
  * Component: Form
