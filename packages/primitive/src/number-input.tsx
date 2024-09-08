@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { Primitive } from '@radix-ui/react-primitive';
+import { type Primitive } from '@radix-ui/react-primitive';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import * as InputPrimitive from '@/input';
 import { createInputScope } from '@/input';
@@ -465,7 +465,7 @@ const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, Num
     }, []);
 
     return (
-      <Primitive.button
+      <button
         ref={forwardedRef}
         aria-controls={id}
         aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}

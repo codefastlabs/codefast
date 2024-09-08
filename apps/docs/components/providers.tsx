@@ -1,8 +1,8 @@
 'use client';
 
 import { Toaster } from '@codefast/ui/sonner';
-import { Provider as JotaiProvider } from 'jotai';
 import { type JSX, type ReactNode } from 'react';
+import { RecoilRoot } from 'recoil';
 
 interface ProvidersProps {
   children?: ReactNode | undefined;
@@ -10,9 +10,9 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps): JSX.Element {
   return (
-    <JotaiProvider>
+    <RecoilRoot>
       <div vaul-drawer-wrapper="">{children}</div>
       <Toaster />
-    </JotaiProvider>
+    </RecoilRoot>
   );
 }

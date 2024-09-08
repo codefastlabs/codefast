@@ -16,7 +16,7 @@ import { wait } from 'next/dist/lib/wait';
 
 const meta = {
   args: {
-    inputSize: 'default',
+    inputSize: 'md',
   },
   component: TextInput,
   tags: ['autodocs'],

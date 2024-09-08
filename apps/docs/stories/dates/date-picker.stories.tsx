@@ -38,10 +38,10 @@ export const Default: Story = {
       <Popover {...args}>
         <PopoverTrigger asChild>
           <Button
-            className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn('w-[280px] justify-start gap-4 text-left font-normal', !date && 'text-muted-foreground')}
+            prefix={<CalendarIcon className="opacity-50" />}
             variant="outline"
           >
-            <CalendarIcon className="mr-2 size-4" />
             {date ? format(date, 'PPP') : <Box as="span">Pick a date</Box>}
           </Button>
         </PopoverTrigger>
@@ -69,11 +69,11 @@ export const DateRangePicker: Story = {
         <Popover {...args}>
           <PopoverTrigger asChild>
             <Button
-              className={cn('w-[300px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+              className={cn('w-[300px] justify-start gap-4 text-left font-normal', !date && 'text-muted-foreground')}
               id="date"
+              prefix={<CalendarIcon className="opacity-50" />}
               variant="outline"
             >
-              <CalendarIcon className="mr-2 size-4" />
               {date?.from ? (
                 date.to ? (
                   <>
@@ -108,10 +108,10 @@ export const WithPresets: Story = {
       <Popover {...args}>
         <PopoverTrigger asChild>
           <Button
-            className={cn('w-[280px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn('w-[280px] justify-start gap-4 text-left font-normal', !date && 'text-muted-foreground')}
+            prefix={<CalendarIcon className="opacity-50" />}
             variant="outline"
           >
-            <CalendarIcon className="mr-2 size-4" />
             {date ? format(date, 'PPP') : <Box as="span">Pick a date</Box>}
           </Button>
         </PopoverTrigger>
@@ -189,11 +189,14 @@ export const ReactHookForm: Story = {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        className={cn('w-[240px] pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}
+                        className={cn(
+                          'w-[240px] justify-between pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
                       >
                         {field.value ? format(field.value, 'PPP') : <Box as="span">Pick a date</Box>}
-                        <CalendarIcon className="ml-auto size-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

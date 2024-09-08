@@ -6,7 +6,7 @@ import perspective from '@/plugin/perspective.plugin';
 
 const tailwindcssConfig: Omit<Config, 'content'> = {
   darkMode: ['class'],
-  plugins: [animate, perspective, base],
+  plugins: [base, animate, perspective],
   theme: {
     extend: {
       animation: {
@@ -117,6 +117,7 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
         1.75: '0.4375rem', // 7px
         2.25: '0.5625rem', // 9px
         2.75: '0.6875rem', // 11px
+        3.25: '0.8125rem', // 13px
         18: '4.5rem', // 72px
       },
       transitionDuration: {

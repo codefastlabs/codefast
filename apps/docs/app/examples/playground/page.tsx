@@ -8,6 +8,7 @@ import { CounterClockwiseClockIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { type JSX } from 'react';
 import { type Metadata } from 'next';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import { CodeViewer } from '@/app/examples/playground/_components/code-viewer';
 import { MaxLengthSelector } from '@/app/examples/playground/_components/maxlength-selector';
 import { ModelSelector } from '@/app/examples/playground/_components/model-selector';
@@ -131,10 +132,16 @@ export default function PlaygroundPage(): JSX.Element {
                     />
                     <div className="flex items-center space-x-2">
                       <Button>Submit</Button>
-                      <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <CounterClockwiseClockIcon className="size-4" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            aria-label="Show history"
+                            prefix={<CounterClockwiseClockIcon />}
+                            variant="secondary"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>Show history</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </TabsContent>
@@ -149,10 +156,16 @@ export default function PlaygroundPage(): JSX.Element {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button>Submit</Button>
-                      <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <CounterClockwiseClockIcon className="size-4" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            aria-label="Show history"
+                            prefix={<CounterClockwiseClockIcon />}
+                            variant="secondary"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>Show history</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </TabsContent>
@@ -177,10 +190,16 @@ export default function PlaygroundPage(): JSX.Element {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button>Submit</Button>
-                      <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <CounterClockwiseClockIcon className="size-4" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            aria-label="Show history"
+                            prefix={<CounterClockwiseClockIcon />}
+                            variant="secondary"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>Show history</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </TabsContent>

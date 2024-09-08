@@ -14,12 +14,10 @@ export function DemoCreateAccount(): JSX.Element {
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-2 gap-6">
-          <Button variant="outline">
-            <Icons.GitHub className="mr-2 size-4" />
+          <Button prefix={<Icons.GitHub />} variant="outline">
             Github
           </Button>
-          <Button variant="outline">
-            <Icons.Google className="mr-2 size-4" />
+          <Button prefix={<Icons.Google />} variant="outline">
             Google
           </Button>
         </div>

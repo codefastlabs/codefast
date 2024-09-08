@@ -26,17 +26,12 @@ export const Default: Story = {
 
     return (
       <Collapsible className="w-[350px] space-y-2" open={isOpen} onOpenChange={setIsOpen} {...args}>
-        <Box className="flex items-center justify-between space-x-4 px-4">
+        <Box className="flex items-center justify-between space-x-4 px-3">
           <Heading as="h4" className="text-sm font-semibold">
             @peduarte starred 3 repositories
           </Heading>
           <CollapsibleTrigger asChild>
-            <Button size="icon-sm" variant="ghost">
-              <CaretSortIcon className="size-4" />
-              <Box as="span" className="sr-only">
-                Toggle
-              </Box>
-            </Button>
+            <Button aria-label="Toggle" prefix={<CaretSortIcon />} shape="square" size="sm" variant="ghost" />
           </CollapsibleTrigger>
         </Box>
         <Box className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@radix-ui/primitives</Box>

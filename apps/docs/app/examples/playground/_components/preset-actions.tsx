@@ -10,7 +10,15 @@ import {
   AlertDialogTitle,
 } from '@codefast/ui/alert-dialog';
 import { Button } from '@codefast/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@codefast/ui/dialog';
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@codefast/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +30,8 @@ import { Label } from '@codefast/ui/label';
 import { toast } from '@codefast/ui/sonner';
 import { Switch } from '@codefast/ui/switch';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { useState, type JSX } from 'react';
+import { type JSX, useState } from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
 export function PresetActions(): JSX.Element {
   const [open, setOpen] = useState(false);
@@ -30,32 +39,35 @@ export function PresetActions(): JSX.Element {
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary">
-            <span className="sr-only">Actions</span>
-            <DotsHorizontalIcon className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onSelect={() => {
-              setOpen(true);
-            }}
-          >
-            Content filter preferences
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="text-red-600"
-            onSelect={() => {
-              setShowDeleteDialog(true);
-            }}
-          >
-            Delete preset
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Tooltip>
+        <DropdownMenu>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger asChild>
+              <Button aria-label="Actions" prefix={<DotsHorizontalIcon />} variant="secondary" />
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onSelect={() => {
+                setOpen(true);
+              }}
+            >
+              Content filter preferences
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onSelect={() => {
+                setShowDeleteDialog(true);
+              }}
+            >
+              Delete preset
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <TooltipContent>Actions</TooltipContent>
+      </Tooltip>
+
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -65,7 +77,7 @@ export function PresetActions(): JSX.Element {
               endpoint which is free to use to moderate your OpenAI API traffic. Learn more.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-6">
+          <DialogBody>
             <h4 className="text-muted-foreground text-sm">Playground Warnings</h4>
             <div className="flex items-start justify-between space-x-4 pt-3">
               <Switch defaultChecked id="show" name="show" />
@@ -76,7 +88,7 @@ export function PresetActions(): JSX.Element {
                 </span>
               </Label>
             </div>
-          </div>
+          </DialogBody>
           <DialogFooter>
             <Button
               variant="secondary"
@@ -89,6 +101,7 @@ export function PresetActions(): JSX.Element {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -56,18 +56,13 @@ interface PaginationLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorEleme
   isActive?: boolean;
 }
 
-function PaginationLink({
-  className,
-  isActive,
-  size = 'icon',
-  children,
-  ...props
-}: PaginationLinkProps): React.JSX.Element {
+function PaginationLink({ className, isActive, size, children, ...props }: PaginationLinkProps): React.JSX.Element {
   return (
     <a
       aria-current={isActive ? 'page' : undefined}
       className={buttonVariants({
         variant: isActive ? 'outline' : 'ghost',
+        shape: 'square',
         size,
         className,
       })}
@@ -86,12 +81,7 @@ type PaginationPreviousProps = PaginationLinkProps;
 
 function PaginationPrevious({ className, ...props }: PaginationPreviousProps): React.JSX.Element {
   return (
-    <PaginationLink
-      aria-label="Go to previous page"
-      className={cn('gap-1 pl-2.5', className)}
-      size="default"
-      {...props}
-    >
+    <PaginationLink aria-label="Go to previous page" className={cn('gap-1 pl-2.5', className)} size="md" {...props}>
       <ChevronLeftIcon className="size-4" />
       <span>Previous</span>
     </PaginationLink>
@@ -106,7 +96,7 @@ type PaginationNextProps = PaginationLinkProps;
 
 function PaginationNext({ className, ...props }: PaginationNextProps): React.JSX.Element {
   return (
-    <PaginationLink aria-label="Go to next page" className={cn('gap-1 pr-2.5', className)} size="default" {...props}>
+    <PaginationLink aria-label="Go to next page" className={cn('gap-1 pr-2.5', className)} size="md" {...props}>
       <span>Next</span>
       <ChevronRightIcon className="size-4" />
     </PaginationLink>
