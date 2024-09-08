@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
-import { Primitive } from '@radix-ui/react-primitive';
+import { type Primitive } from '@radix-ui/react-primitive';
 
 /* -----------------------------------------------------------------------------
  * Component: Input
@@ -53,7 +53,7 @@ function Input(inputProps: InputProps): React.JSX.Element {
 
   return (
     <InputProvider inputRef={inputRef} scope={__scopeInput}>
-      <Primitive.div role="presentation" onPointerDown={handlePointerDown} {...props} />
+      <div role="presentation" onPointerDown={handlePointerDown} {...props} />
     </InputProvider>
   );
 }
@@ -74,7 +74,7 @@ const InputItem = React.forwardRef<InputItemElement, InputItemProps>(
     const { inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
     const composedInputRef = useComposedRefs(forwardedRef, inputRef);
 
-    return <Primitive.input ref={composedInputRef} type="text" {...props} />;
+    return <input ref={composedInputRef} type="text" {...props} />;
   },
 );
 

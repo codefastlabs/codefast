@@ -1,4 +1,3 @@
-import { cn } from '@codefast/ui/utils';
 import '@/app/globals.css';
 import { type JSX, type ReactNode } from 'react';
 import { type Metadata } from 'next';
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
   return (
-    <html className={cn(inter.variable, 'dark')} lang="en">
+    <html className={inter.variable} lang="en">
       <body>
         <Providers>{children}</Providers>
       </body>

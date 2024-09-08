@@ -94,9 +94,14 @@ export const Default: Story = {
     return (
       <Popover open={open} onOpenChange={setOpen} {...args}>
         <PopoverTrigger asChild>
-          <Button aria-expanded={open} className="w-[200px] justify-between" role="combobox" variant="outline">
+          <Button
+            aria-expanded={open}
+            className="w-[200px] justify-between"
+            role="combobox"
+            suffix={<ChevronsUpDown className="opacity-50" />}
+            variant="outline"
+          >
             {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
-            <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
@@ -241,9 +246,7 @@ export const WithDropdownMenu: Story = {
         </Box>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
-            <Button size="sm" variant="ghost">
-              <MoreHorizontal />
-            </Button>
+            <Button aria-label="Actions" prefix={<MoreHorizontal />} shape="square" size="sm" variant="ghost" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -435,12 +438,12 @@ export const WithReactHookForm: Story = {
                       <Button
                         className={cn('w-[200px] justify-between', !field.value && 'text-muted-foreground')}
                         role="combobox"
+                        suffix={<ChevronsUpDown className="opacity-50" />}
                         variant="outline"
                       >
                         {field.value
                           ? languages.find((language) => language.value === field.value)?.label
                           : 'Select language'}
-                        <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

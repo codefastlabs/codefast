@@ -14,7 +14,7 @@ import { useState } from 'react';
 
 const meta = {
   args: {
-    inputSize: 'default',
+    inputSize: 'md',
   },
   component: NumberInput,
   tags: ['autodocs'],

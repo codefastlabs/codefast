@@ -25,16 +25,18 @@ export function DemoGithub(): JSX.Element {
           </CardDescription>
         </div>
         <div className="bg-secondary text-secondary-foreground flex items-center space-x-1 rounded-md">
-          <Button className="px-3 shadow-none" variant="secondary">
-            <StarIcon className="mr-2 size-4" />
+          <Button className="px-3" prefix={<StarIcon className="text-muted-foreground" />} variant="secondary">
             Star
           </Button>
           <Separator className="h-[20px]" orientation="vertical" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="px-2 shadow-none" variant="secondary">
-                <ChevronDownIcon className="text-secondary-foreground size-4" />
-              </Button>
+              <Button
+                aria-label="More options"
+                prefix={<ChevronDownIcon className="text-secondary-foreground" />}
+                shape="square"
+                variant="secondary"
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent forceMount align="end" alignOffset={-5} className="w-[200px]">
               <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>

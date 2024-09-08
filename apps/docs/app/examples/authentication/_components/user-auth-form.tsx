@@ -2,7 +2,6 @@
 
 import { Button } from '@codefast/ui/button';
 import { Label } from '@codefast/ui/label';
-import { Spinner } from '@codefast/ui/spinner';
 import { cn } from '@codefast/ui/utils';
 import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
@@ -41,8 +40,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
               type="email"
             />
           </div>
-          <Button disabled={isLoading} type="submit">
-            {isLoading ? <Spinner className="mr-2" /> : null}
+          <Button loading={isLoading} type="submit">
             Sign In with Email
           </Button>
         </div>
@@ -55,8 +53,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
           <span className="bg-background text-muted-foreground px-2">Or continue with</span>
         </div>
       </div>
-      <Button disabled={isLoading} type="button" variant="outline">
-        {isLoading ? <Spinner className="mr-2" /> : <Icons.GitHub className="mr-2 size-4" />} GitHub
+      <Button loading={isLoading} prefix={<Icons.GitHub />} type="button" variant="outline">
+        GitHub
       </Button>
     </div>
   );

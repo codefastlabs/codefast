@@ -14,8 +14,10 @@ export function ExampleLink({ className, ...props }: ExampleLinkProps): JSX.Elem
   return (
     <Link
       className={cn(
-        'hover:text-primary flex h-7 items-center justify-center rounded-full px-4 text-center text-sm transition-colors',
-        isActive ? 'bg-muted text-primary font-medium' : 'text-muted-foreground',
+        'flex h-7 items-center justify-center rounded-full px-4 text-center text-sm transition',
+        isActive
+          ? 'bg-primary text-primary-foreground font-medium'
+          : 'hover:text-secondary-foreground hover:bg-secondary',
         className,
       )}
       {...props}

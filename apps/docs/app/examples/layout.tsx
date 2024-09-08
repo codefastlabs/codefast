@@ -1,14 +1,17 @@
 import { type JSX, type ReactNode } from 'react';
+import { TooltipProvider } from '@codefast/ui/tooltip';
 import { ExamplesNavigation } from '@/components/examples-navigation';
 
 export default function ExamplesLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
   return (
-    <section className="divide-y">
-      <div className="px-4 py-2">
-        <ExamplesNavigation />
-      </div>
+    <TooltipProvider delayDuration={0}>
+      <section className="divide-y">
+        <div className="px-4 py-2">
+          <ExamplesNavigation />
+        </div>
 
-      {children}
-    </section>
+        {children}
+      </section>
+    </TooltipProvider>
   );
 }

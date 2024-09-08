@@ -25,20 +25,18 @@ type RadioGroupItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
 type RadioGroupItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
 const RadioGroupItem = React.forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
-  ({ className, ...props }, forwardedRef) => {
-    return (
-      <RadioGroupPrimitive.Item
-        ref={forwardedRef}
-        className={cn(
-          'border-input hover:border-primary text-foreground aria-checked:border-primary group peer aspect-square size-4 rounded-full border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
-          className,
-        )}
-        {...props}
-      >
-        <RadioGroupPrimitive.Indicator className="after:bg-primary relative flex size-full items-center justify-center after:block after:size-2.5 after:rounded-full" />
-      </RadioGroupPrimitive.Item>
-    );
-  },
+  ({ className, ...props }, forwardedRef) => (
+    <RadioGroupPrimitive.Item
+      ref={forwardedRef}
+      className={cn(
+        'border-input hover:border-primary text-foreground aria-checked:border-primary group peer aspect-square size-4 rounded-full border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
+        className,
+      )}
+      {...props}
+    >
+      <RadioGroupPrimitive.Indicator className="after:bg-primary relative flex size-full items-center justify-center after:block after:size-2.5 after:rounded-full" />
+    </RadioGroupPrimitive.Item>
+  ),
 );
 
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;

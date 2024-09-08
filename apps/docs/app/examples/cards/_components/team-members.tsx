@@ -27,8 +27,12 @@ export function DemoTeamMembers(): JSX.Element {
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button className="ml-auto" variant="outline">
-                Owner <ChevronDownIcon className="text-muted-foreground ml-2 size-4" />
+              <Button
+                className="ml-auto gap-4"
+                suffix={<ChevronDownIcon className="text-muted-foreground" />}
+                variant="outline"
+              >
+                Owner
               </Button>
             </PopoverTrigger>
             <PopoverContent align="end" className="p-0">
@@ -72,8 +76,12 @@ export function DemoTeamMembers(): JSX.Element {
           </div>
           <Popover>
             <PopoverTrigger asChild>
-              <Button className="ml-auto" variant="outline">
-                Member <ChevronDownIcon className="text-muted-foreground ml-2 size-4" />
+              <Button
+                className="ml-auto gap-4"
+                suffix={<ChevronDownIcon className="text-muted-foreground" />}
+                variant="outline"
+              >
+                Member
               </Button>
             </PopoverTrigger>
             <PopoverContent align="end" className="p-0">

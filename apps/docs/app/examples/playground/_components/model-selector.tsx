@@ -4,12 +4,11 @@ import { Button } from '@codefast/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
 import { Label } from '@codefast/ui/label';
-import { Popover, PopoverContent, PopoverTrigger, type PopoverProps } from '@codefast/ui/popover';
+import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { useRef, useState } from 'react';
+import { type JSX, useRef, useState } from 'react';
 import { useMutationObserver } from '@codefast/hooks/use-mutation-observer';
-import { type JSX } from 'react';
 import { type Model, type ModelType } from '@/app/examples/playground/_data/models';
 
 interface ModelSelectorProps extends PopoverProps {
@@ -40,10 +39,10 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
             aria-label="Select a model"
             className="w-full justify-between"
             role="combobox"
+            suffix={<CaretSortIcon className="opacity-50" />}
             variant="outline"
           >
             {selectedModel.name ? selectedModel.name : 'Select a model...'}
-            <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 p-0">

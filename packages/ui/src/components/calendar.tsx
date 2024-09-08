@@ -75,7 +75,8 @@ function DayButton({
         modifiers.outside && (!modifiers.selected || modifiers.range_middle) && 'text-opacity-30',
         className,
       )}
-      size="icon-sm"
+      shape="square"
+      size="sm"
       variant={modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'}
       {...props}
     />
@@ -94,12 +95,14 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
       className={cn('p-3', className)}
       classNames={{
         [UI.ButtonPrevious]: buttonVariants({
-          size: 'icon-xs',
+          size: 'xs',
+          shape: 'square',
           variant: 'outline',
           className: 'absolute start-0 shadow-none',
         }),
         [UI.ButtonNext]: buttonVariants({
-          size: 'icon-xs',
+          size: 'xs',
+          shape: 'square',
           variant: 'outline',
           className: 'absolute end-0 shadow-none',
         }),

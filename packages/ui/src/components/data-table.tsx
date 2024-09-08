@@ -49,20 +49,18 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
         {table
           .getAllColumns()
           .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
-          .map((column) => {
-            return (
-              <DropdownMenuCheckboxItem
-                key={column.id}
-                checked={column.getIsVisible()}
-                className="capitalize"
-                onCheckedChange={(value) => {
-                  column.toggleVisibility(Boolean(value));
-                }}
-              >
-                {column.id}
-              </DropdownMenuCheckboxItem>
-            );
-          })}
+          .map((column) => (
+            <DropdownMenuCheckboxItem
+              key={column.id}
+              checked={column.getIsVisible()}
+              className="capitalize"
+              onCheckedChange={(value) => {
+                column.toggleVisibility(Boolean(value));
+              }}
+            >
+              {column.id}
+            </DropdownMenuCheckboxItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -114,7 +112,8 @@ function DataTablePagination<TData>({
           <Button
             className="hidden lg:flex"
             disabled={!table.getCanPreviousPage()}
-            size="icon-xs"
+            shape="square"
+            size="xs"
             variant="outline"
             onClick={() => {
               table.setPageIndex(0);
@@ -125,7 +124,8 @@ function DataTablePagination<TData>({
           </Button>
           <Button
             disabled={!table.getCanPreviousPage()}
-            size="icon-xs"
+            shape="square"
+            size="xs"
             variant="outline"
             onClick={() => {
               table.previousPage();
@@ -136,7 +136,8 @@ function DataTablePagination<TData>({
           </Button>
           <Button
             disabled={!table.getCanNextPage()}
-            size="icon-xs"
+            shape="square"
+            size="xs"
             variant="outline"
             onClick={() => {
               table.nextPage();
@@ -148,7 +149,8 @@ function DataTablePagination<TData>({
           <Button
             className="hidden lg:flex"
             disabled={!table.getCanNextPage()}
-            size="icon-xs"
+            shape="square"
+            size="xs"
             variant="outline"
             onClick={() => {
               table.setPageIndex(table.getPageCount() - 1);

@@ -62,15 +62,13 @@ type SeparatorItemElement = HTMLDivElement;
 type SeparatorItemProps = React.HTMLAttributes<HTMLDivElement>;
 
 const SeparatorItem = React.forwardRef<SeparatorItemElement, SeparatorItemProps>(
-  ({ className, ...props }, forwardedRef) => {
-    return (
-      <div
-        ref={forwardedRef}
-        className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
-        {...props}
-      />
-    );
-  },
+  ({ className, ...props }, forwardedRef) => (
+    <div
+      ref={forwardedRef}
+      className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
+      {...props}
+    />
+  ),
 );
 
 SeparatorItem.displayName = 'SeparatorItem';

@@ -1,16 +1,17 @@
-import { atom, type SetStateAction, useAtom } from 'jotai';
+import { atom, type SetterOrUpdater, useRecoilState } from 'recoil';
 import { type EmailMessage, mails } from '@/app/examples/mail/_data/data';
 
-type SetAtom<Args extends unknown[], Result> = (...args: Args) => Result;
-
-interface Config {
+interface MailState {
   selected: EmailMessage['id'] | null;
 }
 
-const configAtom = atom<Config>({
-  selected: mails[0].id,
+const mailStateAtom = atom<MailState>({
+  key: 'mailStateAtom',
+  default: {
+    selected: mails[0].id,
+  },
 });
 
-export function useMail(): [Config, SetAtom<[SetStateAction<Config>], void>] {
-  return useAtom(configAtom);
+export function useMail(): [MailState, SetterOrUpdater<MailState>] {
+  return useRecoilState(mailStateAtom);
 }

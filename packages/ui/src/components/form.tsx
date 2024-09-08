@@ -117,19 +117,10 @@ type FormFieldElement = React.ElementRef<typeof LabelPrimitive.Root>;
 type FormLabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
 
 const FormLabel = React.forwardRef<FormFieldElement, FormLabelProps>(
-  ({ __scopeFormField, className, ...props }: ScopedProps<FormLabelProps>, forwardedRef) => {
+  ({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>, forwardedRef) => {
     const { formItemId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
-    const { name } = useFormFieldContext(FORM_LABEL_NAME, __scopeFormField);
-    const { errors } = useFormState({ name });
 
-    return (
-      <Label
-        ref={forwardedRef}
-        className={cn(errors[name] && 'text-destructive', className)}
-        htmlFor={formItemId}
-        {...props}
-      />
-    );
+    return <Label ref={forwardedRef} htmlFor={formItemId} {...props} />;
   },
 );
 

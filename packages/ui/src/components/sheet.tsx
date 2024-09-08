@@ -58,7 +58,12 @@ const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
       <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ side, className })} {...props}>
         {children}
         <SheetPrimitive.Close
-          className={buttonVariants({ size: 'icon-2xs', variant: 'ghost', className: 'absolute right-4 top-4' })}
+          className={buttonVariants({
+            size: 'xxs',
+            shape: 'square',
+            variant: 'ghost',
+            className: 'absolute right-4 top-4',
+          })}
         >
           <Cross2Icon className="size-4" />
           <span className="sr-only">Close</span>

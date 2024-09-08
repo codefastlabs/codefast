@@ -110,37 +110,31 @@ export const Default: Story = {
             <Box className="p-4 pb-0">
               <Box className="flex items-center justify-center space-x-2">
                 <Button
+                  aria-label="Decrease"
                   className="size-8 shrink-0 rounded-full"
                   disabled={goal <= 200}
-                  size="icon"
+                  prefix={<Minus />}
+                  shape="square"
                   variant="outline"
                   onClick={() => {
                     onClick(-10);
                   }}
-                >
-                  <Minus className="size-4" />
-                  <Box as="span" className="sr-only">
-                    Decrease
-                  </Box>
-                </Button>
+                />
                 <Box className="flex-1 text-center">
                   <Box className="text-7xl font-bold tracking-tighter">{goal}</Box>
                   <Box className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</Box>
                 </Box>
                 <Button
+                  aria-label="Increase"
                   className="size-8 shrink-0 rounded-full"
                   disabled={goal >= 400}
-                  size="icon"
+                  prefix={<Plus />}
+                  shape="square"
                   variant="outline"
                   onClick={() => {
                     onClick(10);
                   }}
-                >
-                  <Plus className="size-4" />
-                  <Box as="span" className="sr-only">
-                    Increase
-                  </Box>
-                </Button>
+                />
               </Box>
               <Box className="mt-3 h-[120px]">
                 <ResponsiveContainer height="100%" width="100%">

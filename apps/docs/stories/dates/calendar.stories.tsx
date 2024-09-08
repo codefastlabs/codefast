@@ -174,11 +174,14 @@ export const ReactHookForm: Story = {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        className={cn('w-[240px] pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}
+                        className={cn(
+                          'w-[240px] justify-between pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
                       >
                         {field.value ? format(field.value, 'PPP') : <Box as="span">Pick a date</Box>}
-                        <CalendarIcon className="ml-auto size-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

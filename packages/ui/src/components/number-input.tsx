@@ -67,12 +67,20 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       />
       <div className="ml-auto grid h-full divide-y rounded-r-md border-l">
         <NumberInputPrimitive.IncrementButton
-          className={buttonVariants({ size: 'icon', variant: 'ghost', className: 'h-full rounded-none rounded-tr-md' })}
+          className={buttonVariants({
+            shape: 'square',
+            variant: 'ghost',
+            className: 'h-full rounded-none rounded-tr-md',
+          })}
         >
           <ChevronUpIcon />
         </NumberInputPrimitive.IncrementButton>
         <NumberInputPrimitive.DecrementButton
-          className={buttonVariants({ size: 'icon', variant: 'ghost', className: 'rounded-tb-md h-full rounded-none' })}
+          className={buttonVariants({
+            shape: 'square',
+            variant: 'ghost',
+            className: 'rounded-tb-md h-full rounded-none',
+          })}
         >
           <ChevronDownIcon />
         </NumberInputPrimitive.DecrementButton>

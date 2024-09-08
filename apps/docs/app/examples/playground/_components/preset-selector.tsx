@@ -10,12 +10,11 @@ import {
   CommandList,
   CommandSeparator,
 } from '@codefast/ui/command';
-import { Popover, PopoverContent, PopoverTrigger, type PopoverProps } from '@codefast/ui/popover';
+import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from '@codefast/ui/popover';
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { type JSX } from 'react';
+import { type JSX, useState } from 'react';
 import { type Preset } from '@/app/examples/playground/_data/presets';
 
 interface PresetSelectorProps extends PopoverProps {
@@ -35,10 +34,10 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
           aria-label="Load a preset..."
           className="flex-1 justify-between md:max-w-[200px] lg:max-w-[300px]"
           role="combobox"
+          suffix={<CaretSortIcon className="opacity-50" />}
           variant="outline"
         >
           {selectedPreset ? selectedPreset.name : 'Load a preset...'}
-          <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
