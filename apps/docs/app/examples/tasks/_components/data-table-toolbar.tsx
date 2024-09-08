@@ -31,14 +31,14 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
         )}
         {isFiltered ? (
           <Button
-            className="h-8 px-2 lg:px-3"
+            size="xs"
+            suffix={<Cross2Icon />}
             variant="ghost"
             onClick={() => {
               table.resetColumnFilters();
             }}
           >
             Reset
-            <Cross2Icon className="ml-2 size-4" />
           </Button>
         ) : null}
       </div>

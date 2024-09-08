@@ -45,7 +45,7 @@ const SelectTrigger = React.forwardRef<SelectTriggerElement, SelectTriggerProps>
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <CaretSortIcon className="size-4 opacity-50" />
+        <CaretSortIcon className="size-4 shrink-0 opacity-50" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   ),
@@ -185,7 +185,7 @@ type SelectSeparatorProps = React.ComponentPropsWithoutRef<typeof SelectPrimitiv
 
 const SelectSeparator = React.forwardRef<SelectSeparatorElement, SelectSeparatorProps>(
   ({ className, ...props }, forwardedRef) => (
-    <SelectPrimitive.Separator ref={forwardedRef} className={cn('bg-muted -mx-1 my-1 h-px', className)} {...props} />
+    <SelectPrimitive.Separator ref={forwardedRef} className={cn('bg-border -mx-1 my-1 h-px', className)} {...props} />
   ),
 );
 

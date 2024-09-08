@@ -6,7 +6,7 @@ import * as RovingFocusGroup from '@radix-ui/react-roving-focus';
 import { createRovingFocusGroupScope } from '@radix-ui/react-roving-focus';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { useDirection } from '@radix-ui/react-direction';
-import { Primitive } from '@radix-ui/react-primitive';
+import { type Primitive } from '@radix-ui/react-primitive';
 
 /* -------------------------------------------------------------------------------------------------
  * Component: CheckboxGroup
@@ -101,13 +101,7 @@ const CheckboxGroup = React.forwardRef<CheckboxGroupElement, CheckboxGroupProps>
       >
         <RovingFocusGroup.Root asChild {...rovingFocusGroupScope} dir={direction} loop={loop} orientation={orientation}>
           {}
-          <Primitive.div
-            ref={forwardedRef}
-            data-disabled={disabled ? '' : undefined}
-            dir={direction}
-            role="group"
-            {...props}
-          />
+          <div ref={forwardedRef} data-disabled={disabled ? '' : undefined} dir={direction} role="group" {...props} />
         </RovingFocusGroup.Root>
       </CheckboxGroupProvider>
     );

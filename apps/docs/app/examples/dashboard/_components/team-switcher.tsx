@@ -73,6 +73,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
             aria-label="Select a team"
             className={cn('w-[200px] justify-between', className)}
             role="combobox"
+            suffix={<CaretSortIcon className="ml-auto opacity-50" />}
             variant="outline"
           >
             <Avatar className="mr-2 size-5">
@@ -84,7 +85,6 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
             {selectedTeam.label}
-            <CaretSortIcon className="ml-auto size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">

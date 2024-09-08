@@ -1,13 +1,22 @@
 import { Button } from '@codefast/ui/button';
-import { Spinner } from '@codefast/ui/spinner';
 import { ChevronRightIcon, EnvelopeOpenIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { SettingsIcon } from 'lucide-react';
 
 const meta = {
+  argTypes: {
+    disabled: {
+      control: 'boolean',
+      description: 'Disables the button',
+      table: { defaultValue: { summary: 'false' } },
+    },
+    loading: {
+      control: 'boolean',
+      description: 'Shows a loading spinner',
+      table: { defaultValue: { summary: 'false' } },
+    },
+  },
   args: {
-    variant: 'default',
-    size: 'default',
     disabled: false,
     loading: false,
   },
@@ -25,9 +34,7 @@ type Story = StoryObj<typeof meta>;
  * -------------------------------------------------------------------------- */
 
 export const Default: Story = {
-  args: {
-    children: 'Click me',
-  },
+  render: (args) => <Button {...args}>Default Button</Button>,
 };
 
 /* -----------------------------------------------------------------------------
@@ -35,21 +42,47 @@ export const Default: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Secondary: Story = {
-  args: {
-    variant: 'secondary',
-    children: 'Secondary Button',
-  },
+  render: (args) => (
+    <Button {...args} variant="secondary">
+      Secondary Button
+    </Button>
+  ),
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Outline
+ * Story: Info
  * -------------------------------------------------------------------------- */
 
-export const Outline: Story = {
-  args: {
-    variant: 'outline',
-    children: 'Outline Button',
-  },
+export const Info: Story = {
+  render: (args) => (
+    <Button {...args} variant="info">
+      Info Button
+    </Button>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Success
+ * -------------------------------------------------------------------------- */
+
+export const Success: Story = {
+  render: (args) => (
+    <Button {...args} variant="success">
+      Success Button
+    </Button>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Warning
+ * -------------------------------------------------------------------------- */
+
+export const Warning: Story = {
+  render: (args) => (
+    <Button {...args} variant="warning">
+      Warning Button
+    </Button>
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -57,10 +90,23 @@ export const Outline: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Destructive: Story = {
-  args: {
-    variant: 'destructive',
-    children: 'Destructive Button',
-  },
+  render: (args) => (
+    <Button {...args} variant="destructive">
+      Destructive Button
+    </Button>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Outline
+ * -------------------------------------------------------------------------- */
+
+export const Outline: Story = {
+  render: (args) => (
+    <Button {...args} variant="outline">
+      Outline Button
+    </Button>
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -68,43 +114,52 @@ export const Destructive: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Ghost: Story = {
-  args: {
-    variant: 'ghost',
-    children: 'Ghost Button',
-  },
+  render: (args) => (
+    <Button {...args} variant="ghost">
+      Ghost Button
+    </Button>
+  ),
 };
 
 /* -----------------------------------------------------------------------------
  * Story: Link
  * -------------------------------------------------------------------------- */
 
-export const AsLink: Story = {
-  args: {
-    variant: 'link',
-    children: 'Link Button',
-  },
+export const Link: Story = {
+  render: (args) => (
+    <Button {...args} variant="link">
+      Link Button
+    </Button>
+  ),
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Small
+ * Story: Sizes
  * -------------------------------------------------------------------------- */
 
-export const Small: Story = {
-  args: {
-    size: 'sm',
-    children: 'Small Button',
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Large
- * -------------------------------------------------------------------------- */
-
-export const Large: Story = {
-  args: {
-    size: 'lg',
-    children: 'Large Button',
-  },
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-2">
+      <Button {...args} prefix={<SettingsIcon />} size="xxs">
+        xxs button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xs">
+        xs button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="sm">
+        sm button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="md">
+        md button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="lg">
+        lg button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xl">
+        xl button
+      </Button>
+    </div>
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -112,15 +167,7 @@ export const Large: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Icon: Story = {
-  args: {
-    variant: 'outline',
-    size: 'icon',
-  },
-  render: (args) => (
-    <Button {...args}>
-      <ChevronRightIcon className="size-4" />
-    </Button>
-  ),
+  render: (args) => <Button {...args} aria-label="Next" prefix={<ChevronRightIcon />} shape="square" />,
 };
 
 /* -----------------------------------------------------------------------------
@@ -129,8 +176,8 @@ export const Icon: Story = {
 
 export const WithIcon: Story = {
   render: (args) => (
-    <Button {...args}>
-      <EnvelopeOpenIcon className="size-4" /> Login with Email
+    <Button {...args} prefix={<EnvelopeOpenIcon />}>
+      Login with Email
     </Button>
   ),
 };
@@ -140,39 +187,21 @@ export const WithIcon: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Loading: Story = {
-  args: {
-    loading: true,
-  },
-  render: (args) => <Button {...args}>Please wait</Button>,
-};
-
-/* -----------------------------------------------------------------------------
- * Story: LoadingSpinner
- * -------------------------------------------------------------------------- */
-
-export const LoadingSpinner: Story = {
-  args: {
-    disabled: true,
-  },
   render: (args) => (
-    <Button {...args}>
-      <Spinner />
+    <Button {...args} loading>
       Please wait
     </Button>
   ),
 };
 
 /* -----------------------------------------------------------------------------
- * Story: As Child
+ * Story: Disabled
  * -------------------------------------------------------------------------- */
 
-export const AsChild: Story = {
-  args: {
-    asChild: true,
-  },
+export const Disabled: Story = {
   render: (args) => (
-    <Button {...args}>
-      <Link href="/apps/docs/public">Login</Link>
+    <Button {...args} disabled>
+      Disabled Button
     </Button>
   ),
 };

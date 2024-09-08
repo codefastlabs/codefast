@@ -3,7 +3,7 @@
 import { Calendar, type DateRange } from '@codefast/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { addDays, format } from 'date-fns';
-import { useState, type HTMLAttributes, type JSX } from 'react';
+import { type HTMLAttributes, type JSX, useState } from 'react';
 import { cn } from '@codefast/ui/utils';
 import { Button } from '@codefast/ui/button';
 import { CalendarIcon } from '@radix-ui/react-icons';
@@ -21,9 +21,9 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
           <Button
             className={cn('justify-start text-left font-normal', !date && 'text-muted-foreground')}
             id="date"
+            prefix={<CalendarIcon />}
             variant="outline"
           >
-            <CalendarIcon className="mr-2 size-4" />
             <ButtonValue date={date} />
           </Button>
         </PopoverTrigger>

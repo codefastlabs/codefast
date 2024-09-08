@@ -15,19 +15,6 @@ import * as React from 'react';
  *   for mutations in the observed element and its descendants and invokes the provided callback function when
  *   mutations occur.
  *
- * @example
- * // Referencing an HTMLElement in a React component
- * const myRef = React.useRef<HTMLDivElement>(null);
- *
- * // Define the callback function to be invoked when mutations occur
- * const handleMutations = (mutationsList: MutationRecord[], observer: MutationObserver) => {
- *   // Process the mutations
- *   // ...
- * }
- *
- * // Attach the MutationObserver to the HTMLElement
- * useMutationObserver(myRef, handleMutations);
- *
  * @see [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
  */
 export function useMutationObserver(

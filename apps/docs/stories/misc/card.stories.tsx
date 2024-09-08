@@ -113,8 +113,8 @@ export const Examples: Story = {
         </Box>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">
-          <CheckIcon className="mr-2 size-4" /> Mark all as read
+        <Button className="w-full" prefix={<CheckIcon />}>
+          Mark all as read
         </Button>
       </CardFooter>
     </Card>

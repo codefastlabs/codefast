@@ -59,10 +59,7 @@ export const WithChildren: Story = {
 
 export const WithButton: Story = {
   render: () => (
-    <Button disabled>
-      <Spinner loading>
-        <BookmarkIcon />
-      </Spinner>
+    <Button loading prefix={<BookmarkIcon />}>
       Bookmark
     </Button>
   ),

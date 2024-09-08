@@ -92,13 +92,16 @@ export function AccountForm(): JSX.Element {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      className={cn('w-56 pl-3 text-left font-normal', isNil(field.value) && 'text-muted-foreground')}
+                      className={cn(
+                        'w-56 justify-between pl-3 text-left font-normal',
+                        isNil(field.value) && 'text-muted-foreground',
+                      )}
                       disabled={field.disabled ?? form.formState.isSubmitting}
+                      suffix={<CalendarIcon className="size-4 opacity-50" />}
                       variant="outline"
                     >
                       {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined */}
                       {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
-                      <CalendarIcon className="ml-auto size-4 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -129,12 +132,12 @@ export function AccountForm(): JSX.Element {
                       className={cn('w-56 justify-between', !field.value && 'text-muted-foreground')}
                       disabled={field.disabled ?? form.formState.isSubmitting}
                       role="combobox"
+                      suffix={<CaretSortIcon className="opacity-50" />}
                       variant="outline"
                     >
                       {field.value
                         ? languages.find((language) => language.value === field.value)?.label
                         : 'Select language'}
-                      <CaretSortIcon className="ml-2 size-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>

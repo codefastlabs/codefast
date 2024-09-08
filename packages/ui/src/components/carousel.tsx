@@ -205,7 +205,14 @@ type CarouselPreviousProps = ButtonProps;
 
 const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPreviousProps>(
   (
-    { __scopeCarousel, className, variant = 'outline', size = 'icon', ...props }: ScopedProps<CarouselPreviousProps>,
+    {
+      __scopeCarousel,
+      className,
+      variant = 'outline',
+      size,
+      shape = 'circle',
+      ...props
+    }: ScopedProps<CarouselPreviousProps>,
     forwardedRef,
   ) => {
     const { orientation, scrollPrev, canScrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
@@ -214,13 +221,14 @@ const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPrevi
       <Button
         ref={forwardedRef}
         className={cn(
-          'absolute size-8 rounded-full',
+          'absolute size-8',
           orientation === 'horizontal'
             ? '-left-12 top-1/2 -translate-y-1/2'
             : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
           className,
         )}
         disabled={!canScrollPrev}
+        shape={shape}
         size={size}
         variant={variant}
         onClick={scrollPrev}
@@ -246,7 +254,14 @@ type CarouselNextProps = ButtonProps;
 
 const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
   (
-    { __scopeCarousel, className, variant = 'outline', size = 'icon', ...props }: ScopedProps<CarouselNextProps>,
+    {
+      __scopeCarousel,
+      className,
+      variant = 'outline',
+      size,
+      shape = 'circle',
+      ...props
+    }: ScopedProps<CarouselNextProps>,
     forwardedRef,
   ) => {
     const { orientation, scrollNext, canScrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
@@ -255,13 +270,14 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
       <Button
         ref={forwardedRef}
         className={cn(
-          'absolute size-8 rounded-full',
+          'absolute size-8',
           orientation === 'horizontal'
             ? '-right-12 top-1/2 -translate-y-1/2'
             : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
           className,
         )}
         disabled={!canScrollNext}
+        shape={shape}
         size={size}
         variant={variant}
         onClick={scrollNext}

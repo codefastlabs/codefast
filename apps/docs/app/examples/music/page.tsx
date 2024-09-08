@@ -45,8 +45,7 @@ export default function MusicPage(): JSX.Element {
                         </TabsTrigger>
                       </TabsList>
                       <div className="ml-auto mr-4">
-                        <Button>
-                          <PlusCircledIcon className="mr-2 size-4" />
+                        <Button className="gap-4" prefix={<PlusCircledIcon />}>
                           Add music
                         </Button>
                       </div>
