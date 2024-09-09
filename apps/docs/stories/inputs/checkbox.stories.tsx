@@ -65,11 +65,11 @@ export const Disabled: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   mobile: z.boolean().default(false).optional(),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -82,7 +82,7 @@ export const ReactHookForm: Story = {
   ],
   render: (args) => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
       defaultValues: {
         mobile: true,
       },

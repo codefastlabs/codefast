@@ -32,7 +32,13 @@ const CheckboxGroupItem = React.forwardRef<CheckboxGroupItemElement, CheckboxGro
     <CheckboxGroupPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'border-input hover:border-primary aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
+        [
+          'border-input peer flex size-4 shrink-0 rounded-sm border',
+          'hover:border-primary',
+          'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
+          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+          'disabled:pointer-events-none disabled:opacity-50',
+        ],
         className,
       )}
       {...props}

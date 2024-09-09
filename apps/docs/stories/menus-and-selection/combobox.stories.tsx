@@ -391,13 +391,13 @@ const languages = [
   { label: 'Chinese', value: 'zh' },
 ] as const;
 
-const FormValues = z.object({
+const formValues = z.object({
   language: z.string({
     required_error: 'Please select a language.',
   }),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const WithReactHookForm: Story = {
   decorators: [
@@ -410,7 +410,7 @@ export const WithReactHookForm: Story = {
   ],
   render: (args) => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values): void => {

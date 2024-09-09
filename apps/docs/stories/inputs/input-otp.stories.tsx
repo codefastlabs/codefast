@@ -133,13 +133,13 @@ export const Controlled: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   pin: z.string().min(6, {
     message: 'Your one-time password must be 6 characters.',
   }),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -152,7 +152,7 @@ export const ReactHookForm: Story = {
   ],
   render: () => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
       defaultValues: {
         pin: '',
       },
