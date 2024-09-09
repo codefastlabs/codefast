@@ -129,13 +129,13 @@ export const Footer: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   dob: z.date({
     required_error: 'A date of birth is required.',
   }),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -148,7 +148,7 @@ export const ReactHookForm: Story = {
   ],
   render: () => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values): void => {

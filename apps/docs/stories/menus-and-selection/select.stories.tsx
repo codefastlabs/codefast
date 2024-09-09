@@ -116,7 +116,7 @@ export const Scrollable: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   email: z
     .string({
       required_error: 'Please select an email to display.',
@@ -124,7 +124,7 @@ const FormValues = z.object({
     .email(),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -137,7 +137,7 @@ export const ReactHookForm: Story = {
   ],
   render: (args) => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values): void => {

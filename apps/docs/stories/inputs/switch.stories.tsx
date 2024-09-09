@@ -44,12 +44,12 @@ export const Default: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   marketing_emails: z.boolean().default(false).optional(),
   security_emails: z.boolean(),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -62,7 +62,7 @@ export const ReactHookForm: Story = {
   ],
   render: () => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
       defaultValues: {
         security_emails: true,
       },
