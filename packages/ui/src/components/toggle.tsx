@@ -9,21 +9,30 @@ import { tv, type VariantProps } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const toggleVariants = tv({
-  base: 'hover:bg-muted hover:text-muted-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground inline-flex items-center justify-center rounded-md text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  base: [
+    'inline-flex items-center justify-center rounded-md text-sm font-medium transition',
+    'hover:bg-accent/80 hover:text-accent-foreground/80',
+    'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+    'disabled:pointer-events-none disabled:opacity-50',
+  ],
   variants: {
     variant: {
-      default: 'bg-transparent',
-      outline: 'border-input hover:bg-accent hover:text-accent-foreground border bg-transparent shadow-sm',
+      default: '',
+      outline: 'border-input border',
     },
     size: {
-      default: 'h-10 px-3',
-      sm: 'h-9 px-2.5',
-      lg: 'h-11 px-5',
+      xxs: 'h-7 px-2',
+      xs: 'h-8 px-2',
+      sm: 'h-9 px-3',
+      md: 'h-10 px-3',
+      lg: 'h-11 px-4',
+      xl: 'h-12 px-4',
     },
   },
   defaultVariants: {
     variant: 'default',
-    size: 'default',
+    size: 'md',
   },
 });
 

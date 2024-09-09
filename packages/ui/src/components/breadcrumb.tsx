@@ -106,7 +106,7 @@ type BreadcrumbSeparatorProps = React.LiHTMLAttributes<HTMLLIElement>;
 
 function BreadcrumbSeparator({ children, className, ...props }: BreadcrumbSeparatorProps): React.JSX.Element {
   return (
-    <li aria-hidden="true" className={cn('[&>svg]:size-3.5', className)} role="presentation" {...props}>
+    <li aria-hidden="true" className={cn('[&_svg]:size-3.5', className)} role="presentation" {...props}>
       {children ?? <ChevronRightIcon />}
     </li>
   );

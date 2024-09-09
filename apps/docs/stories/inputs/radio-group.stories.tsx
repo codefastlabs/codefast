@@ -57,13 +57,13 @@ export const Default: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   type: z.enum(['all', 'mentions', 'none'], {
     required_error: 'You need to select a notification type.',
   }),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -76,7 +76,7 @@ export const ReactHookForm: Story = {
   ],
   render: () => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<FormValues> = (values): void => {

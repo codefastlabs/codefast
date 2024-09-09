@@ -10,7 +10,7 @@ import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { MailIcon, UserIcon } from 'lucide-react';
+import { MailIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { TextInput } from '@codefast/ui/text-input';
 import { wait } from 'next/dist/lib/wait';
 
@@ -121,10 +121,27 @@ export const WithButton: Story = {
 };
 
 /* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-4">
+      <TextInput {...args} inputSize="xxs" prefix={<SettingsIcon />} />
+      <TextInput {...args} inputSize="xs" prefix={<SettingsIcon />} />
+      <TextInput {...args} inputSize="sm" prefix={<SettingsIcon />} />
+      <TextInput {...args} inputSize="md" prefix={<SettingsIcon />} />
+      <TextInput {...args} inputSize="lg" prefix={<SettingsIcon />} />
+      <TextInput {...args} inputSize="xl" prefix={<SettingsIcon />} />
+    </div>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const FormValues = z.object({
+const formValues = z.object({
   username: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
@@ -133,7 +150,7 @@ const FormValues = z.object({
   }),
 });
 
-type FormValues = z.infer<typeof FormValues>;
+type FormValues = z.infer<typeof formValues>;
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -146,7 +163,7 @@ export const ReactHookForm: Story = {
   ],
   render: (args) => {
     const form = useForm<FormValues>({
-      resolver: zodResolver(FormValues),
+      resolver: zodResolver(formValues),
       defaultValues: {
         username: '',
         email: '',
