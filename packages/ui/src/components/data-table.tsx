@@ -193,6 +193,7 @@ function DataTableColumnHeader<TData, TValue>({
             <SortIcon sorted={column.getIsSorted()} />
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="start">
           <DropdownMenuItem
             onClick={() => {

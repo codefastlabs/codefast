@@ -2,7 +2,13 @@
 
 import * as React from 'react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { cn } from '@/lib/utils';
+import { avatarVariants } from '@/styles/avatar-variants';
+
+/* -----------------------------------------------------------------------------
+ * Variant: Avatar
+ * -------------------------------------------------------------------------- */
+
+const { root, image, fallback } = avatarVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: Avatar
@@ -12,11 +18,7 @@ type AvatarElement = React.ElementRef<typeof AvatarPrimitive.Root>;
 type AvatarProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>;
 
 const Avatar = React.forwardRef<AvatarElement, AvatarProps>(({ className, ...props }, forwardedRef) => (
-  <AvatarPrimitive.Root
-    ref={forwardedRef}
-    className={cn('relative flex size-10 shrink-0 overflow-hidden rounded-full', className)}
-    {...props}
-  />
+  <AvatarPrimitive.Root ref={forwardedRef} className={root({ className })} {...props} />
 ));
 
 Avatar.displayName = AvatarPrimitive.Root.displayName;
@@ -29,7 +31,7 @@ type AvatarImageElement = React.ElementRef<typeof AvatarPrimitive.Image>;
 type AvatarImageProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>;
 
 const AvatarImage = React.forwardRef<AvatarImageElement, AvatarImageProps>(({ className, ...props }, forwardedRef) => (
-  <AvatarPrimitive.Image ref={forwardedRef} className={cn('aspect-square size-full', className)} {...props} />
+  <AvatarPrimitive.Image ref={forwardedRef} className={image({ className })} {...props} />
 ));
 
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
@@ -43,11 +45,7 @@ type AvatarFallbackProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive
 
 const AvatarFallback = React.forwardRef<AvatarFallbackElement, AvatarFallbackProps>(
   ({ className, ...props }, forwardedRef) => (
-    <AvatarPrimitive.Fallback
-      ref={forwardedRef}
-      className={cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
-      {...props}
-    />
+    <AvatarPrimitive.Fallback ref={forwardedRef} className={fallback({ className })} {...props} />
   ),
 );
 

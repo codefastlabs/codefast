@@ -17,7 +17,7 @@ export function DemoNotifications(): JSX.Element {
             <p className="text-muted-foreground text-sm">Email digest, mentions & all activity.</p>
           </div>
         </div>
-        <div className="bg-accent text-accent-foreground -mx-2 flex items-start space-x-4 rounded-md p-2 transition-all">
+        <div className="bg-muted text-muted-foreground -mx-2 flex items-start space-x-4 rounded-md p-2 transition-all">
           <PersonIcon className="mt-px size-5" />
           <div className="space-y-1">
             <p className="text-sm font-medium leading-none">Available</p>
