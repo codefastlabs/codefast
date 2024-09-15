@@ -7,7 +7,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
@@ -48,10 +47,10 @@ export const WithLabel: Story = {
     const id = useId();
 
     return (
-      <Box className="grid w-full gap-1.5">
+      <div className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
         <Textarea id={`message-${id}`} placeholder="Type your message here." {...args} />
-      </Box>
+      </div>
     );
   },
 };
@@ -65,11 +64,11 @@ export const WithText: Story = {
     const id = useId();
 
     return (
-      <Box className="grid w-full gap-1.5">
+      <div className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
         <Textarea id={`message-${id}`} placeholder="Type your message here." {...args} />
         <Text className="text-muted-foreground text-sm">Your message will be copied to the support team.</Text>
-      </Box>
+      </div>
     );
   },
 };
@@ -81,10 +80,10 @@ export const WithText: Story = {
 export const WithButton: Story = {
   render: (args) => {
     return (
-      <Box className="grid w-full gap-2">
+      <div className="grid w-full gap-2">
         <Textarea placeholder="Type your message here." {...args} />
         <Button>Send message</Button>
-      </Box>
+      </div>
     );
   },
 };
@@ -143,7 +142,7 @@ export const ReactHookForm: Story = {
                   <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
                 </FormControl>
                 <FormDescription>
-                  You can <Box as="span">@mention</Box> other users and organizations.
+                  You can <span>@mention</span> other users and organizations.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

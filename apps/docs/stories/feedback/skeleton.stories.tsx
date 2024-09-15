@@ -1,5 +1,4 @@
 import { Skeleton } from '@codefast/ui/skeleton';
-import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
@@ -21,13 +20,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Box className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4">
       <Skeleton className="size-12" />
-      <Box className="space-y-2">
+      <div className="space-y-2">
         <Skeleton className="h-4 w-[250px]" />
         <Skeleton className="h-4 w-[200px]" />
-      </Box>
-    </Box>
+      </div>
+    </div>
   ),
 };
 
@@ -37,12 +36,12 @@ export const Default: Story = {
 
 export const Card: Story = {
   render: () => (
-    <Box className="flex flex-col space-y-3">
+    <div className="flex flex-col space-y-3">
       <Skeleton className="h-[125px] w-[250px]" />
-      <Box className="space-y-2">
+      <div className="space-y-2">
         <Skeleton className="h-4 w-[250px]" />
         <Skeleton className="h-4 w-[200px]" />
-      </Box>
-    </Box>
+      </div>
+    </div>
   ),
 };

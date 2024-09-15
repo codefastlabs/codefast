@@ -7,7 +7,6 @@ import { toast, Toaster } from '@codefast/ui/sonner';
 import Link from 'next/link';
 import { Button } from '@codefast/ui/button';
 import { useId } from 'react';
-import { Box } from '@codefast/ui/box';
 import { Label } from '@codefast/ui/label';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
@@ -33,13 +32,13 @@ export const Default: Story = {
     const id = useId();
 
     return (
-      <Box className="items-top flex space-x-2">
+      <div className="items-top flex space-x-2">
         <Checkbox id={id} {...args} />
-        <Box className="grid gap-1.5 leading-none">
+        <div className="grid gap-1.5 leading-none">
           <Label htmlFor={id}>Accept terms and conditions</Label>
           <Text className="text-muted-foreground text-sm">You agree to our Terms of Service and Privacy Policy.</Text>
-        </Box>
-      </Box>
+        </div>
+      </div>
     );
   },
 };
@@ -53,10 +52,10 @@ export const Disabled: Story = {
     const id = useId();
 
     return (
-      <Box className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2">
         <Checkbox disabled id={id} {...args} />
         <Label htmlFor={id}>Accept terms and conditions</Label>
-      </Box>
+      </div>
     );
   },
 };
@@ -109,13 +108,13 @@ export const ReactHookForm: Story = {
                 <FormControl>
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} {...args} />
                 </FormControl>
-                <Box className="space-y-1 leading-none">
+                <div className="space-y-1 leading-none">
                   <FormLabel>Use different settings for my mobile devices</FormLabel>
                   <FormDescription>
                     You can manage your mobile notifications in the{' '}
                     <Link href="/apps/docs/public">mobile settings</Link> page.
                   </FormDescription>
-                </Box>
+                </div>
               </FormItem>
             )}
           />
@@ -200,10 +199,10 @@ export const ReactHookForm2: Story = {
             name="items"
             render={() => (
               <FormItem>
-                <Box className="mb-4">
+                <div className="mb-4">
                   <FormLabel className="text-base">Sidebar</FormLabel>
                   <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
-                </Box>
+                </div>
                 {items2.map((item) => (
                   <FormField
                     key={item.id}

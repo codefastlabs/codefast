@@ -12,7 +12,6 @@ import {
 import { Button } from '@codefast/ui/button';
 import { Label } from '@codefast/ui/label';
 import { Copy } from 'lucide-react';
-import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui/tooltip';
 import { TextInput } from '@codefast/ui/text-input';
@@ -49,20 +48,20 @@ export const Default: Story = {
           </DialogHeader>
 
           <DialogBody>
-            <Box className="grid gap-4 py-4">
-              <Box className="grid grid-cols-4 items-center gap-4">
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor="name">
                   Name
                 </Label>
                 <TextInput className="col-span-3" defaultValue="Pedro Duarte" id="name" />
-              </Box>
-              <Box className="grid grid-cols-4 items-center gap-4">
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor="username">
                   Username
                 </Label>
                 <TextInput className="col-span-3" defaultValue="@peduarte" id="username" />
-              </Box>
-            </Box>
+              </div>
+            </div>
           </DialogBody>
 
           <DialogFooter>
@@ -100,13 +99,13 @@ export const CustomCloseButton: Story = {
         </DialogHeader>
 
         <DialogBody>
-          <Box className="flex items-center gap-2">
-            <Box className="grid flex-1 gap-2">
+          <div className="flex items-center gap-2">
+            <div className="grid flex-1 gap-2">
               <Label className="sr-only" htmlFor="link">
                 Link
               </Label>
               <TextInput readOnly defaultValue="https://ui.shadcn.com/docs/installation" id="link" />
-            </Box>
+            </div>
             <TooltipProvider delayDuration={250}>
               <Tooltip>
                 <TooltipTrigger>
@@ -115,7 +114,7 @@ export const CustomCloseButton: Story = {
                 <TooltipContent>Copy</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </Box>
+          </div>
         </DialogBody>
 
         <DialogFooter>

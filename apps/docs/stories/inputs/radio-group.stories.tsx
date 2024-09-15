@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { Button } from '@codefast/ui/button';
-import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -32,22 +31,22 @@ export const Default: Story = {
 
     return (
       <RadioGroup defaultValue="comfortable">
-        <Box className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <RadioGroupItem id={`r1-${id}`} value="default" />
           <Label htmlFor={`r1-${id}`}>Default</Label>
-        </Box>
-        <Box className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <RadioGroupItem id={`r2-${id}`} value="comfortable" />
           <Label htmlFor={`r2-${id}`}>Comfortable</Label>
-        </Box>
-        <Box className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <RadioGroupItem id={`r3-${id}`} value="compact" />
           <Label htmlFor={`r3-${id}`}>Compact</Label>
-        </Box>
-        <Box className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <RadioGroupItem disabled id={`r4-${id}`} value="disabled" />
           <Label htmlFor={`r4-${id}`}>Disabled</Label>
-        </Box>
+        </div>
       </RadioGroup>
     );
   },

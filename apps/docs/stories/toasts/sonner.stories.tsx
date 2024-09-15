@@ -1,6 +1,5 @@
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Button } from '@codefast/ui/button';
-import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
@@ -19,7 +18,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <Box className="h-96">
+    <div className="h-96">
       <Button
         variant="outline"
         onClick={() =>
@@ -38,6 +37,6 @@ export const Default: Story = {
         Show Toast
       </Button>
       <Toaster />
-    </Box>
+    </div>
   ),
 };
