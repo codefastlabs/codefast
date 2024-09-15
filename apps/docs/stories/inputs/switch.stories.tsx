@@ -7,10 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@codefast/ui/form';
 import { Button } from '@codefast/ui/button';
-import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
-import { Heading } from '@codefast/ui/heading';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
@@ -32,10 +30,10 @@ export const Default: Story = {
     const id = useId();
 
     return (
-      <Box className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2">
         <Switch id={`airplane-mode-${id}`} {...args} />
         <Label htmlFor={`airplane-mode-${id}`}>Airplane Mode</Label>
-      </Box>
+      </div>
     );
   },
 };
@@ -81,20 +79,18 @@ export const ReactHookForm: Story = {
     return (
       <Form {...form}>
         <form className="w-full space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-          <Box>
-            <Heading as="h3" className="mb-4 text-lg font-medium">
-              Email Notifications
-            </Heading>
-            <Box className="space-y-4">
+          <div>
+            <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+            <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="marketing_emails"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <Box className="space-y-0.5">
+                    <div className="space-y-0.5">
                       <FormLabel className="text-base">Marketing emails</FormLabel>
                       <FormDescription>Receive emails about new products, features, and more.</FormDescription>
-                    </Box>
+                    </div>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
@@ -106,18 +102,18 @@ export const ReactHookForm: Story = {
                 name="security_emails"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <Box className="space-y-0.5">
+                    <div className="space-y-0.5">
                       <FormLabel className="text-base">Security emails</FormLabel>
                       <FormDescription>Receive emails about your account security.</FormDescription>
-                    </Box>
+                    </div>
                     <FormControl>
                       <Switch aria-readonly disabled checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
               />
-            </Box>
-          </Box>
+            </div>
+          </div>
           <Button type="submit">Submit</Button>
         </form>
       </Form>

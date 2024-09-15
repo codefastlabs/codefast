@@ -29,11 +29,9 @@ module.exports = {
       'warn',
       {
         callbacksLast: true,
-        shorthandFirst: true,
-        shorthandLast: false,
         ignoreCase: true,
-        noSortAlphabetically: false,
         reservedFirst: true,
+        shorthandFirst: true,
       },
     ],
     'react/no-unknown-property': ['warn', { ignore: ['vaul-drawer-wrapper'] }],

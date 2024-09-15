@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -68,10 +67,10 @@ export const File: Story = {
     const id = useId();
 
     return (
-      <Box className="grid w-full max-w-sm items-center gap-1.5">
+      <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Picture</Label>
         <TextInput id={id} type="file" {...args} />
-      </Box>
+      </div>
     );
   },
 };
@@ -99,10 +98,10 @@ export const WithLabel: Story = {
     const id = useId();
 
     return (
-      <Box className="grid w-full max-w-sm items-center gap-1.5">
+      <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Email</Label>
         <TextInput id={id} placeholder="Email" prefix={<MailIcon />} type="email" {...args} />
-      </Box>
+      </div>
     );
   },
 };
@@ -113,10 +112,10 @@ export const WithLabel: Story = {
 
 export const WithButton: Story = {
   render: (args) => (
-    <Box className="flex w-full max-w-sm items-center space-x-2">
+    <div className="flex w-full max-w-sm items-center space-x-2">
       <TextInput placeholder="Email" type="email" {...args} />
       <Button type="submit">Subscribe</Button>
-    </Box>
+    </div>
   ),
 };
 

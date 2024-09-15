@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
-import { buttonVariants, type ButtonVariantsProps } from '@/components/button';
+import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

@@ -25,7 +25,6 @@ import {
   DialogTrigger,
 } from '@codefast/ui/dialog';
 import { Label } from '@codefast/ui/label';
-import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/hooks/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { TextInput } from '@codefast/ui/text-input';
@@ -102,13 +101,13 @@ export const Default: Story = {
           <Button variant="outline">Open Drawer</Button>
         </DrawerTrigger>
         <DrawerContent>
-          <Box className="mx-auto w-full max-w-sm">
+          <div className="mx-auto w-full max-w-sm">
             <DrawerHeader>
               <DrawerTitle>Move Goal</DrawerTitle>
               <DrawerDescription>Set your daily activity goal.</DrawerDescription>
             </DrawerHeader>
-            <Box className="p-4 pb-0">
-              <Box className="flex items-center justify-center space-x-2">
+            <div className="p-4 pb-0">
+              <div className="flex items-center justify-center space-x-2">
                 <Button
                   aria-label="Decrease"
                   className="size-8 shrink-0 rounded-full"
@@ -120,10 +119,10 @@ export const Default: Story = {
                     onClick(-10);
                   }}
                 />
-                <Box className="flex-1 text-center">
-                  <Box className="text-7xl font-bold tracking-tighter">{goal}</Box>
-                  <Box className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</Box>
-                </Box>
+                <div className="flex-1 text-center">
+                  <div className="text-7xl font-bold tracking-tighter">{goal}</div>
+                  <div className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</div>
+                </div>
                 <Button
                   aria-label="Increase"
                   className="size-8 shrink-0 rounded-full"
@@ -135,8 +134,8 @@ export const Default: Story = {
                     onClick(10);
                   }}
                 />
-              </Box>
-              <Box className="mt-3 h-[120px]">
+              </div>
+              <div className="mt-3 h-[120px]">
                 <ResponsiveContainer height="100%" width="100%">
                   <BarChart data={data}>
                     <Bar
@@ -148,13 +147,13 @@ export const Default: Story = {
                     />
                   </BarChart>
                 </ResponsiveContainer>
-              </Box>
-            </Box>
+              </div>
+            </div>
             <DrawerFooter>
               <DrawerClose>Cancel</DrawerClose>
               <DrawerClose variant="default">Submit</DrawerClose>
             </DrawerFooter>
-          </Box>
+          </div>
         </DrawerContent>
       </Drawer>
     );
@@ -185,14 +184,14 @@ export const ResponsiveDialog: Story = {
                 </DialogDescription>
               </DialogHeader>
               <DialogBody className="grid items-start gap-4">
-                <Box className="grid gap-2">
+                <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <TextInput defaultValue="codefast@example.com" id="email" type="email" />
-                </Box>
-                <Box className="grid gap-2">
+                </div>
+                <div className="grid gap-2">
                   <Label htmlFor="username">Username</Label>
                   <TextInput defaultValue="@codefast" id="username" />
-                </Box>
+                </div>
               </DialogBody>
               <DialogFooter>
                 <DialogClose
@@ -231,14 +230,14 @@ export const ResponsiveDialog: Story = {
               </DrawerDescription>
             </DrawerHeader>
             <DrawerBody className="grid items-start gap-4">
-              <Box className="grid gap-2">
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <TextInput defaultValue="codefast@example.com" id="email" type="email" />
-              </Box>
-              <Box className="grid gap-2">
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>
                 <TextInput defaultValue="@codefast" id="username" />
-              </Box>
+              </div>
             </DrawerBody>
             <DrawerFooter className="pt-2">
               <DrawerClose>Cancel</DrawerClose>

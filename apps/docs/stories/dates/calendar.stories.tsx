@@ -9,7 +9,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { Button } from '@codefast/ui/button';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { toast, Toaster } from '@codefast/ui/sonner';
-import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -181,7 +180,7 @@ export const ReactHookForm: Story = {
                         suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
                       >
-                        {field.value ? format(field.value, 'PPP') : <Box as="span">Pick a date</Box>}
+                        {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

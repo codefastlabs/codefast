@@ -331,6 +331,61 @@
       "import": "./dist/lib/utils.js",
       "require": "./dist/lib/utils.cjs"
     },
+    "./alert-variants": {
+      "types": "./dist/styles/alert-variants.d.ts",
+      "import": "./dist/styles/alert-variants.js",
+      "require": "./dist/styles/alert-variants.cjs"
+    },
+    "./badge-variants": {
+      "types": "./dist/styles/badge-variants.d.ts",
+      "import": "./dist/styles/badge-variants.js",
+      "require": "./dist/styles/badge-variants.cjs"
+    },
+    "./button-variants": {
+      "types": "./dist/styles/button-variants.d.ts",
+      "import": "./dist/styles/button-variants.js",
+      "require": "./dist/styles/button-variants.cjs"
+    },
+    "./input-variants": {
+      "types": "./dist/styles/input-variants.d.ts",
+      "import": "./dist/styles/input-variants.js",
+      "require": "./dist/styles/input-variants.cjs"
+    },
+    "./navigation-menu-variants": {
+      "types": "./dist/styles/navigation-menu-variants.d.ts",
+      "import": "./dist/styles/navigation-menu-variants.js",
+      "require": "./dist/styles/navigation-menu-variants.cjs"
+    },
+    "./scroll-area-variants": {
+      "types": "./dist/styles/scroll-area-variants.d.ts",
+      "import": "./dist/styles/scroll-area-variants.js",
+      "require": "./dist/styles/scroll-area-variants.cjs"
+    },
+    "./select-variants": {
+      "types": "./dist/styles/select-variants.d.ts",
+      "import": "./dist/styles/select-variants.js",
+      "require": "./dist/styles/select-variants.cjs"
+    },
+    "./separator-variants": {
+      "types": "./dist/styles/select-variants.d.ts",
+      "import": "./dist/styles/select-variants.js",
+      "require": "./dist/styles/select-variants.cjs"
+    },
+    "./sheet-variants": {
+      "types": "./dist/styles/sheet-variants.d.ts",
+      "import": "./dist/styles/sheet-variants.js",
+      "require": "./dist/styles/sheet-variants.cjs"
+    },
+    "./textarea-variants": {
+      "types": "./dist/styles/textarea-variants.d.ts",
+      "import": "./dist/styles/textarea-variants.js",
+      "require": "./dist/styles/textarea-variants.cjs"
+    },
+    "./toggle-variants": {
+      "types": "./dist/styles/toggle-variants.d.ts",
+      "import": "./dist/styles/toggle-variants.js",
+      "require": "./dist/styles/toggle-variants.cjs"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": [
@@ -382,30 +437,30 @@
     "@tanstack/react-table": "8.20.5",
     "clsx": "2.1.1",
     "cmdk": "1.0.0",
-    "embla-carousel-react": "8.2.1",
+    "embla-carousel-react": "8.3.0",
     "input-otp": "1.2.4",
     "next-themes": "0.3.0",
-    "react-day-picker": "9.0.8",
+    "react-day-picker": "9.0.9",
     "react-hook-form": "7.53.0",
     "react-resizable-panels": "2.1.2",
     "sonner": "1.5.0",
     "tailwind-merge": "2.5.2",
     "tailwind-variants": "0.2.1",
-    "vaul": "0.9.2"
+    "vaul": "0.9.3"
   },
   "devDependencies": {
     "@codefast/config-tailwind": "workspace:*",
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/node": "22.5.4",
+    "@types/node": "22.5.5",
     "@types/react": "18.3.5",
     "autoprefixer": "10.4.20",
     "eslint": "8.57.0",
     "postcss": "8.4.45",
     "react": "18.3.1",
-    "tailwindcss": "3.4.10",
+    "tailwindcss": "3.4.11",
     "tsup": "8.2.4",
-    "typescript": "5.5.4"
+    "typescript": "5.6.2"
   },
   "publishConfig": {
     "access": "public"

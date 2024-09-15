@@ -5,15 +5,16 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerVariants,
 } from '@codefast/ui/navigation-menu';
 import { type AnchorHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@codefast/ui/utils';
 import Link from 'next/link';
 import { SettingsIcon } from 'lucide-react';
-import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { navigationMenuVariants } from '@codefast/ui/navigation-menu-variants';
+
+const { trigger } = navigationMenuVariants();
 
 const meta = {
   component: NavigationMenu,
@@ -21,9 +22,9 @@ const meta = {
   title: 'Components/Navigation/Navigation Menu',
   decorators: [
     (Story) => (
-      <Box className="h-[70dvh]">
+      <div className="h-[70dvh]">
         <Story />
-      </Box>
+      </div>
     ),
   ],
 } satisfies Meta<typeof NavigationMenu>;
@@ -84,7 +85,7 @@ const ListItem = forwardRef<HTMLAnchorElement, AnchorHTMLAttributes<HTMLAnchorEl
             )}
             {...props}
           >
-            <Box className="text-sm font-medium leading-none">{title}</Box>
+            <div className="text-sm font-medium leading-none">{title}</div>
             <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</Text>
           </a>
         </NavigationMenuLink>
@@ -110,7 +111,7 @@ export const Default: Story = {
                     href="/apps/docs/public"
                   >
                     <SettingsIcon className="size-6" />
-                    <Box className="mb-2 mt-4 text-lg font-medium">shadcn/ui</Box>
+                    <div className="mb-2 mt-4 text-lg font-medium">shadcn/ui</div>
                     <Text className="text-muted-foreground text-sm leading-tight">
                       Beautifully designed components that you can copy and paste into your apps. Accessible.
                       Customizable. Open Source.
@@ -144,7 +145,7 @@ export const Default: Story = {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link legacyBehavior passHref href="/apps/docs/public">
-            <NavigationMenuLink className={navigationMenuTriggerVariants()}>Documentation</NavigationMenuLink>
+            <NavigationMenuLink className={trigger()}>Documentation</NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
       </NavigationMenuList>

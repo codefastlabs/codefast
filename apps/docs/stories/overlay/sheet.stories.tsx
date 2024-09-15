@@ -12,7 +12,6 @@ import {
 import { Button } from '@codefast/ui/button';
 import { Label } from '@codefast/ui/label';
 import { useId } from 'react';
-import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { TextInput } from '@codefast/ui/text-input';
 
@@ -47,20 +46,20 @@ export const Default: Story = {
           </SheetHeader>
 
           <SheetBody>
-            <Box className="grid gap-4">
-              <Box className="grid grid-cols-4 items-center gap-4">
+            <div className="grid gap-4">
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor={`name-${id}`}>
                   Name
                 </Label>
                 <TextInput className="col-span-3" id={`name-${id}`} value="Pedro Duarte" />
-              </Box>
-              <Box className="grid grid-cols-4 items-center gap-4">
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor={`username-${id}`}>
                   Username
                 </Label>
                 <TextInput className="col-span-3" id={`username-${id}`} value="@peduarte" />
-              </Box>
-            </Box>
+              </div>
+            </div>
           </SheetBody>
 
           <SheetFooter>
@@ -83,7 +82,7 @@ export const Side: Story = {
     const id = useId();
 
     return (
-      <Box className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {SHEET_SIDES.map((side) => (
           <Sheet key={side} {...args}>
             <SheetTrigger asChild>
@@ -99,20 +98,20 @@ export const Side: Story = {
               </SheetHeader>
 
               <SheetBody>
-                <Box className="grid gap-4">
-                  <Box className="grid grid-cols-4 items-center gap-4">
+                <div className="grid gap-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right" htmlFor={`name-${side}-${id}`}>
                       Name
                     </Label>
                     <TextInput className="col-span-3" id={`name-${side}-${id}`} value="Pedro Duarte" />
-                  </Box>
-                  <Box className="grid grid-cols-4 items-center gap-4">
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right" htmlFor={`username-${side}-${id}`}>
                       Username
                     </Label>
                     <TextInput className="col-span-3" id={`username-${side}-${id}`} value="@peduarte" />
-                  </Box>
-                </Box>
+                  </div>
+                </div>
               </SheetBody>
 
               <SheetFooter>
@@ -121,7 +120,7 @@ export const Side: Story = {
             </SheetContent>
           </Sheet>
         ))}
-      </Box>
+      </div>
     );
   },
 };
@@ -132,7 +131,7 @@ export const Side: Story = {
 
 export const Scrollable: Story = {
   render: (args) => (
-    <Box className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {SHEET_SIDES.map((side) => (
         <Sheet key={side} {...args}>
           <SheetTrigger asChild>
@@ -163,7 +162,7 @@ export const Scrollable: Story = {
           </SheetContent>
         </Sheet>
       ))}
-    </Box>
+    </div>
   ),
 };
 
@@ -173,7 +172,7 @@ export const Scrollable: Story = {
 
 export const ScrollingLongContent: Story = {
   render: (args) => (
-    <Box className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-2">
       {SHEET_SIDES.map((side) => (
         <Sheet key={side} {...args}>
           <SheetTrigger asChild>
@@ -204,6 +203,6 @@ export const ScrollingLongContent: Story = {
           </SheetContent>
         </Sheet>
       ))}
-    </Box>
+    </div>
   ),
 };

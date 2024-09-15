@@ -2,7 +2,6 @@ import { Button } from '@codefast/ui/button';
 import { Switch } from '@codefast/ui/switch';
 import { BookmarkIcon } from '@radix-ui/react-icons';
 import { Spinner } from '@codefast/ui/spinner';
-import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
@@ -27,11 +26,11 @@ export const Default: Story = {};
 
 export const Size: Story = {
   render: () => (
-    <Box className="flex items-center gap-4">
+    <div className="flex items-center gap-4">
       <Spinner />
       <Spinner className="size-6" />
       <Spinner className="size-8" />
-    </Box>
+    </div>
   ),
 };
 
@@ -41,7 +40,7 @@ export const Size: Story = {
 
 export const WithChildren: Story = {
   render: () => (
-    <Box className="flex items-center gap-4">
+    <div className="flex items-center gap-4">
       <Spinner loading>
         <Switch defaultChecked />
       </Spinner>
@@ -49,7 +48,7 @@ export const WithChildren: Story = {
       <Spinner loading={false}>
         <Switch defaultChecked />
       </Spinner>
-    </Box>
+    </div>
   ),
 };
 

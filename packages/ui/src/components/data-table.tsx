@@ -23,8 +23,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/dropdown-menu';
-import { Button, buttonVariants } from '@/components/button';
+import { Button } from '@/components/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions
