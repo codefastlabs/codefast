@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { cn } from '@/lib/utils';
+import { breadcrumbVariants } from '@/styles/breadcrumb-variants';
+
+/* -----------------------------------------------------------------------------
+ * Variant: Breadcrumb
+ * -------------------------------------------------------------------------- */
+
+const { list, item, link, page, ellipsis } = breadcrumbVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
@@ -27,16 +33,7 @@ type BreadcrumbListElement = HTMLOListElement;
 type BreadcrumbListProps = React.OlHTMLAttributes<HTMLOListElement>;
 
 const BreadcrumbList = React.forwardRef<BreadcrumbListElement, BreadcrumbListProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <ol
-      ref={forwardedRef}
-      className={cn(
-        'text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2.5',
-        className,
-      )}
-      {...props}
-    />
-  ),
+  ({ className, ...props }, forwardedRef) => <ol ref={forwardedRef} className={list({ className })} {...props} />,
 );
 
 BreadcrumbList.displayName = 'BreadcrumbList';
@@ -49,9 +46,7 @@ type BreadcrumbItemElement = HTMLLIElement;
 type BreadcrumbItemProps = React.LiHTMLAttributes<HTMLLIElement>;
 
 const BreadcrumbItem = React.forwardRef<BreadcrumbItemElement, BreadcrumbItemProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <li ref={forwardedRef} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
-  ),
+  ({ className, ...props }, forwardedRef) => <li ref={forwardedRef} className={item({ className })} {...props} />,
 );
 
 BreadcrumbItem.displayName = 'BreadcrumbItem';
@@ -70,7 +65,7 @@ const BreadcrumbLink = React.forwardRef<BreadcrumbLinkElement, BreadcrumbLinkPro
   ({ asChild, className, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'a';
 
-    return <Component ref={forwardedRef} className={cn('hover:text-foreground transition', className)} {...props} />;
+    return <Component ref={forwardedRef} className={link({ className })} {...props} />;
   },
 );
 
@@ -89,7 +84,7 @@ const BreadcrumbPage = React.forwardRef<BreadcrumbPageElement, BreadcrumbPagePro
       ref={forwardedRef}
       aria-current="page"
       aria-disabled="true"
-      className={cn('text-foreground font-normal', className)}
+      className={page({ className })}
       role="link"
       {...props}
     />
@@ -104,10 +99,10 @@ BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 type BreadcrumbSeparatorProps = React.LiHTMLAttributes<HTMLLIElement>;
 
-function BreadcrumbSeparator({ children, className, ...props }: BreadcrumbSeparatorProps): React.JSX.Element {
+function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): React.JSX.Element {
   return (
-    <li aria-hidden="true" className={cn('[&_svg]:size-3.5', className)} role="presentation" {...props}>
-      {children ?? <ChevronRightIcon />}
+    <li aria-hidden="true" role="presentation" {...props}>
+      {children ?? <ChevronRightIcon className="size-4" />}
     </li>
   );
 }
@@ -120,12 +115,7 @@ type BreadcrumbEllipsisProps = React.HTMLAttributes<HTMLSpanElement>;
 
 function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): React.JSX.Element {
   return (
-    <span
-      aria-hidden="true"
-      className={cn('flex size-4 items-center justify-center', className)}
-      role="presentation"
-      {...props}
-    >
+    <span aria-hidden="true" className={ellipsis({ className })} role="presentation" {...props}>
       <DotsHorizontalIcon className="size-4" />
       <span className="sr-only">More</span>
     </span>
