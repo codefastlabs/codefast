@@ -21,7 +21,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
-import { Box } from '@codefast/ui/box';
 import { useMediaQuery } from '@codefast/hooks/use-media-query';
 import { type Meta, type StoryObj } from '@storybook/react';
 
@@ -51,9 +50,7 @@ export const Default: Story = {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1">
               <BreadcrumbEllipsis />
-              <Box as="span" className="sr-only">
-                Toggle menu
-              </Box>
+              <span className="sr-only">Toggle menu</span>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuItem>Documentation</DropdownMenuItem>
@@ -250,7 +247,7 @@ export const ResponsiveBreadcrumb: Story = {
                         <DrawerTitle>Navigate to</DrawerTitle>
                         <DrawerDescription>Select a page to navigate to.</DrawerDescription>
                       </DrawerHeader>
-                      <Box className="grid gap-1 px-4">
+                      <div className="grid gap-1 px-4">
                         {items.slice(1, -2).map((item, index) => (
                           <Link
                             // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
@@ -261,7 +258,7 @@ export const ResponsiveBreadcrumb: Story = {
                             {item.label}
                           </Link>
                         ))}
-                      </Box>
+                      </div>
                       <DrawerFooter className="pt-4">
                         <DrawerClose>Close</DrawerClose>
                       </DrawerFooter>

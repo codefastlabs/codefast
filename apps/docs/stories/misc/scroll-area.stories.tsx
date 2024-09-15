@@ -1,17 +1,30 @@
 import { ScrollArea } from '@codefast/ui/scroll-area';
 import { Separator } from '@codefast/ui/separator';
 import Image from 'next/image';
-import { Heading } from '@codefast/ui/heading';
-import { Box } from '@codefast/ui/box';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
+  argTypes: {
+    size: {
+      control: 'inline-radio',
+      description: 'The size of the scroll area.',
+      type: {
+        name: 'enum',
+        value: ['none', 'sm', 'md', 'lg'],
+      },
+      table: {
+        defaultValue: {
+          summary: 'md',
+        },
+      },
+    },
+  },
+  args: {
+    size: 'md',
+  },
   component: ScrollArea,
   tags: ['autodocs'],
   title: 'Components/Misc/Scroll Area',
-  args: {
-    size: '2',
-  },
 } satisfies Meta<typeof ScrollArea>;
 
 export default meta;
@@ -28,19 +41,17 @@ const tagCount = tags.length;
 export const Default: Story = {
   render: (args) => (
     <ScrollArea className="h-72 w-48 rounded-md border" {...args}>
-      <Box className="p-4">
-        <Heading as="h4" className="mb-4 text-sm font-medium leading-none">
-          Tags
-        </Heading>
+      <div className="p-4">
+        <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
         {tags.map((tag, index) => (
           <>
-            <Box key={tag} className="text-sm">
+            <div key={tag} className="text-sm">
               {tag}
-            </Box>
+            </div>
             {index < tagCount - 1 && <Separator className="my-2" />}
           </>
         ))}
-      </Box>
+      </div>
     </ScrollArea>
   ),
 };
@@ -72,10 +83,10 @@ const works: Artwork[] = [
 export const HorizontalScrolling: Story = {
   render: (args) => (
     <ScrollArea className="w-96 whitespace-nowrap rounded-md border" {...args}>
-      <Box className="flex w-max gap-4 p-4">
+      <div className="flex w-max gap-4 p-4">
         {works.map((artwork) => (
           <figure key={artwork.artist} className="shrink-0">
-            <Box className="overflow-hidden rounded-md">
+            <div className="overflow-hidden rounded-md">
               <Image
                 alt={`Photo by ${artwork.artist}`}
                 className="aspect-[3/4] h-fit w-fit object-cover"
@@ -83,16 +94,13 @@ export const HorizontalScrolling: Story = {
                 src={artwork.art}
                 width={300}
               />
-            </Box>
+            </div>
             <figcaption className="text-muted-foreground pt-2 text-xs">
-              Photo by{' '}
-              <Box as="span" className="text-foreground font-semibold">
-                {artwork.artist}
-              </Box>
+              Photo by <span className="text-foreground font-semibold">{artwork.artist}</span>
             </figcaption>
           </figure>
         ))}
-      </Box>
+      </div>
     </ScrollArea>
   ),
 };

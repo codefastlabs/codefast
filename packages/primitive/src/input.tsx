@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
-import { type Primitive } from '@radix-ui/react-primitive';
 
 /* -----------------------------------------------------------------------------
  * Component: Input
@@ -66,8 +65,8 @@ Input.displayName = INPUT_NAME;
 
 const INPUT_ITEM_NAME = 'InputItem';
 
-type InputItemElement = React.ElementRef<typeof Primitive.input>;
-type InputItemProps = React.ComponentPropsWithoutRef<typeof Primitive.input>;
+type InputItemElement = HTMLInputElement;
+type InputItemProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const InputItem = React.forwardRef<InputItemElement, InputItemProps>(
   ({ __scopeInput, ...props }: ScopedProps<InputItemProps>, forwardedRef) => {

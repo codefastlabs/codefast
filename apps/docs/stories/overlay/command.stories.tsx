@@ -11,7 +11,6 @@ import {
 } from '@codefast/ui/command';
 import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Box } from '@codefast/ui/box';
 import { Text } from '@codefast/ui/text';
 import { Kbd } from '@codefast/ui/kbd';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -39,32 +38,32 @@ export const Default: Story = {
         <CommandGroup heading="Suggestions">
           <CommandItem>
             <Calendar className="mr-2 size-4" />
-            <Box as="span">Calendar</Box>
+            <span>Calendar</span>
           </CommandItem>
           <CommandItem>
             <Smile className="mr-2 size-4" />
-            <Box as="span">Search Emoji</Box>
+            <span>Search Emoji</span>
           </CommandItem>
           <CommandItem>
             <Calculator className="mr-2 size-4" />
-            <Box as="span">Calculator</Box>
+            <span>Calculator</span>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Settings">
           <CommandItem>
             <User className="mr-2 size-4" />
-            <Box as="span">Profile</Box>
+            <span>Profile</span>
             <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <CreditCard className="mr-2 size-4" />
-            <Box as="span">Billing</Box>
+            <span>Billing</span>
             <CommandShortcut>⌘B</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <Settings className="mr-2 size-4" />
-            <Box as="span">Settings</Box>
+            <span>Settings</span>
             <CommandShortcut>⌘S</CommandShortcut>
           </CommandItem>
         </CommandGroup>
@@ -101,7 +100,7 @@ export const WithDialog: Story = {
         <Text className="text-muted-foreground text-sm">
           Press{' '}
           <Kbd>
-            <Box as="span">⌘</Box>J
+            <span>⌘</span>J
           </Kbd>
         </Text>
         <CommandDialog open={open} onOpenChange={setOpen}>
@@ -111,32 +110,32 @@ export const WithDialog: Story = {
             <CommandGroup heading="Suggestions">
               <CommandItem>
                 <Calendar className="mr-2 size-4" />
-                <Box as="span">Calendar</Box>
+                <span>Calendar</span>
               </CommandItem>
               <CommandItem>
                 <Smile className="mr-2 size-4" />
-                <Box as="span">Search Emoji</Box>
+                <span>Search Emoji</span>
               </CommandItem>
               <CommandItem>
                 <Calculator className="mr-2 size-4" />
-                <Box as="span">Calculator</Box>
+                <span>Calculator</span>
               </CommandItem>
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Settings">
               <CommandItem>
                 <User className="mr-2 size-4" />
-                <Box as="span">Profile</Box>
+                <span>Profile</span>
                 <CommandShortcut>⌘P</CommandShortcut>
               </CommandItem>
               <CommandItem>
                 <CreditCard className="mr-2 size-4" />
-                <Box as="span">Billing</Box>
+                <span>Billing</span>
                 <CommandShortcut>⌘B</CommandShortcut>
               </CommandItem>
               <CommandItem>
                 <Settings className="mr-2 size-4" />
-                <Box as="span">Settings</Box>
+                <span>Settings</span>
                 <CommandShortcut>⌘S</CommandShortcut>
               </CommandItem>
             </CommandGroup>

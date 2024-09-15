@@ -1,6 +1,6 @@
 'use client';
 
-import { buttonVariants } from '@codefast/ui/button';
+import { buttonVariants } from '@codefast/ui/button-variants';
 import { cn } from '@codefast/ui/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

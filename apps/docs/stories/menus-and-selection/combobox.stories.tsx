@@ -37,7 +37,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { Drawer, DrawerContent, DrawerTrigger } from '@codefast/ui/drawer';
-import { Box } from '@codefast/ui/box';
 import { Badge } from '@codefast/ui/badge';
 import { Pre } from '@codefast/ui/pre';
 import { Text } from '@codefast/ui/text';
@@ -176,7 +175,7 @@ export const WithPopover: Story = {
     const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
 
     return (
-      <Box className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4">
         <Text className="text-muted-foreground text-sm">Status</Text>
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
@@ -212,7 +211,7 @@ export const WithPopover: Story = {
                           status.value === selectedStatus?.value ? 'opacity-100' : 'opacity-40',
                         )}
                       />
-                      <Box as="span">{status.label}</Box>
+                      <span>{status.label}</span>
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -220,7 +219,7 @@ export const WithPopover: Story = {
             </Command>
           </PopoverContent>
         </Popover>
-      </Box>
+      </div>
     );
   },
 };
@@ -237,13 +236,11 @@ export const WithDropdownMenu: Story = {
     const [open, setOpen] = useState(false);
 
     return (
-      <Box className="flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
-        <Box className="text-sm font-medium leading-none">
+      <div className="flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
+        <div className="text-sm font-medium leading-none">
           <Badge className="mr-2 rounded-full">{currentLabel}</Badge>
-          <Box as="span" className="text-muted-foreground">
-            Create a new project
-          </Box>
-        </Box>
+          <span className="text-muted-foreground">Create a new project</span>
+        </div>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
             <Button aria-label="Actions" prefix={<MoreHorizontal />} shape="square" size="sm" variant="ghost" />
@@ -297,7 +294,7 @@ export const WithDropdownMenu: Story = {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </Box>
+      </div>
     );
   },
 };
@@ -366,9 +363,9 @@ export const ResponsiveCombobox: Story = {
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <Box className="mt-4 border-t">
+          <div className="mt-4 border-t">
             <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
-          </Box>
+          </div>
         </DrawerContent>
       </Drawer>
     );

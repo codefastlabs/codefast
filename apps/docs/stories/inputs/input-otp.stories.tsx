@@ -12,7 +12,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import { Button } from '@codefast/ui/button';
-import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -104,7 +103,7 @@ export const Controlled: Story = {
     const [value, setValue] = useState('');
 
     return (
-      <Box className="space-y-2">
+      <div className="space-y-2">
         <InputOTP
           maxLength={6}
           value={value}
@@ -121,10 +120,10 @@ export const Controlled: Story = {
             <InputOTPSlot index={5} />
           </InputOTPGroup>
         </InputOTP>
-        <Box className="text-center text-sm">
+        <div className="text-center text-sm">
           {value === '' ? <>Enter your one-time password.</> : <>You entered: {value}</>}
-        </Box>
-      </Box>
+        </div>
+      </div>
     );
   },
 };

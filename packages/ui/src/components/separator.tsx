@@ -2,33 +2,13 @@
 
 import * as React from 'react';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { tv, type VariantProps } from 'tailwind-variants';
-import { cn } from '@/lib/utils';
+import { separatorVariants, type SeparatorVariantsProps } from '@/styles/separator-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Separator
  * -------------------------------------------------------------------------- */
 
-const separatorVariants = tv({
-  base: 'bg-border relative flex shrink-0 items-center',
-  variants: {
-    align: {
-      start: 'justify-start',
-      center: 'justify-center',
-      end: 'justify-end',
-    },
-    orientation: {
-      horizontal: 'h-px w-full',
-      vertical: 'h-full w-px flex-col',
-    },
-  },
-  defaultVariants: {
-    align: 'center',
-    orientation: 'horizontal',
-  },
-});
-
-type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
+const { root, item } = separatorVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: Separator
@@ -41,10 +21,10 @@ interface SeparatorProps
     Omit<SeparatorVariantsProps, 'orientation'> {}
 
 const Separator = React.forwardRef<SeparatorElement, SeparatorProps>(
-  ({ className, orientation = 'horizontal', align, decorative = true, ...props }, forwardedRef) => (
+  ({ className, orientation, align, decorative = true, ...props }, forwardedRef) => (
     <SeparatorPrimitive.Root
       ref={forwardedRef}
-      className={separatorVariants({ align, orientation, className })}
+      className={root({ align, orientation, className })}
       decorative={decorative}
       orientation={orientation}
       {...props}
@@ -62,13 +42,7 @@ type SeparatorItemElement = HTMLDivElement;
 type SeparatorItemProps = React.HTMLAttributes<HTMLDivElement>;
 
 const SeparatorItem = React.forwardRef<SeparatorItemElement, SeparatorItemProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div
-      ref={forwardedRef}
-      className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
-      {...props}
-    />
-  ),
+  ({ className, ...props }, forwardedRef) => <div ref={forwardedRef} className={item({ className })} {...props} />,
 );
 
 SeparatorItem.displayName = 'SeparatorItem';

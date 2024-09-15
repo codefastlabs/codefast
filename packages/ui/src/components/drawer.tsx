@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 import { cn } from '@/lib/utils';
-import { buttonVariants, type ButtonVariantsProps } from '@/components/button';
+import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer

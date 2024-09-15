@@ -3,9 +3,9 @@
 import * as React from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as NumberInputPrimitive from '@codefast/primitive/number-input';
-import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
-import { inputVariants, type InputVariantsProps } from '@/components/text-input';
+import { buttonVariants } from '@/styles/button-variants';
+import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
 
 const { root, input } = inputVariants();
 

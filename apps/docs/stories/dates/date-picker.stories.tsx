@@ -11,7 +11,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Box } from '@codefast/ui/box';
 import { Pre } from '@codefast/ui/pre';
 import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -42,7 +41,7 @@ export const Default: Story = {
             prefix={<CalendarIcon className="opacity-50" />}
             variant="outline"
           >
-            {date ? format(date, 'PPP') : <Box as="span">Pick a date</Box>}
+            {date ? format(date, 'PPP') : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
@@ -65,7 +64,7 @@ export const DateRangePicker: Story = {
     });
 
     return (
-      <Box className="grid gap-2">
+      <div className="grid gap-2">
         <Popover {...args}>
           <PopoverTrigger asChild>
             <Button
@@ -83,7 +82,7 @@ export const DateRangePicker: Story = {
                   format(date.from, 'LLL dd, y')
                 )
               ) : (
-                <Box as="span">Pick a date</Box>
+                <span>Pick a date</span>
               )}
             </Button>
           </PopoverTrigger>
@@ -91,7 +90,7 @@ export const DateRangePicker: Story = {
             <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
           </PopoverContent>
         </Popover>
-      </Box>
+      </div>
     );
   },
 };
@@ -112,7 +111,7 @@ export const WithPresets: Story = {
             prefix={<CalendarIcon className="opacity-50" />}
             variant="outline"
           >
-            {date ? format(date, 'PPP') : <Box as="span">Pick a date</Box>}
+            {date ? format(date, 'PPP') : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
@@ -131,9 +130,9 @@ export const WithPresets: Story = {
               <SelectItem value="7">In a week</SelectItem>
             </SelectContent>
           </Select>
-          <Box className="rounded-md border">
+          <div className="rounded-md border">
             <Calendar mode="single" selected={date} onSelect={setDate} />
-          </Box>
+          </div>
         </PopoverContent>
       </Popover>
     );
@@ -196,7 +195,7 @@ export const ReactHookForm: Story = {
                         suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
                       >
-                        {field.value ? format(field.value, 'PPP') : <Box as="span">Pick a date</Box>}
+                        {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { type Primitive } from '@radix-ui/react-primitive';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import * as InputPrimitive from '@/input';
 import { createInputScope } from '@/input';
@@ -421,8 +420,8 @@ NumberInputItem.displayName = NUMBER_INPUT_ITEM_NAME;
 
 const NUMBER_INPUT_BUTTON_IMPL_NAME = 'NumberInputImplButton';
 
-type NumberInputButtonImplElement = React.ElementRef<typeof Primitive.button>;
-interface NumberInputButtonImplProps extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+type NumberInputButtonImplElement = HTMLButtonElement;
+interface NumberInputButtonImplProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   operation: 'increment' | 'decrement';
 }
 

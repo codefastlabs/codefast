@@ -1,4 +1,4 @@
-import { buttonVariants } from '@codefast/ui/button';
+import { buttonVariants } from '@codefast/ui/button-variants';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import { cn } from '@codefast/ui/utils';
 import Link from 'next/link';

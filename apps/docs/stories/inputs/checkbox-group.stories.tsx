@@ -1,7 +1,6 @@
 import { CheckboxGroup, CheckboxGroupItem } from '@codefast/ui/checkbox-group';
 import { useId } from 'react';
 import { Label } from '@codefast/ui/label';
-import { Box } from '@codefast/ui/box';
 import { z } from 'zod';
 import { toast, Toaster } from '@codefast/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,22 +31,22 @@ export const Default: Story = {
 
     return (
       <CheckboxGroup defaultValue={['comfortable']}>
-        <Box className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <CheckboxGroupItem id={`r1-${id}`} value="default" />
           <Label htmlFor={`r1-${id}`}>Default</Label>
-        </Box>
-        <Box className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <CheckboxGroupItem id={`r2-${id}`} value="comfortable" />
           <Label htmlFor={`r2-${id}`}>Comfortable</Label>
-        </Box>
-        <Box className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <CheckboxGroupItem id={`r3-${id}`} value="compact" />
           <Label htmlFor={`r3-${id}`}>Compact</Label>
-        </Box>
-        <Box className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <CheckboxGroupItem disabled id={`r4-${id}`} value="disabled" />
           <Label htmlFor={`r4-${id}`}>Disabled</Label>
-        </Box>
+        </div>
       </CheckboxGroup>
     );
   },

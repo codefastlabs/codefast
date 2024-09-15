@@ -12,7 +12,6 @@ import {
 } from '@codefast/ui/dropdown-menu';
 import { useState } from 'react';
 import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from '@codefast/ui/data-table';
-import { Box } from '@codefast/ui/box';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -79,16 +78,16 @@ const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <Box className="capitalize">{row.getValue('status')}</Box>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue('status')}</div>,
   },
   {
     accessorKey: 'email',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    cell: ({ row }) => <Box className="lowercase">{row.getValue('email')}</Box>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
   },
   {
     accessorKey: 'amount',
-    header: () => <Box className="text-right">Amount</Box>,
+    header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('amount'));
 
@@ -98,7 +97,7 @@ const columns: ColumnDef<Payment>[] = [
         currency: 'USD',
       }).format(amount);
 
-      return <Box className="text-right font-medium">{formatted}</Box>;
+      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
@@ -108,13 +107,11 @@ const columns: ColumnDef<Payment>[] = [
       const payment = row.original;
 
       return (
-        <Box className="text-right">
+        <div className="text-right">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button shape="square" size="xs" suffix={<DotsHorizontalIcon />} variant="ghost">
-                <Box as="span" className="sr-only">
-                  Open menu
-                </Box>
+                <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -131,7 +128,7 @@ const columns: ColumnDef<Payment>[] = [
               <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </Box>
+        </div>
       );
     },
     meta: {},
@@ -165,9 +162,9 @@ export const Default: Story = {
     });
 
     return (
-      <Box className="w-full">
-        <Box className="flex items-center py-4">
-          <Box className="flex grow items-center">
+      <div className="w-full">
+        <div className="flex items-center py-4">
+          <div className="flex grow items-center">
             <TextInput
               className="h-8 max-w-sm"
               inputSize="sm"
@@ -176,10 +173,10 @@ export const Default: Story = {
               value={String(table.getColumn('email')?.getFilterValue() ?? '')}
               onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
             />
-          </Box>
+          </div>
           <DataTableViewOptions table={table} />
-        </Box>
-        <Box className="rounded-md border">
+        </div>
+        <div className="rounded-md border">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -221,9 +218,9 @@ export const Default: Story = {
               ))}
             </TableFooter>
           </Table>
-        </Box>
+        </div>
         <DataTablePagination className="py-4" table={table} />
-      </Box>
+      </div>
     );
   },
 };
