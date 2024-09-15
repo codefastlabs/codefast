@@ -2,7 +2,13 @@
 
 import * as React from 'react';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-import { cn } from '@/lib/utils';
+import { collapsibleVariants } from '@/styles/collapsible-variants';
+
+/* -----------------------------------------------------------------------------
+ * Variant: Collapsible
+ * -------------------------------------------------------------------------- */
+
+const { content } = collapsibleVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: Collapsible
@@ -27,14 +33,7 @@ type CollapsibleContentProps = React.ComponentPropsWithoutRef<typeof Collapsible
 
 const CollapsibleContent = React.forwardRef<CollapsibleContentElement, CollapsibleContentProps>(
   ({ className, ...props }, forwardedRef) => (
-    <CollapsiblePrimitive.CollapsibleContent
-      ref={forwardedRef}
-      className={cn(
-        'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden',
-        className,
-      )}
-      {...props}
-    />
+    <CollapsiblePrimitive.CollapsibleContent ref={forwardedRef} className={content({ className })} {...props} />
   ),
 );
 

@@ -4,6 +4,13 @@ import * as React from 'react';
 import { CheckIcon } from '@radix-ui/react-icons';
 import * as CheckboxGroupPrimitive from '@codefast/primitive/checkbox-group';
 import { cn } from '@/lib/utils';
+import { checkboxCardsVariants } from '@/styles/checkbox-cards-variants';
+
+/* -----------------------------------------------------------------------------
+ * Variant: CheckboxCards
+ * -------------------------------------------------------------------------- */
+
+const { root, itemWrapper, item, indicator } = checkboxCardsVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCards
@@ -14,7 +21,7 @@ type CheckboxCardsProps = React.ComponentPropsWithoutRef<typeof CheckboxGroupPri
 
 const CheckboxCards = React.forwardRef<CheckboxCardsElement, CheckboxCardsProps>(
   ({ className, ...props }, forwardedRef) => (
-    <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={forwardedRef} />
+    <CheckboxGroupPrimitive.Root className={root({ className })} {...props} ref={forwardedRef} />
   ),
 );
 
@@ -27,22 +34,19 @@ CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
 type CheckboxCardsItemElement = React.ElementRef<typeof CheckboxGroupPrimitive.Item>;
 
 interface CheckboxCardsItemProps extends React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
-  checkboxClassName?: string;
+  classNames?: {
+    indicator?: string;
+    item?: string;
+    wrapper?: string;
+  };
 }
 
 const CheckboxCardsItem = React.forwardRef<CheckboxCardsItemElement, CheckboxCardsItemProps>(
-  ({ children, className, checkboxClassName, ...props }, forwardedRef) => (
-    <label className={cn('flex items-center justify-center gap-4 rounded-md border p-4', className)}>
+  ({ children, className, classNames, ...props }, forwardedRef) => (
+    <label className={itemWrapper({ className: cn(className, classNames?.wrapper) })}>
       {children}
-      <CheckboxGroupPrimitive.Item
-        ref={forwardedRef}
-        className={cn(
-          'border-input aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground peer flex size-4 shrink-0 cursor-pointer rounded-sm border shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-default disabled:opacity-50',
-          checkboxClassName,
-        )}
-        {...props}
-      >
-        <CheckboxGroupPrimitive.CheckboxGroupIndicator className="flex size-full items-center justify-center text-current">
+      <CheckboxGroupPrimitive.Item ref={forwardedRef} className={item({ className: classNames?.item })} {...props}>
+        <CheckboxGroupPrimitive.CheckboxGroupIndicator className={indicator({ className: classNames?.indicator })}>
           <CheckIcon className="size-3.5" />
         </CheckboxGroupPrimitive.CheckboxGroupIndicator>
       </CheckboxGroupPrimitive.Item>

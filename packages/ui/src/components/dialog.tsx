@@ -3,8 +3,14 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { cn } from '@/lib/utils';
 import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
+import { dialogVariants } from '@/styles/dialog-variants';
+
+/* -----------------------------------------------------------------------------
+ * Variant: Dialog
+ * -------------------------------------------------------------------------- */
+
+const { overlay, content, header, body, footer, title, description } = dialogVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -30,15 +36,8 @@ type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.
 const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>(
   ({ children, className, ...props }, forwardedRef) => (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8">
-        <DialogPrimitive.Content
-          ref={forwardedRef}
-          className={cn(
-            'bg-background data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
-            className,
-          )}
-          {...props}
-        >
+      <DialogPrimitive.Overlay className={overlay()}>
+        <DialogPrimitive.Content ref={forwardedRef} className={content({ className })} {...props}>
           {children}
           <DialogPrimitive.Close
             className={buttonVariants({
@@ -66,12 +65,7 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Element {
-  return (
-    <header
-      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
-      {...props}
-    />
-  );
+  return <header className={header({ className })} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -81,7 +75,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): React.JSX.Ele
 type DialogBodyProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DialogBody({ className, ...props }: DialogBodyProps): React.JSX.Element {
-  return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
+  return <main className={body({ className })} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -91,12 +85,7 @@ function DialogBody({ className, ...props }: DialogBodyProps): React.JSX.Element
 type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 function DialogFooter({ className, ...props }: DialogFooterProps): React.JSX.Element {
-  return (
-    <footer
-      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
-      {...props}
-    />
-  );
+  return <footer className={footer({ className })} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -107,11 +96,7 @@ type DialogTitleElement = React.ElementRef<typeof DialogPrimitive.Title>;
 type DialogTitleProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>;
 
 const DialogTitle = React.forwardRef<DialogTitleElement, DialogTitleProps>(({ className, ...props }, forwardedRef) => (
-  <DialogPrimitive.Title
-    ref={forwardedRef}
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
-    {...props}
-  />
+  <DialogPrimitive.Title ref={forwardedRef} className={title({ className })} {...props} />
 ));
 
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
@@ -125,11 +110,7 @@ type DialogDescriptionProps = React.ComponentPropsWithoutRef<typeof DialogPrimit
 
 const DialogDescription = React.forwardRef<DialogDescriptionElement, DialogDescriptionProps>(
   ({ className, ...props }, forwardedRef) => (
-    <DialogPrimitive.Description
-      ref={forwardedRef}
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
+    <DialogPrimitive.Description ref={forwardedRef} className={description({ className })} {...props} />
   ),
 );
 
