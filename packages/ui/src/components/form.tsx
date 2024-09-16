@@ -8,10 +8,12 @@ import {
   type FieldPath,
   type FieldValues,
   FormProvider,
+  type GlobalError,
   useFormState,
 } from 'react-hook-form';
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
+import { result } from 'lodash';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/label';
 
@@ -195,7 +197,8 @@ const FormMessage = React.forwardRef<FormMessageElement, FormMessageProps>(
     const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
     const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
     const { errors } = useFormState({ name });
-    const body = errors[name]?.message ? String(errors[name].message) : children;
+    const error = result<GlobalError | null>(errors, name);
+    const body = error?.message ? String(error.message) : children;
 
     if (!body) {
       return null;
@@ -204,11 +207,7 @@ const FormMessage = React.forwardRef<FormMessageElement, FormMessageProps>(
     return (
       <p
         ref={forwardedRef}
-        className={cn(
-          'text-xs',
-          errors[name]?.message ? 'text-destructive font-medium' : 'text-muted-foreground',
-          className,
-        )}
+        className={cn('text-xs', error?.message ? 'text-destructive font-medium' : 'text-muted-foreground', className)}
         id={formMessageId}
         {...props}
       >
