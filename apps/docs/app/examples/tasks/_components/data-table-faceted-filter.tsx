@@ -96,7 +96,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                           : 'opacity-50 [&_svg]:invisible',
                       )}
                     >
-                      <CheckIcon className={cn('size-4')} />
+                      <CheckIcon className="size-4" />
                     </div>
                     {Icon ? <Icon className="text-muted-foreground mr-2 size-4" /> : null}
                     <span>{option.label}</span>
