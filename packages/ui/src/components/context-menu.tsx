@@ -9,19 +9,8 @@ import { contextMenuVariant } from '@/styles/context-menu-variant';
  * Variant: ContextMenu
  * -------------------------------------------------------------------------- */
 
-const {
-  subTrigger,
-  subTriggerIcon,
-  subContent,
-  content,
-  item,
-  checkboxItem,
-  itemIndicator,
-  label,
-  separator,
-  shortcut,
-  arrow,
-} = contextMenuVariant();
+const { subTrigger, subContent, content, item, checkboxItem, itemIndicator, label, separator, shortcut, arrow } =
+  contextMenuVariant();
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenu
@@ -72,7 +61,7 @@ const ContextMenuSubTrigger = React.forwardRef<ContextMenuSubTriggerElement, Con
   ({ children, className, inset, ...props }, forwardedRef) => (
     <ContextMenuPrimitive.SubTrigger ref={forwardedRef} className={subTrigger({ inset, className })} {...props}>
       {children}
-      <ChevronRightIcon className={subTriggerIcon()} />
+      <ChevronRightIcon className="ml-auto size-4" />
     </ContextMenuPrimitive.SubTrigger>
   ),
 );
