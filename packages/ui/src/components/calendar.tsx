@@ -19,7 +19,9 @@ import {
 } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/button';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants'; /* -----------------------------------------------------------------------------
+ * Component: Chevron
+ * -------------------------------------------------------------------------- */
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -95,13 +97,13 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
-        [UI.ButtonPrevious]: buttonVariants({
+        [UI.PreviousMonthButton]: buttonVariants({
           size: 'xs',
           shape: 'square',
           variant: 'outline',
           className: 'absolute start-0 shadow-none',
         }),
-        [UI.ButtonNext]: buttonVariants({
+        [UI.NextMonthButton]: buttonVariants({
           size: 'xs',
           shape: 'square',
           variant: 'outline',
