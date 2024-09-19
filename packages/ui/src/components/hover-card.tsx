@@ -2,7 +2,13 @@
 
 import * as React from 'react';
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-import { cn } from '@/lib/utils';
+import { hoverCardVariants } from '@/styles/hover-card-variants';
+
+/* -----------------------------------------------------------------------------
+ * Variant: HoverCard
+ * -------------------------------------------------------------------------- */
+
+const { content, arrow } = hoverCardVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCard
@@ -31,10 +37,7 @@ const HoverCardContent = React.forwardRef<HoverCardContentElement, HoverCardCont
       <HoverCardPrimitive.Content
         ref={forwardedRef}
         align={align}
-        className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 z-50 min-w-32 rounded-md border p-4 shadow-md',
-          className,
-        )}
+        className={content({ className })}
         sideOffset={sideOffset}
         {...props}
       />
@@ -53,7 +56,7 @@ type HoverCardArrowProps = React.ComponentPropsWithoutRef<typeof HoverCardPrimit
 
 const HoverCardArrow = React.forwardRef<HoverCardArrowElement, HoverCardArrowProps>(
   ({ className, ...props }, forwardedRef) => (
-    <HoverCardPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
+    <HoverCardPrimitive.Arrow ref={forwardedRef} className={arrow({ className })} {...props} />
   ),
 );
 
