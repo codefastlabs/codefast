@@ -209,7 +209,7 @@ const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPrevi
       __scopeCarousel,
       className,
       variant = 'outline',
-      size = 'sm',
+      size,
       shape = 'circle',
       ...props
     }: ScopedProps<CarouselPreviousProps>,
@@ -220,22 +220,23 @@ const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPrevi
     return (
       <Button
         ref={forwardedRef}
-        aria-label="Previous slide"
         className={cn(
-          'absolute',
+          'absolute size-8',
           orientation === 'horizontal'
             ? '-left-12 top-1/2 -translate-y-1/2'
             : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
           className,
         )}
         disabled={!canScrollPrev}
-        prefix={<ArrowLeftIcon />}
         shape={shape}
         size={size}
         variant={variant}
         onClick={scrollPrev}
         {...props}
-      />
+      >
+        <ArrowLeftIcon className="size-4" />
+        <span className="sr-only">Previous slide</span>
+      </Button>
     );
   },
 );
@@ -257,7 +258,7 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
       __scopeCarousel,
       className,
       variant = 'outline',
-      size = 'sm',
+      size,
       shape = 'circle',
       ...props
     }: ScopedProps<CarouselNextProps>,
@@ -268,22 +269,23 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
     return (
       <Button
         ref={forwardedRef}
-        aria-label="Next slide"
         className={cn(
-          'absolute',
+          'absolute size-8',
           orientation === 'horizontal'
             ? '-right-12 top-1/2 -translate-y-1/2'
             : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
           className,
         )}
         disabled={!canScrollNext}
-        prefix={<ArrowRightIcon />}
         shape={shape}
         size={size}
         variant={variant}
         onClick={scrollNext}
         {...props}
-      />
+      >
+        <ArrowRightIcon className="size-4" />
+        <span className="sr-only">Next slide</span>
+      </Button>
     );
   },
 );

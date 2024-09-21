@@ -19,9 +19,7 @@ import {
 } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/button';
-import { buttonVariants } from '@/styles/button-variants'; /* -----------------------------------------------------------------------------
- * Component: Chevron
- * -------------------------------------------------------------------------- */
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron

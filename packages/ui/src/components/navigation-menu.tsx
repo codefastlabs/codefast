@@ -65,11 +65,7 @@ type NavigationMenuTriggerProps = React.ComponentPropsWithoutRef<typeof Navigati
 
 const NavigationMenuTrigger = React.forwardRef<NavigationMenuTriggerElement, NavigationMenuTriggerProps>(
   ({ children, className, ...props }, forwardedRef) => (
-    <NavigationMenuPrimitive.Trigger
-      ref={forwardedRef}
-      className={trigger({ className: ['group', className] })}
-      {...props}
-    >
+    <NavigationMenuPrimitive.Trigger ref={forwardedRef} className={trigger({ className })} {...props}>
       {children}
       <ChevronDownIcon aria-hidden="true" className={triggerIcon()} />
     </NavigationMenuPrimitive.Trigger>

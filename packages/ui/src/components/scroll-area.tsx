@@ -9,7 +9,7 @@ import { scrollAreaVariants, type ScrollAreaVariantsProps } from '@/styles/scrol
  * Variant: ScrollArea
  * -------------------------------------------------------------------------- */
 
-const { root, viewport, scrollbar } = scrollAreaVariants();
+const { root, viewport, scrollbar, scrollAreaThumb } = scrollAreaVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
@@ -64,7 +64,7 @@ const ScrollAreaScrollbar = React.forwardRef<ScrollAreaScrollbarElement, ScrollA
         orientation={orientation}
         {...props}
       >
-        <ScrollAreaPrimitive.ScrollAreaThumb className="bg-border relative flex-1 rounded-full" />
+        <ScrollAreaPrimitive.ScrollAreaThumb className={scrollAreaThumb()} />
       </ScrollAreaPrimitive.Scrollbar>
     );
   },
