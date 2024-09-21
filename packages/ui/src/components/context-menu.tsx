@@ -9,8 +9,22 @@ import { contextMenuVariant } from '@/styles/context-menu-variant';
  * Variant: ContextMenu
  * -------------------------------------------------------------------------- */
 
-const { subTrigger, subContent, content, item, checkboxItem, itemIndicator, label, separator, shortcut, arrow } =
-  contextMenuVariant();
+const {
+  subTrigger,
+  subTriggerIcon,
+  subContent,
+  content,
+  item,
+  checkboxItem,
+  radioItem,
+  itemIndicator,
+  radioItemIndicatorIcon,
+  itemIndicatorIcon,
+  label,
+  separator,
+  shortcut,
+  arrow,
+} = contextMenuVariant();
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenu
@@ -61,7 +75,7 @@ const ContextMenuSubTrigger = React.forwardRef<ContextMenuSubTriggerElement, Con
   ({ children, className, inset, ...props }, forwardedRef) => (
     <ContextMenuPrimitive.SubTrigger ref={forwardedRef} className={subTrigger({ inset, className })} {...props}>
       {children}
-      <ChevronRightIcon className="ml-auto size-4" />
+      <ChevronRightIcon className={subTriggerIcon()} />
     </ContextMenuPrimitive.SubTrigger>
   ),
 );
@@ -136,7 +150,7 @@ const ContextMenuCheckboxItem = React.forwardRef<ContextMenuCheckboxItemElement,
       {...props}
     >
       <ContextMenuPrimitive.ItemIndicator className={itemIndicator()}>
-        <CheckIcon className="size-4" />
+        <CheckIcon className={itemIndicatorIcon()} />
       </ContextMenuPrimitive.ItemIndicator>
       {children}
     </ContextMenuPrimitive.CheckboxItem>
@@ -154,9 +168,9 @@ type ContextMenuRadioItemProps = React.ComponentPropsWithoutRef<typeof ContextMe
 
 const ContextMenuRadioItem = React.forwardRef<ContextMenuRadioItemElement, ContextMenuRadioItemProps>(
   ({ children, className, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.RadioItem ref={forwardedRef} className={checkboxItem({ className })} {...props}>
+    <ContextMenuPrimitive.RadioItem ref={forwardedRef} className={radioItem({ className })} {...props}>
       <ContextMenuPrimitive.ItemIndicator className={itemIndicator()}>
-        <DotFilledIcon className="size-4 fill-current" />
+        <DotFilledIcon className={radioItemIndicatorIcon()} />
       </ContextMenuPrimitive.ItemIndicator>
       {children}
     </ContextMenuPrimitive.RadioItem>

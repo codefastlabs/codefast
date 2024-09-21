@@ -59,7 +59,7 @@ type TooltipArrowProps = React.ComponentPropsWithoutRef<typeof TooltipPrimitive.
 
 const TooltipArrow = React.forwardRef<TooltipArrowElement, TooltipArrowProps>(
   ({ className, ...props }, forwardedRef) => (
-    <TooltipPrimitive.Arrow ref={forwardedRef} className={cn('fill-primary', className)} {...props} />
+    <TooltipPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
   ),
 );
 

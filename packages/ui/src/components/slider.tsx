@@ -21,7 +21,7 @@ const Slider = React.forwardRef<SliderElement, SliderProps>(({ className, ...pro
       <SliderPrimitive.Range className="bg-primary absolute h-full" />
     </SliderPrimitive.Track>
 
-    {(props.value ?? props.defaultValue ?? []).map((value, index) => (
+    {(props.value ?? props.defaultValue ?? []).map((_, index) => (
       <SliderPrimitive.Thumb
         // eslint-disable-next-line react/no-array-index-key -- index is stable
         key={index}
