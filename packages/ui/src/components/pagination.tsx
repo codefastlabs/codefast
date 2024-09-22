@@ -61,10 +61,10 @@ function PaginationLink({ className, isActive, size, children, ...props }: Pagin
     <a
       aria-current={isActive ? 'page' : undefined}
       className={buttonVariants({
-        variant: isActive ? 'outline' : 'ghost',
-        shape: 'square',
-        size,
         className,
+        icon: true,
+        size,
+        variant: isActive ? 'outline' : 'ghost',
       })}
       {...props}
     >

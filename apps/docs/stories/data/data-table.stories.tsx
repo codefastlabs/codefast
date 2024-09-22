@@ -110,7 +110,7 @@ const columns: ColumnDef<Payment>[] = [
         <div className="text-right">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button shape="square" size="xs" suffix={<DotsHorizontalIcon />} variant="ghost">
+              <Button icon size="xs" suffix={<DotsHorizontalIcon />} variant="ghost">
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>

@@ -111,9 +111,9 @@ function DataTablePagination<TData>({
         </div>
         <div className="flex items-center space-x-2">
           <Button
+            icon
             className="hidden lg:flex"
             disabled={!table.getCanPreviousPage()}
-            shape="square"
             size="xs"
             variant="outline"
             onClick={() => {
@@ -124,8 +124,8 @@ function DataTablePagination<TData>({
             <DoubleArrowLeftIcon className="size-4" />
           </Button>
           <Button
+            icon
             disabled={!table.getCanPreviousPage()}
-            shape="square"
             size="xs"
             variant="outline"
             onClick={() => {
@@ -136,8 +136,8 @@ function DataTablePagination<TData>({
             <ChevronLeftIcon className="size-4" />
           </Button>
           <Button
+            icon
             disabled={!table.getCanNextPage()}
-            shape="square"
             size="xs"
             variant="outline"
             onClick={() => {
@@ -148,9 +148,9 @@ function DataTablePagination<TData>({
             <ChevronRightIcon className="size-4" />
           </Button>
           <Button
+            icon
             className="hidden lg:flex"
             disabled={!table.getCanNextPage()}
-            shape="square"
             size="xs"
             variant="outline"
             onClick={() => {

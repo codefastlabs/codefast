@@ -167,7 +167,7 @@ export const Sizes: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Icon: Story = {
-  render: (args) => <Button {...args} aria-label="Next" prefix={<ChevronRightIcon />} shape="square" />,
+  render: (args) => <Button {...args} icon aria-label="Next" prefix={<ChevronRightIcon />} />,
 };
 
 /* -----------------------------------------------------------------------------

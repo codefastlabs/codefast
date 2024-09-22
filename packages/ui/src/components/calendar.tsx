@@ -69,6 +69,7 @@ function DayButton({
   return (
     <Button
       ref={buttonRef}
+      icon
       className={cn(
         'focus-visible:-outline-offset-2',
         (!modifiers.selected || modifiers.range_middle) && !modifiers.today && 'hover:bg-transparent',
@@ -76,7 +77,6 @@ function DayButton({
         modifiers.outside && (!modifiers.selected || modifiers.range_middle) && 'text-opacity-30',
         className,
       )}
-      shape="square"
       size="sm"
       variant={modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'}
       {...props}
@@ -96,16 +96,16 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
       className={cn('p-3', className)}
       classNames={{
         [UI.PreviousMonthButton]: buttonVariants({
-          size: 'xs',
-          shape: 'square',
-          variant: 'outline',
           className: 'absolute start-0',
+          icon: true,
+          size: 'xs',
+          variant: 'outline',
         }),
         [UI.NextMonthButton]: buttonVariants({
-          size: 'xs',
-          shape: 'square',
-          variant: 'outline',
           className: 'absolute end-0',
+          icon: true,
+          size: 'xs',
+          variant: 'outline',
         }),
         [UI.Root]: 'inline-grid gap-4',
         [UI.Chevron]: '',

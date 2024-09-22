@@ -243,7 +243,7 @@ export const WithDropdownMenu: Story = {
         </div>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
-            <Button aria-label="Actions" prefix={<MoreHorizontalIcon />} shape="square" size="sm" variant="ghost" />
+            <Button icon aria-label="Actions" prefix={<MoreHorizontalIcon />} size="sm" variant="ghost" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>

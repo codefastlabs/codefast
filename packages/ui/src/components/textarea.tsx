@@ -14,12 +14,12 @@ const textareaVariants = tv({
   ],
   variants: {
     inputSize: {
-      xxs: 'px-2',
-      xs: 'px-2',
+      xxs: 'px-2.5',
+      xs: 'px-2.75',
       sm: 'px-3',
-      md: 'px-3',
-      lg: 'px-4',
-      xl: 'px-4',
+      md: 'px-3.25',
+      lg: 'px-3.5',
+      xl: 'px-3.75',
     },
   },
   defaultVariants: {
