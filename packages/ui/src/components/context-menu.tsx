@@ -55,7 +55,9 @@ const ContextMenuSubTrigger = React.forwardRef<ContextMenuSubTriggerElement, Con
     <ContextMenuPrimitive.SubTrigger
       ref={forwardedRef}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm focus:outline-none',
+        'flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
+        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+        'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
         className,
       )}
@@ -132,7 +134,9 @@ const ContextMenuItem = React.forwardRef<ContextMenuItemElement, ContextMenuItem
     <ContextMenuPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
+        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         inset && 'pl-8',
         className,
       )}
@@ -156,7 +160,9 @@ const ContextMenuCheckboxItem = React.forwardRef<ContextMenuCheckboxItemElement,
       ref={forwardedRef}
       checked={checked}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm',
+        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
       )}
       {...props}
@@ -185,7 +191,9 @@ const ContextMenuRadioItem = React.forwardRef<ContextMenuRadioItemElement, Conte
     <ContextMenuPrimitive.RadioItem
       ref={forwardedRef}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm',
+        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
       )}
       {...props}
