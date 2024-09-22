@@ -2,19 +2,19 @@ import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { type JSX, useState } from 'react';
 import { Button } from '@codefast/ui/button';
 import {
-  ArrowUpCircle,
-  Calendar,
-  Check,
-  CheckCircle2,
-  ChevronsUpDown,
-  Circle,
-  HelpCircle,
+  ArrowUpCircleIcon,
+  CalendarIcon,
+  CheckCircle2Icon,
+  CheckIcon,
+  ChevronDownIcon,
+  CircleIcon,
+  HelpCircleIcon,
   type LucideIcon,
-  MoreHorizontal,
-  Tags,
-  Trash,
-  User,
-  XCircle,
+  MoreHorizontalIcon,
+  TagsIcon,
+  TrashIcon,
+  UserIcon,
+  XCircleIcon,
 } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
 import { cn } from '@codefast/ui/utils';
@@ -97,7 +97,7 @@ export const Default: Story = {
             aria-expanded={open}
             className="w-[200px] justify-between"
             role="combobox"
-            suffix={<ChevronsUpDown className="opacity-50" />}
+            suffix={<ChevronDownIcon className="opacity-50" />}
             variant="outline"
           >
             {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
@@ -118,7 +118,7 @@ export const Default: Story = {
                       setOpen(false);
                     }}
                   >
-                    <Check className={cn('mr-2 size-4', value === framework.value ? 'opacity-100' : 'opacity-0')} />
+                    <CheckIcon className={cn('mr-2 size-4', value === framework.value ? 'opacity-100' : 'opacity-0')} />
                     {framework.label}
                   </CommandItem>
                 ))}
@@ -145,27 +145,27 @@ const statuses: Status[] = [
   {
     value: 'backlog',
     label: 'Backlog',
-    icon: HelpCircle,
+    icon: HelpCircleIcon,
   },
   {
     value: 'todo',
     label: 'Todo',
-    icon: Circle,
+    icon: CircleIcon,
   },
   {
     value: 'in progress',
     label: 'In Progress',
-    icon: ArrowUpCircle,
+    icon: ArrowUpCircleIcon,
   },
   {
     value: 'done',
     label: 'Done',
-    icon: CheckCircle2,
+    icon: CheckCircle2Icon,
   },
   {
     value: 'canceled',
     label: 'Canceled',
-    icon: XCircle,
+    icon: XCircleIcon,
   },
 ];
 
@@ -236,30 +236,30 @@ export const WithDropdownMenu: Story = {
     const [open, setOpen] = useState(false);
 
     return (
-      <div className="flex w-full flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
+      <div className="flex w-full flex-wrap items-center justify-between gap-4 rounded-md border px-4 py-3">
         <div className="text-sm font-medium leading-none">
           <Badge className="mr-2 rounded-full">{currentLabel}</Badge>
           <span className="text-muted-foreground">Create a new project</span>
         </div>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
-            <Button aria-label="Actions" prefix={<MoreHorizontal />} shape="square" size="sm" variant="ghost" />
+            <Button aria-label="Actions" prefix={<MoreHorizontalIcon />} shape="square" size="sm" variant="ghost" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <User className="mr-2 size-4" />
+                <UserIcon className="mr-2 size-4" />
                 Assign to...
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Calendar className="mr-2 size-4" />
+                <CalendarIcon className="mr-2 size-4" />
                 Set due date...
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
-                  <Tags className="mr-2 size-4" />
+                  <TagsIcon className="mr-2 size-4" />
                   Apply label
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="p-0">
@@ -287,7 +287,7 @@ export const WithDropdownMenu: Story = {
               </DropdownMenuSub>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">
-                <Trash className="mr-2 size-4" />
+                <TrashIcon className="mr-2 size-4" />
                 Delete
                 <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
               </DropdownMenuItem>
@@ -435,7 +435,7 @@ export const WithReactHookForm: Story = {
                       <Button
                         className={cn('w-[200px] justify-between', !field.value && 'text-muted-foreground')}
                         role="combobox"
-                        suffix={<ChevronsUpDown className="opacity-50" />}
+                        suffix={<ChevronDownIcon className="opacity-50" />}
                         variant="outline"
                       >
                         {field.value
@@ -458,7 +458,7 @@ export const WithReactHookForm: Story = {
                                 form.setValue('language', language.value);
                               }}
                             >
-                              <Check
+                              <CheckIcon
                                 className={cn(
                                   'mr-2 size-4',
                                   language.value === field.value ? 'opacity-100' : 'opacity-0',
