@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenu
@@ -68,10 +69,10 @@ const NavigationMenuTrigger = React.forwardRef<NavigationMenuTriggerElement, Nav
   ({ children, className, ...props }, forwardedRef) => (
     <NavigationMenuPrimitive.Trigger
       ref={forwardedRef}
-      className={cn(
-        'bg-background hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent/50 data-[active]:bg-accent/50 group inline-flex h-10 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50',
-        className,
-      )}
+      className={buttonVariants({
+        variant: 'ghost',
+        className: ['data-[state=open]:bg-accent data-[state=open]:text-accent-foreground group', className],
+      })}
       {...props}
     >
       {children}
@@ -156,7 +157,7 @@ const NavigationMenuIndicator = React.forwardRef<NavigationMenuIndicatorElement,
       )}
       {...props}
     >
-      <div className="bg-border relative top-[60%] size-2 rotate-45 rounded-tl-sm" />
+      <div className="bg-popover relative top-[60%] size-2 rotate-45 rounded-tl-sm" />
     </NavigationMenuPrimitive.Indicator>
   ),
 );
