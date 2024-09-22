@@ -43,7 +43,7 @@ type MenubarProps = React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>
 const Menubar = React.forwardRef<MenubarElement, MenubarProps>(({ className, ...props }, forwardedRef) => (
   <MenubarPrimitive.Root
     ref={forwardedRef}
-    className={cn('bg-background flex h-10 items-center space-x-1 rounded-md border p-1 shadow-sm', className)}
+    className={cn('bg-background flex h-10 items-center space-x-1 rounded-md border p-1', className)}
     {...props}
   />
 ));

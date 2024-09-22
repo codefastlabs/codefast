@@ -4,6 +4,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@codefast/ui/select';
@@ -48,6 +49,12 @@ export const Default: Story = {
           <SelectItem value="blueberry">Blueberry</SelectItem>
           <SelectItem value="grapes">Grapes</SelectItem>
           <SelectItem value="pineapple">Pineapple</SelectItem>
+
+          <SelectSeparator />
+
+          <SelectItem value="strawberry">Strawberry</SelectItem>
+          <SelectItem value="watermelon">Watermelon</SelectItem>
+          <SelectItem value="kiwi">Kiwi</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
@@ -74,6 +81,9 @@ export const Scrollable: Story = {
           <SelectItem value="akst">Alaska Standard Time (AKST)</SelectItem>
           <SelectItem value="hst">Hawaii Standard Time (HST)</SelectItem>
         </SelectGroup>
+
+        <SelectSeparator />
+
         <SelectGroup>
           <SelectLabel>Europe & Africa</SelectLabel>
           <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
@@ -83,6 +93,9 @@ export const Scrollable: Story = {
           <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
           <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
         </SelectGroup>
+
+        <SelectSeparator />
+
         <SelectGroup>
           <SelectLabel>Asia</SelectLabel>
           <SelectItem value="msk">Moscow Time (MSK)</SelectItem>
@@ -92,6 +105,9 @@ export const Scrollable: Story = {
           <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
           <SelectItem value="ist_indonesia">Indonesia Central Standard Time (WITA)</SelectItem>
         </SelectGroup>
+
+        <SelectSeparator />
+
         <SelectGroup>
           <SelectLabel>Australia & Pacific</SelectLabel>
           <SelectItem value="awst">Australian Western Standard Time (AWST)</SelectItem>
@@ -100,6 +116,9 @@ export const Scrollable: Story = {
           <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
           <SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
         </SelectGroup>
+
+        <SelectSeparator />
+
         <SelectGroup>
           <SelectLabel>South America</SelectLabel>
           <SelectItem value="art">Argentina Time (ART)</SelectItem>
