@@ -3,14 +3,32 @@
 import * as React from 'react';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { cn } from '@/lib/utils';
 import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
-import { sheetVariants, type SheetVariantsProps } from '@/styles/sheet-variants';
 
 /* -----------------------------------------------------------------------------
- * Variant: Sheet
+ * Variant: SheetContent
  * -------------------------------------------------------------------------- */
 
-const { overlay, content, header, body, footer, title, description } = sheetVariants();
+const sheetContentVariants = tv({
+  base: 'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 animate-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
+  variants: {
+    side: {
+      top: 'data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top inset-x-0 top-0 max-h-screen border-b',
+      bottom:
+        'data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom inset-x-0 bottom-0 max-h-screen border-t',
+      left: 'data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+      right:
+        'data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
+    },
+  },
+  defaultVariants: {
+    side: 'right',
+  },
+});
+
+type SheetContentVariantsProps = VariantProps<typeof sheetContentVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -31,14 +49,13 @@ const SheetTrigger = SheetPrimitive.Trigger;
  * -------------------------------------------------------------------------- */
 
 type SheetContentElement = React.ElementRef<typeof SheetPrimitive.Content>;
-type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> &
-  Pick<SheetVariantsProps, 'side'>;
+type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
 
 const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
-  ({ children, side, className, ...props }, forwardedRef) => (
+  ({ children, side = 'right', className, ...props }, forwardedRef) => (
     <SheetPrimitive.Portal>
-      <SheetPrimitive.Overlay className={overlay()} />
-      <SheetPrimitive.Content ref={forwardedRef} className={content({ side, className })} {...props}>
+      <SheetPrimitive.Overlay className="data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 bg-black/80" />
+      <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ side, className })} {...props}>
         {children}
         <SheetPrimitive.Close
           className={buttonVariants({
@@ -65,7 +82,12 @@ SheetContent.displayName = SheetPrimitive.Content.displayName;
 type SheetHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 function SheetHeader({ className, ...props }: SheetHeaderProps): React.JSX.Element {
-  return <header className={header({ className })} {...props} />;
+  return (
+    <header
+      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -75,7 +97,7 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): React.JSX.Eleme
 type SheetBodyProps = React.HTMLAttributes<HTMLDivElement>;
 
 function SheetBody({ className, ...props }: SheetHeaderProps): React.JSX.Element {
-  return <main className={body({ className })} {...props} />;
+  return <main className={cn('px-6 py-2', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -85,7 +107,12 @@ function SheetBody({ className, ...props }: SheetHeaderProps): React.JSX.Element
 type SheetFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 function SheetFooter({ className, ...props }: SheetFooterProps): React.JSX.Element {
-  return <footer className={footer({ className })} {...props} />;
+  return (
+    <footer
+      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
+      {...props}
+    />
+  );
 }
 
 SheetFooter.displayName = 'SheetFooter';
@@ -98,7 +125,11 @@ type SheetTitleElement = React.ElementRef<typeof SheetPrimitive.Title>;
 type SheetTitleProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>;
 
 const SheetTitle = React.forwardRef<SheetTitleElement, SheetTitleProps>(({ className, ...props }, forwardedRef) => (
-  <SheetPrimitive.Title ref={forwardedRef} className={title({ className })} {...props} />
+  <SheetPrimitive.Title
+    ref={forwardedRef}
+    className={cn('text-foreground text-lg font-semibold', className)}
+    {...props}
+  />
 ));
 
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
@@ -112,7 +143,11 @@ type SheetDescriptionProps = React.ComponentPropsWithoutRef<typeof SheetPrimitiv
 
 const SheetDescription = React.forwardRef<SheetDescriptionElement, SheetDescriptionProps>(
   ({ className, ...props }, forwardedRef) => (
-    <SheetPrimitive.Description ref={forwardedRef} className={description({ className })} {...props} />
+    <SheetPrimitive.Description
+      ref={forwardedRef}
+      className={cn('text-muted-foreground text-sm', className)}
+      {...props}
+    />
   ),
 );
 

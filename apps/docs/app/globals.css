@@ -168,7 +168,7 @@
     /*--------------------------------------------------------------------------
     | Accent Colors
     |---------------------------------------------------------------------------
-    | Used for accents such as hover effects.
+    | Used for accents such as hover effects and active state.
     --------------------------------------------------------------------------*/
     --accent: var(--slate-200);
     --accent-foreground: var(--slate-950);
@@ -236,5 +236,6 @@
   }
 
   .dark {
+    /* We can define dark mode colors here */
   }
 }
