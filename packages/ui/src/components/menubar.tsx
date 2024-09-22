@@ -278,7 +278,7 @@ type MenubarSeparatorProps = React.ComponentPropsWithoutRef<typeof MenubarPrimit
 
 const MenubarSeparator = React.forwardRef<MenubarSeparatorElement, MenubarSeparatorProps>(
   ({ className, ...props }, forwardedRef) => (
-    <MenubarPrimitive.Separator ref={forwardedRef} className={cn('bg-border -mx-1 my-1 h-px', className)} {...props} />
+    <MenubarPrimitive.Separator ref={forwardedRef} className={cn('bg-muted -mx-1 my-1 h-px', className)} {...props} />
   ),
 );
 
