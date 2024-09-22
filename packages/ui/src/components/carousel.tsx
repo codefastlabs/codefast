@@ -205,14 +205,7 @@ type CarouselPreviousProps = ButtonProps;
 
 const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPreviousProps>(
   (
-    {
-      __scopeCarousel,
-      className,
-      variant = 'outline',
-      size,
-      shape = 'circle',
-      ...props
-    }: ScopedProps<CarouselPreviousProps>,
+    { __scopeCarousel, className, variant = 'outline', size, icon, ...props }: ScopedProps<CarouselPreviousProps>,
     forwardedRef,
   ) => {
     const { orientation, scrollPrev, canScrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
@@ -228,7 +221,7 @@ const CarouselPrevious = React.forwardRef<CarouselPreviousElement, CarouselPrevi
           className,
         )}
         disabled={!canScrollPrev}
-        shape={shape}
+        icon={icon}
         size={size}
         variant={variant}
         onClick={scrollPrev}
@@ -254,14 +247,7 @@ type CarouselNextProps = ButtonProps;
 
 const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
   (
-    {
-      __scopeCarousel,
-      className,
-      variant = 'outline',
-      size,
-      shape = 'circle',
-      ...props
-    }: ScopedProps<CarouselNextProps>,
+    { __scopeCarousel, className, variant = 'outline', size, icon, ...props }: ScopedProps<CarouselNextProps>,
     forwardedRef,
   ) => {
     const { orientation, scrollNext, canScrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
@@ -277,7 +263,7 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
           className,
         )}
         disabled={!canScrollNext}
-        shape={shape}
+        icon={icon}
         size={size}
         variant={variant}
         onClick={scrollNext}

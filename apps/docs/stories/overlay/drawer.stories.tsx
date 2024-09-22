@@ -109,11 +109,11 @@ export const Default: Story = {
             <div className="p-4 pb-0">
               <div className="flex items-center justify-center space-x-2">
                 <Button
+                  icon
                   aria-label="Decrease"
                   className="size-8 shrink-0 rounded-full"
                   disabled={goal <= 200}
                   prefix={<Minus />}
-                  shape="square"
                   variant="outline"
                   onClick={() => {
                     onClick(-10);
@@ -124,11 +124,11 @@ export const Default: Story = {
                   <div className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</div>
                 </div>
                 <Button
+                  icon
                   aria-label="Increase"
                   className="size-8 shrink-0 rounded-full"
                   disabled={goal >= 400}
                   prefix={<Plus />}
-                  shape="square"
                   variant="outline"
                   onClick={() => {
                     onClick(10);

@@ -109,7 +109,7 @@ export const CustomCloseButton: Story = {
             <TooltipProvider delayDuration={250}>
               <Tooltip>
                 <TooltipTrigger>
-                  <Button aria-label="Copy" prefix={<Copy />} shape="square" />
+                  <Button icon aria-label="Copy" prefix={<Copy />} />
                 </TooltipTrigger>
                 <TooltipContent>Copy</TooltipContent>
               </Tooltip>

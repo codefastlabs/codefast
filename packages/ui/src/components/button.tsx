@@ -15,10 +15,10 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 const Button = React.forwardRef<ButtonElement, ButtonProps>(
-  ({ children, className, variant, size, shape, disabled, loading, prefix, suffix, ...props }, forwardedRef) => (
+  ({ children, className, variant, size, icon, disabled, loading, prefix, suffix, ...props }, forwardedRef) => (
     <button
       ref={forwardedRef}
-      className={buttonVariants({ className, shape, size, variant })}
+      className={buttonVariants({ className, icon, size, variant })}
       disabled={loading || disabled}
       type="button"
       {...props}
