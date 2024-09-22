@@ -2,7 +2,7 @@ const { resolve } = require('node:path');
 
 const project = resolve(process.cwd(), 'tsconfig.json');
 
-/** @type {import("eslint").Linter.Config} */
+/** @type { import("eslint").Linter.Config } */
 module.exports = {
   extends: [
     require.resolve('@vercel/style-guide/eslint/node'),
@@ -12,7 +12,10 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/next'),
     require.resolve('./rules/common'),
   ],
-  globals: { React: true, JSX: true },
+  globals: {
+    React: true,
+    JSX: true,
+  },
   ignorePatterns: ['node_modules/', '.next/', '*.js', '*.mjs', '*.cjs'],
   overrides: [
     {
@@ -20,11 +23,30 @@ module.exports = {
       files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
     },
   ],
-  parserOptions: { project },
+  parserOptions: {
+    project,
+  },
   plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
-    '@typescript-eslint/no-misused-promises': ['warn', { checksVoidReturn: { attributes: false } }],
-    'react/jsx-pascal-case': ['warn', { allowNamespace: true }],
+    /** Warns when Promises are used inappropriately */
+    '@typescript-eslint/no-misused-promises': [
+      'warn',
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
+
+    /** Warns when JSX components aren't in PascalCase but allows namespaces */
+    'react/jsx-pascal-case': [
+      'warn',
+      {
+        allowNamespace: true,
+      },
+    ],
+
+    /** Enforces sorting of JSX props */
     'react/jsx-sort-props': [
       'warn',
       {
@@ -34,7 +56,20 @@ module.exports = {
         shorthandFirst: true,
       },
     ],
-    'react/no-unknown-property': ['warn', { ignore: ['vaul-drawer-wrapper'] }],
+
+    /** Warns when using unknown DOM properties but ignores specified custom elements */
+    'react/no-unknown-property': [
+      'warn',
+      {
+        ignore: ['vaul-drawer-wrapper'],
+      },
+    ],
   },
-  settings: { 'import/resolver': { typescript: { project } } },
+  settings: {
+    'import/resolver': {
+      typescript: {
+        project,
+      },
+    },
+  },
 };
