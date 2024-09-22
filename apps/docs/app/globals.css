@@ -176,7 +176,7 @@
     /*--------------------------------------------------------------------------
     | Muted Colors
     |---------------------------------------------------------------------------
-    | Used for muted states such as placeholder, description.
+    | Used for muted states such as placeholder, description, separator.
     --------------------------------------------------------------------------*/
     --muted: var(--slate-200);
     --muted-foreground: var(--slate-500);

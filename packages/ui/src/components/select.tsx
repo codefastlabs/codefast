@@ -191,7 +191,7 @@ type SelectSeparatorProps = React.ComponentPropsWithoutRef<typeof SelectPrimitiv
 
 const SelectSeparator = React.forwardRef<SelectSeparatorElement, SelectSeparatorProps>(
   ({ className, ...props }, forwardedRef) => (
-    <SelectPrimitive.Separator ref={forwardedRef} className={cn('bg-border -mx-1 my-1 h-px', className)} {...props} />
+    <SelectPrimitive.Separator ref={forwardedRef} className={cn('bg-muted -mx-1 my-1 h-px', className)} {...props} />
   ),
 );
 
