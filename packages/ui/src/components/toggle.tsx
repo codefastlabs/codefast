@@ -9,11 +9,22 @@ import { toggleVariants, type ToggleVariantsProps } from '@/styles/toggle-varian
  * -------------------------------------------------------------------------- */
 
 type ToggleElement = React.ElementRef<typeof TogglePrimitive.Root>;
-type ToggleProps = React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & ToggleVariantsProps;
+interface ToggleProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root>, 'prefix'>,
+    ToggleVariantsProps {
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+}
 
-const Toggle = React.forwardRef<ToggleElement, ToggleProps>(({ className, variant, size, ...props }, forwardedRef) => (
-  <TogglePrimitive.Root ref={forwardedRef} className={toggleVariants({ variant, size, className })} {...props} />
-));
+const Toggle = React.forwardRef<ToggleElement, ToggleProps>(
+  ({ className, size, icon, variant, prefix, children, suffix, ...props }, forwardedRef) => (
+    <TogglePrimitive.Root ref={forwardedRef} className={toggleVariants({ className, icon, size, variant })} {...props}>
+      {prefix}
+      {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
+      {suffix}
+    </TogglePrimitive.Root>
+  ),
+);
 
 Toggle.displayName = TogglePrimitive.Root.displayName;
 
