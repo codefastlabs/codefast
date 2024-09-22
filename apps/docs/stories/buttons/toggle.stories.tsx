@@ -1,5 +1,5 @@
 import { Toggle } from '@codefast/ui/toggle';
-import { Bold, Italic, Underline } from 'lucide-react';
+import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
@@ -19,9 +19,49 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <Toggle aria-label="Toggle bold" {...args}>
-      <Bold className="size-4" />
+      <BoldIcon />
     </Toggle>
   ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Secondary
+ * -------------------------------------------------------------------------- */
+
+export const Secondary: Story = {
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="secondary" {...args} />,
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Info
+ * -------------------------------------------------------------------------- */
+
+export const Info: Story = {
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="info" {...args} />,
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Success
+ * -------------------------------------------------------------------------- */
+
+export const Success: Story = {
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="success" {...args} />,
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Warning
+ * -------------------------------------------------------------------------- */
+
+export const Warning: Story = {
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="warning" {...args} />,
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Destructive
+ * -------------------------------------------------------------------------- */
+
+export const Destructive: Story = {
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="destructive" {...args} />,
 };
 
 /* -----------------------------------------------------------------------------
@@ -29,11 +69,15 @@ export const Default: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Outline: Story = {
-  render: (args) => (
-    <Toggle aria-label="Toggle italic" variant="outline" {...args}>
-      <Italic className="size-4" />
-    </Toggle>
-  ),
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="outline" {...args} />,
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Ghost
+ * -------------------------------------------------------------------------- */
+
+export const Ghost: Story = {
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="ghost" {...args} />,
 };
 
 /* -----------------------------------------------------------------------------
@@ -42,8 +86,7 @@ export const Outline: Story = {
 
 export const WithText: Story = {
   render: (args) => (
-    <Toggle aria-label="Toggle italic" {...args}>
-      <Italic className="mr-2 size-4" />
+    <Toggle aria-label="Toggle italic" prefix={<ItalicIcon />} {...args}>
       Italic
     </Toggle>
   ),
@@ -54,11 +97,7 @@ export const WithText: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Small: Story = {
-  render: (args) => (
-    <Toggle aria-label="Toggle italic" size="sm" {...args}>
-      <Italic className="size-4" />
-    </Toggle>
-  ),
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} size="sm" {...args} />,
 };
 
 /* -----------------------------------------------------------------------------
@@ -66,11 +105,7 @@ export const Small: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Large: Story = {
-  render: (args) => (
-    <Toggle aria-label="Toggle italic" size="lg" {...args}>
-      <Italic className="size-4" />
-    </Toggle>
-  ),
+  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} size="lg" {...args} />,
 };
 
 /* -----------------------------------------------------------------------------
@@ -78,9 +113,5 @@ export const Large: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Disabled: Story = {
-  render: (args) => (
-    <Toggle disabled aria-label="Toggle underline" {...args}>
-      <Underline className="size-4" />
-    </Toggle>
-  ),
+  render: (args) => <Toggle disabled icon aria-label="Toggle underline" prefix={<UnderlineIcon />} {...args} />,
 };

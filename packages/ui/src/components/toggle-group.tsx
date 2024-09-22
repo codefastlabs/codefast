@@ -26,13 +26,13 @@ type ToggleGroupProps = React.ComponentPropsWithoutRef<typeof ToggleGroupPrimiti
 
 const ToggleGroup = React.forwardRef<ToggleGroupElement, ToggleGroupProps>(
   (
-    { __scopeToggleGroup, children, className, variant, size, ...props }: ScopedProps<ToggleGroupProps>,
+    { __scopeToggleGroup, children, className, variant, size, icon, ...props }: ScopedProps<ToggleGroupProps>,
     forwardedRef,
   ) => {
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
     return (
-      <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
+      <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
         <ToggleGroupPrimitive.Root
           ref={forwardedRef}
           className={cn('flex items-center justify-center gap-1', className)}
@@ -55,10 +55,17 @@ ToggleGroup.displayName = TOGGLE_GROUP_NAME;
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
 type ToggleGroupItemElement = React.ElementRef<typeof ToggleGroupPrimitive.Item>;
-type ToggleGroupItemProps = React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>;
+interface ToggleGroupItemProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+}
 
 const ToggleGroupItem = React.forwardRef<ToggleGroupItemElement, ToggleGroupItemProps>(
-  ({ __scopeToggleGroup, children, className, ...props }: ScopedProps<ToggleGroupItemProps>, forwardedRef) => {
+  (
+    { __scopeToggleGroup, children, prefix, suffix, className, ...props }: ScopedProps<ToggleGroupItemProps>,
+    forwardedRef,
+  ) => {
     const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
@@ -69,7 +76,9 @@ const ToggleGroupItem = React.forwardRef<ToggleGroupItemElement, ToggleGroupItem
         {...toggleGroupScope}
         {...props}
       >
-        {children}
+        {prefix}
+        {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
+        {suffix}
       </ToggleGroupPrimitive.Item>
     );
   },
