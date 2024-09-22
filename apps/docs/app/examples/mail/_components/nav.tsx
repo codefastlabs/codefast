@@ -26,7 +26,7 @@ export function Nav({ links, isCollapsed }: NavProps): JSX.Element {
               <TooltipTrigger asChild>
                 <Link
                   className={cn(
-                    buttonVariants({ variant: link.variant, shape: 'square' }),
+                    buttonVariants({ variant: link.variant, icon: true }),
                     'size-9',
                     link.variant === 'default' &&
                       'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white',

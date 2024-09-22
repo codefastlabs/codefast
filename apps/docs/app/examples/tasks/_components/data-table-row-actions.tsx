@@ -29,10 +29,10 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          icon
           aria-label="Open menu"
           className="data-[state=open]:bg-accent"
           prefix={<DotsHorizontalIcon />}
-          shape="square"
           size="xs"
           variant="ghost"
         />

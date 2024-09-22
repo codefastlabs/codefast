@@ -27,7 +27,7 @@ export const Default: Story = {
         <div className="flex items-center justify-between space-x-4 px-3">
           <h4 className="text-sm font-semibold">@peduarte starred 3 repositories</h4>
           <CollapsibleTrigger asChild>
-            <Button aria-label="Toggle" prefix={<CaretSortIcon />} shape="square" size="sm" variant="ghost" />
+            <Button icon aria-label="Toggle" prefix={<CaretSortIcon />} size="sm" variant="ghost" />
           </CollapsibleTrigger>
         </div>
         <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@radix-ui/primitives</div>

@@ -32,9 +32,9 @@ export function DemoGithub(): JSX.Element {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
+                icon
                 aria-label="More options"
                 prefix={<ChevronDownIcon className="text-secondary-foreground" />}
-                shape="square"
                 variant="secondary"
               />
             </DropdownMenuTrigger>

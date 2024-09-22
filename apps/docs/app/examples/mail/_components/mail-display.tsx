@@ -27,10 +27,10 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                icon
                 aria-label="Archive"
                 disabled={!mail}
                 prefix={<Archive className="size-4" />}
-                shape="square"
                 variant="ghost"
               />
             </TooltipTrigger>
@@ -38,13 +38,13 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button aria-label="Move to junk" disabled={!mail} prefix={<ArchiveX />} shape="square" variant="ghost" />
+              <Button icon aria-label="Move to junk" disabled={!mail} prefix={<ArchiveX />} variant="ghost" />
             </TooltipTrigger>
             <TooltipContent>Move to junk</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button aria-label="Move to trash" disabled={!mail} prefix={<Trash2 />} shape="square" variant="ghost" />
+              <Button icon aria-label="Move to trash" disabled={!mail} prefix={<Trash2 />} variant="ghost" />
             </TooltipTrigger>
             <TooltipContent>Move to trash</TooltipContent>
           </Tooltip>
@@ -53,7 +53,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
             <Popover>
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button aria-label="Snooze" disabled={!mail} prefix={<Clock />} shape="square" variant="ghost" />
+                  <Button icon aria-label="Snooze" disabled={!mail} prefix={<Clock />} variant="ghost" />
                 </TooltipTrigger>
               </PopoverTrigger>
               <PopoverContent className="flex p-0">
@@ -89,17 +89,17 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
         <div className="ml-auto flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button aria-label="Reply" disabled={!mail} prefix={<Reply />} shape="square" variant="ghost" />
+              <Button icon aria-label="Reply" disabled={!mail} prefix={<Reply />} variant="ghost" />
             </TooltipTrigger>
             <TooltipContent>Reply</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                icon
                 aria-label="Reply all"
                 disabled={!mail}
                 prefix={<ReplyAll className="size-4" />}
-                shape="square"
                 variant="ghost"
               />
             </TooltipTrigger>
@@ -107,7 +107,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button aria-label="Forward" disabled={!mail} prefix={<Forward />} shape="square" variant="ghost" />
+              <Button icon aria-label="Forward" disabled={!mail} prefix={<Forward />} variant="ghost" />
             </TooltipTrigger>
             <TooltipContent>Forward</TooltipContent>
           </Tooltip>
@@ -115,13 +115,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
         <Separator className="mx-2 h-6" orientation="vertical" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              aria-label="More options"
-              disabled={!mail}
-              shape="square"
-              suffix={<MoreVertical />}
-              variant="ghost"
-            />
+            <Button icon aria-label="More options" disabled={!mail} suffix={<MoreVertical />} variant="ghost" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>Mark as unread</DropdownMenuItem>

@@ -42,10 +42,10 @@ const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>
           {children}
           <DialogPrimitive.Close
             className={buttonVariants({
-              size: 'xxs',
-              shape: 'square',
-              variant: 'ghost',
               className: 'absolute right-4 top-4',
+              icon: true,
+              size: 'xxs',
+              variant: 'ghost',
             })}
           >
             <Cross2Icon className="size-4" />

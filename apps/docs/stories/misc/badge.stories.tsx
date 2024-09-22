@@ -36,6 +36,39 @@ export const Secondary: Story = {
 };
 
 /* -----------------------------------------------------------------------------
+ * Story: Info
+ * -------------------------------------------------------------------------- */
+
+export const Info: Story = {
+  args: {
+    variant: 'info',
+    children: 'Info Badge',
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Success
+ * -------------------------------------------------------------------------- */
+
+export const Success: Story = {
+  args: {
+    variant: 'success',
+    children: 'Success Badge',
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Warning
+ * -------------------------------------------------------------------------- */
+
+export const Warning: Story = {
+  args: {
+    variant: 'warning',
+    children: 'Warning Badge',
+  },
+};
+
+/* -----------------------------------------------------------------------------
  * Story: Destructive
  * -------------------------------------------------------------------------- */
 
@@ -55,4 +88,30 @@ export const Outline: Story = {
     variant: 'outline',
     children: 'Outline Badge',
   },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-4">
+      <Badge {...args} size="xs">
+        xs badge
+      </Badge>
+      <Badge {...args} size="sm">
+        sm badge
+      </Badge>
+      <Badge {...args} size="md">
+        md badge
+      </Badge>
+      <Badge {...args} size="lg">
+        lg badge
+      </Badge>
+      <Badge {...args} size="xl">
+        xl badge
+      </Badge>
+    </div>
+  ),
 };
