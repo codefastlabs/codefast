@@ -129,7 +129,7 @@ const NavigationMenuViewport = React.forwardRef<NavigationMenuViewportElement, N
       <NavigationMenuPrimitive.Viewport
         ref={forwardedRef}
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border transition-[width,height] sm:w-[var(--radix-navigation-menu-viewport-width)]',
+          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border p-1 shadow-md transition-[width,height] sm:w-[var(--radix-navigation-menu-viewport-width)]',
           className,
         )}
         {...props}

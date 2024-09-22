@@ -9,9 +9,9 @@ const badgeVariants = tv({
   base: 'inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition',
   variants: {
     variant: {
-      default: 'bg-primary text-primary-foreground border-transparent shadow',
+      default: 'bg-primary text-primary-foreground border-transparent',
       secondary: 'bg-secondary text-secondary-foreground border-transparent',
-      destructive: 'bg-destructive text-destructive-foreground border-transparent shadow',
+      destructive: 'bg-destructive text-destructive-foreground border-transparent',
       outline: 'text-foreground',
     },
   },
