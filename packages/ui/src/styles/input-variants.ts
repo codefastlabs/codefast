@@ -5,8 +5,9 @@ const inputVariants = tv({
     root: [
       'border-input inline-flex w-full shrink-0 cursor-text items-center gap-2 rounded-md border transition',
       '[&_svg]:size-4 [&_svg]:shrink-0',
+      'has-[[type=file]]:cursor-pointer',
       'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2',
-      'has-[[type=file]]:cursor-pointer has-[input[disabled]]:cursor-default has-[input[disabled]]:opacity-50',
+      'has-[input[disabled]]:cursor-default has-[input[disabled]]:opacity-50',
     ],
     input: [
       'peer size-full flex-1 bg-inherit text-sm outline-none autofill:bg-inherit',

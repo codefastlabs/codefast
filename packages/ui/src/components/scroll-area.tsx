@@ -3,13 +3,34 @@
 import * as React from 'react';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
-import { scrollAreaVariants, type ScrollAreaVariantsProps } from '@/styles/scroll-area-variants';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
- * Variant: ScrollArea
+ * Variant: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-const { root, viewport, scrollbar, scrollAreaThumb } = scrollAreaVariants();
+const scrollAreaScrollbarVariants = tv({
+  base: 'flex touch-none select-none p-px transition',
+  variants: {
+    orientation: {
+      vertical: 'h-full flex-row border-l border-l-transparent',
+      horizontal: 'w-full flex-col border-t border-t-transparent',
+    },
+    size: { none: '', sm: '', md: '', lg: '' },
+  },
+  compoundVariants: [
+    { orientation: 'vertical', size: 'sm', className: 'w-1.5' },
+    { orientation: 'vertical', size: 'md', className: 'w-2' },
+    { orientation: 'vertical', size: 'lg', className: 'w-2.5' },
+    { orientation: 'horizontal', size: 'sm', className: 'h-1.5' },
+    { orientation: 'horizontal', size: 'md', className: 'h-2' },
+    { orientation: 'horizontal', size: 'lg', className: 'h-2.5' },
+  ],
+  defaultVariants: { size: 'md', vertical: 'vertical' },
+});
+
+type ScrollAreaScrollbarVariantsProps = VariantProps<typeof scrollAreaScrollbarVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
@@ -19,25 +40,27 @@ const SCROLL_AREA_NAME = 'ScrollArea';
 
 type ScopedProps<P> = P & { __scopeScrollArea?: Scope };
 
-const [createScrollAreaContext] = createContextScope(SCROLL_AREA_NAME);
+const [createCarouselContext] = createContextScope(SCROLL_AREA_NAME);
 
-type ScrollAreaContextValue = Pick<ScrollAreaVariantsProps, 'size'>;
+type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 
-const [ScrollAreaProvider, useScrollAreaContext] = createScrollAreaContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
+const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
 type ScrollAreaElement = React.ElementRef<typeof ScrollAreaPrimitive.Root>;
 type ScrollAreaProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
 
 const ScrollArea = React.forwardRef<ScrollAreaElement, ScrollAreaProps>(
   ({ __scopeScrollArea, children, className, size, ...props }: ScopedProps<ScrollAreaProps>, forwardedRef) => (
-    <ScrollAreaProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root ref={forwardedRef} className={root({ className })} {...props}>
-        <ScrollAreaPrimitive.Viewport className={viewport()}>{children}</ScrollAreaPrimitive.Viewport>
+    <CarouselProvider scope={__scopeScrollArea} size={size}>
+      <ScrollAreaPrimitive.Root ref={forwardedRef} className={cn('relative overflow-hidden', className)} {...props}>
+        <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit] [&>*]:h-full">
+          {children}
+        </ScrollAreaPrimitive.Viewport>
         <ScrollAreaScrollbar orientation="vertical" />
         <ScrollAreaScrollbar orientation="horizontal" />
         <ScrollAreaPrimitive.Corner />
       </ScrollAreaPrimitive.Root>
-    </ScrollAreaProvider>
+    </CarouselProvider>
   ),
 );
 
@@ -51,20 +74,17 @@ type ScrollAreaScrollbarElement = React.ElementRef<typeof ScrollAreaPrimitive.Sc
 type ScrollAreaScrollbarProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Scrollbar>;
 
 const ScrollAreaScrollbar = React.forwardRef<ScrollAreaScrollbarElement, ScrollAreaScrollbarProps>(
-  (
-    { __scopeScrollArea, className, orientation = 'vertical', ...props }: ScopedProps<ScrollAreaScrollbarProps>,
-    forwardedRef,
-  ) => {
-    const { size } = useScrollAreaContext(SCROLL_AREA_NAME, __scopeScrollArea);
+  ({ __scopeScrollArea, className, orientation, ...props }: ScopedProps<ScrollAreaScrollbarProps>, forwardedRef) => {
+    const { size } = useCarouselContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
     return (
       <ScrollAreaPrimitive.Scrollbar
         ref={forwardedRef}
-        className={scrollbar({ orientation, size, className })}
+        className={scrollAreaScrollbarVariants({ orientation, size, className })}
         orientation={orientation}
         {...props}
       >
-        <ScrollAreaPrimitive.ScrollAreaThumb className={scrollAreaThumb()} />
+        <ScrollAreaPrimitive.ScrollAreaThumb className="bg-border relative flex-1 rounded-full" />
       </ScrollAreaPrimitive.Scrollbar>
     );
   },

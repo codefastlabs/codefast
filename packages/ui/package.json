@@ -336,55 +336,10 @@
       "import": "./dist/styles/alert-variants.js",
       "require": "./dist/styles/alert-variants.cjs"
     },
-    "./badge-variants": {
-      "types": "./dist/styles/badge-variants.d.ts",
-      "import": "./dist/styles/badge-variants.js",
-      "require": "./dist/styles/badge-variants.cjs"
-    },
     "./button-variants": {
       "types": "./dist/styles/button-variants.d.ts",
       "import": "./dist/styles/button-variants.js",
       "require": "./dist/styles/button-variants.cjs"
-    },
-    "./input-variants": {
-      "types": "./dist/styles/input-variants.d.ts",
-      "import": "./dist/styles/input-variants.js",
-      "require": "./dist/styles/input-variants.cjs"
-    },
-    "./navigation-menu-variants": {
-      "types": "./dist/styles/navigation-menu-variants.d.ts",
-      "import": "./dist/styles/navigation-menu-variants.js",
-      "require": "./dist/styles/navigation-menu-variants.cjs"
-    },
-    "./scroll-area-variants": {
-      "types": "./dist/styles/scroll-area-variants.d.ts",
-      "import": "./dist/styles/scroll-area-variants.js",
-      "require": "./dist/styles/scroll-area-variants.cjs"
-    },
-    "./select-variants": {
-      "types": "./dist/styles/select-variants.d.ts",
-      "import": "./dist/styles/select-variants.js",
-      "require": "./dist/styles/select-variants.cjs"
-    },
-    "./separator-variants": {
-      "types": "./dist/styles/select-variants.d.ts",
-      "import": "./dist/styles/select-variants.js",
-      "require": "./dist/styles/select-variants.cjs"
-    },
-    "./sheet-variants": {
-      "types": "./dist/styles/sheet-variants.d.ts",
-      "import": "./dist/styles/sheet-variants.js",
-      "require": "./dist/styles/sheet-variants.cjs"
-    },
-    "./textarea-variants": {
-      "types": "./dist/styles/textarea-variants.d.ts",
-      "import": "./dist/styles/textarea-variants.js",
-      "require": "./dist/styles/textarea-variants.cjs"
-    },
-    "./toggle-variants": {
-      "types": "./dist/styles/toggle-variants.d.ts",
-      "import": "./dist/styles/toggle-variants.js",
-      "require": "./dist/styles/toggle-variants.cjs"
     },
     "./styles.css": "./dist/styles.css"
   },

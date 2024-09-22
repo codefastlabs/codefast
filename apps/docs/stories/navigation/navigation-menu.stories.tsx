@@ -12,9 +12,6 @@ import Link from 'next/link';
 import { SettingsIcon } from 'lucide-react';
 import { Text } from '@codefast/ui/text';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { navigationMenuVariants } from '@codefast/ui/navigation-menu-variants';
-
-const { trigger } = navigationMenuVariants();
 
 const meta = {
   component: NavigationMenu,
@@ -145,7 +142,9 @@ export const Default: Story = {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link legacyBehavior passHref href="/apps/docs/public">
-            <NavigationMenuLink className={trigger()}>Documentation</NavigationMenuLink>
+            <NavigationMenuLink className="bg-background hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent/50 data-[active]:bg-accent/50 group inline-flex h-10 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50">
+              Documentation
+            </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
       </NavigationMenuList>

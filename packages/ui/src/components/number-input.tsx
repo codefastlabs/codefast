@@ -1,9 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as NumberInputPrimitive from '@codefast/primitive/number-input';
-import { cn } from '@/lib/utils';
+import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { buttonVariants } from '@/styles/button-variants';
 import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
 
@@ -43,7 +42,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
     <NumberInputPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={root({ inputSize, className: cn('pr-0', className) })}
+      className={root({ inputSize, className: ['pr-0', className] })}
       defaultValue={defaultValue}
       disabled={disabled}
       formatOptions={formatOptions}

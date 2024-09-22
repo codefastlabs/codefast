@@ -3,28 +3,7 @@
 import * as React from 'react';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 import { CheckIcon, ChevronRightIcon, DotFilledIcon } from '@radix-ui/react-icons';
-import { contextMenuVariant } from '@/styles/context-menu-variant';
-
-/* -----------------------------------------------------------------------------
- * Variant: ContextMenu
- * -------------------------------------------------------------------------- */
-
-const {
-  subTrigger,
-  subTriggerIcon,
-  subContent,
-  content,
-  item,
-  checkboxItem,
-  radioItem,
-  itemIndicator,
-  radioItemIndicatorIcon,
-  itemIndicatorIcon,
-  label,
-  separator,
-  shortcut,
-  arrow,
-} = contextMenuVariant();
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenu
@@ -73,9 +52,17 @@ interface ContextMenuSubTriggerProps extends React.ComponentPropsWithoutRef<type
 
 const ContextMenuSubTrigger = React.forwardRef<ContextMenuSubTriggerElement, ContextMenuSubTriggerProps>(
   ({ children, className, inset, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.SubTrigger ref={forwardedRef} className={subTrigger({ inset, className })} {...props}>
+    <ContextMenuPrimitive.SubTrigger
+      ref={forwardedRef}
+      className={cn(
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm focus:outline-none',
+        inset && 'pl-8',
+        className,
+      )}
+      {...props}
+    >
       {children}
-      <ChevronRightIcon className={subTriggerIcon()} />
+      <ChevronRightIcon className="ml-auto size-4" />
     </ContextMenuPrimitive.SubTrigger>
   ),
 );
@@ -92,7 +79,14 @@ type ContextMenuSubContentProps = React.ComponentPropsWithoutRef<typeof ContextM
 const ContextMenuSubContent = React.forwardRef<ContextMenuSubContentElement, ContextMenuSubContentProps>(
   ({ className, ...props }, forwardedRef) => (
     <ContextMenuPrimitive.Portal>
-      <ContextMenuPrimitive.SubContent ref={forwardedRef} className={subContent({ className })} {...props} />
+      <ContextMenuPrimitive.SubContent
+        ref={forwardedRef}
+        className={cn(
+          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
+          className,
+        )}
+        {...props}
+      />
     </ContextMenuPrimitive.Portal>
   ),
 );
@@ -109,7 +103,14 @@ type ContextMenuContentProps = React.ComponentPropsWithoutRef<typeof ContextMenu
 const ContextMenuContent = React.forwardRef<ContextMenuContentElement, ContextMenuContentProps>(
   ({ className, ...props }, forwardedRef) => (
     <ContextMenuPrimitive.Portal>
-      <ContextMenuPrimitive.Content ref={forwardedRef} className={content({ className })} {...props} />
+      <ContextMenuPrimitive.Content
+        ref={forwardedRef}
+        className={cn(
+          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
+          className,
+        )}
+        {...props}
+      />
     </ContextMenuPrimitive.Portal>
   ),
 );
@@ -128,7 +129,15 @@ interface ContextMenuItemProps extends React.ComponentPropsWithoutRef<typeof Con
 
 const ContextMenuItem = React.forwardRef<ContextMenuItemElement, ContextMenuItemProps>(
   ({ className, inset, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.Item ref={forwardedRef} className={item({ inset, className })} {...props} />
+    <ContextMenuPrimitive.Item
+      ref={forwardedRef}
+      className={cn(
+        'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        inset && 'pl-8',
+        className,
+      )}
+      {...props}
+    />
   ),
 );
 
@@ -146,12 +155,17 @@ const ContextMenuCheckboxItem = React.forwardRef<ContextMenuCheckboxItemElement,
     <ContextMenuPrimitive.CheckboxItem
       ref={forwardedRef}
       checked={checked}
-      className={checkboxItem({ className })}
+      className={cn(
+        'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        className,
+      )}
       {...props}
     >
-      <ContextMenuPrimitive.ItemIndicator className={itemIndicator()}>
-        <CheckIcon className={itemIndicatorIcon()} />
-      </ContextMenuPrimitive.ItemIndicator>
+      <span className="absolute left-2 flex size-3.5 items-center justify-center">
+        <ContextMenuPrimitive.ItemIndicator>
+          <CheckIcon className="size-4" />
+        </ContextMenuPrimitive.ItemIndicator>
+      </span>
       {children}
     </ContextMenuPrimitive.CheckboxItem>
   ),
@@ -168,10 +182,19 @@ type ContextMenuRadioItemProps = React.ComponentPropsWithoutRef<typeof ContextMe
 
 const ContextMenuRadioItem = React.forwardRef<ContextMenuRadioItemElement, ContextMenuRadioItemProps>(
   ({ children, className, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.RadioItem ref={forwardedRef} className={radioItem({ className })} {...props}>
-      <ContextMenuPrimitive.ItemIndicator className={itemIndicator()}>
-        <DotFilledIcon className={radioItemIndicatorIcon()} />
-      </ContextMenuPrimitive.ItemIndicator>
+    <ContextMenuPrimitive.RadioItem
+      ref={forwardedRef}
+      className={cn(
+        'focus:bg-accent focus:text-accent-foreground relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm focus:outline-none aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        className,
+      )}
+      {...props}
+    >
+      <span className="absolute left-2 flex size-3.5 items-center justify-center">
+        <ContextMenuPrimitive.ItemIndicator>
+          <DotFilledIcon className="size-4 fill-current" />
+        </ContextMenuPrimitive.ItemIndicator>
+      </span>
       {children}
     </ContextMenuPrimitive.RadioItem>
   ),
@@ -191,7 +214,11 @@ interface ContextMenuLabelProps extends React.ComponentPropsWithoutRef<typeof Co
 
 const ContextMenuLabel = React.forwardRef<ContextMenuLabelElement, ContextMenuLabelProps>(
   ({ className, inset, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.Label ref={forwardedRef} className={label({ inset, className })} {...props} />
+    <ContextMenuPrimitive.Label
+      ref={forwardedRef}
+      className={cn('text-foreground px-2 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+      {...props}
+    />
   ),
 );
 
@@ -206,7 +233,11 @@ type ContextMenuSeparatorProps = React.ComponentPropsWithoutRef<typeof ContextMe
 
 const ContextMenuSeparator = React.forwardRef<ContextMenuSeparatorElement, ContextMenuSeparatorProps>(
   ({ className, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.Separator ref={forwardedRef} className={separator({ className })} {...props} />
+    <ContextMenuPrimitive.Separator
+      ref={forwardedRef}
+      className={cn('bg-border -mx-1 my-1 h-px', className)}
+      {...props}
+    />
   ),
 );
 
@@ -219,7 +250,7 @@ ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName;
 type ContextMenuShortcutProps = React.HTMLAttributes<HTMLSpanElement>;
 
 function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): React.JSX.Element {
-  return <span className={shortcut({ className })} {...props} />;
+  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -231,7 +262,7 @@ type ContextMenuArrowProps = ContextMenuPrimitive.ContextMenuArrowProps;
 
 const ContextMenuArrow = React.forwardRef<ContextMenuArrowElement, ContextMenuArrowProps>(
   ({ className, ...props }, forwardedRef) => (
-    <ContextMenuPrimitive.Arrow ref={forwardedRef} className={arrow({ className })} {...props} />
+    <ContextMenuPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
   ),
 );
 
