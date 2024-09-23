@@ -163,11 +163,11 @@ export const Default: Story = {
 
     return (
       <div className="w-full">
-        <div className="flex items-center py-4">
+        <div className="flex items-center gap-4 py-4">
           <div className="flex grow items-center">
             <TextInput
-              className="h-8 max-w-sm"
-              inputSize="sm"
+              className="max-w-sm"
+              inputSize="xs"
               placeholder="Filter emails..."
               prefix={<SearchIcon className="text-muted-foreground" />}
               value={String(table.getColumn('email')?.getFilterValue() ?? '')}
