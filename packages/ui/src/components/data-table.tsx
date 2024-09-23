@@ -3,10 +3,10 @@
 import * as React from 'react';
 import {
   ArrowDownIcon,
-  ArrowUpIcon,
   CaretSortIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronUpIcon,
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
   EyeNoneIcon,
@@ -38,9 +38,7 @@ interface DataTableViewOptionsProps<TData> {
 function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>): React.JSX.Element {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        className={buttonVariants({ className: 'hidden h-8 lg:flex', size: 'sm', variant: 'outline' })}
-      >
+      <DropdownMenuTrigger className={buttonVariants({ size: 'xs', variant: 'outline' })}>
         <MixerHorizontalIcon className="size-4" />
         View
       </DropdownMenuTrigger>
@@ -81,12 +79,13 @@ function DataTablePagination<TData>({
   ...props
 }: DataTablePaginationProps<TData>): React.JSX.Element {
   return (
-    <div className={cn('flex items-center justify-between px-2', className)} {...props}>
-      <div className="text-muted-foreground flex-1 text-sm">
+    <div className={cn('flex flex-wrap items-center justify-between gap-4 px-2', className)} {...props}>
+      <div className="text-muted-foreground min-w-max flex-1 text-sm">
         {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
+
+      <div className="flex grow flex-wrap items-center justify-between gap-4 md:justify-end md:gap-x-6 lg:gap-x-8">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-4">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
             value={String(table.getState().pagination.pageSize)}
@@ -106,13 +105,13 @@ function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-28 items-center justify-center text-sm font-medium">
+        <div className="flex flex-wrap items-center justify-center text-sm font-medium">
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-4">
           <Button
             icon
-            className="hidden lg:flex"
+            className="max-md:hidden"
             disabled={!table.getCanPreviousPage()}
             size="xs"
             variant="outline"
@@ -149,7 +148,7 @@ function DataTablePagination<TData>({
           </Button>
           <Button
             icon
-            className="hidden lg:flex"
+            className="max-md:hidden"
             disabled={!table.getCanNextPage()}
             size="xs"
             variant="outline"
@@ -185,12 +184,16 @@ function DataTableColumnHeader<TData, TValue>({
   }
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <div className={cn('flex flex-wrap items-center gap-x-2 gap-y-4', className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="data-[state=open]:bg-accent -ml-3" size="xs" variant="ghost">
-            <span>{title}</span>
-            <SortIcon sorted={column.getIsSorted()} />
+          <Button
+            className="data-[state=open]:bg-accent"
+            size="xs"
+            suffix={<SortIcon sorted={column.getIsSorted()} />}
+            variant="ghost"
+          >
+            {title}
           </Button>
         </DropdownMenuTrigger>
 
@@ -200,7 +203,7 @@ function DataTableColumnHeader<TData, TValue>({
               column.toggleSorting(false);
             }}
           >
-            <ArrowUpIcon className="text-muted-foreground/70 mr-2 size-3.5" />
+            <ChevronUpIcon className="text-muted-foreground" />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -208,7 +211,7 @@ function DataTableColumnHeader<TData, TValue>({
               column.toggleSorting(true);
             }}
           >
-            <ArrowDownIcon className="text-muted-foreground/70 mr-2 size-3.5" />
+            <ArrowDownIcon className="text-muted-foreground" />
             Desc
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -217,7 +220,7 @@ function DataTableColumnHeader<TData, TValue>({
               column.toggleVisibility(false);
             }}
           >
-            <EyeNoneIcon className="text-muted-foreground/70 mr-2 size-3.5" />
+            <EyeNoneIcon className="text-muted-foreground" />
             Hide
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -229,15 +232,15 @@ function DataTableColumnHeader<TData, TValue>({
 function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): React.JSX.Element {
   switch (sorted) {
     case 'desc': {
-      return <ArrowDownIcon className="ml-2 size-4" />;
+      return <ArrowDownIcon />;
     }
 
     case 'asc': {
-      return <ArrowUpIcon className="ml-2 size-4" />;
+      return <ChevronUpIcon />;
     }
 
     default:
-      return <CaretSortIcon className="ml-2 size-4" />;
+      return <CaretSortIcon />;
   }
 }
 
