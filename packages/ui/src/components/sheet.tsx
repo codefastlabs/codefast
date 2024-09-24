@@ -12,15 +12,35 @@ import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-varian
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: 'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 animate-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
+  base: [
+    'bg-background animate-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
+    'data-[state=open]:animate-in',
+    'data-[state=closed]:animate-out',
+    'data-[state=closed]:animate-duration-300',
+    'data-[state=open]:animate-duration-500',
+  ],
   variants: {
     side: {
-      top: 'data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top inset-x-0 top-0 max-h-screen border-b',
-      bottom:
-        'data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom inset-x-0 bottom-0 max-h-screen border-t',
-      left: 'data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
-      right:
-        'data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
+      top: [
+        'inset-x-0 top-0 max-h-screen border-b',
+        'data-[state=open]:slide-in-from-top',
+        'data-[state=closed]:slide-out-to-top',
+      ],
+      bottom: [
+        'inset-x-0 bottom-0 max-h-screen border-t',
+        'data-[state=open]:slide-in-from-bottom',
+        'data-[state=closed]:slide-out-to-bottom',
+      ],
+      left: [
+        'inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+        'data-[state=open]:slide-in-from-left',
+        'data-[state=closed]:slide-out-to-left',
+      ],
+      right: [
+        'inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
+        'data-[state=open]:slide-in-from-right',
+        'data-[state=closed]:slide-out-to-right',
+      ],
     },
   },
   defaultVariants: {
@@ -54,7 +74,13 @@ type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Co
 const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
   ({ children, side = 'right', className, ...props }, forwardedRef) => (
     <SheetPrimitive.Portal>
-      <SheetPrimitive.Overlay className="data-[state=closed]:animate-duration-300 data-[state=open]:animate-duration-500 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 bg-black/80" />
+      <SheetPrimitive.Overlay
+        className={cn(
+          'fixed inset-0 z-50 bg-black/80',
+          'data-[state=open]:animate-duration-500 data-[state=open]:animate-fade-in',
+          'data-[state=closed]:animate-duration-300 data-[state=closed]:animate-fade-out',
+        )}
+      />
       <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ side, className })} {...props}>
         {children}
         <SheetPrimitive.Close
