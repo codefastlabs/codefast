@@ -55,8 +55,10 @@ const DropdownMenuSubTrigger = React.forwardRef<DropdownMenuSubTriggerElement, D
     <DropdownMenuPrimitive.SubTrigger
       ref={forwardedRef}
       className={cn(
-        'flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
-        'focus:bg-accent data-[state=open]:bg-accent focus:outline-none',
+        'px-2.75 gap-2.75 h-8',
+        'flex cursor-pointer select-none items-center rounded-sm text-sm',
+        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+        'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
         className,
       )}
@@ -139,7 +141,7 @@ const DropdownMenuItem = React.forwardRef<DropdownMenuItemElement, DropdownMenuI
       ref={forwardedRef}
       className={cn(
         'px-2.75 gap-2.75 h-8',
-        'relative flex cursor-pointer select-none items-center rounded-sm text-sm transition',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -167,7 +169,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<DropdownMenuCheckboxItemElemen
       className={cn(
         'px-2.75 gap-2.75 h-8',
         'pl-8',
-        'relative flex cursor-pointer select-none items-center rounded-sm text-sm transition',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -200,7 +202,7 @@ const DropdownMenuRadioItem = React.forwardRef<DropdownMenuRadioItemElement, Dro
       className={cn(
         'px-2.75 gap-2.75 h-8',
         'pl-8',
-        'relative flex cursor-pointer select-none items-center rounded-sm text-sm transition',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -271,6 +273,21 @@ function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: DropdownMenuArrow
+ * -------------------------------------------------------------------------- */
+
+type DropdownMenuArrowElement = React.ElementRef<typeof DropdownMenuPrimitive.Arrow>;
+type DropdownMenuArrowProps = DropdownMenuPrimitive.DropdownMenuArrowProps;
+
+const DropdownMenuArrow = React.forwardRef<DropdownMenuArrowElement, DropdownMenuArrowProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <DropdownMenuPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
+  ),
+);
+
+DropdownMenuArrow.displayName = DropdownMenuPrimitive.Arrow.displayName;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
@@ -289,6 +306,7 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
+  DropdownMenuArrow,
   type DropdownMenuProps,
   type DropdownMenuTriggerProps,
   type DropdownMenuContentProps,
@@ -303,4 +321,5 @@ export {
   type DropdownMenuSubContentProps,
   type DropdownMenuSubTriggerProps,
   type DropdownMenuRadioGroupProps,
+  type DropdownMenuArrowProps,
 };
