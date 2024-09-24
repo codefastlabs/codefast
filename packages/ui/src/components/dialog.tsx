@@ -30,11 +30,19 @@ type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.
 const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>(
   ({ children, className, ...props }, forwardedRef) => (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8">
+      <DialogPrimitive.Overlay
+        className={cn(
+          'fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8',
+          'data-[state=open]:animate-duration-200 data-[state=open]:animate-fade-in',
+          'data-[state=closed]:animate-duration-200 data-[state=closed]:animate-fade-out',
+        )}
+      >
         <DialogPrimitive.Content
           ref={forwardedRef}
           className={cn(
-            'bg-background data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:animate-duration-200 data-[state=closed]:animate-duration-200 data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
+            'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
+            'data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:animate-duration-200 data-[state=open]:fade-in',
+            'data-[state=closed]:zoom-out-95 data-[state=closed]:animate-duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out',
             className,
           )}
           {...props}
