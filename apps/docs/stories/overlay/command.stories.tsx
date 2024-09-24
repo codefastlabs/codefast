@@ -9,7 +9,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@codefast/ui/command';
-import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Text } from '@codefast/ui/text';
 import { Kbd } from '@codefast/ui/kbd';
@@ -37,32 +37,32 @@ export const Default: Story = {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
           <CommandItem>
-            <Calendar className="mr-2 size-4" />
+            <CalendarIcon className="size-4" />
             <span>Calendar</span>
           </CommandItem>
           <CommandItem>
-            <Smile className="mr-2 size-4" />
+            <SmileIcon className="size-4" />
             <span>Search Emoji</span>
           </CommandItem>
           <CommandItem>
-            <Calculator className="mr-2 size-4" />
+            <CalculatorIcon className="size-4" />
             <span>Calculator</span>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Settings">
           <CommandItem>
-            <User className="mr-2 size-4" />
+            <UserIcon className="size-4" />
             <span>Profile</span>
             <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
           <CommandItem>
-            <CreditCard className="mr-2 size-4" />
+            <CreditCardIcon className="size-4" />
             <span>Billing</span>
             <CommandShortcut>⌘B</CommandShortcut>
           </CommandItem>
           <CommandItem>
-            <Settings className="mr-2 size-4" />
+            <SettingsIcon className="size-4" />
             <span>Settings</span>
             <CommandShortcut>⌘S</CommandShortcut>
           </CommandItem>
@@ -109,32 +109,32 @@ export const WithDialog: Story = {
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Suggestions">
               <CommandItem>
-                <Calendar className="mr-2 size-4" />
+                <CalendarIcon className="size-4" />
                 <span>Calendar</span>
               </CommandItem>
               <CommandItem>
-                <Smile className="mr-2 size-4" />
+                <SmileIcon className="size-4" />
                 <span>Search Emoji</span>
               </CommandItem>
               <CommandItem>
-                <Calculator className="mr-2 size-4" />
+                <CalculatorIcon className="size-4" />
                 <span>Calculator</span>
               </CommandItem>
             </CommandGroup>
             <CommandSeparator />
             <CommandGroup heading="Settings">
               <CommandItem>
-                <User className="mr-2 size-4" />
+                <UserIcon className="size-4" />
                 <span>Profile</span>
                 <CommandShortcut>⌘P</CommandShortcut>
               </CommandItem>
               <CommandItem>
-                <CreditCard className="mr-2 size-4" />
+                <CreditCardIcon className="size-4" />
                 <span>Billing</span>
                 <CommandShortcut>⌘B</CommandShortcut>
               </CommandItem>
               <CommandItem>
-                <Settings className="mr-2 size-4" />
+                <SettingsIcon className="size-4" />
                 <span>Settings</span>
                 <CommandShortcut>⌘S</CommandShortcut>
               </CommandItem>
