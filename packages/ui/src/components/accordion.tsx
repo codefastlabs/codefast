@@ -33,7 +33,11 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): Re
   if (asChild) {
     return (
       <Slot
-        className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
+        className={cn(
+          'text-muted-foreground size-4 shrink-0 transition',
+          'group-data-[state=open]:rotate-90',
+          className,
+        )}
         {...props}
       />
     );
@@ -42,7 +46,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): Re
   return (
     <ChevronRightIcon
       aria-hidden
-      className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
+      className={cn('text-muted-foreground size-4 shrink-0 transition', 'group-data-[state=open]:rotate-90', className)}
     />
   );
 }
@@ -79,7 +83,10 @@ const AccordionContent = React.forwardRef<AccordionContentElement, AccordionCont
   ({ children, className, ...props }, forwardedRef) => (
     <AccordionPrimitive.Content
       ref={forwardedRef}
-      className="data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden text-sm"
+      className={cn(
+        'overflow-hidden text-sm',
+        'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed',
+      )}
       {...props}
     >
       <div className={cn('pb-4 pt-0', className)}>{children}</div>
