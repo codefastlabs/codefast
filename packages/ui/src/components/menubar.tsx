@@ -62,7 +62,8 @@ const MenubarTrigger = React.forwardRef<MenubarTriggerElement, MenubarTriggerPro
     <MenubarPrimitive.Trigger
       ref={forwardedRef}
       className={cn(
-        'flex cursor-pointer select-none items-center rounded-sm px-3 py-1 text-sm font-medium',
+        'px-2.75 gap-2.75 h-8',
+        'flex cursor-pointer select-none items-center rounded-sm text-sm font-medium',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         className,
@@ -89,7 +90,8 @@ const MenubarSubTrigger = React.forwardRef<MenubarSubTriggerElement, MenubarSubT
     <MenubarPrimitive.SubTrigger
       ref={forwardedRef}
       className={cn(
-        'flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
@@ -118,7 +120,9 @@ const MenubarSubContent = React.forwardRef<MenubarSubContentElement, MenubarSubC
       <MenubarPrimitive.SubContent
         ref={forwardedRef}
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2',
           className,
         )}
         {...props}
@@ -144,7 +148,8 @@ const MenubarContent = React.forwardRef<MenubarContentElement, MenubarContentPro
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2',
           className,
         )}
         sideOffset={sideOffset}
@@ -171,7 +176,8 @@ const MenubarItem = React.forwardRef<MenubarItemElement, MenubarItemProps>(
     <MenubarPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -197,7 +203,9 @@ const MenubarCheckboxItem = React.forwardRef<MenubarCheckboxItemElement, Menubar
       ref={forwardedRef}
       checked={checked}
       className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'pl-8',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -228,7 +236,9 @@ const MenubarRadioItem = React.forwardRef<MenubarRadioItemElement, MenubarRadioI
     <MenubarPrimitive.RadioItem
       ref={forwardedRef}
       className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'pl-8',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -261,7 +271,7 @@ const MenubarLabel = React.forwardRef<MenubarLabelElement, MenubarLabelProps>(
   ({ className, inset, ...props }, forwardedRef) => (
     <MenubarPrimitive.Label
       ref={forwardedRef}
-      className={cn('px-2 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('px-2.75 gap-2.75 h-8', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   ),
@@ -295,6 +305,21 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): React.J
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: MenubarArrow
+ * -------------------------------------------------------------------------- */
+
+type MenubarArrowElement = React.ElementRef<typeof MenubarPrimitive.Arrow>;
+type MenubarArrowProps = MenubarPrimitive.MenubarArrowProps;
+
+const MenubarArrow = React.forwardRef<MenubarArrowElement, MenubarArrowProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <MenubarPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
+  ),
+);
+
+MenubarArrow.displayName = MenubarPrimitive.Arrow.displayName;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
@@ -314,6 +339,7 @@ export {
   MenubarGroup,
   MenubarSub,
   MenubarShortcut,
+  MenubarArrow,
   type MenubarProps,
   type MenubarMenuProps,
   type MenubarTriggerProps,
@@ -329,4 +355,5 @@ export {
   type MenubarGroupProps,
   type MenubarSubProps,
   type MenubarShortcutProps,
+  type MenubarArrowProps,
 };

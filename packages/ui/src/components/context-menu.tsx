@@ -55,7 +55,8 @@ const ContextMenuSubTrigger = React.forwardRef<ContextMenuSubTriggerElement, Con
     <ContextMenuPrimitive.SubTrigger
       ref={forwardedRef}
       className={cn(
-        'flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
@@ -84,7 +85,9 @@ const ContextMenuSubContent = React.forwardRef<ContextMenuSubContentElement, Con
       <ContextMenuPrimitive.SubContent
         ref={forwardedRef}
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-out-to-bottom-2 data-[state=closed]:data-[side=right]:slide-out-to-left-2 data-[state=closed]:data-[side=bottom]:slide-out-to-top-2 data-[state=closed]:data-[side=left]:slide-out-to-right-2',
           className,
         )}
         {...props}
@@ -108,7 +111,8 @@ const ContextMenuContent = React.forwardRef<ContextMenuContentElement, ContextMe
       <ContextMenuPrimitive.Content
         ref={forwardedRef}
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2 z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-in-from-bottom-2 data-[state=open]:data-[side=right]:slide-in-from-left-2 data-[state=open]:data-[side=bottom]:slide-in-from-top-2 data-[state=open]:data-[side=left]:slide-in-from-right-2',
           className,
         )}
         {...props}
@@ -134,7 +138,8 @@ const ContextMenuItem = React.forwardRef<ContextMenuItemElement, ContextMenuItem
     <ContextMenuPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -160,7 +165,9 @@ const ContextMenuCheckboxItem = React.forwardRef<ContextMenuCheckboxItemElement,
       ref={forwardedRef}
       checked={checked}
       className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'pl-8',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -191,7 +198,9 @@ const ContextMenuRadioItem = React.forwardRef<ContextMenuRadioItemElement, Conte
     <ContextMenuPrimitive.RadioItem
       ref={forwardedRef}
       className={cn(
-        'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm',
+        'px-2.75 gap-2.75 h-8',
+        'pl-8',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -224,7 +233,7 @@ const ContextMenuLabel = React.forwardRef<ContextMenuLabelElement, ContextMenuLa
   ({ className, inset, ...props }, forwardedRef) => (
     <ContextMenuPrimitive.Label
       ref={forwardedRef}
-      className={cn('text-foreground px-2 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('px-2.75 gap-2.75 h-8', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   ),
