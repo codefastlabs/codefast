@@ -1,5 +1,11 @@
 # @codefast/primitive
 
+## 0.1.14
+
+### Patch Changes
+
+- Update dependencies across multiple packages
+
 ## 0.1.13
 
 ### Patch Changes

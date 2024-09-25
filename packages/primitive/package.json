@@ -1,6 +1,6 @@
 {
   "name": "@codefast/primitive",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
@@ -49,8 +49,8 @@
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/node": "22.5.5",
-    "@types/react": "18.3.7",
+    "@types/node": "22.7.0",
+    "@types/react": "18.3.9",
     "eslint": "8.57.0",
     "react": "18.3.1",
     "tsup": "8.3.0",
