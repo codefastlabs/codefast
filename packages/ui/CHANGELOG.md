@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.15
+
+### Patch Changes
+
+- Restructure primitive package into separate modules
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.15
+  - @codefast-ui/number-input@0.1.15
+  - @codefast-ui/input@0.1.15
+
 ## 0.1.14
 
 ### Patch Changes

@@ -1,37 +1,31 @@
 {
-  "name": "@codefast/hooks",
+  "name": "@codefast-ui/checkbox-group",
   "version": "0.1.15",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
-    "directory": "packages/hooks"
+    "directory": "packages/primitive/checkbox-group"
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./use-media-query": {
-      "types": "./dist/use-media-query.d.ts",
-      "import": "./dist/use-media-query.js",
-      "require": "./dist/use-media-query.cjs"
-    },
-    "./use-pagination": {
-      "types": "./dist/use-pagination.d.ts",
-      "import": "./dist/use-pagination.js",
-      "require": "./dist/use-pagination.cjs"
-    },
-    "./use-mutation-observer": {
-      "types": "./dist/use-mutation-observer.d.ts",
-      "import": "./dist/use-mutation-observer.js",
-      "require": "./dist/use-mutation-observer.cjs"
-    },
-    "./use-state-params": {
-      "types": "./dist/use-state-params.d.ts",
-      "import": "./dist/use-state-params.js",
-      "require": "./dist/use-state-params.cjs"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
@@ -40,6 +34,13 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@radix-ui/react-checkbox": "1.1.1",
+    "@radix-ui/react-context": "1.1.0",
+    "@radix-ui/react-direction": "1.1.0",
+    "@radix-ui/react-roving-focus": "1.1.0",
+    "@radix-ui/react-use-controllable-state": "1.1.0"
   },
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",

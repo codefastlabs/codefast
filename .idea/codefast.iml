@@ -18,6 +18,12 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ui/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/number-input/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/number-input/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

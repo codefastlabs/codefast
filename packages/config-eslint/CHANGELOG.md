@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.15
+
+### Patch Changes
+
+- Restructure primitive package into separate modules
+
 ## 0.1.14
 
 ### Patch Changes

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import * as InputPrimitive from '@codefast/primitive/input';
+import * as InputPrimitive from '@codefast-ui/input';
 import { Spinner } from '@/components/spinner';
 import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
 
