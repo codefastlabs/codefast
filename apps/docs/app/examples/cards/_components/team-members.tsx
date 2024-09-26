@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 
-export function DemoTeamMembers(): JSX.Element {
+export function TeamMembers(): JSX.Element {
   return (
     <Card>
       <CardHeader>
