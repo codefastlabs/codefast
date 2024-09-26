@@ -3,8 +3,8 @@ import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { composeEventHandlers } from '@radix-ui/primitive';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import * as InputPrimitive from '@/input';
-import { createInputScope } from '@/input';
+import * as InputPrimitive from '@codefast-ui/input';
+import { createInputScope } from '@codefast-ui/input';
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
