@@ -6,7 +6,7 @@ import { Textarea } from '@codefast/ui/textarea';
 import { type JSX } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
 
-export function DemoReportAnIssue(): JSX.Element {
+export function ReportAnIssue(): JSX.Element {
   return (
     <Card>
       <CardHeader>

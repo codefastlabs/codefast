@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@code
 import { BellIcon, EyeNoneIcon, PersonIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 
-export function DemoNotifications(): JSX.Element {
+export function Notifications(): JSX.Element {
   return (
     <Card>
       <CardHeader className="pb-3">

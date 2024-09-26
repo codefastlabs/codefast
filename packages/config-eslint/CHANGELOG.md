@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.16
+
+### Patch Changes
+
+- Remove 'use client' directive from components
+
 ## 0.1.15
 
 ### Patch Changes

@@ -3,7 +3,7 @@ import { Label } from '@codefast/ui/label';
 import { type JSX } from 'react';
 import { DatePickerWithRange } from '@/components/date-picker-with-range';
 
-export function DemoDatePicker(): JSX.Element {
+export function DatePicker(): JSX.Element {
   return (
     <Card>
       <CardContent className="pt-6">

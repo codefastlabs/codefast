@@ -13,7 +13,7 @@ import { Separator } from '@codefast/ui/separator';
 import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 
-export function DemoGithub(): JSX.Element {
+export function Github(): JSX.Element {
   return (
     <Card>
       <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
