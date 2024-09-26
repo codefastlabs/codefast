@@ -1,4 +1,4 @@
-import { type VegasAnimation, type VegasSettings, type VegasTransition } from '@/slideshow/_lib/vegas/types';
+import { type VegasAnimation, type VegasSettings, type VegasTransition } from '@/slideshow/_lib/types';
 
 export const DEFAULT_TRANSITIONS: VegasTransition[] = [
   'fade',

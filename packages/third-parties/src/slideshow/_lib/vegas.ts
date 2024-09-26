@@ -8,9 +8,9 @@ import {
   type VegasTransition,
   type VegasTransitionWithRandom,
   type VegasVideo,
-} from '@/slideshow/_lib/vegas/types';
-import { isVideoCompatible, random } from '@/slideshow/_lib/vegas/utils';
-import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/vegas/constants';
+} from '@/slideshow/_lib/types';
+import { isVideoCompatible, random } from '@/slideshow/_lib/utils';
+import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/constants';
 
 /**
  * Vegas class to handle slideshow functionality.
@@ -56,8 +56,6 @@ export class Vegas {
     if (this.settings.shuffle) {
       this.shuffleSlides();
     }
-
-    this.init();
   }
 
   public shuffleSlides(): void {

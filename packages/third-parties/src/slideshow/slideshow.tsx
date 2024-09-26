@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import '@/slideshow/_lib/vegas/sass/vegas.sass';
-import { Vegas } from '@/slideshow/_lib/vegas/vegas';
-import { type VegasSettings } from '@/slideshow/_lib/vegas/types';
+import '@/slideshow/_styles/sass/vegas.sass';
+import { Vegas } from '@/slideshow/_lib/vegas';
+import { type VegasSettings } from '@/slideshow/_lib/types';
 
 interface SlideshowProps {
   options: Partial<VegasSettings>;
@@ -12,18 +12,19 @@ interface SlideshowProps {
 
 export function Slideshow({ options, ...props }: SlideshowProps): React.JSX.Element {
   const slideshowRef = React.useRef<HTMLDivElement>(null);
-  const vegasRef = React.useRef<Vegas>();
 
   React.useEffect(() => {
-    if (!slideshowRef.current || vegasRef.current) {
+    if (!slideshowRef.current) {
       return;
     }
 
-    vegasRef.current = new Vegas(slideshowRef.current, options);
+    const vegas = new Vegas(slideshowRef.current, options);
+
+    vegas.init();
 
     // Cleanup on unmounting
     return () => {
-      vegasRef.current?.destroy();
+      vegas.destroy();
     };
   }, [options]);
 
