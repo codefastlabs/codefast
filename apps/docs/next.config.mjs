@@ -1,5 +1,6 @@
 /** @type { import("next").NextConfig } */
 const nextConfig = {
+  transpilePackages: ['@codefast/hooks', '@codefast/third-parties', '@codefast/ui'],
   images: {
     remotePatterns: [
       {
