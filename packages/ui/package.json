@@ -1,6 +1,6 @@
 {
   "name": "@codefast/ui",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
@@ -353,7 +353,9 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
-    "@codefast/primitive": "workspace:*",
+    "@codefast-ui/checkbox-group": "workspace:*",
+    "@codefast-ui/input": "workspace:*",
+    "@codefast-ui/number-input": "workspace:*",
     "@radix-ui/primitive": "1.1.0",
     "@radix-ui/react-accordion": "1.2.0",
     "@radix-ui/react-alert-dialog": "1.1.1",

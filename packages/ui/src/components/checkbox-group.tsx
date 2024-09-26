@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { CheckIcon } from '@radix-ui/react-icons';
-import * as CheckboxGroupPrimitive from '@codefast/primitive/checkbox-group';
+import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------

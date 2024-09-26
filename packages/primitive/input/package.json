@@ -1,22 +1,31 @@
 {
-  "name": "@codefast/config-tailwind",
+  "name": "@codefast-ui/input",
   "version": "0.1.15",
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
-    "directory": "packages/config-tailwind"
+    "directory": "packages/primitive/input"
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./tailwind.config": {
-      "types": "./dist/tailwind.config.d.ts",
-      "import": "./dist/tailwind.config.js",
-      "require": "./dist/tailwind.config.cjs"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.cts",
   "files": [
     "dist"
   ],
@@ -26,11 +35,17 @@
     "dev": "tsup --watch",
     "lint": "eslint src --max-warnings 0"
   },
+  "dependencies": {
+    "@radix-ui/react-compose-refs": "1.1.0",
+    "@radix-ui/react-context": "1.1.0"
+  },
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
+    "@types/node": "22.7.0",
+    "@types/react": "18.3.9",
     "eslint": "8.57.0",
-    "tailwindcss": "3.4.13",
+    "react": "18.3.1",
     "tsup": "8.3.0",
     "typescript": "5.6.2"
   },
