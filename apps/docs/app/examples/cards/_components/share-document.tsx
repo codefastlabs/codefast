@@ -6,7 +6,7 @@ import { Separator } from '@codefast/ui/separator';
 import { type JSX } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
 
-export function DemoShareDocument(): JSX.Element {
+export function ShareDocument(): JSX.Element {
   return (
     <Card>
       <CardHeader>

@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { DotFilledIcon } from '@radix-ui/react-icons';
 import {

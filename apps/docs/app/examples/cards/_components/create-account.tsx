@@ -5,7 +5,7 @@ import { type JSX } from 'react';
 import { TextInput } from '@codefast/ui/text-input';
 import { Icons } from '@/components/icons';
 
-export function DemoCreateAccount(): JSX.Element {
+export function CreateAccount(): JSX.Element {
   return (
     <Card>
       <CardHeader className="space-y-1">

@@ -4,7 +4,7 @@ export default defineConfig((options) => [
   {
     clean: !options.watch,
     dts: true,
-    entry: ['src/**/*.ts'],
+    entry: ['src/**/*.ts*'],
     external: ['tailwindcss'],
     format: ['cjs', 'esm'],
     minify: !options.watch,
