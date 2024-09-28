@@ -6,6 +6,8 @@ export default defineConfig((options) => ({
   entry: ['src/**/*.ts*'],
   format: ['cjs', 'esm'],
   minify: !options.watch,
+  shims: true,
+  silent: true,
   sourcemap: true,
   ...options,
 }));
