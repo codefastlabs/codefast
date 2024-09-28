@@ -11,5 +11,6 @@ export default defineConfig((options) => ({
   shims: true,
   silent: true,
   sourcemap: true,
+  splitting: true,
   ...options,
 }));
