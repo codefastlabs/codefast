@@ -8,7 +8,7 @@ import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from '@cod
 import { cn } from '@codefast/ui/utils';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { type JSX, useRef, useState } from 'react';
-import { useMutationObserver } from '@codefast/hooks/use-mutation-observer';
+import { useMutationObserver } from '@codefast/hooks';
 import { type Model, type ModelType } from '@/app/examples/playground/_data/models';
 
 interface ModelSelectorProps extends PopoverProps {

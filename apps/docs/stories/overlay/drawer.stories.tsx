@@ -25,7 +25,7 @@ import {
   DialogTrigger,
 } from '@codefast/ui/dialog';
 import { Label } from '@codefast/ui/label';
-import { useMediaQuery } from '@codefast/hooks/use-media-query';
+import { useMediaQuery } from '@codefast/hooks';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { TextInput } from '@codefast/ui/text-input';
 
