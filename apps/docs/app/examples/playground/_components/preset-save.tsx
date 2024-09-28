@@ -38,8 +38,8 @@ export function PresetSave(): JSX.Element {
           </div>
         </DialogBody>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button type="submit">Save</Button>
+          <DialogClose type="submit" variant="default">
+            Save
           </DialogClose>
         </DialogFooter>
       </DialogContent>

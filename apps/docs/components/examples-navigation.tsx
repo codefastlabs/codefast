@@ -56,7 +56,7 @@ type ExamplesNavigationProps = HTMLAttributes<HTMLDivElement>;
 export function ExamplesNavigation({ className, ...props }: ExamplesNavigationProps): JSX.Element {
   return (
     <div className={cn('relative', className)} {...props}>
-      <ScrollArea className="max-w-[600px] lg:max-w-none">
+      <ScrollArea size="sm">
         <div className={cn('flex items-center gap-1 p-2', className)} {...props}>
           {examples.map((example) => (
             <ExampleLink key={example.href} href={example.href}>
