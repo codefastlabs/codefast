@@ -10,6 +10,5 @@ export default defineConfig((options) => ({
   silent: true,
   sourcemap: true,
   splitting: true,
-  splitting: true,
   ...options,
 }));
