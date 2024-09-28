@@ -3,8 +3,7 @@
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
 import { Label } from '@codefast/ui/label';
 import { Slider, type SliderProps } from '@codefast/ui/slider';
-import { useState } from 'react';
-import { type JSX } from 'react';
+import { type JSX, useState } from 'react';
 
 interface MaxLengthSelectorProps {
   defaultValue: SliderProps['defaultValue'];
@@ -21,7 +20,7 @@ export function MaxLengthSelector({ defaultValue }: MaxLengthSelectorProps): JSX
             <div className="flex items-center justify-between">
               <Label htmlFor="maxlength">Maximum Length</Label>
               <span className="text-muted-foreground hover:border-border w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm">
-                {value}
+                {value?.toLocaleString() ?? '0'}
               </span>
             </div>
             <Slider
