@@ -12,7 +12,10 @@ type SwitchProps = React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>;
 const Switch = React.forwardRef<SwitchElement, SwitchProps>(({ className, ...props }, forwardedRef) => (
   <SwitchPrimitives.Root
     className={cn(
-      'data-[state=checked]:bg-primary data-[state=unchecked]:bg-input peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-default disabled:opacity-50',
+      'peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition',
+      'data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
+      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+      'disabled:cursor-default disabled:opacity-50',
       className,
     )}
     {...props}

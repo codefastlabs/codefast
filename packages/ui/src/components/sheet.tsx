@@ -12,10 +12,8 @@ import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-varian
 const sheetContentVariants = tv({
   base: [
     'bg-background animate-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
-    'data-[state=open]:animate-in',
-    'data-[state=closed]:animate-out',
-    'data-[state=closed]:animate-duration-300',
-    'data-[state=open]:animate-duration-500',
+    'data-[state=open]:animate-in data-[state=open]:animate-duration-500',
+    'data-[state=closed]:animate-out data-[state=closed]:animate-duration-300',
   ],
   variants: {
     side: {
