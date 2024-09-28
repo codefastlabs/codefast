@@ -61,7 +61,7 @@ const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTrig
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         ref={forwardedRef}
-        className={cn('group flex flex-1 items-center py-4 text-left text-sm font-medium', className)}
+        className={cn('group flex grow items-center gap-2 py-4 text-left text-sm font-medium', className)}
         {...props}
       />
     </AccordionPrimitive.Header>

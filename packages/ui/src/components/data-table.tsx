@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import {
-  ArrowDownIcon,
   CaretSortIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpIcon,
@@ -211,7 +211,7 @@ function DataTableColumnHeader<TData, TValue>({
               column.toggleSorting(true);
             }}
           >
-            <ArrowDownIcon className="text-muted-foreground" />
+            <ChevronDownIcon className="text-muted-foreground" />
             Desc
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -232,7 +232,7 @@ function DataTableColumnHeader<TData, TValue>({
 function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): React.JSX.Element {
   switch (sorted) {
     case 'desc': {
-      return <ArrowDownIcon />;
+      return <ChevronDownIcon />;
     }
 
     case 'asc': {

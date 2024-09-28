@@ -7,7 +7,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 const textareaVariants = tv({
   base: [
-    'border-input flex min-h-16 w-full rounded-md border bg-transparent py-2 text-sm',
+    'border-input flex min-h-16 grow rounded-md border bg-transparent py-2 text-sm',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
     'placeholder:text-muted-foreground',
     'disabled:cursor-default disabled:opacity-50',
