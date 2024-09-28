@@ -21,7 +21,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui/drawer';
-import { useMediaQuery } from '@codefast/hooks/use-media-query';
+import { useMediaQuery } from '@codefast/hooks';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
