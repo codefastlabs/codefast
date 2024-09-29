@@ -15,7 +15,13 @@ const clientLibs = [
 
 const limit = pLimit(10);
 
-// Function to check for "use client" directive and client libraries/hooks in a file
+/**
+ * Analyzes the specified file for client directives, custom hooks, and client libraries.
+ *
+ * @param filePath - The path to the file to be analyzed.
+ * @returns An object containing the file content, a flag indicating if a client directive is present,
+ * and a flag indicating if custom client hooks or libraries are present.
+ */
 async function analyzeFile(
   filePath: string,
 ): Promise<{ content: string; hasClientDirective: boolean; hasClientLibsOrHooks: boolean }> {
@@ -38,7 +44,14 @@ async function analyzeFile(
   }
 }
 
-// Function to add the "use client" directive to the beginning of a file if not already present
+/**
+ * Adds the "use client" directive to the beginning of the provided content and writes it to the specified file.
+ * Skips processing if the content already starts with the "use client" directive.
+ *
+ * @param filePath - The path to the file where the content should be written.
+ * @param content - The content to which the "use client" directive should be added.
+ * @returns A promise that resolves when the file has been written.
+ */
 async function addUseClientDirective(filePath: string, content: string): Promise<void> {
   if (content.startsWith('"use client"')) {
     return; // Skip if already has "use client"
@@ -47,7 +60,13 @@ async function addUseClientDirective(filePath: string, content: string): Promise
   await fs.writeFile(filePath, `"use client";${content}`, 'utf-8');
 }
 
-// Function to analyze a component and its imports for chunk files
+/**
+ * Analyzes a component by examining its import statements to determine if
+ * they contain client-side libraries or hooks, and adds `useClient` directives if needed.
+ *
+ * @param componentPath - The file path of the component to analyze.
+ * @returns A promise that resolves when the analysis is complete.
+ */
 async function analyzeComponent(componentPath: string): Promise<void> {
   try {
     const { content } = await analyzeFile(componentPath);
@@ -76,7 +95,15 @@ async function analyzeComponent(componentPath: string): Promise<void> {
   }
 }
 
-// Main function to process all components in dist/components
+/**
+ * Updates client directives in all JavaScript and CommonJS components within the specified directory.
+ *
+ * This function reads the contents of the components directory, identifies JavaScript and CommonJS files,
+ * and performs an analysis on each file to check for the presence of client directives. If a client
+ * directive is found, it further analyzes the component. The processing of files is done concurrently.
+ *
+ * @returns A promise that resolves when all components have been processed.
+ */
 async function updateClientDirectivesInComponents(): Promise<void> {
   try {
     const files = await fs.readdir(componentsDir, { withFileTypes: true });
