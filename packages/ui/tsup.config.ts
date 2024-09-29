@@ -3,94 +3,106 @@ import path from 'node:path';
 import { defineConfig } from 'tsup';
 import pLimit from 'p-limit';
 
-const distDir = path.resolve(__dirname, './dist');
-const limit = pLimit(5);
+const componentsDir = path.resolve(__dirname, './dist/components');
+const clientLibs = [
+  '@radix-ui/react-context',
+  'vaul',
+  'cmdk',
+  'input-otp',
+  'react-resizable-panels',
+  '@radix-ui/primitive',
+];
 
-/**
- * Retrieves a list of directory paths from a given source directory.
- *
- * @param source - The path of the source directory.
- * @returns A promise that resolves to an array of directory paths.
- */
-async function getDirectories(source: string): Promise<string[]> {
-  const files = await fs.readdir(source, { withFileTypes: true });
+const limit = pLimit(10);
 
-  return files.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(source, dirent.name));
-}
+// Function to check for "use client" directive and client libraries/hooks in a file
+async function analyzeFile(
+  filePath: string,
+): Promise<{ content: string; hasClientDirective: boolean; hasClientLibsOrHooks: boolean }> {
+  try {
+    const content = await fs.readFile(filePath, 'utf-8');
+    const hasClientDirective = content.includes('"use client"');
+    const containsCustomHooks = /\buse[A-Z][a-zA-Z]*\s*\(.*\)/.test(content);
+    const containsClientLibs = clientLibs.some((lib) => content.includes(lib));
 
-/**
- * Updates the index.js and index.cjs files in a given directory with export statements
- * for all JavaScript files in that directory, excluding the index files themselves.
- *
- * @param dir - The directory path where the index files and JavaScript files are located.
- * @returns A promise that resolves when the index files have been successfully written.
- */
-async function updateIndexFile(dir: string): Promise<void> {
-  const files = await fs.readdir(dir);
+    return {
+      hasClientDirective,
+      hasClientLibsOrHooks: containsClientLibs || containsCustomHooks,
+      content,
+    };
+  } catch (error) {
+    // eslint-disable-next-line no-console -- We want to log the error
+    console.error(`Error reading file ${filePath}:`, error);
 
-  // Filter JavaScript files that are not index.js
-  const jsFiles = files.filter((file) => file.endsWith('.js') && file !== 'index.js');
-
-  if (jsFiles.length > 0) {
-    // Generate export statements for ESM and CommonJS
-    const jsExports = jsFiles.map((file) => `export * from './${file.replace('.js', '')}';`).join('\n');
-    const cjsExports = jsFiles.map((file) => `module.exports = require('./${file.replace('.js', '')}');`).join('\n');
-
-    const indexEsmPath = path.join(dir, 'index.js');
-    const indexCjsPath = path.join(dir, 'index.cjs');
-
-    // Write index.js and index.cjs files with exports
-    try {
-      await Promise.allSettled([
-        fs.writeFile(indexEsmPath, `${jsExports}\n//# sourceMappingURL=index.js.map`, 'utf8'),
-        fs.writeFile(indexCjsPath, `${cjsExports}\n//# sourceMappingURL=index.cjs.map`, 'utf8'),
-      ]);
-    } catch (error) {
-      // eslint-disable-next-line no-console -- Log error to console
-      console.error(`Error updating index files in ${dir}:`, error);
-    }
+    return { hasClientDirective: false, hasClientLibsOrHooks: false, content: '' };
   }
 }
 
-/**
- * Updates export statements for JavaScript and CommonJS modules in the distribution directory.
- *
- * This method scans all subdirectories in the distribution directory, generates unified export statements
- * and writes them to the appropriate `index.js` and `index.cjs` files. Both the ESM and CommonJS files are
- * updated concurrently for efficiency.
- *
- * @returns A promise that resolves when the export updates are completed, or rejects if an error occurs during the
- *   process.
- */
-export async function updateExports(): Promise<void> {
-  const directories = await getDirectories(distDir);
+// Function to add the "use client" directive to the beginning of a file if not already present
+async function addUseClientDirective(filePath: string, content: string): Promise<void> {
+  if (content.startsWith('"use client"')) {
+    return; // Skip if already has "use client"
+  }
 
-  // Process updating index.js and index.cjs in subdirectories in parallel
-  const updatePromises = directories.map((dir) => limit(() => updateIndexFile(dir)));
+  await fs.writeFile(filePath, `"use client";${content}`, 'utf-8');
+}
 
-  const results = await Promise.allSettled(updatePromises);
-
-  // Log any errors encountered during updates
-  results.forEach((result, index) => {
-    if (result.status === 'rejected') {
-      // eslint-disable-next-line no-console -- Log error to console
-      console.error(`Failed to update index files for directory ${directories[index]}:`, result.reason);
-    }
-  });
-
-  // Create exports for dist/index.js and dist/index.cjs
-  const rootEsmExports = directories.map((dir) => `export * from './${path.basename(dir)}';`).join('\n');
-  const rootCjsExports = directories.map((dir) => `module.exports = require('./${path.basename(dir)}');`).join('\n');
-
-  // Write index.js file for ESM and index.cjs file for CommonJS in the root directory
+// Function to analyze a component and its imports for chunk files
+async function analyzeComponent(componentPath: string): Promise<void> {
   try {
-    await Promise.allSettled([
-      fs.writeFile(path.join(distDir, 'index.js'), `${rootEsmExports}\n//# sourceMappingURL=index.js.map`, 'utf8'),
-      fs.writeFile(path.join(distDir, 'index.cjs'), `${rootCjsExports}\n//# sourceMappingURL=index.cjs.map`, 'utf8'),
-    ]);
+    const { content } = await analyzeFile(componentPath);
+    const importRegex = /import.*?from\s*['"](?<path>[^'"]+)['"]/g;
+    const requireRegex = /require\(['"](?<path>[^'"]+)['"]\)/g;
+    let match;
+
+    // Analyze ES module imports and CommonJS requires
+    while ((match = importRegex.exec(content)) !== null || (match = requireRegex.exec(content)) !== null) {
+      const importedPath = match.groups?.path;
+
+      if (!importedPath) {
+        continue; // Skip if no imported path
+      }
+
+      const fullChunkPath = path.resolve(path.dirname(componentPath), importedPath);
+      const { hasClientLibsOrHooks, content: importedContent } = await analyzeFile(fullChunkPath);
+
+      if (hasClientLibsOrHooks) {
+        await addUseClientDirective(fullChunkPath, importedContent);
+      }
+    }
   } catch (error) {
-    // eslint-disable-next-line no-console -- Log error to console
-    console.error('Error writing root index files:', error);
+    // eslint-disable-next-line no-console -- We want to log the error
+    console.error(`Error analyzing component ${componentPath}:`, error);
+  }
+}
+
+// Main function to process all components in dist/components
+async function updateClientDirectivesInComponents(): Promise<void> {
+  try {
+    const files = await fs.readdir(componentsDir, { withFileTypes: true });
+
+    const processPromises = files.map((file) =>
+      limit(async () => {
+        const componentPath = path.join(componentsDir, file.name);
+
+        if (!file.isFile() || !(componentPath.endsWith('.js') || componentPath.endsWith('.cjs'))) {
+          return; // Skip non-file or non-js/cjs files
+        }
+
+        const { hasClientDirective } = await analyzeFile(componentPath);
+
+        if (!hasClientDirective) {
+          return; // Skip if no "use client"
+        }
+
+        await analyzeComponent(componentPath);
+      }),
+    );
+
+    await Promise.all(processPromises); // Process all files concurrently
+  } catch (error) {
+    // eslint-disable-next-line no-console -- We want to log the error
+    console.error('Error processing components:', error);
   }
 }
 
@@ -101,7 +113,7 @@ export default defineConfig((options) => ({
   format: ['cjs', 'esm'],
   minify: !options.watch,
   sourcemap: true,
-  onSuccess: updateExports,
+  onSuccess: updateClientDirectivesInComponents,
   shims: true,
   silent: true,
   splitting: true,
