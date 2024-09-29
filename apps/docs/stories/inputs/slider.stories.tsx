@@ -1,4 +1,4 @@
-import { Slider } from '@codefast/ui/slider';
+import { Slider } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

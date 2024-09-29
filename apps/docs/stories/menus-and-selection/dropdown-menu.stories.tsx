@@ -1,4 +1,5 @@
 import {
+  Button,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -13,8 +14,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
-import { Button } from '@codefast/ui/button';
+} from '@codefast/ui';
 import { type ComponentProps, useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 

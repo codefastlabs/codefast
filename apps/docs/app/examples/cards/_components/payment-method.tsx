@@ -1,10 +1,22 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Label } from '@codefast/ui/label';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  TextInput,
+} from '@codefast/ui';
 import { type JSX } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
 import { Icons } from '@/components/icons';
 
 export function PaymentMethod(): JSX.Element {

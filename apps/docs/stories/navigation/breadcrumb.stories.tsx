@@ -6,12 +6,6 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@codefast/ui/breadcrumb';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@codefast/ui/dropdown-menu';
-import { ChevronDownIcon, SlashIcon } from '@radix-ui/react-icons';
-import Link from 'next/link';
-import { Fragment, useState } from 'react';
-import {
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -20,7 +14,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@codefast/ui/drawer';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@codefast/ui';
+import { ChevronDownIcon, SlashIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
+import { Fragment, useState } from 'react';
 import { useMediaQuery } from '@codefast/hooks';
 import { type Meta, type StoryObj } from '@storybook/react';
 

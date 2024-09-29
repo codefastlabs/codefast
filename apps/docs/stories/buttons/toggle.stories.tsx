@@ -1,4 +1,4 @@
-import { Toggle } from '@codefast/ui/toggle';
+import { Toggle } from '@codefast/ui';
 import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
 

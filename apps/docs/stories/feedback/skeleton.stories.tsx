@@ -1,4 +1,4 @@
-import { Skeleton } from '@codefast/ui/skeleton';
+import { Skeleton } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

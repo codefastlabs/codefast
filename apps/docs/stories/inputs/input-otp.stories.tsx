@@ -1,19 +1,26 @@
 import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
+  Pre,
   REGEXP_ONLY_DIGITS_AND_CHARS,
-} from '@codefast/ui/input-otp';
+  toast,
+  Toaster,
+} from '@codefast/ui';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast, Toaster } from '@codefast/ui/sonner';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Button } from '@codefast/ui/button';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

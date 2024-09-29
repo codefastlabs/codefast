@@ -1,6 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
-import { Button } from '@codefast/ui/button';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -9,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
+} from '@codefast/ui';
 import { type JSX } from 'react';
 
 export function UserNav(): JSX.Element {

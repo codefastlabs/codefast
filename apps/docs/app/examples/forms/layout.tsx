@@ -1,4 +1,4 @@
-import { Separator } from '@codefast/ui/separator';
+import { Separator } from '@codefast/ui';
 import Image from 'next/image';
 import { type Metadata } from 'next';
 import { type JSX, type ReactNode } from 'react';

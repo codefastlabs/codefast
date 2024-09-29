@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui';
 import { BellIcon, EyeNoneIcon, PersonIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 

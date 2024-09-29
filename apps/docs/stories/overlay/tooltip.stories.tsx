@@ -1,6 +1,4 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui/tooltip';
-import { Button } from '@codefast/ui/button';
-import { Text } from '@codefast/ui/text';
+import { Button, Text, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

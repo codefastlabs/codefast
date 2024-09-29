@@ -1,14 +1,23 @@
-import { CheckboxGroup, CheckboxGroupItem } from '@codefast/ui/checkbox-group';
+import {
+  Button,
+  CheckboxGroup,
+  CheckboxGroupItem,
+  Code,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Label,
+  Pre,
+  toast,
+  Toaster,
+} from '@codefast/ui';
 import { useId } from 'react';
-import { Label } from '@codefast/ui/label';
 import { z } from 'zod';
-import { toast, Toaster } from '@codefast/ui/sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Button } from '@codefast/ui/button';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

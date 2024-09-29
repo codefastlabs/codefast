@@ -1,15 +1,24 @@
-import { Textarea } from '@codefast/ui/textarea';
-import { Label } from '@codefast/ui/label';
+import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Label,
+  Pre,
+  Text,
+  Textarea,
+  toast,
+  Toaster,
+} from '@codefast/ui';
 import { useId } from 'react';
-import { Button } from '@codefast/ui/button';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast, Toaster } from '@codefast/ui/sonner';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Text } from '@codefast/ui/text';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

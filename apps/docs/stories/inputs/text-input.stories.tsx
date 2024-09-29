@@ -1,16 +1,25 @@
-import { Label } from '@codefast/ui/label';
+import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Label,
+  Pre,
+  TextInput,
+  toast,
+  Toaster,
+} from '@codefast/ui';
 import { useId } from 'react';
-import { Button } from '@codefast/ui/button';
-import { toast, Toaster } from '@codefast/ui/sonner';
 import { z } from 'zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { MailIcon, SettingsIcon, UserIcon } from 'lucide-react';
-import { TextInput } from '@codefast/ui/text-input';
 import { wait } from 'next/dist/lib/wait';
 
 const meta = {

@@ -1,6 +1,10 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
 import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -8,8 +12,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
-import { Separator } from '@codefast/ui/separator';
+  Separator,
+} from '@codefast/ui';
 import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 

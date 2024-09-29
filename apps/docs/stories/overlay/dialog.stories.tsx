@@ -1,4 +1,5 @@
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogClose,
@@ -8,13 +9,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@codefast/ui/dialog';
-import { Button } from '@codefast/ui/button';
-import { Label } from '@codefast/ui/label';
+  Label,
+  TextInput,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@codefast/ui';
 import { Copy } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui/tooltip';
-import { TextInput } from '@codefast/ui/text-input';
 import { useState } from 'react';
 
 const meta = {

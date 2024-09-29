@@ -13,7 +13,7 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from '@codefast/ui/menubar';
+} from '@codefast/ui';
 import { type JSX } from 'react';
 
 export function Menu(): JSX.Element {

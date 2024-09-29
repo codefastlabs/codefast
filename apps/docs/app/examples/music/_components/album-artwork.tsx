@@ -1,4 +1,5 @@
 import {
+  cn,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -7,8 +8,7 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from '@codefast/ui/context-menu';
-import { cn } from '@codefast/ui/utils';
+} from '@codefast/ui';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { type HTMLAttributes, type JSX } from 'react';

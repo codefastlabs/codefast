@@ -8,11 +8,11 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from '@codefast/ui/command';
+  Kbd,
+  Text,
+} from '@codefast/ui';
 import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Text } from '@codefast/ui/text';
-import { Kbd } from '@codefast/ui/kbd';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

@@ -1,5 +1,4 @@
-import { Separator, SeparatorItem } from '@codefast/ui/separator';
-import { Text } from '@codefast/ui/text';
+import { Separator, SeparatorItem, Text } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

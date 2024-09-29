@@ -1,10 +1,21 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Label } from '@codefast/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Textarea } from '@codefast/ui/textarea';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+  TextInput,
+} from '@codefast/ui';
 import { type JSX } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
 
 export function ReportAnIssue(): JSX.Element {
   return (

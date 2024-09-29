@@ -1,4 +1,4 @@
-import { Badge } from '@codefast/ui/badge';
+import { Badge } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

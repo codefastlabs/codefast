@@ -1,6 +1,15 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@codefast/ui';
 import Image from 'next/image';
 import { type JSX, Suspense } from 'react';
 import { type Metadata } from 'next';

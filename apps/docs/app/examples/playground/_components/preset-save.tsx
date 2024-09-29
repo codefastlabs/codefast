@@ -1,5 +1,5 @@
-import { Button } from '@codefast/ui/button';
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogClose,
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@codefast/ui/dialog';
-import { Label } from '@codefast/ui/label';
+  Label,
+  TextInput,
+} from '@codefast/ui';
 import { type JSX } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
 
 export function PresetSave(): JSX.Element {
   return (

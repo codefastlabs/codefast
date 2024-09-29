@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertTitle } from '@codefast/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@codefast/ui';
 import { ExclamationTriangleIcon, RocketIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 

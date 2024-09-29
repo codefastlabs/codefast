@@ -1,14 +1,22 @@
 'use client';
 
-import { Button } from '@codefast/ui/button';
-import { Checkbox } from '@codefast/ui/checkbox';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { toast } from '@codefast/ui/sonner';
+import {
+  Button,
+  Checkbox,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Pre,
+  toast,
+} from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
 import { type JSX } from 'react';
 
 const items = [

@@ -1,6 +1,4 @@
-import { buttonVariants } from '@codefast/ui/button-variants';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
-import { cn } from '@codefast/ui/utils';
+import { buttonVariants, cn, Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui';
 import Link from 'next/link';
 import { type LucideIcon } from 'lucide-react';
 import { type JSX } from 'react';

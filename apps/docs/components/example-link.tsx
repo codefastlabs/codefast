@@ -1,5 +1,5 @@
 import { type ComponentProps, type JSX } from 'react';
-import { cn } from '@codefast/ui/utils';
+import { cn } from '@codefast/ui';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { formatUrl } from 'next/dist/shared/lib/router/utils/format-url';

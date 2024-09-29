@@ -1,4 +1,4 @@
-import { Button } from '@codefast/ui/button';
+import { Button } from '@codefast/ui';
 import { ChevronRightIcon, EnvelopeOpenIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { SettingsIcon } from 'lucide-react';

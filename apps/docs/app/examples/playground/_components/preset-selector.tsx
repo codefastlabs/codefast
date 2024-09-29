@@ -1,7 +1,8 @@
 'use client';
 
-import { Button } from '@codefast/ui/button';
 import {
+  Button,
+  cn,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -9,9 +10,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@codefast/ui/command';
-import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from '@codefast/ui/popover';
-import { cn } from '@codefast/ui/utils';
+  Popover,
+  PopoverContent,
+  type PopoverProps,
+  PopoverTrigger,
+} from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 import { type JSX, useState } from 'react';

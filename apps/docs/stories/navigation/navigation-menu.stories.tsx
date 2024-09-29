@@ -1,18 +1,18 @@
 import {
+  buttonVariants,
+  cn,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@codefast/ui/navigation-menu';
+  Text,
+} from '@codefast/ui';
 import { type AnchorHTMLAttributes, forwardRef } from 'react';
-import { cn } from '@codefast/ui/utils';
 import Link from 'next/link';
 import { SettingsIcon } from 'lucide-react';
-import { Text } from '@codefast/ui/text';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { buttonVariants } from '@codefast/ui/button-variants';
 
 const meta = {
   component: NavigationMenu,

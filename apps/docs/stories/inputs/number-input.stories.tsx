@@ -1,15 +1,24 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { NumberInput } from '@codefast/ui/number-input';
+import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Label,
+  NumberInput,
+  Pre,
+  toast,
+  Toaster,
+} from '@codefast/ui';
 import { z } from 'zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { wait } from 'next/dist/lib/wait';
-import { toast, Toaster } from '@codefast/ui/sonner';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Pre } from '@codefast/ui/pre';
-import { Button } from '@codefast/ui/button';
-import { Code } from '@codefast/ui/code';
-import { Label } from '@codefast/ui/label';
 import { useState } from 'react';
 
 const meta = {

@@ -1,4 +1,4 @@
-import { AspectRatio } from '@codefast/ui/aspect-ratio';
+import { AspectRatio } from '@codefast/ui';
 import Image from 'next/image';
 import { type Meta, type StoryObj } from '@storybook/react';
 

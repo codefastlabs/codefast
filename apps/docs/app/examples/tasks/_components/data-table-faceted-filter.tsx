@@ -1,6 +1,7 @@
-import { Badge } from '@codefast/ui/badge';
-import { Button } from '@codefast/ui/button';
 import {
+  Badge,
+  Button,
+  cn,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -8,10 +9,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@codefast/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { Separator } from '@codefast/ui/separator';
-import { cn } from '@codefast/ui/utils';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Separator,
+} from '@codefast/ui';
 import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { type Column } from '@tanstack/react-table';
 import { type ComponentType, type JSX } from 'react';
