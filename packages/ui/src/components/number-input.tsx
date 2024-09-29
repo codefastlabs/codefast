@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
