@@ -1,9 +1,17 @@
 'use client';
 
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/ui/resizable';
-import { Separator } from '@codefast/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
-import { cn } from '@codefast/ui/utils';
+import {
+  cn,
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  TextInput,
+} from '@codefast/ui';
 import {
   AlertCircle,
   Archive,
@@ -18,7 +26,6 @@ import {
   Users2,
 } from 'lucide-react';
 import { type JSX, type ReactNode, useState } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 import { Nav } from '@/app/examples/mail/_components/nav';
 import { MailList } from '@/app/examples/mail/_components/mail-list';

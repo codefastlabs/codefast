@@ -1,4 +1,4 @@
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/ui/resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

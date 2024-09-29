@@ -1,13 +1,24 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
-import { Button } from '@codefast/ui/button';
-import { Calendar } from '@codefast/ui/calendar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@codefast/ui/dropdown-menu';
-import { Label } from '@codefast/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { Separator } from '@codefast/ui/separator';
-import { Switch } from '@codefast/ui/switch';
-import { Textarea } from '@codefast/ui/textarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Calendar,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Separator,
+  Switch,
+  Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@codefast/ui';
 import { addDays, addHours, format, nextSaturday } from 'date-fns';
 import { Archive, ArchiveX, Clock, Forward, MoreVertical, Reply, ReplyAll, Trash2 } from 'lucide-react';
 import { type JSX } from 'react';

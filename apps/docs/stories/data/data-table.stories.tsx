@@ -1,17 +1,26 @@
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@codefast/ui/table';
-import { Checkbox } from '@codefast/ui/checkbox';
-import { Button } from '@codefast/ui/button';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import {
+  Button,
+  Checkbox,
+  DataTableColumnHeader,
+  DataTablePagination,
+  DataTableViewOptions,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TextInput,
+} from '@codefast/ui';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
-import { DataTableColumnHeader, DataTablePagination, DataTableViewOptions } from '@codefast/ui/data-table';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -26,7 +35,6 @@ import {
 } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TextInput } from '@codefast/ui/text-input';
 import data from '@/mocks/data-table.json';
 
 const meta = {

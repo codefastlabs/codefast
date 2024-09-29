@@ -1,8 +1,14 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
-import { Button } from '@codefast/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Text,
+} from '@codefast/ui';
 import { CalendarDays } from 'lucide-react';
-import { Text } from '@codefast/ui/text';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

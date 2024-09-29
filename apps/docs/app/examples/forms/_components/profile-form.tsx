@@ -1,19 +1,31 @@
 'use client';
 
-import { Button } from '@codefast/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { toast } from '@codefast/ui/sonner';
-import { Textarea } from '@codefast/ui/textarea';
-import { cn } from '@codefast/ui/utils';
+import {
+  Button,
+  cn,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Pre,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+  TextInput,
+  toast,
+} from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
 import { type JSX } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
 
 const profileFormValues = z.object({
   username: z

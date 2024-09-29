@@ -1,12 +1,23 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Label } from '@codefast/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { Button } from '@codefast/ui/button';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+  Text,
+  TextInput,
+} from '@codefast/ui';
 import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
-import { Switch } from '@codefast/ui/switch';
-import { Text } from '@codefast/ui/text';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Card,

@@ -1,5 +1,4 @@
-import { Radio } from '@codefast/ui/radio';
-import { Label } from '@codefast/ui/label';
+import { Label, Radio } from '@codefast/ui';
 import { useId } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 

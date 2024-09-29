@@ -1,7 +1,4 @@
-import { Button } from '@codefast/ui/button';
-import { ScrollArea } from '@codefast/ui/scroll-area';
-import { Separator } from '@codefast/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
+import { Button, ScrollArea, Separator, Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { type JSX } from 'react';

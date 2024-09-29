@@ -1,5 +1,4 @@
-import { RadioCards, RadioCardsItem } from '@codefast/ui/radio-cards';
-import { Text } from '@codefast/ui/text';
+import { RadioCards, RadioCardsItem, Text } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

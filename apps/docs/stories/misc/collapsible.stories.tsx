@@ -1,6 +1,5 @@
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui/collapsible';
+import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui';
 import { useState } from 'react';
-import { Button } from '@codefast/ui/button';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 

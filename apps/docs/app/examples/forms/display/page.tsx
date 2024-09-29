@@ -1,4 +1,4 @@
-import { Separator } from '@codefast/ui/separator';
+import { Separator } from '@codefast/ui';
 import { type JSX } from 'react';
 import { DisplayForm } from '@/app/examples/forms/display/_components/display-form';
 

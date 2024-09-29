@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

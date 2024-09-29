@@ -1,5 +1,4 @@
-import { toast, Toaster } from '@codefast/ui/sonner';
-import { Button } from '@codefast/ui/button';
+import { Button, toast, Toaster } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

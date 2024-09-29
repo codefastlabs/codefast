@@ -1,4 +1,6 @@
 import {
+  Button,
+  Label,
   Sheet,
   SheetBody,
   SheetClose,
@@ -8,12 +10,10 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@codefast/ui/sheet';
-import { Button } from '@codefast/ui/button';
-import { Label } from '@codefast/ui/label';
+  TextInput,
+} from '@codefast/ui';
 import { useId } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Sheet,

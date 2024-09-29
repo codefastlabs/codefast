@@ -1,5 +1,5 @@
-import { Button } from '@codefast/ui/button';
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@codefast/ui/dialog';
+} from '@codefast/ui';
 import { type JSX } from 'react';
 
 export function CodeViewer(): JSX.Element {

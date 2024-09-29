@@ -1,14 +1,23 @@
-import { Button } from '@codefast/ui/button';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
-import { Label } from '@codefast/ui/label';
-import { Separator } from '@codefast/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
-import { Textarea } from '@codefast/ui/textarea';
+import {
+  Button,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Label,
+  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@codefast/ui';
 import { CounterClockwiseClockIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { type JSX } from 'react';
 import { type Metadata } from 'next';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 import { CodeViewer } from '@/app/examples/playground/_components/code-viewer';
 import { MaxLengthSelector } from '@/app/examples/playground/_components/maxlength-selector';
 import { ModelSelector } from '@/app/examples/playground/_components/model-selector';

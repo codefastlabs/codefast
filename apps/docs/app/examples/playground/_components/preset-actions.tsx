@@ -8,9 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@codefast/ui/alert-dialog';
-import { Button } from '@codefast/ui/button';
-import {
+  Button,
   Dialog,
   DialogBody,
   DialogContent,
@@ -18,20 +16,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@codefast/ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@codefast/ui/dropdown-menu';
-import { Label } from '@codefast/ui/label';
-import { toast } from '@codefast/ui/sonner';
-import { Switch } from '@codefast/ui/switch';
+  Label,
+  Switch,
+  toast,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@codefast/ui';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { type JSX, useState } from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui/tooltip';
 
 export function PresetActions(): JSX.Element {
   const [open, setOpen] = useState(false);

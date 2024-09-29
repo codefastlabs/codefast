@@ -1,4 +1,4 @@
-import { cn } from '@codefast/ui/utils';
+import { cn } from '@codefast/ui';
 import Image from 'next/image';
 import { type HTMLAttributes, type JSX } from 'react';
 import { type Metadata } from 'next';

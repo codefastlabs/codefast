@@ -1,5 +1,4 @@
-import { buttonVariants } from '@codefast/ui/button-variants';
-import { cn } from '@codefast/ui/utils';
+import { buttonVariants, cn } from '@codefast/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { type JSX } from 'react';

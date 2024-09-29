@@ -1,5 +1,5 @@
 import { type JSX, type ReactNode } from 'react';
-import { TooltipProvider } from '@codefast/ui/tooltip';
+import { TooltipProvider } from '@codefast/ui';
 import { ExamplesNavigation } from '@/components/examples-navigation';
 
 export default function ExamplesLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
