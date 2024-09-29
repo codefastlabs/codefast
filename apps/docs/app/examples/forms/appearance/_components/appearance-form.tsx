@@ -1,15 +1,28 @@
 'use client';
 
-import { Button } from '@codefast/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
-import { RadioGroup, RadioGroupItem } from '@codefast/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui/select';
-import { toast } from '@codefast/ui/sonner';
+import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Pre,
+  RadioGroup,
+  RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  toast,
+} from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Code } from '@codefast/ui/code';
-import { Pre } from '@codefast/ui/pre';
 import { type JSX } from 'react';
 
 const appearanceFormValues = z.object({

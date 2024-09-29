@@ -1,9 +1,5 @@
-import { Popover, PopoverContent, PopoverTrigger } from '@codefast/ui/popover';
-import { Button } from '@codefast/ui/button';
-import { Label } from '@codefast/ui/label';
-import { Text } from '@codefast/ui/text';
+import { Button, Label, Popover, PopoverContent, PopoverTrigger, Text, TextInput } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Popover,

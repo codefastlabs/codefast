@@ -1,19 +1,5 @@
 import {
-  Drawer,
-  DrawerBody,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@codefast/ui/drawer';
-import { useState } from 'react';
-import { Button } from '@codefast/ui/button';
-import { Minus, Plus } from 'lucide-react';
-import { Bar, BarChart, ResponsiveContainer } from 'recharts';
-import {
+  Button,
   Dialog,
   DialogBody,
   DialogClose,
@@ -23,11 +9,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@codefast/ui/dialog';
-import { Label } from '@codefast/ui/label';
+  Drawer,
+  DrawerBody,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  Label,
+  TextInput,
+} from '@codefast/ui';
+import { useState } from 'react';
+import { Minus, Plus } from 'lucide-react';
+import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 import { useMediaQuery } from '@codefast/hooks';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Drawer,

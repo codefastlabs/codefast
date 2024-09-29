@@ -1,6 +1,4 @@
-import { Badge } from '@codefast/ui/badge';
-import { ScrollArea } from '@codefast/ui/scroll-area';
-import { cn } from '@codefast/ui/utils';
+import { Badge, cn, ScrollArea } from '@codefast/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { type ComponentProps, type JSX } from 'react';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';

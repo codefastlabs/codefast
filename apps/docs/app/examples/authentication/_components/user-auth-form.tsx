@@ -1,10 +1,7 @@
 'use client';
 
-import { Button } from '@codefast/ui/button';
-import { Label } from '@codefast/ui/label';
-import { cn } from '@codefast/ui/utils';
+import { Button, cn, Label, TextInput } from '@codefast/ui';
 import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
 import { type SubmitHandler } from 'react-hook-form';
 import { Icons } from '@/components/icons';
 

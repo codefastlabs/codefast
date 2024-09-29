@@ -1,5 +1,4 @@
-import { CheckboxCards, CheckboxCardsItem } from '@codefast/ui/checkbox-cards';
-import { Text } from '@codefast/ui/text';
+import { CheckboxCards, CheckboxCardsItem, Text } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

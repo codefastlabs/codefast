@@ -1,4 +1,14 @@
 import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Pre,
   Select,
   SelectContent,
   SelectGroup,
@@ -7,16 +17,13 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui/select';
+  toast,
+  Toaster,
+} from '@codefast/ui';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast, Toaster } from '@codefast/ui/sonner';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@codefast/ui/form';
 import Link from 'next/link';
-import { Button } from '@codefast/ui/button';
-import { Pre } from '@codefast/ui/pre';
-import { Code } from '@codefast/ui/code';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {

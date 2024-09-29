@@ -1,7 +1,14 @@
-import { Button } from '@codefast/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Label } from '@codefast/ui/label';
-import { Switch } from '@codefast/ui/switch';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Label,
+  Switch,
+} from '@codefast/ui';
 import { type JSX } from 'react';
 
 export function CookieSettings(): JSX.Element {

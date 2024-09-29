@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from '@codefast/ui/toggle-group';
+import { ToggleGroup, ToggleGroupItem } from '@codefast/ui';
 import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
 

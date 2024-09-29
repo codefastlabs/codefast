@@ -1,12 +1,13 @@
-import { Card, CardContent } from '@codefast/ui/card';
 import {
+  Card,
+  CardContent,
   Carousel,
   type CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@codefast/ui/carousel';
+} from '@codefast/ui';
 import { useEffect, useRef, useState } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import { type Meta, type StoryObj } from '@storybook/react';

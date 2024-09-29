@@ -1,5 +1,4 @@
-import { Label } from '@codefast/ui/label';
-import { Checkbox } from '@codefast/ui/checkbox';
+import { Checkbox, Label } from '@codefast/ui';
 import { useId } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 

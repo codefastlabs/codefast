@@ -1,6 +1,6 @@
 'use client';
 
-import { Toaster } from '@codefast/ui/sonner';
+import { Toaster } from '@codefast/ui';
 import { type JSX, type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 

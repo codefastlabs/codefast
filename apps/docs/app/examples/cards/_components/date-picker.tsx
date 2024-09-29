@@ -1,5 +1,4 @@
-import { Card, CardContent } from '@codefast/ui/card';
-import { Label } from '@codefast/ui/label';
+import { Card, CardContent, Label } from '@codefast/ui';
 import { type JSX } from 'react';
 import { DatePickerWithRange } from '@/components/date-picker-with-range';
 

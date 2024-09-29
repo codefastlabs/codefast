@@ -1,9 +1,19 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui/card';
-import { Label } from '@codefast/ui/label';
-import { Button } from '@codefast/ui/button';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Label,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  TextInput,
+} from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { TextInput } from '@codefast/ui/text-input';
 
 const meta = {
   component: Tabs,

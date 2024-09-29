@@ -1,7 +1,6 @@
 'use client';
 
-import { cn } from '@codefast/ui/utils';
-import { ScrollArea } from '@codefast/ui/scroll-area';
+import { cn, ScrollArea } from '@codefast/ui';
 import { type HTMLAttributes, type JSX } from 'react';
 import { ExampleLink } from '@/components/example-link';
 

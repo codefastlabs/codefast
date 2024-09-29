@@ -12,7 +12,7 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from '@codefast/ui/context-menu';
+} from '@codefast/ui';
 import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 

@@ -1,4 +1,4 @@
-import { cn } from '@codefast/ui/utils';
+import { cn } from '@codefast/ui';
 import Link from 'next/link';
 import { type HTMLAttributes, type JSX } from 'react';
 

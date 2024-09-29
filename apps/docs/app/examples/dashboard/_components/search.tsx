@@ -1,7 +1,7 @@
 'use client';
 
 import { type FormEventHandler, type JSX, useCallback, useTransition } from 'react';
-import { TextInput } from '@codefast/ui/text-input';
+import { TextInput } from '@codefast/ui';
 import { SearchIcon } from 'lucide-react';
 import { useStateParams } from '@codefast/hooks';
 import { useSearchParams } from 'next/navigation';

@@ -1,11 +1,23 @@
 'use client';
 
-import { Button } from '@codefast/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@codefast/ui/command';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@codefast/ui/hover-card';
-import { Label } from '@codefast/ui/label';
-import { Popover, PopoverContent, type PopoverProps, PopoverTrigger } from '@codefast/ui/popover';
-import { cn } from '@codefast/ui/utils';
+import {
+  Button,
+  cn,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Label,
+  Popover,
+  PopoverContent,
+  type PopoverProps,
+  PopoverTrigger,
+} from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { type JSX, useRef, useState } from 'react';
 import { useMutationObserver } from '@codefast/hooks';
