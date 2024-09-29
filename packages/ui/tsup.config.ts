@@ -1,19 +1,16 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'tsup';
-import pLimit from 'p-limit';
 
 const componentsDir = path.resolve(__dirname, './dist/components');
 const clientLibs = [
   '@radix-ui/react-context',
-  'vaul',
-  'cmdk',
-  'input-otp',
-  'react-resizable-panels',
   '@radix-ui/primitive',
+  'react-resizable-panels',
+  'input-otp',
+  'cmdk',
+  'vaul',
 ];
-
-const limit = pLimit(10);
 
 /**
  * Analyzes the specified file for client directives, custom hooks, and client libraries.
@@ -108,23 +105,21 @@ async function updateClientDirectivesInComponents(): Promise<void> {
   try {
     const files = await fs.readdir(componentsDir, { withFileTypes: true });
 
-    const processPromises = files.map((file) =>
-      limit(async () => {
-        const componentPath = path.join(componentsDir, file.name);
+    const processPromises = files.map(async (file) => {
+      const componentPath = path.join(componentsDir, file.name);
 
-        if (!file.isFile() || !(componentPath.endsWith('.js') || componentPath.endsWith('.cjs'))) {
-          return; // Skip non-file or non-js/cjs files
-        }
+      if (!file.isFile() || !(componentPath.endsWith('.js') || componentPath.endsWith('.cjs'))) {
+        return; // Skip non-file or non-js/cjs files
+      }
 
-        const { hasClientDirective } = await analyzeFile(componentPath);
+      const { hasClientDirective } = await analyzeFile(componentPath);
 
-        if (!hasClientDirective) {
-          return; // Skip if no "use client"
-        }
+      if (!hasClientDirective) {
+        return; // Skip if no "use client"
+      }
 
-        await analyzeComponent(componentPath);
-      }),
-    );
+      await analyzeComponent(componentPath);
+    });
 
     await Promise.all(processPromises); // Process all files concurrently
   } catch (error) {
