@@ -38,6 +38,9 @@ importers:
       simple-git-hooks:
         specifier: 2.11.1
         version: 2.11.1
+      tsup:
+        specifier: 8.3.0
+        version: 8.3.0(jiti@1.21.6)(postcss@8.4.47)(typescript@5.6.2)(yaml@2.5.1)
       turbo:
         specifier: 2.1.2
         version: 2.1.2
