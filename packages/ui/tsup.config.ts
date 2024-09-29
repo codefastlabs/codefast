@@ -67,7 +67,7 @@ async function addUseClientDirective(filePath: string, content: string): Promise
 async function analyzeComponent(componentPath: string): Promise<void> {
   try {
     const { content } = await analyzeFile(componentPath);
-    const importRegex = /import.*?from\s*['"](?<path>[^'"]+)['"]/g;
+    const importRegex = /import[\s\S]*?from\s*['"](?<path>[^'"]+)['"]/g;
     const requireRegex = /require\(['"](?<path>[^'"]+)['"]\)/g;
     let match;
 
