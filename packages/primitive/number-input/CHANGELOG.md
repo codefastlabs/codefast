@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.20
+
+### Patch Changes
+
+- Update timeout type and remove @types/node
+- Updated dependencies
+  - @codefast-ui/input@0.1.20
+
 ## 0.1.19
 
 ### Patch Changes
