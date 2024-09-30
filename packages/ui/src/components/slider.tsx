@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Slider
  * -------------------------------------------------------------------------- */
 
-type SliderElement = React.ElementRef<typeof SliderPrimitive.Root>;
+type SliderElement = React.ComponentRef<typeof SliderPrimitive.Root>;
 type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>;
 
 const Slider = React.forwardRef<SliderElement, SliderProps>(({ className, ...props }, forwardedRef) => (

@@ -53,7 +53,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): Re
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
-type AccordionTriggerElement = React.ElementRef<typeof AccordionPrimitive.Trigger>;
+type AccordionTriggerElement = React.ComponentRef<typeof AccordionPrimitive.Trigger>;
 type AccordionTriggerProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
 
 const AccordionTrigger = React.forwardRef<AccordionTriggerElement, AccordionTriggerProps>(
@@ -74,7 +74,7 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */
 
-type AccordionContentElement = React.ElementRef<typeof AccordionPrimitive.Content>;
+type AccordionContentElement = React.ComponentRef<typeof AccordionPrimitive.Content>;
 type AccordionContentProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>;
 
 const AccordionContent = React.forwardRef<AccordionContentElement, AccordionContentProps>(

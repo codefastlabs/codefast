@@ -8,7 +8,7 @@ import { buttonVariants } from '@/styles/button-variants';
  * Component: NavigationMenu
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuElement = React.ElementRef<typeof NavigationMenuPrimitive.Root>;
+type NavigationMenuElement = React.ComponentRef<typeof NavigationMenuPrimitive.Root>;
 type NavigationMenuProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>;
 
 const NavigationMenu = React.forwardRef<NavigationMenuElement, NavigationMenuProps>(
@@ -30,7 +30,7 @@ NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName;
  * Component: NavigationMenuList
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuListElement = React.ElementRef<typeof NavigationMenuPrimitive.List>;
+type NavigationMenuListElement = React.ComponentRef<typeof NavigationMenuPrimitive.List>;
 type NavigationMenuListProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>;
 
 const NavigationMenuList = React.forwardRef<NavigationMenuListElement, NavigationMenuListProps>(
@@ -60,7 +60,7 @@ const NavigationMenuItem = NavigationMenuPrimitive.Item;
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuTriggerElement = React.ElementRef<typeof NavigationMenuPrimitive.Trigger>;
+type NavigationMenuTriggerElement = React.ComponentRef<typeof NavigationMenuPrimitive.Trigger>;
 type NavigationMenuTriggerProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>;
 
 const NavigationMenuTrigger = React.forwardRef<NavigationMenuTriggerElement, NavigationMenuTriggerProps>(
@@ -88,7 +88,7 @@ NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName;
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuContentElement = React.ElementRef<typeof NavigationMenuPrimitive.Content>;
+type NavigationMenuContentElement = React.ComponentRef<typeof NavigationMenuPrimitive.Content>;
 type NavigationMenuContentProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>;
 
 const NavigationMenuContent = React.forwardRef<NavigationMenuContentElement, NavigationMenuContentProps>(
@@ -124,7 +124,7 @@ const NavigationMenuLink = NavigationMenuPrimitive.Link;
  * Component: NavigationMenuViewport
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuViewportElement = React.ElementRef<typeof NavigationMenuPrimitive.Viewport>;
+type NavigationMenuViewportElement = React.ComponentRef<typeof NavigationMenuPrimitive.Viewport>;
 type NavigationMenuViewportProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>;
 
 const NavigationMenuViewport = React.forwardRef<NavigationMenuViewportElement, NavigationMenuViewportProps>(
@@ -150,7 +150,7 @@ NavigationMenuViewport.displayName = NavigationMenuPrimitive.Viewport.displayNam
  * Component: NavigationMenuIndicator
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuIndicatorElement = React.ElementRef<typeof NavigationMenuPrimitive.Indicator>;
+type NavigationMenuIndicatorElement = React.ComponentRef<typeof NavigationMenuPrimitive.Indicator>;
 type NavigationMenuIndicatorProps = React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>;
 
 const NavigationMenuIndicator = React.forwardRef<NavigationMenuIndicatorElement, NavigationMenuIndicatorProps>(

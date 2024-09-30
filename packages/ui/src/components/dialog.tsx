@@ -22,7 +22,7 @@ const DialogTrigger = DialogPrimitive.Trigger;
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
-type DialogContentElement = React.ElementRef<typeof DialogPrimitive.Content>;
+type DialogContentElement = React.ComponentRef<typeof DialogPrimitive.Content>;
 type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>;
 
 const DialogContent = React.forwardRef<DialogContentElement, DialogContentProps>(
@@ -109,7 +109,7 @@ function DialogFooter({ className, ...props }: DialogFooterProps): React.JSX.Ele
  * Component: DialogTitle
  * -------------------------------------------------------------------------- */
 
-type DialogTitleElement = React.ElementRef<typeof DialogPrimitive.Title>;
+type DialogTitleElement = React.ComponentRef<typeof DialogPrimitive.Title>;
 type DialogTitleProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>;
 
 const DialogTitle = React.forwardRef<DialogTitleElement, DialogTitleProps>(({ className, ...props }, forwardedRef) => (
@@ -126,7 +126,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
-type DialogDescriptionElement = React.ElementRef<typeof DialogPrimitive.Description>;
+type DialogDescriptionElement = React.ComponentRef<typeof DialogPrimitive.Description>;
 type DialogDescriptionProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>;
 
 const DialogDescription = React.forwardRef<DialogDescriptionElement, DialogDescriptionProps>(
@@ -145,7 +145,7 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
  * Component: DialogClose
  * -------------------------------------------------------------------------- */
 
-type DialogCloseElement = React.ElementRef<typeof DialogPrimitive.Close>;
+type DialogCloseElement = React.ComponentRef<typeof DialogPrimitive.Close>;
 
 interface DialogCloseProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
   size?: ButtonVariantsProps['size'];

@@ -115,7 +115,7 @@ FormItem.displayName = FORM_ITEM_NAME;
 
 const FORM_LABEL_NAME = 'FormLabel';
 
-type FormFieldElement = React.ElementRef<typeof LabelPrimitive.Root>;
+type FormFieldElement = React.ComponentRef<typeof LabelPrimitive.Root>;
 type FormLabelProps = React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
 
 const FormLabel = React.forwardRef<FormFieldElement, FormLabelProps>(
@@ -134,7 +134,7 @@ FormLabel.displayName = FORM_LABEL_NAME;
 
 const FORM_CONTROL_NAME = 'FormControl';
 
-type FormControlElement = React.ElementRef<typeof Slot>;
+type FormControlElement = React.ComponentRef<typeof Slot>;
 type FormControlProps = React.ComponentPropsWithoutRef<typeof Slot>;
 
 const FormControl = React.forwardRef<FormControlElement, FormControlProps>(

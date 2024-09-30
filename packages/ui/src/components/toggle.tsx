@@ -6,7 +6,7 @@ import { toggleVariants, type ToggleVariantsProps } from '@/styles/toggle-varian
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
-type ToggleElement = React.ElementRef<typeof TogglePrimitive.Root>;
+type ToggleElement = React.ComponentRef<typeof TogglePrimitive.Root>;
 interface ToggleProps
   extends Omit<React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root>, 'prefix'>,
     ToggleVariantsProps {

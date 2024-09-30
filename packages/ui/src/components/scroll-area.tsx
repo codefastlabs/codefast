@@ -46,7 +46,7 @@ type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 
 const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
-type ScrollAreaElement = React.ElementRef<typeof ScrollAreaPrimitive.Root>;
+type ScrollAreaElement = React.ComponentRef<typeof ScrollAreaPrimitive.Root>;
 type ScrollAreaProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
 
 const ScrollArea = React.forwardRef<ScrollAreaElement, ScrollAreaProps>(
@@ -70,7 +70,7 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
  * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-type ScrollAreaScrollbarElement = React.ElementRef<typeof ScrollAreaPrimitive.Scrollbar>;
+type ScrollAreaScrollbarElement = React.ComponentRef<typeof ScrollAreaPrimitive.Scrollbar>;
 type ScrollAreaScrollbarProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Scrollbar>;
 
 const ScrollAreaScrollbar = React.forwardRef<ScrollAreaScrollbarElement, ScrollAreaScrollbarProps>(
