@@ -71,10 +71,11 @@ function DayButton({
       ref={buttonRef}
       icon
       className={cn(
-        'focus-visible:-outline-offset-2',
-        (!modifiers.selected || modifiers.range_middle) && !modifiers.today && 'hover:bg-transparent',
-        modifiers.today && !modifiers.selected && 'bg-accent',
-        modifiers.outside && (!modifiers.selected || modifiers.range_middle) && 'text-opacity-30',
+        'transition-none focus-visible:-outline-offset-2',
+        (!modifiers.selected || modifiers.range_middle) && [
+          modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
+          modifiers.outside && 'text-opacity-30',
+        ],
         className,
       )}
       size="sm"
@@ -108,9 +109,8 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
           variant: 'outline',
         }),
         [UI.Root]: 'inline-grid gap-4',
-        [UI.Chevron]: '',
         [UI.Day]: 'py-0',
-        [UI.DayButton]: 'hover:border-primary border border-transparent',
+        [UI.DayButton]: 'border border-transparent',
         [UI.CaptionLabel]: 'inline-flex items-center',
         [UI.Dropdowns]: 'inline-flex items-center gap-2',
         [UI.Dropdown]: 'absolute size-full appearance-none opacity-0',
@@ -118,7 +118,6 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.Footer]: 'text-sm',
         [UI.MonthGrid]: 'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
         [UI.MonthCaption]: 'flex w-full justify-center text-sm font-medium',
-        [UI.MonthsDropdown]: '',
         [UI.Month]: 'grid grid-rows-[2rem_1fr] gap-4',
         [UI.Months]: 'relative flex flex-wrap gap-4',
         [UI.Nav]: '-mr-4',
@@ -127,12 +126,9 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.Weekday]: 'text-muted-foreground flex-1 text-sm font-normal',
         [UI.Weekdays]: 'flex',
         [UI.WeekNumber]: 'text-foreground/50 size-9 text-center text-xs',
-        [UI.WeekNumberHeader]: '',
-        [UI.YearsDropdown]: '',
         [SelectionState.range_start]: 'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
         [SelectionState.range_middle]: 'bg-accent first:rounded-l-md last:rounded-r-md',
         [SelectionState.range_end]: 'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
-        [SelectionState.selected]: '',
         ...classNames,
       }}
       components={{ Chevron, DayButton }}

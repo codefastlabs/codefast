@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.18
+
+### Patch Changes
+
+- Improve various component styles
+
 ## 0.1.17
 
 ### Patch Changes
