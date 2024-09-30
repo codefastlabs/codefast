@@ -432,7 +432,7 @@ const NumberInputButtonImpl = React.forwardRef<NumberInputButtonImplElement, Num
   ): React.JSX.Element => {
     const { ariaIncrementLabel, ariaDecrementLabel, disabled, readOnly, id, onIncrement, onDecrement } =
       useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
-    const timeoutIdRef = React.useRef<NodeJS.Timeout | null>(null);
+    const timeoutIdRef = React.useRef<number | null>(null);
 
     const startActionInterval = React.useCallback((callback: () => void) => {
       const interval = 100;

@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.20
+
+### Patch Changes
+
+- Update timeout type and remove @types/node
+
 ## 0.1.19
 
 ### Patch Changes
