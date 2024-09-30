@@ -1,6 +1,9 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.1.18",
+  "version": "0.1.19",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
