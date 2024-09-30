@@ -64,7 +64,7 @@ const SheetTrigger = SheetPrimitive.Trigger;
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
-type SheetContentElement = React.ElementRef<typeof SheetPrimitive.Content>;
+type SheetContentElement = React.ComponentRef<typeof SheetPrimitive.Content>;
 type SheetContentProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
 
 const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
@@ -143,7 +143,7 @@ SheetFooter.displayName = 'SheetFooter';
  * Component: SheetTitle
  * -------------------------------------------------------------------------- */
 
-type SheetTitleElement = React.ElementRef<typeof SheetPrimitive.Title>;
+type SheetTitleElement = React.ComponentRef<typeof SheetPrimitive.Title>;
 type SheetTitleProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>;
 
 const SheetTitle = React.forwardRef<SheetTitleElement, SheetTitleProps>(({ className, ...props }, forwardedRef) => (
@@ -160,7 +160,7 @@ SheetTitle.displayName = SheetPrimitive.Title.displayName;
  * Component: SheetDescription
  * -------------------------------------------------------------------------- */
 
-type SheetDescriptionElement = React.ElementRef<typeof SheetPrimitive.Description>;
+type SheetDescriptionElement = React.ComponentRef<typeof SheetPrimitive.Description>;
 type SheetDescriptionProps = React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>;
 
 const SheetDescription = React.forwardRef<SheetDescriptionElement, SheetDescriptionProps>(
@@ -179,7 +179,7 @@ SheetDescription.displayName = SheetPrimitive.Description.displayName;
  * Component: SheetClose
  * -------------------------------------------------------------------------- */
 
-type SheetCloseElement = React.ElementRef<typeof SheetPrimitive.Close>;
+type SheetCloseElement = React.ComponentRef<typeof SheetPrimitive.Close>;
 
 interface SheetCloseProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close> {
   size?: ButtonVariantsProps['size'];

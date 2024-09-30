@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: RadioCards
  * -------------------------------------------------------------------------- */
 
-type RadioCardsElement = React.ElementRef<typeof RadioGroupPrimitive.Root>;
+type RadioCardsElement = React.ComponentRef<typeof RadioGroupPrimitive.Root>;
 type RadioCardsProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
 const RadioCards = React.forwardRef<RadioCardsElement, RadioCardsProps>(({ className, ...props }, forwardedRef) => {
@@ -19,7 +19,7 @@ RadioCards.displayName = RadioGroupPrimitive.Root.displayName;
  * Component: RadioCardsItem
  * -------------------------------------------------------------------------- */
 
-type RadioCardsItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
+type RadioCardsItemElement = React.ComponentRef<typeof RadioGroupPrimitive.Item>;
 type RadioCardsItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
 const RadioCardsItem = React.forwardRef<RadioCardsItemElement, RadioCardsItemProps>(

@@ -32,7 +32,7 @@ type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
-type SeparatorElement = React.ElementRef<typeof SeparatorPrimitive.Root>;
+type SeparatorElement = React.ComponentRef<typeof SeparatorPrimitive.Root>;
 
 interface SeparatorProps
   extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>,

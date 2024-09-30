@@ -29,7 +29,7 @@ const SelectValue = SelectPrimitive.Value;
  * Component: SelectTrigger
  * -------------------------------------------------------------------------- */
 
-type SelectTriggerElement = React.ElementRef<typeof SelectPrimitive.Trigger>;
+type SelectTriggerElement = React.ComponentRef<typeof SelectPrimitive.Trigger>;
 interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
   size?: ButtonVariantsProps['size'];
 }
@@ -59,7 +59,7 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
  * Component: SelectScrollUpButton
  * -------------------------------------------------------------------------- */
 
-type SelectScrollUpButtonElement = React.ElementRef<typeof SelectPrimitive.ScrollUpButton>;
+type SelectScrollUpButtonElement = React.ComponentRef<typeof SelectPrimitive.ScrollUpButton>;
 type SelectScrollUpButtonProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>;
 
 const SelectScrollUpButton = React.forwardRef<SelectScrollUpButtonElement, SelectScrollUpButtonProps>(
@@ -80,7 +80,7 @@ SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
  * Component: SelectScrollDownButton
  * -------------------------------------------------------------------------- */
 
-type SelectScrollDownButtonElement = React.ElementRef<typeof SelectPrimitive.ScrollDownButton>;
+type SelectScrollDownButtonElement = React.ComponentRef<typeof SelectPrimitive.ScrollDownButton>;
 type SelectScrollDownButtonProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>;
 
 const SelectScrollDownButton = React.forwardRef<SelectScrollDownButtonElement, SelectScrollDownButtonProps>(
@@ -101,7 +101,7 @@ SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayNam
  * Component: SelectContent
  * -------------------------------------------------------------------------- */
 
-type SelectContentElement = React.ElementRef<typeof SelectPrimitive.Content>;
+type SelectContentElement = React.ComponentRef<typeof SelectPrimitive.Content>;
 type SelectContentProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>;
 
 const SelectContent = React.forwardRef<SelectContentElement, SelectContentProps>(
@@ -154,7 +154,7 @@ SelectContent.displayName = SelectPrimitive.Content.displayName;
  * Component: SelectLabel
  * -------------------------------------------------------------------------- */
 
-type SelectLabelElement = React.ElementRef<typeof SelectPrimitive.Label>;
+type SelectLabelElement = React.ComponentRef<typeof SelectPrimitive.Label>;
 type SelectLabelProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>;
 
 const SelectLabel = React.forwardRef<SelectLabelElement, SelectLabelProps>(({ className, ...props }, forwardedRef) => (
@@ -171,7 +171,7 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName;
  * Component: SelectItem
  * -------------------------------------------------------------------------- */
 
-type SelectItemElement = React.ElementRef<typeof SelectPrimitive.Item>;
+type SelectItemElement = React.ComponentRef<typeof SelectPrimitive.Item>;
 type SelectItemProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>;
 
 const SelectItem = React.forwardRef<SelectItemElement, SelectItemProps>(
@@ -202,7 +202,7 @@ SelectItem.displayName = SelectPrimitive.Item.displayName;
  * Component: SelectSeparator
  * -------------------------------------------------------------------------- */
 
-type SelectSeparatorElement = React.ElementRef<typeof SelectPrimitive.Separator>;
+type SelectSeparatorElement = React.ComponentRef<typeof SelectPrimitive.Separator>;
 type SelectSeparatorProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>;
 
 const SelectSeparator = React.forwardRef<SelectSeparatorElement, SelectSeparatorProps>(

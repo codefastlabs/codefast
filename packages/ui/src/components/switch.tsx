@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Switch
  * -------------------------------------------------------------------------- */
 
-type SwitchElement = React.ElementRef<typeof SwitchPrimitives.Root>;
+type SwitchElement = React.ComponentRef<typeof SwitchPrimitives.Root>;
 type SwitchProps = React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>;
 
 const Switch = React.forwardRef<SwitchElement, SwitchProps>(({ className, ...props }, forwardedRef) => (
