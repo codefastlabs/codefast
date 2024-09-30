@@ -59,7 +59,7 @@ export const SizeNative: Story = {
     ...Default.args,
     size: 3,
     maxLength: 3,
-    className: 'w-auto',
+    className: 'w-auto inline-flex',
     placeholder: 'CVV',
   },
   render: (args) => {
