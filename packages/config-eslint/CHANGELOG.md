@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.19
+
+### Patch Changes
+
+- Add bugs URL and update dependencies
+
 ## 0.1.18
 
 ### Patch Changes
