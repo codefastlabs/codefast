@@ -26,7 +26,7 @@ export class Vegas {
   private ended: boolean;
   private timerElement: HTMLElement | null;
   private overlayElement: HTMLElement | null;
-  private timeout: NodeJS.Timeout | null;
+  private timeout: number | null;
   private first: boolean;
   private readonly transitions: VegasTransition[];
   private readonly animations: VegasAnimation[];

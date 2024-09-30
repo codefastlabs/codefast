@@ -1,6 +1,6 @@
 {
   "name": "@codefast/third-parties",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -33,7 +33,6 @@
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
-    "@types/node": "22.7.4",
     "esbuild-sass-plugin": "3.3.1",
     "eslint": "8.57.0",
     "tsup": "8.3.0",
