@@ -20,7 +20,7 @@ const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
  * Component: CollapsibleContent
  * -------------------------------------------------------------------------- */
 
-type CollapsibleContentElement = React.ElementRef<typeof CollapsiblePrimitive.CollapsibleContent>;
+type CollapsibleContentElement = React.ComponentRef<typeof CollapsiblePrimitive.CollapsibleContent>;
 type CollapsibleContentProps = React.ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleContent>;
 
 const CollapsibleContent = React.forwardRef<CollapsibleContentElement, CollapsibleContentProps>(

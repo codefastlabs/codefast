@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
-type RadioGroupElement = React.ElementRef<typeof RadioGroupPrimitive.Root>;
+type RadioGroupElement = React.ComponentRef<typeof RadioGroupPrimitive.Root>;
 type RadioGroupProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
 const RadioGroup = React.forwardRef<RadioGroupElement, RadioGroupProps>(({ className, ...props }, forwardedRef) => {
@@ -19,7 +19,7 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
-type RadioGroupItemElement = React.ElementRef<typeof RadioGroupPrimitive.Item>;
+type RadioGroupItemElement = React.ComponentRef<typeof RadioGroupPrimitive.Item>;
 type RadioGroupItemProps = React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
 const RadioGroupItem = React.forwardRef<RadioGroupItemElement, RadioGroupItemProps>(

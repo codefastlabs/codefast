@@ -26,7 +26,7 @@ const DrawerTrigger = DrawerPrimitive.Trigger;
  * Component: DrawerContent
  * -------------------------------------------------------------------------- */
 
-type DrawerContentElement = React.ElementRef<typeof DrawerPrimitive.Content>;
+type DrawerContentElement = React.ComponentRef<typeof DrawerPrimitive.Content>;
 type DrawerContentProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>;
 
 const DrawerContent = React.forwardRef<DrawerContentElement, DrawerContentProps>(
@@ -84,7 +84,7 @@ function DrawerFooter({ className, ...props }: DrawerFooterProps): React.JSX.Ele
  * Component: DrawerTitle
  * -------------------------------------------------------------------------- */
 
-type DrawerTitleElement = React.ElementRef<typeof DrawerPrimitive.Title>;
+type DrawerTitleElement = React.ComponentRef<typeof DrawerPrimitive.Title>;
 type DrawerTitleProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>;
 
 const DrawerTitle = React.forwardRef<DrawerTitleElement, DrawerTitleProps>(({ className, ...props }, forwardedRef) => (
@@ -101,7 +101,7 @@ DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
  * Component: DrawerDescription
  * -------------------------------------------------------------------------- */
 
-type DrawerDescriptionElement = React.ElementRef<typeof DrawerPrimitive.Description>;
+type DrawerDescriptionElement = React.ComponentRef<typeof DrawerPrimitive.Description>;
 type DrawerDescriptionProps = React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>;
 
 const DrawerDescription = React.forwardRef<DrawerDescriptionElement, DrawerDescriptionProps>(
@@ -120,7 +120,7 @@ DrawerDescription.displayName = DrawerPrimitive.Description.displayName;
  * Component: DrawerClose
  * -------------------------------------------------------------------------- */
 
-type DrawerCloseElement = React.ElementRef<typeof DrawerPrimitive.Close>;
+type DrawerCloseElement = React.ComponentRef<typeof DrawerPrimitive.Close>;
 
 interface DrawerCloseProps extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Close> {
   size?: ButtonVariantsProps['size'];

@@ -13,7 +13,7 @@ const { root, input } = inputVariants();
  * Component: TextInput
  * -------------------------------------------------------------------------- */
 
-type TextInputElement = React.ElementRef<typeof InputPrimitive.Item>;
+type TextInputElement = React.ComponentRef<typeof InputPrimitive.Item>;
 interface TextInputProps
   extends InputVariantsProps,
     React.ComponentProps<typeof InputPrimitive.Root>,

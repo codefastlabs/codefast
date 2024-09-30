@@ -10,7 +10,7 @@ import { Dialog, DialogContent } from '@/components/dialog';
  * Component: Command
  * -------------------------------------------------------------------------- */
 
-type CommandElement = React.ElementRef<typeof CommandPrimitive>;
+type CommandElement = React.ComponentRef<typeof CommandPrimitive>;
 type CommandProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive>;
 
 const Command = React.forwardRef<CommandElement, CommandProps>(({ className, ...props }, forwardedRef) => (
@@ -48,7 +48,7 @@ function CommandDialog({ children, ...props }: CommandDialogProps): React.JSX.El
  * Component: CommandInput
  * -------------------------------------------------------------------------- */
 
-type CommandInputElement = React.ElementRef<typeof CommandPrimitive.Input>;
+type CommandInputElement = React.ComponentRef<typeof CommandPrimitive.Input>;
 type CommandInputProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>;
 
 const CommandInput = React.forwardRef<CommandInputElement, CommandInputProps>(
@@ -73,7 +73,7 @@ CommandInput.displayName = CommandPrimitive.Input.displayName;
  * Component: CommandList
  * -------------------------------------------------------------------------- */
 
-type CommandListElement = React.ElementRef<typeof CommandPrimitive.List>;
+type CommandListElement = React.ComponentRef<typeof CommandPrimitive.List>;
 type CommandListProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.List>;
 
 const CommandList = React.forwardRef<CommandListElement, CommandListProps>(({ className, ...props }, forwardedRef) => (
@@ -90,7 +90,7 @@ CommandList.displayName = CommandPrimitive.List.displayName;
  * Component: CommandEmpty
  * -------------------------------------------------------------------------- */
 
-type CommandEmptyElement = React.ElementRef<typeof CommandPrimitive.Empty>;
+type CommandEmptyElement = React.ComponentRef<typeof CommandPrimitive.Empty>;
 type CommandEmptyProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>;
 
 const CommandEmpty = React.forwardRef<CommandEmptyElement, CommandEmptyProps>((props, forwardedRef) => (
@@ -103,7 +103,7 @@ CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
  * Component: CommandGroup
  * -------------------------------------------------------------------------- */
 
-type CommandGroupElement = React.ElementRef<typeof CommandPrimitive.Group>;
+type CommandGroupElement = React.ComponentRef<typeof CommandPrimitive.Group>;
 type CommandGroupProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Group>;
 
 const CommandGroup = React.forwardRef<CommandGroupElement, CommandGroupProps>(
@@ -125,7 +125,7 @@ CommandGroup.displayName = CommandPrimitive.Group.displayName;
  * Component: CommandSeparator
  * -------------------------------------------------------------------------- */
 
-type CommandSeparatorElement = React.ElementRef<typeof CommandPrimitive.Separator>;
+type CommandSeparatorElement = React.ComponentRef<typeof CommandPrimitive.Separator>;
 type CommandSeparatorProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Separator>;
 
 const CommandSeparator = React.forwardRef<CommandSeparatorElement, CommandSeparatorProps>(
@@ -140,7 +140,7 @@ CommandSeparator.displayName = CommandPrimitive.Separator.displayName;
  * Component: CommandItem
  * -------------------------------------------------------------------------- */
 
-type CommandItemElement = React.ElementRef<typeof CommandPrimitive.Item>;
+type CommandItemElement = React.ComponentRef<typeof CommandPrimitive.Item>;
 type CommandItemProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>;
 
 const CommandItem = React.forwardRef<CommandItemElement, CommandItemProps>(({ className, ...props }, forwardedRef) => (
@@ -163,7 +163,7 @@ CommandItem.displayName = CommandPrimitive.Item.displayName;
  * Component: CommandLoading
  * -------------------------------------------------------------------------- */
 
-type CommandLoadingElement = React.ElementRef<typeof CommandPrimitive.Loading>;
+type CommandLoadingElement = React.ComponentRef<typeof CommandPrimitive.Loading>;
 type CommandLoadingProps = React.ComponentPropsWithoutRef<typeof CommandPrimitive.Loading>;
 
 const CommandLoading = React.forwardRef<CommandLoadingElement, CommandLoadingProps>(

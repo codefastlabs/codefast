@@ -21,7 +21,7 @@ const useToggleGroupScope = createToggleGroupScope();
 
 const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
-type ToggleGroupElement = React.ElementRef<typeof ToggleGroupPrimitive.Root>;
+type ToggleGroupElement = React.ComponentRef<typeof ToggleGroupPrimitive.Root>;
 type ToggleGroupProps = React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
 
 const ToggleGroup = React.forwardRef<ToggleGroupElement, ToggleGroupProps>(
@@ -54,7 +54,7 @@ ToggleGroup.displayName = TOGGLE_GROUP_NAME;
 
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
-type ToggleGroupItemElement = React.ElementRef<typeof ToggleGroupPrimitive.Item>;
+type ToggleGroupItemElement = React.ComponentRef<typeof ToggleGroupPrimitive.Item>;
 interface ToggleGroupItemProps
   extends Omit<React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
   prefix?: React.ReactNode;

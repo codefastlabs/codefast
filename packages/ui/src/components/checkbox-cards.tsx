@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
  * Component: CheckboxCards
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsElement = React.ElementRef<typeof CheckboxGroupPrimitive.Root>;
+type CheckboxCardsElement = React.ComponentRef<typeof CheckboxGroupPrimitive.Root>;
 type CheckboxCardsProps = React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Root>;
 
 const CheckboxCards = React.forwardRef<CheckboxCardsElement, CheckboxCardsProps>(
@@ -22,7 +22,7 @@ CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
  * Component: CheckboxCardsItem
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsItemElement = React.ElementRef<typeof CheckboxGroupPrimitive.Item>;
+type CheckboxCardsItemElement = React.ComponentRef<typeof CheckboxGroupPrimitive.Item>;
 
 interface CheckboxCardsItemProps extends React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
   checkboxClassName?: string;

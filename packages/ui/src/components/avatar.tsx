@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Avatar
  * -------------------------------------------------------------------------- */
 
-type AvatarElement = React.ElementRef<typeof AvatarPrimitive.Root>;
+type AvatarElement = React.ComponentRef<typeof AvatarPrimitive.Root>;
 type AvatarProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>;
 
 const Avatar = React.forwardRef<AvatarElement, AvatarProps>(({ className, ...props }, forwardedRef) => (
@@ -23,7 +23,7 @@ Avatar.displayName = AvatarPrimitive.Root.displayName;
  * Component: AvatarImage
  * -------------------------------------------------------------------------- */
 
-type AvatarImageElement = React.ElementRef<typeof AvatarPrimitive.Image>;
+type AvatarImageElement = React.ComponentRef<typeof AvatarPrimitive.Image>;
 type AvatarImageProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>;
 
 const AvatarImage = React.forwardRef<AvatarImageElement, AvatarImageProps>(({ className, ...props }, forwardedRef) => (
@@ -36,7 +36,7 @@ AvatarImage.displayName = AvatarPrimitive.Image.displayName;
  * Component: AvatarFallback
  * -------------------------------------------------------------------------- */
 
-type AvatarFallbackElement = React.ElementRef<typeof AvatarPrimitive.Fallback>;
+type AvatarFallbackElement = React.ComponentRef<typeof AvatarPrimitive.Fallback>;
 type AvatarFallbackProps = React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>;
 
 const AvatarFallback = React.forwardRef<AvatarFallbackElement, AvatarFallbackProps>(

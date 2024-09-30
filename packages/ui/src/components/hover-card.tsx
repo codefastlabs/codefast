@@ -20,7 +20,7 @@ const HoverCardTrigger = HoverCardPrimitive.Trigger;
  * Component: HoverCardContent
  * -------------------------------------------------------------------------- */
 
-type HoverCardContentElement = React.ElementRef<typeof HoverCardPrimitive.Content>;
+type HoverCardContentElement = React.ComponentRef<typeof HoverCardPrimitive.Content>;
 type HoverCardContentProps = React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>;
 
 const HoverCardContent = React.forwardRef<HoverCardContentElement, HoverCardContentProps>(
@@ -56,7 +56,7 @@ HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;
  * Component: HoverCardArrow
  * -------------------------------------------------------------------------- */
 
-type HoverCardArrowElement = React.ElementRef<typeof HoverCardPrimitive.Arrow>;
+type HoverCardArrowElement = React.ComponentRef<typeof HoverCardPrimitive.Arrow>;
 type HoverCardArrowProps = React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Arrow>;
 
 const HoverCardArrow = React.forwardRef<HoverCardArrowElement, HoverCardArrowProps>(

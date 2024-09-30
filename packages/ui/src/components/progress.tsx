@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Progress
  * -------------------------------------------------------------------------- */
 
-type ProgressElement = React.ElementRef<typeof ProgressPrimitive.Root>;
+type ProgressElement = React.ComponentRef<typeof ProgressPrimitive.Root>;
 type ProgressProps = React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>;
 
 const Progress = React.forwardRef<ProgressElement, ProgressProps>(({ className, value, ...props }, forwardedRef) => (

@@ -27,7 +27,7 @@ const PopoverAnchor = PopoverPrimitive.Anchor;
  * Component: PopoverContent
  * -------------------------------------------------------------------------- */
 
-type PopoverContentElement = React.ElementRef<typeof PopoverPrimitive.Content>;
+type PopoverContentElement = React.ComponentRef<typeof PopoverPrimitive.Content>;
 type PopoverContentProps = React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>;
 
 const PopoverContent = React.forwardRef<PopoverContentElement, PopoverContentProps>(
@@ -63,7 +63,7 @@ PopoverContent.displayName = PopoverPrimitive.Content.displayName;
  * Component: PopoverArrow
  * -------------------------------------------------------------------------- */
 
-type PopoverArrowElement = React.ElementRef<typeof PopoverPrimitive.Arrow>;
+type PopoverArrowElement = React.ComponentRef<typeof PopoverPrimitive.Arrow>;
 type PopoverArrowProps = React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Arrow>;
 
 const PopoverArrow = React.forwardRef<PopoverArrowElement, PopoverArrowProps>(

@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
  * Component: InputOtp
  * -------------------------------------------------------------------------- */
 
-type InputOTPElement = React.ElementRef<typeof OTPInput>;
+type InputOTPElement = React.ComponentRef<typeof OTPInput>;
 type InputOTPProps = React.ComponentPropsWithoutRef<typeof OTPInput>;
 
 const InputOTP = React.forwardRef<InputOTPElement, InputOTPProps>(

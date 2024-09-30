@@ -21,7 +21,7 @@ const useInputScope = createInputScope();
 interface NumberInputContextValue {
   formatOptions: Intl.NumberFormatOptions;
   formatValue: (value?: number) => string;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   onChange: (value?: number) => void;
   onDecrement: () => void;
   onDecrementToMin: () => void;
@@ -193,7 +193,7 @@ NumberInput.displayName = NUMBER_INPUT_NAME;
 
 const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 
-type NumberInputItemElement = React.ElementRef<typeof InputPrimitive.Item>;
+type NumberInputItemElement = React.ComponentRef<typeof InputPrimitive.Item>;
 type NumberInputItemProps = Omit<
   React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
   'min' | 'max' | 'value' | 'step' | 'onChange' | 'defaultValue' | 'disabled' | 'readOnly' | 'prefix' | 'id'

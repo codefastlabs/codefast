@@ -27,7 +27,7 @@ const TooltipTrigger = TooltipPrimitive.Trigger;
  * Component: TooltipContent
  * -------------------------------------------------------------------------- */
 
-type TooltipContentElement = React.ElementRef<typeof TooltipPrimitive.Content>;
+type TooltipContentElement = React.ComponentRef<typeof TooltipPrimitive.Content>;
 type TooltipContentProps = React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>;
 
 const TooltipContent = React.forwardRef<TooltipContentElement, TooltipContentProps>(
@@ -63,7 +63,7 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
  * Component: TooltipArrow
  * -------------------------------------------------------------------------- */
 
-type TooltipArrowElement = React.ElementRef<typeof TooltipPrimitive.Arrow>;
+type TooltipArrowElement = React.ComponentRef<typeof TooltipPrimitive.Arrow>;
 type TooltipArrowProps = React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Arrow>;
 
 const TooltipArrow = React.forwardRef<TooltipArrowElement, TooltipArrowProps>(

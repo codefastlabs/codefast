@@ -10,7 +10,7 @@ const { root, input } = inputVariants();
  * Component: NumberInput
  * -------------------------------------------------------------------------- */
 
-type NumberInputElement = React.ElementRef<typeof NumberInputPrimitive.Item>;
+type NumberInputElement = React.ComponentRef<typeof NumberInputPrimitive.Item>;
 interface NumberInputProps
   extends InputVariantsProps,
     React.ComponentProps<typeof NumberInputPrimitive.Root>,

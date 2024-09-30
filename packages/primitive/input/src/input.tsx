@@ -12,7 +12,7 @@ type ScopedProps<P> = P & { __scopeInput?: Scope };
 const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
 
 interface InputContextValue {
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);

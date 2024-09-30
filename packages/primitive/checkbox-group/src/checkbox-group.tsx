@@ -114,7 +114,7 @@ CheckboxGroup.displayName = CHECKBOX_GROUP_NAME;
 
 const ITEM_NAME = 'CheckboxGroupItem';
 
-type CheckboxGroupItemElement = React.ElementRef<typeof CheckboxPrimitive.Root>;
+type CheckboxGroupItemElement = React.ComponentRef<typeof CheckboxPrimitive.Root>;
 
 interface CheckboxGroupItemProps
   extends Omit<
@@ -163,7 +163,7 @@ CheckboxGroupItem.displayName = ITEM_NAME;
 
 const INDICATOR_NAME = 'CheckboxGroupIndicator';
 
-type CheckboxGroupIndicatorElement = React.ElementRef<typeof CheckboxPrimitive.Indicator>;
+type CheckboxGroupIndicatorElement = React.ComponentRef<typeof CheckboxPrimitive.Indicator>;
 type CheckboxGroupIndicatorProps = React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Indicator>;
 
 const CheckboxGroupIndicator = React.forwardRef<CheckboxGroupIndicatorElement, CheckboxGroupIndicatorProps>(
