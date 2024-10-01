@@ -12,17 +12,17 @@ interface SlideshowProps {
 
 export function Slideshow({ options, ...props }: SlideshowProps): React.JSX.Element {
   const slideshowRef = React.useRef<HTMLDivElement>(null);
+  const vegasRef = React.useRef<Vegas | null>(null);
 
   React.useEffect(() => {
-    if (!slideshowRef.current) {
+    if (!slideshowRef.current || vegasRef.current) {
       return;
     }
 
     const vegas = new Vegas(slideshowRef.current, options);
 
-    vegas.init();
+    vegasRef.current = vegas;
 
-    // Cleanup on unmounting
     return () => {
       vegas.destroy();
     };
