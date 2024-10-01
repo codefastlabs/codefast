@@ -24,10 +24,7 @@ interface PasswordInputProps
     Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix' | 'type'> {}
 
 const PasswordInput = React.forwardRef<PasswordInputElement, PasswordInputProps>(
-  (
-    { className, inputSize, loaderPosition = 'prefix', loading, prefix, spinner = <Spinner />, suffix, ...props },
-    forwardedRef,
-  ) => {
+  ({ className, inputSize, loaderPosition = 'prefix', loading, prefix, spinner, suffix, ...props }, forwardedRef) => {
     const [type, setType] = React.useState<'password' | 'text'>('password');
 
     return (
@@ -36,7 +33,7 @@ const PasswordInput = React.forwardRef<PasswordInputElement, PasswordInputProps>
         loaderPosition={loaderPosition}
         loading={loading}
         prefix={prefix}
-        spinner={spinner}
+        spinner={spinner || <Spinner />}
         suffix={suffix}
       >
         <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize })} type={type} {...props} />

@@ -35,7 +35,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       onChange,
       prefix,
       readOnly,
-      spinner = <Spinner />,
+      spinner,
       step,
       suffix,
       value,
@@ -57,7 +57,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       min={min}
       prefix={prefix}
       readOnly={readOnly}
-      spinner={spinner}
+      spinner={spinner || <Spinner />}
       step={step}
       suffix={suffix}
       value={value}
