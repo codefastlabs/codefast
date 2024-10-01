@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { type JSX } from 'react';
 import Link from 'next/link';
-import { PasswordInput } from '@codefast/ui';
 
 export default function Home(): JSX.Element {
   return (
@@ -34,8 +33,6 @@ export default function Home(): JSX.Element {
             width={180}
           />
         </div>
-
-        <PasswordInput />
       </main>
 
       <footer className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
