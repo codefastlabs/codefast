@@ -29,7 +29,6 @@ export function Search(): JSX.Element {
       <TextInput
         className="md:w-[100px] lg:w-[300px]"
         defaultValue={searchParams.get('search') ?? ''}
-        loaderPosition="prefix"
         placeholder="Search..."
         prefix={<SearchIcon />}
         type="search"

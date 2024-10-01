@@ -3,6 +3,7 @@ import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { buttonVariants } from '@/styles/button-variants';
 import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
+import { Spinner } from '@/components/spinner';
 
 const { root, input } = inputVariants();
 
@@ -22,17 +23,22 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       ariaDecrementLabel,
       ariaIncrementLabel,
       className,
-      inputSize,
       defaultValue,
       disabled,
       formatOptions,
       id,
+      inputSize,
+      loaderPosition = 'prefix',
+      loading,
       max,
       min,
-      readOnly,
-      step,
-      value,
       onChange,
+      prefix,
+      readOnly,
+      spinner = <Spinner />,
+      step,
+      suffix,
+      value,
       ...props
     },
     forwardedRef,
@@ -45,10 +51,15 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       disabled={disabled}
       formatOptions={formatOptions}
       id={id}
+      loaderPosition={loaderPosition}
+      loading={loading}
       max={max}
       min={min}
+      prefix={prefix}
       readOnly={readOnly}
+      spinner={spinner}
       step={step}
+      suffix={suffix}
       value={value}
       onChange={onChange}
     >
@@ -62,12 +73,13 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
         spellCheck="false"
         {...props}
       />
-      <div className="ml-auto grid h-full divide-y rounded-r-md border-l">
+      <div className="order-last ml-auto grid h-full divide-y overflow-hidden rounded-r-md border-l">
         <NumberInputPrimitive.IncrementButton
           className={buttonVariants({
             className: 'h-full rounded-none rounded-tr-md',
             icon: true,
             variant: 'ghost',
+            size: inputSize,
           })}
         >
           <ChevronUpIcon />
@@ -77,6 +89,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
             className: 'rounded-tb-md h-full rounded-none',
             icon: true,
             variant: 'ghost',
+            size: inputSize,
           })}
         >
           <ChevronDownIcon />

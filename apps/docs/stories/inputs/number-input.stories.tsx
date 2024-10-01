@@ -20,6 +20,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
+import { CalculatorIcon, FootprintsIcon } from 'lucide-react';
 
 const meta = {
   args: {
@@ -43,7 +44,7 @@ export const Default: Story = {
     placeholder: 'Placeholder',
   },
   render: (args) => {
-    return <NumberInput {...args} />;
+    return <NumberInput {...args} prefix={<CalculatorIcon />} />;
   },
 };
 
@@ -180,7 +181,7 @@ export const Step: Story = {
     step: 10,
   },
   render: (args) => {
-    return <NumberInput {...args} />;
+    return <NumberInput {...args} prefix={<FootprintsIcon />} />;
   },
 };
 
@@ -195,9 +196,12 @@ export const Sizes: Story = {
   render: (args) => {
     return (
       <div className="grid place-items-center gap-4 sm:grid-cols-3">
+        <NumberInput {...args} inputSize="xxs" />
+        <NumberInput {...args} inputSize="xs" />
         <NumberInput {...args} inputSize="sm" />
         <NumberInput {...args} />
         <NumberInput {...args} inputSize="lg" />
+        <NumberInput {...args} inputSize="xl" />
       </div>
     );
   },

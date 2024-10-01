@@ -42,7 +42,7 @@ interface NumberInputContextValue {
 const [NumberInputProvider, useNumberInputContext] =
   createNumberInputContext<NumberInputContextValue>(NUMBER_INPUT_NAME);
 
-interface NumberInputProps extends Omit<InputPrimitive.InputProps, 'prefix' | 'suffix' | 'loading' | 'loaderPosition'> {
+interface NumberInputProps extends React.ComponentProps<typeof InputPrimitive.Root> {
   ariaDecrementLabel?: string;
   ariaIncrementLabel?: string;
   defaultValue?: number;

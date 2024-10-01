@@ -19,10 +19,16 @@ const [InputProvider, useInputContext] = createInputContext<InputContextValue>(I
 
 type InputProps = React.PropsWithChildren<{
   className?: string;
+  loaderPosition?: 'prefix' | 'suffix';
+  loading?: boolean;
+  prefix?: React.ReactNode;
+  spinner?: React.ReactNode;
+  suffix?: React.ReactNode;
 }>;
 
 function Input(inputProps: InputProps): React.JSX.Element {
-  const { __scopeInput, ...props } = inputProps as ScopedProps<InputProps>;
+  const { __scopeInput, children, loaderPosition, loading, prefix, spinner, suffix, ...props } =
+    inputProps as ScopedProps<InputProps>;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -52,7 +58,11 @@ function Input(inputProps: InputProps): React.JSX.Element {
 
   return (
     <InputProvider inputRef={inputRef} scope={__scopeInput}>
-      <div role="presentation" onPointerDown={handlePointerDown} {...props} />
+      <div role="presentation" onPointerDown={handlePointerDown} {...props}>
+        {loading && loaderPosition === 'prefix' ? spinner : prefix}
+        {children}
+        {loading && loaderPosition === 'suffix' ? spinner : suffix}
+      </div>
     </InputProvider>
   );
 }
