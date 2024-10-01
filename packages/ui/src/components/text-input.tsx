@@ -17,19 +17,22 @@ type TextInputElement = React.ComponentRef<typeof InputPrimitive.Item>;
 interface TextInputProps
   extends InputVariantsProps,
     React.ComponentProps<typeof InputPrimitive.Root>,
-    Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix'> {
-  loaderPosition?: 'prefix' | 'suffix';
-  loading?: boolean;
-  prefix?: React.ReactNode;
-  suffix?: React.ReactNode;
-}
+    Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix'> {}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
-  ({ inputSize, className, loading, loaderPosition, prefix, suffix, ...props }, forwardedRef) => (
-    <InputPrimitive.Root className={root({ inputSize, className })}>
-      {loading && loaderPosition === 'prefix' ? <Spinner /> : prefix}
+  (
+    { className, inputSize, loaderPosition = 'prefix', loading, prefix, spinner = <Spinner />, suffix, ...props },
+    forwardedRef,
+  ) => (
+    <InputPrimitive.Root
+      className={root({ inputSize, className })}
+      loaderPosition={loaderPosition}
+      loading={loading}
+      prefix={prefix}
+      spinner={spinner}
+      suffix={suffix}
+    >
       <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize })} {...props} />
-      {loading && loaderPosition === 'suffix' ? <Spinner /> : suffix}
     </InputPrimitive.Root>
   ),
 );

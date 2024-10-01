@@ -1,5 +1,6 @@
 import { Badge } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { ShieldCheckIcon } from 'lucide-react';
 
 const meta = {
   args: {
@@ -97,19 +98,19 @@ export const Outline: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-4">
-      <Badge {...args} size="xs">
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="xs">
         xs badge
       </Badge>
-      <Badge {...args} size="sm">
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="sm">
         sm badge
       </Badge>
-      <Badge {...args} size="md">
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="md">
         md badge
       </Badge>
-      <Badge {...args} size="lg">
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="lg">
         lg badge
       </Badge>
-      <Badge {...args} size="xl">
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="xl">
         xl badge
       </Badge>
     </div>

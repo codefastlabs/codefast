@@ -2,8 +2,8 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 const toggleVariants = tv({
   base: [
-    'inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition',
-    '[&_svg]:size-4 [&_svg]:shrink-0',
+    'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition',
+    '[&>svg]:shrink-0',
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
     'disabled:pointer-events-none disabled:opacity-50',
   ],
@@ -20,12 +20,12 @@ const toggleVariants = tv({
       ghost: 'data-[state=on]:bg-accent hover:bg-accent/20 data-[state=on]:text-accent-foreground',
     },
     size: {
-      xxs: 'h-7 gap-2.5 px-2.5', // 28px
-      xs: 'px-2.75 gap-2.75 h-8', // 32px
-      sm: 'h-9 gap-3 px-3', // 36px
-      md: 'px-3.25 gap-3.25 h-10', // 40px
-      lg: 'h-11 gap-3.5 px-3.5', // 44px
-      xl: 'px-3.75 gap-3.75 h-12', // 48px
+      xxs: 'h-7 px-2.5 [&>svg]:size-3', // 28px
+      xs: 'px-2.75 h-8 [&>svg]:size-3', // 32px
+      sm: 'h-9 px-3 [&>svg]:size-4', // 36px
+      md: 'px-3.25 h-10 [&>svg]:size-4', // 40px
+      lg: 'h-11 px-3.5 [&>svg]:size-5', // 44px
+      xl: 'px-3.75 h-12 [&>svg]:size-5', // 48px
     },
     icon: {
       true: 'px-0',
