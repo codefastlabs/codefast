@@ -33,9 +33,11 @@ export class Vegas {
   private support: VegasSupport;
 
   /**
-   * Constructor for Vegas class.
-   * @param element - The DOM element to apply the slideshow to.
-   * @param options - Partial settings to customize the slideshow.
+   * Constructs a new instance of the slider.
+   *
+   * @param element - The HTML element that the slider will be attached to.
+   * @param options - Partial settings to customize the slider behavior.
+   * @returns An instance of the slider.
    */
   constructor(element: HTMLElement, options: Partial<VegasSettings>) {
     this.element = element;
@@ -56,6 +58,8 @@ export class Vegas {
     if (this.settings.shuffle) {
       this.shuffleSlides();
     }
+
+    this.init();
   }
 
   public shuffleSlides(): void {
