@@ -38,6 +38,53 @@ export const Default: Story = {
 };
 
 /* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-4">
+      <Button {...args} prefix={<SettingsIcon />} size="xxs">
+        xxs button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xs">
+        xs button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="sm">
+        sm button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="md">
+        md button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="lg">
+        lg button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xl">
+        xl button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xxs" variant="outline">
+        xxs button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xs" variant="outline">
+        xs button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="sm" variant="outline">
+        sm button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="md" variant="outline">
+        md button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="lg" variant="outline">
+        lg button
+      </Button>
+      <Button {...args} prefix={<SettingsIcon />} size="xl" variant="outline">
+        xl button
+      </Button>
+    </div>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
  * Story: Secondary
  * -------------------------------------------------------------------------- */
 
@@ -130,35 +177,6 @@ export const Link: Story = {
     <Button {...args} variant="link">
       Link Button
     </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Sizes
- * -------------------------------------------------------------------------- */
-
-export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-wrap items-center gap-4">
-      <Button {...args} prefix={<SettingsIcon />} size="xxs">
-        xxs button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xs">
-        xs button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="sm">
-        sm button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="md">
-        md button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="lg">
-        lg button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xl">
-        xl button
-      </Button>
-    </div>
   ),
 };
 
