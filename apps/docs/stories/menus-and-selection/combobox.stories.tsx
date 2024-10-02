@@ -111,7 +111,7 @@ export const Default: Story = {
         <PopoverTrigger asChild>
           <Button
             aria-expanded={open}
-            className="w-[200px] justify-between"
+            className="w-[200px] justify-between px-3"
             role="combobox"
             suffix={<ChevronDownIcon className="opacity-50" />}
             variant="outline"
@@ -134,7 +134,7 @@ export const Default: Story = {
                       setOpen(false);
                     }}
                   >
-                    <CheckIcon className={cn('mr-2 size-4', value === framework.value ? 'opacity-100' : 'opacity-0')} />
+                    <CheckIcon className={cn('size-4', value === framework.value ? 'opacity-100' : 'opacity-0')} />
                     {framework.label}
                   </CommandItem>
                 ))}
@@ -195,10 +195,10 @@ export const WithPopover: Story = {
         <Text className="text-muted-foreground text-sm">Status</Text>
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
-            <Button className="w-[150px] justify-start" size="sm" variant="outline">
+            <Button className="w-[150px] justify-start px-3" size="sm" variant="outline">
               {selectedStatus ? (
                 <>
-                  <selectedStatus.icon className="mr-2 size-4 shrink-0" />
+                  <selectedStatus.icon className="size-4 shrink-0" />
                   {selectedStatus.label}
                 </>
               ) : (
@@ -222,10 +222,7 @@ export const WithPopover: Story = {
                       }}
                     >
                       <Icon
-                        className={cn(
-                          'mr-2 size-4',
-                          status.value === selectedStatus?.value ? 'opacity-100' : 'opacity-40',
-                        )}
+                        className={cn('size-4', status.value === selectedStatus?.value ? 'opacity-100' : 'opacity-40')}
                       />
                       <span>{status.label}</span>
                     </CommandItem>
@@ -253,8 +250,8 @@ export const WithDropdownMenu: Story = {
 
     return (
       <div className="flex w-full flex-wrap items-center justify-between gap-4 rounded-md border px-4 py-3">
-        <div className="text-sm font-medium leading-none">
-          <Badge className="mr-2 rounded-full">{currentLabel}</Badge>
+        <div className="space-x-2 text-sm font-medium leading-none">
+          <Badge className="rounded-full">{currentLabel}</Badge>
           <span className="text-muted-foreground">Create a new project</span>
         </div>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
@@ -265,17 +262,17 @@ export const WithDropdownMenu: Story = {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <UserIcon className="mr-2 size-4" />
+                <UserIcon className="size-4" />
                 Assign to...
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CalendarIcon className="mr-2 size-4" />
+                <CalendarIcon className="size-4" />
                 Set due date...
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
-                  <TagsIcon className="mr-2 size-4" />
+                  <TagsIcon className="size-4" />
                   Apply label
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="p-0">
@@ -303,7 +300,7 @@ export const WithDropdownMenu: Story = {
               </DropdownMenuSub>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600">
-                <TrashIcon className="mr-2 size-4" />
+                <TrashIcon className="size-4" />
                 Delete
                 <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
               </DropdownMenuItem>
@@ -360,7 +357,7 @@ export const ResponsiveCombobox: Story = {
       return (
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
-            <Button className="w-[150px] justify-start" variant="outline">
+            <Button className="w-[150px] justify-start px-3" variant="outline">
               {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
             </Button>
           </PopoverTrigger>
@@ -374,7 +371,7 @@ export const ResponsiveCombobox: Story = {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button className="w-[150px] justify-start" variant="outline">
+          <Button className="w-[150px] justify-start px-3" variant="outline">
             {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
           </Button>
         </DrawerTrigger>
@@ -449,7 +446,7 @@ export const WithReactHookForm: Story = {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        className={cn('w-[200px] justify-between', !field.value && 'text-muted-foreground')}
+                        className={cn('w-[200px] justify-between px-3', !field.value && 'text-muted-foreground')}
                         role="combobox"
                         suffix={<ChevronDownIcon className="opacity-50" />}
                         variant="outline"
@@ -475,10 +472,7 @@ export const WithReactHookForm: Story = {
                               }}
                             >
                               <CheckIcon
-                                className={cn(
-                                  'mr-2 size-4',
-                                  language.value === field.value ? 'opacity-100' : 'opacity-0',
-                                )}
+                                className={cn('size-4', language.value === field.value ? 'opacity-100' : 'opacity-0')}
                               />
                               {language.label}
                             </CommandItem>

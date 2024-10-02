@@ -41,7 +41,7 @@ const SelectTrigger = React.forwardRef<SelectTriggerElement, SelectTriggerProps>
       className={buttonVariants({
         variant: 'outline',
         size,
-        className: ['w-full justify-between font-normal', className],
+        className: ['w-full justify-between px-3 font-normal', className],
       })}
       {...props}
     >
@@ -160,7 +160,7 @@ type SelectLabelProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.La
 const SelectLabel = React.forwardRef<SelectLabelElement, SelectLabelProps>(({ className, ...props }, forwardedRef) => (
   <SelectPrimitive.Label
     ref={forwardedRef}
-    className={cn('gap-2.5 px-2.5 py-1.5', 'flex items-center text-sm font-semibold', className)}
+    className={cn('gap-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', className)}
     {...props}
   />
 ));
