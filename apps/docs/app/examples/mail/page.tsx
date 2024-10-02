@@ -4,8 +4,8 @@ import { type JSX } from 'react';
 import { accounts, mails } from '@/app/examples/mail/_data/data';
 import { Mail } from '@/app/examples/mail/_components/mail';
 
-export default function MailPage(): JSX.Element {
-  const cookieStore = cookies();
+export default async function MailPage(): Promise<JSX.Element> {
+  const cookieStore = await cookies();
   const layout = cookieStore.get('react-resizable-panels:layout');
   const collapsed = cookieStore.get('react-resizable-panels:collapsed');
 
