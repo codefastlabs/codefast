@@ -30,7 +30,7 @@ const RadioGroupItem = React.forwardRef<RadioGroupItemElement, RadioGroupItemPro
         'border-input text-foreground group peer aspect-square size-4 rounded-full border',
         'hover:border-primary',
         'aria-checked:border-primary',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
         'disabled:pointer-events-none disabled:opacity-50',
         className,
       )}

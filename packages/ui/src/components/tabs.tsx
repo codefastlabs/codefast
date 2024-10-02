@@ -42,7 +42,7 @@ const TabsTrigger = React.forwardRef<TabsTriggerElement, TabsTriggerProps>(({ cl
     className={cn(
       'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium outline-transparent transition-all',
       'data-[state=active]:bg-background data-[state=active]:text-foreground',
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+      'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
       'disabled:pointer-events-none disabled:opacity-50',
       className,
     )}
@@ -64,7 +64,7 @@ const TabsContent = React.forwardRef<TabsContentElement, TabsContentProps>(({ cl
     ref={forwardedRef}
     className={cn(
       'mt-2 rounded-md',
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+      'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
       className,
     )}
     {...props}
