@@ -7,7 +7,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 const badgeVariants = tv({
   base: [
-    'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium',
+    'inline-flex shrink-0 items-center justify-center gap-2.5 whitespace-nowrap rounded-md px-2.5 font-medium',
     '[&>svg]:shrink-0',
   ],
   variants: {
@@ -21,11 +21,11 @@ const badgeVariants = tv({
       outline: 'bg-background border-input border',
     },
     size: {
-      xs: 'h-5 px-2 [&>svg]:size-3', // 20px
-      sm: 'h-6 px-2.5 [&>svg]:size-3', // 24px
-      md: 'h-7 px-3 [&>svg]:size-3', // 28px
-      lg: 'h-8 px-3.5 [&>svg]:size-3', // 32px
-      xl: 'h-9 px-3.5 [&>svg]:size-4', // 36px
+      xs: ['h-5', '[&>svg]:size-3', 'text-xs'], // 20px
+      sm: ['h-6', '[&>svg]:size-3', 'text-xs'], // 24px
+      md: ['h-7', '[&>svg]:size-4', 'text-sm'], // 28px
+      lg: ['h-8', '[&>svg]:size-4', 'text-sm'], // 32px
+      xl: ['h-9', '[&>svg]:size-4', 'text-sm'], // 36px
     },
     icon: {
       true: 'px-0',
