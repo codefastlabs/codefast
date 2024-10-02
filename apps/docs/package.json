@@ -25,6 +25,7 @@
     "@tanstack/react-table": "8.20.5",
     "date-fns": "4.1.0",
     "embla-carousel-autoplay": "8.3.0",
+    "jotai": "2.10.0",
     "lodash": "4.17.21",
     "lucide-react": "0.447.0",
     "next": "canary",
@@ -32,7 +33,6 @@
     "react-dom": "18.3.1",
     "react-hook-form": "7.53.0",
     "recharts": "alpha",
-    "recoil": "0.7.7",
     "zod": "3.23.8"
   },
   "devDependencies": {
