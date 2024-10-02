@@ -3,6 +3,11 @@ import type { Options } from 'tsup';
 
 const trackedImports = new Set<string>();
 
+// Constants
+const USE_CLIENT_DIRECTIVE = '"use client"';
+// Regex to check for React hooks in the code while ignoring commented-out code.
+const HOOK_REGEX = /(?<!\/\/.*)(?<!\/\*.*)\buse[A-Z]\w*\s*\(.*\)/;
+
 /**
  * Checks if the provided content includes any of the given client libraries or if it contains any React hooks.
  *
@@ -11,9 +16,7 @@ const trackedImports = new Set<string>();
  * @returns `true` if the content includes any of the client libraries or if it contains any hooks, otherwise `false`.
  */
 function containsClientLibsOrHooks(content: string, clientLibs: string[]): boolean {
-  return (
-    clientLibs.some((lib) => content.includes(lib)) || /(?<!\/\/.*)(?<!\/\*.*)\buse[A-Z]\w*\s*\(.*\)/.test(content)
-  );
+  return clientLibs.some((lib) => content.includes(lib)) || HOOK_REGEX.test(content);
 }
 
 /**
@@ -30,7 +33,7 @@ export function addUseClientDirective(clientLibs: string[]): NonNullable<Options
       const relativePath = relative(process.cwd(), path);
 
       // If the code already contains "use client", track its imports.
-      if (code.startsWith('"use client"')) {
+      if (code.startsWith(USE_CLIENT_DIRECTIVE)) {
         imports?.forEach(({ path: importPath }) => trackedImports.add(importPath));
 
         return { code, map };
@@ -44,14 +47,16 @@ export function addUseClientDirective(clientLibs: string[]): NonNullable<Options
       // Remove the path after processing and check for client libraries/hooks.
       trackedImports.delete(relativePath);
 
+      // Check for client libraries or React hooks in the current code and add "use client" if necessary.
       if (containsClientLibsOrHooks(code, clientLibs)) {
         return {
-          code: `"use client";${code}`,
+          code: `${USE_CLIENT_DIRECTIVE};${code}`,
           map,
         };
       }
 
-      return { code, map }; // Return the original code if no modifications were made.
+      // Return the original code if no modifications were made.
+      return { code, map };
     },
   };
 }
