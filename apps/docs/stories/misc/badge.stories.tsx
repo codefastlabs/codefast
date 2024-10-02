@@ -26,6 +26,47 @@ export const Default: Story = {
 };
 
 /* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-4">
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="xs">
+        xs badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="sm">
+        sm badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="md">
+        md badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="lg">
+        lg badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="xl">
+        xl badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="xs" variant="outline">
+        xs badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="sm" variant="outline">
+        sm badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="md" variant="outline">
+        md badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="lg" variant="outline">
+        lg badge
+      </Badge>
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="xl" variant="outline">
+        xl badge
+      </Badge>
+    </div>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
  * Story: Secondary
  * -------------------------------------------------------------------------- */
 
@@ -89,30 +130,4 @@ export const Outline: Story = {
     variant: 'outline',
     children: 'Outline Badge',
   },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Sizes
- * -------------------------------------------------------------------------- */
-
-export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-wrap items-center gap-4">
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="xs">
-        xs badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="sm">
-        sm badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="md">
-        md badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="lg">
-        lg badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="xl">
-        xl badge
-      </Badge>
-    </div>
-  ),
 };
