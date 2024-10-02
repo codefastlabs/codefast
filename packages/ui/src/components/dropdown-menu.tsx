@@ -53,7 +53,7 @@ const DropdownMenuSubTrigger = React.forwardRef<DropdownMenuSubTriggerElement, D
     <DropdownMenuPrimitive.SubTrigger
       ref={forwardedRef}
       className={cn(
-        'gap-2 px-3 py-1.5',
+        'gap-x-2 px-3 py-1.5',
         'flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
@@ -154,7 +154,7 @@ const DropdownMenuItem = React.forwardRef<DropdownMenuItemElement, DropdownMenuI
     <DropdownMenuPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'gap-2 px-3 py-1.5',
+        'gap-x-2 px-3 py-1.5',
         'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
@@ -181,7 +181,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<DropdownMenuCheckboxItemElemen
       ref={forwardedRef}
       checked={checked}
       className={cn(
-        'gap-2 px-3 py-1.5',
+        'gap-x-2 px-3 py-1.5',
         'pl-8',
         'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
@@ -214,7 +214,7 @@ const DropdownMenuRadioItem = React.forwardRef<DropdownMenuRadioItemElement, Dro
     <DropdownMenuPrimitive.RadioItem
       ref={forwardedRef}
       className={cn(
-        'gap-2 px-3 py-1.5',
+        'gap-x-2 px-3 py-1.5',
         'pl-8',
         'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
@@ -249,7 +249,7 @@ const DropdownMenuLabel = React.forwardRef<DropdownMenuLabelElement, DropdownMen
   ({ className, inset, ...props }, forwardedRef) => (
     <DropdownMenuPrimitive.Label
       ref={forwardedRef}
-      className={cn('gap-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   ),
