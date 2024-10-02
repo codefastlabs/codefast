@@ -7,7 +7,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 const badgeVariants = tv({
   base: [
-    'inline-flex shrink-0 items-center justify-center gap-2.5 whitespace-nowrap rounded-md px-2.5 font-medium',
+    'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 font-medium',
     '[&>svg]:shrink-0',
   ],
   variants: {
