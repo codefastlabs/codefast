@@ -37,7 +37,7 @@ const CheckboxCardsItem = React.forwardRef<CheckboxCardsItemElement, CheckboxCar
         className={cn(
           'border-input peer flex size-4 shrink-0 cursor-pointer rounded-sm border',
           'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
-          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+          'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
           'disabled:cursor-default disabled:opacity-50',
           checkboxClassName,
         )}
