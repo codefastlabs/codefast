@@ -78,7 +78,12 @@ export const File: Story = {
     return (
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor={id}>Picture</Label>
-        <TextInput id={id} type="file" {...args} />
+        <TextInput id={id} type="file" {...args} inputSize="xxs" />
+        <TextInput id={id} type="file" {...args} inputSize="xs" />
+        <TextInput id={id} type="file" {...args} inputSize="sm" />
+        <TextInput id={id} type="file" {...args} inputSize="md" />
+        <TextInput id={id} type="file" {...args} inputSize="lg" />
+        <TextInput id={id} type="file" {...args} inputSize="xl" />
       </div>
     );
   },
