@@ -67,18 +67,20 @@ export function AppearanceForm(): JSX.Element {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Font</FormLabel>
-              <Select defaultValue={field.value} onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Select a font" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="inter">Inter</SelectItem>
-                  <SelectItem value="manrope">Manrope</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="relative w-max">
+                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select a font" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="inter">Inter</SelectItem>
+                    <SelectItem value="manrope">Manrope</SelectItem>
+                    <SelectItem value="system">System</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <FormDescription>Set the font you want to use in the dashboard.</FormDescription>
               <FormMessage />
             </FormItem>

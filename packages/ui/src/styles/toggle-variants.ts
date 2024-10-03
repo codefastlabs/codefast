@@ -9,15 +9,36 @@ const toggleVariants = tv({
   ],
   variants: {
     variant: {
-      default: 'data-[state=on]:bg-primary hover:bg-primary/20 data-[state=on]:text-primary-foreground',
-      secondary: 'data-[state=on]:bg-secondary hover:bg-secondary/20 data-[state=on]:text-secondary-foreground',
-      info: 'data-[state=on]:bg-info hover:bg-info/20 data-[state=on]:text-info-foreground',
-      success: 'data-[state=on]:bg-success hover:bg-success/20 data-[state=on]:text-success-foreground',
-      warning: 'data-[state=on]:bg-warning hover:bg-warning/20 data-[state=on]:text-warning-foreground',
-      destructive: 'data-[state=on]:bg-destructive hover:bg-destructive/20 data-[state=on]:text-destructive-foreground',
-      outline:
-        'bg-background data-[state=on]:bg-accent hover:bg-accent/20 data-[state=on]:text-accent-foreground border-input border',
-      ghost: 'data-[state=on]:bg-accent hover:bg-accent/20 data-[state=on]:text-accent-foreground',
+      default: [
+        'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm',
+        'hover:bg-primary/20',
+      ],
+      secondary: [
+        'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground data-[state=on]:shadow-sm',
+        'hover:bg-secondary/20',
+      ],
+      info: [
+        'data-[state=on]:bg-info data-[state=on]:text-info-foreground data-[state=on]:shadow-sm',
+        'hover:bg-info/20',
+      ],
+      success: [
+        'data-[state=on]:bg-success data-[state=on]:text-success-foreground data-[state=on]:shadow-sm',
+        'hover:bg-success/20',
+      ],
+      warning: [
+        'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground data-[state=on]:shadow-sm',
+        'hover:bg-warning/20',
+      ],
+      destructive: [
+        'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground data-[state=on]:shadow-sm',
+        'hover:bg-destructive/20',
+      ],
+      outline: [
+        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
+        'hover:bg-accent/20',
+        'bg-background border-input border shadow-sm',
+      ],
+      ghost: ['data-[state=on]:bg-accent data-[state=on]:text-accent-foreground', 'hover:bg-accent/20'],
     },
     size: {
       xxs: 'h-7', // 28px
