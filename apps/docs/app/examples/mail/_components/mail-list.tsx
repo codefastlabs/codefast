@@ -41,9 +41,7 @@ export function MailList({ items }: MailListProps): JSX.Element {
                     mail.selected === item.id ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >
-                  {formatDistanceToNow(new Date(item.date), {
-                    addSuffix: true,
-                  })}
+                  {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
                 </div>
               </div>
               <div className="text-xs font-medium">{item.subject}</div>
@@ -52,7 +50,7 @@ export function MailList({ items }: MailListProps): JSX.Element {
             {item.labels.length ? (
               <div className="flex items-center gap-2">
                 {item.labels.map((label) => (
-                  <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
+                  <Badge key={label} size="xs" variant={getBadgeVariantFromLabel(label)}>
                     {label}
                   </Badge>
                 ))}
