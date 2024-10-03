@@ -28,8 +28,12 @@ export function Github(): JSX.Element {
             Source.
           </CardDescription>
         </div>
-        <div className="bg-secondary text-secondary-foreground flex items-center space-x-1 rounded-md">
-          <Button className="px-3" prefix={<StarIcon className="text-muted-foreground" />} variant="secondary">
+        <div className="bg-secondary text-secondary-foreground flex items-center space-x-1 rounded-md shadow-sm">
+          <Button
+            className="px-3 shadow-none"
+            prefix={<StarIcon className="text-muted-foreground" />}
+            variant="secondary"
+          >
             Star
           </Button>
           <Separator className="h-[20px]" orientation="vertical" />
@@ -38,6 +42,7 @@ export function Github(): JSX.Element {
               <Button
                 icon
                 aria-label="More options"
+                className="shadow-none"
                 prefix={<ChevronDownIcon className="text-secondary-foreground" />}
                 variant="secondary"
               />
