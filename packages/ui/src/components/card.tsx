@@ -9,7 +9,11 @@ type CardElement = HTMLDivElement;
 type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
 const Card = React.forwardRef<CardElement, CardProps>(({ className, ...props }, forwardedRef) => (
-  <div ref={forwardedRef} className={cn('bg-card text-card-foreground rounded-lg border', className)} {...props} />
+  <div
+    ref={forwardedRef}
+    className={cn('bg-card text-card-foreground rounded-lg border shadow', className)}
+    {...props}
+  />
 ));
 
 Card.displayName = 'Card';
