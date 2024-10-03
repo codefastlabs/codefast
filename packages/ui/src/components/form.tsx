@@ -13,7 +13,7 @@ import {
 } from 'react-hook-form';
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
-import { result } from 'lodash';
+import { result } from 'lodash-es';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/label';
 
