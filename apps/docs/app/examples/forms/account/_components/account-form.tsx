@@ -27,7 +27,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import isNil from 'lodash/isNil';
+import { isNil } from 'lodash-es';
 import { type JSX } from 'react';
 import { accountFormValues, type AccountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
 import { updateAccount } from '@/app/examples/forms/account/_lib/actions/account-actions';
