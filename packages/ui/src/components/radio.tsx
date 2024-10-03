@@ -19,7 +19,9 @@ const Radio = React.forwardRef<RadioElement, RadioProps>(
     <input
       ref={forwardedRef}
       className={cn(
-        'before:border-input hover:before:border-primary checked:before:border-primary checked:after:bg-primary peer relative flex appearance-none items-center justify-center rounded-full before:size-4 before:rounded-full before:border checked:after:absolute checked:after:size-2.5 checked:after:rounded-full',
+        'peer relative flex appearance-none items-center justify-center rounded-full shadow-sm',
+        'hover:before:border-primary checked:before:border-primary before:border-input before:size-4 before:rounded-full before:border',
+        'checked:after:bg-primary checked:after:absolute checked:after:size-2.5 checked:after:rounded-full',
         'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
         'disabled:pointer-events-none disabled:opacity-50',
         className,

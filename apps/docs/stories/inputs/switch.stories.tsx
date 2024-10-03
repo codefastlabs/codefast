@@ -94,7 +94,7 @@ export const ReactHookForm: Story = {
                 control={form.control}
                 name="marketing_emails"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Marketing emails</FormLabel>
                       <FormDescription>Receive emails about new products, features, and more.</FormDescription>
@@ -109,7 +109,7 @@ export const ReactHookForm: Story = {
                 control={form.control}
                 name="security_emails"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Security emails</FormLabel>
                       <FormDescription>Receive emails about your account security.</FormDescription>

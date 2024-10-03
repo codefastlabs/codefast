@@ -3,7 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 const inputVariants = tv({
   slots: {
     root: [
-      'border-input flex w-full grow cursor-text items-center gap-2 rounded-md border px-3 transition',
+      'border-input flex w-full grow cursor-text items-center gap-2 rounded-md border px-3 shadow-sm transition',
       '[&>svg]:text-muted-foreground [&>svg]:size-4 [&>svg]:shrink-0',
       'has-[[type=file]]:cursor-pointer',
       'focus-within:outline focus-within:outline-2 focus-within:-outline-offset-1',
