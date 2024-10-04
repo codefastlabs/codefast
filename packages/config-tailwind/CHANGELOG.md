@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.21
+
+### Patch Changes
+
+- Introducing the PasswordInput component
+
 ## 0.1.20
 
 ### Patch Changes
