@@ -82,15 +82,11 @@ export function AccountForm(): JSX.Element {
         <FormField
           control={form.control}
           name="name"
-          render={({ field }) => (
+          render={({ field: { disabled, ...field } }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <TextInput
-                  placeholder="Your name"
-                  {...field}
-                  disabled={field.disabled ?? form.formState.isSubmitting}
-                />
+                <TextInput disabled={disabled ?? form.formState.isSubmitting} placeholder="Your name" {...field} />
               </FormControl>
               <FormDescription>This is the name that will be displayed on your profile and in emails.</FormDescription>
               <FormMessage />
@@ -100,7 +96,7 @@ export function AccountForm(): JSX.Element {
         <FormField
           control={form.control}
           name="dob"
-          render={({ field }) => (
+          render={({ field: { disabled, ...field } }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Date of birth</FormLabel>
               <Popover>
@@ -111,7 +107,7 @@ export function AccountForm(): JSX.Element {
                         'w-56 justify-between pl-3 text-left font-normal',
                         isNil(field.value) && 'text-muted-foreground',
                       )}
-                      disabled={field.disabled ?? form.formState.isSubmitting}
+                      disabled={disabled ?? form.formState.isSubmitting}
                       suffix={<CalendarIcon className="size-4 opacity-50" />}
                       variant="outline"
                     >
@@ -137,7 +133,7 @@ export function AccountForm(): JSX.Element {
         <FormField
           control={form.control}
           name="language"
-          render={({ field }) => (
+          render={({ field: { disabled, ...field } }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Language</FormLabel>
               <Popover>
@@ -145,7 +141,7 @@ export function AccountForm(): JSX.Element {
                   <FormControl>
                     <Button
                       className={cn('w-56 justify-between', !field.value && 'text-muted-foreground')}
-                      disabled={field.disabled ?? form.formState.isSubmitting}
+                      disabled={disabled ?? form.formState.isSubmitting}
                       role="combobox"
                       suffix={<CaretSortIcon className="opacity-50" />}
                       variant="outline"

@@ -1,7 +1,26 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { PasswordInput } from '@codefast/ui';
-import { LoaderCircleIcon, LockKeyholeIcon, LockKeyholeOpenIcon } from 'lucide-react';
+import {
+  Button,
+  Code,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  PasswordInput,
+  Pre,
+  TextInput,
+  toast,
+  Toaster,
+} from '@codefast/ui';
+import { LoaderCircleIcon, LockKeyholeIcon, LockKeyholeOpenIcon, MailIcon } from 'lucide-react';
 import { useState } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { wait } from 'next/dist/lib/wait';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const meta: Meta<typeof PasswordInput> = {
   title: 'Components/Inputs/Password Input',
@@ -113,6 +132,103 @@ export const Controlled: Story = {
           <strong>Value:</strong> {value}
         </p>
       </div>
+    );
+  },
+};
+
+// Story for PasswordInput with react-hook-form integration
+export const ReactHookForm: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        <Toaster />
+      </>
+    ),
+  ],
+
+  render: () => {
+    const formValues = z.object({
+      email: z.string().email({
+        message: 'Invalid email address.',
+      }),
+      password: z.string().min(8, {
+        message: 'Password must be at least 8 characters.',
+      }),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
+      resolver: zodResolver(formValues),
+      defaultValues: {
+        email: '',
+        password: '',
+      },
+    });
+
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (values): Promise<void> => {
+      console.log(values);
+      await wait(1000);
+      toast.message('You submitted the following values:', {
+        description: (
+          <Pre className="w-full rounded-md bg-slate-950 p-4">
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+          </Pre>
+        ),
+      });
+    };
+
+    return (
+      <Form {...form}>
+        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field: { disabled, ...field } }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <TextInput
+                      disabled={disabled ?? form.formState.isSubmitting}
+                      inputMode="email"
+                      placeholder="info@codefast.one"
+                      prefix={<MailIcon />}
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>This is your public display name.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field: { disabled, ...field } }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      disabled={disabled ?? form.formState.isSubmitting}
+                      placeholder="Password"
+                      prefix={<LockKeyholeOpenIcon />}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Must be at least 8 characters.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Button loading={form.formState.isSubmitting} type="submit">
+            Submit
+          </Button>
+        </form>
+      </Form>
     );
   },
 };
