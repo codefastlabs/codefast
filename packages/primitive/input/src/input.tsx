@@ -27,8 +27,16 @@ type InputProps = React.PropsWithChildren<{
 }>;
 
 function Input(inputProps: InputProps): React.JSX.Element {
-  const { __scopeInput, children, loaderPosition, loading, prefix, spinner, suffix, ...props } =
-    inputProps as ScopedProps<InputProps>;
+  const {
+    __scopeInput,
+    children,
+    loaderPosition = 'prefix',
+    loading,
+    prefix,
+    spinner,
+    suffix,
+    ...props
+  } = inputProps as ScopedProps<InputProps>;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {

@@ -20,7 +20,7 @@ interface TextInputProps
     Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix'> {}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
-  ({ className, inputSize, loaderPosition = 'prefix', loading, prefix, spinner, suffix, ...props }, forwardedRef) => (
+  ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => (
     <InputPrimitive.Root
       className={root({ inputSize, className })}
       loaderPosition={loaderPosition}
