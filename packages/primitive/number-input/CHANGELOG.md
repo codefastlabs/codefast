@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.21
+
+### Patch Changes
+
+- Introducing the PasswordInput component
+- Updated dependencies
+  - @codefast-ui/input@0.1.21
+
 ## 0.1.20
 
 ### Patch Changes
