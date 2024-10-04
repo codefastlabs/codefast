@@ -28,7 +28,7 @@ export function Github(): JSX.Element {
             Source.
           </CardDescription>
         </div>
-        <div className="bg-secondary text-secondary-foreground flex items-center space-x-1 rounded-md shadow-sm">
+        <div className="bg-secondary text-secondary-foreground flex items-center rounded-md shadow-sm">
           <Button
             className="px-3 shadow-none"
             prefix={<StarIcon className="text-muted-foreground" />}

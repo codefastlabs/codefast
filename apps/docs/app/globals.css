@@ -235,7 +235,26 @@
     --radius: 0.25rem;
   }
 
+  /*----------------------------------------------------------------------------
+  | Dark mode
+  ----------------------------------------------------------------------------*/
   .dark {
     /* We can define dark mode colors here */
+  }
+
+  /*----------------------------------------------------------------------------
+  | Tailwind CSS Autofill and Selection Styling
+  ----------------------------------------------------------------------------*/
+
+  ::selection {
+    @apply bg-primary text-background;
+  }
+
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
   }
 }

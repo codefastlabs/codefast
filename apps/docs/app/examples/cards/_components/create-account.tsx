@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   Label,
+  PasswordInput,
   TextInput,
 } from '@codefast/ui';
 import { type JSX } from 'react';
@@ -42,7 +43,7 @@ export function CreateAccount(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <TextInput id="password" type="password" />
+          <PasswordInput className="autofill:bg-red-500" id="password" placeholder="********" />
         </div>
       </CardContent>
       <CardFooter>
