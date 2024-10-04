@@ -9,13 +9,31 @@ import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-varian
 type ButtonElement = HTMLButtonElement;
 
 interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>, ButtonVariantsProps {
+  loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
   prefix?: React.ReactNode;
+  spinner?: React.ReactNode;
   suffix?: React.ReactNode;
 }
 
 const Button = React.forwardRef<ButtonElement, ButtonProps>(
-  ({ children, className, variant, size, icon, disabled, loading, prefix, suffix, ...props }, forwardedRef) => (
+  (
+    {
+      children,
+      className,
+      variant,
+      size,
+      icon,
+      disabled,
+      loading,
+      prefix,
+      suffix,
+      loaderPosition = 'prefix',
+      spinner,
+      ...props
+    },
+    forwardedRef,
+  ) => (
     <button
       ref={forwardedRef}
       className={buttonVariants({ className, icon, size, variant })}
@@ -23,9 +41,9 @@ const Button = React.forwardRef<ButtonElement, ButtonProps>(
       type="button"
       {...props}
     >
-      {loading ? <Spinner /> : prefix}
+      {loading && loaderPosition === 'prefix' ? spinner || <Spinner /> : prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
-      {suffix}
+      {loading && loaderPosition === 'suffix' ? spinner || <Spinner /> : suffix}
     </button>
   ),
 );

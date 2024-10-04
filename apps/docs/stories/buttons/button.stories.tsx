@@ -1,225 +1,159 @@
-import { Button } from '@codefast/ui';
-import { ChevronRightIcon, EnvelopeOpenIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { SettingsIcon } from 'lucide-react';
+import { Button } from '@codefast/ui';
+import { PaletteIcon, TreeDeciduousIcon } from 'lucide-react';
+import { useState } from 'react';
 
-const meta = {
+const meta: Meta<typeof Button> = {
+  title: 'Components/Buttons/Button',
+  component: Button,
+  tags: ['autodocs'],
   argTypes: {
     disabled: {
-      control: 'boolean',
+      control: { type: 'boolean' },
       description: 'Disables the button',
-      table: { defaultValue: { summary: 'false' } },
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
     },
     loading: {
-      control: 'boolean',
-      description: 'Shows a loading spinner',
-      table: { defaultValue: { summary: 'false' } },
+      control: { type: 'boolean' },
+      description: 'Shows a loading spinner when true',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+    },
+    loaderPosition: {
+      control: { type: 'select' },
+      options: ['prefix', 'suffix'],
+      description: 'Position of the loader',
+      table: { type: { summary: 'string' }, defaultValue: { summary: 'prefix' } },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'],
+      description: 'Button variant styles',
+      table: { type: { summary: 'string' }, defaultValue: { summary: 'default' } },
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Button size',
+      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
+    },
+    icon: {
+      control: { type: 'boolean' },
+      description: 'Indicates if the button should display an icon',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+    },
+    prefix: {
+      control: { type: 'text' },
+      description: 'Element shown before the button content',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    suffix: {
+      control: { type: 'text' },
+      description: 'Element shown after the button content',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    spinner: {
+      control: { type: 'text' },
+      description: 'Custom spinner element',
+      table: { type: { summary: 'ReactNode' } },
     },
   },
   args: {
     disabled: false,
     loading: false,
+    loaderPosition: 'prefix',
+    variant: 'default',
+    size: 'md',
+    icon: false,
+    prefix: undefined,
+    suffix: undefined,
+    spinner: undefined,
   },
-  component: Button,
-  tags: ['autodocs'],
-  title: 'Components/Buttons/Button',
-} satisfies Meta<typeof Button>;
+};
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Button>;
 
-/* -----------------------------------------------------------------------------
- * Story: Default
- * -------------------------------------------------------------------------- */
-
-export const Default: Story = {
-  render: (args) => <Button {...args}>Default Button</Button>,
+export const Basic: Story = {
+  args: {
+    children: 'Click Me',
+  },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Sizes
- * -------------------------------------------------------------------------- */
+// Story for Button with loading state
+export const Loading: Story = {
+  args: {
+    loading: true,
+    children: 'Loading...',
+  },
+};
 
+// Story for Button with prefix and suffix
+export const PrefixSuffix: Story = {
+  args: {
+    prefix: <PaletteIcon />,
+    children: 'Submit',
+    suffix: <TreeDeciduousIcon />,
+  },
+};
+
+// Story for Button in the disabled state
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: 'Disabled',
+  },
+};
+
+// Story for Button with different sizes
 export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-wrap items-center gap-4">
-      <Button {...args} prefix={<SettingsIcon />} size="xxs">
-        xxs button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xs">
-        xs button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="sm">
-        sm button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="md">
-        md button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="lg">
-        lg button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xl">
-        xl button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xxs" variant="outline">
-        xxs button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xs" variant="outline">
-        xs button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="sm" variant="outline">
-        sm button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="md" variant="outline">
-        md button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="lg" variant="outline">
-        lg button
-      </Button>
-      <Button {...args} prefix={<SettingsIcon />} size="xl" variant="outline">
-        xl button
-      </Button>
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Button size="xxs">xxs button</Button>
+      <Button size="xs">xs button</Button>
+      <Button size="sm">sm button</Button>
+      <Button size="md">md button</Button>
+      <Button size="lg">lg button</Button>
+      <Button size="xl">xl button</Button>
     </div>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Secondary
- * -------------------------------------------------------------------------- */
+// Story for Button in a controlled state
+export const Controlled: Story = {
+  render: () => {
+    const [count, setCount] = useState(0);
 
-export const Secondary: Story = {
-  render: (args) => (
-    <Button {...args} variant="secondary">
-      Secondary Button
-    </Button>
-  ),
+    return (
+      <div className="space-y-4">
+        <Button
+          onClick={() => {
+            setCount(count + 1);
+          }}
+        >
+          Click Me
+        </Button>
+        <p>
+          <strong>Count:</strong> {count}
+        </p>
+      </div>
+    );
+  },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Info
- * -------------------------------------------------------------------------- */
-
-export const Info: Story = {
-  render: (args) => (
-    <Button {...args} variant="info">
-      Info Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Success
- * -------------------------------------------------------------------------- */
-
-export const Success: Story = {
-  render: (args) => (
-    <Button {...args} variant="success">
-      Success Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Warning
- * -------------------------------------------------------------------------- */
-
-export const Warning: Story = {
-  render: (args) => (
-    <Button {...args} variant="warning">
-      Warning Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Destructive
- * -------------------------------------------------------------------------- */
-
-export const Destructive: Story = {
-  render: (args) => (
-    <Button {...args} variant="destructive">
-      Destructive Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Outline
- * -------------------------------------------------------------------------- */
-
-export const Outline: Story = {
-  render: (args) => (
-    <Button {...args} variant="outline">
-      Outline Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Ghost
- * -------------------------------------------------------------------------- */
-
-export const Ghost: Story = {
-  render: (args) => (
-    <Button {...args} variant="ghost">
-      Ghost Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Link
- * -------------------------------------------------------------------------- */
-
-export const Link: Story = {
-  render: (args) => (
-    <Button {...args} variant="link">
-      Link Button
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Icon
- * -------------------------------------------------------------------------- */
-
-export const Icon: Story = {
-  render: (args) => <Button {...args} icon aria-label="Next" prefix={<ChevronRightIcon />} />,
-};
-
-/* -----------------------------------------------------------------------------
- * Story: With Icon
- * -------------------------------------------------------------------------- */
-
-export const WithIcon: Story = {
-  render: (args) => (
-    <Button {...args} prefix={<EnvelopeOpenIcon />}>
-      Login with Email
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Loading
- * -------------------------------------------------------------------------- */
-
-export const Loading: Story = {
-  render: (args) => (
-    <Button {...args} loading>
-      Please wait
-    </Button>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Disabled
- * -------------------------------------------------------------------------- */
-
-export const Disabled: Story = {
-  render: (args) => (
-    <Button {...args} disabled>
-      Disabled Button
-    </Button>
+// Story for Button with different variants
+export const Variants: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-2">
+      <Button variant="default">Default Button</Button>
+      <Button variant="secondary">Secondary Button</Button>
+      <Button variant="info">Info Button</Button>
+      <Button variant="success">Success Button</Button>
+      <Button variant="warning">Warning Button</Button>
+      <Button variant="destructive">Destructive Button</Button>
+      <Button variant="outline">Outline Button</Button>
+      <Button variant="ghost">Ghost Button</Button>
+      <Button variant="link">Link Button</Button>
+    </div>
   ),
 };

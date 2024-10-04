@@ -24,7 +24,7 @@ interface PasswordInputProps
     Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix' | 'type'> {}
 
 const PasswordInput = React.forwardRef<PasswordInputElement, PasswordInputProps>(
-  ({ className, inputSize, loaderPosition = 'prefix', loading, prefix, spinner, suffix, ...props }, forwardedRef) => {
+  ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => {
     const [type, setType] = React.useState<'password' | 'text'>('password');
 
     const togglePasswordVisibility = React.useCallback<React.MouseEventHandler<HTMLButtonElement>>(() => {
