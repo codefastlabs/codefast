@@ -305,7 +305,7 @@ export const ReactHookForm: Story = {
       </>
     ),
   ],
-  render: (args) => {
+  render: () => {
     const form = useForm<FormValues>({
       resolver: zodResolver(formValues),
       defaultValues: {
@@ -330,11 +330,11 @@ export const ReactHookForm: Story = {
           <FormField
             control={form.control}
             name="age"
-            render={({ field }) => (
+            render={({ field: { disabled, ...field } }) => (
               <FormItem>
                 <FormLabel>Age</FormLabel>
                 <FormControl>
-                  <NumberInput disabled={form.formState.isSubmitting} placeholder="codefast" {...field} {...args} />
+                  <NumberInput disabled={disabled ?? form.formState.isSubmitting} placeholder="codefast" {...field} />
                 </FormControl>
                 <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />

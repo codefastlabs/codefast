@@ -174,7 +174,7 @@ export const ReactHookForm: Story = {
       </>
     ),
   ],
-  render: (args) => {
+  render: () => {
     const form = useForm<FormValues>({
       resolver: zodResolver(formValues),
       defaultValues: {
@@ -201,18 +201,17 @@ export const ReactHookForm: Story = {
             <FormField
               control={form.control}
               name="username"
-              render={({ field }) => (
+              render={({ field: { disabled, ...field } }) => (
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
                     <TextInput
-                      disabled={form.formState.isSubmitting}
+                      disabled={disabled ?? form.formState.isSubmitting}
                       loaderPosition="suffix"
                       loading={form.formState.isSubmitting}
                       placeholder="codefast"
                       prefix={<UserIcon />}
                       {...field}
-                      {...args}
                     />
                   </FormControl>
                   <FormDescription>This is your public display name.</FormDescription>
@@ -224,18 +223,17 @@ export const ReactHookForm: Story = {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
+              render={({ field: { disabled, ...field } }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <TextInput
-                      disabled={form.formState.isSubmitting}
+                      disabled={disabled ?? form.formState.isSubmitting}
                       loaderPosition="suffix"
                       loading={form.formState.isSubmitting}
                       placeholder="info@codefast.one"
                       prefix={<MailIcon />}
                       {...field}
-                      {...args}
                     />
                   </FormControl>
                   <FormDescription>This is your public display name.</FormDescription>
@@ -244,7 +242,7 @@ export const ReactHookForm: Story = {
               )}
             />
           </div>
-          <Button disabled={form.formState.isSubmitting} type="submit">
+          <Button loading={form.formState.isSubmitting} type="submit">
             Submit
           </Button>
         </form>
