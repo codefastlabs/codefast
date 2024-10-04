@@ -28,7 +28,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
       formatOptions,
       id,
       inputSize,
-      loaderPosition = 'prefix',
+      loaderPosition,
       loading,
       max,
       min,
