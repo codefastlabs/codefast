@@ -28,15 +28,15 @@ const badgeVariants = tv({
       xl: ['h-9', '[&>svg]:size-4', 'text-sm'], // 36px
     },
     icon: {
-      true: 'p-0',
+      true: 'p-2',
     },
   },
   compoundVariants: [
-    { className: 'w-8', icon: true, size: 'xs' },
-    { className: 'w-9', icon: true, size: 'sm' },
-    { className: 'w-10', icon: true, size: 'md' },
-    { className: 'w-11', icon: true, size: 'lg' },
-    { className: 'w-12', icon: true, size: 'xl' },
+    { className: 'min-w-8', icon: true, size: 'xs' },
+    { className: 'min-w-9', icon: true, size: 'sm' },
+    { className: 'min-w-10', icon: true, size: 'md' },
+    { className: 'min-w-11', icon: true, size: 'lg' },
+    { className: 'min-w-12', icon: true, size: 'xl' },
   ],
   defaultVariants: {
     icon: false,

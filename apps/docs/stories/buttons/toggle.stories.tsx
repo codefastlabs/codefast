@@ -1,197 +1,176 @@
-import { Toggle } from '@codefast/ui';
-import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
+import * as React from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { Toggle } from '@codefast/ui';
+import { fn } from '@storybook/test';
+import { ExpandIcon } from 'lucide-react';
 
-const meta = {
+const meta: Meta<typeof Toggle> = {
+  argTypes: {
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disables the toggle button.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    pressed: {
+      control: { type: 'boolean' },
+      description: 'The controlled state of the toggle (pressed or not).',
+      table: {
+        type: { summary: 'boolean' },
+      },
+    },
+    defaultPressed: {
+      control: { type: 'boolean' },
+      description:
+        'The uncontrolled state of the toggle when initially rendered.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    onPressedChange: {
+      action: 'onPressedChange',
+      description: 'Callback function triggered when the toggle state changes.',
+      table: {
+        type: { summary: '(pressed: boolean) => void' },
+      },
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Toggle button size.',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'md' },
+      },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: [
+        'default',
+        'secondary',
+        'info',
+        'success',
+        'warning',
+        'destructive',
+        'outline',
+        'ghost',
+      ],
+      description: 'Toggle button variant styles.',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      },
+    },
+  },
+  args: {
+    disabled: false,
+    defaultPressed: false,
+    size: 'md',
+    variant: 'default',
+    onPressedChange: fn(),
+  },
   component: Toggle,
   tags: ['autodocs'],
   title: 'Components/Buttons/Toggle',
-} satisfies Meta<typeof Toggle>;
+};
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Toggle>;
 
-/* -----------------------------------------------------------------------------
- * Story: Default
- * -------------------------------------------------------------------------- */
+export const Basic: Story = {
+  render: (args) => <Toggle {...args}>Toggle</Toggle>,
+};
 
-export const Default: Story = {
+// Story for Toggle with different sizes
+export const Sizes: Story = {
   render: (args) => (
-    <Toggle aria-label="Toggle bold" {...args}>
-      <BoldIcon />
-    </Toggle>
+    <div className="flex flex-wrap gap-2">
+      {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <Toggle key={size} {...args} size={size}>
+          {size} Toggle
+        </Toggle>
+      ))}
+    </div>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Secondary
- * -------------------------------------------------------------------------- */
-
-export const Secondary: Story = {
+// Story for Toggle with different variants
+export const Variants: Story = {
+  args: {
+    className: 'capitalize',
+  },
   render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="secondary"
-      {...args}
-    />
+    <div className="flex flex-wrap gap-2">
+      {(
+        [
+          'default',
+          'secondary',
+          'info',
+          'success',
+          'warning',
+          'destructive',
+          'outline',
+          'ghost',
+        ] as const
+      ).map((variant) => (
+        <Toggle key={variant} {...args} variant={variant}>
+          {variant} Toggle
+        </Toggle>
+      ))}
+    </div>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Info
- * -------------------------------------------------------------------------- */
-
-export const Info: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="info"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Success
- * -------------------------------------------------------------------------- */
-
-export const Success: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="success"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Warning
- * -------------------------------------------------------------------------- */
-
-export const Warning: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="warning"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Destructive
- * -------------------------------------------------------------------------- */
-
-export const Destructive: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="destructive"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Outline
- * -------------------------------------------------------------------------- */
-
-export const Outline: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="outline"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Ghost
- * -------------------------------------------------------------------------- */
-
-export const Ghost: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      variant="ghost"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: With Text
- * -------------------------------------------------------------------------- */
-
-export const WithText: Story = {
-  render: (args) => (
-    <Toggle aria-label="Toggle italic" prefix={<ItalicIcon />} {...args}>
-      Italic
-    </Toggle>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Small
- * -------------------------------------------------------------------------- */
-
-export const Small: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      size="sm"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Large
- * -------------------------------------------------------------------------- */
-
-export const Large: Story = {
-  render: (args) => (
-    <Toggle
-      icon
-      aria-label="Toggle italic"
-      prefix={<ItalicIcon />}
-      size="lg"
-      {...args}
-    />
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Disabled
- * -------------------------------------------------------------------------- */
-
+// Story for Toggle with disabled state
 export const Disabled: Story = {
-  render: (args) => (
-    <Toggle
-      disabled
-      icon
-      aria-label="Toggle underline"
-      prefix={<UnderlineIcon />}
-      {...args}
-    />
-  ),
+  args: {
+    disabled: true,
+    children: 'Disabled Toggle',
+  },
+};
+
+// Story for Toggle with icon-only
+export const IconOnly: Story = {
+  args: {
+    prefix: <ExpandIcon />,
+    icon: true,
+  },
+};
+
+// Story for Toggle with prefix
+export const Prefix: Story = {
+  args: {
+    prefix: <ExpandIcon />,
+    children: 'Option',
+  },
+};
+
+// Story for Toggle with suffix
+export const Suffix: Story = {
+  args: {
+    suffix: <ExpandIcon />,
+    children: 'Option',
+  },
+};
+
+// Story for Toggle with controlled state
+export const Controlled: Story = {
+  render: (args) => {
+    const [pressed, setPressed] = React.useState(false);
+
+    return (
+      <div className="space-y-4">
+        <Toggle {...args} pressed={pressed} onPressedChange={setPressed}>
+          Controlled Toggle
+        </Toggle>
+        <p>
+          <strong>Pressed:</strong> {pressed ? 'Yes' : 'No'}
+        </p>
+      </div>
+    );
+  },
 };
