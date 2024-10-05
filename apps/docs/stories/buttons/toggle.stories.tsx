@@ -81,11 +81,12 @@ export default meta;
 
 type Story = StoryObj<typeof Toggle>;
 
+// Default story showing a basic toggle button
 export const Basic: Story = {
   render: (args) => <Toggle {...args}>Toggle</Toggle>,
 };
 
-// Story for Toggle with different sizes
+// Story showing different sizes of toggle buttons
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-2">
@@ -98,7 +99,7 @@ export const Sizes: Story = {
   ),
 };
 
-// Story for Toggle with different variants
+// Story showing different variants of toggle buttons
 export const Variants: Story = {
   args: {
     className: 'capitalize',
@@ -125,7 +126,7 @@ export const Variants: Story = {
   ),
 };
 
-// Story for Toggle with disabled state
+// Story showing a disabled toggle button
 export const Disabled: Story = {
   args: {
     disabled: true,
@@ -133,7 +134,7 @@ export const Disabled: Story = {
   },
 };
 
-// Story for Toggle with icon-only
+// Story with toggle button having an icon
 export const IconOnly: Story = {
   args: {
     prefix: <ExpandIcon />,
@@ -154,6 +155,30 @@ export const Suffix: Story = {
   args: {
     suffix: <ExpandIcon />,
     children: 'Option',
+  },
+};
+
+// Interactive story for toggle button
+export const Interactive: Story = {
+  render: (args) => {
+    const [toggled, setToggled] = React.useState(false);
+
+    return (
+      <Toggle
+        {...args}
+        onClick={() => {
+          setToggled(!toggled);
+        }}
+      >
+        {toggled ? 'On' : 'Off'}
+      </Toggle>
+    );
+  },
+  args: {
+    size: 'md',
+    variant: 'default',
+    icon: false,
+    disabled: false,
   },
 };
 
