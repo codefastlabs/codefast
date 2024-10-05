@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.22
+
+### Patch Changes
+
+- Adjust password input element styles
+
 ## 0.1.21
 
 ### Patch Changes
