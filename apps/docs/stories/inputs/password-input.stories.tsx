@@ -27,7 +27,7 @@ import { z } from 'zod';
 import { wait } from 'next/dist/lib/wait';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-const meta: Meta<typeof PasswordInput> = {
+const meta = {
   title: 'Components/Inputs/Password Input',
   component: PasswordInput,
   tags: ['autodocs'],
@@ -50,7 +50,7 @@ const meta: Meta<typeof PasswordInput> = {
       },
     },
     loaderPosition: {
-      control: { type: 'select' },
+      control: { type: 'inline-radio' },
       options: ['prefix', 'suffix'],
       description: 'Position of the loader in the input field',
       table: {
@@ -88,7 +88,7 @@ const meta: Meta<typeof PasswordInput> = {
     loaderPosition: 'prefix',
     loading: false,
   },
-};
+} satisfies Meta<typeof PasswordInput>;
 
 export default meta;
 
@@ -101,21 +101,23 @@ export const Loading: Story = {
   args: { loading: true },
 };
 
-// Story for PasswordInput with prefix and suffix
-export const PrefixSuffix: Story = {
-  args: { prefix: <LockKeyholeOpenIcon />, suffix: <LockKeyholeIcon /> },
+// Story for PasswordInput with prefix
+export const Prefix: Story = {
+  args: { prefix: <LockKeyholeOpenIcon /> },
+};
+
+// Story for PasswordInput with suffix
+export const Suffix: Story = {
+  args: { suffix: <LockKeyholeIcon /> },
 };
 
 // Story for PasswordInput with different sizes
 export const Sizes: Story = {
   render: () => (
     <div className="space-y-4">
-      <PasswordInput inputSize="xxs" placeholder="xxs" />
-      <PasswordInput inputSize="xs" placeholder="xs" />
-      <PasswordInput inputSize="sm" placeholder="sm" />
-      <PasswordInput inputSize="md" placeholder="md" />
-      <PasswordInput inputSize="lg" placeholder="lg" />
-      <PasswordInput inputSize="xl" placeholder="xl" />
+      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <PasswordInput key={size} inputSize={size} placeholder={size} />
+      ))}
     </div>
   ),
 };
@@ -188,7 +190,6 @@ export const ReactHookForm: Story = {
     const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (
       values,
     ): Promise<void> => {
-      console.log(values);
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (

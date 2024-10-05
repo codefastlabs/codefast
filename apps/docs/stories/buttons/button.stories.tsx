@@ -1,12 +1,10 @@
+import * as React from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Button } from '@codefast/ui';
 import { PaletteIcon, TreeDeciduousIcon } from 'lucide-react';
-import { useState } from 'react';
+import { fn } from '@storybook/test';
 
-const meta: Meta<typeof Button> = {
-  title: 'Components/Buttons/Button',
-  component: Button,
-  tags: ['autodocs'],
+const meta = {
   argTypes: {
     disabled: {
       control: { type: 'boolean' },
@@ -14,6 +12,23 @@ const meta: Meta<typeof Button> = {
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+      },
+    },
+    icon: {
+      control: { type: 'boolean' },
+      description: 'Indicates if the button should display an icon',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    loaderPosition: {
+      control: { type: 'inline-radio' },
+      options: ['prefix', 'suffix'],
+      description: 'Position of the loader',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'prefix' },
       },
     },
     loading: {
@@ -24,14 +39,33 @@ const meta: Meta<typeof Button> = {
         defaultValue: { summary: 'false' },
       },
     },
-    loaderPosition: {
-      control: { type: 'select' },
-      options: ['prefix', 'suffix'],
-      description: 'Position of the loader',
+    onClick: {
+      action: 'onClick',
+      description: 'Callback function triggered when the button is clicked',
       table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'prefix' },
+        type: { summary: '() => void' },
       },
+    },
+    prefix: {
+      control: { type: 'text' },
+      description: 'Element shown before the button content',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Button size',
+      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
+    },
+    spinner: {
+      control: { type: 'text' },
+      description: 'Custom spinner element',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    suffix: {
+      control: { type: 'text' },
+      description: 'Element shown after the button content',
+      table: { type: { summary: 'ReactNode' } },
     },
     variant: {
       control: { type: 'select' },
@@ -52,48 +86,23 @@ const meta: Meta<typeof Button> = {
         defaultValue: { summary: 'default' },
       },
     },
-    size: {
-      control: { type: 'select' },
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Button size',
-      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
-    },
-    icon: {
-      control: { type: 'boolean' },
-      description: 'Indicates if the button should display an icon',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
-      },
-    },
-    prefix: {
-      control: { type: 'text' },
-      description: 'Element shown before the button content',
-      table: { type: { summary: 'ReactNode' } },
-    },
-    suffix: {
-      control: { type: 'text' },
-      description: 'Element shown after the button content',
-      table: { type: { summary: 'ReactNode' } },
-    },
-    spinner: {
-      control: { type: 'text' },
-      description: 'Custom spinner element',
-      table: { type: { summary: 'ReactNode' } },
-    },
   },
   args: {
     disabled: false,
-    loading: false,
-    loaderPosition: 'prefix',
-    variant: 'default',
-    size: 'md',
     icon: false,
+    loaderPosition: 'prefix',
+    loading: false,
+    onClick: fn(),
     prefix: undefined,
-    suffix: undefined,
+    size: 'md',
     spinner: undefined,
+    suffix: undefined,
+    variant: 'default',
   },
-};
+  component: Button,
+  tags: ['autodocs'],
+  title: 'Components/Buttons/Button',
+} satisfies Meta<typeof Button>;
 
 export default meta;
 
@@ -113,10 +122,17 @@ export const Loading: Story = {
   },
 };
 
-// Story for Button with prefix and suffix
-export const PrefixSuffix: Story = {
+// Story for Button with prefix
+export const Prefix: Story = {
   args: {
     prefix: <PaletteIcon />,
+    children: 'Submit',
+  },
+};
+
+// Story for Button with suffix
+export const Suffix: Story = {
+  args: {
     children: 'Submit',
     suffix: <TreeDeciduousIcon />,
   },
@@ -132,22 +148,47 @@ export const Disabled: Story = {
 
 // Story for Button with different sizes
 export const Sizes: Story = {
-  render: () => (
+  render: (args) => (
     <div className="flex flex-wrap gap-2">
-      <Button size="xxs">xxs button</Button>
-      <Button size="xs">xs button</Button>
-      <Button size="sm">sm button</Button>
-      <Button size="md">md button</Button>
-      <Button size="lg">lg button</Button>
-      <Button size="xl">xl button</Button>
+      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <Button key={size} {...args} size={size}>
+          {size} button
+        </Button>
+      ))}
+    </div>
+  ),
+};
+
+// Story for Button with different variants
+export const Variants: Story = {
+  args: { className: 'capitalize' },
+  render: (args) => (
+    <div className="flex flex-wrap gap-2">
+      {(
+        [
+          'default',
+          'secondary',
+          'info',
+          'success',
+          'warning',
+          'destructive',
+          'outline',
+          'ghost',
+          'link',
+        ] as const
+      ).map((variant) => (
+        <Button key={variant} {...args} variant={variant}>
+          {variant} Button
+        </Button>
+      ))}
     </div>
   ),
 };
 
 // Story for Button in a controlled state
 export const Controlled: Story = {
-  render: () => {
-    const [count, setCount] = useState(0);
+  render: (args) => {
+    const [count, setCount] = React.useState(0);
 
     return (
       <div className="space-y-4">
@@ -155,6 +196,7 @@ export const Controlled: Story = {
           onClick={() => {
             setCount(count + 1);
           }}
+          {...args}
         >
           Click Me
         </Button>
@@ -164,21 +206,4 @@ export const Controlled: Story = {
       </div>
     );
   },
-};
-
-// Story for Button with different variants
-export const Variants: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-2">
-      <Button variant="default">Default Button</Button>
-      <Button variant="secondary">Secondary Button</Button>
-      <Button variant="info">Info Button</Button>
-      <Button variant="success">Success Button</Button>
-      <Button variant="warning">Warning Button</Button>
-      <Button variant="destructive">Destructive Button</Button>
-      <Button variant="outline">Outline Button</Button>
-      <Button variant="ghost">Ghost Button</Button>
-      <Button variant="link">Link Button</Button>
-    </div>
-  ),
 };
