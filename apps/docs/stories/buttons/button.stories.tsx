@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Button } from '@codefast/ui';
-import { PaletteIcon, TreeDeciduousIcon } from 'lucide-react';
+import { LoaderCircleIcon, PaletteIcon, TreeDeciduousIcon } from 'lucide-react';
 import { fn } from '@storybook/test';
 
 const meta = {
@@ -114,38 +114,6 @@ export const Basic: Story = {
   },
 };
 
-// Story for Button with loading state
-export const Loading: Story = {
-  args: {
-    loading: true,
-    children: 'Loading...',
-  },
-};
-
-// Story for Button with prefix
-export const Prefix: Story = {
-  args: {
-    prefix: <PaletteIcon />,
-    children: 'Submit',
-  },
-};
-
-// Story for Button with suffix
-export const Suffix: Story = {
-  args: {
-    children: 'Submit',
-    suffix: <TreeDeciduousIcon />,
-  },
-};
-
-// Story for Button in the disabled state
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    children: 'Disabled',
-  },
-};
-
 // Story for Button with different sizes
 export const Sizes: Story = {
   render: (args) => (
@@ -183,6 +151,47 @@ export const Variants: Story = {
       ))}
     </div>
   ),
+};
+
+// Story for Button in the disabled state
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: 'Disabled',
+  },
+};
+
+// Story for Button with loading state
+export const Loading: Story = {
+  args: {
+    loading: true,
+    children: 'Loading...',
+  },
+};
+
+// Story for Button with a custom spinner
+export const CustomSpinner: Story = {
+  args: {
+    children: 'Loading...',
+    spinner: <LoaderCircleIcon className="animate-spin" />,
+    loading: true,
+  },
+};
+
+// Story for Button with prefix
+export const Prefix: Story = {
+  args: {
+    prefix: <PaletteIcon />,
+    children: 'Submit',
+  },
+};
+
+// Story for Button with suffix
+export const Suffix: Story = {
+  args: {
+    children: 'Submit',
+    suffix: <TreeDeciduousIcon />,
+  },
 };
 
 // Story for Button in a controlled state

@@ -22,8 +22,23 @@ interface TextInputProps
     React.ComponentProps<typeof InputPrimitive.Root>,
     Omit<
       React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
-      'prefix'
-    > {}
+      'prefix' | 'type'
+    > {
+  type?:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'tel'
+    | 'url'
+    | 'date'
+    | 'time'
+    | 'datetime-local'
+    | 'month'
+    | 'week'
+    | 'file'
+    | 'search';
+}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
   (

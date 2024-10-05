@@ -96,21 +96,6 @@ type Story = StoryObj<typeof PasswordInput>;
 
 export const Basic: Story = {};
 
-// Story for InputPassword with loading state
-export const Loading: Story = {
-  args: { loading: true },
-};
-
-// Story for PasswordInput with prefix
-export const Prefix: Story = {
-  args: { prefix: <LockKeyholeOpenIcon /> },
-};
-
-// Story for PasswordInput with suffix
-export const Suffix: Story = {
-  args: { suffix: <LockKeyholeIcon /> },
-};
-
 // Story for PasswordInput with different sizes
 export const Sizes: Story = {
   render: () => (
@@ -127,6 +112,11 @@ export const Disabled: Story = {
   args: { disabled: true },
 };
 
+// Story for InputPassword with loading state
+export const Loading: Story = {
+  args: { loading: true },
+};
+
 // Story for PasswordInput with a custom spinner
 export const CustomSpinner: Story = {
   args: {
@@ -135,14 +125,25 @@ export const CustomSpinner: Story = {
   },
 };
 
+// Story for PasswordInput with prefix
+export const Prefix: Story = {
+  args: { prefix: <LockKeyholeOpenIcon /> },
+};
+
+// Story for PasswordInput with suffix
+export const Suffix: Story = {
+  args: { suffix: <LockKeyholeIcon /> },
+};
+
 // Story for PasswordInput in a controlled state
 export const Controlled: Story = {
-  render: () => {
+  render: (args) => {
     const [value, setValue] = useState('');
 
     return (
       <div className="space-y-4">
         <PasswordInput
+          {...args}
           placeholder="Controlled"
           value={value}
           onChange={(e) => {
