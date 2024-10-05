@@ -268,7 +268,13 @@ export const FormReset: Story = {
           toast.message('Form submitted!', {
             description: (
               <Pre className="w-full rounded-md bg-slate-950 p-4">
-                <Code className="text-white">{JSON.stringify(Object.fromEntries(formData.entries()), null, 2)}</Code>
+                <Code className="text-white">
+                  {JSON.stringify(
+                    Object.fromEntries(formData.entries()),
+                    null,
+                    2,
+                  )}
+                </Code>
               </Pre>
             ),
           });
@@ -313,12 +319,16 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit: SubmitHandler<FormValues> = async (values): Promise<void> => {
+    const onSubmit: SubmitHandler<FormValues> = async (
+      values,
+    ): Promise<void> => {
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+            <Code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </Code>
           </Pre>
         ),
       });
@@ -326,7 +336,10 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="w-2/3 space-y-6"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <FormField
             control={form.control}
             name="age"
@@ -334,9 +347,15 @@ export const ReactHookForm: Story = {
               <FormItem>
                 <FormLabel>Age</FormLabel>
                 <FormControl>
-                  <NumberInput disabled={disabled ?? form.formState.isSubmitting} placeholder="codefast" {...field} />
+                  <NumberInput
+                    disabled={disabled ?? form.formState.isSubmitting}
+                    placeholder="codefast"
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -345,7 +364,11 @@ export const ReactHookForm: Story = {
             <Button loading={form.formState.isSubmitting} type="submit">
               Submit
             </Button>
-            <Button loading={form.formState.isSubmitting} type="reset" variant="outline">
+            <Button
+              loading={form.formState.isSubmitting}
+              type="reset"
+              variant="outline"
+            >
               Reset (Native)
             </Button>
             <Button

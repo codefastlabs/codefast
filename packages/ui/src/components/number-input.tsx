@@ -2,7 +2,10 @@ import * as React from 'react';
 import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import { buttonVariants } from '@/styles/button-variants';
-import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
+import {
+  inputVariants,
+  type InputVariantsProps,
+} from '@/styles/input-variants';
 import { Spinner } from '@/components/spinner';
 
 const { root, input } = inputVariants();

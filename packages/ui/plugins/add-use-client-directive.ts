@@ -9,13 +9,20 @@ const USE_CLIENT_DIRECTIVE = '"use client"';
 const HOOK_REGEX = /(?<!\/\/.*)(?<!\/\*.*)\buse[A-Z]\w*\s*\(.*\)/;
 
 /**
- * Checks if the provided content includes any of the given client libraries or if it contains any React hooks.
+ * Checks if the provided content includes any of the given client libraries or
+ * if it contains any React hooks.
  *
- * @param content - The string content to be checked for client libraries or hooks.
- * @param clientLibs - An array of client library names to check against the content.
- * @returns `true` if the content includes any of the client libraries or if it contains any hooks, otherwise `false`.
+ * @param content - The string content to be checked for client libraries or
+ *   hooks.
+ * @param clientLibs - An array of client library names to check against the
+ *   content.
+ * @returns `true` if the content includes any of the client libraries or if it
+ *   contains any hooks, otherwise `false`.
  */
-function containsClientLibsOrHooks(content: string, clientLibs: RegExp): boolean {
+function containsClientLibsOrHooks(
+  content: string,
+  clientLibs: RegExp,
+): boolean {
   return clientLibs.test(content) || HOOK_REGEX.test(content);
 }
 
@@ -27,20 +34,26 @@ function containsClientLibsOrHooks(content: string, clientLibs: RegExp): boolean
  */
 function buildClientLibsRegex(clientLibs: string[]): RegExp {
   // Escape special characters in the library names
-  const escapedLibs = clientLibs.map((lib) => lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const escapedLibs = clientLibs.map((lib) =>
+    lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+  );
 
   // Create a regex to match any of the libraries as whole words
   return new RegExp(`(?:${escapedLibs.join('|')})`, 'g');
 }
 
 /**
- * Adds a "use client" directive to the given code based on the specified client libraries.
+ * Adds a "use client" directive to the given code based on the specified
+ * client libraries.
  *
- * @param clientLibs - An array of strings representing the client libraries that should trigger the addition of "use
- *   client" directives.
- * @returns A plugin object that contains a `renderChunk` method to process and potentially modify the code chunks.
+ * @param clientLibs - An array of strings representing the client libraries
+ *   that should trigger the addition of "use client" directives.
+ * @returns A plugin object that contains a `renderChunk` method to process and
+ *   potentially modify the code chunks.
  */
-export function addUseClientDirective(clientLibs: string[]): NonNullable<Options['plugins']>[number] {
+export function addUseClientDirective(
+  clientLibs: string[],
+): NonNullable<Options['plugins']>[number] {
   const clientLibsRegex = buildClientLibsRegex(clientLibs);
 
   return {
@@ -50,7 +63,9 @@ export function addUseClientDirective(clientLibs: string[]): NonNullable<Options
 
       // If the code already contains "use client", track its imports.
       if (code.startsWith(USE_CLIENT_DIRECTIVE)) {
-        imports?.forEach(({ path: importPath }) => trackedImports.add(importPath));
+        imports?.forEach(({ path: importPath }) =>
+          trackedImports.add(importPath),
+        );
 
         return { code, map };
       }

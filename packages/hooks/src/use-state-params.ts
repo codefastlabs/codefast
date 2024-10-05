@@ -22,7 +22,10 @@ type ParamInput = string | Record<string, Value>;
  *   value.
  * @returns void
  */
-function setUrlParams(params: URLSearchParams, newParams: Record<string, Value>): void {
+function setUrlParams(
+  params: URLSearchParams,
+  newParams: Record<string, Value>,
+): void {
   for (const [key, value] of Object.entries(newParams)) {
     value ? params.set(key, value.toString()) : params.delete(key);
   }
@@ -31,11 +34,16 @@ function setUrlParams(params: URLSearchParams, newParams: Record<string, Value>)
 /**
  * Updates the query parameters in the URL and updates the browser history.
  *
- * @param newParams - A dictionary object containing the new query parameters to be added or updated.
- * @param method - A value indicating whether to use `PUSH_STATE` or `REPLACE_STATE` when updating the browser history.
+ * @param newParams - A dictionary object containing the new query parameters
+ *   to be added or updated.
+ * @param method - A value indicating whether to use `PUSH_STATE` or
+ *   `REPLACE_STATE` when updating the browser history.
  * @returns void
  */
-function updateUrlParams(newParams: Record<string, Value>, method: HistoryMethod): void {
+function updateUrlParams(
+  newParams: Record<string, Value>,
+  method: HistoryMethod,
+): void {
   const params = new URLSearchParams(window.location.search);
 
   setUrlParams(params, newParams);
@@ -50,15 +58,19 @@ function updateUrlParams(newParams: Record<string, Value>, method: HistoryMethod
 }
 
 /**
- * useStateParams is a custom hook that returns an object with two methods: push and replace.
- * The push method is used to update the URL parameters by pushing a new state to the browser history.
- * The replace method is used to update the URL parameters by replacing the current state in the browser history.
+ * useStateParams is a custom hook that returns an object with two methods:
+ * push and replace. The push method is used to update the URL parameters by
+ * pushing a new state to the browser history. The replace method is used to
+ * update the URL parameters by replacing the current state in the browser
+ * history.
  *
  * @returns An object with two methods: push and replace.
- *          - push: A function that takes a ParamInput and an optional value as parameters and updates the URL
- *   parameters by pushing a new state to the browser history.
- *          - replace: A function that takes a ParamInput and an optional value as parameters and updates the URL
- *   parameters by replacing the current state in the browser history.
+ *          - push: A function that takes a ParamInput and an optional value as
+ *   parameters and updates the URL parameters by pushing a new state to the
+ *   browser history.
+ *          - replace: A function that takes a ParamInput and an optional value
+ *   as parameters and updates the URL parameters by replacing the current
+ *   state in the browser history.
  */
 export function useStateParams(): {
   push: (paramInput: ParamInput, value?: Value) => void;

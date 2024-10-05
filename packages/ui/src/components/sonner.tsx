@@ -18,8 +18,10 @@ function Toaster({ ...props }: ToasterProps): React.JSX.Element {
       theme={theme}
       toastOptions={{
         classNames: {
-          actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
-          cancelButton: 'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
+          actionButton:
+            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
+          cancelButton:
+            'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
           content: 'w-full flex flex-col gap-1',
           description: 'group-[.toast]:text-muted-foreground',
           toast:

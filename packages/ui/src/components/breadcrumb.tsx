@@ -13,9 +13,11 @@ interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   separator?: React.ReactNode;
 }
 
-const Breadcrumb = React.forwardRef<BreadcrumbElement, BreadcrumbProps>(({ ...props }, forwardedRef) => (
-  <nav ref={forwardedRef} aria-label="breadcrumb" {...props} />
-));
+const Breadcrumb = React.forwardRef<BreadcrumbElement, BreadcrumbProps>(
+  ({ ...props }, forwardedRef) => (
+    <nav ref={forwardedRef} aria-label="breadcrumb" {...props} />
+  ),
+);
 
 Breadcrumb.displayName = 'Breadcrumb';
 
@@ -26,18 +28,19 @@ Breadcrumb.displayName = 'Breadcrumb';
 type BreadcrumbListElement = HTMLOListElement;
 type BreadcrumbListProps = React.OlHTMLAttributes<HTMLOListElement>;
 
-const BreadcrumbList = React.forwardRef<BreadcrumbListElement, BreadcrumbListProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <ol
-      ref={forwardedRef}
-      className={cn(
-        'text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const BreadcrumbList = React.forwardRef<
+  BreadcrumbListElement,
+  BreadcrumbListProps
+>(({ className, ...props }, forwardedRef) => (
+  <ol
+    ref={forwardedRef}
+    className={cn(
+      'text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2',
+      className,
+    )}
+    {...props}
+  />
+));
 
 BreadcrumbList.displayName = 'BreadcrumbList';
 
@@ -48,11 +51,16 @@ BreadcrumbList.displayName = 'BreadcrumbList';
 type BreadcrumbItemElement = HTMLLIElement;
 type BreadcrumbItemProps = React.LiHTMLAttributes<HTMLLIElement>;
 
-const BreadcrumbItem = React.forwardRef<BreadcrumbItemElement, BreadcrumbItemProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <li ref={forwardedRef} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
-  ),
-);
+const BreadcrumbItem = React.forwardRef<
+  BreadcrumbItemElement,
+  BreadcrumbItemProps
+>(({ className, ...props }, forwardedRef) => (
+  <li
+    ref={forwardedRef}
+    className={cn('inline-flex items-center gap-1.5', className)}
+    {...props}
+  />
+));
 
 BreadcrumbItem.displayName = 'BreadcrumbItem';
 
@@ -62,17 +70,25 @@ BreadcrumbItem.displayName = 'BreadcrumbItem';
 
 type BreadcrumbLinkElement = HTMLAnchorElement;
 
-interface BreadcrumbLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface BreadcrumbLinkProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   asChild?: boolean;
 }
 
-const BreadcrumbLink = React.forwardRef<BreadcrumbLinkElement, BreadcrumbLinkProps>(
-  ({ asChild, className, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : 'a';
+const BreadcrumbLink = React.forwardRef<
+  BreadcrumbLinkElement,
+  BreadcrumbLinkProps
+>(({ asChild, className, ...props }, forwardedRef) => {
+  const Component = asChild ? Slot : 'a';
 
-    return <Component ref={forwardedRef} className={cn('hover:text-foreground transition', className)} {...props} />;
-  },
-);
+  return (
+    <Component
+      ref={forwardedRef}
+      className={cn('hover:text-foreground transition', className)}
+      {...props}
+    />
+  );
+});
 
 BreadcrumbLink.displayName = 'BreadcrumbLink';
 
@@ -83,18 +99,19 @@ BreadcrumbLink.displayName = 'BreadcrumbLink';
 type BreadcrumbPageElement = HTMLSpanElement;
 type BreadcrumbPageProps = React.HTMLAttributes<HTMLSpanElement>;
 
-const BreadcrumbPage = React.forwardRef<BreadcrumbPageElement, BreadcrumbPageProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <span
-      ref={forwardedRef}
-      aria-current="page"
-      aria-disabled="true"
-      className={cn('text-foreground font-normal', className)}
-      role="link"
-      {...props}
-    />
-  ),
-);
+const BreadcrumbPage = React.forwardRef<
+  BreadcrumbPageElement,
+  BreadcrumbPageProps
+>(({ className, ...props }, forwardedRef) => (
+  <span
+    ref={forwardedRef}
+    aria-current="page"
+    aria-disabled="true"
+    className={cn('text-foreground font-normal', className)}
+    role="link"
+    {...props}
+  />
+));
 
 BreadcrumbPage.displayName = 'BreadcrumbPage';
 
@@ -104,7 +121,10 @@ BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 type BreadcrumbSeparatorProps = React.LiHTMLAttributes<HTMLLIElement>;
 
-function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): React.JSX.Element {
+function BreadcrumbSeparator({
+  children,
+  ...props
+}: BreadcrumbSeparatorProps): React.JSX.Element {
   return (
     <li aria-hidden="true" role="presentation" {...props}>
       {children ?? <ChevronRightIcon className="size-3.5" />}
@@ -118,7 +138,10 @@ function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): 
 
 type BreadcrumbEllipsisProps = React.HTMLAttributes<HTMLSpanElement>;
 
-function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): React.JSX.Element {
+function BreadcrumbEllipsis({
+  className,
+  ...props
+}: BreadcrumbEllipsisProps): React.JSX.Element {
   return (
     <span
       aria-hidden="true"

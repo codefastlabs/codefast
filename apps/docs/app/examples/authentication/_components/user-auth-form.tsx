@@ -1,13 +1,21 @@
 'use client';
 
 import { Button, cn, Label, TextInput } from '@codefast/ui';
-import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from 'react';
+import {
+  type HTMLAttributes,
+  type JSX,
+  type SyntheticEvent,
+  useState,
+} from 'react';
 import { type SubmitHandler } from 'react-hook-form';
 import { Icons } from '@/components/icons';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.Element {
+export function UserAuthForm({
+  className,
+  ...props
+}: UserAuthFormProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<SyntheticEvent> = (event): void => {
@@ -47,10 +55,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background text-muted-foreground px-2">Or continue with</span>
+          <span className="bg-background text-muted-foreground px-2">
+            Or continue with
+          </span>
         </div>
       </div>
-      <Button loading={isLoading} prefix={<Icons.GitHub />} type="button" variant="outline">
+      <Button
+        loading={isLoading}
+        prefix={<Icons.GitHub />}
+        type="button"
+        variant="outline"
+      >
         GitHub
       </Button>
     </div>

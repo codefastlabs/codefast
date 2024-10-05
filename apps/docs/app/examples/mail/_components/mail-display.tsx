@@ -20,7 +20,16 @@ import {
   TooltipTrigger,
 } from '@codefast/ui';
 import { addDays, addHours, format, nextSaturday } from 'date-fns';
-import { Archive, ArchiveX, Clock, Forward, MoreVertical, Reply, ReplyAll, Trash2 } from 'lucide-react';
+import {
+  Archive,
+  ArchiveX,
+  Clock,
+  Forward,
+  MoreVertical,
+  Reply,
+  ReplyAll,
+  Trash2,
+} from 'lucide-react';
 import { type JSX } from 'react';
 import { type EmailMessage } from '@/app/examples/mail/_data/data';
 
@@ -49,13 +58,25 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button icon aria-label="Move to junk" disabled={!mail} prefix={<ArchiveX />} variant="ghost" />
+              <Button
+                icon
+                aria-label="Move to junk"
+                disabled={!mail}
+                prefix={<ArchiveX />}
+                variant="ghost"
+              />
             </TooltipTrigger>
             <TooltipContent>Move to junk</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button icon aria-label="Move to trash" disabled={!mail} prefix={<Trash2 />} variant="ghost" />
+              <Button
+                icon
+                aria-label="Move to trash"
+                disabled={!mail}
+                prefix={<Trash2 />}
+                variant="ghost"
+              />
             </TooltipTrigger>
             <TooltipContent>Move to trash</TooltipContent>
           </Tooltip>
@@ -64,28 +85,54 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
             <Popover>
               <PopoverTrigger asChild>
                 <TooltipTrigger asChild>
-                  <Button icon aria-label="Snooze" disabled={!mail} prefix={<Clock />} variant="ghost" />
+                  <Button
+                    icon
+                    aria-label="Snooze"
+                    disabled={!mail}
+                    prefix={<Clock />}
+                    variant="ghost"
+                  />
                 </TooltipTrigger>
               </PopoverTrigger>
               <PopoverContent className="flex p-0">
                 <div className="flex flex-col gap-2 border-r px-2 py-4">
                   <div className="px-4 text-sm font-medium">Snooze until</div>
                   <div className="grid min-w-64 gap-1">
-                    <Button className="justify-start font-normal" variant="ghost">
+                    <Button
+                      className="justify-start font-normal"
+                      variant="ghost"
+                    >
                       Later today{' '}
-                      <span className="text-muted-foreground ml-auto">{format(addHours(today, 4), 'E, h:m b')}</span>
+                      <span className="text-muted-foreground ml-auto">
+                        {format(addHours(today, 4), 'E, h:m b')}
+                      </span>
                     </Button>
-                    <Button className="justify-start font-normal" variant="ghost">
+                    <Button
+                      className="justify-start font-normal"
+                      variant="ghost"
+                    >
                       Tomorrow
-                      <span className="text-muted-foreground ml-auto">{format(addDays(today, 1), 'E, h:m b')}</span>
+                      <span className="text-muted-foreground ml-auto">
+                        {format(addDays(today, 1), 'E, h:m b')}
+                      </span>
                     </Button>
-                    <Button className="justify-start font-normal" variant="ghost">
+                    <Button
+                      className="justify-start font-normal"
+                      variant="ghost"
+                    >
                       This weekend
-                      <span className="text-muted-foreground ml-auto">{format(nextSaturday(today), 'E, h:m b')}</span>
+                      <span className="text-muted-foreground ml-auto">
+                        {format(nextSaturday(today), 'E, h:m b')}
+                      </span>
                     </Button>
-                    <Button className="justify-start font-normal" variant="ghost">
+                    <Button
+                      className="justify-start font-normal"
+                      variant="ghost"
+                    >
                       Next week
-                      <span className="text-muted-foreground ml-auto">{format(addDays(today, 7), 'E, h:m b')}</span>
+                      <span className="text-muted-foreground ml-auto">
+                        {format(addDays(today, 7), 'E, h:m b')}
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -100,7 +147,13 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
         <div className="ml-auto flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button icon aria-label="Reply" disabled={!mail} prefix={<Reply />} variant="ghost" />
+              <Button
+                icon
+                aria-label="Reply"
+                disabled={!mail}
+                prefix={<Reply />}
+                variant="ghost"
+              />
             </TooltipTrigger>
             <TooltipContent>Reply</TooltipContent>
           </Tooltip>
@@ -118,7 +171,13 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button icon aria-label="Forward" disabled={!mail} prefix={<Forward />} variant="ghost" />
+              <Button
+                icon
+                aria-label="Forward"
+                disabled={!mail}
+                prefix={<Forward />}
+                variant="ghost"
+              />
             </TooltipTrigger>
             <TooltipContent>Forward</TooltipContent>
           </Tooltip>
@@ -126,7 +185,13 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
         <Separator className="mx-2 h-6" orientation="vertical" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button icon aria-label="More options" disabled={!mail} suffix={<MoreVertical />} variant="ghost" />
+            <Button
+              icon
+              aria-label="More options"
+              disabled={!mail}
+              suffix={<MoreVertical />}
+              variant="ghost"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>Mark as unread</DropdownMenuItem>
@@ -159,19 +224,30 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
               </div>
             </div>
             {mail.date ? (
-              <div className="text-muted-foreground ml-auto text-xs">{format(new Date(mail.date), 'PPpp')}</div>
+              <div className="text-muted-foreground ml-auto text-xs">
+                {format(new Date(mail.date), 'PPpp')}
+              </div>
             ) : null}
           </div>
           <Separator />
-          <div className="flex-1 whitespace-pre-wrap p-4 text-sm">{mail.text}</div>
+          <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
+            {mail.text}
+          </div>
           <Separator className="mt-auto" />
           <div className="p-4">
             <form>
               <div className="grid gap-4">
-                <Textarea className="p-4" placeholder={`Reply ${mail.name}...`} />
+                <Textarea
+                  className="p-4"
+                  placeholder={`Reply ${mail.name}...`}
+                />
                 <div className="flex items-center">
-                  <Label className="flex items-center gap-2 text-xs font-normal" htmlFor="mute">
-                    <Switch aria-label="Mute thread" id="mute" /> Mute this thread
+                  <Label
+                    className="flex items-center gap-2 text-xs font-normal"
+                    htmlFor="mute"
+                  >
+                    <Switch aria-label="Mute thread" id="mute" /> Mute this
+                    thread
                   </Label>
                   <Button
                     className="ml-auto"
@@ -188,7 +264,9 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           </div>
         </div>
       ) : (
-        <div className="text-muted-foreground p-8 text-center">No message selected</div>
+        <div className="text-muted-foreground p-8 text-center">
+          No message selected
+        </div>
       )}
     </div>
   );

@@ -21,7 +21,8 @@ export interface UsePaginationProps {
 export const ELLIPSIS = '•••';
 
 /**
- * Generates an array of numbers representing a range between the start and end values (inclusive).
+ * Generates an array of numbers representing a range between the start and end
+ * values (inclusive).
  *
  * @param start - The starting number of the range
  * @param end - The ending number of the range
@@ -34,10 +35,12 @@ const createRange = (start: number, end: number): number[] => {
 };
 
 /**
- * A custom hook that calculates the pagination logic for a given set of results.
+ * A custom hook that calculates the pagination logic for a given set of
+ * results.
  *
  * @param props - An object containing the pagination properties
- * @returns An array representing the pagination structure, which includes page numbers and ellipsis indicators
+ * @returns An array representing the pagination structure, which includes page
+ *   numbers and ellipsis indicators
  *
  * @example
  * ```typescript
@@ -68,8 +71,8 @@ export const usePagination = ({
     const visiblePageNumbers = siblingPagesCount + 5;
 
     /**
-     * Case 1: If the number of pages is less than or equal to the visible page numbers,
-     * return an array of all page numbers.
+     * Case 1: If the number of pages is less than or equal to the visible page
+     * numbers, return an array of all page numbers.
      */
     if (visiblePageNumbers >= totalPages) {
       return createRange(1, totalPages);
@@ -77,7 +80,10 @@ export const usePagination = ({
 
     // Determine the left and right sibling page indices, ensuring they stay within valid bounds
     const leftSiblingIndex = Math.max(currentPage - siblingPagesCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingPagesCount, totalPages);
+    const rightSiblingIndex = Math.min(
+      currentPage + siblingPagesCount,
+      totalPages,
+    );
 
     // Determine whether to show ellipsis on the left or right of the pagination
     const shouldShowLeftEllipsis = leftSiblingIndex > 2;
@@ -89,7 +95,8 @@ export const usePagination = ({
 
     /**
      * Case 2: No left ellipsis, but right ellipsis is necessary.
-     * This occurs when the current page is close to the start of the pagination range.
+     * This occurs when the current page is close to the start of the
+     * pagination range.
      */
     if (!shouldShowLeftEllipsis && shouldShowRightEllipsis) {
       const leftRange = createRange(1, 3 + 2 * siblingPagesCount);
@@ -99,17 +106,22 @@ export const usePagination = ({
 
     /**
      * Case 3: No right ellipsis, but left ellipsis is necessary.
-     * This occurs when the current page is close to the end of the pagination range.
+     * This occurs when the current page is close to the end of the pagination
+     * range.
      */
     if (shouldShowLeftEllipsis && !shouldShowRightEllipsis) {
-      const rightRange = createRange(totalPages - (3 + 2 * siblingPagesCount) + 1, totalPages);
+      const rightRange = createRange(
+        totalPages - (3 + 2 * siblingPagesCount) + 1,
+        totalPages,
+      );
 
       return [firstPage, ELLIPSIS, ...rightRange];
     }
 
     /**
      * Case 4: Both left and right ellipsis are necessary.
-     * This occurs when the current page is far enough from both the start and end of the pagination range.
+     * This occurs when the current page is far enough from both the start and
+     * end of the pagination range.
      */
     if (shouldShowLeftEllipsis && shouldShowRightEllipsis) {
       const middleRange = createRange(leftSiblingIndex, rightSiblingIndex);

@@ -15,7 +15,8 @@ interface InputContextValue {
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
-const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
+const [InputProvider, useInputContext] =
+  createInputContext<InputContextValue>(INPUT_NAME);
 
 type InputProps = React.PropsWithChildren<{
   className?: string;
@@ -39,7 +40,9 @@ function Input(inputProps: InputProps): React.JSX.Element {
   } = inputProps as ScopedProps<InputProps>;
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
+  const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (
+    event,
+  ) => {
     const target = event.target as HTMLElement;
 
     if (target.closest('input, a, button')) {
@@ -101,4 +104,12 @@ InputItem.displayName = INPUT_ITEM_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { createInputScope, Input, Input as Root, InputItem, InputItem as Item, type InputProps, type InputItemProps };
+export {
+  createInputScope,
+  Input,
+  Input as Root,
+  InputItem,
+  InputItem as Item,
+  type InputProps,
+  type InputItemProps,
+};

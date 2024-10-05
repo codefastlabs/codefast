@@ -6,9 +6,13 @@ import { formatUrl } from 'next/dist/shared/lib/router/utils/format-url';
 
 type ExampleLinkProps = ComponentProps<typeof Link>;
 
-export function ExampleLink({ className, ...props }: ExampleLinkProps): JSX.Element {
+export function ExampleLink({
+  className,
+  ...props
+}: ExampleLinkProps): JSX.Element {
   const pathname = usePathname();
-  const hrefString = typeof props.href === 'string' ? props.href : formatUrl(props.href);
+  const hrefString =
+    typeof props.href === 'string' ? props.href : formatUrl(props.href);
   const isActive = pathname.startsWith(hrefString) && props.href !== '/';
 
   return (

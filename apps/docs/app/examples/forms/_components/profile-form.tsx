@@ -56,7 +56,10 @@ type ProfileFormValues = z.infer<typeof profileFormValues>;
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
   bio: 'I own a computer.',
-  urls: [{ value: 'https://shadcn.com' }, { value: 'https://twitter.com/shadcn' }],
+  urls: [
+    { value: 'https://shadcn.com' },
+    { value: 'https://twitter.com/shadcn' },
+  ],
 };
 
 export function ProfileForm(): JSX.Element {
@@ -94,8 +97,8 @@ export function ProfileForm(): JSX.Element {
                 <TextInput placeholder="codefast" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name. It can be your real name or a pseudonym. You can only change this once
-                every 30 days.
+                This is your public display name. It can be your real name or a
+                pseudonym. You can only change this once every 30 days.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -120,7 +123,8 @@ export function ProfileForm(): JSX.Element {
                 </SelectContent>
               </Select>
               <FormDescription>
-                You can manage verified email addresses in your <Link href="/examples/forms">email settings</Link>.
+                You can manage verified email addresses in your{' '}
+                <Link href="/examples/forms">email settings</Link>.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -133,10 +137,15 @@ export function ProfileForm(): JSX.Element {
             <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
-                <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
+                <Textarea
+                  className="resize-none"
+                  placeholder="Tell us a little bit about yourself"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
-                You can <span>@mention</span> other users and organizations to link to them.
+                You can <span>@mention</span> other users and organizations to
+                link to them.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -150,7 +159,9 @@ export function ProfileForm(): JSX.Element {
               name={`urls.${index}.value`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className={cn(index !== 0 && 'sr-only')}>URLs</FormLabel>
+                  <FormLabel className={cn(index !== 0 && 'sr-only')}>
+                    URLs
+                  </FormLabel>
                   <FormDescription className={cn(index !== 0 && 'sr-only')}>
                     Add links to your website, blog, or social media profiles.
                   </FormDescription>

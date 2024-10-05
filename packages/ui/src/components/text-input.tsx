@@ -1,7 +1,10 @@
 import * as React from 'react';
 import * as InputPrimitive from '@codefast-ui/input';
 import { Spinner } from '@/components/spinner';
-import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
+import {
+  inputVariants,
+  type InputVariantsProps,
+} from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input
@@ -17,10 +20,25 @@ type TextInputElement = React.ComponentRef<typeof InputPrimitive.Item>;
 interface TextInputProps
   extends InputVariantsProps,
     React.ComponentProps<typeof InputPrimitive.Root>,
-    Omit<React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix'> {}
+    Omit<
+      React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
+      'prefix'
+    > {}
 
 const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
-  ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => (
+  (
+    {
+      className,
+      inputSize,
+      loaderPosition,
+      loading,
+      prefix,
+      spinner,
+      suffix,
+      ...props
+    },
+    forwardedRef,
+  ) => (
     <InputPrimitive.Root
       className={root({ inputSize, className })}
       loaderPosition={loaderPosition}
@@ -29,7 +47,11 @@ const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
-      <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize })} {...props} />
+      <InputPrimitive.Item
+        ref={forwardedRef}
+        className={input({ inputSize })}
+        {...props}
+      />
     </InputPrimitive.Root>
   ),
 );

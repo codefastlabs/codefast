@@ -33,7 +33,9 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
         </svg>
 
         <h3 className="mt-4 text-lg font-semibold">No episodes added</h3>
-        <p className="text-muted-foreground mb-4 mt-2 text-sm">You have not added any podcasts. Add one below.</p>
+        <p className="text-muted-foreground mb-4 mt-2 text-sm">
+          You have not added any podcasts. Add one below.
+        </p>
         <Dialog>
           <DialogTrigger asChild>
             <Button className="relative" size="sm">
@@ -43,12 +45,17 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Podcast</DialogTitle>
-              <DialogDescription>Copy and paste the podcast feed URL to import.</DialogDescription>
+              <DialogDescription>
+                Copy and paste the podcast feed URL to import.
+              </DialogDescription>
             </DialogHeader>
             <DialogBody className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="url">Podcast URL</Label>
-                <TextInput id="url" placeholder="https://example.com/feed.xml" />
+                <TextInput
+                  id="url"
+                  placeholder="https://example.com/feed.xml"
+                />
               </div>
             </DialogBody>
             <DialogFooter>

@@ -38,7 +38,9 @@ export const Default: Story = {
     <div>
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">Radix Primitives</h4>
-        <Text className="text-muted-foreground text-sm">An open-source UI component library.</Text>
+        <Text className="text-muted-foreground text-sm">
+          An open-source UI component library.
+        </Text>
       </div>
       <Separator className="my-4" />
       <div className="flex items-center space-x-4 text-sm">
@@ -79,7 +81,9 @@ export const Label: Story = {
       <Separator className="my-4" {...args} orientation="horizontal">
         <SeparatorItem>or</SeparatorItem>
       </Separator>
-      <Text className="text-muted-foreground text-sm">An open-source UI component library.</Text>
+      <Text className="text-muted-foreground text-sm">
+        An open-source UI component library.
+      </Text>
     </div>
   ),
 };
@@ -96,11 +100,15 @@ export const VerticalLabel: Story = {
 
   render: (args) => (
     <div className="inline-grid grid-flow-col space-x-4">
-      <div className="flex size-20 items-center justify-center border border-dashed">Blog</div>
+      <div className="flex size-20 items-center justify-center border border-dashed">
+        Blog
+      </div>
       <Separator {...args} orientation="vertical">
         <SeparatorItem>or</SeparatorItem>
       </Separator>
-      <div className="flex size-20 items-center justify-center border border-dashed">Docs</div>
+      <div className="flex size-20 items-center justify-center border border-dashed">
+        Docs
+      </div>
     </div>
   ),
 };

@@ -11,24 +11,46 @@ const meta: Meta<typeof Button> = {
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the button',
-      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Shows a loading spinner when true',
-      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     loaderPosition: {
       control: { type: 'select' },
       options: ['prefix', 'suffix'],
       description: 'Position of the loader',
-      table: { type: { summary: 'string' }, defaultValue: { summary: 'prefix' } },
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'prefix' },
+      },
     },
     variant: {
       control: { type: 'select' },
-      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'],
+      options: [
+        'default',
+        'secondary',
+        'info',
+        'success',
+        'warning',
+        'destructive',
+        'outline',
+        'ghost',
+        'link',
+      ],
       description: 'Button variant styles',
-      table: { type: { summary: 'string' }, defaultValue: { summary: 'default' } },
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      },
     },
     size: {
       control: { type: 'select' },
@@ -39,7 +61,10 @@ const meta: Meta<typeof Button> = {
     icon: {
       control: { type: 'boolean' },
       description: 'Indicates if the button should display an icon',
-      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     prefix: {
       control: { type: 'text' },

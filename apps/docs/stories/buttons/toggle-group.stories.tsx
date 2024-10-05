@@ -18,9 +18,21 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -32,9 +44,21 @@ export const Default: Story = {
 export const Secondary: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="secondary" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -46,9 +70,21 @@ export const Secondary: Story = {
 export const Info: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="info" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -60,9 +96,21 @@ export const Info: Story = {
 export const Success: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="success" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -74,9 +122,21 @@ export const Success: Story = {
 export const Warning: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="warning" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -88,9 +148,21 @@ export const Warning: Story = {
 export const Destructive: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="destructive" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -102,9 +174,21 @@ export const Destructive: Story = {
 export const Outline: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="outline" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -116,9 +200,21 @@ export const Outline: Story = {
 export const Ghost: Story = {
   render: (args) => (
     <ToggleGroup icon type="multiple" variant="ghost" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -130,13 +226,25 @@ export const Ghost: Story = {
 export const WithText: Story = {
   render: (args) => (
     <ToggleGroup type="multiple" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold">
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      >
         Bold
       </ToggleGroupItem>
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic">
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      >
         Italic
       </ToggleGroupItem>
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline">
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      >
         Underline
       </ToggleGroupItem>
     </ToggleGroup>
@@ -150,9 +258,21 @@ export const WithText: Story = {
 export const Single: Story = {
   render: (args) => (
     <ToggleGroup icon type="single" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -164,9 +284,21 @@ export const Single: Story = {
 export const Small: Story = {
   render: (args) => (
     <ToggleGroup icon size="sm" type="multiple" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -178,9 +310,21 @@ export const Small: Story = {
 export const Large: Story = {
   render: (args) => (
     <ToggleGroup icon size="lg" type="multiple" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };
@@ -192,9 +336,21 @@ export const Large: Story = {
 export const Disabled: Story = {
   render: (args) => (
     <ToggleGroup disabled icon type="multiple" {...args}>
-      <ToggleGroupItem aria-label="Toggle bold" prefix={<BoldIcon />} value="bold" />
-      <ToggleGroupItem aria-label="Toggle italic" prefix={<ItalicIcon />} value="italic" />
-      <ToggleGroupItem aria-label="Toggle underline" prefix={<UnderlineIcon />} value="underline" />
+      <ToggleGroupItem
+        aria-label="Toggle bold"
+        prefix={<BoldIcon />}
+        value="bold"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle italic"
+        prefix={<ItalicIcon />}
+        value="italic"
+      />
+      <ToggleGroupItem
+        aria-label="Toggle underline"
+        prefix={<UnderlineIcon />}
+        value="underline"
+      />
     </ToggleGroup>
   ),
 };

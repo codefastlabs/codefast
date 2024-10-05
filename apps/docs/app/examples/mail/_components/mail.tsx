@@ -65,7 +65,9 @@ export function Mail({
     >
       <ResizablePanel
         collapsible
-        className={cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')}
+        className={cn(
+          isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out',
+        )}
         collapsedSize={navCollapsedSize}
         defaultSize={defaultLayout[0]}
         maxSize={20}
@@ -79,7 +81,12 @@ export function Mail({
           document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
         }}
       >
-        <div className={cn('flex h-[56px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}>
+        <div
+          className={cn(
+            'flex h-[56px] items-center justify-center',
+            isCollapsed ? 'h-[52px]' : 'px-2',
+          )}
+        >
           <AccountSwitcher accounts={accounts} isCollapsed={isCollapsed} />
         </div>
         <Separator />
@@ -167,10 +174,16 @@ export function Mail({
           <div className="flex items-center px-4 py-2">
             <h1 className="text-xl font-bold">Inbox</h1>
             <TabsList className="ml-auto">
-              <TabsTrigger className="text-zinc-600 dark:text-zinc-200" value="all">
+              <TabsTrigger
+                className="text-zinc-600 dark:text-zinc-200"
+                value="all"
+              >
                 All mail
               </TabsTrigger>
-              <TabsTrigger className="text-zinc-600 dark:text-zinc-200" value="unread">
+              <TabsTrigger
+                className="text-zinc-600 dark:text-zinc-200"
+                value="unread"
+              >
                 Unread
               </TabsTrigger>
             </TabsList>
@@ -178,7 +191,10 @@ export function Mail({
           <Separator />
           <div className="bg-background/95 supports-[backdrop-filter]:bg-background/60 p-4 backdrop-blur">
             <form>
-              <TextInput placeholder="Search" prefix={<SearchIcon className="text-muted-foreground" />} />
+              <TextInput
+                placeholder="Search"
+                prefix={<SearchIcon className="text-muted-foreground" />}
+              />
             </form>
           </div>
           <TabsContent className="m-0" value="all">

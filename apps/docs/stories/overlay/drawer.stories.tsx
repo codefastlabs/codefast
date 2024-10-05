@@ -102,7 +102,9 @@ export const Default: Story = {
           <div className="mx-auto w-full max-w-sm">
             <DrawerHeader>
               <DrawerTitle>Move Goal</DrawerTitle>
-              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+              <DrawerDescription>
+                Set your daily activity goal.
+              </DrawerDescription>
             </DrawerHeader>
             <div className="p-4 pb-0">
               <div className="flex items-center justify-center space-x-2">
@@ -118,8 +120,12 @@ export const Default: Story = {
                   }}
                 />
                 <div className="flex-1 text-center">
-                  <div className="text-7xl font-bold tracking-tighter">{goal}</div>
-                  <div className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</div>
+                  <div className="text-7xl font-bold tracking-tighter">
+                    {goal}
+                  </div>
+                  <div className="text-muted-foreground text-[0.70rem] uppercase">
+                    Calories/day
+                  </div>
                 </div>
                 <Button
                   icon
@@ -178,13 +184,18 @@ export const ResponsiveDialog: Story = {
               <DialogHeader>
                 <DialogTitle>Edit profile</DialogTitle>
                 <DialogDescription>
-                  Make changes to your profile here. Click save when you&apos;re done.
+                  Make changes to your profile here. Click save when you&apos;re
+                  done.
                 </DialogDescription>
               </DialogHeader>
               <DialogBody className="grid items-start gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <TextInput defaultValue="codefast@example.com" id="email" type="email" />
+                  <TextInput
+                    defaultValue="codefast@example.com"
+                    id="email"
+                    type="email"
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="username">Username</Label>
@@ -224,13 +235,18 @@ export const ResponsiveDialog: Story = {
             <DrawerHeader className="text-left">
               <DrawerTitle>Edit profile</DrawerTitle>
               <DrawerDescription>
-                Make changes to your profile here. Click save when you&apos;re done.
+                Make changes to your profile here. Click save when you&apos;re
+                done.
               </DrawerDescription>
             </DrawerHeader>
             <DrawerBody className="grid items-start gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <TextInput defaultValue="codefast@example.com" id="email" type="email" />
+                <TextInput
+                  defaultValue="codefast@example.com"
+                  id="email"
+                  type="email"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>

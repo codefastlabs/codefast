@@ -16,7 +16,13 @@ const Container = React.forwardRef<ContainerElement, ContainerProps>(
   ({ className, asChild, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'div';
 
-    return <Component ref={forwardedRef} className={cn('container', className)} {...props} />;
+    return (
+      <Component
+        ref={forwardedRef}
+        className={cn('container', className)}
+        {...props}
+      />
+    );
   },
 );
 

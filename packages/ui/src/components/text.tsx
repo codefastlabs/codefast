@@ -7,7 +7,8 @@ import { Slot } from '@radix-ui/react-slot';
 
 type TextElement = HTMLParagraphElement;
 
-interface TextParagraphProps extends React.HTMLAttributes<HTMLParagraphElement> {
+interface TextParagraphProps
+  extends React.HTMLAttributes<HTMLParagraphElement> {
   as?: 'p';
 }
 
@@ -19,11 +20,13 @@ type TextProps = (TextParagraphProps | TextSpanProps) & {
   asChild?: boolean;
 };
 
-const Text = React.forwardRef<TextElement, TextProps>(({ as: Tag = 'p', asChild, ...props }, forwardedRef) => {
-  const Component = asChild ? Slot : Tag;
+const Text = React.forwardRef<TextElement, TextProps>(
+  ({ as: Tag = 'p', asChild, ...props }, forwardedRef) => {
+    const Component = asChild ? Slot : Tag;
 
-  return <Component ref={forwardedRef} {...props} />;
-});
+    return <Component ref={forwardedRef} {...props} />;
+  },
+);
 
 Text.displayName = 'Text';
 

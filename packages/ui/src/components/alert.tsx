@@ -11,7 +11,8 @@ const alertVariants = tv({
   variants: {
     variant: {
       default: 'bg-background text-foreground [&>svg]:text-foreground',
-      destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+      destructive:
+        'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
     },
   },
   defaultVariants: {
@@ -28,9 +29,16 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
 type AlertElement = HTMLDivElement;
 type AlertProps = React.HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
 
-const Alert = React.forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, forwardedRef) => (
-  <div ref={forwardedRef} className={alertVariants({ variant, className })} role="alert" {...props} />
-));
+const Alert = React.forwardRef<AlertElement, AlertProps>(
+  ({ className, variant, ...props }, forwardedRef) => (
+    <div
+      ref={forwardedRef}
+      className={alertVariants({ variant, className })}
+      role="alert"
+      {...props}
+    />
+  ),
+);
 
 Alert.displayName = 'Alert';
 
@@ -43,7 +51,11 @@ type AlertTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
 
 const AlertTitle = React.forwardRef<AlertTitleElement, AlertTitleProps>(
   ({ children, className, ...props }, forwardedRef) => (
-    <h5 ref={forwardedRef} className={cn('mb-1 font-medium leading-none tracking-tight', className)} {...props}>
+    <h5
+      ref={forwardedRef}
+      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      {...props}
+    >
       {children}
     </h5>
   ),
@@ -58,11 +70,16 @@ AlertTitle.displayName = 'AlertTitle';
 type AlertDescriptionElement = HTMLDivElement;
 type AlertDescriptionProps = React.HTMLAttributes<HTMLDivElement>;
 
-const AlertDescription = React.forwardRef<AlertDescriptionElement, AlertDescriptionProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div ref={forwardedRef} className={cn('text-sm [&_p]:leading-relaxed', className)} {...props} />
-  ),
-);
+const AlertDescription = React.forwardRef<
+  AlertDescriptionElement,
+  AlertDescriptionProps
+>(({ className, ...props }, forwardedRef) => (
+  <div
+    ref={forwardedRef}
+    className={cn('text-sm [&_p]:leading-relaxed', className)}
+    {...props}
+  />
+));
 
 AlertDescription.displayName = 'AlertDescription';
 
@@ -70,4 +87,11 @@ AlertDescription.displayName = 'AlertDescription';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Alert, AlertTitle, AlertDescription, type AlertProps, type AlertTitleProps, type AlertDescriptionProps };
+export {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  type AlertProps,
+  type AlertTitleProps,
+  type AlertDescriptionProps,
+};

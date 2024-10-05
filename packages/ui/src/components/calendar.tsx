@@ -25,7 +25,10 @@ import { buttonVariants } from '@/styles/button-variants';
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-function Chevron({ orientation, ...props }: React.ComponentProps<CustomComponents['Chevron']>): React.JSX.Element {
+function Chevron({
+  orientation,
+  ...props
+}: React.ComponentProps<CustomComponents['Chevron']>): React.JSX.Element {
   switch (orientation) {
     case 'up': {
       return <ChevronUpIcon className="size-4" {...props} />;
@@ -73,13 +76,17 @@ function DayButton({
       className={cn(
         'transition-none focus-visible:-outline-offset-2',
         (!modifiers.selected || modifiers.range_middle) && [
-          modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
+          modifiers.today
+            ? 'bg-accent'
+            : 'hover:border-accent hover:bg-transparent',
           modifiers.outside && 'text-opacity-30',
         ],
         className,
       )}
       size="sm"
-      variant={modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'}
+      variant={
+        modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'
+      }
       {...props}
     />
   );
@@ -91,7 +98,11 @@ function DayButton({
 
 type CalendarProps = DayPickerProps;
 
-function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX.Element {
+function Calendar({
+  className,
+  classNames,
+  ...props
+}: CalendarProps): React.JSX.Element {
   return (
     <DayPicker
       className={cn('p-3', className)}
@@ -116,7 +127,8 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.Dropdown]: 'absolute size-full appearance-none opacity-0',
         [UI.DropdownRoot]: 'relative inline-flex',
         [UI.Footer]: 'text-sm',
-        [UI.MonthGrid]: 'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
+        [UI.MonthGrid]:
+          'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
         [UI.MonthCaption]: 'flex w-full justify-center text-sm font-medium',
         [UI.Month]: 'grid grid-rows-[2rem_1fr] gap-4',
         [UI.Months]: 'relative flex flex-wrap gap-4',
@@ -126,9 +138,12 @@ function Calendar({ className, classNames, ...props }: CalendarProps): React.JSX
         [UI.Weekday]: 'text-muted-foreground flex-1 text-sm font-normal',
         [UI.Weekdays]: 'flex',
         [UI.WeekNumber]: 'text-foreground/50 size-9 text-center text-xs',
-        [SelectionState.range_start]: 'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
-        [SelectionState.range_middle]: 'bg-accent first:rounded-l-md last:rounded-r-md',
-        [SelectionState.range_end]: 'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
+        [SelectionState.range_start]:
+          'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
+        [SelectionState.range_middle]:
+          'bg-accent first:rounded-l-md last:rounded-r-md',
+        [SelectionState.range_end]:
+          'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
         ...classNames,
       }}
       components={{ Chevron, DayButton }}

@@ -165,7 +165,9 @@ export const ReactHookForm: Story = {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+            <Code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </Code>
           </Pre>
         ),
       });
@@ -191,20 +193,28 @@ export const ReactHookForm: Story = {
                         suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
                       >
-                        {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                        {field.value ? (
+                          format(field.value, 'PPP')
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent align="start" className="w-auto p-0">
                     <Calendar
-                      disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
                     />
                   </PopoverContent>
                 </Popover>
-                <FormDescription>Your date of birth is used to calculate your age.</FormDescription>
+                <FormDescription>
+                  Your date of birth is used to calculate your age.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

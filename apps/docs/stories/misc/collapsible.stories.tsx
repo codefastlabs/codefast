@@ -1,4 +1,9 @@
-import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui';
+import {
+  Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@codefast/ui';
 import { useState } from 'react';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -22,17 +27,36 @@ export const Default: Story = {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <Collapsible className="w-[350px] space-y-2" open={isOpen} onOpenChange={setIsOpen} {...args}>
+      <Collapsible
+        className="w-[350px] space-y-2"
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        {...args}
+      >
         <div className="flex items-center justify-between space-x-4 px-3">
-          <h4 className="text-sm font-semibold">@peduarte starred 3 repositories</h4>
+          <h4 className="text-sm font-semibold">
+            @peduarte starred 3 repositories
+          </h4>
           <CollapsibleTrigger asChild>
-            <Button icon aria-label="Toggle" prefix={<CaretSortIcon />} size="sm" variant="ghost" />
+            <Button
+              icon
+              aria-label="Toggle"
+              prefix={<CaretSortIcon />}
+              size="sm"
+              variant="ghost"
+            />
           </CollapsibleTrigger>
         </div>
-        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@radix-ui/primitives</div>
+        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+          @radix-ui/primitives
+        </div>
         <CollapsibleContent className="space-y-2">
-          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@radix-ui/colors</div>
-          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@stitches/react</div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+            @radix-ui/colors
+          </div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+            @stitches/react
+          </div>
         </CollapsibleContent>
       </Collapsible>
     );

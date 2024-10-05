@@ -47,7 +47,9 @@ const items = [
 ] as const;
 
 const displayFormValues = z.object({
-  items: z.array(z.string().trim()).min(1, 'You have to select at least one item.'),
+  items: z
+    .array(z.string().trim())
+    .min(1, 'You have to select at least one item.'),
 });
 
 type DisplayFormValues = z.infer<typeof displayFormValues>;
@@ -83,7 +85,9 @@ export function DisplayForm(): JSX.Element {
             <FormItem>
               <div className="mb-4">
                 <FormLabel className="text-base">Sidebar</FormLabel>
-                <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
+                <FormDescription>
+                  Select the items you want to display in the sidebar.
+                </FormDescription>
               </div>
               {items.map((item) => (
                 <FormField
@@ -92,18 +96,27 @@ export function DisplayForm(): JSX.Element {
                   name="items"
                   render={({ field }) => {
                     return (
-                      <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormItem
+                        key={item.id}
+                        className="flex flex-row items-start space-x-3 space-y-0"
+                      >
                         <FormControl>
                           <Checkbox
                             checked={field.value.includes(item.id)}
                             onCheckedChange={(checked) => {
                               checked
                                 ? field.onChange([...field.value, item.id])
-                                : field.onChange(field.value.filter((value) => value !== item.id));
+                                : field.onChange(
+                                    field.value.filter(
+                                      (value) => value !== item.id,
+                                    ),
+                                  );
                             }}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">{item.label}</FormLabel>
+                        <FormLabel className="font-normal">
+                          {item.label}
+                        </FormLabel>
                       </FormItem>
                     );
                   }}

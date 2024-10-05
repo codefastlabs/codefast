@@ -5,7 +5,10 @@ import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { cn } from '@/lib/utils';
-import { toggleVariants, type ToggleVariantsProps } from '@/styles/toggle-variants';
+import {
+  toggleVariants,
+  type ToggleVariantsProps,
+} from '@/styles/toggle-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroup
@@ -15,24 +18,43 @@ const TOGGLE_GROUP_NAME = 'ToggleGroup';
 
 type ScopedProps<P> = P & { __scopeToggleGroup?: Scope };
 
-const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [createToggleGroupScope]);
+const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [
+  createToggleGroupScope,
+]);
 
 const useToggleGroupScope = createToggleGroupScope();
 
-const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
+const [ToggleGroupProvider, useToggleGroupContext] =
+  createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
 type ToggleGroupElement = React.ComponentRef<typeof ToggleGroupPrimitive.Root>;
-type ToggleGroupProps = React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
+type ToggleGroupProps = React.ComponentPropsWithoutRef<
+  typeof ToggleGroupPrimitive.Root
+> &
+  ToggleVariantsProps;
 
 const ToggleGroup = React.forwardRef<ToggleGroupElement, ToggleGroupProps>(
   (
-    { __scopeToggleGroup, children, className, variant, size, icon, ...props }: ScopedProps<ToggleGroupProps>,
+    {
+      __scopeToggleGroup,
+      children,
+      className,
+      variant,
+      size,
+      icon,
+      ...props
+    }: ScopedProps<ToggleGroupProps>,
     forwardedRef,
   ) => {
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
     return (
-      <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
+      <ToggleGroupProvider
+        icon={icon}
+        scope={__scopeToggleGroup}
+        size={size}
+        variant={variant}
+      >
         <ToggleGroupPrimitive.Root
           ref={forwardedRef}
           className={cn('flex items-center justify-center gap-1', className)}
@@ -54,19 +76,37 @@ ToggleGroup.displayName = TOGGLE_GROUP_NAME;
 
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
-type ToggleGroupItemElement = React.ComponentRef<typeof ToggleGroupPrimitive.Item>;
+type ToggleGroupItemElement = React.ComponentRef<
+  typeof ToggleGroupPrimitive.Item
+>;
 interface ToggleGroupItemProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>,
+    'prefix'
+  > {
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
 }
 
-const ToggleGroupItem = React.forwardRef<ToggleGroupItemElement, ToggleGroupItemProps>(
+const ToggleGroupItem = React.forwardRef<
+  ToggleGroupItemElement,
+  ToggleGroupItemProps
+>(
   (
-    { __scopeToggleGroup, children, prefix, suffix, className, ...props }: ScopedProps<ToggleGroupItemProps>,
+    {
+      __scopeToggleGroup,
+      children,
+      prefix,
+      suffix,
+      className,
+      ...props
+    }: ScopedProps<ToggleGroupItemProps>,
     forwardedRef,
   ) => {
-    const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
+    const context = useToggleGroupContext(
+      TOGGLE_GROUP_ITEM_NAME,
+      __scopeToggleGroup,
+    );
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
     return (
@@ -77,7 +117,11 @@ const ToggleGroupItem = React.forwardRef<ToggleGroupItemElement, ToggleGroupItem
         {...props}
       >
         {prefix}
-        {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
+        {typeof children === 'string' ? (
+          <span className="truncate">{children}</span>
+        ) : (
+          children
+        )}
         {suffix}
       </ToggleGroupPrimitive.Item>
     );
@@ -90,4 +134,9 @@ ToggleGroupItem.displayName = TOGGLE_GROUP_ITEM_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { ToggleGroup, ToggleGroupItem, type ToggleGroupProps, type ToggleGroupItemProps };
+export {
+  ToggleGroup,
+  ToggleGroupItem,
+  type ToggleGroupProps,
+  type ToggleGroupItemProps,
+};

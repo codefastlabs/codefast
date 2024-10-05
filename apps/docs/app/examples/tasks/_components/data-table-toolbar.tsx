@@ -9,7 +9,9 @@ interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>): JSX.Element {
+export function DataTableToolbar<TData>({
+  table,
+}: DataTableToolbarProps<TData>): JSX.Element {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
@@ -19,13 +21,23 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           className="h-8 w-[150px] lg:w-64"
           placeholder="Filter tasks..."
           value={String(table.getColumn('title')?.getFilterValue() ?? '')}
-          onChange={(event) => table.getColumn('title')?.setFilterValue(event.target.value)}
+          onChange={(event) =>
+            table.getColumn('title')?.setFilterValue(event.target.value)
+          }
         />
         {table.getColumn('status') && (
-          <DataTableFacetedFilter column={table.getColumn('status')} options={statuses} title="Status" />
+          <DataTableFacetedFilter
+            column={table.getColumn('status')}
+            options={statuses}
+            title="Status"
+          />
         )}
         {table.getColumn('priority') && (
-          <DataTableFacetedFilter column={table.getColumn('priority')} options={priorities} title="Priority" />
+          <DataTableFacetedFilter
+            column={table.getColumn('priority')}
+            options={priorities}
+            title="Priority"
+          />
         )}
         {isFiltered ? (
           <Button

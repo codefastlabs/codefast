@@ -23,7 +23,11 @@ const InputOTP = React.forwardRef<InputOTPElement, InputOTPProps>(
     <OTPInput
       ref={forwardedRef}
       className={cn('disabled:cursor-default', className)}
-      containerClassName={cn('flex items-center gap-2', 'has-[:disabled]:opacity-50', containerClassName)}
+      containerClassName={cn(
+        'flex items-center gap-2',
+        'has-[:disabled]:opacity-50',
+        containerClassName,
+      )}
       {...props}
     />
   ),
@@ -38,11 +42,16 @@ InputOTP.displayName = 'InputOTP';
 type InputOTPGroupElement = HTMLDivElement;
 type InputOTPGroupProps = React.HTMLAttributes<HTMLDivElement>;
 
-const InputOTPGroup = React.forwardRef<InputOTPGroupElement, InputOTPGroupProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div ref={forwardedRef} className={cn('flex items-center', className)} {...props} />
-  ),
-);
+const InputOTPGroup = React.forwardRef<
+  InputOTPGroupElement,
+  InputOTPGroupProps
+>(({ className, ...props }, forwardedRef) => (
+  <div
+    ref={forwardedRef}
+    className={cn('flex items-center', className)}
+    {...props}
+  />
+));
 
 InputOTPGroup.displayName = 'InputOTPGroup';
 
@@ -93,13 +102,14 @@ InputOTPSlot.displayName = 'InputOTPSlot';
 type InputOTPSeparatorElement = HTMLDivElement;
 type InputOTPSeparatorProps = React.HTMLAttributes<HTMLDivElement>;
 
-const InputOTPSeparator = React.forwardRef<InputOTPSeparatorElement, InputOTPSeparatorProps>(
-  ({ ...props }, forwardedRef) => (
-    <div ref={forwardedRef} role="separator" {...props}>
-      <DotFilledIcon />
-    </div>
-  ),
-);
+const InputOTPSeparator = React.forwardRef<
+  InputOTPSeparatorElement,
+  InputOTPSeparatorProps
+>(({ ...props }, forwardedRef) => (
+  <div ref={forwardedRef} role="separator" {...props}>
+    <DotFilledIcon />
+  </div>
+));
 
 InputOTPSeparator.displayName = 'InputOTPSeparator';
 
