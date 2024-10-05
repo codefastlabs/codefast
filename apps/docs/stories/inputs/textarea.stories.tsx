@@ -36,7 +36,9 @@ type Story = StoryObj<typeof meta>;
  * -------------------------------------------------------------------------- */
 
 export const Default: Story = {
-  render: (args) => <Textarea placeholder="Type your message here." {...args} />,
+  render: (args) => (
+    <Textarea placeholder="Type your message here." {...args} />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -44,7 +46,9 @@ export const Default: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Disabled: Story = {
-  render: (args) => <Textarea disabled placeholder="Type your message here." {...args} />,
+  render: (args) => (
+    <Textarea disabled placeholder="Type your message here." {...args} />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -58,7 +62,11 @@ export const WithLabel: Story = {
     return (
       <div className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
-        <Textarea id={`message-${id}`} placeholder="Type your message here." {...args} />
+        <Textarea
+          id={`message-${id}`}
+          placeholder="Type your message here."
+          {...args}
+        />
       </div>
     );
   },
@@ -75,8 +83,14 @@ export const WithText: Story = {
     return (
       <div className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
-        <Textarea id={`message-${id}`} placeholder="Type your message here." {...args} />
-        <Text className="text-muted-foreground text-sm">Your message will be copied to the support team.</Text>
+        <Textarea
+          id={`message-${id}`}
+          placeholder="Type your message here."
+          {...args}
+        />
+        <Text className="text-muted-foreground text-sm">
+          Your message will be copied to the support team.
+        </Text>
       </div>
     );
   },
@@ -132,7 +146,9 @@ export const ReactHookForm: Story = {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+            <Code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </Code>
           </Pre>
         ),
       });
@@ -140,7 +156,10 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="w-2/3 space-y-6"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <FormField
             control={form.control}
             name="bio"
@@ -148,7 +167,11 @@ export const ReactHookForm: Story = {
               <FormItem>
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
-                  <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
+                  <Textarea
+                    className="resize-none"
+                    placeholder="Tell us a little bit about yourself"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
                   You can <span>@mention</span> other users and organizations.

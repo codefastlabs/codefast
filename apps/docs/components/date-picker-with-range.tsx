@@ -1,11 +1,21 @@
 'use client';
 
-import { Button, Calendar, cn, type DateRange, Popover, PopoverContent, PopoverTrigger } from '@codefast/ui';
+import {
+  Button,
+  Calendar,
+  cn,
+  type DateRange,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@codefast/ui';
 import { addDays, format } from 'date-fns';
 import { type HTMLAttributes, type JSX, useState } from 'react';
 import { CalendarIcon } from '@radix-ui/react-icons';
 
-export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement>): JSX.Element {
+export function DatePickerWithRange({
+  className,
+}: HTMLAttributes<HTMLDivElement>): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(2024, 0, 20),
     to: addDays(new Date(2024, 0, 20), 20),
@@ -16,7 +26,10 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            className={cn('justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn(
+              'justify-start text-left font-normal',
+              !date && 'text-muted-foreground',
+            )}
             id="date"
             prefix={<CalendarIcon />}
             variant="outline"
@@ -25,7 +38,13 @@ export function DatePickerWithRange({ className }: HTMLAttributes<HTMLDivElement
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-auto p-0">
-          <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
+          <Calendar
+            defaultMonth={date?.from}
+            mode="range"
+            numberOfMonths={2}
+            selected={date}
+            onSelect={setDate}
+          />
         </PopoverContent>
       </Popover>
     </div>

@@ -1,12 +1,20 @@
 'use server';
 
 import { wait } from 'next/dist/lib/wait';
-import { accountFormValues, type AccountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
-import { type FieldValidationErrors, type ServerResponse } from '@/lib/types/server-actions';
+import {
+  accountFormValues,
+  type AccountFormValues,
+} from '@/app/examples/forms/account/_lib/schema/account-schema';
+import {
+  type FieldValidationErrors,
+  type ServerResponse,
+} from '@/lib/types/server-actions';
 
 export async function updateAccount(
   data: AccountFormValues,
-): Promise<ServerResponse<{ message: string }, FieldValidationErrors<AccountFormValues>>> {
+): Promise<
+  ServerResponse<{ message: string }, FieldValidationErrors<AccountFormValues>>
+> {
   try {
     const validatedFields = accountFormValues.safeParse(data);
 

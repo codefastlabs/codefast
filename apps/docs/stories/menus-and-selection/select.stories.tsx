@@ -96,7 +96,9 @@ export const Scrollable: Story = {
           <SelectItem value="gmt">Greenwich Mean Time (GMT)</SelectItem>
           <SelectItem value="cet">Central European Time (CET)</SelectItem>
           <SelectItem value="eet">Eastern European Time (EET)</SelectItem>
-          <SelectItem value="west">Western European Summer Time (WEST)</SelectItem>
+          <SelectItem value="west">
+            Western European Summer Time (WEST)
+          </SelectItem>
           <SelectItem value="cat">Central Africa Time (CAT)</SelectItem>
           <SelectItem value="eat">East Africa Time (EAT)</SelectItem>
         </SelectGroup>
@@ -110,16 +112,24 @@ export const Scrollable: Story = {
           <SelectItem value="cst_china">China Standard Time (CST)</SelectItem>
           <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
           <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
-          <SelectItem value="ist_indonesia">Indonesia Central Standard Time (WITA)</SelectItem>
+          <SelectItem value="ist_indonesia">
+            Indonesia Central Standard Time (WITA)
+          </SelectItem>
         </SelectGroup>
 
         <SelectSeparator />
 
         <SelectGroup>
           <SelectLabel>Australia & Pacific</SelectLabel>
-          <SelectItem value="awst">Australian Western Standard Time (AWST)</SelectItem>
-          <SelectItem value="acst">Australian Central Standard Time (ACST)</SelectItem>
-          <SelectItem value="aest">Australian Eastern Standard Time (AEST)</SelectItem>
+          <SelectItem value="awst">
+            Australian Western Standard Time (AWST)
+          </SelectItem>
+          <SelectItem value="acst">
+            Australian Central Standard Time (ACST)
+          </SelectItem>
+          <SelectItem value="aest">
+            Australian Eastern Standard Time (AEST)
+          </SelectItem>
           <SelectItem value="nzst">New Zealand Standard Time (NZST)</SelectItem>
           <SelectItem value="fjt">Fiji Time (FJT)</SelectItem>
         </SelectGroup>
@@ -170,7 +180,9 @@ export const ReactHookForm: Story = {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+            <Code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </Code>
           </Pre>
         ),
       });
@@ -178,14 +190,21 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="w-2/3 space-y-6"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
-                <Select defaultValue={field.value} onValueChange={field.onChange} {...args}>
+                <Select
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                  {...args}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a verified email to display" />
@@ -198,7 +217,8 @@ export const ReactHookForm: Story = {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  You can manage email addresses in your <Link href="/apps/docs/public">email settings</Link>.
+                  You can manage email addresses in your{' '}
+                  <Link href="/apps/docs/public">email settings</Link>.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

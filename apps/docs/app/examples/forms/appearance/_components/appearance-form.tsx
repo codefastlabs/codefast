@@ -68,7 +68,10 @@ export function AppearanceForm(): JSX.Element {
             <FormItem>
               <FormLabel>Font</FormLabel>
               <div className="relative w-max">
-                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                <Select
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue placeholder="Select a font" />
@@ -81,7 +84,9 @@ export function AppearanceForm(): JSX.Element {
                   </SelectContent>
                 </Select>
               </div>
-              <FormDescription>Set the font you want to use in the dashboard.</FormDescription>
+              <FormDescription>
+                Set the font you want to use in the dashboard.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -92,7 +97,9 @@ export function AppearanceForm(): JSX.Element {
           render={({ field }) => (
             <FormItem className="space-y-1">
               <FormLabel>Theme</FormLabel>
-              <FormDescription>Select the theme for the dashboard.</FormDescription>
+              <FormDescription>
+                Select the theme for the dashboard.
+              </FormDescription>
               <FormMessage />
               <RadioGroup
                 className="grid max-w-md grid-cols-2 gap-8 pt-2"
@@ -120,7 +127,9 @@ export function AppearanceForm(): JSX.Element {
                         </div>
                       </div>
                     </div>
-                    <span className="block w-full p-2 text-center font-normal">Light</span>
+                    <span className="block w-full p-2 text-center font-normal">
+                      Light
+                    </span>
                   </FormLabel>
                 </FormItem>
                 <FormItem>
@@ -144,7 +153,9 @@ export function AppearanceForm(): JSX.Element {
                         </div>
                       </div>
                     </div>
-                    <span className="block w-full p-2 text-center font-normal">Dark</span>
+                    <span className="block w-full p-2 text-center font-normal">
+                      Dark
+                    </span>
                   </FormLabel>
                 </FormItem>
               </RadioGroup>

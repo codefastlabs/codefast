@@ -10,7 +10,10 @@ interface SlideshowProps {
   className?: string;
 }
 
-export function Slideshow({ options, ...props }: SlideshowProps): React.JSX.Element {
+export function Slideshow({
+  options,
+  ...props
+}: SlideshowProps): React.JSX.Element {
   const slideshowRef = React.useRef<HTMLDivElement>(null);
   const vegasRef = React.useRef<Vegas | null>(null);
 

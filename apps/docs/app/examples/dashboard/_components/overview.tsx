@@ -58,7 +58,13 @@ export function Overview(): JSX.Element {
   return (
     <ResponsiveContainer height={350} width="100%">
       <BarChart data={data}>
-        <XAxis axisLine={false} dataKey="name" fontSize={12} stroke="#888888" tickLine={false} />
+        <XAxis
+          axisLine={false}
+          dataKey="name"
+          fontSize={12}
+          stroke="#888888"
+          tickLine={false}
+        />
         <YAxis
           axisLine={false}
           fontSize={12}
@@ -66,7 +72,12 @@ export function Overview(): JSX.Element {
           tickFormatter={(value: string) => `$${value}`}
           tickLine={false}
         />
-        <Bar className="fill-primary" dataKey="total" fill="currentColor" radius={[4, 4, 0, 0]} />
+        <Bar
+          className="fill-primary"
+          dataKey="total"
+          fill="currentColor"
+          radius={[4, 4, 0, 0]}
+        />
       </BarChart>
     </ResponsiveContainer>
   );

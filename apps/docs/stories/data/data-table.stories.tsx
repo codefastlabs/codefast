@@ -65,7 +65,10 @@ const columns: ColumnDef<Payment>[] = [
     header: ({ table }) => (
       <Checkbox
         aria-label="Select all"
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
@@ -86,11 +89,15 @@ const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('status')}</div>,
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue('status')}</div>
+    ),
   },
   {
     accessorKey: 'email',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
     cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
   },
   {
@@ -118,7 +125,12 @@ const columns: ColumnDef<Payment>[] = [
         <div className="text-right">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button icon size="xs" suffix={<DotsHorizontalIcon />} variant="ghost">
+              <Button
+                icon
+                size="xs"
+                suffix={<DotsHorizontalIcon />}
+                variant="ghost"
+              >
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -147,7 +159,9 @@ export const Default: Story = {
   render: () => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+      {},
+    );
     const [rowSelection, setRowSelection] = useState({});
 
     const table = useReactTable({
@@ -179,7 +193,9 @@ export const Default: Story = {
               placeholder="Filter emails..."
               prefix={<SearchIcon className="text-muted-foreground" />}
               value={String(table.getColumn('email')?.getFilterValue() ?? '')}
-              onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+              onChange={(event) =>
+                table.getColumn('email')?.setFilterValue(event.target.value)
+              }
             />
           </div>
           <DataTableViewOptions table={table} />
@@ -191,7 +207,12 @@ export const Default: Story = {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -200,15 +221,26 @@ export const Default: Story = {
             <TableBody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell className="h-24 text-center" colSpan={columns.length}>
+                  <TableCell
+                    className="h-24 text-center"
+                    colSpan={columns.length}
+                  >
                     No results.
                   </TableCell>
                 </TableRow>
@@ -219,7 +251,12 @@ export const Default: Story = {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>

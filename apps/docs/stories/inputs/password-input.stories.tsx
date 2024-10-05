@@ -15,7 +15,12 @@ import {
   toast,
   Toaster,
 } from '@codefast/ui';
-import { LoaderCircleIcon, LockKeyholeIcon, LockKeyholeOpenIcon, MailIcon } from 'lucide-react';
+import {
+  LoaderCircleIcon,
+  LockKeyholeIcon,
+  LockKeyholeOpenIcon,
+  MailIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -30,24 +35,36 @@ const meta: Meta<typeof PasswordInput> = {
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the input field',
-      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     inputSize: {
       control: { type: 'select' },
       options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Sets the size of the input field',
-      table: { type: { summary: 'xxs | xs | sm | md | lg | xl' }, defaultValue: { summary: 'md' } },
+      table: {
+        type: { summary: 'xxs | xs | sm | md | lg | xl' },
+        defaultValue: { summary: 'md' },
+      },
     },
     loaderPosition: {
       control: { type: 'select' },
       options: ['prefix', 'suffix'],
       description: 'Position of the loader in the input field',
-      table: { type: { summary: 'string' }, defaultValue: { summary: 'prefix' } },
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'prefix' },
+      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Determines if the loading spinner is shown',
-      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
     },
     prefix: {
       control: { type: 'text' },
@@ -110,7 +127,10 @@ export const Disabled: Story = {
 
 // Story for PasswordInput with a custom spinner
 export const CustomSpinner: Story = {
-  args: { spinner: <LoaderCircleIcon className="animate-spin" />, loading: true },
+  args: {
+    spinner: <LoaderCircleIcon className="animate-spin" />,
+    loading: true,
+  },
 };
 
 // Story for PasswordInput in a controlled state
@@ -165,13 +185,17 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (values): Promise<void> => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (
+      values,
+    ): Promise<void> => {
       console.log(values);
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+            <Code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </Code>
           </Pre>
         ),
       });
@@ -179,7 +203,10 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="w-2/3 space-y-6"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -197,7 +224,9 @@ export const ReactHookForm: Story = {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>This is your public display name.</FormDescription>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -217,7 +246,9 @@ export const ReactHookForm: Story = {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Must be at least 8 characters.</FormDescription>
+                  <FormDescription>
+                    Must be at least 8 characters.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

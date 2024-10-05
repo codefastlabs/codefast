@@ -6,7 +6,9 @@ import '@codefast/third-parties/slideshow.css';
 
 type SlideshowWeddingProps = HTMLAttributes<HTMLDivElement>;
 
-export function SlideshowWedding({ ...props }: SlideshowWeddingProps): JSX.Element {
+export function SlideshowWedding({
+  ...props
+}: SlideshowWeddingProps): JSX.Element {
   return (
     <Slideshow
       options={{
