@@ -4,27 +4,159 @@ import {
   Code,
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  Label,
   NumberInput,
   Pre,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
   toast,
   Toaster,
 } from '@codefast/ui';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { type SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
-import { CalculatorIcon, FootprintsIcon } from 'lucide-react';
+import { fn } from '@storybook/test';
+import { ImportIcon, LoaderCircleIcon } from 'lucide-react';
 
 const meta = {
+  argTypes: {
+    autoFocus: {
+      control: { type: 'boolean' },
+      description:
+        'Specifies that the input field should automatically get focus when the page loads',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disables the input field',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    formatOptions: {
+      control: {
+        type: 'object',
+      },
+      description: 'Options for formatting the number input',
+      table: {
+        type: { summary: 'Intl.NumberFormatOptions' },
+      },
+    },
+    inputSize: {
+      control: { type: 'select' },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Sets the size of the input field',
+      table: {
+        type: { summary: 'xxs | xs | sm | md | lg | xl' },
+        defaultValue: { summary: 'md' },
+      },
+    },
+    loaderPosition: {
+      control: { type: 'inline-radio' },
+      options: ['prefix', 'suffix'],
+      description: 'Position of the loader in the input field',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'prefix' },
+      },
+    },
+    loading: {
+      control: { type: 'boolean' },
+      description: 'Determines if the loading spinner is shown',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    max: {
+      control: { type: 'number' },
+      description: 'Maximum value for number inputs',
+      table: {
+        type: { summary: 'number' },
+      },
+    },
+    min: {
+      control: { type: 'number' },
+      description: 'Minimum value for number inputs',
+      table: {
+        type: { summary: 'number' },
+      },
+    },
+    onChange: {
+      action: 'changed',
+      description: 'Function called when the input value changes',
+      table: {
+        type: {
+          summary: '(value: number) => void',
+        },
+      },
+    },
+    placeholder: {
+      control: { type: 'text' },
+      description: 'Placeholder text for the input field',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    prefix: {
+      control: { type: 'text' },
+      description: 'Prefix element shown before the input field',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    readOnly: {
+      control: { type: 'boolean' },
+      description: 'Specifies that the input field is read-only',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    required: {
+      control: { type: 'boolean' },
+      description:
+        'Specifies that the input field must be filled out before submitting the form',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    step: {
+      control: { type: 'number' },
+      description: 'Interval between valid values for number inputs',
+      table: {
+        type: { summary: 'number' },
+      },
+    },
+    value: {
+      control: { type: 'number' },
+      description: 'Controlled value of the input field',
+      table: {
+        type: { summary: 'number' },
+      },
+    },
+  },
   args: {
-    inputSize: 'md',
+    autoFocus: false,
+    disabled: false,
+    max: undefined,
+    min: undefined,
+    onChange: fn(),
+    placeholder: 'Enter a number...',
+    step: 1,
   },
   component: NumberInput,
   tags: ['autodocs'],
@@ -33,275 +165,219 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+const units = {
+  area: ['acre', 'hectare'],
+  volume: ['liter', 'milliliter', 'gallon', 'fluid-ounce'],
+  length: [
+    'kilometer',
+    'meter',
+    'centimeter',
+    'inch',
+    'foot',
+    'yard',
+    'mile',
+    'mile-scandinavian',
+  ],
+  mass: ['gram', 'kilogram', 'ounce', 'pound', 'stone'],
+  time: [
+    'second',
+    'minute',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year',
+    'millisecond',
+    'microsecond',
+    'nanosecond',
+  ],
+  temperature: ['celsius', 'fahrenheit', 'degree'],
+  data: [
+    'bit',
+    'kilobit',
+    'megabit',
+    'gigabit',
+    'terabit',
+    'byte',
+    'kilobyte',
+    'megabyte',
+    'gigabyte',
+    'terabyte',
+    'petabyte',
+  ],
+  percentage: ['percent'],
+};
 
-/* -----------------------------------------------------------------------------
- * Story: Default
- * -------------------------------------------------------------------------- */
+type Story = StoryObj<typeof NumberInput>;
 
-export const Default: Story = {
+export const Basic: Story = {
   args: {
-    placeholder: 'Placeholder',
-  },
-  render: (args) => {
-    return <NumberInput {...args} prefix={<CalculatorIcon />} />;
+    placeholder: 'Basic Number Input',
   },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Disabled
- * -------------------------------------------------------------------------- */
-
-export const Disabled: Story = {
+// Story for NumberInput with different sizes
+export const Sizes: Story = {
   args: {
-    placeholder: 'Disabled',
-    disabled: true,
+    prefix: <ImportIcon />,
   },
-  render: (args) => {
-    return <NumberInput {...args} />;
-  },
+  render: (args) => (
+    <div className="space-y-4">
+      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <NumberInput key={size} {...args} inputSize={size} placeholder={size} />
+      ))}
+    </div>
+  ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Readonly
- * -------------------------------------------------------------------------- */
-
-export const Readonly: Story = {
+// NumberInput with currency format options
+export const CurrencyFormat: Story = {
   args: {
-    placeholder: 'Readonly',
-    readOnly: true,
-  },
-  render: (args) => {
-    return <NumberInput {...args} />;
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Formating With Decimal
- * -------------------------------------------------------------------------- */
-
-export const FormatingWithDecimal: Story = {
-  args: {
-    placeholder: 'Decimal',
-    defaultValue: 0,
-    step: 0.01,
     formatOptions: {
-      signDisplay: 'exceptZero',
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 2,
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      currencyDisplay: 'code',
     },
-  },
-  render: (args) => {
-    return <NumberInput {...args} />;
+    placeholder: 'Enter a price...',
   },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Formating With Percentage
- * -------------------------------------------------------------------------- */
-
-export const FormatingWithPercentage: Story = {
+// NumberInput with percentage format options
+export const PercentageFormat: Story = {
   args: {
-    placeholder: 'Percentage',
-    defaultValue: 0.5,
     formatOptions: {
       style: 'percent',
       maximumFractionDigits: 2,
     },
-    step: 0.02,
-  },
-  render: (args) => {
-    return <NumberInput {...args} />;
+    step: 0.01,
+    placeholder: 'Enter a percentage...',
   },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Formating With Currency
- * -------------------------------------------------------------------------- */
-
-export const FormatingWithCurrency: Story = {
-  args: {
-    placeholder: 'Currency',
-    defaultValue: 45,
-    formatOptions: {
-      style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'code',
-      currencySign: 'accounting',
-    },
-  },
+// NumberInput with unit mile-per-hour format options
+export const UnitFormat: Story = {
   render: (args) => {
-    return <NumberInput {...args} />;
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Formating With Unit
- * -------------------------------------------------------------------------- */
-
-export const FormatingWithUnit: Story = {
-  args: {
-    placeholder: 'Unit',
-    defaultValue: 4,
-    formatOptions: {
-      style: 'unit',
-      unit: 'inch',
-      unitDisplay: 'long',
-    },
-  },
-  render: (args) => {
-    return <NumberInput {...args} />;
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Min and Max
- * -------------------------------------------------------------------------- */
-
-export const MinAndMax: Story = {
-  args: {
-    placeholder: 'Min and Max',
-    defaultValue: 50,
-    min: 0,
-    max: 100,
-  },
-  render: (args) => {
-    return <NumberInput {...args} />;
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Step
- * -------------------------------------------------------------------------- */
-
-export const Step: Story = {
-  args: {
-    placeholder: 'Step',
-    defaultValue: 50,
-    step: 10,
-  },
-  render: (args) => {
-    return <NumberInput {...args} prefix={<FootprintsIcon />} />;
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Sizes
- * -------------------------------------------------------------------------- */
-
-export const Sizes: Story = {
-  args: {
-    placeholder: 'Sizes',
-  },
-  render: (args) => {
-    return (
-      <div className="grid place-items-center gap-4 sm:grid-cols-3">
-        <NumberInput {...args} inputSize="xxs" />
-        <NumberInput {...args} inputSize="xs" />
-        <NumberInput {...args} inputSize="sm" />
-        <NumberInput {...args} />
-        <NumberInput {...args} inputSize="lg" />
-        <NumberInput {...args} inputSize="xl" />
-      </div>
-    );
-  },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Controlled
- * -------------------------------------------------------------------------- */
-
-export const Controlled: Story = {
-  args: {
-    placeholder: 'Controlled',
-    formatOptions: {
-      style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'code',
-      currencySign: 'accounting',
-    },
-  },
-  render: (args) => {
-    const [value, setValue] = useState(50);
+    const [value, setValue] = useState<string>('acre');
 
     return (
       <div className="space-y-4">
-        <NumberInput {...args} value={value} onChange={setValue} />
-        <NumberInput {...args} value={value} onChange={setValue} />
-        <p>Mirrored number: {value}</p>
+        <Select value={value} onValueChange={setValue}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a unit..." />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(units).map(([group, unitList]) => (
+              <SelectGroup key={group}>
+                <SelectLabel>
+                  {group.charAt(0).toUpperCase() + group.slice(1)}
+                </SelectLabel>
+
+                {unitList.map((unit) => (
+                  <SelectItem key={unit} value={unit}>
+                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <NumberInput
+          {...args}
+          formatOptions={{
+            style: 'unit',
+            unit: value,
+          }}
+          placeholder={`Enter a value in ${value}s...`}
+        />
       </div>
     );
   },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Form Reset
- * -------------------------------------------------------------------------- */
+// Story for NumberInput in the read-only state
+export const ReadOnly: Story = {
+  args: { readOnly: true, placeholder: 'Read-Only Number Input' },
+};
 
-export const FormReset: Story = {
-  decorators: [
-    (Story) => (
-      <>
-        <Story />
-        <Toaster />
-      </>
-    ),
-  ],
+// Story for NumberInput with loading state
+export const Loading: Story = {
+  args: { loading: true, placeholder: 'Loading Number Input' },
+};
+
+// Story for NumberInput with a custom spinner
+export const CustomSpinner: Story = {
   args: {
-    placeholder: 'Form Reset',
-    value: 50,
-    formatOptions: {
-      style: 'currency',
-      currency: 'USD',
-      currencyDisplay: 'code',
-      currencySign: 'accounting',
-    },
+    loading: true,
+    spinner: <LoaderCircleIcon className="animate-spin" />,
+    placeholder: 'Custom Spinner Number Input',
   },
-  render: (args) => {
-    return (
-      <form
-        className="space-y-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const formData = new FormData(event.target as HTMLFormElement);
+};
 
-          toast.message('Form submitted!', {
-            description: (
-              <Pre className="w-full rounded-md bg-slate-950 p-4">
-                <Code className="text-white">
-                  {JSON.stringify(
-                    Object.fromEntries(formData.entries()),
-                    null,
-                    2,
-                  )}
-                </Code>
-              </Pre>
-            ),
-          });
-        }}
-      >
-        <div className="space-y-2">
-          <Label>Enter a number:</Label>
-          <NumberInput name="number" {...args} />
-        </div>
-        <Button type="reset" variant="outline">
-          Reset form
-        </Button>
-      </form>
+// Story for NumberInput with prefix
+export const Prefix: Story = {
+  args: { prefix: <ImportIcon />, placeholder: 'Number Input with Prefix' },
+};
+
+// Story for NumberInput with suffix
+export const Suffix: Story = {
+  args: { suffix: <ImportIcon />, placeholder: 'Number Input with Suffix' },
+};
+
+// Story for NumberInput with different min and max values
+export const MinMax: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    placeholder: 'Number between 0 and 100',
+  },
+};
+
+// Story for NumberInput in the disabled state
+export const Disabled: Story = {
+  args: { disabled: true, placeholder: 'Disabled Number Input' },
+};
+
+// Story for NumberInput with a maximum value
+export const MaxValue: Story = {
+  args: { max: 50, placeholder: 'Max Value Number Input (max=50)' },
+};
+
+// Story for NumberInput with a minimum value
+export const MinValue: Story = {
+  args: { min: 10, placeholder: 'Min Value Number Input (min=10)' },
+};
+
+// Story for NumberInput with a step value
+export const StepValue: Story = {
+  args: { step: 5, placeholder: 'Step Value Number Input (step=5)' },
+};
+
+// Story for NumberInput in a controlled state
+export const Controlled: Story = {
+  render: (args) => {
+    const [value, setValue] = useState(0);
+
+    return (
+      <div className="space-y-4">
+        <NumberInput
+          {...args}
+          placeholder="Controlled Number Input"
+          value={value}
+          onChange={(newValue) => {
+            setValue(newValue);
+          }}
+        />
+        <p>
+          <strong>Value:</strong> {value}
+        </p>
+      </div>
     );
   },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: React Hook Form
- * -------------------------------------------------------------------------- */
-
-const formValues = z.object({
-  age: z.coerce.number().int().positive().min(18).max(99),
-});
-
-type FormValues = z.infer<typeof formValues>;
-
+// Story for NumberInput with react-hook-form integration
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (
@@ -312,15 +388,19 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: () => {
-    const form = useForm<FormValues>({
+    const formValues = z.object({
+      number: z.number().min(0, { message: 'Must be at least 0.' }),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
       resolver: zodResolver(formValues),
       defaultValues: {
-        age: 10,
+        number: 0,
       },
     });
 
-    const onSubmit: SubmitHandler<FormValues> = async (
-      values,
+    const onSubmit = async (
+      values: z.infer<typeof formValues>,
     ): Promise<void> => {
       await wait(1000);
       toast.message('You submitted the following values:', {
@@ -336,52 +416,27 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          className="w-2/3 space-y-6"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+        <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
-            name="age"
+            name="number"
             render={({ field: { disabled, ...field } }) => (
               <FormItem>
-                <FormLabel>Age</FormLabel>
+                <FormLabel>Number Input</FormLabel>
                 <FormControl>
                   <NumberInput
-                    disabled={disabled ?? form.formState.isSubmitting}
-                    placeholder="codefast"
+                    disabled={disabled}
                     {...field}
+                    placeholder="Enter a number"
                   />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex gap-4">
-            <Button loading={form.formState.isSubmitting} type="submit">
-              Submit
-            </Button>
-            <Button
-              loading={form.formState.isSubmitting}
-              type="reset"
-              variant="outline"
-            >
-              Reset (Native)
-            </Button>
-            <Button
-              loading={form.formState.isSubmitting}
-              type="reset"
-              variant="secondary"
-              onClick={() => {
-                form.reset();
-              }}
-            >
-              Reset
-            </Button>
-          </div>
+          <Button loading={form.formState.isSubmitting} type="submit">
+            Submit
+          </Button>
         </form>
       </Form>
     );
