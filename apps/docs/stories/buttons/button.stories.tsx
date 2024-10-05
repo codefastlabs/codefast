@@ -194,6 +194,14 @@ export const Suffix: Story = {
   },
 };
 
+// Story for Button with only an icon
+export const IconOnly: Story = {
+  args: {
+    icon: true,
+    prefix: <PaletteIcon />,
+  },
+};
+
 // Story for Button in a controlled state
 export const Controlled: Story = {
   render: (args) => {
