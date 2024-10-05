@@ -28,7 +28,7 @@ const badgeVariants = tv({
       xl: ['h-9', '[&>svg]:size-4', 'text-sm'], // 36px
     },
     icon: {
-      true: 'px-0',
+      true: 'p-1',
     },
   },
   compoundVariants: [

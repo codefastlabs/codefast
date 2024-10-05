@@ -11,44 +11,44 @@ const toggleVariants = tv({
     variant: {
       default: [
         'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm',
-        'hover:bg-primary/20',
-        'focus-visible::bg-primary/20',
+        'hover:bg-primary/80 hover:text-primary-foreground',
+        'focus-visible::bg-primary/80 focus-visible:text-primary-foreground',
       ],
       secondary: [
         'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground data-[state=on]:shadow-sm',
-        'hover:bg-secondary/20',
-        'focus-visible::bg-secondary/20',
+        'hover:bg-secondary/80 hover:text-secondary-foreground',
+        'focus-visible::bg-secondary/80 focus-visible:text-secondary-foreground',
       ],
       info: [
         'data-[state=on]:bg-info data-[state=on]:text-info-foreground data-[state=on]:shadow-sm',
-        'hover:bg-info/20',
-        'focus-visible::bg-info/20',
+        'hover:bg-info/80 hover:text-info-foreground',
+        'focus-visible::bg-info/80 focus-visible:text-info-foreground',
       ],
       success: [
         'data-[state=on]:bg-success data-[state=on]:text-success-foreground data-[state=on]:shadow-sm',
-        'hover:bg-success/20',
-        'focus-visible::bg-success/20',
+        'hover:bg-success/80 hover:text-success-foreground',
+        'focus-visible::bg-success/80 focus-visible:text-success-foreground',
       ],
       warning: [
         'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground data-[state=on]:shadow-sm',
-        'hover:bg-warning/20',
-        'focus-visible::bg-warning/20',
+        'hover:bg-warning/80 hover:text-warning-foreground',
+        'focus-visible::bg-warning/80 focus-visible:text-warning-foreground',
       ],
       destructive: [
         'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground data-[state=on]:shadow-sm',
-        'hover:bg-destructive/20',
-        'focus-visible::bg-destructive/20',
+        'hover:bg-destructive/80 hover:text-destructive-foreground',
+        'focus-visible::bg-destructive/80 focus-visible:text-destructive-foreground',
       ],
       outline: [
         'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-        'hover:bg-accent/20',
-        'focus-visible::bg-accent/20',
+        'hover:bg-accent/80 hover:text-accent-foreground',
+        'focus-visible::bg-accent/80 focus-visible:text-accent-foreground',
         'bg-background border-input border shadow-sm',
       ],
       ghost: [
         'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-        'hover:bg-accent/20',
-        'focus-visible:bg-accent/20',
+        'hover:bg-accent/80 hover:text-accent-foreground',
+        'focus-visible:bg-accent/80 focus-visible:text-accent-foreground',
       ],
     },
     size: {
@@ -60,7 +60,7 @@ const toggleVariants = tv({
       xl: 'h-12', // 48px
     },
     icon: {
-      true: 'px-0',
+      true: 'p-1',
     },
   },
   compoundVariants: [

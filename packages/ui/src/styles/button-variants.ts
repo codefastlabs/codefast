@@ -63,7 +63,7 @@ const buttonVariants = tv({
       xl: 'h-12', // 48px
     },
     icon: {
-      true: 'px-0',
+      true: 'p-1',
     },
   },
   compoundVariants: [
