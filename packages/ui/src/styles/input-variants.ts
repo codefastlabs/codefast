@@ -25,6 +25,10 @@ const inputVariants = tv({
       xl: { root: 'h-12', input: 'file:py-3.25' }, // 48px
     },
   },
+  compoundVariants: [
+    { className: '[&>svg]:size-3', inputSize: 'xxs' },
+    { className: '[&>svg]:size-3.5', inputSize: 'xs' },
+  ],
   defaultVariants: {
     inputSize: 'md',
   },

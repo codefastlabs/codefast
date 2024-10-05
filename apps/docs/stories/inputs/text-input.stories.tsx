@@ -256,11 +256,6 @@ export const ReadOnly: Story = {
   args: { readOnly: true, placeholder: 'Read-Only Text Input' },
 };
 
-// Story for TextInput with the required attribute
-export const Required: Story = {
-  args: { required: true, placeholder: 'Required Text Input' },
-};
-
 // Story for TextInput with a maximum length
 export const MaxLength: Story = {
   args: { maxLength: 10, placeholder: 'Max Length Text Input' },
