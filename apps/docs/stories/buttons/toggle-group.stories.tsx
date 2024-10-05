@@ -108,52 +108,6 @@ export const Basic: Story = {
   ),
 };
 
-// Story for ToggleGroup with prefix
-export const Prefix: Story = {
-  render: (args) => (
-    <ToggleGroup {...args}>
-      <ToggleGroupItem prefix={<ExpandIcon />} value="1">
-        Option 1
-      </ToggleGroupItem>
-      <ToggleGroupItem prefix={<ApertureIcon />} value="2">
-        Option 2
-      </ToggleGroupItem>
-      <ToggleGroupItem prefix={<PackageCheckIcon />} value="3">
-        Option 3
-      </ToggleGroupItem>
-    </ToggleGroup>
-  ),
-};
-
-// Story for ToggleGroup with suffix
-export const Suffix: Story = {
-  render: (args) => (
-    <ToggleGroup {...args}>
-      <ToggleGroupItem suffix={<ExpandIcon />} value="1">
-        Option 1
-      </ToggleGroupItem>
-      <ToggleGroupItem suffix={<ApertureIcon />} value="2">
-        Option 2
-      </ToggleGroupItem>
-      <ToggleGroupItem suffix={<PackageCheckIcon />} value="3">
-        Option 3
-      </ToggleGroupItem>
-    </ToggleGroup>
-  ),
-};
-
-// Story for ToggleGroup with Icons
-export const Icons: Story = {
-  args: { icon: true },
-  render: (args) => (
-    <ToggleGroup {...args}>
-      <ToggleGroupItem prefix={<ExpandIcon />} value="1" />
-      <ToggleGroupItem prefix={<ApertureIcon />} value="2" />
-      <ToggleGroupItem prefix={<PackageCheckIcon />} value="3" />
-    </ToggleGroup>
-  ),
-};
-
 // Story for ToggleGroup with different sizes
 export const Sizes: Story = {
   render: (args) => (
@@ -193,6 +147,52 @@ export const Variants: Story = {
         </ToggleGroup>
       ))}
     </div>
+  ),
+};
+
+// Story for ToggleGroup with Icons
+export const Icons: Story = {
+  args: { icon: true },
+  render: (args) => (
+    <ToggleGroup {...args}>
+      <ToggleGroupItem prefix={<ExpandIcon />} value="1" />
+      <ToggleGroupItem prefix={<ApertureIcon />} value="2" />
+      <ToggleGroupItem prefix={<PackageCheckIcon />} value="3" />
+    </ToggleGroup>
+  ),
+};
+
+// Story for ToggleGroup with prefix
+export const Prefix: Story = {
+  render: (args) => (
+    <ToggleGroup {...args}>
+      <ToggleGroupItem prefix={<ExpandIcon />} value="1">
+        Option 1
+      </ToggleGroupItem>
+      <ToggleGroupItem prefix={<ApertureIcon />} value="2">
+        Option 2
+      </ToggleGroupItem>
+      <ToggleGroupItem prefix={<PackageCheckIcon />} value="3">
+        Option 3
+      </ToggleGroupItem>
+    </ToggleGroup>
+  ),
+};
+
+// Story for ToggleGroup with suffix
+export const Suffix: Story = {
+  render: (args) => (
+    <ToggleGroup {...args}>
+      <ToggleGroupItem suffix={<ExpandIcon />} value="1">
+        Option 1
+      </ToggleGroupItem>
+      <ToggleGroupItem suffix={<ApertureIcon />} value="2">
+        Option 2
+      </ToggleGroupItem>
+      <ToggleGroupItem suffix={<PackageCheckIcon />} value="3">
+        Option 3
+      </ToggleGroupItem>
+    </ToggleGroup>
   ),
 };
 
