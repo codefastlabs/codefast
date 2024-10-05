@@ -1,8 +1,95 @@
-import { ToggleGroup, ToggleGroupItem } from '@codefast/ui';
-import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
+import * as React from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { ToggleGroup, ToggleGroupItem } from '@codefast/ui';
+import { fn } from '@storybook/test';
+import { ApertureIcon, ExpandIcon, PackageCheckIcon } from 'lucide-react';
 
 const meta = {
+  argTypes: {
+    defaultValue: {
+      control: { type: 'text' },
+      description:
+        'The value of the toggle item that should be selected by default.',
+      table: {
+        type: { summary: 'string | string[]' },
+      },
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disables the toggle group and all its items.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    icon: {
+      control: { type: 'boolean' },
+      description: 'If true, the toggle button will have an icon',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    onValueChange: {
+      action: 'onValueChange',
+      description:
+        'Callback function triggered when the value of the selected toggle item changes.',
+      table: {
+        type: { summary: '(value: string | string[]) => void' },
+      },
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Toggle button size',
+      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
+    },
+    type: {
+      control: { type: 'inline-radio' },
+      options: ['single', 'multiple'],
+      description:
+        'Defines whether only a single toggle item can be active at a time (`single`) or multiple items can be active (`multiple`).',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'single' },
+      },
+    },
+    value: {
+      control: { type: 'text' },
+      description:
+        'The controlled value of the selected toggle item. This should be used when the component is controlled.',
+      table: {
+        type: { summary: 'string | string[]' },
+      },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: [
+        'default',
+        'secondary',
+        'info',
+        'success',
+        'warning',
+        'destructive',
+        'outline',
+        'ghost',
+      ],
+      description: 'Toggle button variant styles',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      },
+    },
+  },
+  args: {
+    disabled: false,
+    icon: false,
+    onValueChange: fn(),
+    size: 'md',
+    type: 'single',
+    variant: 'default',
+  },
+  component: ToggleGroup,
   tags: ['autodocs'],
   title: 'Components/Buttons/Toggle Group',
 } satisfies Meta<typeof ToggleGroup>;
@@ -11,346 +98,127 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/* -----------------------------------------------------------------------------
- * Story: Default
- * -------------------------------------------------------------------------- */
-
-export const Default: Story = {
+export const Basic: Story = {
   render: (args) => (
-    <ToggleGroup icon type="multiple" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
+    <ToggleGroup {...args}>
+      <ToggleGroupItem value="1">Option 1</ToggleGroupItem>
+      <ToggleGroupItem value="2">Option 2</ToggleGroupItem>
+      <ToggleGroupItem value="3">Option 3</ToggleGroupItem>
     </ToggleGroup>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Secondary
- * -------------------------------------------------------------------------- */
-
-export const Secondary: Story = {
+// Story for ToggleGroup with prefix
+export const Prefix: Story = {
   render: (args) => (
-    <ToggleGroup icon type="multiple" variant="secondary" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Info
- * -------------------------------------------------------------------------- */
-
-export const Info: Story = {
-  render: (args) => (
-    <ToggleGroup icon type="multiple" variant="info" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Success
- * -------------------------------------------------------------------------- */
-
-export const Success: Story = {
-  render: (args) => (
-    <ToggleGroup icon type="multiple" variant="success" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Warning
- * -------------------------------------------------------------------------- */
-
-export const Warning: Story = {
-  render: (args) => (
-    <ToggleGroup icon type="multiple" variant="warning" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Destructive
- * -------------------------------------------------------------------------- */
-
-export const Destructive: Story = {
-  render: (args) => (
-    <ToggleGroup icon type="multiple" variant="destructive" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Outline
- * -------------------------------------------------------------------------- */
-
-export const Outline: Story = {
-  render: (args) => (
-    <ToggleGroup icon type="multiple" variant="outline" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Ghost
- * -------------------------------------------------------------------------- */
-
-export const Ghost: Story = {
-  render: (args) => (
-    <ToggleGroup icon type="multiple" variant="ghost" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
- * Story: With Text
- * -------------------------------------------------------------------------- */
-
-export const WithText: Story = {
-  render: (args) => (
-    <ToggleGroup type="multiple" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      >
-        Bold
+    <ToggleGroup {...args}>
+      <ToggleGroupItem prefix={<ExpandIcon />} value="1">
+        Option 1
       </ToggleGroupItem>
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      >
-        Italic
+      <ToggleGroupItem prefix={<ApertureIcon />} value="2">
+        Option 2
       </ToggleGroupItem>
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      >
-        Underline
+      <ToggleGroupItem prefix={<PackageCheckIcon />} value="3">
+        Option 3
       </ToggleGroupItem>
     </ToggleGroup>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Single
- * -------------------------------------------------------------------------- */
-
-export const Single: Story = {
+// Story for ToggleGroup with suffix
+export const Suffix: Story = {
   render: (args) => (
-    <ToggleGroup icon type="single" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
+    <ToggleGroup {...args}>
+      <ToggleGroupItem suffix={<ExpandIcon />} value="1">
+        Option 1
+      </ToggleGroupItem>
+      <ToggleGroupItem suffix={<ApertureIcon />} value="2">
+        Option 2
+      </ToggleGroupItem>
+      <ToggleGroupItem suffix={<PackageCheckIcon />} value="3">
+        Option 3
+      </ToggleGroupItem>
     </ToggleGroup>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Small
- * -------------------------------------------------------------------------- */
-
-export const Small: Story = {
+// Story for ToggleGroup with Icons
+export const Icons: Story = {
+  args: { icon: true },
   render: (args) => (
-    <ToggleGroup icon size="sm" type="multiple" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
+    <ToggleGroup {...args}>
+      <ToggleGroupItem prefix={<ExpandIcon />} value="1" />
+      <ToggleGroupItem prefix={<ApertureIcon />} value="2" />
+      <ToggleGroupItem prefix={<PackageCheckIcon />} value="3" />
     </ToggleGroup>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Large
- * -------------------------------------------------------------------------- */
-
-export const Large: Story = {
+// Story for ToggleGroup with different sizes
+export const Sizes: Story = {
   render: (args) => (
-    <ToggleGroup icon size="lg" type="multiple" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
+    <div className="flex flex-col gap-2">
+      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <ToggleGroup key={size} {...args} size={size}>
+          <ToggleGroupItem value="1">{size} 1</ToggleGroupItem>
+          <ToggleGroupItem value="2">{size} 2</ToggleGroupItem>
+          <ToggleGroupItem value="3">{size} 3</ToggleGroupItem>
+        </ToggleGroup>
+      ))}
+    </div>
   ),
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Disabled
- * -------------------------------------------------------------------------- */
-
-export const Disabled: Story = {
+// Story for ToggleGroup with different variants
+export const Variants: Story = {
+  args: { className: '[&_button]:capitalize' },
   render: (args) => (
-    <ToggleGroup disabled icon type="multiple" {...args}>
-      <ToggleGroupItem
-        aria-label="Toggle bold"
-        prefix={<BoldIcon />}
-        value="bold"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle italic"
-        prefix={<ItalicIcon />}
-        value="italic"
-      />
-      <ToggleGroupItem
-        aria-label="Toggle underline"
-        prefix={<UnderlineIcon />}
-        value="underline"
-      />
-    </ToggleGroup>
+    <div className="flex flex-col gap-2">
+      {(
+        [
+          'default',
+          'secondary',
+          'info',
+          'success',
+          'warning',
+          'destructive',
+          'outline',
+          'ghost',
+        ] as const
+      ).map((variant) => (
+        <ToggleGroup key={variant} {...args} variant={variant}>
+          <ToggleGroupItem value="1">{variant} 1</ToggleGroupItem>
+          <ToggleGroupItem value="2">{variant} 2</ToggleGroupItem>
+          <ToggleGroupItem value="3">{variant} 3</ToggleGroupItem>
+        </ToggleGroup>
+      ))}
+    </div>
   ),
+};
+
+// Story for ToggleGroup in a controlled state
+export const Controlled: Story = {
+  render: (args) => {
+    const [value, setValue] = React.useState('1');
+
+    return (
+      <div className="space-y-4">
+        <ToggleGroup
+          {...args}
+          defaultValue="1"
+          type="single"
+          value={value}
+          onValueChange={setValue}
+        >
+          <ToggleGroupItem value="1">Option 1</ToggleGroupItem>
+          <ToggleGroupItem value="2">Option 2</ToggleGroupItem>
+          <ToggleGroupItem value="3">Option 3</ToggleGroupItem>
+        </ToggleGroup>
+
+        <p>
+          <strong>Value:</strong> {value}
+        </p>
+      </div>
+    );
+  },
 };
