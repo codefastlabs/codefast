@@ -76,10 +76,10 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
         spellCheck="false"
         {...props}
       />
-      <div className="order-last ml-auto grid h-full divide-y overflow-hidden rounded-r-md border-l">
+      <div className="order-last ml-auto grid h-full shrink-0 divide-y rounded-r border-l">
         <NumberInputPrimitive.IncrementButton
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-tr-md',
+            className: 'h-full rounded-none rounded-tr',
             icon: true,
             variant: 'ghost',
             size: inputSize,
@@ -89,7 +89,7 @@ const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
         </NumberInputPrimitive.IncrementButton>
         <NumberInputPrimitive.DecrementButton
           className={buttonVariants({
-            className: 'rounded-tb-md h-full rounded-none',
+            className: 'h-full rounded-none rounded-br',
             icon: true,
             variant: 'ghost',
             size: inputSize,

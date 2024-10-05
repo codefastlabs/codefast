@@ -63,16 +63,20 @@ const buttonVariants = tv({
       xl: 'h-12', // 48px
     },
     icon: {
-      true: 'p-1',
+      true: 'p-0',
     },
   },
   compoundVariants: [
-    { className: 'size-7', icon: true, size: 'xxs' },
-    { className: 'size-8', icon: true, size: 'xs' },
-    { className: 'size-9', icon: true, size: 'sm' },
-    { className: 'size-10', icon: true, size: 'md' },
-    { className: 'size-11', icon: true, size: 'lg' },
-    { className: 'size-12', icon: true, size: 'xl' },
+    // --
+    { className: 'w-7', icon: true, size: 'xxs' },
+    { className: 'w-8', icon: true, size: 'xs' },
+    { className: 'w-9', icon: true, size: 'sm' },
+    { className: 'w-10', icon: true, size: 'md' },
+    { className: 'w-11', icon: true, size: 'lg' },
+    { className: 'w-12', icon: true, size: 'xl' },
+    // --
+    { className: '[&>svg]:size-3', size: 'xxs' },
+    { className: '[&>svg]:size-3.5', size: 'xs' },
   ],
   defaultVariants: {
     icon: false,
