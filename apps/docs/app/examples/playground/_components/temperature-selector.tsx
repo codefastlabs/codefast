@@ -1,13 +1,22 @@
 'use client';
 
-import { HoverCard, HoverCardContent, HoverCardTrigger, Label, Slider, type SliderProps } from '@codefast/ui';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Label,
+  Slider,
+  type SliderProps,
+} from '@codefast/ui';
 import { type JSX, useState } from 'react';
 
 interface TemperatureSelectorProps {
   defaultValue: SliderProps['defaultValue'];
 }
 
-export function TemperatureSelector({ defaultValue }: TemperatureSelectorProps): JSX.Element {
+export function TemperatureSelector({
+  defaultValue,
+}: TemperatureSelectorProps): JSX.Element {
   const [value, setValue] = useState(defaultValue);
 
   return (
@@ -32,8 +41,9 @@ export function TemperatureSelector({ defaultValue }: TemperatureSelectorProps):
           </div>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          Controls randomness: lowering results in less random completions. As the temperature approaches zero, the
-          model will become deterministic and repetitive.
+          Controls randomness: lowering results in less random completions. As
+          the temperature approaches zero, the model will become deterministic
+          and repetitive.
         </HoverCardContent>
       </HoverCard>
     </div>

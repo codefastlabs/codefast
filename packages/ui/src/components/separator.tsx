@@ -39,7 +39,10 @@ interface SeparatorProps
     Omit<SeparatorVariantsProps, 'orientation'> {}
 
 const Separator = React.forwardRef<SeparatorElement, SeparatorProps>(
-  ({ className, orientation, align, decorative = true, ...props }, forwardedRef) => (
+  (
+    { className, orientation, align, decorative = true, ...props },
+    forwardedRef,
+  ) => (
     <SeparatorPrimitive.Root
       ref={forwardedRef}
       className={separatorVariants({ align, orientation, className })}
@@ -59,15 +62,19 @@ Separator.displayName = SeparatorPrimitive.Root.displayName;
 type SeparatorItemElement = HTMLDivElement;
 type SeparatorItemProps = React.HTMLAttributes<HTMLDivElement>;
 
-const SeparatorItem = React.forwardRef<SeparatorItemElement, SeparatorItemProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div
-      ref={forwardedRef}
-      className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
-      {...props}
-    />
-  ),
-);
+const SeparatorItem = React.forwardRef<
+  SeparatorItemElement,
+  SeparatorItemProps
+>(({ className, ...props }, forwardedRef) => (
+  <div
+    ref={forwardedRef}
+    className={cn(
+      'bg-background text-muted-foreground absolute mx-2 px-2 text-sm',
+      className,
+    )}
+    {...props}
+  />
+));
 
 SeparatorItem.displayName = 'SeparatorItem';
 

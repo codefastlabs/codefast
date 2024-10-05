@@ -21,11 +21,19 @@ type TextareaVariantsProps = VariantProps<typeof textareaVariants>;
  * -------------------------------------------------------------------------- */
 
 type TextareaElement = HTMLTextAreaElement;
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>, TextareaVariantsProps {}
+interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    TextareaVariantsProps {}
 
-const Textarea = React.forwardRef<TextareaElement, TextareaProps>(({ className, ...props }, forwardedRef) => (
-  <textarea ref={forwardedRef} className={textareaVariants({ className })} {...props} />
-));
+const Textarea = React.forwardRef<TextareaElement, TextareaProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <textarea
+      ref={forwardedRef}
+      className={textareaVariants({ className })}
+      {...props}
+    />
+  ),
+);
 
 Textarea.displayName = 'Textarea';
 

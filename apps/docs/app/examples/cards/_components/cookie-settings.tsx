@@ -23,7 +23,8 @@ export function CookieSettings(): JSX.Element {
           <Label className="flex flex-col space-y-1" htmlFor="necessary">
             <span>Strictly Necessary</span>
             <span className="text-muted-foreground font-normal leading-snug">
-              These cookies are essential in order to use the website and use its features.
+              These cookies are essential in order to use the website and use
+              its features.
             </span>
           </Label>
           <Switch defaultChecked id="necessary" />
@@ -32,7 +33,8 @@ export function CookieSettings(): JSX.Element {
           <Label className="flex flex-col space-y-1" htmlFor="functional">
             <span>Functional Cookies</span>
             <span className="text-muted-foreground font-normal leading-snug">
-              These cookies allow the website to provide personalized functionality.
+              These cookies allow the website to provide personalized
+              functionality.
             </span>
           </Label>
           <Switch id="functional" />

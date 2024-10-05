@@ -8,11 +8,17 @@ import { cn } from '@/lib/utils';
 type TableElement = HTMLTableElement;
 type TableProps = React.HTMLAttributes<HTMLTableElement>;
 
-const Table = React.forwardRef<TableElement, TableProps>(({ className, ...props }, forwardedRef) => (
-  <div className="relative w-full overflow-auto">
-    <table ref={forwardedRef} className={cn('w-full caption-bottom text-sm', className)} {...props} />
-  </div>
-));
+const Table = React.forwardRef<TableElement, TableProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <div className="relative w-full overflow-auto">
+      <table
+        ref={forwardedRef}
+        className={cn('w-full caption-bottom text-sm', className)}
+        {...props}
+      />
+    </div>
+  ),
+);
 
 Table.displayName = 'Table';
 
@@ -23,9 +29,15 @@ Table.displayName = 'Table';
 type TableHeaderElement = HTMLTableSectionElement;
 type TableHeaderProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
-const TableHeader = React.forwardRef<TableHeaderElement, TableHeaderProps>(({ className, ...props }, forwardedRef) => (
-  <thead ref={forwardedRef} className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)} {...props} />
-));
+const TableHeader = React.forwardRef<TableHeaderElement, TableHeaderProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <thead
+      ref={forwardedRef}
+      className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)}
+      {...props}
+    />
+  ),
+);
 
 TableHeader.displayName = 'TableHeader';
 
@@ -36,9 +48,15 @@ TableHeader.displayName = 'TableHeader';
 type TableBodyElement = HTMLTableSectionElement;
 type TableBodyProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
-const TableBody = React.forwardRef<TableBodyElement, TableBodyProps>(({ className, ...props }, forwardedRef) => (
-  <tbody ref={forwardedRef} className={cn('[&_tr:last-child]:border-0', className)} {...props} />
-));
+const TableBody = React.forwardRef<TableBodyElement, TableBodyProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <tbody
+      ref={forwardedRef}
+      className={cn('[&_tr:last-child]:border-0', className)}
+      {...props}
+    />
+  ),
+);
 
 TableBody.displayName = 'TableBody';
 
@@ -49,13 +67,18 @@ TableBody.displayName = 'TableBody';
 type TableFooterElement = HTMLTableSectionElement;
 type TableFooterProps = React.HTMLAttributes<HTMLTableSectionElement>;
 
-const TableFooter = React.forwardRef<TableFooterElement, TableFooterProps>(({ className, ...props }, forwardedRef) => (
-  <tfoot
-    ref={forwardedRef}
-    className={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)}
-    {...props}
-  />
-));
+const TableFooter = React.forwardRef<TableFooterElement, TableFooterProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <tfoot
+      ref={forwardedRef}
+      className={cn(
+        'bg-muted/50 border-t font-medium [&>tr]:last:border-b-0',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 TableFooter.displayName = 'TableFooter';
 
@@ -66,13 +89,20 @@ TableFooter.displayName = 'TableFooter';
 type TableRowElement = HTMLTableRowElement;
 type TableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
 
-const TableRow = React.forwardRef<TableRowElement, TableRowProps>(({ className, ...props }, forwardedRef) => (
-  <tr
-    ref={forwardedRef}
-    className={cn('border-b transition', 'hover:bg-accent', 'data-[state=selected]:bg-muted', className)}
-    {...props}
-  />
-));
+const TableRow = React.forwardRef<TableRowElement, TableRowProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <tr
+      ref={forwardedRef}
+      className={cn(
+        'border-b transition',
+        'hover:bg-accent',
+        'data-[state=selected]:bg-muted',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 TableRow.displayName = 'TableRow';
 
@@ -83,13 +113,18 @@ TableRow.displayName = 'TableRow';
 type TableHeadElement = HTMLTableCellElement;
 type TableHeadProps = React.ThHTMLAttributes<HTMLTableCellElement>;
 
-const TableHead = React.forwardRef<TableHeadElement, TableHeadProps>(({ className, ...props }, forwardedRef) => (
-  <th
-    ref={forwardedRef}
-    className={cn('text-muted-foreground h-12 px-4 text-left align-middle font-medium', className)}
-    {...props}
-  />
-));
+const TableHead = React.forwardRef<TableHeadElement, TableHeadProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <th
+      ref={forwardedRef}
+      className={cn(
+        'text-muted-foreground h-12 px-4 text-left align-middle font-medium',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 TableHead.displayName = 'TableHead';
 
@@ -100,9 +135,15 @@ TableHead.displayName = 'TableHead';
 type TableCellElement = HTMLTableCellElement;
 type TableCellProps = React.TdHTMLAttributes<HTMLTableCellElement>;
 
-const TableCell = React.forwardRef<TableCellElement, TableCellProps>(({ className, ...props }, forwardedRef) => (
-  <td ref={forwardedRef} className={cn('p-4 align-middle', className)} {...props} />
-));
+const TableCell = React.forwardRef<TableCellElement, TableCellProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <td
+      ref={forwardedRef}
+      className={cn('p-4 align-middle', className)}
+      {...props}
+    />
+  ),
+);
 
 TableCell.displayName = 'TableCell';
 
@@ -115,7 +156,11 @@ type TableCaptionProps = React.HTMLAttributes<HTMLTableCaptionElement>;
 
 const TableCaption = React.forwardRef<TableCaptionElement, TableCaptionProps>(
   ({ className, ...props }, forwardedRef) => (
-    <caption ref={forwardedRef} className={cn('text-muted-foreground mt-4 text-sm', className)} {...props} />
+    <caption
+      ref={forwardedRef}
+      className={cn('text-muted-foreground mt-4 text-sm', className)}
+      {...props}
+    />
   ),
 );
 

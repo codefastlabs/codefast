@@ -1,6 +1,13 @@
 'use client';
 
-import { HoverCard, HoverCardContent, HoverCardTrigger, Label, Slider, type SliderProps } from '@codefast/ui';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Label,
+  Slider,
+  type SliderProps,
+} from '@codefast/ui';
 import { type JSX, useState } from 'react';
 
 interface TopPSelectorProps {
@@ -21,11 +28,19 @@ export function TopPSelector({ defaultValue }: TopPSelectorProps): JSX.Element {
                 {value}
               </span>
             </div>
-            <Slider aria-label="Top P" defaultValue={value} id="top-p" max={1} step={0.1} onValueChange={setValue} />
+            <Slider
+              aria-label="Top P"
+              defaultValue={value}
+              id="top-p"
+              max={1}
+              step={0.1}
+              onValueChange={setValue}
+            />
           </div>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          Control diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.
+          Control diversity via nucleus sampling: 0.5 means half of all
+          likelihood-weighted options are considered.
         </HoverCardContent>
       </HoverCard>
     </div>

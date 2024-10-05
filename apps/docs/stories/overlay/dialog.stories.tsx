@@ -47,7 +47,10 @@ export const Default: Story = {
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you&apos;re
+              done.
+            </DialogDescription>
           </DialogHeader>
 
           <DialogBody>
@@ -56,13 +59,21 @@ export const Default: Story = {
                 <Label className="text-right" htmlFor="name">
                   Name
                 </Label>
-                <TextInput className="col-span-3" defaultValue="Pedro Duarte" id="name" />
+                <TextInput
+                  className="col-span-3"
+                  defaultValue="Pedro Duarte"
+                  id="name"
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor="username">
                   Username
                 </Label>
-                <TextInput className="col-span-3" defaultValue="@peduarte" id="username" />
+                <TextInput
+                  className="col-span-3"
+                  defaultValue="@peduarte"
+                  id="username"
+                />
               </div>
             </div>
           </DialogBody>
@@ -98,7 +109,9 @@ export const CustomCloseButton: Story = {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share link</DialogTitle>
-          <DialogDescription>Anyone who has this link will be able to view this.</DialogDescription>
+          <DialogDescription>
+            Anyone who has this link will be able to view this.
+          </DialogDescription>
         </DialogHeader>
 
         <DialogBody>
@@ -107,7 +120,11 @@ export const CustomCloseButton: Story = {
               <Label className="sr-only" htmlFor="link">
                 Link
               </Label>
-              <TextInput readOnly defaultValue="https://ui.shadcn.com/docs/installation" id="link" />
+              <TextInput
+                readOnly
+                defaultValue="https://ui.shadcn.com/docs/installation"
+                id="link"
+              />
             </div>
             <TooltipProvider delayDuration={250}>
               <Tooltip>
@@ -142,16 +159,19 @@ export const Scrollable: Story = {
       <DialogContent className="max-h-full overflow-auto">
         <DialogHeader>
           <DialogTitle>Share link</DialogTitle>
-          <DialogDescription>Anyone who has this link will be able to view this.</DialogDescription>
+          <DialogDescription>
+            Anyone who has this link will be able to view this.
+          </DialogDescription>
         </DialogHeader>
 
         <DialogBody className="border-y">
           <div className="grid gap-2 py-4">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
-                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
-                officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
-                quos totam voluptas voluptatibus.
+                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Beatae dicta dolores, eligendi est officia voluptatem? Corporis
+                culpa debitis ipsa ipsam maiores, nisi odit perspiciatis
+                possimus quae, quos totam voluptas voluptatibus.
               </p>
             ))}
           </div>
@@ -179,16 +199,19 @@ export const ScrollingLongContent: Story = {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Share link</DialogTitle>
-          <DialogDescription>Anyone who has this link will be able to view this.</DialogDescription>
+          <DialogDescription>
+            Anyone who has this link will be able to view this.
+          </DialogDescription>
         </DialogHeader>
 
         <DialogBody>
           <div className="grid gap-2">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
-                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
-                officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
-                quos totam voluptas voluptatibus.
+                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Beatae dicta dolores, eligendi est officia voluptatem? Corporis
+                culpa debitis ipsa ipsam maiores, nisi odit perspiciatis
+                possimus quae, quos totam voluptas voluptatibus.
               </p>
             ))}
           </div>

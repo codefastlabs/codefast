@@ -22,7 +22,9 @@ interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
-export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>): JSX.Element {
+export function DataTableRowActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>): JSX.Element {
   const task = taskSchema.parse(row.original);
 
   return (

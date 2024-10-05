@@ -29,7 +29,15 @@ export const Default: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Secondary: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="secondary" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="secondary"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -37,7 +45,15 @@ export const Secondary: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Info: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="info" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="info"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -45,7 +61,15 @@ export const Info: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Success: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="success" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="success"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -53,7 +77,15 @@ export const Success: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Warning: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="warning" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="warning"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -61,7 +93,15 @@ export const Warning: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Destructive: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="destructive" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="destructive"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -69,7 +109,15 @@ export const Destructive: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Outline: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="outline" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="outline"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -77,7 +125,15 @@ export const Outline: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Ghost: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} variant="ghost" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      variant="ghost"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -97,7 +153,15 @@ export const WithText: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Small: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} size="sm" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      size="sm"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -105,7 +169,15 @@ export const Small: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Large: Story = {
-  render: (args) => <Toggle icon aria-label="Toggle italic" prefix={<ItalicIcon />} size="lg" {...args} />,
+  render: (args) => (
+    <Toggle
+      icon
+      aria-label="Toggle italic"
+      prefix={<ItalicIcon />}
+      size="lg"
+      {...args}
+    />
+  ),
 };
 
 /* -----------------------------------------------------------------------------
@@ -113,5 +185,13 @@ export const Large: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Disabled: Story = {
-  render: (args) => <Toggle disabled icon aria-label="Toggle underline" prefix={<UnderlineIcon />} {...args} />,
+  render: (args) => (
+    <Toggle
+      disabled
+      icon
+      aria-label="Toggle underline"
+      prefix={<UnderlineIcon />}
+      {...args}
+    />
+  ),
 };

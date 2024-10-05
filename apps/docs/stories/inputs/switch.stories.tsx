@@ -78,7 +78,9 @@ export const ReactHookForm: Story = {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
+            <Code className="text-white">
+              {JSON.stringify(values, null, 2)}
+            </Code>
           </Pre>
         ),
       });
@@ -86,7 +88,10 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form className="w-full space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="w-full space-y-6"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div>
             <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
             <div className="space-y-4">
@@ -96,11 +101,18 @@ export const ReactHookForm: Story = {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Marketing emails</FormLabel>
-                      <FormDescription>Receive emails about new products, features, and more.</FormDescription>
+                      <FormLabel className="text-base">
+                        Marketing emails
+                      </FormLabel>
+                      <FormDescription>
+                        Receive emails about new products, features, and more.
+                      </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -111,11 +123,20 @@ export const ReactHookForm: Story = {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Security emails</FormLabel>
-                      <FormDescription>Receive emails about your account security.</FormDescription>
+                      <FormLabel className="text-base">
+                        Security emails
+                      </FormLabel>
+                      <FormDescription>
+                        Receive emails about your account security.
+                      </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch aria-readonly disabled checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch
+                        aria-readonly
+                        disabled
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
