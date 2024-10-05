@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.22
+
+### Patch Changes
+
+- Adjust password input element styles
+- Updated dependencies
+  - @codefast-ui/input@0.1.22
+
 ## 0.1.21
 
 ### Patch Changes

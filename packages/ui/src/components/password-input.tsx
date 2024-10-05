@@ -56,7 +56,7 @@ const PasswordInput = React.forwardRef<
 
     return (
       <InputPrimitive.Root
-        className={root({ inputSize, className })}
+        className={root({ inputSize, className: ['pr-0', className] })}
         loaderPosition={loaderPosition}
         loading={loading}
         prefix={prefix}
@@ -69,11 +69,11 @@ const PasswordInput = React.forwardRef<
           type={type}
           {...props}
         />
-        <div className="order-last aspect-square h-full p-0.5">
+        <div className="order-last aspect-square h-full p-1">
           <Button
             icon
             aria-label={type === 'password' ? 'Show password' : 'Hide password'}
-            className="size-full"
+            className="size-full rounded-full"
             disabled={props.disabled}
             size={inputSize}
             variant="ghost"
