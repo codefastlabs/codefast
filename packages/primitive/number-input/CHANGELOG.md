@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.27
+
+### Patch Changes
+
+- Correct refs and improve input component logic
+- Updated dependencies
+  - @codefast-ui/input@0.1.27
+
 ## 0.1.26
 
 ### Patch Changes
