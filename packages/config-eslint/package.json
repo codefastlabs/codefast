@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -29,7 +29,7 @@
     "eslint-plugin-only-warn": "1.1.0",
     "eslint-plugin-typescript-sort-keys": "3.2.0"
   },
-  "devDependencies": {
+  "peerDependencies": {
     "eslint": "^8.57.1"
   },
   "publishConfig": {
