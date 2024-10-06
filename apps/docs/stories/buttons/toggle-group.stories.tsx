@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui';
 import { fn } from '@storybook/test';
@@ -98,7 +99,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Basic: Story = {
+export const Default: Story = {
   render: (args) => (
     <ToggleGroup {...args}>
       <ToggleGroupItem value="1">Option 1</ToggleGroupItem>
@@ -199,7 +200,7 @@ export const Suffix: Story = {
 // Story for ToggleGroup in a controlled state
 export const Controlled: Story = {
   render: (args) => {
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = useState('1');
 
     return (
       <div className="space-y-4">

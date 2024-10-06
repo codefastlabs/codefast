@@ -209,16 +209,16 @@ const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 type NumberInputItemElement = React.ComponentRef<typeof InputPrimitive.Item>;
 type NumberInputItemProps = Omit<
   React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
-  | 'min'
-  | 'max'
-  | 'value'
-  | 'step'
-  | 'onChange'
   | 'defaultValue'
   | 'disabled'
-  | 'readOnly'
-  | 'prefix'
   | 'id'
+  | 'max'
+  | 'min'
+  | 'onChange'
+  | 'prefix'
+  | 'readOnly'
+  | 'step'
+  | 'value'
 >;
 
 const NumberInputItem = React.forwardRef<
@@ -226,26 +226,31 @@ const NumberInputItem = React.forwardRef<
   NumberInputItemProps
 >(
   (
-    { __scopeNumberInput, ...props }: ScopedProps<NumberInputItemProps>,
+    {
+      __scopeNumberInput,
+      onBlur,
+      onKeyDown,
+      ...props
+    }: ScopedProps<NumberInputItemProps>,
     forwardedRef,
   ): React.JSX.Element => {
     const inputScope = useInputScope(__scopeNumberInput);
     const {
-      inputRef,
       disabled,
+      formatValue,
       id,
+      inputRef,
       max,
       min,
+      onChange,
+      onDecrement,
+      onDecrementToMin,
+      onIncrement,
+      onIncrementToMax,
+      parseValue,
       readOnly,
       step,
       value,
-      formatValue,
-      parseValue,
-      onChange,
-      onIncrement,
-      onDecrement,
-      onIncrementToMax,
-      onDecrementToMin,
     } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
     const composedNumberInputRef = useComposedRefs(forwardedRef, inputRef);
 
@@ -435,8 +440,6 @@ const NumberInputItem = React.forwardRef<
     return (
       <InputPrimitive.Item
         ref={composedNumberInputRef}
-        {...inputScope}
-        {...props}
         defaultValue={formatValue(value)}
         disabled={disabled}
         id={id}
@@ -444,15 +447,17 @@ const NumberInputItem = React.forwardRef<
         min={min}
         readOnly={readOnly}
         step={step}
-        onBlur={composeEventHandlers(props.onBlur, handleBlur)}
+        onBlur={composeEventHandlers(onBlur, handleBlur)}
         onKeyDown={composeEventHandlers(
-          props.onKeyDown,
+          onKeyDown,
           React.useMemo(
             () =>
               chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
             [handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
           ),
         )}
+        {...inputScope}
+        {...props}
       />
     );
   },
