@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.23
+
+### Patch Changes
+
+- Add SearchInput component
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.23
+  - @codefast-ui/input@0.1.23
+  - @codefast-ui/number-input@0.1.23
+
 ## 0.1.22
 
 ### Patch Changes
