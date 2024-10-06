@@ -263,9 +263,9 @@ const CarouselPrevious = React.forwardRef<
     {
       __scopeCarousel,
       className,
+      icon = true,
+      size = 'sm',
       variant = 'outline',
-      size,
-      icon,
       ...props
     }: ScopedProps<CarouselPreviousProps>,
     forwardedRef,
@@ -279,7 +279,7 @@ const CarouselPrevious = React.forwardRef<
       <Button
         ref={forwardedRef}
         className={cn(
-          'absolute size-8',
+          'absolute',
           orientation === 'horizontal'
             ? '-left-12 top-1/2 -translate-y-1/2'
             : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -287,12 +287,12 @@ const CarouselPrevious = React.forwardRef<
         )}
         disabled={!canScrollPrev}
         icon={icon}
+        prefix={<ArrowLeftIcon />}
         size={size}
         variant={variant}
         onClick={scrollPrev}
         {...props}
       >
-        <ArrowLeftIcon className="size-4" />
         <span className="sr-only">Previous slide</span>
       </Button>
     );
@@ -315,9 +315,9 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
     {
       __scopeCarousel,
       className,
+      icon = true,
+      size = 'sm',
       variant = 'outline',
-      size,
-      icon,
       ...props
     }: ScopedProps<CarouselNextProps>,
     forwardedRef,
@@ -331,7 +331,7 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
       <Button
         ref={forwardedRef}
         className={cn(
-          'absolute size-8',
+          'absolute',
           orientation === 'horizontal'
             ? '-right-12 top-1/2 -translate-y-1/2'
             : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -339,12 +339,12 @@ const CarouselNext = React.forwardRef<CarouselNextElement, CarouselNextProps>(
         )}
         disabled={!canScrollNext}
         icon={icon}
+        prefix={<ArrowRightIcon />}
         size={size}
         variant={variant}
         onClick={scrollNext}
         {...props}
       >
-        <ArrowRightIcon className="size-4" />
         <span className="sr-only">Next slide</span>
       </Button>
     );

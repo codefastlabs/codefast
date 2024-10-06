@@ -18,6 +18,9 @@ const sheetContentVariants = tv({
     'data-[state=open]:animate-in data-[state=open]:animate-duration-500',
     'data-[state=closed]:animate-out data-[state=closed]:animate-duration-300',
   ],
+  defaultVariants: {
+    side: 'right',
+  },
   variants: {
     side: {
       top: [
@@ -41,9 +44,6 @@ const sheetContentVariants = tv({
         'data-[state=closed]:slide-out-to-right',
       ],
     },
-  },
-  defaultVariants: {
-    side: 'right',
   },
 });
 

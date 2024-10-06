@@ -56,7 +56,7 @@ const PasswordInput = React.forwardRef<
 
     return (
       <InputPrimitive.Root
-        className={root({ inputSize, className: ['pr-0', className] })}
+        className={root({ inputSize, className })}
         loaderPosition={loaderPosition}
         loading={loading}
         prefix={prefix}
@@ -65,23 +65,21 @@ const PasswordInput = React.forwardRef<
       >
         <InputPrimitive.Item
           ref={forwardedRef}
-          className={input({ inputSize, className: 'w-full' })}
+          className={input({ inputSize })}
           type={type}
           {...props}
         />
-        <div className="order-last aspect-square h-full p-1">
-          <Button
-            icon
-            aria-label={type === 'password' ? 'Show password' : 'Hide password'}
-            className="size-full rounded-full"
-            disabled={props.disabled}
-            size={inputSize}
-            variant="ghost"
-            onClick={togglePasswordVisibility}
-          >
-            {type === 'password' ? <EyeClosedIcon /> : <EyeOpenIcon />}
-          </Button>
-        </div>
+        <Button
+          icon
+          inside
+          aria-label={type === 'password' ? 'Show password' : 'Hide password'}
+          className="rounded-full"
+          disabled={props.disabled}
+          prefix={type === 'password' ? <EyeClosedIcon /> : <EyeOpenIcon />}
+          size={inputSize}
+          variant="ghost"
+          onClick={togglePasswordVisibility}
+        />
       </InputPrimitive.Root>
     );
   },
