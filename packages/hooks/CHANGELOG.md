@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.1.28
+
+### Patch Changes
+
+- Update search component input handling
+
 ## 0.1.27
 
 ### Patch Changes
