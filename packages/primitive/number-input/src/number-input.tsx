@@ -578,9 +578,9 @@ const NumberInputIncrementButton = React.forwardRef<
 >(
   (props: NumberInputIncrementButtonProps, forwardedRef): React.JSX.Element => (
     <NumberInputButtonImpl
+      ref={forwardedRef}
       operation="increment"
       {...props}
-      ref={forwardedRef}
     />
   ),
 );
@@ -605,9 +605,9 @@ const NumberInputDecrementButton = React.forwardRef<
 >(
   (props: NumberInputDecrementButtonProps, forwardedRef): React.JSX.Element => (
     <NumberInputButtonImpl
+      ref={forwardedRef}
       operation="decrement"
       {...props}
-      ref={forwardedRef}
     />
   ),
 );
