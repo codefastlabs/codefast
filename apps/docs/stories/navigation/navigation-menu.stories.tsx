@@ -104,7 +104,7 @@ export const Default: Story = {
   render: () => (
     <NavigationMenu>
       <NavigationMenuList>
-        <NavigationMenuItem>
+        <NavigationMenuItem value="menu-0">
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-6 sm:w-[400px] md:w-[500px] md:grid-cols-[.75fr_1fr]">
@@ -138,7 +138,8 @@ export const Default: Story = {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
+
+        <NavigationMenuItem value="menu-1">
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 sm:w-[500px] sm:grid-cols-2 md:w-[600px]">
@@ -154,7 +155,8 @@ export const Default: Story = {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
+
+        <NavigationMenuItem value="menu-2">
           <NavigationMenuLink
             asChild
             className={buttonVariants({ variant: 'ghost' })}
