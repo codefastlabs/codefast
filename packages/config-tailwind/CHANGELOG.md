@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.25
+
+### Patch Changes
+
+- Move eslint to peerDependencies
+
 ## 0.1.24
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.25
+
+### Patch Changes
+
+- Move eslint to peerDependencies
+- Updated dependencies
+  - @codefast-ui/input@0.1.25
+
 ## 0.1.24
 
 ### Patch Changes
