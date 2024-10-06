@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.1.26
+
+### Patch Changes
+
+- Update eslint dependency ranges across packages
+
 ## 0.1.25
 
 ### Patch Changes
