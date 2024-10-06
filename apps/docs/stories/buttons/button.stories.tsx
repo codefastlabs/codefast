@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Button } from '@codefast/ui';
 import { LoaderCircleIcon, PaletteIcon, TreeDeciduousIcon } from 'lucide-react';
@@ -108,7 +109,7 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
-export const Basic: Story = {
+export const Default: Story = {
   args: {
     children: 'Click Me',
   },
@@ -205,7 +206,7 @@ export const IconOnly: Story = {
 // Story for Button in a controlled state
 export const Controlled: Story = {
   render: (args) => {
-    const [count, setCount] = React.useState(0);
+    const [count, setCount] = useState(0);
 
     return (
       <div className="space-y-4">

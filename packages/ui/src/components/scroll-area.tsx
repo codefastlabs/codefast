@@ -12,22 +12,30 @@ import { cn } from '@/lib/utils';
 
 const scrollAreaScrollbarVariants = tv({
   base: 'flex touch-none select-none p-px transition',
+  compoundVariants: [
+    { className: 'w-1.5', orientation: 'vertical', size: 'sm' },
+    { className: 'w-2', orientation: 'vertical', size: 'md' },
+    { className: 'w-2.5', orientation: 'vertical', size: 'lg' },
+    { className: 'h-1.5', orientation: 'horizontal', size: 'sm' },
+    { className: 'h-2', orientation: 'horizontal', size: 'md' },
+    { className: 'h-2.5', orientation: 'horizontal', size: 'lg' },
+  ],
+  defaultVariants: {
+    size: 'md',
+    vertical: 'vertical',
+  },
   variants: {
     orientation: {
       vertical: 'h-full flex-row border-l border-l-transparent',
       horizontal: 'w-full flex-col border-t border-t-transparent',
     },
-    size: { none: '', sm: '', md: '', lg: '' },
+    size: {
+      none: '',
+      sm: '',
+      md: '',
+      lg: '',
+    },
   },
-  compoundVariants: [
-    { orientation: 'vertical', size: 'sm', className: 'w-1.5' },
-    { orientation: 'vertical', size: 'md', className: 'w-2' },
-    { orientation: 'vertical', size: 'lg', className: 'w-2.5' },
-    { orientation: 'horizontal', size: 'sm', className: 'h-1.5' },
-    { orientation: 'horizontal', size: 'md', className: 'h-2' },
-    { orientation: 'horizontal', size: 'lg', className: 'h-2.5' },
-  ],
-  defaultVariants: { size: 'md', vertical: 'vertical' },
 });
 
 type ScrollAreaScrollbarVariantsProps = VariantProps<

@@ -29,6 +29,7 @@ const Button = React.forwardRef<ButtonElement, ButtonProps>(
       variant,
       size,
       icon,
+      inside,
       disabled,
       loading,
       prefix,
@@ -41,7 +42,13 @@ const Button = React.forwardRef<ButtonElement, ButtonProps>(
   ) => (
     <button
       ref={forwardedRef}
-      className={buttonVariants({ className, icon, size, variant })}
+      className={buttonVariants({
+        className,
+        icon,
+        inside,
+        size,
+        variant,
+      })}
       disabled={loading || disabled}
       type="button"
       {...props}

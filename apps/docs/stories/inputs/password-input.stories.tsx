@@ -94,7 +94,7 @@ export default meta;
 
 type Story = StoryObj<typeof PasswordInput>;
 
-export const Basic: Story = {};
+export const Default: Story = {};
 
 // Story for PasswordInput with different sizes
 export const Sizes: Story = {

@@ -38,6 +38,13 @@ const meta = {
         defaultValue: { summary: 'false' },
       },
     },
+    defaultValue: {
+      control: { type: 'text' },
+      description: 'The default value of the search input.',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the input field',
@@ -199,7 +206,7 @@ export default meta;
 
 type Story = StoryObj<typeof TextInput>;
 
-export const Basic: Story = {
+export const Default: Story = {
   args: {
     placeholder: 'Basic Text Input',
   },

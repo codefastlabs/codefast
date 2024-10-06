@@ -53,6 +53,7 @@ export * from '@/components/radio-cards';
 export * from '@/components/radio-group';
 export * from '@/components/resizable';
 export * from '@/components/scroll-area';
+export * from '@/components/search-input';
 export * from '@/components/section';
 export * from '@/components/select';
 export * from '@/components/separator';

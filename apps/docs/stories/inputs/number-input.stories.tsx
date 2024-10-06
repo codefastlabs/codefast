@@ -210,7 +210,7 @@ const units = {
 
 type Story = StoryObj<typeof NumberInput>;
 
-export const Basic: Story = {
+export const Default: Story = {
   args: {
     placeholder: 'Basic Number Input',
   },
@@ -357,20 +357,20 @@ export const StepValue: Story = {
 // Story for NumberInput in a controlled state
 export const Controlled: Story = {
   render: (args) => {
-    const [value, setValue] = useState(0);
+    const [number, setNumber] = useState(0);
 
     return (
       <div className="space-y-4">
         <NumberInput
           {...args}
           placeholder="Controlled Number Input"
-          value={value}
-          onChange={(newValue) => {
-            setValue(newValue);
+          value={number}
+          onChange={(value) => {
+            setNumber(value);
           }}
         />
         <p>
-          <strong>Value:</strong> {value}
+          <strong>Value:</strong> {number}
         </p>
       </div>
     );

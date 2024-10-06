@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Toggle } from '@codefast/ui';
 import { fn } from '@storybook/test';
@@ -82,7 +83,7 @@ export default meta;
 type Story = StoryObj<typeof Toggle>;
 
 // Default story showing a basic toggle button
-export const Basic: Story = {
+export const Default: Story = {
   render: (args) => <Toggle {...args}>Toggle</Toggle>,
 };
 
@@ -161,7 +162,7 @@ export const Suffix: Story = {
 // Interactive story for toggle button
 export const Interactive: Story = {
   render: (args) => {
-    const [toggled, setToggled] = React.useState(false);
+    const [toggled, setToggled] = useState(false);
 
     return (
       <Toggle
@@ -185,7 +186,7 @@ export const Interactive: Story = {
 // Story for Toggle with controlled state
 export const Controlled: Story = {
   render: (args) => {
-    const [pressed, setPressed] = React.useState(false);
+    const [pressed, setPressed] = useState(false);
 
     return (
       <div className="space-y-4">
