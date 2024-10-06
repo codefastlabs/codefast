@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.24
+
+### Patch Changes
+
+- Add autofill and selection styling to Tailwind config
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.24
+  - @codefast-ui/input@0.1.24
+  - @codefast-ui/number-input@0.1.24
+
 ## 0.1.23
 
 ### Patch Changes
