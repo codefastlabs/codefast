@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.23
+
+### Patch Changes
+
+- Add SearchInput component
+
 ## 0.1.22
 
 ### Patch Changes
