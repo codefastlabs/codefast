@@ -2,7 +2,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { Button } from '@codefast/ui';
-import { LoaderCircleIcon, PaletteIcon, TreeDeciduousIcon } from 'lucide-react';
+import {
+  LoaderCircleIcon,
+  PaletteIcon,
+  ScanSearchIcon,
+  TreeDeciduousIcon,
+} from 'lucide-react';
 import { fn } from '@storybook/test';
 
 const meta = {
@@ -117,6 +122,9 @@ export const Default: Story = {
 
 // Story for Button with different sizes
 export const Sizes: Story = {
+  args: {
+    prefix: <ScanSearchIcon />,
+  },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
       {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
