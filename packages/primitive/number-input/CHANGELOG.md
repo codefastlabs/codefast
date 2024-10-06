@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.26
+
+### Patch Changes
+
+- Update eslint dependency ranges across packages
+- Updated dependencies
+  - @codefast-ui/input@0.1.26
+
 ## 0.1.25
 
 ### Patch Changes
