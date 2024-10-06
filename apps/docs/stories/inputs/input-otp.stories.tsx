@@ -143,14 +143,6 @@ export const Controlled: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const formValues = z.object({
-  pin: z.string().min(6, {
-    message: 'Your one-time password must be 6 characters.',
-  }),
-});
-
-type FormValues = z.infer<typeof formValues>;
-
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (
@@ -161,14 +153,22 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: () => {
-    const form = useForm<FormValues>({
+    const formValues = z.object({
+      pin: z.string().min(6, {
+        message: 'Your one-time password must be 6 characters.',
+      }),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
       resolver: zodResolver(formValues),
       defaultValues: {
         pin: '',
       },
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (values): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
+      values,
+    ): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
