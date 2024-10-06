@@ -75,12 +75,6 @@ export const Disabled: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const formValues = z.object({
-  mobile: z.boolean().default(false).optional(),
-});
-
-type FormValues = z.infer<typeof formValues>;
-
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (
@@ -91,14 +85,20 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<FormValues>({
+    const formValues = z.object({
+      mobile: z.boolean().default(false).optional(),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
       resolver: zodResolver(formValues),
       defaultValues: {
         mobile: true,
       },
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (values): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
+      values,
+    ): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
@@ -175,14 +175,6 @@ const items2 = [
   },
 ] as const;
 
-const FormValues2 = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'You have to select at least one item.',
-  }),
-});
-
-type FormValues2 = z.infer<typeof FormValues2>;
-
 export const ReactHookForm2: Story = {
   decorators: [
     (Story) => (
@@ -193,14 +185,22 @@ export const ReactHookForm2: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<FormValues2>({
-      resolver: zodResolver(FormValues2),
+    const formValues = z.object({
+      items: z.array(z.string()).refine((value) => value.some((item) => item), {
+        message: 'You have to select at least one item.',
+      }),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
+      resolver: zodResolver(formValues),
       defaultValues: {
         items: ['recents', 'home'],
       },
     });
 
-    const onSubmit: SubmitHandler<FormValues2> = (values): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
+      values,
+    ): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">

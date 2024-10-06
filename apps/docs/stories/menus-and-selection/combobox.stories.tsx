@@ -443,14 +443,6 @@ const languages = [
   { label: 'Chinese', value: 'zh' },
 ] as const;
 
-const formValues = z.object({
-  language: z.string({
-    required_error: 'Please select a language.',
-  }),
-});
-
-type FormValues = z.infer<typeof formValues>;
-
 export const WithReactHookForm: Story = {
   decorators: [
     (Story) => (
@@ -461,11 +453,19 @@ export const WithReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<FormValues>({
+    const formValues = z.object({
+      language: z.string({
+        required_error: 'Please select a language.',
+      }),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
       resolver: zodResolver(formValues),
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (values): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
+      values,
+    ): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">

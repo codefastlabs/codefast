@@ -152,16 +152,6 @@ export const Scrollable: Story = {
  * Story: React Hook Form
  * -------------------------------------------------------------------------- */
 
-const formValues = z.object({
-  email: z
-    .string({
-      required_error: 'Please select an email to display.',
-    })
-    .email(),
-});
-
-type FormValues = z.infer<typeof formValues>;
-
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (
@@ -172,11 +162,21 @@ export const ReactHookForm: Story = {
     ),
   ],
   render: (args) => {
-    const form = useForm<FormValues>({
+    const formValues = z.object({
+      email: z
+        .string({
+          required_error: 'Please select an email to display.',
+        })
+        .email(),
+    });
+
+    const form = useForm<z.infer<typeof formValues>>({
       resolver: zodResolver(formValues),
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (values): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
+      values,
+    ): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">

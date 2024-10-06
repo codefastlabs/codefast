@@ -17,9 +17,12 @@ import {
   ChevronUpIcon,
   DotFilledIcon,
 } from '@radix-ui/react-icons';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/button';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants'; /* -----------------------------------------------------------------------------
+ * Component: Chevron
+ * -------------------------------------------------------------------------- */
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -153,7 +156,72 @@ function Calendar({
 }
 
 /* -----------------------------------------------------------------------------
+ * Component: CalendarRangeLabel
+ * -------------------------------------------------------------------------- */
+
+interface CalendarRangeLabelProps {
+  date: DateRange | undefined;
+  formatStr?: string;
+  placeholder?: string;
+}
+
+function CalendarRangeLabel({
+  date,
+  formatStr = 'LLL dd, y',
+  placeholder = 'Pick a date',
+}: CalendarRangeLabelProps): string | React.JSX.Element {
+  if (!date?.from) {
+    return <span className="truncate">{placeholder}</span>;
+  }
+
+  const formattedFromDate = format(date.from, formatStr);
+
+  if (!date.to) {
+    return <span className="truncate">{formattedFromDate}</span>;
+  }
+
+  const formattedToDate = format(date.to, formatStr);
+
+  return (
+    <span className="truncate">
+      {formattedFromDate} - {formattedToDate}
+    </span>
+  );
+}
+
+/* -----------------------------------------------------------------------------
+ * Component: CalendarLabel
+ * -------------------------------------------------------------------------- */
+
+interface CalendarLabelProps {
+  date: Date | undefined;
+  formatStr?: string;
+  placeholder?: string;
+}
+
+function CalendarLabel({
+  date,
+  formatStr = 'PPP',
+  placeholder = 'Pick a date',
+}: CalendarLabelProps): string | React.JSX.Element {
+  if (!date) {
+    return <span className="truncate">{placeholder}</span>;
+  }
+
+  return <span className="truncate">{format(date, formatStr)}</span>;
+}
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Calendar, type CalendarProps, type DateRange, type Matcher };
+export {
+  Calendar,
+  CalendarLabel,
+  CalendarRangeLabel,
+  type CalendarProps,
+  type CalendarLabelProps,
+  type CalendarRangeLabelProps,
+  type DateRange,
+  type Matcher,
+};
