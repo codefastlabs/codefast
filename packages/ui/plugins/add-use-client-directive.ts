@@ -5,8 +5,10 @@ const trackedImports = new Set<string>();
 
 // Constants
 const USE_CLIENT_DIRECTIVE = '"use client"';
-// Regex to check for React hooks in the code while ignoring commented-out code.
-const HOOK_REGEX = /(?<!\/\/.*)(?<!\/\*.*)\buse[A-Z]\w*\s*\(.*\)/;
+// Regex to check for React hooks and event handlers in the code
+// while ignoring commented-out code.
+const HOOK_OR_EVENT_REGEX =
+  /(?<!\/\/.*)(?<!\/\*.*)\b(?<hookOrEvent>use[A-Z]\w*\s*\(.*\)|on[A-Z]\w*)\s*\(?.*\)?/;
 
 /**
  * Checks if the provided content includes any of the given client libraries or
@@ -23,7 +25,7 @@ function containsClientLibsOrHooks(
   content: string,
   clientLibs: RegExp,
 ): boolean {
-  return clientLibs.test(content) || HOOK_REGEX.test(content);
+  return clientLibs.test(content) || HOOK_OR_EVENT_REGEX.test(content);
 }
 
 /**
