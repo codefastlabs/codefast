@@ -1,43 +1,33 @@
 'use client';
 
-import {
-  type FormEventHandler,
-  type JSX,
-  useCallback,
-  useTransition,
-} from 'react';
-import { TextInput } from '@codefast/ui';
-import { SearchIcon } from 'lucide-react';
+import { type JSX, useCallback, useTransition } from 'react';
+import { SearchInput } from '@codefast/ui';
 import { useStateParams } from '@codefast/hooks';
 import { useSearchParams } from 'next/navigation';
+import { SearchIcon } from 'lucide-react';
 
 export function Search(): JSX.Element {
   const stateParams = useStateParams();
   const searchParams = useSearchParams();
   const [_, startTransition] = useTransition();
 
-  const handleInput = useCallback<FormEventHandler<HTMLInputElement>>(
-    (event) => {
-      const target = event.target;
-
-      if (target instanceof HTMLInputElement) {
-        startTransition(() => {
-          stateParams.replace({ search: target.value });
-        });
-      }
+  const handleChange = useCallback<(value: string) => void>(
+    (value) => {
+      startTransition(() => {
+        stateParams.replace({ search: value });
+      });
     },
     [stateParams],
   );
 
   return (
     <div>
-      <TextInput
+      <SearchInput
         className="md:w-[100px] lg:w-[300px]"
         defaultValue={searchParams.get('search') ?? ''}
         placeholder="Search..."
         prefix={<SearchIcon />}
-        type="search"
-        onInput={handleInput}
+        onChange={handleChange}
       />
     </div>
   );
