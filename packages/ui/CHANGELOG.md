@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.25
+
+### Patch Changes
+
+- Move eslint to peerDependencies
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.25
+  - @codefast-ui/input@0.1.25
+  - @codefast-ui/number-input@0.1.25
+
 ## 0.1.24
 
 ### Patch Changes
