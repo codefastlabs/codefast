@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.24
+
+### Patch Changes
+
+- Add autofill and selection styling to Tailwind config
+
 ## 0.1.23
 
 ### Patch Changes
