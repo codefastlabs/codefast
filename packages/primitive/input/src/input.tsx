@@ -45,7 +45,7 @@ function Input(inputProps: InputProps): React.JSX.Element {
   ) => {
     const target = event.target as HTMLElement;
 
-    if (target.closest('input, a, button')) {
+    if (target.closest('input, a')) {
       return;
     }
 

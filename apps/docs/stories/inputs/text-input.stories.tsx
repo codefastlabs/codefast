@@ -21,6 +21,7 @@ import {
   ImportIcon,
   LoaderCircleIcon,
   MailIcon,
+  TextCursorInputIcon,
   UsersIcon,
 } from 'lucide-react';
 import { wait } from 'next/dist/lib/wait';
@@ -228,6 +229,9 @@ export const Sizes: Story = {
 
 // Story for Button with different types
 export const Types: Story = {
+  args: {
+    prefix: <TextCursorInputIcon />,
+  },
   render: (args) => (
     <div className="space-y-4">
       {(
