@@ -67,7 +67,7 @@ const SearchInput = React.forwardRef<SearchInputElement, SearchInputProps>(
           className={input({
             inputSize,
             className: [
-              '[&::-webkit-search-cancel-button]:appearance-none',
+              '[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:after:hidden',
               '[&::-webkit-search-decoration]:appearance-none',
             ],
           })}
