@@ -64,13 +64,7 @@ const SearchInput = React.forwardRef<SearchInputElement, SearchInputProps>(
       >
         <InputPrimitive.Item
           ref={forwardedRef}
-          className={input({
-            inputSize,
-            className: [
-              '[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-cancel-button]:after:hidden',
-              '[&::-webkit-search-decoration]:appearance-none',
-            ],
-          })}
+          className={input({ inputSize })}
           type="search"
           value={value}
           onChange={(event) => {
