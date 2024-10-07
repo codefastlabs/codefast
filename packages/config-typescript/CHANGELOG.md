@@ -1,5 +1,11 @@
 # @codefast/config-typescript
 
+## 0.1.29
+
+### Patch Changes
+
+- Update Tailwind config for webkit autofill and buttons
+
 ## 0.1.28
 
 ### Patch Changes

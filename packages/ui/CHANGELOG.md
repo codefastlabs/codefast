@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.29
+
+### Patch Changes
+
+- Update Tailwind config for webkit autofill and buttons
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.29
+  - @codefast-ui/input@0.1.29
+  - @codefast-ui/number-input@0.1.29
+
 ## 0.1.28
 
 ### Patch Changes
