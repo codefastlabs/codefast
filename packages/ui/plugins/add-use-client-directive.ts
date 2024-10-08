@@ -23,9 +23,9 @@ const HOOK_OR_EVENT_REGEX =
  */
 function containsClientLibsOrHooks(
   content: string,
-  clientLibs: RegExp,
+  clientLibs: RegExp | undefined,
 ): boolean {
-  return clientLibs.test(content) || HOOK_OR_EVENT_REGEX.test(content);
+  return clientLibs?.test(content) || HOOK_OR_EVENT_REGEX.test(content);
 }
 
 /**
@@ -34,14 +34,20 @@ function containsClientLibsOrHooks(
  * @param clientLibs - An array of strings representing client libraries.
  * @returns A regex pattern matching any of the provided client libraries.
  */
-function buildClientLibsRegex(clientLibs: string[]): RegExp {
+function buildClientLibsRegex(
+  clientLibs: string[] | undefined,
+): RegExp | undefined {
+  if (!clientLibs || clientLibs.length === 0) {
+    return undefined;
+  }
+
   // Escape special characters in the library names
   const escapedLibs = clientLibs.map((lib) =>
     lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
   );
 
   // Create a regex to match any of the libraries as whole words
-  return new RegExp(`(?:${escapedLibs.join('|')})`, 'g');
+  return new RegExp(`(?:${escapedLibs.join('|')})`);
 }
 
 /**
@@ -54,7 +60,7 @@ function buildClientLibsRegex(clientLibs: string[]): RegExp {
  *   potentially modify the code chunks.
  */
 export function addUseClientDirective(
-  clientLibs: string[],
+  clientLibs?: string[],
 ): NonNullable<Options['plugins']>[number] {
   const clientLibsRegex = buildClientLibsRegex(clientLibs);
 
@@ -65,9 +71,15 @@ export function addUseClientDirective(
 
       // If the code already contains "use client", track its imports.
       if (code.startsWith(USE_CLIENT_DIRECTIVE)) {
-        imports?.forEach(({ path: importPath }) =>
-          trackedImports.add(importPath),
-        );
+        const importLength = imports ? imports.length : 0;
+
+        for (let i = 0; i < importLength; i++) {
+          const currentImport = imports?.[i];
+
+          if (currentImport) {
+            trackedImports.add(currentImport.path);
+          }
+        }
 
         return { code, map };
       }
