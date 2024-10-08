@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/input",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -39,15 +39,15 @@
     "lint": "eslint src --max-warnings 0"
   },
   "dependencies": {
-    "@radix-ui/react-compose-refs": "1.1.0",
-    "@radix-ui/react-context": "1.1.1"
+    "@radix-ui/react-compose-refs": "^1.1.0",
+    "@radix-ui/react-context": "^1.1.1"
   },
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
     "eslint": "^8.57.1",
-    "tsup": "8.3.0",
-    "typescript": "5.6.2"
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
   },
   "peerDependencies": {
     "@types/react": "*",
