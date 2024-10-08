@@ -1,12 +1,13 @@
 import { relative } from 'node:path';
 import type { Options } from 'tsup';
 
+// Set to track the imports of each code chunk.
 const trackedImports = new Set<string>();
 
-// Constants
+// String directive for indicating a client-side component.
 const USE_CLIENT_DIRECTIVE = '"use client"';
-// Regex to check for React hooks and event handlers in the code
-// while ignoring commented-out code.
+
+// Regular expression to detect React hooks and event handlers, excluding any occurrences within comments.
 const HOOK_OR_EVENT_REGEX =
   /(?<!\/\/.*)(?<!\/\*.*)\b(?<hookOrEvent>use[A-Z]\w*\s*\(.*\)|on[A-Z]\w*)\s*\(?.*\)?/;
 
@@ -41,12 +42,12 @@ function buildClientLibsRegex(
     return undefined;
   }
 
-  // Escape special characters in the library names
+  // Escape special characters in each library name to safely use in regex.
   const escapedLibs = clientLibs.map((lib) =>
     lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
   );
 
-  // Create a regex to match any of the libraries as whole words
+  // Return a regex pattern that matches any of the provided client libraries.
   return new RegExp(`(?:${escapedLibs.join('|')})`);
 }
 
@@ -69,38 +70,42 @@ export function addUseClientDirective(
     renderChunk: (code, { imports, path, map }) => {
       const relativePath = relative(process.cwd(), path);
 
-      // If the code already contains "use client", track its imports.
+      // Check if the code already contains the "use client" directive.
       if (code.startsWith(USE_CLIENT_DIRECTIVE)) {
         const importLength = imports ? imports.length : 0;
 
+        // Record the imports of the current chunk to avoid duplication.
         for (let i = 0; i < importLength; i++) {
           const currentImport = imports?.[i];
 
+          // Add the current import path to the tracked imports.
           if (currentImport) {
             trackedImports.add(currentImport.path);
           }
         }
 
+        // Return the original code if the directive is already present.
         return { code, map };
       }
 
-      // If the current path is not tracked, return the original code.
+      // If the current path has not been tracked, return unchanged code.
       if (!trackedImports.has(relativePath)) {
         return { code, map };
       }
 
-      // Remove the path after processing and check for client libraries/hooks.
+      // Remove the current path from the tracked imports.
       trackedImports.delete(relativePath);
 
-      // Check for client libraries or React hooks in the current code and add "use client" if necessary.
+      // Check if the code contains any client libraries or hooks.
       if (containsClientLibsOrHooks(code, clientLibsRegex)) {
+        // Add the "use client" directive to the code.
         return {
           code: `${USE_CLIENT_DIRECTIVE};${code}`,
           map,
         };
       }
 
-      // Return the original code if no modifications were made.
+      // Return the original code if no client libraries or hooks were found.
       return { code, map };
     },
   };
