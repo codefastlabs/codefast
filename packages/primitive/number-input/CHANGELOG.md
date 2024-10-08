@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.30
+
+### Patch Changes
+
+- Update dependency versions to use caret ranges
+- Updated dependencies
+  - @codefast-ui/input@0.1.30
+
 ## 0.1.29
 
 ### Patch Changes

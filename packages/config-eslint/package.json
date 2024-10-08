@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -22,12 +22,12 @@
     "clean": "rm -rf node_modules"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.18.0",
-    "@vercel/style-guide": "6.0.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-only-warn": "1.1.0",
-    "eslint-plugin-typescript-sort-keys": "3.3.0"
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vercel/style-guide": "^6.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-typescript-sort-keys": "^3.3.0"
   },
   "peerDependencies": {
     "eslint": "^8"
