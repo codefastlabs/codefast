@@ -1,12 +1,15 @@
 import { defineConfig } from 'tsup';
 import { addUseClientDirective } from '@/add-use-client-directive';
 
-// Array of libraries used to detect client components in chunk files named
-// "chunk-*".
-// This list is checked to determine if the "use client" directive should be added.
-// Notably, the @radix-ui/<package> libraries already include the "use client" directive internally,
-// so they are not included here.
-// However, there may be exceptions.
+// Listen up, folks!
+// This is the ultimate library list—better than anything
+// you’ve ever seen—to sniff out client components in our "chunk-*" files.
+// We use this to decide if we should slap on the "use client" directive.
+// And let me tell you, the @radix-ui/<package> libraries?
+// They’re so smart they put "use client" right in there—like magic!
+// So, they're not invited to this party.
+// But hey, there could be some exceptions—because,
+// you know, sometimes things get complicated, folks!
 const clientLibs = [
   '@radix-ui/react-use-controllable-state',
   '@radix-ui/react-context',
