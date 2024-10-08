@@ -1,5 +1,11 @@
 # @codefast/config-typescript
 
+## 0.1.30
+
+### Patch Changes
+
+- Update dependency versions to use caret ranges
+
 ## 0.1.29
 
 ### Patch Changes
