@@ -57,8 +57,10 @@ type ProfileFormValues = z.infer<typeof profileFormValues>;
 const defaultValues: Partial<ProfileFormValues> = {
   bio: 'I own a computer.',
   urls: [
-    { value: 'https://shadcn.com' },
-    { value: 'https://twitter.com/shadcn' },
+    { value: 'https://github.com/codefastlabs/codefast' },
+    {
+      value: 'https://www.chromatic.com/library?appId=65f6e20be4fe47733636320a',
+    },
   ],
 };
 

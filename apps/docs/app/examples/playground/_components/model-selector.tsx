@@ -56,7 +56,7 @@ export function ModelSelector({
           <Button
             aria-expanded={open}
             aria-label="Select a model"
-            className="w-full justify-between"
+            className="w-full justify-between px-3"
             role="combobox"
             suffix={<CaretSortIcon className="opacity-50" />}
             variant="outline"

@@ -164,7 +164,7 @@ export function AccountForm(): JSX.Element {
                   <FormControl>
                     <Button
                       className={cn(
-                        'w-56 justify-between',
+                        'w-56 justify-between px-3',
                         !field.value && 'text-muted-foreground',
                       )}
                       disabled={disabled ?? form.formState.isSubmitting}
