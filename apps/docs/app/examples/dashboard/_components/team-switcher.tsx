@@ -81,7 +81,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
           <Button
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn('w-[200px] justify-between', className)}
+            className={cn('w-[200px] justify-between px-3', className)}
             role="combobox"
             suffix={<CaretSortIcon className="ml-auto opacity-50" />}
             variant="outline"
