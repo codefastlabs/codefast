@@ -1,5 +1,11 @@
 # @codefast/third-parties
 
+## 0.1.33
+
+### Patch Changes
+
+- Add chart component to ui package and update dependencies
+
 ## 0.1.32
 
 ### Patch Changes

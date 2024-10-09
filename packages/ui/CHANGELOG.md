@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.33
+
+### Patch Changes
+
+- Add chart component to ui package and update dependencies
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.33
+  - @codefast-ui/input@0.1.33
+  - @codefast-ui/number-input@0.1.33
+
 ## 0.1.32
 
 ### Patch Changes
