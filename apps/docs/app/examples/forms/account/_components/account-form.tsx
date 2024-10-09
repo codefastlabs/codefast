@@ -3,6 +3,7 @@
 import {
   Button,
   Calendar,
+  CalendarLabel,
   cn,
   Command,
   CommandEmpty,
@@ -25,7 +26,6 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
-import { format } from 'date-fns';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { isNil } from 'lodash-es';
 import { type JSX } from 'react';
@@ -126,12 +126,7 @@ export function AccountForm(): JSX.Element {
                       suffix={<CalendarIcon className="size-4 opacity-50" />}
                       variant="outline"
                     >
-                      {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- default value might be undefined */}
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
+                      <CalendarLabel date={field.value} />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>

@@ -53,8 +53,12 @@ export const columns: ColumnDef<Task>[] = [
       const label = labels.find(({ value }) => value === row.original.label);
 
       return (
-        <div className="flex space-x-2">
-          {label ? <Badge variant="outline">{label.label}</Badge> : null}
+        <div className="flex items-center gap-x-2">
+          {label ? (
+            <Badge size="sm" variant="outline">
+              {label.label}
+            </Badge>
+          ) : null}
           <span className="max-w-[500px] truncate font-medium">
             {row.getValue('title')}
           </span>
