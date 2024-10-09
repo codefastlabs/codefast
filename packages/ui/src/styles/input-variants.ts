@@ -9,7 +9,7 @@ const inputVariants = tv({
       'has-[input:disabled]:cursor-default has-[input:disabled]:opacity-50',
     ],
     input: [
-      'peer size-full bg-inherit outline-none',
+      'peer size-full rounded-[inherit] bg-inherit outline-none',
       'file:cursor-pointer file:border-0 file:bg-transparent file:font-medium',
       'placeholder:text-muted-foreground',
       'disabled:cursor-default',

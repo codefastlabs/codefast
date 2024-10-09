@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.32
+
+### Patch Changes
+
+- Update UI component styles for consistency
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.32
+  - @codefast-ui/input@0.1.32
+  - @codefast-ui/number-input@0.1.32
+
 ## 0.1.31
 
 ### Patch Changes

@@ -200,20 +200,18 @@ interface DataTableColumnHeaderProps<TData, TValue>
 function DataTableColumnHeader<TData, TValue>({
   column,
   title,
-  className,
+  ...props
 }: DataTableColumnHeaderProps<TData, TValue>): React.JSX.Element {
   if (!column.getCanSort()) {
-    return <div className={className}>{title}</div>;
+    return <div {...props}>{title}</div>;
   }
 
   return (
-    <div
-      className={cn('flex flex-wrap items-center gap-x-2 gap-y-4', className)}
-    >
+    <div {...props}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            className="data-[state=open]:bg-accent"
+            className="data-[state=open]:text-accent-foreground -mx-4 hover:bg-transparent"
             size="xs"
             suffix={<SortIcon sorted={column.getIsSorted()} />}
             variant="ghost"

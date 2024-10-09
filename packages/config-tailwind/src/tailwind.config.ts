@@ -18,7 +18,7 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
         DEFAULT: 'hsl(var(--border) / <alpha-value>)',
       },
       borderRadius: {
-        sm: 'calc(var(--radius, 0.25rem) - 0.125px)', // 2px
+        sm: 'calc(var(--radius, 0.25rem) - 0.125rem)', // 2px
         DEFAULT: 'var(--radius, 0.25rem)', // 4px
         md: 'calc(var(--radius, 0.25rem) + 0.125rem)', // 6px
         lg: 'calc(var(--radius, 0.25rem) + 0.25rem)', // 8px

@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   type CustomComponents,
   type DateRange,
+  DayFlag,
   DayPicker,
   type DayPickerProps,
   type Matcher,
@@ -20,9 +21,7 @@ import {
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/button';
-import { buttonVariants } from '@/styles/button-variants'; /* -----------------------------------------------------------------------------
- * Component: Chevron
- * -------------------------------------------------------------------------- */
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -84,6 +83,7 @@ function DayButton({
             : 'hover:border-accent hover:bg-transparent',
           modifiers.outside && 'text-opacity-30',
         ],
+        modifiers.range_middle && 'bg-transparent',
         className,
       )}
       size="sm"
@@ -110,43 +110,49 @@ function Calendar({
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
-        [UI.PreviousMonthButton]: buttonVariants({
-          className: 'absolute start-0',
-          icon: true,
-          size: 'xs',
-          variant: 'outline',
-        }),
+        [DayFlag.outside]: cn(!props.mode && 'text-opacity-30'),
+        [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md'),
+        [SelectionState.range_end]:
+          'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
+        [SelectionState.range_middle]:
+          'bg-accent first:rounded-l-md last:rounded-r-md',
+        [SelectionState.range_start]:
+          'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
+        [UI.CaptionLabel]: 'inline-flex items-center',
+        [UI.Day]: cn(
+          'py-0',
+          !props.mode &&
+            'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
+        ),
+        [UI.DayButton]: 'border border-transparent',
+        [UI.Dropdown]: 'absolute size-full appearance-none opacity-0',
+        [UI.DropdownRoot]: 'relative inline-flex',
+        [UI.Dropdowns]: 'inline-flex items-center gap-2',
+        [UI.Footer]: 'text-sm',
+        [UI.Month]: 'grid grid-rows-[2rem_1fr] gap-4',
+        [UI.MonthCaption]: 'flex w-full justify-center text-sm font-medium',
+        [UI.MonthGrid]:
+          'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
+        [UI.Months]: 'relative flex flex-wrap gap-4',
+        [UI.Nav]: '-mr-4',
         [UI.NextMonthButton]: buttonVariants({
           className: 'absolute end-0',
           icon: true,
           size: 'xs',
           variant: 'outline',
         }),
+        [UI.PreviousMonthButton]: buttonVariants({
+          className: 'absolute start-0',
+          icon: true,
+          size: 'xs',
+          variant: 'outline',
+        }),
         [UI.Root]: 'inline-grid gap-4',
-        [UI.Day]: 'py-0',
-        [UI.DayButton]: 'border border-transparent',
-        [UI.CaptionLabel]: 'inline-flex items-center',
-        [UI.Dropdowns]: 'inline-flex items-center gap-2',
-        [UI.Dropdown]: 'absolute size-full appearance-none opacity-0',
-        [UI.DropdownRoot]: 'relative inline-flex',
-        [UI.Footer]: 'text-sm',
-        [UI.MonthGrid]:
-          'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
-        [UI.MonthCaption]: 'flex w-full justify-center text-sm font-medium',
-        [UI.Month]: 'grid grid-rows-[2rem_1fr] gap-4',
-        [UI.Months]: 'relative flex flex-wrap gap-4',
-        [UI.Nav]: '-mr-4',
         [UI.Week]: 'flex',
-        [UI.Weeks]: 'block space-y-2',
+        [UI.WeekNumber]: 'text-foreground/50 size-9 text-center text-xs',
         [UI.Weekday]: 'text-muted-foreground flex-1 text-sm font-normal',
         [UI.Weekdays]: 'flex',
-        [UI.WeekNumber]: 'text-foreground/50 size-9 text-center text-xs',
-        [SelectionState.range_start]:
-          'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
-        [SelectionState.range_middle]:
-          'bg-accent first:rounded-l-md last:rounded-r-md',
-        [SelectionState.range_end]:
-          'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
+        [UI.Weeks]: 'block space-y-2',
         ...classNames,
       }}
       components={{ Chevron, DayButton }}
