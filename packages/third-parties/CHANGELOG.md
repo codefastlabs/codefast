@@ -1,5 +1,11 @@
 # @codefast/third-parties
 
+## 0.1.31
+
+### Patch Changes
+
+- Bump TypeScript and other dependencies
+
 ## 0.1.30
 
 ### Patch Changes

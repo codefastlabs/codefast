@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.31
+
+### Patch Changes
+
+- Bump TypeScript and other dependencies
+- Updated dependencies
+  - @codefast-ui/input@0.1.31
+
 ## 0.1.30
 
 ### Patch Changes

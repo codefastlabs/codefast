@@ -1,6 +1,6 @@
 {
   "name": "@codefast/ui",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -96,7 +96,7 @@
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "tsup": "^8.3.0",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "@tanstack/react-table": "^8.0",
