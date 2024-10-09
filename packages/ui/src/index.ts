@@ -20,6 +20,7 @@ export * from '@/components/button';
 export * from '@/components/calendar';
 export * from '@/components/card';
 export * from '@/components/carousel';
+export * from '@/components/chart';
 export * from '@/components/checkbox';
 export * from '@/components/checkbox-cards';
 export * from '@/components/checkbox-group';
