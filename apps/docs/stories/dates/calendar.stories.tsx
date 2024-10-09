@@ -1,6 +1,7 @@
 import {
   Button,
   Calendar,
+  CalendarLabel,
   cn,
   Code,
   Form,
@@ -19,14 +20,11 @@ import {
 } from '@codefast/ui';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { CalendarIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
-  tags: ['autodocs'],
-  title: 'Components/Dates/Calendar',
   argTypes: {
     captionLayout: {
       control: 'inline-radio',
@@ -109,15 +107,13 @@ const meta = {
     showOutsideDays: false,
     showWeekNumber: false,
   },
+  tags: ['autodocs'],
+  title: 'Components/Dates/Calendar',
 } satisfies Meta<typeof Calendar>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
-
-/* -----------------------------------------------------------------------------
- * Story: Default
- * -------------------------------------------------------------------------- */
 
 export const Default: Story = {
   render: (args) => {
@@ -125,19 +121,20 @@ export const Default: Story = {
   },
 };
 
-/* -----------------------------------------------------------------------------
- * Story: Footer
- * -------------------------------------------------------------------------- */
+export const NoMode: Story = {
+  args: {
+    mode: undefined,
+  },
+  render: (args) => {
+    return <Calendar {...args} />;
+  },
+};
 
 export const Footer: Story = {
   render: (args) => {
     return <Calendar {...args} footer="Please pick a date." />;
   },
 };
-
-/* -----------------------------------------------------------------------------
- * Story: React Hook Form
- * -------------------------------------------------------------------------- */
 
 export const ReactHookForm: Story = {
   decorators: [
@@ -193,11 +190,7 @@ export const ReactHookForm: Story = {
                         suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
                       >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
+                        <CalendarLabel date={field.value} />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
