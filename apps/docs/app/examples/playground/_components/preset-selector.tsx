@@ -38,7 +38,7 @@ export function PresetSelector({
         <Button
           aria-expanded={open}
           aria-label="Load a preset..."
-          className="flex-1 justify-between md:max-w-[200px] lg:max-w-[300px]"
+          className="flex-1 justify-between px-3 md:max-w-[200px] lg:max-w-[300px]"
           role="combobox"
           suffix={<CaretSortIcon className="opacity-50" />}
           variant="outline"

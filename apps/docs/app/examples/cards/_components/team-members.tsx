@@ -45,7 +45,7 @@ export function TeamMembers(): JSX.Element {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                className="ml-auto gap-4"
+                className="ml-auto gap-4 px-3"
                 suffix={<ChevronDownIcon className="text-muted-foreground" />}
                 variant="outline"
               >
@@ -102,7 +102,7 @@ export function TeamMembers(): JSX.Element {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                className="ml-auto gap-4"
+                className="ml-auto gap-4 px-3"
                 suffix={<ChevronDownIcon className="text-muted-foreground" />}
                 variant="outline"
               >
