@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.32
+
+### Patch Changes
+
+- Update UI component styles for consistency
+
 ## 0.1.31
 
 ### Patch Changes

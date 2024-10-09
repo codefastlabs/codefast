@@ -82,11 +82,12 @@ const buttonVariants = tv({
         'focus-visible:bg-destructive/80',
       ],
       outline: [
-        'bg-background border-input border shadow-sm',
+        'bg-background text-foreground border-input border shadow-sm',
         'hover:bg-accent hover:text-accent-foreground',
         'focus-visible:bg-accent focus-visible:text-accent-foreground',
       ],
       ghost: [
+        'text-foreground bg-background',
         'hover:bg-accent hover:text-accent-foreground',
         'focus-visible:bg-accent focus-visible:text-accent-foreground',
       ],
