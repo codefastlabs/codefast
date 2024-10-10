@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsup';
 import { sassPlugin } from 'esbuild-sass-plugin';
+import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => ({
   clean: !options.watch,
