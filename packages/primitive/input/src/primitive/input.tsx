@@ -1,6 +1,15 @@
-import * as React from 'react';
-import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
+import { createContextScope, type Scope } from '@radix-ui/react-context';
+import {
+  forwardRef,
+  type InputHTMLAttributes,
+  type JSX,
+  type PointerEventHandler,
+  type PropsWithChildren,
+  type ReactNode,
+  type RefObject,
+  useRef,
+} from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Input
@@ -12,22 +21,22 @@ type ScopedProps<P> = P & { __scopeInput?: Scope };
 const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
 
 interface InputContextValue {
-  inputRef: React.RefObject<HTMLInputElement | null>;
+  inputRef: RefObject<HTMLInputElement | null>;
 }
 
 const [InputProvider, useInputContext] =
   createInputContext<InputContextValue>(INPUT_NAME);
 
-type InputProps = React.PropsWithChildren<{
+type InputProps = PropsWithChildren<{
   className?: string;
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
-  prefix?: React.ReactNode;
-  spinner?: React.ReactNode;
-  suffix?: React.ReactNode;
+  prefix?: ReactNode;
+  spinner?: ReactNode;
+  suffix?: ReactNode;
 }>;
 
-function Input(inputProps: InputProps): React.JSX.Element {
+function Input(inputProps: InputProps): JSX.Element {
   const {
     __scopeInput,
     children,
@@ -38,11 +47,9 @@ function Input(inputProps: InputProps): React.JSX.Element {
     suffix,
     ...props
   } = inputProps as ScopedProps<InputProps>;
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (
-    event,
-  ) => {
+  const handlePointerDown: PointerEventHandler<HTMLDivElement> = (event) => {
     const target = event.target as HTMLElement;
 
     if (target.closest('input, a')) {
@@ -87,9 +94,9 @@ Input.displayName = INPUT_NAME;
 const INPUT_ITEM_NAME = 'InputItem';
 
 type InputItemElement = HTMLInputElement;
-type InputItemProps = React.InputHTMLAttributes<HTMLInputElement>;
+type InputItemProps = InputHTMLAttributes<HTMLInputElement>;
 
-const InputItem = React.forwardRef<InputItemElement, InputItemProps>(
+const InputItem = forwardRef<InputItemElement, InputItemProps>(
   ({ __scopeInput, ...props }: ScopedProps<InputItemProps>, forwardedRef) => {
     const { inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
     const composedInputRef = useComposedRefs(forwardedRef, inputRef);
@@ -110,6 +117,6 @@ export {
   Input as Root,
   InputItem,
   InputItem as Item,
-  type InputProps,
   type InputItemProps,
+  type InputProps,
 };
