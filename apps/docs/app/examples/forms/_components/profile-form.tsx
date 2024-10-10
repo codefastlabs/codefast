@@ -153,7 +153,7 @@ export function ProfileForm(): JSX.Element {
             </FormItem>
           )}
         />
-        <div>
+        <div className="space-y-2">
           {fields.map(({ id }, index) => (
             <FormField
               key={id}
@@ -175,8 +175,8 @@ export function ProfileForm(): JSX.Element {
               )}
             />
           ))}
+
           <Button
-            className="mt-2"
             size="sm"
             type="button"
             variant="outline"

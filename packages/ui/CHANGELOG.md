@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.35
+
+### Patch Changes
+
+- Update form layout for better spacing consistency
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.35
+  - @codefast-ui/input@0.1.35
+  - @codefast-ui/number-input@0.1.35
+
 ## 0.1.34
 
 ### Patch Changes

@@ -119,7 +119,7 @@ const FormItem = forwardRef<FormItemElement, FormItemProps>(
       <FormItemProvider id={id} scope={__scopeFormField}>
         <div
           ref={forwardedRef}
-          className={cn('space-y-2', className)}
+          className={cn('grid gap-2', className)}
           {...props}
         />
       </FormItemProvider>
