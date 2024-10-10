@@ -1,4 +1,9 @@
 import {
+  DEFAULT_ANIMATIONS,
+  DEFAULT_SETTINGS,
+  DEFAULT_TRANSITIONS,
+} from '@/slideshow/_lib/constants';
+import {
   type VegasAnimation,
   type VegasAnimationWithRandom,
   type VegasCallback,
@@ -10,11 +15,6 @@ import {
   type VegasVideo,
 } from '@/slideshow/_lib/types';
 import { isVideoCompatible, random } from '@/slideshow/_lib/utils';
-import {
-  DEFAULT_ANIMATIONS,
-  DEFAULT_SETTINGS,
-  DEFAULT_TRANSITIONS,
-} from '@/slideshow/_lib/constants';
 
 /**
  * Vegas class to handle slideshow functionality.
