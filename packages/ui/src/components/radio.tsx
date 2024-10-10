@@ -1,7 +1,7 @@
 'use client';
 
 import { composeEventHandlers } from '@radix-ui/primitive';
-import * as React from 'react';
+import { forwardRef, type InputHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -10,11 +10,11 @@ import { cn } from '@/lib/utils';
 
 type RadioElement = HTMLInputElement;
 
-interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
   onValueChange?: (value: string) => void;
 }
 
-const Radio = React.forwardRef<RadioElement, RadioProps>(
+const Radio = forwardRef<RadioElement, RadioProps>(
   ({ className, onValueChange, onChange, ...props }, forwardedRef) => (
     <input
       ref={forwardedRef}

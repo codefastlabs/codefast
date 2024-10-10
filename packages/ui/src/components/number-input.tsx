@@ -1,6 +1,11 @@
 import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { Spinner } from '@/components/spinner';
 import { buttonVariants } from '@/styles/button-variants';
 import {
@@ -14,13 +19,13 @@ const { root, input } = inputVariants();
  * Component: NumberInput
  * -------------------------------------------------------------------------- */
 
-type NumberInputElement = React.ComponentRef<typeof NumberInputPrimitive.Item>;
+type NumberInputElement = ComponentRef<typeof NumberInputPrimitive.Item>;
 interface NumberInputProps
   extends InputVariantsProps,
-    React.ComponentProps<typeof NumberInputPrimitive.Root>,
-    React.ComponentPropsWithoutRef<typeof NumberInputPrimitive.Item> {}
+    ComponentProps<typeof NumberInputPrimitive.Root>,
+    ComponentPropsWithoutRef<typeof NumberInputPrimitive.Item> {}
 
-const NumberInput = React.forwardRef<NumberInputElement, NumberInputProps>(
+const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
   (
     {
       ariaDecrementLabel,

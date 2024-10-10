@@ -1,6 +1,13 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type HTMLAttributes,
+  type JSX,
+} from 'react';
 import { cn } from '@/lib/utils';
 import {
   buttonVariants,
@@ -11,14 +18,14 @@ import {
  * Component: Dialog
  * -------------------------------------------------------------------------- */
 
-type DialogProps = React.ComponentProps<typeof DialogPrimitive.Root>;
+type DialogProps = ComponentProps<typeof DialogPrimitive.Root>;
 const Dialog = DialogPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
-type DialogTriggerProps = React.ComponentPropsWithoutRef<
+type DialogTriggerProps = ComponentPropsWithoutRef<
   typeof DialogPrimitive.Trigger
 >;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -27,49 +34,48 @@ const DialogTrigger = DialogPrimitive.Trigger;
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
-type DialogContentElement = React.ComponentRef<typeof DialogPrimitive.Content>;
-type DialogContentProps = React.ComponentPropsWithoutRef<
+type DialogContentElement = ComponentRef<typeof DialogPrimitive.Content>;
+type DialogContentProps = ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content
 >;
 
-const DialogContent = React.forwardRef<
-  DialogContentElement,
-  DialogContentProps
->(({ children, className, ...props }, forwardedRef) => (
-  <DialogPrimitive.Portal>
-    <DialogPrimitive.Overlay
-      className={cn(
-        'fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8',
-        'data-[state=open]:animate-duration-200 data-[state=open]:animate-fade-in',
-        'data-[state=closed]:animate-duration-200 data-[state=closed]:animate-fade-out',
-      )}
-    >
-      <DialogPrimitive.Content
-        ref={forwardedRef}
+const DialogContent = forwardRef<DialogContentElement, DialogContentProps>(
+  ({ children, className, ...props }, forwardedRef) => (
+    <DialogPrimitive.Portal>
+      <DialogPrimitive.Overlay
         className={cn(
-          'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
-          'data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:animate-duration-200 data-[state=open]:fade-in',
-          'data-[state=closed]:zoom-out-95 data-[state=closed]:animate-duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out',
-          className,
+          'fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8',
+          'data-[state=open]:animate-duration-200 data-[state=open]:animate-fade-in',
+          'data-[state=closed]:animate-duration-200 data-[state=closed]:animate-fade-out',
         )}
-        {...props}
       >
-        {children}
-        <DialogPrimitive.Close
-          className={buttonVariants({
-            className: 'absolute right-4 top-4',
-            icon: true,
-            size: 'xxs',
-            variant: 'ghost',
-          })}
+        <DialogPrimitive.Content
+          ref={forwardedRef}
+          className={cn(
+            'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
+            'data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:animate-duration-200 data-[state=open]:fade-in',
+            'data-[state=closed]:zoom-out-95 data-[state=closed]:animate-duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out',
+            className,
+          )}
+          {...props}
         >
-          <Cross2Icon className="size-4" />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
-      </DialogPrimitive.Content>
-    </DialogPrimitive.Overlay>
-  </DialogPrimitive.Portal>
-));
+          {children}
+          <DialogPrimitive.Close
+            className={buttonVariants({
+              className: 'absolute right-4 top-4',
+              icon: true,
+              size: 'xxs',
+              variant: 'ghost',
+            })}
+          >
+            <Cross2Icon className="size-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Overlay>
+    </DialogPrimitive.Portal>
+  ),
+);
 
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
@@ -77,12 +83,9 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
  * Component: DialogHeader
  * -------------------------------------------------------------------------- */
 
-type DialogHeaderProps = React.HTMLAttributes<HTMLDivElement>;
+type DialogHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-function DialogHeader({
-  className,
-  ...props
-}: DialogHeaderProps): React.JSX.Element {
+function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
@@ -98,12 +101,9 @@ function DialogHeader({
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
-type DialogBodyProps = React.HTMLAttributes<HTMLDivElement>;
+type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
 
-function DialogBody({
-  className,
-  ...props
-}: DialogBodyProps): React.JSX.Element {
+function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return (
     <main className={cn('overflow-auto px-6 py-2', className)} {...props} />
   );
@@ -113,12 +113,9 @@ function DialogBody({
  * Component: DialogFooter
  * -------------------------------------------------------------------------- */
 
-type DialogFooterProps = React.HTMLAttributes<HTMLDivElement>;
+type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
 
-function DialogFooter({
-  className,
-  ...props
-}: DialogFooterProps): React.JSX.Element {
+function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
@@ -134,12 +131,10 @@ function DialogFooter({
  * Component: DialogTitle
  * -------------------------------------------------------------------------- */
 
-type DialogTitleElement = React.ComponentRef<typeof DialogPrimitive.Title>;
-type DialogTitleProps = React.ComponentPropsWithoutRef<
-  typeof DialogPrimitive.Title
->;
+type DialogTitleElement = ComponentRef<typeof DialogPrimitive.Title>;
+type DialogTitleProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Title>;
 
-const DialogTitle = React.forwardRef<DialogTitleElement, DialogTitleProps>(
+const DialogTitle = forwardRef<DialogTitleElement, DialogTitleProps>(
   ({ className, ...props }, forwardedRef) => (
     <DialogPrimitive.Title
       ref={forwardedRef}
@@ -158,14 +153,14 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
-type DialogDescriptionElement = React.ComponentRef<
+type DialogDescriptionElement = ComponentRef<
   typeof DialogPrimitive.Description
 >;
-type DialogDescriptionProps = React.ComponentPropsWithoutRef<
+type DialogDescriptionProps = ComponentPropsWithoutRef<
   typeof DialogPrimitive.Description
 >;
 
-const DialogDescription = React.forwardRef<
+const DialogDescription = forwardRef<
   DialogDescriptionElement,
   DialogDescriptionProps
 >(({ className, ...props }, forwardedRef) => (
@@ -182,15 +177,15 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
  * Component: DialogClose
  * -------------------------------------------------------------------------- */
 
-type DialogCloseElement = React.ComponentRef<typeof DialogPrimitive.Close>;
+type DialogCloseElement = ComponentRef<typeof DialogPrimitive.Close>;
 
 interface DialogCloseProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
+  extends ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }
 
-const DialogClose = React.forwardRef<DialogCloseElement, DialogCloseProps>(
+const DialogClose = forwardRef<DialogCloseElement, DialogCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
     <DialogPrimitive.Close
       ref={forwardedRef}

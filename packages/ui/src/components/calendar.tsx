@@ -8,7 +8,7 @@ import {
   DotFilledIcon,
 } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
-import * as React from 'react';
+import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 import {
   type CustomComponents,
   type DateRange,
@@ -30,7 +30,7 @@ import { buttonVariants } from '@/styles/button-variants';
 function Chevron({
   orientation,
   ...props
-}: React.ComponentProps<CustomComponents['Chevron']>): React.JSX.Element {
+}: ComponentProps<CustomComponents['Chevron']>): JSX.Element {
   switch (orientation) {
     case 'up': {
       return <ChevronUpIcon className="size-4" {...props} />;
@@ -62,10 +62,10 @@ function DayButton({
   modifiers,
   className,
   ...props
-}: React.ComponentProps<CustomComponents['DayButton']>): React.JSX.Element {
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
+}: ComponentProps<CustomComponents['DayButton']>): JSX.Element {
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (modifiers.focused) {
       buttonRef.current?.focus();
     }
@@ -105,7 +105,7 @@ function Calendar({
   className,
   classNames,
   ...props
-}: CalendarProps): React.JSX.Element {
+}: CalendarProps): JSX.Element {
   return (
     <DayPicker
       className={cn('p-3', className)}
@@ -175,7 +175,7 @@ function CalendarRangeLabel({
   date,
   formatStr = 'LLL dd, y',
   placeholder = 'Pick a date',
-}: CalendarRangeLabelProps): string | React.JSX.Element {
+}: CalendarRangeLabelProps): string | JSX.Element {
   if (!date?.from) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -209,7 +209,7 @@ function CalendarLabel({
   date,
   formatStr = 'PPP',
   placeholder = 'Pick a date',
-}: CalendarLabelProps): string | React.JSX.Element {
+}: CalendarLabelProps): string | JSX.Element {
   if (!date) {
     return <span className="truncate">{placeholder}</span>;
   }

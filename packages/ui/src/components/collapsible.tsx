@@ -1,12 +1,16 @@
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Collapsible
  * -------------------------------------------------------------------------- */
 
-type CollapsibleProps = React.ComponentPropsWithoutRef<
+type CollapsibleProps = ComponentPropsWithoutRef<
   typeof CollapsiblePrimitive.Root
 >;
 const Collapsible = CollapsiblePrimitive.Root;
@@ -15,7 +19,7 @@ const Collapsible = CollapsiblePrimitive.Root;
  * Component: CollapsibleTrigger
  * -------------------------------------------------------------------------- */
 
-type CollapsibleTriggerProps = React.ComponentPropsWithoutRef<
+type CollapsibleTriggerProps = ComponentPropsWithoutRef<
   typeof CollapsiblePrimitive.CollapsibleTrigger
 >;
 const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
@@ -24,14 +28,14 @@ const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
  * Component: CollapsibleContent
  * -------------------------------------------------------------------------- */
 
-type CollapsibleContentElement = React.ComponentRef<
+type CollapsibleContentElement = ComponentRef<
   typeof CollapsiblePrimitive.CollapsibleContent
 >;
-type CollapsibleContentProps = React.ComponentPropsWithoutRef<
+type CollapsibleContentProps = ComponentPropsWithoutRef<
   typeof CollapsiblePrimitive.CollapsibleContent
 >;
 
-const CollapsibleContent = React.forwardRef<
+const CollapsibleContent = forwardRef<
   CollapsibleContentElement,
   CollapsibleContentProps
 >(({ className, ...props }, forwardedRef) => (

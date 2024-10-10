@@ -3,7 +3,12 @@
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type ReactNode,
+} from 'react';
 import { cn } from '@/lib/utils';
 import {
   toggleVariants,
@@ -27,13 +32,13 @@ const useToggleGroupScope = createToggleGroupScope();
 const [ToggleGroupProvider, useToggleGroupContext] =
   createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
-type ToggleGroupElement = React.ComponentRef<typeof ToggleGroupPrimitive.Root>;
-type ToggleGroupProps = React.ComponentPropsWithoutRef<
+type ToggleGroupElement = ComponentRef<typeof ToggleGroupPrimitive.Root>;
+type ToggleGroupProps = ComponentPropsWithoutRef<
   typeof ToggleGroupPrimitive.Root
 > &
   ToggleVariantsProps;
 
-const ToggleGroup = React.forwardRef<ToggleGroupElement, ToggleGroupProps>(
+const ToggleGroup = forwardRef<ToggleGroupElement, ToggleGroupProps>(
   (
     {
       __scopeToggleGroup,
@@ -76,19 +81,17 @@ ToggleGroup.displayName = TOGGLE_GROUP_NAME;
 
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
-type ToggleGroupItemElement = React.ComponentRef<
-  typeof ToggleGroupPrimitive.Item
->;
+type ToggleGroupItemElement = ComponentRef<typeof ToggleGroupPrimitive.Item>;
 interface ToggleGroupItemProps
   extends Omit<
-    React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>,
+    ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>,
     'prefix'
   > {
-  prefix?: React.ReactNode;
-  suffix?: React.ReactNode;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
 }
 
-const ToggleGroupItem = React.forwardRef<
+const ToggleGroupItem = forwardRef<
   ToggleGroupItemElement,
   ToggleGroupItemProps
 >(

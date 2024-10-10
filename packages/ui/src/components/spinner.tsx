@@ -1,5 +1,5 @@
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import * as React from 'react';
+import { type CSSProperties, forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -10,11 +10,11 @@ const spinnerCount = 8;
 
 type SpinnerElement = HTMLSpanElement;
 
-interface SpinnerProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   loading?: boolean;
 }
 
-const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
+const Spinner = forwardRef<SpinnerElement, SpinnerProps>(
   ({ children, className, loading = true, ...props }, forwardedRef) => {
     if (!loading) {
       return children;
@@ -39,7 +39,7 @@ const Spinner = React.forwardRef<SpinnerElement, SpinnerProps>(
                 '--spinner-delay': `-${((spinnerCount - i) * 100).toString()}ms`,
                 '--spinner-rotate': `${((360 / spinnerCount) * i).toString()}deg`,
                 '--spinner-duration': `${(spinnerCount * 100).toString()}ms`,
-              } as React.CSSProperties
+              } as CSSProperties
             }
           />
         ))}

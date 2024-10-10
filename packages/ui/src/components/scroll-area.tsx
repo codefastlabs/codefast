@@ -2,7 +2,11 @@
 
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 
@@ -57,13 +61,13 @@ type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 const [CarouselProvider, useCarouselContext] =
   createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
-type ScrollAreaElement = React.ComponentRef<typeof ScrollAreaPrimitive.Root>;
-type ScrollAreaProps = React.ComponentPropsWithoutRef<
+type ScrollAreaElement = ComponentRef<typeof ScrollAreaPrimitive.Root>;
+type ScrollAreaProps = ComponentPropsWithoutRef<
   typeof ScrollAreaPrimitive.Root
 > &
   ScrollAreaContextValue;
 
-const ScrollArea = React.forwardRef<ScrollAreaElement, ScrollAreaProps>(
+const ScrollArea = forwardRef<ScrollAreaElement, ScrollAreaProps>(
   (
     {
       __scopeScrollArea,
@@ -97,14 +101,14 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
  * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-type ScrollAreaScrollbarElement = React.ComponentRef<
+type ScrollAreaScrollbarElement = ComponentRef<
   typeof ScrollAreaPrimitive.Scrollbar
 >;
-type ScrollAreaScrollbarProps = React.ComponentPropsWithoutRef<
+type ScrollAreaScrollbarProps = ComponentPropsWithoutRef<
   typeof ScrollAreaPrimitive.Scrollbar
 >;
 
-const ScrollAreaScrollbar = React.forwardRef<
+const ScrollAreaScrollbar = forwardRef<
   ScrollAreaScrollbarElement,
   ScrollAreaScrollbarProps
 >(

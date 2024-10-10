@@ -11,7 +11,7 @@ import {
   EyeNoneIcon,
   MixerHorizontalIcon,
 } from '@radix-ui/react-icons';
-import * as React from 'react';
+import { type HTMLAttributes, type JSX } from 'react';
 import { Button } from '@/components/button';
 import {
   DropdownMenu,
@@ -43,7 +43,7 @@ interface DataTableViewOptionsProps<TData> {
 
 function DataTableViewOptions<TData>({
   table,
-}: DataTableViewOptionsProps<TData>): React.JSX.Element {
+}: DataTableViewOptionsProps<TData>): JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -83,7 +83,7 @@ function DataTableViewOptions<TData>({
  * -------------------------------------------------------------------------- */
 
 interface DataTablePaginationProps<TData>
-  extends React.HTMLAttributes<HTMLDivElement> {
+  extends HTMLAttributes<HTMLDivElement> {
   table: ReactTable.Table<TData>;
 }
 
@@ -91,7 +91,7 @@ function DataTablePagination<TData>({
   table,
   className,
   ...props
-}: DataTablePaginationProps<TData>): React.JSX.Element {
+}: DataTablePaginationProps<TData>): JSX.Element {
   return (
     <div
       className={cn(
@@ -192,7 +192,7 @@ function DataTablePagination<TData>({
  * -------------------------------------------------------------------------- */
 
 interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+  extends HTMLAttributes<HTMLDivElement> {
   column: ReactTable.Column<TData, TValue>;
   title: string;
 }
@@ -201,7 +201,7 @@ function DataTableColumnHeader<TData, TValue>({
   column,
   title,
   ...props
-}: DataTableColumnHeaderProps<TData, TValue>): React.JSX.Element {
+}: DataTableColumnHeaderProps<TData, TValue>): JSX.Element {
   if (!column.getCanSort()) {
     return <div {...props}>{title}</div>;
   }
@@ -256,7 +256,7 @@ function SortIcon({
   sorted,
 }: {
   sorted: false | ReactTable.SortDirection;
-}): React.JSX.Element {
+}): JSX.Element {
   switch (sorted) {
     case 'desc': {
       return <ChevronDownIcon />;

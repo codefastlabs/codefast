@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Section
@@ -7,11 +7,11 @@ import * as React from 'react';
 
 type SectionElement = HTMLElement;
 
-interface SectionProps extends React.HTMLAttributes<HTMLElement> {
+interface SectionProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Section = React.forwardRef<SectionElement, SectionProps>(
+const Section = forwardRef<SectionElement, SectionProps>(
   ({ asChild, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'section';
 

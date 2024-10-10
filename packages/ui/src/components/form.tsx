@@ -3,7 +3,15 @@
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
 import { result } from 'lodash-es';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type HTMLAttributes,
+  type JSX,
+  useId,
+} from 'react';
 import {
   Controller,
   type ControllerProps,
@@ -21,7 +29,7 @@ import type * as LabelPrimitive from '@radix-ui/react-label';
  * Component: Form
  * -------------------------------------------------------------------------- */
 
-type FormProps = React.ComponentProps<typeof FormProvider>;
+type FormProps = ComponentProps<typeof FormProvider>;
 const Form = FormProvider;
 
 /* -----------------------------------------------------------------------------
@@ -72,7 +80,7 @@ type FormFieldProps<
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(formFieldProps: FormFieldProps<TFieldValues, TName>): React.JSX.Element {
+>(formFieldProps: FormFieldProps<TFieldValues, TName>): JSX.Element {
   const { __scopeFormField, ...props } = formFieldProps as ScopedProps<
     FormFieldProps<TFieldValues, TName>
   >;
@@ -98,14 +106,14 @@ const [FormItemProvider, useFormItemContext] =
   createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 type FormItemElement = HTMLDivElement;
-type FormItemProps = React.HTMLAttributes<HTMLDivElement>;
+type FormItemProps = HTMLAttributes<HTMLDivElement>;
 
-const FormItem = React.forwardRef<FormItemElement, FormItemProps>(
+const FormItem = forwardRef<FormItemElement, FormItemProps>(
   (
     { __scopeFormField, className, ...props }: ScopedProps<FormItemProps>,
     forwardedRef,
   ) => {
-    const id = React.useId();
+    const id = useId();
 
     return (
       <FormItemProvider id={id} scope={__scopeFormField}>
@@ -127,12 +135,10 @@ FormItem.displayName = FORM_ITEM_NAME;
 
 const FORM_LABEL_NAME = 'FormLabel';
 
-type FormFieldElement = React.ComponentRef<typeof LabelPrimitive.Root>;
-type FormLabelProps = React.ComponentPropsWithoutRef<
-  typeof LabelPrimitive.Root
->;
+type FormFieldElement = ComponentRef<typeof LabelPrimitive.Root>;
+type FormLabelProps = ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
 
-const FormLabel = React.forwardRef<FormFieldElement, FormLabelProps>(
+const FormLabel = forwardRef<FormFieldElement, FormLabelProps>(
   (
     { __scopeFormField, ...props }: ScopedProps<FormLabelProps>,
     forwardedRef,
@@ -151,10 +157,10 @@ FormLabel.displayName = FORM_LABEL_NAME;
 
 const FORM_CONTROL_NAME = 'FormControl';
 
-type FormControlElement = React.ComponentRef<typeof Slot>;
-type FormControlProps = React.ComponentPropsWithoutRef<typeof Slot>;
+type FormControlElement = ComponentRef<typeof Slot>;
+type FormControlProps = ComponentPropsWithoutRef<typeof Slot>;
 
-const FormControl = React.forwardRef<FormControlElement, FormControlProps>(
+const FormControl = forwardRef<FormControlElement, FormControlProps>(
   (
     { __scopeFormField, ...props }: ScopedProps<FormControlProps>,
     forwardedRef,
@@ -191,9 +197,9 @@ FormControl.displayName = FORM_CONTROL_NAME;
 const FORM_DESCRIPTION_NAME = 'FormDescription';
 
 type FormDescriptionElement = HTMLParagraphElement;
-type FormDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;
+type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 
-const FormDescription = React.forwardRef<
+const FormDescription = forwardRef<
   FormDescriptionElement,
   FormDescriptionProps
 >(
@@ -230,9 +236,9 @@ FormDescription.displayName = FORM_DESCRIPTION_NAME;
 const FORM_MESSAGE_NAME = 'FormMessage';
 
 type FormMessageElement = HTMLParagraphElement;
-type FormMessageProps = React.HTMLAttributes<HTMLParagraphElement>;
+type FormMessageProps = HTMLAttributes<HTMLParagraphElement>;
 
-const FormMessage = React.forwardRef<FormMessageElement, FormMessageProps>(
+const FormMessage = forwardRef<FormMessageElement, FormMessageProps>(
   (
     {
       __scopeFormField,

@@ -1,23 +1,26 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type JSX,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion
  * -------------------------------------------------------------------------- */
 
-type AccordionProps = React.ComponentPropsWithoutRef<
-  typeof AccordionPrimitive.Root
->;
+type AccordionProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Root>;
 const Accordion = AccordionPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
-type AccordionItemProps = React.ComponentPropsWithoutRef<
+type AccordionItemProps = ComponentPropsWithoutRef<
   typeof AccordionPrimitive.Item
 >;
 const AccordionItem = AccordionPrimitive.Item;
@@ -26,8 +29,7 @@ const AccordionItem = AccordionPrimitive.Item;
  * Component: AccordionIcon
  * -------------------------------------------------------------------------- */
 
-interface AccordionIconProps
-  extends React.ComponentPropsWithoutRef<typeof Slot> {
+interface AccordionIconProps extends ComponentPropsWithoutRef<typeof Slot> {
   asChild?: boolean;
   className?: string;
 }
@@ -36,7 +38,7 @@ function AccordionIcon({
   asChild,
   className,
   ...props
-}: AccordionIconProps): React.JSX.Element {
+}: AccordionIconProps): JSX.Element {
   if (asChild) {
     return (
       <Slot
@@ -66,14 +68,12 @@ function AccordionIcon({
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
-type AccordionTriggerElement = React.ComponentRef<
-  typeof AccordionPrimitive.Trigger
->;
-type AccordionTriggerProps = React.ComponentPropsWithoutRef<
+type AccordionTriggerElement = ComponentRef<typeof AccordionPrimitive.Trigger>;
+type AccordionTriggerProps = ComponentPropsWithoutRef<
   typeof AccordionPrimitive.Trigger
 >;
 
-const AccordionTrigger = React.forwardRef<
+const AccordionTrigger = forwardRef<
   AccordionTriggerElement,
   AccordionTriggerProps
 >(({ className, ...props }, forwardedRef) => (
@@ -95,14 +95,12 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */
 
-type AccordionContentElement = React.ComponentRef<
-  typeof AccordionPrimitive.Content
->;
-type AccordionContentProps = React.ComponentPropsWithoutRef<
+type AccordionContentElement = ComponentRef<typeof AccordionPrimitive.Content>;
+type AccordionContentProps = ComponentPropsWithoutRef<
   typeof AccordionPrimitive.Content
 >;
 
-const AccordionContent = React.forwardRef<
+const AccordionContent = forwardRef<
   AccordionContentElement,
   AccordionContentProps
 >(({ children, className, ...props }, forwardedRef) => (

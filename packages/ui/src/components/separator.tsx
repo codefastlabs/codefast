@@ -1,5 +1,10 @@
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type HTMLAttributes,
+} from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 
@@ -32,13 +37,13 @@ type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
-type SeparatorElement = React.ComponentRef<typeof SeparatorPrimitive.Root>;
+type SeparatorElement = ComponentRef<typeof SeparatorPrimitive.Root>;
 
 interface SeparatorProps
-  extends React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>,
+  extends ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>,
     Omit<SeparatorVariantsProps, 'orientation'> {}
 
-const Separator = React.forwardRef<SeparatorElement, SeparatorProps>(
+const Separator = forwardRef<SeparatorElement, SeparatorProps>(
   (
     { className, orientation, align, decorative = true, ...props },
     forwardedRef,
@@ -60,21 +65,20 @@ Separator.displayName = SeparatorPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 type SeparatorItemElement = HTMLDivElement;
-type SeparatorItemProps = React.HTMLAttributes<HTMLDivElement>;
+type SeparatorItemProps = HTMLAttributes<HTMLDivElement>;
 
-const SeparatorItem = React.forwardRef<
-  SeparatorItemElement,
-  SeparatorItemProps
->(({ className, ...props }, forwardedRef) => (
-  <div
-    ref={forwardedRef}
-    className={cn(
-      'bg-background text-muted-foreground absolute mx-2 px-2 text-sm',
-      className,
-    )}
-    {...props}
-  />
-));
+const SeparatorItem = forwardRef<SeparatorItemElement, SeparatorItemProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <div
+      ref={forwardedRef}
+      className={cn(
+        'bg-background text-muted-foreground absolute mx-2 px-2 text-sm',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 SeparatorItem.displayName = 'SeparatorItem';
 

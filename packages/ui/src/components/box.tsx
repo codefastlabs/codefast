@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Box
@@ -7,11 +7,11 @@ import * as React from 'react';
 
 type BoxElement = HTMLDivElement;
 
-interface BoxDivProps extends React.HTMLAttributes<HTMLDivElement> {
+interface BoxDivProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div';
 }
 
-interface BoxSpanProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface BoxSpanProps extends HTMLAttributes<HTMLSpanElement> {
   as: 'span';
 }
 
@@ -19,7 +19,7 @@ type BoxProps = (BoxDivProps | BoxSpanProps) & {
   asChild?: boolean;
 };
 
-const Box = React.forwardRef<BoxElement, BoxProps>(
+const Box = forwardRef<BoxElement, BoxProps>(
   ({ as: Tag = 'div', asChild, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : Tag;
 

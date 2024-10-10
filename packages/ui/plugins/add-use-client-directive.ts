@@ -9,7 +9,7 @@ const USE_CLIENT_DIRECTIVE = '"use client"';
 
 // Regular expression to detect React hooks and event handlers, excluding any occurrences within comments.
 const HOOK_OR_EVENT_REGEX =
-  /(?<!\/\/.*)(?<!\/\*.*)\b(?<hookOrEvent>use[A-Z]\w*\s*\(.*\)|on[A-Z]\w*)\s*\(?.*\)?/;
+  /(?<!\/\/.*)(?<!\/\*[\s\S]*?\*\/)(?<!['"])\b(?<hookOrEvent>(?<hookOrEventName>use[A-Z]\w*\s*\(.*\)|on[A-Z]\w*)\s*\(?.*\)?|import\s*{[^}]*\buse[A-Z]\w*\b[^}]*})(?!['"])/;
 
 /**
  * Checks if the provided content includes any of the given client libraries or

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from 'react';
 import { Spinner } from '@/components/spinner';
 import {
   buttonVariants,
@@ -12,16 +12,16 @@ import {
 type ButtonElement = HTMLButtonElement;
 
 interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>,
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>,
     ButtonVariantsProps {
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
-  prefix?: React.ReactNode;
-  spinner?: React.ReactNode;
-  suffix?: React.ReactNode;
+  prefix?: ReactNode;
+  spinner?: ReactNode;
+  suffix?: ReactNode;
 }
 
-const Button = React.forwardRef<ButtonElement, ButtonProps>(
+const Button = forwardRef<ButtonElement, ButtonProps>(
   (
     {
       children,

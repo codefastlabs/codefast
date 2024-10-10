@@ -1,29 +1,30 @@
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroup
  * -------------------------------------------------------------------------- */
 
-type CheckboxGroupElement = React.ComponentRef<
-  typeof CheckboxGroupPrimitive.Root
->;
-type CheckboxGroupProps = React.ComponentPropsWithoutRef<
+type CheckboxGroupElement = ComponentRef<typeof CheckboxGroupPrimitive.Root>;
+type CheckboxGroupProps = ComponentPropsWithoutRef<
   typeof CheckboxGroupPrimitive.Root
 >;
 
-const CheckboxGroup = React.forwardRef<
-  CheckboxGroupElement,
-  CheckboxGroupProps
->(({ className, ...props }, forwardedRef) => (
-  <CheckboxGroupPrimitive.Root
-    ref={forwardedRef}
-    className={cn('grid gap-2', className)}
-    {...props}
-  />
-));
+const CheckboxGroup = forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <CheckboxGroupPrimitive.Root
+      ref={forwardedRef}
+      className={cn('grid gap-2', className)}
+      {...props}
+    />
+  ),
+);
 
 CheckboxGroup.displayName = 'CheckboxGroup';
 
@@ -31,14 +32,14 @@ CheckboxGroup.displayName = 'CheckboxGroup';
  * Component: CheckboxGroupItem
  * -------------------------------------------------------------------------- */
 
-type CheckboxGroupItemElement = React.ComponentRef<
+type CheckboxGroupItemElement = ComponentRef<
   typeof CheckboxGroupPrimitive.Item
 >;
-type CheckboxGroupItemProps = React.ComponentPropsWithoutRef<
+type CheckboxGroupItemProps = ComponentPropsWithoutRef<
   typeof CheckboxGroupPrimitive.Item
 >;
 
-const CheckboxGroupItem = React.forwardRef<
+const CheckboxGroupItem = forwardRef<
   CheckboxGroupItemElement,
   CheckboxGroupItemProps
 >(({ className, ...props }, forwardedRef) => (

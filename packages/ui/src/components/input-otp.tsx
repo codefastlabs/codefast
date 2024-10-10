@@ -8,17 +8,23 @@ import {
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
 } from 'input-otp';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type HTMLAttributes,
+  useContext,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp
  * -------------------------------------------------------------------------- */
 
-type InputOTPElement = React.ComponentRef<typeof OTPInput>;
-type InputOTPProps = React.ComponentPropsWithoutRef<typeof OTPInput>;
+type InputOTPElement = ComponentRef<typeof OTPInput>;
+type InputOTPProps = ComponentPropsWithoutRef<typeof OTPInput>;
 
-const InputOTP = React.forwardRef<InputOTPElement, InputOTPProps>(
+const InputOTP = forwardRef<InputOTPElement, InputOTPProps>(
   ({ className, containerClassName, ...props }, forwardedRef) => (
     <OTPInput
       ref={forwardedRef}
@@ -40,18 +46,17 @@ InputOTP.displayName = 'InputOTP';
  * -------------------------------------------------------------------------- */
 
 type InputOTPGroupElement = HTMLDivElement;
-type InputOTPGroupProps = React.HTMLAttributes<HTMLDivElement>;
+type InputOTPGroupProps = HTMLAttributes<HTMLDivElement>;
 
-const InputOTPGroup = React.forwardRef<
-  InputOTPGroupElement,
-  InputOTPGroupProps
->(({ className, ...props }, forwardedRef) => (
-  <div
-    ref={forwardedRef}
-    className={cn('flex items-center', className)}
-    {...props}
-  />
-));
+const InputOTPGroup = forwardRef<InputOTPGroupElement, InputOTPGroupProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <div
+      ref={forwardedRef}
+      className={cn('flex items-center', className)}
+      {...props}
+    />
+  ),
+);
 
 InputOTPGroup.displayName = 'InputOTPGroup';
 
@@ -61,13 +66,13 @@ InputOTPGroup.displayName = 'InputOTPGroup';
 
 type InputOTPSlotElement = HTMLDivElement;
 
-interface InputOTPSlotProps extends React.HTMLAttributes<HTMLDivElement> {
+interface InputOTPSlotProps extends HTMLAttributes<HTMLDivElement> {
   index: number;
 }
 
-const InputOTPSlot = React.forwardRef<InputOTPSlotElement, InputOTPSlotProps>(
+const InputOTPSlot = forwardRef<InputOTPSlotElement, InputOTPSlotProps>(
   ({ index, className, ...props }, forwardedRef) => {
-    const inputOTPContext = React.useContext(OTPInputContext);
+    const inputOTPContext = useContext(OTPInputContext);
     const slot = inputOTPContext.slots[index];
 
     return (
@@ -100,9 +105,9 @@ InputOTPSlot.displayName = 'InputOTPSlot';
  * -------------------------------------------------------------------------- */
 
 type InputOTPSeparatorElement = HTMLDivElement;
-type InputOTPSeparatorProps = React.HTMLAttributes<HTMLDivElement>;
+type InputOTPSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
-const InputOTPSeparator = React.forwardRef<
+const InputOTPSeparator = forwardRef<
   InputOTPSeparatorElement,
   InputOTPSeparatorProps
 >(({ ...props }, forwardedRef) => (

@@ -1,15 +1,15 @@
 import { useTheme } from 'next-themes';
-import * as React from 'react';
+import { type ComponentProps, type JSX } from 'react';
 import { toast, Toaster as Sonner } from 'sonner';
 
 /* -----------------------------------------------------------------------------
  * Component: Sonner
  * -------------------------------------------------------------------------- */
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+type ToasterProps = ComponentProps<typeof Sonner>;
 type Theme = 'light' | 'dark' | 'system' | undefined;
 
-function Toaster({ ...props }: ToasterProps): React.JSX.Element {
+function Toaster({ ...props }: ToasterProps): JSX.Element {
   const { theme = 'system' } = useTheme() as { theme: Theme };
 
   return (
