@@ -1,4 +1,4 @@
-name: Release
+name: The Best Release Pipeline, Believe Me!
 
 on:
   push:
@@ -9,52 +9,52 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release
+    name: Tremendous Package Release, It's Gonna Be Huge!
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout the Greatest Code, Nobody Does It Better!
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch full history for creating changelogs
+          fetch-depth: 0
 
-      - name: Setup Node.js 20.x Environment
+      - name: Setting Up Node.js 20.x, It's a Perfect Node Version!
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Use Node.js version 20
+          node-version: 20
 
-      - name: Install pnpm Package Manager
+      - name: Installing pnpm, It's the Best Package Manager, Everyone Knows It!
         uses: pnpm/action-setup@v4
         with:
-          run_install: false # Don't automatically run install
+          run_install: false
 
-      - name: Get pnpm Store Directory
+      - name: Finding the pnpm Store, The Best Store, It's Yuge!
         shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV # Store pnpm cache path in environment variable
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - name: Cache pnpm Store Directory
+      - name: Caching pnpm Store, We Love Saving Time, Don’t We?
         uses: actions/cache@v4
         with:
-          path: ${{ env.STORE_PATH }} # Use pnpm cache path
+          path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-pnpm-store- # Restore keys for caching
+          restore-keys: ${{ runner.os }}-pnpm-store-
 
-      - name: Install Project Dependencies
-        run: pnpm install # Install dependencies
+      - name: Installing Dependencies, Faster Than Anyone Thought Possible!
+        run: pnpm install
 
-      - name: Create Release Pull Request or Publish Package
+      - name: Creating a Yuge Release PR or Publishing the Greatest Package Ever!
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release # Custom release script
+          publish: pnpm release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub token for authentication
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # npm token for publishing
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Run Chromatic Visual Tests
+      - name: Running Chromatic, Visual Tests So Good, They’ll Blow Your Mind!
         uses: chromaui/action@latest
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }} # Chromatic project token
-          workingDir: apps/docs # Specify the working directory
-          onlyChanged: true # Run only on changed files
-          zip: true # Use zip compression for artifacts
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/docs
+          onlyChanged: true
+          zip: true
