@@ -20,7 +20,7 @@
     "version-packages": "changeset version"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm exec lint-staged --allow-empty",
+    "pre-commit": "pnpm exec lint-staged",
     "commit-msg": "pnpm exec commitlint --edit $1"
   },
   "prettier": {
