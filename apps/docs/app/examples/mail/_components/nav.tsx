@@ -5,8 +5,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@codefast/ui';
-import Link from 'next/link';
 import { type LucideIcon } from 'lucide-react';
+import Link from 'next/link';
 import { type JSX } from 'react';
 
 interface NavProps {

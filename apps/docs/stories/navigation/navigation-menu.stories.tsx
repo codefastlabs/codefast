@@ -9,10 +9,10 @@ import {
   NavigationMenuTrigger,
   Text,
 } from '@codefast/ui';
-import { type AnchorHTMLAttributes, forwardRef } from 'react';
-import Link from 'next/link';
-import { SettingsIcon } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { SettingsIcon } from 'lucide-react';
+import Link from 'next/link';
+import { type AnchorHTMLAttributes, forwardRef } from 'react';
 
 const meta = {
   component: NavigationMenu,

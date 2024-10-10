@@ -10,9 +10,9 @@ import {
   TabsList,
   TabsTrigger,
 } from '@codefast/ui';
+import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX, Suspense } from 'react';
-import { type Metadata } from 'next';
 import { MainNav } from '@/app/examples/dashboard/_components/main-nav';
 import { Overview } from '@/app/examples/dashboard/_components/overview';
 import { RecentSales } from '@/app/examples/dashboard/_components/recent-sales';

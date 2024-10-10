@@ -1,4 +1,3 @@
-import { type Meta, type StoryObj } from '@storybook/react';
 import {
   Button,
   Code,
@@ -20,13 +19,14 @@ import {
   toast,
   Toaster,
 } from '@codefast/ui';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { wait } from 'next/dist/lib/wait';
-import { useState } from 'react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { ImportIcon, LoaderCircleIcon } from 'lucide-react';
+import { wait } from 'next/dist/lib/wait';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const meta = {
   argTypes: {

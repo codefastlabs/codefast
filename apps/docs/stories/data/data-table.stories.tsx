@@ -20,7 +20,7 @@ import {
   TextInput,
 } from '@codefast/ui';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { useState } from 'react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -34,7 +34,7 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import data from '@/mocks/data-table.json';
 
 const meta = {
