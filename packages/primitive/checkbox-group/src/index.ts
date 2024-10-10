@@ -1,3 +1,3 @@
 'use client';
 
-export * from '@/checkbox-group';
+export * from '@/primitive/checkbox-group';
