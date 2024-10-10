@@ -25,24 +25,31 @@ module.exports = {
     'import/order': [
       'warn',
       {
+        alphabetize: {
+          order: 'asc',
+          orderImportKind: 'asc',
+          caseInsensitive: true,
+        },
         groups: [
-          'builtin', // Node.js built-in modules
-          'external', // Packages
-          'internal', // Aliased modules
-          'parent', // Relative parent
-          'sibling', // Relative sibling
-          'index', // Relative index
+          'builtin', // Built-in Node.js modules
+          'external', // Third-party libraries
+          'internal', // Internal modules (if any)
+          'parent', // Imports from parent directories
+          'sibling', // Imports from sibling directories
+          'index', // Imports from index files
+          'object', // Namespace imports
+          'type', // Type imports
         ],
+        named: true,
         'newlines-between': 'never',
         pathGroups: [
           {
-            pattern: '@/**',
+            pattern: '@/**', // Internal paths
             group: 'internal',
           },
         ],
       },
     ],
-
     /** Prevents fallthrough in switch statements but allows empty cases */
     'no-fallthrough': [
       'error',
