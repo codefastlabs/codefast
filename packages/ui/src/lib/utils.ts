@@ -1,5 +1,5 @@
-import { twMerge } from 'tailwind-merge';
 import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 /**
  * Returns the combined class names from the given inputs.

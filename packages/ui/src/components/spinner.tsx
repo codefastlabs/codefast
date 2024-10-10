@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------

@@ -1,5 +1,13 @@
 'use client';
 
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  DotFilledIcon,
+} from '@radix-ui/react-icons';
+import { format } from 'date-fns';
 import * as React from 'react';
 import {
   type CustomComponents,
@@ -11,16 +19,8 @@ import {
   SelectionState,
   UI,
 } from 'react-day-picker';
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  DotFilledIcon,
-} from '@radix-ui/react-icons';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/button';
+import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
@@ -224,9 +224,9 @@ function CalendarLabel({
 export {
   Calendar,
   CalendarLabel,
-  CalendarRangeLabel,
-  type CalendarProps,
   type CalendarLabelProps,
+  type CalendarProps,
+  CalendarRangeLabel,
   type CalendarRangeLabelProps,
   type DateRange,
   type Matcher,

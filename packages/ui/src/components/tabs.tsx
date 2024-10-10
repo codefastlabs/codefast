@@ -1,5 +1,5 @@
-import * as React from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -89,11 +89,11 @@ TabsContent.displayName = TabsPrimitive.Content.displayName;
 
 export {
   Tabs,
-  TabsList,
-  TabsTrigger,
   TabsContent,
-  type TabsProps,
-  type TabsListProps,
-  type TabsTriggerProps,
   type TabsContentProps,
+  TabsList,
+  type TabsListProps,
+  type TabsProps,
+  TabsTrigger,
+  type TabsTriggerProps,
 };

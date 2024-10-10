@@ -1,6 +1,6 @@
-import * as React from 'react';
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import * as React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 import {
@@ -241,21 +241,21 @@ SheetClose.displayName = SheetPrimitive.Close.displayName;
 
 export {
   Sheet,
-  SheetTrigger,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
   SheetBody,
-  SheetFooter,
-  SheetTitle,
-  SheetDescription,
-  type SheetProps,
-  type SheetTriggerProps,
-  type SheetCloseProps,
-  type SheetContentProps,
-  type SheetHeaderProps,
   type SheetBodyProps,
-  type SheetFooterProps,
-  type SheetTitleProps,
+  SheetClose,
+  type SheetCloseProps,
+  SheetContent,
+  type SheetContentProps,
+  SheetDescription,
   type SheetDescriptionProps,
+  SheetFooter,
+  type SheetFooterProps,
+  SheetHeader,
+  type SheetHeaderProps,
+  type SheetProps,
+  SheetTitle,
+  type SheetTitleProps,
+  SheetTrigger,
+  type SheetTriggerProps,
 };
