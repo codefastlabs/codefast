@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -8,11 +8,11 @@ import { cn } from '@/lib/utils';
 
 type ContainerElement = HTMLDivElement;
 
-interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
 }
 
-const Container = React.forwardRef<ContainerElement, ContainerProps>(
+const Container = forwardRef<ContainerElement, ContainerProps>(
   ({ className, asChild, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'div';
 

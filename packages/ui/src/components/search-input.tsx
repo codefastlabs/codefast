@@ -3,7 +3,12 @@
 import * as InputPrimitive from '@codefast-ui/input';
 import { Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
 import {
@@ -17,12 +22,12 @@ import {
 
 const { root, input } = inputVariants();
 
-type SearchInputElement = React.ComponentRef<typeof InputPrimitive.Item>;
+type SearchInputElement = ComponentRef<typeof InputPrimitive.Item>;
 interface SearchInputProps
   extends InputVariantsProps,
-    React.ComponentProps<typeof InputPrimitive.Root>,
+    ComponentProps<typeof InputPrimitive.Root>,
     Omit<
-      React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
+      ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
       'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'
     > {
   defaultValue?: string;
@@ -30,7 +35,7 @@ interface SearchInputProps
   value?: string;
 }
 
-const SearchInput = React.forwardRef<SearchInputElement, SearchInputProps>(
+const SearchInput = forwardRef<SearchInputElement, SearchInputProps>(
   (
     {
       className,

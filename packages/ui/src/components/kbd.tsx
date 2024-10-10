@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -8,11 +8,11 @@ import { cn } from '@/lib/utils';
 
 type KbdElement = HTMLElement;
 
-interface KbdProps extends React.HTMLAttributes<HTMLElement> {
+interface KbdProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Kbd = React.forwardRef<KbdElement, KbdProps>(
+const Kbd = forwardRef<KbdElement, KbdProps>(
   ({ asChild, className, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'kbd';
 

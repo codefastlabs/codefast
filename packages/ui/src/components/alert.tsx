@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 
@@ -27,9 +27,9 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
  * -------------------------------------------------------------------------- */
 
 type AlertElement = HTMLDivElement;
-type AlertProps = React.HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
+type AlertProps = HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
 
-const Alert = React.forwardRef<AlertElement, AlertProps>(
+const Alert = forwardRef<AlertElement, AlertProps>(
   ({ className, variant, ...props }, forwardedRef) => (
     <div
       ref={forwardedRef}
@@ -47,9 +47,9 @@ Alert.displayName = 'Alert';
  * -------------------------------------------------------------------------- */
 
 type AlertTitleElement = HTMLHeadingElement;
-type AlertTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
+type AlertTitleProps = HTMLAttributes<HTMLHeadingElement>;
 
-const AlertTitle = React.forwardRef<AlertTitleElement, AlertTitleProps>(
+const AlertTitle = forwardRef<AlertTitleElement, AlertTitleProps>(
   ({ children, className, ...props }, forwardedRef) => (
     <h5
       ref={forwardedRef}
@@ -68,9 +68,9 @@ AlertTitle.displayName = 'AlertTitle';
  * -------------------------------------------------------------------------- */
 
 type AlertDescriptionElement = HTMLDivElement;
-type AlertDescriptionProps = React.HTMLAttributes<HTMLDivElement>;
+type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
 
-const AlertDescription = React.forwardRef<
+const AlertDescription = forwardRef<
   AlertDescriptionElement,
   AlertDescriptionProps
 >(({ className, ...props }, forwardedRef) => (

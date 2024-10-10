@@ -1,5 +1,10 @@
 import * as TogglePrimitive from '@radix-ui/react-toggle';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type ReactNode,
+} from 'react';
 import {
   toggleVariants,
   type ToggleVariantsProps,
@@ -9,18 +14,15 @@ import {
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
-type ToggleElement = React.ComponentRef<typeof TogglePrimitive.Root>;
+type ToggleElement = ComponentRef<typeof TogglePrimitive.Root>;
 interface ToggleProps
-  extends Omit<
-      React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root>,
-      'prefix'
-    >,
+  extends Omit<ComponentPropsWithoutRef<typeof TogglePrimitive.Root>, 'prefix'>,
     ToggleVariantsProps {
-  prefix?: React.ReactNode;
-  suffix?: React.ReactNode;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
 }
 
-const Toggle = React.forwardRef<ToggleElement, ToggleProps>(
+const Toggle = forwardRef<ToggleElement, ToggleProps>(
   (
     { className, size, icon, variant, prefix, children, suffix, ...props },
     forwardedRef,

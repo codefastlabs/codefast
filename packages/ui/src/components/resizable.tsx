@@ -1,7 +1,7 @@
 'use client';
 
 import { DragHandleDots2Icon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import { type ComponentProps, type JSX } from 'react';
 import * as ResizablePrimitive from 'react-resizable-panels';
 import { cn } from '@/lib/utils';
 
@@ -12,9 +12,7 @@ import { cn } from '@/lib/utils';
 function ResizablePanelGroup({
   className,
   ...props
-}: React.ComponentProps<
-  typeof ResizablePrimitive.PanelGroup
->): React.JSX.Element {
+}: ComponentProps<typeof ResizablePrimitive.PanelGroup>): JSX.Element {
   return (
     <ResizablePrimitive.PanelGroup
       className={cn(
@@ -41,9 +39,9 @@ function ResizableHandle({
   withHandle,
   className,
   ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+}: ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
   withHandle?: boolean;
-}): React.JSX.Element {
+}): JSX.Element {
   return (
     <ResizablePrimitive.PanelResizeHandle
       className={cn(
