@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { Slot } from '@radix-ui/react-slot';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -161,17 +161,17 @@ function BreadcrumbEllipsis({
 
 export {
   Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
   BreadcrumbEllipsis,
-  type BreadcrumbProps,
-  type BreadcrumbListProps,
-  type BreadcrumbItemProps,
-  type BreadcrumbLinkProps,
-  type BreadcrumbPageProps,
-  type BreadcrumbSeparatorProps,
   type BreadcrumbEllipsisProps,
+  BreadcrumbItem,
+  type BreadcrumbItemProps,
+  BreadcrumbLink,
+  type BreadcrumbLinkProps,
+  BreadcrumbList,
+  type BreadcrumbListProps,
+  BreadcrumbPage,
+  type BreadcrumbPageProps,
+  type BreadcrumbProps,
+  BreadcrumbSeparator,
+  type BreadcrumbSeparatorProps,
 };

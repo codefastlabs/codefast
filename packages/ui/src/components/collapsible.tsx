@@ -1,5 +1,5 @@
-import * as React from 'react';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -56,9 +56,9 @@ CollapsibleContent.displayName =
 
 export {
   Collapsible,
-  CollapsibleTrigger,
   CollapsibleContent,
-  type CollapsibleProps,
-  type CollapsibleTriggerProps,
   type CollapsibleContentProps,
+  type CollapsibleProps,
+  CollapsibleTrigger,
+  type CollapsibleTriggerProps,
 };

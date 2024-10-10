@@ -1,5 +1,5 @@
-import * as React from 'react';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -62,6 +62,6 @@ RadioCardsItem.displayName = RadioGroupPrimitive.Item.displayName;
 export {
   RadioCards,
   RadioCardsItem,
-  type RadioCardsProps,
   type RadioCardsItemProps,
+  type RadioCardsProps,
 };

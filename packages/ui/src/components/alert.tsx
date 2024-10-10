@@ -89,9 +89,9 @@ AlertDescription.displayName = 'AlertDescription';
 
 export {
   Alert,
-  AlertTitle,
   AlertDescription,
-  type AlertProps,
-  type AlertTitleProps,
   type AlertDescriptionProps,
+  type AlertProps,
+  AlertTitle,
+  type AlertTitleProps,
 };

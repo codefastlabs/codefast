@@ -1,9 +1,9 @@
 'use client';
 
-import * as React from 'react';
+import { createContextScope, type Scope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
-import { createContextScope, type Scope } from '@radix-ui/react-context';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 import {
   toggleVariants,
@@ -137,6 +137,6 @@ ToggleGroupItem.displayName = TOGGLE_GROUP_ITEM_NAME;
 export {
   ToggleGroup,
   ToggleGroupItem,
-  type ToggleGroupProps,
   type ToggleGroupItemProps,
+  type ToggleGroupProps,
 };

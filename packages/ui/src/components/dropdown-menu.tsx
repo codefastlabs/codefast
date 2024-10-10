@@ -1,10 +1,10 @@
-import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import {
   CheckIcon,
   ChevronRightIcon,
   DotFilledIcon,
 } from '@radix-ui/react-icons';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -379,33 +379,33 @@ DropdownMenuArrow.displayName = DropdownMenuPrimitive.Arrow.displayName;
 
 export {
   DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuArrow,
+  type DropdownMenuArrowProps,
   DropdownMenuCheckboxItem,
-  DropdownMenuRadioItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
+  type DropdownMenuCheckboxItemProps,
+  DropdownMenuContent,
+  type DropdownMenuContentProps,
   DropdownMenuGroup,
+  type DropdownMenuGroupProps,
+  DropdownMenuItem,
+  type DropdownMenuItemProps,
+  DropdownMenuLabel,
+  type DropdownMenuLabelProps,
+  type DropdownMenuProps,
+  DropdownMenuRadioGroup,
+  type DropdownMenuRadioGroupProps,
+  DropdownMenuRadioItem,
+  type DropdownMenuRadioItemProps,
+  DropdownMenuSeparator,
+  type DropdownMenuSeparatorProps,
+  DropdownMenuShortcut,
+  type DropdownMenuShortcutProps,
   DropdownMenuSub,
   DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuArrow,
-  type DropdownMenuProps,
-  type DropdownMenuTriggerProps,
-  type DropdownMenuContentProps,
-  type DropdownMenuItemProps,
-  type DropdownMenuCheckboxItemProps,
-  type DropdownMenuRadioItemProps,
-  type DropdownMenuLabelProps,
-  type DropdownMenuSeparatorProps,
-  type DropdownMenuShortcutProps,
-  type DropdownMenuGroupProps,
-  type DropdownMenuSubProps,
   type DropdownMenuSubContentProps,
+  type DropdownMenuSubProps,
+  DropdownMenuSubTrigger,
   type DropdownMenuSubTriggerProps,
-  type DropdownMenuRadioGroupProps,
-  type DropdownMenuArrowProps,
+  DropdownMenuTrigger,
+  type DropdownMenuTriggerProps,
 };

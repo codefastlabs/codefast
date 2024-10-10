@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { composeEventHandlers } from '@radix-ui/primitive';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------

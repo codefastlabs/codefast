@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
+import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+import * as React from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 
@@ -144,7 +144,7 @@ ScrollAreaScrollbar.displayName = ScrollAreaPrimitive.Scrollbar.displayName;
 
 export {
   ScrollArea,
-  ScrollAreaScrollbar,
   type ScrollAreaProps,
+  ScrollAreaScrollbar,
   type ScrollAreaScrollbarProps,
 };

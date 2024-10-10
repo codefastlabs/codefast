@@ -1,10 +1,10 @@
 'use client';
 
-import * as React from 'react';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command as CommandPrimitive } from 'cmdk';
-import { cn } from '@/lib/utils';
+import * as React from 'react';
 import { Dialog, DialogContent } from '@/components/dialog';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Command
@@ -248,22 +248,22 @@ function CommandShortcut({
 export {
   Command,
   CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandLoading,
-  CommandShortcut,
-  CommandSeparator,
-  type CommandProps,
   type CommandDialogProps,
-  type CommandInputProps,
-  type CommandListProps,
+  CommandEmpty,
   type CommandEmptyProps,
+  CommandGroup,
   type CommandGroupProps,
+  CommandInput,
+  type CommandInputProps,
+  CommandItem,
   type CommandItemProps,
+  CommandList,
+  type CommandListProps,
+  CommandLoading,
   type CommandLoadingProps,
-  type CommandShortcutProps,
+  type CommandProps,
+  CommandSeparator,
   type CommandSeparatorProps,
+  CommandShortcut,
+  type CommandShortcutProps,
 };

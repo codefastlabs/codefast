@@ -1,14 +1,14 @@
 'use client';
 
-import * as React from 'react';
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons';
+import * as React from 'react';
+import { Button } from '@/components/button';
+import { Spinner } from '@/components/spinner';
 import {
   inputVariants,
   type InputVariantsProps,
 } from '@/styles/input-variants';
-import { Spinner } from '@/components/spinner';
-import { Button } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Variant: PasswordInput

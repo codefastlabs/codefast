@@ -1,5 +1,5 @@
-import * as React from 'react';
 import * as InputPrimitive from '@codefast-ui/input';
+import * as React from 'react';
 import { Spinner } from '@/components/spinner';
 import {
   inputVariants,
