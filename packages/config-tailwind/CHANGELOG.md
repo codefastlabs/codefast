@@ -1,5 +1,21 @@
 # @codefast/config-tailwind
 
+## 0.1.34
+
+### Patch Changes
+
+- refactor: replace React namespace with individual imports
+- refactor(imports): optimize import order in various files
+- feat: restructure imports and export order in components
+- refactor: reorder import statement in tailwind.config.ts
+- refactor: update imports and type usage for consistency
+- fix: reorder imports in tsup.config.ts for consistency
+- refactor: optimize imports and hooks usage in slideshow
+- fix(hooks): add return type annotation to listener function
+- chore: update import order eslint rule
+- refactor(hooks): refactor hooks and modularize exports
+- fix(peerDependencies): normalize version formats
+
 ## 0.1.33
 
 ### Patch Changes
