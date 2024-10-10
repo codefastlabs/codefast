@@ -1,6 +1,6 @@
-import * as React from 'react';
-
 // Enum for History Method
+import { useCallback } from 'react';
+
 enum HistoryMethod {
   Push = 'push',
   Replace = 'replace',
@@ -76,7 +76,7 @@ export function useStateParams(): {
   push: (paramInput: ParamInput, value?: Value) => void;
   replace: (paramInput: ParamInput, value?: Value) => void;
 } {
-  const push = React.useCallback((paramInput: ParamInput, value?: Value) => {
+  const push = useCallback((paramInput: ParamInput, value?: Value) => {
     if (typeof paramInput === 'object') {
       updateUrlParams(paramInput, HistoryMethod.Push);
     } else {
@@ -84,7 +84,7 @@ export function useStateParams(): {
     }
   }, []);
 
-  const replace = React.useCallback((paramInput: ParamInput, value?: Value) => {
+  const replace = useCallback((paramInput: ParamInput, value?: Value) => {
     if (typeof paramInput === 'object') {
       updateUrlParams(paramInput, HistoryMethod.Replace);
     } else {
