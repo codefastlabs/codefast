@@ -52,14 +52,15 @@ const createRange = (start: number, end: number): number[] => {
  * });
  * ```
  */
-export const usePagination = ({
+export function usePagination({
   currentPage,
   resultsPerPage,
   siblingPagesCount = 1,
   totalResults,
-}: UsePaginationProps): (number | string)[] => {
+}: UsePaginationProps): (number | string)[] {
   return useMemo<(number | string)[]>(() => {
-    // Calculate the total number of pages based on total results and results per page
+    // Calculate the total number of pages based on total results and results
+    // per page
     const totalPages = Math.ceil(totalResults / Math.floor(resultsPerPage));
 
     // Return an empty array if there are no pages to display
@@ -67,7 +68,8 @@ export const usePagination = ({
       return [];
     }
 
-    // The total number of pagination items to show, including first, last, current, and sibling pages
+    // The total number of pagination items to show, including first, last,
+    // current, and sibling pages
     const visiblePageNumbers = siblingPagesCount + 5;
 
     /**
@@ -78,7 +80,8 @@ export const usePagination = ({
       return createRange(1, totalPages);
     }
 
-    // Determine the left and right sibling page indices, ensuring they stay within valid bounds
+    // Determine the left and right sibling page indexes, ensuring they stay
+    // within valid bounds
     const leftSiblingIndex = Math.max(currentPage - siblingPagesCount, 1);
     const rightSiblingIndex = Math.min(
       currentPage + siblingPagesCount,
@@ -131,4 +134,4 @@ export const usePagination = ({
 
     return [];
   }, [totalResults, resultsPerPage, siblingPagesCount, currentPage]);
-};
+}
