@@ -16,8 +16,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@codefast/ui';
-import { Copy } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { Copy } from 'lucide-react';
 import { useState } from 'react';
 
 const meta = {

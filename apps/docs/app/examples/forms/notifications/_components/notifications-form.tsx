@@ -19,9 +19,9 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { type JSX } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { type JSX } from 'react';
 
 const notificationsFormValues = z.object({
   type: z.enum(['all', 'mentions', 'none'], {

@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { Button } from '@codefast/ui';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 import {
   LoaderCircleIcon,
   PaletteIcon,
   ScanSearchIcon,
   TreeDeciduousIcon,
 } from 'lucide-react';
-import { fn } from '@storybook/test';
+import { useState } from 'react';
 
 const meta = {
   argTypes: {

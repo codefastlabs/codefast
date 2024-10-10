@@ -8,8 +8,8 @@ import {
   HoverCardTrigger,
   Text,
 } from '@codefast/ui';
-import { CalendarDays } from 'lucide-react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { CalendarDays } from 'lucide-react';
 
 const meta = {
   component: HoverCard,
