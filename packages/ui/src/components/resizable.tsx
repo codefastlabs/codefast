@@ -1,8 +1,8 @@
 'use client';
 
+import { DragHandleDots2Icon } from '@radix-ui/react-icons';
 import * as React from 'react';
 import * as ResizablePrimitive from 'react-resizable-panels';
-import { DragHandleDots2Icon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -75,4 +75,4 @@ function ResizableHandle({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle };
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup };

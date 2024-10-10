@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { CheckIcon } from '@radix-ui/react-icons';
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
+import { CheckIcon } from '@radix-ui/react-icons';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -71,6 +71,6 @@ CheckboxGroupItem.displayName = 'CheckboxGroupItem';
 export {
   CheckboxGroup,
   CheckboxGroupItem,
-  type CheckboxGroupProps,
   type CheckboxGroupItemProps,
+  type CheckboxGroupProps,
 };

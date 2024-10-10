@@ -1,7 +1,9 @@
 'use client';
 
-import * as React from 'react';
+import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
+import { result } from 'lodash-es';
+import * as React from 'react';
 import {
   Controller,
   type ControllerProps,
@@ -11,11 +13,9 @@ import {
   type GlobalError,
   useFormState,
 } from 'react-hook-form';
-import type * as LabelPrimitive from '@radix-ui/react-label';
-import { createContextScope, type Scope } from '@radix-ui/react-context';
-import { result } from 'lodash-es';
-import { cn } from '@/lib/utils';
 import { Label } from '@/components/label';
+import { cn } from '@/lib/utils';
+import type * as LabelPrimitive from '@radix-ui/react-label';
 
 /* -----------------------------------------------------------------------------
  * Component: Form
@@ -280,17 +280,17 @@ FormMessage.displayName = FORM_MESSAGE_NAME;
 export {
   createFormFieldScope,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-  type FormProps,
-  type FormItemProps,
-  type FormLabelProps,
   type FormControlProps,
+  FormDescription,
   type FormDescriptionProps,
-  type FormMessageProps,
+  FormField,
   type FormFieldProps,
+  FormItem,
+  type FormItemProps,
+  FormLabel,
+  type FormLabelProps,
+  FormMessage,
+  type FormMessageProps,
+  type FormProps,
 };

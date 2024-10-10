@@ -1,6 +1,6 @@
-import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 import {
   buttonVariants,
@@ -208,21 +208,21 @@ DialogClose.displayName = DialogPrimitive.Close.displayName;
 
 export {
   Dialog,
-  DialogTrigger,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
   DialogBody,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  type DialogProps,
-  type DialogTriggerProps,
-  type DialogCloseProps,
-  type DialogContentProps,
-  type DialogHeaderProps,
   type DialogBodyProps,
-  type DialogFooterProps,
-  type DialogTitleProps,
+  DialogClose,
+  type DialogCloseProps,
+  DialogContent,
+  type DialogContentProps,
+  DialogDescription,
   type DialogDescriptionProps,
+  DialogFooter,
+  type DialogFooterProps,
+  DialogHeader,
+  type DialogHeaderProps,
+  type DialogProps,
+  DialogTitle,
+  type DialogTitleProps,
+  DialogTrigger,
+  type DialogTriggerProps,
 };

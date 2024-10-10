@@ -1,10 +1,10 @@
-import * as React from 'react';
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 import {
   CheckIcon,
   ChevronRightIcon,
   DotFilledIcon,
 } from '@radix-ui/react-icons';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -376,33 +376,33 @@ ContextMenuArrow.displayName = ContextMenuPrimitive.Arrow.displayName;
 
 export {
   ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
+  ContextMenuArrow,
+  type ContextMenuArrowProps,
   ContextMenuCheckboxItem,
-  ContextMenuRadioItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
+  type ContextMenuCheckboxItemProps,
+  ContextMenuContent,
+  type ContextMenuContentProps,
   ContextMenuGroup,
+  type ContextMenuGroupProps,
+  ContextMenuItem,
+  type ContextMenuItemProps,
+  ContextMenuLabel,
+  type ContextMenuLabelProps,
+  type ContextMenuProps,
+  ContextMenuRadioGroup,
+  type ContextMenuRadioGroupProps,
+  ContextMenuRadioItem,
+  type ContextMenuRadioItemProps,
+  ContextMenuSeparator,
+  type ContextMenuSeparatorProps,
+  ContextMenuShortcut,
+  type ContextMenuShortcutProps,
   ContextMenuSub,
   ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuRadioGroup,
-  ContextMenuArrow,
-  type ContextMenuProps,
-  type ContextMenuTriggerProps,
-  type ContextMenuContentProps,
-  type ContextMenuItemProps,
-  type ContextMenuCheckboxItemProps,
-  type ContextMenuRadioItemProps,
-  type ContextMenuLabelProps,
-  type ContextMenuSeparatorProps,
-  type ContextMenuShortcutProps,
-  type ContextMenuGroupProps,
-  type ContextMenuSubProps,
   type ContextMenuSubContentProps,
+  type ContextMenuSubProps,
+  ContextMenuSubTrigger,
   type ContextMenuSubTriggerProps,
-  type ContextMenuRadioGroupProps,
-  type ContextMenuArrowProps,
+  ContextMenuTrigger,
+  type ContextMenuTriggerProps,
 };

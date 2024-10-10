@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
 
@@ -226,15 +226,15 @@ NavigationMenuIndicator.displayName =
 
 export {
   NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
   NavigationMenuContent,
-  NavigationMenuTrigger,
-  NavigationMenuLink,
-  type NavigationMenuProps,
-  type NavigationMenuListProps,
-  type NavigationMenuItemProps,
   type NavigationMenuContentProps,
-  type NavigationMenuTriggerProps,
+  NavigationMenuItem,
+  type NavigationMenuItemProps,
+  NavigationMenuLink,
   type NavigationMenuLinkProps,
+  NavigationMenuList,
+  type NavigationMenuListProps,
+  type NavigationMenuProps,
+  NavigationMenuTrigger,
+  type NavigationMenuTriggerProps,
 };

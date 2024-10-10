@@ -1,15 +1,15 @@
 'use client';
 
-import * as React from 'react';
 import * as InputPrimitive from '@codefast-ui/input';
 import { Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import * as React from 'react';
+import { Button } from '@/components/button';
+import { Spinner } from '@/components/spinner';
 import {
   inputVariants,
   type InputVariantsProps,
 } from '@/styles/input-variants';
-import { Spinner } from '@/components/spinner';
-import { Button } from '@/components/button';
 
 /* -----------------------------------------------------------------------------
  * Component: SearchInput

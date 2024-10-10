@@ -1,13 +1,13 @@
 'use client';
 
-import * as React from 'react';
+import { createContextScope, type Scope } from '@radix-ui/react-context';
+import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
-import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
-import { createContextScope, type Scope } from '@radix-ui/react-context';
-import { cn } from '@/lib/utils';
+import * as React from 'react';
 import { Button, type ButtonProps } from '@/components/button';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel
@@ -358,16 +358,16 @@ CarouselNext.displayName = CAROUSEL_NEXT_NAME;
  * -------------------------------------------------------------------------- */
 
 export {
-  createCarouselScope,
   Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
   type CarouselApi,
-  type CarouselProps,
+  CarouselContent,
   type CarouselContentProps,
+  CarouselItem,
   type CarouselItemProps,
-  type CarouselPreviousProps,
+  CarouselNext,
   type CarouselNextProps,
+  CarouselPrevious,
+  type CarouselPreviousProps,
+  type CarouselProps,
+  createCarouselScope,
 };
