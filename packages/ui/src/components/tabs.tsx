@@ -1,22 +1,26 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Tabs
  * -------------------------------------------------------------------------- */
 
-type TabsProps = React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>;
+type TabsProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Root>;
 const Tabs = TabsPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: TabsList
  * -------------------------------------------------------------------------- */
 
-type TabsListElement = React.ComponentRef<typeof TabsPrimitive.List>;
-type TabsListProps = React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>;
+type TabsListElement = ComponentRef<typeof TabsPrimitive.List>;
+type TabsListProps = ComponentPropsWithoutRef<typeof TabsPrimitive.List>;
 
-const TabsList = React.forwardRef<TabsListElement, TabsListProps>(
+const TabsList = forwardRef<TabsListElement, TabsListProps>(
   ({ className, ...props }, forwardedRef) => (
     <TabsPrimitive.List
       ref={forwardedRef}
@@ -35,12 +39,10 @@ TabsList.displayName = TabsPrimitive.List.displayName;
  * Component: TabsTrigger
  * -------------------------------------------------------------------------- */
 
-type TabsTriggerElement = React.ComponentRef<typeof TabsPrimitive.Trigger>;
-type TabsTriggerProps = React.ComponentPropsWithoutRef<
-  typeof TabsPrimitive.Trigger
->;
+type TabsTriggerElement = ComponentRef<typeof TabsPrimitive.Trigger>;
+type TabsTriggerProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>;
 
-const TabsTrigger = React.forwardRef<TabsTriggerElement, TabsTriggerProps>(
+const TabsTrigger = forwardRef<TabsTriggerElement, TabsTriggerProps>(
   ({ className, ...props }, forwardedRef) => (
     <TabsPrimitive.Trigger
       ref={forwardedRef}
@@ -62,12 +64,10 @@ TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
  * Component: TabsContent
  * -------------------------------------------------------------------------- */
 
-type TabsContentElement = React.ComponentRef<typeof TabsPrimitive.Content>;
-type TabsContentProps = React.ComponentPropsWithoutRef<
-  typeof TabsPrimitive.Content
->;
+type TabsContentElement = ComponentRef<typeof TabsPrimitive.Content>;
+type TabsContentProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Content>;
 
-const TabsContent = React.forwardRef<TabsContentElement, TabsContentProps>(
+const TabsContent = forwardRef<TabsContentElement, TabsContentProps>(
   ({ className, ...props }, forwardedRef) => (
     <TabsPrimitive.Content
       ref={forwardedRef}

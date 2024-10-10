@@ -1,6 +1,13 @@
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type HTMLAttributes,
+  type JSX,
+} from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 import {
@@ -53,14 +60,14 @@ type SheetContentVariantsProps = VariantProps<typeof sheetContentVariants>;
  * Component: Sheet
  * -------------------------------------------------------------------------- */
 
-type SheetProps = React.ComponentProps<typeof SheetPrimitive.Root>;
+type SheetProps = ComponentProps<typeof SheetPrimitive.Root>;
 const Sheet = SheetPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: SheetTrigger
  * -------------------------------------------------------------------------- */
 
-type SheetTriggerProps = React.ComponentPropsWithoutRef<
+type SheetTriggerProps = ComponentPropsWithoutRef<
   typeof SheetPrimitive.Trigger
 >;
 const SheetTrigger = SheetPrimitive.Trigger;
@@ -69,13 +76,13 @@ const SheetTrigger = SheetPrimitive.Trigger;
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
-type SheetContentElement = React.ComponentRef<typeof SheetPrimitive.Content>;
-type SheetContentProps = React.ComponentPropsWithoutRef<
+type SheetContentElement = ComponentRef<typeof SheetPrimitive.Content>;
+type SheetContentProps = ComponentPropsWithoutRef<
   typeof SheetPrimitive.Content
 > &
   SheetContentVariantsProps;
 
-const SheetContent = React.forwardRef<SheetContentElement, SheetContentProps>(
+const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
   ({ children, side = 'right', className, ...props }, forwardedRef) => (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
@@ -113,12 +120,9 @@ SheetContent.displayName = SheetPrimitive.Content.displayName;
  * Component: SheetHeader
  * -------------------------------------------------------------------------- */
 
-type SheetHeaderProps = React.HTMLAttributes<HTMLDivElement>;
+type SheetHeaderProps = HTMLAttributes<HTMLDivElement>;
 
-function SheetHeader({
-  className,
-  ...props
-}: SheetHeaderProps): React.JSX.Element {
+function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
       className={cn(
@@ -134,12 +138,9 @@ function SheetHeader({
  * Component: SheetBody
  * -------------------------------------------------------------------------- */
 
-type SheetBodyProps = React.HTMLAttributes<HTMLDivElement>;
+type SheetBodyProps = HTMLAttributes<HTMLDivElement>;
 
-function SheetBody({
-  className,
-  ...props
-}: SheetHeaderProps): React.JSX.Element {
+function SheetBody({ className, ...props }: SheetHeaderProps): JSX.Element {
   return <main className={cn('px-6 py-2', className)} {...props} />;
 }
 
@@ -147,12 +148,9 @@ function SheetBody({
  * Component: SheetFooter
  * -------------------------------------------------------------------------- */
 
-type SheetFooterProps = React.HTMLAttributes<HTMLDivElement>;
+type SheetFooterProps = HTMLAttributes<HTMLDivElement>;
 
-function SheetFooter({
-  className,
-  ...props
-}: SheetFooterProps): React.JSX.Element {
+function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
       className={cn(
@@ -170,12 +168,10 @@ SheetFooter.displayName = 'SheetFooter';
  * Component: SheetTitle
  * -------------------------------------------------------------------------- */
 
-type SheetTitleElement = React.ComponentRef<typeof SheetPrimitive.Title>;
-type SheetTitleProps = React.ComponentPropsWithoutRef<
-  typeof SheetPrimitive.Title
->;
+type SheetTitleElement = ComponentRef<typeof SheetPrimitive.Title>;
+type SheetTitleProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Title>;
 
-const SheetTitle = React.forwardRef<SheetTitleElement, SheetTitleProps>(
+const SheetTitle = forwardRef<SheetTitleElement, SheetTitleProps>(
   ({ className, ...props }, forwardedRef) => (
     <SheetPrimitive.Title
       ref={forwardedRef}
@@ -191,14 +187,12 @@ SheetTitle.displayName = SheetPrimitive.Title.displayName;
  * Component: SheetDescription
  * -------------------------------------------------------------------------- */
 
-type SheetDescriptionElement = React.ComponentRef<
-  typeof SheetPrimitive.Description
->;
-type SheetDescriptionProps = React.ComponentPropsWithoutRef<
+type SheetDescriptionElement = ComponentRef<typeof SheetPrimitive.Description>;
+type SheetDescriptionProps = ComponentPropsWithoutRef<
   typeof SheetPrimitive.Description
 >;
 
-const SheetDescription = React.forwardRef<
+const SheetDescription = forwardRef<
   SheetDescriptionElement,
   SheetDescriptionProps
 >(({ className, ...props }, forwardedRef) => (
@@ -215,15 +209,15 @@ SheetDescription.displayName = SheetPrimitive.Description.displayName;
  * Component: SheetClose
  * -------------------------------------------------------------------------- */
 
-type SheetCloseElement = React.ComponentRef<typeof SheetPrimitive.Close>;
+type SheetCloseElement = ComponentRef<typeof SheetPrimitive.Close>;
 
 interface SheetCloseProps
-  extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close> {
+  extends ComponentPropsWithoutRef<typeof SheetPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }
 
-const SheetClose = React.forwardRef<SheetCloseElement, SheetCloseProps>(
+const SheetClose = forwardRef<SheetCloseElement, SheetCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
     <SheetPrimitive.Close
       ref={forwardedRef}

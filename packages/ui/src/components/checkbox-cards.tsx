@@ -1,29 +1,30 @@
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCards
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsElement = React.ComponentRef<
-  typeof CheckboxGroupPrimitive.Root
->;
-type CheckboxCardsProps = React.ComponentPropsWithoutRef<
+type CheckboxCardsElement = ComponentRef<typeof CheckboxGroupPrimitive.Root>;
+type CheckboxCardsProps = ComponentPropsWithoutRef<
   typeof CheckboxGroupPrimitive.Root
 >;
 
-const CheckboxCards = React.forwardRef<
-  CheckboxCardsElement,
-  CheckboxCardsProps
->(({ className, ...props }, forwardedRef) => (
-  <CheckboxGroupPrimitive.Root
-    className={cn('grid gap-2', className)}
-    {...props}
-    ref={forwardedRef}
-  />
-));
+const CheckboxCards = forwardRef<CheckboxCardsElement, CheckboxCardsProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <CheckboxGroupPrimitive.Root
+      className={cn('grid gap-2', className)}
+      {...props}
+      ref={forwardedRef}
+    />
+  ),
+);
 
 CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
 
@@ -31,16 +32,16 @@ CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
  * Component: CheckboxCardsItem
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsItemElement = React.ComponentRef<
+type CheckboxCardsItemElement = ComponentRef<
   typeof CheckboxGroupPrimitive.Item
 >;
 
 interface CheckboxCardsItemProps
-  extends React.ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
+  extends ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
   checkboxClassName?: string;
 }
 
-const CheckboxCardsItem = React.forwardRef<
+const CheckboxCardsItem = forwardRef<
   CheckboxCardsItemElement,
   CheckboxCardsItemProps
 >(({ children, className, checkboxClassName, ...props }, forwardedRef) => (

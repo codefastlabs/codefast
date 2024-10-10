@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Em
@@ -7,11 +7,11 @@ import * as React from 'react';
 
 type EmElement = HTMLElement;
 
-interface EmProps extends React.HTMLAttributes<HTMLElement> {
+interface EmProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Em = React.forwardRef<EmElement, EmProps>(
+const Em = forwardRef<EmElement, EmProps>(
   ({ asChild, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'em';
 

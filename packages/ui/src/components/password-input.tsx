@@ -2,7 +2,15 @@
 
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+  type MouseEventHandler,
+  useCallback,
+  useState,
+} from 'react';
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
 import {
@@ -20,19 +28,16 @@ const { root, input } = inputVariants();
  * Component: PasswordInput
  * -------------------------------------------------------------------------- */
 
-type PasswordInputElement = React.ComponentRef<typeof InputPrimitive.Item>;
+type PasswordInputElement = ComponentRef<typeof InputPrimitive.Item>;
 interface PasswordInputProps
   extends InputVariantsProps,
-    React.ComponentProps<typeof InputPrimitive.Root>,
+    ComponentProps<typeof InputPrimitive.Root>,
     Omit<
-      React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
+      ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
       'prefix' | 'type'
     > {}
 
-const PasswordInput = React.forwardRef<
-  PasswordInputElement,
-  PasswordInputProps
->(
+const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
   (
     {
       className,
@@ -46,10 +51,10 @@ const PasswordInput = React.forwardRef<
     },
     forwardedRef,
   ) => {
-    const [type, setType] = React.useState<'password' | 'text'>('password');
+    const [type, setType] = useState<'password' | 'text'>('password');
 
-    const togglePasswordVisibility = React.useCallback<
-      React.MouseEventHandler<HTMLButtonElement>
+    const togglePasswordVisibility = useCallback<
+      MouseEventHandler<HTMLButtonElement>
     >(() => {
       setType((prev) => (prev === 'password' ? 'text' : 'password'));
     }, []);

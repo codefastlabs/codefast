@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { type HTMLAttributes, type JSX, type ReactNode } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 /* -----------------------------------------------------------------------------
@@ -50,10 +50,10 @@ type BadgeVariantsProps = VariantProps<typeof badgeVariants>;
  * -------------------------------------------------------------------------- */
 
 interface BadgeProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefix'>,
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'prefix'>,
     BadgeVariantsProps {
-  prefix?: React.ReactNode;
-  suffix?: React.ReactNode;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
 }
 
 function Badge({
@@ -64,7 +64,7 @@ function Badge({
   suffix,
   children,
   ...props
-}: BadgeProps): React.JSX.Element {
+}: BadgeProps): JSX.Element {
   return (
     <div className={badgeVariants({ variant, className, size })} {...props}>
       {prefix}

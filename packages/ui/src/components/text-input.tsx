@@ -1,5 +1,10 @@
 import * as InputPrimitive from '@codefast-ui/input';
-import * as React from 'react';
+import {
+  type ComponentProps,
+  type ComponentPropsWithoutRef,
+  type ComponentRef,
+  forwardRef,
+} from 'react';
 import { Spinner } from '@/components/spinner';
 import {
   inputVariants,
@@ -16,12 +21,12 @@ const { root, input } = inputVariants();
  * Component: TextInput
  * -------------------------------------------------------------------------- */
 
-type TextInputElement = React.ComponentRef<typeof InputPrimitive.Item>;
+type TextInputElement = ComponentRef<typeof InputPrimitive.Item>;
 interface TextInputProps
   extends InputVariantsProps,
-    React.ComponentProps<typeof InputPrimitive.Root>,
+    ComponentProps<typeof InputPrimitive.Root>,
     Omit<
-      React.ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
+      ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
       'prefix' | 'type'
     > {
   type?:
@@ -40,7 +45,7 @@ interface TextInputProps
     | 'search';
 }
 
-const TextInput = React.forwardRef<TextInputElement, TextInputProps>(
+const TextInput = forwardRef<TextInputElement, TextInputProps>(
   (
     {
       className,

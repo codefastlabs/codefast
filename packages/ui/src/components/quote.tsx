@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
+import { forwardRef, type QuoteHTMLAttributes } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Quote
@@ -7,11 +7,11 @@ import * as React from 'react';
 
 type QuoteElement = HTMLQuoteElement;
 
-interface QuoteProps extends React.QuoteHTMLAttributes<HTMLQuoteElement> {
+interface QuoteProps extends QuoteHTMLAttributes<HTMLQuoteElement> {
   asChild?: boolean;
 }
 
-const Quote = React.forwardRef<QuoteElement, QuoteProps>(
+const Quote = forwardRef<QuoteElement, QuoteProps>(
   ({ asChild, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'q';
 
