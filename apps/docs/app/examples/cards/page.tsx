@@ -1,7 +1,7 @@
 import { cn } from '@codefast/ui';
+import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type HTMLAttributes, type JSX } from 'react';
-import { type Metadata } from 'next';
 import { CookieSettings } from '@/app/examples/cards/_components/cookie-settings';
 import { CreateAccount } from '@/app/examples/cards/_components/create-account';
 import { DatePicker } from '@/app/examples/cards/_components/date-picker';

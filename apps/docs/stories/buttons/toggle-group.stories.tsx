@@ -1,9 +1,8 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { ApertureIcon, ExpandIcon, PackageCheckIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const meta = {
   argTypes: {

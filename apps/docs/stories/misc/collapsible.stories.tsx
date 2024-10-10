@@ -4,9 +4,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@codefast/ui';
-import { useState } from 'react';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
 const meta = {
   component: Collapsible,

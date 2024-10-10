@@ -12,8 +12,8 @@ import {
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import { type HTMLAttributes, type JSX } from 'react';
-import { playlists } from '@/app/examples/music/_data/playlists';
 import { type Album } from '@/app/examples/music/_data/albums';
+import { playlists } from '@/app/examples/music/_data/playlists';
 
 interface AlbumArtworkProps extends HTMLAttributes<HTMLDivElement> {
   album: Album;

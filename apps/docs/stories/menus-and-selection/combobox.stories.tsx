@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@codefast/hooks';
 import {
   Badge,
   Button,
@@ -38,7 +39,8 @@ import {
   toast,
   Toaster,
 } from '@codefast/ui';
-import { type JSX, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   ArrowUpCircleIcon,
   CalendarIcon,
@@ -54,11 +56,9 @@ import {
   UserIcon,
   XCircleIcon,
 } from 'lucide-react';
+import { type JSX, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMediaQuery } from '@codefast/hooks';
-import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],

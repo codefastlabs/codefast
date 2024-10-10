@@ -2,8 +2,8 @@
 
 import { Badge, Checkbox, DataTableColumnHeader } from '@codefast/ui';
 import { type ColumnDef } from '@tanstack/react-table';
-import { labels, priorities, statuses } from '@/app/examples/tasks/_data/data';
 import { DataTableRowActions } from '@/app/examples/tasks/_components/data-table-row-actions';
+import { labels, priorities, statuses } from '@/app/examples/tasks/_data/data';
 import { type Task } from '@/app/examples/tasks/_data/schema';
 
 export const columns: ColumnDef<Task>[] = [

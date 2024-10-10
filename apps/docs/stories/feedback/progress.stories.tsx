@@ -1,6 +1,6 @@
 import { Progress } from '@codefast/ui';
-import { useEffect, useState } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useEffect, useState } from 'react';
 
 const meta = {
   component: Progress,

@@ -8,9 +8,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@codefast/ui';
-import { useEffect, useRef, useState } from 'react';
-import Autoplay from 'embla-carousel-autoplay';
 import { type Meta, type StoryObj } from '@storybook/react';
+import Autoplay from 'embla-carousel-autoplay';
+import { useEffect, useRef, useState } from 'react';
 
 const meta = {
   component: Carousel,

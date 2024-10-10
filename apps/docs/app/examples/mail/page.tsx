@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import Image from 'next/image';
 import { type JSX } from 'react';
-import { accounts, mails } from '@/app/examples/mail/_data/data';
 import { Mail } from '@/app/examples/mail/_components/mail';
+import { accounts, mails } from '@/app/examples/mail/_data/data';
 
 export default async function MailPage(): Promise<JSX.Element> {
   const cookieStore = await cookies();

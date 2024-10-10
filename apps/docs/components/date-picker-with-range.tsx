@@ -9,9 +9,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@codefast/ui';
+import { CalendarIcon } from '@radix-ui/react-icons';
 import { addDays, format } from 'date-fns';
 import { type HTMLAttributes, type JSX, useState } from 'react';
-import { CalendarIcon } from '@radix-ui/react-icons';
 
 export function DatePickerWithRange({
   className,

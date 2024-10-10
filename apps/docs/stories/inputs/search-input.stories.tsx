@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { SearchInput } from '@codefast/ui';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { NotebookIcon, SearchIcon } from 'lucide-react';
+import React, { useState } from 'react';
 
 const meta: Meta<typeof SearchInput> = {
   argTypes: {

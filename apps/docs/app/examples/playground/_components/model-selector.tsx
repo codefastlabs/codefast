@@ -1,5 +1,6 @@
 'use client';
 
+import { useMutationObserver } from '@codefast/hooks';
 import {
   Button,
   cn,
@@ -20,7 +21,6 @@ import {
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { type JSX, useRef, useState } from 'react';
-import { useMutationObserver } from '@codefast/hooks';
 import {
   type Model,
   type ModelType,

@@ -15,9 +15,9 @@ import {
   TooltipTrigger,
 } from '@codefast/ui';
 import { CounterClockwiseClockIcon } from '@radix-ui/react-icons';
+import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX } from 'react';
-import { type Metadata } from 'next';
 import { CodeViewer } from '@/app/examples/playground/_components/code-viewer';
 import { MaxLengthSelector } from '@/app/examples/playground/_components/maxlength-selector';
 import { ModelSelector } from '@/app/examples/playground/_components/model-selector';

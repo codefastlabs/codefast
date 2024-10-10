@@ -23,9 +23,9 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { type JSX } from 'react';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { type JSX } from 'react';
 
 const profileFormValues = z.object({
   username: z

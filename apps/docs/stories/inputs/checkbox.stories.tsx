@@ -15,12 +15,12 @@ import {
   toast,
   Toaster,
 } from '@codefast/ui';
-import { type SubmitHandler, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { type Meta, type StoryObj } from '@storybook/react';
 import Link from 'next/link';
 import { useId } from 'react';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const meta = {
   component: Checkbox,

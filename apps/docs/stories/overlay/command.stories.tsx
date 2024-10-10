@@ -11,6 +11,7 @@ import {
   Kbd,
   Text,
 } from '@codefast/ui';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   CalculatorIcon,
   CalendarIcon,
@@ -20,7 +21,6 @@ import {
   UserIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Command,

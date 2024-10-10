@@ -2,8 +2,8 @@
 
 import { wait } from 'next/dist/lib/wait';
 import {
-  accountFormValues,
   type AccountFormValues,
+  accountFormValues,
 } from '@/app/examples/forms/account/_lib/schema/account-schema';
 import {
   type FieldValidationErrors,

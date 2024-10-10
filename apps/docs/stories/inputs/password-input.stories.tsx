@@ -1,4 +1,3 @@
-import { type Meta, type StoryObj } from '@storybook/react';
 import {
   Button,
   Code,
@@ -15,17 +14,18 @@ import {
   toast,
   Toaster,
 } from '@codefast/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   LoaderCircleIcon,
   LockKeyholeIcon,
   LockKeyholeOpenIcon,
   MailIcon,
 } from 'lucide-react';
+import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { wait } from 'next/dist/lib/wait';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 const meta = {
   title: 'Components/Inputs/Password Input',
