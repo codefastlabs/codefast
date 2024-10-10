@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.35
+
+### Patch Changes
+
+- Update form layout for better spacing consistency
+
 ## 0.1.34
 
 ### Patch Changes
