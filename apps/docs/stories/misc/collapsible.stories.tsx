@@ -33,7 +33,7 @@ export const Default: Story = {
         onOpenChange={setIsOpen}
         {...args}
       >
-        <div className="flex items-center justify-between space-x-4 px-3">
+        <div className="flex items-center justify-between gap-x-4 px-3">
           <h4 className="text-sm font-semibold">
             @peduarte starred 3 repositories
           </h4>

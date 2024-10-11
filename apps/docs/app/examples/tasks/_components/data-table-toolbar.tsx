@@ -15,10 +15,10 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+    <div className="flex items-center justify-between gap-x-4">
+      <div className="flex max-w-screen-sm flex-1 items-center space-x-2">
         <TextInput
-          className="h-8 w-[150px] lg:w-64"
+          className="h-8 lg:w-64"
           placeholder="Filter tasks..."
           value={String(table.getColumn('title')?.getFilterValue() ?? '')}
           onChange={(event) =>
