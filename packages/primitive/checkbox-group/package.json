@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/checkbox-group",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -28,7 +28,7 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "source": "./src/index.ts",
-  "types": "./dist/index.d.cts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],

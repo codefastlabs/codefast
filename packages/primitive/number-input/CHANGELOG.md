@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.36
+
+### Patch Changes
+
+- fix: update dependencies and lock file for compatibility
+- Updated dependencies
+  - @codefast-ui/input@0.1.36
+
 ## 0.1.35
 
 ### Patch Changes
