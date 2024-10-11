@@ -47,7 +47,7 @@ const CheckboxGroupItem = forwardRef<
     ref={forwardedRef}
     className={cn(
       [
-        'border-input peer flex size-4 shrink-0 rounded-sm border shadow-sm',
+        'border-input peer flex size-4 shrink-0 rounded border shadow-sm',
         'hover:border-primary',
         'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
         'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
