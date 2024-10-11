@@ -7,15 +7,15 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 const badgeVariants = tv({
   base: [
-    'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 font-medium',
+    'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 text-sm font-medium',
     '[&>svg]:shrink-0',
   ],
   compoundVariants: [
-    { className: 'w-8', icon: true, size: 'xs' },
-    { className: 'w-9', icon: true, size: 'sm' },
-    { className: 'w-10', icon: true, size: 'md' },
-    { className: 'w-11', icon: true, size: 'lg' },
-    { className: 'w-12', icon: true, size: 'xl' },
+    { className: 'w-8', icon: true, size: 'sm' },
+    { className: 'w-9', icon: true, size: 'md' },
+    { className: 'w-10', icon: true, size: 'lg' },
+    { className: 'w-11', icon: true, size: 'xl' },
+    { className: 'w-12', icon: true, size: '2xl' },
   ],
   defaultVariants: {
     icon: false,
@@ -25,11 +25,11 @@ const badgeVariants = tv({
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
-      xs: ['h-5', '[&>svg]:size-3', 'text-xs'], // 20px
-      sm: ['h-6', '[&>svg]:size-3', 'text-xs'], // 24px
-      md: ['h-7', '[&>svg]:size-4', 'text-sm'], // 28px
-      lg: ['h-8', '[&>svg]:size-4', 'text-sm'], // 32px
-      xl: ['h-9', '[&>svg]:size-4', 'text-sm'], // 36px
+      sm: 'h-5 [&>svg]:size-3', // 20px
+      md: 'h-6 [&>svg]:size-3', // 24px
+      lg: 'h-7 [&>svg]:size-4', // 28px
+      xl: 'h-8 [&>svg]:size-5', // 32px
+      '2xl': 'h-9 [&>svg]:size-5', // 36px
     },
     variant: {
       default: 'bg-primary text-primary-foreground',
