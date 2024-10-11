@@ -47,7 +47,7 @@ const CheckboxCardsItem = forwardRef<
 >(({ children, className, checkboxClassName, ...props }, forwardedRef) => (
   <label
     className={cn(
-      'flex items-center justify-center gap-4 rounded-md border p-4',
+      'group flex items-center justify-center gap-4 rounded-md border p-4',
       className,
     )}
   >
@@ -55,7 +55,8 @@ const CheckboxCardsItem = forwardRef<
     <CheckboxGroupPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'border-input peer flex size-4 shrink-0 cursor-pointer rounded-sm border shadow-sm',
+        'border-input peer flex size-4 shrink-0 cursor-pointer rounded border shadow-sm',
+        'group-hover:border-primary',
         'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
         'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
         'disabled:cursor-default disabled:opacity-50',
