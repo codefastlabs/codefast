@@ -7,8 +7,8 @@ export default function ExamplesLayout({
 }: Readonly<{ children: ReactNode }>): JSX.Element {
   return (
     <TooltipProvider delayDuration={0}>
-      <section className="divide-y">
-        <div className="px-4 py-2">
+      <section>
+        <div className="border-b px-4 py-2">
           <ExamplesNavigation />
         </div>
 
