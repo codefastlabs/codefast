@@ -96,7 +96,7 @@ const meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ToggleGroup>;
 
 export const Default: Story = {
   render: (args) => (
