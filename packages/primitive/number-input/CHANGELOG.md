@@ -1,5 +1,15 @@
 # @codefast-ui/number-input
 
+## 0.1.38
+
+### Patch Changes
+
+- feat(config): enforce no-unused rules in TypeScript config
+- feat(ui): add Chart components and Storybook examples
+
+- Updated dependencies
+  - @codefast-ui/input@0.1.38
+
 ## 0.1.37
 
 ### Patch Changes
