@@ -14,6 +14,7 @@ import {
   CommandList,
   CommandSeparator,
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -161,7 +162,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
             Add a new team to manage products and customers.
           </DialogDescription>
         </DialogHeader>
-        <div>
+        <DialogBody>
           <div className="space-y-4 py-2 pb-4">
             <div className="space-y-2">
               <Label htmlFor="name">Team name</Label>
@@ -190,7 +191,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
               </Select>
             </div>
           </div>
-        </div>
+        </DialogBody>
         <DialogFooter>
           <Button
             variant="outline"
