@@ -1,5 +1,16 @@
 # @codefast/ui
 
+## 0.1.37
+
+### Patch Changes
+
+- refactor: update styles and simplify DataTableColumnHeader
+- refactor: update checkbox border styles for consistency
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.37
+  - @codefast-ui/input@0.1.37
+  - @codefast-ui/number-input@0.1.37
+
 ## 0.1.36
 
 ### Patch Changes
