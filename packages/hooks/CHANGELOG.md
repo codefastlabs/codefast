@@ -1,5 +1,12 @@
 # @codefast/hooks
 
+## 0.1.38
+
+### Patch Changes
+
+- feat(config): enforce no-unused rules in TypeScript config
+- feat(ui): add Chart components and Storybook examples
+
 ## 0.1.37
 
 ### Patch Changes
