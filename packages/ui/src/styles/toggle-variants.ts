@@ -3,7 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 const toggleVariants = tv({
   base: [
     'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
-    '[&>svg]:size-4 [&>svg]:shrink-0',
+    '[&>svg]:shrink-0',
     'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
     'disabled:pointer-events-none disabled:opacity-50',
   ],
@@ -27,12 +27,12 @@ const toggleVariants = tv({
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
-      xxs: 'h-7', // 28px
-      xs: 'h-8', // 32px
-      sm: 'h-9', // 36px
-      md: 'h-10', // 40px
-      lg: 'h-11', // 44px
-      xl: 'h-12', // 48px
+      xxs: 'h-7 [&>svg]:size-3', // 28px
+      xs: 'h-8 [&>svg]:size-3.5', // 32px
+      sm: 'h-9 [&>svg]:size-4', // 36px
+      md: 'h-10 [&>svg]:size-4', // 40px
+      lg: 'h-11 [&>svg]:size-5', // 44px
+      xl: 'h-12 [&>svg]:size-5', // 48px
     },
     variant: {
       default: [

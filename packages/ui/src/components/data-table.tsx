@@ -191,8 +191,7 @@ function DataTablePagination<TData>({
  * Component: DataTableColumnHeader
  * -------------------------------------------------------------------------- */
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends HTMLAttributes<HTMLDivElement> {
+interface DataTableColumnHeaderProps<TData, TValue> {
   column: ReactTable.Column<TData, TValue>;
   title: string;
 }
@@ -200,55 +199,57 @@ interface DataTableColumnHeaderProps<TData, TValue>
 function DataTableColumnHeader<TData, TValue>({
   column,
   title,
-  ...props
 }: DataTableColumnHeaderProps<TData, TValue>): JSX.Element {
   if (!column.getCanSort()) {
-    return <div {...props}>{title}</div>;
+    return <>{title}</>;
   }
 
   return (
-    <div {...props}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            className="data-[state=open]:text-accent-foreground -mx-4 hover:bg-transparent"
-            size="xs"
-            suffix={<SortIcon sorted={column.getIsSorted()} />}
-            variant="ghost"
-          >
-            {title}
-          </Button>
-        </DropdownMenuTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          className={cn(
+            'text-muted-foreground p-0',
+            'hover:bg-transparent',
+            'data-[state=open]:text-accent-foreground',
+            'focus-visible:text-accent-foreground focus-visible:bg-transparent focus-visible:outline-0',
+          )}
+          size="xs"
+          suffix={<SortIcon sorted={column.getIsSorted()} />}
+          variant="ghost"
+        >
+          {title}
+        </Button>
+      </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="start">
-          <DropdownMenuItem
-            onClick={() => {
-              column.toggleSorting(false);
-            }}
-          >
-            <ChevronUpIcon className="text-muted-foreground" />
-            Asc
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              column.toggleSorting(true);
-            }}
-          >
-            <ChevronDownIcon className="text-muted-foreground" />
-            Desc
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              column.toggleVisibility(false);
-            }}
-          >
-            <EyeNoneIcon className="text-muted-foreground" />
-            Hide
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem
+          onClick={() => {
+            column.toggleSorting(false);
+          }}
+        >
+          <ChevronUpIcon className="text-muted-foreground" />
+          Asc
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            column.toggleSorting(true);
+          }}
+        >
+          <ChevronDownIcon className="text-muted-foreground" />
+          Desc
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => {
+            column.toggleVisibility(false);
+          }}
+        >
+          <EyeNoneIcon className="text-muted-foreground" />
+          Hide
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

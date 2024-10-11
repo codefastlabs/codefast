@@ -3,7 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 const buttonVariants = tv({
   base: [
     'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
-    '[&>svg]:size-4 [&>svg]:shrink-0',
+    '[&>svg]:shrink-0',
     'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
     'disabled:pointer-events-none disabled:opacity-50',
   ],
@@ -15,9 +15,6 @@ const buttonVariants = tv({
     { className: 'w-10', icon: true, size: 'md' },
     { className: 'w-11', icon: true, size: 'lg' },
     { className: 'w-12', icon: true, size: 'xl' },
-    // --
-    { className: '[&>svg]:size-3', size: 'xxs' },
-    { className: '[&>svg]:size-3.5', size: 'xs' },
     // --
     { className: 'h-6', inside: true, size: 'xxs' },
     { className: 'h-6', inside: true, size: 'xs' },
@@ -43,12 +40,12 @@ const buttonVariants = tv({
     icon: { false: '', true: 'px-0' },
     inside: { false: '', true: '' },
     size: {
-      xxs: 'h-7', // 28px
-      xs: 'h-8', // 32px
-      sm: 'h-9', // 36px
-      md: 'h-10', // 40px
-      lg: 'h-11', // 44px
-      xl: 'h-12', // 48px
+      xxs: 'h-7 [&>svg]:size-3', // 28px
+      xs: 'h-8 [&>svg]:size-3.5', // 32px
+      sm: 'h-9 [&>svg]:size-4', // 36px
+      md: 'h-10 [&>svg]:size-4', // 40px
+      lg: 'h-11 [&>svg]:size-5', // 44px
+      xl: 'h-12 [&>svg]:size-5', // 48px
     },
     variant: {
       default: [
@@ -82,12 +79,12 @@ const buttonVariants = tv({
         'focus-visible:bg-destructive/80',
       ],
       outline: [
-        'bg-background text-foreground border-input border shadow-sm',
+        'text-foreground border-input border shadow-sm',
         'hover:bg-accent hover:text-accent-foreground',
         'focus-visible:bg-accent focus-visible:text-accent-foreground',
       ],
       ghost: [
-        'text-foreground bg-background',
+        'text-foreground',
         'hover:bg-accent hover:text-accent-foreground',
         'focus-visible:bg-accent focus-visible:text-accent-foreground',
       ],
