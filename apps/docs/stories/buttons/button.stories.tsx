@@ -218,10 +218,10 @@ export const Controlled: Story = {
     return (
       <div className="space-y-4">
         <Button
+          {...args}
           onClick={() => {
             setCount(count + 1);
           }}
-          {...args}
         >
           Click Me
         </Button>
