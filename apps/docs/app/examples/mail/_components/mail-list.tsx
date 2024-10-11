@@ -58,11 +58,7 @@ export function MailList({ items }: MailListProps): JSX.Element {
             {item.labels.length ? (
               <div className="flex items-center gap-2">
                 {item.labels.map((label) => (
-                  <Badge
-                    key={label}
-                    size="xs"
-                    variant={getBadgeVariantFromLabel(label)}
-                  >
+                  <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
                     {label}
                   </Badge>
                 ))}

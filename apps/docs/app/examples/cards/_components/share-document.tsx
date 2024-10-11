@@ -38,7 +38,7 @@ export function ShareDocument(): JSX.Element {
         <div className="space-y-4">
           <h4 className="text-sm font-medium">People with access</h4>
           <div className="grid gap-6">
-            <div className="flex items-center justify-between space-x-4">
+            <div className="flex items-center justify-between gap-x-4">
               <div className="flex items-center space-x-4">
                 <Avatar>
                   <AvatarImage src="/avatars/03.png" />
@@ -61,7 +61,7 @@ export function ShareDocument(): JSX.Element {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between space-x-4">
+            <div className="flex items-center justify-between gap-x-4">
               <div className="flex items-center space-x-4">
                 <Avatar>
                   <AvatarImage src="/avatars/05.png" />
@@ -84,7 +84,7 @@ export function ShareDocument(): JSX.Element {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between space-x-4">
+            <div className="flex items-center justify-between gap-x-4">
               <div className="flex items-center space-x-4">
                 <Avatar>
                   <AvatarImage src="/avatars/01.png" />
