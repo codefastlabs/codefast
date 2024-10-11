@@ -176,13 +176,14 @@
     |---------------------------------------------------------------------------
     | Used for accents such as hover effects and active state.
     --------------------------------------------------------------------------*/
-    --accent: var(--slate-200);
+    --accent: var(--slate-100);
     --accent-foreground: var(--slate-950);
 
     /*--------------------------------------------------------------------------
     | Muted Colors
     |---------------------------------------------------------------------------
-    | Used for muted states such as placeholder, description, separator.
+    | Used for muted states such as placeholder, description, separator,
+    | table header.
     --------------------------------------------------------------------------*/
     --muted: var(--slate-200);
     --muted-foreground: var(--slate-500);

@@ -32,9 +32,6 @@ export const Default: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-4">
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="xs">
-        xs badge
-      </Badge>
       <Badge {...args} prefix={<ShieldCheckIcon />} size="sm">
         sm badge
       </Badge>
@@ -47,9 +44,10 @@ export const Sizes: Story = {
       <Badge {...args} prefix={<ShieldCheckIcon />} size="xl">
         xl badge
       </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="xs" variant="outline">
-        xs badge
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="2xl">
+        2xl badge
       </Badge>
+
       <Badge {...args} prefix={<ShieldCheckIcon />} size="sm" variant="outline">
         sm badge
       </Badge>
@@ -61,6 +59,14 @@ export const Sizes: Story = {
       </Badge>
       <Badge {...args} prefix={<ShieldCheckIcon />} size="xl" variant="outline">
         xl badge
+      </Badge>
+      <Badge
+        {...args}
+        prefix={<ShieldCheckIcon />}
+        size="2xl"
+        variant="outline"
+      >
+        2xl badge
       </Badge>
     </div>
   ),
