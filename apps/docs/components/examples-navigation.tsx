@@ -13,40 +13,44 @@ const examples: {
     href: '/',
   },
   {
-    name: 'Mail',
-    href: '/examples/mail',
-  },
-  {
-    name: 'Dashboard',
-    href: '/examples/dashboard',
+    name: 'Authentication',
+    href: '/examples/authentication',
   },
   {
     name: 'Cards',
     href: '/examples/cards',
   },
   {
-    name: 'Tasks',
-    href: '/examples/tasks',
+    name: 'Charts',
+    href: '/examples/charts',
   },
   {
-    name: 'Playground',
-    href: '/examples/playground',
+    name: 'Dashboard',
+    href: '/examples/dashboard',
   },
   {
     name: 'Forms',
     href: '/examples/forms',
   },
   {
+    name: 'Mail',
+    href: '/examples/mail',
+  },
+  {
     name: 'Music',
     href: '/examples/music',
   },
   {
-    name: 'Authentication',
-    href: '/examples/authentication',
+    name: 'Playground',
+    href: '/examples/playground',
   },
   {
     name: 'Slideshow',
     href: '/examples/slideshow',
+  },
+  {
+    name: 'Tasks',
+    href: '/examples/tasks',
   },
 ];
 
