@@ -7,8 +7,6 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@codefast/ui';
-import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
@@ -29,7 +27,7 @@ const chartData = [
   { month: 'June', desktop: 214, mobile: 140 },
 ];
 
-const chartConfig = {
+const chartConfig: ChartConfig = {
   desktop: {
     label: 'Desktop',
     color: 'hsl(var(--chart-1))',
@@ -38,7 +36,7 @@ const chartConfig = {
     label: 'Mobile',
     color: 'hsl(var(--chart-2))',
   },
-} satisfies ChartConfig;
+};
 
 export function ChartAreaAxes(): JSX.Element {
   return (
@@ -63,7 +61,7 @@ export function ChartAreaAxes(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="month"
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value: string) => value.slice(0, 3)}
               tickLine={false}
               tickMargin={8}
             />
