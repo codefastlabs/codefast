@@ -27,7 +27,7 @@ const THEMES = {
 
 type Theme = keyof typeof THEMES;
 
-export type ChartConfig = {
+type ChartConfig = {
   [k in string]: {
     icon?: ComponentType;
     label?: ReactNode;
@@ -488,7 +488,8 @@ function getConfigLabelKey(
  *
  * @param theme - The theme to be used (for example, 'light', 'dark').
  * @param id - The unique identifier of the chart.
- * @param configEntries - A list of configuration entries, each containing a key and a chart configuration.
+ * @param configEntries - A list of configuration entries, each containing a
+ *   key and a chart configuration.
  * @returns The generated CSS as a string.
  */
 function generateThemeCSS(
@@ -514,10 +515,12 @@ function generateThemeCSS(
 }
 
 /**
- * Generates CSS styles for a chart based on the provided configuration and themes.
+ * Generates CSS styles for a chart based on the provided configuration and
+ * themes.
  *
  * @param id - The unique identifier for the chart element.
- * @param config - Configuration object for the chart. This includes theme and color settings.
+ * @param config - Configuration object for the chart. This includes theme and
+ *   color settings.
  * @returns A string containing the generated CSS rules.
  */
 function generateCSS(id: string, config: ChartConfig): string {
@@ -553,4 +556,5 @@ export {
   ChartTooltipContent,
   type ChartTooltipContentProps,
   type ChartTooltipProps,
+  type ChartConfig,
 };
