@@ -1,6 +1,6 @@
 import {
   Card,
-  CardContent,
+  CardBody,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -17,7 +17,7 @@ export function Notifications(): JSX.Element {
           Choose what you want to be notified about.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-1">
+      <CardBody className="grid gap-1">
         <div className="hover:bg-accent hover:text-accent-foreground -mx-2 flex items-start space-x-4 rounded-md p-2 transition-all">
           <BellIcon className="mt-px size-5" />
           <div className="space-y-1">
@@ -45,7 +45,7 @@ export function Notifications(): JSX.Element {
             </p>
           </div>
         </div>
-      </CardContent>
+      </CardBody>
     </Card>
   );
 }

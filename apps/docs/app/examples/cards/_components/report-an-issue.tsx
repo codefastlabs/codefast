@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  CardContent,
+  CardBody,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -26,7 +26,7 @@ export function ReportAnIssue(): JSX.Element {
           What area are you having problems with?
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6">
+      <CardBody className="grid gap-6">
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label htmlFor="area">Area</Label>
@@ -69,7 +69,7 @@ export function ReportAnIssue(): JSX.Element {
             placeholder="Please include all information relevant to your issue."
           />
         </div>
-      </CardContent>
+      </CardBody>
       <CardFooter className="justify-between space-x-2">
         <Button variant="ghost">Cancel</Button>
         <Button>Submit</Button>
