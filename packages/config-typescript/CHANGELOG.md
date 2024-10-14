@@ -1,5 +1,11 @@
 # @codefast/config-typescript
 
+## 0.1.39
+
+### Patch Changes
+
+- feat: improve chart component with new config options
+
 ## 0.1.38
 
 ### Patch Changes

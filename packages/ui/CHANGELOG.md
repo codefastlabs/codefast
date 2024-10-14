@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.39
+
+### Patch Changes
+
+- feat: improve chart component with new config options
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.39
+  - @codefast-ui/input@0.1.39
+  - @codefast-ui/number-input@0.1.39
+
 ## 0.1.38
 
 ### Patch Changes
