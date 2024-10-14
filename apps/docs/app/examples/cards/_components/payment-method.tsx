@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  CardContent,
+  CardBody,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -28,7 +28,7 @@ export function PaymentMethod(): JSX.Element {
           Add a new payment method to your account.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6">
+      <CardBody className="grid gap-6">
         <RadioGroup className="grid grid-cols-3 gap-4" defaultValue="card">
           <div>
             <RadioGroupItem className="peer sr-only" id="card" value="card" />
@@ -131,7 +131,7 @@ export function PaymentMethod(): JSX.Element {
             <TextInput id="cvc" placeholder="CVC" />
           </div>
         </div>
-      </CardContent>
+      </CardBody>
       <CardFooter>
         <Button className="w-full">Continue</Button>
       </CardFooter>

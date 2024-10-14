@@ -4,7 +4,7 @@ import {
   AvatarImage,
   Button,
   Card,
-  CardContent,
+  CardBody,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -30,7 +30,7 @@ export function TeamMembers(): JSX.Element {
           Invite your team members to collaborate.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6">
+      <CardBody className="grid gap-6">
         <div className="flex items-center justify-between gap-x-4">
           <div className="flex items-center space-x-4">
             <Avatar>
@@ -145,7 +145,7 @@ export function TeamMembers(): JSX.Element {
             </PopoverContent>
           </Popover>
         </div>
-      </CardContent>
+      </CardBody>
     </Card>
   );
 }

@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  CardContent,
+  CardBody,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -75,7 +75,7 @@ export function Github(): JSX.Element {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardBody>
         <div className="text-muted-foreground flex space-x-4 text-sm">
           <div className="flex items-center">
             <CircleIcon className="mr-1 size-3 fill-sky-400 text-sky-400" />
@@ -87,7 +87,7 @@ export function Github(): JSX.Element {
           </div>
           <div>Updated April 2023</div>
         </div>
-      </CardContent>
+      </CardBody>
     </Card>
   );
 }
