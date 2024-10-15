@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
@@ -7,7 +8,6 @@ import {
   forwardRef,
   type JSX,
 } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion
@@ -125,12 +125,12 @@ AccordionContent.displayName = AccordionPrimitive.Content.displayName;
 export {
   Accordion,
   AccordionContent,
-  type AccordionContentProps,
   AccordionIcon,
-  type AccordionIconProps,
   AccordionItem,
+  AccordionTrigger,
+  type AccordionContentProps,
+  type AccordionIconProps,
   type AccordionItemProps,
   type AccordionProps,
-  AccordionTrigger,
   type AccordionTriggerProps,
 };

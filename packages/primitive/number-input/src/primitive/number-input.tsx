@@ -697,16 +697,16 @@ function clamp(value: number, min = -Infinity, max = Infinity): number {
 
 export {
   createNumberInputScope,
-  NumberInput,
-  NumberInput as Root,
-  NumberInputDecrementButton,
   NumberInputDecrementButton as DecrementButton,
-  type NumberInputDecrementButtonProps,
-  NumberInputIncrementButton,
   NumberInputIncrementButton as IncrementButton,
-  type NumberInputIncrementButtonProps,
-  NumberInputItem,
   NumberInputItem as Item,
+  NumberInput,
+  NumberInputDecrementButton,
+  NumberInputIncrementButton,
+  NumberInputItem,
+  NumberInput as Root,
+  type NumberInputDecrementButtonProps,
+  type NumberInputIncrementButtonProps,
   type NumberInputItemProps,
   type NumberInputProps,
 };

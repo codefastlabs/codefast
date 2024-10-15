@@ -1,6 +1,6 @@
+import { AccountForm } from '@/app/examples/forms/account/_components/account-form';
 import { Separator } from '@codefast/ui';
 import { type JSX } from 'react';
-import { AccountForm } from '@/app/examples/forms/account/_components/account-form';
 
 export default function SettingsAccountPage(): JSX.Element {
   return (

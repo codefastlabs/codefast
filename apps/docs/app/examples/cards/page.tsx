@@ -1,7 +1,3 @@
-import { cn } from '@codefast/ui';
-import { type Metadata } from 'next';
-import Image from 'next/image';
-import { type HTMLAttributes, type JSX } from 'react';
 import { CookieSettings } from '@/app/examples/cards/_components/cookie-settings';
 import { CreateAccount } from '@/app/examples/cards/_components/create-account';
 import { DatePicker } from '@/app/examples/cards/_components/date-picker';
@@ -11,6 +7,10 @@ import { PaymentMethod } from '@/app/examples/cards/_components/payment-method';
 import { ReportAnIssue } from '@/app/examples/cards/_components/report-an-issue';
 import { ShareDocument } from '@/app/examples/cards/_components/share-document';
 import { TeamMembers } from '@/app/examples/cards/_components/team-members';
+import { cn } from '@codefast/ui';
+import { type Metadata } from 'next';
+import Image from 'next/image';
+import { type HTMLAttributes, type JSX } from 'react';
 
 export const metadata: Metadata = {
   title: 'Cards',

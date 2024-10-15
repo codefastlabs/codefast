@@ -1,3 +1,8 @@
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import {
   type ComponentProps,
@@ -7,11 +12,6 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog
@@ -236,22 +236,22 @@ AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 export {
   AlertDialog,
   AlertDialogAction,
-  type AlertDialogActionProps,
   AlertDialogBody,
-  type AlertDialogBodyProps,
   AlertDialogCancel,
-  type AlertDialogCancelProps,
   AlertDialogContent,
-  type AlertDialogContentProps,
   AlertDialogDescription,
-  type AlertDialogDescriptionProps,
   AlertDialogFooter,
-  type AlertDialogFooterProps,
   AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  type AlertDialogActionProps,
+  type AlertDialogBodyProps,
+  type AlertDialogCancelProps,
+  type AlertDialogContentProps,
+  type AlertDialogDescriptionProps,
+  type AlertDialogFooterProps,
   type AlertDialogHeaderProps,
   type AlertDialogProps,
-  AlertDialogTitle,
   type AlertDialogTitleProps,
-  AlertDialogTrigger,
   type AlertDialogTriggerProps,
 };

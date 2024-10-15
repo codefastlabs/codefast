@@ -243,13 +243,13 @@ CheckboxGroupIndicator.displayName = INDICATOR_NAME;
 
 export {
   CheckboxGroup,
-  CheckboxGroup as Root,
   CheckboxGroupIndicator,
-  CheckboxGroupIndicator as Indicator,
-  type CheckboxGroupIndicatorProps,
   CheckboxGroupItem,
+  createCheckboxGroupScope,
+  CheckboxGroupIndicator as Indicator,
   CheckboxGroupItem as Item,
+  CheckboxGroup as Root,
+  type CheckboxGroupIndicatorProps,
   type CheckboxGroupItemProps,
   type CheckboxGroupProps,
-  createCheckboxGroupScope,
 };

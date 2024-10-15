@@ -1,6 +1,6 @@
+import { cn } from '@/lib/utils';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { type CSSProperties, forwardRef, type HTMLAttributes } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Spinner

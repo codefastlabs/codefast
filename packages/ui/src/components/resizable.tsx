@@ -1,9 +1,9 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { DragHandleDots2Icon } from '@radix-ui/react-icons';
 import { type ComponentProps, type JSX } from 'react';
 import * as ResizablePrimitive from 'react-resizable-panels';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: ResizablePanelGroup

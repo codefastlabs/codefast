@@ -1,3 +1,7 @@
+import {
+  toggleVariants,
+  type ToggleVariantsProps,
+} from '@/styles/toggle-variants';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import {
   type ComponentPropsWithoutRef,
@@ -5,10 +9,6 @@ import {
   forwardRef,
   type ReactNode,
 } from 'react';
-import {
-  toggleVariants,
-  type ToggleVariantsProps,
-} from '@/styles/toggle-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Toggle

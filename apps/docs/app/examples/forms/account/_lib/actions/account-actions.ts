@@ -1,6 +1,5 @@
 'use server';
 
-import { wait } from 'next/dist/lib/wait';
 import {
   type AccountFormValues,
   accountFormValues,
@@ -9,6 +8,7 @@ import {
   type FieldValidationErrors,
   type ServerResponse,
 } from '@/lib/types/server-actions';
+import { wait } from 'next/dist/lib/wait';
 
 export async function updateAccount(
   data: AccountFormValues,

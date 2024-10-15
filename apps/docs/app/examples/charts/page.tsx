@@ -1,7 +1,7 @@
-import { type Metadata } from 'next';
-import { type JSX } from 'react';
 import { ChartAreaAxes } from '@/app/examples/charts/_components/chart-area-axes';
 import { ChartAreaDefault } from '@/app/examples/charts/_components/chart-area-default';
+import { type Metadata } from 'next';
+import { type JSX } from 'react';
 
 export const metadata: Metadata = {
   title: 'Charts',

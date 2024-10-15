@@ -1,3 +1,4 @@
+import { type EmailMessage } from '@/app/examples/mail/_data/data';
 import {
   Avatar,
   AvatarFallback,
@@ -31,7 +32,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import { type JSX } from 'react';
-import { type EmailMessage } from '@/app/examples/mail/_data/data';
 
 interface MailDisplayProps {
   mail: EmailMessage | null | undefined;

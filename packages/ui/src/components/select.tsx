@@ -1,3 +1,8 @@
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 import {
   CaretSortIcon,
   CheckIcon,
@@ -11,11 +16,6 @@ import {
   type ComponentRef,
   forwardRef,
 } from 'react';
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Select
@@ -266,22 +266,22 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 export {
   Select,
   SelectContent,
-  type SelectContentProps,
   SelectGroup,
-  type SelectGroupProps,
   SelectItem,
-  type SelectItemProps,
   SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  type SelectContentProps,
+  type SelectGroupProps,
+  type SelectItemProps,
   type SelectLabelProps,
   type SelectProps,
-  SelectScrollDownButton,
   type SelectScrollDownButtonProps,
-  SelectScrollUpButton,
   type SelectScrollUpButtonProps,
-  SelectSeparator,
   type SelectSeparatorProps,
-  SelectTrigger,
   type SelectTriggerProps,
-  SelectValue,
   type SelectValueProps,
 };

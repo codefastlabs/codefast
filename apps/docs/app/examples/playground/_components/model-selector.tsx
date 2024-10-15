@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  type Model,
+  type ModelType,
+} from '@/app/examples/playground/_data/models';
 import { useMutationObserver } from '@codefast/hooks';
 import {
   Button,
@@ -21,10 +25,6 @@ import {
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { type JSX, useRef, useState } from 'react';
-import {
-  type Model,
-  type ModelType,
-} from '@/app/examples/playground/_data/models';
 
 interface ModelSelectorProps extends PopoverProps {
   models: Model[];

@@ -1,3 +1,10 @@
+import { MainNav } from '@/app/examples/dashboard/_components/main-nav';
+import { Overview } from '@/app/examples/dashboard/_components/overview';
+import { RecentSales } from '@/app/examples/dashboard/_components/recent-sales';
+import { Search } from '@/app/examples/dashboard/_components/search';
+import { TeamSwitcher } from '@/app/examples/dashboard/_components/team-switcher';
+import { UserNav } from '@/app/examples/dashboard/_components/user-nav';
+import { DatePickerWithRange } from '@/components/date-picker-with-range';
 import {
   Button,
   Card,
@@ -13,13 +20,6 @@ import {
 import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX, Suspense } from 'react';
-import { MainNav } from '@/app/examples/dashboard/_components/main-nav';
-import { Overview } from '@/app/examples/dashboard/_components/overview';
-import { RecentSales } from '@/app/examples/dashboard/_components/recent-sales';
-import { Search } from '@/app/examples/dashboard/_components/search';
-import { TeamSwitcher } from '@/app/examples/dashboard/_components/team-switcher';
-import { UserNav } from '@/app/examples/dashboard/_components/user-nav';
-import { DatePickerWithRange } from '@/components/date-picker-with-range';
 
 export const metadata: Metadata = {
   title: 'Dashboard',

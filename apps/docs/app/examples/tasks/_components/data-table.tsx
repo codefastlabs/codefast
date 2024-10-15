@@ -1,5 +1,6 @@
 'use client';
 
+import { DataTableToolbar } from '@/app/examples/tasks/_components/data-table-toolbar';
 import {
   DataTablePagination,
   Table,
@@ -24,7 +25,6 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 import { type JSX, useState } from 'react';
-import { DataTableToolbar } from '@/app/examples/tasks/_components/data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

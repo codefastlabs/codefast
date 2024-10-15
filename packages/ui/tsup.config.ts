@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsup';
 import { addUseClientDirective } from '@/add-use-client-directive';
+import { defineConfig } from 'tsup';
 
 // Listen up, folks!
 // This is the ultimate library list—better than anything
