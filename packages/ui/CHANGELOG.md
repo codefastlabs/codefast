@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.41
+
+### Patch Changes
+
+- refactor: update imports for clarity and consistency
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.41
+  - @codefast-ui/input@0.1.41
+  - @codefast-ui/number-input@0.1.41
+
 ## 0.1.40
 
 ### Patch Changes
