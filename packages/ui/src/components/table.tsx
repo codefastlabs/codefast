@@ -1,10 +1,10 @@
+import { cn } from '@/lib/utils';
 import {
   forwardRef,
   type HTMLAttributes,
   type TdHTMLAttributes,
   type ThHTMLAttributes,
 } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Table
@@ -178,18 +178,18 @@ TableCaption.displayName = 'TableCaption';
 export {
   Table,
   TableBody,
-  type TableBodyProps,
   TableCaption,
-  type TableCaptionProps,
   TableCell,
-  type TableCellProps,
   TableFooter,
-  type TableFooterProps,
   TableHead,
   TableHeader,
+  TableRow,
+  type TableBodyProps,
+  type TableCaptionProps,
+  type TableCellProps,
+  type TableFooterProps,
   type TableHeaderProps,
   type TableHeadProps,
   type TableProps,
-  TableRow,
   type TableRowProps,
 };

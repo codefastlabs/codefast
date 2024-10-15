@@ -1,18 +1,5 @@
 'use client';
 
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-  EyeNoneIcon,
-  MixerHorizontalIcon,
-} from '@radix-ui/react-icons';
-import { type HTMLAttributes, type JSX } from 'react';
-import type * as ReactTable from '@tanstack/react-table';
 import { Button } from '@/components/button';
 import {
   DropdownMenu,
@@ -32,6 +19,19 @@ import {
 } from '@/components/select';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
+import {
+  CaretSortIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+  EyeNoneIcon,
+  MixerHorizontalIcon,
+} from '@radix-ui/react-icons';
+import type * as ReactTable from '@tanstack/react-table';
+import { type HTMLAttributes, type JSX } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions
@@ -278,9 +278,9 @@ function SortIcon({
 
 export {
   DataTableColumnHeader,
-  type DataTableColumnHeaderProps,
   DataTablePagination,
-  type DataTablePaginationProps,
   DataTableViewOptions,
+  type DataTableColumnHeaderProps,
+  type DataTablePaginationProps,
   type DataTableViewOptionsProps,
 };

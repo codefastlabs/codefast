@@ -1,3 +1,8 @@
+import { Spinner } from '@/components/spinner';
+import {
+  inputVariants,
+  type InputVariantsProps,
+} from '@/styles/input-variants';
 import * as InputPrimitive from '@codefast-ui/input';
 import {
   type ComponentProps,
@@ -5,11 +10,6 @@ import {
   type ComponentRef,
   forwardRef,
 } from 'react';
-import { Spinner } from '@/components/spinner';
-import {
-  inputVariants,
-  type InputVariantsProps,
-} from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

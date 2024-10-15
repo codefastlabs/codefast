@@ -1,6 +1,6 @@
+import { NotificationsForm } from '@/app/examples/forms/notifications/_components/notifications-form';
 import { Separator } from '@codefast/ui';
 import { type JSX } from 'react';
-import { NotificationsForm } from '@/app/examples/forms/notifications/_components/notifications-form';
 
 export default function SettingsNotificationsPage(): JSX.Element {
   return (

@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { DotFilledIcon } from '@radix-ui/react-icons';
 import {
   OTPInput,
@@ -15,7 +16,6 @@ import {
   type HTMLAttributes,
   useContext,
 } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp
@@ -125,13 +125,13 @@ InputOTPSeparator.displayName = 'InputOTPSeparator';
 export {
   InputOTP,
   InputOTPGroup,
-  type InputOTPGroupProps,
-  type InputOTPProps,
   InputOTPSeparator,
-  type InputOTPSeparatorProps,
   InputOTPSlot,
-  type InputOTPSlotProps,
   REGEXP_ONLY_CHARS,
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
+  type InputOTPGroupProps,
+  type InputOTPProps,
+  type InputOTPSeparatorProps,
+  type InputOTPSlotProps,
 };

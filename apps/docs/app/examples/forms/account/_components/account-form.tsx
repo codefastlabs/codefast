@@ -1,5 +1,10 @@
 'use client';
 
+import { updateAccount } from '@/app/examples/forms/account/_lib/actions/account-actions';
+import {
+  type AccountFormValues,
+  accountFormValues,
+} from '@/app/examples/forms/account/_lib/schema/account-schema';
 import {
   Button,
   Calendar,
@@ -29,11 +34,6 @@ import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { isNil } from 'lodash-es';
 import { type JSX } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { updateAccount } from '@/app/examples/forms/account/_lib/actions/account-actions';
-import {
-  type AccountFormValues,
-  accountFormValues,
-} from '@/app/examples/forms/account/_lib/schema/account-schema';
 
 const languages = [
   { label: 'English', value: 'en' },

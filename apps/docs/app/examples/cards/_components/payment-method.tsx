@@ -1,3 +1,4 @@
+import { Icons } from '@/components/icons';
 import {
   Button,
   Card,
@@ -17,7 +18,6 @@ import {
   TextInput,
 } from '@codefast/ui';
 import { type JSX } from 'react';
-import { Icons } from '@/components/icons';
 
 export function PaymentMethod(): JSX.Element {
   return (

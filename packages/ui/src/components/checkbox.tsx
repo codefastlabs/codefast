@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { CheckIcon } from '@radix-ui/react-icons';
 import {
@@ -5,7 +6,6 @@ import {
   type ComponentRef,
   forwardRef,
 } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Checkbox

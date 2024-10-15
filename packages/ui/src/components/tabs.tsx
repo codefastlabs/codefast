@@ -1,10 +1,10 @@
+import { cn } from '@/lib/utils';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import {
   type ComponentPropsWithoutRef,
   type ComponentRef,
   forwardRef,
 } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Tabs
@@ -90,10 +90,10 @@ TabsContent.displayName = TabsPrimitive.Content.displayName;
 export {
   Tabs,
   TabsContent,
-  type TabsContentProps,
   TabsList,
+  TabsTrigger,
+  type TabsContentProps,
   type TabsListProps,
   type TabsProps,
-  TabsTrigger,
   type TabsTriggerProps,
 };

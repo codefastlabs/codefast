@@ -1,5 +1,5 @@
-import { atom, useAtom } from 'jotai';
 import { type EmailMessage, mails } from '@/app/examples/mail/_data/data';
+import { atom, useAtom } from 'jotai';
 
 interface MailState {
   selected: EmailMessage['id'] | null;
