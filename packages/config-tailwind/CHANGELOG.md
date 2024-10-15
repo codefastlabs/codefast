@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.41
+
+### Patch Changes
+
+- refactor: update imports for clarity and consistency
+
 ## 0.1.40
 
 ### Patch Changes
