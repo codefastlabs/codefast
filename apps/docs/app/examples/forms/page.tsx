@@ -1,6 +1,6 @@
+import { ProfileForm } from '@/app/examples/forms/_components/profile-form';
 import { Separator } from '@codefast/ui';
 import { type JSX } from 'react';
-import { ProfileForm } from '@/app/examples/forms/_components/profile-form';
 
 export default function SettingsProfilePage(): JSX.Element {
   return (

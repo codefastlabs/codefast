@@ -1,5 +1,10 @@
 'use client';
 
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -9,11 +14,6 @@ import {
   type JSX,
 } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer
@@ -191,20 +191,20 @@ DrawerClose.displayName = DrawerPrimitive.Close.displayName;
 export {
   Drawer,
   DrawerBody,
-  type DrawerBodyProps,
   DrawerClose,
-  type DrawerCloseProps,
   DrawerContent,
-  type DrawerContentProps,
   DrawerDescription,
-  type DrawerDescriptionProps,
   DrawerFooter,
-  type DrawerFooterProps,
   DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  type DrawerBodyProps,
+  type DrawerCloseProps,
+  type DrawerContentProps,
+  type DrawerDescriptionProps,
+  type DrawerFooterProps,
   type DrawerHeaderProps,
   type DrawerProps,
-  DrawerTitle,
   type DrawerTitleProps,
-  DrawerTrigger,
   type DrawerTriggerProps,
 };

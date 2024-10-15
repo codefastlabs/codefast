@@ -22,26 +22,7 @@ module.exports = {
     'import/no-default-export': 'off',
 
     /** Enforces a specific order for import statements */
-    'import/order': [
-      'warn',
-      {
-        groups: [
-          'builtin', // Node.js built-in modules
-          'external', // Packages
-          'internal', // Aliased modules
-          'parent', // Relative parent
-          'sibling', // Relative sibling
-          'index', // Relative index
-        ],
-        'newlines-between': 'never',
-        pathGroups: [
-          {
-            pattern: '@/**',
-            group: 'internal',
-          },
-        ],
-      },
-    ],
+    'import/order': 'off',
 
     /** Prevents fallthrough in switch statements but allows empty cases */
     'no-fallthrough': [

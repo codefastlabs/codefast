@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import {
   type ComponentProps,
   type ComponentType,
@@ -18,7 +19,6 @@ import {
   type Payload,
   type ValueType,
 } from 'recharts/types/component/DefaultTooltipContent';
-import { cn } from '@/lib/utils';
 
 const THEMES = {
   light: '',
@@ -545,16 +545,16 @@ function generateCSS(id: string, config: ChartConfig): string {
 
 export {
   ChartContainer,
-  type ChartContainerProps,
   ChartLegend,
   ChartLegendContent,
-  type ChartLegendContentProps,
-  type ChartLegendProps,
   ChartStyle,
-  type ChartStyleProps,
   ChartTooltip,
   ChartTooltipContent,
+  type ChartConfig,
+  type ChartContainerProps,
+  type ChartLegendContentProps,
+  type ChartLegendProps,
+  type ChartStyleProps,
   type ChartTooltipContentProps,
   type ChartTooltipProps,
-  type ChartConfig,
 };

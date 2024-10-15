@@ -1,5 +1,8 @@
 'use client';
 
+import { Button } from '@/components/button';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/styles/button-variants';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -19,9 +22,6 @@ import {
   SelectionState,
   UI,
 } from 'react-day-picker';
-import { Button } from '@/components/button';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -224,9 +224,9 @@ function CalendarLabel({
 export {
   Calendar,
   CalendarLabel,
+  CalendarRangeLabel,
   type CalendarLabelProps,
   type CalendarProps,
-  CalendarRangeLabel,
   type CalendarRangeLabelProps,
   type DateRange,
   type Matcher,

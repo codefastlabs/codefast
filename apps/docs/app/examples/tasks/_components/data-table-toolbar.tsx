@@ -1,9 +1,9 @@
+import { DataTableFacetedFilter } from '@/app/examples/tasks/_components/data-table-faceted-filter';
+import { priorities, statuses } from '@/app/examples/tasks/_data/data';
 import { Button, DataTableViewOptions, TextInput } from '@codefast/ui';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { type Table } from '@tanstack/react-table';
 import { type JSX } from 'react';
-import { DataTableFacetedFilter } from '@/app/examples/tasks/_components/data-table-faceted-filter';
-import { priorities, statuses } from '@/app/examples/tasks/_data/data';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

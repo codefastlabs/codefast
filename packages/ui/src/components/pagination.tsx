@@ -1,3 +1,8 @@
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -10,11 +15,6 @@ import {
   type JSX,
   type LiHTMLAttributes,
 } from 'react';
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
@@ -161,16 +161,16 @@ function PaginationEllipsis({
 export {
   Pagination,
   PaginationContent,
-  type PaginationContentProps,
   PaginationEllipsis,
-  type PaginationEllipsisProps,
   PaginationItem,
-  type PaginationItemProps,
   PaginationLink,
-  type PaginationLinkProps,
   PaginationNext,
-  type PaginationNextProps,
   PaginationPrevious,
+  type PaginationContentProps,
+  type PaginationEllipsisProps,
+  type PaginationItemProps,
+  type PaginationLinkProps,
+  type PaginationNextProps,
   type PaginationPreviousProps,
   type PaginationProps,
 };

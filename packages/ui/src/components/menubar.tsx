@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -12,7 +13,6 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
-import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarMenu
@@ -405,34 +405,34 @@ MenubarArrow.displayName = MenubarPrimitive.Arrow.displayName;
 export {
   Menubar,
   MenubarArrow,
-  type MenubarArrowProps,
   MenubarCheckboxItem,
-  type MenubarCheckboxItemProps,
   MenubarContent,
-  type MenubarContentProps,
   MenubarGroup,
-  type MenubarGroupProps,
   MenubarItem,
-  type MenubarItemProps,
   MenubarLabel,
-  type MenubarLabelProps,
   MenubarMenu,
-  type MenubarMenuProps,
-  type MenubarProps,
   MenubarRadioGroup,
-  type MenubarRadioGroupProps,
   MenubarRadioItem,
-  type MenubarRadioItemProps,
   MenubarSeparator,
-  type MenubarSeparatorProps,
   MenubarShortcut,
-  type MenubarShortcutProps,
   MenubarSub,
   MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+  type MenubarArrowProps,
+  type MenubarCheckboxItemProps,
+  type MenubarContentProps,
+  type MenubarGroupProps,
+  type MenubarItemProps,
+  type MenubarLabelProps,
+  type MenubarMenuProps,
+  type MenubarProps,
+  type MenubarRadioGroupProps,
+  type MenubarRadioItemProps,
+  type MenubarSeparatorProps,
+  type MenubarShortcutProps,
   type MenubarSubContentProps,
   type MenubarSubProps,
-  MenubarSubTrigger,
   type MenubarSubTriggerProps,
-  MenubarTrigger,
   type MenubarTriggerProps,
 };

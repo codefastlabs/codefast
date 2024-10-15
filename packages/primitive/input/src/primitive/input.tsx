@@ -114,9 +114,9 @@ InputItem.displayName = INPUT_ITEM_NAME;
 export {
   createInputScope,
   Input,
-  Input as Root,
   InputItem,
   InputItem as Item,
+  Input as Root,
   type InputItemProps,
   type InputProps,
 };
