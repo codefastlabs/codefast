@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.42
+
+### Patch Changes
+
+- refactor: update dependencies and package versions
+
 ## 0.1.41
 
 ### Patch Changes
