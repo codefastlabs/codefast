@@ -9,7 +9,7 @@
     "chromatic": "chromatic --exit-zero-on-changes",
     "clean": "rm -rf .next && rm -rf .turbo && rm -rf storybook-static && rm -rf node_modules",
     "dev": "concurrently -k -p \"[{name}]\" -n \"next,storybook\" -c \"cyan,yellow\" \"pnpm run dev-next\" \"pnpm run dev-storybook\"",
-    "dev-next": "next dev --turbo",
+    "dev-next": "next dev",
     "dev-storybook": "pnpm storybook",
     "lint": "next lint --fix --max-warnings 0",
     "start": "next start",
