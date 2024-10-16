@@ -1,63 +1,45 @@
-name: The Best Release Pipeline, Believe Me!
-
+name: Release Workflow
 on:
   push:
     branches:
       - main
-
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  setup:
-    name: Setup Environment, Let’s Do This First!
+  release:
+    name: Checkout and Setup
     runs-on: ubuntu-latest
-    outputs:
-      store_path: ${{ steps.store.outputs.store_path }}
     steps:
-      - name: Checkout the Greatest Code, Nobody Does It Better!
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setting Up Node.js 20.x, It's a Perfect Node Version!
+      - name: Setup Node.js 20.x Environment
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Installing pnpm, It's the Best Package Manager, Everyone Knows It!
+      - name: Install pnpm Package Manager
         uses: pnpm/action-setup@v4
         with:
           run_install: false
 
-      - name: Finding the pnpm Store, The Best Store, It's Yuge!
-        id: store
+      - name: Get pnpm Store Directory
         shell: bash
-        run: echo "store_path=$(pnpm store path --silent)" >> $GITHUB_ENV && echo "::set-output name=store_path::$(pnpm store path --silent)"
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - name: Caching pnpm Store, We Love Saving Time, Don’t We?
+      - name: Cache pnpm Store Directory
         uses: actions/cache@v4
         with:
-          path: ${{ steps.store.outputs.store_path }}
+          path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: ${{ runner.os }}-pnpm-store-
 
-      - name: Installing Dependencies, Faster Than Anyone Thought Possible!
+      - name: Install Project Dependencies
         run: pnpm install
 
-  release:
-    name: Release the Package, It’s Show Time!
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout the Greatest Code, Nobody Does It Better!
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Installing Dependencies, It's Already Setup, So Fast!
-        run: pnpm install --frozen-lockfile
-
-      - name: Create Release PR or Publish the Greatest Package Ever!
+      - name: Create Release Pull Request or Publish Package
         id: changesets
         uses: changesets/action@v1
         with:
@@ -67,22 +49,19 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   chromatic:
-    name: Running Chromatic, Visual Tests So Good, They’ll Blow Your Mind!
+    name: Run Chromatic Visual Tests
     runs-on: ubuntu-latest
-    needs: setup
+    needs: release
     steps:
-      - name: Checkout the Greatest Code, Nobody Does It Better!
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Installing Dependencies, It's Already Setup, So Fast!
-        run: pnpm install --frozen-lockfile
-
-      - name: Running Chromatic, Visual Tests So Good, They’ll Blow Your Mind!
+      - name: Run Chromatic Visual Tests
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: apps/docs
           onlyChanged: true
-          zip: true
+          zip:
