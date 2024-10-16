@@ -1,14 +1,17 @@
-name: Release Workflow
+name: Release
+
 on:
   push:
     branches:
       - main
+
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Checkout and Setup
+    name: Release
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -48,44 +51,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  chromatic:
-    name: Run Chromatic Visual Tests
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js 20.x Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install pnpm Package Manager
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
-      - name: Get pnpm Store Directory
-        shell: bash
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Cache pnpm Store Directory
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-pnpm-store-
-
-      - name: Install Project Dependencies
-        run: pnpm install
-
       - name: Run Chromatic Visual Tests
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: apps/docs
           onlyChanged: true
-          zip:
+          zip: true
