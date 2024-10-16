@@ -14,7 +14,7 @@ export function useEvent<T extends Event>(
   element: EventTarget = window,
 ): void {
   // Create a ref that stores handler
-  const savedHandler = useRef<(event: T) => void>();
+  const savedHandler = useRef<(event: T) => void>(null);
 
   // Update ref.current value if handler changes.
   useEffect(() => {
