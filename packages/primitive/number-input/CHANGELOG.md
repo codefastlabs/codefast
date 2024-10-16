@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.42
+
+### Patch Changes
+
+- refactor: update dependencies and package versions
+- Updated dependencies
+  - @codefast-ui/input@0.1.42
+
 ## 0.1.41
 
 ### Patch Changes
