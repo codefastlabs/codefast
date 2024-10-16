@@ -4,8 +4,8 @@ import { cookies } from 'next/headers';
 import Image from 'next/image';
 import { type JSX } from 'react';
 
-export default function MailPage(): JSX.Element {
-  const cookieStore = cookies();
+export default async function MailPage(): Promise<JSX.Element> {
+  const cookieStore = await cookies();
   const layout = cookieStore.get('react-resizable-panels:layout');
   const collapsed = cookieStore.get('react-resizable-panels:collapsed');
 
