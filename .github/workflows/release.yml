@@ -8,10 +8,9 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Tremendous Package Release, It's Gonna Be Huge!
+  setup:
+    name: Setup Node.js & pnpm, Time to Roll!
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout the Greatest Code, Nobody Does It Better!
         uses: actions/checkout@v4
@@ -42,7 +41,12 @@ jobs:
       - name: Installing Dependencies, Faster Than Anyone Thought Possible!
         run: pnpm install
 
-      - name: Creating a Yuge Release PR or Publishing the Greatest Package Ever!
+  release:
+    name: Release the Package, It’s Show Time!
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Create Release PR or Publish the Greatest Package Ever!
         id: changesets
         uses: changesets/action@v1
         with:
@@ -51,7 +55,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Running Chromatic, Visual Tests So Good, They’ll Blow Your Mind!
+  chromatic:
+    name: Run Chromatic Tests, Let’s See the Magic!
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Run Chromatic, Visual Tests So Good, They’ll Blow Your Mind!
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
