@@ -46,6 +46,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Checkout the Greatest Code, Nobody Does It Better!
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Create Release PR or Publish the Greatest Package Ever!
         id: changesets
         uses: changesets/action@v1
@@ -60,6 +65,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup
     steps:
+      - name: Checkout the Greatest Code, Nobody Does It Better!
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Run Chromatic, Visual Tests So Good, They’ll Blow Your Mind!
         uses: chromaui/action@latest
         with:
