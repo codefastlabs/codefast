@@ -19,6 +19,7 @@ import {
   DayPicker,
   type DayPickerProps,
   type Matcher,
+  type Modifiers,
   SelectionState,
   UI,
 } from 'react-day-picker';
@@ -57,12 +58,15 @@ function Chevron({
  * Component: DayButton
  * -------------------------------------------------------------------------- */
 
+interface DayButtonProps extends ComponentProps<'button'> {
+  modifiers: Modifiers;
+}
+
 function DayButton({
-  day: _,
   modifiers,
   className,
   ...props
-}: ComponentProps<CustomComponents['DayButton']>): JSX.Element {
+}: DayButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
