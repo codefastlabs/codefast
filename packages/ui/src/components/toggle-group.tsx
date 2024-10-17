@@ -1,10 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import {
-  toggleVariants,
-  type ToggleVariantsProps,
-} from '@/styles/toggle-variants';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
@@ -14,6 +9,12 @@ import {
   forwardRef,
   type ReactNode,
 } from 'react';
+
+import { cn } from '@/lib/utils';
+import {
+  toggleVariants,
+  type ToggleVariantsProps,
+} from '@/styles/toggle-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroup

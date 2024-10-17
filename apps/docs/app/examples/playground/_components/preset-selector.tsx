@@ -1,6 +1,5 @@
 'use client';
 
-import { type Preset } from '@/app/examples/playground/_data/presets';
 import {
   Button,
   cn,
@@ -19,6 +18,8 @@ import {
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
 import { type JSX, useState } from 'react';
+
+import { type Preset } from '@/app/examples/playground/_data/presets';
 
 interface PresetSelectorProps extends PopoverProps {
   presets: Preset[];

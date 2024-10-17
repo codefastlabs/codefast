@@ -1,6 +1,7 @@
-import { SlideshowWedding } from '@/app/examples/slideshow/_components/slideshow-wedding';
 import { type Metadata } from 'next';
 import { type JSX } from 'react';
+
+import { SlideshowWedding } from '@/app/examples/slideshow/_components/slideshow-wedding';
 
 export const metadata: Metadata = {
   title: 'Slideshow',

@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, type HTMLAttributes } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Kbd

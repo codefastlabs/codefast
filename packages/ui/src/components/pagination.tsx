@@ -1,8 +1,3 @@
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -15,6 +10,12 @@ import {
   type JSX,
   type LiHTMLAttributes,
 } from 'react';
+
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

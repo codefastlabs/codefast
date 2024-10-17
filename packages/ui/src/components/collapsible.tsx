@@ -1,10 +1,11 @@
-import { cn } from '@/lib/utils';
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import {
   type ComponentPropsWithoutRef,
   type ComponentRef,
   forwardRef,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Collapsible

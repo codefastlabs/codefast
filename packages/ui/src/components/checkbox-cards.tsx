@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from '@radix-ui/react-icons';
 import {
@@ -6,6 +5,8 @@ import {
   type ComponentRef,
   forwardRef,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCards

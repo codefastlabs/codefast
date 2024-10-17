@@ -1,8 +1,9 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { composeEventHandlers } from '@radix-ui/primitive';
 import { forwardRef, type InputHTMLAttributes } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Radio

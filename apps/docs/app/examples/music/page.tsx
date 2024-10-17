@@ -1,12 +1,3 @@
-import { AlbumArtwork } from '@/app/examples/music/_components/album-artwork';
-import { Menu } from '@/app/examples/music/_components/menu';
-import { PodcastEmptyPlaceholder } from '@/app/examples/music/_components/podcast-empty-placeholder';
-import { Sidebar } from '@/app/examples/music/_components/sidebar';
-import {
-  listenNowAlbums,
-  madeForYouAlbums,
-} from '@/app/examples/music/_data/albums';
-import { playlists } from '@/app/examples/music/_data/playlists';
 import {
   Button,
   ScrollArea,
@@ -20,6 +11,16 @@ import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type JSX } from 'react';
+
+import { AlbumArtwork } from '@/app/examples/music/_components/album-artwork';
+import { Menu } from '@/app/examples/music/_components/menu';
+import { PodcastEmptyPlaceholder } from '@/app/examples/music/_components/podcast-empty-placeholder';
+import { Sidebar } from '@/app/examples/music/_components/sidebar';
+import {
+  listenNowAlbums,
+  madeForYouAlbums,
+} from '@/app/examples/music/_data/albums';
+import { playlists } from '@/app/examples/music/_data/playlists';
 
 export const metadata: Metadata = {
   title: 'Music App',

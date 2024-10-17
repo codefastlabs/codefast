@@ -1,10 +1,11 @@
-import { cn } from '@/lib/utils';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import {
   type ComponentPropsWithoutRef,
   type ComponentRef,
   forwardRef,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Label

@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import {
   CheckIcon,
@@ -13,6 +12,8 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenu
