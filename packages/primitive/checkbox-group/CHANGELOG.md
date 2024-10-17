@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.1.43
+
+### Patch Changes
+
+- feat(eslint): enforce specific order for import statements
+
 ## 0.1.42
 
 ### Patch Changes
