@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
@@ -8,6 +7,8 @@ import {
   forwardRef,
   type JSX,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion

@@ -1,6 +1,7 @@
-import { cn } from '@/lib/utils';
 import { forwardRef, type HTMLAttributes } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Alert

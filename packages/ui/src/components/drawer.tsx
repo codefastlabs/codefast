@@ -1,10 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -14,6 +9,12 @@ import {
   type JSX,
 } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
+
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer

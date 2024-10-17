@@ -1,6 +1,7 @@
-import { DatePickerWithRange } from '@/components/date-picker-with-range';
 import { Card, CardBody, Label } from '@codefast/ui';
 import { type JSX } from 'react';
+
+import { DatePickerWithRange } from '@/components/date-picker-with-range';
 
 export function DatePicker(): JSX.Element {
   return (

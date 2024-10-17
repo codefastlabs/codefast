@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import {
   type ComponentProps,
@@ -6,6 +5,8 @@ import {
   type ComponentRef,
   forwardRef,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipProvider

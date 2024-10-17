@@ -1,8 +1,3 @@
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 import {
   CaretSortIcon,
   CheckIcon,
@@ -16,6 +11,12 @@ import {
   type ComponentRef,
   forwardRef,
 } from 'react';
+
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Select

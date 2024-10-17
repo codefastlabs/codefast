@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { DotFilledIcon } from '@radix-ui/react-icons';
 import {
   OTPInput,
@@ -16,6 +15,8 @@ import {
   type HTMLAttributes,
   useContext,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp

@@ -1,8 +1,9 @@
-import { inter } from '@/app/fonts';
-import '@/app/globals.css';
-import { Providers } from '@/components/providers';
 import { type Metadata } from 'next';
 import { type JSX, type ReactNode } from 'react';
+
+import { inter } from '@/app/fonts';
+import { Providers } from '@/components/providers';
+import '@/app/globals.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',

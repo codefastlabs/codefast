@@ -1,11 +1,5 @@
 'use client';
 
-import { Button } from '@/components/button';
-import { Spinner } from '@/components/spinner';
-import {
-  inputVariants,
-  type InputVariantsProps,
-} from '@/styles/input-variants';
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons';
 import {
@@ -17,6 +11,13 @@ import {
   useCallback,
   useState,
 } from 'react';
+
+import { Button } from '@/components/button';
+import { Spinner } from '@/components/spinner';
+import {
+  inputVariants,
+  type InputVariantsProps,
+} from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: PasswordInput

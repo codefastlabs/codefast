@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import {
   type ComponentProps,
   type ComponentType,
@@ -19,6 +18,8 @@ import {
   type Payload,
   type ValueType,
 } from 'recharts/types/component/DefaultTooltipContent';
+
+import { cn } from '@/lib/utils';
 
 const THEMES = {
   light: '',

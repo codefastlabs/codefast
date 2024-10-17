@@ -1,8 +1,9 @@
-import { type EmailMessage } from '@/app/examples/mail/_data/data';
-import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 import { Badge, cn, ScrollArea } from '@codefast/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { type ComponentProps, type JSX } from 'react';
+
+import { type EmailMessage } from '@/app/examples/mail/_data/data';
+import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 
 interface MailListProps {
   items: EmailMessage[];

@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import {
@@ -9,6 +8,8 @@ import {
   forwardRef,
 } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: ScrollAreaScrollbar

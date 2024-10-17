@@ -1,8 +1,3 @@
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import {
@@ -13,6 +8,12 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
+
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog

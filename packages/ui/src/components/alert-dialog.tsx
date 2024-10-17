@@ -1,8 +1,3 @@
-import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import {
   type ComponentProps,
@@ -12,6 +7,12 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
+
+import { cn } from '@/lib/utils';
+import {
+  buttonVariants,
+  type ButtonVariantsProps,
+} from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog
