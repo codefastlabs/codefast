@@ -1,7 +1,5 @@
 'use client';
 
-import { Dialog, DialogContent } from '@/components/dialog';
-import { cn } from '@/lib/utils';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command as CommandPrimitive } from 'cmdk';
 import {
@@ -12,6 +10,9 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
+
+import { Dialog, DialogContent } from '@/components/dialog';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Command

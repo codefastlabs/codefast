@@ -1,4 +1,5 @@
 import { relative } from 'node:path';
+
 import type { Options } from 'tsup';
 
 // Set to track the imports of each code chunk.

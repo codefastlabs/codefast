@@ -1,7 +1,5 @@
 'use client';
 
-import { Label } from '@/components/label';
-import { cn } from '@/lib/utils';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
@@ -24,6 +22,9 @@ import {
   type GlobalError,
   useFormState,
 } from 'react-hook-form';
+
+import { Label } from '@/components/label';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Form

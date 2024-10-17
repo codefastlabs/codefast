@@ -1,7 +1,5 @@
 'use client';
 
-import { Button, type ButtonProps } from '@/components/button';
-import { cn } from '@/lib/utils';
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import useEmblaCarousel, {
@@ -15,6 +13,9 @@ import {
   useEffect,
   useState,
 } from 'react';
+
+import { Button, type ButtonProps } from '@/components/button';
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel

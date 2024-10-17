@@ -1,6 +1,5 @@
 'use client';
 
-import { Icons } from '@/components/icons';
 import { Button, cn, Label, TextInput } from '@codefast/ui';
 import {
   type HTMLAttributes,
@@ -9,6 +8,8 @@ import {
   useState,
 } from 'react';
 import { type SubmitHandler } from 'react-hook-form';
+
+import { Icons } from '@/components/icons';
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 

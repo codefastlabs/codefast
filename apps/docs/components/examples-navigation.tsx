@@ -1,8 +1,9 @@
 'use client';
 
-import { ExampleLink } from '@/components/example-link';
 import { cn, ScrollArea } from '@codefast/ui';
 import { type HTMLAttributes, type JSX } from 'react';
+
+import { ExampleLink } from '@/components/example-link';
 
 const examples: {
   href: string;

@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import {
   CheckIcon,
   ChevronRightIcon,
@@ -13,6 +12,8 @@ import {
   type HTMLAttributes,
   type JSX,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarMenu

@@ -1,6 +1,6 @@
 import { useTheme } from 'next-themes';
 import { type ComponentProps, type JSX } from 'react';
-import { Toaster as Sonner, toast } from 'sonner';
+import { toast, Toaster as Sonner } from 'sonner';
 
 /* -----------------------------------------------------------------------------
  * Component: Sonner

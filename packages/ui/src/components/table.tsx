@@ -1,10 +1,11 @@
-import { cn } from '@/lib/utils';
 import {
   forwardRef,
   type HTMLAttributes,
   type TdHTMLAttributes,
   type ThHTMLAttributes,
 } from 'react';
+
+import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: Table
