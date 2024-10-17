@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.44
+
+### Patch Changes
+
+- chore: remove version range specifiers from dependencies
+
 ## 0.1.43
 
 ### Patch Changes

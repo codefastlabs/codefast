@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.44
+
+### Patch Changes
+
+- chore: remove version range specifiers from dependencies
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.44
+  - @codefast-ui/input@0.1.44
+  - @codefast-ui/number-input@0.1.44
+
 ## 0.1.43
 
 ### Patch Changes
