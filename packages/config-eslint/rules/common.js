@@ -22,7 +22,32 @@ module.exports = {
     'import/no-default-export': 'off',
 
     /** Enforces a specific order for import statements */
-    'import/order': 'off',
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+        ],
+        'newlines-between': 'always',
+        pathGroups: [
+          {
+            pattern: '@/**',
+            group: 'internal',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['builtin'],
+      },
+    ],
 
     /** Prevents fallthrough in switch statements but allows empty cases */
     'no-fallthrough': [
