@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.43
+
+### Patch Changes
+
+- feat(eslint): enforce specific order for import statements
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.43
+  - @codefast-ui/input@0.1.43
+  - @codefast-ui/number-input@0.1.43
+
 ## 0.1.42
 
 ### Patch Changes
