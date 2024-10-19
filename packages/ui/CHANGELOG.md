@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.45
+
+### Patch Changes
+
+- refactor: replace CardBody with CardContent
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.45
+  - @codefast-ui/input@0.1.45
+  - @codefast-ui/number-input@0.1.45
+
 ## 0.1.44
 
 ### Patch Changes
