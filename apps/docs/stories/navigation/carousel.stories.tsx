@@ -1,6 +1,6 @@
 import {
   Card,
-  CardBody,
+  CardContent,
   Carousel,
   type CarouselApi,
   CarouselContent,
@@ -42,9 +42,9 @@ export const Default: Story = {
           <CarouselItem key={index}>
             <div className="p-1">
               <Card>
-                <CardBody className="flex aspect-square items-center justify-center p-6">
+                <CardContent className="flex aspect-square items-center justify-center p-6">
                   <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardBody>
+                </CardContent>
               </Card>
             </div>
           </CarouselItem>
@@ -75,9 +75,9 @@ export const Sizes: Story = {
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card>
-                <CardBody className="flex aspect-square items-center justify-center p-6">
+                <CardContent className="flex aspect-square items-center justify-center p-6">
                   <span className="text-3xl font-semibold">{index + 1}</span>
-                </CardBody>
+                </CardContent>
               </Card>
             </div>
           </CarouselItem>
@@ -102,9 +102,9 @@ export const Spacing: Story = {
           <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card>
-                <CardBody className="flex aspect-square items-center justify-center p-6">
+                <CardContent className="flex aspect-square items-center justify-center p-6">
                   <span className="text-2xl font-semibold">{index + 1}</span>
-                </CardBody>
+                </CardContent>
               </Card>
             </div>
           </CarouselItem>
@@ -136,9 +136,9 @@ export const Orientation: Story = {
           <CarouselItem key={index} className="pt-1 md:basis-1/2">
             <div className="p-1">
               <Card>
-                <CardBody className="flex items-center justify-center p-6">
+                <CardContent className="flex items-center justify-center p-6">
                   <span className="text-3xl font-semibold">{index + 1}</span>
-                </CardBody>
+                </CardContent>
               </Card>
             </div>
           </CarouselItem>
@@ -185,11 +185,11 @@ export const API: Story = {
               <CarouselItem key={index}>
                 <div className="p-1">
                   <Card>
-                    <CardBody className="flex aspect-square items-center justify-center p-6">
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
                       <span className="text-4xl font-semibold">
                         {index + 1}
                       </span>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </div>
               </CarouselItem>
@@ -228,9 +228,9 @@ export const Plugins: Story = {
             <CarouselItem key={index}>
               <div className="p-1">
                 <Card>
-                  <CardBody className="flex aspect-square items-center justify-center p-6">
+                  <CardContent className="flex aspect-square items-center justify-center p-6">
                     <span className="text-4xl font-semibold">{index + 1}</span>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </div>
             </CarouselItem>

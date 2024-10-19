@@ -4,7 +4,7 @@ import {
   AvatarImage,
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -27,7 +27,7 @@ export function ShareDocument(): JSX.Element {
           Anyone with the link can view this document.
         </CardDescription>
       </CardHeader>
-      <CardBody>
+      <CardContent>
         <div className="flex space-x-2">
           <TextInput readOnly value="https://example.com/link/to/document" />
           <Button className="shrink-0" variant="secondary">
@@ -109,7 +109,7 @@ export function ShareDocument(): JSX.Element {
             </div>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }
