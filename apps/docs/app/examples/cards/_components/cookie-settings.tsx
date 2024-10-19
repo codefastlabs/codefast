@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -18,7 +18,7 @@ export function CookieSettings(): JSX.Element {
         <CardTitle>Cookie Settings</CardTitle>
         <CardDescription>Manage your cookie settings here.</CardDescription>
       </CardHeader>
-      <CardBody className="grid gap-6">
+      <CardContent className="grid gap-6">
         <div className="flex items-center justify-between gap-x-2">
           <Label className="flex flex-col space-y-1" htmlFor="necessary">
             <span>Strictly Necessary</span>
@@ -48,7 +48,7 @@ export function CookieSettings(): JSX.Element {
           </Label>
           <Switch id="performance" />
         </div>
-      </CardBody>
+      </CardContent>
       <CardFooter>
         <Button className="w-full" variant="outline">
           Save preferences

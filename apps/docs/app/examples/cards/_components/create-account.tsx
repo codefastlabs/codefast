@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -23,7 +23,7 @@ export function CreateAccount(): JSX.Element {
           Enter your email below to create your account
         </CardDescription>
       </CardHeader>
-      <CardBody className="grid gap-4">
+      <CardContent className="grid gap-4">
         <div className="grid grid-cols-2 gap-6">
           <Button prefix={<Icons.GitHub />} variant="outline">
             Github
@@ -54,7 +54,7 @@ export function CreateAccount(): JSX.Element {
             placeholder="********"
           />
         </div>
-      </CardBody>
+      </CardContent>
       <CardFooter>
         <Button className="w-full">Create account</Button>
       </CardFooter>

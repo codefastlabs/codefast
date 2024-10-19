@@ -85,19 +85,19 @@ const CardDescription = forwardRef<
 CardDescription.displayName = 'CardDescription';
 
 /* -----------------------------------------------------------------------------
- * Component: CardBody
+ * Component: CardContent
  * -------------------------------------------------------------------------- */
 
 type CardContentElement = HTMLDivElement;
 type CardContentProps = HTMLAttributes<HTMLDivElement>;
 
-const CardBody = forwardRef<CardContentElement, CardContentProps>(
+const CardContent = forwardRef<CardContentElement, CardContentProps>(
   ({ className, ...props }, forwardedRef) => (
     <div ref={forwardedRef} className={cn('p-6 pt-0', className)} {...props} />
   ),
 );
 
-CardBody.displayName = 'CardBody';
+CardContent.displayName = 'CardContent';
 
 /* -----------------------------------------------------------------------------
  * Component: CardFooter
@@ -124,7 +124,7 @@ CardFooter.displayName = 'CardFooter';
 
 export {
   Card,
-  CardBody,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,

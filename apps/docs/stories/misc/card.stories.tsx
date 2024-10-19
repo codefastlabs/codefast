@@ -1,7 +1,7 @@
 import {
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -40,7 +40,7 @@ export const Default: Story = {
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
       </CardHeader>
-      <CardBody>
+      <CardContent>
         <form>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
@@ -63,7 +63,7 @@ export const Default: Story = {
             </div>
           </div>
         </form>
-      </CardBody>
+      </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>
         <Button>Deploy</Button>
@@ -101,7 +101,7 @@ export const Examples: Story = {
         <CardTitle>Notifications</CardTitle>
         <CardDescription>You have 3 unread messages.</CardDescription>
       </CardHeader>
-      <CardBody className="grid gap-4">
+      <CardContent className="grid gap-4">
         <div className="flex items-center space-x-4 rounded-md border p-4">
           <BellIcon />
           <div className="flex-1 space-y-1">
@@ -132,7 +132,7 @@ export const Examples: Story = {
             </div>
           ))}
         </div>
-      </CardBody>
+      </CardContent>
       <CardFooter>
         <Button className="w-full" prefix={<CheckIcon />}>
           Mark all as read

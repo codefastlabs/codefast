@@ -2,7 +2,7 @@
 
 import {
   Card,
-  CardBody,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -47,7 +47,7 @@ export function ChartAreaAxes(): JSX.Element {
           Showing total visitors for the last 6 months
         </CardDescription>
       </CardHeader>
-      <CardBody>
+      <CardContent>
         <ChartContainer config={chartConfig}>
           <AreaChart
             accessibilityLayer
@@ -90,7 +90,7 @@ export function ChartAreaAxes(): JSX.Element {
             />
           </AreaChart>
         </ChartContainer>
-      </CardBody>
+      </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
