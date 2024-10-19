@@ -36,6 +36,8 @@ module.exports = {
           'parent',
           'sibling',
           'index',
+          'object',
+          'type',
         ],
         'newlines-between': 'always',
         pathGroups: [
