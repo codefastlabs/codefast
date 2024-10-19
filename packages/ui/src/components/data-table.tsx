@@ -11,7 +11,6 @@ import {
   EyeNoneIcon,
   MixerHorizontalIcon,
 } from '@radix-ui/react-icons';
-import type * as ReactTable from '@tanstack/react-table';
 import { type HTMLAttributes, type JSX } from 'react';
 
 import { Button } from '@/components/button';
@@ -33,6 +32,8 @@ import {
 } from '@/components/select';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
+
+import type * as ReactTable from '@tanstack/react-table';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions
