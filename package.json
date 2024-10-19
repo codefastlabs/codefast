@@ -12,7 +12,7 @@
     "lint:check": "turbo lint",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm clean && pnpm install && pnpm build",
-    "package:update": "pnpm update --interactive --recursive",
+    "package:update": "pnpm update --latest --interactive --recursive",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "release": "turbo build --filter=docs^... && changeset publish",
@@ -59,8 +59,9 @@
     "overrides": {
       "@types/react": "npm:types-react@19.0.0-rc.1",
       "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-      "react": "19.0.0-rc-cd22717c-20241013",
-      "react-dom": "19.0.0-rc-cd22717c-20241013"
+      "react": "19.0.0-rc-b8ae38f8-20241018",
+      "react-dom": "19.0.0-rc-b8ae38f8-20241018",
+      "react-is": "19.0.0-rc-b8ae38f8-20241018"
     }
   }
 }
