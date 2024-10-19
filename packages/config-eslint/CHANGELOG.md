@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.45
+
+### Patch Changes
+
+- refactor: replace CardBody with CardContent
+
 ## 0.1.44
 
 ### Patch Changes
