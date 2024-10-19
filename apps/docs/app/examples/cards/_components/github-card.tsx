@@ -25,7 +25,7 @@ import { type JSX } from 'react';
 export function Github(): JSX.Element {
   return (
     <Card>
-      <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
+      <CardHeader className="flex-row items-start justify-between gap-4">
         <div className="space-y-1">
           <CardTitle>codefast/ui</CardTitle>
           <CardDescription>
@@ -33,7 +33,8 @@ export function Github(): JSX.Element {
             your apps. Accessible. Customizable. Open Source.
           </CardDescription>
         </div>
-        <div className="bg-secondary text-secondary-foreground flex items-center rounded-md shadow-sm">
+
+        <div className="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-md shadow-sm">
           <Button
             className="px-3 shadow-none"
             prefix={<StarIcon className="text-muted-foreground" />}
@@ -41,7 +42,7 @@ export function Github(): JSX.Element {
           >
             Star
           </Button>
-          <Separator className="h-[20px]" orientation="vertical" />
+          <Separator className="h-5 bg-slate-300" orientation="vertical" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -75,6 +76,7 @@ export function Github(): JSX.Element {
           </DropdownMenu>
         </div>
       </CardHeader>
+
       <CardContent>
         <div className="text-muted-foreground flex space-x-4 text-sm">
           <div className="flex items-center">

@@ -11,7 +11,7 @@ import { type JSX } from 'react';
 export function Notifications(): JSX.Element {
   return (
     <Card>
-      <CardHeader className="pb-3">
+      <CardHeader>
         <CardTitle>Notifications</CardTitle>
         <CardDescription>
           Choose what you want to be notified about.

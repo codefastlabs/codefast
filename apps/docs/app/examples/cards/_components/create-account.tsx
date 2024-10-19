@@ -17,7 +17,7 @@ import { Icons } from '@/components/icons';
 export function CreateAccount(): JSX.Element {
   return (
     <Card>
-      <CardHeader className="space-y-1">
+      <CardHeader>
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>
           Enter your email below to create your account

@@ -3,9 +3,9 @@ import { type Metadata } from 'next';
 import Image from 'next/image';
 import { type HTMLAttributes, type JSX } from 'react';
 
+import { Calendar } from '@/app/examples/cards/_components/calendar';
 import { CookieSettings } from '@/app/examples/cards/_components/cookie-settings';
 import { CreateAccount } from '@/app/examples/cards/_components/create-account';
-import { DatePicker } from '@/app/examples/cards/_components/date-picker';
 import { Github } from '@/app/examples/cards/_components/github-card';
 import { Notifications } from '@/app/examples/cards/_components/notifications';
 import { PaymentMethod } from '@/app/examples/cards/_components/payment-method';
@@ -57,6 +57,7 @@ export default function CardsPage(): JSX.Element {
           <Container>
             <CreateAccount />
           </Container>
+
           <Container>
             <PaymentMethod />
           </Container>
@@ -65,12 +66,15 @@ export default function CardsPage(): JSX.Element {
           <Container>
             <TeamMembers />
           </Container>
+
           <Container>
             <ShareDocument />
           </Container>
+
           <Container>
-            <DatePicker />
+            <Calendar />
           </Container>
+
           <Container>
             <Notifications />
           </Container>
@@ -79,9 +83,11 @@ export default function CardsPage(): JSX.Element {
           <Container>
             <ReportAnIssue />
           </Container>
+
           <Container>
             <Github />
           </Container>
+
           <Container>
             <CookieSettings />
           </Container>
