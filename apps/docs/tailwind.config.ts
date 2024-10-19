@@ -6,7 +6,7 @@ const tailwindcssConfig: Config = {
     './stories/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@codefast/ui/dist/**/*.map',
+    './node_modules/@codefast/ui/dist/**/*.js',
   ],
   presets: [sharedConfig],
   theme: {
