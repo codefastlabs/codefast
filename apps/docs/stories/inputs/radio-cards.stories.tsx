@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: RadioCards,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Radio Cards',
+  title: 'UI/Radio Cards',
 } satisfies Meta<typeof RadioCards>;
 
 export default meta;

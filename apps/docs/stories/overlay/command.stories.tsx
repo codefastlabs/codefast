@@ -25,7 +25,7 @@ import { useEffect, useState } from 'react';
 const meta = {
   component: Command,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Command',
+  title: 'UI/Command',
 } satisfies Meta<typeof Command>;
 
 export default meta;

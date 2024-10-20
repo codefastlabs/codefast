@@ -19,7 +19,7 @@ import { useState } from 'react';
 const meta = {
   component: ContextMenu,
   tags: ['autodocs'],
-  title: 'Components/Menus and Selection/Context Menu',
+  title: 'UI/Context Menu',
 } satisfies Meta<typeof ContextMenu>;
 
 export default meta;

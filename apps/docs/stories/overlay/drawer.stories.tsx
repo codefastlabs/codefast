@@ -30,7 +30,7 @@ import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 const meta = {
   component: Drawer,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Drawer',
+  title: 'UI/Drawer',
 } satisfies Meta<typeof Drawer>;
 
 export default meta;

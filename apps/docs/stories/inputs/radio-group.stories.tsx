@@ -23,7 +23,7 @@ import { z } from 'zod';
 const meta = {
   component: RadioGroup,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Radio Group',
+  title: 'UI/Radio Group',
 } satisfies Meta<typeof RadioGroup>;
 
 export default meta;

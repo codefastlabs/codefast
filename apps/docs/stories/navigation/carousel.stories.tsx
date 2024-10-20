@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 const meta = {
   component: Carousel,
   tags: ['autodocs'],
-  title: 'Components/Navigation/Carousel',
+  title: 'UI/Carousel',
   decorators: [
     (Story) => (
       <div className="p-10">

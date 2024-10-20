@@ -23,7 +23,7 @@ import { useState } from 'react';
 const meta = {
   component: Dialog,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Dialog',
+  title: 'UI/Dialog',
 } satisfies Meta<typeof Dialog>;
 
 export default meta;

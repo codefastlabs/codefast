@@ -17,7 +17,7 @@ import { type AnchorHTMLAttributes, forwardRef } from 'react';
 const meta = {
   component: NavigationMenu,
   tags: ['autodocs'],
-  title: 'Components/Navigation/Navigation Menu',
+  title: 'UI/Navigation Menu',
   decorators: [
     (Story) => (
       <div className="h-[70dvh]">

@@ -11,7 +11,7 @@ import { useState } from 'react';
 const meta = {
   component: Collapsible,
   tags: ['autodocs'],
-  title: 'Components/Misc/Collapsible',
+  title: 'UI/Collapsible',
 } satisfies Meta<typeof Collapsible>;
 
 export default meta;

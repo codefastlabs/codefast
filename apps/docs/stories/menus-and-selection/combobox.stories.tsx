@@ -62,7 +62,7 @@ import { z } from 'zod';
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Components/Menus and Selection/Combobox',
+  title: 'UI/Combobox',
 } satisfies Meta<typeof Popover>;
 
 export default meta;

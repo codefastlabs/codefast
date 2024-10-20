@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Skeleton,
   tags: ['autodocs'],
-  title: 'Components/Feedback/Skeleton',
+  title: 'UI/Skeleton',
   parameters: {
     layout: 'centered',
   },
