@@ -44,7 +44,7 @@ export const Default: Story = {
     <Breadcrumb {...args}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="#">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -62,9 +62,7 @@ export const Default: Story = {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">
-            Components
-          </BreadcrumbLink>
+          <BreadcrumbLink href="#">Components</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -84,15 +82,13 @@ export const CustomSeparator: Story = {
     <Breadcrumb {...args}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="#">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <SlashIcon />
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">
-            Components
-          </BreadcrumbLink>
+          <BreadcrumbLink href="#">Components</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <SlashIcon />
@@ -114,7 +110,7 @@ export const Dropdown: Story = {
     <Breadcrumb {...args}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="#">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <SlashIcon />
@@ -152,7 +148,7 @@ export const Collapsed: Story = {
     <Breadcrumb {...args}>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="#">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -160,9 +156,7 @@ export const Collapsed: Story = {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbLink href="/?path=/docs/uis-breadcrumb--docs">
-            Components
-          </BreadcrumbLink>
+          <BreadcrumbLink href="#">Components</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
@@ -183,13 +177,13 @@ export const AsLink: Story = {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/apps/docs/public">Home</Link>
+            <Link href="#">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/apps/docs/public">Components</Link>
+            <Link href="#">Components</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
