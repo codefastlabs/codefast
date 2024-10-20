@@ -16,13 +16,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import {
-  ImportIcon,
-  LoaderCircleIcon,
-  MailIcon,
-  TextCursorInputIcon,
-  UsersIcon,
-} from 'lucide-react';
+import { ImportIcon, LoaderCircleIcon, MailIcon, TextCursorInputIcon, UsersIcon } from 'lucide-react';
 import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -32,8 +26,7 @@ const meta = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field should automatically get focus when the page loads',
+      description: 'Specifies that the input field should automatically get focus when the page loads',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -132,8 +125,7 @@ const meta = {
     },
     required: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field must be filled out before submitting the form',
+      description: 'Specifies that the input field must be filled out before submitting the form',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -350,16 +342,12 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit = async (
-      values: z.infer<typeof formValues>,
-    ): Promise<void> => {
+    const onSubmit = async (values: z.infer<typeof formValues>): Promise<void> => {
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -382,9 +370,7 @@ export const ReactHookForm: Story = {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
+                <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

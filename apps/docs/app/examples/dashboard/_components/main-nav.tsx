@@ -2,19 +2,10 @@ import { cn } from '@codefast/ui';
 import Link from 'next/link';
 import { type HTMLAttributes, type JSX } from 'react';
 
-export function MainNav({
-  className,
-  ...props
-}: HTMLAttributes<HTMLElement>): JSX.Element {
+export function MainNav({ className, ...props }: HTMLAttributes<HTMLElement>): JSX.Element {
   return (
-    <nav
-      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-      {...props}
-    >
-      <Link
-        className="hover:text-primary text-sm font-medium transition-colors"
-        href="/examples/dashboard"
-      >
+    <nav className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
+      <Link className="hover:text-primary text-sm font-medium transition-colors" href="/examples/dashboard">
         Overview
       </Link>
       <Link

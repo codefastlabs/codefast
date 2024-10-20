@@ -23,10 +23,7 @@ const HOOK_OR_EVENT_REGEX =
  * @returns `true` if the content includes any of the client libraries or if it
  *   contains any hooks, otherwise `false`.
  */
-function containsClientLibsOrHooks(
-  content: string,
-  clientLibs: RegExp | undefined,
-): boolean {
+function containsClientLibsOrHooks(content: string, clientLibs: RegExp | undefined): boolean {
   return clientLibs?.test(content) || HOOK_OR_EVENT_REGEX.test(content);
 }
 
@@ -36,17 +33,13 @@ function containsClientLibsOrHooks(
  * @param clientLibs - An array of strings representing client libraries.
  * @returns A regex pattern matching any of the provided client libraries.
  */
-function buildClientLibsRegex(
-  clientLibs: string[] | undefined,
-): RegExp | undefined {
+function buildClientLibsRegex(clientLibs: string[] | undefined): RegExp | undefined {
   if (!clientLibs || clientLibs.length === 0) {
     return undefined;
   }
 
   // Escape special characters in each library name to safely use in regex.
-  const escapedLibs = clientLibs.map((lib) =>
-    lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-  );
+  const escapedLibs = clientLibs.map((lib) => lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
 
   // Return a regex pattern that matches any of the provided client libraries.
   return new RegExp(`(?:${escapedLibs.join('|')})`);
@@ -61,9 +54,7 @@ function buildClientLibsRegex(
  * @returns A plugin object that contains a `renderChunk` method to process and
  *   potentially modify the code chunks.
  */
-export function addUseClientDirective(
-  clientLibs?: string[],
-): NonNullable<Options['plugins']>[number] {
+export function addUseClientDirective(clientLibs?: string[]): NonNullable<Options['plugins']>[number] {
   const clientLibsRegex = buildClientLibsRegex(clientLibs);
 
   return {

@@ -85,15 +85,11 @@ export const ReactHookForm: Story = {
       resolver: zodResolver(formValues),
     });
 
-    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
-      values,
-    ): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -101,10 +97,7 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          className="w-2/3 space-y-6"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
             name="type"
@@ -121,17 +114,13 @@ export const ReactHookForm: Story = {
                       <FormControl>
                         <CheckboxGroupItem value="all" />
                       </FormControl>
-                      <FormLabel className="font-normal">
-                        All new messages
-                      </FormLabel>
+                      <FormLabel className="font-normal">All new messages</FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>
                         <CheckboxGroupItem value="mentions" />
                       </FormControl>
-                      <FormLabel className="font-normal">
-                        Direct messages and mentions
-                      </FormLabel>
+                      <FormLabel className="font-normal">Direct messages and mentions</FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>

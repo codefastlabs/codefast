@@ -57,17 +57,11 @@ const examples: {
 
 type ExamplesNavigationProps = HTMLAttributes<HTMLDivElement>;
 
-export function ExamplesNavigation({
-  className,
-  ...props
-}: ExamplesNavigationProps): JSX.Element {
+export function ExamplesNavigation({ className, ...props }: ExamplesNavigationProps): JSX.Element {
   return (
     <div className={cn('relative', className)} {...props}>
       <ScrollArea size="sm">
-        <div
-          className={cn('flex items-center gap-1 p-2', className)}
-          {...props}
-        >
+        <div className={cn('flex items-center gap-1 p-2', className)} {...props}>
           {examples.map((example) => (
             <ExampleLink key={example.href} href={example.href}>
               {example.name}

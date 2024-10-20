@@ -11,13 +11,11 @@ interface PreProps extends HTMLAttributes<HTMLPreElement> {
   asChild?: boolean;
 }
 
-const Pre = forwardRef<PreElement, PreProps>(
-  ({ asChild, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : 'pre';
+const Pre = forwardRef<PreElement, PreProps>(({ asChild, ...props }, forwardedRef) => {
+  const Component = asChild ? Slot : 'pre';
 
-    return <Component ref={forwardedRef} {...props} />;
-  },
-);
+  return <Component ref={forwardedRef} {...props} />;
+});
 
 Pre.displayName = 'Pre';
 

@@ -1,9 +1,5 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -21,18 +17,16 @@ const Tabs = TabsPrimitive.Root;
 type TabsListElement = ComponentRef<typeof TabsPrimitive.List>;
 type TabsListProps = ComponentPropsWithoutRef<typeof TabsPrimitive.List>;
 
-const TabsList = forwardRef<TabsListElement, TabsListProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <TabsPrimitive.List
-      ref={forwardedRef}
-      className={cn(
-        'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center gap-1 rounded-md p-1',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const TabsList = forwardRef<TabsListElement, TabsListProps>(({ className, ...props }, forwardedRef) => (
+  <TabsPrimitive.List
+    ref={forwardedRef}
+    className={cn(
+      'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center gap-1 rounded-md p-1',
+      className,
+    )}
+    {...props}
+  />
+));
 
 TabsList.displayName = TabsPrimitive.List.displayName;
 
@@ -43,21 +37,19 @@ TabsList.displayName = TabsPrimitive.List.displayName;
 type TabsTriggerElement = ComponentRef<typeof TabsPrimitive.Trigger>;
 type TabsTriggerProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>;
 
-const TabsTrigger = forwardRef<TabsTriggerElement, TabsTriggerProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <TabsPrimitive.Trigger
-      ref={forwardedRef}
-      className={cn(
-        'inline-flex items-center justify-center whitespace-nowrap rounded px-3 py-1.5 text-sm font-medium outline-transparent transition-all',
-        'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
-        'disabled:pointer-events-none disabled:opacity-50',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const TabsTrigger = forwardRef<TabsTriggerElement, TabsTriggerProps>(({ className, ...props }, forwardedRef) => (
+  <TabsPrimitive.Trigger
+    ref={forwardedRef}
+    className={cn(
+      'inline-flex items-center justify-center whitespace-nowrap rounded px-3 py-1.5 text-sm font-medium outline-transparent transition-all',
+      'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+      'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
+      'disabled:pointer-events-none disabled:opacity-50',
+      className,
+    )}
+    {...props}
+  />
+));
 
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
@@ -68,19 +60,17 @@ TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 type TabsContentElement = ComponentRef<typeof TabsPrimitive.Content>;
 type TabsContentProps = ComponentPropsWithoutRef<typeof TabsPrimitive.Content>;
 
-const TabsContent = forwardRef<TabsContentElement, TabsContentProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <TabsPrimitive.Content
-      ref={forwardedRef}
-      className={cn(
-        'mt-2 rounded-md',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const TabsContent = forwardRef<TabsContentElement, TabsContentProps>(({ className, ...props }, forwardedRef) => (
+  <TabsPrimitive.Content
+    ref={forwardedRef}
+    className={cn(
+      'mt-2 rounded-md',
+      'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
+      className,
+    )}
+    {...props}
+  />
+));
 
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 

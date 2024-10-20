@@ -32,8 +32,7 @@ const meta = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field should automatically get focus when the page loads',
+      description: 'Specifies that the input field should automatically get focus when the page loads',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -127,8 +126,7 @@ const meta = {
     },
     required: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field must be filled out before submitting the form',
+      description: 'Specifies that the input field must be filled out before submitting the form',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -168,29 +166,9 @@ export default meta;
 const units = {
   area: ['acre', 'hectare'],
   volume: ['liter', 'milliliter', 'gallon', 'fluid-ounce'],
-  length: [
-    'kilometer',
-    'meter',
-    'centimeter',
-    'inch',
-    'foot',
-    'yard',
-    'mile',
-    'mile-scandinavian',
-  ],
+  length: ['kilometer', 'meter', 'centimeter', 'inch', 'foot', 'yard', 'mile', 'mile-scandinavian'],
   mass: ['gram', 'kilogram', 'ounce', 'pound', 'stone'],
-  time: [
-    'second',
-    'minute',
-    'hour',
-    'day',
-    'week',
-    'month',
-    'year',
-    'millisecond',
-    'microsecond',
-    'nanosecond',
-  ],
+  time: ['second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'millisecond', 'microsecond', 'nanosecond'],
   temperature: ['celsius', 'fahrenheit', 'degree'],
   data: [
     'bit',
@@ -269,9 +247,7 @@ export const UnitFormat: Story = {
           <SelectContent>
             {Object.entries(units).map(([group, unitList]) => (
               <SelectGroup key={group}>
-                <SelectLabel>
-                  {group.charAt(0).toUpperCase() + group.slice(1)}
-                </SelectLabel>
+                <SelectLabel>{group.charAt(0).toUpperCase() + group.slice(1)}</SelectLabel>
 
                 {unitList.map((unit) => (
                   <SelectItem key={unit} value={unit}>
@@ -399,16 +375,12 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit = async (
-      values: z.infer<typeof formValues>,
-    ): Promise<void> => {
+    const onSubmit = async (values: z.infer<typeof formValues>): Promise<void> => {
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -424,11 +396,7 @@ export const ReactHookForm: Story = {
               <FormItem>
                 <FormLabel>Number Input</FormLabel>
                 <FormControl>
-                  <NumberInput
-                    disabled={disabled}
-                    {...field}
-                    placeholder="Enter a number"
-                  />
+                  <NumberInput disabled={disabled} {...field} placeholder="Enter a number" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

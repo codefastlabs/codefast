@@ -60,12 +60,7 @@ export const Sizes: Story = {
       <Badge {...args} prefix={<ShieldCheckIcon />} size="xl" variant="outline">
         xl badge
       </Badge>
-      <Badge
-        {...args}
-        prefix={<ShieldCheckIcon />}
-        size="2xl"
-        variant="outline"
-      >
+      <Badge {...args} prefix={<ShieldCheckIcon />} size="2xl" variant="outline">
         2xl badge
       </Badge>
     </div>

@@ -8,13 +8,7 @@ import {
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
 } from 'input-otp';
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-  type HTMLAttributes,
-  useContext,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type HTMLAttributes, useContext } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -30,11 +24,7 @@ const InputOTP = forwardRef<InputOTPElement, InputOTPProps>(
     <OTPInput
       ref={forwardedRef}
       className={cn('disabled:cursor-default', className)}
-      containerClassName={cn(
-        'flex items-center gap-2',
-        'has-[:disabled]:opacity-50',
-        containerClassName,
-      )}
+      containerClassName={cn('flex items-center gap-2', 'has-[:disabled]:opacity-50', containerClassName)}
       {...props}
     />
   ),
@@ -49,15 +39,9 @@ InputOTP.displayName = 'InputOTP';
 type InputOTPGroupElement = HTMLDivElement;
 type InputOTPGroupProps = HTMLAttributes<HTMLDivElement>;
 
-const InputOTPGroup = forwardRef<InputOTPGroupElement, InputOTPGroupProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div
-      ref={forwardedRef}
-      className={cn('flex items-center', className)}
-      {...props}
-    />
-  ),
-);
+const InputOTPGroup = forwardRef<InputOTPGroupElement, InputOTPGroupProps>(({ className, ...props }, forwardedRef) => (
+  <div ref={forwardedRef} className={cn('flex items-center', className)} {...props} />
+));
 
 InputOTPGroup.displayName = 'InputOTPGroup';
 
@@ -108,10 +92,7 @@ InputOTPSlot.displayName = 'InputOTPSlot';
 type InputOTPSeparatorElement = HTMLDivElement;
 type InputOTPSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
-const InputOTPSeparator = forwardRef<
-  InputOTPSeparatorElement,
-  InputOTPSeparatorProps
->(({ ...props }, forwardedRef) => (
+const InputOTPSeparator = forwardRef<InputOTPSeparatorElement, InputOTPSeparatorProps>(({ ...props }, forwardedRef) => (
   <div ref={forwardedRef} role="separator" {...props}>
     <DotFilledIcon />
   </div>

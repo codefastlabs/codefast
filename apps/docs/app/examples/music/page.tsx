@@ -1,12 +1,4 @@
-import {
-  Button,
-  ScrollArea,
-  Separator,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@codefast/ui';
+import { Button, ScrollArea, Separator, Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { type Metadata } from 'next';
 import Image from 'next/image';
@@ -16,10 +8,7 @@ import { AlbumArtwork } from '@/app/examples/music/_components/album-artwork';
 import { Menu } from '@/app/examples/music/_components/menu';
 import { PodcastEmptyPlaceholder } from '@/app/examples/music/_components/podcast-empty-placeholder';
 import { Sidebar } from '@/app/examples/music/_components/sidebar';
-import {
-  listenNowAlbums,
-  madeForYouAlbums,
-} from '@/app/examples/music/_data/albums';
+import { listenNowAlbums, madeForYouAlbums } from '@/app/examples/music/_data/albums';
 import { playlists } from '@/app/examples/music/_data/playlists';
 
 export const metadata: Metadata = {
@@ -31,20 +20,8 @@ export default function MusicPage(): JSX.Element {
   return (
     <>
       <div className="md:hidden">
-        <Image
-          alt="Music"
-          className="block dark:hidden"
-          height={1114}
-          src="/examples/music-light.png"
-          width={1280}
-        />
-        <Image
-          alt="Music"
-          className="hidden dark:block"
-          height={1114}
-          src="/examples/music-dark.png"
-          width={1280}
-        />
+        <Image alt="Music" className="block dark:hidden" height={1114} src="/examples/music-light.png" width={1280} />
+        <Image alt="Music" className="hidden dark:block" height={1114} src="/examples/music-dark.png" width={1280} />
       </div>
       <div className="hidden md:block">
         <Menu />
@@ -71,18 +48,11 @@ export default function MusicPage(): JSX.Element {
                         </Button>
                       </div>
                     </div>
-                    <TabsContent
-                      className="border-none p-0 outline-none"
-                      value="music"
-                    >
+                    <TabsContent className="border-none p-0 outline-none" value="music">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <h2 className="text-2xl font-semibold tracking-tight">
-                            Listen Now
-                          </h2>
-                          <p className="text-muted-foreground text-sm">
-                            Top picks for you. Updated daily.
-                          </p>
+                          <h2 className="text-2xl font-semibold tracking-tight">Listen Now</h2>
+                          <p className="text-muted-foreground text-sm">Top picks for you. Updated daily.</p>
                         </div>
                       </div>
                       <Separator className="my-4" />
@@ -103,12 +73,8 @@ export default function MusicPage(): JSX.Element {
                         </ScrollArea>
                       </div>
                       <div className="mt-6 space-y-1">
-                        <h2 className="text-2xl font-semibold tracking-tight">
-                          Made for You
-                        </h2>
-                        <p className="text-muted-foreground text-sm">
-                          Your personal playlists. Updated daily.
-                        </p>
+                        <h2 className="text-2xl font-semibold tracking-tight">Made for You</h2>
+                        <p className="text-muted-foreground text-sm">Your personal playlists. Updated daily.</p>
                       </div>
                       <Separator className="my-4" />
                       <div className="relative">
@@ -128,18 +94,11 @@ export default function MusicPage(): JSX.Element {
                         </ScrollArea>
                       </div>
                     </TabsContent>
-                    <TabsContent
-                      className="h-full flex-col border-none p-0 data-[state=active]:flex"
-                      value="podcasts"
-                    >
+                    <TabsContent className="h-full flex-col border-none p-0 data-[state=active]:flex" value="podcasts">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <h2 className="text-2xl font-semibold tracking-tight">
-                            New Episodes
-                          </h2>
-                          <p className="text-muted-foreground text-sm">
-                            Your favorite podcasts. Updated daily.
-                          </p>
+                          <h2 className="text-2xl font-semibold tracking-tight">New Episodes</h2>
+                          <p className="text-muted-foreground text-sm">Your favorite podcasts. Updated daily.</p>
                         </div>
                       </div>
                       <Separator className="my-4" />

@@ -5,9 +5,7 @@ import { type ComponentPropsWithoutRef } from 'react';
  * Component: AspectRatio
  * -------------------------------------------------------------------------- */
 
-type AspectRatioProps = ComponentPropsWithoutRef<
-  typeof AspectRatioPrimitive.Root
->;
+type AspectRatioProps = ComponentPropsWithoutRef<typeof AspectRatioPrimitive.Root>;
 const AspectRatio = AspectRatioPrimitive.Root;
 
 /* -----------------------------------------------------------------------------

@@ -1,9 +1,5 @@
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -12,21 +8,11 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type RadioGroupElement = ComponentRef<typeof RadioGroupPrimitive.Root>;
-type RadioGroupProps = ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Root
->;
+type RadioGroupProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
-const RadioGroup = forwardRef<RadioGroupElement, RadioGroupProps>(
-  ({ className, ...props }, forwardedRef) => {
-    return (
-      <RadioGroupPrimitive.Root
-        className={cn('grid gap-2', className)}
-        {...props}
-        ref={forwardedRef}
-      />
-    );
-  },
-);
+const RadioGroup = forwardRef<RadioGroupElement, RadioGroupProps>(({ className, ...props }, forwardedRef) => {
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={forwardedRef} />;
+});
 
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -35,9 +21,7 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 type RadioGroupItemElement = ComponentRef<typeof RadioGroupPrimitive.Item>;
-type RadioGroupItemProps = ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Item
->;
+type RadioGroupItemProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
 const RadioGroupItem = forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
   ({ className, ...props }, forwardedRef) => (
@@ -69,9 +53,4 @@ RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  RadioGroup,
-  RadioGroupItem,
-  type RadioGroupItemProps,
-  type RadioGroupProps,
-};
+export { RadioGroup, RadioGroupItem, type RadioGroupItemProps, type RadioGroupProps };

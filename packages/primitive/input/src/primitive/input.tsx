@@ -24,8 +24,7 @@ interface InputContextValue {
   inputRef: RefObject<HTMLInputElement | null>;
 }
 
-const [InputProvider, useInputContext] =
-  createInputContext<InputContextValue>(INPUT_NAME);
+const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
 type InputProps = PropsWithChildren<{
   className?: string;
@@ -111,12 +110,4 @@ InputItem.displayName = INPUT_ITEM_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  createInputScope,
-  Input,
-  InputItem,
-  InputItem as Item,
-  Input as Root,
-  type InputItemProps,
-  type InputProps,
-};
+export { createInputScope, Input, InputItem, InputItem as Item, Input as Root, type InputItemProps, type InputProps };

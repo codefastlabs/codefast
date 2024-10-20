@@ -10,30 +10,14 @@ export default async function MailPage(): Promise<JSX.Element> {
   const layout = cookieStore.get('react-resizable-panels:layout');
   const collapsed = cookieStore.get('react-resizable-panels:collapsed');
 
-  const defaultLayout = (
-    layout ? JSON.parse(layout.value) : undefined
-  ) as number[];
-  const defaultCollapsed = (
-    collapsed ? JSON.parse(collapsed.value) : undefined
-  ) as boolean;
+  const defaultLayout = (layout ? JSON.parse(layout.value) : undefined) as number[];
+  const defaultCollapsed = (collapsed ? JSON.parse(collapsed.value) : undefined) as boolean;
 
   return (
     <>
       <div className="md:hidden">
-        <Image
-          alt="Mail"
-          className="hidden dark:block"
-          height={727}
-          src="/examples/mail-dark.png"
-          width={1280}
-        />
-        <Image
-          alt="Mail"
-          className="block dark:hidden"
-          height={727}
-          src="/examples/mail-light.png"
-          width={1280}
-        />
+        <Image alt="Mail" className="hidden dark:block" height={727} src="/examples/mail-dark.png" width={1280} />
+        <Image alt="Mail" className="block dark:hidden" height={727} src="/examples/mail-light.png" width={1280} />
       </div>
       <div className="hidden flex-col md:flex">
         <Mail

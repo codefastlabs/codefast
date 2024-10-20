@@ -31,10 +31,7 @@ import { type JSX } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 
 import { updateAccount } from '@/app/examples/forms/account/_lib/actions/account-actions';
-import {
-  type AccountFormValues,
-  accountFormValues,
-} from '@/app/examples/forms/account/_lib/schema/account-schema';
+import { type AccountFormValues, accountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
 
 const languages = [
   { label: 'English', value: 'en' },
@@ -60,9 +57,7 @@ export function AccountForm(): JSX.Element {
     defaultValues,
   });
 
-  const onSubmit: SubmitHandler<AccountFormValues> = async (
-    values,
-  ): Promise<void> => {
+  const onSubmit: SubmitHandler<AccountFormValues> = async (values): Promise<void> => {
     const response = await updateAccount(values);
 
     if (response.ok) {
@@ -95,16 +90,9 @@ export function AccountForm(): JSX.Element {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <TextInput
-                  disabled={disabled ?? form.formState.isSubmitting}
-                  placeholder="Your name"
-                  {...field}
-                />
+                <TextInput disabled={disabled ?? form.formState.isSubmitting} placeholder="Your name" {...field} />
               </FormControl>
-              <FormDescription>
-                This is the name that will be displayed on your profile and in
-                emails.
-              </FormDescription>
+              <FormDescription>This is the name that will be displayed on your profile and in emails.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -133,18 +121,14 @@ export function AccountForm(): JSX.Element {
                 </PopoverTrigger>
                 <PopoverContent align="start" className="w-auto p-0">
                   <Calendar
-                    disabled={(date) =>
-                      date > new Date() || date < new Date('1900-01-01')
-                    }
+                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
+              <FormDescription>Your date of birth is used to calculate your age.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -159,19 +143,14 @@ export function AccountForm(): JSX.Element {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      className={cn(
-                        'w-56 justify-between px-3',
-                        !field.value && 'text-muted-foreground',
-                      )}
+                      className={cn('w-56 justify-between px-3', !field.value && 'text-muted-foreground')}
                       disabled={disabled ?? form.formState.isSubmitting}
                       role="combobox"
                       suffix={<CaretSortIcon className="opacity-50" />}
                       variant="outline"
                     >
                       {field.value
-                        ? languages.find(
-                            (language) => language.value === field.value,
-                          )?.label
+                        ? languages.find((language) => language.value === field.value)?.label
                         : 'Select language'}
                     </Button>
                   </FormControl>
@@ -193,9 +172,7 @@ export function AccountForm(): JSX.Element {
                             <CheckIcon
                               className={cn(
                                 'mr-2 size-4',
-                                language.value === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
+                                language.value === field.value ? 'opacity-100' : 'opacity-0',
                               )}
                             />
                             {language.label}
@@ -206,9 +183,7 @@ export function AccountForm(): JSX.Element {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                This is the language that will be used in the dashboard.
-              </FormDescription>
+              <FormDescription>This is the language that will be used in the dashboard.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

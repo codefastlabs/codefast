@@ -11,13 +11,11 @@ interface CodeProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Code = forwardRef<CodeElement, CodeProps>(
-  ({ asChild, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : 'code';
+const Code = forwardRef<CodeElement, CodeProps>(({ asChild, ...props }, forwardedRef) => {
+  const Component = asChild ? Slot : 'code';
 
-    return <Component ref={forwardedRef} {...props} />;
-  },
-);
+  return <Component ref={forwardedRef} {...props} />;
+});
 
 Code.displayName = 'Code';
 

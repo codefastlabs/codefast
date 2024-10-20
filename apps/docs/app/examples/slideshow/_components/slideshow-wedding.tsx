@@ -6,9 +6,7 @@ import { type HTMLAttributes, type JSX } from 'react';
 
 type SlideshowWeddingProps = HTMLAttributes<HTMLDivElement>;
 
-export function SlideshowWedding({
-  ...props
-}: SlideshowWeddingProps): JSX.Element {
+export function SlideshowWedding({ ...props }: SlideshowWeddingProps): JSX.Element {
   return (
     <Slideshow
       options={{

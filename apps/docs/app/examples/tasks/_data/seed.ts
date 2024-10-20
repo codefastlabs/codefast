@@ -13,10 +13,7 @@ const tasks = Array.from({ length: 100 }, () => ({
   priority: faker.helpers.arrayElement(priorities).value,
 }));
 
-fs.writeFileSync(
-  path.join(__dirname, 'tasks.json'),
-  JSON.stringify(tasks, null, 2),
-);
+fs.writeFileSync(path.join(__dirname, 'tasks.json'), JSON.stringify(tasks, null, 2));
 
 // eslint-disable-next-line no-console -- no need to log this
 console.log('✅ Tasks data generated.');

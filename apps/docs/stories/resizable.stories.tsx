@@ -1,8 +1,4 @@
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@codefast/ui';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
@@ -20,11 +16,7 @@ type Story = StoryObj<typeof ResizablePanelGroup>;
 
 export const Default: Story = {
   render: (args) => (
-    <ResizablePanelGroup
-      className="max-w-md rounded-lg border"
-      {...args}
-      direction="horizontal"
-    >
+    <ResizablePanelGroup className="max-w-md rounded-lg border" {...args} direction="horizontal">
       <ResizablePanel defaultSize={50}>
         <div className="flex h-[200px] items-center justify-center p-6">
           <span className="font-semibold">One</span>
@@ -56,11 +48,7 @@ export const Default: Story = {
 
 export const Vertical: Story = {
   render: (args) => (
-    <ResizablePanelGroup
-      className="min-h-[200px] max-w-md rounded-lg border"
-      {...args}
-      direction="vertical"
-    >
+    <ResizablePanelGroup className="min-h-[200px] max-w-md rounded-lg border" {...args} direction="vertical">
       <ResizablePanel defaultSize={25}>
         <div className="flex h-full items-center justify-center p-6">
           <span className="font-semibold">Header</span>
@@ -82,11 +70,7 @@ export const Vertical: Story = {
 
 export const Handle: Story = {
   render: (args) => (
-    <ResizablePanelGroup
-      className="min-h-[200px] max-w-md rounded-lg border"
-      {...args}
-      direction="horizontal"
-    >
+    <ResizablePanelGroup className="min-h-[200px] max-w-md rounded-lg border" {...args} direction="horizontal">
       <ResizablePanel defaultSize={25}>
         <div className="flex h-full items-center justify-center p-6">
           <span className="font-semibold">Sidebar</span>

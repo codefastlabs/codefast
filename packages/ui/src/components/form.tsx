@@ -42,8 +42,7 @@ const FORM_FIELD_NAME = 'FormField';
 
 type ScopedProps<P> = P & { __scopeFormField?: Scope };
 
-const [createFormFieldContext, createFormFieldScope] =
-  createContextScope(FORM_FIELD_NAME);
+const [createFormFieldContext, createFormFieldScope] = createContextScope(FORM_FIELD_NAME);
 
 interface FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -52,8 +51,7 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const [FormFieldProvider, useFormFieldContext] =
-  createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
+const [FormFieldProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
 
 function useFormItem(
   consumerName: string,
@@ -83,9 +81,7 @@ function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(formFieldProps: FormFieldProps<TFieldValues, TName>): JSX.Element {
-  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<
-    FormFieldProps<TFieldValues, TName>
-  >;
+  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<FormFieldProps<TFieldValues, TName>>;
 
   return (
     <FormFieldProvider name={props.name} scope={__scopeFormField}>
@@ -104,26 +100,18 @@ interface FormItemContextValue {
   id: string;
 }
 
-const [FormItemProvider, useFormItemContext] =
-  createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
+const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 type FormItemElement = HTMLDivElement;
 type FormItemProps = HTMLAttributes<HTMLDivElement>;
 
 const FormItem = forwardRef<FormItemElement, FormItemProps>(
-  (
-    { __scopeFormField, className, ...props }: ScopedProps<FormItemProps>,
-    forwardedRef,
-  ) => {
+  ({ __scopeFormField, className, ...props }: ScopedProps<FormItemProps>, forwardedRef) => {
     const id = useId();
 
     return (
       <FormItemProvider id={id} scope={__scopeFormField}>
-        <div
-          ref={forwardedRef}
-          className={cn('grid gap-2', className)}
-          {...props}
-        />
+        <div ref={forwardedRef} className={cn('grid gap-2', className)} {...props} />
       </FormItemProvider>
     );
   },
@@ -141,10 +129,7 @@ type FormFieldElement = ComponentRef<typeof LabelPrimitive.Root>;
 type FormLabelProps = ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
 
 const FormLabel = forwardRef<FormFieldElement, FormLabelProps>(
-  (
-    { __scopeFormField, ...props }: ScopedProps<FormLabelProps>,
-    forwardedRef,
-  ) => {
+  ({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>, forwardedRef) => {
     const { formItemId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
     return <Label ref={forwardedRef} htmlFor={formItemId} {...props} />;
@@ -163,25 +148,15 @@ type FormControlElement = ComponentRef<typeof Slot>;
 type FormControlProps = ComponentPropsWithoutRef<typeof Slot>;
 
 const FormControl = forwardRef<FormControlElement, FormControlProps>(
-  (
-    { __scopeFormField, ...props }: ScopedProps<FormControlProps>,
-    forwardedRef,
-  ) => {
-    const { formItemId, formDescriptionId, formMessageId } = useFormItem(
-      FORM_MESSAGE_NAME,
-      __scopeFormField,
-    );
+  ({ __scopeFormField, ...props }: ScopedProps<FormControlProps>, forwardedRef) => {
+    const { formItemId, formDescriptionId, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
     const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
     const { errors } = useFormState({ name });
 
     return (
       <Slot
         ref={forwardedRef}
-        aria-describedby={
-          !errors[name]
-            ? formDescriptionId
-            : `${formDescriptionId} ${formMessageId}`
-        }
+        aria-describedby={!errors[name] ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
         aria-invalid={Boolean(errors[name])}
         id={formItemId}
         {...props}
@@ -201,22 +176,9 @@ const FORM_DESCRIPTION_NAME = 'FormDescription';
 type FormDescriptionElement = HTMLParagraphElement;
 type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 
-const FormDescription = forwardRef<
-  FormDescriptionElement,
-  FormDescriptionProps
->(
-  (
-    {
-      __scopeFormField,
-      className,
-      ...props
-    }: ScopedProps<FormDescriptionProps>,
-    forwardedRef,
-  ) => {
-    const { formDescriptionId } = useFormItem(
-      FORM_MESSAGE_NAME,
-      __scopeFormField,
-    );
+const FormDescription = forwardRef<FormDescriptionElement, FormDescriptionProps>(
+  ({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>, forwardedRef) => {
+    const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
     return (
       <p
@@ -241,15 +203,7 @@ type FormMessageElement = HTMLParagraphElement;
 type FormMessageProps = HTMLAttributes<HTMLParagraphElement>;
 
 const FormMessage = forwardRef<FormMessageElement, FormMessageProps>(
-  (
-    {
-      __scopeFormField,
-      children,
-      className,
-      ...props
-    }: ScopedProps<FormMessageProps>,
-    forwardedRef,
-  ) => {
+  ({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>, forwardedRef) => {
     const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
     const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
     const { errors } = useFormState({ name });
@@ -263,13 +217,7 @@ const FormMessage = forwardRef<FormMessageElement, FormMessageProps>(
     return (
       <p
         ref={forwardedRef}
-        className={cn(
-          'text-xs',
-          error?.message
-            ? 'text-destructive font-medium'
-            : 'text-muted-foreground',
-          className,
-        )}
+        className={cn('text-xs', error?.message ? 'text-destructive font-medium' : 'text-muted-foreground', className)}
         id={formMessageId}
         {...props}
       >

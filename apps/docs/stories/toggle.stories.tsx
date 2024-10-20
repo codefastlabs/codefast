@@ -23,8 +23,7 @@ const meta: Meta<typeof Toggle> = {
     },
     defaultPressed: {
       control: { type: 'boolean' },
-      description:
-        'The uncontrolled state of the toggle when initially rendered.',
+      description: 'The uncontrolled state of the toggle when initially rendered.',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -48,16 +47,7 @@ const meta: Meta<typeof Toggle> = {
     },
     variant: {
       control: { type: 'select' },
-      options: [
-        'default',
-        'secondary',
-        'info',
-        'success',
-        'warning',
-        'destructive',
-        'outline',
-        'ghost',
-      ],
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
       description: 'Toggle button variant styles.',
       table: {
         type: { summary: 'string' },
@@ -106,22 +96,13 @@ export const Variants: Story = {
   },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      {(
-        [
-          'default',
-          'secondary',
-          'info',
-          'success',
-          'warning',
-          'destructive',
-          'outline',
-          'ghost',
-        ] as const
-      ).map((variant) => (
-        <Toggle key={variant} {...args} variant={variant}>
-          {variant} Toggle
-        </Toggle>
-      ))}
+      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'] as const).map(
+        (variant) => (
+          <Toggle key={variant} {...args} variant={variant}>
+            {variant} Toggle
+          </Toggle>
+        ),
+      )}
     </div>
   ),
 };

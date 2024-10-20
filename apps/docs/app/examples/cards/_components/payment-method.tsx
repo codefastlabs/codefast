@@ -25,9 +25,7 @@ export function PaymentMethod(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>Payment Method</CardTitle>
-        <CardDescription>
-          Add a new payment method to your account.
-        </CardDescription>
+        <CardDescription>Add a new payment method to your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
         <RadioGroup className="grid grid-cols-3 gap-4" defaultValue="card">
@@ -54,11 +52,7 @@ export function PaymentMethod(): JSX.Element {
             </Label>
           </div>
           <div>
-            <RadioGroupItem
-              className="peer sr-only"
-              id="paypal"
-              value="paypal"
-            />
+            <RadioGroupItem className="peer sr-only" id="paypal" value="paypal" />
             <Label
               className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 p-4"
               htmlFor="paypal"
@@ -117,10 +111,7 @@ export function PaymentMethod(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 10 }, (_, i) => (
-                  <SelectItem
-                    key={i}
-                    value={String(new Date().getFullYear() + i)}
-                  >
+                  <SelectItem key={i} value={String(new Date().getFullYear() + i)}>
                     {new Date().getFullYear() + i}
                   </SelectItem>
                 ))}

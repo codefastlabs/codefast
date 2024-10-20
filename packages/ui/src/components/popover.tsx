@@ -1,10 +1,5 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-} from 'react';
+import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -19,18 +14,14 @@ const Popover = PopoverPrimitive.Root;
  * Component: PopoverTrigger
  * -------------------------------------------------------------------------- */
 
-type PopoverTriggerProps = ComponentPropsWithoutRef<
-  typeof PopoverPrimitive.Trigger
->;
+type PopoverTriggerProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>;
 const PopoverTrigger = PopoverPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverAnchor
  * -------------------------------------------------------------------------- */
 
-type PopoverAnchorProps = ComponentPropsWithoutRef<
-  typeof PopoverPrimitive.Anchor
->;
+type PopoverAnchorProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Anchor>;
 const PopoverAnchor = PopoverPrimitive.Anchor;
 
 /* -----------------------------------------------------------------------------
@@ -38,9 +29,7 @@ const PopoverAnchor = PopoverPrimitive.Anchor;
  * -------------------------------------------------------------------------- */
 
 type PopoverContentElement = ComponentRef<typeof PopoverPrimitive.Content>;
-type PopoverContentProps = ComponentPropsWithoutRef<
-  typeof PopoverPrimitive.Content
->;
+type PopoverContentProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>;
 
 const PopoverContent = forwardRef<PopoverContentElement, PopoverContentProps>(
   ({ className, align = 'center', sideOffset = 6, ...props }, forwardedRef) => (
@@ -76,19 +65,11 @@ PopoverContent.displayName = PopoverPrimitive.Content.displayName;
  * -------------------------------------------------------------------------- */
 
 type PopoverArrowElement = ComponentRef<typeof PopoverPrimitive.Arrow>;
-type PopoverArrowProps = ComponentPropsWithoutRef<
-  typeof PopoverPrimitive.Arrow
->;
+type PopoverArrowProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Arrow>;
 
-const PopoverArrow = forwardRef<PopoverArrowElement, PopoverArrowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <PopoverPrimitive.Arrow
-      ref={forwardedRef}
-      className={cn('fill-popover', className)}
-      {...props}
-    />
-  ),
-);
+const PopoverArrow = forwardRef<PopoverArrowElement, PopoverArrowProps>(({ className, ...props }, forwardedRef) => (
+  <PopoverPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
+));
 
 PopoverArrow.displayName = PopoverPrimitive.Arrow.displayName;
 

@@ -16,12 +16,7 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Meta, type StoryObj } from '@storybook/react';
-import {
-  LoaderCircleIcon,
-  LockKeyholeIcon,
-  LockKeyholeOpenIcon,
-  MailIcon,
-} from 'lucide-react';
+import { LoaderCircleIcon, LockKeyholeIcon, LockKeyholeOpenIcon, MailIcon } from 'lucide-react';
 import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -190,16 +185,12 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (
-      values,
-    ): Promise<void> => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (values): Promise<void> => {
       await wait(1000);
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -207,10 +198,7 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          className="w-2/3 space-y-6"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -228,9 +216,7 @@ export const ReactHookForm: Story = {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
+                  <FormDescription>This is your public display name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -250,9 +236,7 @@ export const ReactHookForm: Story = {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Must be at least 8 characters.
-                  </FormDescription>
+                  <FormDescription>Must be at least 8 characters.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
