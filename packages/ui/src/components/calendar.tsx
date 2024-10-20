@@ -81,7 +81,6 @@ function DayButton({
       ref={buttonRef}
       icon
       className={cn(
-        'transition-none focus-visible:-outline-offset-2',
         (!modifiers.selected || modifiers.range_middle) && [
           modifiers.today
             ? 'bg-accent'
