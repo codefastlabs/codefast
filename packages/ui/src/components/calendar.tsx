@@ -78,6 +78,7 @@ function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): 
         size: 'sm',
         variant: modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost',
         className: [
+          'focus-visible:z-10',
           (!modifiers.selected || modifiers.range_middle) && [
             modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
             modifiers.outside && 'text-opacity-30',
@@ -103,14 +104,17 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
+        [DayFlag.focused]: 'z-10',
         [DayFlag.outside]: cn(!props.mode && 'text-opacity-30'),
         [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md'),
-        [SelectionState.range_end]: 'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
+        [SelectionState.range_end]:
+          'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50% first:rounded-l-md',
         [SelectionState.range_middle]: 'bg-accent first:rounded-l-md last:rounded-r-md',
-        [SelectionState.range_start]: 'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
+        [SelectionState.range_start]:
+          'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50% last:rounded-r-md',
         [UI.CaptionLabel]: 'inline-flex items-center',
         [UI.Day]: cn(
-          'px-px py-0',
+          'py-0',
           !props.mode && 'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
         ),
         [UI.DayButton]: 'border border-transparent',
