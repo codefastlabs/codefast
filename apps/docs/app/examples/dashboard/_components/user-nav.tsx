@@ -18,8 +18,8 @@ export function UserNav(): JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="relative size-8 rounded-full" variant="ghost">
-          <Avatar className="size-8">
+        <Button icon className="relative rounded-full" variant="ghost">
+          <Avatar>
             <AvatarImage alt="@codefast" src="/avatars/01.png" />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
