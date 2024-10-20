@@ -5,7 +5,7 @@ import { useId } from 'react';
 const meta = {
   component: Radio,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Radio',
+  title: 'UI/Radio',
 } satisfies Meta<typeof Radio>;
 
 export default meta;

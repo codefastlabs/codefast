@@ -22,7 +22,7 @@ import { z } from 'zod';
 const meta = {
   component: Switch,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Switch',
+  title: 'UI/Switch',
 } satisfies Meta<typeof Switch>;
 
 export default meta;

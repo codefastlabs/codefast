@@ -19,7 +19,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Tabs,
   tags: ['autodocs'],
-  title: 'Components/Navigation/Tabs',
+  title: 'UI/Tabs',
 } satisfies Meta<typeof Tabs>;
 
 export default meta;

@@ -117,7 +117,7 @@ const meta: Meta<typeof SearchInput> = {
   },
   component: SearchInput,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Search Input',
+  title: 'UI/Search Input',
 };
 
 export default meta;

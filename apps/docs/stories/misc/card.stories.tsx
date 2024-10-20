@@ -22,7 +22,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Card,
   tags: ['autodocs'],
-  title: 'Components/Misc/Card',
+  title: 'UI/Card',
 } satisfies Meta<typeof Card>;
 
 export default meta;

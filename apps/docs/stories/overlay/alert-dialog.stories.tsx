@@ -15,7 +15,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: AlertDialog,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Alert Dialog',
+  title: 'UI/Alert Dialog',
 } satisfies Meta<typeof AlertDialog>;
 
 export default meta;

@@ -91,7 +91,7 @@ const meta = {
   },
   component: ToggleGroup,
   tags: ['autodocs'],
-  title: 'Components/Buttons/Toggle Group',
+  title: 'UI/Toggle Group',
 } satisfies Meta<typeof ToggleGroup>;
 
 export default meta;

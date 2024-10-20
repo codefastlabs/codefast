@@ -5,7 +5,7 @@ import Image from 'next/image';
 const meta = {
   component: AspectRatio,
   tags: ['autodocs'],
-  title: 'Components/Misc/Aspect Ratio',
+  title: 'UI/Aspect Ratio',
 } satisfies Meta<typeof AspectRatio>;
 
 export default meta;

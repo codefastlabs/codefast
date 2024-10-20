@@ -12,7 +12,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 const meta = {
   component: ChartContainer,
   tags: ['autodocs'],
-  title: 'Components/Data/Chart',
+  title: 'UI/Chart',
 } satisfies Meta<typeof ChartContainer>;
 
 export default meta;

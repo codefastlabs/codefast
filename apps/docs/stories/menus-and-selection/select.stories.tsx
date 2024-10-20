@@ -29,7 +29,7 @@ import { z } from 'zod';
 const meta = {
   component: Select,
   tags: ['autodocs'],
-  title: 'Components/Menus and Selection/Select',
+  title: 'UI/Select',
 } satisfies Meta<typeof Select>;
 
 export default meta;

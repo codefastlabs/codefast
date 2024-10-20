@@ -1,4 +1,3 @@
-import data from '@/mocks/data-table.json';
 import {
   Button,
   Checkbox,
@@ -37,9 +36,11 @@ import {
 import { SearchIcon } from 'lucide-react';
 import { useState } from 'react';
 
+import data from '@/mocks/data-table.json';
+
 const meta = {
   tags: ['autodocs'],
-  title: 'Components/Data/Data Table',
+  title: 'UI/Data Table',
 } satisfies Meta<typeof Table>;
 
 export default meta;

@@ -12,7 +12,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Popover,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Popover',
+  title: 'UI/Popover',
 } satisfies Meta<typeof Popover>;
 
 export default meta;

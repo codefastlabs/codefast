@@ -160,7 +160,7 @@ const meta = {
   },
   component: NumberInput,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Number Input',
+  title: 'UI/Number Input',
 } satisfies Meta<typeof NumberInput>;
 
 export default meta;

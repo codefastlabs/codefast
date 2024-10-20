@@ -22,7 +22,7 @@ const meta = {
   },
   component: Separator,
   tags: ['autodocs'],
-  title: 'Components/Misc/Separator',
+  title: 'UI/Separator',
 } satisfies Meta<typeof Separator>;
 
 export default meta;

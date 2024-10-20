@@ -10,7 +10,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Accordion,
   tags: ['autodocs'],
-  title: 'Components/Misc/Accordion',
+  title: 'UI/Accordion',
 } satisfies Meta<typeof Accordion>;
 
 export default meta;

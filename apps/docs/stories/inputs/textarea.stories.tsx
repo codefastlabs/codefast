@@ -24,7 +24,7 @@ import { z } from 'zod';
 const meta = {
   component: Textarea,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Textarea',
+  title: 'UI/Textarea',
 } satisfies Meta<typeof Textarea>;
 
 export default meta;

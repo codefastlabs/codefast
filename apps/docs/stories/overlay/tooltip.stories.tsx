@@ -11,7 +11,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Tooltip,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Tooltip',
+  title: 'UI/Tooltip',
 } satisfies Meta<typeof Tooltip>;
 
 export default meta;

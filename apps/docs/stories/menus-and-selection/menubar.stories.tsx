@@ -18,7 +18,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Menubar,
   tags: ['autodocs'],
-  title: 'Components/Menus and Selection/Menubar',
+  title: 'UI/Menubar',
 } satisfies Meta<typeof Menubar>;
 
 export default meta;

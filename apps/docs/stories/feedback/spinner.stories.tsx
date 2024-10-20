@@ -5,7 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 const meta = {
   component: Spinner,
   tags: ['autodocs'],
-  title: 'Components/Feedback/Spinner',
+  title: 'UI/Spinner',
 } satisfies Meta<typeof Spinner>;
 
 export default meta;

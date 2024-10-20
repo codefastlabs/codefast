@@ -23,7 +23,7 @@ import { z } from 'zod';
 const meta = {
   component: CheckboxGroup,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Checkbox Group',
+  title: 'UI/Checkbox Group',
 } satisfies Meta<typeof CheckboxGroup>;
 
 export default meta;

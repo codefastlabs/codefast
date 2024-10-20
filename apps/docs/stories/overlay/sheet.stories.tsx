@@ -18,7 +18,7 @@ import { useId } from 'react';
 const meta = {
   component: Sheet,
   tags: ['autodocs'],
-  title: 'Components/Overlay/Sheet',
+  title: 'UI/Sheet',
 } satisfies Meta<typeof Sheet>;
 
 export default meta;
