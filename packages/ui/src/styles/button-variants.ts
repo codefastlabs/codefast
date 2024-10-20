@@ -4,7 +4,7 @@ const buttonVariants = tv({
   base: [
     'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
     '[&>svg]:shrink-0',
-    'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
+    'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2',
     'disabled:pointer-events-none disabled:opacity-50',
   ],
   compoundVariants: [
@@ -48,31 +48,15 @@ const buttonVariants = tv({
       xl: 'h-12 [&>svg]:size-5', // 48px
     },
     variant: {
-      default: ['bg-primary text-primary-foreground shadow-sm', 'hover:bg-primary/80', 'focus-visible:bg-primary/80'],
-      secondary: [
-        'bg-secondary text-secondary-foreground shadow-sm',
-        'hover:bg-secondary/80',
-        'focus-visible:bg-secondary/80',
-      ],
-      info: ['bg-info text-info-foreground shadow-sm', 'hover:bg-info/80', 'focus-visible:bg-info/80'],
-      success: ['bg-success text-success-foreground shadow-sm', 'hover:bg-success/80', 'focus-visible:bg-success/80'],
-      warning: ['bg-warning text-warning-foreground shadow-sm', 'hover:bg-warning/80', 'focus-visible:bg-warning/80'],
-      destructive: [
-        'bg-destructive text-destructive-foreground shadow-sm',
-        'hover:bg-destructive/80',
-        'focus-visible:bg-destructive/80',
-      ],
-      outline: [
-        'text-foreground border-input border shadow-sm',
-        'hover:bg-accent hover:text-accent-foreground',
-        'focus-visible:bg-accent focus-visible:text-accent-foreground',
-      ],
-      ghost: [
-        'text-foreground',
-        'hover:bg-accent hover:text-accent-foreground',
-        'focus-visible:bg-accent focus-visible:text-accent-foreground',
-      ],
-      link: ['text-primary underline-offset-4', 'hover:underline', 'focus-visible:underline'],
+      default: ['bg-primary text-primary-foreground shadow-sm', 'hover:bg-primary/80'],
+      secondary: ['bg-secondary text-secondary-foreground shadow-sm', 'hover:bg-secondary/80'],
+      info: ['bg-info text-info-foreground shadow-sm', 'hover:bg-info/80'],
+      success: ['bg-success text-success-foreground shadow-sm', 'hover:bg-success/80'],
+      warning: ['bg-warning text-warning-foreground shadow-sm', 'hover:bg-warning/80'],
+      destructive: ['bg-destructive text-destructive-foreground shadow-sm', 'hover:bg-destructive/80'],
+      outline: ['text-foreground border-input border shadow-sm', 'hover:bg-accent hover:text-accent-foreground'],
+      ghost: ['text-foreground', 'hover:bg-accent hover:text-accent-foreground'],
+      link: ['text-primary underline-offset-4', 'hover:underline'],
     },
   },
 });

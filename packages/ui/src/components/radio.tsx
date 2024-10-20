@@ -20,9 +20,11 @@ const Radio = forwardRef<RadioElement, RadioProps>(({ className, onValueChange, 
     ref={forwardedRef}
     className={cn(
       'peer relative flex appearance-none items-center justify-center rounded-full shadow-sm transition',
-      'hover:before:border-primary checked:before:border-primary before:border-input before:size-4 before:rounded-full before:border',
-      'checked:after:bg-primary checked:after:absolute checked:after:size-2.5 checked:after:rounded-full',
-      'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
+      'before:border-input before:size-4 before:rounded-full before:border before:transition',
+      'hover:before:border-primary',
+      'checked:before:border-primary checked:before:bg-primary',
+      'checked:after:bg-background checked:after:absolute checked:after:size-1 checked:after:rounded-full',
+      'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2',
       'disabled:pointer-events-none disabled:opacity-50',
       className,
     )}

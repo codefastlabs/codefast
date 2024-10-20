@@ -30,8 +30,8 @@ const RadioGroupItem = forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
       className={cn(
         'border-input text-foreground group peer aspect-square size-4 rounded-full border shadow-sm transition',
         'hover:border-primary',
-        'aria-checked:border-primary',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
+        'aria-checked:border-primary aria-checked:bg-primary',
+        'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2',
         'disabled:pointer-events-none disabled:opacity-50',
         className,
       )}
@@ -40,7 +40,7 @@ const RadioGroupItem = forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
       <RadioGroupPrimitive.Indicator
         className={cn(
           'relative flex size-full items-center justify-center',
-          'after:bg-primary after:block after:size-2.5 after:rounded-full',
+          'after:bg-background after:block after:size-1 after:rounded-full',
         )}
       />
     </RadioGroupPrimitive.Item>
