@@ -28,7 +28,7 @@
       "prettier-plugin-packagejson",
       "prettier-plugin-tailwindcss"
     ],
-    "printWidth": 80,
+    "printWidth": 120,
     "singleQuote": true,
     "tailwindAttributes": [
       "classNames"
