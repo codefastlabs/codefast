@@ -28,7 +28,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {
-  title: 'Components/Inputs/Password Input',
+  title: 'UI/Password Input',
   component: PasswordInput,
   tags: ['autodocs'],
   argTypes: {

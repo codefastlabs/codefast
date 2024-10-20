@@ -108,7 +108,7 @@ const meta = {
     showWeekNumber: false,
   },
   tags: ['autodocs'],
-  title: 'Components/Dates/Calendar',
+  title: 'UI/Calendar',
 } satisfies Meta<typeof Calendar>;
 
 export default meta;

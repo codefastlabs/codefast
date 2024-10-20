@@ -36,7 +36,7 @@ import { z } from 'zod';
 const meta = {
   component: Popover,
   tags: ['autodocs'],
-  title: 'Components/Dates/Date Picker',
+  title: 'UI/Date Picker',
 } satisfies Meta<typeof Popover>;
 
 export default meta;

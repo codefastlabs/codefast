@@ -21,7 +21,7 @@ import { type ComponentProps, useState } from 'react';
 const meta = {
   component: DropdownMenu,
   tags: ['autodocs'],
-  title: 'Components/Menus and Selection/Dropdown Menu',
+  title: 'UI/Dropdown Menu',
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;

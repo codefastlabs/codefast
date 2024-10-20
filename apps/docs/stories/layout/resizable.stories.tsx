@@ -7,7 +7,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Components/Layout/Resizable',
+  title: 'UI/Resizable',
 } satisfies Meta<typeof ResizablePanelGroup>;
 
 export default meta;

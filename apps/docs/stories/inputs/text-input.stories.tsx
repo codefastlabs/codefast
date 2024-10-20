@@ -200,7 +200,7 @@ const meta = {
   },
   component: TextInput,
   tags: ['autodocs'],
-  title: 'Components/Inputs/Text Input',
+  title: 'UI/Text Input',
 } satisfies Meta<typeof TextInput>;
 
 export default meta;

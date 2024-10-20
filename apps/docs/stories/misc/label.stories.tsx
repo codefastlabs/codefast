@@ -5,7 +5,7 @@ import { useId } from 'react';
 const meta = {
   component: Label,
   tags: ['autodocs'],
-  title: 'Components/Misc/Label',
+  title: 'UI/Label',
 } satisfies Meta<typeof Label>;
 
 export default meta;

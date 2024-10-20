@@ -23,7 +23,7 @@ const meta = {
   },
   component: ScrollArea,
   tags: ['autodocs'],
-  title: 'Components/Misc/Scroll Area',
+  title: 'UI/Scroll Area',
 } satisfies Meta<typeof ScrollArea>;
 
 export default meta;

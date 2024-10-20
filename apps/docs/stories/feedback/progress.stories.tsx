@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const meta = {
   component: Progress,
   tags: ['autodocs'],
-  title: 'Components/Feedback/Progress',
+  title: 'UI/Progress',
 } satisfies Meta<typeof Progress>;
 
 export default meta;

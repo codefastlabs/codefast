@@ -25,7 +25,7 @@ import { z } from 'zod';
 
 const meta = {
   tags: ['autodocs'],
-  title: 'Components/Inputs/Input OTP',
+  title: 'UI/Input OTP',
   parameters: {
     layout: 'centered',
   },

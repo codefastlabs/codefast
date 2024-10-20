@@ -28,7 +28,7 @@ import { Fragment, useState } from 'react';
 const meta = {
   component: Breadcrumb,
   tags: ['autodocs'],
-  title: 'Components/Navigation/Breadcrumb',
+  title: 'UI/Breadcrumb',
 } satisfies Meta<typeof Breadcrumb>;
 
 export default meta;

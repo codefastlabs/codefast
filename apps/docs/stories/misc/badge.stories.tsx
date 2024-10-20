@@ -8,7 +8,7 @@ const meta = {
   },
   component: Badge,
   tags: ['autodocs'],
-  title: 'Components/Misc/Badge',
+  title: 'UI/Badge',
 } satisfies Meta<typeof Badge>;
 
 export default meta;
