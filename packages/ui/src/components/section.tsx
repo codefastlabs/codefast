@@ -11,13 +11,11 @@ interface SectionProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Section = forwardRef<SectionElement, SectionProps>(
-  ({ asChild, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : 'section';
+const Section = forwardRef<SectionElement, SectionProps>(({ asChild, ...props }, forwardedRef) => {
+  const Component = asChild ? Slot : 'section';
 
-    return <Component ref={forwardedRef} {...props} />;
-  },
-);
+  return <Component ref={forwardedRef} {...props} />;
+});
 
 Section.displayName = 'Section';
 

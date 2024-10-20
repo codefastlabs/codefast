@@ -1,12 +1,7 @@
 import { Button } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import {
-  LoaderCircleIcon,
-  PaletteIcon,
-  ScanSearchIcon,
-  TreeDeciduousIcon,
-} from 'lucide-react';
+import { LoaderCircleIcon, PaletteIcon, ScanSearchIcon, TreeDeciduousIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const meta = {
@@ -74,17 +69,7 @@ const meta = {
     },
     variant: {
       control: { type: 'select' },
-      options: [
-        'default',
-        'secondary',
-        'info',
-        'success',
-        'warning',
-        'destructive',
-        'outline',
-        'ghost',
-        'link',
-      ],
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'],
       description: 'Button variant styles',
       table: {
         type: { summary: 'string' },
@@ -140,23 +125,13 @@ export const Variants: Story = {
   args: { className: 'capitalize' },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      {(
-        [
-          'default',
-          'secondary',
-          'info',
-          'success',
-          'warning',
-          'destructive',
-          'outline',
-          'ghost',
-          'link',
-        ] as const
-      ).map((variant) => (
-        <Button key={variant} {...args} variant={variant}>
-          {variant} Button
-        </Button>
-      ))}
+      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'] as const).map(
+        (variant) => (
+          <Button key={variant} {...args} variant={variant}>
+            {variant} Button
+          </Button>
+        ),
+      )}
     </div>
   ),
 };

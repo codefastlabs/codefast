@@ -2,11 +2,7 @@
 
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
@@ -43,9 +39,7 @@ const scrollAreaScrollbarVariants = tv({
   },
 });
 
-type ScrollAreaScrollbarVariantsProps = VariantProps<
-  typeof scrollAreaScrollbarVariants
->;
+type ScrollAreaScrollbarVariantsProps = VariantProps<typeof scrollAreaScrollbarVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
@@ -59,32 +53,15 @@ const [createCarouselContext] = createContextScope(SCROLL_AREA_NAME);
 
 type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 
-const [CarouselProvider, useCarouselContext] =
-  createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
+const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
 type ScrollAreaElement = ComponentRef<typeof ScrollAreaPrimitive.Root>;
-type ScrollAreaProps = ComponentPropsWithoutRef<
-  typeof ScrollAreaPrimitive.Root
-> &
-  ScrollAreaContextValue;
+type ScrollAreaProps = ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
 
 const ScrollArea = forwardRef<ScrollAreaElement, ScrollAreaProps>(
-  (
-    {
-      __scopeScrollArea,
-      children,
-      className,
-      size,
-      ...props
-    }: ScopedProps<ScrollAreaProps>,
-    forwardedRef,
-  ) => (
+  ({ __scopeScrollArea, children, className, size, ...props }: ScopedProps<ScrollAreaProps>, forwardedRef) => (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root
-        ref={forwardedRef}
-        className={cn('relative overflow-hidden', className)}
-        {...props}
-      >
+      <ScrollAreaPrimitive.Root ref={forwardedRef} className={cn('relative overflow-hidden', className)} {...props}>
         <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit] [&>*]:h-full">
           {children}
         </ScrollAreaPrimitive.Viewport>
@@ -102,26 +79,11 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
  * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-type ScrollAreaScrollbarElement = ComponentRef<
-  typeof ScrollAreaPrimitive.Scrollbar
->;
-type ScrollAreaScrollbarProps = ComponentPropsWithoutRef<
-  typeof ScrollAreaPrimitive.Scrollbar
->;
+type ScrollAreaScrollbarElement = ComponentRef<typeof ScrollAreaPrimitive.Scrollbar>;
+type ScrollAreaScrollbarProps = ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Scrollbar>;
 
-const ScrollAreaScrollbar = forwardRef<
-  ScrollAreaScrollbarElement,
-  ScrollAreaScrollbarProps
->(
-  (
-    {
-      __scopeScrollArea,
-      className,
-      orientation,
-      ...props
-    }: ScopedProps<ScrollAreaScrollbarProps>,
-    forwardedRef,
-  ) => {
+const ScrollAreaScrollbar = forwardRef<ScrollAreaScrollbarElement, ScrollAreaScrollbarProps>(
+  ({ __scopeScrollArea, className, orientation, ...props }: ScopedProps<ScrollAreaScrollbarProps>, forwardedRef) => {
     const { size } = useCarouselContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
     return (
@@ -147,9 +109,4 @@ ScrollAreaScrollbar.displayName = ScrollAreaPrimitive.Scrollbar.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  ScrollArea,
-  ScrollAreaScrollbar,
-  type ScrollAreaProps,
-  type ScrollAreaScrollbarProps,
-};
+export { ScrollArea, ScrollAreaScrollbar, type ScrollAreaProps, type ScrollAreaScrollbarProps };

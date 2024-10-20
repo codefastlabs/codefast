@@ -10,10 +10,7 @@ import {
 } from 'react';
 
 import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
+import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -26,9 +23,7 @@ const Dialog = DialogPrimitive.Root;
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
-type DialogTriggerProps = ComponentPropsWithoutRef<
-  typeof DialogPrimitive.Trigger
->;
+type DialogTriggerProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Trigger>;
 const DialogTrigger = DialogPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
@@ -36,9 +31,7 @@ const DialogTrigger = DialogPrimitive.Trigger;
  * -------------------------------------------------------------------------- */
 
 type DialogContentElement = ComponentRef<typeof DialogPrimitive.Content>;
-type DialogContentProps = ComponentPropsWithoutRef<
-  typeof DialogPrimitive.Content
->;
+type DialogContentProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Content>;
 
 const DialogContent = forwardRef<DialogContentElement, DialogContentProps>(
   ({ children, className, ...props }, forwardedRef) => (
@@ -89,10 +82,7 @@ type DialogHeaderProps = HTMLAttributes<HTMLDivElement>;
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
-      className={cn(
-        'flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left',
-        className,
-      )}
+      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
       {...props}
     />
   );
@@ -105,9 +95,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
 type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
 
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
-  return (
-    <main className={cn('overflow-auto px-6 py-2', className)} {...props} />
-  );
+  return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -119,10 +107,7 @@ type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
-      className={cn(
-        'flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end',
-        className,
-      )}
+      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
       {...props}
     />
   );
@@ -135,18 +120,13 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
 type DialogTitleElement = ComponentRef<typeof DialogPrimitive.Title>;
 type DialogTitleProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Title>;
 
-const DialogTitle = forwardRef<DialogTitleElement, DialogTitleProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <DialogPrimitive.Title
-      ref={forwardedRef}
-      className={cn(
-        'text-lg font-semibold leading-none tracking-tight',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const DialogTitle = forwardRef<DialogTitleElement, DialogTitleProps>(({ className, ...props }, forwardedRef) => (
+  <DialogPrimitive.Title
+    ref={forwardedRef}
+    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+    {...props}
+  />
+));
 
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
@@ -154,23 +134,18 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
-type DialogDescriptionElement = ComponentRef<
-  typeof DialogPrimitive.Description
->;
-type DialogDescriptionProps = ComponentPropsWithoutRef<
-  typeof DialogPrimitive.Description
->;
+type DialogDescriptionElement = ComponentRef<typeof DialogPrimitive.Description>;
+type DialogDescriptionProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Description>;
 
-const DialogDescription = forwardRef<
-  DialogDescriptionElement,
-  DialogDescriptionProps
->(({ className, ...props }, forwardedRef) => (
-  <DialogPrimitive.Description
-    ref={forwardedRef}
-    className={cn('text-muted-foreground text-sm', className)}
-    {...props}
-  />
-));
+const DialogDescription = forwardRef<DialogDescriptionElement, DialogDescriptionProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <DialogPrimitive.Description
+      ref={forwardedRef}
+      className={cn('text-muted-foreground text-sm', className)}
+      {...props}
+    />
+  ),
+);
 
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
@@ -180,19 +155,14 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
 type DialogCloseElement = ComponentRef<typeof DialogPrimitive.Close>;
 
-interface DialogCloseProps
-  extends ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
+interface DialogCloseProps extends ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }
 
 const DialogClose = forwardRef<DialogCloseElement, DialogCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <DialogPrimitive.Close
-      ref={forwardedRef}
-      className={buttonVariants({ className, size, variant })}
-      {...props}
-    />
+    <DialogPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
   ),
 );
 

@@ -7,8 +7,7 @@ const meta: Meta<typeof SearchInput> = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field should automatically get focus when the page loads',
+      description: 'Specifies that the input field should automatically get focus when the page loads',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -86,8 +85,7 @@ const meta: Meta<typeof SearchInput> = {
     },
     required: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field must be filled out before submitting the form',
+      description: 'Specifies that the input field must be filled out before submitting the form',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },

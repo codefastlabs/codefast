@@ -23,9 +23,7 @@ export function ShareDocument(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>Share this document</CardTitle>
-        <CardDescription>
-          Anyone with the link can view this document.
-        </CardDescription>
+        <CardDescription>Anyone with the link can view this document.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex space-x-2">
@@ -45,9 +43,7 @@ export function ShareDocument(): JSX.Element {
                   <AvatarFallback>OM</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium leading-none">
-                    Olivia Martin
-                  </p>
+                  <p className="text-sm font-medium leading-none">Olivia Martin</p>
                   <p className="text-muted-foreground text-sm">m@example.com</p>
                 </div>
               </div>
@@ -68,9 +64,7 @@ export function ShareDocument(): JSX.Element {
                   <AvatarFallback>IN</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium leading-none">
-                    Isabella Nguyen
-                  </p>
+                  <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
                   <p className="text-muted-foreground text-sm">b@example.com</p>
                 </div>
               </div>
@@ -91,9 +85,7 @@ export function ShareDocument(): JSX.Element {
                   <AvatarFallback>SD</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
+                  <p className="text-sm font-medium leading-none">Sofia Davis</p>
                   <p className="text-muted-foreground text-sm">p@example.com</p>
                 </div>
               </div>

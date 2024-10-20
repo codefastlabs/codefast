@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Label,
-} from '@codefast/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Label } from '@codefast/ui';
 import { type JSX } from 'react';
 
 import { DatePickerWithRange } from '@/components/date-picker-with-range';
@@ -15,9 +8,7 @@ export function Calendar(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>Calendar</CardTitle>
-        <CardDescription>
-          Keep track of important dates with the calendar.
-        </CardDescription>
+        <CardDescription>Keep track of important dates with the calendar.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">

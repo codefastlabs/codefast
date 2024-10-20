@@ -22,11 +22,9 @@ interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
   separator?: ReactNode;
 }
 
-const Breadcrumb = forwardRef<BreadcrumbElement, BreadcrumbProps>(
-  ({ ...props }, forwardedRef) => (
-    <nav ref={forwardedRef} aria-label="breadcrumb" {...props} />
-  ),
-);
+const Breadcrumb = forwardRef<BreadcrumbElement, BreadcrumbProps>(({ ...props }, forwardedRef) => (
+  <nav ref={forwardedRef} aria-label="breadcrumb" {...props} />
+));
 
 Breadcrumb.displayName = 'Breadcrumb';
 
@@ -61,11 +59,7 @@ type BreadcrumbItemProps = LiHTMLAttributes<HTMLLIElement>;
 
 const BreadcrumbItem = forwardRef<BreadcrumbItemElement, BreadcrumbItemProps>(
   ({ className, ...props }, forwardedRef) => (
-    <li
-      ref={forwardedRef}
-      className={cn('inline-flex items-center gap-1.5', className)}
-      {...props}
-    />
+    <li ref={forwardedRef} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
   ),
 );
 
@@ -85,13 +79,7 @@ const BreadcrumbLink = forwardRef<BreadcrumbLinkElement, BreadcrumbLinkProps>(
   ({ asChild, className, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'a';
 
-    return (
-      <Component
-        ref={forwardedRef}
-        className={cn('hover:text-foreground transition', className)}
-        {...props}
-      />
-    );
+    return <Component ref={forwardedRef} className={cn('hover:text-foreground transition', className)} {...props} />;
   },
 );
 
@@ -125,10 +113,7 @@ BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 type BreadcrumbSeparatorProps = LiHTMLAttributes<HTMLLIElement>;
 
-function BreadcrumbSeparator({
-  children,
-  ...props
-}: BreadcrumbSeparatorProps): JSX.Element {
+function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
     <li aria-hidden="true" role="presentation" {...props}>
       {children ?? <ChevronRightIcon className="size-3.5" />}
@@ -142,10 +127,7 @@ function BreadcrumbSeparator({
 
 type BreadcrumbEllipsisProps = HTMLAttributes<HTMLSpanElement>;
 
-function BreadcrumbEllipsis({
-  className,
-  ...props
-}: BreadcrumbEllipsisProps): JSX.Element {
+function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): JSX.Element {
   return (
     <span
       aria-hidden="true"

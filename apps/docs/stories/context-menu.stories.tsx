@@ -68,25 +68,17 @@ export const Default: Story = {
             </ContextMenuSubContent>
           </ContextMenuSub>
           <ContextMenuSeparator />
-          <ContextMenuCheckboxItem
-            checked={bookmarksChecked}
-            onCheckedChange={setBookmarksChecked}
-          >
+          <ContextMenuCheckboxItem checked={bookmarksChecked} onCheckedChange={setBookmarksChecked}>
             Show Bookmarks Bar
             <ContextMenuShortcut>⌘⇧B</ContextMenuShortcut>
           </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem
-            checked={urlsChecked}
-            onCheckedChange={setUrlsChecked}
-          >
+          <ContextMenuCheckboxItem checked={urlsChecked} onCheckedChange={setUrlsChecked}>
             Show Full URLs
           </ContextMenuCheckboxItem>
           <ContextMenuSeparator />
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuRadioGroup value={person} onValueChange={setPerson}>
-            <ContextMenuRadioItem value="pedro">
-              Pedro Duarte
-            </ContextMenuRadioItem>
+            <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
             <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
           </ContextMenuRadioGroup>
         </ContextMenuContent>

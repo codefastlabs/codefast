@@ -22,10 +22,7 @@ type ParamInput = string | Record<string, Value>;
  *   value.
  * @returns void
  */
-function setUrlParams(
-  params: URLSearchParams,
-  newParams: Record<string, Value>,
-): void {
+function setUrlParams(params: URLSearchParams, newParams: Record<string, Value>): void {
   for (const [key, value] of Object.entries(newParams)) {
     value ? params.set(key, value.toString()) : params.delete(key);
   }
@@ -40,10 +37,7 @@ function setUrlParams(
  *   `REPLACE_STATE` when updating the browser history.
  * @returns void
  */
-function updateUrlParams(
-  newParams: Record<string, Value>,
-  method: HistoryMethod,
-): void {
+function updateUrlParams(newParams: Record<string, Value>, method: HistoryMethod): void {
   const params = new URLSearchParams(window.location.search);
 
   setUrlParams(params, newParams);

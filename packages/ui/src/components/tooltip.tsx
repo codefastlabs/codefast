@@ -1,10 +1,5 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-} from 'react';
+import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -26,9 +21,7 @@ const Tooltip = TooltipPrimitive.Root;
  * Component: TooltipTrigger
  * -------------------------------------------------------------------------- */
 
-type TooltipTriggerProps = ComponentPropsWithoutRef<
-  typeof TooltipPrimitive.Trigger
->;
+type TooltipTriggerProps = ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>;
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
@@ -36,9 +29,7 @@ const TooltipTrigger = TooltipPrimitive.Trigger;
  * -------------------------------------------------------------------------- */
 
 type TooltipContentElement = ComponentRef<typeof TooltipPrimitive.Content>;
-type TooltipContentProps = ComponentPropsWithoutRef<
-  typeof TooltipPrimitive.Content
->;
+type TooltipContentProps = ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>;
 
 const TooltipContent = forwardRef<TooltipContentElement, TooltipContentProps>(
   ({ className, sideOffset = 6, ...props }, forwardedRef) => (
@@ -74,19 +65,11 @@ TooltipContent.displayName = TooltipPrimitive.Content.displayName;
  * -------------------------------------------------------------------------- */
 
 type TooltipArrowElement = ComponentRef<typeof TooltipPrimitive.Arrow>;
-type TooltipArrowProps = ComponentPropsWithoutRef<
-  typeof TooltipPrimitive.Arrow
->;
+type TooltipArrowProps = ComponentPropsWithoutRef<typeof TooltipPrimitive.Arrow>;
 
-const TooltipArrow = forwardRef<TooltipArrowElement, TooltipArrowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <TooltipPrimitive.Arrow
-      ref={forwardedRef}
-      className={cn('fill-popover', className)}
-      {...props}
-    />
-  ),
-);
+const TooltipArrow = forwardRef<TooltipArrowElement, TooltipArrowProps>(({ className, ...props }, forwardedRef) => (
+  <TooltipPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
+));
 
 TooltipArrow.displayName = TooltipPrimitive.Arrow.displayName;
 
