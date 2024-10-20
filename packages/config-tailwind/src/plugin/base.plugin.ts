@@ -2,14 +2,14 @@ import plugin from 'tailwindcss/plugin';
 
 const base = plugin(({ addBase }) => {
   addBase({
-    body: {
-      '@apply bg-background text-foreground': '',
+    '::selection': {
+      '@apply bg-primary text-background': '',
     },
     ':focus-visible': {
       '@apply outline-ring': '',
     },
-    '::selection': {
-      '@apply bg-primary text-background': '',
+    body: {
+      '@apply bg-background text-foreground': '',
     },
     'input, textarea, select': {
       '&:-webkit-autofill': {
