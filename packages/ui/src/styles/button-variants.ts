@@ -4,7 +4,7 @@ const buttonVariants = tv({
   base: [
     'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
     '[&>svg]:shrink-0',
-    'focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring',
+    'focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring-2',
     'disabled:pointer-events-none disabled:opacity-50',
   ],
   compoundVariants: [
