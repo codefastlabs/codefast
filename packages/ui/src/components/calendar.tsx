@@ -10,6 +10,7 @@ import {
 import { format } from 'date-fns';
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 import {
+  type CalendarDay,
   type CustomComponents,
   type DateRange,
   DayFlag,
@@ -57,10 +58,11 @@ function Chevron({ orientation, ...props }: ComponentProps<CustomComponents['Che
  * -------------------------------------------------------------------------- */
 
 interface DayButtonProps extends ComponentProps<'button'> {
+  day: CalendarDay;
   modifiers: Modifiers;
 }
 
-function DayButton({ modifiers, className, ...props }: DayButtonProps): JSX.Element {
+function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -106,7 +108,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         [SelectionState.range_start]: 'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
         [UI.CaptionLabel]: 'inline-flex items-center',
         [UI.Day]: cn(
-          'py-0',
+          'px-px py-0',
           !props.mode && 'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
         ),
         [UI.DayButton]: 'border border-transparent',

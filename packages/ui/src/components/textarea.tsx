@@ -15,7 +15,7 @@ const Textarea = forwardRef<TextareaElement, TextareaProps>(({ className, ...pro
     className={cn(
       [
         'border-input flex min-h-16 w-full grow rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm transition',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
+        'focus:ring-ring focus:outline-none focus:ring-2',
         'placeholder:text-muted-foreground',
         'disabled:cursor-default disabled:opacity-50',
       ],

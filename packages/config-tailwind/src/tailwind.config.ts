@@ -103,15 +103,6 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
           },
         },
       },
-      outlineColor: {
-        DEFAULT: 'hsl(var(--ring) / <alpha-value>)',
-      },
-      ringColor: {
-        DEFAULT: 'hsl(var(--ring) / <alpha-value>)',
-      },
-      ringOffsetColor: {
-        DEFAULT: 'hsl(var(--background) / <alpha-value>)',
-      },
       spacing: {
         0.75: '0.1875rem', // 3px
         1.25: '0.3125rem', // 5px

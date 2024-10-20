@@ -36,7 +36,7 @@ const ToggleGroup = forwardRef<ToggleGroupElement, ToggleGroupProps>(
       <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
         <ToggleGroupPrimitive.Root
           ref={forwardedRef}
-          className={cn('flex items-center justify-center gap-1', className)}
+          className={cn('flex items-center justify-center gap-1.5', className)}
           {...toggleGroupScope}
           {...props}
         >
