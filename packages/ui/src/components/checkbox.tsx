@@ -15,7 +15,7 @@ const Checkbox = forwardRef<CheckboxElement, CheckboxProps>(({ className, ...pro
   <CheckboxPrimitive.Root
     ref={forwardedRef}
     className={cn(
-      'border-input peer inline-flex size-4 shrink-0 rounded border shadow-sm',
+      'border-input peer inline-flex size-4 shrink-0 rounded border shadow-sm transition',
       'hover:border-primary',
       'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
       'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',

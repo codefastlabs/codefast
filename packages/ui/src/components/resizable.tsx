@@ -42,7 +42,7 @@ function ResizableHandle({
   return (
     <ResizablePrimitive.PanelResizeHandle
       className={cn(
-        'bg-border relative flex w-px items-center justify-center',
+        'bg-border relative flex w-px items-center justify-center transition',
         'after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2',
         'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
         'data-[panel-group-direction=vertical]:h-px',

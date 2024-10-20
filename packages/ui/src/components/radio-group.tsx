@@ -28,7 +28,7 @@ const RadioGroupItem = forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
     <RadioGroupPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'border-input text-foreground group peer aspect-square size-4 rounded-full border shadow-sm',
+        'border-input text-foreground group peer aspect-square size-4 rounded-full border shadow-sm transition',
         'hover:border-primary',
         'aria-checked:border-primary',
         'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-1',
