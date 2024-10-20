@@ -40,12 +40,12 @@ type CheckboxGroupElement = HTMLDivElement;
 interface CheckboxGroupProps extends HTMLAttributes<HTMLDivElement> {
   defaultValue?: string[];
   dir?: RovingFocusGroup.RovingFocusGroupProps['dir'];
-  disabled?: ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>['disabled'];
+  disabled?: boolean;
   loop?: RovingFocusGroup.RovingFocusGroupProps['loop'];
   name?: CheckboxGroupContextValue['name'];
   onValueChange?: (value: string[]) => void;
   orientation?: RovingFocusGroup.RovingFocusGroupProps['orientation'];
-  required?: ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>['required'];
+  required?: boolean;
   value?: CheckboxGroupContextValue['value'];
 }
 
