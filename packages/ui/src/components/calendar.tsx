@@ -78,7 +78,7 @@ function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): 
         size: 'sm',
         variant: modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost',
         className: [
-          'focus-visible:z-10',
+          'focus-visible:ring-1',
           (!modifiers.selected || modifiers.range_middle) && [
             modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
             modifiers.outside && 'text-opacity-30',
@@ -104,7 +104,6 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
-        [DayFlag.focused]: 'z-10',
         [DayFlag.outside]: cn(!props.mode && 'text-opacity-30'),
         [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md'),
         [SelectionState.range_end]:
