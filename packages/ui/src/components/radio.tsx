@@ -24,7 +24,7 @@ const Radio = forwardRef<RadioElement, RadioProps>(({ className, onValueChange, 
       'hover:before:border-primary',
       'checked:before:border-primary checked:before:bg-primary',
       'checked:after:bg-background checked:after:absolute checked:after:size-1 checked:after:rounded-full',
-      'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2',
+      'focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring',
       'disabled:pointer-events-none disabled:opacity-50',
       className,
     )}

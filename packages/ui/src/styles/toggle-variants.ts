@@ -5,7 +5,7 @@ const toggleVariants = tv({
     'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
     '[&>svg]:shrink-0',
     'focus-visible:outline-none',
-    'focus-visible:ring-ring focus-visible:ring-2',
+    'focus-visible:ring-ring/40 focus-visible:ring',
     'disabled:pointer-events-none disabled:opacity-50',
   ],
   compoundVariants: [

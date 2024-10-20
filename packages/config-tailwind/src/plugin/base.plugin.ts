@@ -6,7 +6,7 @@ const base = plugin(({ addBase }) => {
       '@apply bg-primary text-background': '',
     },
     ':focus-visible': {
-      '@apply outline-ring': '',
+      '@apply outline-ring/40': '',
     },
     body: {
       '@apply bg-background text-foreground': '',
