@@ -37,7 +37,7 @@ const CheckboxCardsItem = forwardRef<CheckboxCardsItemElement, CheckboxCardsItem
           'border-input peer flex size-4 shrink-0 cursor-pointer rounded border shadow-sm transition',
           'group-hover:border-primary',
           'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
-          'focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring',
+          'focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring-2',
           'disabled:cursor-default disabled:opacity-50',
           checkboxClassName,
         )}

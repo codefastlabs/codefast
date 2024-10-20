@@ -22,7 +22,6 @@ import {
   UI,
 } from 'react-day-picker';
 
-import { Button } from '@/components/button';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
 
@@ -72,19 +71,22 @@ function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): 
   }, [modifiers.focused]);
 
   return (
-    <Button
+    <button
       ref={buttonRef}
-      icon
-      className={cn(
-        (!modifiers.selected || modifiers.range_middle) && [
-          modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
-          modifiers.outside && 'text-opacity-30',
+      className={buttonVariants({
+        icon: true,
+        size: 'sm',
+        variant: modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost',
+        className: [
+          (!modifiers.selected || modifiers.range_middle) && [
+            modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
+            modifiers.outside && 'text-opacity-30',
+          ],
+          modifiers.range_middle && 'bg-transparent',
+          className,
         ],
-        modifiers.range_middle && 'bg-transparent',
-        className,
-      )}
-      size="sm"
-      variant={modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'}
+      })}
+      type="button"
       {...props}
     />
   );
