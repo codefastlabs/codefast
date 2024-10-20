@@ -128,11 +128,7 @@ export const Controlled: Story = {
           </InputOTPGroup>
         </InputOTP>
         <div className="text-center text-sm">
-          {value === '' ? (
-            <>Enter your one-time password.</>
-          ) : (
-            <>You entered: {value}</>
-          )}
+          {value === '' ? <>Enter your one-time password.</> : <>You entered: {value}</>}
         </div>
       </div>
     );
@@ -166,15 +162,11 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
-      values,
-    ): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -182,10 +174,7 @@ export const ReactHookForm: Story = {
 
     return (
       <Form {...form}>
-        <form
-          className="w-2/3 space-y-6"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
+        <form className="w-2/3 space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
             name="pin"
@@ -204,9 +193,7 @@ export const ReactHookForm: Story = {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
-                <FormDescription>
-                  Please enter the one-time password sent to your phone.
-                </FormDescription>
+                <FormDescription>Please enter the one-time password sent to your phone.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

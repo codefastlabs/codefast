@@ -1,12 +1,7 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-  type JSX,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -21,9 +16,7 @@ const Accordion = AccordionPrimitive.Root;
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
-type AccordionItemProps = ComponentPropsWithoutRef<
-  typeof AccordionPrimitive.Item
->;
+type AccordionItemProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>;
 const AccordionItem = AccordionPrimitive.Item;
 
 /* -----------------------------------------------------------------------------
@@ -35,11 +28,7 @@ interface AccordionIconProps extends ComponentPropsWithoutRef<typeof Slot> {
   className?: string;
 }
 
-function AccordionIcon({
-  asChild,
-  className,
-  ...props
-}: AccordionIconProps): JSX.Element {
+function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JSX.Element {
   if (asChild) {
     return (
       <Slot
@@ -56,11 +45,7 @@ function AccordionIcon({
   return (
     <ChevronRightIcon
       aria-hidden
-      className={cn(
-        'text-muted-foreground size-4 shrink-0 transition',
-        'group-data-[state=open]:rotate-90',
-        className,
-      )}
+      className={cn('text-muted-foreground size-4 shrink-0 transition', 'group-data-[state=open]:rotate-90', className)}
     />
   );
 }
@@ -70,25 +55,19 @@ function AccordionIcon({
  * -------------------------------------------------------------------------- */
 
 type AccordionTriggerElement = ComponentRef<typeof AccordionPrimitive.Trigger>;
-type AccordionTriggerProps = ComponentPropsWithoutRef<
-  typeof AccordionPrimitive.Trigger
->;
+type AccordionTriggerProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
 
-const AccordionTrigger = forwardRef<
-  AccordionTriggerElement,
-  AccordionTriggerProps
->(({ className, ...props }, forwardedRef) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={forwardedRef}
-      className={cn(
-        'group flex grow items-center gap-2 py-4 text-left text-sm font-medium',
-        className,
-      )}
-      {...props}
-    />
-  </AccordionPrimitive.Header>
-));
+const AccordionTrigger = forwardRef<AccordionTriggerElement, AccordionTriggerProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <AccordionPrimitive.Header className="flex">
+      <AccordionPrimitive.Trigger
+        ref={forwardedRef}
+        className={cn('group flex grow items-center gap-2 py-4 text-left text-sm font-medium', className)}
+        {...props}
+      />
+    </AccordionPrimitive.Header>
+  ),
+);
 
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
@@ -97,25 +76,22 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
  * -------------------------------------------------------------------------- */
 
 type AccordionContentElement = ComponentRef<typeof AccordionPrimitive.Content>;
-type AccordionContentProps = ComponentPropsWithoutRef<
-  typeof AccordionPrimitive.Content
->;
+type AccordionContentProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>;
 
-const AccordionContent = forwardRef<
-  AccordionContentElement,
-  AccordionContentProps
->(({ children, className, ...props }, forwardedRef) => (
-  <AccordionPrimitive.Content
-    ref={forwardedRef}
-    className={cn(
-      'overflow-hidden text-sm',
-      'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed',
-    )}
-    {...props}
-  >
-    <div className={cn('pb-4 pt-0', className)}>{children}</div>
-  </AccordionPrimitive.Content>
-));
+const AccordionContent = forwardRef<AccordionContentElement, AccordionContentProps>(
+  ({ children, className, ...props }, forwardedRef) => (
+    <AccordionPrimitive.Content
+      ref={forwardedRef}
+      className={cn(
+        'overflow-hidden text-sm',
+        'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed',
+      )}
+      {...props}
+    >
+      <div className={cn('pb-4 pt-0', className)}>{children}</div>
+    </AccordionPrimitive.Content>
+  ),
+);
 
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;
 

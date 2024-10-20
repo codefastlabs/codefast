@@ -11,13 +11,11 @@ interface EmProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Em = forwardRef<EmElement, EmProps>(
-  ({ asChild, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : 'em';
+const Em = forwardRef<EmElement, EmProps>(({ asChild, ...props }, forwardedRef) => {
+  const Component = asChild ? Slot : 'em';
 
-    return <Component ref={forwardedRef} {...props} />;
-  },
-);
+  return <Component ref={forwardedRef} {...props} />;
+});
 
 Em.displayName = 'Em';
 

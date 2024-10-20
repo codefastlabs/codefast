@@ -1,8 +1,4 @@
-import {
-  DEFAULT_ANIMATIONS,
-  DEFAULT_SETTINGS,
-  DEFAULT_TRANSITIONS,
-} from '@/slideshow/_lib/constants';
+import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/constants';
 import {
   type VegasAnimation,
   type VegasAnimationWithRandom,
@@ -183,47 +179,31 @@ export class Vegas {
   }
 
   private setupTransitions(): VegasTransition[] {
-    return [
-      ...DEFAULT_TRANSITIONS,
-      ...(this.settings.transitionRegister as VegasTransition[]),
-    ];
+    return [...DEFAULT_TRANSITIONS, ...(this.settings.transitionRegister as VegasTransition[])];
   }
 
   private setupAnimations(): VegasAnimation[] {
-    return [
-      ...DEFAULT_ANIMATIONS,
-      ...(this.settings.animationRegister as VegasAnimation[]),
-    ];
+    return [...DEFAULT_ANIMATIONS, ...(this.settings.animationRegister as VegasAnimation[])];
   }
 
   private setupSupport(): VegasSupport {
     return {
       objectFit: 'objectFit' in document.body.style,
-      transition:
-        'transition' in document.body.style ||
-        'WebkitTransition' in document.body.style,
+      transition: 'transition' in document.body.style || 'WebkitTransition' in document.body.style,
       video: isVideoCompatible(),
     };
   }
 
   private setupTimer(): void {
     if (this.settings.timer && this.support.transition) {
-      this.timerElement = this.createElement(
-        'div',
-        'vegas-timer',
-        this.element,
-      );
+      this.timerElement = this.createElement('div', 'vegas-timer', this.element);
       this.createElement('div', 'vegas-timer-progress', this.timerElement);
     }
   }
 
   private setupOverlay(): void {
     if (this.settings.overlay) {
-      this.overlayElement = this.createElement(
-        'div',
-        'vegas-overlay',
-        this.element,
-      );
+      this.overlayElement = this.createElement('div', 'vegas-overlay', this.element);
 
       if (typeof this.settings.overlay === 'string') {
         this.overlayElement.style.backgroundImage = `url(${this.settings.overlay})`;
@@ -231,11 +211,7 @@ export class Vegas {
     }
   }
 
-  private createElement(
-    tag: string,
-    className: string,
-    parent: HTMLElement,
-  ): HTMLElement {
+  private createElement(tag: string, className: string, parent: HTMLElement): HTMLElement {
     const element = document.createElement(tag);
 
     element.className = className;
@@ -351,15 +327,9 @@ export class Vegas {
     direction: 'increase' | 'decrease',
   ): void {
     const delay = duration / 10;
-    const volume =
-      direction === 'increase'
-        ? videoElement.volume + step
-        : videoElement.volume - step;
+    const volume = direction === 'increase' ? videoElement.volume + step : videoElement.volume - step;
 
-    if (
-      (direction === 'increase' && volume < 1) ||
-      (direction === 'decrease' && volume > 0)
-    ) {
+    if ((direction === 'increase' && volume < 1) || (direction === 'decrease' && volume > 0)) {
       videoElement.volume = volume;
       setTimeout(() => {
         this.adjustVolume(videoElement, duration, step, direction);
@@ -400,16 +370,9 @@ export class Vegas {
 
     const cover = this.getCoverSetting(defaultCover);
     const transition = this.getTransition(firstTransition, defaultTransition);
-    const transitionDuration = this.getTransitionDuration(
-      firstTransitionDuration,
-      defaultTransitionDuration,
-      delay,
-    );
+    const transitionDuration = this.getTransitionDuration(firstTransitionDuration, defaultTransitionDuration, delay);
     const animation = this.getAnimation(defaultAnimation);
-    const animationDuration = this.getAnimationDuration(
-      defaultAnimationDuration,
-      delay,
-    );
+    const animationDuration = this.getAnimationDuration(defaultAnimationDuration, delay);
 
     const slideElement = this.createSlideElement({
       color,
@@ -484,16 +447,11 @@ export class Vegas {
     return defaultTransitionDuration;
   }
 
-  private getAnimation(
-    defaultAnimation: VegasAnimationWithRandom,
-  ): VegasAnimation {
+  private getAnimation(defaultAnimation: VegasAnimationWithRandom): VegasAnimation {
     return this.getRandomAnimation(defaultAnimation);
   }
 
-  private getAnimationDuration(
-    defaultAnimationDuration: number | 'auto',
-    delay: number,
-  ): number {
+  private getAnimationDuration(defaultAnimationDuration: number | 'auto', delay: number): number {
     if (defaultAnimationDuration === 'auto') {
       return delay;
     }
@@ -501,9 +459,7 @@ export class Vegas {
     return defaultAnimationDuration;
   }
 
-  private getRandomTransition(
-    transition: VegasTransitionWithRandom,
-  ): VegasTransition {
+  private getRandomTransition(transition: VegasTransitionWithRandom): VegasTransition {
     if (transition === 'random') {
       return random(this.transitions);
     }
@@ -511,9 +467,7 @@ export class Vegas {
     return transition;
   }
 
-  private getRandomAnimation(
-    animation: VegasAnimationWithRandom,
-  ): VegasAnimation {
+  private getRandomAnimation(animation: VegasAnimationWithRandom): VegasAnimation {
     if (animation === 'random') {
       return random(this.animations);
     }
@@ -585,16 +539,7 @@ export class Vegas {
         transitionDuration,
       });
     } else if (src) {
-      this.setupImageElement(
-        slideElement,
-        src,
-        color,
-        align,
-        alignVertical,
-        cover,
-        animation,
-        animationDuration,
-      );
+      this.setupImageElement(slideElement, src, color, align, alignVertical, cover, animation, animationDuration);
     }
 
     return videoElement;
@@ -617,9 +562,7 @@ export class Vegas {
     transitionDuration: number;
     video: VegasVideo;
   }): HTMLVideoElement {
-    const videoElement = Array.isArray(video.src)
-      ? this.preloadVideo(video.src)
-      : this.preloadVideo(video.src);
+    const videoElement = Array.isArray(video.src) ? this.preloadVideo(video.src) : this.preloadVideo(video.src);
 
     videoElement.loop = video.loop ?? true;
     videoElement.muted = video.mute ?? true;
@@ -696,8 +639,7 @@ export class Vegas {
       slideElement.style.display = 'none';
     }
 
-    const slideElements =
-      this.element.querySelectorAll<HTMLElement>('.vegas-slide');
+    const slideElements = this.element.querySelectorAll<HTMLElement>('.vegas-slide');
 
     if (slideElements.length) {
       const lastSlideElement = slideElements[slideElements.length - 1];
@@ -728,12 +670,7 @@ export class Vegas {
       this.timer(true);
 
       requestAnimationFrame(() => {
-        this.performTransition(
-          transition,
-          slideElements,
-          transitionDuration,
-          slideElement,
-        );
+        this.performTransition(transition, slideElements, transitionDuration, slideElement);
         this.removeOldSlides(slideElements, this.settings.slidesToKeep);
         this.callCallback('onWalk');
         this.scheduleNextSlide();
@@ -761,8 +698,7 @@ export class Vegas {
           const activeVideo = slide.querySelector('video');
 
           if (activeVideo && transitionDuration) {
-            activeVideo.volume > 0 &&
-              this.fadeOutSound(activeVideo, transitionDuration);
+            activeVideo.volume > 0 && this.fadeOutSound(activeVideo, transitionDuration);
           }
         });
         slideElement.style.transition = `all ${transitionDuration}ms`;
@@ -773,10 +709,7 @@ export class Vegas {
     }
   }
 
-  private handleVideoElement(
-    videoElement: HTMLVideoElement,
-    callback: () => void,
-  ): void {
+  private handleVideoElement(videoElement: HTMLVideoElement, callback: () => void): void {
     if (videoElement.readyState === 4) {
       videoElement.currentTime = 0;
     }
@@ -797,10 +730,7 @@ export class Vegas {
     }
   }
 
-  private removeOldSlides(
-    slideElements: NodeListOf<HTMLElement>,
-    slidesToKeep: number,
-  ): void {
+  private removeOldSlides(slideElements: NodeListOf<HTMLElement>, slidesToKeep: number): void {
     Array.from(slideElements)
       .slice(0, slideElements.length - slidesToKeep)
       .forEach((slide) => {

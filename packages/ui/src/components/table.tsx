@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  type HTMLAttributes,
-  type TdHTMLAttributes,
-  type ThHTMLAttributes,
-} from 'react';
+import { forwardRef, type HTMLAttributes, type TdHTMLAttributes, type ThHTMLAttributes } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -14,17 +9,11 @@ import { cn } from '@/lib/utils';
 type TableElement = HTMLTableElement;
 type TableProps = HTMLAttributes<HTMLTableElement>;
 
-const Table = forwardRef<TableElement, TableProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div className="relative w-full overflow-auto">
-      <table
-        ref={forwardedRef}
-        className={cn('w-full caption-bottom text-sm', className)}
-        {...props}
-      />
-    </div>
-  ),
-);
+const Table = forwardRef<TableElement, TableProps>(({ className, ...props }, forwardedRef) => (
+  <div className="relative w-full overflow-auto">
+    <table ref={forwardedRef} className={cn('w-full caption-bottom text-sm', className)} {...props} />
+  </div>
+));
 
 Table.displayName = 'Table';
 
@@ -35,15 +24,9 @@ Table.displayName = 'Table';
 type TableHeaderElement = HTMLTableSectionElement;
 type TableHeaderProps = HTMLAttributes<HTMLTableSectionElement>;
 
-const TableHeader = forwardRef<TableHeaderElement, TableHeaderProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <thead
-      ref={forwardedRef}
-      className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)}
-      {...props}
-    />
-  ),
-);
+const TableHeader = forwardRef<TableHeaderElement, TableHeaderProps>(({ className, ...props }, forwardedRef) => (
+  <thead ref={forwardedRef} className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)} {...props} />
+));
 
 TableHeader.displayName = 'TableHeader';
 
@@ -54,15 +37,9 @@ TableHeader.displayName = 'TableHeader';
 type TableBodyElement = HTMLTableSectionElement;
 type TableBodyProps = HTMLAttributes<HTMLTableSectionElement>;
 
-const TableBody = forwardRef<TableBodyElement, TableBodyProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <tbody
-      ref={forwardedRef}
-      className={cn('[&_tr:last-child]:border-0', className)}
-      {...props}
-    />
-  ),
-);
+const TableBody = forwardRef<TableBodyElement, TableBodyProps>(({ className, ...props }, forwardedRef) => (
+  <tbody ref={forwardedRef} className={cn('[&_tr:last-child]:border-0', className)} {...props} />
+));
 
 TableBody.displayName = 'TableBody';
 
@@ -73,18 +50,13 @@ TableBody.displayName = 'TableBody';
 type TableFooterElement = HTMLTableSectionElement;
 type TableFooterProps = HTMLAttributes<HTMLTableSectionElement>;
 
-const TableFooter = forwardRef<TableFooterElement, TableFooterProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <tfoot
-      ref={forwardedRef}
-      className={cn(
-        'bg-muted/50 border-t font-medium [&>tr]:last:border-b-0',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const TableFooter = forwardRef<TableFooterElement, TableFooterProps>(({ className, ...props }, forwardedRef) => (
+  <tfoot
+    ref={forwardedRef}
+    className={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)}
+    {...props}
+  />
+));
 
 TableFooter.displayName = 'TableFooter';
 
@@ -95,20 +67,13 @@ TableFooter.displayName = 'TableFooter';
 type TableRowElement = HTMLTableRowElement;
 type TableRowProps = HTMLAttributes<HTMLTableRowElement>;
 
-const TableRow = forwardRef<TableRowElement, TableRowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <tr
-      ref={forwardedRef}
-      className={cn(
-        'border-b transition',
-        'hover:bg-accent',
-        'data-[state=selected]:bg-muted',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const TableRow = forwardRef<TableRowElement, TableRowProps>(({ className, ...props }, forwardedRef) => (
+  <tr
+    ref={forwardedRef}
+    className={cn('border-b transition', 'hover:bg-accent', 'data-[state=selected]:bg-muted', className)}
+    {...props}
+  />
+));
 
 TableRow.displayName = 'TableRow';
 
@@ -119,18 +84,13 @@ TableRow.displayName = 'TableRow';
 type TableHeadElement = HTMLTableCellElement;
 type TableHeadProps = ThHTMLAttributes<HTMLTableCellElement>;
 
-const TableHead = forwardRef<TableHeadElement, TableHeadProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <th
-      ref={forwardedRef}
-      className={cn(
-        'text-muted-foreground p-2 text-left align-middle font-medium',
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const TableHead = forwardRef<TableHeadElement, TableHeadProps>(({ className, ...props }, forwardedRef) => (
+  <th
+    ref={forwardedRef}
+    className={cn('text-muted-foreground p-2 text-left align-middle font-medium', className)}
+    {...props}
+  />
+));
 
 TableHead.displayName = 'TableHead';
 
@@ -141,15 +101,9 @@ TableHead.displayName = 'TableHead';
 type TableCellElement = HTMLTableCellElement;
 type TableCellProps = TdHTMLAttributes<HTMLTableCellElement>;
 
-const TableCell = forwardRef<TableCellElement, TableCellProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <td
-      ref={forwardedRef}
-      className={cn('p-2 align-middle', className)}
-      {...props}
-    />
-  ),
-);
+const TableCell = forwardRef<TableCellElement, TableCellProps>(({ className, ...props }, forwardedRef) => (
+  <td ref={forwardedRef} className={cn('p-2 align-middle', className)} {...props} />
+));
 
 TableCell.displayName = 'TableCell';
 
@@ -160,15 +114,9 @@ TableCell.displayName = 'TableCell';
 type TableCaptionElement = HTMLTableCaptionElement;
 type TableCaptionProps = HTMLAttributes<HTMLTableCaptionElement>;
 
-const TableCaption = forwardRef<TableCaptionElement, TableCaptionProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <caption
-      ref={forwardedRef}
-      className={cn('text-muted-foreground mt-4 text-sm', className)}
-      {...props}
-    />
-  ),
-);
+const TableCaption = forwardRef<TableCaptionElement, TableCaptionProps>(({ className, ...props }, forwardedRef) => (
+  <caption ref={forwardedRef} className={cn('text-muted-foreground mt-4 text-sm', className)} {...props} />
+));
 
 TableCaption.displayName = 'TableCaption';
 

@@ -25,10 +25,7 @@ interface PresetSelectorProps extends PopoverProps {
   presets: Preset[];
 }
 
-export function PresetSelector({
-  presets,
-  ...props
-}: PresetSelectorProps): JSX.Element {
+export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<Preset>();
   const router = useRouter();
@@ -63,12 +60,7 @@ export function PresetSelector({
                 >
                   {preset.name}
                   <CheckIcon
-                    className={cn(
-                      'ml-auto size-4',
-                      selectedPreset?.id === preset.id
-                        ? 'opacity-100'
-                        : 'opacity-0',
-                    )}
+                    className={cn('ml-auto size-4', selectedPreset?.id === preset.id ? 'opacity-100' : 'opacity-0')}
                   />
                 </CommandItem>
               ))}

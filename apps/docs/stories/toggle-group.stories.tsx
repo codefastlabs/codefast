@@ -8,8 +8,7 @@ const meta = {
   argTypes: {
     defaultValue: {
       control: { type: 'text' },
-      description:
-        'The value of the toggle item that should be selected by default.',
+      description: 'The value of the toggle item that should be selected by default.',
       table: {
         type: { summary: 'string | string[]' },
       },
@@ -32,8 +31,7 @@ const meta = {
     },
     onValueChange: {
       action: 'onValueChange',
-      description:
-        'Callback function triggered when the value of the selected toggle item changes.',
+      description: 'Callback function triggered when the value of the selected toggle item changes.',
       table: {
         type: { summary: '(value: string | string[]) => void' },
       },
@@ -64,16 +62,7 @@ const meta = {
     },
     variant: {
       control: { type: 'select' },
-      options: [
-        'default',
-        'secondary',
-        'info',
-        'success',
-        'warning',
-        'destructive',
-        'outline',
-        'ghost',
-      ],
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
       description: 'Toggle button variant styles',
       table: {
         type: { summary: 'string' },
@@ -128,24 +117,15 @@ export const Variants: Story = {
   args: { className: '[&_button]:capitalize' },
   render: (args) => (
     <div className="flex flex-col gap-2">
-      {(
-        [
-          'default',
-          'secondary',
-          'info',
-          'success',
-          'warning',
-          'destructive',
-          'outline',
-          'ghost',
-        ] as const
-      ).map((variant) => (
-        <ToggleGroup key={variant} {...args} variant={variant}>
-          <ToggleGroupItem value="1">{variant} 1</ToggleGroupItem>
-          <ToggleGroupItem value="2">{variant} 2</ToggleGroupItem>
-          <ToggleGroupItem value="3">{variant} 3</ToggleGroupItem>
-        </ToggleGroup>
-      ))}
+      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'] as const).map(
+        (variant) => (
+          <ToggleGroup key={variant} {...args} variant={variant}>
+            <ToggleGroupItem value="1">{variant} 1</ToggleGroupItem>
+            <ToggleGroupItem value="2">{variant} 2</ToggleGroupItem>
+            <ToggleGroupItem value="3">{variant} 3</ToggleGroupItem>
+          </ToggleGroup>
+        ),
+      )}
     </div>
   ),
 };
@@ -203,13 +183,7 @@ export const Controlled: Story = {
 
     return (
       <div className="space-y-4">
-        <ToggleGroup
-          {...args}
-          defaultValue="1"
-          type="single"
-          value={value}
-          onValueChange={setValue}
-        >
+        <ToggleGroup {...args} defaultValue="1" type="single" value={value} onValueChange={setValue}>
           <ToggleGroupItem value="1">Option 1</ToggleGroupItem>
           <ToggleGroupItem value="2">Option 2</ToggleGroupItem>
           <ToggleGroupItem value="3">Option 3</ToggleGroupItem>

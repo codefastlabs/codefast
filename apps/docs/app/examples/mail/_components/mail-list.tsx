@@ -34,16 +34,12 @@ export function MailList({ items }: MailListProps): JSX.Element {
               <div className="flex items-center">
                 <div className="flex items-center gap-2">
                   <div className="font-semibold">{item.name}</div>
-                  {!item.read && (
-                    <span className="flex size-2 rounded-full bg-blue-600" />
-                  )}
+                  {!item.read && <span className="flex size-2 rounded-full bg-blue-600" />}
                 </div>
                 <div
                   className={cn(
                     'ml-auto text-xs',
-                    mail.selected === item.id
-                      ? 'text-foreground'
-                      : 'text-muted-foreground',
+                    mail.selected === item.id ? 'text-foreground' : 'text-muted-foreground',
                   )}
                 >
                   {formatDistanceToNow(new Date(item.date), {
@@ -53,9 +49,7 @@ export function MailList({ items }: MailListProps): JSX.Element {
               </div>
               <div className="text-xs font-medium">{item.subject}</div>
             </div>
-            <div className="text-muted-foreground line-clamp-2 text-xs">
-              {item.text.substring(0, 300)}
-            </div>
+            <div className="text-muted-foreground line-clamp-2 text-xs">{item.text.substring(0, 300)}</div>
             {item.labels.length ? (
               <div className="flex items-center gap-2">
                 {item.labels.map((label) => (
@@ -72,9 +66,7 @@ export function MailList({ items }: MailListProps): JSX.Element {
   );
 }
 
-function getBadgeVariantFromLabel(
-  label: string,
-): ComponentProps<typeof Badge>['variant'] {
+function getBadgeVariantFromLabel(label: string): ComponentProps<typeof Badge>['variant'] {
   if (['work'].includes(label.toLowerCase())) {
     return 'default';
   }

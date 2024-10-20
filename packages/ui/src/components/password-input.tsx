@@ -14,10 +14,7 @@ import {
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
-import {
-  inputVariants,
-  type InputVariantsProps,
-} from '@/styles/input-variants';
+import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: PasswordInput
@@ -33,30 +30,13 @@ type PasswordInputElement = ComponentRef<typeof InputPrimitive.Item>;
 interface PasswordInputProps
   extends InputVariantsProps,
     ComponentProps<typeof InputPrimitive.Root>,
-    Omit<
-      ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
-      'prefix' | 'type'
-    > {}
+    Omit<ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix' | 'type'> {}
 
 const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
-  (
-    {
-      className,
-      inputSize,
-      loaderPosition,
-      loading,
-      prefix,
-      spinner,
-      suffix,
-      ...props
-    },
-    forwardedRef,
-  ) => {
+  ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => {
     const [type, setType] = useState<'password' | 'text'>('password');
 
-    const togglePasswordVisibility = useCallback<
-      MouseEventHandler<HTMLButtonElement>
-    >(() => {
+    const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
       setType((prev) => (prev === 'password' ? 'text' : 'password'));
     }, []);
 
@@ -69,12 +49,7 @@ const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
         spinner={spinner || <Spinner />}
         suffix={suffix}
       >
-        <InputPrimitive.Item
-          ref={forwardedRef}
-          className={input({ inputSize })}
-          type={type}
-          {...props}
-        />
+        <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize })} type={type} {...props} />
         <Button
           icon
           inside

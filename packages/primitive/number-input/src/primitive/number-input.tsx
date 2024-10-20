@@ -32,10 +32,7 @@ const NUMBER_INPUT_NAME = 'NumberInput';
 type ScopedProps<P> = P & {
   __scopeNumberInput?: Scope;
 };
-const [createNumberInputContext, createNumberInputScope] = createContextScope(
-  NUMBER_INPUT_NAME,
-  [createInputScope],
-);
+const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
@@ -47,9 +44,7 @@ interface NumberInputContextValue {
   onDecrementToMin: () => void;
   onIncrement: () => void;
   onIncrementToMax: () => void;
-  parseValue: (
-    value: string | number | readonly string[] | undefined,
-  ) => number;
+  parseValue: (value: string | number | readonly string[] | undefined) => number;
   ariaDecrementLabel?: string;
   ariaIncrementLabel?: string;
   disabled?: boolean;
@@ -107,10 +102,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     onChange,
   });
 
-  const { thousandSeparator, decimalSeparator } = useMemo(
-    () => getNumberFormatSeparators(locale),
-    [locale],
-  );
+  const { thousandSeparator, decimalSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = useCallback(
     (inputValue?: number): string => {
@@ -139,11 +131,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
         return NaN;
       }
 
-      const normalizedValue = normalizeInputValue(
-        cleanedValue,
-        thousandSeparator,
-        decimalSeparator,
-      );
+      const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
       let parsedValue = parseFloat(normalizedValue);
 
       if (formatOptions.style === 'percent') {
@@ -225,29 +213,12 @@ const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 type NumberInputItemElement = ComponentRef<typeof InputPrimitive.Item>;
 type NumberInputItemProps = Omit<
   ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
-  | 'defaultValue'
-  | 'disabled'
-  | 'id'
-  | 'max'
-  | 'min'
-  | 'onChange'
-  | 'prefix'
-  | 'readOnly'
-  | 'step'
-  | 'value'
+  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
 >;
 
-const NumberInputItem = forwardRef<
-  NumberInputItemElement,
-  NumberInputItemProps
->(
+const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>(
   (
-    {
-      __scopeNumberInput,
-      onBlur,
-      onKeyDown,
-      ...props
-    }: ScopedProps<NumberInputItemProps>,
+    { __scopeNumberInput, onBlur, onKeyDown, ...props }: ScopedProps<NumberInputItemProps>,
     forwardedRef,
   ): JSX.Element => {
     const inputScope = useInputScope(__scopeNumberInput);
@@ -317,9 +288,7 @@ const NumberInputItem = forwardRef<
     );
 
     // Prevent non-numeric input
-    const handleKeyDownPrevent = useCallback<
-      KeyboardEventHandler<HTMLInputElement>
-    >((event) => {
+    const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
       switch (event.key) {
         case 'ArrowUp':
 
@@ -357,11 +326,7 @@ const NumberInputItem = forwardRef<
           return;
 
         default:
-          if (
-            isNumberKey(event.key) ||
-            isModifierKey(event) ||
-            isFunctionKey(event.key)
-          ) {
+          if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
             return;
           }
 
@@ -370,9 +335,7 @@ const NumberInputItem = forwardRef<
     }, []);
 
     // Handle Enter key to format the value
-    const handleKeyDownEnter = useCallback<
-      KeyboardEventHandler<HTMLInputElement>
-    >(
+    const handleKeyDownEnter = useCallback<KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
         const inputElement = inputRef.current;
 
@@ -397,12 +360,7 @@ const NumberInputItem = forwardRef<
       const handleWheel = (event: WheelEvent): void => {
         const inputElement = inputRef.current;
 
-        if (
-          !inputElement ||
-          disabled ||
-          readOnly ||
-          document.activeElement !== inputElement
-        ) {
+        if (!inputElement || disabled || readOnly || document.activeElement !== inputElement) {
           return;
         }
 
@@ -463,8 +421,7 @@ const NumberInputItem = forwardRef<
         onKeyDown={composeEventHandlers(
           onKeyDown,
           useMemo(
-            () =>
-              chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
+            () => chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
             [handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
           ),
         )}
@@ -484,35 +441,14 @@ NumberInputItem.displayName = NUMBER_INPUT_ITEM_NAME;
 const NUMBER_INPUT_BUTTON_IMPL_NAME = 'NumberInputImplButton';
 
 type NumberInputButtonImplElement = HTMLButtonElement;
-interface NumberInputButtonImplProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface NumberInputButtonImplProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   operation: 'increment' | 'decrement';
 }
 
-const NumberInputButtonImpl = forwardRef<
-  NumberInputButtonImplElement,
-  NumberInputButtonImplProps
->(
-  (
-    {
-      __scopeNumberInput,
-      operation,
-      ...props
-    }: ScopedProps<NumberInputButtonImplProps>,
-    forwardedRef,
-  ): JSX.Element => {
-    const {
-      ariaIncrementLabel,
-      ariaDecrementLabel,
-      disabled,
-      readOnly,
-      id,
-      onIncrement,
-      onDecrement,
-    } = useNumberInputContext(
-      NUMBER_INPUT_BUTTON_IMPL_NAME,
-      __scopeNumberInput,
-    );
+const NumberInputButtonImpl = forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
+  ({ __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>, forwardedRef): JSX.Element => {
+    const { ariaIncrementLabel, ariaDecrementLabel, disabled, readOnly, id, onIncrement, onDecrement } =
+      useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
     const timeoutIdRef = useRef<number | null>(null);
 
     const startActionInterval = useCallback((callback: () => void) => {
@@ -534,28 +470,21 @@ const NumberInputButtonImpl = forwardRef<
       }
     }, []);
 
-    const handlePointerDown = useCallback<
-      PointerEventHandler<HTMLButtonElement>
-    >(() => {
+    const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(() => {
       const action = operation === 'increment' ? onIncrement : onDecrement;
 
       startActionInterval(action);
     }, [onDecrement, onIncrement, operation, startActionInterval]);
 
-    const handleContextMenu = useCallback<MouseEventHandler<HTMLButtonElement>>(
-      (event) => {
-        event.preventDefault();
-      },
-      [],
-    );
+    const handleContextMenu = useCallback<MouseEventHandler<HTMLButtonElement>>((event) => {
+      event.preventDefault();
+    }, []);
 
     return (
       <button
         ref={forwardedRef}
         aria-controls={id}
-        aria-label={
-          operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel
-        }
+        aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
         aria-live="polite"
         disabled={disabled || readOnly}
         tabIndex={-1}
@@ -580,21 +509,11 @@ NumberInputButtonImpl.displayName = NUMBER_INPUT_BUTTON_IMPL_NAME;
 const NUMBER_INPUT_INCREMENT_BUTTON_NAME = 'NumberInputIncrementButton';
 
 type NumberInputIncrementButtonElement = NumberInputButtonImplElement;
-type NumberInputIncrementButtonProps = Omit<
-  NumberInputButtonImplProps,
-  'operation'
->;
+type NumberInputIncrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
 
-const NumberInputIncrementButton = forwardRef<
-  NumberInputIncrementButtonElement,
-  NumberInputIncrementButtonProps
->(
+const NumberInputIncrementButton = forwardRef<NumberInputIncrementButtonElement, NumberInputIncrementButtonProps>(
   (props: NumberInputIncrementButtonProps, forwardedRef): JSX.Element => (
-    <NumberInputButtonImpl
-      ref={forwardedRef}
-      operation="increment"
-      {...props}
-    />
+    <NumberInputButtonImpl ref={forwardedRef} operation="increment" {...props} />
   ),
 );
 
@@ -607,21 +526,11 @@ NumberInputIncrementButton.displayName = NUMBER_INPUT_INCREMENT_BUTTON_NAME;
 const NUMBER_INPUT_DECREMENT_BUTTON_NAME = 'NumberInputDecrementButton';
 
 type NumberInputDecrementButtonElement = NumberInputButtonImplElement;
-type NumberInputDecrementButtonProps = Omit<
-  NumberInputButtonImplProps,
-  'operation'
->;
+type NumberInputDecrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
 
-const NumberInputDecrementButton = forwardRef<
-  NumberInputDecrementButtonElement,
-  NumberInputDecrementButtonProps
->(
+const NumberInputDecrementButton = forwardRef<NumberInputDecrementButtonElement, NumberInputDecrementButtonProps>(
   (props: NumberInputDecrementButtonProps, forwardedRef): JSX.Element => (
-    <NumberInputButtonImpl
-      ref={forwardedRef}
-      operation="decrement"
-      {...props}
-    />
+    <NumberInputButtonImpl ref={forwardedRef} operation="decrement" {...props} />
   ),
 );
 
@@ -631,9 +540,7 @@ NumberInputDecrementButton.displayName = NUMBER_INPUT_DECREMENT_BUTTON_NAME;
  * Utility Functions
  * -------------------------------------------------------------------------- */
 
-function chain<T extends unknown[]>(
-  ...callbacks: ((...args: T) => void)[]
-): (...args: T) => void {
+function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
   return (...args: T) => {
     for (const callback of callbacks) {
       callback(...args);
@@ -664,11 +571,7 @@ function getNumberFormatSeparators(locale: string): {
   );
 }
 
-function normalizeInputValue(
-  value: string,
-  thousandSeparator: string,
-  decimalSeparator: string,
-): string {
+function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
     .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
     .replace(new RegExp(`\\${decimalSeparator}`), '.')

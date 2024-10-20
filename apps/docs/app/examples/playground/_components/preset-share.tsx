@@ -1,11 +1,4 @@
-import {
-  Button,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  TextInput,
-} from '@codefast/ui';
+import { Button, Label, Popover, PopoverContent, PopoverTrigger, TextInput } from '@codefast/ui';
 import { CopyIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 
@@ -19,8 +12,7 @@ export function PresetShare(): JSX.Element {
         <div className="flex flex-col space-y-2 text-center sm:text-left">
           <h3 className="text-lg font-semibold">Share preset</h3>
           <p className="text-muted-foreground text-sm">
-            Anyone who has this link and an OpenAI account will be able to view
-            this.
+            Anyone who has this link and an OpenAI account will be able to view this.
           </p>
         </div>
         <div className="flex items-center space-x-2 pt-4">
@@ -35,13 +27,7 @@ export function PresetShare(): JSX.Element {
               id="link"
             />
           </div>
-          <Button
-            aria-label="Copy"
-            className="px-3"
-            prefix={<CopyIcon />}
-            size="sm"
-            type="submit"
-          />
+          <Button aria-label="Copy" className="px-3" prefix={<CopyIcon />} size="sm" type="submit" />
         </div>
       </PopoverContent>
     </Popover>

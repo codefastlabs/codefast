@@ -83,10 +83,7 @@ export function usePagination({
     // Determine the left and right sibling page indexes, ensuring they stay
     // within valid bounds
     const leftSiblingIndex = Math.max(currentPage - siblingPagesCount, 1);
-    const rightSiblingIndex = Math.min(
-      currentPage + siblingPagesCount,
-      totalPages,
-    );
+    const rightSiblingIndex = Math.min(currentPage + siblingPagesCount, totalPages);
 
     // Determine whether to show ellipsis on the left or right of the pagination
     const shouldShowLeftEllipsis = leftSiblingIndex > 2;
@@ -113,10 +110,7 @@ export function usePagination({
      * range.
      */
     if (shouldShowLeftEllipsis && !shouldShowRightEllipsis) {
-      const rightRange = createRange(
-        totalPages - (3 + 2 * siblingPagesCount) + 1,
-        totalPages,
-      );
+      const rightRange = createRange(totalPages - (3 + 2 * siblingPagesCount) + 1, totalPages);
 
       return [firstPage, ELLIPSIS, ...rightRange];
     }

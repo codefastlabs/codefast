@@ -1,9 +1,5 @@
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  forwardRef,
-} from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -12,21 +8,11 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type RadioCardsElement = ComponentRef<typeof RadioGroupPrimitive.Root>;
-type RadioCardsProps = ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Root
->;
+type RadioCardsProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
-const RadioCards = forwardRef<RadioCardsElement, RadioCardsProps>(
-  ({ className, ...props }, forwardedRef) => {
-    return (
-      <RadioGroupPrimitive.Root
-        className={cn('grid gap-2', className)}
-        {...props}
-        ref={forwardedRef}
-      />
-    );
-  },
-);
+const RadioCards = forwardRef<RadioCardsElement, RadioCardsProps>(({ className, ...props }, forwardedRef) => {
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={forwardedRef} />;
+});
 
 RadioCards.displayName = RadioGroupPrimitive.Root.displayName;
 
@@ -35,9 +21,7 @@ RadioCards.displayName = RadioGroupPrimitive.Root.displayName;
  * -------------------------------------------------------------------------- */
 
 type RadioCardsItemElement = ComponentRef<typeof RadioGroupPrimitive.Item>;
-type RadioCardsItemProps = ComponentPropsWithoutRef<
-  typeof RadioGroupPrimitive.Item
->;
+type RadioCardsItemProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
 
 const RadioCardsItem = forwardRef<RadioCardsItemElement, RadioCardsItemProps>(
   ({ className, ...props }, forwardedRef) => (
@@ -61,9 +45,4 @@ RadioCardsItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  RadioCards,
-  RadioCardsItem,
-  type RadioCardsItemProps,
-  type RadioCardsProps,
-};
+export { RadioCards, RadioCardsItem, type RadioCardsItemProps, type RadioCardsProps };

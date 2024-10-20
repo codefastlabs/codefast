@@ -14,12 +14,7 @@ import {
   DropdownMenuTrigger,
   Separator,
 } from '@codefast/ui';
-import {
-  ChevronDownIcon,
-  CircleIcon,
-  PlusIcon,
-  StarIcon,
-} from '@radix-ui/react-icons';
+import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from '@radix-ui/react-icons';
 import { type JSX } from 'react';
 
 export function Github(): JSX.Element {
@@ -29,8 +24,8 @@ export function Github(): JSX.Element {
         <div className="space-y-1">
           <CardTitle>codefast/ui</CardTitle>
           <CardDescription>
-            Beautifully designed components that you can copy and paste into
-            your apps. Accessible. Customizable. Open Source.
+            Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open
+            Source.
           </CardDescription>
         </div>
 
@@ -49,23 +44,14 @@ export function Github(): JSX.Element {
                 icon
                 aria-label="More options"
                 className="shadow-none"
-                prefix={
-                  <ChevronDownIcon className="text-secondary-foreground" />
-                }
+                prefix={<ChevronDownIcon className="text-secondary-foreground" />}
                 variant="secondary"
               />
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              forceMount
-              align="end"
-              alignOffset={-5}
-              className="w-[200px]"
-            >
+            <DropdownMenuContent forceMount align="end" alignOffset={-5} className="w-[200px]">
               <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>
-                Future Ideas
-              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem checked>Future Ideas</DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem>My Stack</DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem>Inspiration</DropdownMenuCheckboxItem>
               <DropdownMenuSeparator />

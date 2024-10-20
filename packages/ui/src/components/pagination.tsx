@@ -1,21 +1,8 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DotsHorizontalIcon,
-} from '@radix-ui/react-icons';
-import {
-  type AnchorHTMLAttributes,
-  forwardRef,
-  type HTMLAttributes,
-  type JSX,
-  type LiHTMLAttributes,
-} from 'react';
+import { ChevronLeftIcon, ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { type AnchorHTMLAttributes, forwardRef, type HTMLAttributes, type JSX, type LiHTMLAttributes } from 'react';
 
 import { cn } from '@/lib/utils';
-import {
-  buttonVariants,
-  type ButtonVariantsProps,
-} from '@/styles/button-variants';
+import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
@@ -41,16 +28,11 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
 type PaginationContentElement = HTMLUListElement;
 type PaginationContentProps = HTMLAttributes<HTMLUListElement>;
 
-const PaginationContent = forwardRef<
-  PaginationContentElement,
-  PaginationContentProps
->(({ className, ...props }, forwardedRef) => (
-  <ul
-    ref={forwardedRef}
-    className={cn('flex flex-row items-center gap-1', className)}
-    {...props}
-  />
-));
+const PaginationContent = forwardRef<PaginationContentElement, PaginationContentProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <ul ref={forwardedRef} className={cn('flex flex-row items-center gap-1', className)} {...props} />
+  ),
+);
 
 PaginationContent.displayName = 'PaginationContent';
 
@@ -61,9 +43,9 @@ PaginationContent.displayName = 'PaginationContent';
 type PaginationItemElement = HTMLLIElement;
 type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
 
-const PaginationItem = forwardRef<PaginationItemElement, PaginationItemProps>(
-  (props, forwardedRef) => <li ref={forwardedRef} {...props} />,
-);
+const PaginationItem = forwardRef<PaginationItemElement, PaginationItemProps>((props, forwardedRef) => (
+  <li ref={forwardedRef} {...props} />
+));
 
 PaginationItem.displayName = 'PaginationItem';
 
@@ -107,9 +89,7 @@ function PaginationLink({
 
 type PaginationPreviousProps = PaginationLinkProps;
 
-function PaginationPrevious({
-  ...props
-}: PaginationPreviousProps): JSX.Element {
+function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element {
   return (
     <PaginationLink aria-label="Go to previous page" icon={false} {...props}>
       <ChevronLeftIcon className="size-4" />
@@ -139,16 +119,9 @@ function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
 
 type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
 
-function PaginationEllipsis({
-  className,
-  ...props
-}: PaginationEllipsisProps): JSX.Element {
+function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (
-    <span
-      aria-hidden
-      className={cn('flex size-10 items-center justify-center', className)}
-      {...props}
-    >
+    <span aria-hidden className={cn('flex size-10 items-center justify-center', className)} {...props}>
       <DotsHorizontalIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>

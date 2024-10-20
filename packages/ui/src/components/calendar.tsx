@@ -29,10 +29,7 @@ import { buttonVariants } from '@/styles/button-variants';
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-function Chevron({
-  orientation,
-  ...props
-}: ComponentProps<CustomComponents['Chevron']>): JSX.Element {
+function Chevron({ orientation, ...props }: ComponentProps<CustomComponents['Chevron']>): JSX.Element {
   switch (orientation) {
     case 'up': {
       return <ChevronUpIcon className="size-4" {...props} />;
@@ -63,11 +60,7 @@ interface DayButtonProps extends ComponentProps<'button'> {
   modifiers: Modifiers;
 }
 
-function DayButton({
-  modifiers,
-  className,
-  ...props
-}: DayButtonProps): JSX.Element {
+function DayButton({ modifiers, className, ...props }: DayButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -82,18 +75,14 @@ function DayButton({
       icon
       className={cn(
         (!modifiers.selected || modifiers.range_middle) && [
-          modifiers.today
-            ? 'bg-accent'
-            : 'hover:border-accent hover:bg-transparent',
+          modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
           modifiers.outside && 'text-opacity-30',
         ],
         modifiers.range_middle && 'bg-transparent',
         className,
       )}
       size="sm"
-      variant={
-        modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'
-      }
+      variant={modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost'}
       {...props}
     />
   );
@@ -105,28 +94,20 @@ function DayButton({
 
 type CalendarProps = DayPickerProps;
 
-function Calendar({
-  className,
-  classNames,
-  ...props
-}: CalendarProps): JSX.Element {
+function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Element {
   return (
     <DayPicker
       className={cn('p-3', className)}
       classNames={{
         [DayFlag.outside]: cn(!props.mode && 'text-opacity-30'),
         [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md'),
-        [SelectionState.range_end]:
-          'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
-        [SelectionState.range_middle]:
-          'bg-accent first:rounded-l-md last:rounded-r-md',
-        [SelectionState.range_start]:
-          'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
+        [SelectionState.range_end]: 'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50%',
+        [SelectionState.range_middle]: 'bg-accent first:rounded-l-md last:rounded-r-md',
+        [SelectionState.range_start]: 'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50%',
         [UI.CaptionLabel]: 'inline-flex items-center',
         [UI.Day]: cn(
           'py-0',
-          !props.mode &&
-            'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
+          !props.mode && 'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
         ),
         [UI.DayButton]: 'border border-transparent',
         [UI.Dropdown]: 'absolute size-full appearance-none opacity-0',
@@ -135,8 +116,7 @@ function Calendar({
         [UI.Footer]: 'text-sm',
         [UI.Month]: 'grid grid-rows-[2rem_1fr] gap-4',
         [UI.MonthCaption]: 'flex w-full justify-center text-sm font-medium',
-        [UI.MonthGrid]:
-          'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
+        [UI.MonthGrid]: 'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
         [UI.Months]: 'relative flex flex-wrap gap-4',
         [UI.Nav]: '-mr-4',
         [UI.NextMonthButton]: buttonVariants({

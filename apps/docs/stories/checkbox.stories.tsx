@@ -45,9 +45,7 @@ export const Default: Story = {
         <Checkbox id={id} {...args} />
         <div className="grid gap-1.5 leading-none">
           <Label htmlFor={id}>Accept terms and conditions</Label>
-          <Text className="text-muted-foreground text-sm">
-            You agree to our Terms of Service and Privacy Policy.
-          </Text>
+          <Text className="text-muted-foreground text-sm">You agree to our Terms of Service and Privacy Policy.</Text>
         </div>
       </div>
     );
@@ -96,15 +94,11 @@ export const ReactHookForm: Story = {
       },
     });
 
-    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
-      values,
-    ): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -119,16 +113,10 @@ export const ReactHookForm: Story = {
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                 <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    {...args}
-                  />
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} {...args} />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>
-                    Use different settings for my mobile devices
-                  </FormLabel>
+                  <FormLabel>Use different settings for my mobile devices</FormLabel>
                   <FormDescription>
                     You can manage your mobile notifications in the{' '}
                     <Link href="/apps/docs/public">mobile settings</Link> page.
@@ -198,15 +186,11 @@ export const ReactHookForm2: Story = {
       },
     });
 
-    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (
-      values,
-    ): void => {
+    const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {
       toast.message('You submitted the following values:', {
         description: (
           <Pre className="w-full rounded-md bg-slate-950 p-4">
-            <Code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </Code>
+            <Code className="text-white">{JSON.stringify(values, null, 2)}</Code>
           </Pre>
         ),
       });
@@ -222,9 +206,7 @@ export const ReactHookForm2: Story = {
               <FormItem>
                 <div className="mb-4">
                   <FormLabel className="text-base">Sidebar</FormLabel>
-                  <FormDescription>
-                    Select the items you want to display in the sidebar.
-                  </FormDescription>
+                  <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
                 </div>
                 {items2.map((item) => (
                   <FormField
@@ -232,28 +214,19 @@ export const ReactHookForm2: Story = {
                     control={form.control}
                     name="items"
                     render={({ field }) => (
-                      <FormItem
-                        key={item.id}
-                        className="flex flex-row items-center space-x-3 space-y-0"
-                      >
+                      <FormItem key={item.id} className="flex flex-row items-center space-x-3 space-y-0">
                         <FormControl>
                           <Checkbox
                             checked={field.value.includes(item.id)}
                             onCheckedChange={(checked) => {
                               checked
                                 ? field.onChange([...field.value, item.id])
-                                : field.onChange(
-                                    field.value.filter(
-                                      (value) => value !== item.id,
-                                    ),
-                                  );
+                                : field.onChange(field.value.filter((value) => value !== item.id));
                             }}
                             {...args}
                           />
                         </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {item.label}
-                        </FormLabel>
+                        <FormLabel className="text-sm font-normal">{item.label}</FormLabel>
                       </FormItem>
                     )}
                   />

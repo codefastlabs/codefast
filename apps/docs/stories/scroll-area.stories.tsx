@@ -34,9 +34,7 @@ type Story = StoryObj<typeof ScrollArea>;
  * Story: Default
  * -------------------------------------------------------------------------- */
 
-const tags = Array.from({ length: 50 }).map(
-  (_, i, a) => `v1.2.0-beta.${a.length - i}`,
-);
+const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
 const tagCount = tags.length;
 
 export const Default: Story = {
@@ -97,10 +95,7 @@ export const HorizontalScrolling: Story = {
               />
             </div>
             <figcaption className="text-muted-foreground pt-2 text-xs">
-              Photo by{' '}
-              <span className="text-foreground font-semibold">
-                {artwork.artist}
-              </span>
+              Photo by <span className="text-foreground font-semibold">{artwork.artist}</span>
             </figcaption>
           </figure>
         ))}
