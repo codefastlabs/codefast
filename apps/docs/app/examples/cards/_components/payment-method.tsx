@@ -15,6 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
   TextInput,
+  RadioCards,
+  RadioCardsItem,
+  Text,
 } from '@codefast/ui';
 import { type JSX } from 'react';
 
@@ -28,6 +31,32 @@ export function PaymentMethod(): JSX.Element {
         <CardDescription>Add a new payment method to your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
+        <RadioCards className="grid-cols-1 sm:grid-cols-3" defaultValue="card">
+          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="card">
+            <svg
+              className="size-6"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect height="14" rx="2" width="20" x="2" y="5" />
+              <path d="M2 10h20" />
+            </svg>
+            Card
+          </RadioCardsItem>
+          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="paypal">
+            <Icons.Paypal className="mb-3 size-6" />
+            Paypal
+          </RadioCardsItem>
+          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="apple">
+            <Icons.Apple className="mb-3 size-6" />
+            Apple
+          </RadioCardsItem>
+        </RadioCards>
         <RadioGroup className="grid grid-cols-3 gap-4" defaultValue="card">
           <div>
             <RadioGroupItem className="peer sr-only" id="card" value="card" />
