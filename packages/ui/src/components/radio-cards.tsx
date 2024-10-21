@@ -30,7 +30,7 @@ const RadioCardsItem = forwardRef<RadioCardsItemElement, RadioCardsItemProps>(
       className={cn(
         'text-foreground group peer flex cursor-pointer items-center justify-center rounded-md border-2 p-4 transition',
         'hover:bg-accent hover:text-accent-foreground',
-        'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2',
+        'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'disabled:cursor-default disabled:opacity-50',
         'aria-checked:border-primary',
         className,
