@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
   Label,
-  RadioGroup,
-  RadioGroupItem,
+  RadioCards,
+  RadioCardsItem,
   Select,
   SelectContent,
   SelectItem,
@@ -28,50 +28,32 @@ export function PaymentMethod(): JSX.Element {
         <CardDescription>Add a new payment method to your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
-        <RadioGroup className="grid grid-cols-3 gap-4" defaultValue="card">
-          <div>
-            <RadioGroupItem className="peer sr-only" id="card" value="card" />
-            <Label
-              className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 p-4"
-              htmlFor="card"
+        <RadioCards className="grid-cols-1 sm:grid-cols-3" defaultValue="card">
+          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="card">
+            <svg
+              className="size-6"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <svg
-                className="mb-3 size-6"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect height="14" rx="2" width="20" x="2" y="5" />
-                <path d="M2 10h20" />
-              </svg>
-              Card
-            </Label>
-          </div>
-          <div>
-            <RadioGroupItem className="peer sr-only" id="paypal" value="paypal" />
-            <Label
-              className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 p-4"
-              htmlFor="paypal"
-            >
-              <Icons.Paypal className="mb-3 size-6" />
-              Paypal
-            </Label>
-          </div>
-          <div>
-            <RadioGroupItem className="peer sr-only" id="apple" value="apple" />
-            <Label
-              className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 p-4"
-              htmlFor="apple"
-            >
-              <Icons.Apple className="mb-3 size-6" />
-              Apple
-            </Label>
-          </div>
-        </RadioGroup>
+              <rect height="14" rx="2" width="20" x="2" y="5" />
+              <path d="M2 10h20" />
+            </svg>
+            Card
+          </RadioCardsItem>
+          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="paypal">
+            <Icons.Paypal className="mb-3 size-6" />
+            Paypal
+          </RadioCardsItem>
+          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="apple">
+            <Icons.Apple className="mb-3 size-6" />
+            Apple
+          </RadioCardsItem>
+        </RadioCards>
         <div className="grid gap-2">
           <Label htmlFor="name">Name</Label>
           <TextInput id="name" placeholder="First Last" />

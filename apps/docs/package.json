@@ -58,7 +58,7 @@
     "concurrently": "9.0.1",
     "eslint": "8.57.1",
     "eslint-config-next": "15.0.0-canary.202",
-    "eslint-config-turbo": "2.2.0",
+    "eslint-config-turbo": "2.2.1",
     "eslint-plugin-storybook": "0.9.0",
     "postcss": "8.4.47",
     "serve": "14.2.4",
