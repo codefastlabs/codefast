@@ -78,7 +78,7 @@ function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): 
         size: 'sm',
         variant: modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost',
         className: [
-          'focus-visible:outline-ring/40 focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:ring-0',
+          'focus-visible:outline-ring focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:ring-0',
           (!modifiers.selected || modifiers.range_middle) && [
             modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
             modifiers.outside && 'text-opacity-30',
