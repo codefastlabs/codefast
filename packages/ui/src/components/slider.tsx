@@ -25,7 +25,7 @@ const Slider = forwardRef<SliderElement, SliderProps>(({ className, ...props }, 
         // eslint-disable-next-line react/no-array-index-key -- index is stable
         key={index}
         className={cn(
-          'border-primary bg-primary size-4.5 flex items-center justify-center rounded-full border-2 shadow-sm transition',
+          'border-primary bg-primary flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition',
           'after:bg-background after:size-full after:rounded-full after:transition-[width,height]',
           'active:after:size-1',
           'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
