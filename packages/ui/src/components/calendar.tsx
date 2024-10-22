@@ -10,14 +10,12 @@ import {
 import { format } from 'date-fns';
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 import {
-  type CalendarDay,
   type CustomComponents,
   type DateRange,
   DayFlag,
   DayPicker,
   type DayPickerProps,
   type Matcher,
-  type Modifiers,
   SelectionState,
   UI,
 } from 'react-day-picker';
@@ -29,7 +27,9 @@ import { buttonVariants } from '@/styles/button-variants';
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-function Chevron({ orientation, ...props }: ComponentProps<CustomComponents['Chevron']>): JSX.Element {
+type ChevronProps = ComponentProps<CustomComponents['Chevron']>;
+
+function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
   switch (orientation) {
     case 'up': {
       return <ChevronUpIcon className="size-4" {...props} />;
@@ -56,10 +56,7 @@ function Chevron({ orientation, ...props }: ComponentProps<CustomComponents['Che
  * Component: DayButton
  * -------------------------------------------------------------------------- */
 
-interface DayButtonProps extends ComponentProps<'button'> {
-  day: CalendarDay;
-  modifiers: Modifiers;
-}
+type DayButtonProps = ComponentProps<CustomComponents['DayButton']>;
 
 function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);

@@ -54,14 +54,5 @@
   "packageManager": "pnpm@9.4.0",
   "engines": {
     "node": ">=20"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-      "react": "19.0.0-rc-b8ae38f8-20241018",
-      "react-dom": "19.0.0-rc-b8ae38f8-20241018",
-      "react-is": "19.0.0-rc-b8ae38f8-20241018"
-    }
   }
 }
