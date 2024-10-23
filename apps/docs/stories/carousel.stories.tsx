@@ -34,26 +34,29 @@ type Story = StoryObj<typeof Carousel>;
  * -------------------------------------------------------------------------- */
 
 export const Default: Story = {
-  render: (args) => (
-    <Carousel className="w-full max-w-xs" {...args}>
-      <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          // eslint-disable-next-line react/no-array-index-key -- okay for static content
-          <CarouselItem key={index}>
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-  ),
+  render: (args) => {
+    const numbers = Array.from({ length: 5 }, (_, index) => index + 1);
+
+    return (
+      <Carousel className="w-full max-w-xs" {...args}>
+        <CarouselContent>
+          {numbers.map((number, index) => (
+            <CarouselItem key={number}>
+              <div className="p-1">
+                <Card>
+                  <CardContent className="flex aspect-square items-center justify-center p-6">
+                    <span className="text-4xl font-semibold">{index + 1}</span>
+                  </CardContent>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    );
+  },
 };
 
 /* -----------------------------------------------------------------------------

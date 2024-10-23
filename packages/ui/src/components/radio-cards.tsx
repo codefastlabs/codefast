@@ -28,8 +28,9 @@ const RadioCardsItem = forwardRef<RadioCardsItemElement, RadioCardsItemProps>(
     <RadioGroupPrimitive.Item
       ref={forwardedRef}
       className={cn(
-        'text-foreground group peer flex cursor-pointer items-center justify-center rounded-md border-2 p-4',
+        'group peer flex cursor-pointer items-center justify-center rounded-md border p-4 shadow-sm transition',
         'hover:bg-accent hover:text-accent-foreground',
+        'focus-visible:ring-ring/40 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2',
         'disabled:cursor-default disabled:opacity-50',
         'aria-checked:border-primary',
         className,

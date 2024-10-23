@@ -78,7 +78,7 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
       <div
         className={cn(
           'peer-focus:divide-ring peer-focus:border-l-ring',
-          'order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(theme(borderRadius.md)-1px)] border-l transition',
+          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(theme(borderRadius.md)-1px)] border-l transition',
         )}
       >
         <NumberInputPrimitive.IncrementButton

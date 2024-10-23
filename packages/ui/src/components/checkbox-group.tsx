@@ -30,17 +30,17 @@ const CheckboxGroupItem = forwardRef<CheckboxGroupItemElement, CheckboxGroupItem
       ref={forwardedRef}
       className={cn(
         [
-          'border-input peer flex size-4 shrink-0 rounded border shadow-sm transition',
+          'border-input text-primary-foreground peer flex size-4 shrink-0 rounded border shadow-sm transition',
           'hover:border-primary',
-          'aria-checked:border-primary aria-checked:bg-primary aria-checked:text-primary-foreground',
-          'focus-visible:ring-ring/40 focus-visible:outline-none focus-visible:ring-2',
+          'aria-checked:border-primary aria-checked:bg-primary',
+          'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
           'disabled:pointer-events-none disabled:opacity-50',
         ],
         className,
       )}
       {...props}
     >
-      <CheckboxGroupPrimitive.CheckboxGroupIndicator className="flex size-full items-center justify-center text-current">
+      <CheckboxGroupPrimitive.CheckboxGroupIndicator>
         <CheckIcon className="size-3.5" />
       </CheckboxGroupPrimitive.CheckboxGroupIndicator>
     </CheckboxGroupPrimitive.Item>
