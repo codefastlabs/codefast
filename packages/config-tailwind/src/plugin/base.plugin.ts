@@ -2,12 +2,6 @@ import plugin from 'tailwindcss/plugin';
 
 const base = plugin(({ addBase }) => {
   addBase({
-    '::selection': {
-      '@apply bg-primary text-background': '',
-    },
-    ':focus-visible': {
-      '@apply outline-ring/40': '',
-    },
     body: {
       '@apply bg-background text-foreground': '',
     },
@@ -16,7 +10,6 @@ const base = plugin(({ addBase }) => {
         '&, &:hover, &:focus': {
           'box-shadow': 'inset 0 0 0 1000px hsl(var(--background))',
           '-webkit-box-shadow': 'inset 0 0 0 1000px hsl(var(--background)) ',
-          '-webkit-text-fill-color': 'hsl(var(--foreground))',
         },
       },
     },
@@ -30,6 +23,12 @@ const base = plugin(({ addBase }) => {
       '&::-webkit-search-cancel-button, &::-webkit-search-decoration': {
         '@apply appearance-none': '',
       },
+    },
+    ':focus-visible': {
+      '@apply outline-ring': '',
+    },
+    '::selection': {
+      '@apply bg-primary text-background': '',
     },
   });
 });
