@@ -1,5 +1,13 @@
 # @codefast-ui/number-input
 
+## 0.1.47
+
+### Patch Changes
+
+- chore: update various package dependencies
+- Updated dependencies
+  - @codefast-ui/input@0.1.47
+
 ## 0.1.46
 
 ### Patch Changes
