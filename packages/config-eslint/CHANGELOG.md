@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.47
+
+### Patch Changes
+
+- chore: update various package dependencies
+
 ## 0.1.46
 
 ### Patch Changes

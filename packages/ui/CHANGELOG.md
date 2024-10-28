@@ -1,5 +1,15 @@
 # @codefast/ui
 
+## 0.1.47
+
+### Patch Changes
+
+- chore: update various package dependencies
+- Updated dependencies
+  - @codefast-ui/checkbox-group@0.1.47
+  - @codefast-ui/input@0.1.47
+  - @codefast-ui/number-input@0.1.47
+
 ## 0.1.46
 
 ### Patch Changes
