@@ -3,9 +3,9 @@ import { type Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {
   content: [
-    './stories/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './stories/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@codefast/ui/dist/**/*.js',
   ],
   presets: [sharedConfig],
