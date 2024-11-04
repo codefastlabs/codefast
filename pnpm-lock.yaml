@@ -447,6 +447,9 @@ importers:
       '@codefast-ui/number-input':
         specifier: workspace:*
         version: link:../primitive/number-input
+      '@codefast/hooks':
+        specifier: workspace:*
+        version: link:../hooks
       '@radix-ui/primitive':
         specifier: 1.1.0
         version: 1.1.0
@@ -573,6 +576,9 @@ importers:
       lodash-es:
         specifier: '4'
         version: 4.17.21
+      lucide-react:
+        specifier: 0.454.0
+        version: 0.454.0(react@19.0.0-rc-45804af1-20241021)
       next-themes:
         specifier: '0.3'
         version: 0.3.0(react-dom@19.0.0-rc-45804af1-20241021(react@19.0.0-rc-45804af1-20241021))(react@19.0.0-rc-45804af1-20241021)
