@@ -142,7 +142,6 @@ AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayNam
  * -------------------------------------------------------------------------- */
 
 type AlertDialogActionElement = ComponentRef<typeof AlertDialogPrimitive.Action>;
-
 interface AlertDialogActionProps extends ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
@@ -165,7 +164,6 @@ AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
  * -------------------------------------------------------------------------- */
 
 type AlertDialogCancelElement = ComponentRef<typeof AlertDialogPrimitive.Cancel>;
-
 interface AlertDialogCancelProps extends ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];

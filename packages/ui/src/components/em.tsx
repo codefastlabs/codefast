@@ -6,7 +6,6 @@ import { forwardRef, type HTMLAttributes } from 'react';
  * -------------------------------------------------------------------------- */
 
 type EmElement = HTMLElement;
-
 interface EmProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }

@@ -188,7 +188,6 @@ SheetDescription.displayName = SheetPrimitive.Description.displayName;
  * -------------------------------------------------------------------------- */
 
 type SheetCloseElement = ComponentRef<typeof SheetPrimitive.Close>;
-
 interface SheetCloseProps extends ComponentPropsWithoutRef<typeof SheetPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
