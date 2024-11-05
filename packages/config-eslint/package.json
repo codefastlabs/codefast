@@ -1,6 +1,6 @@
 {
   "name": "@codefast/eslint-config",
-  "version": "0.1.47",
+  "version": "0.1.48",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
@@ -22,8 +22,8 @@
     "clean": "rm -rf node_modules"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "8.11.0",
-    "@typescript-eslint/parser": "8.11.0",
+    "@typescript-eslint/eslint-plugin": "8.13.0",
+    "@typescript-eslint/parser": "8.13.0",
     "@vercel/style-guide": "6.0.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-only-warn": "1.1.0",

@@ -51,7 +51,6 @@ const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
  * -------------------------------------------------------------------------- */
 
 type ContextMenuSubTriggerElement = ComponentRef<typeof ContextMenuPrimitive.SubTrigger>;
-
 interface ContextMenuSubTriggerProps extends ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
@@ -146,7 +145,6 @@ ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName;
  * -------------------------------------------------------------------------- */
 
 type ContextMenuItemElement = ComponentRef<typeof ContextMenuPrimitive.Item>;
-
 interface ContextMenuItemProps extends ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> {
   inset?: boolean;
 }
@@ -242,7 +240,6 @@ ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName;
  * -------------------------------------------------------------------------- */
 
 type ContextMenuLabelElement = ComponentRef<typeof ContextMenuPrimitive.Label>;
-
 interface ContextMenuLabelProps extends ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label> {
   inset?: boolean;
 }

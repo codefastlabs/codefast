@@ -6,7 +6,6 @@ import { forwardRef, type HTMLAttributes } from 'react';
  * -------------------------------------------------------------------------- */
 
 type BoxElement = HTMLDivElement;
-
 interface BoxDivProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div';
 }

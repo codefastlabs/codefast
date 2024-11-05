@@ -6,7 +6,6 @@ import { forwardRef, type HTMLAttributes } from 'react';
  * -------------------------------------------------------------------------- */
 
 type CodeElement = HTMLElement;
-
 interface CodeProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }

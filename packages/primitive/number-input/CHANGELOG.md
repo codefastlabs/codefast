@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.1.48
+
+### Patch Changes
+
+- feat(ui): add new Sidebar component
+
+- Updated dependencies []:
+  - @codefast-ui/input@0.1.48
+
 ## 0.1.47
 
 ### Patch Changes

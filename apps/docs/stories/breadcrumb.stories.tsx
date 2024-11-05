@@ -231,7 +231,6 @@ export const ResponsiveBreadcrumb: Story = {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                       {items.slice(1, -2).map((item, index) => (
-                        // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
                         <DropdownMenuItem key={index}>
                           <Link href={item.href ? item.href : '#'}>{item.label}</Link>
                         </DropdownMenuItem>
@@ -250,12 +249,7 @@ export const ResponsiveBreadcrumb: Story = {
                       </DrawerHeader>
                       <div className="grid gap-1 px-4">
                         {items.slice(1, -2).map((item, index) => (
-                          <Link
-                            // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
-                            key={index}
-                            className="py-1 text-sm"
-                            href={item.href ? item.href : '#'}
-                          >
+                          <Link key={index} className="py-1 text-sm" href={item.href ? item.href : '#'}>
                             {item.label}
                           </Link>
                         ))}
@@ -270,7 +264,6 @@ export const ResponsiveBreadcrumb: Story = {
             </>
           ) : null}
           {items.slice(-ITEMS_TO_DISPLAY + 1).map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- We're iterating over a static array
             <Fragment key={index}>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
