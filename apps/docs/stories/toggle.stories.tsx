@@ -4,7 +4,7 @@ import { fn } from '@storybook/test';
 import { ExpandIcon } from 'lucide-react';
 import { useState } from 'react';
 
-const meta: Meta<typeof Toggle> = {
+const meta = {
   argTypes: {
     disabled: {
       control: { type: 'boolean' },
@@ -65,7 +65,7 @@ const meta: Meta<typeof Toggle> = {
   component: Toggle,
   tags: ['autodocs'],
   title: 'UI/Toggle',
-};
+} satisfies Meta<typeof Toggle>;
 
 export default meta;
 
