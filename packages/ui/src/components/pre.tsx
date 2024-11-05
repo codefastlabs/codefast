@@ -6,7 +6,6 @@ import { forwardRef, type HTMLAttributes } from 'react';
  * -------------------------------------------------------------------------- */
 
 type PreElement = HTMLPreElement;
-
 interface PreProps extends HTMLAttributes<HTMLPreElement> {
   asChild?: boolean;
 }

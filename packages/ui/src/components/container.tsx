@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type ContainerElement = HTMLDivElement;
-
 interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   asChild?: boolean;
 }

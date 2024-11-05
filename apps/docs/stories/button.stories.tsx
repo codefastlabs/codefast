@@ -98,13 +98,16 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: {
     children: 'Click Me',
   },
 };
 
-// Story for Button with different sizes
 export const Sizes: Story = {
   args: {
     prefix: <ScanSearchIcon />,
@@ -120,7 +123,10 @@ export const Sizes: Story = {
   ),
 };
 
-// Story for Button with different variants
+/* -----------------------------------------------------------------------------
+ * Story: Variants
+ * -------------------------------------------------------------------------- */
+
 export const Variants: Story = {
   args: { className: 'capitalize' },
   render: (args) => (
@@ -136,7 +142,10 @@ export const Variants: Story = {
   ),
 };
 
-// Story for Button in the disabled state
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
 export const Disabled: Story = {
   args: {
     disabled: true,
@@ -144,7 +153,10 @@ export const Disabled: Story = {
   },
 };
 
-// Story for Button with loading state
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
 export const Loading: Story = {
   args: {
     loading: true,
@@ -152,7 +164,10 @@ export const Loading: Story = {
   },
 };
 
-// Story for Button with a custom spinner
+/* -----------------------------------------------------------------------------
+ * Story: CustomSpinner
+ * -------------------------------------------------------------------------- */
+
 export const CustomSpinner: Story = {
   args: {
     children: 'Loading...',
@@ -161,7 +176,10 @@ export const CustomSpinner: Story = {
   },
 };
 
-// Story for Button with prefix
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
 export const Prefix: Story = {
   args: {
     prefix: <PaletteIcon />,
@@ -169,7 +187,10 @@ export const Prefix: Story = {
   },
 };
 
-// Story for Button with suffix
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
 export const Suffix: Story = {
   args: {
     children: 'Submit',
@@ -177,7 +198,10 @@ export const Suffix: Story = {
   },
 };
 
-// Story for Button with only an icon
+/* -----------------------------------------------------------------------------
+ * Story: IconOnly
+ * -------------------------------------------------------------------------- */
+
 export const IconOnly: Story = {
   args: {
     icon: true,
@@ -185,7 +209,10 @@ export const IconOnly: Story = {
   },
 };
 
-// Story for Button in a controlled state
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
 export const Controlled: Story = {
   render: (args) => {
     const [count, setCount] = useState(0);

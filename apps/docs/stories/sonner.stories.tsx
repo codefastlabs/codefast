@@ -1,5 +1,6 @@
 import { Button, toast, Toaster } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { consola } from 'consola';
 
 const meta = {
   component: Toaster,
@@ -26,8 +27,7 @@ export const Default: Story = {
             action: {
               label: 'Undo',
               onClick: () => {
-                // eslint-disable-next-line no-console -- This is a console log
-                console.log('Undo');
+                consola.log('Undo');
               },
             },
           })

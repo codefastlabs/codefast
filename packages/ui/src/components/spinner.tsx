@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 const spinnerCount = 8;
 
 type SpinnerElement = HTMLSpanElement;
-
 interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   loading?: boolean;
 }

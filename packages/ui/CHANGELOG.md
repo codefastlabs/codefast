@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.1.48
+
+### Patch Changes
+
+- feat(ui): add new Sidebar component
+
+- Updated dependencies []:
+  - @codefast/hooks@0.1.48
+  - @codefast-ui/checkbox-group@0.1.48
+  - @codefast-ui/input@0.1.48
+  - @codefast-ui/number-input@0.1.48
+
 ## 0.1.47
 
 ### Patch Changes

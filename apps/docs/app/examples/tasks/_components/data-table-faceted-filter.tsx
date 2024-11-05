@@ -95,7 +95,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                         'mr-2 flex size-4 items-center justify-center rounded border',
                         isSelected
                           ? 'bg-primary border-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible',
+                          : 'opacity-80 [&_svg]:invisible',
                       )}
                     >
                       <CheckIcon className="size-4" />

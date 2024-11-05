@@ -87,6 +87,10 @@ export default meta;
 
 type Story = StoryObj<typeof ToggleGroup>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   render: (args) => (
     <ToggleGroup {...args}>
@@ -97,7 +101,10 @@ export const Default: Story = {
   ),
 };
 
-// Story for ToggleGroup with different sizes
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-col gap-2">
@@ -112,7 +119,10 @@ export const Sizes: Story = {
   ),
 };
 
-// Story for ToggleGroup with different variants
+/* -----------------------------------------------------------------------------
+ * Story: Variants
+ * -------------------------------------------------------------------------- */
+
 export const Variants: Story = {
   args: { className: '[&_button]:capitalize' },
   render: (args) => (
@@ -130,7 +140,10 @@ export const Variants: Story = {
   ),
 };
 
-// Story for ToggleGroup with Icons
+/* -----------------------------------------------------------------------------
+ * Story: Icons
+ * -------------------------------------------------------------------------- */
+
 export const Icons: Story = {
   args: { icon: true },
   render: (args) => (
@@ -142,7 +155,10 @@ export const Icons: Story = {
   ),
 };
 
-// Story for ToggleGroup with prefix
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
 export const Prefix: Story = {
   render: (args) => (
     <ToggleGroup {...args}>
@@ -159,7 +175,10 @@ export const Prefix: Story = {
   ),
 };
 
-// Story for ToggleGroup with suffix
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
 export const Suffix: Story = {
   render: (args) => (
     <ToggleGroup {...args}>
@@ -176,7 +195,10 @@ export const Suffix: Story = {
   ),
 };
 
-// Story for ToggleGroup in a controlled state
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
 export const Controlled: Story = {
   render: (args) => {
     const [value, setValue] = useState('1');

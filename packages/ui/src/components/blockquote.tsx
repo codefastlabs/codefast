@@ -6,7 +6,6 @@ import { type BlockquoteHTMLAttributes, forwardRef } from 'react';
  * -------------------------------------------------------------------------- */
 
 type BlockquoteElement = HTMLQuoteElement;
-
 interface BlockquoteProps extends BlockquoteHTMLAttributes<HTMLQuoteElement> {
   asChild?: boolean;
 }

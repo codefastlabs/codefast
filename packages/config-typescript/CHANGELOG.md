@@ -1,5 +1,11 @@
 # @codefast/config-typescript
 
+## 0.1.48
+
+### Patch Changes
+
+- feat(ui): add new Sidebar component
+
 ## 0.1.47
 
 ### Patch Changes

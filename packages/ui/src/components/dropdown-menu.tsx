@@ -51,7 +51,6 @@ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuSubTriggerElement = ComponentRef<typeof DropdownMenuPrimitive.SubTrigger>;
-
 interface DropdownMenuSubTriggerProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
@@ -152,7 +151,6 @@ DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuItemElement = ComponentRef<typeof DropdownMenuPrimitive.Item>;
-
 interface DropdownMenuItemProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> {
   inset?: boolean;
 }

@@ -188,13 +188,20 @@ const units = {
 
 type Story = StoryObj<typeof NumberInput>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: {
     placeholder: 'Basic Number Input',
   },
 };
 
-// Story for NumberInput with different sizes
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
   args: {
     prefix: <ImportIcon />,
@@ -208,7 +215,10 @@ export const Sizes: Story = {
   ),
 };
 
-// NumberInput with currency format options
+/* -----------------------------------------------------------------------------
+ * Story: CurrencyFormat
+ * -------------------------------------------------------------------------- */
+
 export const CurrencyFormat: Story = {
   args: {
     formatOptions: {
@@ -221,7 +231,10 @@ export const CurrencyFormat: Story = {
   },
 };
 
-// NumberInput with percentage format options
+/* -----------------------------------------------------------------------------
+ * Story: PercentageFormat
+ * -------------------------------------------------------------------------- */
+
 export const PercentageFormat: Story = {
   args: {
     formatOptions: {
@@ -233,7 +246,10 @@ export const PercentageFormat: Story = {
   },
 };
 
-// NumberInput with unit mile-per-hour format options
+/* -----------------------------------------------------------------------------
+ * Story: UnitFormat
+ * -------------------------------------------------------------------------- */
+
 export const UnitFormat: Story = {
   render: (args) => {
     const [value, setValue] = useState<string>('acre');
@@ -272,17 +288,26 @@ export const UnitFormat: Story = {
   },
 };
 
-// Story for NumberInput in the read-only state
+/* -----------------------------------------------------------------------------
+ * Story: ReadOnly
+ * -------------------------------------------------------------------------- */
+
 export const ReadOnly: Story = {
   args: { readOnly: true, placeholder: 'Read-Only Number Input' },
 };
 
-// Story for NumberInput with loading state
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
 export const Loading: Story = {
   args: { loading: true, placeholder: 'Loading Number Input' },
 };
 
-// Story for NumberInput with a custom spinner
+/* -----------------------------------------------------------------------------
+ * Story: CustomSpinner
+ * -------------------------------------------------------------------------- */
+
 export const CustomSpinner: Story = {
   args: {
     loading: true,
@@ -291,17 +316,26 @@ export const CustomSpinner: Story = {
   },
 };
 
-// Story for NumberInput with prefix
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
 export const Prefix: Story = {
   args: { prefix: <ImportIcon />, placeholder: 'Number Input with Prefix' },
 };
 
-// Story for NumberInput with suffix
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
 export const Suffix: Story = {
   args: { suffix: <ImportIcon />, placeholder: 'Number Input with Suffix' },
 };
 
-// Story for NumberInput with different min and max values
+/* -----------------------------------------------------------------------------
+ * Story: MinMax
+ * -------------------------------------------------------------------------- */
+
 export const MinMax: Story = {
   args: {
     min: 0,
@@ -310,27 +344,42 @@ export const MinMax: Story = {
   },
 };
 
-// Story for NumberInput in the disabled state
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
 export const Disabled: Story = {
   args: { disabled: true, placeholder: 'Disabled Number Input' },
 };
 
-// Story for NumberInput with a maximum value
+/* -----------------------------------------------------------------------------
+ * Story: MaxValue
+ * -------------------------------------------------------------------------- */
+
 export const MaxValue: Story = {
   args: { max: 50, placeholder: 'Max Value Number Input (max=50)' },
 };
 
-// Story for NumberInput with a minimum value
+/* -----------------------------------------------------------------------------
+ * Story: MinValue
+ * -------------------------------------------------------------------------- */
+
 export const MinValue: Story = {
   args: { min: 10, placeholder: 'Min Value Number Input (min=10)' },
 };
 
-// Story for NumberInput with a step value
+/* -----------------------------------------------------------------------------
+ * Story: StepValue
+ * -------------------------------------------------------------------------- */
+
 export const StepValue: Story = {
   args: { step: 5, placeholder: 'Step Value Number Input (step=5)' },
 };
 
-// Story for NumberInput in a controlled state
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
 export const Controlled: Story = {
   render: (args) => {
     const [number, setNumber] = useState(0);
@@ -353,7 +402,10 @@ export const Controlled: Story = {
   },
 };
 
-// Story for NumberInput with react-hook-form integration
+/* -----------------------------------------------------------------------------
+ * Story: React Hook Form
+ * -------------------------------------------------------------------------- */
+
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (

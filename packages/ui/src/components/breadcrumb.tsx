@@ -17,7 +17,6 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type BreadcrumbElement = HTMLElement;
-
 interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
   separator?: ReactNode;
 }
@@ -70,7 +69,6 @@ BreadcrumbItem.displayName = 'BreadcrumbItem';
  * -------------------------------------------------------------------------- */
 
 type BreadcrumbLinkElement = HTMLAnchorElement;
-
 interface BreadcrumbLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   asChild?: boolean;
 }

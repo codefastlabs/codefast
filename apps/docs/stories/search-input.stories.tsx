@@ -122,7 +122,10 @@ export default meta;
 
 type Story = StoryObj<typeof SearchInput>;
 
-// Default story showing basic SearchInput
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: {
     loading: false,
@@ -130,7 +133,10 @@ export const Default: Story = {
   },
 };
 
-// Story for NumberInput with different sizes
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
   args: {
     prefix: <SearchIcon />,
@@ -144,21 +150,30 @@ export const Sizes: Story = {
   ),
 };
 
-// Story showing SearchInput with a default value
+/* -----------------------------------------------------------------------------
+ * Story: With Default Value
+ * -------------------------------------------------------------------------- */
+
 export const WithDefaultValue: Story = {
   args: {
     defaultValue: 'Default search value',
   },
 };
 
-// Story showing disabled SearchInput
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
 export const Disabled: Story = {
   args: {
     disabled: true,
   },
 };
 
-// Story showing SearchInput with read-only state
+/* -----------------------------------------------------------------------------
+ * Story: Read-only
+ * -------------------------------------------------------------------------- */
+
 export const ReadOnly: Story = {
   args: {
     readOnly: true,
@@ -166,14 +181,20 @@ export const ReadOnly: Story = {
   },
 };
 
-// Story showing SearchInput with loading state
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
 export const Loading: Story = {
   args: {
     loading: true,
   },
 };
 
-// Story showing SearchInput with custom prefix and suffix
+/* -----------------------------------------------------------------------------
+ * Story: With Prefix Suffix
+ * -------------------------------------------------------------------------- */
+
 export const WithPrefixSuffix: Story = {
   args: {
     prefix: <SearchIcon />,
@@ -181,7 +202,10 @@ export const WithPrefixSuffix: Story = {
   },
 };
 
-// Interactive story for SearchInput
+/* -----------------------------------------------------------------------------
+ * Story: Interactive
+ * -------------------------------------------------------------------------- */
+
 export const Interactive: Story = {
   render: (args) => {
     const [searchValue, setSearchValue] = useState('');

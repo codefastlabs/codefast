@@ -74,7 +74,6 @@ export const Sizes: Story = {
     >
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
-          // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card>
@@ -101,7 +100,6 @@ export const Spacing: Story = {
     <Carousel className="w-full max-w-sm" {...args}>
       <CarouselContent className="-ml-1">
         {Array.from({ length: 5 }).map((_, index) => (
-          // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card>
@@ -135,7 +133,6 @@ export const Orientation: Story = {
     >
       <CarouselContent className="-mt-1 h-[200px]">
         {Array.from({ length: 5 }).map((_, index) => (
-          // eslint-disable-next-line react/no-array-index-key -- okay for static content
           <CarouselItem key={index} className="pt-1 md:basis-1/2">
             <div className="p-1">
               <Card>
@@ -184,7 +181,6 @@ export const API: Story = {
         <Carousel className="w-full max-w-xs" setApi={setApi} {...args}>
           <CarouselContent>
             {Array.from({ length: 5 }).map((_, index) => (
-              // eslint-disable-next-line react/no-array-index-key -- okay for static content
               <CarouselItem key={index}>
                 <div className="p-1">
                   <Card>
@@ -225,7 +221,6 @@ export const Plugins: Story = {
       >
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- okay for static content
             <CarouselItem key={index}>
               <div className="p-1">
                 <Card>

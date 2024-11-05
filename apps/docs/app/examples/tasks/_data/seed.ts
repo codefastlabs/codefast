@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { faker } from '@faker-js/faker';
+import { consola } from 'consola';
 
 import { labels, priorities, statuses } from './data';
 
@@ -15,5 +16,4 @@ const tasks = Array.from({ length: 100 }, () => ({
 
 fs.writeFileSync(path.join(__dirname, 'tasks.json'), JSON.stringify(tasks, null, 2));
 
-// eslint-disable-next-line no-console -- no need to log this
-console.log('✅ Tasks data generated.');
+consola.log('✅ Tasks data generated.');

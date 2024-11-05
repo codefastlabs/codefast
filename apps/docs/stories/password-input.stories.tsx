@@ -89,11 +89,18 @@ export default meta;
 
 type Story = StoryObj<typeof PasswordInput>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: { defaultValue: 'Password' },
 };
 
-// Story for PasswordInput with different sizes
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
   render: () => (
     <div className="space-y-4">
@@ -104,17 +111,26 @@ export const Sizes: Story = {
   ),
 };
 
-// Story for PasswordInput in the disabled state
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
 export const Disabled: Story = {
   args: { disabled: true },
 };
 
-// Story for InputPassword with loading state
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
 export const Loading: Story = {
   args: { loading: true },
 };
 
-// Story for PasswordInput with a custom spinner
+/* -----------------------------------------------------------------------------
+ * Story: Custom Spinner
+ * -------------------------------------------------------------------------- */
+
 export const CustomSpinner: Story = {
   args: {
     spinner: <LoaderCircleIcon className="animate-spin" />,
@@ -122,17 +138,26 @@ export const CustomSpinner: Story = {
   },
 };
 
-// Story for PasswordInput with prefix
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
 export const Prefix: Story = {
   args: { prefix: <LockKeyholeOpenIcon /> },
 };
 
-// Story for PasswordInput with suffix
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
 export const Suffix: Story = {
   args: { suffix: <LockKeyholeIcon /> },
 };
 
-// Story for PasswordInput in a controlled state
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
 export const Controlled: Story = {
   render: (args) => {
     const [value, setValue] = useState('');
@@ -156,7 +181,10 @@ export const Controlled: Story = {
   },
 };
 
-// Story for PasswordInput with react-hook-form integration
+/* -----------------------------------------------------------------------------
+ * Story: React Hook Form
+ * -------------------------------------------------------------------------- */
+
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (

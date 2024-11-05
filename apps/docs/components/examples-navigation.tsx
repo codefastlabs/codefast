@@ -53,6 +53,10 @@ const examples: {
     name: 'Tasks',
     href: '/examples/tasks',
   },
+  {
+    name: 'Sidebars',
+    href: '/examples/sidebars',
+  },
 ];
 
 type ExamplesNavigationProps = HTMLAttributes<HTMLDivElement>;

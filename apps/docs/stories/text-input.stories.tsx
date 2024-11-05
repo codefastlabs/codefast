@@ -199,13 +199,20 @@ export default meta;
 
 type Story = StoryObj<typeof TextInput>;
 
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   args: {
     placeholder: 'Basic Text Input',
   },
 };
 
-// Story for TextInput with different sizes
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
   args: {
     prefix: <ImportIcon />,
@@ -219,7 +226,10 @@ export const Sizes: Story = {
   ),
 };
 
-// Story for Button with different types
+/* -----------------------------------------------------------------------------
+ * Story: Types
+ * -------------------------------------------------------------------------- */
+
 export const Types: Story = {
   args: {
     prefix: <TextCursorInputIcon />,
@@ -249,27 +259,42 @@ export const Types: Story = {
   ),
 };
 
-// Story for TextInput in the disabled state
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
 export const Disabled: Story = {
   args: { disabled: true, placeholder: 'Disabled Text Input' },
 };
 
-// Story for TextInput in the read-only state
+/* -----------------------------------------------------------------------------
+ * Story: ReadOnly
+ * -------------------------------------------------------------------------- */
+
 export const ReadOnly: Story = {
   args: { readOnly: true, placeholder: 'Read-Only Text Input' },
 };
 
-// Story for TextInput with a maximum length
+/* -----------------------------------------------------------------------------
+ * Story: Max Length
+ * -------------------------------------------------------------------------- */
+
 export const MaxLength: Story = {
   args: { maxLength: 10, placeholder: 'Max Length Text Input' },
 };
 
-// Story for TextInput with loading state
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
 export const Loading: Story = {
   args: { loading: true, placeholder: 'Loading...' },
 };
 
-// Story for TextInput with a custom spinner
+/* -----------------------------------------------------------------------------
+ * Story: Custom Spinner
+ * -------------------------------------------------------------------------- */
+
 export const CustomSpinner: Story = {
   args: {
     loading: true,
@@ -278,7 +303,10 @@ export const CustomSpinner: Story = {
   },
 };
 
-// Story for TextInput with prefix
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
 export const Prefix: Story = {
   args: {
     prefix: <MailIcon />,
@@ -286,7 +314,10 @@ export const Prefix: Story = {
   },
 };
 
-// Story for TextInput with suffix
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
 export const Suffix: Story = {
   args: {
     suffix: <UsersIcon />,
@@ -294,7 +325,10 @@ export const Suffix: Story = {
   },
 };
 
-// Story for TextInput in a controlled state
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
 export const Controlled: Story = {
   render: (args) => {
     const [value, setValue] = useState('');
@@ -318,7 +352,10 @@ export const Controlled: Story = {
   },
 };
 
-// Story for TextInput with react-hook-form integration
+/* -----------------------------------------------------------------------------
+ * Story: React Hook Form
+ * -------------------------------------------------------------------------- */
+
 export const ReactHookForm: Story = {
   decorators: [
     (Story) => (

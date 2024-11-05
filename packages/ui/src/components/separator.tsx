@@ -34,7 +34,6 @@ type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
  * -------------------------------------------------------------------------- */
 
 type SeparatorElement = ComponentRef<typeof SeparatorPrimitive.Root>;
-
 interface SeparatorProps
   extends ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>,
     Omit<SeparatorVariantsProps, 'orientation'> {}
