@@ -6,7 +6,6 @@ import { forwardRef, type HTMLAttributes } from 'react';
  * -------------------------------------------------------------------------- */
 
 type TextElement = HTMLParagraphElement;
-
 interface TextParagraphProps extends HTMLAttributes<HTMLParagraphElement> {
   as?: 'p';
 }

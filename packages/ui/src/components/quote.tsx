@@ -6,7 +6,6 @@ import { forwardRef, type QuoteHTMLAttributes } from 'react';
  * -------------------------------------------------------------------------- */
 
 type QuoteElement = HTMLQuoteElement;
-
 interface QuoteProps extends QuoteHTMLAttributes<HTMLQuoteElement> {
   asChild?: boolean;
 }

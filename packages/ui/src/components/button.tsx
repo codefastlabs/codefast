@@ -8,7 +8,6 @@ import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-varian
  * -------------------------------------------------------------------------- */
 
 type ButtonElement = HTMLButtonElement;
-
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>, ButtonVariantsProps {
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;

@@ -154,7 +154,6 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName;
  * -------------------------------------------------------------------------- */
 
 type DialogCloseElement = ComponentRef<typeof DialogPrimitive.Close>;
-
 interface DialogCloseProps extends ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
