@@ -71,12 +71,18 @@ export default meta;
 
 type Story = StoryObj<typeof Toggle>;
 
-// Default story showing a basic toggle button
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
 export const Default: Story = {
   render: (args) => <Toggle {...args}>Toggle</Toggle>,
 };
 
-// Story showing different sizes of toggle buttons
+/* -----------------------------------------------------------------------------
+ * Story: Sizes
+ * -------------------------------------------------------------------------- */
+
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-2">
@@ -89,7 +95,10 @@ export const Sizes: Story = {
   ),
 };
 
-// Story showing different variants of toggle buttons
+/* -----------------------------------------------------------------------------
+ * Story: Variants
+ * -------------------------------------------------------------------------- */
+
 export const Variants: Story = {
   args: {
     className: 'capitalize',
@@ -107,7 +116,10 @@ export const Variants: Story = {
   ),
 };
 
-// Story showing a disabled toggle button
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
 export const Disabled: Story = {
   args: {
     disabled: true,
@@ -115,7 +127,10 @@ export const Disabled: Story = {
   },
 };
 
-// Story with toggle button having an icon
+/* -----------------------------------------------------------------------------
+ * Story: Icon Only
+ * -------------------------------------------------------------------------- */
+
 export const IconOnly: Story = {
   args: {
     prefix: <ExpandIcon />,
@@ -123,7 +138,10 @@ export const IconOnly: Story = {
   },
 };
 
-// Story for Toggle with prefix
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
 export const Prefix: Story = {
   args: {
     prefix: <ExpandIcon />,
@@ -131,7 +149,10 @@ export const Prefix: Story = {
   },
 };
 
-// Story for Toggle with suffix
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
 export const Suffix: Story = {
   args: {
     suffix: <ExpandIcon />,
@@ -139,7 +160,10 @@ export const Suffix: Story = {
   },
 };
 
-// Interactive story for toggle button
+/* -----------------------------------------------------------------------------
+ * Story: Interactive
+ * -------------------------------------------------------------------------- */
+
 export const Interactive: Story = {
   render: (args) => {
     const [toggled, setToggled] = useState(false);
@@ -163,7 +187,10 @@ export const Interactive: Story = {
   },
 };
 
-// Story for Toggle with controlled state
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
 export const Controlled: Story = {
   render: (args) => {
     const [pressed, setPressed] = useState(false);
