@@ -610,16 +610,17 @@ const SidebarMenuButton = forwardRef<SidebarMenuButtonElement, SidebarMenuButton
       return button;
     }
 
-    if (typeof tooltip === 'string') {
-      tooltip = {
-        children: tooltip,
-      };
-    }
+    const tooltipProps =
+      typeof tooltip === 'string'
+        ? {
+            children: tooltip,
+          }
+        : tooltip;
 
     return (
       <Tooltip>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent align="center" hidden={state !== 'collapsed' || isMobile} side="right" {...tooltip} />
+        <TooltipContent align="center" hidden={state !== 'collapsed' || isMobile} side="right" {...tooltipProps} />
       </Tooltip>
     );
   },
