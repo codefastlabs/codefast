@@ -42,6 +42,9 @@ jobs:
       - name: Install Project Dependencies
         run: pnpm install
 
+      - name: Build Project Packages
+        run: pnpm build:packages
+
       - name: Run Chromatic Visual Tests
         uses: chromaui/action@latest
         with:
