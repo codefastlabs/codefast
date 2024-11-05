@@ -2,6 +2,7 @@
 
 import { useMediaQuery } from '@codefast/hooks';
 import { Slot } from '@radix-ui/react-slot';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { PanelLeftIcon } from 'lucide-react';
 import {
   type ComponentProps,
@@ -19,7 +20,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Button } from '@/components/button';
 import { Separator } from '@/components/separator';
-import { Sheet, SheetContent } from '@/components/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/sheet';
 import { Skeleton } from '@/components/skeleton';
 import { TextInput } from '@/components/text-input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/tooltip';
@@ -198,6 +199,10 @@ const Sidebar = forwardRef<SidebarElement, SidebarProps>(
               } as CSSProperties
             }
           >
+            <VisuallyHidden>
+              <SheetTitle>Sidebar</SheetTitle>
+              <SheetDescription>Press escape to close the sidebar</SheetDescription>
+            </VisuallyHidden>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>
