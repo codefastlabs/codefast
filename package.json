@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "build:force": "turbo build --force",
+    "build:packages": "turbo build --filter=docs^...",
     "changeset": "changeset",
     "clean": "turbo clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo dev",
@@ -15,7 +16,7 @@
     "package:update": "pnpm update --latest --interactive --recursive",
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
-    "release": "turbo build --filter=docs^... && changeset publish",
+    "release": "pnpm build:packages && changeset publish",
     "start": "turbo start",
     "version-packages": "changeset version"
   },
