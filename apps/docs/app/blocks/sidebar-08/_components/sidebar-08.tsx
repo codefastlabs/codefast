@@ -1,32 +1,27 @@
-'use client';
-
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
   cn,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Command,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
   Separator,
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
@@ -38,8 +33,11 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarProvider,
-  SidebarRail,
   SidebarTrigger,
+  BreadcrumbItem,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+  BreadcrumbLink,
 } from '@codefast/ui';
 import {
   BadgeCheckIcon,
@@ -48,77 +46,38 @@ import {
   ChevronsUpDownIcon,
   CreditCardIcon,
   FolderIcon,
-  ForwardIcon,
   LogOutIcon,
   MoreHorizontalIcon,
-  PlusIcon,
+  ShareIcon,
   SparklesIcon,
   Trash2Icon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX, useState } from 'react';
+import { type ComponentProps, type JSX } from 'react';
 
-import { data } from '@/app/blocks/sidebar-07/_lib/mocks/data';
+import { data } from '@/app/blocks/sidebar-08/_lib/mocks/data';
 
-type Sidebar07Props = ComponentProps<'div'>;
+type Sidebar08Props = ComponentProps<'div'>;
 
-export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element {
-  const [activeTeam, setActiveTeam] = useState(data.teams[0]);
-
+export function Sidebar08({ className, ...props }: Sidebar08Props): JSX.Element {
   return (
     <div className={cn('', className)} {...props}>
       <SidebarProvider>
-        <Sidebar collapsible="icon">
+        <Sidebar variant="inset">
           <SidebarHeader>
             <SidebarMenu>
               <SidebarMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton
-                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                      size="lg"
-                    >
-                      <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                        <activeTeam.logo className="size-4" />
-                      </div>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{activeTeam.name}</span>
-                        <span className="truncate text-xs">{activeTeam.plan}</span>
-                      </div>
-                      <ChevronsUpDownIcon className="ml-auto" />
-                    </SidebarMenuButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                    side="bottom"
-                    sideOffset={4}
-                  >
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
-                    {data.teams.map((team, index) => (
-                      <DropdownMenuItem
-                        key={team.name}
-                        className="gap-2 p-2"
-                        onClick={() => {
-                          setActiveTeam(team);
-                        }}
-                      >
-                        <div className="flex size-6 items-center justify-center rounded-sm border">
-                          <team.logo className="size-4 shrink-0" />
-                        </div>
-                        {team.name}
-                        <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="gap-2 p-2">
-                      <div className="bg-background flex size-6 items-center justify-center rounded-md border">
-                        <PlusIcon className="size-4" />
-                      </div>
-                      <div className="text-muted-foreground font-medium">Add team</div>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <SidebarMenuButton asChild size="lg">
+                  <Link href="#">
+                    <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                      <Command className="size-4" />
+                    </div>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">Acme Inc</span>
+                      <span className="truncate text-xs">Enterprise</span>
+                    </div>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarHeader>
@@ -127,28 +86,37 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
               <SidebarGroupLabel>Platform</SidebarGroupLabel>
               <SidebarMenu>
                 {data.navMain.map((item) => (
-                  <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
+                  <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
                     <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={item.title}>
-                          {item.icon ? <item.icon /> : null}
+                      <SidebarMenuButton asChild tooltip={item.title}>
+                        <Link href={item.url}>
+                          <item.icon />
                           <span>{item.title}</span>
-                          <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {item.items?.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton asChild>
-                                <Link href={subItem.url}>
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
+                        </Link>
+                      </SidebarMenuButton>
+                      {item.items.length ? (
+                        <>
+                          <CollapsibleTrigger asChild>
+                            <SidebarMenuAction className="data-[state=open]:rotate-90">
+                              <ChevronRightIcon />
+                              <span className="sr-only">Toggle</span>
+                            </SidebarMenuAction>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <SidebarMenuSub>
+                              {item.items.map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.title}>
+                                  <SidebarMenuSubButton asChild>
+                                    <Link href={subItem.url}>
+                                      <span>{subItem.title}</span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            </SidebarMenuSub>
+                          </CollapsibleContent>
+                        </>
+                      ) : null}
                     </SidebarMenuItem>
                   </Collapsible>
                 ))}
@@ -172,13 +140,13 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
                           <span className="sr-only">More</span>
                         </SidebarMenuAction>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 rounded-lg" side="bottom">
+                      <DropdownMenuContent align="end" className="w-48" side="bottom">
                         <DropdownMenuItem>
                           <FolderIcon className="text-muted-foreground" />
                           <span>View Project</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                          <ForwardIcon className="text-muted-foreground" />
+                          <ShareIcon className="text-muted-foreground" />
                           <span>Share Project</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -191,12 +159,28 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
                   </SidebarMenuItem>
                 ))}
                 <SidebarMenuItem>
-                  <SidebarMenuButton className="text-sidebar-foreground/70">
-                    <MoreHorizontalIcon className="text-sidebar-foreground/70" />
+                  <SidebarMenuButton>
+                    <MoreHorizontalIcon />
                     <span>More</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
+            </SidebarGroup>
+            <SidebarGroup className="mt-auto">
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {data.navSecondary.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild size="sm">
+                        <Link href={item.url}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter>
@@ -269,10 +253,9 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
-          <SidebarRail />
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <header className="flex h-16 shrink-0 items-center gap-2">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator className="mr-2 h-4" orientation="vertical" />
