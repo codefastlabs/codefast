@@ -33,6 +33,7 @@ import {
   SidebarTrigger,
 } from '@codefast/ui';
 import { CheckIcon, ChevronRightIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon, SearchIcon } from 'lucide-react';
+import Link from 'next/link';
 import { type ComponentProps, type JSX, useState } from 'react';
 
 import { PlaceholderGrid } from '@/app/blocks/sidebar-02/_components/placeholder-grid';
@@ -95,25 +96,25 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
           </SidebarHeader>
           <SidebarContent className="gap-0">
             {/* We create a collapsible SidebarGroup for each parent. */}
-            {data.navMain.map((itemGroup) => (
-              <Collapsible key={itemGroup.title} defaultOpen className="group/collapsible" title={itemGroup.title}>
+            {data.navMain.map((nav) => (
+              <Collapsible key={nav.title} defaultOpen className="group/collapsible" title={nav.title}>
                 <SidebarGroup>
                   <SidebarGroupLabel
                     asChild
                     className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
                   >
                     <CollapsibleTrigger>
-                      {itemGroup.title}{' '}
+                      {nav.title}{' '}
                       <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                     </CollapsibleTrigger>
                   </SidebarGroupLabel>
                   <CollapsibleContent>
                     <SidebarGroupContent>
                       <SidebarMenu>
-                        {itemGroup.items.map((item) => (
+                        {nav.items.map((item) => (
                           <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton asChild isActive={item.isActive}>
-                              <a href={item.url}>{item.title}</a>
+                              <Link href={item.url}>{item.title}</Link>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
                         ))}
