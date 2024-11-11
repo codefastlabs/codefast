@@ -70,7 +70,7 @@ export function Sidebar01({ className, ...props }: Sidebar01Props): JSX.Element 
                           setSelectedVersion(version);
                         }}
                       >
-                        v{version} {version === selectedVersion && <CheckIcon className="ml-auto" />}
+                        v{version} {version === selectedVersion && <CheckIcon className="ml-auto size-4" />}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
