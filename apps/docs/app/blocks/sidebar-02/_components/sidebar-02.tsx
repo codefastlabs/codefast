@@ -35,6 +35,7 @@ import {
 import { CheckIcon, ChevronRightIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon, SearchIcon } from 'lucide-react';
 import { type ComponentProps, type JSX, useState } from 'react';
 
+import { PlaceholderGrid } from '@/app/blocks/sidebar-02/_components/placeholder-grid';
 import { data } from '@/app/blocks/sidebar-02/_lib/mocks/data';
 
 type Sidebar02Props = ComponentProps<'div'>;
@@ -73,7 +74,7 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
                           setSelectedVersion(version);
                         }}
                       >
-                        v{version} {version === selectedVersion && <CheckIcon className="ml-auto" />}
+                        v{version} {version === selectedVersion && <CheckIcon className="ml-auto size-4" />}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -94,22 +95,22 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
           </SidebarHeader>
           <SidebarContent className="gap-0">
             {/* We create a collapsible SidebarGroup for each parent. */}
-            {data.navMain.map((item) => (
-              <Collapsible key={item.title} defaultOpen className="group/collapsible" title={item.title}>
+            {data.navMain.map((itemGroup) => (
+              <Collapsible key={itemGroup.title} defaultOpen className="group/collapsible" title={itemGroup.title}>
                 <SidebarGroup>
                   <SidebarGroupLabel
                     asChild
                     className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
                   >
                     <CollapsibleTrigger>
-                      {item.title}{' '}
+                      {itemGroup.title}{' '}
                       <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                     </CollapsibleTrigger>
                   </SidebarGroupLabel>
                   <CollapsibleContent>
                     <SidebarGroupContent>
                       <SidebarMenu>
-                        {item.items.map((item) => (
+                        {itemGroup.items.map((item) => (
                           <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton asChild isActive={item.isActive}>
                               <a href={item.url}>{item.title}</a>
@@ -141,11 +142,7 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          <div className="flex flex-1 flex-col gap-4 p-4">
-            {Array.from({ length: 24 }).map((_, index) => (
-              <div key={index} className="bg-muted/50 aspect-video h-12 w-full rounded-lg" />
-            ))}
-          </div>
+          <PlaceholderGrid className="flex flex-1 flex-col gap-4 p-4" />
         </SidebarInset>
       </SidebarProvider>
     </div>
