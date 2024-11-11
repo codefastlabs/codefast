@@ -30,6 +30,7 @@ import {
   SidebarTrigger,
 } from '@codefast/ui';
 import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon, SearchIcon } from 'lucide-react';
+import Link from 'next/link';
 import { type ComponentProps, type JSX, useState } from 'react';
 
 import { data } from '@/app/blocks/sidebar-01/_lib/mocks/sidebar-01';
@@ -99,7 +100,7 @@ export function Sidebar01({ className, ...props }: Sidebar01Props): JSX.Element 
                     {nav.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
+                          <Link href={item.url}>{item.title}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
