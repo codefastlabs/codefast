@@ -1,5 +1,11 @@
 # @codefast/config-tailwind
 
+## 0.1.49
+
+### Patch Changes
+
+- feat(tailwind): add custom scrollbar styles
+
 ## 0.1.48
 
 ### Patch Changes

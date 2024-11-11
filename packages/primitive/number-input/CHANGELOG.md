@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.1.49
+
+### Patch Changes
+
+- feat(tailwind): add custom scrollbar styles
+
+- Updated dependencies []:
+  - @codefast-ui/input@0.1.49
+
 ## 0.1.48
 
 ### Patch Changes
