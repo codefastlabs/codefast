@@ -33,7 +33,7 @@ import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon, SearchIcon } fro
 import Link from 'next/link';
 import { type ComponentProps, type JSX, useState } from 'react';
 
-import { data } from '@/app/blocks/sidebar-01/_lib/mocks/sidebar-01';
+import { data } from '@/app/blocks/sidebar-01/_lib/mocks/data';
 
 type Sidebar01Props = ComponentProps<'div'>;
 

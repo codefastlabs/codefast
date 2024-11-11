@@ -36,7 +36,7 @@ import { CheckIcon, ChevronRightIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon
 import Link from 'next/link';
 import { type ComponentProps, type JSX, useState } from 'react';
 
-import { PlaceholderGrid } from '@/app/blocks/sidebar-02/_components/placeholder-grid';
+import { PlaceholderGrid } from '@/app/blocks/_components/placeholder-grid';
 import { data } from '@/app/blocks/sidebar-02/_lib/mocks/data';
 
 type Sidebar02Props = ComponentProps<'div'>;
