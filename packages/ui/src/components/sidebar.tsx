@@ -6,9 +6,9 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { PanelLeftIcon } from 'lucide-react';
 import {
   type ComponentProps,
+  type ComponentRef,
   createContext,
   type CSSProperties,
-  type ComponentRef,
   forwardRef,
   useCallback,
   useContext,
