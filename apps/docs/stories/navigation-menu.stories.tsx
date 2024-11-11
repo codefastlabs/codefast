@@ -109,7 +109,7 @@ export const Default: Story = {
                     href="/apps/docs/public"
                   >
                     <SettingsIcon className="size-6" />
-                    <div className="mb-2 mt-4 text-lg font-medium">shadcn/ui</div>
+                    <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
                     <Text className="text-muted-foreground text-sm leading-tight">
                       Beautifully designed components that you can copy and paste into your apps. Accessible.
                       Customizable. Open Source.
