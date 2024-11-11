@@ -31,7 +31,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@codefast/ui';
-import { GalleryVerticalEnd, MoreHorizontal } from 'lucide-react';
+import { GalleryVerticalEndIcon, MoreHorizontalIcon } from 'lucide-react';
 import Link from 'next/link';
 import { type ComponentProps, type JSX } from 'react';
 
@@ -50,7 +50,7 @@ export function Sidebar06({ className, ...props }: Sidebar06Props): JSX.Element 
                 <SidebarMenuButton asChild size="lg">
                   <Link href="#">
                     <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                      <GalleryVerticalEnd className="size-4" />
+                      <GalleryVerticalEndIcon className="size-4" />
                     </div>
                     <div className="flex flex-col gap-0.5 leading-none">
                       <span className="font-semibold">Documentation</span>
@@ -69,7 +69,7 @@ export function Sidebar06({ className, ...props }: Sidebar06Props): JSX.Element 
                     <SidebarMenuItem>
                       <DropdownMenuTrigger asChild>
                         <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                          {nav.title} <MoreHorizontal className="ml-auto" />
+                          {nav.title} <MoreHorizontalIcon className="ml-auto" />
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
                       {nav.items.length ? (
