@@ -20,7 +20,7 @@ import { CommandIcon } from 'lucide-react';
 import Link from 'next/link';
 import { type ComponentProps, type JSX, useState } from 'react';
 
-import { NavUser } from '@/app/blocks/sidebar-09/_components/nav-user';
+import { NavUser } from '@/app/blocks/_components/nav-user';
 import { data } from '@/app/blocks/sidebar-09/_lib/mocks/data';
 
 type AppSidebarProps = ComponentProps<'div'>;
