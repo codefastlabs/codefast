@@ -77,10 +77,10 @@ export const Pattern: Story = {
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Separator
+ * Story: Separator OTP
  * -------------------------------------------------------------------------- */
 
-export const Separator: Story = {
+export const SeparatorOTP: Story = {
   render: () => (
     <InputOTP maxLength={6}>
       <InputOTPGroup>
