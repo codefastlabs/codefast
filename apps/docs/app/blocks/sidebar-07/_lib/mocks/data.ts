@@ -47,9 +47,9 @@ interface Data {
 
 export const data: Data = {
   user: {
-    name: 'shadcn',
+    name: 'codefast',
     email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    avatar: '/avatars/01.png',
   },
   teams: [
     {
