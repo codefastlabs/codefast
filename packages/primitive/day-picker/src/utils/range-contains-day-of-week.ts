@@ -1,4 +1,4 @@
-import { defaultDateLib, type DateLib } from '@/classes/date-lib';
+import { type DateLib, defaultDateLib } from '@/classes/date-lib';
 
 /**
  * Returns whether a date range contains one or more days of the week.
@@ -15,7 +15,7 @@ export function rangeContainsDayOfWeek(
   range: { from: Date; to: Date },
   dayOfWeek: number | number[],
   dateLib: DateLib = defaultDateLib,
-) {
+): boolean {
   const dayOfWeekArr = !Array.isArray(dayOfWeek) ? [dayOfWeek] : dayOfWeek;
   let date = range.from;
   const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);

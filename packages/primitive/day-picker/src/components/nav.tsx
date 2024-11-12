@@ -13,9 +13,7 @@ export type NavProps = ComponentProps<'nav'> & {
 /**
  * Render the toolbar with the navigation button.
  */
-export function Nav(props: NavProps): JSX.Element {
-  const { onPreviousClick, onNextClick, previousMonth, nextMonth, ...navProps } = props;
-
+export function Nav({ onPreviousClick, onNextClick, previousMonth, nextMonth, ...props }: NavProps): JSX.Element {
   const {
     components,
     classNames,
@@ -23,14 +21,14 @@ export function Nav(props: NavProps): JSX.Element {
   } = useDayPicker();
 
   return (
-    <nav {...navProps}>
+    <nav {...props}>
       <components.PreviousMonthButton
         aria-label={labelPrevious(previousMonth)}
         className={classNames[UI.PreviousMonthButton]}
         disabled={previousMonth ? undefined : true}
         tabIndex={previousMonth ? undefined : -1}
         type="button"
-        onClick={props.onPreviousClick}
+        onClick={onPreviousClick}
       >
         <components.Chevron
           className={classNames[UI.Chevron]}
@@ -44,7 +42,7 @@ export function Nav(props: NavProps): JSX.Element {
         disabled={nextMonth ? undefined : true}
         tabIndex={nextMonth ? undefined : -1}
         type="button"
-        onClick={props.onNextClick}
+        onClick={onNextClick}
       >
         <components.Chevron
           className={classNames[UI.Chevron]}

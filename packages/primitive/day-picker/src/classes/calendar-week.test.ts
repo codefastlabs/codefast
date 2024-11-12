@@ -1,5 +1,4 @@
 import { CalendarDay } from '@/classes/calendar-day';
-
 import { CalendarWeek } from '@/classes/calendar-week';
 
 let week: CalendarWeek;

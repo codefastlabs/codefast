@@ -110,7 +110,7 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
     }
 
     for (const name in customModifiersMap) {
-      customModifiers[name] = Boolean(customModifiersMap[name]?.some((d) => d === day));
+      customModifiers[name] = Boolean(customModifiersMap[name].some((d) => d === day));
     }
 
     return {
