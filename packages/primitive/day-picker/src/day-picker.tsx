@@ -8,23 +8,24 @@ import {
   useMemo,
 } from 'react';
 
-import { type CalendarDay } from '@/classes/calendar-day';
-import { DateLib, defaultLocale } from '@/classes/date-lib';
-import { getClassNamesForModifiers } from '@/helpers/get-class-names-for-modifiers';
-import { getComponents } from '@/helpers/get-components';
-import { getDataAttributes } from '@/helpers/get-data-attributes';
-import { getDefaultClassNames } from '@/helpers/get-default-class-names';
-import { getFormatters } from '@/helpers/get-formatters';
-import { getMonthOptions } from '@/helpers/get-month-options';
-import { getStyleForModifiers } from '@/helpers/get-style-for-modifiers';
-import { getWeekdays } from '@/helpers/get-weekdays';
-import { getYearOptions } from '@/helpers/get-year-options';
-import { useCalendar } from '@/hooks/use-calendar';
-import { type DayPickerContext, dayPickerContext } from '@/hooks/use-day-picker';
-import { useFocus } from '@/hooks/use-focus';
-import { useGetModifiers } from '@/hooks/use-get-modifiers';
-import { useSelection } from '@/hooks/use-selection';
-import * as defaultLabels from '@/labels';
+import { type CalendarDay } from '@/lib/classes/calendar-day';
+import { DateLib, defaultLocale } from '@/lib/classes/date-lib';
+import { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
+import { getClassNamesForModifiers } from '@/lib/helpers/get-class-names-for-modifiers';
+import { getComponents } from '@/lib/helpers/get-components';
+import { getDataAttributes } from '@/lib/helpers/get-data-attributes';
+import { getDefaultClassNames } from '@/lib/helpers/get-default-class-names';
+import { getFormatters } from '@/lib/helpers/get-formatters';
+import { getMonthOptions } from '@/lib/helpers/get-month-options';
+import { getStyleForModifiers } from '@/lib/helpers/get-style-for-modifiers';
+import { getWeekdays } from '@/lib/helpers/get-weekdays';
+import { getYearOptions } from '@/lib/helpers/get-year-options';
+import { useCalendar } from '@/lib/hooks/use-calendar';
+import { type DayPickerContext, dayPickerContext } from '@/lib/hooks/use-day-picker';
+import { useFocus } from '@/lib/hooks/use-focus';
+import { useGetModifiers } from '@/lib/hooks/use-get-modifiers';
+import { useSelection } from '@/lib/hooks/use-selection';
+import * as defaultLabels from '@/lib/labels';
 import {
   type DayPickerProps,
   type Modifiers,
@@ -32,10 +33,9 @@ import {
   type MoveFocusDir,
   type SelectedValue,
   type SelectHandler,
-} from '@/types';
-import { DayFlag, SelectionState, UI } from '@/ui';
-import { isDateRange } from '@/utils';
-import { rangeIncludesDate } from '@/utils/range-includes-date';
+} from '@/lib/types';
+import { isDateRange } from '@/lib/utils';
+import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
 
 /**
  * Render the date picker calendar.
