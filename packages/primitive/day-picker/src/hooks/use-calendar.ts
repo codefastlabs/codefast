@@ -10,7 +10,7 @@ import { getNavMonths } from '@/helpers/get-nav-month';
 import { getNextMonth } from '@/helpers/get-next-month';
 import { getPreviousMonth } from '@/helpers/get-previous-month';
 import { getWeeks } from '@/helpers/get-weeks';
-import { useControlledValue } from '@/helpers/use-controlled-value';
+import { useControlledValue } from '@/hooks/use-controlled-value';
 import { type DayPickerProps } from '@/types';
 
 /**
