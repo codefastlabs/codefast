@@ -3,6 +3,6 @@
  *
  * @defaultValue `""`
  */
-export function formatWeekNumberHeader() {
+export function formatWeekNumberHeader(): string {
   return ``;
 }

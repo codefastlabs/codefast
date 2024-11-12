@@ -17,8 +17,6 @@ export type DayProps = ComponentProps<'td'> & {
  * If you need to just change the content of the day cell, consider swapping the
  * `DayDate` component instead.
  */
-export function Day(props: DayProps): JSX.Element {
-  const { day: _day, modifiers: _modifiers, ...tdProps } = props;
-
-  return <td {...tdProps} />;
+export function Day({ day: _day, modifiers: _modifiers, ...props }: DayProps): JSX.Element {
+  return <td {...props} />;
 }

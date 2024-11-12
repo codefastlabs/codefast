@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { type CalendarWeek, type CalendarDay, type CalendarMonth, type DateLib } from '@/classes';
+import { type CalendarDay, type CalendarMonth, type CalendarWeek, type DateLib } from '@/classes';
 import { getDates } from '@/helpers/get-dates';
 import { getDays } from '@/helpers/get-days';
 import { getDisplayMonths } from '@/helpers/get-display-months';
@@ -94,7 +94,7 @@ export function useCalendar(
     const newInitialMonth = getInitialMonth(props, dateLib);
 
     setFirstMonth(newInitialMonth);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only update when the timezone changes
   }, [props.timeZone]);
 
   /** The months displayed in the calendar. */
