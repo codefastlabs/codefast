@@ -117,43 +117,43 @@ export enum SelectionState {
  */
 export interface DeprecatedUI<T extends CSSProperties | string> {
   /**
-   * This element was applied to the style of any button in DayPicker and it is
+   * This element was applied to the style of any button in DayPicker, and it is
    * replaced by {@link UI.PreviousMonthButton} and {@link UI.NextMonthButton}.
    *
-   * @deprecated - Use `UI.PreviousMonthButton` and `UI.NextMonthButton` instead.
+   * @deprecated - Use {@link UI.PreviousMonthButton} and {@link UI.NextMonthButton} instead.
    */
   button: T;
   /**
-   * This element was resetting the style of any button in DayPicker and it is
+   * This element was resetting the style of any button in DayPicker, and it is
    * replaced by {@link UI.PreviousMonthButton} and {@link UI.NextMonthButton}.
    *
-   * @deprecated - Use `UI.PreviousMonthButton` and `UI.NextMonthButton` instead.
+   * @deprecated - Use {@link UI.PreviousMonthButton} and {@link UI.NextMonthButton} instead.
    */
   button_reset: T;
   /**
    * This element has been renamed to {@link UI.MonthCaption}.
    *
-   * @deprecated - Use `UI.MonthCaption` instead.
+   * @deprecated - Use {@link UI.MonthCaption} instead.
    */
   caption: T;
   /**
    * This element has been removed. Captions are styled via
    * {@link UI.MonthCaption}.
    *
-   * @deprecated - Use `UI.MonthCaption` instead.
+   * @deprecated - Use {@link UI.MonthCaption} instead.
    */
   caption_between: T;
   /**
    * This element has been renamed to {@link UI.Dropdowns}.
    *
-   * @deprecated - Use `UI.Dropdowns` instead.
+   * @deprecated - Use {@link UI.Dropdowns} instead.
    */
   caption_dropdowns: T;
   /**
    * This element has been removed. Captions are styled via
    * {@link UI.MonthCaption}.
    *
-   * @deprecated - Use `UI.MonthCaption` instead.
+   * @deprecated - Use {@link UI.MonthCaption} instead.
    */
   caption_end: T;
   /**
@@ -165,74 +165,74 @@ export interface DeprecatedUI<T extends CSSProperties | string> {
   /**
    * This element has been renamed to {@link UI.Day}.
    *
-   * @deprecated - Use `UI.Day` instead.
+   * @deprecated - Use {@link UI.Day} instead.
    */
   cell: T;
   /**
    * This element has been renamed to {@link DayFlag.disabled}.
    *
-   * @deprecated - Use `DayFlag.disabled` instead.
+   * @deprecated - Use {@link DayFlag.disabled} instead.
    */
   day_disabled: T;
   /**
    * This element has been renamed to {@link DayFlag.hidden}.
    *
-   * @deprecated - Use `DayFlag.hidden` instead.
+   * @deprecated - Use {@link DayFlag.hidden} instead.
    */
   day_hidden: T;
   /**
    * This element has been renamed to {@link DayFlag.outside}.
    *
-   * @deprecated - Use `DayFlag.outside` instead.
+   * @deprecated - Use {@link DayFlag.outside} instead.
    */
   day_outside: T;
   /**
    * This element has been renamed to {@link SelectionState.range_end}.
    *
-   * @deprecated - Use `SelectionState.range_end` instead.
+   * @deprecated - Use {@link SelectionState.range_end} instead.
    */
   day_range_end: T;
   /**
    * This element has been renamed to {@link SelectionState.range_middle}.
    *
-   * @deprecated - Use `SelectionState.range_middle` instead.
+   * @deprecated - Use {@link SelectionState.range_middle} instead.
    */
   day_range_middle: T;
   /**
    * This element has been renamed to {@link SelectionState.range_start}.
    *
-   * @deprecated - Use `SelectionState.range_start` instead.
+   * @deprecated - Use {@link SelectionState.range_start} instead.
    */
   day_range_start: T;
   /**
    * This element has been renamed to {@link SelectionState.selected}.
    *
-   * @deprecated - Use `SelectionState.selected` instead.
+   * @deprecated - Use {@link SelectionState.selected} instead.
    */
   day_selected: T;
   /**
    * This element has been renamed to {@link DayFlag.today}.
    *
-   * @deprecated - Use `DayFlag.today` instead.
+   * @deprecated - Use {@link DayFlag.today} instead.
    */
   day_today: T;
   /**
    * This element has been removed. The dropdown icon is now {@link UI.Chevron}
    * inside a {@link UI.CaptionLabel}.
    *
-   * @deprecated - Use `UI.Chevron` instead.
+   * @deprecated - Use {@link UI.Chevron} instead.
    */
   dropdown_icon: T;
   /**
    * This element has been renamed to {@link UI.MonthsDropdown}.
    *
-   * @deprecated - Use `UI.MonthsDropdown` instead.
+   * @deprecated - Use {@link UI.MonthsDropdown} instead.
    */
   dropdown_month: T;
   /**
    * This element has been renamed to {@link UI.YearsDropdown}.
    *
-   * @deprecated - Use `UI.YearsDropdown` instead.
+   * @deprecated - Use {@link UI.YearsDropdown} instead.
    */
   dropdown_year: T;
   /**
@@ -244,13 +244,13 @@ export interface DeprecatedUI<T extends CSSProperties | string> {
   /**
    * This element has been renamed to {@link UI.Weekday}.
    *
-   * @deprecated - Use `UI.Weekday` instead.
+   * @deprecated - Use {@link UI.Weekday} instead.
    */
   head_cell: T;
   /**
    * This element has been renamed to {@link UI.Weekdays}.
    *
-   * @deprecated - Use `UI.Weekdays` instead.
+   * @deprecated - Use {@link UI.Weekdays} instead.
    */
   head_row: T;
   /**
@@ -264,44 +264,44 @@ export interface DeprecatedUI<T extends CSSProperties | string> {
    * This element has been removed. To style the navigation buttons, use
    * {@link UI.PreviousMonthButton} and {@link UI.NextMonthButton}.
    *
-   * @deprecated - Use `UI.PreviousMonthButton` and `UI.NextMonthButton` instead.
+   * @deprecated - Use {@link UI.PreviousMonthButton} and {@link UI.NextMonthButton} instead.
    */
   nav_button: T;
   /**
    * This element has been renamed to {@link UI.NextMonthButton}.
    *
-   * @deprecated - Use `UI.NextMonthButton` instead.
+   * @deprecated - Use {@link UI.NextMonthButton} instead.
    */
   nav_button_next: T;
   /**
    * This element has been renamed to {@link UI.PreviousMonthButton}.
    *
-   * @deprecated - Use `UI.PreviousMonthButton` instead.
+   * @deprecated - Use {@link UI.PreviousMonthButton} instead.
    */
   nav_button_previous: T;
   /**
    * This element has been removed. The dropdown icon is now {@link UI.Chevron}
    * inside a {@link UI.NextMonthButton} or a {@link UI.PreviousMonthButton}.
    *
-   * @deprecated - Use `UI.Chevron` instead.
+   * @deprecated - Use {@link UI.Chevron} instead.
    */
   nav_icon: T;
   /**
    * This element has been renamed to {@link UI.Week}.
    *
-   * @deprecated - Use `UI.Week` instead.
+   * @deprecated - Use {@link UI.Week} instead.
    */
   row: T;
   /**
    * This element has been renamed to {@link UI.MonthGrid}.
    *
-   * @deprecated - Use `UI.MonthGrid` instead.
+   * @deprecated - Use {@link UI.MonthGrid} instead.
    */
   table: T;
   /**
    * This element has been renamed to {@link UI.Weeks}.
    *
-   * @deprecated - Use `UI.Weeks` instead.
+   * @deprecated - Use {@link UI.Weeks} instead.
    */
   tbody: T;
   /**
@@ -321,7 +321,7 @@ export interface DeprecatedUI<T extends CSSProperties | string> {
   /**
    * This element has been renamed. Use {@link UI.WeekNumber} instead.
    *
-   * @deprecated - Use `UI.WeekNumber` instead.
+   * @deprecated - Use {@link UI.WeekNumber} instead.
    */
   weeknumber: T;
   /**
