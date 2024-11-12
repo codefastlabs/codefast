@@ -6,8 +6,7 @@ import { type ClassNames, type CustomComponents } from '@/lib/types';
 /** An option to use in the dropdown. Maps to the `<option>` HTML element. */
 export interface DropdownOption {
   /**
-   * The dropdown option is disabled when it cannot be selected because out of
-   * the calendar range.
+   * The dropdown option is disabled when it can't be selected because out of the calendar range.
    */
   disabled: boolean;
   /** The label of the option. */
@@ -18,13 +17,11 @@ export interface DropdownOption {
 
 export type DropdownProps = Omit<ComponentProps<'select'>, 'children'> & {
   /**
-   * @deprecated Use {@link useDayPicker} hook to get the list of internal
-   *   class names.
+   * @deprecated Use {@link useDayPicker} hook to get the list of internal class names.
    */
   classNames: ClassNames;
   /**
-   * @deprecated Use {@link useDayPicker} hook to get the list of internal
-   *   components.
+   * @deprecated Use {@link useDayPicker} hook to get the list of internal components.
    */
   components: CustomComponents;
   options?: DropdownOption[] | undefined;
