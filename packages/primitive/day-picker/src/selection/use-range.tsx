@@ -1,10 +1,10 @@
+import { type MouseEvent, type KeyboardEvent } from 'react';
+
 import { type DateLib } from '@/classes/date-lib';
 import { useControlledValue } from '@/hooks/use-controlled-value';
 import { type DateRange, type DayPickerProps, type Modifiers, type PropsRange, type Selection } from '@/types';
 import { addToRange, rangeContainsModifiers } from '@/utils';
 import { rangeIncludesDate } from '@/utils/range-includes-date';
-
-import type React from 'react';
 
 export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> {
   const { disabled, excludeDisabled, selected: initiallySelected, required, onSelect } = props as PropsRange;
@@ -21,7 +21,7 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   const select = (
     triggerDate: Date,
     modifiers: Modifiers,
-    event: React.MouseEvent | React.KeyboardEvent,
+    event: MouseEvent | KeyboardEvent,
   ): DateRange | undefined => {
     const { min, max } = props as PropsRange;
     const newRange = triggerDate ? addToRange(triggerDate, selected, min, max, required, dateLib) : undefined;

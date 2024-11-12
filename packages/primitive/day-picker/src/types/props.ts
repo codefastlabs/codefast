@@ -1,3 +1,13 @@
+import {
+  type CSSProperties,
+  type FocusEvent,
+  type MouseEvent,
+  type KeyboardEvent,
+  type PointerEvent,
+  type TouchEvent,
+  type ReactNode,
+} from 'react';
+
 import { type Locale, type DateLib } from '@/classes/date-lib';
 import {
   type ClassNames,
@@ -15,8 +25,6 @@ import {
   type Mode,
 } from '@/types/shared';
 import { type DeprecatedUI } from '@/ui';
-
-import type React from 'react';
 
 /**
  * The props for the `<DayPicker />` component.
@@ -153,7 +161,7 @@ export interface PropsBase {
    *
    * @see https://daypicker.dev/guides/accessibility#footer
    */
-  footer?: React.ReactNode | string;
+  footer?: ReactNode | string;
   /**
    * Formatters used to format dates to strings. Use this prop to override the
    * default functions.
@@ -267,49 +275,49 @@ export interface PropsBase {
    */
   numberOfMonths?: number;
   /** Event handler when a day is blurred. */
-  onDayBlur?: DayEventHandler<React.FocusEvent>;
+  onDayBlur?: DayEventHandler<FocusEvent>;
   /** Event handler when a day is clicked. */
-  onDayClick?: DayEventHandler<React.MouseEvent>;
+  onDayClick?: DayEventHandler<MouseEvent>;
   /** Event handler when a day is focused. */
-  onDayFocus?: DayEventHandler<React.FocusEvent>;
+  onDayFocus?: DayEventHandler<FocusEvent>;
   /** Event handler when a key is pressed on a day. */
-  onDayKeyDown?: DayEventHandler<React.KeyboardEvent>;
+  onDayKeyDown?: DayEventHandler<KeyboardEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayKeyPress?: DayEventHandler<React.KeyboardEvent>;
+  onDayKeyPress?: DayEventHandler<KeyboardEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayKeyUp?: DayEventHandler<React.KeyboardEvent>;
+  onDayKeyUp?: DayEventHandler<KeyboardEvent>;
   /** Event handler when the mouse enters a day. */
-  onDayMouseEnter?: DayEventHandler<React.MouseEvent>;
+  onDayMouseEnter?: DayEventHandler<MouseEvent>;
   /** Event handler when the mouse leaves a day. */
-  onDayMouseLeave?: DayEventHandler<React.MouseEvent>;
+  onDayMouseLeave?: DayEventHandler<MouseEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayPointerEnter?: DayEventHandler<React.PointerEvent>;
+  onDayPointerEnter?: DayEventHandler<PointerEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayPointerLeave?: DayEventHandler<React.PointerEvent>;
+  onDayPointerLeave?: DayEventHandler<PointerEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayTouchCancel?: DayEventHandler<React.TouchEvent>;
+  onDayTouchCancel?: DayEventHandler<TouchEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayTouchEnd?: DayEventHandler<React.TouchEvent>;
+  onDayTouchEnd?: DayEventHandler<TouchEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayTouchMove?: DayEventHandler<React.TouchEvent>;
+  onDayTouchMove?: DayEventHandler<TouchEvent>;
   /**
    * @deprecated Use a custom `DayButton` component instead.
    */
-  onDayTouchStart?: DayEventHandler<React.TouchEvent>;
+  onDayTouchStart?: DayEventHandler<TouchEvent>;
   /**
    * Event fired when the user navigates between months.
    *
@@ -380,13 +388,13 @@ export interface PropsBase {
    */
   startMonth?: Date | undefined;
   /** Style to apply to the root element. */
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   /**
    * Change the inline styles of the HTML elements.
    *
    * @see https://daypicker.dev/docs/styling
    */
-  styles?: Partial<Styles> & Partial<DeprecatedUI<React.CSSProperties>>;
+  styles?: Partial<Styles> & Partial<DeprecatedUI<CSSProperties>>;
 
   /**
    * The time zone (IANA or UTC offset) to use in the calendar (experimental).
@@ -465,7 +473,7 @@ export type OnSelectHandler<T> = (
   selected: T,
   triggerDate: Date,
   modifiers: Modifiers,
-  event: React.MouseEvent | React.KeyboardEvent,
+  event: MouseEvent | KeyboardEvent,
 ) => void;
 
 /**

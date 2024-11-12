@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
-export type DispatchStateAction<T> = React.Dispatch<React.SetStateAction<T>>;
+export type DispatchStateAction<T> = Dispatch<SetStateAction<T>>;
 
 /**
  * Manages a value that can either be controlled or uncontrolled.
