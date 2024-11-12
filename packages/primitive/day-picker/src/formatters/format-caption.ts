@@ -10,7 +10,6 @@ export function formatCaption(month: Date, options?: DateLibOptions, dateLib?: D
 }
 
 /**
- * @private
  * @deprecated Use {@link formatCaption} instead.
  */
 export const formatMonthCaption = formatCaption;
