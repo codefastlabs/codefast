@@ -9,7 +9,6 @@ import {
 } from 'react';
 
 import { type DateLib, type Locale } from '@/lib/classes/date-lib';
-import { type DeprecatedUI } from '@/lib/constants/ui';
 import {
   type ClassNames,
   type CustomComponents,
@@ -90,7 +89,7 @@ export interface PropsBase {
    *
    * @see https://daypicker.dev/docs/styling
    */
-  classNames?: Partial<ClassNames> & Partial<DeprecatedUI<string>>;
+  classNames?: Partial<ClassNames>;
   /**
    * Change the components used for rendering the calendar elements.
    *
@@ -394,7 +393,7 @@ export interface PropsBase {
    *
    * @see https://daypicker.dev/docs/styling
    */
-  styles?: Partial<Styles> & Partial<DeprecatedUI<CSSProperties>>;
+  styles?: Partial<Styles>;
 
   /**
    * The time zone (IANA or UTC offset) to use in the calendar (experimental).
