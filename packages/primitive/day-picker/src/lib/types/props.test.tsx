@@ -1,6 +1,6 @@
 import { type JSX } from 'react';
 
-import { DayPicker } from '@/day-picker';
+import { DayPicker } from '@/components/day-picker';
 
 function Test(): JSX.Element {
   return (
