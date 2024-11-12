@@ -1,8 +1,8 @@
+import { type MouseEvent, type KeyboardEvent } from 'react';
+
 import { type DateLib } from '@/classes/date-lib';
 import { useControlledValue } from '@/hooks/use-controlled-value';
 import { type DayPickerProps, type Modifiers, type PropsMulti, type Selection } from '@/types';
-
-import type React from 'react';
 
 export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> {
   const { selected: initiallySelected, required, onSelect } = props as PropsMulti;
@@ -22,11 +22,7 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
 
   const { min, max } = props as PropsMulti;
 
-  const select = (
-    triggerDate: Date,
-    modifiers: Modifiers,
-    event: React.MouseEvent | React.KeyboardEvent,
-  ): Date[] | undefined => {
+  const select = (triggerDate: Date, modifiers: Modifiers, event: MouseEvent | KeyboardEvent): Date[] | undefined => {
     let newDates: Date[] | undefined = [...(selected ?? [])];
 
     if (isSelected(triggerDate)) {
