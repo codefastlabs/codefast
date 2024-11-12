@@ -169,12 +169,10 @@ export class Vegas {
   private callCallback(callback: keyof VegasCallback): void {
     const currentSlide = this.settings.slides[this.slideIndex];
 
-    if (currentSlide) {
-      if (callback === 'onInit') {
-        this.settings[callback]?.(this.settings);
-      } else {
-        this.settings[callback]?.(this.slideIndex, currentSlide);
-      }
+    if (callback === 'onInit') {
+      this.settings[callback]?.(this.settings);
+    } else {
+      this.settings[callback]?.(this.slideIndex, currentSlide);
     }
   }
 
@@ -291,7 +289,7 @@ export class Vegas {
   private preloadVideo(vSources: string | string[]): HTMLVideoElement {
     const cacheKey = Array.isArray(vSources) ? vSources.toString() : vSources;
 
-    if (Vegas.videoCache[cacheKey]) {
+    if (Vegas.videoCache[cacheKey] instanceof HTMLVideoElement) {
       return Vegas.videoCache[cacheKey];
     }
 
@@ -346,10 +344,6 @@ export class Vegas {
   private goto(index: number): void {
     const slideIndex = this.getValidSlideIndex(index);
     const currentSlide = this.settings.slides[slideIndex];
-
-    if (!currentSlide) {
-      return;
-    }
 
     this.slideIndex = slideIndex;
     const { src, video } = currentSlide;
@@ -644,9 +638,7 @@ export class Vegas {
     if (slideElements.length) {
       const lastSlideElement = slideElements[slideElements.length - 1];
 
-      if (lastSlideElement) {
-        this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
-      }
+      this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
     } else {
       this.element.prepend(slideElement);
     }
