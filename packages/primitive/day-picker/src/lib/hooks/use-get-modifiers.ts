@@ -39,10 +39,7 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
 
     const isHidden = Boolean(hidden && dateMatchModifiers(date, hidden, dateLib)) || (!showOutsideDays && isOutside);
 
-    const isToday = isSameDay(
-      date,
-      today ?? (props.timeZone ? TZDate.tz(props.timeZone) : dateLib.Date ? new dateLib.Date() : new Date()),
-    );
+    const isToday = isSameDay(date, today ?? (props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date()));
 
     if (isOutside) {
       internalModifiersMap.outside.push(day);

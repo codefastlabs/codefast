@@ -13,7 +13,7 @@ export function getWeekdays(
   ISOWeek?: boolean | undefined,
   timeZone?: string | undefined,
 ): Date[] {
-  const date = timeZone ? TZDate.tz(timeZone) : dateLib.Date ? new dateLib.Date() : new Date();
+  const date = timeZone ? TZDate.tz(timeZone) : new dateLib.Date();
   const start = ISOWeek ? dateLib.startOfISOWeek(date) : dateLib.startOfWeek(date);
 
   const days: Date[] = [];
