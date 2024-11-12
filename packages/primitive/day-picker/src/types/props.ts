@@ -460,14 +460,17 @@ export interface PropsBase {
 }
 
 /**
- * Shared handler type for `onSelect` callback when a selection mode is set.
+ * OnSelectHandler is a type definition for a callback function triggered upon a selection event.
  *
- * @template T - The type of the selected item.
- * @callback OnSelectHandler
- * @param {T} selected - The selected item after the event.
- * @param {Date} triggerDate - The date when the event was triggered.
- * @param {Modifiers} modifiers - The modifiers associated with the event.
- * @param {React.MouseEvent | React.KeyboardEvent} e - The event object.
+ * It handles selection logic by receiving the selected item, the date when the selection was triggered,
+ * various modifiers related to the selection, and the event that invoked the selection (either mouse or keyboard event).
+ *
+ * @typeParam T - The type representing the selected item.
+ *
+ * @param selected - The item that was selected.
+ * @param triggerDate - The date and time when the selection event occurred.
+ * @param modifiers - An object containing flags or additional information about the selection state.
+ * @param event - The event object representing the mouse or keyboard event that triggered the selection.
  */
 export type OnSelectHandler<T> = (
   selected: T,
