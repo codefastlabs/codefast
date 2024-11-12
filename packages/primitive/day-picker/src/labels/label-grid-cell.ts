@@ -3,7 +3,6 @@ import { type Modifiers } from '@/types';
 
 /**
  * The label for the day gridcell when the calendar is not interactive.
- *
  */
 export function labelGridCell(
   date: Date,

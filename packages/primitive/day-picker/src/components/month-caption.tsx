@@ -11,7 +11,6 @@ export type MonthCaptionProps = ComponentProps<'div'> & {
 
 /**
  * Render the caption of a month in the calendar.
- *
  */
 export function MonthCaption(props: MonthCaptionProps): JSX.Element {
   const { calendarMonth, displayIndex, ...divProps } = props;

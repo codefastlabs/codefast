@@ -16,7 +16,6 @@ export interface ChevronProps {
 
 /**
  * Render the chevron icon used in the navigation buttons and dropdowns.
- *
  */
 export function Chevron(props: ChevronProps): JSX.Element {
   const { size = 24, orientation = 'left', className } = props;
