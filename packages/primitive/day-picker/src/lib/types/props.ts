@@ -1,4 +1,3 @@
-/* eslint-disable tsdoc/syntax -- we use JSDoc syntax to generate the documentation */
 import {
   type CSSProperties,
   type FocusEvent,
