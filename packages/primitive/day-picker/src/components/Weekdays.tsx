@@ -1,17 +1,15 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type WeekdaysProps = ComponentProps<'tr'>;
 
 /**
  * Render the row with the weekday names.
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Weekdays(props: JSX.IntrinsicElements['tr']) {
+export function Weekdays(props: WeekdaysProps): JSX.Element {
   return (
     <thead>
       <tr {...props} />
     </thead>
   );
 }
-
-export type WeekdaysProps = Parameters<typeof Weekdays>[0];

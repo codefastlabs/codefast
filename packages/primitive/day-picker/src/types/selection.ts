@@ -1,14 +1,14 @@
-import type { DayPickerProps } from './props.js';
-import type { DateRange, Mode, Modifiers } from './shared.js';
+import type { DayPickerProps } from '@/types/props';
+import type { DateRange, Mode, Modifiers } from '@/types/shared';
 
-export type Selection<T extends DayPickerProps> = {
-  /** The selected date(s). */
-  selected: SelectedValue<T> | undefined;
-  /** Set a selection. */
-  select: SelectHandler<T> | undefined;
+export interface Selection<T extends DayPickerProps> {
   /** Whether the given date is selected. */
   isSelected: (date: Date) => boolean;
-};
+  /** Set a selection. */
+  select: SelectHandler<T> | undefined;
+  /** The selected date(s). */
+  selected: SelectedValue<T> | undefined;
+}
 
 export type SelectedSingle<T extends { required?: boolean }> = T['required'] extends true ? Date : Date | undefined;
 export type SelectedMulti<T extends { required?: boolean }> = T['required'] extends true ? Date[] : Date[] | undefined;

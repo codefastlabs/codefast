@@ -1,4 +1,6 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type ButtonProps = ComponentProps<'button'>;
 
 /**
  * Render the button elements in the calendar.
@@ -6,8 +8,6 @@ import React from 'react';
  * @private
  * @deprecated Use `PreviousMonthButton` or `@link NextMonthButton` instead.
  */
-export function Button(props: JSX.IntrinsicElements['button']) {
-  return <button {...props} />;
+export function Button(props: ButtonProps): JSX.Element {
+  return <button type="button" {...props} />;
 }
-
-export type ButtonProps = Parameters<typeof Button>[0];

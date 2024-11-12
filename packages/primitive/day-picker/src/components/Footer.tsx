@@ -1,13 +1,10 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type FooterProps = ComponentProps<'div'>;
 
 /**
  * Component wrapping the footer.
- *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Footer(props: JSX.IntrinsicElements['div']) {
+export function Footer(props: FooterProps): JSX.Element {
   return <div {...props} />;
 }
-
-export type FooterProps = Parameters<typeof Footer>[0];

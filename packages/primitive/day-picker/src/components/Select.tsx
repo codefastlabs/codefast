@@ -1,13 +1,11 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type SelectProps = ComponentProps<'select'>;
 
 /**
  * Render the `select` element.
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Select(props: JSX.IntrinsicElements['select']) {
+export function Select(props: SelectProps): JSX.Element {
   return <select {...props} />;
 }
-
-export type SelectProps = Parameters<typeof Select>[0];

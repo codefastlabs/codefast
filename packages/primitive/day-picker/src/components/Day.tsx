@@ -1,28 +1,25 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
 
-import type { CalendarDay } from '../classes/index.js';
-import type { Modifiers } from '../types/index.js';
+import type { CalendarDay } from '@/classes';
+import type { Modifiers } from '@/types';
+
+export type DayProps = ComponentProps<'td'> & {
+  /** The day to render. */
+  day: CalendarDay;
+  /** The modifiers to apply to the day. */
+  modifiers: Modifiers;
+};
 
 /**
- * Render the gridcell of a day in the calendar and handle the interaction and
+ * Render the grid-cell of a day in the calendar and handle the interaction and
  * the focus with they day.
  *
  * If you need to just change the content of the day cell, consider swapping the
  * `DayDate` component instead.
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Day(
-  props: {
-    /** The day to render. */
-    day: CalendarDay;
-    /** The modifiers to apply to the day. */
-    modifiers: Modifiers;
-  } & JSX.IntrinsicElements['td'],
-) {
-  const { day, modifiers, ...tdProps } = props;
+export function Day(props: DayProps): JSX.Element {
+  const { day: _day, modifiers: _modifiers, ...tdProps } = props;
+
   return <td {...tdProps} />;
 }
-
-export type DayProps = Parameters<typeof Day>[0];
