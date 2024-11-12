@@ -1,5 +1,5 @@
 import { defaultDateLib } from '@/classes/date-lib';
-import type { DateInterval, DateRange, DateAfter, DateBefore, DayOfWeek } from '@/types';
+import { type DateInterval, type DateRange, type DateAfter, type DateBefore, type DayOfWeek } from '@/types';
 import {
   isDateInterval,
   isDateRange,

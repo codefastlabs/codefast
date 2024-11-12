@@ -1,5 +1,5 @@
 import { defaultDateLib } from '@/classes';
-import type { DateRange } from '@/types';
+import { type DateRange } from '@/types';
 
 /**
  * Determines whether a given date is inside a specified date range.
@@ -44,4 +44,5 @@ export function rangeIncludesDate(
  * @private
  * @deprecated Use {@link rangeIncludesDate} instead.
  */
-export const isDateInRange = (range: DateRange, date: Date) => rangeIncludesDate(range, date, false, defaultDateLib);
+export const isDateInRange = (range: DateRange, date: Date): boolean =>
+  rangeIncludesDate(range, date, false, defaultDateLib);

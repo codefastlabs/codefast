@@ -1,6 +1,6 @@
-import type { DateLib } from '@/classes/date-lib';
+import { type DateLib } from '@/classes/date-lib';
 import { useControlledValue } from '@/helpers/use-controlled-value';
-import type { DayPickerProps, Modifiers, PropsMulti, Selection } from '@/types';
+import { type DayPickerProps, type Modifiers, type PropsMulti, type Selection } from '@/types';
 
 import type React from 'react';
 
@@ -16,13 +16,17 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
 
   const { isSameDay } = dateLib;
 
-  const isSelected = (date: Date) => {
+  const isSelected = (date: Date): boolean => {
     return selected?.some((d) => isSameDay(d, date)) ?? false;
   };
 
   const { min, max } = props as PropsMulti;
 
-  const select = (triggerDate: Date, modifiers: Modifiers, e: React.MouseEvent | React.KeyboardEvent) => {
+  const select = (
+    triggerDate: Date,
+    modifiers: Modifiers,
+    e: React.MouseEvent | React.KeyboardEvent,
+  ): Date[] | undefined => {
     let newDates: Date[] | undefined = [...(selected ?? [])];
 
     if (isSelected(triggerDate)) {

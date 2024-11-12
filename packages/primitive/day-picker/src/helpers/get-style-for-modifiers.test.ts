@@ -1,7 +1,7 @@
-import { getStyleForModifiers } from '@/helpers/get-style-for-modifiers';
-import type { Modifiers, ModifiersStyles } from '@/types';
+import { type CSSProperties } from 'react';
 
-import type { CSSProperties } from 'react';
+import { getStyleForModifiers } from '@/helpers/get-style-for-modifiers';
+import { type Modifiers, type ModifiersStyles } from '@/types';
 
 // Update the path as needed
 

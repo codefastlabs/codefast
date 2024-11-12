@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX } from 'react';
 
-import type { CalendarDay } from '@/classes';
-import type { Modifiers } from '@/types';
+import { type CalendarDay } from '@/classes';
+import { type Modifiers } from '@/types';
 
 export type DayProps = ComponentProps<'td'> & {
   /** The day to render. */
