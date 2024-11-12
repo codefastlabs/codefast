@@ -1,6 +1,6 @@
 import { type ComponentProps, type JSX } from 'react';
 
-import { type CalendarMonth } from '@/classes/calendar-month';
+import { type CalendarMonth } from '@/lib/classes/calendar-month';
 
 export type MonthProps = ComponentProps<'div'> & {
   /** The month where the grid is displayed. */

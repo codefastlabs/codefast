@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 
-import { type CalendarDay } from '@/classes';
-import { type Modifiers } from '@/types';
+import { type CalendarDay } from '@/lib/classes';
+import { type Modifiers } from '@/lib/types';
 
 export type DayButtonProps = ComponentProps<'button'> & {
   /** The day to render. */
