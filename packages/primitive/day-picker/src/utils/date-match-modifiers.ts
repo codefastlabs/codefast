@@ -91,7 +91,6 @@ export function dateMatchModifiers(
 }
 
 /**
- * @private
  * @deprecated Use {@link dateMatchModifiers} instead.
  */
 export const isMatch = dateMatchModifiers;
