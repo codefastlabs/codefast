@@ -5,6 +5,6 @@ import { type DateLibOptions } from '@/classes/date-lib';
  *
  * @defaultValue `"Choose the Month"`
  */
-export function labelMonthDropdown(options?: DateLibOptions): string {
+export function labelMonthDropdown(_options?: DateLibOptions): string {
   return 'Choose the Month';
 }
