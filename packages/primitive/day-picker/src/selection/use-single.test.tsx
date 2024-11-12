@@ -1,3 +1,5 @@
+import { type MouseEvent } from 'react';
+
 import { defaultDateLib } from '@/classes/date-lib';
 import { useSingle } from '@/selection/use-single';
 import { type DayPickerProps } from '@/types';
@@ -29,7 +31,7 @@ describe('useSingle', () => {
     const { result } = renderHook(() => useSingle(props, defaultDateLib));
 
     act(() => {
-      result.current.select?.(new Date(2023, 9, 2), {}, {} as React.MouseEvent);
+      result.current.select?.(new Date(2023, 9, 2), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual(new Date(2023, 9, 2));

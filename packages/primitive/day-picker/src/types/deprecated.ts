@@ -1,3 +1,5 @@
+import { type FocusEvent, type KeyboardEvent } from 'react';
+
 import { MonthCaption, type MonthCaptionProps } from '@/components/month-caption';
 import { Week, type WeekProps } from '@/components/week';
 import { useDayPicker } from '@/hooks/use-day-picker';
@@ -129,29 +131,29 @@ export type WeekNumberLabel = typeof labelWeekNumber;
 /**
  * @deprecated Use {@link DayMouseEventHandler} instead.
  */
-export type DayClickEventHandler = DayEventHandler<React.MouseEvent>;
+export type DayClickEventHandler = DayEventHandler<MouseEvent>;
 
 /**
  * @deprecated This type will be removed. Use `DayEventHandler<React.FocusEvent | React.KeyboardEvent>` instead.
  */
-export type DayFocusEventHandler = DayEventHandler<React.FocusEvent | React.KeyboardEvent>;
+export type DayFocusEventHandler = DayEventHandler<FocusEvent | KeyboardEvent>;
 
 /**
  * @deprecated This type will be removed. Use `DayEventHandler<React.KeyboardEvent>` instead.
  */
-export type DayKeyboardEventHandler = DayEventHandler<React.KeyboardEvent>;
+export type DayKeyboardEventHandler = DayEventHandler<KeyboardEvent>;
 
 /**
  * @deprecated This type will be removed. Use `DayEventHandler<React.MouseEvent>` instead.
  */
-export type DayMouseEventHandler = DayEventHandler<React.MouseEvent>;
+export type DayMouseEventHandler = DayEventHandler<MouseEvent>;
 
 /**
  * @deprecated This type will be removed. Use `DayEventHandler<React.PointerEvent>` instead.
  */
-export type DayPointerEventHandler = DayEventHandler<React.PointerEvent>;
+export type DayPointerEventHandler = DayEventHandler<PointerEvent>;
 
 /**
  * @deprecated This type will be removed. Use `DayEventHandler<React.TouchEvent>` instead.
  */
-export type DayTouchEventHandler = DayEventHandler<React.TouchEvent>;
+export type DayTouchEventHandler = DayEventHandler<TouchEvent>;

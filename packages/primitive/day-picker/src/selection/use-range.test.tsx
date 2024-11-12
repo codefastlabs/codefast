@@ -1,3 +1,5 @@
+import { type MouseEvent } from 'react';
+
 import { defaultDateLib } from '@/classes/date-lib';
 import { useRange } from '@/selection/use-range';
 import { type DayPickerProps } from '@/types';
@@ -132,7 +134,7 @@ describe('useRange', () => {
     const { result } = renderHook(() => useRange(props, defaultDateLib));
 
     act(() => {
-      result.current.select?.(new Date(2023, 9, 6), {}, {} as React.MouseEvent);
+      result.current.select?.(new Date(2023, 9, 6), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual({
