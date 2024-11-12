@@ -1,12 +1,4 @@
-import {
-  type CSSProperties,
-  type FocusEvent,
-  type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
-  type ReactNode,
-  type TouchEvent,
-} from 'react';
+import { type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
 
 import { type DateLib, type Locale } from '@/lib/classes/date-lib';
 import {
@@ -58,7 +50,6 @@ export interface PropsBase {
    *
    * Use this prop when you need to focus DayPicker after a user action, for
    * improved accessibility.
-   *
    */
   autoFocus?: boolean;
 
@@ -73,11 +64,12 @@ export interface PropsBase {
    *
    * **Note:** showing the dropdown will set the start/end months
    * {@link fromYear} to 100 years ago, and {@link toYear} to the current year.
-   *
    */
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
 
-  /** Class name to add to the root element. */
+  /**
+   * Class name to add to the root element.
+   */
   className?: string;
 
   /**
@@ -86,13 +78,11 @@ export interface PropsBase {
    * Use this prop when you need to change the default class names — for
    * example, when importing the style via CSS modules or when using a CSS
    * framework.
-   *
    */
   classNames?: Partial<ClassNames>;
 
   /**
    * Change the components used for rendering the calendar elements.
-   *
    */
   components?: Partial<CustomComponents>;
 
@@ -117,39 +107,33 @@ export interface PropsBase {
   /**
    * The text direction of the calendar. Use `ltr` for left-to-right (default)
    * or `rtl` for right-to-left.
-   *
    */
   dir?: HTMLDivElement['dir'];
 
   /**
    * Disable the navigation between months. This prop won't hide the navigation:
    * to hide the navigation, use {@link hideNavigation}.
-   *
    */
   disableNavigation?: boolean;
 
   /**
    * Apply the `disabled` modifier to the matching days.
-   *
    */
   disabled?: Matcher | Matcher[] | undefined;
 
   /**
    * The latest month to end the month navigation.
-   *
    */
   endMonth?: Date;
 
   /**
    * The day of January, which is always in the first week of the year.
-   *
    */
   firstWeekContainsDate?: 1 | 4;
 
   /**
-   * Display always 6 weeks per each month, regardless of the month’s number of
-   * weeks. Weeks will be filled with the days from the next month.
-   *
+   * Display always 6 weeks per each month, regardless of the month’s number of weeks. Weeks will be filled with the
+   * days from the next month.
    */
   fixedWeeks?: boolean;
 
@@ -157,15 +141,12 @@ export interface PropsBase {
    * Add a footer to the calendar, acting as a live region.
    *
    * Use this prop to communicate the calendar's status to screen readers.
-   * Prefer strings over complex UI elements.
-   *
+   * Prefer strings to complex UI elements.
    */
   footer?: ReactNode | string;
 
   /**
-   * Formatters used to format dates to strings. Use this prop to override the
-   * default functions.
-   *
+   * Formatters used to format dates to strings. Use this prop to override the default functions.
    */
   formatters?: Partial<Formatters>;
 
@@ -185,16 +166,13 @@ export interface PropsBase {
   fromYear?: number | undefined;
 
   /**
-   * Apply the `hidden` modifier to the matching days. Will hide them from the
-   * calendar.
-   *
+   * Apply the `hidden` modifier to the matching days. Will hide them from the calendar.
    */
   hidden?: Matcher | Matcher[] | undefined;
 
   /**
-   * Hide the navigation buttons. This prop won't disable the navigation: to
-   * disable the navigation, use {@link disableNavigation}.
-   *
+   * Hide the navigation buttons. This prop won't disable the navigation: to disable the navigation, use
+   * {@link disableNavigation}.
    */
   hideNavigation?: boolean;
 
@@ -203,17 +181,19 @@ export interface PropsBase {
    */
   hideWeekdays?: boolean;
 
-  /** A unique id to add to the root element. */
+  /**
+   * A unique id to add to the root element.
+   */
   id?: string;
 
   /**
-   * Labels creators to override the defaults. Use this prop to customize the
-   * aria-label attributes in DayPicker.
-   *
+   * Labels creators to override the defaults. Use this prop to customize the aria-label attributes in DayPicker.
    */
   labels?: Partial<Labels>;
 
-  /** Add the language tag to the container element. */
+  /**
+   * Add the language tag to the container element.
+   */
   lang?: HTMLDivElement['lang'];
 
   /**
@@ -231,40 +211,34 @@ export interface PropsBase {
 
   /**
    * Enable the selection of a single day, multiple days, or a range of days.
-   *
    */
   mode?: Mode | undefined;
 
   /**
    * Add modifiers to the matching days.
-   *
    */
   modifiers?: Record<string, Matcher | Matcher[] | undefined> | undefined;
 
   /**
    * Change the class name for the day matching the `modifiers`.
-   *
    */
   modifiersClassNames?: ModifiersClassNames;
 
   /**
    * Change the class name for the day matching the {@link modifiers}.
-   *
    */
   modifiersStyles?: ModifiersStyles;
 
   /**
    * The month displayed in the calendar.
    *
-   * As opposed to `defaultMonth`, use this prop with `onMonthChange` to change
-   * the month programmatically.
-   *
+   * As opposed to `defaultMonth`, use this prop with `onMonthChange` to change the month programmatically.
    */
   month?: Date;
 
   /**
-   * A cryptographic nonce ("number used once") which can be used by Content
-   * Security Policy for the inline `style` attributes.
+   * A cryptographic nonce ("number used once") which can be used by Content Security Policy for the inline `style`
+   * attributes.
    */
   nonce?: HTMLDivElement['nonce'];
 
@@ -275,158 +249,113 @@ export interface PropsBase {
    */
   numberOfMonths?: number;
 
-  /** Event handler when a day is blurred. */
+  /**
+   * Event handler when a day is blurred.
+   */
   onDayBlur?: DayEventHandler<FocusEvent>;
 
-  /** Event handler when a day is clicked. */
+  /**
+   * Event handler when a day is clicked.
+   */
   onDayClick?: DayEventHandler<MouseEvent>;
 
-  /** Event handler when a day is focused. */
+  /**
+   * Event handler when a day is focused.
+   */
   onDayFocus?: DayEventHandler<FocusEvent>;
 
-  /** Event handler when a key is pressed on a day. */
+  /**
+   * Event handler when a key is pressed on a day.
+   */
   onDayKeyDown?: DayEventHandler<KeyboardEvent>;
 
   /**
-   * @deprecated Use a custom `DayButton` component instead.
+   * Event handler when the mouse enters a day.
    */
-  onDayKeyPress?: DayEventHandler<KeyboardEvent>;
-
-  /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayKeyUp?: DayEventHandler<KeyboardEvent>;
-
-  /** Event handler when the mouse enters a day. */
   onDayMouseEnter?: DayEventHandler<MouseEvent>;
 
-  /** Event handler when the mouse leaves a day. */
+  /**
+   * Event handler when the mouse leaves a day.
+   */
   onDayMouseLeave?: DayEventHandler<MouseEvent>;
 
   /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayPointerEnter?: DayEventHandler<PointerEvent>;
-
-  /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayPointerLeave?: DayEventHandler<PointerEvent>;
-
-  /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayTouchCancel?: DayEventHandler<TouchEvent>;
-
-  /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayTouchEnd?: DayEventHandler<TouchEvent>;
-
-  /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayTouchMove?: DayEventHandler<TouchEvent>;
-
-  /**
-   * @deprecated Use a custom `DayButton` component instead.
-   */
-  onDayTouchStart?: DayEventHandler<TouchEvent>;
-
-  /**
    * Event fired when the user navigates between months.
-   *
    */
   onMonthChange?: MonthChangeEventHandler;
 
   /**
    * Event handler when the next month button is clicked.
-   *
    */
   onNextClick?: MonthChangeEventHandler;
 
   /**
    * Event handler when the previous month button is clicked.
-   *
    */
   onPrevClick?: MonthChangeEventHandler;
 
   /**
-   * Event handler when a week number is clicked.
-   * @deprecated Use a custom `WeekNumber` component instead.
-   */
-  onWeekNumberClick?: never;
-
-  /**
    * Paginate the month navigation displaying the `numberOfMonths` at a time.
-   *
    */
   pagedNavigation?: boolean;
 
   /**
    * Whether the selection is required.
-   *
    */
   required?: boolean | undefined;
 
   /**
-   * Render the months in reversed order (when {@link numberOfMonths} is set) to
-   * display the most recent month first.
-   *
+   * Render the months in reversed order (when {@link numberOfMonths} is set) to display the most recent month first.
    */
   reverseMonths?: boolean;
 
   /**
    * Show the outside days (days falling in the next or the previous month).
-   *
    */
   showOutsideDays?: boolean;
 
   /**
-   * Show the week numbers column. Weeks are numbered according to the local
-   * week index.
+   * Show the week numbers column.
+   * Weeks are numbered according to the local week index.
    *
    * - To use ISO week numbering, use the `ISOWeek` prop.
    * - To change how the week numbers are displayed, use the `formatters` prop.
-   *
    */
   showWeekNumber?: boolean;
 
   /**
    * The earliest month to start the month navigation.
-   *
    */
   startMonth?: Date | undefined;
 
-  /** Style to apply to the root element. */
+  /**
+   * Style to apply to the root element.
+   */
   style?: CSSProperties;
 
   /**
    * Change the inline styles of the HTML elements.
-   *
    */
   styles?: Partial<Styles>;
 
   /**
    * The time zone (IANA or UTC offset) to use in the calendar (experimental).
-   * See
-   * [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-   * for the possible values.
+   * See [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for the possible values.
    *
-   * Time zones are supported by the `TZDate` object by the
-   * [@date-fns/tz](https://github.com/date-fns/tz) package. Please refer to the
-   * package documentation for more information.
+   * Time zones are supported by the `TZDate` object by the [@date-fns/tz](https://github.com/date-fns/tz) package.
+   * Please refer to the package documentation for more information.
    *
    * @experimental
    */
   timeZone?: string | undefined;
 
-  /** Add a `title` attribute to the container element. */
+  /**
+   * Add a `title` attribute to the container element.
+   */
   title?: HTMLDivElement['title'];
 
   /**
-   * @deprecated This prop has been removed. Use `hidden={{ after: date }}`
-   *   instead.
+   * @deprecated This prop has been removed. Use `hidden={{ after: date }}` instead.
    */
   toDate?: Date;
 
@@ -441,23 +370,19 @@ export interface PropsBase {
   toYear?: number;
 
   /**
-   * The today’s date. Default is the current date. This date will get the
-   * `today` modifier to style the day.
-   *
+   * The today’s date. Default is the current date. This date will get the `today` modifier to style the day.
    */
   today?: Date;
 
   /**
-   * Enable `YY` and `YYYY` for day of year tokens when formatting or parsing
-   * dates.
+   * Enable `YY` and `YYYY` for day of year tokens when formatting or parsing dates.
    *
    * @see https://date-fns.org/docs/Unicode-Tokens
    */
   useAdditionalDayOfYearTokens?: boolean | undefined;
 
   /**
-   * Enable `DD` and `DDDD` for week year tokens when formatting or parsing
-   * dates.
+   * Enable `DD` and `DDDD` for week year tokens when formatting or parsing dates.
    *
    * @see https://date-fns.org/docs/Unicode-Tokens
    */
@@ -466,7 +391,6 @@ export interface PropsBase {
   /**
    * The index of the first day of the week (0 - Sunday). Overrides the locale's
    * one.
-   *
    */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
 }
@@ -474,9 +398,8 @@ export interface PropsBase {
 /**
  * OnSelectHandler is a type definition for a callback function triggered upon a selection event.
  *
- * It handles selection logic by receiving the selected item, the date when the selection was triggered,
- * various modifiers related to the selection, and the event that invoked the selection (either mouse or keyboard
- * event).
+ * It handles selection logic by receiving the selected item, the date when the selection was triggered, various
+ * modifiers related to the selection, and the event that invoked the selection (either mouse or keyboard event).
  *
  * @typeParam T - The type representing the selected item.
  *
@@ -499,10 +422,14 @@ export interface PropsSingleRequired {
   mode: 'single';
   required: true;
 
-  /** The selected date. */
+  /**
+   * The selected date.
+   */
   selected: Date | undefined;
 
-  /** Event handler when a day is selected. */
+  /**
+   * Event handler when a day is selected.
+   */
   onSelect?: OnSelectHandler<Date>;
 }
 
@@ -512,31 +439,43 @@ export interface PropsSingleRequired {
 export interface PropsSingle {
   mode: 'single';
 
-  /** Event handler when a day is selected. */
+  /**
+   * Event handler when a day is selected.
+   */
   onSelect?: OnSelectHandler<Date | undefined>;
   required?: false | undefined;
 
-  /** The selected date. */
+  /**
+   * The selected date.
+   */
   selected?: Date | undefined;
 }
 
 /**
- * The props when the multiple selection is required.
+ * The props when multiple selection is required.
  */
 export interface PropsMultiRequired {
   mode: 'multiple';
   required: true;
 
-  /** The selected dates. */
+  /**
+   * The selected dates.
+   */
   selected: Date[] | undefined;
 
-  /** The maximum number of selectable days. */
+  /**
+   * The maximum number of selectable days.
+   */
   max?: number;
 
-  /** The minimum number of selectable days. */
+  /**
+   * The minimum number of selectable days.
+   */
   min?: number;
 
-  /** Event handler when days are selected. */
+  /**
+   * Event handler when days are selected.
+   */
   onSelect?: OnSelectHandler<Date[]>;
 }
 
@@ -546,17 +485,25 @@ export interface PropsMultiRequired {
 export interface PropsMulti {
   mode: 'multiple';
 
-  /** The maximum number of selectable days. */
+  /**
+   * The maximum number of selectable days.
+   */
   max?: number;
 
-  /** The minimum number of selectable days. */
+  /**
+   * The minimum number of selectable days.
+   */
   min?: number;
 
-  /** Event handler when days are selected. */
+  /**
+   * Event handler when days are selected.
+   */
   onSelect?: OnSelectHandler<Date[] | undefined>;
   required?: false | undefined;
 
-  /** The selected dates. */
+  /**
+   * The selected dates.
+   */
   selected?: Date[] | undefined;
 }
 
@@ -567,7 +514,9 @@ export interface PropsRangeRequired {
   mode: 'range';
   required: true;
 
-  /** The selected range. */
+  /**
+   * The selected range.
+   */
   selected: DateRange | undefined;
   disabled?: Matcher | Matcher[] | undefined;
 
@@ -576,13 +525,19 @@ export interface PropsRangeRequired {
    */
   excludeDisabled?: boolean | undefined;
 
-  /** The maximum number of days to include in the range. */
+  /**
+   * The maximum number of days to include in the range.
+   */
   max?: number;
 
-  /** The minimum number of days to include in the range. */
+  /**
+   * The minimum number of days to include in the range.
+   */
   min?: number;
 
-  /** Event handler when a range is selected. */
+  /**
+   * Event handler when a range is selected.
+   */
   onSelect?: OnSelectHandler<DateRange>;
 }
 
@@ -598,16 +553,24 @@ export interface PropsRange {
    */
   excludeDisabled?: boolean | undefined;
 
-  /** The maximum number of days to include in the range. */
+  /**
+   * The maximum number of days to include in the range.
+   */
   max?: number;
 
-  /** The minimum number of days to include in the range. */
+  /**
+   * The minimum number of days to include in the range.
+   */
   min?: number;
 
-  /** Event handler when the selection changes. */
+  /**
+   * Event handler when the selection changes.
+   */
   onSelect?: OnSelectHandler<DateRange | undefined>;
   required?: false | undefined;
 
-  /** The selected range. */
+  /**
+   * The selected range.
+   */
   selected?: DateRange | undefined;
 }
