@@ -1,5 +1,5 @@
 import { type DateLib } from '@/classes/date-lib';
-import { useControlledValue } from '@/helpers/use-controlled-value';
+import { useControlledValue } from '@/hooks/use-controlled-value';
 import {
   type DayPickerProps,
   type Modifiers,

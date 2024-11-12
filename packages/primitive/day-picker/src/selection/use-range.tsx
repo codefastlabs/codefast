@@ -1,5 +1,5 @@
 import { type DateLib } from '@/classes/date-lib';
-import { useControlledValue } from '@/helpers/use-controlled-value';
+import { useControlledValue } from '@/hooks/use-controlled-value';
 import { type DateRange, type DayPickerProps, type Modifiers, type PropsRange, type Selection } from '@/types';
 import { addToRange, rangeContainsModifiers } from '@/utils';
 import { rangeIncludesDate } from '@/utils/range-includes-date';

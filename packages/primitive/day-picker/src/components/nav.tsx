@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX, type MouseEventHandler } from 'react';
 
+import { useDayPicker } from '@/hooks/use-day-picker';
 import { UI } from '@/ui';
-import { useDayPicker } from '@/use-day-picker';
 
 export type NavProps = ComponentProps<'nav'> & {
   nextMonth?: Date | undefined;
