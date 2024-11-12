@@ -25,7 +25,7 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   const select = (
     triggerDate: Date,
     modifiers: Modifiers,
-    e: React.MouseEvent | React.KeyboardEvent,
+    event: React.MouseEvent | React.KeyboardEvent,
   ): Date[] | undefined => {
     let newDates: Date[] | undefined = [...(selected ?? [])];
 
@@ -53,7 +53,7 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
       setSelected(newDates);
     }
 
-    onSelect?.(newDates, triggerDate, modifiers, e);
+    onSelect?.(newDates, triggerDate, modifiers, event);
 
     return newDates;
   };

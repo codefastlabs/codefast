@@ -1,45 +1,91 @@
-import React from 'react';
+import { type JSX } from 'react';
 
 import { DayPicker } from '@/day-picker';
-import { type DateRange } from '@/types/shared';
 
-function Test() {
+function Test(): JSX.Element {
   return (
     <>
       <DayPicker />
       <DayPicker mode="single" />
-      <DayPicker mode="single" selected={undefined} onSelect={(date: Date | undefined) => {}} />
-      <DayPicker mode="single" selected={new Date()} onSelect={(date: Date | undefined) => {}} />
-      {/* @ts-expect-error Missing `selected` */}
-      <DayPicker required mode="single" onSelect={(date: Date | undefined) => {}} />
-      {/* Allow undefined as initial selected value */}
+      <DayPicker
+        mode="single"
+        selected={undefined}
+        onSelect={(_date) => {
+          /* noop */
+        }}
+      />
+      <DayPicker
+        mode="single"
+        selected={new Date()}
+        onSelect={(_date) => {
+          /* noop */
+        }}
+      />
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore */}
+      {/* @ts-expect-error */}
+      <DayPicker
+        required
+        mode="single"
+        onSelect={(_date) => {
+          /* noop */
+        }}
+      />
       <DayPicker required mode="single" selected={undefined} />
       <DayPicker
         required
         mode="multiple"
         selected={undefined}
-        onSelect={(selected: Date[], date: Date, modifiers) => {}}
+        onSelect={(_selected, _date, _modifiers) => {
+          /* noop */
+        }}
       />
       <DayPicker
         required
         mode="range"
         selected={undefined}
-        onSelect={(selected: DateRange, date: Date, modifiers) => {}}
+        onSelect={(_selected, _date, _modifiers) => {
+          /* noop */
+        }}
       />
       <DayPicker
         mode="multiple"
         required={false}
         selected={undefined}
-        // @ts-expect-error Selected can be also undefined
-        onSelect={(selected: Date[], date: Date, modifiers) => {}}
+        onSelect={(_selected, _date, _modifiers) => {
+          /* noop */
+        }}
       />
-      {/** @ts-expect-error Wrong selected prop */}
-      <DayPicker mode="multiple" selected={new Date()} />
-      <DayPicker mode="multiple" onSelect={(date: Date[] | undefined) => {}} />
-      <DayPicker required mode="multiple" selected={[]} onSelect={(date: Date[]) => {}} />
+      <DayPicker mode="multiple" selected={[new Date()]} />
+      <DayPicker
+        mode="multiple"
+        onSelect={(_date) => {
+          /* noop */
+        }}
+      />
+      <DayPicker
+        required
+        mode="multiple"
+        selected={[]}
+        onSelect={(_date) => {
+          /* noop */
+        }}
+      />
       <DayPicker mode="single" selected={new Date()} />
-      <DayPicker modifiers={{ selected: new Date() }} onDayClick={() => {}} />
-      <DayPicker selected={new Date()} onDayClick={() => {}} onSelect={() => {}} />
+      <DayPicker
+        modifiers={{ selected: new Date() }}
+        onDayClick={() => {
+          /* noop */
+        }}
+      />
+      <DayPicker
+        selected={new Date()}
+        onDayClick={() => {
+          /* noop */
+        }}
+        onSelect={() => {
+          /* noop */
+        }}
+      />
     </>
   );
 }

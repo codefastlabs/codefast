@@ -1,8 +1,7 @@
-import { type DayPickerProps } from 'react-day-picker';
-
 import { CalendarMonth } from '@/classes';
 import { DateLib } from '@/classes/date-lib';
 import { getMonths } from '@/helpers/get-months';
+import { type DayPickerProps } from '@/types';
 
 const mockDates = [
   new Date(2023, 4, 27), // May 1, 2023
@@ -32,7 +31,7 @@ it('should return the correct months without ISO weeks and reverse months', () =
 
   expect(result).toHaveLength(1);
   expect(result[0]).toBeInstanceOf(CalendarMonth);
-  expect(result[0].weeks).toHaveLength(5); // June 2023 has 5 weeks
+  expect(result[0]?.weeks).toHaveLength(5); // June 2023 has 5 weeks
 });
 
 it('should handle ISO weeks', () => {
@@ -44,7 +43,7 @@ it('should handle ISO weeks', () => {
 
   expect(result).toHaveLength(1);
   expect(result[0]).toBeInstanceOf(CalendarMonth);
-  expect(result[0].weeks).toHaveLength(5); // June 2023 has 5 ISO weeks
+  expect(result[0]?.weeks).toHaveLength(5); // June 2023 has 5 ISO weeks
 });
 
 it('should handle reverse months', () => {
@@ -58,8 +57,8 @@ it('should handle reverse months', () => {
   const result = getMonths(displayMonths, mockDates, reverseProps, dateLib);
 
   expect(result).toHaveLength(2);
-  expect(result[0].date).toEqual(new Date(2023, 5, 1)); // June 2023
-  expect(result[1].date).toEqual(new Date(2023, 4, 1)); // May 2023
+  expect(result[0]?.date).toEqual(new Date(2023, 5, 1)); // June 2023
+  expect(result[1]?.date).toEqual(new Date(2023, 4, 1)); // May 2023
 });
 
 it('should handle fixed weeks', () => {
@@ -71,7 +70,7 @@ it('should handle fixed weeks', () => {
 
   expect(result).toHaveLength(1);
   expect(result[0]).toBeInstanceOf(CalendarMonth);
-  expect(result[0].weeks).toHaveLength(6); // Fixed weeks should ensure 6 weeks in the month view
+  expect(result[0]?.weeks).toHaveLength(6); // Fixed weeks should ensure 6 weeks in the month view
 });
 
 it('should handle months with no dates', () => {
@@ -81,5 +80,5 @@ it('should handle months with no dates', () => {
 
   expect(result).toHaveLength(1);
   expect(result[0]).toBeInstanceOf(CalendarMonth);
-  expect(result[0].weeks).toHaveLength(0); // No dates should result in no weeks
+  expect(result[0]?.weeks).toHaveLength(0); // No dates should result in no weeks
 });

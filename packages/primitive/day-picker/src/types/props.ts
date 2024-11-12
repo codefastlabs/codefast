@@ -465,7 +465,7 @@ export type OnSelectHandler<T> = (
   selected: T,
   triggerDate: Date,
   modifiers: Modifiers,
-  e: React.MouseEvent | React.KeyboardEvent,
+  event: React.MouseEvent | React.KeyboardEvent,
 ) => void;
 
 /**

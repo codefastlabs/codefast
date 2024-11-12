@@ -155,68 +155,68 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
   }, [goToMonth, nextMonth, onNextClick]);
 
   const handleDayClick = useCallback(
-    (day: CalendarDay, m: Modifiers) => (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
+    (day: CalendarDay, m: Modifiers) => (event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
       setFocused(day);
-      select?.(day.date, m, e);
-      onDayClick?.(day.date, m, e);
+      select?.(day.date, m, event);
+      onDayClick?.(day.date, m, event);
     },
     [select, onDayClick, setFocused],
   );
 
   const handleDayFocus = useCallback(
-    (day: CalendarDay, m: Modifiers) => (e: FocusEvent) => {
+    (day: CalendarDay, m: Modifiers) => (event: FocusEvent) => {
       setFocused(day);
-      onDayFocus?.(day.date, m, e);
+      onDayFocus?.(day.date, m, event);
     },
     [onDayFocus, setFocused],
   );
 
   const handleDayBlur = useCallback(
-    (day: CalendarDay, m: Modifiers) => (e: FocusEvent) => {
+    (day: CalendarDay, m: Modifiers) => (event: FocusEvent) => {
       blur();
-      onDayBlur?.(day.date, m, e);
+      onDayBlur?.(day.date, m, event);
     },
     [blur, onDayBlur],
   );
 
   const handleDayKeyDown = useCallback(
-    (day: CalendarDay, modifiers: Modifiers) => (e: KeyboardEvent) => {
+    (day: CalendarDay, modifiers: Modifiers) => (event: KeyboardEvent) => {
       const keyMap: Record<string, [MoveFocusBy, MoveFocusDir]> = {
         ArrowLeft: ['day', props.dir === 'rtl' ? 'after' : 'before'],
         ArrowRight: ['day', props.dir === 'rtl' ? 'before' : 'after'],
         ArrowDown: ['week', 'after'],
         ArrowUp: ['week', 'before'],
-        PageUp: [e.shiftKey ? 'year' : 'month', 'before'],
-        PageDown: [e.shiftKey ? 'year' : 'month', 'after'],
+        PageUp: [event.shiftKey ? 'year' : 'month', 'before'],
+        PageDown: [event.shiftKey ? 'year' : 'month', 'after'],
         Home: ['startOfWeek', 'before'],
         End: ['endOfWeek', 'after'],
       };
 
-      if (keyMap[e.key]) {
-        e.preventDefault();
-        e.stopPropagation();
-        const [moveBy, moveDir] = keyMap[e.key];
+      if (keyMap[event.key]) {
+        event.preventDefault();
+        event.stopPropagation();
+        const [moveBy, moveDir] = keyMap[event.key];
 
         moveFocus(moveBy, moveDir);
       }
 
-      onDayKeyDown?.(day.date, modifiers, e);
+      onDayKeyDown?.(day.date, modifiers, event);
     },
     [moveFocus, onDayKeyDown, props.dir],
   );
 
   const handleDayMouseEnter = useCallback(
-    (day: CalendarDay, modifiers: Modifiers) => (e: MouseEvent) => {
-      onDayMouseEnter?.(day.date, modifiers, e);
+    (day: CalendarDay, modifiers: Modifiers) => (event: MouseEvent) => {
+      onDayMouseEnter?.(day.date, modifiers, event);
     },
     [onDayMouseEnter],
   );
 
   const handleDayMouseLeave = useCallback(
-    (day: CalendarDay, modifiers: Modifiers) => (e: MouseEvent) => {
-      onDayMouseLeave?.(day.date, modifiers, e);
+    (day: CalendarDay, modifiers: Modifiers) => (event: MouseEvent) => {
+      onDayMouseLeave?.(day.date, modifiers, event);
     },
     [onDayMouseLeave],
   );
@@ -380,7 +380,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                     </components.Weekdays>
                   )}
                   <components.Weeks className={classNames[UI.Weeks]} style={styles?.[UI.Weeks]}>
-                    {calendarMonth.weeks.map((week, weekIndex) => {
+                    {calendarMonth.weeks.map((week, _weekIndex) => {
                       return (
                         <components.Week
                           key={week.weekNumber}

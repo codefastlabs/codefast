@@ -5,7 +5,7 @@
  */
 export function labelPrevious(
   /** Undefined where there's no previous month to navigate to. */
-  month: Date | undefined,
-) {
+  _month: Date | undefined,
+): string {
   return 'Go to the Previous Month';
 }

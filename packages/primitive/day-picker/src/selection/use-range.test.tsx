@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { type DayPickerProps } from 'react-day-picker/types';
-
 import { defaultDateLib } from '@/classes/date-lib';
 import { useRange } from '@/selection/use-range';
-import { act, renderHook } from '@/test/render';
+import { type DayPickerProps } from '@/types';
+
+import { act, renderHook } from 'test/render';
 
 describe('useRange', () => {
   test('initialize with initiallySelected date range', () => {
