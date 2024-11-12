@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX } from 'react';
 
-import { type ClassNames, type CustomComponents } from '@/types';
-import { UI } from '@/ui';
+import { UI } from '@/lib/constants/ui';
+import { type ClassNames, type CustomComponents } from '@/lib/types';
 
 /** An option to use in the dropdown. Maps to the `<option>` HTML element. */
 export interface DropdownOption {
