@@ -109,7 +109,7 @@ describe('when matching the date before', () => {
 });
 
 describe('when the matcher is a function', () => {
-  const matcher = () => true;
+  const matcher = (): true => true;
   const result = dateMatchModifiers(testDay, [matcher], defaultDateLib);
 
   test('should return the result of the function', () => {

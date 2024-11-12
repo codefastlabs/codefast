@@ -1,5 +1,4 @@
 import { defaultDateLib } from '@/classes/date-lib';
-
 import { getDisplayMonths } from '@/helpers/get-display-months';
 
 describe('getDisplayMonths', () => {

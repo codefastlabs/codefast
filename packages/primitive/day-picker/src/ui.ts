@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention -- we use lower case for the enums */
 import { type CSSProperties } from 'react';
 
 /**

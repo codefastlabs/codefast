@@ -29,7 +29,7 @@ describe('useRange', () => {
     );
 
     act(() => {
-      result.current.select?.(new Date(2023, 6, 10), {}, {} as any);
+      result.current.select?.(new Date(2023, 6, 10), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual({
@@ -52,8 +52,8 @@ describe('useRange', () => {
     );
 
     act(() => {
-      result.current.select?.(new Date(2023, 6, 1), {}, {} as any);
-      result.current.select?.(new Date(2023, 6, 10), {}, {} as any);
+      result.current.select?.(new Date(2023, 6, 1), {}, {} as MouseEvent);
+      result.current.select?.(new Date(2023, 6, 10), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual({
@@ -68,8 +68,8 @@ describe('useRange', () => {
     );
 
     act(() => {
-      result.current.select?.(new Date(2023, 6, 1), {}, {} as any);
-      result.current.select?.(new Date(2023, 6, 3), {}, {} as any);
+      result.current.select?.(new Date(2023, 6, 1), {}, {} as MouseEvent);
+      result.current.select?.(new Date(2023, 6, 3), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual({
@@ -94,8 +94,8 @@ describe('useRange', () => {
     );
 
     act(() => {
-      result.current.select?.(new Date(2023, 6, 1), {}, {} as any);
-      result.current.select?.(new Date(2023, 6, 10), {}, {} as any);
+      result.current.select?.(new Date(2023, 6, 1), {}, {} as MouseEvent);
+      result.current.select?.(new Date(2023, 6, 10), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual({

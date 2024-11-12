@@ -1,4 +1,4 @@
-import { defaultDateLib, type DateLib } from '@/classes/date-lib';
+import { type DateLib, defaultDateLib } from '@/classes/date-lib';
 import { type Matcher } from '@/types';
 import { dateMatchModifiers } from '@/utils/date-match-modifiers';
 import { rangeContainsDayOfWeek } from '@/utils/range-contains-day-of-week';
@@ -98,8 +98,10 @@ export function rangeContainsModifiers(
     let date = range.from;
     const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);
 
+    const isMatch = (currentDate: Date): boolean => functionMatchers.some((matcher) => matcher(currentDate));
+
     for (let i = 0; i <= totalDays; i++) {
-      if (functionMatchers.some((matcher) => matcher(date))) {
+      if (isMatch(date)) {
         return true;
       }
 

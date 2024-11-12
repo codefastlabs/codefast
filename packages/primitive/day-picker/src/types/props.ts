@@ -1,28 +1,29 @@
+/* eslint-disable tsdoc/syntax -- we use JSDoc syntax to generate the documentation */
 import {
   type CSSProperties,
   type FocusEvent,
-  type MouseEvent,
   type KeyboardEvent,
+  type MouseEvent,
   type PointerEvent,
-  type TouchEvent,
   type ReactNode,
+  type TouchEvent,
 } from 'react';
 
-import { type Locale, type DateLib } from '@/classes/date-lib';
+import { type DateLib, type Locale } from '@/classes/date-lib';
 import {
   type ClassNames,
-  type ModifiersClassNames,
-  type Styles,
-  type ModifiersStyles,
   type CustomComponents,
-  type Matcher,
-  type Labels,
-  type Formatters,
-  type MonthChangeEventHandler,
-  type DayEventHandler,
-  type Modifiers,
   type DateRange,
+  type DayEventHandler,
+  type Formatters,
+  type Labels,
+  type Matcher,
   type Mode,
+  type Modifiers,
+  type ModifiersClassNames,
+  type ModifiersStyles,
+  type MonthChangeEventHandler,
+  type Styles,
 } from '@/types/shared';
 import { type DeprecatedUI } from '@/ui';
 
@@ -343,8 +344,8 @@ export interface PropsBase {
    * @deprecated Use a custom `WeekNumber` component instead.
    * @see https://daypicker.dev/docs/customization#showweeknumber
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onWeekNumberClick?: any;
+
+  onWeekNumberClick?: never;
   /**
    * Paginate the month navigation displaying the `numberOfMonths` at a time.
    *
@@ -463,7 +464,8 @@ export interface PropsBase {
  * OnSelectHandler is a type definition for a callback function triggered upon a selection event.
  *
  * It handles selection logic by receiving the selected item, the date when the selection was triggered,
- * various modifiers related to the selection, and the event that invoked the selection (either mouse or keyboard event).
+ * various modifiers related to the selection, and the event that invoked the selection (either mouse or keyboard
+ * event).
  *
  * @typeParam T - The type representing the selected item.
  *
