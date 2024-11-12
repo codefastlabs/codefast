@@ -1,7 +1,7 @@
 import { type MouseEvent } from 'react';
 
 import { defaultDateLib } from '@/classes/date-lib';
-import { useRange } from '@/selection/use-range';
+import { useRange } from '@/hooks/use-range';
 import { type DayPickerProps } from '@/types';
 
 import { act, renderHook } from '@test/render';
