@@ -5,7 +5,6 @@ import { useDayPicker } from '@/use-day-picker';
 
 /**
  * Render the dropdown to navigate between years.
- *
  */
 export function YearsDropdown(props: DropdownProps): JSX.Element {
   const { components } = useDayPicker();

@@ -20,7 +20,6 @@ import type React from 'react';
 
 /**
  * The props for the `<DayPicker />` component.
- *
  */
 export type DayPickerProps = PropsBase &
   (
@@ -36,7 +35,6 @@ export type DayPickerProps = PropsBase &
 /**
  * Props for customizing the calendar, handling localization, and managing
  * events. These exclude the selection mode props.
- *
  */
 export interface PropsBase {
   /**
@@ -200,7 +198,6 @@ export interface PropsBase {
   hideNavigation?: boolean;
   /**
    * Hide the row displaying the weekday row header.
-   *
    */
   hideWeekdays?: boolean;
   /** A unique id to add to the root element. */
@@ -489,7 +486,6 @@ export type OnSelectHandler<T> = (
 
 /**
  * The props when the single selection is required.
- *
  */
 export interface PropsSingleRequired {
   mode: 'single';
@@ -502,7 +498,6 @@ export interface PropsSingleRequired {
 
 /**
  * The props when the single selection is optional.
- *
  */
 export interface PropsSingle {
   mode: 'single';
@@ -515,7 +510,6 @@ export interface PropsSingle {
 
 /**
  * The props when the multiple selection is required.
- *
  */
 export interface PropsMultiRequired {
   mode: 'multiple';
@@ -532,7 +526,6 @@ export interface PropsMultiRequired {
 
 /**
  * The props when the multiple selection is optional.
- *
  */
 export interface PropsMulti {
   mode: 'multiple';
@@ -548,7 +541,6 @@ export interface PropsMulti {
 }
 /**
  * The props when the range selection is required.
- *
  */
 export interface PropsRangeRequired {
   mode: 'range';
@@ -558,7 +550,6 @@ export interface PropsRangeRequired {
   disabled?: Matcher | Matcher[] | undefined;
   /**
    * When `true`, the range will reset when including a disabled day.
-   *
    */
   excludeDisabled?: boolean | undefined;
   /** The maximum number of days to include in the range. */
@@ -570,14 +561,12 @@ export interface PropsRangeRequired {
 }
 /**
  * The props when the range selection is optional.
- *
  */
 export interface PropsRange {
   mode: 'range';
   disabled?: Matcher | Matcher[] | undefined;
   /**
    * When `true`, the range will reset when including a disabled day.
-   *
    */
   excludeDisabled?: boolean | undefined;
   /** The maximum number of days to include in the range. */

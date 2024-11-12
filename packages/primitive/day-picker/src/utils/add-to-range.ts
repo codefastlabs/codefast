@@ -6,7 +6,6 @@ import { type DateRange } from '@/types';
  *
  * The returned range takes in account the `undefined` values and if the added
  * day is already present in the range.
- *
  */
 export function addToRange(
   /** The date to add to the range. */

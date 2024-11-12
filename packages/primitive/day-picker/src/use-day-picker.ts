@@ -39,7 +39,6 @@ export interface DayPickerContext<T extends { mode?: Mode | undefined; required?
   components: CustomComponents;
   /**
    * The props as passed to the DayPicker component.
-   *
    */
   dayPickerProps: DayPickerProps;
   /** The formatters used to format the UI elements. */

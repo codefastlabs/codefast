@@ -10,7 +10,6 @@ import { defaultDateLib, type DateLib } from '@/classes/date-lib';
  * };
  * rangeContainsDayOfWeek(date, 1); // true: contains range contains Monday
  * ```
- *
  */
 export function rangeContainsDayOfWeek(
   range: { from: Date; to: Date },
