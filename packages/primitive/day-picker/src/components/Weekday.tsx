@@ -1,13 +1,11 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type WeekdayProps = ComponentProps<'th'>;
 
 /**
  * Render the column header with the weekday name (e.g. "Mo", "Tu", etc.).
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Weekday(props: JSX.IntrinsicElements['th']) {
+export function Weekday(props: WeekdayProps): JSX.Element {
   return <th {...props} />;
 }
-
-export type WeekdayProps = Parameters<typeof Weekday>[0];

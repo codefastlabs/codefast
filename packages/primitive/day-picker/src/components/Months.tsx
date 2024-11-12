@@ -1,13 +1,10 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type MonthsProps = ComponentProps<'div'>;
 
 /**
  * Component wrapping the month grids.
- *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Months(props: JSX.IntrinsicElements['div']) {
+export function Months(props: MonthsProps): JSX.Element {
   return <div {...props} />;
 }
-
-export type MonthsProps = Parameters<typeof Months>[0];

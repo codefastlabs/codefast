@@ -1,6 +1,5 @@
-import { defaultDateLib } from '../classes/DateLib.js';
-import type { DateInterval, DateRange, DateAfter, DateBefore, DayOfWeek } from '../types/index.js';
-
+import { defaultDateLib } from '@/classes/date-lib';
+import type { DateInterval, DateRange, DateAfter, DateBefore, DayOfWeek } from '@/types';
 import {
   isDateInterval,
   isDateRange,
@@ -8,10 +7,11 @@ import {
   isDateBeforeType,
   isDayOfWeekType,
   isDatesArray,
-} from './typeguards.js';
+} from '@/utils/typeguards';
 
 test('isDateInterval return true for valid DateInterval', () => {
   const validInterval: DateInterval = { before: new Date(), after: new Date() };
+
   expect(isDateInterval(validInterval)).toBe(true);
 });
 
@@ -23,6 +23,7 @@ test('isDateInterval return false for invalid DateInterval', () => {
 
 test('isDateRange return true for valid DateRange', () => {
   const validRange: DateRange = { from: new Date() };
+
   expect(isDateRange(validRange)).toBe(true);
 });
 
@@ -34,6 +35,7 @@ test('isDateRange return false for invalid DateRange', () => {
 
 test('isDateAfterType return true for valid DateAfter', () => {
   const validAfter: DateAfter = { after: new Date() };
+
   expect(isDateAfterType(validAfter)).toBe(true);
 });
 
@@ -45,6 +47,7 @@ test('isDateAfterType return false for invalid DateAfter', () => {
 
 test('isDateBeforeType return true for valid DateBefore', () => {
   const validBefore: DateBefore = { before: new Date() };
+
   expect(isDateBeforeType(validBefore)).toBe(true);
 });
 
@@ -56,6 +59,7 @@ test('isDateBeforeType return false for invalid DateBefore', () => {
 
 test('isDayOfWeekType return true for valid DayOfWeek', () => {
   const validDayOfWeek: DayOfWeek = { dayOfWeek: [1] };
+
   expect(isDayOfWeekType(validDayOfWeek)).toBe(true);
 });
 
@@ -67,6 +71,7 @@ test('isDayOfWeekType return false for invalid DayOfWeek', () => {
 
 test('isDatesArray return true for valid array of dates', () => {
   const validDatesArray: Date[] = [new Date(), new Date()];
+
   expect(isDatesArray(validDatesArray, defaultDateLib)).toBe(true);
 });
 

@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { MonthCaption, type MonthCaptionProps } from '../components/MonthCaption.js';
-import { Week, type WeekProps } from '../components/Week.js';
-import { labelDayButton, labelNext, labelWeekday, labelWeekNumber } from '../labels/index.js';
-import { useDayPicker } from '../useDayPicker.js';
-
-import type { PropsMulti, PropsRange, PropsSingle } from './props.js';
-import type { Mode, DayEventHandler } from './shared.js';
+import { MonthCaption, type MonthCaptionProps } from '@/components/month-caption';
+import { Week, type WeekProps } from '@/components/week';
+import { type labelDayButton, type labelNext, type labelWeekday, type labelWeekNumber } from '@/labels';
+import type { PropsMulti, PropsRange, PropsSingle } from '@/types/props';
+import type { Mode, DayEventHandler } from '@/types/shared';
+import { useDayPicker } from '@/use-day-picker';
 
 /**
  * @deprecated This type will be removed.
@@ -22,8 +20,6 @@ export type RootProviderProps = any;
 /**
  * @deprecated This component has been renamed. Use `MonthCaption` instead.
  * @protected
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
 export const Caption = MonthCaption;
 
@@ -36,16 +32,12 @@ export type CaptionProps = MonthCaptionProps;
 /**
  * @deprecated This component has been removed.
  * @protected
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
 export type HeadRow = any;
 
 /**
  * @deprecated This component has been renamed. Use `Week` instead.
  * @protected
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
 export const Row = Week;
 
@@ -119,15 +111,12 @@ export type DayPickerProviderProps = any;
 /**
  * @deprecated This type has been removed to `useDayPicker`.
  * @protected
- * @group Hooks
  */
 export const useNavigation = useDayPicker;
 
 /**
  * @deprecated This hook has been removed. Use a custom `Day` component instead.
  * @protected
- * @group Hooks
- * @see https://daypicker.dev/guides/custom-components
  */
 export type useDayRender = any;
 
