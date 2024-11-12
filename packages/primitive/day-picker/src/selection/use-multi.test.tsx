@@ -1,7 +1,8 @@
 import { defaultDateLib } from '@/classes/date-lib';
 import { useMulti } from '@/selection/use-multi';
-import { act, renderHook } from '@/test/render';
 import { type DayPickerProps } from '@/types';
+
+import { act, renderHook } from 'test/render';
 
 describe('useMulti', () => {
   it('uses the selected value from props when onSelect is provided', () => {

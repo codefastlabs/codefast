@@ -1,5 +1,4 @@
 import { DateLib, defaultDateLib } from '@/classes/date-lib';
-
 import { getDates } from '@/helpers/get-dates';
 
 describe('when the first month and the last month are the same', () => {
