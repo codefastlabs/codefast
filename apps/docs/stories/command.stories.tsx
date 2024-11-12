@@ -81,9 +81,9 @@ export const WithDialog: Story = {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-      const down = (e: KeyboardEvent): void => {
-        if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
-          e.preventDefault();
+      const down = (event: KeyboardEvent): void => {
+        if (event.key === 'j' && (event.metaKey || event.ctrlKey)) {
+          event.preventDefault();
           setOpen((prev) => !prev);
         }
       };
