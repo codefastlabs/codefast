@@ -32,9 +32,7 @@ import {
   startOfWeek,
   startOfYear,
 } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-
-import type { Locale } from 'date-fns/locale';
+import { enUS, type Locale } from 'date-fns/locale';
 
 export type { Locale } from 'date-fns/locale';
 export type { Month as DateFnsMonth } from 'date-fns';

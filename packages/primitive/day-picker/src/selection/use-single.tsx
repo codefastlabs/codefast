@@ -1,6 +1,13 @@
-import type { DateLib } from '@/classes/date-lib';
+import { type DateLib } from '@/classes/date-lib';
 import { useControlledValue } from '@/helpers/use-controlled-value';
-import type { DayPickerProps, Modifiers, PropsSingle, SelectHandler, SelectedValue, Selection } from '@/types';
+import {
+  type DayPickerProps,
+  type Modifiers,
+  type PropsSingle,
+  type SelectHandler,
+  type SelectedValue,
+  type Selection,
+} from '@/types';
 
 import type React from 'react';
 
@@ -22,11 +29,15 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
 
   const { isSameDay } = dateLib;
 
-  const isSelected = (compareDate: Date) => {
+  const isSelected = (compareDate: Date): boolean => {
     return selected ? isSameDay(selected, compareDate) : false;
   };
 
-  const select = (triggerDate: Date, modifiers: Modifiers, e: React.MouseEvent | React.KeyboardEvent) => {
+  const select = (
+    triggerDate: Date,
+    modifiers: Modifiers,
+    e: React.MouseEvent | React.KeyboardEvent,
+  ): Date | undefined => {
     let newDate: Date | undefined = triggerDate;
 
     if (!required && selected && selected && isSameDay(triggerDate, selected)) {

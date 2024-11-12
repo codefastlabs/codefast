@@ -1,4 +1,4 @@
-import type { DateLibOptions } from '@/classes/date-lib';
+import { type DateLibOptions } from '@/classes/date-lib';
 
 /**
  * The ARIA label for the week number header element.

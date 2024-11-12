@@ -1,7 +1,7 @@
 import { TZDate } from '@date-fns/tz';
 
-import type { DateLib } from '@/classes/date-lib';
-import type { DayPickerProps } from '@/types';
+import { type DateLib } from '@/classes/date-lib';
+import { type DayPickerProps } from '@/types';
 
 /** Return the start and end months for the calendar navigation. */
 export function getNavMonths(

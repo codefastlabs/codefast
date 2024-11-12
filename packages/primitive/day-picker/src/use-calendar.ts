@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import type { CalendarWeek, CalendarDay, CalendarMonth, DateLib } from '@/classes';
+import { type CalendarWeek, type CalendarDay, type CalendarMonth, type DateLib } from '@/classes';
 import { getDates } from '@/helpers/get-dates';
 import { getDays } from '@/helpers/get-days';
 import { getDisplayMonths } from '@/helpers/get-display-months';
@@ -11,7 +11,7 @@ import { getNextMonth } from '@/helpers/get-next-month';
 import { getPreviousMonth } from '@/helpers/get-previous-month';
 import { getWeeks } from '@/helpers/get-weeks';
 import { useControlledValue } from '@/helpers/use-controlled-value';
-import type { DayPickerProps } from '@/types';
+import { type DayPickerProps } from '@/types';
 
 /**
  * Return the calendar object to work with the calendar in custom components.
@@ -119,10 +119,10 @@ export function useCalendar(
 
   const { disableNavigation, onMonthChange } = props;
 
-  const isDayInCalendar = (day: CalendarDay) =>
+  const isDayInCalendar = (day: CalendarDay): boolean =>
     weeks.some((week: CalendarWeek) => week.days.some((d) => d.isEqualTo(day)));
 
-  const goToMonth = (date: Date) => {
+  const goToMonth = (date: Date): void => {
     if (disableNavigation) {
       return;
     }
@@ -143,7 +143,7 @@ export function useCalendar(
     onMonthChange?.(newMonth);
   };
 
-  const goToDay = (day: CalendarDay) => {
+  const goToDay = (day: CalendarDay): void => {
     // is this check necessary?
     if (isDayInCalendar(day)) {
       return;
