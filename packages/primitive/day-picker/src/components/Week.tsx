@@ -1,20 +1,17 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
 
-import type { CalendarWeek } from '../classes/index.js';
+import type { CalendarWeek } from '@/classes';
+
+export type WeekProps = ComponentProps<'tr'> & {
+  week: CalendarWeek;
+};
 
 /**
  * Render a row in the calendar, with the days and the week number.
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Week(
-  props: {
-    week: CalendarWeek;
-  } & JSX.IntrinsicElements['tr'],
-) {
-  const { week, ...trProps } = props;
+export function Week(props: WeekProps): JSX.Element {
+  const { week: _week, ...trProps } = props;
+
   return <tr {...trProps} />;
 }
-
-export type WeekProps = Parameters<typeof Week>[0];

@@ -1,13 +1,11 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type OptionProps = ComponentProps<'option'>;
 
 /**
  * Render the `option` element.
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Option(props: JSX.IntrinsicElements['option']) {
+export function Option(props: OptionProps): JSX.Element {
   return <option {...props} />;
 }
-
-export type OptionProps = Parameters<typeof Option>[0];
