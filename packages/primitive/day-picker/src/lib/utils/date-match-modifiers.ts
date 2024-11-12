@@ -89,8 +89,3 @@ export function dateMatchModifiers(
     return false;
   });
 }
-
-/**
- * @deprecated Use {@link dateMatchModifiers} instead.
- */
-export const isMatch = dateMatchModifiers;
