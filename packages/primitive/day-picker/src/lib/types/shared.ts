@@ -1,7 +1,7 @@
 /* eslint-disable tsdoc/syntax -- we use JSDoc syntax to generate the documentation */
 import { type CSSProperties } from 'react';
 
-import type * as components from '@/components';
+import type * as components from '@/components/ui';
 import { type DayFlag, type SelectionState, type UI } from '@/lib/constants/ui';
 import {
   type formatCaption,
