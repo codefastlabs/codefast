@@ -1,3 +1,5 @@
+import { type CSSProperties } from 'react';
+
 import type * as components from '@/components';
 import {
   type formatCaption,
@@ -24,8 +26,6 @@ import {
   type labelYearDropdown,
 } from '@/labels';
 import { type UI, type DayFlag, type SelectionState } from '@/ui';
-
-import type { CSSProperties } from 'react';
 
 /**
  * Selection modes supported by DayPicker.

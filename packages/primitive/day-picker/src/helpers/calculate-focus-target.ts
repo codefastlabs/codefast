@@ -1,5 +1,5 @@
-import type { CalendarDay } from '@/classes';
-import type { Modifiers } from '@/types';
+import { type CalendarDay } from '@/classes';
+import { type Modifiers } from '@/types';
 import { DayFlag } from '@/ui';
 
 export function calculateFocusTarget(
@@ -7,7 +7,7 @@ export function calculateFocusTarget(
   getModifiers: (day: CalendarDay) => Modifiers,
   isSelected: (date: Date) => boolean,
   lastFocused: CalendarDay | undefined,
-) {
+): CalendarDay | undefined {
   let focusTarget: CalendarDay | undefined;
 
   let index = 0;

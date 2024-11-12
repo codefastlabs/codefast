@@ -1,5 +1,5 @@
-import type { DateLib } from '@/classes/date-lib';
-import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/types';
+import { type DateLib } from '@/classes/date-lib';
+import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/types';
 
 /** Return the next date that should be focused. */
 export function getFocusableDate(

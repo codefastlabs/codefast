@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import type { CalendarDay, DateLib } from '@/classes';
+import { type CalendarDay, type DateLib } from '@/classes';
 import { calculateFocusTarget } from '@/helpers/calculate-focus-target';
 import { getNextFocus } from '@/helpers/get-next-focus';
-import type { MoveFocusBy, MoveFocusDir, DayPickerProps, Modifiers } from '@/types';
+import { type MoveFocusBy, type MoveFocusDir, type DayPickerProps, type Modifiers } from '@/types';
 import { type Calendar } from '@/use-calendar';
 
 export interface UseFocus {
@@ -37,12 +37,12 @@ export function useFocus<T extends DayPickerProps>(
   const focusTarget = calculateFocusTarget(calendar.days, getModifiers, isSelected || (() => false), lastFocused);
   const [focusedDay, setFocused] = useState<CalendarDay | undefined>(autoFocus ? focusTarget : undefined);
 
-  const blur = () => {
+  const blur = (): void => {
     setLastFocused(focusedDay);
     setFocused(undefined);
   };
 
-  const moveFocus = (moveBy: MoveFocusBy, moveDir: MoveFocusDir) => {
+  const moveFocus = (moveBy: MoveFocusBy, moveDir: MoveFocusDir): void => {
     if (!focusedDay) {
       return;
     }
@@ -57,7 +57,7 @@ export function useFocus<T extends DayPickerProps>(
     setFocused(nextFocus);
   };
 
-  const isFocusTarget = (day: CalendarDay) => {
+  const isFocusTarget = (day: CalendarDay): boolean => {
     return Boolean(focusTarget?.isEqualTo(day));
   };
 

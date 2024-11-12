@@ -1,5 +1,5 @@
 import { DateLib, type DateLibOptions } from '@/classes/date-lib';
-import type { Modifiers } from '@/types';
+import { type Modifiers } from '@/types';
 
 /**
  * The ARIA label for the day button.
@@ -15,7 +15,7 @@ export function labelDayButton(
   modifiers: Modifiers,
   options?: DateLibOptions,
   dateLib?: DateLib,
-) {
+): string {
   let label = (dateLib ?? new DateLib(options)).format(date, 'PPPP');
 
   if (modifiers.today) {
