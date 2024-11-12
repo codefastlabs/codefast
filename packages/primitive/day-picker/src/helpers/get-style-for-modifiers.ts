@@ -1,13 +1,13 @@
-import type { Modifiers, ModifiersStyles, Styles } from '@/types';
-import { UI } from '@/ui';
+import { type CSSProperties } from 'react';
 
-import type { CSSProperties } from 'react';
+import { type Modifiers, type ModifiersStyles, type Styles } from '@/types';
+import { UI } from '@/ui';
 
 export function getStyleForModifiers(
   dayModifiers: Modifiers,
   styles: Partial<Styles> = {},
   modifiersStyles: Partial<ModifiersStyles> = {},
-) {
+): CSSProperties {
   let style: CSSProperties = { ...styles[UI.Day] };
 
   Object.entries(dayModifiers)

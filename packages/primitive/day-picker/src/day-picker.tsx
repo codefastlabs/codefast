@@ -8,7 +8,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 
-import type { CalendarDay } from '@/classes/calendar-day';
+import { type CalendarDay } from '@/classes/calendar-day';
 import { DateLib, defaultLocale } from '@/classes/date-lib';
 import { getClassNamesForModifiers } from '@/helpers/get-class-names-for-modifiers';
 import { getComponents } from '@/helpers/get-components';
@@ -20,7 +20,14 @@ import { getStyleForModifiers } from '@/helpers/get-style-for-modifiers';
 import { getWeekdays } from '@/helpers/get-weekdays';
 import { getYearOptions } from '@/helpers/get-year-options';
 import * as defaultLabels from '@/labels';
-import type { DayPickerProps, Modifiers, MoveFocusBy, MoveFocusDir, SelectedValue, SelectHandler } from '@/types';
+import {
+  type DayPickerProps,
+  type Modifiers,
+  type MoveFocusBy,
+  type MoveFocusDir,
+  type SelectedValue,
+  type SelectHandler,
+} from '@/types';
 import { UI, DayFlag, SelectionState } from '@/ui';
 import { useCalendar } from '@/use-calendar';
 import { type DayPickerContext, dayPickerContext } from '@/use-day-picker';

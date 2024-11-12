@@ -1,5 +1,5 @@
 import { defaultDateLib, type DateLib } from '@/classes/date-lib';
-import type { Matcher } from '@/types';
+import { type Matcher } from '@/types';
 import { dateMatchModifiers } from '@/utils/date-match-modifiers';
 import { rangeContainsDayOfWeek } from '@/utils/range-contains-day-of-week';
 import { rangeIncludesDate } from '@/utils/range-includes-date';

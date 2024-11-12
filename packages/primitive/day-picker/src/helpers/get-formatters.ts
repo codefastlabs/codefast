@@ -2,7 +2,7 @@ import { type Locale } from 'date-fns/locale';
 
 import { type DateLib, type DateLibOptions } from '@/classes';
 import * as defaultFormatters from '@/formatters';
-import type { DayPickerProps } from '@/types';
+import { type DayPickerProps } from '@/types';
 
 /** Return the formatters from the props merged with the default formatters. */
 export function getFormatters(customFormatters: DayPickerProps['formatters']): {

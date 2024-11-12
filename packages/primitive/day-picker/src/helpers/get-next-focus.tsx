@@ -1,7 +1,7 @@
 import { CalendarDay } from '@/classes';
-import type { DateLib } from '@/classes/date-lib';
+import { type DateLib } from '@/classes/date-lib';
 import { getFocusableDate } from '@/helpers/get-focusable-date';
-import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/types';
+import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/types';
 import { dateMatchModifiers } from '@/utils/date-match-modifiers';
 
 export function getNextFocus(

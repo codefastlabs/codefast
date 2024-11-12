@@ -1,7 +1,5 @@
 import { type CSSProperties } from 'react';
 
-import type { CustomComponents, ClassNames, Styles } from '@/types';
-
 /**
  * The UI elements composing DayPicker. These elements are mapped to
  * {@link CustomComponents}, the {@link ClassNames} and the {@link Styles} used by
@@ -279,7 +277,7 @@ export interface DeprecatedUI<T extends CSSProperties | string> {
   /**
    * This element has been renamed to {@link UI.PreviousMonthButton}.
    *
-   * @deprecated
+   * @deprecated - Use `UI.PreviousMonthButton` instead.
    */
   nav_button_previous: T;
   /**
@@ -292,19 +290,19 @@ export interface DeprecatedUI<T extends CSSProperties | string> {
   /**
    * This element has been renamed to {@link UI.Week}.
    *
-   * @deprecated
+   * @deprecated - Use `UI.Week` instead.
    */
   row: T;
   /**
    * This element has been renamed to {@link UI.MonthGrid}.
    *
-   * @deprecated
+   * @deprecated - Use `UI.MonthGrid` instead.
    */
   table: T;
   /**
    * This element has been renamed to {@link UI.Weeks}.
    *
-   * @deprecated
+   * @deprecated - Use `UI.Weeks` instead.
    */
   tbody: T;
   /**

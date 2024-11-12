@@ -1,6 +1,6 @@
 import { CalendarWeek, CalendarDay, CalendarMonth } from '@/classes';
-import type { DateLib } from '@/classes/date-lib';
-import type { DayPickerProps } from '@/types';
+import { type DateLib } from '@/classes/date-lib';
+import { type DayPickerProps } from '@/types';
 
 /** Return the months to display in the calendar. */
 export function getMonths(

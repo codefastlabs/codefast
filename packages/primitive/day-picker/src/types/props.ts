@@ -1,20 +1,20 @@
-import type { Locale, DateLib } from '@/classes/date-lib';
-import type {
-  ClassNames,
-  ModifiersClassNames,
-  Styles,
-  ModifiersStyles,
-  CustomComponents,
-  Matcher,
-  Labels,
-  Formatters,
-  MonthChangeEventHandler,
-  DayEventHandler,
-  Modifiers,
-  DateRange,
-  Mode,
+import { type Locale, type DateLib } from '@/classes/date-lib';
+import {
+  type ClassNames,
+  type ModifiersClassNames,
+  type Styles,
+  type ModifiersStyles,
+  type CustomComponents,
+  type Matcher,
+  type Labels,
+  type Formatters,
+  type MonthChangeEventHandler,
+  type DayEventHandler,
+  type Modifiers,
+  type DateRange,
+  type Mode,
 } from '@/types/shared';
-import type { DeprecatedUI } from '@/ui';
+import { type DeprecatedUI } from '@/ui';
 
 import type React from 'react';
 
@@ -179,8 +179,7 @@ export interface PropsBase {
   fromMonth?: Date | undefined;
   /**
    * @private
-   * @deprecated Use `startMonth` instead. E.g. `startMonth={new Date(year,
-   *   0)}`.
+   * @deprecated Use `startMonth` instead. E.g. `startMonth={new Date(year, 0)}`.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   fromYear?: number | undefined;

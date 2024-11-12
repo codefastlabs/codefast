@@ -1,12 +1,12 @@
-import type { DateLib } from '@/classes/date-lib';
-import type { DayPickerProps } from '@/types';
+import { type DateLib } from '@/classes/date-lib';
+import { type DayPickerProps } from '@/types';
 
 export function getDisplayMonths(
   firstDisplayedMonth: Date,
   calendarEndMonth: Date | undefined,
   props: Pick<DayPickerProps, 'numberOfMonths'>,
   dateLib: DateLib,
-) {
+): Date[] {
   const { numberOfMonths = 1 } = props;
   const months: Date[] = [];
 

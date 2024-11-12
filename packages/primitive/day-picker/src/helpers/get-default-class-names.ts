@@ -1,4 +1,4 @@
-import type { ClassNames } from '@/types';
+import { type ClassNames } from '@/types';
 import { UI, DayFlag, SelectionState } from '@/ui';
 
 /**

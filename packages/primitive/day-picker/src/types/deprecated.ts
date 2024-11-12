@@ -1,8 +1,8 @@
 import { MonthCaption, type MonthCaptionProps } from '@/components/month-caption';
 import { Week, type WeekProps } from '@/components/week';
 import { type labelDayButton, type labelNext, type labelWeekday, type labelWeekNumber } from '@/labels';
-import type { PropsMulti, PropsRange, PropsSingle } from '@/types/props';
-import type { Mode, DayEventHandler } from '@/types/shared';
+import { type PropsMulti, type PropsRange, type PropsSingle } from '@/types/props';
+import { type Mode, type DayEventHandler } from '@/types/shared';
 import { useDayPicker } from '@/use-day-picker';
 
 /**

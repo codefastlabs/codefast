@@ -1,6 +1,6 @@
-import type { DateLib } from '@/classes/date-lib';
+import { type DateLib } from '@/classes/date-lib';
 import { type DropdownOption } from '@/components/dropdown';
-import type { Formatters } from '@/types';
+import { type Formatters } from '@/types';
 
 /** Return the years to show in the dropdown. */
 export function getYearOptions(

@@ -1,6 +1,6 @@
 import { type ComponentProps, type JSX } from 'react';
 
-import type { CalendarWeek } from '@/classes';
+import { type CalendarWeek } from '@/classes';
 
 export type WeekNumberProps = ComponentProps<'th'> & {
   /** The week to render. */

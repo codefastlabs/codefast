@@ -1,5 +1,5 @@
 import { DateLib, type DateLibOptions } from '@/classes/date-lib';
-import type { Modifiers } from '@/types';
+import { type Modifiers } from '@/types';
 
 /**
  * The label for the day gridcell when the calendar is not interactive.
@@ -11,7 +11,7 @@ export function labelGridCell(
   modifiers?: Modifiers,
   options?: DateLibOptions,
   dateLib?: DateLib,
-) {
+): string {
   let label = (dateLib ?? new DateLib(options)).format(date, 'PPPP');
 
   if (modifiers?.today) {

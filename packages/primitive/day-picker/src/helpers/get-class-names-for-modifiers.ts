@@ -1,11 +1,11 @@
-import type { ModifiersClassNames, ClassNames } from '@/types';
+import { type ModifiersClassNames, type ClassNames } from '@/types';
 import { DayFlag, SelectionState, UI } from '@/ui';
 
 export function getClassNamesForModifiers(
   modifiers: Record<string, boolean>,
   classNames: ClassNames,
   modifiersClassNames: ModifiersClassNames = {},
-) {
+): string[] {
   const modifierClassNames = Object.entries(modifiers)
     .filter(([, active]) => active)
     .reduce<string[]>(

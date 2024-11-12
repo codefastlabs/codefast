@@ -1,6 +1,6 @@
 import { type ComponentProps, type JSX } from 'react';
 
-import type { ClassNames, CustomComponents } from '@/types';
+import { type ClassNames, type CustomComponents } from '@/types';
 import { UI } from '@/ui';
 
 /** An option to use in the dropdown. Maps to the `<option>` HTML element. */
