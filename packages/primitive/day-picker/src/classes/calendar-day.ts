@@ -10,8 +10,6 @@ import { type DateLib, defaultDateLib } from '@/classes/date-lib';
 export class CalendarDay {
   /**
    * The utility functions to manipulate dates.
-   *
-   * @private
    */
   readonly dateLib: DateLib;
   /**

@@ -58,7 +58,6 @@ export interface Calendar {
   weeks: CalendarWeek[];
 }
 
-/** @private */
 export function useCalendar(
   props: Pick<
     DayPickerProps,

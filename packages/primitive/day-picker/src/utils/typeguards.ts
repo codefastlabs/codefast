@@ -38,8 +38,6 @@ export function isDayOfWeekType(value: unknown): value is DayOfWeek {
 
 /**
  * Returns true if `value` is an array of valid dates.
- *
- * @private
  */
 export function isDatesArray(value: unknown, dateLib: DateLib): value is Date[] {
   return Array.isArray(value) && value.every(dateLib.isDate);

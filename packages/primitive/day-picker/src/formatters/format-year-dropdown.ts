@@ -8,7 +8,6 @@ export function formatYearDropdown(year: number): string {
 }
 
 /**
- * @private
  * @deprecated Use `formatYearDropdown` instead.
  */
 export const formatYearCaption = formatYearDropdown;

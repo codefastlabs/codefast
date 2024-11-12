@@ -7,8 +7,6 @@ import { dateMatchModifiers } from '@/utils/date-match-modifiers';
 
 /**
  * Return a function to get the modifiers for a given day.
- *
- * @private
  */
 export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, dateLib: DateLib) {
   const { disabled, hidden, modifiers, showOutsideDays, today } = props;

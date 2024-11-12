@@ -163,20 +163,17 @@ export interface PropsBase {
   formatters?: Partial<Formatters>;
 
   /**
-   * @private
    * @deprecated This prop has been removed. Use `hidden={{ before: date }}`
    *   instead.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   fromDate?: Date | undefined;
   /**
-   * @private
    * @deprecated This prop has been renamed to `startMonth`.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   fromMonth?: Date | undefined;
   /**
-   * @private
    * @deprecated Use `startMonth` instead. E.g. `startMonth={new Date(year, 0)}`.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
@@ -278,12 +275,10 @@ export interface PropsBase {
   /** Event handler when a key is pressed on a day. */
   onDayKeyDown?: DayEventHandler<React.KeyboardEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayKeyPress?: DayEventHandler<React.KeyboardEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayKeyUp?: DayEventHandler<React.KeyboardEvent>;
@@ -292,32 +287,26 @@ export interface PropsBase {
   /** Event handler when the mouse leaves a day. */
   onDayMouseLeave?: DayEventHandler<React.MouseEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayPointerEnter?: DayEventHandler<React.PointerEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayPointerLeave?: DayEventHandler<React.PointerEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayTouchCancel?: DayEventHandler<React.TouchEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayTouchEnd?: DayEventHandler<React.TouchEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayTouchMove?: DayEventHandler<React.TouchEvent>;
   /**
-   * @private
    * @deprecated Use a custom `DayButton` component instead.
    */
   onDayTouchStart?: DayEventHandler<React.TouchEvent>;
@@ -343,8 +332,6 @@ export interface PropsBase {
 
   /**
    * Event handler when a week number is clicked.
-   *
-   * @private
    * @deprecated Use a custom `WeekNumber` component instead.
    * @see https://daypicker.dev/docs/customization#showweeknumber
    */
@@ -419,20 +406,17 @@ export interface PropsBase {
   /** Add a `title` attribute to the container element. */
   title?: HTMLDivElement['title'];
   /**
-   * @private
    * @deprecated This prop has been removed. Use `hidden={{ after: date }}`
    *   instead.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   toDate?: Date;
   /**
-   * @private
    * @deprecated This prop has been renamed to `endMonth`.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   toMonth?: Date;
   /**
-   * @private
    * @deprecated Use `endMonth` instead. E.g. `endMonth={new Date(year, 0)}`.
    * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */

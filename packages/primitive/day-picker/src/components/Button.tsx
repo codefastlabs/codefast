@@ -5,7 +5,6 @@ export type ButtonProps = ComponentProps<'button'>;
 /**
  * Render the button elements in the calendar.
  *
- * @private
  * @deprecated Use `PreviousMonthButton` or `@link NextMonthButton` instead.
  */
 export function Button(props: ButtonProps): JSX.Element {

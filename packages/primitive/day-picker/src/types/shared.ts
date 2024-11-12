@@ -367,8 +367,6 @@ export type ModifiersClassNames = Record<string, string>;
 
 /**
  * The props that have been deprecated since version 9.0.0.
- *
- * @private
  */
 export type V9DeprecatedProps =
   /** Use `hidden` prop instead. */
