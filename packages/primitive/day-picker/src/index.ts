@@ -1,7 +1,4 @@
-export * from '@/day-picker';
+import '@/style.css';
 
 export * from '@/components';
-
 export * from '@/lib';
-
-export { TZDate } from '@date-fns/tz';

@@ -1,7 +1,7 @@
 import { type FocusEvent, type KeyboardEvent } from 'react';
 
-import { MonthCaption, type MonthCaptionProps } from '@/components/month-caption';
-import { Week, type WeekProps } from '@/components/week';
+import { MonthCaption, type MonthCaptionProps } from '@/components/ui/month-caption';
+import { Week, type WeekProps } from '@/components/ui/week';
 import { useDayPicker } from '@/lib/hooks/use-day-picker';
 import { type labelDayButton, type labelNext, type labelWeekday, type labelWeekNumber } from '@/lib/labels';
 import { type PropsMulti, type PropsRange, type PropsSingle } from '@/lib/types/props';
