@@ -2,7 +2,7 @@ import { defaultDateLib } from '@/classes/date-lib';
 import { useSingle } from '@/selection/use-single';
 import { type DayPickerProps } from '@/types';
 
-import { act, renderHook } from 'test/render';
+import { act, renderHook } from '@test/render';
 
 describe('useSingle', () => {
   it('uses the selected value from props when onSelect is provided', () => {
