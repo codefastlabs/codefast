@@ -3,5 +3,5 @@ export function isVideoCompatible(): boolean {
 }
 
 export function random<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)] as T;
+  return array[Math.floor(Math.random() * array.length)];
 }
