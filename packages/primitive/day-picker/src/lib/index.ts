@@ -4,5 +4,6 @@ export * from '@/lib/formatters';
 export * from '@/lib/helpers';
 export * from '@/lib/hooks';
 export * from '@/lib/labels';
+export * from '@/lib/locale';
 export * from '@/lib/types';
 export * from '@/lib/utils';
