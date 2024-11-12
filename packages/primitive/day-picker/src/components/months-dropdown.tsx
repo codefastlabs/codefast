@@ -1,7 +1,7 @@
 import { type JSX } from 'react';
 
 import { type DropdownProps } from '@/components/dropdown';
-import { useDayPicker } from '@/hooks/use-day-picker';
+import { useDayPicker } from '@/lib/hooks/use-day-picker';
 
 /**
  * Render the dropdown to navigate between months.
