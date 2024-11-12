@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useControlledValue } from '@/helpers/use-controlled-value';
+import { useControlledValue } from '@/hooks/use-controlled-value';
 
 describe('when the value is controlled', () => {
   const defaultValue: string | undefined = 'foo'; // not controlled

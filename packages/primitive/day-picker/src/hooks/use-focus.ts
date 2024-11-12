@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { type CalendarDay, type DateLib } from '@/classes';
 import { calculateFocusTarget } from '@/helpers/calculate-focus-target';
 import { getNextFocus } from '@/helpers/get-next-focus';
+import { type Calendar } from '@/hooks/use-calendar';
 import { type MoveFocusBy, type MoveFocusDir, type DayPickerProps, type Modifiers } from '@/types';
-import { type Calendar } from '@/use-calendar';
 
 export interface UseFocus {
   /** Blur the focused day. */
