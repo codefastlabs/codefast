@@ -40,6 +40,10 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
+  "dependencies": {
+    "@date-fns/tz": "1.2.0",
+    "date-fns": "4.1.0"
+  },
   "devDependencies": {
     "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
@@ -61,7 +65,6 @@
   "peerDependencies": {
     "@types/react": "*",
     "@types/react-dom": "*",
-    "date-fns": "^4",
     "react": "^18.0 || ^19.0",
     "react-dom": "^18.0 || ^19.0"
   },
