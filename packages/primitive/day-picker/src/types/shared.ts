@@ -277,11 +277,11 @@ export interface DayOfWeek {
 /**
  * The event handler triggered when clicking or interacting with a day.
  *
- * @template EventType - The event type that triggered the event (e.g.
- *   `React.MouseEvent`, `React.KeyboardEvent`, etc.).
- * @param date - The date that has triggered the event.
- * @param modifiers - The modifiers belonging to the date.
- * @param e - The DOM event that triggered the event.
+ * @typeParam EventType - The type of the event object.
+ *
+ * @param date - The date on which the event occurs.
+ * @param modifiers - An object containing modifiers for the event.
+ * @param event - The event object containing details about the event.
  */
 export type DayEventHandler<EventType> = (date: Date, modifiers: Modifiers, event: EventType) => void;
 
