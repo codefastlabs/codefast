@@ -29,8 +29,8 @@ export interface Calendar {
    * month before the date.
    *
    * @param day - The date to navigate to.
-   * @param dateToCompare - Optional. If `date` is before `dateToCompare`, the
-   *   month is set to one month before the date.
+   * @param dateToCompare - Optional. If `date` is before `dateToCompare`, the month is set to one month before the
+   *   date.
    */
   goToDay: (day: CalendarDay) => void;
   /** Navigate to the specified month. Will fire the `onMonthChange` callback. */

@@ -43,8 +43,7 @@ export interface CustomComponents {
   /**
    * Render any button element in DayPicker.
    *
-   * @deprecated Use {@link CustomComponents.NextMonthButton} or
-   *   {@link CustomComponents.PreviousMonthButton} instead.
+   * @deprecated Use {@link CustomComponents.NextMonthButton} or {@link CustomComponents.PreviousMonthButton} instead.
    */
   Button: typeof components.Button;
   /** Render the caption label of the month grid. */
