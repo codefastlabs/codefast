@@ -19,6 +19,11 @@ import { getMonthOptions } from '@/helpers/get-month-options';
 import { getStyleForModifiers } from '@/helpers/get-style-for-modifiers';
 import { getWeekdays } from '@/helpers/get-weekdays';
 import { getYearOptions } from '@/helpers/get-year-options';
+import { useCalendar } from '@/hooks/use-calendar';
+import { type DayPickerContext, dayPickerContext } from '@/hooks/use-day-picker';
+import { useFocus } from '@/hooks/use-focus';
+import { useGetModifiers } from '@/hooks/use-get-modifiers';
+import { useSelection } from '@/hooks/use-selection';
 import * as defaultLabels from '@/labels';
 import {
   type DayPickerProps,
@@ -29,11 +34,6 @@ import {
   type SelectHandler,
 } from '@/types';
 import { UI, DayFlag, SelectionState } from '@/ui';
-import { useCalendar } from '@/use-calendar';
-import { type DayPickerContext, dayPickerContext } from '@/use-day-picker';
-import { useFocus } from '@/use-focus';
-import { useGetModifiers } from '@/use-get-modifiers';
-import { useSelection } from '@/use-selection';
 import { isDateRange } from '@/utils';
 import { rangeIncludesDate } from '@/utils/range-includes-date';
 

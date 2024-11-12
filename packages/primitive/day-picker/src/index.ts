@@ -10,6 +10,6 @@ export * from '@/labels';
 export * from '@/utils';
 export * from '@/ui';
 
-export * from '@/use-day-picker';
+export * from '@/hooks/use-day-picker';
 
 export { TZDate } from '@date-fns/tz';

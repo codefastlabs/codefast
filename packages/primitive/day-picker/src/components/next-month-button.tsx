@@ -1,6 +1,6 @@
 import { type ComponentProps, type JSX } from 'react';
 
-import { useDayPicker } from '@/use-day-picker';
+import { useDayPicker } from '@/hooks/use-day-picker';
 
 export type NextMonthButtonProps = ComponentProps<'button'>;
 
