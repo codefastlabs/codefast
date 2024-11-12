@@ -2,7 +2,7 @@ import { defaultDateLib } from '@/classes/date-lib';
 import { useRange } from '@/selection/use-range';
 import { type DayPickerProps } from '@/types';
 
-import { act, renderHook } from 'test/render';
+import { act, renderHook } from '@test/render';
 
 describe('useRange', () => {
   test('initialize with initiallySelected date range', () => {
