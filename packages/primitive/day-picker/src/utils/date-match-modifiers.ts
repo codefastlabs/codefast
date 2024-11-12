@@ -26,7 +26,6 @@ import {
  * };
  * dateMatchModifiers(date, [matcher1, matcher2]); // true, since day is in the matcher1 range.
  * ```
- *
  */
 export function dateMatchModifiers(
   date: Date,

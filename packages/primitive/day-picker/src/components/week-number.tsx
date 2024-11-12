@@ -9,7 +9,6 @@ export type WeekNumberProps = ComponentProps<'th'> & {
 
 /**
  * Render the cell with the number of the week.
- *
  */
 export function WeekNumber(props: WeekNumberProps): JSX.Element {
   const { week: _week, ...thProps } = props;

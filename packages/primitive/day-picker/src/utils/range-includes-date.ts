@@ -3,7 +3,6 @@ import { type DateRange } from '@/types';
 
 /**
  * Determines whether a given date is inside a specified date range.
- *
  */
 export function rangeIncludesDate(
   range: DateRange,
