@@ -1,6 +1,17 @@
 'use client';
 
 import {
+  type CustomComponents,
+  type DateRange,
+  type DayButtonProps,
+  DayFlag,
+  DayPicker,
+  type DayPickerProps,
+  type Matcher,
+  SelectionState,
+  UI,
+} from '@codefast-ui/day-picker';
+import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -9,17 +20,6 @@ import {
 } from '@radix-ui/react-icons';
 import { format } from 'date-fns';
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
-import {
-  type CalendarDay,
-  type CustomComponents,
-  type DateRange,
-  DayFlag,
-  DayPicker,
-  type DayPickerProps,
-  type Matcher,
-  SelectionState,
-  UI,
-} from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
@@ -56,11 +56,6 @@ function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
 /* -----------------------------------------------------------------------------
  * Component: DayButton
  * -------------------------------------------------------------------------- */
-
-interface DayButtonProps extends ComponentProps<'button'> {
-  day: CalendarDay;
-  modifiers: Record<DayFlag | SelectionState, boolean>;
-}
 
 function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
