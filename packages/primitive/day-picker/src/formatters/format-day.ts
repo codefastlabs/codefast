@@ -5,6 +5,6 @@ import { DateLib, type DateLibOptions } from '@/classes/date-lib';
  *
  * @defaultValue `d` (e.g. "1")
  */
-export function formatDay(date: Date, options?: DateLibOptions, dateLib?: DateLib) {
+export function formatDay(date: Date, options?: DateLibOptions, dateLib?: DateLib): string {
   return (dateLib ?? new DateLib(options)).format(date, 'd');
 }

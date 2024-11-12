@@ -5,7 +5,7 @@ import { DateLib, type DateLibOptions } from '@/classes/date-lib';
  *
  * @defaultValue `LLLL y` (e.g. "November 2022")
  */
-export function formatCaption(month: Date, options?: DateLibOptions, dateLib?: DateLib) {
+export function formatCaption(month: Date, options?: DateLibOptions, dateLib?: DateLib): string {
   return (dateLib ?? new DateLib(options)).format(month, 'LLLL y');
 }
 

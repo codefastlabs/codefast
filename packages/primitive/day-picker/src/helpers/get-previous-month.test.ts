@@ -1,5 +1,4 @@
 import { defaultDateLib } from '@/classes/date-lib';
-
 import { getPreviousMonth } from '@/helpers/get-previous-month';
 
 it('should return undefined if navigation is disabled', () => {

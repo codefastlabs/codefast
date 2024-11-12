@@ -1,5 +1,4 @@
 import { defaultDateLib } from '@/classes/date-lib';
-
 import { getNavMonths } from '@/helpers/get-nav-month';
 
 describe('when "startMonth" is not passed in', () => {

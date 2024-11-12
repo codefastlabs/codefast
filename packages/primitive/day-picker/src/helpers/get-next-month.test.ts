@@ -1,7 +1,6 @@
 import { addMonths, isSameMonth } from 'date-fns';
 
 import { defaultDateLib } from '@/classes/date-lib';
-
 import { getNextMonth } from '@/helpers/get-next-month';
 
 const startingMonth = new Date(2020, 4, 31);

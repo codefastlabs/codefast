@@ -3,19 +3,18 @@ import { createContext, useContext } from 'react';
 import { type CalendarDay } from '@/classes/calendar-day';
 import { type CalendarMonth } from '@/classes/calendar-month';
 import {
-  type DayPickerProps,
   type ClassNames,
   type CustomComponents,
+  type DayPickerProps,
   type Formatters,
   type Labels,
   type Mode,
   type Modifiers,
-  type Styles,
   type SelectedValue,
   type SelectHandler,
+  type Styles,
 } from '@/types';
 
-/** @ignore */
 export const dayPickerContext = createContext<
   | DayPickerContext<{
       mode?: Mode | undefined;
@@ -57,7 +56,7 @@ export interface DayPickerContext<T extends { mode?: Mode | undefined; required?
   previousMonth: Date | undefined;
   /** Set a selection. */
   select: SelectHandler<T> | undefined;
-  /** The selected date(s). */
+  /** The selected date. */
   selected: SelectedValue<T> | undefined;
   /** The styles for the UI elements. */
   styles: Partial<Styles> | undefined;

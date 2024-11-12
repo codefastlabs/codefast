@@ -244,19 +244,19 @@ describe('when matching the date before', () => {
 
 describe('when the matcher is a function', () => {
   test('should return true when matching the "from" date', () => {
-    const matcher = (date: Date) => date.getTime() === monday.getTime();
+    const matcher = (date: Date): boolean => date.getTime() === monday.getTime();
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return true when matching the "to" date', () => {
-    const matcher = (date: Date) => date.getTime() === saturday.getTime();
+    const matcher = (date: Date): boolean => date.getTime() === saturday.getTime();
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return false', () => {
-    const matcher = (date: Date) => date.getTime() === nextWeekSunday.getTime();
+    const matcher = (date: Date): boolean => date.getTime() === nextWeekSunday.getTime();
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(false);

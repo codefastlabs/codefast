@@ -14,7 +14,7 @@ describe('when the value is controlled', () => {
   describe('when setting a new value', () => {
     const newValue = 'taz';
 
-    test('should return the controlled value instead', async () => {
+    test('should return the controlled value instead', () => {
       const { result } = renderHook(() => useControlledValue<string>(defaultValue, controlledValue));
 
       act(() => {
@@ -37,7 +37,7 @@ describe('when the value is not controlled', () => {
   describe('when setting a new value', () => {
     const newValue = 'bar';
 
-    test('should return the new value', async () => {
+    test('should return the new value', () => {
       const { result } = renderHook(() => useControlledValue<string>(defaultValue, controlledValue));
 
       act(() => {

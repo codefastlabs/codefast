@@ -1,4 +1,4 @@
-import { type MouseEvent, type KeyboardEvent } from 'react';
+import { type KeyboardEvent, type MouseEvent } from 'react';
 
 import { type DateLib } from '@/classes/date-lib';
 import { useControlledValue } from '@/hooks/use-controlled-value';
@@ -6,8 +6,8 @@ import {
   type DayPickerProps,
   type Modifiers,
   type PropsSingle,
-  type SelectHandler,
   type SelectedValue,
+  type SelectHandler,
   type Selection,
 } from '@/types';
 
@@ -36,7 +36,7 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
   const select = (triggerDate: Date, modifiers: Modifiers, event: MouseEvent | KeyboardEvent): Date | undefined => {
     let newDate: Date | undefined = triggerDate;
 
-    if (!required && selected && selected && isSameDay(triggerDate, selected)) {
+    if (!required && selected && isSameDay(triggerDate, selected)) {
       // If the date is the same, clear the selection.
       newDate = undefined;
     }
@@ -45,11 +45,7 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
       setSelected(newDate);
     }
 
-    if (required) {
-      onSelect?.(newDate, triggerDate, modifiers, event);
-    } else {
-      onSelect?.(newDate, triggerDate, modifiers, event);
-    }
+    onSelect?.(newDate, triggerDate, modifiers, event);
 
     return newDate;
   };

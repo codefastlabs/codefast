@@ -33,16 +33,14 @@ export type DropdownProps = Omit<ComponentProps<'select'>, 'children'> & {
 /**
  * Render a dropdown component to use in the navigation bar.
  */
-export function Dropdown(props: DropdownProps): JSX.Element {
-  const { options, className, components, classNames, ...selectProps } = props;
-
+export function Dropdown({ options, className, components, classNames, ...props }: DropdownProps): JSX.Element {
   const cssClassSelect = [classNames[UI.Dropdown], className].join(' ');
 
-  const selectedOption = options?.find(({ value }) => value === selectProps.value);
+  const selectedOption = options?.find(({ value }) => value === props.value);
 
   return (
-    <span className={classNames[UI.DropdownRoot]} data-disabled={selectProps.disabled}>
-      <components.Select className={cssClassSelect} {...selectProps}>
+    <span className={classNames[UI.DropdownRoot]} data-disabled={props.disabled}>
+      <components.Select className={cssClassSelect} {...props}>
         {options?.map(({ value, label, disabled }) => (
           <components.Option key={value} disabled={disabled} value={value}>
             {label}

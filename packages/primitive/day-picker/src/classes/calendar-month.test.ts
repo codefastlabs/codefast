@@ -1,5 +1,4 @@
 import { CalendarDay } from '@/classes/calendar-day';
-
 import { CalendarMonth } from '@/classes/calendar-month';
 import { CalendarWeek } from '@/classes/calendar-week';
 

@@ -1,11 +1,11 @@
 import {
+  type ChangeEventHandler,
+  type FocusEvent,
   type JSX,
+  type KeyboardEvent,
+  type MouseEvent,
   useCallback,
   useMemo,
-  type ChangeEventHandler,
-  type MouseEvent,
-  type FocusEvent,
-  type KeyboardEvent,
 } from 'react';
 
 import { type CalendarDay } from '@/classes/calendar-day';
@@ -33,7 +33,7 @@ import {
   type SelectedValue,
   type SelectHandler,
 } from '@/types';
-import { UI, DayFlag, SelectionState } from '@/ui';
+import { DayFlag, SelectionState, UI } from '@/ui';
 import { isDateRange } from '@/utils';
 import { rangeIncludesDate } from '@/utils/range-includes-date';
 
@@ -42,11 +42,11 @@ import { rangeIncludesDate } from '@/utils/range-includes-date';
  */
 export function DayPicker(props: DayPickerProps): JSX.Element {
   const { components, formatters, labels, dateLib, locale, classNames } = useMemo(() => {
-    const locale = { ...defaultLocale, ...props.locale };
+    const mergedLocale = { ...defaultLocale, ...props.locale };
 
-    const dateLib = new DateLib(
+    const mergedDateLib = new DateLib(
       {
-        locale,
+        locale: mergedLocale,
         weekStartsOn: props.weekStartsOn,
         firstWeekContainsDate: props.firstWeekContainsDate,
         useAdditionalWeekYearTokens: props.useAdditionalWeekYearTokens,
@@ -56,11 +56,11 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
     );
 
     return {
-      dateLib,
+      dateLib: mergedDateLib,
       components: getComponents(props.components),
       formatters: getFormatters(props.formatters),
       labels: { ...defaultLabels, ...props.labels },
-      locale,
+      locale: mergedLocale,
       classNames: { ...getDefaultClassNames(), ...props.classNames },
     };
   }, [

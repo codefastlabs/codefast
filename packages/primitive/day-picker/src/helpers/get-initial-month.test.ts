@@ -1,7 +1,6 @@
 import { addMonths, isSameMonth } from 'date-fns';
 
 import { defaultDateLib } from '@/classes/date-lib';
-
 import { getInitialMonth } from '@/helpers/get-initial-month';
 
 describe('when no endMonth is given', () => {

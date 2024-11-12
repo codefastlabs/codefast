@@ -5,17 +5,17 @@ import { Week, type WeekProps } from '@/components/week';
 import { useDayPicker } from '@/hooks/use-day-picker';
 import { type labelDayButton, type labelNext, type labelWeekday, type labelWeekNumber } from '@/labels';
 import { type PropsMulti, type PropsRange, type PropsSingle } from '@/types/props';
-import { type Mode, type DayEventHandler } from '@/types/shared';
+import { type DayEventHandler, type Mode } from '@/types/shared';
 
 /**
  * @deprecated This type will be removed.
  */
-export type RootProvider = any;
+export type RootProvider = never;
 
 /**
  * @deprecated This type will be removed.
  */
-export type RootProviderProps = any;
+export type RootProviderProps = never;
 
 /**
  * @deprecated This component has been renamed. Use `MonthCaption` instead.
@@ -30,7 +30,7 @@ export type CaptionProps = MonthCaptionProps;
 /**
  * @deprecated This component has been removed.
  */
-export type HeadRow = any;
+export type HeadRow = never;
 
 /**
  * @deprecated This component has been renamed. Use `Week` instead.
@@ -91,7 +91,7 @@ export type SelectRangeEventHandler = PropsRange['onSelect'];
 /**
  * @deprecated This type is not used anymore.
  */
-export type DayPickerProviderProps = any;
+export type DayPickerProviderProps = never;
 
 /**
  * @deprecated This type has been removed to `useDayPicker`.
@@ -101,12 +101,12 @@ export const useNavigation = useDayPicker;
 /**
  * @deprecated This hook has been removed. Use a custom `Day` component instead.
  */
-export type useDayRender = any;
+export type UseDayRender = never;
 
 /**
  * @deprecated This type is not used anymore.
  */
-export type ContextProvidersProps = any;
+export type ContextProvidersProps = never;
 
 /**
  * @deprecated Use `typeof labelDayButton` instead.

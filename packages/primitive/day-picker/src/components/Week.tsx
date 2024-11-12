@@ -9,8 +9,6 @@ export type WeekProps = ComponentProps<'tr'> & {
 /**
  * Render a row in the calendar, with the days and the week number.
  */
-export function Week(props: WeekProps): JSX.Element {
-  const { week: _week, ...trProps } = props;
-
-  return <tr {...trProps} />;
+export function Week({ week: _week, ...props }: WeekProps): JSX.Element {
+  return <tr {...props} />;
 }

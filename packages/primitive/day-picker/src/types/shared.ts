@@ -1,3 +1,4 @@
+/* eslint-disable tsdoc/syntax -- we use JSDoc syntax to generate the documentation */
 import { type CSSProperties } from 'react';
 
 import type * as components from '@/components';
@@ -14,10 +15,10 @@ import {
 } from '@/formatters';
 import {
   type labelDayButton,
-  type labelNav,
   type labelGrid,
   type labelGridCell,
   type labelMonthDropdown,
+  type labelNav,
   type labelNext,
   type labelPrevious,
   type labelWeekday,
@@ -25,7 +26,7 @@ import {
   type labelWeekNumberHeader,
   type labelYearDropdown,
 } from '@/labels';
-import { type UI, type DayFlag, type SelectionState } from '@/ui';
+import { type DayFlag, type SelectionState, type UI } from '@/ui';
 
 /**
  * Selection modes supported by DayPicker.

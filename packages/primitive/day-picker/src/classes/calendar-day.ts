@@ -33,7 +33,7 @@ export class CalendarDay {
   constructor(date: Date, displayMonth: Date, dateLib: DateLib = defaultDateLib) {
     this.date = date;
     this.displayMonth = displayMonth;
-    this.outside = Boolean(displayMonth && !dateLib.isSameMonth(date, displayMonth));
+    this.outside = Boolean(!dateLib.isSameMonth(date, displayMonth));
     this.dateLib = dateLib;
   }
 
@@ -41,7 +41,7 @@ export class CalendarDay {
    * Check if the day is the same as the given day: considering if it is in the
    * same display month.
    */
-  isEqualTo(day: CalendarDay) {
+  isEqualTo(day: CalendarDay): boolean {
     return this.dateLib.isSameDay(day.date, this.date) && this.dateLib.isSameMonth(day.displayMonth, this.displayMonth);
   }
 }
