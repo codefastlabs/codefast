@@ -50,8 +50,7 @@ export function getNavMonths(
   } else if (fromYear) {
     startMonth = new Date(fromYear, 0, 1);
   } else if (!startMonth && hasDropdowns) {
-    const today =
-      props.today ?? (props.timeZone ? TZDate.tz(props.timeZone) : dateLib.Date ? new dateLib.Date() : new Date());
+    const today = props.today ?? (props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date());
 
     startMonth = startOfYear(addYears(today, -100));
   }
@@ -61,8 +60,7 @@ export function getNavMonths(
   } else if (toYear) {
     endMonth = new Date(toYear, 11, 31);
   } else if (!endMonth && hasDropdowns) {
-    const today =
-      props.today ?? (props.timeZone ? TZDate.tz(props.timeZone) : dateLib.Date ? new dateLib.Date() : new Date());
+    const today = props.today ?? (props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date());
 
     endMonth = endOfYear(today);
   }
