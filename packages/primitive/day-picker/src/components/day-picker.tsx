@@ -42,7 +42,10 @@ import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
  */
 export function DayPicker(props: DayPickerProps): JSX.Element {
   const { components, formatters, labels, dateLib, locale, classNames } = useMemo(() => {
-    const mergedLocale = { ...defaultLocale, ...props.locale };
+    const mergedLocale = {
+      ...defaultLocale,
+      ...props.locale,
+    };
 
     const mergedDateLib = new DateLib(
       {
@@ -59,9 +62,15 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
       dateLib: mergedDateLib,
       components: getComponents(props.components),
       formatters: getFormatters(props.formatters),
-      labels: { ...defaultLabels, ...props.labels },
+      labels: {
+        ...defaultLabels,
+        ...props.labels,
+      },
       locale: mergedLocale,
-      classNames: { ...getDefaultClassNames(), ...props.classNames },
+      classNames: {
+        ...getDefaultClassNames(),
+        ...props.classNames,
+      },
     };
   }, [
     props.classNames,
@@ -224,7 +233,10 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
   const { className, style } = useMemo(
     () => ({
       className: [classNames[UI.Root], props.className].filter(Boolean).join(' '),
-      style: { ...styles?.[UI.Root], ...props.style },
+      style: {
+        ...styles?.[UI.Root],
+        ...props.style,
+      },
     }),
     [classNames, props.className, props.style, styles],
   );
