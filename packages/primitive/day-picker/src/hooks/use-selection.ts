@@ -1,7 +1,7 @@
 import { type DateLib } from '@/classes/date-lib';
-import { useMulti } from '@/selection/use-multi';
-import { useRange } from '@/selection/use-range';
-import { useSingle } from '@/selection/use-single';
+import { useMulti } from '@/hooks/use-multi';
+import { useRange } from '@/hooks/use-range';
+import { useSingle } from '@/hooks/use-single';
 import { type Selection, type DayPickerProps } from '@/types';
 
 export function useSelection<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> | undefined {
