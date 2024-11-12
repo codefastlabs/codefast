@@ -1,3 +1,5 @@
+import { type MouseEvent } from 'react';
+
 import { defaultDateLib } from '@/classes/date-lib';
 import { useMulti } from '@/selection/use-multi';
 import { type DayPickerProps } from '@/types';
@@ -29,7 +31,7 @@ describe('useMulti', () => {
     const { result } = renderHook(() => useMulti(props, defaultDateLib));
 
     act(() => {
-      result.current.select?.(new Date(2023, 9, 3), {}, {} as React.MouseEvent);
+      result.current.select?.(new Date(2023, 9, 3), {}, {} as MouseEvent);
     });
 
     expect(result.current.selected).toEqual([...initialSelectedDates, new Date(2023, 9, 3)]);
