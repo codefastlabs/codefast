@@ -48,7 +48,6 @@ export interface PropsBase {
    * Use ISO week dates instead of the locale setting. Setting this prop will
    * ignore `weekStartsOn` and `firstWeekContainsDate`.
    *
-   * @see https://daypicker.dev/docs/localization#iso-week-dates
    * @see https://en.wikipedia.org/wiki/ISO_week_date
    */
   ISOWeek?: boolean;
@@ -59,7 +58,6 @@ export interface PropsBase {
    * Use this prop when you need to focus DayPicker after a user action, for
    * improved accessibility.
    *
-   * @see https://daypicker.dev/guides/accessibility#autofocus
    */
   autoFocus?: boolean;
 
@@ -67,15 +65,14 @@ export interface PropsBase {
    * Show dropdowns to navigate between months or years.
    *
    * - `true`: display the dropdowns for both month and year
-   * - `label`: display the month and the year as a label. Change the label with
-   *   the `formatCaption` formatter.
+   * - `label`: display the month and the year as a label.
+   * Change the label with the `formatCaption` formatter.
    * - `month`: display only the dropdown for the months
    * - `year`: display only the dropdown for the years
    *
    * **Note:** showing the dropdown will set the start/end months
    * {@link fromYear} to 100 years ago, and {@link toYear} to the current year.
    *
-   * @see https://daypicker.dev/docs/customization#caption-layouts
    */
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
   /** Class name to add to the root element. */
@@ -87,13 +84,11 @@ export interface PropsBase {
    * example, when importing the style via CSS modules or when using a CSS
    * framework.
    *
-   * @see https://daypicker.dev/docs/styling
    */
   classNames?: Partial<ClassNames>;
   /**
    * Change the components used for rendering the calendar elements.
    *
-   * @see https://daypicker.dev/guides/custom-components
    */
   components?: Partial<CustomComponents>;
   /**
@@ -110,46 +105,39 @@ export interface PropsBase {
    * set the month programmatically, use {@link month} and {@link onMonthChange}.
    *
    * @defaultValue The current month
-   * @see https://daypicker.dev/docs/navigation
    */
   defaultMonth?: Date;
   /**
    * The text direction of the calendar. Use `ltr` for left-to-right (default)
    * or `rtl` for right-to-left.
    *
-   * @see https://daypicker.dev/docs/translation#rtl-text-direction
    */
   dir?: HTMLDivElement['dir'];
   /**
    * Disable the navigation between months. This prop won't hide the navigation:
    * to hide the navigation, use {@link hideNavigation}.
    *
-   * @see https://daypicker.dev/docs/navigation#disablenavigation
    */
   disableNavigation?: boolean;
   /**
    * Apply the `disabled` modifier to the matching days.
    *
-   * @see https://daypicker.dev/docs/selection-modes#disabling-dates
    */
   disabled?: Matcher | Matcher[] | undefined;
   /**
    * The latest month to end the month navigation.
    *
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   endMonth?: Date;
   /**
    * The day of January, which is always in the first week of the year.
    *
-   * @see https://daypicker.dev/docs/localization#first-week-contains-date
    */
   firstWeekContainsDate?: 1 | 4;
   /**
    * Display always 6 weeks per each month, regardless of the month’s number of
    * weeks. Weeks will be filled with the days from the next month.
    *
-   * @see https://daypicker.dev/docs/customization#fixed-weeks
    */
   fixedWeeks?: boolean;
   /**
@@ -158,38 +146,31 @@ export interface PropsBase {
    * Use this prop to communicate the calendar's status to screen readers.
    * Prefer strings over complex UI elements.
    *
-   * @see https://daypicker.dev/guides/accessibility#footer
    */
   footer?: ReactNode | string;
   /**
    * Formatters used to format dates to strings. Use this prop to override the
    * default functions.
    *
-   * @see https://daypicker.dev/docs/translation#custom-formatters
    */
   formatters?: Partial<Formatters>;
 
   /**
-   * @deprecated This prop has been removed. Use `hidden={{ before: date }}`
-   *   instead.
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
+   * @deprecated This prop has been removed. Use `hidden={{ before: date }}` instead.
    */
   fromDate?: Date | undefined;
   /**
    * @deprecated This prop has been renamed to `startMonth`.
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   fromMonth?: Date | undefined;
   /**
    * @deprecated Use `startMonth` instead. E.g. `startMonth={new Date(year, 0)}`.
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   fromYear?: number | undefined;
   /**
    * Apply the `hidden` modifier to the matching days. Will hide them from the
    * calendar.
    *
-   * @see https://daypicker.dev/guides/custom-modifiers#hidden-modifier
    */
   hidden?: Matcher | Matcher[] | undefined;
 
@@ -197,7 +178,6 @@ export interface PropsBase {
    * Hide the navigation buttons. This prop won't disable the navigation: to
    * disable the navigation, use {@link disableNavigation}.
    *
-   * @see https://daypicker.dev/docs/navigation#hidenavigation
    */
   hideNavigation?: boolean;
   /**
@@ -210,7 +190,6 @@ export interface PropsBase {
    * Labels creators to override the defaults. Use this prop to customize the
    * aria-label attributes in DayPicker.
    *
-   * @see https://daypicker.dev/docs/translation#aria-labels
    */
   labels?: Partial<Labels>;
   /** Add the language tag to the container element. */
@@ -224,32 +203,27 @@ export interface PropsBase {
    *   <DayPicker locale={es} />
    *
    * @defaultValue enUS - The English locale default of `date-fns`.
-   * @see https://daypicker.dev/docs/localization
    * @see https://github.com/date-fns/date-fns/tree/main/src/locale for a list of the supported locales
    */
   locale?: Partial<Locale> | undefined;
   /**
    * Enable the selection of a single day, multiple days, or a range of days.
    *
-   * @see https://daypicker.dev/docs/selection-modes
    */
   mode?: Mode | undefined;
   /**
    * Add modifiers to the matching days.
    *
-   * @see https://daypicker.dev/guides/custom-modifiers
    */
   modifiers?: Record<string, Matcher | Matcher[] | undefined> | undefined;
   /**
    * Change the class name for the day matching the `modifiers`.
    *
-   * @see https://daypicker.dev/guides/custom-modifiers
    */
   modifiersClassNames?: ModifiersClassNames;
   /**
    * Change the class name for the day matching the {@link modifiers}.
    *
-   * @see https://daypicker.dev/guides/custom-modifiers
    */
   modifiersStyles?: ModifiersStyles;
   /**
@@ -258,7 +232,6 @@ export interface PropsBase {
    * As opposed to `defaultMonth`, use this prop with `onMonthChange` to change
    * the month programmatically.
    *
-   * @see https://daypicker.dev/docs/navigation
    */
   month?: Date;
   /**
@@ -270,7 +243,6 @@ export interface PropsBase {
    * The number of displayed months.
    *
    * @defaultValue 1
-   * @see https://daypicker.dev/docs/customization#multiplemonths
    */
   numberOfMonths?: number;
   /** Event handler when a day is blurred. */
@@ -320,40 +292,34 @@ export interface PropsBase {
   /**
    * Event fired when the user navigates between months.
    *
-   * @see https://daypicker.dev/docs/navigation#onmonthchange
    */
   onMonthChange?: MonthChangeEventHandler;
   /**
    * Event handler when the next month button is clicked.
    *
-   * @see https://daypicker.dev/docs/navigation
    */
   onNextClick?: MonthChangeEventHandler;
 
   /**
    * Event handler when the previous month button is clicked.
    *
-   * @see https://daypicker.dev/docs/navigation
    */
   onPrevClick?: MonthChangeEventHandler;
 
   /**
    * Event handler when a week number is clicked.
    * @deprecated Use a custom `WeekNumber` component instead.
-   * @see https://daypicker.dev/docs/customization#showweeknumber
    */
 
   onWeekNumberClick?: never;
   /**
    * Paginate the month navigation displaying the `numberOfMonths` at a time.
    *
-   * @see https://daypicker.dev/docs/customization#multiplemonths
    */
   pagedNavigation?: boolean;
   /**
    * Whether the selection is required.
    *
-   * @see https://daypicker.dev/docs/selection-modes
    */
   required?: boolean | undefined;
 
@@ -361,13 +327,11 @@ export interface PropsBase {
    * Render the months in reversed order (when {@link numberOfMonths} is set) to
    * display the most recent month first.
    *
-   * @see https://daypicker.dev/docs/customization#multiplemonths
    */
   reverseMonths?: boolean;
   /**
    * Show the outside days (days falling in the next or the previous month).
    *
-   * @see https://daypicker.dev/docs/customization#outside-days
    */
   showOutsideDays?: boolean;
   /**
@@ -377,13 +341,11 @@ export interface PropsBase {
    * - To use ISO week numbering, use the `ISOWeek` prop.
    * - To change how the week numbers are displayed, use the `formatters` prop.
    *
-   * @see https://daypicker.dev/docs/customization#showweeknumber
    */
   showWeekNumber?: boolean;
   /**
    * The earliest month to start the month navigation.
    *
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   startMonth?: Date | undefined;
   /** Style to apply to the root element. */
@@ -391,7 +353,6 @@ export interface PropsBase {
   /**
    * Change the inline styles of the HTML elements.
    *
-   * @see https://daypicker.dev/docs/styling
    */
   styles?: Partial<Styles>;
 
@@ -406,7 +367,6 @@ export interface PropsBase {
    * package documentation for more information.
    *
    * @experimental
-   * @see https://daypicker.dev/docs/time-zone
    */
   timeZone?: string | undefined;
 
@@ -415,24 +375,20 @@ export interface PropsBase {
   /**
    * @deprecated This prop has been removed. Use `hidden={{ after: date }}`
    *   instead.
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   toDate?: Date;
   /**
    * @deprecated This prop has been renamed to `endMonth`.
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   toMonth?: Date;
   /**
    * @deprecated Use `endMonth` instead. E.g. `endMonth={new Date(year, 0)}`.
-   * @see https://daypicker.dev/docs/navigation#start-and-end-dates
    */
   toYear?: number;
   /**
    * The today’s date. Default is the current date. This date will get the
    * `today` modifier to style the day.
    *
-   * @see https://daypicker.dev/guides/custom-modifiers#today-modifier
    */
   today?: Date;
   /**
@@ -453,7 +409,6 @@ export interface PropsBase {
    * The index of the first day of the week (0 - Sunday). Overrides the locale's
    * one.
    *
-   * @see https://daypicker.dev/docs/localization#first-date-of-the-week
    */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
 }
