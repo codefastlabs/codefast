@@ -1,31 +1,31 @@
-import type { CSSProperties } from 'react';
+import type * as components from '@/components';
+import {
+  type formatCaption,
+  type formatDay,
+  type formatMonthCaption,
+  type formatMonthDropdown,
+  type formatWeekdayName,
+  type formatWeekNumber,
+  type formatWeekNumberHeader,
+  type formatYearCaption,
+  type formatYearDropdown,
+} from '@/formatters';
+import {
+  type labelDayButton,
+  type labelNav,
+  type labelGrid,
+  type labelGridCell,
+  type labelMonthDropdown,
+  type labelNext,
+  type labelPrevious,
+  type labelWeekday,
+  type labelWeekNumber,
+  type labelWeekNumberHeader,
+  type labelYearDropdown,
+} from '@/labels';
+import { type UI, type DayFlag, type SelectionState } from '@/ui';
 
-import { UI, DayFlag, SelectionState } from '../UI.js';
-import * as components from '../components/custom-components.js';
-import {
-  formatCaption,
-  formatDay,
-  formatMonthCaption,
-  formatMonthDropdown,
-  formatWeekdayName,
-  formatWeekNumber,
-  formatWeekNumberHeader,
-  formatYearCaption,
-  formatYearDropdown,
-} from '../formatters/index.js';
-import {
-  labelDayButton,
-  labelNav,
-  labelGrid,
-  labelGridcell,
-  labelMonthDropdown,
-  labelNext,
-  labelPrevious,
-  labelWeekday,
-  labelWeekNumber,
-  labelWeekNumberHeader,
-  labelYearDropdown,
-} from '../labels/index.js';
+import type { CSSProperties } from 'react';
 
 /**
  * Selection modes supported by DayPicker.
@@ -34,16 +34,14 @@ import {
  * - `multiple`: allow selecting multiple days.
  * - `range`: use DayPicker to select a range of days.
  *
- * @see https://daypicker.dev/docs/selection-modes
  */
 export type Mode = 'single' | 'multiple' | 'range';
 
 /**
  * The components that can be changed using the `components` prop.
  *
- * @see https://daypicker.dev/guides/custom-components
  */
-export type CustomComponents = {
+export interface CustomComponents {
   /**
    * Render any button element in DayPicker.
    *
@@ -51,10 +49,10 @@ export type CustomComponents = {
    *   {@link CustomComponents.PreviousMonthButton} instead.
    */
   Button: typeof components.Button;
-  /** Render the chevron icon used in the navigation buttons and dropdowns. */
-  Chevron: typeof components.Chevron;
   /** Render the caption label of the month grid. */
   CaptionLabel: typeof components.CaptionLabel;
+  /** Render the chevron icon used in the navigation buttons and dropdowns. */
+  Chevron: typeof components.Chevron;
   /** Render the day cell in the month grid. */
   Day: typeof components.Day;
   /** Render the button containing the day in the day cell. */
@@ -73,89 +71,88 @@ export type CustomComponents = {
   MonthGrid: typeof components.MonthGrid;
   /** Wrapper of the month grids. */
   Months: typeof components.Months;
+  /** Render the dropdown with the months. */
+  MonthsDropdown: typeof components.MonthsDropdown;
   /** Render the navigation element with the next and previous buttons. */
   Nav: typeof components.Nav;
+  /** Render the next month button element in the navigation. */
+  NextMonthButton: typeof components.NextMonthButton;
   /** Render the `<option>` HTML element in the dropdown. */
   Option: typeof components.Option;
   /** Render the previous month button element in the navigation. */
   PreviousMonthButton: typeof components.PreviousMonthButton;
-  /** Render the next month button element in the navigation. */
-  NextMonthButton: typeof components.NextMonthButton;
   /** Render the root element of the calendar. */
   Root: typeof components.Root;
   /** Render the select element in the dropdowns. */
   Select: typeof components.Select;
-  /** Render the weeks section in the month grid. */
-  Weeks: typeof components.Weeks;
   /** Render the week rows. */
   Week: typeof components.Week;
-  /** Render the weekday name in the header. */
-  Weekday: typeof components.Weekday;
-  /** Render the row containing the week days. */
-  Weekdays: typeof components.Weekdays;
   /** Render the cell with the number of the week. */
   WeekNumber: typeof components.WeekNumber;
   /** Render the header of the week number column. */
   WeekNumberHeader: typeof components.WeekNumberHeader;
-  /** Render the dropdown with the months. */
-  MonthsDropdown: typeof components.MonthsDropdown;
+  /** Render the weekday name in the header. */
+  Weekday: typeof components.Weekday;
+  /** Render the row containing the week days. */
+  Weekdays: typeof components.Weekdays;
+  /** Render the weeks section in the month grid. */
+  Weeks: typeof components.Weeks;
   /** Render the dropdown with the years. */
   YearsDropdown: typeof components.YearsDropdown;
-};
+}
 
 /** Represent a map of formatters used to render localized content. */
-export type Formatters = {
+export interface Formatters {
   /** Format the caption of a month grid. */
   formatCaption: typeof formatCaption;
   /** Format the day in the day cell. */
   formatDay: typeof formatDay;
-  /** Format the label in the month dropdown. */
-  formatMonthDropdown: typeof formatMonthDropdown;
   /** @deprecated Use {@link Formatters.formatCaption} instead. */
   formatMonthCaption: typeof formatMonthCaption;
+  /** Format the label in the month dropdown. */
+  formatMonthDropdown: typeof formatMonthDropdown;
   /** Format the week number. */
   formatWeekNumber: typeof formatWeekNumber;
   /** Format the header of the week number column. */
   formatWeekNumberHeader: typeof formatWeekNumberHeader;
   /** Format the week day name in the header. */
   formatWeekdayName: typeof formatWeekdayName;
-  /** Format the label in the year dropdown. */
-  formatYearDropdown: typeof formatYearDropdown;
   /** @deprecated Use {@link Formatters.formatYearDropdown} instead. */
   formatYearCaption: typeof formatYearCaption;
-};
+  /** Format the label in the year dropdown. */
+  formatYearDropdown: typeof formatYearDropdown;
+}
 
 /** Map of functions to translate ARIA labels for the relative elements. */
-export type Labels = {
-  /** The label for the navigation toolbar. */
-  labelNav: typeof labelNav;
+export interface Labels {
+  /** @deprecated Use {@link labelDayButton} instead. */
+  labelDay: typeof labelDayButton;
+  /** The label for the day button. */
+  labelDayButton: typeof labelDayButton;
   /** The label for the month grid. */
   labelGrid: typeof labelGrid;
   /** The label for the gridcell, when the calendar is not interactive. */
-  labelGridcell: typeof labelGridcell;
+  labelGridCell: typeof labelGridCell;
   /** The label for the month dropdown. */
   labelMonthDropdown: typeof labelMonthDropdown;
-  /** The label for the year dropdown. */
-  labelYearDropdown: typeof labelYearDropdown;
+  /** The label for the navigation toolbar. */
+  labelNav: typeof labelNav;
   /** The label for the "next month" button. */
   labelNext: typeof labelNext;
   /** The label for the "previous month" button. */
   labelPrevious: typeof labelPrevious;
-  /** The label for the day button. */
-  labelDayButton: typeof labelDayButton;
-  /** @deprecated Use {@link labelDayButton} instead. */
-  labelDay: typeof labelDayButton;
-  /** The label for the weekday. */
-  labelWeekday: typeof labelWeekday;
   /** The label for the week number. */
   labelWeekNumber: typeof labelWeekNumber;
   /**
    * Return the label for the column of the week number.
    *
-   * @since 9.0.0
    */
   labelWeekNumberHeader: typeof labelWeekNumberHeader;
-};
+  /** The label for the weekday. */
+  labelWeekday: typeof labelWeekday;
+  /** The label for the year dropdown. */
+  labelYearDropdown: typeof labelYearDropdown;
+}
 
 /**
  * A value or a function that matches a specific day.
@@ -219,7 +216,9 @@ export type Matcher =
  *   // Match days after the 2nd of February 2019
  *   const matcher: DateAfter = { after: new Date(2019, 1, 2) };
  */
-export type DateAfter = { after: Date };
+export interface DateAfter {
+  after: Date;
+}
 
 /**
  * Match a day falling before the specified date, with the date not included.
@@ -228,7 +227,9 @@ export type DateAfter = { after: Date };
  *   // Match days before the 2nd of February 2019
  *   const matcher: DateBefore = { before: new Date(2019, 1, 2) };
  */
-export type DateBefore = { before: Date };
+export interface DateBefore {
+  before: Date;
+}
 
 /**
  * An interval of dates. Differently from {@link DateRange}, the range ends here
@@ -241,7 +242,10 @@ export type DateBefore = { before: Date };
  *     before: new Date(2019, 1, 5)
  *   };
  */
-export type DateInterval = { before: Date; after: Date };
+export interface DateInterval {
+  after: Date;
+  before: Date;
+}
 
 /**
  * A range of dates. The range can be open. Differently from
@@ -254,7 +258,10 @@ export type DateInterval = { before: Date; after: Date };
  *     to: new Date(2019, 1, 5)
  *   };
  */
-export type DateRange = { from: Date | undefined; to?: Date | undefined };
+export interface DateRange {
+  from: Date | undefined;
+  to?: Date | undefined;
+}
 
 /**
  * Match dates being one of the specified days of the week (`0-6`, where `0` is
@@ -266,7 +273,9 @@ export type DateRange = { from: Date | undefined; to?: Date | undefined };
  *   // Match weekends
  *   const matcher: DayOfWeek = { dayOfWeek: [0, 6] };
  */
-export type DayOfWeek = { dayOfWeek: number | number[] };
+export interface DayOfWeek {
+  dayOfWeek: number | number[];
+}
 
 /**
  * The event handler triggered when clicking or interacting with a day.
@@ -286,7 +295,6 @@ export type DayEventHandler<EventType> = (date: Date, modifiers: Modifiers, e: E
  * <DayPicker onMonthChange={(month) => console.log(month)} />
  * ```
  *
- * @see https://daypicker.dev/docs/navigation
  */
 export type MonthChangeEventHandler = (month: Date) => void;
 
@@ -335,7 +343,6 @@ export type Styles = {
  *   available: false // custom modifier example for matching an available day
  *   };
  *
- * @see https://daypicker.dev/guides/custom-modifiers
  */
 export type Modifiers = Record<string, boolean>;
 
@@ -367,8 +374,6 @@ export type ModifiersClassNames = Record<string, string>;
  * The props that have been deprecated since version 9.0.0.
  *
  * @private
- * @since 9.0.0
- * @see https://daypicker.dev/upgrading
  */
 export type V9DeprecatedProps =
   /** Use `hidden` prop instead. */

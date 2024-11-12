@@ -1,13 +1,11 @@
-import React from 'react';
+import { type ComponentProps, type JSX } from 'react';
+
+export type RootProps = ComponentProps<'div'>;
 
 /**
  * Render the root element.
  *
- * @group Components
- * @see https://daypicker.dev/guides/custom-components
  */
-export function Root(props: JSX.IntrinsicElements['div']) {
+export function Root(props: RootProps): JSX.Element {
   return <div {...props} />;
 }
-
-export type RootProps = Parameters<typeof Root>[0];
