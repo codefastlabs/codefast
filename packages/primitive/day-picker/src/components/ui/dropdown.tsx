@@ -23,7 +23,7 @@ export type DropdownProps = Omit<ComponentProps<'select'>, 'children'> & {
    */
   classNames: ClassNames;
   /**
-   * @deprecated Use{@link useDayPicker} hook to get the list of internal
+   * @deprecated Use {@link useDayPicker} hook to get the list of internal
    *   components.
    */
   components: CustomComponents;
