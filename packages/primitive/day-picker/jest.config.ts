@@ -15,7 +15,13 @@ const config: Config = {
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[tj]s?(x)'],
+  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
+  testPathIgnorePatterns: [
+    // Don't look for tests in node_modules
+    '/node_modules/',
+    // Don't look for tests in dist
+    '/dist/',
+  ],
 };
 
 export default config;

@@ -2,4 +2,4 @@
 import '@testing-library/jest-dom';
 import 'html-validate/jest';
 
-import './test/date-matchers';
+import '@test/date-matchers';
