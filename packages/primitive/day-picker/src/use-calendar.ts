@@ -15,7 +15,6 @@ import { type DayPickerProps } from '@/types';
 
 /**
  * Return the calendar object to work with the calendar in custom components.
- *
  */
 export interface Calendar {
   /**

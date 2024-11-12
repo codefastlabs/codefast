@@ -33,13 +33,11 @@ import { type UI, type DayFlag, type SelectionState } from '@/ui';
  * - `single`: use DayPicker to select single days.
  * - `multiple`: allow selecting multiple days.
  * - `range`: use DayPicker to select a range of days.
- *
  */
 export type Mode = 'single' | 'multiple' | 'range';
 
 /**
  * The components that can be changed using the `components` prop.
- *
  */
 export interface CustomComponents {
   /**
@@ -145,7 +143,6 @@ export interface Labels {
   labelWeekNumber: typeof labelWeekNumber;
   /**
    * Return the label for the column of the week number.
-   *
    */
   labelWeekNumberHeader: typeof labelWeekNumberHeader;
   /** The label for the weekday. */
@@ -294,7 +291,6 @@ export type DayEventHandler<EventType> = (date: Date, modifiers: Modifiers, e: E
  * ```tsx
  * <DayPicker onMonthChange={(month) => console.log(month)} />
  * ```
- *
  */
 export type MonthChangeEventHandler = (month: Date) => void;
 
@@ -342,7 +338,6 @@ export type Styles = {
  *   booked: true // custom modifier example for matching a booked day
  *   available: false // custom modifier example for matching an available day
  *   };
- *
  */
 export type Modifiers = Record<string, boolean>;
 

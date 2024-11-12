@@ -12,7 +12,6 @@ export type MonthProps = ComponentProps<'div'> & {
 /**
  * Render the grid with the weekday header row and the weeks for the given
  * month.
- *
  */
 export function Month(props: MonthProps): JSX.Element {
   const { calendarMonth, displayIndex, ...divProps } = props;

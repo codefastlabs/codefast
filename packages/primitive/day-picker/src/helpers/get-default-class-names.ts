@@ -3,7 +3,6 @@ import { UI, DayFlag, SelectionState } from '@/ui';
 
 /**
  * Get the default class names for the UI elements.
- *
  */
 export function getDefaultClassNames(): ClassNames {
   const classNames: Partial<Required<ClassNames>> = {};

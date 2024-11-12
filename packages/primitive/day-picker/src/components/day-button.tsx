@@ -12,7 +12,6 @@ export type DayButtonProps = ComponentProps<'button'> & {
 
 /**
  * Render the button for a day in the calendar.
- *
  */
 export function DayButton(props: DayButtonProps): JSX.Element {
   const { day: _day, modifiers, ...buttonProps } = props;

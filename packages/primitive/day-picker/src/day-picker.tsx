@@ -39,7 +39,6 @@ import { rangeIncludesDate } from '@/utils/range-includes-date';
 
 /**
  * Render the date picker calendar.
- *
  */
 export function DayPicker(props: DayPickerProps): JSX.Element {
   const { components, formatters, labels, dateLib, locale, classNames } = useMemo(() => {

@@ -3,7 +3,6 @@ import { rangeIncludesDate } from '@/utils/range-includes-date';
 
 /**
  * Determines whether a given range overlaps with another range.
- *
  */
 export function rangeOverlaps(
   rangeLeft: { from: Date; to: Date },

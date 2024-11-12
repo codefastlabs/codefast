@@ -48,7 +48,6 @@ export type LabelOptions = DateLibOptions;
  * Extends `date-fns` [format](https://date-fns.org/docs/format),
  * [startOfWeek](https://date-fns.org/docs/startOfWeek) and
  * [endOfWeek](https://date-fns.org/docs/endOfWeek) options.
- *
  */
 export interface DateLibOptions extends DateFnsFormatOptions, StartOfWeekOptions, EndOfWeekOptions {
   /** A constructor for the `Date` object. */
@@ -403,7 +402,6 @@ export { enUS as defaultLocale } from 'date-fns/locale/en-US';
 
 /**
  * The default date library with English locale.
- *
  */
 export const defaultDateLib = new DateLib();
 

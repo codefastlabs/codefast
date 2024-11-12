@@ -28,7 +28,6 @@ import {
  * };
  * rangeContainsModifiers(range, [matcher1, matcher2]); // true, since matcher1 is in the date.
  * ```
- *
  */
 export function rangeContainsModifiers(
   range: { from: Date; to: Date },
