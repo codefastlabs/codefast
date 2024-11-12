@@ -18,6 +18,8 @@
     "prettier:check": "prettier --check --ignore-unknown .",
     "release": "pnpm build:packages && changeset publish",
     "start": "turbo start",
+    "test": "turbo test",
+    "test:watch": "turbo test:watch",
     "version-packages": "changeset version"
   },
   "simple-git-hooks": {
