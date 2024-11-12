@@ -4,8 +4,8 @@
  * @defaultValue `"Go to the Next Month"`
  */
 export function labelNext(
-  /** `undefined` where there's no next month to navigate to. */
-  month: Date | undefined,
-) {
+  /** `undefined` where there is no next month to navigate to. */
+  _month: Date | undefined,
+): string {
   return 'Go to the Next Month';
 }

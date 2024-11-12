@@ -5,6 +5,6 @@ import { type DateLibOptions } from '@/classes/date-lib';
  *
  * @defaultValue `Week ${weekNumber}`
  */
-export function labelWeekNumber(weekNumber: number, options?: DateLibOptions): string {
+export function labelWeekNumber(weekNumber: number, _options?: DateLibOptions): string {
   return `Week ${weekNumber}`;
 }

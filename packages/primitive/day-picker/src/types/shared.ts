@@ -283,7 +283,7 @@ export interface DayOfWeek {
  * @param modifiers - The modifiers belonging to the date.
  * @param e - The DOM event that triggered the event.
  */
-export type DayEventHandler<EventType> = (date: Date, modifiers: Modifiers, e: EventType) => void;
+export type DayEventHandler<EventType> = (date: Date, modifiers: Modifiers, event: EventType) => void;
 
 /**
  * The event handler when a month is changed in the calendar.

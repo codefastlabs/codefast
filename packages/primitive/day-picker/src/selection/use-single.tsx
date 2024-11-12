@@ -36,7 +36,7 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
   const select = (
     triggerDate: Date,
     modifiers: Modifiers,
-    e: React.MouseEvent | React.KeyboardEvent,
+    event: React.MouseEvent | React.KeyboardEvent,
   ): Date | undefined => {
     let newDate: Date | undefined = triggerDate;
 
@@ -50,9 +50,9 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
     }
 
     if (required) {
-      onSelect?.(newDate, triggerDate, modifiers, e);
+      onSelect?.(newDate, triggerDate, modifiers, event);
     } else {
-      onSelect?.(newDate, triggerDate, modifiers, e);
+      onSelect?.(newDate, triggerDate, modifiers, event);
     }
 
     return newDate;
