@@ -1,10 +1,9 @@
+import { act, renderHook } from '@testing-library/react';
 import { type MouseEvent } from 'react';
 
 import { defaultDateLib } from '@/lib/classes/date-lib';
 import { useRange } from '@/lib/hooks/use-range';
 import { type DayPickerProps } from '@/lib/types';
-
-import { act, renderHook } from '@test/render';
 
 describe('useRange', () => {
   test('initialize with initiallySelected date range', () => {
