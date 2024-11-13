@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 
 import { ContainerAttributes } from './container-attributes';
 
-describe('container attributes component', () => {
+describe('container-attributes component', () => {
   it('renders DayPicker with expected data attributes', () => {
     const { container } = render(<ContainerAttributes id="test-div" />);
 
