@@ -10,23 +10,16 @@ module.exports = {
     require.resolve('@vercel/style-guide/eslint/browser'),
     require.resolve('@vercel/style-guide/eslint/react'),
     require.resolve('@vercel/style-guide/eslint/next'),
-    require.resolve('./rules/common'),
+    require.resolve('./eslint/recommended'),
   ],
   globals: {
     React: true,
     JSX: true,
   },
   ignorePatterns: ['node_modules/', '.next/', '*.js', '*.mjs', '*.cjs'],
-  overrides: [
-    {
-      extends: [require.resolve('@vercel/style-guide/eslint/jest')],
-      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
-    },
-  ],
   parserOptions: {
     project,
   },
-  plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
     /** Warns when Promises are used inappropriately */
     '@typescript-eslint/no-misused-promises': [
