@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { CustomSingle } from './custom-single';
-import { dateButton, gridCell } from './lib/elements';
+import { dateButton, gridcell } from './lib/elements';
 
 const today = new Date();
 
@@ -19,7 +19,7 @@ describe('custom-single component', () => {
 
     // Check the displayed date and the aria-selected status.
     expect(screen.getByText(`You selected ${today.toDateString()}`)).toBeInTheDocument();
-    expect(gridCell(today, true)).toHaveAttribute('aria-selected', 'true');
+    expect(gridcell(today, true)).toHaveAttribute('aria-selected', 'true');
   });
 
   it('clears the selected date when the same day is clicked again', () => {
