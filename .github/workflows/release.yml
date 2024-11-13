@@ -46,7 +46,10 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm release
+          version: pnpm changeset:version
+          commit: 'chore(release): publish updated packages and generate release notes'
+          title: 'chore(release): publish new version'
+          publish: pnpm changeset:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
