@@ -66,21 +66,23 @@ describe('when "toYear" is passed in', () => {
 });
 
 describe('when "captionLayout" is dropdown', () => {
-  const today = new Date(2024, 4, 3);
-  const [navStartMonth, navEndMonth] = getNavMonths(
-    {
-      captionLayout: 'dropdown',
-      today,
-    },
-    defaultDateLib,
-  );
+  describe('default behavior', () => {
+    const today = new Date(2024, 4, 3);
+    const [navStartMonth, navEndMonth] = getNavMonths(
+      {
+        captionLayout: 'dropdown',
+        today,
+      },
+      defaultDateLib,
+    );
 
-  test('"startMonth" should be 100 years ago', () => {
-    expect(navStartMonth).toEqual(new Date(1924, 0, 1));
-  });
+    test('"startMonth" should be 100 years ago', () => {
+      expect(navStartMonth).toEqual(new Date(1924, 0, 1));
+    });
 
-  test('"endMonth" should be the end of this year', () => {
-    expect(navEndMonth).toEqual(new Date(2024, 11, 31));
+    test('"endMonth" should be the end of this year', () => {
+      expect(navEndMonth).toEqual(new Date(2024, 11, 31));
+    });
   });
 
   describe('when "fromYear" is set', () => {
@@ -119,6 +121,7 @@ describe('when "captionLayout" is dropdown', () => {
     test('"startMonth" should be 100 years ago', () => {
       expect(navStartMonth).toEqual(new Date(1921, 0, 1));
     });
+
     test('"endMonth" should be equal to "toYear"', () => {
       expect(navEndMonth).toEqual(new Date(2022, 11, 31));
     });
