@@ -4,16 +4,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "build-storybook": "storybook build",
-    "chromatic": "chromatic --exit-zero-on-changes",
-    "clean": "rm -rf .next && rm -rf .turbo && rm -rf storybook-static && rm -rf node_modules",
-    "dev": "concurrently -k -p \"[{name}]\" -n \"next,storybook\" -c \"cyan,yellow\" \"pnpm run dev-next\" \"pnpm run dev-storybook\"",
-    "dev-next": "next dev --turbopack",
-    "dev-storybook": "pnpm storybook",
+    "clean": "rm -rf .next && rm -rf .turbo && rm -rf node_modules",
+    "dev": "next dev --turbopack",
     "lint": "next lint --fix --max-warnings 0",
-    "start": "next start",
-    "start-storybook": "serve storybook-static",
-    "storybook": "storybook dev -p 6006 --no-open --quiet"
+    "start": "next start"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",
@@ -37,32 +31,18 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "3.2.2",
     "@codefast/config-tailwind": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
     "@faker-js/faker": "9.2.0",
-    "@storybook/addon-essentials": "8.4.2",
-    "@storybook/addon-interactions": "8.4.2",
-    "@storybook/addon-links": "8.4.2",
-    "@storybook/addon-themes": "8.4.2",
-    "@storybook/blocks": "8.4.2",
-    "@storybook/nextjs": "8.4.2",
-    "@storybook/react": "8.4.2",
-    "@storybook/test": "8.4.2",
     "@types/lodash-es": "4.17.12",
     "@types/node": "20.17.6",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "autoprefixer": "10.4.20",
-    "chromatic": "11.16.5",
-    "concurrently": "9.1.0",
     "eslint": "8.57.1",
     "eslint-config-next": "15.0.2",
     "eslint-config-turbo": "2.2.3",
-    "eslint-plugin-storybook": "0.11.0",
     "postcss": "8.4.47",
-    "serve": "14.2.4",
-    "storybook": "8.4.2",
     "tailwindcss": "3.4.14",
     "typescript": "5.6.3"
   }

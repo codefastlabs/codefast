@@ -1,0 +1,236 @@
+import { Button } from '@codefast/ui';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
+import { LoaderCircleIcon, PaletteIcon, ScanSearchIcon, TreeDeciduousIcon } from 'lucide-react';
+import { useState } from 'react';
+
+const meta = {
+  argTypes: {
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disables the button',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    icon: {
+      control: { type: 'boolean' },
+      description: 'Indicates if the button should display an icon',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    loaderPosition: {
+      control: { type: 'inline-radio' },
+      options: ['prefix', 'suffix'],
+      description: 'Position of the loader',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'prefix' },
+      },
+    },
+    loading: {
+      control: { type: 'boolean' },
+      description: 'Shows a loading spinner when true',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    onClick: {
+      action: 'onClick',
+      description: 'Callback function triggered when the button is clicked',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
+    prefix: {
+      control: { type: 'text' },
+      description: 'Element shown before the button content',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    size: {
+      control: { type: 'select' },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      description: 'Button size',
+      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
+    },
+    spinner: {
+      control: { type: 'text' },
+      description: 'Custom spinner element',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    suffix: {
+      control: { type: 'text' },
+      description: 'Element shown after the button content',
+      table: { type: { summary: 'ReactNode' } },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'],
+      description: 'Button variant styles',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'default' },
+      },
+    },
+  },
+  args: {
+    disabled: false,
+    icon: false,
+    loaderPosition: 'prefix',
+    loading: false,
+    onClick: fn(),
+    prefix: undefined,
+    size: 'md',
+    spinner: undefined,
+    suffix: undefined,
+    variant: 'default',
+  },
+  component: Button,
+  tags: ['autodocs'],
+  title: 'UI/Button',
+} satisfies Meta<typeof Button>;
+
+export default meta;
+
+type Story = StoryObj<typeof Button>;
+
+/* -----------------------------------------------------------------------------
+ * Story: Default
+ * -------------------------------------------------------------------------- */
+
+export const Default: Story = {
+  args: {
+    children: 'Click Me',
+  },
+};
+
+export const Sizes: Story = {
+  args: {
+    prefix: <ScanSearchIcon />,
+  },
+  render: (args) => (
+    <div className="flex flex-wrap gap-2">
+      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <Button key={size} {...args} size={size}>
+          {size} button
+        </Button>
+      ))}
+    </div>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Variants
+ * -------------------------------------------------------------------------- */
+
+export const Variants: Story = {
+  args: { className: 'capitalize' },
+  render: (args) => (
+    <div className="flex flex-wrap gap-2">
+      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'] as const).map(
+        (variant) => (
+          <Button key={variant} {...args} variant={variant}>
+            {variant} Button
+          </Button>
+        ),
+      )}
+    </div>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: 'Disabled',
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Loading
+ * -------------------------------------------------------------------------- */
+
+export const Loading: Story = {
+  args: {
+    loading: true,
+    children: 'Loading...',
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: CustomSpinner
+ * -------------------------------------------------------------------------- */
+
+export const CustomSpinner: Story = {
+  args: {
+    children: 'Loading...',
+    spinner: <LoaderCircleIcon className="animate-spin" />,
+    loading: true,
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Prefix
+ * -------------------------------------------------------------------------- */
+
+export const Prefix: Story = {
+  args: {
+    prefix: <PaletteIcon />,
+    children: 'Submit',
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Suffix
+ * -------------------------------------------------------------------------- */
+
+export const Suffix: Story = {
+  args: {
+    children: 'Submit',
+    suffix: <TreeDeciduousIcon />,
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: IconOnly
+ * -------------------------------------------------------------------------- */
+
+export const IconOnly: Story = {
+  args: {
+    icon: true,
+    prefix: <PaletteIcon />,
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Controlled
+ * -------------------------------------------------------------------------- */
+
+export const Controlled: Story = {
+  render: (args) => {
+    const [count, setCount] = useState(0);
+
+    return (
+      <div className="space-y-4">
+        <Button
+          {...args}
+          onClick={() => {
+            setCount(count + 1);
+          }}
+        >
+          Click Me
+        </Button>
+        <p>
+          <strong>Count:</strong> {count}
+        </p>
+      </div>
+    );
+  },
+};
