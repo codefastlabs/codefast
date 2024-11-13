@@ -1,5 +1,12 @@
 /** @type { import("eslint").Linter.Config } */
 module.exports = {
+  overrides: [
+    {
+      extends: [require.resolve('@vercel/style-guide/eslint/jest')],
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
+    },
+  ],
+  plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
     /** Disables the rule that enforces using nullish coalescing operator */
     '@typescript-eslint/prefer-nullish-coalescing': 'off',

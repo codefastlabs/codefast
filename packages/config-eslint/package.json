@@ -13,7 +13,7 @@
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "sideEffects": false,
   "files": [
-    "rules",
+    "eslint",
     "library.js",
     "next.js",
     "react.js"

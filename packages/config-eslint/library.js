@@ -7,7 +7,7 @@ module.exports = {
   extends: [
     require.resolve('@vercel/style-guide/eslint/node'),
     require.resolve('@vercel/style-guide/eslint/typescript'),
-    require.resolve('./rules/common'),
+    require.resolve('./eslint/recommended'),
   ],
   globals: {
     React: true,
@@ -17,7 +17,6 @@ module.exports = {
   parserOptions: {
     project,
   },
-  plugins: ['only-warn', 'typescript-sort-keys'],
   settings: {
     'import/resolver': {
       typescript: {
