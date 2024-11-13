@@ -37,9 +37,14 @@ import { enUS, type Locale } from 'date-fns/locale';
 export type { Locale } from 'date-fns/locale';
 export type { Month as DateFnsMonth } from 'date-fns';
 
-/** @deprecated Use {@link DateLibOptions} instead. */
+/**
+ * @deprecated Use {@link DateLibOptions} instead.
+ */
 export type FormatOptions = DateLibOptions;
-/** @deprecated Use {@link DateLibOptions} instead. */
+
+/**
+ * @deprecated Use {@link DateLibOptions} instead.
+ */
 export type LabelOptions = DateLibOptions;
 
 /**
@@ -50,9 +55,14 @@ export type LabelOptions = DateLibOptions;
  * [endOfWeek](https://date-fns.org/docs/endOfWeek) options.
  */
 export interface DateLibOptions extends DateFnsFormatOptions, StartOfWeekOptions, EndOfWeekOptions {
-  /** A constructor for the `Date` object. */
+  /**
+   * A constructor for the `Date` object.
+   */
   Date?: typeof Date;
-  /** A locale to use for formatting dates. */
+
+  /**
+   * A locale to use for formatting dates.
+   */
   locale?: Locale;
 }
 
@@ -68,12 +78,19 @@ export interface DateLibOptions extends DateFnsFormatOptions, StartOfWeekOptions
  * ```
  */
 export class DateLib {
-  /** The options for the date library. */
+  /**
+   * The options for the date library.
+   */
   readonly options: DateLibOptions;
 
-  /** Overrides for the date library functions. */
+  /**
+   * Overrides for the date library functions.
+   */
   readonly overrides?: Partial<typeof DateLib.prototype>;
-  /** Reference to the built-in Date constructor. */
+
+  /**
+   * Reference to the built-in Date constructor.
+   */
   Date: typeof Date = Date;
 
   /**
@@ -399,7 +416,9 @@ export class DateLib {
     return this.overrides?.startOfYear ? this.overrides.startOfYear(date) : startOfYear(date);
   };
 }
-/** The default locale (English). */
+/**
+ * The default locale (English).
+ */
 export { enUS as defaultLocale } from 'date-fns/locale/en-US';
 
 /**
@@ -407,5 +426,7 @@ export { enUS as defaultLocale } from 'date-fns/locale/en-US';
  */
 export const defaultDateLib = new DateLib();
 
-/** @deprecated Use `defaultDateLib`. */
+/**
+ * @deprecated Use `defaultDateLib`.
+ */
 export const dateLib = defaultDateLib;
