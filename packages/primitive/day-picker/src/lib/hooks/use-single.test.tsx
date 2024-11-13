@@ -1,10 +1,9 @@
+import { act, renderHook } from '@testing-library/react';
 import { type MouseEvent } from 'react';
 
 import { defaultDateLib } from '@/lib/classes/date-lib';
 import { useSingle } from '@/lib/hooks/use-single';
 import { type DayPickerProps } from '@/lib/types';
-
-import { act, renderHook } from '@test/render';
 
 describe('useSingle', () => {
   it('uses the selected value from props when onSelect is provided', () => {
