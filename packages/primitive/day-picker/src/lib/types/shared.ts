@@ -154,6 +154,7 @@ export interface Labels {
  * A value or a function that matches a specific day.
  *
  * @example
+ * ```tsx
  *   // will always match the day
  *   const booleanMatcher: Matcher = true;
  *
@@ -169,7 +170,7 @@ export interface Labels {
  *   // will match days after the 2nd of February 2019
  *   const afterMatcher: DateAfter = { after: new Date(2019, 1, 2) };
  *
- *   // will match days before the 2nd of February 2019 }
+ *   // will match days before the 2nd of February 2019
  *   const beforeMatcher: DateBefore = { before: new Date(2019, 1, 2) };
  *
  *   // will match Sundays
@@ -193,6 +194,7 @@ export interface Labels {
  *   const functionMatcher: Matcher = (day: Date) => {
  *     return day.getMonth() === 2; // match when month is March
  *   };
+ * ```
  */
 export type Matcher =
   | boolean
@@ -209,8 +211,10 @@ export type Matcher =
  * Match a day falling after the specified date, with the date not included.
  *
  * @example
+ * ```tsx
  *   // Match days after the 2nd of February 2019
  *   const matcher: DateAfter = { after: new Date(2019, 1, 2) };
+ * ```
  */
 export interface DateAfter {
   after: Date;
@@ -220,23 +224,26 @@ export interface DateAfter {
  * Match a day falling before the specified date, with the date not included.
  *
  * @example
+ * ```tsx
  *   // Match days before the 2nd of February 2019
  *   const matcher: DateBefore = { before: new Date(2019, 1, 2) };
+ * ```
  */
 export interface DateBefore {
   before: Date;
 }
 
 /**
- * An interval of dates. Differently from {@link DateRange}, the range ends here
- * are not included.
+ * An interval of dates. Differently from {@link DateRange}, the range ends here aren't included.
  *
  * @example
+ * ```tsx
  *   // Match the days between the 2nd and the 5th of February 2019
  *   const matcher: DateInterval = {
  *     after: new Date(2019, 1, 2),
  *     before: new Date(2019, 1, 5)
  *   };
+ * ```
  */
 export interface DateInterval {
   after: Date;
@@ -248,11 +255,13 @@ export interface DateInterval {
  * {@link DateInterval}, the range ends here are included.
  *
  * @example
+ * ```tsx
  *   // Match the days between the 2nd and the 5th of February 2019
  *   const matcher: DateRange = {
  *     from: new Date(2019, 1, 2),
  *     to: new Date(2019, 1, 5)
  *   };
+ * ```
  */
 export interface DateRange {
   from: Date | undefined;
@@ -264,10 +273,12 @@ export interface DateRange {
  * Sunday).
  *
  * @example
+ * ```tsx
  *   // Match Sundays
  *   const matcher: DayOfWeek = { dayOfWeek: 0 };
  *   // Match weekends
  *   const matcher: DayOfWeek = { dayOfWeek: [0, 6] };
+ * ```
  */
 export interface DayOfWeek {
   dayOfWeek: number | number[];
@@ -298,12 +309,14 @@ export type MonthChangeEventHandler = (month: Date) => void;
  * {@link SelectionState} and the {@link DayFlag}.
  *
  * @example
+ * ```tsx
  *   const classNames: ClassNames = {
  *     [UI.Root]: "root",
  *     [UI.Outside]: "outside",
  *     [UI.Nav]: "nav"
  *     // etc.
  *   };
+ * ```
  */
 export type ClassNames = {
   [key in UI | SelectionState | DayFlag]: string;
@@ -326,6 +339,7 @@ export type Styles = {
  * - Add custom modifiers using the `modifiers` prop.
  *
  * @example
+ * ```tsx
  *   const modifiers: Modifiers = {
  *   today: false, // the day is not today
  *   selected: true, // the day is selected
@@ -337,6 +351,7 @@ export type Styles = {
  *   booked: true // custom modifier example for matching a booked day
  *   available: false // custom modifier example for matching an available day
  *   };
+ * ```
  */
 export type Modifiers = Record<string, boolean>;
 
@@ -344,11 +359,13 @@ export type Modifiers = Record<string, boolean>;
  * The style to apply to each day element matching a modifier.
  *
  * @example
+ * ```tsx
  *   const modifiersStyles: ModifiersStyles = {
  *     today: { color: "red" },
  *     selected: { backgroundColor: "blue" },
  *     weekend: { color: "green" }
  *   };
+ * ```
  */
 export type ModifiersStyles = Record<string, CSSProperties>;
 
@@ -356,11 +373,13 @@ export type ModifiersStyles = Record<string, CSSProperties>;
  * The classnames to assign to each day element matching a modifier.
  *
  * @example
+ * ```tsx
  *   const modifiersClassNames: ModifiersClassNames = {
  *     today: "today", // Use the "today" class for the today's day
  *     selected: "highlight", // Use the "highlight" class for the selected day
  *     weekend: "weekend" // Use the "weekend" class for the weekend days
  *   };
+ * ```
  */
 export type ModifiersClassNames = Record<string, string>;
 
