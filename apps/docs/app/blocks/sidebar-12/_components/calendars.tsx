@@ -39,12 +39,12 @@ export function Calendars({ calendars }: CalendarsProps): JSX.Element {
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {calendar.items.map((item, index) => (
+                    {calendar.items.map((item, index2) => (
                       <SidebarMenuItem key={item}>
                         <SidebarMenuButton>
                           <div
                             className="group/calendar-item border-sidebar-border text-sidebar-primary-foreground data-[active=true]:border-sidebar-primary data-[active=true]:bg-sidebar-primary flex aspect-square size-4 shrink-0 items-center justify-center rounded border"
-                            data-active={index < 2}
+                            data-active={index2 < 2}
                           >
                             <CheckIcon className="hidden size-3 group-data-[active=true]/calendar-item:block" />
                           </div>
