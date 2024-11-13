@@ -2,12 +2,21 @@ import { defaultDateLib } from '@/lib/classes';
 import { type DateRange } from '@/lib/types';
 
 /**
- * Determines whether a given date is inside a specified date range.
+ * Determines if a given date is within a specified date range.
+ *
+ * @param range - The range of dates with a 'from' and 'to' date.
+ * @param date - The date to check if it is within the range.
+ * @param excludeEnds - Optional flag indicating if the ends of the range should be excluded (default is false).
+ * @param dateLib - Optional date manipulation library; defaults to 'defaultDateLib'.
+ *
+ * @returns True if the date is within the range (considering the optional excludeEnds flag), otherwise false.
  */
 export function rangeIncludesDate(
   range: DateRange,
   date: Date,
-  /** If `true`, the ends of the range are excluded. */
+  /**
+   *  If `true`, the ends of the range are excluded.
+   */
   excludeEnds = false,
   dateLib = defaultDateLib,
 ): boolean {
@@ -21,11 +30,10 @@ export function rangeIncludesDate(
       [from, to] = [to, from];
     }
 
-    const isInRange =
+    return (
       differenceInCalendarDays(date, from) >= (excludeEnds ? 1 : 0) &&
-      differenceInCalendarDays(to, date) >= (excludeEnds ? 1 : 0);
-
-    return isInRange;
+      differenceInCalendarDays(to, date) >= (excludeEnds ? 1 : 0)
+    );
   }
 
   if (!excludeEnds && to) {
