@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 
 import { ControlledSelection } from './controlled-selection';
-import { dateButton, gridCell } from './lib/elements';
+import { dateButton, gridcell } from './lib/elements';
 
 const today = new Date(2024, 11, 13);
 
@@ -25,10 +25,10 @@ describe('controlled-selection component', () => {
 
     // Verify that each date within the range is selected
     for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-      expect(gridCell(new Date(date), true)).toHaveAttribute('aria-selected', 'true');
+      expect(gridcell(new Date(date), true)).toHaveAttribute('aria-selected', 'true');
     }
 
-    expect(gridCell(new Date(2024, 11, 5), true)).not.toHaveAttribute('aria-selected', 'true');
+    expect(gridcell(new Date(2024, 11, 5), true)).not.toHaveAttribute('aria-selected', 'true');
   });
 
   it('resets the selected date range after clicking a third date', () => {
@@ -49,12 +49,12 @@ describe('controlled-selection component', () => {
 
     // Verify no dates in the original range are selected
     for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-      expect(gridCell(new Date(date), true)).not.toHaveAttribute('aria-selected', 'true');
+      expect(gridcell(new Date(date), true)).not.toHaveAttribute('aria-selected', 'true');
     }
 
     // Verify that only the reset date is selected
-    expect(gridCell(resetDate, true)).toHaveAttribute('aria-selected', 'true');
-    expect(gridCell(new Date(2024, 11, 6), true)).not.toHaveAttribute('aria-selected', 'true');
+    expect(gridcell(resetDate, true)).toHaveAttribute('aria-selected', 'true');
+    expect(gridcell(new Date(2024, 11, 6), true)).not.toHaveAttribute('aria-selected', 'true');
 
     logSpy.mockRestore();
   });

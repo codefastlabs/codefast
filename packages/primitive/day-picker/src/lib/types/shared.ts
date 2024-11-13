@@ -16,7 +16,7 @@ import {
 import {
   type labelDayButton,
   type labelGrid,
-  type labelGridCell,
+  type labelGridcell,
   type labelMonthDropdown,
   type labelNav,
   type labelNext,
@@ -129,7 +129,7 @@ export interface Labels {
   /** The label for the month grid. */
   labelGrid: typeof labelGrid;
   /** The label for the gridcell, when the calendar is not interactive. */
-  labelGridCell: typeof labelGridCell;
+  labelGridcell: typeof labelGridcell;
   /** The label for the month dropdown. */
   labelMonthDropdown: typeof labelMonthDropdown;
   /** The label for the navigation toolbar. */

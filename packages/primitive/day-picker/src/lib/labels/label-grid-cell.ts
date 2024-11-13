@@ -2,11 +2,13 @@ import { DateLib, type DateLibOptions } from '@/lib/classes/date-lib';
 import { type Modifiers } from '@/lib/types';
 
 /**
- * The label for the day gridCell when the calendar is not interactive.
+ * The label for the day gridcell when the calendar is not interactive.
  */
-export function labelGridCell(
+export function labelGridcell(
   date: Date,
-  /** The modifiers for the day. */
+  /**
+   * The modifiers for the day.
+   */
   modifiers?: Modifiers,
   options?: DateLibOptions,
   dateLib?: DateLib,
