@@ -44,11 +44,6 @@ module.exports = {
             group: 'internal',
             position: 'before',
           },
-          {
-            pattern: '@test/**',
-            group: 'internal',
-            position: 'before',
-          },
         ],
         pathGroupsExcludedImportTypes: ['builtin'],
       },
