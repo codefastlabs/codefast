@@ -1,6 +1,6 @@
 import { type ByRoleOptions, screen } from '@testing-library/react';
 
-import { DayFlag, labelDayButton, labelGridCell, SelectionState } from '@/lib';
+import { DayFlag, labelDayButton, labelGridcell, SelectionState } from '@/lib';
 
 /**
  * Retrieves an HTML element with the role of 'grid', optionally filtered by a given name.
@@ -13,13 +13,13 @@ export function grid(name?: ByRoleOptions['name']): HTMLElement {
 }
 
 /**
- * Retrieves a grid cell element corresponding to the given date.
+ * Retrieves a gridcell element corresponding to the given date.
  *
  * @param date - The date for which the grid cell is being retrieved.
  * @param interactive - Optional. A boolean indicating whether the cell is interactive. Defaults to false.
  * @returns The HTMLElement representing the grid cell matching the specified date.
  */
-export function gridCell(date: Date, interactive?: boolean): HTMLElement {
+export function gridcell(date: Date, interactive?: boolean): HTMLElement {
   if (interactive) {
     return screen.getByRole('cell', {
       name: date.getDate().toString(),
@@ -27,7 +27,7 @@ export function gridCell(date: Date, interactive?: boolean): HTMLElement {
   }
 
   return screen.getByRole('cell', {
-    name: labelGridCell(date),
+    name: labelGridcell(date),
   });
 }
 
