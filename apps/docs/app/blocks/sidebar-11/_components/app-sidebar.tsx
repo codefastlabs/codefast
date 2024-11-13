@@ -44,6 +44,7 @@ export function AppSidebar({ className, ...props }: AppSidebarProps): JSX.Elemen
           <SidebarGroupContent>
             <SidebarMenu>
               {data.tree.map((item, index) => (
+                // eslint-disable-next-line react/no-array-index-key -- key is safe
                 <Tree key={index} item={item} />
               ))}
             </SidebarMenu>

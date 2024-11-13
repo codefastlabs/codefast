@@ -1,12 +1,12 @@
 'use client';
 
 import {
-  cn,
-  Sidebar,
   Button,
+  cn,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
@@ -47,11 +47,13 @@ export function NavActions({ actions, className, ...props }: NavActionsProps): J
           <Sidebar className="bg-transparent" collapsible="none">
             <SidebarContent>
               {actions.map((group, index) => (
+                // eslint-disable-next-line react/no-array-index-key -- key is safe
                 <SidebarGroup key={index} className="border-b last:border-none">
                   <SidebarGroupContent className="gap-0">
                     <SidebarMenu>
-                      {group.map((item, index) => (
-                        <SidebarMenuItem key={index}>
+                      {group.map((item, index2) => (
+                        // eslint-disable-next-line react/no-array-index-key -- key is safe
+                        <SidebarMenuItem key={index2}>
                           <SidebarMenuButton>
                             <item.icon />
                             <span>{item.label}</span>

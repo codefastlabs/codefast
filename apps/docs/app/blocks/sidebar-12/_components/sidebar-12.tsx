@@ -1,9 +1,9 @@
 import {
-  cn,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
+  cn,
   Separator,
   SidebarInset,
   SidebarProvider,
@@ -35,6 +35,7 @@ export function Sidebar12({ className, ...props }: Sidebar12Props): JSX.Element 
           <div className="flex flex-1 flex-col gap-4 p-4">
             <div className="grid auto-rows-min gap-4 md:grid-cols-5">
               {Array.from({ length: 20 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key -- key is safe
                 <div key={index} className="bg-muted/50 aspect-square rounded-xl" />
               ))}
             </div>
