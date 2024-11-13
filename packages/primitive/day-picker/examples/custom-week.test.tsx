@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { endOfWeek, startOfWeek } from 'date-fns';
 
 import { CustomWeek } from './custom-week';
-import { dateButton, gridCell } from './lib/elements';
+import { dateButton, gridcell } from './lib/elements';
 
 const today = new Date(2024, 11, 13);
 const startOfThisWeek = startOfWeek(today);
@@ -36,7 +36,7 @@ describe('custom-week component', () => {
 
     // Check the selected days of the week.
     for (let date = new Date(startOfThisWeek); date <= endOfThisWeek; date.setDate(date.getDate() + 1)) {
-      expect(gridCell(new Date(date), true)).toHaveAttribute('aria-selected', 'true');
+      expect(gridcell(new Date(date), true)).toHaveAttribute('aria-selected', 'true');
     }
   });
 
@@ -57,7 +57,7 @@ describe('custom-week component', () => {
 
     // Make sure that no day of the week is selected.
     for (let date = new Date(startOfThisWeek); date <= endOfThisWeek; date.setDate(date.getDate() + 1)) {
-      expect(gridCell(new Date(date), true)).not.toHaveAttribute('aria-selected', 'true');
+      expect(gridcell(new Date(date), true)).not.toHaveAttribute('aria-selected', 'true');
     }
   });
 });

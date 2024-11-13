@@ -128,7 +128,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
 
   const {
     labelDayButton,
-    labelGridCell,
+    labelGridcell,
     labelGrid,
     labelMonthDropdown,
     labelNav,
@@ -447,7 +447,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                             );
 
                             const ariaLabel = !isInteractive
-                              ? labelGridCell(date, modifiers, dateLib.options, dateLib)
+                              ? labelGridcell(date, modifiers, dateLib.options, dateLib)
                               : undefined;
 
                             return (
