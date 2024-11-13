@@ -45,7 +45,7 @@ export interface PropsBase {
   ISOWeek?: boolean;
 
   /**
-   * When a selection mode is set, DayPicker will focus the first selected day
+   * When a selection mode is set, DayPicker will focus on the first selected day
    * (if set) or today's date (if not disabled).
    *
    * Use this prop when you need to focus DayPicker after a user action, for
