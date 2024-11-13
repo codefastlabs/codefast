@@ -1,19 +1,18 @@
 import {
-  type DateArg,
-  type EndOfWeekOptions,
-  type FormatOptions as DateFnsFormatOptions,
-  type StartOfWeekOptions,
   addDays,
   addMonths,
   addWeeks,
   addYears,
+  type DateArg,
   differenceInCalendarDays,
   differenceInCalendarMonths,
   endOfISOWeek,
   endOfMonth,
   endOfWeek,
+  type EndOfWeekOptions,
   endOfYear,
   format,
+  type FormatOptions as DateFnsFormatOptions,
   getISOWeek,
   getWeek,
   isAfter,
@@ -30,6 +29,7 @@ import {
   startOfISOWeek,
   startOfMonth,
   startOfWeek,
+  type StartOfWeekOptions,
   startOfYear,
 } from 'date-fns';
 import { enUS, type Locale } from 'date-fns/locale';
@@ -62,8 +62,10 @@ export interface DateLibOptions extends DateFnsFormatOptions, StartOfWeekOptions
  * {@link PropsBase.dateLib} prop.
  *
  * @example
+ * ```tsx
  *   const dateLib = new DateLib({ locale: es });
  *   const newDate = dateLib.addDays(new Date(), 5);
+ * ```
  */
 export class DateLib {
   /** The options for the date library. */

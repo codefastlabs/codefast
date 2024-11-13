@@ -201,8 +201,10 @@ export interface PropsBase {
    * `react-day-picker/locale` to localize the calendar.
    *
    * @example
+   * ```tsx
    *   import { es } from "react-day-picker/locale";
    *   <DayPicker locale={es} />
+   * ```
    *
    * @defaultValue enUS - The English locale default of `date-fns`.
    * @see https://github.com/date-fns/date-fns/tree/main/src/locale for a list of the supported locales
@@ -342,8 +344,8 @@ export interface PropsBase {
    * The time zone (IANA or UTC offset) to use in the calendar (experimental).
    * See [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for the possible values.
    *
-   * Time zones are supported by the `TZDate` object by the [@date-fns/tz](https://github.com/date-fns/tz) package.
-   * Please refer to the package documentation for more information.
+   * Time zones are supported by the `TZDate` object by the [\@date-fns/tz](https://github.com/date-fns/tz) package.
+   * Refer to the package documentation for more information.
    *
    * @experimental
    */
