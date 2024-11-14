@@ -11,6 +11,7 @@ const today = new Date(2023, 9, 16);
 beforeAll(() => {
   jest.setSystemTime(today);
 });
+
 afterAll(() => {
   jest.useRealTimers();
 });
