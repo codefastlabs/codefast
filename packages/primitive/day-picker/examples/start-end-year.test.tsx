@@ -1,0 +1,50 @@
+import { render } from '@testing-library/react';
+import { differenceInMonths } from 'date-fns';
+
+import { nextButton, previousButton } from './lib/elements';
+import { user } from './lib/user';
+import { StartEndYear } from './start-end-year';
+
+const fromMonth = new Date(2024, 0);
+const toMonth = new Date(2026, 11);
+const today = new Date(2025, 10, 25);
+
+beforeAll(() => {
+  jest.setSystemTime(today);
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+describe('start-end-year', () => {
+  beforeEach(() => {
+    render(<StartEndYear />);
+  });
+
+  test('disables the previous month button on the start month', () => {
+    expect(previousButton()).toHaveAttribute('disabled');
+  });
+
+  test('enables the next month button on the start month', () => {
+    expect(nextButton()).not.toHaveAttribute('disabled');
+  });
+
+  describe('when navigating to the end month', () => {
+    const numberOfMonths = differenceInMonths(toMonth, fromMonth);
+
+    beforeEach(async () => {
+      for (let i = 0; i < numberOfMonths; i++) {
+        await user.click(nextButton());
+      }
+    });
+
+    test('enables the previous month button on the end month', () => {
+      expect(previousButton()).not.toHaveAttribute('disabled');
+    });
+
+    test('disables the next month button on the end month', () => {
+      expect(nextButton()).toHaveAttribute('disabled');
+    });
+  });
+});
