@@ -9,8 +9,6 @@ export function ControlledSelection(): JSX.Element {
   const handleOnSelect: OnSelectHandler<DateRange | undefined> = (range, triggerDate): void => {
     // Change the behavior of the selection when a range is already selected
     if (selected?.from && selected.to) {
-      // eslint-disable-next-line no-console -- keep the console.log
-      console.log('reset range');
       setSelected({
         from: triggerDate,
         to: undefined,
