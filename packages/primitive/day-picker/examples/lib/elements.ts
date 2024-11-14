@@ -73,3 +73,17 @@ export function yearDropdown(): HTMLElement {
 export function monthDropdown(): HTMLElement {
   return screen.getByRole('combobox', { name: labelMonthDropdown() });
 }
+
+/**
+ * Returns the currently focused element in the document.
+ *
+ * @throws Error Will throw an error if no element is currently focused.
+ * @returns Element - The currently focused element.
+ */
+export function activeElement(): Element {
+  if (!document.activeElement) {
+    throw new Error('Could not find any focused element');
+  }
+
+  return document.activeElement;
+}
