@@ -1,8 +1,9 @@
 import { within } from '@testing-library/dom';
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import { Dropdown } from './dropdown';
 import { grid, monthDropdown, yearDropdown } from './lib/elements';
+import { user } from './lib/user';
 
 describe('dropdown component', () => {
   beforeEach(() => {
@@ -21,8 +22,8 @@ describe('dropdown component', () => {
   describe('when a month is selected', () => {
     const monthName = 'December';
 
-    beforeEach(() => {
-      fireEvent.change(monthDropdown(), { target: { value: '11' } });
+    beforeEach(async () => {
+      await user.selectOptions(monthDropdown(), monthName);
     });
 
     it('displays the selected month and current year in the calendar grid', () => {
@@ -37,8 +38,8 @@ describe('dropdown component', () => {
   describe('when a year is selected', () => {
     const year = '2025';
 
-    beforeEach(() => {
-      fireEvent.change(yearDropdown(), { target: { value: '2025' } });
+    beforeEach(async () => {
+      await user.selectOptions(yearDropdown(), year);
     });
 
     it('displays the selected year and current month in the calendar grid', () => {
@@ -51,8 +52,10 @@ describe('dropdown component', () => {
   });
 
   describe('when an unavailable month is selected', () => {
-    beforeEach(() => {
-      fireEvent.change(monthDropdown(), { target: { value: '1' } });
+    const monthName = 'January';
+
+    beforeEach(async () => {
+      await user.selectOptions(monthDropdown(), monthName);
     });
 
     it('displays the first available month in the calendar grid', () => {
