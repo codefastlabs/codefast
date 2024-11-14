@@ -10,8 +10,9 @@ const startOfThisWeek = startOfWeek(today);
 const endOfThisWeek = endOfWeek(today);
 
 beforeAll(() => {
-  jest.setSystemTime(today); // Set a fixed date for consistent testing
+  jest.setSystemTime(today);
 });
+
 afterAll(() => {
   jest.useRealTimers();
 });

@@ -4,9 +4,12 @@ import { Controlled } from './controlled';
 import { grid } from './lib/elements';
 import { user } from './lib/user';
 
+const today = new Date(2024, 10, 1);
+
 beforeAll(() => {
-  jest.setSystemTime(new Date(2024, 10, 1));
+  jest.setSystemTime(today);
 });
+
 afterAll(() => {
   jest.useRealTimers();
 });

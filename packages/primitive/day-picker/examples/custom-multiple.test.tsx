@@ -10,6 +10,7 @@ const tomorrow = new Date(2024, 11, 14);
 beforeAll(() => {
   jest.setSystemTime(today);
 });
+
 afterAll(() => {
   jest.useRealTimers();
 });
