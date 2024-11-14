@@ -102,7 +102,7 @@ describe('useRange', () => {
       to: new Date(2023, 6, 10),
     });
   });
-  it('uses the selected value from props when onSelect is provided', () => {
+  test('uses the selected value from props when onSelect is provided', () => {
     const mockOnSelect = jest.fn();
     const selectedRange = {
       from: new Date(2023, 9, 1),
@@ -120,7 +120,7 @@ describe('useRange', () => {
     expect(result.current.selected).toBe(selectedRange);
   });
 
-  it('uses the internally selected value when onSelect is not provided', () => {
+  test('uses the internally selected value when onSelect is not provided', () => {
     const initialSelectedRange = {
       from: new Date(2023, 9, 1),
       to: new Date(2023, 9, 5),

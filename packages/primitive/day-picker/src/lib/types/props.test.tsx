@@ -6,7 +6,9 @@ function Test(): JSX.Element {
   return (
     <>
       <DayPicker />
+
       <DayPicker mode="single" />
+
       <DayPicker
         mode="single"
         selected={undefined}
@@ -14,6 +16,7 @@ function Test(): JSX.Element {
           /* noop */
         }}
       />
+
       <DayPicker
         mode="single"
         selected={new Date()}
@@ -21,16 +24,9 @@ function Test(): JSX.Element {
           /* noop */
         }}
       />
-      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment -- ignore */}
-      {/* @ts-expect-error */}
-      <DayPicker
-        required
-        mode="single"
-        onSelect={(_date) => {
-          /* noop */
-        }}
-      />
+
       <DayPicker required mode="single" selected={undefined} />
+
       <DayPicker
         required
         mode="multiple"
@@ -39,6 +35,7 @@ function Test(): JSX.Element {
           /* noop */
         }}
       />
+
       <DayPicker
         required
         mode="range"
@@ -47,6 +44,7 @@ function Test(): JSX.Element {
           /* noop */
         }}
       />
+
       <DayPicker
         mode="multiple"
         required={false}
@@ -55,13 +53,16 @@ function Test(): JSX.Element {
           /* noop */
         }}
       />
+
       <DayPicker mode="multiple" selected={[new Date()]} />
+
       <DayPicker
         mode="multiple"
         onSelect={(_date) => {
           /* noop */
         }}
       />
+
       <DayPicker
         required
         mode="multiple"
@@ -70,13 +71,16 @@ function Test(): JSX.Element {
           /* noop */
         }}
       />
+
       <DayPicker mode="single" selected={new Date()} />
+
       <DayPicker
         modifiers={{ selected: new Date() }}
         onDayClick={() => {
           /* noop */
         }}
       />
+
       <DayPicker
         selected={new Date()}
         onDayClick={() => {
@@ -90,6 +94,6 @@ function Test(): JSX.Element {
   );
 }
 
-it('should type-check', () => {
+test('should type-check', () => {
   expect(Test).toBeTruthy();
 });

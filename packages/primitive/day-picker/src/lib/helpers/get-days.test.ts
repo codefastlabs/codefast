@@ -21,6 +21,6 @@ const weeks1 = [new CalendarWeek(1, days1), new CalendarWeek(2, days2)];
 const weeks2 = [new CalendarWeek(3, days3), new CalendarWeek(4, days4)];
 const months = [new CalendarMonth(days1[0].date, weeks1), new CalendarMonth(days1[0].date, weeks2)];
 
-it('should return all the days belonging to the calendar by merging the days in the weeks for each month', () => {
+test('should return all the days belonging to the calendar by merging the days in the weeks for each month', () => {
   expect(getDays(months)).toEqual([...days1, ...days2, ...days3, ...days4]);
 });

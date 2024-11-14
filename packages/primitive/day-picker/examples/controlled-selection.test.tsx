@@ -15,7 +15,7 @@ afterAll(() => {
 });
 
 describe('controlled-selection component', () => {
-  it('selects a date range after clicking two dates', async () => {
+  test('selects a date range after clicking two dates', async () => {
     render(<ControlledSelection />);
 
     const startDate = new Date(2024, 11, 1);
@@ -32,7 +32,7 @@ describe('controlled-selection component', () => {
     expect(gridcell(new Date(2024, 11, 5), true)).not.toHaveAttribute('aria-selected', 'true');
   });
 
-  it('resets the selected date range after clicking a third date', async () => {
+  test('resets the selected date range after clicking a third date', async () => {
     render(<ControlledSelection />);
 
     const startDate = new Date(2024, 11, 1);

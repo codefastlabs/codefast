@@ -32,7 +32,7 @@ describe('dropdown-multiple-months component', () => {
       await user.selectOptions(firstDropDown, monthName);
     });
 
-    it('displays the selected month in the first calendar grid', () => {
+    test('displays the selected month in the first calendar grid', () => {
       expect(grid(`${monthName} 2023`)).toBeInTheDocument();
     });
   });
@@ -48,7 +48,7 @@ describe('dropdown-multiple-months component', () => {
       await user.selectOptions(thirdDropDown, monthName);
     });
 
-    it('displays the selected month in the third calendar grid', () => {
+    test('displays the selected month in the third calendar grid', () => {
       expect(grid(`${monthName} 2023`)).toBeInTheDocument();
     });
   });

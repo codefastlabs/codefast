@@ -11,11 +11,11 @@ describe('custom-single component', () => {
     render(<CustomSingle />);
   });
 
-  it('renders correctly with no selected date', () => {
+  test('renders correctly with no selected date', () => {
     expect(screen.queryByText(/You selected/)).toBeNull();
   });
 
-  it('displays the selected date when a day is clicked', async () => {
+  test('displays the selected date when a day is clicked', async () => {
     await user.click(dateButton(today));
 
     // Check the displayed date and the aria-selected status.
@@ -23,7 +23,7 @@ describe('custom-single component', () => {
     expect(gridcell(today, true)).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('clears the selected date when the same day is clicked again', async () => {
+  test('clears the selected date when the same day is clicked again', async () => {
     await user.click(dateButton(today)); // Select date
     expect(screen.getByText(`You selected ${today.toDateString()}`)).toBeInTheDocument();
 

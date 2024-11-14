@@ -15,13 +15,13 @@ afterAll(() => {
 });
 
 describe('focus-recursive component', () => {
-  it('renders component without crashing', () => {
+  test('renders component without crashing', () => {
     const { container } = render(<FocusRecursive />);
 
     expect(container).toBeInTheDocument();
   });
 
-  it('focuses on the correct day after navigating with ArrowDown', async () => {
+  test('focuses on the correct day after navigating with ArrowDown', async () => {
     render(<FocusRecursive />);
 
     // Sử dụng phím tab ba lần để đưa focus đến ngày bắt đầu

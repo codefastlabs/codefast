@@ -10,12 +10,12 @@ describe('dropdown component', () => {
     render(<Dropdown />);
   });
 
-  it('renders month and year dropdowns on initial load', () => {
+  test('renders month and year dropdowns on initial load', () => {
     expect(monthDropdown()).toBeInTheDocument();
     expect(yearDropdown()).toBeInTheDocument();
   });
 
-  it('disables months that are outside the selectable range', () => {
+  test('disables months that are outside the selectable range', () => {
     expect(within(monthDropdown()).getByRole('option', { name: 'January' })).toBeDisabled();
   });
 
@@ -26,11 +26,11 @@ describe('dropdown component', () => {
       await user.selectOptions(monthDropdown(), monthName);
     });
 
-    it('displays the selected month and current year in the calendar grid', () => {
+    test('displays the selected month and current year in the calendar grid', () => {
       expect(grid()).toHaveAccessibleName(`${monthName} 2024`);
     });
 
-    it('disables years that are outside the selectable range', () => {
+    test('disables years that are outside the selectable range', () => {
       expect(within(yearDropdown()).getByRole('option', { name: '2025' })).toBeDisabled();
     });
   });
@@ -42,11 +42,11 @@ describe('dropdown component', () => {
       await user.selectOptions(yearDropdown(), year);
     });
 
-    it('displays the selected year and current month in the calendar grid', () => {
+    test('displays the selected year and current month in the calendar grid', () => {
       expect(grid()).toHaveAccessibleName(`July ${year}`);
     });
 
-    it('excludes years outside the range, such as 2026, from the year dropdown', () => {
+    test('excludes years outside the range, such as 2026, from the year dropdown', () => {
       expect(within(yearDropdown()).queryByRole('option', { name: '2026' })).toBeNull();
     });
   });
@@ -58,7 +58,7 @@ describe('dropdown component', () => {
       await user.selectOptions(monthDropdown(), monthName);
     });
 
-    it('displays the first available month in the calendar grid', () => {
+    test('displays the first available month in the calendar grid', () => {
       expect(grid()).toHaveAccessibleName(`July 2024`);
     });
   });

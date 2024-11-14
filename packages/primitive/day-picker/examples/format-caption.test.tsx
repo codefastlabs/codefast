@@ -13,18 +13,18 @@ afterAll(() => {
 });
 
 describe('format-caption component', () => {
-  it('renders without crashing', () => {
+  test('renders without crashing', () => {
     const { container } = render(<FormatCaption />);
 
     expect(container).toBeInTheDocument();
   });
 
-  it('displays the correct season emoji and month name for autumn', () => {
+  test('displays the correct season emoji and month name for autumn', () => {
     render(<FormatCaption />);
     expect(screen.getByText('🍂 November')).toBeInTheDocument();
   });
 
-  it('displays the correct season emoji and month name for winter', () => {
+  test('displays the correct season emoji and month name for winter', () => {
     const winterMonth = new Date(2022, 1, 1); // February 2022
 
     jest.setSystemTime(winterMonth);
@@ -34,7 +34,7 @@ describe('format-caption component', () => {
     expect(screen.getByText('⛄️ February')).toBeInTheDocument();
   });
 
-  it('displays the correct season emoji and month name for spring', () => {
+  test('displays the correct season emoji and month name for spring', () => {
     const springMonth = new Date(2022, 4, 1); // May 2022
 
     jest.setSystemTime(springMonth);
@@ -44,7 +44,7 @@ describe('format-caption component', () => {
     expect(screen.getByText('🌸 May')).toBeInTheDocument();
   });
 
-  it('displays the correct season emoji and month name for summer', () => {
+  test('displays the correct season emoji and month name for summer', () => {
     const summerMonth = new Date(2022, 7, 1); // August 2022
 
     jest.setSystemTime(summerMonth);

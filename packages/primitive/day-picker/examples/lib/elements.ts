@@ -87,3 +87,27 @@ export function activeElement(): Element {
 
   return document.activeElement;
 }
+
+/**
+ * Retrieves the "Go to the Previous Month" button from the screen.
+ * This button allows the user to navigate to the previous month in a calendar or date picker interface.
+ *
+ * @returns HTMLElement - The button element that, when activated, navigates to the previous month.
+ */
+export function previousButton(): HTMLElement {
+  return screen.getByRole('button', {
+    name: 'Go to the Previous Month',
+  });
+}
+
+/**
+ * Retrieves the "Go to the Next Month" button from the screen.
+ * This button allows the user to navigate to the next month in a calendar or date picker interface.
+ *
+ * @returns HTMLElement - The button element that, when activated, navigates to the next month.
+ */
+export function nextButton(): HTMLElement {
+  return screen.getByRole('button', {
+    name: 'Go to the Next Month',
+  });
+}
