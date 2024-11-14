@@ -60,9 +60,9 @@
     "overrides": {
       "@types/react": "npm:types-react@19.0.0-rc.1",
       "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-      "react": "19.0.0-rc-02c0e824-20241028",
-      "react-dom": "19.0.0-rc-02c0e824-20241028",
-      "react-is": "19.0.0-rc-02c0e824-20241028"
+      "react": "19.0.0-rc-7ac8e612-20241113",
+      "react-dom": "19.0.0-rc-7ac8e612-20241113",
+      "react-is": "19.0.0-rc-7ac8e612-20241113"
     }
   }
 }
