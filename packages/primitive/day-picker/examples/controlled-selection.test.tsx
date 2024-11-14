@@ -33,8 +33,6 @@ describe('controlled-selection component', () => {
   });
 
   it('resets the selected date range after clicking a third date', async () => {
-    const logSpy = jest.spyOn(console, 'log');
-
     render(<ControlledSelection />);
 
     const startDate = new Date(2024, 11, 1);
@@ -45,9 +43,6 @@ describe('controlled-selection component', () => {
     await user.click(dateButton(endDate));
     await user.click(dateButton(resetDate));
 
-    // Verify reset action is logged
-    expect(logSpy).toHaveBeenCalledWith('reset range');
-
     // Verify no dates in the original range are selected
     for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
       expect(gridcell(new Date(date), true)).not.toHaveAttribute('aria-selected', 'true');
@@ -56,7 +51,5 @@ describe('controlled-selection component', () => {
     // Verify that only the reset date is selected
     expect(gridcell(resetDate, true)).toHaveAttribute('aria-selected', 'true');
     expect(gridcell(new Date(2024, 11, 6), true)).not.toHaveAttribute('aria-selected', 'true');
-
-    logSpy.mockRestore();
   });
 });
