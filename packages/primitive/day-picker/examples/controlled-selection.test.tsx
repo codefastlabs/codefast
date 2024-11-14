@@ -1,7 +1,8 @@
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 import { ControlledSelection } from './controlled-selection';
 import { dateButton, gridcell } from './lib/elements';
+import { user } from './lib/user';
 
 const today = new Date(2024, 11, 13);
 
@@ -14,14 +15,14 @@ afterAll(() => {
 });
 
 describe('controlled-selection component', () => {
-  it('selects a date range after clicking two dates', () => {
+  it('selects a date range after clicking two dates', async () => {
     render(<ControlledSelection />);
 
     const startDate = new Date(2024, 11, 1);
     const endDate = new Date(2024, 11, 4);
 
-    fireEvent.click(dateButton(startDate));
-    fireEvent.click(dateButton(endDate));
+    await user.click(dateButton(startDate));
+    await user.click(dateButton(endDate));
 
     // Verify that each date within the range is selected
     for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
@@ -31,7 +32,7 @@ describe('controlled-selection component', () => {
     expect(gridcell(new Date(2024, 11, 5), true)).not.toHaveAttribute('aria-selected', 'true');
   });
 
-  it('resets the selected date range after clicking a third date', () => {
+  it('resets the selected date range after clicking a third date', async () => {
     const logSpy = jest.spyOn(console, 'log');
 
     render(<ControlledSelection />);
@@ -40,9 +41,9 @@ describe('controlled-selection component', () => {
     const endDate = new Date(2024, 11, 4);
     const resetDate = new Date(2024, 11, 5);
 
-    fireEvent.click(dateButton(startDate));
-    fireEvent.click(dateButton(endDate));
-    fireEvent.click(dateButton(resetDate));
+    await user.click(dateButton(startDate));
+    await user.click(dateButton(endDate));
+    await user.click(dateButton(resetDate));
 
     // Verify reset action is logged
     expect(logSpy).toHaveBeenCalledWith('reset range');
