@@ -7,7 +7,7 @@ describe('when no endMonth is given', () => {
   describe('when month is in context', () => {
     const month = new Date(2010, 11, 12);
 
-    it('return that month', () => {
+    test('return that month', () => {
       const startMonth = getInitialMonth({ month }, defaultDateLib);
 
       expect(isSameMonth(startMonth, month)).toBe(true);
@@ -16,7 +16,7 @@ describe('when no endMonth is given', () => {
   describe('when defaultMonth is in context', () => {
     const defaultMonth = new Date(2010, 11, 12);
 
-    it('return that month', () => {
+    test('return that month', () => {
       const startMonth = getInitialMonth({ defaultMonth }, defaultDateLib);
 
       expect(isSameMonth(startMonth, defaultMonth)).toBe(true);
@@ -25,7 +25,7 @@ describe('when no endMonth is given', () => {
   describe('when no month or defaultMonth', () => {
     const today = new Date(2010, 11, 12);
 
-    it('return the today month', () => {
+    test('return the today month', () => {
       const startMonth = getInitialMonth({ today }, defaultDateLib);
 
       expect(isSameMonth(startMonth, today)).toBe(true);
@@ -38,14 +38,14 @@ describe('when endMonth is given', () => {
     const endMonth = addMonths(month, -2);
 
     describe('when the number of month is 1', () => {
-      it('return the endMonth', () => {
+      test('return the endMonth', () => {
         const startMonth = getInitialMonth({ month, endMonth }, defaultDateLib);
 
         expect(isSameMonth(startMonth, endMonth)).toBe(true);
       });
     });
     describe('when the number of month is 3', () => {
-      it('return the endMonth plus the number of months', () => {
+      test('return the endMonth plus the number of months', () => {
         const startMonth = getInitialMonth({ month, numberOfMonths: 3, endMonth }, defaultDateLib);
         const expectedMonth = addMonths(endMonth, -1 * (3 - 1));
 

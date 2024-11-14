@@ -24,7 +24,7 @@ const dateLib = new DateLib({
   firstWeekContainsDate: 1,
 });
 
-it('should return the correct months without ISO weeks and reverse months', () => {
+test('should return the correct months without ISO weeks and reverse months', () => {
   const displayMonths = [new Date(2023, 5, 1)]; // June 2023
 
   const result = getMonths(displayMonths, mockDates, mockProps, dateLib);
@@ -34,7 +34,7 @@ it('should return the correct months without ISO weeks and reverse months', () =
   expect(result[0]?.weeks).toHaveLength(5); // June 2023 has 5 weeks
 });
 
-it('should handle ISO weeks', () => {
+test('should handle ISO weeks', () => {
   const displayMonths = [new Date(2023, 5, 1)]; // June 2023
 
   const isoProps = { ...mockProps, ISOWeek: true };
@@ -46,7 +46,7 @@ it('should handle ISO weeks', () => {
   expect(result[0]?.weeks).toHaveLength(5); // June 2023 has 5 ISO weeks
 });
 
-it('should handle reverse months', () => {
+test('should handle reverse months', () => {
   const displayMonths = [
     new Date(2023, 4, 1), // May 2023
     new Date(2023, 5, 1), // June 2023
@@ -61,7 +61,7 @@ it('should handle reverse months', () => {
   expect(result[1]?.date).toEqual(new Date(2023, 4, 1)); // May 2023
 });
 
-it('should handle fixed weeks', () => {
+test('should handle fixed weeks', () => {
   const displayMonths = [new Date(2023, 5, 1)]; // June 2023
 
   const fixedWeeksProps = { ...mockProps, fixedWeeks: true };
@@ -73,7 +73,7 @@ it('should handle fixed weeks', () => {
   expect(result[0]?.weeks).toHaveLength(6); // Fixed weeks should ensure 6 weeks in the month view
 });
 
-it('should handle months with no dates', () => {
+test('should handle months with no dates', () => {
   const displayMonths = [new Date(2023, 5, 1)]; // June 2023
 
   const result = getMonths(displayMonths, [], mockProps, dateLib);
