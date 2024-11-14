@@ -22,12 +22,12 @@ describe('custom-week component', () => {
     render(<CustomWeek />);
   });
 
-  it('renders without any selected week initially', () => {
+  test('renders without any selected week initially', () => {
     // Check that there is no weekly information in the initial footer.
     expect(screen.queryByText(/Week from/)).toBeNull();
   });
 
-  it('selects a full week when a day is clicked', async () => {
+  test('selects a full week when a day is clicked', async () => {
     // Assume the user clicks on today's date.
     await user.click(dateButton(today));
 
@@ -42,7 +42,7 @@ describe('custom-week component', () => {
     }
   });
 
-  it('clears the selected week when a selected day is clicked again', async () => {
+  test('clears the selected week when a selected day is clicked again', async () => {
     // Assume the user clicks on today's date to select the week.
     await user.click(dateButton(today));
 

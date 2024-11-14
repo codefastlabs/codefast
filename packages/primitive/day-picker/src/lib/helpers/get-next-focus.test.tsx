@@ -8,7 +8,7 @@ const props: Pick<DayPickerProps, 'disabled' | 'hidden' | 'startMonth' | 'endMon
   hidden: [],
 };
 
-it('should return `undefined` if `attempt` exceeds 365', () => {
+test('should return `undefined` if `attempt` exceeds 365', () => {
   const focusedDay = new CalendarDay(new Date(2020, 0, 1), new Date(2020, 0, 1), defaultDateLib);
   const moveBy: MoveFocusBy = 'day';
   const moveDir: MoveFocusDir = 'after';
@@ -17,7 +17,7 @@ it('should return `undefined` if `attempt` exceeds 365', () => {
   expect(result).toBeUndefined();
 });
 
-it('should return the focus date if it is not disabled or hidden', () => {
+test('should return the focus date if it is not disabled or hidden', () => {
   const focusedDay = new CalendarDay(new Date(2020, 0, 1), new Date(2020, 0, 1), defaultDateLib);
   const expectedDate = new Date(2020, 0, 2);
   const result = getNextFocus('day', 'after', focusedDay, undefined, undefined, props, defaultDateLib);
@@ -25,7 +25,7 @@ it('should return the focus date if it is not disabled or hidden', () => {
   expect(result?.date).toEqual(expectedDate);
 });
 
-it('should return the next focus date if it is disabled', () => {
+test('should return the next focus date if it is disabled', () => {
   const focusedDay = new CalendarDay(new Date(2020, 0, 1), new Date(2020, 0, 1), defaultDateLib);
   const disabledDate = new Date(2020, 0, 2);
   const expectedDate = new Date(2020, 0, 3);
@@ -45,7 +45,7 @@ it('should return the next focus date if it is disabled', () => {
   expect(result?.date).toEqual(expectedDate);
 });
 
-it('should return the next focus date if it is hidden', () => {
+test('should return the next focus date if it is hidden', () => {
   const focusedDay = new CalendarDay(new Date(2020, 0, 1), new Date(2020, 0, 1), defaultDateLib);
   const hiddenDate = new Date(2020, 0, 2);
   const expectedDate = new Date(2020, 0, 3);

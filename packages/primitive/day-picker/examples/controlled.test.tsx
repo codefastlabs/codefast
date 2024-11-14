@@ -19,7 +19,7 @@ describe('controlled component', () => {
     render(<Controlled />);
   });
 
-  it('renders with initial button properties', () => {
+  test('renders with initial button properties', () => {
     const button = screen.getByRole('button', { name: /Go to Today/i });
 
     expect(button).toBeInTheDocument();
@@ -27,14 +27,14 @@ describe('controlled component', () => {
     expect(button).toBeEnabled();
   });
 
-  it('disables the button when the selected month is the current month', async () => {
+  test('disables the button when the selected month is the current month', async () => {
     const button = screen.getByRole('button', { name: /Go to Today/i });
 
     await user.click(button);
     expect(button).toBeDisabled();
   });
 
-  it('displays the current month name when "Go to Today" is clicked', async () => {
+  test('displays the current month name when "Go to Today" is clicked', async () => {
     const button = screen.getByRole('button', { name: /Go to Today/i });
 
     await user.click(button);

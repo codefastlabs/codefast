@@ -20,11 +20,11 @@ describe('custom-day-button component', () => {
     render(<CustomDayButton />);
   });
 
-  it('renders informational text on initial load', () => {
+  test('renders informational text on initial load', () => {
     expect(screen.getByText('Double click to select a date')).toBeInTheDocument();
   });
 
-  it('clears the selected date on single click', async () => {
+  test('clears the selected date on single click', async () => {
     // Assume the user clicks on the button for the first day of the month.
     await user.click(dateButton(startOfMonth(today)));
 
@@ -33,7 +33,7 @@ describe('custom-day-button component', () => {
     expect(screen.queryByText(today.toDateString())).not.toBeInTheDocument();
   });
 
-  it('selects a date on double click', async () => {
+  test('selects a date on double click', async () => {
     // Assuming the user double-clicks on the current date.
     await user.dblClick(dateButton(today));
 
