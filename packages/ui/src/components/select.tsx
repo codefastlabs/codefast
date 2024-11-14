@@ -42,7 +42,7 @@ const SelectTrigger = forwardRef<SelectTriggerElement, SelectTriggerProps>(
       className={buttonVariants({
         variant: 'outline',
         size,
-        className: ['w-full justify-between px-3 font-normal', className],
+        className: ['w-full justify-between px-3 font-normal [&>span]:truncate', className],
       })}
       {...props}
     >
