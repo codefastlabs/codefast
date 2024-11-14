@@ -13,6 +13,15 @@ export function grid(name?: ByRoleOptions['name']): HTMLElement {
 }
 
 /**
+ * Retrieves all HTML elements with the role of 'grid'.
+ *
+ * @returns An array of HTMLElements that represent the grids in the document.
+ */
+export function grids(): HTMLElement[] {
+  return screen.getAllByRole('grid');
+}
+
+/**
  * Retrieves a gridcell element corresponding to the given date.
  *
  * @param date - The date for which the grid cell is being retrieved.
