@@ -123,6 +123,7 @@ export interface PropsBase {
 
   /**
    * The latest month to end the month navigation.
+   * If used for an end year, use `endMonth={new Date(year, 0)}`.
    */
   endMonth?: Date;
 
@@ -327,6 +328,7 @@ export interface PropsBase {
 
   /**
    * The earliest month to start the month navigation.
+   * If used for a start year, use `startMonth={new Date(year, 0)}`.
    */
   startMonth?: Date | undefined;
 
