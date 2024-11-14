@@ -16,7 +16,7 @@ afterAll(() => {
 const disabledDays = [new Date(2024, 10, 9), new Date(2024, 10, 16), new Date(2024, 10, 23), new Date(2024, 10, 30)];
 const enabledDays = [new Date(2024, 10, 8), new Date(2024, 10, 15), new Date(2024, 10, 22), new Date(2024, 10, 29)];
 
-describe('modifiersDisabled component', () => {
+describe('modifiers-disabled component', () => {
   test('renders DayPicker with disabled days for Saturday and Sunday', () => {
     const { container } = render(<ModifiersDisabled />);
 
