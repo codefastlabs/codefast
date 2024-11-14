@@ -46,107 +46,245 @@ export interface CustomComponents {
    * @deprecated Use {@link CustomComponents.NextMonthButton} or {@link CustomComponents.PreviousMonthButton} instead.
    */
   Button: typeof components.Button;
-  /** Render the caption label of the month grid. */
+
+  /**
+   * Render the caption label of the month grid.
+   */
   CaptionLabel: typeof components.CaptionLabel;
-  /** Render the chevron icon used in the navigation buttons and dropdowns. */
+
+  /**
+   * Render the chevron icon used in the navigation buttons and dropdowns.
+   */
   Chevron: typeof components.Chevron;
-  /** Render the day cell in the month grid. */
+
+  /**
+   * Render the day cell in the month grid.
+   */
   Day: typeof components.Day;
-  /** Render the button containing the day in the day cell. */
+
+  /**
+   * Render the button containing the day in the day cell.
+   */
   DayButton: typeof components.DayButton;
-  /** Render the dropdown element to select years and months. */
+
+  /**
+   * Render the dropdown element to select years and months.
+   */
   Dropdown: typeof components.Dropdown;
-  /** Render the container of the dropdowns. */
+
+  /**
+   * Render the container of the dropdowns.
+   */
   DropdownNav: typeof components.DropdownNav;
-  /** Render the footer element announced by screen readers. */
+
+  /**
+   * Render the footer element announced by screen readers.
+   */
   Footer: typeof components.Footer;
-  /** Render the container of the MonthGrid. */
+
+  /**
+   * Render the container of the MonthGrid.
+   */
   Month: typeof components.Month;
-  /** Render the caption of the month grid. */
+
+  /**
+   * Render the caption of the month grid.
+   */
   MonthCaption: typeof components.MonthCaption;
-  /** Render the grid of days in a month. */
+
+  /**
+   * Render the grid of days in a month.
+   */
   MonthGrid: typeof components.MonthGrid;
-  /** Wrapper of the month grids. */
+
+  /**
+   * Wrapper of the month grids.
+   */
   Months: typeof components.Months;
-  /** Render the dropdown with the months. */
+
+  /**
+   * Render the dropdown with the months.
+   */
   MonthsDropdown: typeof components.MonthsDropdown;
-  /** Render the navigation element with the next and previous buttons. */
+
+  /**
+   * Render the navigation element with the next and previous buttons.
+   */
   Nav: typeof components.Nav;
-  /** Render the next month button element in the navigation. */
+
+  /**
+   * Render the next month button element in the navigation.
+   */
   NextMonthButton: typeof components.NextMonthButton;
-  /** Render the `<option>` HTML element in the dropdown. */
+
+  /**
+   * Render the `<option>` HTML element in the dropdown.
+   */
   Option: typeof components.Option;
-  /** Render the previous month button element in the navigation. */
+
+  /**
+   * Render the previous month button element in the navigation.
+   */
   PreviousMonthButton: typeof components.PreviousMonthButton;
-  /** Render the root element of the calendar. */
+
+  /**
+   * Render the root element of the calendar.
+   */
   Root: typeof components.Root;
-  /** Render the select element in the dropdowns. */
+
+  /**
+   * Render the select element in the dropdowns.
+   */
   Select: typeof components.Select;
-  /** Render the week rows. */
+
+  /**
+   * Render the week rows.
+   */
   Week: typeof components.Week;
-  /** Render the cell with the number of the week. */
+
+  /**
+   * Render the cell with the number of the week.
+   */
   WeekNumber: typeof components.WeekNumber;
-  /** Render the header of the week number column. */
+
+  /**
+   * Render the header of the week number column.
+   */
   WeekNumberHeader: typeof components.WeekNumberHeader;
-  /** Render the weekday name in the header. */
+
+  /**
+   * Render the weekday name in the header.
+   */
   Weekday: typeof components.Weekday;
-  /** Render the row containing the week days. */
+
+  /**
+   * Render the row containing the week days.
+   */
   Weekdays: typeof components.Weekdays;
-  /** Render the weeks section in the month grid. */
+
+  /**
+   * Render the weeks section in the month grid.
+   */
   Weeks: typeof components.Weeks;
-  /** Render the dropdown with the years. */
+
+  /**
+   * Render the dropdown with the years.
+   */
   YearsDropdown: typeof components.YearsDropdown;
 }
 
-/** Represent a map of formatters used to render localized content. */
+/**
+ * Represent a map of formatters used to render localized content.
+ */
 export interface Formatters {
-  /** Format the caption of a month grid. */
+  /**
+   * Format the caption of a month grid.
+   */
   formatCaption: typeof formatCaption;
-  /** Format the day in the day cell. */
+
+  /**
+   * Format the day in the day cell.
+   */
   formatDay: typeof formatDay;
-  /** @deprecated Use {@link Formatters.formatCaption} instead. */
+
+  /**
+   * @deprecated Use {@link Formatters.formatCaption} instead.
+   */
   formatMonthCaption: typeof formatMonthCaption;
-  /** Format the label in the month dropdown. */
+
+  /**
+   * Format the label in the month dropdown.
+   */
   formatMonthDropdown: typeof formatMonthDropdown;
-  /** Format the week number. */
+
+  /**
+   * Format the week number.
+   */
   formatWeekNumber: typeof formatWeekNumber;
-  /** Format the header of the week number column. */
+
+  /**
+   * Format the header of the week number column.
+   */
   formatWeekNumberHeader: typeof formatWeekNumberHeader;
-  /** Format the week day name in the header. */
+
+  /**
+   * Format the week day name in the header.
+   */
   formatWeekdayName: typeof formatWeekdayName;
-  /** @deprecated Use {@link Formatters.formatYearDropdown} instead. */
+
+  /**
+   * @deprecated Use {@link Formatters.formatYearDropdown} instead.
+   */
   formatYearCaption: typeof formatYearCaption;
-  /** Format the label in the year dropdown. */
+
+  /**
+   * Format the label in the year dropdown.
+   */
   formatYearDropdown: typeof formatYearDropdown;
 }
 
-/** Map of functions to translate ARIA labels for the relative elements. */
+/**
+ * Map of functions to translate ARIA labels for the relative elements.
+ */
 export interface Labels {
-  /** @deprecated Use {@link labelDayButton} instead. */
+  /**
+   * @deprecated Use {@link labelDayButton} instead.
+   */
   labelDay: typeof labelDayButton;
-  /** The label for the day button. */
+
+  /**
+   * The label for the day button.
+   */
   labelDayButton: typeof labelDayButton;
-  /** The label for the month grid. */
+
+  /**
+   * The label for the month grid.
+   */
   labelGrid: typeof labelGrid;
-  /** The label for the gridcell, when the calendar is not interactive. */
+
+  /**
+   * The label for the gridcell, when the calendar is not interactive.
+   */
   labelGridcell: typeof labelGridcell;
-  /** The label for the month dropdown. */
+
+  /**
+   * The label for the month dropdown.
+   */
   labelMonthDropdown: typeof labelMonthDropdown;
-  /** The label for the navigation toolbar. */
+
+  /**
+   * The label for the navigation toolbar.
+   */
   labelNav: typeof labelNav;
-  /** The label for the "next month" button. */
+
+  /**
+   * The label for the "next month" button.
+   */
   labelNext: typeof labelNext;
-  /** The label for the "previous month" button. */
+
+  /**
+   * The label for the "previous month" button.
+   */
   labelPrevious: typeof labelPrevious;
-  /** The label for the week number. */
+
+  /**
+   * The label for the week number.
+   */
   labelWeekNumber: typeof labelWeekNumber;
+
   /**
    * Return the label for the column of the week number.
    */
   labelWeekNumberHeader: typeof labelWeekNumberHeader;
-  /** The label for the weekday. */
+
+  /**
+   * The label for the weekday.
+   */
   labelWeekday: typeof labelWeekday;
-  /** The label for the year dropdown. */
+
+  /**
+   * The label for the year dropdown.
+   */
   labelYearDropdown: typeof labelYearDropdown;
 }
 
@@ -384,24 +522,11 @@ export type ModifiersStyles = Record<string, CSSProperties>;
 export type ModifiersClassNames = Record<string, string>;
 
 /**
- * The props that have been deprecated since version 9.0.0.
+ * The direction to move the focus relative to the current focused date.
  */
-export type V9DeprecatedProps =
-  /** Use `hidden` prop instead. */
-  | 'fromDate'
-  /** Use `hidden` prop instead. */
-  | 'toDate'
-  /** Use `startMonth` instead. */
-  | 'fromMonth'
-  /** Use `endMonth` instead. */
-  | 'toMonth'
-  /** Use `startMonth` instead. */
-  | 'fromYear'
-  /** Use `endMonth` instead. */
-  | 'toYear';
-
-/** The direction to move the focus relative to the current focused date. */
 export type MoveFocusDir = 'after' | 'before';
 
-/** The temporal unit to move the focus by. */
+/**
+ * The temporal unit to move the focus by.
+ */
 export type MoveFocusBy = 'day' | 'week' | 'startOfWeek' | 'endOfWeek' | 'month' | 'year';
