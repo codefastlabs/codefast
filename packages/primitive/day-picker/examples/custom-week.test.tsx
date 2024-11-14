@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { endOfWeek, startOfWeek } from 'date-fns';
 
 import { CustomWeek } from './custom-week';
 import { dateButton, gridcell } from './lib/elements';
+import { user } from './lib/user';
 
 const today = new Date(2024, 11, 13);
 const startOfThisWeek = startOfWeek(today);
@@ -25,9 +26,9 @@ describe('custom-week component', () => {
     expect(screen.queryByText(/Week from/)).toBeNull();
   });
 
-  it('selects a full week when a day is clicked', () => {
+  it('selects a full week when a day is clicked', async () => {
     // Assume the user clicks on today's date.
-    fireEvent.click(dateButton(today));
+    await user.click(dateButton(today));
 
     // Check that the footer displays the selected week.
     expect(
@@ -40,9 +41,9 @@ describe('custom-week component', () => {
     }
   });
 
-  it('clears the selected week when a selected day is clicked again', () => {
+  it('clears the selected week when a selected day is clicked again', async () => {
     // Assume the user clicks on today's date to select the week.
-    fireEvent.click(dateButton(today));
+    await user.click(dateButton(today));
 
     // Check that the week has been selected
     expect(
@@ -50,7 +51,7 @@ describe('custom-week component', () => {
     ).toBeInTheDocument();
 
     // Assume the user clicks on today to deselect the week.
-    fireEvent.click(dateButton(today));
+    await user.click(dateButton(today));
 
     // Check that the footer doesn't display information about next week.
     expect(screen.queryByText(/Week from/)).toBeNull();

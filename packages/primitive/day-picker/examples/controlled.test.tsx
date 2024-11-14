@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { Controlled } from './controlled';
 import { grid } from './lib/elements';
+import { user } from './lib/user';
 
 beforeAll(() => {
   jest.setSystemTime(new Date(2024, 10, 1));
@@ -23,17 +24,17 @@ describe('controlled component', () => {
     expect(button).toBeEnabled();
   });
 
-  it('disables the button when the selected month is the current month', () => {
+  it('disables the button when the selected month is the current month', async () => {
     const button = screen.getByRole('button', { name: /Go to Today/i });
 
-    fireEvent.click(button);
+    await user.click(button);
     expect(button).toBeDisabled();
   });
 
-  it('displays the current month name when "Go to Today" is clicked', () => {
+  it('displays the current month name when "Go to Today" is clicked', async () => {
     const button = screen.getByRole('button', { name: /Go to Today/i });
 
-    fireEvent.click(button);
+    await user.click(button);
     expect(grid()).toHaveAccessibleName('November 2024');
   });
 });

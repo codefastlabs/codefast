@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { endOfMonth, startOfMonth } from 'date-fns';
 
 import { DisableNavigation } from './disable-navigation';
 import { grid, gridcell } from './lib/elements';
+import { user } from './lib/user';
 
 const today = new Date();
 
@@ -16,21 +17,21 @@ describe('disable-navigation component', () => {
     expect(screen.getByRole('button', { name: /next month/i })).toBeDisabled();
   });
 
-  it('should keep the current month displayed when navigating left on the first day of the month', () => {
+  it('should keep the current month displayed when navigating left on the first day of the month', async () => {
     const currentMonth = grid().getAttribute('aria-label');
     const firstDay = gridcell(startOfMonth(today));
 
-    fireEvent.click(firstDay);
-    fireEvent.keyDown(screen.getByRole('grid'), { key: 'ArrowLeft' });
+    await user.click(firstDay);
+    await user.type(screen.getByRole('grid'), '[ArrowLeft]');
     expect(screen.getByRole('grid').getAttribute('aria-label')).toBe(currentMonth);
   });
 
-  it('should keep the current month displayed when navigating right on the last day of the month', () => {
+  it('should keep the current month displayed when navigating right on the last day of the month', async () => {
     const currentMonth = grid().getAttribute('aria-label');
     const lastDay = gridcell(endOfMonth(today));
 
-    fireEvent.click(lastDay);
-    fireEvent.keyDown(screen.getByRole('grid'), { key: 'ArrowRight' });
+    await user.click(lastDay);
+    await user.type(screen.getByRole('grid'), '[ArrowRight]');
     expect(screen.getByRole('grid').getAttribute('aria-label')).toBe(currentMonth);
   });
 });

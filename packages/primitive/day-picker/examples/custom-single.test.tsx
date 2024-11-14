@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { CustomSingle } from './custom-single';
 import { dateButton, gridcell } from './lib/elements';
+import { user } from './lib/user';
 
 const today = new Date();
 
@@ -14,19 +15,19 @@ describe('custom-single component', () => {
     expect(screen.queryByText(/You selected/)).toBeNull();
   });
 
-  it('displays the selected date when a day is clicked', () => {
-    fireEvent.click(dateButton(today));
+  it('displays the selected date when a day is clicked', async () => {
+    await user.click(dateButton(today));
 
     // Check the displayed date and the aria-selected status.
     expect(screen.getByText(`You selected ${today.toDateString()}`)).toBeInTheDocument();
     expect(gridcell(today, true)).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('clears the selected date when the same day is clicked again', () => {
-    fireEvent.click(dateButton(today)); // Select date
+  it('clears the selected date when the same day is clicked again', async () => {
+    await user.click(dateButton(today)); // Select date
     expect(screen.getByText(`You selected ${today.toDateString()}`)).toBeInTheDocument();
 
-    fireEvent.click(dateButton(today)); // Deselect the same day
+    await user.click(dateButton(today)); // Deselect the same day
     expect(screen.queryByText(/You selected/)).toBeNull();
   });
 });
