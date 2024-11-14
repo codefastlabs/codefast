@@ -1,6 +1,6 @@
 import { type ByRoleOptions, screen } from '@testing-library/react';
 
-import { DayFlag, labelDayButton, labelGridcell, SelectionState } from '@/lib';
+import { DayFlag, labelDayButton, labelGridcell, labelMonthDropdown, labelYearDropdown, SelectionState } from '@/lib';
 
 /**
  * Retrieves an HTML element with the role of 'grid', optionally filtered by a given name.
@@ -54,4 +54,22 @@ export function dateButton(date: Date): HTMLElement {
       's',
     ),
   });
+}
+
+/**
+ * Retrieves the dropdown element for selecting the year.
+ *
+ * @returns The HTML element representing the year dropdown.
+ */
+export function yearDropdown(): HTMLElement {
+  return screen.getByRole('combobox', { name: labelYearDropdown() });
+}
+
+/**
+ * Generates and returns the month dropdown element.
+ *
+ * @returns The HTML element representing the month dropdown.
+ */
+export function monthDropdown(): HTMLElement {
+  return screen.getByRole('combobox', { name: labelMonthDropdown() });
 }
