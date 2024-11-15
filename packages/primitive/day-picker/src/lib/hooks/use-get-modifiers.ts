@@ -33,7 +33,7 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
   for (const day of days) {
     const { date, displayMonth } = day;
 
-    const isOutside = Boolean(displayMonth && !isSameMonth(date, displayMonth));
+    const isOutside = Boolean(!isSameMonth(date, displayMonth));
 
     const isDisabled = Boolean(disabled && dateMatchModifiers(date, disabled, dateLib));
 
@@ -67,7 +67,7 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
           return;
         }
 
-        if (customModifiersMap[name]) {
+        if (name in customModifiersMap) {
           customModifiersMap[name].push(day);
         } else {
           customModifiersMap[name] = [day];
@@ -95,15 +95,15 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
 
     // Find the modifiers for the given day
     for (const name in internalModifiersMap) {
-      const days = internalModifiersMap[name as DayFlag];
+      const daysForFlag = internalModifiersMap[name as DayFlag];
 
-      dayFlags[name as DayFlag] = days.some((d) => d === day);
+      dayFlags[name as DayFlag] = daysForFlag.some((d) => d === day);
     }
 
     for (const name in selectionModifiersMap) {
-      const days = selectionModifiersMap[name as SelectionState];
+      const daysForState = selectionModifiersMap[name as SelectionState];
 
-      selectionStates[name as SelectionState] = days.some((d) => d === day);
+      selectionStates[name as SelectionState] = daysForState.some((d) => d === day);
     }
 
     for (const name in customModifiersMap) {

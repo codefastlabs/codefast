@@ -32,7 +32,7 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
 
   const select = (triggerDate: Date, modifiers: Modifiers, event: DayEvent): DateRange | undefined => {
     const { min, max } = props as RangeProps;
-    const newRange = triggerDate ? addToRange(triggerDate, selected, min, max, required, dateLib) : undefined;
+    const newRange = addToRange(triggerDate, selected, min, max, required, dateLib);
 
     if (excludeDisabled && disabled && newRange?.from && newRange.to) {
       if (rangeContainsModifiers({ from: newRange.from, to: newRange.to }, disabled, dateLib)) {
