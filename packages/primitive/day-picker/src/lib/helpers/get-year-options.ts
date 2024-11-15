@@ -10,11 +10,7 @@ export function getYearOptions(
   formatters: Pick<Formatters, 'formatYearDropdown'>,
   dateLib: DateLib,
 ): DropdownOption[] | undefined {
-  if (!calendarStart) {
-    return undefined;
-  }
-
-  if (!calendarEnd) {
+  if (!calendarStart || !calendarEnd) {
     return undefined;
   }
 
@@ -24,19 +20,16 @@ export function getYearOptions(
   const lastNavYear = endOfYear(calendarEnd);
   const years: number[] = [];
 
-  let year = firstNavYear;
+  let yearIterator = firstNavYear;
 
-  while (isBefore(year, lastNavYear) || isSameYear(year, lastNavYear)) {
-    years.push(year.getFullYear());
-    year = addYears(year, 1);
+  while (isBefore(yearIterator, lastNavYear) || isSameYear(yearIterator, lastNavYear)) {
+    years.push(yearIterator.getFullYear());
+    yearIterator = addYears(yearIterator, 1);
   }
 
   return years.map((value) => {
-    const year = dateLib.Date ? new dateLib.Date(value, month) : new Date(value, month);
-    const disabled =
-      (calendarStart && year < startOfMonth(calendarStart)) ||
-      (month && calendarEnd && year > startOfMonth(calendarEnd)) ||
-      false;
+    const year = new dateLib.Date(value, month);
+    const disabled = year < startOfMonth(calendarStart) || (month && year > startOfMonth(calendarEnd)) || false;
     const label = formatters.formatYearDropdown(value);
 
     return {

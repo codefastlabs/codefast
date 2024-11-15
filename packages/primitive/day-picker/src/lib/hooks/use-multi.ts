@@ -1,9 +1,16 @@
 import { type DateLib } from '@/lib/classes/date-lib';
 import { useControlledValue } from '@/lib/hooks/use-controlled-value';
-import { type DayEvent, type DayPickerProps, type Modifiers, type MultiProps, type Selection } from '@/lib/types';
+import {
+  type DayEvent,
+  type DayPickerProps,
+  type Modifiers,
+  type MultiProps,
+  type MultiRequiredProps,
+  type Selection,
+} from '@/lib/types';
 
 export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> {
-  const { selected: initiallySelected, required, onSelect } = props as MultiProps;
+  const { selected: initiallySelected, required, onSelect } = props as MultiProps | MultiRequiredProps;
 
   const [internallySelected, setSelected] = useControlledValue(
     initiallySelected,
@@ -30,7 +37,7 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
       }
 
       if (required && selected?.length === 1) {
-        // Required value already selected do nothing
+        // The required value already selected does nothing
         return;
       }
 
@@ -47,7 +54,11 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
       setSelected(newDates);
     }
 
-    onSelect?.(newDates, triggerDate, modifiers, event);
+    if (!required) {
+      onSelect?.(newDates, triggerDate, modifiers, event);
+    } else if (newDates) {
+      onSelect?.(newDates, triggerDate, modifiers, event);
+    }
 
     return newDates;
   };

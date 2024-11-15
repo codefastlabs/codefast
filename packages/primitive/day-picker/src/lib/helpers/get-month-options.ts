@@ -10,11 +10,7 @@ export function getMonthOptions(
   formatters: Pick<Formatters, 'formatMonthDropdown'>,
   dateLib: DateLib,
 ): DropdownOption[] | undefined {
-  if (!navStart) {
-    return undefined;
-  }
-
-  if (!navEnd) {
+  if (!navStart || !navEnd) {
     return undefined;
   }
 
@@ -22,23 +18,20 @@ export function getMonthOptions(
   const year = displayMonth.getFullYear();
 
   const months: number[] = [];
-  let month = navStart;
+  let monthIterator = navStart;
 
-  while (months.length < 12 && isBefore(month, addMonths(navEnd, 1))) {
-    months.push(month.getMonth());
-    month = addMonths(month, 1);
+  while (months.length < 12 && isBefore(monthIterator, addMonths(navEnd, 1))) {
+    months.push(monthIterator.getMonth());
+    monthIterator = addMonths(monthIterator, 1);
   }
 
-  const sortedMonths = months.sort((a, b) => {
-    return a - b;
-  });
-  const options = sortedMonths.map((value) => {
+  const sortedMonths = months.sort((a, b) => a - b);
+
+  return sortedMonths.map((value) => {
     const label = formatters.formatMonthDropdown(value, dateLib.options.locale);
-    const month = dateLib.Date ? new dateLib.Date(year, value) : new Date(year, value);
-    const disabled = (navStart && month < startOfMonth(navStart)) || (navEnd && month > startOfMonth(navEnd)) || false;
+    const month = new dateLib.Date(year, value);
+    const disabled = month < startOfMonth(navStart) || month > startOfMonth(navEnd) || false;
 
     return { value, label, disabled };
   });
-
-  return options;
 }

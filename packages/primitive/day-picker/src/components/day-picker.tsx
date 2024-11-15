@@ -203,7 +203,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
         End: ['endOfWeek', 'after'],
       };
 
-      if (keyMap[event.key]) {
+      if (event.key in keyMap) {
         event.preventDefault();
         event.stopPropagation();
         const [moveBy, moveDir] = keyMap[event.key];
@@ -304,6 +304,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
 
             return (
               <components.Month
+                // eslint-disable-next-line react/no-array-index-key -- we need the index
                 key={displayIndex}
                 calendarMonth={calendarMonth}
                 className={classNames[UI.Month]}
@@ -378,9 +379,10 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                           {formatWeekNumberHeader()}
                         </components.WeekNumberHeader>
                       ) : null}
-                      {weekdays.map((weekday, i) => (
+                      {weekdays.map((weekday, weekdayIndex) => (
                         <components.Weekday
-                          key={i}
+                          // eslint-disable-next-line react/no-array-index-key -- we need the index
+                          key={weekdayIndex}
                           aria-label={labelWeekday(weekday, dateLib.options, dateLib)}
                           className={classNames[UI.Weekday]}
                           scope="col"
@@ -438,9 +440,9 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                               );
                             }
 
-                            const style = getStyleForModifiers(modifiers, styles, props.modifiersStyles);
+                            const styleForModifiers = getStyleForModifiers(modifiers, styles, props.modifiersStyles);
 
-                            const className = getClassNamesForModifiers(
+                            const classNamesForModifiers = getClassNamesForModifiers(
                               modifiers,
                               classNames,
                               props.modifiersClassNames,
@@ -456,7 +458,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                                 aria-hidden={modifiers.hidden || undefined}
                                 aria-label={ariaLabel}
                                 aria-selected={modifiers.selected || undefined}
-                                className={className.join(' ')}
+                                className={classNamesForModifiers.join(' ')}
                                 data-day={dateLib.format(date, 'yyyy-MM-dd')}
                                 data-disabled={modifiers.disabled || undefined}
                                 data-focused={modifiers.focused || undefined}
@@ -467,7 +469,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                                 data-today={modifiers.today || undefined}
                                 day={day}
                                 modifiers={modifiers}
-                                style={style}
+                                style={styleForModifiers}
                               >
                                 {isInteractive ? (
                                   <components.DayButton

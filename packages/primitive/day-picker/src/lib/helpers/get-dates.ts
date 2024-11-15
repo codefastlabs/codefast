@@ -14,7 +14,8 @@ export function getDates(
   const firstMonth = displayMonths[0];
   const lastMonth = displayMonths[displayMonths.length - 1];
 
-  const { ISOWeek, fixedWeeks } = props ?? {};
+  const { ISOWeek, fixedWeeks } = props;
+
   const {
     startOfWeek,
     endOfWeek,
