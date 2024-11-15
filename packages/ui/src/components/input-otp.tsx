@@ -67,13 +67,13 @@ const InputOTPSlot = forwardRef<InputOTPSlotElement, InputOTPSlotProps>(
           'border-input relative flex size-10 items-center justify-center border-y border-r text-sm shadow-sm transition-all',
           'first:rounded-l-md first:border-l',
           'last:rounded-r-md',
-          slot?.isActive && 'z-10 outline outline-2',
+          slot.isActive && 'z-10 outline outline-2',
           className,
         )}
         {...props}
       >
-        {slot?.char}
-        {slot?.hasFakeCaret ? (
+        {slot.char}
+        {slot.hasFakeCaret ? (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="animate-caret-blink bg-foreground animate-duration-1000 h-4 w-px" />
           </div>
