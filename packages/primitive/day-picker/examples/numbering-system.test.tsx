@@ -9,7 +9,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  return jest.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe('numbering-system component', () => {

@@ -10,7 +10,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  return jest.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe('modifiers-classnames component', () => {
