@@ -31,19 +31,19 @@ export function getMonths(
       monthDates.push(...extraDates);
     }
 
-    const weeks: CalendarWeek[] = monthDates.reduce<CalendarWeek[]>((weeks, date) => {
+    const weeks: CalendarWeek[] = monthDates.reduce<CalendarWeek[]>((weeksAcc, date) => {
       const weekNumber = props.ISOWeek ? getISOWeek(date) : getWeek(date);
-      const week = weeks.find((week) => week.weekNumber === weekNumber);
+      const week = weeksAcc.find((currentWeek) => currentWeek.weekNumber === weekNumber);
 
       const day = new CalendarDay(date, month, dateLib);
 
       if (!week) {
-        weeks.push(new CalendarWeek(weekNumber, [day]));
+        weeksAcc.push(new CalendarWeek(weekNumber, [day]));
       } else {
         week.days.push(day);
       }
 
-      return weeks;
+      return weeksAcc;
     }, []);
 
     const dayPickerMonth = new CalendarMonth(month, weeks);

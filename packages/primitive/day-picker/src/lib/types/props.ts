@@ -20,16 +20,11 @@ import {
 /**
  * The props for the `<DayPicker />` component.
  */
-export type DayPickerProps = BaseProps &
-  (
-    | SingleProps
-    | SingleRequiredProps
-    | MultiProps
-    | MultiRequiredProps
-    | RangeProps
-    | RangeRequiredProps
-    | { mode?: undefined; required?: undefined }
-  );
+export type DayPickerProps =
+  | (SingleProps | SingleRequiredProps)
+  | (MultiProps | MultiRequiredProps)
+  | (RangeProps | RangeRequiredProps)
+  | NoModeProps;
 
 export type DayEvent = MouseEvent | KeyboardEvent;
 
@@ -419,7 +414,7 @@ export type OnSelectHandler<T> = (selected: T, triggerDate: Date, modifiers: Mod
 /**
  * The props when the single selection is optional.
  */
-export interface SingleProps {
+export interface SingleProps extends BaseProps {
   mode: 'single';
 
   /**
@@ -437,7 +432,7 @@ export interface SingleProps {
 /**
  * The props when the single selection is required.
  */
-export interface SingleRequiredProps {
+export interface SingleRequiredProps extends BaseProps {
   mode: 'single';
   required: true;
 
@@ -455,7 +450,7 @@ export interface SingleRequiredProps {
 /**
  * The props when the multiple selection is optional.
  */
-export interface MultiProps {
+export interface MultiProps extends BaseProps {
   mode: 'multiple';
 
   /**
@@ -483,7 +478,7 @@ export interface MultiProps {
 /**
  * The props when multiple selection is required.
  */
-export interface MultiRequiredProps {
+export interface MultiRequiredProps extends BaseProps {
   mode: 'multiple';
   required: true;
 
@@ -511,7 +506,7 @@ export interface MultiRequiredProps {
 /**
  * The props when the range selection is optional.
  */
-export interface RangeProps {
+export interface RangeProps extends BaseProps {
   mode: 'range';
   disabled?: Matcher | Matcher[] | undefined;
 
@@ -545,7 +540,7 @@ export interface RangeProps {
 /**
  * The props when the range selection is required.
  */
-export interface RangeRequiredProps {
+export interface RangeRequiredProps extends BaseProps {
   mode: 'range';
   required: true;
 
@@ -574,4 +569,9 @@ export interface RangeRequiredProps {
    * Event handler when a range is selected.
    */
   onSelect?: OnSelectHandler<DateRange>;
+}
+
+export interface NoModeProps extends BaseProps {
+  mode?: undefined;
+  required?: undefined;
 }
