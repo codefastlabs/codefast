@@ -73,7 +73,7 @@ describe('multipleMinMax component', () => {
       expect(gridcell(day, true)).toHaveAttribute('aria-selected', 'true');
     });
 
-    test('does not allow a sixth day to be selected due to max constraint', async () => {
+    test('does not allow a sixth day to be selected due to max constraint', () => {
       const day6 = addDays(today, 5);
 
       expect(gridcell(day6, true)).not.toHaveAttribute('aria-selected');
