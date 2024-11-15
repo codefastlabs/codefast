@@ -8,6 +8,7 @@ import {
   type SelectHandler,
   type Selection,
   type SingleProps,
+  type SingleRequiredProps,
 } from '@/lib/types';
 
 export interface UseSingle<T extends DayPickerProps> {
@@ -17,7 +18,7 @@ export interface UseSingle<T extends DayPickerProps> {
 }
 
 export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateLib: DateLib): Selection<T> {
-  const { selected: initiallySelected, required, onSelect } = props as SingleProps;
+  const { selected: initiallySelected, required, onSelect } = props as SingleProps | SingleRequiredProps;
 
   const [internallySelected, setSelected] = useControlledValue(
     initiallySelected,
@@ -44,7 +45,11 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
       setSelected(newDate);
     }
 
-    onSelect?.(newDate, triggerDate, modifiers, event);
+    if (!required) {
+      onSelect?.(newDate, triggerDate, modifiers, event);
+    } else if (newDate) {
+      onSelect?.(newDate, triggerDate, modifiers, event);
+    }
 
     return newDate;
   };
