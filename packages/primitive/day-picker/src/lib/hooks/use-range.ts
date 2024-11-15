@@ -5,14 +5,14 @@ import {
   type DayEvent,
   type DayPickerProps,
   type Modifiers,
-  type PropsRange,
+  type RangeProps,
   type Selection,
 } from '@/lib/types';
 import { addToRange, rangeContainsModifiers } from '@/lib/utils';
 import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
 
 export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> {
-  const { disabled, excludeDisabled, selected: initiallySelected, required, onSelect } = props as PropsRange;
+  const { disabled, excludeDisabled, selected: initiallySelected, required, onSelect } = props as RangeProps;
 
   const [internallySelected, setSelected] = useControlledValue(
     initiallySelected,
@@ -24,7 +24,7 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   const isSelected = (date: Date): boolean | undefined => selected && rangeIncludesDate(selected, date, false, dateLib);
 
   const select = (triggerDate: Date, modifiers: Modifiers, event: DayEvent): DateRange | undefined => {
-    const { min, max } = props as PropsRange;
+    const { min, max } = props as RangeProps;
     const newRange = triggerDate ? addToRange(triggerDate, selected, min, max, required, dateLib) : undefined;
 
     if (excludeDisabled && disabled && newRange?.from && newRange.to) {
