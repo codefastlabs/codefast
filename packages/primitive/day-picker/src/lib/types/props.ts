@@ -20,14 +20,14 @@ import {
 /**
  * The props for the `<DayPicker />` component.
  */
-export type DayPickerProps = PropsBase &
+export type DayPickerProps = BaseProps &
   (
-    | PropsSingle
-    | PropsSingleRequired
-    | PropsMulti
-    | PropsMultiRequired
-    | PropsRange
-    | PropsRangeRequired
+    | SingleProps
+    | SingleRequiredProps
+    | MultiProps
+    | MultiRequiredProps
+    | RangeProps
+    | RangeRequiredProps
     | { mode?: undefined; required?: undefined }
   );
 
@@ -37,7 +37,7 @@ export type DayEvent = MouseEvent | KeyboardEvent;
  * Props for customizing the calendar, handling localization, and managing
  * events. These exclude the selection mode props.
  */
-export interface PropsBase {
+export interface BaseProps {
   /**
    * Use ISO week dates instead of the locale setting. Setting this prop will
    * ignore `weekStartsOn` and `firstWeekContainsDate`.
@@ -419,7 +419,7 @@ export type OnSelectHandler<T> = (selected: T, triggerDate: Date, modifiers: Mod
 /**
  * The props when the single selection is optional.
  */
-export interface PropsSingle {
+export interface SingleProps {
   mode: 'single';
 
   /**
@@ -437,7 +437,7 @@ export interface PropsSingle {
 /**
  * The props when the single selection is required.
  */
-export interface PropsSingleRequired {
+export interface SingleRequiredProps {
   mode: 'single';
   required: true;
 
@@ -455,7 +455,7 @@ export interface PropsSingleRequired {
 /**
  * The props when the multiple selection is optional.
  */
-export interface PropsMulti {
+export interface MultiProps {
   mode: 'multiple';
 
   /**
@@ -483,7 +483,7 @@ export interface PropsMulti {
 /**
  * The props when multiple selection is required.
  */
-export interface PropsMultiRequired {
+export interface MultiRequiredProps {
   mode: 'multiple';
   required: true;
 
@@ -511,7 +511,7 @@ export interface PropsMultiRequired {
 /**
  * The props when the range selection is optional.
  */
-export interface PropsRange {
+export interface RangeProps {
   mode: 'range';
   disabled?: Matcher | Matcher[] | undefined;
 
@@ -545,7 +545,7 @@ export interface PropsRange {
 /**
  * The props when the range selection is required.
  */
-export interface PropsRangeRequired {
+export interface RangeRequiredProps {
   mode: 'range';
   required: true;
 
