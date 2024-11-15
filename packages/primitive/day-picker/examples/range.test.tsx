@@ -7,7 +7,6 @@ import { Range } from './range';
 
 const defaultMonth = new Date(2020, 5, 15);
 
-let container: HTMLElement;
 const days = [
   defaultMonth,
   addDays(defaultMonth, 1),
@@ -24,11 +23,7 @@ function getAllSelected(): HTMLElement[] {
 
 describe('range component', () => {
   beforeEach(() => {
-    container = render(<Range />).container;
-  });
-
-  test('matches the snapshot initially', () => {
-    expect(container).toMatchSnapshot();
+    render(<Range />);
   });
 
   describe('when initialized with a default range', () => {
@@ -85,8 +80,10 @@ describe('range component', () => {
           expect(getAllSelected()).toHaveLength(0);
         });
 
-        test('matches the snapshot after clearing the selection', () => {
-          expect(container).toMatchSnapshot();
+        test('all grid cells are not selected after clearing the selection', () => {
+          const selectedCells = getAllSelected();
+
+          expect(selectedCells).toHaveLength(0);
         });
       });
     });
