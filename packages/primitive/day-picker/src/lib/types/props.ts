@@ -31,6 +31,8 @@ export type DayPickerProps = PropsBase &
     | { mode?: undefined; required?: undefined }
   );
 
+export type DayEvent = MouseEvent | KeyboardEvent;
+
 /**
  * Props for customizing the calendar, handling localization, and managing
  * events. These exclude the selection mode props.
@@ -412,30 +414,7 @@ export interface PropsBase {
  * @param modifiers - An object containing flags or additional information about the selection state.
  * @param event - The event object representing the mouse or keyboard event that triggered the selection.
  */
-export type OnSelectHandler<T> = (
-  selected: T,
-  triggerDate: Date,
-  modifiers: Modifiers,
-  event: MouseEvent | KeyboardEvent,
-) => void;
-
-/**
- * The props when the single selection is required.
- */
-export interface PropsSingleRequired {
-  mode: 'single';
-  required: true;
-
-  /**
-   * The selected date.
-   */
-  selected: Date | undefined;
-
-  /**
-   * Event handler when a day is selected.
-   */
-  onSelect?: OnSelectHandler<Date>;
-}
+export type OnSelectHandler<T> = (selected: T, triggerDate: Date, modifiers: Modifiers, event: DayEvent) => void;
 
 /**
  * The props when the single selection is optional.
@@ -456,31 +435,21 @@ export interface PropsSingle {
 }
 
 /**
- * The props when multiple selection is required.
+ * The props when the single selection is required.
  */
-export interface PropsMultiRequired {
-  mode: 'multiple';
+export interface PropsSingleRequired {
+  mode: 'single';
   required: true;
 
   /**
-   * The selected dates.
+   * The selected date.
    */
-  selected: Date[] | undefined;
+  selected: Date | undefined;
 
   /**
-   * The maximum number of selectable days.
+   * Event handler when a day is selected.
    */
-  max?: number;
-
-  /**
-   * The minimum number of selectable days.
-   */
-  min?: number;
-
-  /**
-   * Event handler when days are selected.
-   */
-  onSelect?: OnSelectHandler<Date[]>;
+  onSelect?: OnSelectHandler<Date>;
 }
 
 /**
@@ -512,37 +481,31 @@ export interface PropsMulti {
 }
 
 /**
- * The props when the range selection is required.
+ * The props when multiple selection is required.
  */
-export interface PropsRangeRequired {
-  mode: 'range';
+export interface PropsMultiRequired {
+  mode: 'multiple';
   required: true;
 
   /**
-   * The selected range.
+   * The selected dates.
    */
-  selected: DateRange | undefined;
-  disabled?: Matcher | Matcher[] | undefined;
+  selected: Date[] | undefined;
 
   /**
-   * When `true`, the range will reset when including a disabled day.
-   */
-  excludeDisabled?: boolean | undefined;
-
-  /**
-   * The maximum number of days to include in the range.
+   * The maximum number of selectable days.
    */
   max?: number;
 
   /**
-   * The minimum number of days to include in the range.
+   * The minimum number of selectable days.
    */
   min?: number;
 
   /**
-   * Event handler when a range is selected.
+   * Event handler when days are selected.
    */
-  onSelect?: OnSelectHandler<DateRange>;
+  onSelect?: OnSelectHandler<Date[]>;
 }
 
 /**
@@ -577,4 +540,38 @@ export interface PropsRange {
    * The selected range.
    */
   selected?: DateRange | undefined;
+}
+
+/**
+ * The props when the range selection is required.
+ */
+export interface PropsRangeRequired {
+  mode: 'range';
+  required: true;
+
+  /**
+   * The selected range.
+   */
+  selected: DateRange | undefined;
+  disabled?: Matcher | Matcher[] | undefined;
+
+  /**
+   * When `true`, the range will reset when including a disabled day.
+   */
+  excludeDisabled?: boolean | undefined;
+
+  /**
+   * The maximum number of days to include in the range.
+   */
+  max?: number;
+
+  /**
+   * The minimum number of days to include in the range.
+   */
+  min?: number;
+
+  /**
+   * Event handler when a range is selected.
+   */
+  onSelect?: OnSelectHandler<DateRange>;
 }
