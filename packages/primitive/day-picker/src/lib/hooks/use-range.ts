@@ -2,8 +2,8 @@ import { type DateLib } from '@/lib/classes/date-lib';
 import { useControlledValue } from '@/lib/hooks/use-controlled-value';
 import {
   type DateRange,
+  type DayEvent,
   type DayPickerProps,
-  type InteractionEvent,
   type Modifiers,
   type PropsRange,
   type Selection,
@@ -23,7 +23,7 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
 
   const isSelected = (date: Date): boolean | undefined => selected && rangeIncludesDate(selected, date, false, dateLib);
 
-  const select = (triggerDate: Date, modifiers: Modifiers, event: InteractionEvent): DateRange | undefined => {
+  const select = (triggerDate: Date, modifiers: Modifiers, event: DayEvent): DateRange | undefined => {
     const { min, max } = props as PropsRange;
     const newRange = triggerDate ? addToRange(triggerDate, selected, min, max, required, dateLib) : undefined;
 
