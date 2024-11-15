@@ -12,7 +12,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  return jest.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe('outside-days component', () => {
