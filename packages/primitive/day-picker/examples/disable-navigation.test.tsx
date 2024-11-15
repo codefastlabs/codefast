@@ -22,7 +22,7 @@ describe('disable-navigation component', () => {
     const firstDay = gridcell(startOfMonth(today));
 
     await user.click(firstDay);
-    await user.type(screen.getByRole('grid'), '[ArrowLeft]');
+    await user.type(screen.getByRole('grid'), '{ArrowLeft}');
     expect(screen.getByRole('grid').getAttribute('aria-label')).toBe(currentMonth);
   });
 
@@ -31,7 +31,7 @@ describe('disable-navigation component', () => {
     const lastDay = gridcell(endOfMonth(today));
 
     await user.click(lastDay);
-    await user.type(screen.getByRole('grid'), '[ArrowRight]');
+    await user.type(screen.getByRole('grid'), '{ArrowRight}');
     expect(screen.getByRole('grid').getAttribute('aria-label')).toBe(currentMonth);
   });
 });
