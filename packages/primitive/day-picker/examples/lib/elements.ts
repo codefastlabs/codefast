@@ -120,3 +120,14 @@ export function nextButton(): HTMLElement {
     name: 'Go to the Next Month',
   });
 }
+
+/**
+ * Retrieves a table column header element based on the specified name options.
+ *
+ * @param name - (Optional) The name options used to query the column header.
+ * It must conform to the ByRoleOptions["name"] type.
+ * @returns The first HTMLElement that matches the role "columnheader" and the specified name options.
+ */
+export function columnHeader(name?: ByRoleOptions['name']): HTMLElement {
+  return screen.getByRole('columnheader', name ? { name } : undefined);
+}
