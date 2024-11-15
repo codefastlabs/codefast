@@ -9,6 +9,7 @@ const today = new Date(2021, 10, 25); // Ngày hiện tại là 25/11/2021
 beforeAll(() => {
   jest.setSystemTime(today);
 });
+
 afterAll(() => jest.useRealTimers());
 
 describe('multiple-months-paged component', () => {
