@@ -1,6 +1,4 @@
-import { type KeyboardEvent, type MouseEvent } from 'react';
-
-import { type DayPickerProps } from '@/lib/types/props';
+import { type DayPickerProps, type InteractionEvent } from '@/lib/types/props';
 import { type DateRange, type Mode, type Modifiers } from '@/lib/types/shared';
 
 export interface Selection<T extends DayPickerProps> {
@@ -29,19 +27,19 @@ export type SelectedValue<T> = T extends { mode: 'single'; required?: boolean }
 export type SelectHandlerSingle<T extends { required?: boolean | undefined }> = (
   triggerDate: Date,
   modifiers: Modifiers,
-  event: MouseEvent | KeyboardEvent,
+  event: InteractionEvent,
 ) => T['required'] extends true ? Date : Date | undefined;
 
 export type SelectHandlerMulti<T extends { required?: boolean | undefined }> = (
   triggerDate: Date,
   modifiers: Modifiers,
-  event: MouseEvent | KeyboardEvent,
+  event: InteractionEvent,
 ) => T['required'] extends true ? Date[] : Date[] | undefined;
 
 export type SelectHandlerRange<T extends { required?: boolean | undefined }> = (
   triggerDate: Date,
   modifiers: Modifiers,
-  event: MouseEvent | KeyboardEvent,
+  event: InteractionEvent,
 ) => T['required'] extends true ? DateRange : DateRange | undefined;
 
 export type SelectHandler<T extends { mode?: Mode | undefined; required?: boolean | undefined }> = T extends {
