@@ -30,10 +30,10 @@ describe('focus-recursive component', () => {
     await user.tab();
 
     // Sử dụng phím mũi tên xuống để di chuyển focus đến ngày cần kiểm tra
-    await user.type(activeElement(), '[ArrowDown]');
-    await user.type(activeElement(), '[ArrowDown]');
-    await user.type(activeElement(), '[ArrowDown]');
-    await user.type(activeElement(), '[ArrowDown]');
+    await user.type(activeElement(), '{ArrowDown}');
+    await user.type(activeElement(), '{ArrowDown}');
+    await user.type(activeElement(), '{ArrowDown}');
+    await user.type(activeElement(), '{ArrowDown}');
 
     // Kiểm tra rằng ngày 22 tháng 6 năm 2022 có focus
     expect(dateButton(new Date(2022, 5, 22))).toHaveFocus();

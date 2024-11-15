@@ -61,7 +61,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Left', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowLeft]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowLeft}'));
 
         if (dir === 'rtl') {
           test('focuses on the next day', () => {
@@ -79,7 +79,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Right', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowRight]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowRight}'));
 
         if (dir === 'rtl') {
           test('displays the previous month', () => {
@@ -97,7 +97,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Up', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowUp]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowUp}'));
 
         test('displays the previous month', () => {
           expect(grid('May 2022')).toBeInTheDocument();
@@ -109,7 +109,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Down', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowDown]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowDown}'));
 
         test('displays the current month', () => {
           expect(grid('June 2022')).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Page Up', () => {
-        beforeEach(() => user.type(activeElement(), '[PageUp]'));
+        beforeEach(() => user.type(activeElement(), '{PageUp}'));
 
         test('displays the previous month', () => {
           expect(grid('May 2022')).toBeInTheDocument();
@@ -133,7 +133,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Page Down', () => {
-        beforeEach(() => user.type(activeElement(), '[PageDown]'));
+        beforeEach(() => user.type(activeElement(), '{PageDown}'));
 
         test('displays the next month', () => {
           expect(grid('July 2022')).toBeInTheDocument();
@@ -145,7 +145,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Shift + Page Up', () => {
-        beforeEach(() => user.type(activeElement(), '{Shift>}[PageUp]'));
+        beforeEach(() => user.type(activeElement(), '{Shift>}{PageUp}'));
 
         test('displays the previous year', () => {
           expect(grid('June 2021')).toBeInTheDocument();
@@ -157,7 +157,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Shift + Page Down', () => {
-        beforeEach(() => user.type(activeElement(), '{Shift>}[PageDown]'));
+        beforeEach(() => user.type(activeElement(), '{Shift>}{PageDown}'));
 
         test('displays the next year', () => {
           expect(grid('June 2023')).toBeInTheDocument();
@@ -169,7 +169,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Home', () => {
-        beforeEach(() => user.type(activeElement(), '[Home]'));
+        beforeEach(() => user.type(activeElement(), '{Home}'));
 
         test('focuses on the start of the week', () => {
           expect(dateButton(startOfWeekDay)).toHaveFocus();
@@ -177,7 +177,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing End', () => {
-        beforeEach(() => user.type(activeElement(), '[End]'));
+        beforeEach(() => user.type(activeElement(), '{End}'));
 
         test('focuses on the end of the week', () => {
           expect(dateButton(endOfWeekDay)).toHaveFocus();
@@ -197,7 +197,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Right', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowRight]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowRight}'));
 
         if (dir === 'rtl') {
           test('focuses on the previous day', () => {
@@ -215,7 +215,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Left', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowLeft]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowLeft}'));
 
         if (dir === 'rtl') {
           test('displays the next month', () => {
@@ -237,7 +237,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Up', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowUp]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowUp}'));
 
         test('displays the current month', () => {
           expect(grid('June 2022')).toBeInTheDocument();
@@ -249,7 +249,7 @@ describe('keyboard component', () => {
       });
 
       describe('pressing Arrow Down', () => {
-        beforeEach(() => user.type(activeElement(), '[ArrowDown]'));
+        beforeEach(() => user.type(activeElement(), '{ArrowDown}'));
 
         test('displays the next month', () => {
           expect(grid('July 2022')).toBeInTheDocument();
@@ -275,7 +275,7 @@ describe('keyboard component', () => {
     });
 
     describe('pressing Home', () => {
-      beforeEach(() => user.type(activeElement(), '[Home]'));
+      beforeEach(() => user.type(activeElement(), '{Home}'));
 
       test('focuses on the start of the week being Monday', () => {
         expect(dateButton(startOfWeekDay)).toHaveFocus();
@@ -283,7 +283,7 @@ describe('keyboard component', () => {
     });
 
     describe('pressing End', () => {
-      beforeEach(() => user.type(activeElement(), '[End]'));
+      beforeEach(() => user.type(activeElement(), '{End}'));
 
       test('focuses on the end of the week being Sunday', () => {
         expect(dateButton(endOfWeekDay)).toHaveFocus();
