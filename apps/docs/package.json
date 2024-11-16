@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "rm -rf .next && next build",
     "clean": "rm -rf .next && rm -rf .turbo && rm -rf node_modules",
     "dev": "next dev --turbopack",
     "lint": "next lint --fix --max-warnings 0",
