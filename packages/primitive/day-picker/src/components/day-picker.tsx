@@ -323,8 +323,6 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                         <components.MonthsDropdown
                           aria-label={labelMonthDropdown()}
                           className={classNames[UI.MonthsDropdown]}
-                          classNames={classNames}
-                          components={components}
                           disabled={Boolean(props.disableNavigation)}
                           options={dropdownMonths}
                           style={styles?.[UI.Dropdown]}
@@ -340,8 +338,6 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                         <components.YearsDropdown
                           aria-label={labelYearDropdown(dateLib.options)}
                           className={classNames[UI.YearsDropdown]}
-                          classNames={classNames}
-                          components={components}
                           disabled={Boolean(props.disableNavigation)}
                           options={dropdownYears}
                           style={styles?.[UI.Dropdown]}
