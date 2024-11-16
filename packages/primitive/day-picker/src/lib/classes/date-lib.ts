@@ -38,16 +38,6 @@ export type { Locale } from 'date-fns/locale';
 export type { Month as DateFnsMonth } from 'date-fns';
 
 /**
- * @deprecated Use {@link DateLibOptions} instead.
- */
-export type FormatOptions = DateLibOptions;
-
-/**
- * @deprecated Use {@link DateLibOptions} instead.
- */
-export type LabelOptions = DateLibOptions;
-
-/**
  * The options for the `DateLib` class.
  *
  * Extends `date-fns` [format](https://date-fns.org/docs/format),
