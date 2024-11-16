@@ -1,10 +1,17 @@
 import { type CalendarDay } from '@/lib/classes/calendar-day';
 
-/** Represent a week in a calendar month. */
+/**
+ * Represent a week in a calendar month.
+ */
 export class CalendarWeek {
-  /** The number of the week within the year. */
+  /**
+   * The number of the week within the year.
+   */
   weekNumber: number;
-  /** The days within the week. */
+
+  /**
+   * The days within the week.
+   */
   days: CalendarDay[];
 
   constructor(weekNumber: number, days: CalendarDay[]) {

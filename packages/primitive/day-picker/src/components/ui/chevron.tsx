@@ -2,10 +2,17 @@ import { type JSX } from 'react';
 
 export interface ChevronProps {
   className?: string;
-  /** Set to `true` to disable the chevron. */
+
+  /**
+   * Set to `true` to disable the chevron.
+   */
   disabled?: boolean;
-  /** The orientation of the chevron. */
+
+  /**
+   * The orientation of the chevron.
+   */
   orientation?: 'up' | 'down' | 'left' | 'right';
+
   /**
    * The size of the chevron.
    *

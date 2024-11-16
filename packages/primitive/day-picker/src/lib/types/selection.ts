@@ -2,16 +2,26 @@ import { type DayEvent, type DayPickerProps } from '@/lib/types/props';
 import { type DateRange, type Mode, type Modifiers } from '@/lib/types/shared';
 
 export interface Selection<T extends DayPickerProps> {
-  /** Whether the given date is selected. */
+  /**
+   * Whether the given date is selected.
+   */
   isSelected: (date: Date) => boolean;
-  /** Set a selection. */
+
+  /**
+   * Set a selection.
+   */
   select: SelectHandler<T> | undefined;
-  /** The selected date(s). */
+
+  /**
+   * The selected date(s).
+   */
   selected: SelectedValue<T> | undefined;
 }
 
 export type SelectedSingle<T extends { required?: boolean }> = T['required'] extends true ? Date : Date | undefined;
+
 export type SelectedMulti<T extends { required?: boolean }> = T['required'] extends true ? Date[] : Date[] | undefined;
+
 export type SelectedRange<T extends { required?: boolean }> = T['required'] extends true
   ? DateRange
   : DateRange | undefined;
