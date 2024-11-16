@@ -110,7 +110,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         [UI.CaptionLabel]: 'inline-flex items-center',
         [UI.Day]: cn(
           'py-0',
-          !props.mode && 'text-foreground mx-px flex min-h-8 min-w-8 items-center justify-center text-sm font-medium',
+          !props.mode && 'text-foreground flex min-h-8 min-w-8 items-center justify-center text-sm font-medium',
         ),
         [UI.DayButton]: 'border border-transparent',
         [UI.Dropdown]: 'absolute size-full appearance-none opacity-0',
