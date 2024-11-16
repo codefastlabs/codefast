@@ -98,8 +98,10 @@ type CalendarProps = DayPickerProps;
 function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Element {
   return (
     <DayPicker
+      showOutsideDays
       className={cn('p-3', className)}
       classNames={{
+        [DayFlag.hidden]: 'invisible',
         [DayFlag.outside]: cn(!props.mode && 'text-opacity-30'),
         [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md'),
         [SelectionState.range_end]:
