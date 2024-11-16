@@ -4,7 +4,7 @@ import { type CalendarDay } from '@/lib/classes/calendar-day';
 import { type CalendarMonth } from '@/lib/classes/calendar-month';
 import {
   type ClassNames,
-  type CustomComponents,
+  type Components,
   type DayPickerProps,
   type Formatters,
   type Labels,
@@ -33,7 +33,7 @@ export interface DayPickerContext<T extends { mode?: Mode | undefined; required?
   /** The class names for the UI elements. */
   classNames: ClassNames;
   /** The components used internally by DayPicker. */
-  components: CustomComponents;
+  components: Components;
   /**
    * The props as passed to the DayPicker component.
    */

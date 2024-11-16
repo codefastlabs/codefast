@@ -37,14 +37,7 @@ export type Mode = 'single' | 'multiple' | 'range';
 /**
  * The components that can be changed using the `components` prop.
  */
-export interface CustomComponents {
-  /**
-   * Render any button element in DayPicker.
-   *
-   * @deprecated Use {@link CustomComponents.NextMonthButton} or {@link CustomComponents.PreviousMonthButton} instead.
-   */
-  Button: typeof components.Button;
-
+export interface Components {
   /**
    * Render the caption label of the month grid.
    */
@@ -215,11 +208,6 @@ export interface Formatters {
  * Map of functions to translate ARIA labels for the relative elements.
  */
 export interface Labels {
-  /**
-   * @deprecated Use {@link labelDayButton} instead.
-   */
-  labelDay: typeof labelDayButton;
-
   /**
    * The label for the day button.
    */
