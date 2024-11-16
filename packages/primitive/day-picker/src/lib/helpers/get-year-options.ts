@@ -2,7 +2,9 @@ import { type DropdownOption } from '@/components/ui/dropdown';
 import { type DateLib } from '@/lib/classes/date-lib';
 import { type Formatters } from '@/lib/types';
 
-/** Return the years to show in the dropdown. */
+/**
+ * Return the years to show in the dropdown.
+ */
 export function getYearOptions(
   displayMonth: Date,
   calendarStart: Date | undefined,

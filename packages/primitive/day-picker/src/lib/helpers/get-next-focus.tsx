@@ -7,7 +7,10 @@ import { dateMatchModifiers } from '@/lib/utils/date-match-modifiers';
 export function getNextFocus(
   moveBy: MoveFocusBy,
   moveDir: MoveFocusDir,
-  /** The date that is currently focused. */
+
+  /**
+   * The date that is currently focused.
+   */
   refDay: CalendarDay,
   calendarStartMonth: Date | undefined,
   calendarEndMonth: Date | undefined,

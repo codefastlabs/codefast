@@ -7,19 +7,29 @@ import { type Calendar } from '@/lib/hooks/use-calendar';
 import { type DayPickerProps, type Modifiers, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
 
 export interface UseFocus {
-  /** Blur the focused day. */
+  /**
+   * Blur the focused day.
+   */
   blur: () => void;
 
-  /** The date that is currently focused. */
+  /**
+   * The date that is currently focused.
+   */
   focused: CalendarDay | undefined;
 
-  /** Check if the given day is the focus target when entering the calendar. */
+  /**
+   * Check if the given day is the focus target when entering the calendar.
+   */
   isFocusTarget: (day: CalendarDay) => boolean;
 
-  /** Move the current focus to the next day according to the given direction. */
+  /**
+   * Move the current focus to the next day according to the given direction.
+   */
   moveFocus: (moveBy: MoveFocusBy, moveDir: MoveFocusDir) => void;
 
-  /** Focus the given day. */
+  /**
+   * Focus the given day.
+   */
   setFocused: (day: CalendarDay | undefined) => void;
 }
 
