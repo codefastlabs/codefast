@@ -1,6 +1,8 @@
 import { type DayPickerProps } from '@/lib/types';
 
-/** Return the `data-` attributes from the props. */
+/**
+ * Return the `data-` attributes from the props.
+ */
 export function getDataAttributes(props: DayPickerProps): Record<string, unknown> {
   const dataAttributes: Record<string, unknown> = {
     'data-mode': props.mode ?? undefined,

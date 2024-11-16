@@ -4,9 +4,14 @@ import { type CalendarDay } from '@/lib/classes';
 import { type Modifiers } from '@/lib/types';
 
 export type DayButtonProps = ComponentProps<'button'> & {
-  /** The day to render. */
+  /**
+   * The day to render.
+   */
   day: CalendarDay;
-  /** The modifiers for the day. */
+
+  /**
+   * The modifiers for the day.
+   */
   modifiers: Modifiers;
 };
 

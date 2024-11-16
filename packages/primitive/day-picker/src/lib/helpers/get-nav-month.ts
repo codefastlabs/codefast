@@ -5,7 +5,9 @@ import { type DayPickerProps } from '@/lib/types';
 
 const YEARS_OFFSET = 100;
 
-/** Return the start and end months for the calendar navigation. */
+/**
+ * Return the start and end months for the calendar navigation.
+ */
 export function getNavMonths(
   props: Pick<DayPickerProps, 'captionLayout' | 'startMonth' | 'endMonth' | 'today' | 'timeZone'>,
   dateLib: DateLib,

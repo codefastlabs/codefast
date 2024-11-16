@@ -18,11 +18,11 @@ import { type DayPickerProps } from '@/lib/types';
  */
 export interface Calendar {
   /**
-   * All the days displayed in the calendar. As opposite from
-   * {@link CalendarContext.dates}, it may return duplicated dates when shown
-   * outside the month.
+   * All the days displayed in the calendar.
+   * As opposite from {@link CalendarContext.dates}, it may return duplicated dates when shown outside the month.
    */
   days: CalendarDay[];
+
   /**
    * Navigate to the specified date. If the second parameter (refDate) is
    * provided and the date is before the refDate, then the month is set to one
@@ -33,28 +33,40 @@ export interface Calendar {
    *   date.
    */
   goToDay: (day: CalendarDay) => void;
-  /** Navigate to the specified month. Will fire the `onMonthChange` callback. */
+
+  /**
+   * Navigate to the specified month. Will fire the `onMonthChange` callback.
+   */
   goToMonth: (month: Date) => void;
 
-  /** The months displayed in the calendar. */
-  months: CalendarMonth[];
   /**
-   * The month where the navigation ends. `undefined` if the calendar can be
-   * navigated indefinitely to the past.
+   * The months displayed in the calendar.
+   */
+  months: CalendarMonth[];
+
+  /**
+   * The month where the navigation ends. `undefined` if the calendar can be navigated indefinitely to the past.
    */
   navEnd: Date | undefined;
 
   /**
-   * The month where the navigation starts. `undefined` if the calendar can be
-   * navigated indefinitely to the past.
+   * The month where the navigation starts. `undefined` if the calendar can be navigated indefinitely to the past.
    */
   navStart: Date | undefined;
-  /** The next month to display. */
+
+  /**
+   * The next month to display.
+   */
   nextMonth: Date | undefined;
 
-  /** The previous month to display. */
+  /**
+   * The previous month to display.
+   */
   previousMonth: Date | undefined;
-  /** The months displayed in the calendar. */
+
+  /**
+   * The months displayed in the calendar.
+   */
   weeks: CalendarWeek[];
 }
 
@@ -92,19 +104,29 @@ export function useCalendar(
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only update when the timezone changes
   }, [props.timeZone]);
 
-  /** The months displayed in the calendar. */
+  /**
+   * The months displayed in the calendar.
+   */
   const displayMonths = getDisplayMonths(firstMonth, navEnd, props, dateLib);
 
-  /** The dates displayed in the calendar. */
+  /**
+   * The dates displayed in the calendar.
+   */
   const dates = getDates(displayMonths, props.endMonth ? endOfMonth(props.endMonth) : undefined, props, dateLib);
 
-  /** The Months displayed in the calendar. */
+  /**
+   * The Months displayed in the calendar.
+   */
   const months = getMonths(displayMonths, dates, props, dateLib);
 
-  /** The Weeks displayed in the calendar. */
+  /**
+   * The Weeks displayed in the calendar.
+   */
   const weeks = getWeeks(months);
 
-  /** The Days displayed in the calendar. */
+  /**
+   * The Days displayed in the calendar.
+   */
   const days = getDays(months);
 
   const previousMonth = getPreviousMonth(firstMonth, navStart, props, dateLib);
@@ -122,12 +144,12 @@ export function useCalendar(
 
     let newMonth = startOfMonth(date);
 
-    // if month is before start, use the first month instead
+    // if the month is before start, use the first month instead
     if (navStart && newMonth < startOfMonth(navStart)) {
       newMonth = startOfMonth(navStart);
     }
 
-    // if month is after endMonth, use the last month instead
+    // if the month is after endMonth, use the last month instead
     if (navEnd && newMonth > startOfMonth(navEnd)) {
       newMonth = startOfMonth(navEnd);
     }
@@ -145,7 +167,7 @@ export function useCalendar(
     goToMonth(day.date);
   };
 
-  const calendar = {
+  return {
     months,
     weeks,
     days,
@@ -159,6 +181,4 @@ export function useCalendar(
     goToMonth,
     goToDay,
   };
-
-  return calendar;
 }

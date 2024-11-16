@@ -1,10 +1,14 @@
 import { type DateLib } from '@/lib/classes/date-lib';
 import { type DayPickerProps } from '@/lib/types';
 
-/** The number of days in a month when having 6 weeks. */
+/**
+ * The number of days in a month when having 6 weeks.
+ */
 const NrOfDaysWithFixedWeeks = 42;
 
-/** Return all the dates to display in the calendar. */
+/**
+ * Return all the dates to display in the calendar.
+ */
 export function getDates(
   displayMonths: Date[],
   maxDate: Date | undefined,

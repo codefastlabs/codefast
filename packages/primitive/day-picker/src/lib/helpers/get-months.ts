@@ -2,13 +2,23 @@ import { CalendarDay, CalendarMonth, CalendarWeek } from '@/lib/classes';
 import { type DateLib } from '@/lib/classes/date-lib';
 import { type DayPickerProps } from '@/lib/types';
 
-/** Return the months to display in the calendar. */
+/**
+ * Return the months to display in the calendar.
+ */
 export function getMonths(
-  /** The months (as dates) to display in the calendar. */
+  /**
+   * The months (as dates) to display in the calendar.
+   */
   displayMonths: Date[],
-  /** The dates to display in the calendar. */
+
+  /**
+   * The dates to display in the calendar.
+   */
   dates: Date[],
-  /** Options from the props context. */
+
+  /**
+   * Options from the props context.
+   */
   props: Pick<DayPickerProps, 'fixedWeeks' | 'ISOWeek' | 'reverseMonths'>,
   dateLib: DateLib,
 ): CalendarMonth[] {
@@ -18,7 +28,9 @@ export function getMonths(
 
     const lastDateOfLastWeek = props.ISOWeek ? endOfISOWeek(endOfMonth(month)) : endOfWeek(endOfMonth(month));
 
-    /** The dates to display in the month. */
+    /**
+     * The dates to display in the month.
+     */
     const monthDates = dates.filter((date) => {
       return date >= firstDateOfFirstWeek && date <= lastDateOfLastWeek;
     });

@@ -2,7 +2,9 @@ import { type DropdownOption } from '@/components/ui/dropdown';
 import { type DateLib } from '@/lib/classes/date-lib';
 import { type Formatters } from '@/lib/types';
 
-/** Return the months to show in the dropdown. */
+/**
+ * Return the months to show in the dropdown.
+ */
 export function getMonthOptions(
   displayMonth: Date,
   navStart: Date | undefined,

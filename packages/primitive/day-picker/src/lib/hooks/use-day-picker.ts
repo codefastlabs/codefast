@@ -30,35 +30,74 @@ export const dayPickerContext = createContext<
  * @typeParam T - A type extending an object with optional `mode` and `required` properties.
  */
 export interface DayPickerContext<T extends { mode?: Mode | undefined; required?: boolean | undefined }> {
-  /** The class names for the UI elements. */
+  /**
+   * The class names for the UI elements.
+   */
   classNames: ClassNames;
-  /** The components used internally by DayPicker. */
+
+  /**
+   * The components used internally by DayPicker.
+   */
   components: Components;
+
   /**
    * The props as passed to the DayPicker component.
    */
   dayPickerProps: DayPickerProps;
-  /** The formatters used to format the UI elements. */
+
+  /**
+   * The formatters used to format the UI elements.
+   */
   formatters: Formatters;
-  /** Returns the modifiers for the given day. */
+
+  /**
+   * Returns the modifiers for the given day.
+   */
   getModifiers: (day: CalendarDay) => Modifiers;
-  /** Navigate to the specified month. Will fire the `onMonthChange` callback. */
+
+  /**
+   * Navigate to the specified month. Will fire the `onMonthChange` callback.
+   */
   goToMonth: (month: Date) => void;
-  /** Whether the given date is selected. */
+
+  /**
+   * Whether the given date is selected.
+   */
   isSelected: ((date: Date) => boolean) | undefined;
-  /** The labels used in the user interface. */
+
+  /**
+   * The labels used in the user interface.
+   */
   labels: Labels;
-  /** The months displayed in the calendar. */
+
+  /**
+   * The months displayed in the calendar.
+   */
   months: CalendarMonth[];
-  /** The next month to display. */
+
+  /**
+   * The next month to display.
+   */
   nextMonth: Date | undefined;
-  /** The previous month to display. */
+
+  /**
+   * The previous month to display.
+   */
   previousMonth: Date | undefined;
-  /** Set a selection. */
+
+  /**
+   * Set a selection.
+   */
   select: SelectHandler<T> | undefined;
-  /** The selected date. */
+
+  /**
+   * The selected date.
+   */
   selected: SelectedValue<T> | undefined;
-  /** The styles for the UI elements. */
+
+  /**
+   * The styles for the UI elements.
+   */
   styles: Partial<Styles> | undefined;
 }
 

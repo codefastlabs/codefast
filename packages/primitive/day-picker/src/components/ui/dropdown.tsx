@@ -3,15 +3,23 @@ import { type ComponentProps, type JSX } from 'react';
 import { useDayPicker } from '@/lib';
 import { UI } from '@/lib/constants/ui';
 
-/** An option to use in the dropdown. Maps to the `<option>` HTML element. */
+/**
+ * An option to use in the dropdown. Maps to the `<option>` HTML element.
+ */
 export interface DropdownOption {
   /**
    * The dropdown option is disabled when it can't be selected because out of the calendar range.
    */
   disabled: boolean;
-  /** The label of the option. */
+
+  /**
+   * The label of the option.
+   */
   label: string;
-  /** The value of the option. */
+
+  /**
+   * The value of the option.
+   */
   value: number;
 }
 

@@ -4,13 +4,17 @@ import { type DateRange } from '@/lib/types';
 /**
  * Add a day to an existing range.
  *
- * The returned range takes in account the `undefined` values and if the added
- * day is already present in the range.
+ * The returned range takes in an account the `undefined` values, and if the added day is already present in the range.
  */
 export function addToRange(
-  /** The date to add to the range. */
+  /**
+   * The date to add to the range.
+   */
   date: Date,
-  /** The range where to add `date`. */
+
+  /**
+   * The range where to add `date`.
+   */
   initialRange: DateRange | undefined,
   min = 0,
   max = 0,
@@ -51,7 +55,7 @@ export function addToRange(
         range = undefined;
       }
     } else if (isSameDay(from, date)) {
-      // adding a date equal to the the start of the range
+      // adding a date equal to the start of the range
       range = { from, to: min > 0 ? undefined : date };
     } else if (isSameDay(to, date)) {
       // adding a dare equal to the end of the range
