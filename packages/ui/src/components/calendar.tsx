@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  type CustomComponents,
+  type Components,
   type DateRange,
   type DayButtonProps,
   DayFlag,
@@ -28,7 +28,7 @@ import { buttonVariants } from '@/styles/button-variants';
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-type ChevronProps = ComponentProps<CustomComponents['Chevron']>;
+type ChevronProps = ComponentProps<Components['Chevron']>;
 
 function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
   switch (orientation) {
