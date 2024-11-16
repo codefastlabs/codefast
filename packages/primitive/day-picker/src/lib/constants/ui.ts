@@ -2,7 +2,7 @@
 
 /**
  * The UI elements composing DayPicker. These elements are mapped to
- * {@link CustomComponents}, the {@link ClassNames} and the {@link Styles} used by
+ * {@link Components}, the {@link ClassNames} and the {@link Styles} used by
  * DayPicker.
  *
  * Some of these elements are extended by flags and modifiers.
