@@ -5,12 +5,10 @@ import { type DayFlag, type SelectionState, type UI } from '@/lib/constants/ui';
 import {
   type formatCaption,
   type formatDay,
-  type formatMonthCaption,
   type formatMonthDropdown,
   type formatWeekdayName,
   type formatWeekNumber,
   type formatWeekNumberHeader,
-  type formatYearCaption,
   type formatYearDropdown,
 } from '@/lib/formatters';
 import {
@@ -188,11 +186,6 @@ export interface Formatters {
   formatDay: typeof formatDay;
 
   /**
-   * @deprecated Use {@link Formatters.formatCaption} instead.
-   */
-  formatMonthCaption: typeof formatMonthCaption;
-
-  /**
    * Format the label in the month dropdown.
    */
   formatMonthDropdown: typeof formatMonthDropdown;
@@ -211,11 +204,6 @@ export interface Formatters {
    * Format the week day name in the header.
    */
   formatWeekdayName: typeof formatWeekdayName;
-
-  /**
-   * @deprecated Use {@link Formatters.formatYearDropdown} instead.
-   */
-  formatYearCaption: typeof formatYearCaption;
 
   /**
    * Format the label in the year dropdown.
