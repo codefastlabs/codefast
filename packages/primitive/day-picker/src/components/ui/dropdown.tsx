@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX } from 'react';
 
+import { useDayPicker } from '@/lib';
 import { UI } from '@/lib/constants/ui';
-import { type ClassNames, type Components } from '@/lib/types';
 
 /** An option to use in the dropdown. Maps to the `<option>` HTML element. */
 export interface DropdownOption {
@@ -16,21 +16,14 @@ export interface DropdownOption {
 }
 
 export type DropdownProps = Omit<ComponentProps<'select'>, 'children'> & {
-  /**
-   * @deprecated Use {@link useDayPicker} hook to get the list of internal class names.
-   */
-  classNames: ClassNames;
-  /**
-   * @deprecated Use {@link useDayPicker} hook to get the list of internal components.
-   */
-  components: Components;
   options?: DropdownOption[] | undefined;
 };
 
 /**
  * Render a dropdown component to use in the navigation bar.
  */
-export function Dropdown({ options, className, components, classNames, ...props }: DropdownProps): JSX.Element {
+export function Dropdown({ options, className, ...props }: DropdownProps): JSX.Element {
+  const { classNames, components } = useDayPicker();
   const cssClassSelect = [classNames[UI.Dropdown], className].join(' ');
 
   const selectedOption = options?.find(({ value }) => value === props.value);
