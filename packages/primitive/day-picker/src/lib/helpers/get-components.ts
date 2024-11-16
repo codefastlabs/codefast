@@ -1,7 +1,7 @@
 import * as components from '@/components/ui';
-import { type CustomComponents, type DayPickerProps } from '@/lib/types';
+import { type Components, type DayPickerProps } from '@/lib/types';
 
-export function getComponents(customComponents: DayPickerProps['components']): CustomComponents {
+export function getComponents(customComponents: DayPickerProps['components']): Components {
   return {
     ...components,
     ...customComponents,
