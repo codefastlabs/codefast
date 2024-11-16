@@ -1,10 +1,17 @@
 import { type CalendarWeek } from '@/lib/classes/calendar-week';
 
-/** Represent a month in a calendar year. Contains the weeks within the month. */
+/**
+ * Represent a month in a calendar year. Contains the weeks within the month.
+ */
 export class CalendarMonth {
-  /** The date of the month. */
+  /**
+   * The date of the month.
+   */
   date: Date;
-  /** The weeks within the month. */
+
+  /**
+   * The weeks within the month.
+   */
   weeks: CalendarWeek[];
 
   constructor(month: Date, weeks: CalendarWeek[]) {

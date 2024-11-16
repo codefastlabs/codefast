@@ -7,9 +7,14 @@ import { type DateLib } from '@/lib/classes/date-lib';
  * the weekday names (Monday, Tuesday, etc.).
  */
 export function getWeekdays(
-  /** The date library. */
+  /**
+   * The date library.
+   */
   dateLib: DateLib,
-  /** Use ISOWeek instead of locale/ */
+
+  /**
+   * Use ISOWeek instead of locale/
+   */
   ISOWeek?: boolean | undefined,
   timeZone?: string | undefined,
 ): Date[] {

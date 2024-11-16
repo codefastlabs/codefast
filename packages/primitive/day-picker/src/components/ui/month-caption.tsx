@@ -3,9 +3,14 @@ import { type ComponentProps, type JSX } from 'react';
 import { type CalendarMonth } from '@/lib/classes';
 
 export type MonthCaptionProps = ComponentProps<'div'> & {
-  /** The month where the grid is displayed. */
+  /**
+   * The month where the grid is displayed.
+   */
   calendarMonth: CalendarMonth;
-  /** The index where this month is displayed. */
+
+  /**
+   * The index where this month is displayed.
+   */
   displayIndex: number;
 };
 
