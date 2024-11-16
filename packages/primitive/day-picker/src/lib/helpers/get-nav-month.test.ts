@@ -28,14 +28,6 @@ describe('when "startMonth" is passed in', () => {
   });
 });
 
-describe('when "fromYear" is passed in', () => {
-  const [navStartMonth] = getNavMonths({ fromYear: 2021 }, defaultDateLib);
-
-  test('"startMonth" should be the start of that year', () => {
-    expect(navStartMonth).toEqual(new Date(2021, 0, 1));
-  });
-});
-
 describe('when "endMonth" is passed in', () => {
   const [, navEndMonth] = getNavMonths(
     {
@@ -52,16 +44,6 @@ describe('when "endMonth" is passed in', () => {
     test('"endMonth" should be the end of that month', () => {
       expect(navEndMonth).toEqual(new Date(2021, 4, 31));
     });
-  });
-});
-
-describe('when "toYear" is passed in', () => {
-  const toYear = 2021;
-  const expectedEndMonth = new Date(2021, 11, 31);
-  const [, navEndMonth] = getNavMonths({ toYear }, defaultDateLib);
-
-  test('"endMonth" should be the end of that year', () => {
-    expect(navEndMonth).toEqual(expectedEndMonth);
   });
 });
 
@@ -82,48 +64,6 @@ describe('when "captionLayout" is dropdown', () => {
 
     test('"endMonth" should be the end of this year', () => {
       expect(navEndMonth).toEqual(new Date(2024, 11, 31));
-    });
-  });
-
-  describe('when "fromYear" is set', () => {
-    const today = new Date(2024, 4, 3);
-    const fromYear = 2022;
-    const [navStartMonth, navEndMonth] = getNavMonths(
-      {
-        captionLayout: 'dropdown',
-        fromYear,
-        today,
-      },
-      defaultDateLib,
-    );
-
-    test('"startMonth" should be equal to the "fromYear"', () => {
-      expect(navStartMonth).toEqual(new Date(2022, 0, 1));
-    });
-
-    test('"endMonth" should be the end of this year', () => {
-      expect(navEndMonth).toEqual(new Date(2024, 11, 31));
-    });
-  });
-
-  describe('when "toYear" is set', () => {
-    const today = new Date(2021, 4, 3);
-    const toYear = 2022;
-    const [navStartMonth, navEndMonth] = getNavMonths(
-      {
-        captionLayout: 'dropdown',
-        toYear,
-        today,
-      },
-      defaultDateLib,
-    );
-
-    test('"startMonth" should be 100 years ago', () => {
-      expect(navStartMonth).toEqual(new Date(1921, 0, 1));
-    });
-
-    test('"endMonth" should be equal to "toYear"', () => {
-      expect(navEndMonth).toEqual(new Date(2022, 11, 31));
     });
   });
 });

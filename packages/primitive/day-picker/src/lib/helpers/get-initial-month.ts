@@ -7,15 +7,7 @@ import { type DayPickerProps } from '@/lib/types';
 export function getInitialMonth(
   props: Pick<
     DayPickerProps,
-    | 'fromYear'
-    | 'toYear'
-    | 'startMonth'
-    | 'endMonth'
-    | 'month'
-    | 'defaultMonth'
-    | 'today'
-    | 'numberOfMonths'
-    | 'timeZone'
+    'startMonth' | 'endMonth' | 'month' | 'defaultMonth' | 'today' | 'numberOfMonths' | 'timeZone'
   >,
   dateLib: DateLib,
 ): Date {
