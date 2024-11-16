@@ -73,11 +73,6 @@ export function useCalendar(
     | 'month'
     | 'defaultMonth'
     | 'timeZone'
-    // Deprecated:
-    | 'fromMonth'
-    | 'fromYear'
-    | 'toMonth'
-    | 'toYear'
   >,
   dateLib: DateLib,
 ): Calendar {

@@ -149,21 +149,6 @@ export interface BaseProps {
   formatters?: Partial<Formatters>;
 
   /**
-   * @deprecated This prop has been removed. Use `hidden={{ before: date }}` instead.
-   */
-  fromDate?: Date | undefined;
-
-  /**
-   * @deprecated This prop has been renamed to `startMonth`.
-   */
-  fromMonth?: Date | undefined;
-
-  /**
-   * @deprecated Use `startMonth` instead. E.g. `startMonth={new Date(year, 0)}`.
-   */
-  fromYear?: number | undefined;
-
-  /**
    * Apply the `hidden` modifier to the matching days. Will hide them from the calendar.
    */
   hidden?: Matcher | Matcher[] | undefined;
@@ -354,21 +339,6 @@ export interface BaseProps {
    * Add a `title` attribute to the container element.
    */
   title?: HTMLDivElement['title'];
-
-  /**
-   * @deprecated This prop has been removed. Use `hidden={{ after: date }}` instead.
-   */
-  toDate?: Date;
-
-  /**
-   * @deprecated This prop has been renamed to `endMonth`.
-   */
-  toMonth?: Date;
-
-  /**
-   * @deprecated Use `endMonth` instead. E.g. `endMonth={new Date(year, 0)}`.
-   */
-  toYear?: number;
 
   /**
    * The today’s date. Default is the current date. This date will get the `today` modifier to style the day.

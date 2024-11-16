@@ -3,67 +3,31 @@ import { TZDate } from '@date-fns/tz';
 import { type DateLib } from '@/lib/classes/date-lib';
 import { type DayPickerProps } from '@/lib/types';
 
+const YEARS_OFFSET = 100;
+
 /** Return the start and end months for the calendar navigation. */
 export function getNavMonths(
-  props: Pick<
-    DayPickerProps,
-    | 'captionLayout'
-    | 'endMonth'
-    | 'startMonth'
-    | 'today'
-    | 'timeZone'
-    // Deprecated:
-    | 'fromMonth'
-    | 'fromYear'
-    | 'toMonth'
-    | 'toYear'
-  >,
+  props: Pick<DayPickerProps, 'captionLayout' | 'startMonth' | 'endMonth' | 'today' | 'timeZone'>,
   dateLib: DateLib,
 ): [start: Date | undefined, end: Date | undefined] {
-  let { startMonth, endMonth } = props;
-
   const { startOfYear, startOfDay, startOfMonth, endOfMonth, addYears, endOfYear } = dateLib;
 
-  // Handle deprecated code
-  const { fromYear, toYear, fromMonth, toMonth } = props;
+  // Extract props
+  let { startMonth, endMonth } = props;
+  const { captionLayout, today, timeZone } = props;
 
-  if (!startMonth && fromMonth) {
-    startMonth = fromMonth;
+  const hasDropdowns = captionLayout?.startsWith('dropdown');
+  const currentToday = today ?? (timeZone ? TZDate.tz(timeZone) : new dateLib.Date());
+
+  // Handle defaults for dropdown layout
+  if (hasDropdowns) {
+    startMonth = startMonth || startOfYear(addYears(currentToday, -YEARS_OFFSET));
+    endMonth = endMonth || endOfYear(currentToday);
   }
 
-  if (!startMonth && fromYear) {
-    startMonth = new Date(fromYear, 0, 1);
-  }
+  // Ensure months are properly rounded
+  const roundedStart = startMonth ? startOfDay(startOfMonth(startMonth)) : undefined;
+  const roundedEnd = endMonth ? startOfDay(endOfMonth(endMonth)) : undefined;
 
-  if (!endMonth && toMonth) {
-    endMonth = toMonth;
-  }
-
-  if (!endMonth && toYear) {
-    endMonth = new Date(toYear, 11, 31);
-  }
-
-  const hasDropdowns = props.captionLayout?.startsWith('dropdown');
-
-  if (startMonth) {
-    startMonth = startOfMonth(startMonth);
-  } else if (fromYear) {
-    startMonth = new Date(fromYear, 0, 1);
-  } else if (hasDropdowns) {
-    const today = props.today ?? (props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date());
-
-    startMonth = startOfYear(addYears(today, -100));
-  }
-
-  if (endMonth) {
-    endMonth = endOfMonth(endMonth);
-  } else if (toYear) {
-    endMonth = new Date(toYear, 11, 31);
-  } else if (hasDropdowns) {
-    const today = props.today ?? (props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date());
-
-    endMonth = endOfYear(today);
-  }
-
-  return [startMonth ? startOfDay(startMonth) : startMonth, endMonth ? startOfDay(endMonth) : endMonth];
+  return [roundedStart, roundedEnd];
 }
