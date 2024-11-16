@@ -415,8 +415,3 @@ export { enUS as defaultLocale } from 'date-fns/locale/en-US';
  * The default date library with English locale.
  */
 export const defaultDateLib = new DateLib();
-
-/**
- * @deprecated Use `defaultDateLib`.
- */
-export const dateLib = defaultDateLib;

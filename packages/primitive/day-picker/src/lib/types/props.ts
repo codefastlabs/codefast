@@ -3,7 +3,7 @@ import { type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEven
 import { type DateLib, type Locale } from '@/lib/classes/date-lib';
 import {
   type ClassNames,
-  type CustomComponents,
+  type Components,
   type DateRange,
   type DayEventHandler,
   type Formatters,
@@ -81,7 +81,7 @@ export interface BaseProps {
   /**
    * Change the components used for rendering the calendar elements.
    */
-  components?: Partial<CustomComponents>;
+  components?: Partial<Components>;
 
   /**
    * Replace the default date library with a custom one. Experimental: not

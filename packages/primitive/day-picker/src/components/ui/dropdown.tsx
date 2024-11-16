@@ -1,7 +1,7 @@
 import { type ComponentProps, type JSX } from 'react';
 
 import { UI } from '@/lib/constants/ui';
-import { type ClassNames, type CustomComponents } from '@/lib/types';
+import { type ClassNames, type Components } from '@/lib/types';
 
 /** An option to use in the dropdown. Maps to the `<option>` HTML element. */
 export interface DropdownOption {
@@ -23,7 +23,7 @@ export type DropdownProps = Omit<ComponentProps<'select'>, 'children'> & {
   /**
    * @deprecated Use {@link useDayPicker} hook to get the list of internal components.
    */
-  components: CustomComponents;
+  components: Components;
   options?: DropdownOption[] | undefined;
 };
 

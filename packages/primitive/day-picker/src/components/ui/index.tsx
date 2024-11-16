@@ -1,4 +1,3 @@
-export * from '@/components/ui/button';
 export * from '@/components/ui/caption-label';
 export * from '@/components/ui/chevron';
 export * from '@/components/ui/day';

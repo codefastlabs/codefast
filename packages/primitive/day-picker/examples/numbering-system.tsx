@@ -15,7 +15,7 @@ function formatWeekNumber(weekNumber: number): string {
   return weekNumber.toLocaleString(NU_LOCALE);
 }
 
-function formatMonthCaption(date: Date, options: DateLibOptions | undefined): string {
+function formatCaption(date: Date, options: DateLibOptions | undefined): string {
   const y = date.getFullYear().toLocaleString(NU_LOCALE);
   const m = format(date, 'LLLL', { locale: options?.locale });
 
@@ -24,11 +24,6 @@ function formatMonthCaption(date: Date, options: DateLibOptions | undefined): st
 
 export function NumberingSystem(): JSX.Element {
   return (
-    <DayPicker
-      showWeekNumber
-      dir="rtl"
-      formatters={{ formatDay, formatMonthCaption, formatWeekNumber }}
-      locale={arSA}
-    />
+    <DayPicker showWeekNumber dir="rtl" formatters={{ formatDay, formatCaption, formatWeekNumber }} locale={arSA} />
   );
 }
