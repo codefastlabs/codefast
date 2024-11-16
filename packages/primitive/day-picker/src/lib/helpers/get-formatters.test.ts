@@ -3,52 +3,50 @@ import * as defaultFormatters from '@/lib/formatters';
 import { getFormatters } from '@/lib/helpers/get-formatters';
 
 const customFormattersMock = {
-  formatMonthCaption: jest.fn(),
-  formatYearCaption: jest.fn(),
+  formatCaption: jest.fn(),
+  formatYearDropdown: jest.fn(),
 };
 
-test('returns default formatters when custom formatters are not provided', () => {
-  const formatters = getFormatters(undefined);
+describe('getFormatters helpers', () => {
+  test('returns default formatters when custom formatters are not provided', () => {
+    const formatters = getFormatters(undefined);
 
-  expect(formatters).toEqual(defaultFormatters);
-});
-
-test('merges custom formatters with default formatters', () => {
-  const formatters = getFormatters(customFormattersMock);
-
-  expect(formatters).toEqual(expect.objectContaining(customFormattersMock));
-});
-
-test('assigns `formatMonthCaption` to `formatCaption` if `formatCaption` is not defined', () => {
-  const result = getFormatters({ formatMonthCaption: () => 'customMonth' });
-
-  expect(result.formatCaption(new Date(), {}, defaultDateLib)).toBe('customMonth');
-  expect(result.formatMonthCaption(new Date(), {}, defaultDateLib)).toBe('customMonth');
-});
-
-test('does not overwrite `formatCaption` if already defined', () => {
-  const result = getFormatters({
-    formatMonthCaption: () => 'customMonth',
-    formatCaption: () => 'customCaption',
+    expect(formatters).toEqual(defaultFormatters);
   });
 
-  expect(result.formatCaption(new Date(), {}, defaultDateLib)).toBe('customCaption');
-  expect(result.formatMonthCaption(new Date(), {}, defaultDateLib)).toBe('customMonth');
-});
+  test('merges custom formatters with default formatters', () => {
+    const formatters = getFormatters(customFormattersMock);
 
-test('assigns `formatYearCaption` to `formatYearDropdown` if `formatYearDropdown` is not defined', () => {
-  const result = getFormatters({ formatYearCaption: () => 'customYear' });
-
-  expect(result.formatYearDropdown(new Date(0).getFullYear())).toBe('customYear');
-  expect(result.formatYearCaption(new Date(0).getFullYear())).toBe('customYear');
-});
-
-test('does not overwrite `formatYearDropdown` if already defined', () => {
-  const result = getFormatters({
-    formatYearCaption: () => 'customYear',
-    formatYearDropdown: () => 'customDropdown',
+    expect(formatters).toEqual(expect.objectContaining(customFormattersMock));
   });
 
-  expect(result.formatYearDropdown(new Date().getFullYear())).toBe('customDropdown');
-  expect(result.formatYearCaption(new Date().getFullYear())).toBe('customYear');
+  test('uses custom `formatCaption` if provided', () => {
+    const customFormatCaption = jest.fn(() => 'Custom Caption');
+    const formatters = getFormatters({ formatCaption: customFormatCaption });
+
+    expect(formatters.formatCaption(new Date(), {}, defaultDateLib)).toBe('Custom Caption');
+    expect(customFormatCaption).toHaveBeenCalled();
+  });
+
+  test('uses default `formatCaption` if no custom `formatCaption` provided', () => {
+    const formatters = getFormatters({});
+
+    expect(formatters.formatCaption(new Date(), {}, defaultDateLib)).toBe(
+      defaultFormatters.formatCaption(new Date(), {}, defaultDateLib),
+    );
+  });
+
+  test('uses custom `formatYearDropdown` if provided', () => {
+    const customFormatYearDropdown = jest.fn(() => 'Custom Year Dropdown');
+    const formatters = getFormatters({ formatYearDropdown: customFormatYearDropdown });
+
+    expect(formatters.formatYearDropdown(2024)).toBe('Custom Year Dropdown');
+    expect(customFormatYearDropdown).toHaveBeenCalledWith(2024);
+  });
+
+  test('uses default `formatYearDropdown` if no custom `formatYearDropdown` provided', () => {
+    const formatters = getFormatters({});
+
+    expect(formatters.formatYearDropdown(2024)).toBe(defaultFormatters.formatYearDropdown(2024));
+  });
 });

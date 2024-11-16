@@ -6,8 +6,3 @@
 export function formatYearDropdown(year: number): string {
   return year.toString();
 }
-
-/**
- * @deprecated Use `formatYearDropdown` instead.
- */
-export const formatYearCaption = formatYearDropdown;
