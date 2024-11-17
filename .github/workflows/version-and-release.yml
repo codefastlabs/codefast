@@ -1,0 +1,190 @@
+name: Version and Release Packages
+
+on:
+  push:
+    branches: [develop, release/*, hotfix/*, main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'docs/**'
+  pull_request:
+    branches: [develop, release/*, hotfix/*, main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'docs/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+  PNPM_VERSION: 8
+  NODE_ENV: production
+
+jobs:
+  setup:
+    name: Setup & Validation
+    runs-on: ubuntu-latest
+    outputs:
+      ui_changed: ${{ steps.filter.outputs.ui }}
+      test_required: ${{ steps.filter.outputs.test }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # Shallow clone for faster checkout
+
+      - name: Check for Changes
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            ui:
+              - 'packages/*/src/**/*.{js,jsx,ts,tsx,css,scss}'
+              - 'apps/storybook-docs/**'
+              - '**/tailwind.config.{js,ts}'
+              - '**/*.stories.{js,jsx,ts,tsx}'
+              - '**/styles/**'
+            test:
+              - 'packages/*/src/**'
+              - 'packages/*/test/**'
+              - '**/__tests__/**'
+              - 'jest.config.*'
+              - 'pnpm-lock.yaml'
+
+      - name: Verify Changesets
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^.changeset/"
+          then
+            echo "Found changeset files"
+          else
+            echo "No changeset files found"
+            exit 1
+          fi
+
+  lint:
+    name: Lint
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+
+      - name: Run Lint
+        run: pnpm lint
+        timeout-minutes: 5
+
+  test:
+    name: Test
+    needs: [setup, lint]
+    if: needs.setup.outputs.test_required == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+
+      - name: Run Tests
+        run: pnpm test
+        timeout-minutes: 10
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  chromatic:
+    name: Visual Testing
+    needs: [setup, lint]
+    if: |
+      needs.setup.outputs.ui_changed == 'true' &&
+      (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') &&
+      !contains(github.event.head_commit.message, '[skip-visual]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+
+      - name: Build Storybook
+        run: pnpm build:storybook
+        timeout-minutes: 10
+
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/storybook-docs
+          onlyChanged: true
+          zip: true
+          exitZeroOnChanges: ${{ github.event_name != 'pull_request' }}
+        timeout-minutes: 10
+
+  release:
+    name: Release
+    needs: [test, chromatic]
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      !contains(github.event.head_commit.message, '[skip-release]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+
+      - name: Build Packages
+        run: pnpm build:packages
+        timeout-minutes: 10
+
+      - name: Create Release
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset:version
+          commit: 'chore(release): publish v${{ steps.version.outputs.version }}'
+          title: 'chore(release): version packages'
+          publish: pnpm changeset:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Notify Team
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { status } = context.job
+            const emoji = status === 'success' ? '✅' : '❌'
+            const message = `${emoji} Release workflow completed with status: ${status}`
+
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: message
+            })
