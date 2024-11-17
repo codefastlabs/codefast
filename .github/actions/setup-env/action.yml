@@ -29,6 +29,7 @@ runs:
         key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-deps-
+          ${{ runner.os }}-
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
