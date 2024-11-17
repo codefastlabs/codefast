@@ -1,4 +1,3 @@
-# .github/actions/setup-env/action.yml
 name: 'Setup Environment'
 description: 'Setup Node.js and pnpm environment with caching'
 
@@ -42,4 +41,3 @@ runs:
     - name: Install Dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-      timeout-minutes: 5
