@@ -13,6 +13,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
 
     - name: Install pnpm
       uses: pnpm/action-setup@v4
@@ -30,6 +31,7 @@ runs:
           ${{ env.STORE_PATH }}
           **/node_modules
           ~/.cache/Cypress
+          .turbo
         key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-deps-
