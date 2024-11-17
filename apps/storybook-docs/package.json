@@ -1,5 +1,5 @@
 {
-  "name": "storybook",
+  "name": "storybook-docs",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -56,7 +56,7 @@
     "eslint-plugin-storybook": "0.11.0",
     "postcss": "8.4.49",
     "serve": "14.2.4",
-    "storybook": "0.0.1",
+    "storybook": "8.4.4",
     "tailwindcss": "3.4.15",
     "typescript": "5.6.3"
   }
