@@ -22,7 +22,7 @@ concurrency:
 
 env:
   NODE_VERSION: 20
-  PNPM_VERSION: 9
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
 
 jobs:
   setup:
@@ -76,7 +76,6 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Run Lint
         run: pnpm lint
@@ -94,7 +93,6 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Run Tests
         run: pnpm test
@@ -122,7 +120,6 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Build Storybook
         run: pnpm build:storybook
@@ -155,7 +152,6 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-          pnpm-version: ${{ env.PNPM_VERSION }}
 
       - name: Build Packages
         run: pnpm build:packages
