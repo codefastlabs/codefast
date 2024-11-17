@@ -1,4 +1,4 @@
-name: Release
+name: Version and Release Packages
 
 on:
   push:
@@ -9,7 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release
+    name: Publish Packages
     runs-on: ubuntu-latest
 
     steps:
@@ -41,6 +41,9 @@ jobs:
 
       - name: Install Project Dependencies
         run: pnpm install
+
+      - name: Build Project Packages
+        run: pnpm build:packages
 
       - name: Create Release Pull Request or Publish Package
         id: changesets

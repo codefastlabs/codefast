@@ -1,4 +1,4 @@
-name: Release
+name: Build and Test UI
 
 on:
   push:
@@ -9,7 +9,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release
+    name: Build and Run Chromatic Tests
     runs-on: ubuntu-latest
 
     steps:
