@@ -4,8 +4,9 @@
   "scripts": {
     "build": "turbo run build",
     "build:force": "turbo run build",
+    "build:packages": "turbo run build test --filter=\"./packages/*\"",
     "changeset": "changeset",
-    "changeset:publish": "turbo run build test --filter=\"./packages/*\" && changeset publish",
+    "changeset:publish": "changeset publish",
     "changeset:version": "changeset version",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo run dev --concurrency=11",
