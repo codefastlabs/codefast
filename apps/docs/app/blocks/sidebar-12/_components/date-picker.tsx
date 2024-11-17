@@ -1,4 +1,4 @@
-import { cn, SidebarGroup, SidebarGroupContent, Calendar } from '@codefast/ui';
+import { Calendar, cn, SidebarGroup, SidebarGroupContent } from '@codefast/ui';
 import { type ComponentProps, type JSX } from 'react';
 
 type DatePickerProps = ComponentProps<typeof SidebarGroup>;
@@ -7,7 +7,12 @@ export function DatePicker({ className, ...props }: DatePickerProps): JSX.Elemen
   return (
     <SidebarGroup className={cn('px-0', className)} {...props}>
       <SidebarGroupContent>
-        <Calendar className="[&_[role=gridcell].bg-accent]:bg-sidebar-primary [&_[role=gridcell].bg-accent]:text-sidebar-primary-foreground [&_[role=gridcell]]:w-[33px]" />
+        <Calendar
+          classNames={{
+            root: 'w-full',
+            day: 'mx-0 min-h-8 min-w-8',
+          }}
+        />
       </SidebarGroupContent>
     </SidebarGroup>
   );
