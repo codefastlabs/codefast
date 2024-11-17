@@ -23,7 +23,6 @@ concurrency:
 env:
   NODE_VERSION: 20
   PNPM_VERSION: 9
-  NODE_ENV: production
 
 jobs:
   setup:
