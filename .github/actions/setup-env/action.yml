@@ -1,0 +1,45 @@
+# .github/actions/setup-env/action.yml
+name: 'Setup Environment'
+description: 'Setup Node.js and pnpm environment with caching'
+
+inputs:
+  node-version:
+    required: true
+    description: 'Node.js version to use'
+  pnpm-version:
+    required: true
+    description: 'pnpm version to use'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.pnpm-version }}
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ env.STORE_PATH }}
+          **/node_modules
+          ~/.cache/Cypress
+        key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-deps-
+
+    - name: Install Dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+      timeout-minutes: 5
