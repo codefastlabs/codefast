@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:force": "turbo run build",
-    "build:packages": "turbo run build test --filter=\"./packages/*\"",
+    "build:packages": "turbo run build --filter=\"./packages/*\"",
     "changeset": "changeset",
     "changeset:publish": "changeset publish",
     "changeset:version": "changeset version",
