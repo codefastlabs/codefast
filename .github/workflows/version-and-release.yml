@@ -121,10 +121,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Build Storybook
-        run: pnpm build:storybook
-        timeout-minutes: 10
-
       - name: Run Chromatic
         uses: chromaui/action@latest
         with:
@@ -152,10 +148,6 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Build Packages
-        run: pnpm build:packages
-        timeout-minutes: 10
 
       - name: Create Release
         id: changesets
