@@ -86,6 +86,25 @@ describe('getDates Helper Function', () => {
         expect(dates[dates.length - 1]).toEqual(new Date(2023, 5, 4)); // Last day
       });
     });
+
+    describe('when the month has 4 weeks', () => {
+      const month = new Date(2026, 1); // February 2026
+
+      describe('when not using fixed weeks', () => {
+        it('should return 28 dates', () => {
+          const dates = getDates([month], undefined, { fixedWeeks: false }, defaultDateLib);
+
+          expect(dates).toHaveLength(28);
+        });
+      });
+      describe('when using fixed weeks', () => {
+        it('should return 42 dates', () => {
+          const dates = getDates([month], undefined, { fixedWeeks: true }, defaultDateLib);
+
+          expect(dates).toHaveLength(42);
+        });
+      });
+    });
   });
 
   describe('when the first month and the last month are different', () => {
