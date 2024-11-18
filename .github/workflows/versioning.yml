@@ -34,7 +34,7 @@ jobs:
         with:
           filters: |
             changeset:
-              - '.changeset/**/*.md'
+              - added|modified: '.changeset/**/*.md'
               - '.changeset/config.json'
 
       - name: Log Filter Outputs
