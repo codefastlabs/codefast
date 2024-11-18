@@ -2,7 +2,7 @@
 module.exports = {
   overrides: [
     {
-      extends: [require.resolve('@vercel/style-guide/eslint/jest')],
+      extends: [require.resolve('@vercel/style-guide/eslint/jest-react')],
       files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
     },
   ],
