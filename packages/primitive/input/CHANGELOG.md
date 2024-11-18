@@ -1,5 +1,11 @@
 # @codefast-ui/input
 
+## 0.1.53
+
+### Patch Changes
+
+- [#19](https://github.com/codefastlabs/codefast/pull/19) [`1e15437`](https://github.com/codefastlabs/codefast/commit/1e15437bd5783ae3b1c1b16d2f7d03dbf25ba054) Thanks [@thevuong](https://github.com/thevuong)! - chore: update dependency versions in pnpm-lock.yaml
+
 ## 0.1.52
 
 ### Patch Changes
