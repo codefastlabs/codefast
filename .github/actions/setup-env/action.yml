@@ -24,16 +24,17 @@ runs:
         path: |
           ${{ env.STORE_PATH }}
           **/node_modules
-          ~/.cache/Cypress
           .turbo
         key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-deps-
+          ${{ runner.os }}-
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
 
     - name: Install Dependencies
       shell: bash
