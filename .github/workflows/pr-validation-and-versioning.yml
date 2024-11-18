@@ -1,7 +1,14 @@
-name: PR Validation
+name: PR Validation and Versioning
 
 on:
   pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'docs/**'
+  push:
     branches: [main]
     paths-ignore:
       - '**.md'
@@ -19,12 +26,13 @@ env:
 
 jobs:
   setup:
-    name: Setup
+    name: Setup and Filter Changes
     runs-on: ubuntu-latest
     outputs:
       ui_changed: ${{ steps.filter.outputs.ui }}
       test_required: ${{ steps.filter.outputs.test }}
       lint_required: ${{ steps.filter.outputs.lint }}
+      has_changeset: ${{ steps.filter.outputs.changeset }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,17 +60,23 @@ jobs:
               - '**/tests/**'
             lint:
               - 'packages/**/src/**/*.{js,jsx,ts,tsx,css,scss}'
+            changeset:
+              - added|modified: '.changeset/**/*.md'
+              - '.changeset/config.json'
 
       - name: Log Filter Outputs
         run: |
           echo "UI Changed: ${{ steps.filter.outputs.ui }}"
           echo "Test Required: ${{ steps.filter.outputs.test }}"
           echo "Lint Required: ${{ steps.filter.outputs.lint }}"
+          echo "Changeset Exists: ${{ steps.filter.outputs.changeset }}"
 
   lint:
-    name: Lint
+    name: Run Code Linting
     needs: setup
-    if: needs.setup.outputs.lint_required == 'true'
+    if: |
+      needs.setup.outputs.lint_required == 'true' &&
+      github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,9 +90,11 @@ jobs:
         run: pnpm lint
 
   test:
-    name: Test
+    name: Run Unit and Integration Tests
     needs: [setup, lint]
-    if: needs.setup.outputs.test_required == 'true'
+    if: |
+      needs.setup.outputs.test_required == 'true' &&
+      github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -92,9 +108,11 @@ jobs:
         run: pnpm test
 
   chromatic:
-    name: Visual Testing
+    name: Visual Regression Testing
     needs: [setup, lint]
-    if: needs.setup.outputs.ui_changed == 'true'
+    if: |
+      needs.setup.outputs.ui_changed == 'true' &&
+      github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -113,3 +131,31 @@ jobs:
           workingDir: apps/storybook-docs
           onlyChanged: true
           zip: true
+
+  version:
+    name: Create Release PR
+    needs: [setup]
+    if: |
+      needs.setup.outputs.has_changeset == 'true' &&
+      github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Create Version PR
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset:version
+          title: 'chore(release): version packages'
+          commit: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
