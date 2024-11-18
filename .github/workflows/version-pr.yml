@@ -48,6 +48,7 @@ jobs:
               - '**/tailwind.config.{js,ts}'
               - '**/*.stories.{js,jsx,ts,tsx}'
               - '**/styles/**'
+
             test:
               - 'packages/*/src/**/*.{js,jsx,ts,tsx}'
               - 'packages/*/__tests__/**'
@@ -57,9 +58,16 @@ jobs:
               - 'jest.config.{js,ts}'
               - 'vitest.config.{js,ts}'
               - '**/tests/**'
+
             changeset:
               - '.changeset/**/*.md'
               - '.changeset/config.json'
+
+      - name: Log Filter Outputs
+        run: |
+          echo "UI Changed: ${{ steps.filter.outputs.ui }}"
+          echo "Test Required: ${{ steps.filter.outputs.test }}"
+          echo "Changeset Exists: ${{ steps.filter.outputs.changeset }}"
 
   lint:
     name: Lint
