@@ -20,12 +20,6 @@ describe('when "startMonth" is passed in', () => {
   test('"startMonth" should be the start of that month', () => {
     expect(navStartMonth).toEqual(new Date(2021, 4, 1));
   });
-
-  describe('when "fromYear" is passed in', () => {
-    test('"startMonth" should be the start of that month', () => {
-      expect(navStartMonth).toEqual(new Date(2021, 4, 1));
-    });
-  });
 });
 
 describe('when "endMonth" is passed in', () => {
@@ -38,12 +32,6 @@ describe('when "endMonth" is passed in', () => {
 
   test('"endMonth" should be the end of that month', () => {
     expect(navEndMonth).toEqual(new Date(2021, 4, 31));
-  });
-
-  describe('when "fromYear" is passed in', () => {
-    test('"endMonth" should be the end of that month', () => {
-      expect(navEndMonth).toEqual(new Date(2021, 4, 31));
-    });
   });
 });
 
