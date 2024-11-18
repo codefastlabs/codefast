@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.1.52
+
+### Patch Changes
+
+- [#15](https://github.com/codefastlabs/codefast/pull/15) [`ca258ee`](https://github.com/codefastlabs/codefast/commit/ca258ee4c88232dad21380091e99a2de6173fc0e) Thanks [@thevuong](https://github.com/thevuong)! - fix(config-eslint): correct Jest configuration for React
+
+- Updated dependencies [[`ca258ee`](https://github.com/codefastlabs/codefast/commit/ca258ee4c88232dad21380091e99a2de6173fc0e)]:
+  - @codefast/hooks@0.1.52
+  - @codefast-ui/checkbox-group@0.1.52
+  - @codefast-ui/day-picker@0.1.52
+  - @codefast-ui/input@0.1.52
+  - @codefast-ui/number-input@0.1.52
+
 ## 0.1.51
 
 ### Patch Changes
