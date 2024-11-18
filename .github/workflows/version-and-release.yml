@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Check for Changes
         uses: dorny/paths-filter@v3
@@ -133,18 +133,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Notify Team
-        if: always()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { status } = context.job
-            const emoji = status === 'success' ? '✅' : '❌'
-            const message = `${emoji} Release workflow completed with status: ${status}`
-
-            await github.rest.issues.createComment({
-              ...context.repo,
-              issue_number: context.issue.number,
-              body: message
-            })
