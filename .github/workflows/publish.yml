@@ -3,8 +3,7 @@ name: Publish Packages
 on:
   pull_request:
     types: [closed]
-    branches:
-      - main
+    branches: [main]
 
 env:
   NODE_VERSION: 20
@@ -16,18 +15,16 @@ jobs:
     # Only run when the PR is merged and the title contains "chore(release): version packages"
     if: |
       github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.title, 'chore(release): version packages')
+      github.event.pull_request.head.ref == 'changeset-release/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Environment
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Publish to NPM
         uses: changesets/action@v1
         with:
