@@ -2,14 +2,14 @@ name: Create Version PR
 
 on:
   push:
-    branches: [feature/*, main]
+    branches: [main]
     paths-ignore:
       - '**.md'
       - '.gitignore'
       - '.editorconfig'
       - 'docs/**'
   pull_request:
-    branches: [feature/*, main]
+    branches: [main]
     paths-ignore:
       - '**.md'
       - '.gitignore'
