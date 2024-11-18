@@ -21,10 +21,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup Environment
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+
       - name: Publish to NPM
         uses: changesets/action@v1
         with:
