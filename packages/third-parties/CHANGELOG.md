@@ -1,5 +1,17 @@
 # @codefast/third-parties
 
+## 0.1.51
+
+### Patch Changes
+
+- [#10](https://github.com/codefastlabs/codefast/pull/10) [`6133723`](https://github.com/codefastlabs/codefast/commit/6133723bd7d7545449bbba6dfcb9a569572f7aa6) Thanks [@thevuong](https://github.com/thevuong)! - fix: remove redundant test cases and clarify prop documentation
+
+- [#10](https://github.com/codefastlabs/codefast/pull/10) [`a610716`](https://github.com/codefastlabs/codefast/commit/a610716d261dbedbe99ac530438dd21268f3efe0) Thanks [@thevuong](https://github.com/thevuong)! - feat(day-picker): ensure fixed weeks display 42 days consistently
+
+- [#10](https://github.com/codefastlabs/codefast/pull/10) [`8a8e12c`](https://github.com/codefastlabs/codefast/commit/8a8e12cec5df96337b5ccd882873f24ae0f8cee7) Thanks [@thevuong](https://github.com/thevuong)! - refactor: simplify useGetModifiers by removing selection states
+
+- [#10](https://github.com/codefastlabs/codefast/pull/10) [`4268a1f`](https://github.com/codefastlabs/codefast/commit/4268a1f100562e5ecc6f6bf2d38c7404c405a285) Thanks [@thevuong](https://github.com/thevuong)! - fix: use default locale when custom locale is absent
+
 ## 0.1.50
 
 ### Patch Changes
