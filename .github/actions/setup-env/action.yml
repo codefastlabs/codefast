@@ -39,7 +39,3 @@ runs:
     - name: Install Dependencies
       shell: bash
       run: pnpm install --frozen-lockfile
-
-    - name: Build Packages
-      shell: bash
-      run: pnpm build:packages

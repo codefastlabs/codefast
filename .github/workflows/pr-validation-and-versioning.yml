@@ -86,6 +86,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Build Packages
+        shell: bash
+        run: pnpm build:packages
+
       - name: Run Lint
         run: pnpm lint
 
@@ -103,6 +107,10 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Build Packages
+        shell: bash
+        run: pnpm build:packages
 
       - name: Run Tests
         run: pnpm test
@@ -123,6 +131,10 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Build Packages
+        shell: bash
+        run: pnpm build:packages
 
       - name: Run Chromatic
         uses: chromaui/action@latest
