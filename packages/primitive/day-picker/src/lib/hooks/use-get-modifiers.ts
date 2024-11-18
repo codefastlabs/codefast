@@ -1,14 +1,18 @@
 import { TZDate } from '@date-fns/tz';
 
 import { type CalendarDay, type DateLib } from '@/lib/classes';
-import { DayFlag, SelectionState } from '@/lib/constants/ui';
+import { DayFlag } from '@/lib/constants/ui';
 import { type DayPickerProps, type Modifiers } from '@/lib/types';
 import { dateMatchModifiers } from '@/lib/utils/date-match-modifiers';
 
 /**
  * Return a function to get the modifiers for a given day.
  */
-export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, dateLib: DateLib) {
+export function useGetModifiers(
+  days: CalendarDay[],
+  props: DayPickerProps,
+  dateLib: DateLib,
+): (day: CalendarDay) => Modifiers {
   const { disabled, hidden, modifiers, showOutsideDays, today } = props;
 
   const { isSameDay, isSameMonth } = dateLib;
@@ -22,13 +26,6 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
   };
 
   const customModifiersMap: Record<string, CalendarDay[]> = {};
-
-  const selectionModifiersMap: Record<SelectionState, CalendarDay[]> = {
-    [SelectionState.range_end]: [],
-    [SelectionState.range_middle]: [],
-    [SelectionState.range_start]: [],
-    [SelectionState.selected]: [],
-  };
 
   for (const day of days) {
     const { date, displayMonth } = day;
@@ -76,7 +73,7 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
     }
   }
 
-  return (day: CalendarDay) => {
+  return (day: CalendarDay): Modifiers => {
     // Initialize all the modifiers to false
     const dayFlags: Record<DayFlag, boolean> = {
       [DayFlag.focused]: false,
@@ -84,12 +81,6 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
       [DayFlag.hidden]: false,
       [DayFlag.outside]: false,
       [DayFlag.today]: false,
-    };
-    const selectionStates: Record<SelectionState, boolean> = {
-      [SelectionState.range_end]: false,
-      [SelectionState.range_middle]: false,
-      [SelectionState.range_start]: false,
-      [SelectionState.selected]: false,
     };
     const customModifiers: Modifiers = {};
 
@@ -100,21 +91,14 @@ export function useGetModifiers(days: CalendarDay[], props: DayPickerProps, date
       dayFlags[name as DayFlag] = daysForFlag.some((d) => d === day);
     }
 
-    for (const name in selectionModifiersMap) {
-      const daysForState = selectionModifiersMap[name as SelectionState];
-
-      selectionStates[name as SelectionState] = daysForState.some((d) => d === day);
-    }
-
     for (const name in customModifiersMap) {
       customModifiers[name] = Boolean(customModifiersMap[name].some((d) => d === day));
     }
 
     return {
-      ...selectionStates,
       ...dayFlags,
       // custom modifiers should override all the previous ones
       ...customModifiers,
-    } as Modifiers;
+    };
   };
 }
