@@ -1,0 +1,68 @@
+name: PR Validation
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'docs/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    outputs:
+      has_changeset: ${{ steps.filter.outputs.changeset }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check for Changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            changeset:
+              - '.changeset/**/*.md'
+              - '.changeset/config.json'
+
+      - name: Log Filter Outputs
+        run: |
+          echo "Changeset Exists: ${{ steps.filter.outputs.changeset }}"
+
+  version:
+    name: Create Version PR
+    needs: [setup]
+    if: needs.setup.outputs.has_changeset == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Create Version PR
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset:version
+          title: 'chore(release): version packages'
+          commit: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
