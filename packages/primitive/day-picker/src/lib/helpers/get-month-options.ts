@@ -1,5 +1,5 @@
 import { type DropdownOption } from '@/components/ui/dropdown';
-import { type DateLib } from '@/lib/classes/date-lib';
+import { type DateLib, defaultLocale } from '@/lib/classes/date-lib';
 import { type Formatters } from '@/lib/types';
 
 /**
@@ -30,7 +30,7 @@ export function getMonthOptions(
   const sortedMonths = months.sort((a, b) => a - b);
 
   return sortedMonths.map((value) => {
-    const label = formatters.formatMonthDropdown(value, dateLib.options.locale);
+    const label = formatters.formatMonthDropdown(value, dateLib.options.locale ?? defaultLocale);
     const month = new dateLib.Date(year, value);
     const disabled = month < startOfMonth(navStart) || month > startOfMonth(navEnd) || false;
 

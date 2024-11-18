@@ -1,4 +1,4 @@
-import { type DateFnsMonth, defaultLocale } from '@/lib/classes/date-lib';
+import { type DateFnsMonth, type Locale } from '@/lib/classes/date-lib';
 
 /**
  * Format the month number for the dropdown option label.
@@ -14,7 +14,7 @@ export function formatMonthDropdown(
   /**
    * The locale to use for formatting.
    */
-  locale = defaultLocale,
+  locale: Locale,
 ): string {
   return locale.localize.month(monthNumber as DateFnsMonth);
 }
