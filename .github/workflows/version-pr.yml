@@ -125,7 +125,6 @@ jobs:
           workingDir: apps/storybook-docs
           onlyChanged: true
           zip: true
-          exitZeroOnChanges: ${{ github.event_name != 'pull_request' }}
 
   version:
     name: Create Version PR
