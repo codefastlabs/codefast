@@ -1,4 +1,4 @@
-name: Version and Release Packages
+name: Create Version PR
 
 on:
   push:
@@ -26,10 +26,12 @@ env:
 
 jobs:
   setup:
-    name: Setup & Validation
+    name: Setup
     runs-on: ubuntu-latest
     outputs:
       ui_changed: ${{ steps.filter.outputs.ui }}
+      test_required: ${{ steps.filter.outputs.test }}
+      has_changeset: ${{ steps.filter.outputs.changeset }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,6 +48,18 @@ jobs:
               - '**/tailwind.config.{js,ts}'
               - '**/*.stories.{js,jsx,ts,tsx}'
               - '**/styles/**'
+            test:
+              - 'packages/*/src/**/*.{js,jsx,ts,tsx}'
+              - 'packages/*/__tests__/**'
+              - 'packages/*/test/**'
+              - '**/*.test.{js,jsx,ts,tsx}'
+              - '**/*.spec.{js,jsx,ts,tsx}'
+              - 'jest.config.{js,ts}'
+              - 'vitest.config.{js,ts}'
+              - '**/tests/**'
+            changeset:
+              - '.changeset/**/*.md'
+              - '.changeset/config.json'
 
   lint:
     name: Lint
@@ -65,6 +79,9 @@ jobs:
   test:
     name: Test
     needs: [setup, lint]
+    if: |
+      needs.setup.outputs.test_required == 'true' ||
+      contains(github.event.head_commit.message, '[force-test]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -106,11 +123,13 @@ jobs:
 
   release:
     name: Release
-    needs: [test]
+    needs: [setup, lint, test]
     if: |
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push' &&
-      !contains(github.event.head_commit.message, '[skip-release]')
+      needs.setup.outputs.has_changeset == 'true' &&
+      !contains(github.event.head_commit.message, '[skip-release]') &&
+      (needs.setup.outputs.test_required == 'false' || success())
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -127,9 +146,8 @@ jobs:
         uses: changesets/action@v1
         with:
           version: pnpm changeset:version
-          commit: 'chore(release): publish updated packages and generate release notes'
-          title: 'chore(release): publish new version'
-          publish: pnpm changeset:publish
+          title: 'chore(release): version packages'
+          commit: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
