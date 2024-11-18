@@ -1,13 +1,6 @@
-name: Create Version PR
+name: PR Validation
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-      - '.editorconfig'
-      - 'docs/**'
   pull_request:
     branches: [main]
     paths-ignore:
@@ -31,7 +24,6 @@ jobs:
     outputs:
       ui_changed: ${{ steps.filter.outputs.ui }}
       test_required: ${{ steps.filter.outputs.test }}
-      has_changeset: ${{ steps.filter.outputs.changeset }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -57,16 +49,11 @@ jobs:
               - 'jest.config.{js,ts}'
               - 'vitest.config.{js,ts}'
               - '**/tests/**'
-            changeset:
-              - '.changeset/**/*.md'
-              - '.changeset/config.json'
 
       - name: Log Filter Outputs
         run: |
           echo "UI Changed: ${{ steps.filter.outputs.ui }}"
           echo "Test Required: ${{ steps.filter.outputs.test }}"
-          echo "Changeset Exists: ${{ steps.filter.outputs.changeset }}"
-          echo "Message: ${{ github.event.head_commit.message }}"
 
   lint:
     name: Lint
@@ -86,9 +73,7 @@ jobs:
   test:
     name: Test
     needs: [setup, lint]
-    if: |
-      needs.setup.outputs.test_required == 'true' ||
-      contains(github.event.head_commit.message, '[force-test]')
+    if: needs.setup.outputs.test_required == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -104,10 +89,7 @@ jobs:
   chromatic:
     name: Visual Testing
     needs: [setup, lint]
-    if: |
-      needs.setup.outputs.ui_changed == 'true' &&
-      (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') &&
-      !contains(github.event.head_commit.message, '[skip-visual]')
+    if: needs.setup.outputs.ui_changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -126,34 +108,3 @@ jobs:
           workingDir: apps/storybook-docs
           onlyChanged: true
           zip: true
-
-  version:
-    name: Create Version PR
-    needs: [setup, lint, test]
-    if: |
-      github.ref == 'refs/heads/main' &&
-      github.event_name == 'push' &&
-      needs.setup.outputs.has_changeset == 'true' &&
-      !contains(github.event.head_commit.message, '[skip-release]') &&
-      (needs.setup.outputs.test_required == 'false' || success())
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Environment
-        uses: ./.github/actions/setup-env
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Create Version PR
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: pnpm changeset:version
-          title: 'chore(release): version packages'
-          commit: 'chore(release): version packages'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
