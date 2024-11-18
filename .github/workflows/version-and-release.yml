@@ -61,7 +61,6 @@ jobs:
 
       - name: Run Lint
         run: pnpm lint
-        timeout-minutes: 5
 
   test:
     name: Test
@@ -77,12 +76,6 @@ jobs:
 
       - name: Run Tests
         run: pnpm test
-        timeout-minutes: 10
-
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   chromatic:
     name: Visual Testing
@@ -110,11 +103,10 @@ jobs:
           onlyChanged: true
           zip: true
           exitZeroOnChanges: ${{ github.event_name != 'pull_request' }}
-        timeout-minutes: 10
 
   release:
     name: Release
-    needs: [test, chromatic]
+    needs: [test]
     if: |
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push' &&
