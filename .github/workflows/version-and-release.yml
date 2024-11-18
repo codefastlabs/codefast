@@ -30,7 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ui_changed: ${{ steps.filter.outputs.ui }}
-      test_required: ${{ steps.filter.outputs.test }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,12 +46,6 @@ jobs:
               - '**/tailwind.config.{js,ts}'
               - '**/*.stories.{js,jsx,ts,tsx}'
               - '**/styles/**'
-            test:
-              - 'packages/*/src/**'
-              - 'packages/*/test/**'
-              - '**/__tests__/**'
-              - 'jest.config.*'
-              - 'pnpm-lock.yaml'
 
   lint:
     name: Lint
@@ -73,7 +66,6 @@ jobs:
   test:
     name: Test
     needs: [setup, lint]
-    if: needs.setup.outputs.test_required == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
