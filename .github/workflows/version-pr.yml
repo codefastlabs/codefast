@@ -121,8 +121,8 @@ jobs:
           zip: true
           exitZeroOnChanges: ${{ github.event_name != 'pull_request' }}
 
-  release:
-    name: Release
+  version:
+    name: Create Version PR
     needs: [setup, lint, test]
     if: |
       github.ref == 'refs/heads/main' &&
@@ -141,7 +141,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Create Release
+      - name: Create Version PR
         id: changesets
         uses: changesets/action@v1
         with:
