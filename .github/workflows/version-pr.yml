@@ -43,22 +43,20 @@ jobs:
         with:
           filters: |
             ui:
-              - 'packages/*/src/**/*.{js,jsx,ts,tsx,css,scss}'
+              - 'packages/**/src/**/*.{js,jsx,ts,tsx,css,scss}'
               - 'apps/storybook-docs/**'
               - '**/tailwind.config.{js,ts}'
               - '**/*.stories.{js,jsx,ts,tsx}'
               - '**/styles/**'
-
             test:
-              - 'packages/*/src/**/*.{js,jsx,ts,tsx}'
-              - 'packages/*/__tests__/**'
-              - 'packages/*/test/**'
+              - 'packages/**/src/**/*.{js,jsx,ts,tsx}'
+              - 'packages/**/__tests__/**'
+              - 'packages/**/test/**'
               - '**/*.test.{js,jsx,ts,tsx}'
               - '**/*.spec.{js,jsx,ts,tsx}'
               - 'jest.config.{js,ts}'
               - 'vitest.config.{js,ts}'
               - '**/tests/**'
-
             changeset:
               - '.changeset/**/*.md'
               - '.changeset/config.json'
