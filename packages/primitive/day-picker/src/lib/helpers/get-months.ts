@@ -1,5 +1,6 @@
 import { CalendarDay, CalendarMonth, CalendarWeek } from '@/lib/classes';
 import { type DateLib } from '@/lib/classes/date-lib';
+import { NrOfDaysWithFixedWeeks } from '@/lib/helpers/get-dates';
 import { type DayPickerProps } from '@/lib/types';
 
 /**
@@ -35,9 +36,11 @@ export function getMonths(
       return date >= firstDateOfFirstWeek && date <= lastDateOfLastWeek;
     });
 
-    if (props.fixedWeeks && monthDates.length < 42) {
+    if (props.fixedWeeks && monthDates.length < NrOfDaysWithFixedWeeks) {
       const extraDates = dates.filter((date) => {
-        return date > lastDateOfLastWeek && date <= addDays(lastDateOfLastWeek, 7);
+        const daysToAdd = NrOfDaysWithFixedWeeks - monthDates.length;
+
+        return date > lastDateOfLastWeek && date <= addDays(lastDateOfLastWeek, daysToAdd);
       });
 
       monthDates.push(...extraDates);
