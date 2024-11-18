@@ -54,17 +54,6 @@ jobs:
               - 'jest.config.*'
               - 'pnpm-lock.yaml'
 
-      - name: Verify Changesets
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^.changeset/"
-          then
-            echo "Found changeset files"
-          else
-            echo "No changeset files found"
-            exit 1
-          fi
-
   lint:
     name: Lint
     needs: setup
