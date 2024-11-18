@@ -2,14 +2,14 @@ name: Version and Release Packages
 
 on:
   push:
-    branches: [develop, release/*, hotfix/*, main]
+    branches: [feature/*, main]
     paths-ignore:
       - '**.md'
       - '.gitignore'
       - '.editorconfig'
       - 'docs/**'
   pull_request:
-    branches: [develop, release/*, hotfix/*, main]
+    branches: [feature/*, main]
     paths-ignore:
       - '**.md'
       - '.gitignore'
