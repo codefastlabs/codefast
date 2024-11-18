@@ -181,11 +181,11 @@ export interface BaseProps {
 
   /**
    * The locale object used to localize dates. Pass a locale from
-   * `react-day-picker/locale` to localize the calendar.
+   * `@codefast-ui/day-picker/locale` to localize the calendar.
    *
    * @example
    * ```tsx
-   *   import { es } from "react-day-picker/locale";
+   *   import { es } from "@codefast-ui/day-picker/locale";
    *   <DayPicker locale={es} />
    * ```
    *
