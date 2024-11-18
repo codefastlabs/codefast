@@ -406,6 +406,7 @@ export class DateLib {
     return this.overrides?.startOfYear ? this.overrides.startOfYear(date) : startOfYear(date);
   };
 }
+
 /**
  * The default locale (English).
  */
