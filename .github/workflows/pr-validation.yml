@@ -24,6 +24,7 @@ jobs:
     outputs:
       ui_changed: ${{ steps.filter.outputs.ui }}
       test_required: ${{ steps.filter.outputs.test }}
+      lint_required: ${{ steps.filter.outputs.lint }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,7 +42,7 @@ jobs:
               - '**/*.stories.{js,jsx,ts,tsx}'
               - '**/styles/**'
             test:
-              - 'packages/**/src/**/*.{js,jsx,ts,tsx}'
+              - 'packages/**/src/**/*.{js,jsx,ts,tsx,css,scss}'
               - 'packages/**/__tests__/**'
               - 'packages/**/test/**'
               - '**/*.test.{js,jsx,ts,tsx}'
@@ -49,15 +50,19 @@ jobs:
               - 'jest.config.{js,ts}'
               - 'vitest.config.{js,ts}'
               - '**/tests/**'
+            lint:
+              - 'packages/**/src/**/*.{js,jsx,ts,tsx,css,scss}'
 
       - name: Log Filter Outputs
         run: |
           echo "UI Changed: ${{ steps.filter.outputs.ui }}"
           echo "Test Required: ${{ steps.filter.outputs.test }}"
+          echo "Lint Required: ${{ steps.filter.outputs.lint }}"
 
   lint:
     name: Lint
     needs: setup
+    if: needs.setup.outputs.lint_required == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
