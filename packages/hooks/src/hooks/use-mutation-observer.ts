@@ -1,4 +1,4 @@
-import { type MutableRefObject, useEffect } from 'react';
+import { type RefObject, useEffect } from 'react';
 
 /**
  * Attaches a MutationObserver to a given HTMLElement and invokes a callback
@@ -21,7 +21,7 @@ import { type MutableRefObject, useEffect } from 'react';
  * @see [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
  */
 export function useMutationObserver(
-  ref: MutableRefObject<HTMLElement | null>,
+  ref: RefObject<HTMLElement | null>,
   callback: MutationCallback,
   options: MutationObserverInit = {
     attributes: true,
