@@ -66,6 +66,7 @@ jobs:
           echo "UI Changed: ${{ steps.filter.outputs.ui }}"
           echo "Test Required: ${{ steps.filter.outputs.test }}"
           echo "Changeset Exists: ${{ steps.filter.outputs.changeset }}"
+          echo "Message: ${{ github.event.head_commit.message }}"
 
   lint:
     name: Lint
