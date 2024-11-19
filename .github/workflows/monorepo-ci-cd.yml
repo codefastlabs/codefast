@@ -92,7 +92,7 @@ jobs:
             build-
   lint:
     name: Run Code Linting
-    needs: setup
+    needs: [setup, build]
     if: |
       needs.setup.outputs.lint_required == 'true' &&
       github.event_name == 'pull_request'
