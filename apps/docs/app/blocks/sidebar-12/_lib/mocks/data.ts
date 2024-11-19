@@ -2,7 +2,7 @@ export const data = {
   user: {
     name: 'shadcn',
     email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    avatar: '/avatars/01.png',
   },
   calendars: [
     {
