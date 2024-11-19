@@ -25,6 +25,7 @@ export default function SidebarPage(): JSX.Element {
         <SidebarLink href="/blocks/sidebar-12" title="Sidebar 12" />
         <SidebarLink href="/blocks/sidebar-13" title="Sidebar 13" />
         <SidebarLink href="/blocks/sidebar-14" title="Sidebar 14" />
+        <SidebarLink href="/blocks/sidebar-15" title="Sidebar 15" />
       </div>
     </main>
   );
