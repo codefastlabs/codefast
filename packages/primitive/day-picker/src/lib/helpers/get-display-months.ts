@@ -1,6 +1,16 @@
 import { type DateLib } from '@/lib/classes/date-lib';
 import { type DayPickerProps } from '@/lib/types';
 
+/**
+ * Gets an array of dates representing the months to be displayed in a calendar.
+ *
+ * @param firstDisplayedMonth - The starting month to be displayed.
+ * @param calendarEndMonth - Optional; The ending month for the calendar display. If specified, the calculation stops
+ *   if a month exceeds this date.
+ * @param props - Properties containing the number of months to display.
+ * @param dateLib - A date library providing date manipulation functions.
+ * @returns An array of dates representing the months to be displayed.
+ */
 export function getDisplayMonths(
   firstDisplayedMonth: Date,
   calendarEndMonth: Date | undefined,
