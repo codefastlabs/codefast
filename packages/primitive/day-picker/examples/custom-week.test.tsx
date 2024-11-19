@@ -17,9 +17,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<CustomWeek />);
+}
+
 describe('custom-week component', () => {
   beforeEach(() => {
-    render(<CustomWeek />);
+    setup();
   });
 
   test('renders without any selected week initially', () => {

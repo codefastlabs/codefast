@@ -4,9 +4,13 @@ import { grid, gridcell, nextButton } from './lib/elements';
 import { user } from './lib/user';
 import { StartEndMonths } from './start-end-months';
 
+function setup(): void {
+  render(<StartEndMonths />);
+}
+
 describe('start-end-months component', () => {
   beforeEach(() => {
-    render(<StartEndMonths />);
+    setup();
   });
 
   test('the first month should be January 2024', () => {

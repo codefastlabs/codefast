@@ -35,6 +35,7 @@ describe('modifiers-disabled component', () => {
 
   test('renders DayPicker with mode set to range', () => {
     const { container } = render(<ModifiersDisabled />);
+    // eslint-disable-next-line testing-library/no-container,testing-library/no-node-access -- ignore
     const dayPicker = container.querySelector('[data-mode="range"]');
 
     expect(dayPicker).toBeInTheDocument();

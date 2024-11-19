@@ -9,11 +9,18 @@ const today = new Date(2021, 10, 25);
 beforeAll(() => {
   jest.setSystemTime(today);
 });
-afterAll(() => jest.useRealTimers());
+
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+function setup(): void {
+  render(<Single />);
+}
 
 describe('single component', () => {
   beforeEach(() => {
-    render(<Single />);
+    setup();
   });
 
   describe('when a single day is clicked', () => {
