@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@codefast/ui';
+import Link from 'next/link';
 import { type ComponentProps, type JSX, useState } from 'react';
 
 import { data } from '@/app/blocks/sidebar-13/_lib/mocks/data';
@@ -50,10 +51,10 @@ export function Sidebar13({ className, ...props }: Sidebar13Props): JSX.Element 
                       {data.nav.map((item) => (
                         <SidebarMenuItem key={item.name}>
                           <SidebarMenuButton asChild isActive={item.name === 'Messages & media'}>
-                            <a href="#">
+                            <Link href="#">
                               <item.icon />
                               <span>{item.name}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       ))}
