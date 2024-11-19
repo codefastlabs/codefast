@@ -22,6 +22,7 @@ describe('modifiers-classnames component', () => {
 
   test('applies the `my-booked-class` class to booked days', () => {
     const { container } = render(<ModifiersClassnames />);
+    // eslint-disable-next-line testing-library/no-container,testing-library/no-node-access -- ignore
     const bookedElements = container.querySelectorAll('.my-booked-class');
 
     expect(bookedElements.length).toBeGreaterThan(0);
@@ -29,6 +30,7 @@ describe('modifiers-classnames component', () => {
 
   test('includes a style tag with custom styles', () => {
     const { container } = render(<ModifiersClassnames />);
+    // eslint-disable-next-line testing-library/no-container,testing-library/no-node-access -- ignore
     const styleTag = container.querySelector('style');
 
     expect(styleTag).toBeInTheDocument();

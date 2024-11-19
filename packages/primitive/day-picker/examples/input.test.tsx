@@ -16,9 +16,13 @@ function selectedCells(): HTMLElement[] {
   return gridcells().filter((cell) => cell.hasAttribute('aria-selected'));
 }
 
+function setup(): void {
+  render(<Input />);
+}
+
 describe('input component', () => {
   beforeEach(() => {
-    render(<Input />);
+    setup();
   });
 
   test('displays the selected date in the calendar when a valid date is typed in', async () => {

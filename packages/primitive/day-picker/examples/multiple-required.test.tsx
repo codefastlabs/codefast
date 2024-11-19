@@ -15,9 +15,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<MultipleRequired />);
+}
+
 describe('multiple-required component', () => {
   beforeEach(() => {
-    render(<MultipleRequired />);
+    setup();
   });
 
   test('initially displays today as selected', () => {

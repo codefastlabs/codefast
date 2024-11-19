@@ -17,9 +17,13 @@ afterAll(() => {
 
 const days = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4)];
 
+function setup(): void {
+  render(<MultipleMinMax />);
+}
+
 describe('multipleMinMax component', () => {
   beforeEach(() => {
-    render(<MultipleMinMax />);
+    setup();
   });
 
   describe('when a single day is clicked', () => {

@@ -14,9 +14,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<PastDatesDisabled />);
+}
+
 describe('past-dates-disabled component', () => {
   beforeEach(() => {
-    render(<PastDatesDisabled />);
+    setup();
   });
 
   describe('when checking date availability', () => {

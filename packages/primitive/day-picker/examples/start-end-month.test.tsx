@@ -5,9 +5,13 @@ import { nextButton, previousButton } from './lib/elements';
 import { user } from './lib/user';
 import { StartEndMonth } from './start-end-month';
 
+function setup(): void {
+  render(<StartEndMonth />);
+}
+
 describe('start-end-month component', () => {
   beforeEach(() => {
-    render(<StartEndMonth />);
+    setup();
   });
 
   test('disables the previous button on the start month', () => {

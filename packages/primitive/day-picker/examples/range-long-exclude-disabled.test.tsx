@@ -17,9 +17,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<RangeLongExcludeDisabled />);
+}
+
 describe('range-long-exclude-disabled component', () => {
   beforeEach(() => {
-    render(<RangeLongExcludeDisabled />);
+    setup();
   });
 
   test('initializes with the correct selected range', () => {
