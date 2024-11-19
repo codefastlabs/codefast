@@ -16,9 +16,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<RangeRequired />);
+}
+
 describe('range-required component', () => {
   beforeEach(() => {
-    render(<RangeRequired />);
+    setup();
   });
 
   test('initially displays the default range as selected', () => {

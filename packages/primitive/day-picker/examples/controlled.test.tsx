@@ -14,9 +14,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<Controlled />);
+}
+
 describe('controlled component', () => {
   beforeEach(() => {
-    render(<Controlled />);
+    setup();
   });
 
   test('renders with initial button properties', () => {

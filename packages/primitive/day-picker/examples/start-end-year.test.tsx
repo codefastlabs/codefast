@@ -17,9 +17,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<StartEndYear />);
+}
+
 describe('start-end-year', () => {
   beforeEach(() => {
-    render(<StartEndYear />);
+    setup();
   });
 
   test('disables the previous month button on the start month', () => {

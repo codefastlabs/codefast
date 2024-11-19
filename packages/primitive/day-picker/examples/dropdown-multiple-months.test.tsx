@@ -16,9 +16,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<DropdownMultipleMonths />);
+}
+
 describe('dropdown-multiple-months component', () => {
   beforeEach(() => {
-    render(<DropdownMultipleMonths />);
+    setup();
   });
 
   describe('when selecting a month from the first dropdown', () => {

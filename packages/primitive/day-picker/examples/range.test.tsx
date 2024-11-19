@@ -21,9 +21,13 @@ function getAllSelected(): HTMLElement[] {
   return Array.from(gridcells).filter((cell) => cell.getAttribute('aria-selected') === 'true');
 }
 
+function setup(): void {
+  render(<Range />);
+}
+
 describe('range component', () => {
   beforeEach(() => {
-    render(<Range />);
+    setup();
   });
 
   describe('when initialized with a default range', () => {

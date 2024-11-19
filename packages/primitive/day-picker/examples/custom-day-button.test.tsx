@@ -15,9 +15,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<CustomDayButton />);
+}
+
 describe('custom-day-button component', () => {
   beforeEach(() => {
-    render(<CustomDayButton />);
+    setup();
   });
 
   test('renders informational text on initial load', () => {
@@ -38,7 +42,7 @@ describe('custom-day-button component', () => {
     await user.dblClick(dateButton(today));
 
     // Check that the selected date is displayed.
-    expect(screen.queryByText(today.toDateString())).toBeInTheDocument();
+    expect(screen.getByText(today.toDateString())).toBeInTheDocument();
     expect(screen.queryByText('Double click to select a date')).not.toBeInTheDocument();
   });
 });

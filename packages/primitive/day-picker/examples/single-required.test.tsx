@@ -4,9 +4,13 @@ import { dateButton, gridcell } from './lib/elements';
 import { user } from './lib/user';
 import { SingleRequired } from './single-required';
 
+function setup(): void {
+  render(<SingleRequired />);
+}
+
 describe('single-required component', () => {
   beforeEach(() => {
-    render(<SingleRequired />);
+    setup();
   });
 
   describe('when no day is selected initially', () => {

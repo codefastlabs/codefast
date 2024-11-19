@@ -11,10 +11,18 @@ beforeAll(() => {
   jest.setSystemTime(today);
 });
 
-afterAll(() => jest.useRealTimers());
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+function setup(): void {
+  render(<RangeMinMax />);
+}
 
 describe('range-min-max component', () => {
-  beforeEach(() => render(<RangeMinMax />));
+  beforeEach(() => {
+    setup();
+  });
 
   describe('when selecting a single day', () => {
     const firstDay = new Date(2022, 8, 13);

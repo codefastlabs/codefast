@@ -9,10 +9,19 @@ const today = new Date(2021, 10, 25);
 beforeAll(() => {
   jest.setSystemTime(today);
 });
-afterAll(() => jest.useRealTimers());
+
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+function setup(): void {
+  render(<RangeShiftKey />);
+}
 
 describe('range-shift-key component', () => {
-  beforeEach(() => render(<RangeShiftKey />));
+  beforeEach(() => {
+    setup();
+  });
 
   describe('when clicking on a single day without pressing Shift', () => {
     const firstDay = new Date(2021, 10, 11);

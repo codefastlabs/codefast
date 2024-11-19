@@ -12,6 +12,10 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<WeekNumber />);
+}
+
 function getWeek(week: number): HTMLElement {
   return screen.getByRole('rowheader', {
     name: `Week ${week}`,
@@ -19,7 +23,9 @@ function getWeek(week: number): HTMLElement {
 }
 
 describe('weekNumber component', () => {
-  beforeEach(() => render(<WeekNumber />).container);
+  beforeEach(() => {
+    setup();
+  });
 
   describe('when displaying November 2021', () => {
     test('should display the 45th week number', () => {

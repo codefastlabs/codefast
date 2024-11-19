@@ -12,9 +12,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<NumberingSystem />);
+}
+
 describe('numbering-system component', () => {
   beforeEach(() => {
-    render(<NumberingSystem />);
+    setup();
   });
 
   test('displays days of the week in Arabic', () => {

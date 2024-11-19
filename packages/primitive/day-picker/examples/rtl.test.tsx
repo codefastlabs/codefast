@@ -10,14 +10,21 @@ beforeAll(() => {
   jest.setSystemTime(today);
 });
 
-afterAll(() => jest.useRealTimers());
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+function setup(): void {
+  render(<Rtl />);
+}
 
 describe('rtl component', () => {
   beforeEach(() => {
-    render(<Rtl />);
+    setup();
   });
 
   test('should render with the "rtl" direction attribute', () => {
+    // eslint-disable-next-line testing-library/no-node-access -- ignore
     const rootElement = document.querySelector('.rdp-root');
 
     expect(rootElement).toHaveAttribute('dir', 'rtl');

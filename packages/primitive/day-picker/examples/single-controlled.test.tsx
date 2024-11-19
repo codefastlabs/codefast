@@ -14,9 +14,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<SingleControlled />);
+}
+
 describe('single-controlled component', () => {
   beforeEach(() => {
-    render(<SingleControlled />);
+    setup();
   });
 
   describe('when a single day is clicked', () => {

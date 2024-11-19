@@ -13,9 +13,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<Spanish />);
+}
+
 describe('spanish component', () => {
   beforeEach(() => {
-    render(<Spanish />);
+    setup();
   });
 
   describe('when rendering the calendar', () => {

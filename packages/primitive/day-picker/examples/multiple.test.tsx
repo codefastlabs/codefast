@@ -14,11 +14,15 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<Multiple />);
+}
+
 describe('multiple component', () => {
   const day1 = new Date(2021, 10, 1);
 
   beforeEach(async () => {
-    render(<Multiple />);
+    setup();
     await user.click(dateButton(day1));
   });
 

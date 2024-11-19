@@ -11,13 +11,17 @@ beforeAll(() => {
   jest.setSystemTime(today);
 });
 
+function setup(): void {
+  render(<CustomMultiple />);
+}
+
 afterAll(() => {
   jest.useRealTimers();
 });
 
 describe('custom-multiple component', () => {
   beforeEach(() => {
-    render(<CustomMultiple />);
+    setup();
   });
 
   test('displays the initial footer text', () => {

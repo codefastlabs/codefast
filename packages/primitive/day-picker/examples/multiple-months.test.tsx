@@ -14,9 +14,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<MultipleMonths />);
+}
+
 describe('multiple-months component', () => {
   beforeEach(() => {
-    render(<MultipleMonths />);
+    setup();
   });
 
   test('renders 2 grids representing two consecutive months', () => {

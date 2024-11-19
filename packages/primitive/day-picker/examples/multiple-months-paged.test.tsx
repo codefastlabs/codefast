@@ -10,11 +10,17 @@ beforeAll(() => {
   jest.setSystemTime(today);
 });
 
-afterAll(() => jest.useRealTimers());
+afterAll(() => {
+  jest.useRealTimers();
+});
+
+function setup(): void {
+  render(<MultipleMonthsPaged />);
+}
 
 describe('multiple-months-paged component', () => {
   beforeEach(() => {
-    render(<MultipleMonthsPaged />);
+    setup();
   });
 
   describe('when the initial month is November 2021', () => {

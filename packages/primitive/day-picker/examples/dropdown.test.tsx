@@ -1,13 +1,16 @@
-import { within } from '@testing-library/dom';
-import { render } from '@testing-library/react';
+import { within, render } from '@testing-library/react';
 
 import { Dropdown } from './dropdown';
 import { grid, monthDropdown, yearDropdown } from './lib/elements';
 import { user } from './lib/user';
 
+function setup(): void {
+  render(<Dropdown />);
+}
+
 describe('dropdown component', () => {
   beforeEach(() => {
-    render(<Dropdown />);
+    setup();
   });
 
   test('renders month and year dropdowns on initial load', () => {
