@@ -2,6 +2,15 @@ import { type CalendarDay } from '@/lib/classes';
 import { DayFlag } from '@/lib/constants/ui';
 import { type Modifiers } from '@/lib/types';
 
+/**
+ * Determines the focus target within a set of calendar days based on several conditions.
+ *
+ * @param days - The array of {@link CalendarDay} objects representing the calendar days.
+ * @param getModifiers - A callback function that retrieves the {@link Modifiers} of a given calendar day.
+ * @param isSelected - A function that determines if a given date is selected.
+ * @param lastFocused - The last {@link CalendarDay} that was focused, or `undefined` if there was none.
+ * @returns The {@link CalendarDay} object that should be focused, or `undefined` if no focusable day is found.
+ */
 export function calculateFocusTarget(
   days: CalendarDay[],
   getModifiers: (day: CalendarDay) => Modifiers,
