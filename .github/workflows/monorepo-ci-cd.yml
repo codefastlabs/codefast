@@ -1,5 +1,4 @@
-name: PR Validation and Versioning
-
+name: Monorepo CI/CD
 on:
   pull_request:
     branches: [main]
@@ -15,15 +14,12 @@ on:
       - '.gitignore'
       - '.editorconfig'
       - 'docs/**'
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 env:
   NODE_VERSION: 20
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
-
 jobs:
   setup:
     name: Setup and Filter Changes
@@ -37,7 +33,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-
       - name: Check for Changes
         uses: dorny/paths-filter@v3
         id: filter
@@ -63,14 +58,38 @@ jobs:
             changeset:
               - added|modified: '.changeset/**/*.md'
               - '.changeset/config.json'
-
       - name: Log Filter Outputs
         run: |
           echo "UI Changed: ${{ steps.filter.outputs.ui }}"
           echo "Test Required: ${{ steps.filter.outputs.test }}"
           echo "Lint Required: ${{ steps.filter.outputs.lint }}"
           echo "Changeset Exists: ${{ steps.filter.outputs.changeset }}"
-
+  build:
+    name: Build Packages
+    needs: setup
+    if: |
+      needs.setup.outputs.test_required == 'true' ||
+      needs.setup.outputs.lint_required == 'true' ||
+      needs.setup.outputs.ui_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Build Packages
+        run: pnpm build:packages
+      - name: Cache Build Artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/dist
+            **/build
+            .next
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-
   lint:
     name: Run Code Linting
     needs: setup
@@ -80,44 +99,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Environment
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Build Packages
-        shell: bash
-        run: pnpm build:packages
-
       - name: Run Lint
         run: pnpm lint
-
   test:
     name: Run Unit and Integration Tests
-    needs: [setup, lint]
+    needs: [setup, build]
     if: |
       needs.setup.outputs.test_required == 'true' &&
       github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Environment
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Build Packages
-        shell: bash
-        run: pnpm build:packages
-
+      - name: Restore Build Artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/dist
+            **/build
+            .next
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-
       - name: Run Tests
         run: pnpm test
-
   chromatic:
     name: Visual Regression Testing
-    needs: [setup, lint]
+    needs: [setup, build]
     if: |
       needs.setup.outputs.ui_changed == 'true' &&
       github.event_name == 'pull_request'
@@ -126,16 +141,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Environment
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
-      - name: Build Packages
-        shell: bash
-        run: pnpm build:packages
-
+      - name: Restore Build Artifacts
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/dist
+            **/build
+            .next
+          key: build-${{ github.sha }}
+          restore-keys: |
+            build-
       - name: Run Chromatic
         uses: chromaui/action@latest
         with:
@@ -143,24 +162,22 @@ jobs:
           workingDir: apps/storybook-docs
           onlyChanged: true
           zip: true
-
   version:
     name: Create Release PR
-    needs: [setup]
+    needs: setup
     if: |
       needs.setup.outputs.has_changeset == 'true' &&
-      github.event_name == 'push'
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Environment
         uses: ./.github/actions/setup-env
         with:
           node-version: ${{ env.NODE_VERSION }}
-
       - name: Create Version PR
         id: changesets
         uses: changesets/action@v1
@@ -168,6 +185,30 @@ jobs:
           version: pnpm changeset:version
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  publish:
+    name: Publish to NPM
+    needs: [setup, build]
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref == 'changeset-release/main' &&
+      github.event_name == 'push' &&
+      needs.setup.outputs.has_changeset == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Environment
+        uses: ./.github/actions/setup-env
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Publish to NPM
+        uses: changesets/action@v1
+        with:
+          publish: pnpm changeset:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
