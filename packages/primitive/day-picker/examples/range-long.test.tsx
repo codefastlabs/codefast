@@ -16,9 +16,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<RangeLong />);
+}
+
 describe('range-long component', () => {
   beforeEach(() => {
-    render(<RangeLong />);
+    setup();
   });
 
   test('displays only the current month as per defaultMonth', () => {

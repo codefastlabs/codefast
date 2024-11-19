@@ -6,9 +6,13 @@ import { user } from './lib/user';
 
 const today = new Date();
 
+function setup(): void {
+  render(<CustomSingle />);
+}
+
 describe('custom-single component', () => {
   beforeEach(() => {
-    render(<CustomSingle />);
+    setup();
   });
 
   test('renders correctly with no selected date', () => {

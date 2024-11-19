@@ -7,9 +7,13 @@ import { user } from './lib/user';
 
 const today = new Date();
 
+function setup(): void {
+  render(<DisableNavigation />);
+}
+
 describe('disable-navigation component', () => {
   beforeEach(() => {
-    render(<DisableNavigation />);
+    setup();
   });
 
   test('should not display the navigation buttons', () => {

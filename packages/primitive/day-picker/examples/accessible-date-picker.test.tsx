@@ -20,21 +20,19 @@ function customDateButton(date: Date): HTMLElement {
   });
 }
 
+function setup(): void {
+  render(<AccessibleDatePicker />);
+}
+
 describe('accessible-date-picker component', () => {
-  test('renders without crashing', () => {
-    const { container } = render(<AccessibleDatePicker />);
-
-    expect(container).toBeInTheDocument();
-  });
-
   test('displays initial footer text prompting to pick a date', () => {
-    render(<AccessibleDatePicker />);
+    setup();
     expect(screen.getByText('Please pick a date for the meeting.')).toBeInTheDocument();
   });
 
   describe('when a date is selected', () => {
     beforeEach(async () => {
-      render(<AccessibleDatePicker />);
+      setup();
       await user.click(customDateButton(today));
     });
 
@@ -55,7 +53,7 @@ describe('accessible-date-picker component', () => {
     const anotherDay = subDays(today, 1);
 
     beforeEach(async () => {
-      render(<AccessibleDatePicker />);
+      setup();
       await user.click(customDateButton(anotherDay));
     });
 

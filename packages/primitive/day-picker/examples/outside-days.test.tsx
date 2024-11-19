@@ -15,9 +15,13 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(): void {
+  render(<OutsideDays />);
+}
+
 describe('outside-days component', () => {
   beforeEach(() => {
-    render(<OutsideDays />);
+    setup();
   });
 
   describe('when displaying a month view with outside days enabled', () => {

@@ -1,5 +1,6 @@
 import { act, render } from '@testing-library/react';
 import { addDays, addMonths, addWeeks, addYears, endOfWeek, lastDayOfMonth, setDate, startOfWeek } from 'date-fns';
+import { type ComponentProps } from 'react';
 
 import { Keyboard } from './keyboard';
 import { activeElement, dateButton, grid, nextButton, previousButton } from './lib/elements';
@@ -15,10 +16,14 @@ afterAll(() => {
   jest.useRealTimers();
 });
 
+function setup(props: ComponentProps<typeof Keyboard>): void {
+  render(<Keyboard {...props} />);
+}
+
 describe('keyboard component', () => {
   describe.each(['ltr', 'rtl'])('in %s text direction', (dir: string) => {
     beforeEach(() => {
-      render(<Keyboard dir={dir} mode="single" />);
+      setup({ dir, mode: 'single' });
     });
 
     describe('clicking the previous month button', () => {
@@ -268,7 +273,7 @@ describe('keyboard component', () => {
     const endOfWeekDay = endOfWeek(day, { weekStartsOn: 1 });
 
     beforeEach(() => {
-      render(<Keyboard mode="single" weekStartsOn={1} />);
+      setup({ mode: 'single', weekStartsOn: 1 });
       act(() => {
         dateButton(day).focus();
       });
