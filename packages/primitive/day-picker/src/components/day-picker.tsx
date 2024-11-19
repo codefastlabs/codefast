@@ -9,13 +9,15 @@ import {
 } from 'react';
 
 import { type CalendarDay } from '@/lib/classes/calendar-day';
-import { DateLib, defaultLocale } from '@/lib/classes/date-lib';
+import { DateLib } from '@/lib/classes/date-lib';
 import { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
+import { getClassNames } from '@/lib/helpers/get-class-names';
 import { getClassNamesForModifiers } from '@/lib/helpers/get-class-names-for-modifiers';
 import { getComponents } from '@/lib/helpers/get-components';
 import { getDataAttributes } from '@/lib/helpers/get-data-attributes';
-import { getDefaultClassNames } from '@/lib/helpers/get-default-class-names';
 import { getFormatters } from '@/lib/helpers/get-formatters';
+import { getLabels } from '@/lib/helpers/get-labels';
+import { getLocale } from '@/lib/helpers/get-locale';
 import { getMonthOptions } from '@/lib/helpers/get-month-options';
 import { getStyleForModifiers } from '@/lib/helpers/get-style-for-modifiers';
 import { getWeekdays } from '@/lib/helpers/get-weekdays';
@@ -25,7 +27,6 @@ import { type DayPickerContext, dayPickerContext } from '@/lib/hooks/use-day-pic
 import { useFocus } from '@/lib/hooks/use-focus';
 import { useGetModifiers } from '@/lib/hooks/use-get-modifiers';
 import { useSelection } from '@/lib/hooks/use-selection';
-import * as defaultLabels from '@/lib/labels';
 import {
   type DayPickerProps,
   type Modifiers,
@@ -42,10 +43,7 @@ import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
  */
 export function DayPicker(props: DayPickerProps): JSX.Element {
   const { components, formatters, labels, dateLib, locale, classNames } = useMemo(() => {
-    const mergedLocale = {
-      ...defaultLocale,
-      ...props.locale,
-    };
+    const mergedLocale = getLocale(props.locale);
 
     const mergedDateLib = new DateLib(
       {
@@ -59,18 +57,12 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
     );
 
     return {
-      dateLib: mergedDateLib,
+      classNames: getClassNames(props.classNames),
       components: getComponents(props.components),
+      dateLib: mergedDateLib,
       formatters: getFormatters(props.formatters),
-      labels: {
-        ...defaultLabels,
-        ...props.labels,
-      },
+      labels: getLabels(props.labels),
       locale: mergedLocale,
-      classNames: {
-        ...getDefaultClassNames(),
-        ...props.classNames,
-      },
     };
   }, [
     props.classNames,
