@@ -3,7 +3,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:force": "turbo run build",
     "build:packages": "turbo run build --filter=\"./packages/*\"",
     "changeset": "changeset",
     "changeset:publish": "changeset publish",
