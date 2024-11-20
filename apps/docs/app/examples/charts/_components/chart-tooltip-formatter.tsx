@@ -1,9 +1,19 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui';
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@codefast/ui';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@codefast/ui';
 import { type JSX } from 'react';
 import { Bar, BarChart, XAxis } from 'recharts';
+import { type Formatter, type NameType, type ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 export const description = 'A stacked bar chart with a legend';
 
@@ -40,7 +50,7 @@ export function ChartTooltipFormatter(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="date"
-              tickFormatter={(value) => {
+              tickFormatter={(value: string) => {
                 return new Date(value).toLocaleDateString('en-US', {
                   weekday: 'short',
                 });
@@ -51,20 +61,7 @@ export function ChartTooltipFormatter(): JSX.Element {
             <Bar dataKey="running" fill="var(--color-running)" radius={[0, 0, 4, 4]} stackId="a" />
             <Bar dataKey="swimming" fill="var(--color-swimming)" radius={[4, 4, 0, 0]} stackId="a" />
             <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  hideLabel
-                  formatter={(value, name) => (
-                    <div className="text-muted-foreground flex min-w-[130px] items-center text-xs">
-                      {chartConfig[name as keyof typeof chartConfig].label || name}
-                      <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
-                        {value}
-                        <span className="text-muted-foreground font-normal">kcal</span>
-                      </div>
-                    </div>
-                  )}
-                />
-              }
+              content={<ChartTooltipContent hideLabel formatter={formatter} />}
               cursor={false}
               defaultIndex={1}
             />
@@ -74,3 +71,13 @@ export function ChartTooltipFormatter(): JSX.Element {
     </Card>
   );
 }
+
+const formatter: Formatter<ValueType, NameType> = (value, name) => (
+  <div className="text-muted-foreground flex min-w-[130px] items-center text-xs">
+    {chartConfig[name as keyof typeof chartConfig].label || name}
+    <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+      {value}
+      <span className="text-muted-foreground font-normal">kcal</span>
+    </div>
+  </div>
+);

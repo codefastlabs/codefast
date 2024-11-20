@@ -14,11 +14,18 @@ import {
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
-import { Pie, PieChart } from 'recharts';
+import { Pie, PieChart, type PieProps } from 'recharts';
+import { type PieLabel } from 'recharts/types/polar/Pie';
 
 export const description = 'A pie chart with a custom label';
 
-const chartData = [
+interface DataItem {
+  browser: string;
+  fill: string;
+  visitors: number;
+}
+
+const chartData: DataItem[] = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
   { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
@@ -63,27 +70,7 @@ export function ChartPieLabelCustom(): JSX.Element {
         <ChartContainer className="mx-auto aspect-square max-h-[250px] px-0" config={chartConfig}>
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="visitors" />} />
-            <Pie
-              data={chartData}
-              dataKey="visitors"
-              label={({ payload, ...props }) => {
-                return (
-                  <text
-                    cx={props.cx}
-                    cy={props.cy}
-                    dominantBaseline={props.dominantBaseline}
-                    fill="hsla(var(--foreground))"
-                    textAnchor={props.textAnchor}
-                    x={props.x}
-                    y={props.y}
-                  >
-                    {payload.visitors}
-                  </text>
-                );
-              }}
-              labelLine={false}
-              nameKey="browser"
-            />
+            <Pie data={chartData} dataKey="visitors" label={label} labelLine={false} nameKey="browser" />
           </PieChart>
         </ChartContainer>
       </CardContent>
@@ -96,3 +83,24 @@ export function ChartPieLabelCustom(): JSX.Element {
     </Card>
   );
 }
+
+const label: PieLabel = ({
+  payload,
+  ...props
+}: PieProps & {
+  payload: DataItem;
+}) => {
+  return (
+    <text
+      cx={props.cx}
+      cy={props.cy}
+      dominantBaseline={props.dominantBaseline}
+      fill="hsla(var(--foreground))"
+      textAnchor={props.textAnchor}
+      x={props.x}
+      y={props.y}
+    >
+      {payload.visitors}
+    </text>
+  );
+};

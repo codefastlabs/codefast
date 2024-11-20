@@ -15,10 +15,18 @@ import {
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
 import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from 'recharts';
+import { type BarProps } from 'recharts/types/cartesian/Bar';
+import { type ActiveShape } from 'recharts/types/util/types';
 
 export const description = 'A bar chart with an active bar';
 
-const chartData = [
+interface DataItem {
+  browser: string;
+  fill: string;
+  visitors: number;
+}
+
+const chartData: DataItem[] = [
   { browser: 'chrome', visitors: 187, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
   { browser: 'firefox', visitors: 275, fill: 'var(--color-firefox)' },
@@ -71,23 +79,7 @@ export function ChartBarActive(): JSX.Element {
               tickMargin={10}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
-            <Bar
-              activeBar={({ ...props }) => {
-                return (
-                  <Rectangle
-                    {...props}
-                    fillOpacity={0.8}
-                    stroke={props.payload.fill}
-                    strokeDasharray={4}
-                    strokeDashoffset={4}
-                  />
-                );
-              }}
-              activeIndex={2}
-              dataKey="visitors"
-              radius={8}
-              strokeWidth={2}
-            />
+            <Bar activeBar={activeBar} activeIndex={2} dataKey="visitors" radius={8} strokeWidth={2} />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -100,3 +92,15 @@ export function ChartBarActive(): JSX.Element {
     </Card>
   );
 }
+
+const activeBar: ActiveShape<BarProps, SVGPathElement> = ({ ...props }) => {
+  return (
+    <Rectangle
+      {...props}
+      fillOpacity={0.8}
+      stroke={(props.payload as DataItem).fill}
+      strokeDasharray={4}
+      strokeDashoffset={4}
+    />
+  );
+};

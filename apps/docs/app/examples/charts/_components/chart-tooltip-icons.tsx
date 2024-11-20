@@ -1,7 +1,16 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui';
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@codefast/ui';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@codefast/ui';
 import { Footprints, Waves } from 'lucide-react';
 import { type JSX } from 'react';
 import { Bar, BarChart, XAxis } from 'recharts';
@@ -43,7 +52,7 @@ export function ChartTooltipIcons(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="date"
-              tickFormatter={(value) => {
+              tickFormatter={(value: string) => {
                 return new Date(value).toLocaleDateString('en-US', {
                   weekday: 'short',
                 });
