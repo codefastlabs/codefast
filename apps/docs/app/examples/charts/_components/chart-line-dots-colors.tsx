@@ -15,10 +15,18 @@ import {
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
 import { CartesianGrid, Dot, Line, LineChart } from 'recharts';
+import { type LineDot } from 'recharts/types/cartesian/Line';
+import { type Props as DotProps } from 'recharts/types/shape/Dot';
 
 export const description = 'A line chart with dots and colors';
 
-const chartData = [
+interface DataItem {
+  browser: string;
+  fill: string;
+  visitors: number;
+}
+
+const chartData: DataItem[] = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
   { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
@@ -76,24 +84,7 @@ export function ChartLineDotsColors(): JSX.Element {
               content={<ChartTooltipContent hideLabel indicator="line" nameKey="visitors" />}
               cursor={false}
             />
-            <Line
-              dataKey="visitors"
-              dot={({ payload, ...props }) => {
-                return (
-                  <Dot
-                    key={payload.browser}
-                    cx={props.cx}
-                    cy={props.cy}
-                    fill={payload.fill}
-                    r={5}
-                    stroke={payload.fill}
-                  />
-                );
-              }}
-              stroke="var(--color-visitors)"
-              strokeWidth={2}
-              type="natural"
-            />
+            <Line dataKey="visitors" dot={dot} stroke="var(--color-visitors)" strokeWidth={2} type="natural" />
           </LineChart>
         </ChartContainer>
       </CardContent>
@@ -106,3 +97,12 @@ export function ChartLineDotsColors(): JSX.Element {
     </Card>
   );
 }
+
+const dot: LineDot = ({
+  payload,
+  ...props
+}: DotProps & {
+  payload: DataItem;
+}) => {
+  return <Dot key={payload.browser} cx={props.cx} cy={props.cy} fill={payload.fill} r={5} stroke={payload.fill} />;
+};

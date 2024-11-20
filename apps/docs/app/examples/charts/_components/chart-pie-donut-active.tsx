@@ -16,10 +16,17 @@ import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
 import { Pie, PieChart, Sector } from 'recharts';
 import { type PieSectorDataItem } from 'recharts/types/polar/Pie';
+import { type ActiveShape } from 'recharts/types/util/types';
 
 export const description = 'A donut chart with an active sector';
 
-const chartData = [
+interface DataItem {
+  browser: string;
+  fill: string;
+  visitors: number;
+}
+
+const chartData: DataItem[] = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
   { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
@@ -66,9 +73,7 @@ export function ChartPieDonutActive(): JSX.Element {
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Pie
               activeIndex={0}
-              activeShape={({ outerRadius = 0, ...props }: PieSectorDataItem) => (
-                <Sector {...props} outerRadius={outerRadius + 10} />
-              )}
+              activeShape={activeShape}
               data={chartData}
               dataKey="visitors"
               innerRadius={60}
@@ -87,3 +92,7 @@ export function ChartPieDonutActive(): JSX.Element {
     </Card>
   );
 }
+
+const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props }: PieSectorDataItem) => (
+  <Sector {...props} outerRadius={outerRadius + 10} />
+);

@@ -54,7 +54,7 @@ export function ChartBarStacked(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="month"
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value: string) => value.slice(0, 3)}
               tickLine={false}
               tickMargin={10}
             />

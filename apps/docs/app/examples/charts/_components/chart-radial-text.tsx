@@ -13,6 +13,7 @@ import {
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from 'recharts';
+import { type ContentType } from 'recharts/types/component/Label';
 
 export const description = 'A radial chart with text';
 
@@ -47,22 +48,7 @@ export function ChartRadialText(): JSX.Element {
             />
             <RadialBar background cornerRadius={10} dataKey="visitors" />
             <PolarRadiusAxis axisLine={false} tick={false} tickLine={false}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                        <tspan className="fill-foreground text-4xl font-bold" x={viewBox.cx} y={viewBox.cy}>
-                          {chartData[0].visitors.toLocaleString()}
-                        </tspan>
-                        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
+              <Label content={content} />
             </PolarRadiusAxis>
           </RadialBarChart>
         </ChartContainer>
@@ -76,3 +62,18 @@ export function ChartRadialText(): JSX.Element {
     </Card>
   );
 }
+
+const content: ContentType = ({ viewBox }) => {
+  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+    return (
+      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
+        <tspan className="fill-foreground text-4xl font-bold" x={viewBox.cx} y={viewBox.cy}>
+          {chartData[0].visitors.toLocaleString()}
+        </tspan>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
+          Visitors
+        </tspan>
+      </text>
+    );
+  }
+};

@@ -16,10 +16,17 @@ import { TrendingUp } from 'lucide-react';
 import * as React from 'react';
 import { type JSX } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
+import { type ContentType } from 'recharts/types/component/Label';
 
 export const description = 'A donut chart with text';
 
-const chartData = [
+interface DataItem {
+  browser: string;
+  fill: string;
+  visitors: number;
+}
+
+const chartData: DataItem[] = [
   { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
   { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
   { browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)' },
@@ -54,10 +61,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartPieDonutText(): JSX.Element {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
-
   return (
     <Card>
       <CardHeader className="items-center pb-0">
@@ -69,22 +72,7 @@ export function ChartPieDonutText(): JSX.Element {
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Pie data={chartData} dataKey="visitors" innerRadius={60} nameKey="browser" strokeWidth={5}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                        <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
+              <Label content={content} />
             </Pie>
           </PieChart>
         </ChartContainer>
@@ -98,3 +86,20 @@ export function ChartPieDonutText(): JSX.Element {
     </Card>
   );
 }
+
+const content: ContentType = ({ viewBox }) => {
+  const totalVisitors = chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+
+  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+    return (
+      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
+        <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
+          {totalVisitors.toLocaleString()}
+        </tspan>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
+          Visitors
+        </tspan>
+      </text>
+    );
+  }
+};

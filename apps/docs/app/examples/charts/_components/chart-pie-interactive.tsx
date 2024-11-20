@@ -20,7 +20,9 @@ import {
 import * as React from 'react';
 import { type ComponentProps, type JSX } from 'react';
 import { Label, Pie, PieChart, Sector } from 'recharts';
+import { type ContentType } from 'recharts/types/component/Label';
 import { type PieSectorDataItem } from 'recharts/types/polar/Pie';
+import { type ActiveShape } from 'recharts/types/util/types';
 
 export const description = 'An interactive pie chart';
 
@@ -89,10 +91,6 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
             {months.map((key) => {
               const config = chartConfig[key as keyof typeof chartConfig];
 
-              if (!config) {
-                return null;
-              }
-
               return (
                 <SelectItem key={key} className="[&_span]:flex" value={key}>
                   <div className="flex items-center gap-2 text-xs">
@@ -116,34 +114,14 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Pie
               activeIndex={activeIndex}
-              activeShape={({ outerRadius = 0, ...props }: PieSectorDataItem) => (
-                <g>
-                  <Sector {...props} outerRadius={outerRadius + 10} />
-                  <Sector {...props} innerRadius={outerRadius + 12} outerRadius={outerRadius + 25} />
-                </g>
-              )}
+              activeShape={activeShape}
               data={desktopData}
               dataKey="desktop"
               innerRadius={60}
               nameKey="month"
               strokeWidth={5}
             >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                        <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
-                          {desktopData[activeIndex].desktop.toLocaleString()}
-                        </tspan>
-                        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
+              <Label content={content(activeIndex)} />
             </Pie>
           </PieChart>
         </ChartContainer>
@@ -151,3 +129,28 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
     </Card>
   );
 }
+
+const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props }: PieSectorDataItem) => (
+  <g>
+    <Sector {...props} outerRadius={outerRadius + 10} />
+    <Sector {...props} innerRadius={outerRadius + 12} outerRadius={outerRadius + 25} />
+  </g>
+);
+
+const content: (activeIndex: number) => ContentType = (activeIndex) =>
+  function Content({ viewBox }): JSX.Element | null {
+    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+      return (
+        <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
+          <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
+            {desktopData[activeIndex].desktop.toLocaleString()}
+          </tspan>
+          <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
+            Visitors
+          </tspan>
+        </text>
+      );
+    }
+
+    return null;
+  };

@@ -154,6 +154,7 @@ export function ChartLineInteractive(props: ChartLineInteractiveProps): JSX.Elem
                 key={chart}
                 className="data-[active=true]:bg-muted/50 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
                 data-active={activeChart === chart}
+                type="button"
                 onClick={() => {
                   setActiveChart(chart);
                 }}
@@ -182,7 +183,7 @@ export function ChartLineInteractive(props: ChartLineInteractiveProps): JSX.Elem
               axisLine={false}
               dataKey="date"
               minTickGap={32}
-              tickFormatter={(value) => {
+              tickFormatter={(value: string) => {
                 const date = new Date(value);
 
                 return date.toLocaleDateString('en-US', {
@@ -197,7 +198,7 @@ export function ChartLineInteractive(props: ChartLineInteractiveProps): JSX.Elem
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  labelFormatter={(value) => {
+                  labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
