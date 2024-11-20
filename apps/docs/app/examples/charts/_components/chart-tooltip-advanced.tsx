@@ -1,13 +1,29 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@codefast/ui';
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@codefast/ui';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@codefast/ui';
 import { type JSX } from 'react';
 import { Bar, BarChart, XAxis } from 'recharts';
+import { type Formatter, type NameType, type ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 export const description = 'A stacked bar chart with a legend';
 
-const chartData = [
+interface DataItem {
+  date: string;
+  running: number;
+  swimming: number;
+}
+
+const chartData: DataItem[] = [
   { date: '2024-07-15', running: 450, swimming: 300 },
   { date: '2024-07-16', running: 380, swimming: 420 },
   { date: '2024-07-17', running: 520, swimming: 120 },
@@ -40,7 +56,7 @@ export function ChartTooltipAdvanced(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="date"
-              tickFormatter={(value) => {
+              tickFormatter={(value: string) => {
                 return new Date(value).toLocaleDateString('en-US', {
                   weekday: 'short',
                 });
@@ -51,39 +67,7 @@ export function ChartTooltipAdvanced(): JSX.Element {
             <Bar dataKey="running" fill="var(--color-running)" radius={[0, 0, 4, 4]} stackId="a" />
             <Bar dataKey="swimming" fill="var(--color-swimming)" radius={[4, 4, 0, 0]} stackId="a" />
             <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  hideLabel
-                  className="w-[180px]"
-                  formatter={(value, name, item, index) => (
-                    <>
-                      <div
-                        className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
-                        style={
-                          {
-                            '--color-bg': `var(--color-${name})`,
-                          } as React.CSSProperties
-                        }
-                      />
-                      {chartConfig[name as keyof typeof chartConfig].label || name}
-                      <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
-                        {value}
-                        <span className="text-muted-foreground font-normal">kcal</span>
-                      </div>
-                      {/* Add this after the last item */}
-                      {index === 1 && (
-                        <div className="text-foreground mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
-                          Total
-                          <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
-                            {item.payload.running + item.payload.swimming}
-                            <span className="text-muted-foreground font-normal">kcal</span>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
-                />
-              }
+              content={<ChartTooltipContent hideLabel className="w-[180px]" formatter={formatter} />}
               cursor={false}
               defaultIndex={1}
             />
@@ -93,3 +77,31 @@ export function ChartTooltipAdvanced(): JSX.Element {
     </Card>
   );
 }
+
+const formatter: Formatter<ValueType, NameType> = (value, name, item, index) => (
+  <>
+    <div
+      className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
+      style={
+        {
+          '--color-bg': `var(--color-${name})`,
+        } as React.CSSProperties
+      }
+    />
+    {chartConfig[name as keyof typeof chartConfig].label || name}
+    <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+      {value}
+      <span className="text-muted-foreground font-normal">kcal</span>
+    </div>
+    {/* Add this after the last item */}
+    {index === 1 && (
+      <div className="text-foreground mt-1.5 flex basis-full items-center border-t pt-1.5 text-xs font-medium">
+        Total
+        <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums">
+          {(item.payload as DataItem).running + (item.payload as DataItem).swimming}
+          <span className="text-muted-foreground font-normal">kcal</span>
+        </div>
+      </div>
+    )}
+  </>
+);
