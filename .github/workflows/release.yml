@@ -1,4 +1,4 @@
-name: Release
+name: Release Packages
 
 on:
   push:
@@ -16,20 +16,18 @@ env:
 
 jobs:
   release:
-    name: Release
+    name: Release Packages to NPM Registry
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Setup
+      - name: Setup Build Environment
         uses: ./.github/setup
 
-      - name: Build
-        run: pnpm run build:packages
-
-      - name: Version or Publish
+      - name: Version or Publish Changed Packages
         id: changesets
         uses: changesets/action@v1
         with:

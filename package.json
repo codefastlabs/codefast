@@ -5,7 +5,7 @@
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=\"./packages/*\"",
     "changeset": "changeset",
-    "changeset:publish": "changeset publish",
+    "changeset:publish": "pnpm build:packages && changeset publish",
     "changeset:version": "changeset version",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
     "dev": "turbo run dev --concurrency=11",
