@@ -9,36 +9,44 @@ import {
   CardTitle,
   type ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
-import { TrendingUp } from 'lucide-react';
+import { TrendingDown, TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
-export const description = 'A simple area chart';
+export const description = 'An area chart with icons';
 
 const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { month: 'January', desktop: 186, mobile: 80 },
+  { month: 'February', desktop: 305, mobile: 200 },
+  { month: 'March', desktop: 237, mobile: 120 },
+  { month: 'April', desktop: 73, mobile: 190 },
+  { month: 'May', desktop: 209, mobile: 130 },
+  { month: 'June', desktop: 214, mobile: 140 },
 ];
 
 const chartConfig = {
   desktop: {
     label: 'Desktop',
     color: 'hsl(var(--chart-1))',
+    icon: TrendingDown,
+  },
+  mobile: {
+    label: 'Mobile',
+    color: 'hsl(var(--chart-2))',
+    icon: TrendingUp,
   },
 } satisfies ChartConfig;
 
-export function ChartAreaDefault(): JSX.Element {
+export function ChartAreaIcons(): JSX.Element {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
+        <CardTitle>Area Chart - Icons</CardTitle>
         <CardDescription>Showing total visitors for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
@@ -61,12 +69,22 @@ export function ChartAreaDefault(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
             <Area
+              dataKey="mobile"
+              fill="var(--color-mobile)"
+              fillOpacity={0.4}
+              stackId="a"
+              stroke="var(--color-mobile)"
+              type="natural"
+            />
+            <Area
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}
+              stackId="a"
               stroke="var(--color-desktop)"
               type="natural"
             />
+            <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
       </CardContent>
