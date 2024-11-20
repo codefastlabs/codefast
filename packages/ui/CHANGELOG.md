@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.1.57
+
+### Patch Changes
+
+- [`86a96d7`](https://github.com/codefastlabs/codefast/commit/86a96d74548becc876bf2e40de56cddb52499b73) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update peerDependency requirements
+
+- Updated dependencies [[`86a96d7`](https://github.com/codefastlabs/codefast/commit/86a96d74548becc876bf2e40de56cddb52499b73)]:
+  - @codefast-ui/checkbox-group@0.1.57
+  - @codefast-ui/number-input@0.1.57
+  - @codefast-ui/day-picker@0.1.57
+  - @codefast-ui/input@0.1.57
+  - @codefast/hooks@0.1.57
+
 ## 0.1.56
 
 ### Patch Changes
