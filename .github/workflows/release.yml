@@ -24,6 +24,9 @@ jobs:
       - name: Setup Build Environment
         uses: ./.github/setup
 
+      - name: Install Dependencies
+        run: pnpm run build:packages
+
       - name: Version or Publish Changed Packages
         id: changesets
         uses: changesets/action@v1
