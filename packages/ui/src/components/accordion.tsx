@@ -1,6 +1,6 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
+import { ChevronRightIcon } from 'lucide-react';
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type JSX } from 'react';
 
 import { cn } from '@/lib/utils';

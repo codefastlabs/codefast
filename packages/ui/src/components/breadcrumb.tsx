@@ -1,5 +1,5 @@
-import { ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
+import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 import {
   type AnchorHTMLAttributes,
   forwardRef,
@@ -133,7 +133,7 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
       role="presentation"
       {...props}
     >
-      <DotsHorizontalIcon className="size-4" />
+      <EllipsisIcon className="size-4" />
       <span className="sr-only">More</span>
     </span>
   );

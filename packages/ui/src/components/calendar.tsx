@@ -11,14 +11,8 @@ import {
   SelectionState,
   UI,
 } from '@codefast-ui/day-picker';
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  DotFilledIcon,
-} from '@radix-ui/react-icons';
 import { format } from 'date-fns';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from 'lucide-react';
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -49,7 +43,7 @@ function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
     }
 
     default:
-      return <DotFilledIcon className="size-4" {...props} />;
+      return <DotIcon className="size-4" {...props} />;
   }
 }
 

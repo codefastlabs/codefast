@@ -1,5 +1,5 @@
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
-import { CheckIcon } from '@radix-ui/react-icons';
+import { CheckIcon } from 'lucide-react';
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
