@@ -1,5 +1,5 @@
 import * as NumberInputPrimitive from '@codefast-ui/number-input';
-import { ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { Spinner } from '@/components/spinner';

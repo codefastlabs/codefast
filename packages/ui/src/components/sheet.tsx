@@ -1,5 +1,5 @@
 import * as SheetPrimitive from '@radix-ui/react-dialog';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { XIcon } from 'lucide-react';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -95,7 +95,7 @@ const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
             variant: 'ghost',
           })}
         >
-          <Cross2Icon className="size-4" />
+          <XIcon className="size-4" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>

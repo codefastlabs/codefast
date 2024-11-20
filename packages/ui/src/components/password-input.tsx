@@ -1,7 +1,7 @@
 'use client';
 
 import * as InputPrimitive from '@codefast-ui/input';
-import { EyeClosedIcon, EyeOpenIcon } from '@radix-ui/react-icons';
+import { EyeClosedIcon, EyeIcon } from 'lucide-react';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -56,7 +56,7 @@ const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
           aria-label={type === 'password' ? 'Show password' : 'Hide password'}
           className="rounded-full"
           disabled={props.disabled}
-          prefix={type === 'password' ? <EyeClosedIcon /> : <EyeOpenIcon />}
+          prefix={type === 'password' ? <EyeClosedIcon /> : <EyeIcon />}
           size={inputSize}
           variant="ghost"
           onClick={togglePasswordVisibility}

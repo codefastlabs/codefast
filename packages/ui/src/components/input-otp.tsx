@@ -1,6 +1,5 @@
 'use client';
 
-import { DotFilledIcon } from '@radix-ui/react-icons';
 import {
   OTPInput,
   OTPInputContext,
@@ -8,6 +7,7 @@ import {
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
 } from 'input-otp';
+import { DotIcon } from 'lucide-react';
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type HTMLAttributes, useContext } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -94,7 +94,7 @@ type InputOTPSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
 const InputOTPSeparator = forwardRef<InputOTPSeparatorElement, InputOTPSeparatorProps>(({ ...props }, forwardedRef) => (
   <div ref={forwardedRef} role="separator" {...props}>
-    <DotFilledIcon />
+    <DotIcon />
   </div>
 ));
 
