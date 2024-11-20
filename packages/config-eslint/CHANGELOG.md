@@ -1,5 +1,11 @@
 # @codefast/eslint-config
 
+## 0.1.56
+
+### Patch Changes
+
+- [`204db1d`](https://github.com/codefastlabs/codefast/commit/204db1d83cea53de279b7e12b3021978eec18283) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): replace @radix-ui/react-icons with lucide-react
+
 ## 0.1.55
 
 ### Patch Changes
