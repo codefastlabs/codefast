@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.1.55
+
+### Patch Changes
+
+- [`d3703f0`](https://github.com/codefastlabs/codefast/commit/d3703f03ff67ad6026ca146d8eed8b5d026fefb6) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): simplify ChartConfig type definition
+
+- Updated dependencies [[`d3703f0`](https://github.com/codefastlabs/codefast/commit/d3703f03ff67ad6026ca146d8eed8b5d026fefb6)]:
+  - @codefast-ui/input@0.1.55
+
 ## 0.1.54
 
 ### Patch Changes
