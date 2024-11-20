@@ -1,27 +1,38 @@
-name: 'Setup Environment'
-description: 'This GitHub Actions workflow sets up the necessary environment for the project. It installs pnpm, Node.js 20, and the project dependencies using pnpm, while leveraging caching mechanisms to improve build speeds and efficiency. Additionally, it configures Turbo for better build caching, addressing potential issues during the setup process to ensure a smooth CI/CD pipeline.'
+name: 'Setup Build Environment'
+description: 'Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds. Configures Turbo build caching and installs all required dependencies using pnpm.'
+author: 'thevuong'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    default: '20'
+  pnpm-version:
+    description: 'pnpm version to use'
+    default: 'latest'
 
 runs:
   using: 'composite'
   steps:
-    - name: Install pnpm
+    - name: Setup Turbo Build Cache
+      uses: actions/cache@v4
+      with:
+        path: .turbo
+        key: ${{ runner.os }}-turbo-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-turbo-
+
+    - name: Setup PNPM Package Manager
       uses: pnpm/action-setup@v4
       with:
         run_install: false
+        version: ${{ inputs.pnpm-version }}
 
-    - name: Install Node.js
+    - name: Setup Node.js Environment
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: ${{ inputs.node-version }}
         cache: 'pnpm'
 
-    - name: Install dependencies
+    - name: Install Project Dependencies
       shell: bash
       run: pnpm install --prefer-offline
-
-    - name: Setup Turbo
-      uses: dtinth/setup-github-actions-caching-for-turbo@v1
-      continue-on-error: true
-      with:
-        # Set the prefix for the cache keys.
-        cache-prefix: turborepo_
