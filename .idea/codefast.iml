@@ -26,6 +26,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/number-input/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/storybook-docs/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
