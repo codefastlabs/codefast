@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.1.58
+
+### Patch Changes
+
+- [`57fed19`](https://github.com/codefastlabs/codefast/commit/57fed1942bd19e7a75ba50c572210ad83ca469a4) Thanks [@thevuong](https://github.com/thevuong)! - chore: update clean scripts across multiple packages
+
+- Updated dependencies [[`57fed19`](https://github.com/codefastlabs/codefast/commit/57fed1942bd19e7a75ba50c572210ad83ca469a4)]:
+  - @codefast-ui/input@0.1.58
+
 ## 0.1.57
 
 ### Patch Changes
