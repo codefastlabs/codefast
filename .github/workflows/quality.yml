@@ -1,0 +1,35 @@
+name: Quality
+
+on:
+  pull_request:
+    paths:
+      - 'packages/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Build Environment
+        uses: ./.github/setup
+
+      - name: Install Packages
+        run: pnpm run build:packages
+
+      - name: Lint Packages
+        run: pnpm run lint
+
+      - name: Test Packages
+        run: pnpm run test
