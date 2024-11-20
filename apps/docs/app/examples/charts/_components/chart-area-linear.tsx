@@ -16,7 +16,7 @@ import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
-export const description = 'A simple area chart';
+export const description = 'A linear area chart';
 
 const chartData = [
   { month: 'January', desktop: 186 },
@@ -34,11 +34,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartAreaDefault(): JSX.Element {
+export function ChartAreaLinear(): JSX.Element {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
+        <CardTitle>Area Chart - Linear</CardTitle>
         <CardDescription>Showing total visitors for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
@@ -59,13 +59,13 @@ export function ChartAreaDefault(): JSX.Element {
               tickLine={false}
               tickMargin={8}
             />
-            <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
+            <ChartTooltip content={<ChartTooltipContent hideLabel indicator="dot" />} cursor={false} />
             <Area
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
-              type="natural"
+              type="linear"
             />
           </AreaChart>
         </ChartContainer>

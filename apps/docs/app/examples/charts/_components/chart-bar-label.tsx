@@ -14,9 +14,9 @@ import {
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts';
 
-export const description = 'A simple area chart';
+export const description = 'A bar chart with a label';
 
 const chartData = [
   { month: 'January', desktop: 186 },
@@ -34,21 +34,20 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartAreaDefault(): JSX.Element {
+export function ChartBarLabel(): JSX.Element {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
-        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
+        <CardTitle>Bar Chart - Label</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart
+          <BarChart
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              top: 20,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -57,28 +56,20 @@ export function ChartAreaDefault(): JSX.Element {
               dataKey="month"
               tickFormatter={(value) => value.slice(0, 3)}
               tickLine={false}
-              tickMargin={8}
+              tickMargin={10}
             />
-            <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
-            <Area
-              dataKey="desktop"
-              fill="var(--color-desktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
-              type="natural"
-            />
-          </AreaChart>
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8}>
+              <LabelList className="fill-foreground" fontSize={12} offset={12} position="top" />
+            </Bar>
+          </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
-          </div>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
+        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
   );

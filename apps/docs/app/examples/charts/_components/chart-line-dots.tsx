@@ -14,9 +14,9 @@ import {
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
-export const description = 'An area chart with axes';
+export const description = 'A line chart with dots';
 
 const chartData = [
   { month: 'January', desktop: 186, mobile: 80 },
@@ -38,20 +38,20 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartAreaAxes(): JSX.Element {
+export function ChartLineDots(): JSX.Element {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Axes</CardTitle>
-        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
+        <CardTitle>Line Chart - Dots</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart
+          <LineChart
             accessibilityLayer
             data={chartData}
             margin={{
-              left: -20,
+              left: 12,
               right: 12,
             }}
           >
@@ -63,36 +63,27 @@ export function ChartAreaAxes(): JSX.Element {
               tickLine={false}
               tickMargin={8}
             />
-            <YAxis axisLine={false} tickCount={3} tickLine={false} tickMargin={8} />
-            <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
-            <Area
-              dataKey="mobile"
-              fill="var(--color-mobile)"
-              fillOpacity={0.4}
-              stackId="a"
-              stroke="var(--color-mobile)"
-              type="natural"
-            />
-            <Area
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
+            <Line
+              activeDot={{
+                r: 6,
+              }}
               dataKey="desktop"
-              fill="var(--color-desktop)"
-              fillOpacity={0.4}
-              stackId="a"
+              dot={{
+                fill: 'var(--color-desktop)',
+              }}
               stroke="var(--color-desktop)"
+              strokeWidth={2}
               type="natural"
             />
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
-          </div>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
+        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
   );
