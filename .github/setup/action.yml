@@ -6,9 +6,6 @@ inputs:
   node-version:
     description: 'Node.js version to use'
     default: '20'
-  pnpm-version:
-    description: 'pnpm version to use'
-    default: 'latest'
 
 runs:
   using: 'composite'
@@ -25,7 +22,6 @@ runs:
       uses: pnpm/action-setup@v4
       with:
         run_install: false
-        version: ${{ inputs.pnpm-version }}
 
     - name: Setup Node.js Environment
       uses: actions/setup-node@v4
