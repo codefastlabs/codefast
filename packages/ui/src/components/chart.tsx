@@ -24,20 +24,25 @@ const THEMES = {
 
 type Theme = keyof typeof THEMES;
 
+interface IconLabelConfig {
+  icon?: ComponentType;
+  label?: ReactNode | undefined;
+}
+
+interface ColorConfig {
+  color?: string;
+  theme?: never;
+}
+
+interface ThemeConfig {
+  theme: Record<Theme, string>;
+  color?: never;
+}
+
+type ChartConfigItem = IconLabelConfig & (ColorConfig | ThemeConfig);
+
 type ChartConfig = {
-  [k in string]: {
-    icon?: ComponentType;
-    label?: ReactNode;
-  } & (
-    | {
-        color?: string;
-        theme?: never;
-      }
-    | {
-        theme: Record<Theme, string>;
-        color?: never;
-      }
-  );
+  [k in string]: ChartConfigItem | undefined;
 };
 
 interface ChartContextProps {
@@ -171,7 +176,7 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
 
       const key = `${labelKey || item.dataKey || item.name || 'value'}`;
       const itemConfig = getPayloadConfigFromPayload(config, item, key);
-      const value = !labelKey && typeof label === 'string' ? config[label].label || label : itemConfig?.label;
+      const value = !labelKey && typeof label === 'string' ? config[label]?.label || label : itemConfig?.label;
 
       if (labelFormatter) {
         return <div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload)}</div>;
@@ -352,26 +357,7 @@ ChartLegendContent.displayName = 'ChartLegendContent';
  *   `label`, `color` or `theme`, or `undefined` if the payload is invalid or
  *   no configuration is found for the provided key.
  */
-function getPayloadConfigFromPayload(
-  config: ChartConfig,
-  payload: unknown,
-  key: string,
-):
-  | ({
-      icon?: ComponentType;
-      label?: ReactNode;
-    } & {
-      color?: string;
-      theme?: never;
-    })
-  | ({
-      icon?: ComponentType;
-      label?: ReactNode;
-    } & {
-      theme: Record<Theme, string>;
-      color?: never;
-    })
-  | undefined {
+function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string): ChartConfigItem | undefined {
   if (!isValidObject(payload)) {
     return undefined;
   }
@@ -440,7 +426,7 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
   rules.push(`${THEMES[theme]} [data-chart=${id}] {`);
 
   configEntries.forEach(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme] || itemConfig.color;
+    const color = itemConfig?.theme?.[theme] || itemConfig?.color;
 
     if (color) {
       rules.push(`  --color-${key}: ${color};`);
@@ -462,7 +448,7 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
  * @returns A string containing the generated CSS rules.
  */
 function generateCSS(id: string, config: ChartConfig): string {
-  const themeOrColorConfig = Object.entries(config).filter(([_, { theme, color }]) => theme || color);
+  const themeOrColorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig?.theme || itemConfig?.color);
 
   const allRules: string[] = [];
 
