@@ -22,10 +22,10 @@ interface CalendarsProps {
 export function Calendars({ calendars }: CalendarsProps): JSX.Element {
   return (
     <>
-      {calendars.map((calendar, index) => (
+      {calendars.map((calendar, calendarIndex) => (
         <Fragment key={calendar.name}>
           <SidebarGroup key={calendar.name} className="py-0">
-            <Collapsible className="group/collapsible" defaultOpen={index === 0}>
+            <Collapsible className="group/collapsible" defaultOpen={calendarIndex === 0}>
               <SidebarGroupLabel
                 asChild
                 className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full text-sm"
