@@ -1,5 +1,11 @@
 # @codefast-ui/day-picker
 
+## 0.1.57
+
+### Patch Changes
+
+- [`86a96d7`](https://github.com/codefastlabs/codefast/commit/86a96d74548becc876bf2e40de56cddb52499b73) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update peerDependency requirements
+
 ## 0.1.56
 
 ### Patch Changes
