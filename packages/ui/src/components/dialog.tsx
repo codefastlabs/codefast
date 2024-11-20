@@ -1,5 +1,5 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { XIcon } from 'lucide-react';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -62,7 +62,7 @@ const DialogContent = forwardRef<DialogContentElement, DialogContentProps>(
               variant: 'ghost',
             })}
           >
-            <Cross2Icon className="size-4" />
+            <XIcon className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>

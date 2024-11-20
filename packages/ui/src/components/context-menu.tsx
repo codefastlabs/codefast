@@ -1,5 +1,5 @@
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
-import { CheckIcon, ChevronRightIcon, DotFilledIcon } from '@radix-ui/react-icons';
+import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -225,7 +225,7 @@ const ContextMenuRadioItem = forwardRef<ContextMenuRadioItemElement, ContextMenu
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
         <ContextMenuPrimitive.ItemIndicator>
-          <DotFilledIcon className="size-4 fill-current" />
+          <DotIcon className="size-4 fill-current" />
         </ContextMenuPrimitive.ItemIndicator>
       </span>
       {children}

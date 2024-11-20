@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 import { type AnchorHTMLAttributes, forwardRef, type HTMLAttributes, type JSX, type LiHTMLAttributes } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -122,7 +122,7 @@ type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
 function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (
     <span aria-hidden className={cn('flex size-10 items-center justify-center', className)} {...props}>
-      <DotsHorizontalIcon className="size-4" />
+      <EllipsisIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
   );

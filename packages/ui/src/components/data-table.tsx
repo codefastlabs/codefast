@@ -1,16 +1,16 @@
 'use client';
 
 import {
-  CaretSortIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  ChevronsUpDownIcon,
   ChevronUpIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-  EyeNoneIcon,
-  MixerHorizontalIcon,
-} from '@radix-ui/react-icons';
+  EyeOffIcon,
+  Settings2Icon,
+} from 'lucide-react';
 import { type HTMLAttributes, type JSX } from 'react';
 
 import { Button } from '@/components/button';
@@ -41,7 +41,7 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={buttonVariants({ size: 'xs', variant: 'outline' })}>
-        <MixerHorizontalIcon className="size-4" />
+        <Settings2Icon className="size-4" />
         View
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
@@ -118,7 +118,7 @@ function DataTablePagination<TData>({ table, className, ...props }: DataTablePag
             }}
           >
             <span className="sr-only">Go to first page</span>
-            <DoubleArrowLeftIcon className="size-4" />
+            <ChevronsLeftIcon className="size-4" />
           </Button>
           <Button
             icon
@@ -155,7 +155,7 @@ function DataTablePagination<TData>({ table, className, ...props }: DataTablePag
             }}
           >
             <span className="sr-only">Go to last page</span>
-            <DoubleArrowRightIcon className="size-4" />
+            <ChevronsRightIcon className="size-4" />
           </Button>
         </div>
       </div>
@@ -204,7 +204,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleSorting(false);
           }}
         >
-          <ChevronUpIcon className="text-muted-foreground" />
+          <ChevronUpIcon className="text-muted-foreground size-4" />
           Asc
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -212,7 +212,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleSorting(true);
           }}
         >
-          <ChevronDownIcon className="text-muted-foreground" />
+          <ChevronDownIcon className="text-muted-foreground size-4" />
           Desc
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -221,7 +221,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleVisibility(false);
           }}
         >
-          <EyeNoneIcon className="text-muted-foreground" />
+          <EyeOffIcon className="text-muted-foreground size-4" />
           Hide
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -240,7 +240,7 @@ function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): JSX
     }
 
     default:
-      return <CaretSortIcon />;
+      return <ChevronsUpDownIcon />;
   }
 }
 

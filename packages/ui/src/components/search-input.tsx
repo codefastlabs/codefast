@@ -1,8 +1,8 @@
 'use client';
 
 import * as InputPrimitive from '@codefast-ui/input';
-import { Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { SearchIcon, XIcon } from 'lucide-react';
 import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { Button } from '@/components/button';
@@ -56,7 +56,7 @@ const SearchInput = forwardRef<SearchInputElement, SearchInputProps>(
         className={root({ inputSize, className })}
         loaderPosition={loaderPosition}
         loading={loading}
-        prefix={prefix || <MagnifyingGlassIcon />}
+        prefix={prefix || <SearchIcon />}
         spinner={spinner || <Spinner />}
         suffix={suffix}
       >
@@ -78,7 +78,7 @@ const SearchInput = forwardRef<SearchInputElement, SearchInputProps>(
             className="rounded-full"
             disabled={props.disabled}
             size={inputSize}
-            suffix={<Cross2Icon />}
+            suffix={<XIcon />}
             variant="ghost"
             onClick={() => {
               setValue('');

@@ -1,8 +1,8 @@
 'use client';
 
 import { createContextScope, type Scope } from '@radix-ui/react-context';
-import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { forwardRef, type HTMLAttributes, type KeyboardEvent, useCallback, useEffect, useState } from 'react';
 
 import { Button, type ButtonProps } from '@/components/button';

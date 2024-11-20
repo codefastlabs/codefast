@@ -1,7 +1,7 @@
 'use client';
 
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command as CommandPrimitive } from 'cmdk';
+import { SearchIcon } from 'lucide-react';
 import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
@@ -61,7 +61,7 @@ type CommandInputProps = ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 
 const CommandInput = forwardRef<CommandInputElement, CommandInputProps>(({ className, ...props }, forwardedRef) => (
   <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="">
-    <MagnifyingGlassIcon className="size-5 shrink-0 opacity-50" />
+    <SearchIcon className="size-5 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={forwardedRef}
       className={cn(
