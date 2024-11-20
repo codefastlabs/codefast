@@ -7,7 +7,7 @@
     "changeset": "changeset",
     "changeset:publish": "changeset publish",
     "changeset:version": "pnpm run build:packages && changeset version",
-    "clean": "turbo run clean && rm -rf node_modules && rm -rf pnpm-lock.yaml",
+    "clean": "turbo run clean",
     "dev": "turbo run dev --concurrency=11",
     "postinstall": "pnpm exec simple-git-hooks",
     "lint": "turbo run lint",
