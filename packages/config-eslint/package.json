@@ -18,9 +18,6 @@
     "next.js",
     "react.js"
   ],
-  "scripts": {
-    "clean": "rm -rf node_modules"
-  },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "8.15.0",
     "@typescript-eslint/parser": "8.15.0",
