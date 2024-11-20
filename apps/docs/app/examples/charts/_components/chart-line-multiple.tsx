@@ -14,17 +14,17 @@ import {
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
-export const description = 'A simple area chart';
+export const description = 'A multiple line chart';
 
 const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { month: 'January', desktop: 186, mobile: 80 },
+  { month: 'February', desktop: 305, mobile: 200 },
+  { month: 'March', desktop: 237, mobile: 120 },
+  { month: 'April', desktop: 73, mobile: 190 },
+  { month: 'May', desktop: 209, mobile: 130 },
+  { month: 'June', desktop: 214, mobile: 140 },
 ];
 
 const chartConfig = {
@@ -32,18 +32,22 @@ const chartConfig = {
     label: 'Desktop',
     color: 'hsl(var(--chart-1))',
   },
+  mobile: {
+    label: 'Mobile',
+    color: 'hsl(var(--chart-2))',
+  },
 } satisfies ChartConfig;
 
-export function ChartAreaDefault(): JSX.Element {
+export function ChartLineMultiple(): JSX.Element {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart</CardTitle>
-        <CardDescription>Showing total visitors for the last 6 months</CardDescription>
+        <CardTitle>Line Chart - Multiple</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <AreaChart
+          <LineChart
             accessibilityLayer
             data={chartData}
             margin={{
@@ -59,15 +63,10 @@ export function ChartAreaDefault(): JSX.Element {
               tickLine={false}
               tickMargin={8}
             />
-            <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
-            <Area
-              dataKey="desktop"
-              fill="var(--color-desktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
-              type="natural"
-            />
-          </AreaChart>
+            <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
+            <Line dataKey="desktop" dot={false} stroke="var(--color-desktop)" strokeWidth={2} type="monotone" />
+            <Line dataKey="mobile" dot={false} stroke="var(--color-mobile)" strokeWidth={2} type="monotone" />
+          </LineChart>
         </ChartContainer>
       </CardContent>
       <CardFooter>
@@ -76,7 +75,9 @@ export function ChartAreaDefault(): JSX.Element {
             <div className="flex items-center gap-2 font-medium leading-none">
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
+            <div className="text-muted-foreground flex items-center gap-2 leading-none">
+              Showing total visitors for the last 6 months
+            </div>
           </div>
         </div>
       </CardFooter>
