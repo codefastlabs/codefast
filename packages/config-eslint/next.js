@@ -13,10 +13,18 @@ module.exports = {
     require.resolve('./eslint/recommended'),
   ],
   globals: {
-    React: true,
     JSX: true,
+    NodeJS: true,
+    React: true,
+    jest: true,
   },
   ignorePatterns: ['node_modules/', '.next/', '*.js', '*.mjs', '*.cjs'],
+  overrides: [
+    {
+      extends: [require.resolve('@vercel/style-guide/eslint/jest-react')],
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
+    },
+  ],
   parserOptions: {
     project,
   },
