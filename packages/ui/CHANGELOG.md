@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.1.59
+
+### Patch Changes
+
+- [`bede302`](https://github.com/codefastlabs/codefast/commit/bede302a692913a0d70c8b5b68302c15cac013a7) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): add Jest support and overrides
+
+- Updated dependencies [[`bede302`](https://github.com/codefastlabs/codefast/commit/bede302a692913a0d70c8b5b68302c15cac013a7)]:
+  - @codefast/hooks@0.1.59
+  - @codefast-ui/checkbox-group@0.1.59
+  - @codefast-ui/day-picker@0.1.59
+  - @codefast-ui/input@0.1.59
+  - @codefast-ui/number-input@0.1.59
+
 ## 0.1.58
 
 ### Patch Changes
