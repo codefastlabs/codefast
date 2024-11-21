@@ -1,5 +1,11 @@
 # @codefast/third-parties
 
+## 0.1.59
+
+### Patch Changes
+
+- [`bede302`](https://github.com/codefastlabs/codefast/commit/bede302a692913a0d70c8b5b68302c15cac013a7) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): add Jest support and overrides
+
 ## 0.1.58
 
 ### Patch Changes
