@@ -12,8 +12,16 @@ module.exports = {
   ],
   globals: {
     JSX: true,
+    NodeJS: true,
+    jest: true,
   },
   ignorePatterns: ['node_modules/', 'dist/', '*.js', '*.mjs', '*.cjs'],
+  overrides: [
+    {
+      extends: [require.resolve('@vercel/style-guide/eslint/jest-react')],
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
+    },
+  ],
   parserOptions: {
     project,
   },
