@@ -24,6 +24,10 @@ module.exports = {
       extends: [require.resolve('@vercel/style-guide/eslint/jest-react')],
       files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(test).[jt]s?(x)'],
     },
+    {
+      extends: [require.resolve('@vercel/style-guide/eslint/playwright-test')],
+      files: ['**/e2e/**/?(*.)+(spec|e2e).[jt]s?(x)'],
+    },
   ],
   parserOptions: {
     project,
