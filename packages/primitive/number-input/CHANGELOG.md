@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.1.61
+
+### Patch Changes
+
+- [`43d34dd`](https://github.com/codefastlabs/codefast/commit/43d34ddffc1f721c48ef360998a98049e976262e) Thanks [@thevuong](https://github.com/thevuong)! - fix(config-eslint): broaden file matching patterns
+
+- Updated dependencies [[`43d34dd`](https://github.com/codefastlabs/codefast/commit/43d34ddffc1f721c48ef360998a98049e976262e)]:
+  - @codefast-ui/input@0.1.61
+
 ## 0.1.60
 
 ### Patch Changes
