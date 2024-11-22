@@ -1,5 +1,13 @@
 # @codefast-ui/checkbox-group
 
+## 0.1.60
+
+### Patch Changes
+
+- [`d422de9`](https://github.com/codefastlabs/codefast/commit/d422de972b7f2aae7df20d9eeb1c5db6339dfda1) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): add Playwright tests eslint configuration
+
+- [`7466b07`](https://github.com/codefastlabs/codefast/commit/7466b075286889ccaa34dbdbf2d2c1245808658d) Thanks [@thevuong](https://github.com/thevuong)! - feat(config-eslint): add Playwright test support
+
 ## 0.1.59
 
 ### Patch Changes
