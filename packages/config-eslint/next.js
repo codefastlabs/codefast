@@ -26,7 +26,7 @@ module.exports = {
     },
     {
       extends: [require.resolve('@vercel/style-guide/eslint/playwright-test')],
-      files: ['**/e2e/**/?(*.)+(spec|e2e).[jt]s?(x)'],
+      files: ['**/e2e/**/*.[jt]s?(x)', '**/?(*.)+(spec|e2e).[jt]s?(x)'],
     },
   ],
   parserOptions: {
