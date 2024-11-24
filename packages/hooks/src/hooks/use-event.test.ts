@@ -5,7 +5,7 @@ import { useEvent } from '@/hooks/use-event';
 describe('useEvent', () => {
   it('should attach an event listener to the provided element', () => {
     const element = document.createElement('div');
-    const handler = jest.fn();
+    const handler = vi.fn();
     const eventName = 'click';
 
     renderHook(() => {
@@ -21,7 +21,7 @@ describe('useEvent', () => {
   });
 
   it('should use window as default element', () => {
-    const handler = jest.fn();
+    const handler = vi.fn();
     const eventName = 'resize';
 
     renderHook(() => {
@@ -38,7 +38,7 @@ describe('useEvent', () => {
 
   it('should clean up event listener on unmount', () => {
     const element = document.createElement('div');
-    const handler = jest.fn();
+    const handler = vi.fn();
     const eventName = 'click';
 
     const { unmount } = renderHook(() => {
@@ -56,8 +56,8 @@ describe('useEvent', () => {
 
   it('should update handler when it changes', () => {
     const element = document.createElement('div');
-    const initialHandler = jest.fn();
-    const updatedHandler = jest.fn();
+    const initialHandler = vi.fn();
+    const updatedHandler = vi.fn();
     const eventName = 'click';
 
     const { rerender } = renderHook(
@@ -81,7 +81,7 @@ describe('useEvent', () => {
 
   it('should update event listener when event name changes', () => {
     const element = document.createElement('div');
-    const handler = jest.fn();
+    const handler = vi.fn();
     const initialEventName = 'click';
     const updatedEventName = 'mouseover';
 
