@@ -7,11 +7,11 @@ import { SingleControlled } from './single-controlled';
 const today = new Date(2024, 10, 25);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

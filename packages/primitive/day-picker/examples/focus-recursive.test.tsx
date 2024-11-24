@@ -7,11 +7,11 @@ import { user } from './lib/user';
 const today = new Date(2022, 5, 10);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe('focus-recursive component', () => {

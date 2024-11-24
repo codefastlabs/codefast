@@ -6,11 +6,11 @@ import { bookedDays, ModifiersClassnames } from './modifiers-classnames';
 const today = new Date(2021, 10, 25);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe('modifiers-classnames component', () => {
