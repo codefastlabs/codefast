@@ -5,11 +5,11 @@ import { ModifiersHidden } from './modifiers-hidden';
 const today = new Date(2022, 5, 10);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 const hiddenDays = [new Date(2022, 5, 10), new Date(2022, 5, 20), new Date(2022, 5, 11)];

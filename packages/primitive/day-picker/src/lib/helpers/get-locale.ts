@@ -10,6 +10,10 @@ import { defaultLocale } from '@/lib/classes/date-lib';
  * @returns The merged locale configuration.
  */
 export function getLocale(locale: DayPickerProps['locale']): Locale {
+  if (!locale) {
+    return defaultLocale;
+  }
+
   return {
     ...defaultLocale,
     ...locale,

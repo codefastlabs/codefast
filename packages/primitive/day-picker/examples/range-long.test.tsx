@@ -9,11 +9,11 @@ const currentMonth = new Date(2024, 9); // Tháng 10, 2024
 const rangeEnd = new Date(2024, 9, 10); // Ngày kết thúc: 10/10/2024
 
 beforeAll(() => {
-  jest.setSystemTime(currentMonth);
+  vi.setSystemTime(currentMonth);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

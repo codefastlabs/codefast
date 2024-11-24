@@ -5,11 +5,11 @@ import { NumberingSystem } from './numbering-system';
 const today = new Date(2024, 8, 19);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

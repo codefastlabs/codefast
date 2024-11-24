@@ -7,11 +7,11 @@ import { user } from './lib/user';
 const today = new Date(2024, 11, 13);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe('controlled-selection component', () => {

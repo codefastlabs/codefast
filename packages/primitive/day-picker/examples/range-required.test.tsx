@@ -9,11 +9,11 @@ const initialEndDate = addDays(startOfCurrentMonth, 4); // 4 days after the star
 const anotherDay = addDays(initialEndDate, 1);
 
 beforeAll(() => {
-  jest.setSystemTime(new Date());
+  vi.setSystemTime(new Date());
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

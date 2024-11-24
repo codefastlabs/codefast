@@ -1,5 +1,3 @@
 import { userEvent } from '@testing-library/user-event';
 
-export const user = userEvent.setup({
-  advanceTimers: jest.advanceTimersByTime,
-});
+export const user = userEvent.setup();

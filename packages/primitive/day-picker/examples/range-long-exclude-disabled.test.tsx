@@ -10,11 +10,11 @@ const rangeEnd = new Date(2024, 9, 10); // October 10, 2024
 const disabledDate = new Date(2000, 0, 1); // January 1, 2000 (disabled)
 
 beforeAll(() => {
-  jest.setSystemTime(new Date(2024, 9, 10)); // Freeze time for consistent results
+  vi.setSystemTime(new Date(2024, 9, 10)); // Freeze time for consistent results
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

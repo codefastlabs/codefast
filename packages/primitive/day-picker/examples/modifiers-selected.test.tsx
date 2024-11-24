@@ -8,11 +8,11 @@ const today = new Date();
 const yesterday = subDays(today, 1);
 
 beforeAll(() => {
-  jest.setSystemTime(today); // Thiết lập ngày cố định cho các test case
+  vi.setSystemTime(today); // Thiết lập ngày cố định cho các test case
 });
 
 afterAll(() => {
-  jest.useRealTimers(); // Reset lại thời gian sau khi hoàn thành các test case
+  vi.useRealTimers(); // Reset lại thời gian sau khi hoàn thành các test case
 });
 
 describe('modifiers-selected component', () => {
@@ -23,7 +23,7 @@ describe('modifiers-selected component', () => {
   });
 
   test('alerts when clicking the selected day (yesterday)', () => {
-    window.alert = jest.fn(); // Mock alert
+    window.alert = vi.fn(); // Mock alert
 
     render(<ModifiersSelected />);
     fireEvent.click(dateButton(yesterday));
@@ -31,7 +31,7 @@ describe('modifiers-selected component', () => {
   });
 
   test('alerts when clicking today', () => {
-    window.alert = jest.fn(); // Mock alert
+    window.alert = vi.fn(); // Mock alert
 
     render(<ModifiersSelected />);
     fireEvent.click(dateButton(today));
@@ -39,7 +39,7 @@ describe('modifiers-selected component', () => {
   });
 
   test('does not alert when clicking an unselected day that is not today', () => {
-    window.alert = jest.fn(); // Mock alert
+    window.alert = vi.fn(); // Mock alert
 
     const unselectedDay = subDays(today, 2); // Một ngày không phải hôm nay và không được chọn
 

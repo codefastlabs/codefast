@@ -10,11 +10,11 @@ const startOfThisWeek = startOfWeek(today);
 const endOfThisWeek = endOfWeek(today);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

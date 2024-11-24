@@ -7,11 +7,11 @@ import { user } from './lib/user';
 const today = new Date();
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function customDateButton(date: Date): HTMLElement {
