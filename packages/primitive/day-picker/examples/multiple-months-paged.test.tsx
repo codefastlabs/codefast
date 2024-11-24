@@ -7,11 +7,11 @@ import { MultipleMonthsPaged } from './multiple-months-paged';
 const today = new Date(2021, 10, 25); // Ngày hiện tại là 25/11/2021
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

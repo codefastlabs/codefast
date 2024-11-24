@@ -5,11 +5,11 @@ import { FormatCaption } from './format-caption';
 const today = new Date(2021, 10, 25); // 25 November 2021
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe('format-caption component', () => {
@@ -27,7 +27,7 @@ describe('format-caption component', () => {
   test('displays the correct season emoji and month name for winter', () => {
     const winterMonth = new Date(2022, 1, 1); // February 2022
 
-    jest.setSystemTime(winterMonth);
+    vi.setSystemTime(winterMonth);
 
     render(<FormatCaption />);
 
@@ -37,7 +37,7 @@ describe('format-caption component', () => {
   test('displays the correct season emoji and month name for spring', () => {
     const springMonth = new Date(2022, 4, 1); // May 2022
 
-    jest.setSystemTime(springMonth);
+    vi.setSystemTime(springMonth);
 
     render(<FormatCaption />);
 
@@ -47,7 +47,7 @@ describe('format-caption component', () => {
   test('displays the correct season emoji and month name for summer', () => {
     const summerMonth = new Date(2022, 7, 1); // August 2022
 
-    jest.setSystemTime(summerMonth);
+    vi.setSystemTime(summerMonth);
 
     render(<FormatCaption />);
 

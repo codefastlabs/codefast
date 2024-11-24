@@ -7,11 +7,11 @@ import { PastDatesDisabled } from './past-dates-disabled';
 const today = new Date();
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

@@ -10,11 +10,11 @@ const toMonth = new Date(2026, 11);
 const today = new Date(2025, 10, 25);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

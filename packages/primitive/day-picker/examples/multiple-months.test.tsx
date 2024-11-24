@@ -7,11 +7,11 @@ import { MultipleMonths } from './multiple-months';
 const today = new Date(2023, 11, 3);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

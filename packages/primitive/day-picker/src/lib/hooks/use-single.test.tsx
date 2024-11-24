@@ -7,7 +7,7 @@ import { type DayPickerProps } from '@/lib/types';
 
 describe('useSingle', () => {
   test('uses the selected value from props when onSelect is provided', () => {
-    const mockOnSelect = jest.fn();
+    const mockOnSelect = vi.fn();
     const selectedDate = new Date(2023, 9, 1);
     const props: DayPickerProps = {
       mode: 'single',
