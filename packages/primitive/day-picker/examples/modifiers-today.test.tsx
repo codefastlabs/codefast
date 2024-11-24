@@ -9,11 +9,11 @@ const today = new Date(); // Đặt ngày hôm nay để kiểm tra các hành v
 const yesterday = subDays(today, 1); // Ngày trước hôm nay
 
 beforeAll(() => {
-  jest.setSystemTime(today); // Thiết lập thời gian cố định cho ngày hôm nay
+  vi.setSystemTime(today); // Thiết lập thời gian cố định cho ngày hôm nay
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

@@ -9,11 +9,11 @@ import { user } from './lib/user';
 const today = new Date(2022, 5, 10);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(props: ComponentProps<typeof Keyboard>): void {
@@ -27,7 +27,9 @@ describe('keyboard component', () => {
     });
 
     describe('clicking the previous month button', () => {
-      beforeEach(() => user.click(previousButton()));
+      beforeEach(async () => {
+        await user.click(previousButton());
+      });
 
       test('displays the previous month', () => {
         expect(grid('May 2022')).toBeInTheDocument();

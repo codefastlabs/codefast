@@ -8,11 +8,11 @@ import { RangeMinMax } from './range-min-max';
 const today = new Date(2022, 8, 12);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

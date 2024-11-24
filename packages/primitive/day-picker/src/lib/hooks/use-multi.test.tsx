@@ -7,7 +7,7 @@ import { type DayPickerProps } from '@/lib/types';
 
 describe('useMulti', () => {
   test('uses the selected value from props when onSelect is provided', () => {
-    const mockOnSelect = jest.fn();
+    const mockOnSelect = vi.fn();
     const selectedDates = [new Date(2023, 9, 1), new Date(2023, 9, 2)];
     const props: DayPickerProps = {
       mode: 'multiple',

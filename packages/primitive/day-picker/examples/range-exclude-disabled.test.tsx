@@ -9,11 +9,11 @@ const today = new Date();
 const nextMonday = setDay(addDays(today, 1), 1); // Ensure we have a Monday after today
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

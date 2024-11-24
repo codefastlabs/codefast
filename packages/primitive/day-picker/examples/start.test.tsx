@@ -7,11 +7,11 @@ import { Start } from './start';
 const today = new Date(2021, 10, 25); // November 25, 2021
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

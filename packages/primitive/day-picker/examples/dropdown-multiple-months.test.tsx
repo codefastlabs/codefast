@@ -9,11 +9,11 @@ import { user } from './lib/user';
 const today = new Date(2023, 9, 16);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 function setup(): void {

@@ -8,7 +8,7 @@ const today = new Date(2024, 11, 13);
 const tomorrow = new Date(2024, 11, 14);
 
 beforeAll(() => {
-  jest.setSystemTime(today);
+  vi.setSystemTime(today);
 });
 
 function setup(): void {
@@ -16,7 +16,7 @@ function setup(): void {
 }
 
 afterAll(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
 });
 
 describe('custom-multiple component', () => {
