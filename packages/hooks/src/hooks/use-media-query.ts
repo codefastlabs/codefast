@@ -27,7 +27,7 @@ export function useMediaQuery(query: string): boolean {
 
     mediaQueryList.addEventListener('change', listener);
 
-    // Clean up listener on component unmount
+    // Clean up listener on a component unmount
     return () => {
       mediaQueryList.removeEventListener('change', listener);
     };
