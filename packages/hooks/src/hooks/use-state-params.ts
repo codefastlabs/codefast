@@ -1,48 +1,24 @@
-// Enum for History Method
 import { useCallback } from 'react';
 
-enum HistoryMethod {
+export enum HistoryMethod {
   Push = 'push',
   Replace = 'replace',
 }
 
-// Type for Parameter Input
-type Value = string | number | boolean | null | undefined;
-type ParamInput = string | Record<string, Value>;
+export type UrlParamValue = string | number | boolean | null | undefined;
+export type ParamInput = string | Record<string, UrlParamValue>;
 
 /**
- * Sets the URL params of a given URLSearchParams object to the provided new
- * params.
+ * Updates the browser's history state using the specified method and URL parameters.
  *
- * @param params - The URLSearchParams object whose params will be modified.
- * @param newParams - An object representing the new params to be set. Each
- *   key-value pair in the object represents a param key-value in the
- *   URLSearchParams object. If the value is falsy, the corresponding param
- *   will be deleted; otherwise, the param will be set or updated with the new
- *   value.
+ * @param urlParams - An instance of URLSearchParams containing the parameters to be used in the URL.
+ * @param method - The method to use for updating the history. It can be either HistoryMethod.Push or
+ *   HistoryMethod.Replace.
  * @returns void
  */
-function setUrlParams(params: URLSearchParams, newParams: Record<string, Value>): void {
-  for (const [key, value] of Object.entries(newParams)) {
-    value ? params.set(key, value.toString()) : params.delete(key);
-  }
-}
-
-/**
- * Updates the query parameters in the URL and updates the browser history.
- *
- * @param newParams - A dictionary object containing the new query parameters
- *   to be added or updated.
- * @param method - A value indicating whether to use `PUSH_STATE` or
- *   `REPLACE_STATE` when updating the browser history.
- * @returns void
- */
-function updateUrlParams(newParams: Record<string, Value>, method: HistoryMethod): void {
-  const params = new URLSearchParams(window.location.search);
-
-  setUrlParams(params, newParams);
-
-  const url = `?${params.toString()}`;
+export function updateBrowserHistory(urlParams: URLSearchParams, method: HistoryMethod): void {
+  const queryString = urlParams.toString();
+  const url = queryString ? `?${queryString}` : '';
 
   if (method === HistoryMethod.Push) {
     window.history.pushState(null, '', url);
@@ -52,42 +28,58 @@ function updateUrlParams(newParams: Record<string, Value>, method: HistoryMethod
 }
 
 /**
- * useStateParams is a custom hook that returns an object with two methods:
- * push and replace. The push method is used to update the URL parameters by
- * pushing a new state to the browser history. The replace method is used to
- * update the URL parameters by replacing the current state in the browser
- * history.
+ * Updates the given URLSearchParams object with key-value pairs from the newParams object.
+ * If a value is null or undefined, the corresponding key is removed from the URLSearchParams object.
  *
- * @returns An object with two methods: push and replace.
- *          - push: A function that takes a ParamInput and an optional value as
- *   parameters and updates the URL parameters by pushing a new state to the
- *   browser history.
- *          - replace: A function that takes a ParamInput and an optional value
- *   as parameters and updates the URL parameters by replacing the current
- *   state in the browser history.
+ * @param params - The URLSearchParams object to be updated.
+ * @param newParams - An object containing key-value pairs to set in the URLSearchParams object.
+ *
+ * @returns void
+ */
+export function setUrlParams(params: URLSearchParams, newParams: Record<string, UrlParamValue>): void {
+  for (const [key, value] of Object.entries(newParams)) {
+    value ? params.set(key, value.toString()) : params.delete(key);
+  }
+}
+
+/**
+ * Updates the current URL parameters with the provided new parameters and modifies the browser history.
+ *
+ * @param newParams - An object where keys are parameter names and values are the corresponding new values to set in
+ *   the URL.
+ * @param method - The method to use to update the browser history. This can be either 'pushState' to create a new
+ *   entry, or 'replaceState' to modify the current history entry.
+ *
+ * @returns void
+ */
+export function updateUrlParams(newParams: Record<string, UrlParamValue>, method: HistoryMethod): void {
+  const params = new URLSearchParams(window.location.search);
+
+  setUrlParams(params, newParams);
+  updateBrowserHistory(params, method);
+}
+
+/**
+ * Custom hook to manage URL parameters with push and replace methods.
+ *
+ * @returns An object containing push and replace methods to update URL parameters.
  */
 export function useStateParams(): {
-  push: (paramInput: ParamInput, value?: Value) => void;
-  replace: (paramInput: ParamInput, value?: Value) => void;
+  push: (paramInput: ParamInput, value?: UrlParamValue) => void;
+  replace: (paramInput: ParamInput, value?: UrlParamValue) => void;
 } {
-  const push = useCallback((paramInput: ParamInput, value?: Value) => {
-    if (typeof paramInput === 'object') {
-      updateUrlParams(paramInput, HistoryMethod.Push);
-    } else {
-      updateUrlParams({ [paramInput]: value }, HistoryMethod.Push);
-    }
-  }, []);
+  const updateParams = useCallback((paramInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
+    const newParams = typeof paramInput === 'object' ? paramInput : { [paramInput]: value };
 
-  const replace = useCallback((paramInput: ParamInput, value?: Value) => {
-    if (typeof paramInput === 'object') {
-      updateUrlParams(paramInput, HistoryMethod.Replace);
-    } else {
-      updateUrlParams({ [paramInput]: value }, HistoryMethod.Replace);
-    }
+    updateUrlParams(newParams, method);
   }, []);
 
   return {
-    push,
-    replace,
+    push: (paramInput, value) => {
+      updateParams(paramInput, value, HistoryMethod.Push);
+    },
+    replace: (paramInput, value) => {
+      updateParams(paramInput, value, HistoryMethod.Replace);
+    },
   };
 }
