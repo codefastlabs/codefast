@@ -3,9 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:packages": "turbo run build --filter=\"./packages/*\"",
     "changeset": "changeset",
-    "changeset:publish": "pnpm run build:packages && changeset publish",
+    "changeset:publish": "changeset publish",
     "changeset:version": "changeset version",
     "clean": "turbo run clean",
     "dev": "turbo run dev --concurrency=11",
