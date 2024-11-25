@@ -38,7 +38,7 @@
     "coverage": "vitest run --coverage",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
-    "test": "vitest",
+    "test": "vitest --watch=false",
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch"
   },
