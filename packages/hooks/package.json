@@ -35,10 +35,10 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf dist",
-    "coverage": "vitest run --coverage",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
     "test": "vitest --watch=false",
+    "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "test:watch": "vitest --watch"
   },
