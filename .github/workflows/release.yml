@@ -30,8 +30,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm changeset:version
-          publish: pnpm changeset:publish
+          version: pnpm run changeset:version
+          publish: pnpm run build --filter="./packages/*" && pnpm run changeset:publish
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
         env:
