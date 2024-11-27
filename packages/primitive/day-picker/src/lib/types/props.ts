@@ -59,7 +59,8 @@ export interface BaseProps {
    * - `month`: display only the dropdown for the months
    * - `year`: display only the dropdown for the years
    *
-   * **Note:** showing the dropdown will set the start/end months
+   * @remarks
+   * Showing the dropdown will set the start/end months
    * {@link startMonth} to 100 years ago, and {@link endMonth} to the current year.
    */
   captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
