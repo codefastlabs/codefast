@@ -1,5 +1,23 @@
 # @codefast/hooks
 
+## 0.1.62
+
+### Patch Changes
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`76aa08d`](https://github.com/codefastlabs/codefast/commit/76aa08dd12f143223d88d30c72e7b8677e9808fc) Thanks [@thevuong](https://github.com/thevuong)! - feat(day-picker): support start and end month constraints
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`abde741`](https://github.com/codefastlabs/codefast/commit/abde741acf18523884da7fd98ed3e8a6379bcac4) Thanks [@thevuong](https://github.com/thevuong)! - fix(day-picker): update role query from 'cell' to 'gridcell'
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`00167ec`](https://github.com/codefastlabs/codefast/commit/00167ec8ca7c04911d3c8844c5172f1765aede9f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(style): improve CSS variable formatting
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`159cad0`](https://github.com/codefastlabs/codefast/commit/159cad087d43749c03e4630b0ef925f940ff0c6c) Thanks [@thevuong](https://github.com/thevuong)! - feat: add focus-visible style to day-picker dropdown
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`5b29cac`](https://github.com/codefastlabs/codefast/commit/5b29cac8d92a4d43f68bec6a42e44af4fb77d301) Thanks [@thevuong](https://github.com/thevuong)! - refactor(day-picker): optimize month and year change handlers
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`b8500c8`](https://github.com/codefastlabs/codefast/commit/b8500c886546b177267a9c9a62d9e12c9c969e7f) Thanks [@thevuong](https://github.com/thevuong)! - fix(day-picker): set fixed dimensions for day cells
+
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`0cded46`](https://github.com/codefastlabs/codefast/commit/0cded46e3164e3b702a712421c07e629fdf4af8b) Thanks [@thevuong](https://github.com/thevuong)! - feat(day-picker): add broadcast calendar support
+
 ## 0.1.61
 
 ### Patch Changes
