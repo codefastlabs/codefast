@@ -1,7 +1,8 @@
 import { fireEvent, render } from '@testing-library/react';
 import { addDays, startOfMonth } from 'date-fns';
 
-import { dateButton, gridcell } from './lib/elements';
+import { dateButton, gridcell } from '@/tests/lib/elements';
+
 import { RangeRequired } from './range-required';
 
 const startOfCurrentMonth = startOfMonth(new Date());

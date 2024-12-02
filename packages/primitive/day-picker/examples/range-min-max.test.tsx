@@ -1,8 +1,9 @@
 import { render } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
-import { dateButton, gridcell } from './lib/elements';
-import { user } from './lib/user';
+import { dateButton, gridcell } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { RangeMinMax } from './range-min-max';
 
 const today = new Date(2022, 8, 12);

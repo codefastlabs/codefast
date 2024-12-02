@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { format } from 'date-fns';
 
+import { user } from '@/tests/lib/user';
+
 import { Input } from './input';
-import { user } from './lib/user';
 
 function textbox(): HTMLElement {
   return screen.getByRole('textbox', { name: 'Date:' });

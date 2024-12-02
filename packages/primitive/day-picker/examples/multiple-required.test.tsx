@@ -1,7 +1,8 @@
 import { fireEvent, render } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
-import { dateButton, gridcell } from './lib/elements';
+import { dateButton, gridcell } from '@/tests/lib/elements';
+
 import { MultipleRequired } from './multiple-required';
 
 const today = new Date();

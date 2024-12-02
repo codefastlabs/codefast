@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { addDays, setDay } from 'date-fns';
 
-import { dateButton, gridcell } from './lib/elements';
-import { user } from './lib/user';
+import { dateButton, gridcell } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { RangeExcludeDisabled } from './range-exclude-disabled';
 
 const today = new Date();

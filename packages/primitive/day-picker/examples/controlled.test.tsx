@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
+import { grid } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { Controlled } from './controlled';
-import { grid } from './lib/elements';
-import { user } from './lib/user';
 
 const today = new Date(2024, 10, 1);
 

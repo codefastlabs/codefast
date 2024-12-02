@@ -4,12 +4,11 @@ import { startOfDay, startOfMonth } from 'date-fns';
 import { DayPicker } from '@/components/day-picker';
 import { type MonthsProps } from '@/components/ui';
 import { defaultLocale } from '@/lib/classes/date-lib';
-
-import { activeElement, dateButton, grid, nav, previousButton } from '../../examples/lib/elements';
-import { user } from '../../examples/lib/user';
+import { activeElement, dateButton, grid, nav, previousButton } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
 
 const testId = 'test';
-const dayPicker = () => screen.getByTestId(testId);
+const dayPicker = (): HTMLElement => screen.getByTestId(testId);
 
 test('should render a date picker component', () => {
   render(<DayPicker data-testid={testId} />);
@@ -106,7 +105,7 @@ describe('when a day is mouse entered', () => {
   const handleDayMouseLeave = vi.fn();
   const today = startOfDay(new Date());
 
-  beforeEach(async () => {
+  const setup = (): void => {
     render(
       <DayPicker
         defaultMonth={today}
@@ -116,17 +115,22 @@ describe('when a day is mouse entered', () => {
         onDayMouseLeave={handleDayMouseLeave}
       />,
     );
+  };
+
+  beforeEach(() => {
+    setup();
+
     fireEvent.mouseEnter(dateButton(today));
     fireEvent.mouseLeave(dateButton(today));
   });
-  test('should call the event handler', async () => {
+  test('should call the event handler', () => {
     expect(handleDayMouseEnter).toHaveBeenCalled();
     expect(handleDayMouseLeave).toHaveBeenCalled();
   });
 });
 
 describe('when the `month` is changed programmatically', () => {
-  test('should update the calendar to reflect the new month', async () => {
+  test('should update the calendar to reflect the new month', () => {
     const initialMonth = new Date(2023, 0, 1); // January 2023
     const newMonth = new Date(2023, 1, 1); // February 2023
     const { rerender } = render(<DayPicker mode="single" month={initialMonth} />);

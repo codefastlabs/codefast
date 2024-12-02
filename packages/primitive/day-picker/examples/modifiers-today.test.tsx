@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { subDays } from 'date-fns';
 
-import { dateButton } from './lib/elements';
-import { user } from './lib/user';
+import { dateButton } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { ModifiersToday } from './modifiers-today';
 
 const today = new Date(); // Đặt ngày hôm nay để kiểm tra các hành vi với ngày hôm nay

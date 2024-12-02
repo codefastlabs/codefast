@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { format, subDays } from 'date-fns';
 
+import { user } from '@/tests/lib/user';
+
 import { AccessibleDatePicker } from './accessible-date-picker';
-import { user } from './lib/user';
 
 const today = new Date();
 

@@ -1,7 +1,8 @@
 import { render } from '@testing-library/react';
 
-import { grid, nextButton, previousButton } from './lib/elements';
-import { user } from './lib/user';
+import { grid, nextButton, previousButton } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { Rtl } from './rtl';
 
 const today = new Date(2021, 10, 25);
