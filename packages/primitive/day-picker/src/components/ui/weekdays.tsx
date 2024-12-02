@@ -7,7 +7,7 @@ export type WeekdaysProps = ComponentProps<'tr'>;
  */
 export function Weekdays(props: WeekdaysProps): JSX.Element {
   return (
-    <thead>
+    <thead aria-hidden>
       <tr {...props} />
     </thead>
   );

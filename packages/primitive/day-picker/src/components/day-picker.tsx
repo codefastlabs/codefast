@@ -276,11 +276,13 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
   return (
     <dayPickerContext.Provider value={contextValue}>
       <components.Root
+        aria-label={props['aria-label']}
         className={className}
         dir={props.dir}
         id={props.id}
         lang={props.lang}
         nonce={props.nonce}
+        role={props.role}
         style={style}
         title={props.title}
         {...dataAttributes}
@@ -404,6 +406,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                                 locale,
                               })}
                               className={classNames[UI.WeekNumber]}
+                              role="rowheader"
                               scope="row"
                               style={styles?.[UI.WeekNumber]}
                               week={week}
@@ -444,9 +447,10 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                               props.modifiersClassNames,
                             );
 
-                            const ariaLabel = !isInteractive
-                              ? labelGridcell(date, modifiers, dateLib.options, dateLib)
-                              : undefined;
+                            const ariaLabel =
+                              !isInteractive && !modifiers.hidden
+                                ? labelGridcell(date, modifiers, dateLib.options, dateLib)
+                                : undefined;
 
                             return (
                               <components.Day
@@ -465,9 +469,10 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                                 data-today={modifiers.today || undefined}
                                 day={day}
                                 modifiers={modifiers}
+                                role="gridcell"
                                 style={styleForModifiers}
                               >
-                                {isInteractive ? (
+                                {!modifiers.hidden && isInteractive ? (
                                   <components.DayButton
                                     aria-label={labelDayButton(date, modifiers, dateLib.options, dateLib)}
                                     className={classNames[UI.DayButton]}
@@ -487,7 +492,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                                     {formatDay(date, dateLib.options, dateLib)}
                                   </components.DayButton>
                                 ) : (
-                                  formatDay(day.date, dateLib.options, dateLib)
+                                  !modifiers.hidden && formatDay(day.date, dateLib.options, dateLib)
                                 )}
                               </components.Day>
                             );

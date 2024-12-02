@@ -82,7 +82,7 @@ describe('range-exclude-disabled component', () => {
     });
 
     test('clears all selected days', () => {
-      const selectedCells = screen.getAllByRole('cell').filter((cell) => cell.hasAttribute('aria-selected'));
+      const selectedCells = screen.getAllByRole('gridcell').filter((cell) => cell.hasAttribute('aria-selected'));
 
       expect(selectedCells).toHaveLength(0);
     });
