@@ -9,8 +9,8 @@ const base = plugin(({ addBase }) => {
     'input, textarea, select': {
       '&:-webkit-autofill': {
         '&, &:hover, &:focus': {
-          'box-shadow': 'inset 0 0 0 1000px hsl(var(--background))',
-          '-webkit-box-shadow': 'inset 0 0 0 1000px hsl(var(--background)) ',
+          'box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background))',
+          '-webkit-box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background)) ',
         },
       },
     },
@@ -45,14 +45,14 @@ const base = plugin(({ addBase }) => {
       },
 
       '&-thumb': {
-        background: 'hsl(var(--border))',
+        background: 'hsl(var(--color-border))',
         borderRadius: '5px',
       },
     },
 
     '*': {
       scrollbarWidth: 'thin',
-      scrollbarColor: 'hsl(var(--border)) transparent',
+      scrollbarColor: 'hsl(var(--color-border)) transparent',
     },
   });
 });
