@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { startOfMonth } from 'date-fns';
 
+import { dateButton } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { CustomDayButton } from './custom-day-button';
-import { dateButton } from './lib/elements';
-import { user } from './lib/user';
 
 const today = new Date(2024, 11, 13);
 

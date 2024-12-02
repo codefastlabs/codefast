@@ -35,17 +35,25 @@ export function getDates(
     startOfWeek,
   } = dateLib;
 
-  const startWeekFirstDate = broadcastCalendar
-    ? startOfBroadcastWeek(firstMonth, dateLib)
-    : ISOWeek
-      ? startOfISOWeek(firstMonth)
-      : startOfWeek(firstMonth);
+  let startWeekFirstDate: Date;
 
-  const endWeekLastDate = broadcastCalendar
-    ? endOfBroadcastWeek(lastMonth, dateLib)
-    : ISOWeek
-      ? endOfISOWeek(endOfMonth(lastMonth))
-      : endOfWeek(endOfMonth(lastMonth));
+  if (broadcastCalendar) {
+    startWeekFirstDate = startOfBroadcastWeek(firstMonth, dateLib);
+  } else if (ISOWeek) {
+    startWeekFirstDate = startOfISOWeek(firstMonth);
+  } else {
+    startWeekFirstDate = startOfWeek(firstMonth);
+  }
+
+  let endWeekLastDate: Date;
+
+  if (broadcastCalendar) {
+    endWeekLastDate = endOfBroadcastWeek(lastMonth, dateLib);
+  } else if (ISOWeek) {
+    endWeekLastDate = endOfISOWeek(endOfMonth(lastMonth));
+  } else {
+    endWeekLastDate = endOfWeek(endOfMonth(lastMonth));
+  }
 
   const nOfDays = differenceInCalendarDays(endWeekLastDate, startWeekFirstDate);
   const nOfMonths = differenceInCalendarMonths(lastMonth, firstMonth) + 1;

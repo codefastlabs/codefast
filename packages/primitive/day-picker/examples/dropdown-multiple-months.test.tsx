@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 
 import { labelMonthDropdown } from '@/lib';
+import { grid } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
 
 import { DropdownMultipleMonths } from './dropdown-multiple-months';
-import { grid } from './lib/elements';
-import { user } from './lib/user';
 
 const today = new Date(2023, 9, 16);
 

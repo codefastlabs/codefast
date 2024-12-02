@@ -1,8 +1,9 @@
 import { render } from '@testing-library/react';
 import { subDays } from 'date-fns';
 
-import { dateButton, gridcell, grids } from './lib/elements';
-import { user } from './lib/user';
+import { dateButton, gridcell, grids } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { RangeLong } from './range-long';
 
 const currentMonth = new Date(2024, 9); // Tháng 10, 2024

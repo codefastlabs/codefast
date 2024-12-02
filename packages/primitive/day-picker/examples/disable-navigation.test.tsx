@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { endOfMonth, startOfMonth } from 'date-fns';
 
+import { grid, gridcell } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { DisableNavigation } from './disable-navigation';
-import { grid, gridcell } from './lib/elements';
-import { user } from './lib/user';
 
 const today = new Date();
 

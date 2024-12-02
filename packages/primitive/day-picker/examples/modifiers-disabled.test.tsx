@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 
-import { dateButton } from './lib/elements';
+import { dateButton } from '@/tests/lib/elements';
+
 import { ModifiersDisabled } from './modifiers-disabled';
 
 const today = new Date(2024, 10, 14);

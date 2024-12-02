@@ -1,8 +1,9 @@
 import { render } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
-import { dateButton, gridcell } from './lib/elements';
-import { user } from './lib/user';
+import { dateButton, gridcell } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { RangeLongExcludeDisabled } from './range-long-exclude-disabled';
 
 const rangeStart = new Date(100, 0, 1); // January 1, year 100
