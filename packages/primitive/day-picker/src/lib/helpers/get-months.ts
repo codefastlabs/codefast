@@ -36,17 +36,25 @@ export function getMonths(
     startOfWeek,
   } = dateLib;
   const dayPickerMonths = displayMonths.reduce<CalendarMonth[]>((months, month) => {
-    const firstDateOfFirstWeek = props.broadcastCalendar
-      ? startOfBroadcastWeek(month, dateLib)
-      : props.ISOWeek
-        ? startOfISOWeek(month)
-        : startOfWeek(month);
+    let firstDateOfFirstWeek: Date;
 
-    const lastDateOfLastWeek = props.broadcastCalendar
-      ? endOfBroadcastWeek(month, dateLib)
-      : props.ISOWeek
-        ? endOfISOWeek(endOfMonth(month))
-        : endOfWeek(endOfMonth(month));
+    if (props.broadcastCalendar) {
+      firstDateOfFirstWeek = startOfBroadcastWeek(month, dateLib);
+    } else if (props.ISOWeek) {
+      firstDateOfFirstWeek = startOfISOWeek(month);
+    } else {
+      firstDateOfFirstWeek = startOfWeek(month);
+    }
+
+    let lastDateOfLastWeek: Date;
+
+    if (props.broadcastCalendar) {
+      lastDateOfLastWeek = endOfBroadcastWeek(month, dateLib);
+    } else if (props.ISOWeek) {
+      lastDateOfLastWeek = endOfISOWeek(endOfMonth(month));
+    } else {
+      lastDateOfLastWeek = endOfWeek(endOfMonth(month));
+    }
 
     /**
      * The dates to display in the month.

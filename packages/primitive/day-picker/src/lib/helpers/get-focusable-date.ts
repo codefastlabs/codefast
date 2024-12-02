@@ -33,10 +33,24 @@ export function getFocusableDate(
     week: addWeeks,
     month: addMonths,
     year: addYears,
-    startOfWeek: (date: Date) =>
-      broadcastCalendar ? startOfBroadcastWeek(date, dateLib) : ISOWeek ? startOfISOWeek(date) : startOfWeek(date),
-    endOfWeek: (date: Date) =>
-      broadcastCalendar ? endOfBroadcastWeek(date, dateLib) : ISOWeek ? endOfISOWeek(date) : endOfWeek(date),
+    startOfWeek: (date: Date) => {
+      if (broadcastCalendar) {
+        return startOfBroadcastWeek(date, dateLib);
+      } else if (ISOWeek) {
+        return startOfISOWeek(date);
+      }
+
+      return startOfWeek(date);
+    },
+    endOfWeek: (date: Date) => {
+      if (broadcastCalendar) {
+        return endOfBroadcastWeek(date, dateLib);
+      } else if (ISOWeek) {
+        return endOfISOWeek(date);
+      }
+
+      return endOfWeek(date);
+    },
   };
 
   let focusableDate = moveFns[moveBy](refDate, moveDir === 'after' ? 1 : -1);
