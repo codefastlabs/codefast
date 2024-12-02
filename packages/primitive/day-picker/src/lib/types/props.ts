@@ -51,6 +51,15 @@ export interface BaseProps {
   autoFocus?: boolean;
 
   /**
+   * Display the weeks in the month following the broadcast calendar.
+   * Setting this prop will ignore {@link weekStartsOn} (always Monday) and {@link showOutsideDays} will default to
+   * true.
+   *
+   * @see https://en.wikipedia.org/wiki/Broadcast_calendar
+   */
+  broadcastCalendar?: boolean;
+
+  /**
    * Show dropdowns to navigate between months or years.
    *
    * - `true`: display the dropdowns for both month and year
@@ -297,6 +306,9 @@ export interface BaseProps {
 
   /**
    * Show the outside days (days falling in the next or the previous month).
+   *
+   * @remarks
+   * When {@link broadcastCalendar} is set, this prop defaults to true.
    */
   showOutsideDays?: boolean;
 

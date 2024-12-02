@@ -85,6 +85,7 @@ export function useCalendar(
     | 'month'
     | 'defaultMonth'
     | 'timeZone'
+    | 'broadcastCalendar'
   >,
   dateLib: DateLib,
 ): Calendar {

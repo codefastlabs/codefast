@@ -13,7 +13,7 @@ export function useGetModifiers(
   props: DayPickerProps,
   dateLib: DateLib,
 ): (day: CalendarDay) => Modifiers {
-  const { disabled, hidden, modifiers, showOutsideDays, today, startMonth, endMonth } = props;
+  const { disabled, hidden, modifiers, showOutsideDays, today, startMonth, endMonth, broadcastCalendar } = props;
 
   const { isSameDay, isSameMonth, startOfMonth, isBefore, endOfMonth, isAfter } = dateLib;
 
@@ -42,7 +42,9 @@ export function useGetModifiers(
       Boolean(hidden && dateMatchModifiers(date, hidden, dateLib)) ||
       isBeforeStartMonth ||
       isAfterEndMonth ||
-      (!showOutsideDays && isOutside);
+      // Broadcast calendar will show outside days as default
+      (!broadcastCalendar && !showOutsideDays && isOutside) ||
+      (broadcastCalendar && showOutsideDays === false && isOutside);
 
     const isToday = isSameDay(date, today ?? (props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date()));
 
