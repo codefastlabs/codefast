@@ -1,8 +1,9 @@
 import { within, render } from '@testing-library/react';
 
+import { grid, monthDropdown, yearDropdown } from '@/tests/lib/elements';
+import { user } from '@/tests/lib/user';
+
 import { Dropdown } from './dropdown';
-import { grid, monthDropdown, yearDropdown } from './lib/elements';
-import { user } from './lib/user';
 
 function setup(): void {
   render(<Dropdown />);
