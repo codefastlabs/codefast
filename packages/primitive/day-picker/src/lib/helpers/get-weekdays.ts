@@ -17,9 +17,14 @@ export function getWeekdays(
    */
   ISOWeek?: boolean | undefined,
   timeZone?: string | undefined,
+  broadcastCalendar?: boolean | undefined,
 ): Date[] {
   const date = timeZone ? TZDate.tz(timeZone) : new dateLib.Date();
-  const start = ISOWeek ? dateLib.startOfISOWeek(date) : dateLib.startOfWeek(date);
+  const start = broadcastCalendar
+    ? dateLib.startOfBroadcastWeek(date, dateLib)
+    : ISOWeek
+      ? dateLib.startOfISOWeek(date)
+      : dateLib.startOfWeek(date);
 
   const days: Date[] = [];
 
