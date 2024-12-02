@@ -25,7 +25,7 @@ describe('modifiers-hidden component', () => {
 
   test.each(hiddenDays)('does not render the hidden day %s', (day) => {
     render(<ModifiersHidden />);
-    expect(screen.queryByRole('cell', { name: `${day.getDate()}` })).not.toBeInTheDocument();
+    expect(screen.queryByRole('gridcell', { name: `${day.getDate()}` })).not.toBeInTheDocument();
   });
 
   test('renders non-hidden days', () => {

@@ -6,6 +6,6 @@ describe('fixed-weeks component', () => {
   render(<FixedWeeks />);
 
   test('should render 42*12 days', () => {
-    expect(screen.getAllByRole('cell')).toHaveLength(42 * 12);
+    expect(screen.getAllByRole('gridcell')).toHaveLength(42 * 12);
   });
 });
