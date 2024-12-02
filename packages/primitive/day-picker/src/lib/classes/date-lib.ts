@@ -34,6 +34,9 @@ import {
 } from 'date-fns';
 import { enUS, type Locale } from 'date-fns/locale';
 
+import { endOfBroadcastWeek } from '@/lib/helpers/end-of-broadcast-week';
+import { startOfBroadcastWeek } from '@/lib/helpers/start-of-broadcast-week';
+
 export type { Locale } from 'date-fns/locale';
 export type { Month as DateFnsMonth } from 'date-fns';
 
@@ -339,6 +342,30 @@ export class DateLib {
    */
   setMonth: typeof setMonth = (date, month) => {
     return this.overrides?.setMonth ? this.overrides.setMonth(date, month) : setMonth(date, month);
+  };
+
+  /**
+   * Returns the end of the broadcast week for the given date.
+   *
+   * @param date - The original date.
+   * @returns The end of the broadcast week.
+   */
+  endOfBroadcastWeek: typeof endOfBroadcastWeek = (date: Date) => {
+    return this.overrides?.endOfBroadcastWeek
+      ? this.overrides.endOfBroadcastWeek(date, this)
+      : endOfBroadcastWeek(date, this);
+  };
+
+  /**
+   * Returns the start of the broadcast week for the given date.
+   *
+   * @param date - The original date.
+   * @returns The start of the broadcast week.
+   */
+  startOfBroadcastWeek: typeof startOfBroadcastWeek = (date: Date) => {
+    return this.overrides?.startOfBroadcastWeek
+      ? this.overrides.startOfBroadcastWeek(date, this)
+      : startOfBroadcastWeek(date, this);
   };
 
   /**
