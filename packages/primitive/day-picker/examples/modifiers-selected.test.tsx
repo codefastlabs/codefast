@@ -4,7 +4,7 @@ import { subDays } from 'date-fns';
 import { dateButton } from './lib/elements';
 import { ModifiersSelected } from './modifiers-selected';
 
-const today = new Date();
+const today = new Date(2024, 11, 5);
 const yesterday = subDays(today, 1);
 
 beforeAll(() => {
