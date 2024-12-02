@@ -1,5 +1,5 @@
 import {
-  type ChangeEventHandler,
+  type ChangeEvent,
   type FocusEvent,
   type JSX,
   type KeyboardEvent,
@@ -74,7 +74,6 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
     props.locale,
     props.useAdditionalDayOfYearTokens,
     props.useAdditionalWeekYearTokens,
-    props.weekStartsOn,
     props.weekStartsOn,
     props.broadcastCalendar,
   ]);
@@ -224,6 +223,26 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
     [onDayMouseLeave],
   );
 
+  const handleMonthChange = useCallback(
+    (date: Date) => (e: ChangeEvent<HTMLSelectElement>) => {
+      const selectedMonth = Number(e.target.value);
+      const month = dateLib.setMonth(dateLib.startOfMonth(date), selectedMonth);
+
+      goToMonth(month);
+    },
+    [dateLib, goToMonth],
+  );
+
+  const handleYearChange = useCallback(
+    (date: Date) => (e: ChangeEvent<HTMLSelectElement>) => {
+      const selectedYear = Number(e.target.value);
+      const month = dateLib.setYear(dateLib.startOfMonth(date), selectedYear);
+
+      goToMonth(month);
+    },
+    [dateLib, goToMonth],
+  );
+
   const { className, style } = useMemo(
     () => ({
       className: [classNames[UI.Root], props.className].filter(Boolean).join(' '),
@@ -279,19 +298,6 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
             />
           )}
           {months.map((calendarMonth, displayIndex) => {
-            const handleMonthChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
-              const selectedMonth = Number((e.target as HTMLSelectElement).value);
-              const month = dateLib.setMonth(dateLib.startOfMonth(calendarMonth.date), selectedMonth);
-
-              goToMonth(month);
-            };
-
-            const handleYearChange: ChangeEventHandler<HTMLSelectElement> = (e) => {
-              const month = dateLib.setYear(dateLib.startOfMonth(calendarMonth.date), Number(e.target.value));
-
-              goToMonth(month);
-            };
-
             const dropdownMonths = getMonthOptions(calendarMonth.date, navStart, navEnd, formatters, dateLib);
 
             const dropdownYears = getYearOptions(months[0].date, navStart, navEnd, formatters, dateLib);
@@ -321,7 +327,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                           options={dropdownMonths}
                           style={styles?.[UI.Dropdown]}
                           value={calendarMonth.date.getMonth()}
-                          onChange={handleMonthChange}
+                          onChange={handleMonthChange(calendarMonth.date)}
                         />
                       ) : (
                         <span aria-live="polite" role="status">
@@ -336,7 +342,7 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                           options={dropdownYears}
                           style={styles?.[UI.Dropdown]}
                           value={calendarMonth.date.getFullYear()}
-                          onChange={handleYearChange}
+                          onChange={handleYearChange(calendarMonth.date)}
                         />
                       ) : (
                         <span aria-live="polite" role="status">
