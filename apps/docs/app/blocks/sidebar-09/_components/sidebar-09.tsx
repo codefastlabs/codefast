@@ -1,15 +1,15 @@
 import {
-  cn,
-  Separator,
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  cn,
+  Separator,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
 } from '@codefast/ui';
 import { type ComponentProps, type JSX } from 'react';
 

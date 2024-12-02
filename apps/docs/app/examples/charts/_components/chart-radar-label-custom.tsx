@@ -36,11 +36,11 @@ const chartData: DataItem[] = [
 const chartConfig = {
   desktop: {
     label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
+    color: 'hsl(var(--color-chart-1))',
   },
   mobile: {
     label: 'Mobile',
-    color: 'hsl(var(--chart-2))',
+    color: 'hsl(var(--color-chart-2))',
   },
 } satisfies ChartConfig;
 

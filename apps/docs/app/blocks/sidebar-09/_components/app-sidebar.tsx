@@ -2,19 +2,19 @@
 
 import {
   cn,
+  Label,
   Sidebar,
-  useSidebar,
-  SidebarHeader,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
+  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   Switch,
-  Label,
-  SidebarInput,
+  useSidebar,
 } from '@codefast/ui';
 import { CommandIcon } from 'lucide-react';
 import Link from 'next/link';
