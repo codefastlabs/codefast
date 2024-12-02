@@ -42,6 +42,11 @@ export interface BaseProps {
   ISOWeek?: boolean;
 
   /**
+   * The aria-label attribute to add to the container element.
+   */
+  ['aria-label']?: string;
+
+  /**
    * When a selection mode is set, DayPicker will focus on the first selected day
    * (if set) or today's date (if not disabled).
    *
@@ -303,6 +308,11 @@ export interface BaseProps {
    * Render the months in reversed order (when {@link numberOfMonths} is set) to display the most recent month first.
    */
   reverseMonths?: boolean;
+
+  /**
+   * The role attribute to add to the container element.
+   */
+  role?: 'application' | 'dialog' | undefined;
 
   /**
    * Show the outside days (days falling in the next or the previous month).
