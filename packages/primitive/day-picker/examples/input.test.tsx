@@ -9,7 +9,7 @@ function textbox(): HTMLElement {
 }
 
 function gridcells(): HTMLElement[] {
-  return screen.queryAllByRole('cell');
+  return screen.queryAllByRole('gridcell');
 }
 
 function selectedCells(): HTMLElement[] {

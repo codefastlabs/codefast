@@ -16,7 +16,7 @@ const days = [
 ];
 
 function getAllSelected(): HTMLElement[] {
-  const gridcells = screen.getAllByRole('cell');
+  const gridcells = screen.getAllByRole('gridcell');
 
   return Array.from(gridcells).filter((cell) => cell.getAttribute('aria-selected') === 'true');
 }

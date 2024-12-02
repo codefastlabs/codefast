@@ -31,7 +31,7 @@ describe('outside-days component', () => {
 
     test('displays today’s date within the month view', () => {
       expect(
-        screen.getByRole('cell', {
+        screen.getByRole('gridcell', {
           name: labelGridcell(today, {
             today: true,
           }),

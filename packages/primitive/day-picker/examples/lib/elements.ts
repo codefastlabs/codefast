@@ -9,7 +9,14 @@ import { DayFlag, labelDayButton, labelGridcell, labelMonthDropdown, labelYearDr
  * @returns The first HTML element with the role of 'grid' that matches the optional name, if provided.
  */
 export function grid(name?: ByRoleOptions['name']): HTMLElement {
-  return screen.getByRole('grid', name ? { name } : undefined);
+  return screen.getByRole('grid', { name });
+}
+
+/**
+ * Return the parent element of the next button from the screen.
+ */
+export function nav(): HTMLElement {
+  return screen.getByRole('navigation');
 }
 
 /**
@@ -30,12 +37,12 @@ export function grids(): HTMLElement[] {
  */
 export function gridcell(date: Date, interactive?: boolean): HTMLElement {
   if (interactive) {
-    return screen.getByRole('cell', {
+    return screen.getByRole('gridcell', {
       name: date.getDate().toString(),
     });
   }
 
-  return screen.getByRole('cell', {
+  return screen.getByRole('gridcell', {
     name: labelGridcell(date),
   });
 }
@@ -129,5 +136,14 @@ export function nextButton(): HTMLElement {
  * @returns The first HTMLElement that matches the role "columnheader" and the specified name options.
  */
 export function columnHeader(name?: ByRoleOptions['name']): HTMLElement {
-  return screen.getByRole('columnheader', name ? { name } : undefined);
+  return screen.getByRole('columnheader', { name, hidden: true });
+}
+
+/**
+ * Return the rowheader element from the screen.
+ *
+ * @param name - The name of the rowheader.
+ */
+export function rowheader(name?: ByRoleOptions['name']): HTMLElement {
+  return screen.getByRole('rowheader', { name });
 }
