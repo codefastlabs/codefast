@@ -9,6 +9,7 @@ export function getDataAttributes(props: DayPickerProps): Record<string, unknown
     'data-required': 'required' in props ? props.required : undefined,
     'data-multiple-months': (props.numberOfMonths && props.numberOfMonths > 1) || undefined,
     'data-week-numbers': props.showWeekNumber || undefined,
+    'data-broadcast-calendar': props.broadcastCalendar || undefined,
   };
 
   Object.entries(props).forEach(([key, val]) => {

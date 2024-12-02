@@ -1,6 +1,6 @@
 import { CalendarDay, CalendarMonth, CalendarWeek } from '@/lib/classes';
 import { type DateLib } from '@/lib/classes/date-lib';
-import { NrOfDaysWithFixedWeeks } from '@/lib/helpers/get-dates';
+import { NrOfDaysBroadcast, NrOfDaysWithFixedWeeks } from '@/lib/helpers/get-dates';
 import { type DayPickerProps } from '@/lib/types';
 
 /**
@@ -20,14 +20,33 @@ export function getMonths(
   /**
    * Options from the props context.
    */
-  props: Pick<DayPickerProps, 'fixedWeeks' | 'ISOWeek' | 'reverseMonths'>,
+  props: Pick<DayPickerProps, 'broadcastCalendar' | 'fixedWeeks' | 'ISOWeek' | 'reverseMonths'>,
   dateLib: DateLib,
 ): CalendarMonth[] {
-  const { startOfWeek, endOfWeek, startOfISOWeek, endOfISOWeek, endOfMonth, addDays, getWeek, getISOWeek } = dateLib;
+  const {
+    addDays,
+    endOfBroadcastWeek,
+    endOfISOWeek,
+    endOfMonth,
+    endOfWeek,
+    getISOWeek,
+    getWeek,
+    startOfBroadcastWeek,
+    startOfISOWeek,
+    startOfWeek,
+  } = dateLib;
   const dayPickerMonths = displayMonths.reduce<CalendarMonth[]>((months, month) => {
-    const firstDateOfFirstWeek = props.ISOWeek ? startOfISOWeek(month) : startOfWeek(month);
+    const firstDateOfFirstWeek = props.broadcastCalendar
+      ? startOfBroadcastWeek(month, dateLib)
+      : props.ISOWeek
+        ? startOfISOWeek(month)
+        : startOfWeek(month);
 
-    const lastDateOfLastWeek = props.ISOWeek ? endOfISOWeek(endOfMonth(month)) : endOfWeek(endOfMonth(month));
+    const lastDateOfLastWeek = props.broadcastCalendar
+      ? endOfBroadcastWeek(month, dateLib)
+      : props.ISOWeek
+        ? endOfISOWeek(endOfMonth(month))
+        : endOfWeek(endOfMonth(month));
 
     /**
      * The dates to display in the month.
@@ -36,9 +55,11 @@ export function getMonths(
       return date >= firstDateOfFirstWeek && date <= lastDateOfLastWeek;
     });
 
-    if (props.fixedWeeks && monthDates.length < NrOfDaysWithFixedWeeks) {
+    const nrOfDaysWithFixedWeeks = props.broadcastCalendar ? NrOfDaysBroadcast : NrOfDaysWithFixedWeeks;
+
+    if (props.fixedWeeks && monthDates.length < nrOfDaysWithFixedWeeks) {
       const extraDates = dates.filter((date) => {
-        const daysToAdd = NrOfDaysWithFixedWeeks - monthDates.length;
+        const daysToAdd = nrOfDaysWithFixedWeeks - monthDates.length;
 
         return date > lastDateOfLastWeek && date <= addDays(lastDateOfLastWeek, daysToAdd);
       });
