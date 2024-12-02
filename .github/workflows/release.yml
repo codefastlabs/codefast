@@ -29,7 +29,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: pnpm run changeset:version
-          publish: turbo run build --filter="./packages/*" && changeset publish
+          publish: pnpm run changeset:publish
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
         env:
