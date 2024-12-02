@@ -30,11 +30,11 @@ const chartData = [
 const chartConfig = {
   desktop: {
     label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
+    color: 'hsl(var(--color-chart-1))',
   },
   mobile: {
     label: 'Mobile',
-    color: 'hsl(var(--chart-2))',
+    color: 'hsl(var(--color-chart-2))',
   },
 } satisfies ChartConfig;
 
@@ -52,7 +52,7 @@ export function ChartRadarRadius(): JSX.Element {
             <PolarGrid />
             <Radar dataKey="desktop" fill="var(--color-desktop)" fillOpacity={0.6} />
             <Radar dataKey="mobile" fill="var(--color-mobile)" />
-            <PolarRadiusAxis angle={60} axisLine={false} orientation="middle" stroke="hsla(var(--foreground))" />
+            <PolarRadiusAxis angle={60} axisLine={false} orientation="middle" stroke="hsla(var(--color-foreground))" />
           </RadarChart>
         </ChartContainer>
       </CardContent>

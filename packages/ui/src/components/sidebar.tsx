@@ -574,7 +574,7 @@ const sidebarMenuButtonVariants = tv({
     variant: {
       default: 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
       outline:
-        'bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
+        'bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--color-sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--color-sidebar-accent))]',
     },
     size: {
       default: 'h-8 text-sm',
