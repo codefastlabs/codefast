@@ -554,6 +554,15 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
+  packages/style-guide:
+    devDependencies:
+      tsup:
+        specifier: 8.3.5
+        version: 8.3.5(jiti@1.21.6)(postcss@8.4.49)(typescript@5.6.3)(yaml@2.6.1)
+      typescript:
+        specifier: 5.6.3
+        version: 5.6.3
+
   packages/tailwind-config:
     dependencies:
       tailwindcss:
