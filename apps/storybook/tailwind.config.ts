@@ -1,4 +1,4 @@
-import sharedConfig from '@codefast/config-tailwind';
+import sharedConfig from '@codefast/tailwind-config';
 import { type Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {

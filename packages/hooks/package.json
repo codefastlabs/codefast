@@ -43,8 +43,8 @@
     "test:watch": "vitest --watch"
   },
   "devDependencies": {
-    "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.0.1",

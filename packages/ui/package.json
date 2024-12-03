@@ -87,9 +87,9 @@
     "vaul": "1.1.1"
   },
   "devDependencies": {
-    "@codefast/config-tailwind": "workspace:*",
-    "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
+    "@codefast/tailwind-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
     "@types/node": "20.17.6",
     "eslint": "8.57.1",
     "postcss": "8.4.49",
