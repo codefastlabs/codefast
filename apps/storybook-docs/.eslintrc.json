@@ -1,4 +1,4 @@
 {
-  "extends": ["@codefast/eslint-config/next", "plugin:storybook/recommended", "turbo"],
+  "extends": ["@codefast/eslint-config/next", "plugin:storybook/recommended"],
   "ignorePatterns": ["storybook-static"]
 }
