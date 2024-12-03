@@ -1,5 +1,5 @@
 {
-  "name": "storybook-docs",
+  "name": "@apps/storybook",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "3.2.2",
-    "@codefast/config-tailwind": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
+    "@codefast/tailwind-config": "workspace:*",
     "@faker-js/faker": "9.2.0",
     "@storybook/addon-essentials": "8.4.5",
     "@storybook/addon-interactions": "8.4.5",

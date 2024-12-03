@@ -1,5 +1,5 @@
 {
-  "name": "@codefast/config-tailwind",
+  "name": "@codefast/tailwind-config",
   "version": "0.1.62",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/codefastlabs/codefast",
-    "directory": "packages/config-tailwind"
+    "directory": "packages/tailwind-config"
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
@@ -39,8 +39,8 @@
     "lint": "eslint . --max-warnings 0"
   },
   "devDependencies": {
-    "@codefast/config-typescript": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
     "eslint": "8.57.1",
     "tsup": "8.3.5",
     "typescript": "5.6.3"
