@@ -8,8 +8,6 @@
       <excludeFolder url="file://$MODULE_DIR$/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/docs/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/docs/storybook-static" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/config-tailwind/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/config-tailwind/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/third-parties/.turbo" />
@@ -26,7 +24,9 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/number-input/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/storybook-docs/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/storybook/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-config/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-config/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
