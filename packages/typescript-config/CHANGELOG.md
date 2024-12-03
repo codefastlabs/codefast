@@ -1,4 +1,4 @@
-# @codefast/config-tailwind
+# @codefast/typescript-config
 
 ## 0.1.62
 
@@ -426,38 +426,40 @@
 
 - Update dependencies across multiple packages
 
-## 0.0.6
+## 0.0.2
 
 ### Patch Changes
 
 - Add InputNumber component and update Calendar styles
 
-## 0.0.5
+## 0.0.1
 
 ### Patch Changes
 
-- Update TS config and import paths
+- Rename typescript-config package to config-typescript
+
+# @codefast/typescript-config
 
 ## 0.0.4
 
 ### Patch Changes
 
-- Update tsup version in package dependencies
+- Add Tailwind config package
 
 ## 0.0.3
 
 ### Patch Changes
 
-- Update eslint package name and version
+- Replace a cva library with tailwind-variants
 
 ## 0.0.2
 
 ### Patch Changes
 
-- Update devDependencies in config-tailwind package
+- Reorganize TypeScript configuration files
 
 ## 0.0.1
 
 ### Patch Changes
 
-- Add Tailwind config package
+- Initial release

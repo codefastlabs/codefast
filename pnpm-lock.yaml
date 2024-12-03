@@ -21,12 +21,12 @@ importers:
       '@changesets/cli':
         specifier: 2.27.10
         version: 2.27.10
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:packages/config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:packages/config-eslint
+        version: link:packages/eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:packages/typescript-config
       '@commitlint/cli':
         specifier: 19.6.0
         version: 19.6.0(@types/node@22.9.1)(typescript@5.6.3)
@@ -112,12 +112,12 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
-      '@codefast/config-tailwind':
-        specifier: workspace:*
-        version: link:../../packages/config-tailwind
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../../packages/config-eslint
+        version: link:../../packages/eslint-config
+      '@codefast/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
       '@faker-js/faker':
         specifier: 9.2.0
         version: 9.2.0
@@ -152,7 +152,7 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
-  apps/storybook-docs:
+  apps/storybook:
     dependencies:
       '@codefast/hooks':
         specifier: workspace:*
@@ -215,12 +215,12 @@ importers:
       '@chromatic-com/storybook':
         specifier: 3.2.2
         version: 3.2.2(react@19.0.0-rc-7ac8e612-20241113)(storybook@8.4.5(prettier@3.3.3))
-      '@codefast/config-tailwind':
-        specifier: workspace:*
-        version: link:../../packages/config-tailwind
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../../packages/config-eslint
+        version: link:../../packages/eslint-config
+      '@codefast/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
       '@faker-js/faker':
         specifier: 9.2.0
         version: 9.2.0
@@ -291,7 +291,7 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
-  packages/config-eslint:
+  packages/eslint-config:
     dependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: 8.15.0
@@ -315,30 +315,6 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(@typescript-eslint/parser@8.15.0(eslint@8.57.1)(typescript@5.6.3))(eslint@8.57.1)(typescript@5.6.3)
 
-  packages/config-tailwind:
-    dependencies:
-      tailwindcss:
-        specifier: ^3
-        version: 3.4.15(ts-node@10.9.2(@types/node@22.9.1)(typescript@5.6.3))
-    devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
-      '@codefast/eslint-config':
-        specifier: workspace:*
-        version: link:../config-eslint
-      eslint:
-        specifier: 8.57.1
-        version: 8.57.1
-      tsup:
-        specifier: 8.3.5
-        version: 8.3.5(jiti@1.21.6)(postcss@8.4.49)(typescript@5.6.3)(yaml@2.6.1)
-      typescript:
-        specifier: 5.6.3
-        version: 5.6.3
-
-  packages/config-typescript: {}
-
   packages/hooks:
     dependencies:
       '@types/react':
@@ -354,12 +330,12 @@ importers:
         specifier: 19.0.0-rc-7ac8e612-20241113
         version: 19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113)
     devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../config-eslint
+        version: link:../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@testing-library/dom':
         specifier: 10.4.0
         version: 10.4.0
@@ -418,12 +394,12 @@ importers:
         specifier: 19.0.0-rc-7ac8e612-20241113
         version: 19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113)
     devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../../config-eslint
+        version: link:../../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
       eslint:
         specifier: 8.57.1
         version: 8.57.1
@@ -455,12 +431,12 @@ importers:
         specifier: 19.0.0-rc-7ac8e612-20241113
         version: 19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113)
     devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../../config-eslint
+        version: link:../../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
       '@testing-library/dom':
         specifier: 10.4.0
         version: 10.4.0
@@ -516,12 +492,12 @@ importers:
         specifier: 19.0.0-rc-7ac8e612-20241113
         version: 19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113)
     devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../../config-eslint
+        version: link:../../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
       eslint:
         specifier: 8.57.1
         version: 8.57.1
@@ -562,12 +538,34 @@ importers:
         specifier: 19.0.0-rc-7ac8e612-20241113
         version: 19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113)
     devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../../config-eslint
+        version: link:../../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../../typescript-config
+      eslint:
+        specifier: 8.57.1
+        version: 8.57.1
+      tsup:
+        specifier: 8.3.5
+        version: 8.3.5(jiti@1.21.6)(postcss@8.4.49)(typescript@5.6.3)(yaml@2.6.1)
+      typescript:
+        specifier: 5.6.3
+        version: 5.6.3
+
+  packages/tailwind-config:
+    dependencies:
+      tailwindcss:
+        specifier: ^3
+        version: 3.4.15(ts-node@10.9.2(@types/node@22.9.1)(typescript@5.6.3))
+    devDependencies:
+      '@codefast/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       eslint:
         specifier: 8.57.1
         version: 8.57.1
@@ -593,12 +591,12 @@ importers:
         specifier: 19.0.0-rc-7ac8e612-20241113
         version: 19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113)
     devDependencies:
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../config-eslint
+        version: link:../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       esbuild-sass-plugin:
         specifier: 3.3.1
         version: 3.3.1(esbuild@0.24.0)(sass-embedded@1.81.0)
@@ -611,6 +609,8 @@ importers:
       typescript:
         specifier: 5.6.3
         version: 5.6.3
+
+  packages/typescript-config: {}
 
   packages/ui:
     dependencies:
@@ -786,15 +786,15 @@ importers:
         specifier: 1.1.1
         version: 1.1.1(react-dom@19.0.0-rc-7ac8e612-20241113(react@19.0.0-rc-7ac8e612-20241113))(react@19.0.0-rc-7ac8e612-20241113)(types-react-dom@19.0.0-rc.1)(types-react@19.0.0-rc.1)
     devDependencies:
-      '@codefast/config-tailwind':
-        specifier: workspace:*
-        version: link:../config-tailwind
-      '@codefast/config-typescript':
-        specifier: workspace:*
-        version: link:../config-typescript
       '@codefast/eslint-config':
         specifier: workspace:*
-        version: link:../config-eslint
+        version: link:../eslint-config
+      '@codefast/tailwind-config':
+        specifier: workspace:*
+        version: link:../tailwind-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       '@types/node':
         specifier: 20.17.6
         version: 20.17.6
@@ -12330,7 +12330,7 @@ snapshots:
     dependencies:
       ansi-align: 3.0.1
       camelcase: 7.0.1
-      chalk: 5.0.1
+      chalk: 5.3.0
       cli-boxes: 3.0.0
       string-width: 5.1.2
       type-fest: 2.19.0
@@ -14825,7 +14825,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.9.1
+      '@types/node': 20.17.6
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
