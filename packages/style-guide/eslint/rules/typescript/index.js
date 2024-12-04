@@ -5,7 +5,12 @@ export const config = {
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/consistent-type-exports/
      */
-    '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: true }],
+    '@typescript-eslint/consistent-type-exports': [
+      'warn',
+      {
+        fixMixedExportsWithInlineTypeSpecifier: true,
+      },
+    ],
 
     /**
      * Require consistent usage of type imports.
@@ -26,7 +31,12 @@ export const config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/explicit-function-return-type/
      */
-    '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
+    '@typescript-eslint/explicit-function-return-type': [
+      'warn',
+      {
+        allowExpressions: true,
+      },
+    ],
 
     /**
      * Require using function property types in method signatures.
@@ -88,7 +98,12 @@ export const config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/require-array-sort-compare/
      */
-    '@typescript-eslint/require-array-sort-compare': ['error', { ignoreStringArrays: true }],
+    '@typescript-eslint/require-array-sort-compare': [
+      'error',
+      {
+        ignoreStringArrays: true,
+      },
+    ],
 
     /**
      * Require exhaustive checks when using union types in switch statements.
