@@ -1,4 +1,4 @@
-export default {
+const config = {
   rules: {
     /**
      * Disallow duplicate setup and teardown hooks.
@@ -15,3 +15,5 @@ export default {
     'jest/prefer-lowercase-title': 'warn',
   },
 };
+
+export { config as default };

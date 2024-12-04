@@ -1,8 +1,10 @@
 import vitest from '@vitest/eslint-plugin';
-import vitestRules from '../../rules/vitest';
+import vitestRules from '../../rules/vitest.js';
+import { UNIT_TEST_FILES } from '../../lib/constants.js';
 
 /** @type {import('eslint').Linter.Config} */
-export default {
+const config = {
+  files: UNIT_TEST_FILES,
   plugins: {
     vitest,
   },
@@ -11,3 +13,5 @@ export default {
     ...vitestRules.rules,
   },
 };
+
+export { config as default };

@@ -1,4 +1,4 @@
-export default {
+const config = {
   rules: {
     /**
      * Disallow useless computed property keys.
@@ -72,3 +72,5 @@ export default {
     'symbol-description': 'error',
   },
 };
+
+export { config as default };

@@ -1,4 +1,4 @@
-export default {
+const config = {
   rules: {
     /**
      * Disallow labels that share a name with a variable.
@@ -30,3 +30,5 @@ export default {
     ],
   },
 };
+
+export { config as default };

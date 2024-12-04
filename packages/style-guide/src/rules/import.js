@@ -1,4 +1,4 @@
-export default {
+const config = {
   rules: {
     /**
      * Disallow non-import statements appearing before import statements.
@@ -93,3 +93,5 @@ export default {
     ],
   },
 };
+
+export { config as default };
