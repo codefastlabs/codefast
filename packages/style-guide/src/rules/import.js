@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Disallow non-import statements appearing before import statements.
@@ -88,10 +88,8 @@ const config = {
           'sibling', // Relative sibling
           'index', // Relative index
         ],
-        'newlines-between': 'never',
+        'newlines-between': 'always',
       },
     ],
   },
 };
-
-export { config as default };

@@ -3,11 +3,12 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 import prettier from 'eslint-config-prettier';
-import reactRules from '../../rules/react.js';
-import jsxA11yRules from '../../rules/jsx-a11y.js';
+
+import { config as reactRules } from '../../rules/react.js';
+import { config as jsxA11yRules } from '../../rules/jsx-a11y.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-export default [
+export const config = [
   // Base React Configurations
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'],

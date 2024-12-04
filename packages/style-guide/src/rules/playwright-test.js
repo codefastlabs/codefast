@@ -27,7 +27,7 @@ const recommended = {
   'playwright/valid-title': 'error',
 };
 
-const config = {
+export const config = {
   rules: {
     ...recommended,
 
@@ -48,5 +48,3 @@ const config = {
     'playwright/prefer-to-have-length': 'warn',
   },
 };
-
-export { config as default };

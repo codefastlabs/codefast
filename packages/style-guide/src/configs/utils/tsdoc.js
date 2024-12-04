@@ -1,8 +1,9 @@
 import tsdoc from 'eslint-plugin-tsdoc';
-import tsdocRules from '../../rules/tsdoc.js';
+
+import { config as tsdocRules } from '../../rules/tsdoc.js';
 
 /** @type {import('eslint').Linter.Config} */
-const config = {
+export const config = {
   plugins: {
     tsdoc,
   },
@@ -10,5 +11,3 @@ const config = {
     ...tsdocRules.rules,
   },
 };
-
-export { config as default };

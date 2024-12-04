@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Disallow duplicate setup and teardown hooks.
@@ -15,5 +15,3 @@ const config = {
     'vitest/prefer-lowercase-title': 'warn',
   },
 };
-
-export { config as default };
