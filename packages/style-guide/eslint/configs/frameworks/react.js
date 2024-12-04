@@ -39,12 +39,4 @@ export const config = [
       ...jsxA11yRules.rules,
     },
   },
-  {
-    settings: {
-      react: {
-        // Automatically detect the React version
-        version: 'detect',
-      },
-    },
-  },
 ];

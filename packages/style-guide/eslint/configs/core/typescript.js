@@ -30,12 +30,4 @@ export const config = [
       ...typescriptImportRules.rules,
     },
   },
-  {
-    settings: {
-      'import/resolver': {
-        // Resolve imports using TypeScript files
-        typescript: true,
-      },
-    },
-  },
 ];
