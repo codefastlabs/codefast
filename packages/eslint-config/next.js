@@ -43,7 +43,10 @@ module.exports = {
       },
     ],
 
-    /** Warns when JSX components aren't in PascalCase but allows namespaces */
+    /**
+     * Warns when JSX components aren't in PascalCase but allows namespaces
+     * TODO: Remove after upgrading the style guide to my own version.
+     */
     'react/jsx-pascal-case': [
       'warn',
       {
@@ -51,7 +54,10 @@ module.exports = {
       },
     ],
 
-    /** Enforces sorting of JSX props */
+    /**
+     * Enforces sorting of JSX props
+     * TODO: Remove after upgrading the style guide to my own version.
+     */
     'react/jsx-sort-props': [
       'warn',
       {
