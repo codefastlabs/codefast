@@ -94,7 +94,11 @@ const SidebarProvider = forwardRef<SidebarProviderElement, SidebarProviderProps>
 
     // Helper to toggle the sidebar.
     const toggleSidebar = useCallback(() => {
-      isMobile ? setOpenMobile((currentValue) => !currentValue) : setOpen((currentValue) => !currentValue);
+      if (isMobile) {
+        setOpenMobile((currentValue) => !currentValue);
+      } else {
+        setOpen((currentValue) => !currentValue);
+      }
     }, [isMobile, setOpen, setOpenMobile]);
 
     // Adds a keyboard shortcut to toggle the sidebar.
