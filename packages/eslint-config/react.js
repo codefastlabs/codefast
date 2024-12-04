@@ -19,40 +19,71 @@ export const config = [
         projectService: true,
       },
     },
-  },
-  {
     rules: {
+      /**
+       * Disables the rule that enforces using nullish coalescing operator
+       */
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+
+      /**
+       * Warns when non-string types are used in template expressions but allows numbers
+       */
+      '@typescript-eslint/restrict-template-expressions': [
+        'warn',
+        {
+          allowNumber: true,
+        },
+      ],
+
       /**
        * Disables the rule that disallows default exports
        */
       'import/no-default-export': 'off',
 
       /**
-
-       * Warns when JSX components aren't in PascalCase but allows namespac
-       es
-       * TODO: Remove after upgrading the style guide to my own version.
+       * Enforces consistent blank lines between statements
        */
-      'react/jsx-pascal-case': [
+      'padding-line-between-statements': [
         'warn',
         {
-          allowNamespace: true,
+          blankLine: 'always',
+          next: 'return',
+          prev: '*',
         },
-      ],
-
-      /**
-
-       * Enforces sorting of JSX pro
-       ps
-       * TODO: Remove after upgrading the style guide to my own version.
-       */
-      'react/jsx-sort-props': [
-        'warn',
         {
-          callbacksLast: true,
-          ignoreCase: true,
-          reservedFirst: true,
-          shorthandFirst: true,
+          blankLine: 'always',
+          next: '*',
+          prev: ['const', 'let', 'var'],
+        },
+        {
+          blankLine: 'any',
+          next: ['const', 'let', 'var'],
+          prev: ['const', 'let', 'var'],
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: 'block-like',
+        },
+        {
+          blankLine: 'always',
+          next: 'block-like',
+          prev: '*',
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: 'directive',
+        },
+        {
+          blankLine: 'any',
+          next: 'directive',
+          prev: 'directive',
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: ['case', 'default'],
         },
       ],
 
