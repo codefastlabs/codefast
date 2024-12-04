@@ -21,11 +21,10 @@ import {
   type GlobalError,
   useFormState,
 } from 'react-hook-form';
+import type * as LabelPrimitive from '@radix-ui/react-label';
 
 import { Label } from '@/components/label';
 import { cn } from '@/lib/utils';
-
-import type * as LabelPrimitive from '@radix-ui/react-label';
 
 /* -----------------------------------------------------------------------------
  * Component: Form

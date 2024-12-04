@@ -42,6 +42,10 @@ function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
       return <ChevronRightIcon className="size-4" {...props} />;
     }
 
+    case undefined: {
+      throw new Error('Not implemented yet: undefined case');
+    }
+
     default:
       return <DotIcon className="size-4" {...props} />;
   }
