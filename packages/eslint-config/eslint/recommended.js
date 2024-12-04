@@ -16,7 +16,10 @@ module.exports = {
     /** Disables the rule that prevents unbound methods */
     '@typescript-eslint/unbound-method': 'off',
 
-    /** Enforces consistent use of curly braces for all control statements */
+    /**
+     * Enforces consistent use of curly braces for all control statements
+     * TODO: Remove after upgrading the style guide to my own version.
+     */
     curly: ['warn', 'all'],
 
     /** Disables the rule that disallows default exports */
