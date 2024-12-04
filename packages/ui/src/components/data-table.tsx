@@ -12,6 +12,7 @@ import {
   Settings2Icon,
 } from 'lucide-react';
 import { type HTMLAttributes, type JSX } from 'react';
+import type * as ReactTable from '@tanstack/react-table';
 
 import { Button } from '@/components/button';
 import {
@@ -26,8 +27,6 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
-
-import type * as ReactTable from '@tanstack/react-table';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions
@@ -237,6 +236,10 @@ function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): JSX
 
     case 'asc': {
       return <ChevronUpIcon />;
+    }
+
+    case false: {
+      throw new Error('Not implemented yet: false case');
     }
 
     default:
