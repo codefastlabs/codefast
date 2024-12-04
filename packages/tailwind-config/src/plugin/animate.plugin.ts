@@ -87,8 +87,7 @@ const animate = plugin(
     // Delay
     matchUtilities(
       {
-        'animate-delay': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'animate-delay': (value: string) => ({
           animationDelay: value,
         }),
       },
@@ -100,8 +99,7 @@ const animate = plugin(
     // Direction
     matchUtilities(
       {
-        'animate-direction': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'animate-direction': (value: string) => ({
           animationDirection: value,
         }),
       },
@@ -113,8 +111,7 @@ const animate = plugin(
     // Duration
     matchUtilities(
       {
-        'animate-duration': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'animate-duration': (value: string) => ({
           animationDuration: value,
         }),
       },
@@ -126,8 +123,7 @@ const animate = plugin(
     // Fill mode
     matchUtilities(
       {
-        'animate-fill-mode': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'animate-fill-mode': (value: string) => ({
           animationFillMode: value,
         }),
       },
@@ -139,12 +135,10 @@ const animate = plugin(
     // Opacity
     matchUtilities(
       {
-        'fade-in': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'fade-in': (value: string) => ({
           '--animate-in-opacity': value,
         }),
-        'fade-out': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'fade-out': (value: string) => ({
           '--animate-out-opacity': value,
         }),
       },
@@ -156,8 +150,7 @@ const animate = plugin(
     // Repeat
     matchUtilities(
       {
-        'animate-repeat': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'animate-repeat': (value: string) => ({
           animationIterationCount: value,
         }),
       },
@@ -169,12 +162,10 @@ const animate = plugin(
     // Rotate
     matchUtilities(
       {
-        'spin-in': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'spin-in': (value: string) => ({
           '--animate-in-rotate': value,
         }),
-        'spin-out': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'spin-out': (value: string) => ({
           '--animate-out-rotate': value,
         }),
       },
@@ -186,12 +177,10 @@ const animate = plugin(
     // Scale – Zoom
     matchUtilities(
       {
-        'zoom-in': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'zoom-in': (value: string) => ({
           '--animate-in-scale': value,
         }),
-        'zoom-out': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'zoom-out': (value: string) => ({
           '--animate-out-scale': value,
         }),
       },
@@ -203,8 +192,7 @@ const animate = plugin(
     // Timing function
     matchUtilities(
       {
-        'animate-ease': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'animate-ease': (value: string) => ({
           animationTimingFunction: value,
         }),
       },
@@ -216,39 +204,35 @@ const animate = plugin(
     // Translate - Slide
     matchUtilities(
       {
-        'slide-in-from-top': (value) => ({
+        'slide-in-from-top': (value: string) => ({
           '--animate-in-translate-y': `-${value}`,
         }),
 
-        'slide-in-from-bottom': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'slide-in-from-bottom': (value: string) => ({
           '--animate-in-translate-y': value,
         }),
 
-        'slide-in-from-left': (value) => ({
+        'slide-in-from-left': (value: string) => ({
           '--animate-in-translate-x': `-${value}`,
         }),
 
-        'slide-in-from-right': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'slide-in-from-right': (value: string) => ({
           '--animate-in-translate-x': value,
         }),
 
-        'slide-out-to-top': (value) => ({
+        'slide-out-to-top': (value: string) => ({
           '--animate-out-translate-y': `-${value}`,
         }),
 
-        'slide-out-to-bottom': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'slide-out-to-bottom': (value: string) => ({
           '--animate-out-translate-y': value,
         }),
 
-        'slide-out-to-left': (value) => ({
+        'slide-out-to-left': (value: string) => ({
           '--animate-out-translate-x': `-${value}`,
         }),
 
-        'slide-out-to-right': (value) => ({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- safe
+        'slide-out-to-right': (value: string) => ({
           '--animate-out-translate-x': value,
         }),
       },
