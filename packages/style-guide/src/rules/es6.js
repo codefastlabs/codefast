@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     /**
      * Disallow useless computed property keys.

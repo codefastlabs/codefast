@@ -9,7 +9,7 @@ const disabledRules = {
   'import/no-unresolved': 'off',
 };
 
-module.exports = {
+export default {
   rules: {
     ...disabledRules,
   },

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     /**
      * Require consistent filename case for all linted files.

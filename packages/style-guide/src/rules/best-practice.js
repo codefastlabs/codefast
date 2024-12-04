@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     /**
      * Require return statements in array methods callbacks.
