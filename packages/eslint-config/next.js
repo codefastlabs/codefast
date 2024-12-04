@@ -2,41 +2,23 @@ import { config as codefast } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 
-const project = resolve(process.cwd(), 'tsconfig.json');
-
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
   ...codefast.configs.recommended,
-  /* {
-    extends: [
-      require.resolve('@vercel/style-guide/eslint/node'),
-      require.resolve('@vercel/style-guide/eslint/typescript'),
-      require.resolve('@vercel/style-guide/eslint/browser'),
-      require.resolve('@vercel/style-guide/eslint/react'),
-      require.resolve('@vercel/style-guide/eslint/next'),
-      require.resolve('./eslint/recommended'),
-    ],
-    globals: {
-      JSX: true,
-      NodeJS: true,
-      React: true,
-      jest: true,
-    },
-    ignorePatterns: ['node_modules/', '.next/', '*.js', '*.mjs', '*.cjs'],
-    overrides: [
-      {
-        extends: [require.resolve('@vercel/style-guide/eslint/jest-react')],
-        files: ['**!/__tests__/!**!/!*.[jt]s?(x)', '**!/?(*.)+(test).[jt]s?(x)'],
+  ...codefast.configs.typescript,
+  ...codefast.configs.react,
+  ...codefast.configs.next,
+  {
+    ignores: ['.next/**', 'coverage/**'],
+  },
+  {
+    languageOptions: {
+      parserOptions: {
+        project: resolve(process.cwd(), 'tsconfig.json'),
+        projectService: true,
       },
-      {
-        extends: [require.resolve('@vercel/style-guide/eslint/playwright-test')],
-        files: ['**!/e2e/!**!/!*.[jt]s?(x)', '**!/?(*.)+(spec|e2e).[jt]s?(x)'],
-      },
-    ],
-    parserOptions: {
-      project,
     },
-  }, */
+  },
   {
     rules: {
       /** Warns when Promises are used inappropriately */
@@ -86,15 +68,6 @@ export const config = [
           ignore: ['vaul-drawer-wrapper'],
         },
       ],
-    },
-  },
-  {
-    settings: {
-      'import/resolver': {
-        typescript: {
-          project,
-        },
-      },
     },
   },
 ];
