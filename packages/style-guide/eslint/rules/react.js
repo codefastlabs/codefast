@@ -100,6 +100,23 @@ export const config = {
     ],
 
     /**
+     * Request to sort attributes in JSX.
+     * These settings ensure that callbacks are processed last, are case-insensitive, prioritize reserved keywords, and
+     * prioritize abbreviations first.
+     *
+     * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-sort-props.md
+     */
+    'react/jsx-sort-props': [
+      'warn',
+      {
+        callbacksLast: true,
+        ignoreCase: true,
+        reservedFirst: true,
+        shorthandFirst: true,
+      },
+    ],
+
+    /**
      * Disallow usage of Array index in keys.
      *
      * 🚫 Not fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md
@@ -120,21 +137,5 @@ export const config = {
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md
      */
     'react/self-closing-comp': 'warn',
-
-    /**
-     * Request to sort attributes in JSX.
-     * These settings ensure that callbacks are processed last, are case-insensitive, prioritize reserved keywords, and prioritize abbreviations first.
-     *
-     * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-sort-props.md
-     */
-    'react/jsx-sort-props': [
-      'warn',
-      {
-        callbacksLast: true,
-        ignoreCase: true,
-        reservedFirst: true,
-        shorthandFirst: true,
-      },
-    ],
   },
 };
