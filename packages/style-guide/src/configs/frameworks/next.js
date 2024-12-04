@@ -1,6 +1,6 @@
 import next from '@next/eslint-plugin-next';
-import babelOptions from '../../lib/babel-options';
-import { JAVASCRIPT_FILES } from '../../lib/constants';
+import babelOptions from '../../lib/babel-options.js';
+import { JAVASCRIPT_FILES } from '../../lib/constants.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [

@@ -3,9 +3,8 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 import prettier from 'eslint-config-prettier';
-import reactRules from '../../rules/react';
-import jsxA11yRules from '../../rules/jsx-a11y';
-import globals from 'globals';
+import reactRules from '../../rules/react.js';
+import jsxA11yRules from '../../rules/jsx-a11y.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -21,17 +20,6 @@ export default [
 
   // Prettier Configuration for Code Style Enforcement
   prettier,
-
-  // Extend Language Options with Globals
-  {
-    languageOptions: {
-      ...react.configs.flat.recommended.languageOptions,
-      globals: {
-        ...globals.serviceworker,
-        ...globals.browser,
-      },
-    },
-  },
 
   // React Hooks Configuration
   {

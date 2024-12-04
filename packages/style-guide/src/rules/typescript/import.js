@@ -9,8 +9,10 @@ const disabledRules = {
   'import/no-unresolved': 'off',
 };
 
-export default {
+const config = {
   rules: {
     ...disabledRules,
   },
 };
+
+export { config as default };

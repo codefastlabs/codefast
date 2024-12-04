@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 
-export default {
+const config = {
   presets: (() => {
     try {
       require.resolve('next/babel');
@@ -12,3 +12,5 @@ export default {
     }
   })(),
 };
+
+export { config as default };

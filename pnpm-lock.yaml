@@ -556,6 +556,12 @@ importers:
 
   packages/style-guide:
     dependencies:
+      '@babel/core':
+        specifier: 7.26.0
+        version: 7.26.0
+      '@babel/eslint-parser':
+        specifier: 7.25.9
+        version: 7.25.9(@babel/core@7.26.0)(eslint@8.57.1)
       '@eslint-community/eslint-plugin-eslint-comments':
         specifier: 4.4.1
         version: 4.4.1(eslint@8.57.1)
@@ -610,9 +616,9 @@ importers:
       eslint-plugin-unicorn:
         specifier: 56.0.1
         version: 56.0.1(eslint@8.57.1)
-      globals:
-        specifier: 15.13.0
-        version: 15.13.0
+      prettier:
+        specifier: ^3
+        version: 3.3.3
       typescript-eslint:
         specifier: 8.17.0
         version: 8.17.0(eslint@8.57.1)(typescript@5.6.3)
@@ -623,6 +629,9 @@ importers:
       eslint:
         specifier: 8.57.1
         version: 8.57.1
+      globals:
+        specifier: 15.13.0
+        version: 15.13.0
       tsup:
         specifier: 8.3.5
         version: 8.3.5(jiti@1.21.6)(postcss@8.4.49)(typescript@5.6.3)(yaml@2.6.1)

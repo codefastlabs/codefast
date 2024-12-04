@@ -1,12 +1,12 @@
 import tseslint from 'typescript-eslint';
 import importPlugin from 'eslint-plugin-import';
 import prettier from 'eslint-config-prettier';
-import requirePackage from '../../lib/require-package';
-import { TYPESCRIPT_FILES } from '../../lib/constants';
-import tsdoc from '../utils/tsdoc';
-import typescriptRules from '../../rules/typescript';
-import typescriptExtensionRules from '../../rules/typescript/extension';
-import typescriptImportRules from '../../rules/typescript/import';
+import requirePackage from '../../lib/require-package.js';
+import { TYPESCRIPT_FILES } from '../../lib/constants.js';
+import tsdoc from '../utils/tsdoc.js';
+import typescriptRules from '../../rules/typescript/index.js';
+import typescriptExtensionRules from '../../rules/typescript/extension.js';
+import typescriptImportRules from '../../rules/typescript/import.js';
 
 // Ensure the package 'typescript' is required before use
 requirePackage('typescript', 'typescript');
