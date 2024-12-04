@@ -27,6 +27,9 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/storybook/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-config/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-config/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/style-guide/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
