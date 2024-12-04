@@ -1,11 +1,13 @@
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
-import commentsRules from '../../rules/comments';
+import commentsRules from '../../rules/comments.js';
 
 /** @type {import('eslint').Linter.Config} */
-export default {
+const config = {
   ...comments.recommended,
   rules: {
     ...comments.recommended.rules,
     ...commentsRules.rules,
   },
 };
+
+export { config as default };

@@ -1,4 +1,4 @@
-export default {
+const config = {
   rules: {
     /**
      * Require camel case names.
@@ -79,3 +79,5 @@ export default {
     'prefer-object-spread': 'warn',
   },
 };
+
+export { config as default };
