@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     /**
      * Disallow labels that share a name with a variable.

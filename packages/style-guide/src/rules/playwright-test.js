@@ -27,7 +27,7 @@ const recommended = {
   'playwright/valid-title': 'error',
 };
 
-module.exports = {
+export default {
   rules: {
     ...recommended,
 
