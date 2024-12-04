@@ -41,9 +41,7 @@ interface ThemeConfig {
 
 type ChartConfigItem = IconLabelConfig & (ColorConfig | ThemeConfig);
 
-type ChartConfig = {
-  [k in string]: ChartConfigItem | undefined;
-};
+type ChartConfig = Record<string, ChartConfigItem | undefined>;
 
 interface ChartContextProps {
   config: ChartConfig;
