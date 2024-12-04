@@ -1,5 +1,6 @@
-const { resolve } = require('node:path');
 import { config as codefast } from '@codefast/style-guide';
+
+import { resolve } from 'node:path';
 
 const project = resolve(process.cwd(), 'tsconfig.json');
 
