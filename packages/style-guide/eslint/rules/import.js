@@ -41,7 +41,12 @@ export const config = {
      * 🚫 Not fixable -
      * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-extraneous-dependencies.md
      */
-    'import/no-extraneous-dependencies': ['error', { includeTypes: true }],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        includeTypes: true,
+      },
+    ],
 
     /**
      * Disallow mutable exports.
