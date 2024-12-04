@@ -9,4 +9,9 @@ export const config = {
     ...importPlugin.flatConfigs.recommended.rules,
     ...importRules.rules,
   },
+  settings: {
+    'import/resolver': {
+      typescript: true,
+    },
+  },
 };
