@@ -34,7 +34,7 @@
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "esbuild-sass-plugin": "3.3.1",
-    "eslint": "8.57.1",
+    "eslint": "9.16.0",
     "tsup": "8.3.5",
     "typescript": "5.6.3"
   },

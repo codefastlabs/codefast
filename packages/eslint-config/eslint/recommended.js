@@ -1,6 +1,5 @@
-/** @type { import("eslint").Linter.Config } */
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
-  plugins: ['only-warn', 'typescript-sort-keys'],
   rules: {
     /** Disables the rule that enforces using nullish coalescing operator */
     '@typescript-eslint/prefer-nullish-coalescing': 'off',

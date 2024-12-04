@@ -12,22 +12,23 @@
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "sideEffects": false,
-  "files": [
-    "eslint",
-    "library.js",
-    "next.js",
-    "react.js"
-  ],
+  "type": "module",
+  "exports": {
+    "./library": "./library.js",
+    "./next": "./next.js",
+    "./react": "./react.js"
+  },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "8.15.0",
-    "@typescript-eslint/parser": "8.15.0",
-    "@vercel/style-guide": "6.0.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-only-warn": "1.1.0",
-    "eslint-plugin-typescript-sort-keys": "3.3.0"
+    "@codefast/style-guide": "workspace:*",
+    "globals": "15.13.0"
   },
   "peerDependencies": {
-    "eslint": "^8"
+    "eslint": "^9"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"
