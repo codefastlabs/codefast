@@ -1,8 +1,6 @@
 import eslint from '@eslint/js';
 import prettier from 'eslint-config-prettier';
-import babelParser from '@babel/eslint-parser';
 
-import { ECMA_VERSION, JAVASCRIPT_FILES } from '../lib/constants.js';
 import { config as bestPracticeRules } from '../rules/best-practice.js';
 import { config as es6Rules } from '../rules/es6.js';
 import { config as possibleErrorsRules } from '../rules/possible-errors.js';
@@ -31,24 +29,11 @@ export const config = [
       ...stylisticRules.rules,
       ...variablesRules.rules,
     },
+  },
+  {
     settings: {
       'import/resolver': {
         typescript: true,
-      },
-    },
-  },
-  {
-    files: JAVASCRIPT_FILES,
-    ignores: ['!.*.js'],
-    linterOptions: {
-      reportUnusedDisableDirectives: 'warn',
-    },
-    languageOptions: {
-      ecmaVersion: ECMA_VERSION,
-      sourceType: 'module',
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
       },
     },
   },

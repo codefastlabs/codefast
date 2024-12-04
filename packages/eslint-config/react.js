@@ -2,44 +2,24 @@ import { config as codefast } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 
-const project = resolve(process.cwd(), 'tsconfig.json');
-
 /**
  * @type {import('eslint').Linter.Config[]}
  */
 export const config = [
   ...codefast.configs.recommended,
+  ...codefast.configs.typescript,
   ...codefast.configs.react,
   {
-    ignores: ['dist/', 'coverage/'],
+    ignores: ['dist/**', 'coverage/**'],
   },
-  /* {
-    extends: [
-      require.resolve('@vercel/style-guide/eslint/browser'),
-      require.resolve('@vercel/style-guide/eslint/typescript'),
-      require.resolve('@vercel/style-guide/eslint/react'),
-      require.resolve('./eslint/recommended'),
-    ],
-    globals: {
-      JSX: true,
-      NodeJS: true,
-      jest: true,
-    },
-    ignorePatterns: ['node_modules/', 'dist/', '*.js', '*.mjs', '*.cjs'],
-    overrides: [
-      {
-        extends: [require.resolve('@vercel/style-guide/eslint/jest-react')],
-        files: ['**!/__tests__/!**!/!*.[jt]s?(x)', '**!/?(*.)+(test).[jt]s?(x)'],
+  {
+    languageOptions: {
+      parserOptions: {
+        project: resolve(process.cwd(), 'tsconfig.json'),
+        projectService: true,
       },
-      {
-        extends: [require.resolve('@vercel/style-guide/eslint/playwright-test')],
-        files: ['**!/e2e/!**!/!*.[jt]s?(x)', '**!/?(*.)+(spec|e2e).[jt]s?(x)'],
-      },
-    ],
-    parserOptions: {
-      project,
     },
-  }, */
+  },
   {
     rules: {
       /**
@@ -85,15 +65,6 @@ export const config = [
           ignore: ['cmdk-input-wrapper'],
         },
       ],
-    },
-  },
-  {
-    settings: {
-      'import/resolver': {
-        typescript: {
-          project,
-        },
-      },
     },
   },
 ];
