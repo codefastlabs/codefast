@@ -30,11 +30,4 @@ export const config = [
       ...variablesRules.rules,
     },
   },
-  {
-    settings: {
-      'import/resolver': {
-        typescript: true,
-      },
-    },
-  },
 ];
