@@ -2,7 +2,6 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => ({
   clean: !options.watch,
-  dts: true,
   entry: ['src/**/*.js*'],
   format: ['cjs', 'esm'],
   minify: !options.watch,
