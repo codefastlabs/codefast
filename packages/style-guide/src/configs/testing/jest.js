@@ -1,9 +1,10 @@
 import jest from 'eslint-plugin-jest';
+
 import { UNIT_TEST_FILES } from '../../lib/constants.js';
-import jestRules from '../../rules/jest.js';
+import { config as jestRules } from '../../rules/jest.js';
 
 /** @type {import('eslint').Linter.Config} */
-const config = {
+export const config = {
   ...jest.configs['flat/recommended'],
   files: UNIT_TEST_FILES,
   rules: {
@@ -11,5 +12,3 @@ const config = {
     ...jestRules.rules,
   },
 };
-
-export { config as default };

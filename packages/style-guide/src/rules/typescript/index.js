@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Require consistent usage of type exports.
@@ -100,5 +100,3 @@ const config = {
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
   },
 };
-
-export { config as default };

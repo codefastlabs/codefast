@@ -1,9 +1,10 @@
 import next from '@next/eslint-plugin-next';
-import babelOptions from '../../lib/babel-options.js';
+
+import { config as babelOptions } from '../../lib/babel-options.js';
 import { JAVASCRIPT_FILES } from '../../lib/constants.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-export default [
+export const config = [
   {
     plugins: {
       '@next/next': next,

@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Disallow the use of console.
@@ -37,5 +37,3 @@ const config = {
     'no-unreachable-loop': 'error',
   },
 };
-
-export { config as default };
