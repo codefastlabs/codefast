@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Require consistent filename case for all linted files.
@@ -20,5 +20,3 @@ const config = {
     'unicorn/prefer-node-protocol': 'warn',
   },
 };
-
-export { config as default };

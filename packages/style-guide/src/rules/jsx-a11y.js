@@ -7,10 +7,8 @@ const disabledRules = {
   'jsx-a11y/no-onchange': 'off',
 };
 
-const config = {
+export const config = {
   rules: {
     ...disabledRules,
   },
 };
-
-export { config as default };

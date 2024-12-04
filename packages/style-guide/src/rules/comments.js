@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Require comments on ESlint disable directives.
@@ -8,5 +8,3 @@ const config = {
     '@eslint-community/eslint-comments/require-description': 'error',
   },
 };
-
-export { config as default };

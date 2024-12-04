@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Require return statements in array methods callbacks.
@@ -261,5 +261,3 @@ const config = {
     yoda: 'warn',
   },
 };
-
-export { config as default };

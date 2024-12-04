@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   rules: {
     /**
      * Require TSDoc comments conform to the TSDoc specification.
@@ -8,5 +8,3 @@ const config = {
     'tsdoc/syntax': 'error',
   },
 };
-
-export { config as default };

@@ -1,9 +1,13 @@
 import globals from 'globals';
-import flat from './src/index.js';
+
+import { config } from './src/index.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-const config = [
-  ...flat.configs.recommended,
+export default [
+  ...config.configs.recommended,
+  {
+    ignores: ['dist/', '.turbo/', 'node_modules/'],
+  },
   {
     languageOptions: {
       globals: {
@@ -24,5 +28,3 @@ const config = [
     },
   },
 ];
-
-export { config as default };

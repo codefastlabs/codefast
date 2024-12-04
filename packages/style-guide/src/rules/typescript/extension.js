@@ -1,9 +1,9 @@
-import variablesRules from '../variables.js';
+import { config as variablesRules } from '../variables.js';
 
 // These share identical configuration options, so we want to keep them in sync.
 const noUnusedVarsConfig = variablesRules.rules['no-unused-vars'];
 
-const config = {
+export const config = {
   rules: {
     /**
      * Require default parameters to be last.
@@ -42,5 +42,3 @@ const config = {
     '@typescript-eslint/no-useless-constructor': 'error',
   },
 };
-
-export { config as default };

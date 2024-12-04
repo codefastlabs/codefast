@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
-import pkgJson from '../../package.json' assert { type: 'json' };
+
+import packageJson from '../../package.json' with { type: 'json' };
 
 const require = createRequire(import.meta.url);
 
@@ -25,7 +26,7 @@ function readPackageManager() {
  * @param {string} configName
  * @param {string} packageName
  */
-export default function checkPeerDependency(configName, packageName) {
+export function checkPeerDependency(configName, packageName) {
   try {
     require.resolve(packageName);
   } catch {
@@ -35,7 +36,7 @@ export default function checkPeerDependency(configName, packageName) {
     log(`The \`${configName}\` config requires an optional peer dependency, which has not been installed.`);
     log();
     log('To install it, run:');
-    log(`- ${packageManager} ${command} ${packageName}@${pkgJson.peerDependencies[packageName]}`);
+    log(`- ${packageManager} ${command} ${packageName}@${packageJson.peerDependencies[packageName]}`);
 
     process.exit(1);
   }
