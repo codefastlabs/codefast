@@ -1,13 +1,10 @@
 import globals from 'globals';
 
-import { config } from './src/index.js';
+import { config } from './eslint/index.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   ...config.configs.recommended,
-  {
-    ignores: ['dist/', '.turbo/', 'node_modules/'],
-  },
   {
     languageOptions: {
       globals: {
