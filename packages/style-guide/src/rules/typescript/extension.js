@@ -1,7 +1,7 @@
 // These share identical configuration options, so we want to keep them in sync.
 const noUnusedVarsConfig = require('../variables').rules['no-unused-vars'];
 
-module.exports = {
+export default {
   rules: {
     /**
      * Require default parameters to be last.

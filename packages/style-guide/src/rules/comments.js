@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     /**
      * Require comments on ESlint disable directives.

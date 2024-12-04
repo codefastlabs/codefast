@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rules: {
     /**
      * Require consistent usage of type exports.
