@@ -70,7 +70,7 @@ const content: ContentType = ({ viewBox }) => {
         <tspan className="fill-foreground text-4xl font-bold" x={viewBox.cx} y={viewBox.cy}>
           {chartData[0].visitors.toLocaleString()}
         </tspan>
-        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
           Visitors
         </tspan>
       </text>

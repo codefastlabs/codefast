@@ -31,7 +31,7 @@ export async function updateAccount(
       },
       ok: true,
     };
-  } catch (error) {
+  } catch {
     return {
       error: {
         message: 'An error occurred while updating the account.',
