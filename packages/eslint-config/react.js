@@ -1,4 +1,4 @@
-import { config as codefast } from '@codefast/style-guide';
+import { jest, jestTypescript, react, recommended, testingLibrary, typescript } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 
@@ -6,13 +6,14 @@ import { resolve } from 'node:path';
  * @type {import('eslint').Linter.Config[]}
  */
 export const config = [
-  ...codefast.configs.recommended,
-  ...codefast.configs.typescript,
-  ...codefast.configs.react,
+  ...recommended,
+  ...typescript,
+  ...react,
   {
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
-    ...codefast.configs.jest,
-    ...codefast.configs['jest-typescript'],
+    ...jest,
+    ...jestTypescript,
+    ...testingLibrary,
   },
   {
     files: ['**/*.d.ts'],
@@ -33,11 +34,15 @@ export const config = [
     rules: {
       /**
        * Disables the rule that enforces using nullish coalescing operator
+       *
+       * https://typescript-eslint.io/rules/prefer-nullish-coalescing/
        */
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
 
       /**
        * Warns when non-string types are used in template expressions but allows numbers
+       *
+       * https://typescript-eslint.io/rules/restrict-template-expressions/
        */
       '@typescript-eslint/restrict-template-expressions': [
         'warn',
@@ -48,11 +53,15 @@ export const config = [
 
       /**
        * Disables the rule that disallows default exports
+       *
+       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
        */
       'import/no-default-export': 'off',
 
       /**
        * Prevents fallthrough in switch statements but allows empty cases
+       *
+       * https://eslint.org/docs/latest/rules/no-fallthrough
        */
       'no-fallthrough': [
         'error',
@@ -63,6 +72,8 @@ export const config = [
 
       /**
        * Enforces consistent blank lines between statements
+       *
+       * https://eslint.org/docs/latest/rules/padding-line-between-statements
        */
       'padding-line-between-statements': [
         'warn',
@@ -110,6 +121,8 @@ export const config = [
 
       /**
        * Warns when using unknown DOM properties but ignores specified custom elements
+       *
+       * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
        */
       'react/no-unknown-property': [
         'warn',
