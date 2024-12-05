@@ -26,10 +26,10 @@ jobs:
         uses: ./.github/setup
 
       - name: Install Packages
-        run: pnpm run build --filter="./packages/*"
+        run: pnpm run build --filter="./packages/**"
 
       - name: Lint Packages
-        run: pnpm run lint --filter="./packages/*"
+        run: pnpm run lint --filter="./packages/**"
 
       - name: Test Packages
-        run: pnpm run test --filter="./packages/*"
+        run: pnpm run test --filter="./packages/**"
