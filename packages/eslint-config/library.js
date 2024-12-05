@@ -19,7 +19,7 @@ export const config = [
     },
   },
   {
-    ignores: ['dist/**', 'coverage/**'],
+    ignores: ['dist', 'coverage'],
   },
   {
     languageOptions: {
