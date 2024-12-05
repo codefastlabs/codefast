@@ -24,7 +24,7 @@ export const config = {
      *
      * 🔧 Fixable - https://eslint.org/docs/rules/curly
      */
-    curly: ['warn', 'all'],
+    curly: 'warn',
 
     /**
      * Require default clauses in switch statements to be last (if used).

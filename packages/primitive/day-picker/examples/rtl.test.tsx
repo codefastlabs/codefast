@@ -25,6 +25,7 @@ describe('rtl component', () => {
   });
 
   test('should render with the "rtl" direction attribute', () => {
+    // eslint-disable-next-line testing-library/no-node-access -- Testing the DOM
     const rootElement = document.querySelector('.rdp-root');
 
     expect(rootElement).toHaveAttribute('dir', 'rtl');
