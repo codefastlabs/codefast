@@ -19,6 +19,12 @@ export const config = [
     },
   },
   {
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    rules: {
+      'tsdoc/syntax': 'off',
+    },
+  },
+  {
     ignores: ['dist', 'coverage'],
   },
   {
