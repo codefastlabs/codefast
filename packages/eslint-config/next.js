@@ -30,6 +30,12 @@ export const config = [
     },
   },
   {
+    files: ['**/?(*.)+(test|spec|e2e).[jt]s?(x)'],
+    rules: {
+      'tsdoc/syntax': 'off',
+    },
+  },
+  {
     ...playwrightTest,
     files: ['**/?(*.)+(e2e).[jt]s?(x)'],
   },
