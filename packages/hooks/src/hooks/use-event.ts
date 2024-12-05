@@ -8,9 +8,13 @@ import { useEffect, useRef } from 'react';
  * @param element - Element to attach the event listener to (default is a
  *   window).
  */
-export function useEvent(eventName: string, handler: (event: Event) => void, element: EventTarget = window): void {
+export function useEvent<T extends Event>(
+  eventName: string,
+  handler: (event: T) => void,
+  element: EventTarget = window,
+): void {
   // Create a ref that stores handler
-  const savedHandler = useRef<(event: Event) => void>(null);
+  const savedHandler = useRef<(event: T) => void>(null);
 
   // Update ref.current value if handler changes.
   useEffect(() => {
@@ -18,7 +22,7 @@ export function useEvent(eventName: string, handler: (event: Event) => void, ele
   }, [handler]);
 
   useEffect(() => {
-    const eventListener = (event: Event): void => {
+    const eventListener = (event: T): void => {
       if (savedHandler.current) {
         savedHandler.current(event);
       }
