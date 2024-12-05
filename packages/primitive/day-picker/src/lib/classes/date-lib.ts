@@ -193,7 +193,6 @@ export class DateLib {
    * @param date - The original date.
    * @returns The end of the week.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- retain definition consistent with date-fns
   endOfWeek: typeof endOfWeek = <DateType extends Date, ResultDate extends Date = DateType>(
     date: DateArg<DateType>,
   ): ResultDate => {
@@ -416,7 +415,6 @@ export class DateLib {
    * @param date - The original date.
    * @returns The start of the week.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- retain definition consistent with date-fns
   startOfWeek: typeof startOfWeek = <DateType extends Date, ResultDate extends Date = DateType>(
     date: DateArg<DateType>,
   ): ResultDate => {
