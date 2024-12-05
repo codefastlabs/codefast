@@ -10,6 +10,7 @@ import {
 } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
+import globals from 'globals';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
@@ -18,14 +19,14 @@ export const config = [
   ...react,
   ...next,
   {
-    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
     ...jest,
     ...jestTypescript,
     ...testingLibrary,
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
   },
   {
-    files: ['**/?(*.)+(e2e).[jt]s?(x)'],
     ...playwrightTest,
+    files: ['**/?(*.)+(e2e).[jt]s?(x)'],
   },
   {
     files: ['**/*.d.ts'],
@@ -39,8 +40,14 @@ export const config = [
   {
     languageOptions: {
       parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
         project: resolve(process.cwd(), 'tsconfig.json'),
         projectService: true,
+      },
+      globals: {
+        ...globals.serviceworker,
       },
     },
   },

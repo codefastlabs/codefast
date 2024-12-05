@@ -1,4 +1,4 @@
-import { recommended, typescript } from '@codefast/style-guide';
+import { jest, jestTypescript, recommended, testingLibrary, typescript } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 
@@ -6,6 +6,12 @@ import { resolve } from 'node:path';
 export const config = [
   ...recommended,
   ...typescript,
+  {
+    ...jest,
+    ...jestTypescript,
+    ...testingLibrary,
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+  },
   {
     ignores: ['dist/**', 'coverage/**'],
   },
