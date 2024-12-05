@@ -145,7 +145,7 @@ const content: (activeIndex: number) => ContentType = (activeIndex) =>
           <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
             {desktopData[activeIndex].desktop.toLocaleString()}
           </tspan>
-          <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
+          <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
             Visitors
           </tspan>
         </text>

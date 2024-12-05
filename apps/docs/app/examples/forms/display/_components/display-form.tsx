@@ -97,9 +97,11 @@ export function DisplayForm(): JSX.Element {
                           <Checkbox
                             checked={field.value.includes(item.id)}
                             onCheckedChange={(checked) => {
-                              checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(field.value.filter((value) => value !== item.id));
+                              if (checked) {
+                                field.onChange([...field.value, item.id]);
+                              } else {
+                                field.onChange(field.value.filter((value) => value !== item.id));
+                              }
                             }}
                           />
                         </FormControl>

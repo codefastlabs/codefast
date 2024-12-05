@@ -42,7 +42,7 @@ export const config = [
       /**
        * Warns when non-string types are used in template expressions but allows numbers
        *
-       * https://typescript-eslint.io/rules/restrict-template-expressions/
+       * 🚫 Not fixable - https://typescript-eslint.io/rules/restrict-template-expressions/
        */
       '@typescript-eslint/restrict-template-expressions': [
         'warn',

@@ -84,7 +84,7 @@ const formatter: Formatter<ValueType, NameType> = (value, name, item, index) => 
       className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
       style={
         {
-          '--color-bg': `var(--color-${name})`,
+          '--color-bg': `var(--color-${name as string})`,
         } as React.CSSProperties
       }
     />

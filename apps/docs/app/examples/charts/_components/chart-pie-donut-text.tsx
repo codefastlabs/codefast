@@ -13,7 +13,6 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import * as React from 'react';
 import { type JSX } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
 import { type ContentType } from 'recharts/types/component/Label';
@@ -96,7 +95,7 @@ const content: ContentType = ({ viewBox }) => {
         <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
           {totalVisitors.toLocaleString()}
         </tspan>
-        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
           Visitors
         </tspan>
       </text>

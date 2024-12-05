@@ -79,10 +79,10 @@ const content: ContentType = ({ viewBox }) => {
   if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
     return (
       <text textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-        <tspan className="fill-foreground text-2xl font-bold" x={viewBox.cx} y={(viewBox.cy || 0) - 16}>
+        <tspan className="fill-foreground text-2xl font-bold" x={viewBox.cx} y={(viewBox.cy ?? 0) - 16}>
           {totalVisitors.toLocaleString()}
         </tspan>
-        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 4}>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 4}>
           Visitors
         </tspan>
       </text>
