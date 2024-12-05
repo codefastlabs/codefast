@@ -1,6 +1,7 @@
 import { jest, jestTypescript, recommended, testingLibrary, typescript } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
+import globals from 'globals';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
@@ -11,6 +12,11 @@ export const config = [
     ...jestTypescript,
     ...testingLibrary,
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
   },
   {
     ignores: ['dist/**', 'coverage/**'],
@@ -20,6 +26,10 @@ export const config = [
       parserOptions: {
         project: resolve(process.cwd(), 'tsconfig.json'),
         projectService: true,
+      },
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
       },
     },
   },
