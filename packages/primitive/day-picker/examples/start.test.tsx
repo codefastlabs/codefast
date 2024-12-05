@@ -78,7 +78,6 @@ describe('start component', () => {
     });
 
     test('does not mark any day as selected', () => {
-      // eslint-disable-next-line testing-library/no-node-access -- ignore
       const allCells = document.querySelectorAll('[aria-selected="true"]');
 
       expect(allCells).toHaveLength(0);

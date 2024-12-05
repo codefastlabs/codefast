@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention -- we use lower case for the enums */
-
 /**
  * The UI elements composing DayPicker.
  * These elements are mapped to {@link Components}, the {@link ClassNames} and the {@link Styles} used by DayPicker.
@@ -135,26 +133,31 @@ export enum DayFlag {
   /**
    * The day is disabled.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   disabled = 'disabled',
 
   /**
    * The day is focused.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   focused = 'focused',
 
   /**
    * The day is hidden.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   hidden = 'hidden',
 
   /**
    * The day is outside the current month.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   outside = 'outside',
 
   /**
    * The day is today.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   today = 'today',
 }
 
@@ -165,20 +168,24 @@ export enum SelectionState {
   /**
    * The day is at the end of a selected range.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   range_end = 'range_end',
 
   /**
    * The day is at the middle of a selected range.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   range_middle = 'range_middle',
 
   /**
    * The day is at the start of a selected range.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   range_start = 'range_start',
 
   /**
    * The day is selected.
    */
+  // eslint-disable-next-line @typescript-eslint/naming-convention -- keep
   selected = 'selected',
 }
