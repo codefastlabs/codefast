@@ -40,7 +40,7 @@ export const config = [
     },
   },
   {
-    ignores: ['.next/**', 'coverage/**'],
+    ignores: ['.next', 'coverage'],
   },
   {
     languageOptions: {
