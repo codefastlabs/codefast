@@ -92,6 +92,8 @@ export const config = {
           'parent', // Relative parent
           'sibling', // Relative sibling
           'index', // Relative index
+          'object', // Object imports
+          'type', // Type imports
         ],
         'newlines-between': 'always',
       },

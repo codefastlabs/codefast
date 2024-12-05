@@ -1,13 +1,38 @@
-import { config as codefast } from '@codefast/style-guide';
+import {
+  jest,
+  jestTypescript,
+  next,
+  playwrightTest,
+  react,
+  recommended,
+  testingLibrary,
+  typescript,
+} from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
-  ...codefast.configs.recommended,
-  ...codefast.configs.typescript,
-  ...codefast.configs.react,
-  ...codefast.configs.next,
+  ...recommended,
+  ...typescript,
+  ...react,
+  ...next,
+  {
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    ...jest,
+    ...jestTypescript,
+    ...testingLibrary,
+  },
+  {
+    files: ['**/?(*.)+(e2e).[jt]s?(x)'],
+    ...playwrightTest,
+  },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
   {
     ignores: ['.next/**', 'coverage/**'],
   },
@@ -21,7 +46,11 @@ export const config = [
   },
   {
     rules: {
-      /** Warns when Promises are used inappropriately */
+      /**
+       * Warns when Promises are used inappropriately
+       *
+       * https://typescript-eslint.io/rules/no-misused-promises/
+       */
       '@typescript-eslint/no-misused-promises': [
         'warn',
         {
@@ -33,35 +62,65 @@ export const config = [
 
       /**
        * Disables the rule that disallows default exports
+       *
+       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
        */
       'import/no-default-export': 'off',
 
       /**
-       * Warns when JSX components aren't in PascalCase but allows namespaces
-       * TODO: Remove after upgrading the style guide to my own version.
+       * Enforces consistent blank lines between statements
+       *
+       * https://eslint.org/docs/latest/rules/padding-line-between-statements
        */
-      'react/jsx-pascal-case': [
+      'padding-line-between-statements': [
         'warn',
         {
-          allowNamespace: true,
+          blankLine: 'always',
+          next: 'return',
+          prev: '*',
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: ['const', 'let', 'var'],
+        },
+        {
+          blankLine: 'any',
+          next: ['const', 'let', 'var'],
+          prev: ['const', 'let', 'var'],
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: 'block-like',
+        },
+        {
+          blankLine: 'always',
+          next: 'block-like',
+          prev: '*',
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: 'directive',
+        },
+        {
+          blankLine: 'any',
+          next: 'directive',
+          prev: 'directive',
+        },
+        {
+          blankLine: 'always',
+          next: '*',
+          prev: ['case', 'default'],
         },
       ],
 
       /**
-       * Enforces sorting of JSX props
-       * TODO: Remove after upgrading the style guide to my own version.
+       * Warns when using unknown DOM properties but ignores specified custom elements
+       *
+       * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
        */
-      'react/jsx-sort-props': [
-        'warn',
-        {
-          callbacksLast: true,
-          ignoreCase: true,
-          reservedFirst: true,
-          shorthandFirst: true,
-        },
-      ],
-
-      /** Warns when using unknown DOM properties but ignores specified custom elements */
       'react/no-unknown-property': [
         'warn',
         {
