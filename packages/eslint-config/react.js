@@ -22,6 +22,12 @@ export const config = [
     },
   },
   {
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    rules: {
+      'tsdoc/syntax': 'off',
+    },
+  },
+  {
     files: ['**/*.d.ts'],
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
