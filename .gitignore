@@ -24,7 +24,6 @@ build
 dist
 .swc/
 
-
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -37,3 +36,6 @@ yarn-error.log*
 # storybook
 storybook-static
 build-storybook.log
+
+# eslint
+.eslintcache
