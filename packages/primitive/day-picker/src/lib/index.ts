@@ -5,5 +5,5 @@ export * from '@/lib/helpers';
 export * from '@/lib/hooks';
 export * from '@/lib/labels';
 export * from '@/lib/locale';
-export * from '@/lib/types';
+export type * from '@/lib/types';
 export * from '@/lib/utils';

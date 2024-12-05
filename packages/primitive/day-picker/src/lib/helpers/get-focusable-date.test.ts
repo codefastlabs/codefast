@@ -61,12 +61,10 @@ testCases.forEach(({ moveBy, moveDir, expectedFn }) => {
 const weekTestCases: {
   expectedFn: (
     date: number | Date,
-    options?:
-      | {
-          locale?: Locale | undefined;
-          weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
-        }
-      | undefined,
+    options?: {
+      locale?: Locale | undefined;
+      weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;
+    },
   ) => Date;
   moveBy: MoveFocusBy;
   moveDir: MoveFocusDir;

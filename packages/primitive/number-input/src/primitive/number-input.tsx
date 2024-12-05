@@ -365,7 +365,12 @@ const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>
         }
 
         event.preventDefault();
-        event.deltaY > 0 ? onIncrement() : onDecrement();
+
+        if (event.deltaY > 0) {
+          onIncrement();
+        } else {
+          onDecrement();
+        }
       };
 
       const inputElement = inputRef.current;

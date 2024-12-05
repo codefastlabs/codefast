@@ -88,7 +88,11 @@ export class Vegas {
   }
 
   public togglePlayPause(): void {
-    this.paused ? this.play() : this.pause();
+    if (this.paused) {
+      this.play();
+    } else {
+      this.pause();
+    }
   }
 
   public isPlaying(): boolean {
@@ -690,7 +694,9 @@ export class Vegas {
           const activeVideo = slide.querySelector('video');
 
           if (activeVideo && transitionDuration) {
-            activeVideo.volume > 0 && this.fadeOutSound(activeVideo, transitionDuration);
+            if (activeVideo.volume > 0) {
+              this.fadeOutSound(activeVideo, transitionDuration);
+            }
           }
         });
         slideElement.style.transition = `all ${transitionDuration}ms`;

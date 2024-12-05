@@ -432,17 +432,13 @@ export type MonthChangeEventHandler = (month: Date) => void;
  *   };
  * ```
  */
-export type ClassNames = {
-  [key in UI | SelectionState | DayFlag]: string;
-};
+export type ClassNames = Record<UI | SelectionState | DayFlag, string>;
 
 /**
  * The CSS styles to use for the {@link UI} elements, the {@link SelectionState}
  * and the {@link DayFlag}.
  */
-export type Styles = {
-  [key in UI | SelectionState | DayFlag]: CSSProperties | undefined;
-};
+export type Styles = Record<UI | SelectionState | DayFlag, CSSProperties | undefined>;
 
 /**
  * Represents the modifiers that match a specific day in the calendar.

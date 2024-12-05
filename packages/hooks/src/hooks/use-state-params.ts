@@ -38,7 +38,11 @@ export function updateBrowserHistory(urlParams: URLSearchParams, method: History
  */
 export function setUrlParams(params: URLSearchParams, newParams: Record<string, UrlParamValue>): void {
   for (const [key, value] of Object.entries(newParams)) {
-    value ? params.set(key, value.toString()) : params.delete(key);
+    if (value) {
+      params.set(key, value.toString());
+    } else {
+      params.delete(key);
+    }
   }
 }
 

@@ -33,8 +33,8 @@ export interface UseFocus {
   setFocused: (day: CalendarDay | undefined) => void;
 }
 
-export function useFocus<T extends DayPickerProps>(
-  props: T,
+export function useFocus(
+  props: DayPickerProps,
   calendar: Calendar,
   getModifiers: (day: CalendarDay) => Modifiers,
   isSelected: (date: Date) => boolean,

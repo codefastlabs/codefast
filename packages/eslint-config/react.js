@@ -10,6 +10,17 @@ export const config = [
   ...codefast.configs.typescript,
   ...codefast.configs.react,
   {
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    ...codefast.configs.jest,
+    ...codefast.configs['jest-typescript'],
+  },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
+  {
     ignores: ['dist/**', 'coverage/**'],
   },
   {
@@ -39,6 +50,16 @@ export const config = [
        * Disables the rule that disallows default exports
        */
       'import/no-default-export': 'off',
+
+      /**
+       * Prevents fallthrough in switch statements but allows empty cases
+       */
+      'no-fallthrough': [
+        'error',
+        {
+          allowEmptyCase: true,
+        },
+      ],
 
       /**
        * Enforces consistent blank lines between statements

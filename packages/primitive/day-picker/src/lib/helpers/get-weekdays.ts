@@ -15,9 +15,9 @@ export function getWeekdays(
   /**
    * Use ISOWeek instead of locale/
    */
-  ISOWeek?: boolean | undefined,
-  timeZone?: string | undefined,
-  broadcastCalendar?: boolean | undefined,
+  ISOWeek?: boolean,
+  timeZone?: string,
+  broadcastCalendar?: boolean,
 ): Date[] {
   const date = timeZone ? TZDate.tz(timeZone) : new dateLib.Date();
   let start: Date;
