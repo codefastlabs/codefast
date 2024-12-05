@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "changeset": "changeset",
-    "changeset:publish": "turbo run build --filter=\"./packages/*\" && changeset publish",
+    "changeset:publish": "turbo run build --filter=\"./packages/**\" && changeset publish",
     "changeset:version": "changeset version",
     "clean": "turbo run clean",
     "dev": "turbo run dev --concurrency=11",
