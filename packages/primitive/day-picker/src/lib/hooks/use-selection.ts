@@ -19,9 +19,7 @@ export function useSelection<T extends DayPickerProps>(props: T, dateLib: DateLi
     case 'range':
       return range;
 
-    case undefined: {
-      throw new Error('Not implemented yet: undefined case');
-    }
+    case undefined:
 
     default:
       return undefined;

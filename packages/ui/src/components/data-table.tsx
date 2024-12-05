@@ -239,9 +239,7 @@ function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): JSX
       return <ChevronUpIcon />;
     }
 
-    case false: {
-      throw new Error('Not implemented yet: false case');
-    }
+    case false:
 
     default:
       return <ChevronsUpDownIcon />;
