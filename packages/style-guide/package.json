@@ -36,22 +36,22 @@
     "eslint-plugin-playwright": "2.1.0",
     "eslint-plugin-react": "7.37.2",
     "eslint-plugin-react-hooks": "5.0.0",
-    "eslint-plugin-testing-library": "7.0.0",
+    "eslint-plugin-testing-library": "7.1.0",
     "eslint-plugin-tsdoc": "0.4.0",
     "eslint-plugin-turbo": "2.3.3",
     "eslint-plugin-unicorn": "56.0.1",
     "typescript-eslint": "8.17.0"
   },
   "devDependencies": {
-    "@types/node": "20.17.6",
+    "@types/node": "22.10.1",
     "eslint": "9.16.0",
     "globals": "15.13.0",
-    "typescript": "5.6.3"
+    "typescript": "5.7.2"
   },
   "peerDependencies": {
-    "eslint": "^9",
-    "prettier": "^3",
-    "typescript": "^5"
+    "eslint": ">=9",
+    "prettier": ">=3",
+    "typescript": ">=5"
   },
   "peerDependenciesMeta": {
     "eslint": {
