@@ -6,6 +6,7 @@ describe('container-attributes component', () => {
   test('renders DayPicker with expected data attributes', () => {
     const { container } = render(<ContainerAttributes id="test-div" />);
 
+    // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container -- Testing the DOM
     const dayPicker = container.querySelector('.testClass');
 
     expect(dayPicker).toHaveAttribute('data-test', 'testData');
