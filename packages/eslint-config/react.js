@@ -15,6 +15,11 @@ export const config = [
     ...jestTypescript,
     ...testingLibrary,
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
   },
   {
     files: ['**/*.d.ts'],
