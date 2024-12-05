@@ -38,7 +38,6 @@ describe('modifiers-hidden component', () => {
 
   test('sets the default month to the month of the first hidden day', () => {
     const { container } = render(<ModifiersHidden />);
-    // eslint-disable-next-line testing-library/no-container,testing-library/no-node-access -- ignore
     const defaultMonthLabel = container.querySelector(`[aria-label="June 2022"]`);
 
     // Xác nhận rằng tháng mặc định là tháng của ngày đầu tiên trong hiddenDays

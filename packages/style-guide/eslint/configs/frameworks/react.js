@@ -38,5 +38,10 @@ export const config = [
       ...reactRules.rules,
       ...jsxA11yRules.rules,
     },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
   },
 ];
