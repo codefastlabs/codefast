@@ -36,7 +36,7 @@
     "build": "tsup",
     "clean": "rm -rf dist",
     "dev": "tsup --watch",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --cache --max-warnings 0"
   },
   "dependencies": {
     "@radix-ui/react-compose-refs": "1.1.0",
