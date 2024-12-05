@@ -13,7 +13,6 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import * as React from 'react';
 import { type JSX } from 'react';
 import { Pie, PieChart } from 'recharts';
 

@@ -49,7 +49,7 @@ export const config = [
       /**
        * Warns when Promises are used inappropriately
        *
-       * https://typescript-eslint.io/rules/no-misused-promises/
+       * 🚫 Not fixable - https://typescript-eslint.io/rules/no-misused-promises/
        */
       '@typescript-eslint/no-misused-promises': [
         'warn',
@@ -61,16 +61,28 @@ export const config = [
       ],
 
       /**
+       * Warns when non-string types are used in template expressions but allows numbers
+       *
+       * 🚫 Not fixable - https://typescript-eslint.io/rules/restrict-template-expressions/
+       */
+      '@typescript-eslint/restrict-template-expressions': [
+        'warn',
+        {
+          allowNumber: true,
+        },
+      ],
+
+      /**
        * Disables the rule that disallows default exports
        *
-       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
+       * 🚫 Not fixable - https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
        */
       'import/no-default-export': 'off',
 
       /**
        * Enforces consistent blank lines between statements
        *
-       * https://eslint.org/docs/latest/rules/padding-line-between-statements
+       * 🔧 Fixable - https://eslint.org/docs/latest/rules/padding-line-between-statements
        */
       'padding-line-between-statements': [
         'warn',
