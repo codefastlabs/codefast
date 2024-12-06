@@ -6,7 +6,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codefastlabs/codefast",
+    "url": "https://github.com/codefastlabs/codefast.git",
     "directory": "packages/third-parties"
   },
   "license": "MIT",
@@ -22,7 +22,8 @@
     "./slideshow.css": "./dist/slideshow.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsup",
