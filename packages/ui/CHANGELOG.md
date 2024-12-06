@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.1
+
+### Patch Changes
+
+- [#41](https://github.com/codefastlabs/codefast/pull/41) [`5c9d51e`](https://github.com/codefastlabs/codefast/commit/5c9d51ef34ceefd9e8ccde33aa006cc2bd7d8001) Thanks [@thevuong](https://github.com/thevuong)! - chore: update dependencies to stable versions
+
+- Updated dependencies [[`5c9d51e`](https://github.com/codefastlabs/codefast/commit/5c9d51ef34ceefd9e8ccde33aa006cc2bd7d8001)]:
+  - @codefast/hooks@0.2.1
+  - @codefast-ui/checkbox-group@0.2.1
+  - @codefast-ui/day-picker@0.2.1
+  - @codefast-ui/input@0.2.1
+  - @codefast-ui/number-input@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
