@@ -35,7 +35,7 @@
   ],
   "scripts": {
     "build": "tsup",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf node_modules dist",
     "dev": "tsup --watch",
     "lint": "eslint . --cache --max-warnings 0"
   },

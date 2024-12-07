@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "pnpm run clean && next build",
-    "clean": "rm -rf .next",
+    "build": "rm -rf .next && next build",
+    "clean": "rm -rf node_modules .next",
     "dev": "next dev --turbopack",
     "lint": "next lint --max-warnings 0",
     "start": "next start"

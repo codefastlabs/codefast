@@ -22,7 +22,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf node_modules dist",
     "lint": "eslint . --cache --max-warnings 0"
   },
   "dependencies": {
