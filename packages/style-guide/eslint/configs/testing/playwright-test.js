@@ -1,6 +1,6 @@
 import playwright from 'eslint-plugin-playwright';
 
-import { config as playwrightTestRules } from '../../rules/playwright-test.js';
+import { playwrightTestRules } from '../../rules/playwright-test.js';
 
 /** @type {import('eslint').Linter} */
 export const config = {

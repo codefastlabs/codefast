@@ -1,4 +1,4 @@
-export const config = {
+export const bestPracticeRules = {
   rules: {
     /**
      * Require return statements in array methods callbacks.

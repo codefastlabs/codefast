@@ -4,8 +4,8 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 import prettier from 'eslint-config-prettier';
 
-import { config as reactRules } from '../../rules/react.js';
-import { config as jsxA11yRules } from '../../rules/jsx-a11y.js';
+import { reactRules } from '../../rules/react.js';
+import { jsxA11yRules } from '../../rules/jsx-a11y.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [

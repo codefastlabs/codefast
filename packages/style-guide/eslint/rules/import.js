@@ -1,4 +1,4 @@
-export const config = {
+export const importRules = {
   rules: {
     /**
      * Disallow non-import statements appearing before import statements.

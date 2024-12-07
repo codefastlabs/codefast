@@ -27,7 +27,7 @@ const recommended = {
   'playwright/valid-title': 'error',
 };
 
-export const config = {
+export const playwrightTestRules = {
   rules: {
     ...recommended,
 

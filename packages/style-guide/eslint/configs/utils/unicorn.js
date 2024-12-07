@@ -1,9 +1,9 @@
 import unicorn from 'eslint-plugin-unicorn';
 
-import { config as unicornRules } from '../../rules/unicorn.js';
+import { unicornRules } from '../../rules/unicorn.js';
 
 /** @type {import('eslint').Linter.Config} */
-export const config = {
+export const unicornConfig = {
   plugins: {
     unicorn,
   },

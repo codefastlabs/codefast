@@ -1,4 +1,4 @@
-export const config = {
+export const tsdocRules = {
   rules: {
     /**
      * Require TSDoc comments conform to the TSDoc specification.

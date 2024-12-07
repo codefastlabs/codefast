@@ -1,4 +1,4 @@
-export const config = {
+export const vitestRules = {
   rules: {
     /**
      * Disallow duplicate setup and teardown hooks.

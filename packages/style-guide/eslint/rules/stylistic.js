@@ -1,4 +1,4 @@
-export const config = {
+export const stylisticRules = {
   rules: {
     /**
      * Require camel case names.

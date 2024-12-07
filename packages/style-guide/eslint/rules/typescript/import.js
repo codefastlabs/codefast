@@ -9,7 +9,7 @@ const disabledRules = {
   'import/no-unresolved': 'off',
 };
 
-export const config = {
+export const typescriptImportRules = {
   rules: {
     ...disabledRules,
   },
