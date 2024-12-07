@@ -1,6 +1,6 @@
 import vitest from '@vitest/eslint-plugin';
 
-import { config as vitestRules } from '../../rules/vitest.js';
+import { vitestRules } from '../../rules/vitest.js';
 
 /** @type {import('eslint').Linter.Config} */
 export const config = {

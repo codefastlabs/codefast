@@ -11,7 +11,7 @@ const disabledRules = {
   'react/react-in-jsx-scope': 'off',
 };
 
-export const config = {
+export const reactRules = {
   rules: {
     ...disabledRules,
 

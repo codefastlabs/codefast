@@ -1,4 +1,4 @@
-export const config = {
+export const variablesRules = {
   rules: {
     /**
      * Disallow labels that share a name with a variable.

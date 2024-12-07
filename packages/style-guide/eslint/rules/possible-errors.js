@@ -1,4 +1,4 @@
-export const config = {
+export const possibleErrorsRules = {
   rules: {
     /**
      * Disallow the use of console.

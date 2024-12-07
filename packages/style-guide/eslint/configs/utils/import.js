@@ -1,9 +1,9 @@
 import importPlugin from 'eslint-plugin-import';
 
-import { config as importRules } from '../../rules/import.js';
+import { importRules } from '../../rules/import.js';
 
 /** @type {import('eslint').Linter.Config} */
-export const config = {
+export const importConfig = {
   ...importPlugin.flatConfigs.recommended,
   rules: {
     ...importPlugin.flatConfigs.recommended.rules,

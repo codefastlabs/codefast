@@ -1,4 +1,4 @@
-export const config = {
+export const unicornRules = {
   rules: {
     /**
      * Require consistent filename case for all linted files.
