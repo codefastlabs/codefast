@@ -1,16 +1,16 @@
-import { jest, jestTypescript, recommended, testingLibrary, typescript } from '@codefast/style-guide';
+import { configs } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 import globals from 'globals';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
-  ...recommended,
-  ...typescript,
+  ...configs.recommended,
+  ...configs.typescript,
   {
-    ...jest,
-    ...jestTypescript,
-    ...testingLibrary,
+    ...configs.jest,
+    ...configs.jestTypescript,
+    ...configs.testingLibrary,
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
     languageOptions: {
       globals: {

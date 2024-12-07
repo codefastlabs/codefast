@@ -1,11 +1,11 @@
-import tsdoc from 'eslint-plugin-tsdoc';
+import tsdocPlugin from 'eslint-plugin-tsdoc';
 
 import { tsdocRules } from '../../rules/tsdoc.js';
 
 /** @type {import('eslint').Linter.Config} */
 export const tsdocConfig = {
   plugins: {
-    tsdoc,
+    tsdoc: tsdocPlugin,
   },
   rules: {
     ...tsdocRules.rules,
