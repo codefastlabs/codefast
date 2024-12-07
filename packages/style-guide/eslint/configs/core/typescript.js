@@ -9,20 +9,10 @@ import { typescriptImportRules } from '../../rules/typescript/import.js';
 
 /** @type {import('eslint').Linter.Config[] | import('@typescript-eslint/utils').TSESLint.FlatConfig.ConfigFile} */
 export const config = [
-  // Base TypeScript Configs
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
-
-  // Import Plugin Configuration for TypeScript
   importPlugin.flatConfigs.typescript,
-
-  // Prettier Configuration for Code Style Enforcement
-  prettier,
-
-  // TSDoc Plugin Configuration
   tsdocConfig,
-
-  // Custom TypeScript-Specific Configurations
   {
     rules: {
       ...typescriptRules.rules,
@@ -30,4 +20,5 @@ export const config = [
       ...typescriptImportRules.rules,
     },
   },
+  prettier,
 ];

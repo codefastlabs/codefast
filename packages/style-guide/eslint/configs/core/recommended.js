@@ -16,17 +16,13 @@ import { unicornConfig } from '../utils/unicorn.js';
  */
 export const config = [
   eslint.configs.recommended,
-  prettier,
   commentsConfig,
   importConfig,
   unicornConfig,
-  {
-    rules: {
-      ...bestPracticeRules.rules,
-      ...es6Rules.rules,
-      ...possibleErrorsRules.rules,
-      ...stylisticRules.rules,
-      ...variablesRules.rules,
-    },
-  },
+  bestPracticeRules,
+  es6Rules,
+  possibleErrorsRules,
+  stylisticRules,
+  variablesRules,
+  prettier,
 ];

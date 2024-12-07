@@ -9,20 +9,25 @@ import { jsxA11yRules } from '../../rules/jsx-a11y.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
-  // Base React Configurations
   react.configs.flat.recommended,
   react.configs.flat['jsx-runtime'],
-
-  // Import Plugin Configuration
   importPlugin.flatConfigs.react,
-
-  // Accessibility Plugin Configuration
   jsxA11y.flatConfigs.recommended,
 
-  // Prettier Configuration for Code Style Enforcement
-  prettier,
-
-  // React Hooks Configuration
+  /**
+   * Vì react-hooks chưa được nâng cấp lên eslint 9, chúng ta cần khai báo plugins.
+   * Cú pháp đề xuất:
+   *
+   * @example
+   * ```js
+   * {
+   *   ...reactHooks.configs.recommended,
+   *   rules: {
+   *     ...reactHooks.configs.recommended.rules,
+   *   },
+   * }
+   * ```
+   */
   {
     plugins: {
       'react-hooks': reactHooks,
@@ -31,13 +36,10 @@ export const config = [
       ...reactHooks.configs.recommended.rules,
     },
   },
-
-  // Custom Rules and Settings
+  reactRules,
+  jsxA11yRules,
+  prettier,
   {
-    rules: {
-      ...reactRules.rules,
-      ...jsxA11yRules.rules,
-    },
     settings: {
       react: {
         version: 'detect',
