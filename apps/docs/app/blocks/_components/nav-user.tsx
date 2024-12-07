@@ -1,13 +1,10 @@
 'use client';
 
 import {
-  cn,
-  SidebarMenuButton,
-  useSidebar,
-  SidebarMenu,
   Avatar,
   AvatarFallback,
   AvatarImage,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -15,7 +12,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@codefast/ui';
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from 'lucide-react';
 import { type ComponentProps, type JSX } from 'react';
