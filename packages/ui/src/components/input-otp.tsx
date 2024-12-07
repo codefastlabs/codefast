@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  OTPInput,
-  OTPInputContext,
-  REGEXP_ONLY_CHARS,
-  REGEXP_ONLY_DIGITS,
-  REGEXP_ONLY_DIGITS_AND_CHARS,
-} from 'input-otp';
+import { OTPInput, OTPInputContext } from 'input-otp';
 import { DotIcon } from 'lucide-react';
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type HTMLAttributes, useContext } from 'react';
 
@@ -109,11 +103,10 @@ export {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-  REGEXP_ONLY_CHARS,
-  REGEXP_ONLY_DIGITS,
-  REGEXP_ONLY_DIGITS_AND_CHARS,
   type InputOTPGroupProps,
   type InputOTPProps,
   type InputOTPSeparatorProps,
   type InputOTPSlotProps,
 };
+
+export { REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';

@@ -32,7 +32,7 @@ export function dateMatchModifiers(
   matchers: Matcher | Matcher[],
   dateLib: DateLib = defaultDateLib,
 ): boolean {
-  const matchersArr = !Array.isArray(matchers) ? [matchers] : matchers;
+  const matchersArr = Array.isArray(matchers) ? matchers : [matchers];
   const { isSameDay, differenceInCalendarDays, isAfter } = dateLib;
 
   return matchersArr.some((matcher: Matcher) => {

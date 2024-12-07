@@ -13,11 +13,7 @@ export function RangeRequired(): JSX.Element {
   let footer = `Please pick the first day.`;
 
   if (range.from) {
-    if (!range.to) {
-      footer = `${format(range.from, 'PPP')}—`;
-    } else {
-      footer = `${format(range.from, 'PPP')}—${format(range.to, 'PPP')}`;
-    }
+    footer = range.to ? `${format(range.from, 'PPP')}—${format(range.to, 'PPP')}` : `${format(range.from, 'PPP')}—`;
   }
 
   return <DayPicker required footer={footer} mode="range" selected={range} onSelect={setRange} />;

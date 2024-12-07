@@ -72,12 +72,12 @@ export function AccountForm(): JSX.Element {
       return;
     }
 
-    Object.entries(response.error.errors).forEach(([field, error]) => {
+    for (const [field, error] of Object.entries(response.error.errors)) {
       form.setError(field as keyof AccountFormValues, {
         type: 'manual',
         message: error.at(0),
       });
-    });
+    }
   };
 
   return (

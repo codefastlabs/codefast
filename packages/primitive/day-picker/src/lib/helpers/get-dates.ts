@@ -17,6 +17,7 @@ export function getDates(
   dateLib: DateLib,
 ): Date[] {
   const firstMonth = displayMonths[0];
+  // eslint-disable-next-line unicorn/prefer-at -- we need the last element
   const lastMonth = displayMonths[displayMonths.length - 1];
 
   const { ISOWeek, fixedWeeks, broadcastCalendar } = props;
@@ -78,6 +79,7 @@ export function getDates(
     const daysToAdd = extraDates - dates.length;
 
     for (let i = 0; i < daysToAdd; i++) {
+      // eslint-disable-next-line unicorn/prefer-at -- we need the last element
       const date = addDays(dates[dates.length - 1], 1);
 
       dates.push(date);

@@ -12,7 +12,7 @@ describe('getDates Helper Function', () => {
 
           expect(dates).toHaveLength(42);
           expect(dates[0]).toEqual(new Date(2023, 10, 26)); // First day
-          expect(dates[dates.length - 1]).toEqual(new Date(2024, 0, 6)); // Last day
+          expect(dates.at(-1)).toEqual(new Date(2024, 0, 6)); // Last day
         });
       });
 
@@ -22,7 +22,7 @@ describe('getDates Helper Function', () => {
 
           expect(dates).toHaveLength(42);
           expect(dates[0]).toEqual(new Date(2023, 10, 26)); // First day
-          expect(dates[dates.length - 1]).toEqual(new Date(2024, 0, 6)); // Last day
+          expect(dates.at(-1)).toEqual(new Date(2024, 0, 6)); // Last day
         });
       });
     });
@@ -36,7 +36,7 @@ describe('getDates Helper Function', () => {
 
           expect(dates).toHaveLength(35);
           expect(dates[0]).toEqual(new Date(2023, 3, 30)); // First day
-          expect(dates[dates.length - 1]).toEqual(new Date(2023, 5, 3)); // Last day
+          expect(dates.at(-1)).toEqual(new Date(2023, 5, 3)); // Last day
         });
       });
 
@@ -46,7 +46,7 @@ describe('getDates Helper Function', () => {
 
           expect(dates).toHaveLength(42);
           expect(dates[0]).toEqual(new Date(2023, 3, 30)); // First day
-          expect(dates[dates.length - 1]).toEqual(new Date(2023, 5, 10)); // Last day
+          expect(dates.at(-1)).toEqual(new Date(2023, 5, 10)); // Last day
         });
       });
     });
@@ -59,7 +59,7 @@ describe('getDates Helper Function', () => {
 
         expect(dates[0]).toBeMonday();
         expect(dates[0]).toEqual(new Date(2023, 4, 1)); // First day
-        expect(dates[dates.length - 1]).toEqual(new Date(2023, 5, 4)); // Last day
+        expect(dates.at(-1)).toEqual(new Date(2023, 5, 4)); // Last day
       });
     });
 
@@ -71,7 +71,7 @@ describe('getDates Helper Function', () => {
         const dates = getDates([month], maxDate, {}, new DateLib({ weekStartsOn: 1 }));
 
         expect(dates).toHaveLength(15);
-        expect(dates[dates.length - 1]).toEqual(maxDate); // Max date
+        expect(dates.at(-1)).toEqual(maxDate); // Max date
       });
     });
 
@@ -83,7 +83,7 @@ describe('getDates Helper Function', () => {
 
         expect(dates[0]).toBeMonday();
         expect(dates[0]).toEqual(new Date(2023, 4, 1)); // First day
-        expect(dates[dates.length - 1]).toEqual(new Date(2023, 5, 4)); // Last day
+        expect(dates.at(-1)).toEqual(new Date(2023, 5, 4)); // Last day
       });
     });
 
@@ -117,7 +117,7 @@ describe('getDates Helper Function', () => {
 
         expect(dates).toHaveLength(252);
         expect(dates[0]).toEqual(new Date(2023, 3, 30)); // First day
-        expect(dates[dates.length - 1]).toEqual(new Date(2024, 0, 6)); // Last day
+        expect(dates.at(-1)).toEqual(new Date(2024, 0, 6)); // Last day
       });
     });
 
@@ -128,7 +128,7 @@ describe('getDates Helper Function', () => {
         const dates = getDates([firstMonth, lastMonth], maxDate, {}, new DateLib({ weekStartsOn: 1 }));
 
         expect(dates).toHaveLength(46);
-        expect(dates[dates.length - 1]).toEqual(maxDate); // Max date
+        expect(dates.at(-1)).toEqual(maxDate); // Max date
       });
     });
 
@@ -140,7 +140,7 @@ describe('getDates Helper Function', () => {
 
         expect(dates[0]).toBeMonday();
         expect(dates[0]).toEqual(new Date(2023, 4, 1)); // First day
-        expect(dates[dates.length - 1]).toEqual(new Date(2023, 5, 4)); // Last day
+        expect(dates.at(-1)).toEqual(new Date(2023, 5, 4)); // Last day
       });
     });
   });

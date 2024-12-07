@@ -65,6 +65,9 @@ importers:
       '@tanstack/react-table':
         specifier: 8.20.5
         version: 8.20.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@types/js-cookie':
+        specifier: 3.0.6
+        version: 3.0.6
       '@vercel/functions':
         specifier: 1.5.1
         version: 1.5.1
@@ -80,6 +83,9 @@ importers:
       jotai:
         specifier: 2.10.3
         version: 2.10.3(@types/react@19.0.0)(react@19.0.0)
+      js-cookie:
+        specifier: 3.0.5
+        version: 3.0.5
       lodash-es:
         specifier: 4.17.21
         version: 4.17.21
@@ -782,6 +788,9 @@ importers:
       '@tanstack/react-table':
         specifier: '>=8'
         version: 8.20.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@types/js-cookie':
+        specifier: 3.0.6
+        version: 3.0.6
       '@types/lodash-es':
         specifier: '*'
         version: 4.17.12
@@ -806,6 +815,9 @@ importers:
       input-otp:
         specifier: 1.4.1
         version: 1.4.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      js-cookie:
+        specifier: 3.0.5
+        version: 3.0.5
       lodash-es:
         specifier: '>=4'
         version: 4.17.21
@@ -3519,6 +3531,9 @@ packages:
   '@types/istanbul-reports@3.0.4':
     resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
 
+  '@types/js-cookie@3.0.6':
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -6009,6 +6024,10 @@ packages:
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
+
+  js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -11495,6 +11514,8 @@ snapshots:
       '@types/istanbul-lib-report': 3.0.3
     optional: true
 
+  '@types/js-cookie@3.0.6': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
@@ -14561,6 +14582,8 @@ snapshots:
       react: 19.0.0
 
   joycon@3.1.1: {}
+
+  js-cookie@3.0.5: {}
 
   js-tokens@4.0.0: {}
 

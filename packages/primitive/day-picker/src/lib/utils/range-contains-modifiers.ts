@@ -94,7 +94,7 @@ export function rangeContainsModifiers(
 
   const functionMatchers = matchers.filter((matcher) => typeof matcher === 'function');
 
-  if (functionMatchers.length) {
+  if (functionMatchers.length > 0) {
     let date = range.from;
     const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);
 

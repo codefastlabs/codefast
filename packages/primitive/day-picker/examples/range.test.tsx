@@ -19,7 +19,7 @@ const days = [
 function getAllSelected(): HTMLElement[] {
   const gridcells = screen.getAllByRole('gridcell');
 
-  return Array.from(gridcells).filter((cell) => cell.getAttribute('aria-selected') === 'true');
+  return [...gridcells].filter((cell) => cell.getAttribute('aria-selected') === 'true');
 }
 
 function setup(): void {
@@ -45,15 +45,15 @@ describe('range component', () => {
     });
 
     test('selects the days up to the clicked day', () => {
-      days.slice(0, 3).forEach((day) => {
+      for (const day of days.slice(0, 3)) {
         expect(gridcell(day, true)).toHaveAttribute('aria-selected', 'true');
-      });
+      }
     });
 
     test('deselects days after the clicked day', () => {
-      days.slice(3).forEach((day) => {
+      for (const day of days.slice(3)) {
         expect(gridcell(day, true)).not.toHaveAttribute('aria-selected');
-      });
+      }
     });
 
     describe('when the reset button is clicked', () => {

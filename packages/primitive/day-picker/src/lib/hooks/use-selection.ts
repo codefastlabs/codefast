@@ -10,18 +10,20 @@ export function useSelection<T extends DayPickerProps>(props: T, dateLib: DateLi
   const range = useRange(props, dateLib);
 
   switch (props.mode) {
-    case 'single':
+    case 'single': {
       return single;
+    }
 
-    case 'multiple':
+    case 'multiple': {
       return multi;
+    }
 
-    case 'range':
+    case 'range': {
       return range;
+    }
 
-    case undefined:
-
-    default:
+    default: {
       return undefined;
+    }
   }
 }

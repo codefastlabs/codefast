@@ -6,7 +6,7 @@ import { unicornRules } from '../../rules/unicorn.js';
 export const unicornConfig = {
   ...unicornPlugin.configs['flat/recommended'],
   rules: {
-    // ...unicorn.configs['flat/recommended'].rules,
+    ...unicornPlugin.configs['flat/recommended'].rules,
     ...unicornRules.rules,
   },
 };
