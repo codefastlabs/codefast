@@ -1,14 +1,14 @@
-import next from '@next/eslint-plugin-next';
+import nextPlugin from '@next/eslint-plugin-next';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
   {
     plugins: {
-      '@next/next': next,
+      '@next/next': nextPlugin,
     },
     rules: {
-      ...next.configs.recommended.rules,
-      ...next.configs['core-web-vitals'].rules,
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
     },
   },
 ];
