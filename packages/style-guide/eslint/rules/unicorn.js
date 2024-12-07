@@ -10,7 +10,7 @@ export const unicornRules = {
     ...disabledRules,
 
     /**
-     * Require consistent filename case for all linted files.
+     * Require a consistent filename case for all linted files.
      *
      * 🚫 Not fixable - https://github.com/sindresorhus/eslint-plugin-unicorn/blob/main/docs/rules/filename-case.md
      */
