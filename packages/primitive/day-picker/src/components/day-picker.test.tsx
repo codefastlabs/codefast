@@ -6,6 +6,7 @@ import { type MonthsProps } from '@/components/ui';
 import { defaultLocale } from '@/lib/classes/date-lib';
 import { activeElement, dateButton, grid, nav, previousButton } from '@/tests/lib/elements';
 import { user } from '@/tests/lib/user';
+import { UI } from '@/lib/constants/ui';
 
 const testId = 'test';
 const dayPicker = (): HTMLElement => screen.getByTestId(testId);
@@ -176,6 +177,29 @@ test('should render the custom components', () => {
   expect(screen.getByText('Custom MonthsDropdown')).toBeInTheDocument();
 });
 
+test('apply classNames prop correctly', () => {
+  const classNames = {
+    [UI.Day]: 'custom-day-class',
+    [UI.Week]: 'custom-week-class',
+    [UI.Month]: 'custom-month-class',
+  };
+
+  render(<DayPicker classNames={classNames} data-testid={testId} />);
+
+  const container = dayPicker();
+
+  // eslint-disable-next-line testing-library/no-node-access -- Testing the DOM
+  const dayElement = container.querySelector('.custom-day-class');
+  // eslint-disable-next-line testing-library/no-node-access -- Testing the DOM
+  const weekElement = container.querySelector('.custom-week-class');
+  // eslint-disable-next-line testing-library/no-node-access -- Testing the DOM
+  const monthElement = container.querySelector('.custom-month-class');
+
+  expect(dayElement).toBeInTheDocument();
+  expect(weekElement).toBeInTheDocument();
+  expect(monthElement).toBeInTheDocument();
+});
+
 describe('when interactive', () => {
   test('render a valid HTML', () => {
     render(<DayPicker mode="single" />);
@@ -184,6 +208,7 @@ describe('when interactive', () => {
     });
   });
 });
+
 describe('when not interactive', () => {
   test('render a valid HTML', () => {
     render(<DayPicker />);

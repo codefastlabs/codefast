@@ -14,6 +14,6 @@ const tasks = Array.from({ length: 100 }, () => ({
   priority: faker.helpers.arrayElement(priorities).value,
 }));
 
-fs.writeFileSync(path.join(__dirname, 'tasks.json'), JSON.stringify(tasks, null, 2));
+fs.writeFileSync(path.join(import.meta.dirname, 'tasks.json'), JSON.stringify(tasks, null, 2));
 
 consola.log('✅ Tasks data generated.');

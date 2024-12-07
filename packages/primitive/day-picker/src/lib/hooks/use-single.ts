@@ -25,7 +25,7 @@ export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateL
     onSelect ? initiallySelected : undefined,
   );
 
-  const selected = !onSelect ? internallySelected : initiallySelected;
+  const selected = onSelect ? initiallySelected : internallySelected;
 
   const { isSameDay } = dateLib;
 

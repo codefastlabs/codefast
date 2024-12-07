@@ -49,7 +49,7 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
+          .filter((column) => column.accessorFn !== undefined && column.getCanHide())
           .map((column) => (
             <DropdownMenuCheckboxItem
               key={column.id}
@@ -239,10 +239,9 @@ function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): JSX
       return <ChevronUpIcon />;
     }
 
-    case false:
-
-    default:
+    default: {
       return <ChevronsUpDownIcon />;
+    }
   }
 }
 

@@ -106,7 +106,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
 
   const formatValue = useCallback(
     (inputValue?: number): string => {
-      if (inputValue === undefined || isNaN(inputValue)) {
+      if (inputValue === undefined || Number.isNaN(inputValue)) {
         return '';
       }
 
@@ -122,23 +122,23 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
       }
 
       if (typeof inputValue !== 'string') {
-        return NaN;
+        return Number.NaN;
       }
 
-      const cleanedValue = inputValue.trim().replace(/[^\d.,\-()]/g, '');
+      const cleanedValue = inputValue.trim().replaceAll(/[^\d.,\-()]/g, '');
 
       if (cleanedValue === '') {
-        return NaN;
+        return Number.NaN;
       }
 
       const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
-      let parsedValue = parseFloat(normalizedValue);
+      let parsedValue = Number.parseFloat(normalizedValue);
 
       if (formatOptions.style === 'percent') {
         parsedValue /= 100;
       }
 
-      return isNaN(parsedValue) ? 0 : clamp(parsedValue, min, max);
+      return Number.isNaN(parsedValue) ? 0 : clamp(parsedValue, min, max);
     },
     [decimalSeparator, formatOptions.style, max, min, thousandSeparator],
   );
@@ -260,28 +260,33 @@ const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>
     const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
       (event) => {
         switch (event.key) {
-          case 'ArrowUp':
+          case 'ArrowUp': {
             onIncrement();
             event.preventDefault();
             break;
+          }
 
-          case 'PageUp':
+          case 'PageUp': {
             onIncrementToMax();
             event.preventDefault();
             break;
+          }
 
-          case 'ArrowDown':
+          case 'ArrowDown': {
             onDecrement();
             event.preventDefault();
             break;
+          }
 
-          case 'PageDown':
+          case 'PageDown': {
             onDecrementToMin();
             event.preventDefault();
             break;
+          }
 
-          default:
+          default: {
             break;
+          }
         }
       },
       [onIncrement, onIncrementToMax, onDecrement, onDecrementToMin],
@@ -322,15 +327,17 @@ const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>
 
         case '-':
 
-        case '%':
+        case '%': {
           return;
+        }
 
-        default:
+        default: {
           if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
             return;
           }
 
           event.preventDefault();
+        }
       }
     }, []);
 
@@ -558,29 +565,34 @@ function getNumberFormatSeparators(locale: string): {
   thousandSeparator: string;
 } {
   const numberFormat = new Intl.NumberFormat(locale);
-  const parts = numberFormat.formatToParts(12345.6);
+  const parts = numberFormat.formatToParts(12_345.6);
 
-  return parts.reduce(
-    (separatorOptions, part) => {
-      if (part.type === 'group') {
-        separatorOptions.thousandSeparator = part.value;
-      }
+  let thousandSeparator = '';
+  let decimalSeparator = '';
 
-      if (part.type === 'decimal') {
-        separatorOptions.decimalSeparator = part.value;
-      }
+  for (const part of parts) {
+    if (part.type === 'group') {
+      thousandSeparator = part.value;
+    }
 
-      return separatorOptions;
-    },
-    { thousandSeparator: '', decimalSeparator: '' },
-  );
+    if (part.type === 'decimal') {
+      decimalSeparator = part.value;
+    }
+
+    // Stop early if you have found enough.
+    if (thousandSeparator && decimalSeparator) {
+      break;
+    }
+  }
+
+  return { thousandSeparator, decimalSeparator };
 }
 
 function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
-    .replace(new RegExp(`\\${thousandSeparator}`, 'g'), '')
+    .replaceAll(new RegExp(`\\${thousandSeparator}`, 'g'), '')
     .replace(new RegExp(`\\${decimalSeparator}`), '.')
-    .replace(/[()]/g, '-');
+    .replaceAll(/[()]/g, '-');
 }
 
 function isModifierKey(event: KeyboardEvent<HTMLInputElement>): boolean {
@@ -592,7 +604,7 @@ function isFunctionKey(key: string): boolean {
 }
 
 function isNumberKey(key: string): boolean {
-  return !isNaN(Number(key));
+  return !Number.isNaN(Number(key));
 }
 
 function clamp(value: number, min = -Infinity, max = Infinity): number {

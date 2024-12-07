@@ -67,7 +67,7 @@ export function Sidebar04({ className, ...props }: Sidebar04Props): JSX.Element 
                         {nav.title}
                       </Link>
                     </SidebarMenuButton>
-                    {nav.items.length ? (
+                    {nav.items.length > 0 ? (
                       <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
                         {nav.items.map((item) => (
                           <SidebarMenuSubItem key={item.title}>

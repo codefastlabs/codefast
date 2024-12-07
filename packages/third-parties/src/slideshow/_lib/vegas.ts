@@ -217,28 +217,24 @@ export class Vegas {
     const element = document.createElement(tag);
 
     element.className = className;
-    parent.appendChild(element);
+    parent.append(element);
 
     return element;
   }
 
   private preloadSlides(): void {
     for (const slide of this.settings.slides) {
-      if (this.settings.preload || this.settings.preloadImage) {
-        if (slide.src) {
-          const img = new Image();
+      if ((this.settings.preload || this.settings.preloadImage) && slide.src) {
+        const img = new Image();
 
-          img.src = slide.src;
-        }
+        img.src = slide.src;
       }
 
-      if (this.settings.preload || this.settings.preloadVideo) {
-        if (this.support.video && slide.video) {
-          if (Array.isArray(slide.video)) {
-            this.preloadVideo(slide.video);
-          } else {
-            this.preloadVideo(slide.video.src);
-          }
+      if ((this.settings.preload || this.settings.preloadVideo) && this.support.video && slide.video) {
+        if (Array.isArray(slide.video)) {
+          this.preloadVideo(slide.video);
+        } else {
+          this.preloadVideo(slide.video.src);
         }
       }
     }
@@ -306,7 +302,7 @@ export class Vegas {
       const source = document.createElement('source');
 
       source.src = src;
-      videoElement.appendChild(source);
+      videoElement.append(source);
     }
 
     Vegas.videoCache[cacheKey] = videoElement;
@@ -342,7 +338,7 @@ export class Vegas {
   }
 
   private getValidSlideIndex(index: number): number {
-    return typeof this.settings.slides[index] !== 'undefined' ? index : 0;
+    return index >= 0 && index < this.settings.slides.length ? index : 0;
   }
 
   private goto(index: number): void {
@@ -565,14 +561,14 @@ export class Vegas {
     videoElement.loop = video.loop ?? true;
     videoElement.muted = video.mute ?? true;
 
-    if (!videoElement.muted) {
+    if (videoElement.muted) {
+      videoElement.pause();
+    } else {
       videoElement.volume = 0;
 
       if (transitionDuration) {
         this.fadeInSound(videoElement, transitionDuration);
       }
-    } else {
-      videoElement.pause();
     }
 
     slideElement.classList.add('vegas-video');
@@ -588,7 +584,7 @@ export class Vegas {
       slideElement.style.height = '100%';
     }
 
-    slideElement.appendChild(videoElement);
+    slideElement.append(videoElement);
 
     return videoElement;
   }
@@ -617,7 +613,7 @@ export class Vegas {
       innerElement.style.backgroundSize = cover;
     }
 
-    slideElement.appendChild(innerElement);
+    slideElement.append(innerElement);
   }
 
   private handleSlideTransition({
@@ -637,17 +633,19 @@ export class Vegas {
       slideElement.style.display = 'none';
     }
 
-    const slideElements = this.element.querySelectorAll<HTMLElement>('.vegas-slide');
+    const slideElements = [...this.element.querySelectorAll<HTMLElement>('.vegas-slide')];
 
-    if (slideElements.length) {
-      const lastSlideElement = slideElements[slideElements.length - 1];
+    if (slideElements.length > 0) {
+      const lastSlideElement = slideElements.at(-1);
 
-      this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
+      if (lastSlideElement?.nextSibling) {
+        this.element.insertBefore(slideElement, lastSlideElement.nextSibling);
+      }
     } else {
       this.element.prepend(slideElement);
     }
 
-    slideElements.forEach((slide) => {
+    for (const slide of slideElements) {
       slide.className = 'vegas-slide';
 
       if (slide.tagName === 'VIDEO') {
@@ -658,7 +656,7 @@ export class Vegas {
         slide.classList.add(`vegas-transition-${transition}`);
         slide.classList.add(`vegas-transition-${transition}-in`);
       }
-    });
+    }
 
     this.timer(false);
 
@@ -682,23 +680,22 @@ export class Vegas {
 
   private performTransition(
     transition: VegasTransition | null,
-    slideElements: NodeListOf<HTMLElement>,
+    slideElements: HTMLElement[],
     transitionDuration: number,
     slideElement: HTMLElement,
   ): void {
     if (transition) {
       if (this.support.transition) {
-        slideElements.forEach((slide) => {
+        for (const slide of slideElements) {
           slide.style.transition = `all ${transitionDuration}ms`;
           slide.classList.add(`vegas-transition-${transition}-out`);
           const activeVideo = slide.querySelector('video');
 
-          if (activeVideo && transitionDuration) {
-            if (activeVideo.volume > 0) {
-              this.fadeOutSound(activeVideo, transitionDuration);
-            }
+          if (activeVideo && transitionDuration && activeVideo.volume > 0) {
+            this.fadeOutSound(activeVideo, transitionDuration);
           }
-        });
+        }
+
         slideElement.style.transition = `all ${transitionDuration}ms`;
         slideElement.classList.add(`vegas-transition-${transition}-in`);
       } else {
@@ -724,16 +721,14 @@ export class Vegas {
     if (img.complete) {
       callback();
     } else {
-      img.onload = callback;
+      img.addEventListener('load', callback);
     }
   }
 
-  private removeOldSlides(slideElements: NodeListOf<HTMLElement>, slidesToKeep: number): void {
-    Array.from(slideElements)
-      .slice(0, slideElements.length - slidesToKeep)
-      .forEach((slide) => {
-        slide.remove();
-      });
+  private removeOldSlides(slideElements: HTMLElement[], slidesToKeep: number): void {
+    for (const slide of [...slideElements].slice(0, slideElements.length - slidesToKeep)) {
+      slide.remove();
+    }
   }
 
   private end(): void {

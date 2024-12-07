@@ -19,11 +19,11 @@ describe('getBroadcastWeeksInMonth', () => {
   ];
 
   // Test for each defined case
-  testCases.forEach(({ month, expectedWeeks, description }) => {
+  for (const { month, expectedWeeks, description } of testCases) {
     test(`returns ${expectedWeeks} weeks for ${description}`, () => {
       expect(getBroadcastWeeksInMonth(month, defaultDateLib)).toBe(expectedWeeks);
     });
-  });
+  }
 
   test('getBroadcastWeeksInMonth should return correct number of weeks', () => {
     // Test for a month with 5 weeks

@@ -18,7 +18,7 @@ interface TreeProps {
 export function Tree({ item }: TreeProps): JSX.Element {
   const [name, ...items] = Array.isArray(item) ? item : [item];
 
-  if (!items.length) {
+  if (items.length === 0) {
     return (
       <SidebarMenuButton className="data-[active=true]:bg-transparent" isActive={name === 'button.tsx'}>
         <FileIcon />

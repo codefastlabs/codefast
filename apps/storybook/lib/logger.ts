@@ -1,3 +1,1 @@
-import { consola } from 'consola';
-
-export const logger = consola;
+export { consola as logger } from 'consola';

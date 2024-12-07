@@ -5,14 +5,13 @@ import { type CalendarDay, type CalendarMonth } from '@/lib/classes';
  * weeks for each month.
  */
 export function getDays(calendarMonths: CalendarMonth[]): CalendarDay[] {
-  const initialDays: CalendarDay[] = [];
+  const allDays: CalendarDay[] = [];
 
-  return calendarMonths.reduce((days, month) => {
-    const daysList: CalendarDay[] = [];
-    const weekDays: CalendarDay[] = month.weeks.reduce((weekDaysAcc, week) => {
-      return [...weekDaysAcc, ...week.days];
-    }, daysList);
+  for (const month of calendarMonths) {
+    for (const week of month.weeks) {
+      allDays.push(...week.days);
+    }
+  }
 
-    return [...days, ...weekDays];
-  }, initialDays);
+  return allDays;
 }

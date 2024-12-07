@@ -15,20 +15,19 @@ export function getClassNamesForModifiers(
   classNames: ClassNames,
   modifiersClassNames: ModifiersClassNames = {},
 ): string[] {
-  return Object.entries(modifiers)
-    .filter(([, active]) => active)
-    .reduce<string[]>(
-      (previousValue, [key]) => {
-        if (modifiersClassNames[key]) {
-          previousValue.push(modifiersClassNames[key]);
-        } else if (classNames[DayFlag[key as DayFlag]]) {
-          previousValue.push(classNames[DayFlag[key as DayFlag]]);
-        } else if (classNames[SelectionState[key as SelectionState]]) {
-          previousValue.push(classNames[SelectionState[key as SelectionState]]);
-        }
+  const classNamesArray: string[] = [classNames[UI.Day]];
 
-        return previousValue;
-      },
-      [classNames[UI.Day]],
-    );
+  for (const [key, active] of Object.entries(modifiers)) {
+    if (active) {
+      if (modifiersClassNames[key]) {
+        classNamesArray.push(modifiersClassNames[key]);
+      } else if (classNames[DayFlag[key as DayFlag]]) {
+        classNamesArray.push(classNames[DayFlag[key as DayFlag]]);
+      } else if (classNames[SelectionState[key as SelectionState]]) {
+        classNamesArray.push(classNames[SelectionState[key as SelectionState]]);
+      }
+    }
+  }
+
+  return classNamesArray;
 }

@@ -16,7 +16,7 @@ describe('useMutationObserver', () => {
     // Simulate a DOM mutation
     const newElement = document.createElement('span');
 
-    ref.current.appendChild(newElement);
+    ref.current.append(newElement);
 
     // MutationObserver callbacks are asynchronous
     setTimeout(() => {

@@ -6,7 +6,7 @@
     "build": "rm -rf .next && next build",
     "clean": "rm -rf node_modules .next",
     "dev": "next dev --turbopack",
-    "lint": "next lint --max-warnings 0",
+    "lint": "TIMING=all next lint --max-warnings 0",
     "start": "next start"
   },
   "dependencies": {
@@ -16,11 +16,13 @@
     "@hookform/resolvers": "3.9.1",
     "@radix-ui/react-icons": "1.3.2",
     "@tanstack/react-table": "8.20.5",
+    "@types/js-cookie": "3.0.6",
     "@vercel/functions": "1.5.1",
     "consola": "3.2.3",
     "date-fns": "4.1.0",
     "embla-carousel-autoplay": "8.5.1",
     "jotai": "2.10.3",
+    "js-cookie": "3.0.5",
     "lodash-es": "4.17.21",
     "lucide-react": "0.468.0",
     "next": "15.0.4",

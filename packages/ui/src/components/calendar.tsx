@@ -7,7 +7,6 @@ import {
   DayFlag,
   DayPicker,
   type DayPickerProps,
-  type Matcher,
   SelectionState,
   UI,
 } from '@codefast-ui/day-picker';
@@ -16,7 +15,9 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotI
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants'; /* -----------------------------------------------------------------------------
+ * Component: Chevron
+ * -------------------------------------------------------------------------- */
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -42,10 +43,9 @@ function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
       return <ChevronRightIcon className="size-4" {...props} />;
     }
 
-    case undefined:
-
-    default:
+    default: {
       return <DotIcon className="size-4" {...props} />;
+    }
   }
 }
 
@@ -234,6 +234,6 @@ export {
   type CalendarLabelProps,
   type CalendarProps,
   type CalendarRangeLabelProps,
-  type DateRange,
-  type Matcher,
 };
+
+export { type Matcher, type DateRange } from '@codefast-ui/day-picker';
