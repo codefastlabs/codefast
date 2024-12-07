@@ -13,12 +13,8 @@ export const typescript = [
   ...tseslint.configs.stylisticTypeChecked,
   importPlugin.flatConfigs.typescript,
   tsdocConfig,
-  {
-    rules: {
-      ...typescriptRules.rules,
-      ...typescriptExtensionRules.rules,
-      ...typescriptImportRules.rules,
-    },
-  },
+  typescriptRules,
+  typescriptExtensionRules,
+  typescriptImportRules,
   prettierConfig,
 ];
