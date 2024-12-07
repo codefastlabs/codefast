@@ -1,4 +1,4 @@
-export const config = {
+export const es6Rules = {
   rules: {
     /**
      * Disallow useless computed property keys.

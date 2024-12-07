@@ -1,9 +1,9 @@
-import { config as variablesRules } from '../variables.js';
+import { variablesRules } from '../variables.js';
 
 // These share identical configuration options, so we want to keep them in sync.
 const noUnusedVarsConfig = variablesRules.rules['no-unused-vars'];
 
-export const config = {
+export const typescriptExtensionRules = {
   rules: {
     /**
      * Require default parameters to be last.

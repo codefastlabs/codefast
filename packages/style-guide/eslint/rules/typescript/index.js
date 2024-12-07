@@ -1,4 +1,4 @@
-export const config = {
+export const typescriptRules = {
   rules: {
     /**
      * Require consistent usage of type exports.
