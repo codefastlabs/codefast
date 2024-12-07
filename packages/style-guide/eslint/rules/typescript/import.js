@@ -1,5 +1,5 @@
 /**
- * These are enabled by `import/recommended`, but are better handled by
+ * These are enabled by `import/recommended` but are better handled by
  * TypeScript and @typescript-eslint.
  */
 const disabledRules = {
