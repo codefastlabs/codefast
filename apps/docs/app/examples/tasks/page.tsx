@@ -17,16 +17,16 @@ export const metadata: Metadata = {
 };
 
 // Simulate a database read for tasks.
-async function getTasks(): Promise<Task[]> {
+function getTasks(): Task[] {
   const data = fs.readFileSync(path.join(process.cwd(), 'app/examples/tasks/_data/tasks.json'));
 
   const tasks = JSON.parse(data.toString()) as Task[];
 
-  return Promise.resolve(z.array(taskSchema).parse(tasks));
+  return z.array(taskSchema).parse(tasks);
 }
 
-export default async function TaskPage(): Promise<JSX.Element> {
-  const tasks = await getTasks();
+export default function TaskPage(): JSX.Element {
+  const tasks = getTasks();
 
   return (
     <>

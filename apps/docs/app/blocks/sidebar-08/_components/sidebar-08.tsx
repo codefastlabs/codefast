@@ -94,7 +94,7 @@ export function Sidebar08({ className, ...props }: Sidebar08Props): JSX.Element 
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
-                      {item.items.length ? (
+                      {item.items.length > 0 ? (
                         <>
                           <CollapsibleTrigger asChild>
                             <SidebarMenuAction className="data-[state=open]:rotate-90">

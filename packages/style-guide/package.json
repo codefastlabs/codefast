@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "clean": "rm -rf node_modules dist",
-    "lint": "eslint . --cache --max-warnings 0"
+    "lint": "TIMING=all eslint . --max-warnings 0"
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "4.4.1",

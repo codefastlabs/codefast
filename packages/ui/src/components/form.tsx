@@ -156,7 +156,7 @@ const FormControl = forwardRef<FormControlElement, FormControlProps>(
     return (
       <Slot
         ref={forwardedRef}
-        aria-describedby={!errors[name] ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
+        aria-describedby={errors[name] ? `${formDescriptionId} ${formMessageId}` : formDescriptionId}
         aria-invalid={Boolean(errors[name])}
         id={formItemId}
         {...props}

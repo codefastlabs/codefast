@@ -55,7 +55,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
             suffix={<CaretSortIcon className="opacity-50" />}
             variant="outline"
           >
-            {selectedModel.name ? selectedModel.name : 'Select a model...'}
+            {selectedModel.name || 'Select a model...'}
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 p-0">
@@ -121,10 +121,8 @@ function ModelItem({ model, isSelected, onSelect, onPeek }: ModelItemProps): JSX
     ref,
     (mutations) => {
       for (const mutation of mutations) {
-        if (mutation.type === 'attributes') {
-          if (mutation.attributeName === 'aria-selected') {
-            onPeek(model);
-          }
+        if (mutation.type === 'attributes' && mutation.attributeName === 'aria-selected') {
+          onPeek(model);
         }
       }
     },

@@ -66,12 +66,12 @@ export function useGetModifiers(
 
     // Add custom modifiers
     if (modifiers) {
-      Object.keys(modifiers).forEach((name) => {
+      for (const name of Object.keys(modifiers)) {
         const modifierValue = modifiers[name];
         const isMatch = modifierValue ? dateMatchModifiers(date, modifierValue, dateLib) : false;
 
         if (!isMatch) {
-          return;
+          continue;
         }
 
         if (name in customModifiersMap) {
@@ -79,7 +79,7 @@ export function useGetModifiers(
         } else {
           customModifiersMap[name] = [day];
         }
-      });
+      }
     }
   }
 
@@ -98,11 +98,11 @@ export function useGetModifiers(
     for (const name in internalModifiersMap) {
       const daysForFlag = internalModifiersMap[name as DayFlag];
 
-      dayFlags[name as DayFlag] = daysForFlag.some((d) => d === day);
+      dayFlags[name as DayFlag] = daysForFlag.includes(day);
     }
 
     for (const name in customModifiersMap) {
-      customModifiers[name] = Boolean(customModifiersMap[name].some((d) => d === day));
+      customModifiers[name] = Boolean(customModifiersMap[name].includes(day));
     }
 
     return {

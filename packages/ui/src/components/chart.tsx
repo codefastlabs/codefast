@@ -72,7 +72,7 @@ interface ChartContainerProps extends ComponentProps<'div'> {
 const ChartContainer = forwardRef<ChartContainerElement, ChartContainerProps>(
   ({ children, className, config, id, ...props }, ref) => {
     const uniqueId = useId();
-    const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
+    const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
 
     return (
       <ChartContext.Provider value={{ config }}>
@@ -201,7 +201,7 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
           className,
         )}
       >
-        {!nestLabel ? tooltipLabel : null}
+        {nestLabel ? null : tooltipLabel}
         <div className="grid gap-1.5">
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || 'value'}`;
@@ -423,13 +423,13 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
 
   rules.push(`${THEMES[theme]} [data-chart=${id}] {`);
 
-  configEntries.forEach(([key, itemConfig]) => {
+  for (const [key, itemConfig] of configEntries) {
     const color = itemConfig?.theme?.[theme] || itemConfig?.color;
 
     if (color) {
       rules.push(`  --color-${key}: ${color};`);
     }
-  });
+  }
 
   rules.push('}');
 
@@ -450,11 +450,11 @@ function generateCSS(id: string, config: ChartConfig): string {
 
   const allRules: string[] = [];
 
-  Object.keys(THEMES).forEach((theme) => {
+  for (const theme of Object.keys(THEMES)) {
     const themeCSS = generateThemeCSS(theme as Theme, id, themeOrColorConfig);
 
     allRules.push(themeCSS);
-  });
+  }
 
   return allRules.join('\n');
 }

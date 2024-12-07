@@ -12,11 +12,11 @@ export function getDataAttributes(props: DayPickerProps): Record<string, unknown
     'data-broadcast-calendar': props.broadcastCalendar || undefined,
   };
 
-  Object.entries(props).forEach(([key, val]) => {
+  for (const [key, val] of Object.entries(props)) {
     if (key.startsWith('data-')) {
       dataAttributes[key] = val;
     }
-  });
+  }
 
   return dataAttributes;
 }

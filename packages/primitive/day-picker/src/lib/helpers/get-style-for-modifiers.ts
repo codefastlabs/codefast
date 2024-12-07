@@ -18,14 +18,12 @@ export function getStyleForModifiers(
 ): CSSProperties {
   let style: CSSProperties = { ...styles[UI.Day] };
 
-  Object.entries(dayModifiers)
-    .filter(([, active]) => active)
-    .forEach(([modifier]) => {
-      style = {
-        ...style,
-        ...modifiersStyles[modifier],
-      };
-    });
+  for (const [modifier] of Object.entries(dayModifiers).filter(([, active]) => active)) {
+    style = {
+      ...style,
+      ...modifiersStyles[modifier],
+    };
+  }
 
   return style;
 }

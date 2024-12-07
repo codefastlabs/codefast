@@ -112,6 +112,11 @@ export const typescriptRules = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/switch-exhaustiveness-check/
      */
-    '@typescript-eslint/switch-exhaustiveness-check': 'error',
+    '@typescript-eslint/switch-exhaustiveness-check': [
+      'error',
+      {
+        considerDefaultExhaustiveForUnions: true,
+      },
+    ],
   },
 };

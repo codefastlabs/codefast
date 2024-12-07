@@ -11,19 +11,19 @@ export function Input(): JSX.Element {
   const [month, setMonth] = useState(new Date());
 
   // Hold the selected date in state
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
   // Hold the input value in state
   const [inputValue, setInputValue] = useState('');
 
   const handleDayPickerSelect: OnSelectHandler<Date | undefined> = (date) => {
-    if (!date) {
-      setInputValue('');
-      setSelectedDate(undefined);
-    } else {
+    if (date) {
       setSelectedDate(date);
       setMonth(date);
       setInputValue(format(date, 'MM/dd/yyyy'));
+    } else {
+      setInputValue('');
+      setSelectedDate(undefined);
     }
   };
 

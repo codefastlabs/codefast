@@ -16,7 +16,7 @@ export function rangeContainsDayOfWeek(
   dayOfWeek: number | number[],
   dateLib: DateLib = defaultDateLib,
 ): boolean {
-  const dayOfWeekArr = !Array.isArray(dayOfWeek) ? [dayOfWeek] : dayOfWeek;
+  const dayOfWeekArr = Array.isArray(dayOfWeek) ? dayOfWeek : [dayOfWeek];
   let date = range.from;
   const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);
 

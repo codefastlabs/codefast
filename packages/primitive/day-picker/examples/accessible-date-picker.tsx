@@ -4,7 +4,7 @@ import { type JSX, useState } from 'react';
 import { DayPicker } from '@/components';
 
 export function AccessibleDatePicker(): JSX.Element {
-  const [meetingDate, setMeetingDate] = useState<Date | undefined>(undefined);
+  const [meetingDate, setMeetingDate] = useState<Date | undefined>();
 
   return (
     <DayPicker

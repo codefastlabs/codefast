@@ -15,8 +15,7 @@ describe('when the matcher is a boolean', () => {
   });
 });
 describe('when matching the same day', () => {
-  const matcher = testDay;
-  const result = dateMatchModifiers(testDay, [matcher], defaultDateLib);
+  const result = dateMatchModifiers(testDay, [testDay], defaultDateLib);
 
   test('should return true', () => {
     expect(result).toBe(true);
@@ -108,8 +107,10 @@ describe('when matching the date before', () => {
   });
 });
 
+const matcher = (): true => true;
+
 describe('when the matcher is a function', () => {
-  const matcher = (): true => true;
+  // Use the previously defined matcher
   const result = dateMatchModifiers(testDay, [matcher], defaultDateLib);
 
   test('should return the result of the function', () => {

@@ -81,7 +81,7 @@ export function Sidebar05({ className, ...props }: Sidebar05Props): JSX.Element 
                           <MinusIcon className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
-                      {nav.items.length ? (
+                      {nav.items.length > 0 ? (
                         <CollapsibleContent>
                           <SidebarMenuSub>
                             {nav.items.map((item) => (

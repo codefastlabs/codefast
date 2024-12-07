@@ -30,12 +30,12 @@ const style = `
   transform: rotate(-45deg);
 }`;
 
-export function ModifiersCustom(): JSX.Element {
-  const handleDayClick: DayEventHandler<MouseEvent> = (day, { booked }) => {
-    // eslint-disable-next-line no-alert -- This is a test message
-    alert(`Day ${day.toLocaleDateString()} is booked? ${booked}`);
-  };
+const handleDayClick: DayEventHandler<MouseEvent> = (day, { booked }) => {
+  // eslint-disable-next-line no-alert -- This is a test message
+  alert(`Day ${day.toLocaleDateString()} is booked? ${booked}`);
+};
 
+export function ModifiersCustom(): JSX.Element {
   return (
     <>
       <style>{style}</style>

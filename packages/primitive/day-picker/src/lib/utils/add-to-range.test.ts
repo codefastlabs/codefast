@@ -3,7 +3,7 @@ import { addToRange } from '@/lib/utils/add-to-range';
 describe('addToRange', () => {
   test('add a date to an undefined range', () => {
     const date = new Date(2022, 0, 1);
-    const range = addToRange(date, undefined);
+    const range = addToRange(date);
 
     expect(range).toEqual({ from: date, to: date });
   });

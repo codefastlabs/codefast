@@ -1,6 +1,6 @@
 import { useTheme } from 'next-themes';
 import { type ComponentProps, type JSX } from 'react';
-import { toast, Toaster as Sonner } from 'sonner';
+import { Toaster as Sonner } from 'sonner';
 
 /* -----------------------------------------------------------------------------
  * Component: Sonner
@@ -35,4 +35,6 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { toast, Toaster, type ToasterProps };
+export { Toaster, type ToasterProps };
+
+export { toast } from 'sonner';

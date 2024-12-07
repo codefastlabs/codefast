@@ -3,10 +3,10 @@ import { type DayOfWeek } from '@/lib/types';
 import { rangeContainsModifiers } from '@/lib/utils/range-contains-modifiers';
 
 const sunday = new Date(2024, 8, 1); //  day of the week 0
-const monday = new Date(2024, 8, 2); //  day of the week 1
-const tuesday = new Date(2024, 8, 3); //  day of the week 1
-const wednesday = new Date(2024, 8, 4); //  day of the week 1
-const thursday = new Date(2024, 8, 5); //  day of the week 1
+const monday = new Date(2024, 8, 2); //  day of week 1
+const tuesday = new Date(2024, 8, 3); //  day of week 1
+const wednesday = new Date(2024, 8, 4); //  day of week 1
+const thursday = new Date(2024, 8, 5); //  day of week 1
 const friday = new Date(2024, 8, 6); //  day of the week 5
 const saturday = new Date(2024, 8, 7); //  day of the week 6
 const nextWeekSunday = new Date(2024, 8, 8); //  day of the week 0
@@ -24,32 +24,27 @@ describe('when the matcher is a boolean', () => {
 
 describe('when matching a single date', () => {
   test('should return true when matching a date in the range', () => {
-    const matcher = thursday;
-    const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
+    const result = rangeContainsModifiers(testRange, [thursday], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return true when matching the "from" date', () => {
-    const matcher = monday;
-    const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
+    const result = rangeContainsModifiers(testRange, [monday], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return true when matching the "to" date', () => {
-    const matcher = saturday;
-    const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
+    const result = rangeContainsModifiers(testRange, [saturday], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return false on the edge of the "from" date', () => {
-    const matcher = sunday;
-    const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
+    const result = rangeContainsModifiers(testRange, [sunday], defaultDateLib);
 
     expect(result).toBe(false);
   });
   test('should return false on the edge of the "to" date', () => {
-    const matcher = nextWeekSunday;
-    const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
+    const result = rangeContainsModifiers(testRange, [nextWeekSunday], defaultDateLib);
 
     expect(result).toBe(false);
   });
@@ -242,21 +237,28 @@ describe('when matching the date before', () => {
   });
 });
 
+const dateMatcher =
+  (targetDate: Date) =>
+  (date: Date): boolean =>
+    date.getTime() === targetDate.getTime();
+
 describe('when the matcher is a function', () => {
   test('should return true when matching the "from" date', () => {
-    const matcher = (date: Date): boolean => date.getTime() === monday.getTime();
+    const matcher = dateMatcher(monday);
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(true);
   });
+
   test('should return true when matching the "to" date', () => {
-    const matcher = (date: Date): boolean => date.getTime() === saturday.getTime();
+    const matcher = dateMatcher(saturday);
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(true);
   });
+
   test('should return false', () => {
-    const matcher = (date: Date): boolean => date.getTime() === nextWeekSunday.getTime();
+    const matcher = dateMatcher(nextWeekSunday);
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(false);

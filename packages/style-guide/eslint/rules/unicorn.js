@@ -1,5 +1,14 @@
+const disabledRules = {
+  'unicorn/import-style': 'off',
+  'unicorn/no-null': 'off',
+  'unicorn/prefer-global-this': 'off',
+  'unicorn/prevent-abbreviations': 'off',
+};
+
 export const unicornRules = {
   rules: {
+    ...disabledRules,
+
     /**
      * Require consistent filename case for all linted files.
      *

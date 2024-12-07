@@ -41,7 +41,7 @@ const testCases: {
   { moveBy: 'year', moveDir: 'before', expectedFn: addYears },
 ];
 
-testCases.forEach(({ moveBy, moveDir, expectedFn }) => {
+for (const { moveBy, moveDir, expectedFn } of testCases) {
   test(`should move ${moveDir} by ${moveBy}`, () => {
     const expectedDate = expectedFn(focusedDate, moveDir === 'after' ? 1 : -1);
     const result = getFocusableDate(
@@ -56,7 +56,7 @@ testCases.forEach(({ moveBy, moveDir, expectedFn }) => {
 
     expect(result).toEqual(expectedDate);
   });
-});
+}
 
 const weekTestCases: {
   expectedFn: (
@@ -73,7 +73,7 @@ const weekTestCases: {
   { moveBy: 'startOfWeek', moveDir: 'after', expectedFn: startOfWeek },
 ];
 
-weekTestCases.forEach(({ moveBy, moveDir, expectedFn }) => {
+for (const { moveBy, moveDir, expectedFn } of weekTestCases) {
   test(`should move ${moveDir} by ${moveBy}`, () => {
     const expectedDate = expectedFn(focusedDate);
     const result = getFocusableDate(
@@ -88,7 +88,7 @@ weekTestCases.forEach(({ moveBy, moveDir, expectedFn }) => {
 
     expect(result).toEqual(expectedDate);
   });
-});
+}
 
 const ISOWeekTestCases: {
   expectedFn: (date: Date | number) => Date;
@@ -99,7 +99,7 @@ const ISOWeekTestCases: {
   { moveBy: 'startOfWeek', moveDir: 'after', expectedFn: startOfISOWeek },
 ];
 
-ISOWeekTestCases.forEach(({ moveBy, moveDir, expectedFn }) => {
+for (const { moveBy, moveDir, expectedFn } of ISOWeekTestCases) {
   test(`should move ${moveDir} by ${moveBy} when ISOWeek is true`, () => {
     const expectedDate = expectedFn(focusedDate);
     const result = getFocusableDate(
@@ -114,7 +114,7 @@ ISOWeekTestCases.forEach(({ moveBy, moveDir, expectedFn }) => {
 
     expect(result).toEqual(expectedDate);
   });
-});
+}
 
 test('should not move before startMonth', () => {
   const result = getFocusableDate(
