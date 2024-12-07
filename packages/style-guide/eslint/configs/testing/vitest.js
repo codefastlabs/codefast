@@ -1,14 +1,14 @@
-import vitest from '@vitest/eslint-plugin';
+import vitestPlugin from '@vitest/eslint-plugin';
 
 import { vitestRules } from '../../rules/vitest.js';
 
 /** @type {import('eslint').Linter.Config} */
-export const config = {
+export const vitest = {
   plugins: {
-    vitest,
+    vitest: vitestPlugin,
   },
   rules: {
-    ...vitest.configs.recommended.rules,
+    ...vitestPlugin.configs.recommended.rules,
     ...vitestRules.rules,
   },
 };

@@ -1,27 +1,18 @@
-import {
-  jest,
-  jestTypescript,
-  next,
-  playwrightTest,
-  react,
-  recommended,
-  testingLibrary,
-  typescript,
-} from '@codefast/style-guide';
+import { configs } from '@codefast/style-guide';
 
 import { resolve } from 'node:path';
 import globals from 'globals';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
-  ...recommended,
-  ...typescript,
-  ...react,
-  ...next,
+  ...configs.recommended,
+  ...configs.typescript,
+  ...configs.react,
+  ...configs.next,
   {
-    ...jest,
-    ...jestTypescript,
-    ...testingLibrary,
+    ...configs.jest,
+    ...configs.jestTypescript,
+    ...configs.testingLibrary,
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
     languageOptions: {
       globals: {
@@ -36,7 +27,7 @@ export const config = [
     },
   },
   {
-    ...playwrightTest,
+    ...configs.playwrightTest,
     files: ['**/?(*.)+(e2e).[jt]s?(x)'],
   },
   {

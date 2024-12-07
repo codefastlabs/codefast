@@ -1,11 +1,21 @@
-export { config as recommended } from './configs/core/recommended.js';
-export { config as typescript } from './configs/core/typescript.js';
+import { recommended } from './configs/core/recommended.js';
+import { typescript } from './configs/core/typescript.js';
+import { next } from './configs/frameworks/next.js';
+import { react } from './configs/frameworks/react.js';
+import { jest } from './configs/testing/jest.js';
+import { jestTypescript } from './configs/testing/jest-typescript.js';
+import { playwrightTest } from './configs/testing/playwright-test.js';
+import { testingLibrary } from './configs/testing/testing-library.js';
+import { vitest } from './configs/testing/vitest.js';
 
-export { config as next } from './configs/frameworks/next.js';
-export { config as react } from './configs/frameworks/react.js';
-
-export { config as jest } from './configs/testing/jest.js';
-export { config as jestTypescript } from './configs/testing/jest-typescript.js';
-export { config as playwrightTest } from './configs/testing/playwright-test.js';
-export { config as testingLibrary } from './configs/testing/testing-library.js';
-export { config as vitest } from './configs/testing/vitest.js';
+export const configs = {
+  recommended,
+  typescript,
+  next,
+  react,
+  jest,
+  jestTypescript,
+  playwrightTest,
+  testingLibrary,
+  vitest,
+};

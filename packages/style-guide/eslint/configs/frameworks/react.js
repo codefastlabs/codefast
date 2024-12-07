@@ -1,19 +1,18 @@
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
-import prettier from 'eslint-config-prettier';
+import prettierConfig from 'eslint-config-prettier';
 
 import { reactRules } from '../../rules/react.js';
 import { jsxA11yRules } from '../../rules/jsx-a11y.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-export const config = [
-  react.configs.flat.recommended,
-  react.configs.flat['jsx-runtime'],
+export const react = [
+  reactPlugin.configs.flat.recommended,
+  reactPlugin.configs.flat['jsx-runtime'],
   importPlugin.flatConfigs.react,
-  jsxA11y.flatConfigs.recommended,
-
+  jsxA11yPlugin.flatConfigs.recommended,
   /**
    * Vì react-hooks chưa được nâng cấp lên eslint 9, chúng ta cần khai báo plugins.
    * Cú pháp đề xuất:
@@ -21,24 +20,24 @@ export const config = [
    * @example
    * ```js
    * {
-   *   ...reactHooks.configs.recommended,
+   *   ...reactHooksPlugin.configs.recommended,
    *   rules: {
-   *     ...reactHooks.configs.recommended.rules,
+   *     ...reactHooksPlugin.configs.recommended.rules,
    *   },
    * }
    * ```
    */
   {
     plugins: {
-      'react-hooks': reactHooks,
+      'react-hooks': reactHooksPlugin,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
+      ...reactHooksPlugin.configs.recommended.rules,
     },
   },
   reactRules,
   jsxA11yRules,
-  prettier,
+  prettierConfig,
   {
     settings: {
       react: {

@@ -1,10 +1,10 @@
 import globals from 'globals';
 
-import { recommended } from './eslint/index.js';
+import { configs } from './eslint/index.js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  ...recommended,
+  ...configs.recommended,
   {
     languageOptions: {
       globals: {
