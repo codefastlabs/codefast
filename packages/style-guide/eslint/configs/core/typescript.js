@@ -1,4 +1,4 @@
-import tseslint from 'typescript-eslint';
+import tsConfig from 'typescript-eslint';
 import importPlugin from 'eslint-plugin-import';
 import prettierConfig from 'eslint-config-prettier';
 
@@ -9,8 +9,8 @@ import { typescriptImportRules } from '../../rules/typescript/import.js';
 
 /** @type {import('eslint').Linter.Config[] | import('@typescript-eslint/utils').TSESLint.FlatConfig.ConfigFile} */
 export const typescript = [
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  ...tsConfig.configs.strictTypeChecked,
+  ...tsConfig.configs.stylisticTypeChecked,
   importPlugin.flatConfigs.typescript,
   tsdocConfig,
   typescriptRules,

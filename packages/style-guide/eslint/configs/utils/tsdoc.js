@@ -2,7 +2,11 @@ import tsdocPlugin from 'eslint-plugin-tsdoc';
 
 import { tsdocRules } from '../../rules/tsdoc.js';
 
-/** @type {import('eslint').Linter.Config} */
+/**
+ * We use a plugin because `tsdoc` is not compatible with eslint version 9 or higher.
+ *
+ * @type {import('eslint').Linter.Config}
+ */
 export const tsdocConfig = {
   plugins: {
     tsdoc: tsdocPlugin,
