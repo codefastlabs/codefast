@@ -18,7 +18,7 @@ test('isDateInterval return true for valid DateInterval', () => {
 test('isDateInterval return false for invalid DateInterval', () => {
   expect(isDateInterval({})).toBe(false);
   expect(isDateInterval(null)).toBe(false);
-  expect(isDateInterval(undefined)).toBe(false);
+  expect(isDateInterval()).toBe(false);
 });
 
 test('isDateRange return true for valid DateRange', () => {
@@ -30,7 +30,7 @@ test('isDateRange return true for valid DateRange', () => {
 test('isDateRange return false for invalid DateRange', () => {
   expect(isDateRange({})).toBe(false);
   expect(isDateRange(null)).toBe(false);
-  expect(isDateRange(undefined)).toBe(false);
+  expect(isDateRange()).toBe(false);
 });
 
 test('isDateAfterType return true for valid DateAfter', () => {
@@ -42,7 +42,7 @@ test('isDateAfterType return true for valid DateAfter', () => {
 test('isDateAfterType return false for invalid DateAfter', () => {
   expect(isDateAfterType({})).toBe(false);
   expect(isDateAfterType(null)).toBe(false);
-  expect(isDateAfterType(undefined)).toBe(false);
+  expect(isDateAfterType()).toBe(false);
 });
 
 test('isDateBeforeType return true for valid DateBefore', () => {
@@ -54,7 +54,7 @@ test('isDateBeforeType return true for valid DateBefore', () => {
 test('isDateBeforeType return false for invalid DateBefore', () => {
   expect(isDateBeforeType({})).toBe(false);
   expect(isDateBeforeType(null)).toBe(false);
-  expect(isDateBeforeType(undefined)).toBe(false);
+  expect(isDateBeforeType()).toBe(false);
 });
 
 test('isDayOfWeekType return true for valid DayOfWeek', () => {
@@ -66,7 +66,7 @@ test('isDayOfWeekType return true for valid DayOfWeek', () => {
 test('isDayOfWeekType return false for invalid DayOfWeek', () => {
   expect(isDayOfWeekType({})).toBe(false);
   expect(isDayOfWeekType(null)).toBe(false);
-  expect(isDayOfWeekType(undefined)).toBe(false);
+  expect(isDayOfWeekType()).toBe(false);
 });
 
 test('isDatesArray return true for valid array of dates', () => {

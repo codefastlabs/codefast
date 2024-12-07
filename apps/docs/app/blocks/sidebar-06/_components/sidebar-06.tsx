@@ -72,7 +72,7 @@ export function Sidebar06({ className, ...props }: Sidebar06Props): JSX.Element 
                           {nav.title} <MoreHorizontalIcon className="ml-auto" />
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
-                      {nav.items.length ? (
+                      {nav.items.length > 0 ? (
                         <DropdownMenuContent align="end" className="min-w-56 rounded-lg" side="bottom">
                           {nav.items.map((item) => (
                             <DropdownMenuItem key={item.title} asChild>

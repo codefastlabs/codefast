@@ -34,7 +34,7 @@ export function AppSidebar({ className, ...props }: AppSidebarProps): JSX.Elemen
                       {nav.title}
                     </a>
                   </SidebarMenuButton>
-                  {nav.items.length ? (
+                  {nav.items.length > 0 ? (
                     <SidebarMenuSub>
                       {nav.items.map((item) => (
                         <SidebarMenuSubItem key={item.title}>

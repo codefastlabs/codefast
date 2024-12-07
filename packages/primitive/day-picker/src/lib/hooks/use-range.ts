@@ -26,7 +26,7 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
     onSelect ? initiallySelected : undefined,
   );
 
-  const selected = !onSelect ? internallySelected : initiallySelected;
+  const selected = onSelect ? initiallySelected : internallySelected;
 
   const isSelected = (date: Date): boolean | undefined => selected && rangeIncludesDate(selected, date, false, dateLib);
 
@@ -34,12 +34,16 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
     const { min, max } = props as RangeProps;
     const newRange = addToRange(triggerDate, selected, min, max, required, dateLib);
 
-    if (excludeDisabled && disabled && newRange?.from && newRange.to) {
-      if (rangeContainsModifiers({ from: newRange.from, to: newRange.to }, disabled, dateLib)) {
-        // if disabled days are found, the range is reset
-        newRange.from = triggerDate;
-        newRange.to = undefined;
-      }
+    if (
+      excludeDisabled &&
+      disabled &&
+      newRange?.from &&
+      newRange.to &&
+      rangeContainsModifiers({ from: newRange.from, to: newRange.to }, disabled, dateLib)
+    ) {
+      // if disabled days are found, the range is reset
+      newRange.from = triggerDate;
+      newRange.to = undefined;
     }
 
     if (!onSelect) {

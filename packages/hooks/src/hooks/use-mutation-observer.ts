@@ -1,5 +1,12 @@
 import { type RefObject, useEffect } from 'react';
 
+const defaultOptions: MutationObserverInit = {
+  attributes: true,
+  characterData: true,
+  childList: true,
+  subtree: true,
+};
+
 /**
  * Attaches a MutationObserver to a given HTMLElement and invokes a callback
  * function when mutations occur in the observed elements.
@@ -23,12 +30,7 @@ import { type RefObject, useEffect } from 'react';
 export function useMutationObserver(
   ref: RefObject<HTMLElement | null>,
   callback: MutationCallback,
-  options: MutationObserverInit = {
-    attributes: true,
-    characterData: true,
-    childList: true,
-    subtree: true,
-  },
+  options: MutationObserverInit = defaultOptions,
 ): void {
   useEffect(() => {
     if (!ref.current) {

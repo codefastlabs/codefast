@@ -35,7 +35,9 @@ export function getMonths(
     startOfISOWeek,
     startOfWeek,
   } = dateLib;
-  const dayPickerMonths = displayMonths.reduce<CalendarMonth[]>((months, month) => {
+  const dayPickerMonths: CalendarMonth[] = [];
+
+  for (const month of displayMonths) {
     let firstDateOfFirstWeek: Date;
 
     if (props.broadcastCalendar) {
@@ -56,9 +58,6 @@ export function getMonths(
       lastDateOfLastWeek = endOfWeek(endOfMonth(month));
     }
 
-    /**
-     * The dates to display in the month.
-     */
     const monthDates = dates.filter((date) => {
       return date >= firstDateOfFirstWeek && date <= lastDateOfLastWeek;
     });
@@ -75,27 +74,24 @@ export function getMonths(
       monthDates.push(...extraDates);
     }
 
-    const weeks: CalendarWeek[] = monthDates.reduce<CalendarWeek[]>((weeksAcc, date) => {
-      const weekNumber = props.ISOWeek ? getISOWeek(date) : getWeek(date);
-      const week = weeksAcc.find((currentWeek) => currentWeek.weekNumber === weekNumber);
+    const weeks: CalendarWeek[] = [];
 
+    for (const date of monthDates) {
+      const weekNumber = props.ISOWeek ? getISOWeek(date) : getWeek(date);
+      const week = weeks.find((currentWeek) => currentWeek.weekNumber === weekNumber);
       const day = new CalendarDay(date, month, dateLib);
 
-      if (!week) {
-        weeksAcc.push(new CalendarWeek(weekNumber, [day]));
-      } else {
+      if (week) {
         week.days.push(day);
+      } else {
+        weeks.push(new CalendarWeek(weekNumber, [day]));
       }
-
-      return weeksAcc;
-    }, []);
+    }
 
     const dayPickerMonth = new CalendarMonth(month, weeks);
 
-    months.push(dayPickerMonth);
-
-    return months;
-  }, []);
+    dayPickerMonths.push(dayPickerMonth);
+  }
 
   if (!props.reverseMonths) {
     return dayPickerMonths;

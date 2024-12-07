@@ -24,8 +24,8 @@ export function SlideshowWedding({ ...props }: SlideshowWeddingProps): JSX.Eleme
         transition: 'zoomOut',
         animation: 'kenburnsDown',
         transitionDuration: 2000,
-        delay: 10000,
-        animationDuration: 20000,
+        delay: 10_000,
+        animationDuration: 20_000,
         shuffle: true,
       }}
       {...props}

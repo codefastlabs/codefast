@@ -9,7 +9,7 @@ const customFormattersMock = {
 
 describe('getFormatters helpers', () => {
   test('returns default formatters when custom formatters are not provided', () => {
-    const formatters = getFormatters(undefined);
+    const formatters = getFormatters();
 
     expect(formatters).toEqual(defaultFormatters);
   });

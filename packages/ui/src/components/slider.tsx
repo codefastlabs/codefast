@@ -31,7 +31,7 @@ const Slider = forwardRef<SliderElement, SliderProps>(({ className, ...props }, 
           'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
           'disabled:pointer-events-none disabled:opacity-50',
         )}
-        {...(props.tabIndex !== undefined ? { tabIndex: props.tabIndex } : undefined)}
+        {...(props.tabIndex === undefined ? undefined : { tabIndex: props.tabIndex })}
       />
     ))}
   </SliderPrimitive.Root>

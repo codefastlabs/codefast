@@ -1,5 +1,6 @@
 'use client';
 
+import Cookies from 'js-cookie';
 import {
   cn,
   ResizableHandle,
@@ -34,6 +35,9 @@ import { Nav } from '@/app/examples/mail/_components/nav';
 import { type EmailMessage } from '@/app/examples/mail/_data/data';
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 
+const RESIZABLE_PANELS_LAYOUT_COOKIE_NAME = 'react-resizable-panels:layout';
+const RESIZABLE_PANELS_COLLAPSED_COOKIE_NAME = 'react-resizable-panels:collapsed';
+
 interface MailProps {
   accounts: {
     email: string;
@@ -61,7 +65,7 @@ export function Mail({
       className="h-full max-h-dvh items-stretch"
       direction="horizontal"
       onLayout={(sizes: number[]) => {
-        document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
+        Cookies.set(RESIZABLE_PANELS_LAYOUT_COOKIE_NAME, JSON.stringify(sizes));
       }}
     >
       <ResizablePanel
@@ -73,11 +77,11 @@ export function Mail({
         minSize={15}
         onCollapse={() => {
           setIsCollapsed(true);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
+          Cookies.set(RESIZABLE_PANELS_COLLAPSED_COOKIE_NAME, JSON.stringify(true));
         }}
         onExpand={() => {
           setIsCollapsed(false);
-          document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
+          Cookies.set(RESIZABLE_PANELS_COLLAPSED_COOKIE_NAME, JSON.stringify(false));
         }}
       >
         <div className={cn('flex h-[56px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}>

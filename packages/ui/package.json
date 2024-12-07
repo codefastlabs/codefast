@@ -37,7 +37,7 @@
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
     "dev": "tsup --watch",
-    "lint": "eslint . --cache --max-warnings 0"
+    "lint": "TIMING=all eslint . --max-warnings 0"
   },
   "dependencies": {
     "@codefast-ui/checkbox-group": "workspace:*",
@@ -76,10 +76,12 @@
     "@radix-ui/react-tooltip": "1.1.4",
     "@radix-ui/react-use-controllable-state": "1.1.0",
     "@radix-ui/react-visually-hidden": "1.1.0",
+    "@types/js-cookie": "3.0.6",
     "clsx": "2.1.1",
     "cmdk": "1.0.4",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
+    "js-cookie": "3.0.5",
     "lucide-react": "0.468.0",
     "react-resizable-panels": "2.1.7",
     "sonner": "1.7.0",
