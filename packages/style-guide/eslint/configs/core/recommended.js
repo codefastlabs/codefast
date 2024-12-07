@@ -1,4 +1,4 @@
-import eslint from '@eslint/js';
+import jsConfig from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
 
 import { bestPracticeRules } from '../../rules/best-practice.js';
@@ -15,7 +15,7 @@ import { unicornConfig } from '../utils/unicorn.js';
  * @type {import('eslint').Linter.Config[]}
  */
 export const recommended = [
-  eslint.configs.recommended,
+  jsConfig.configs.recommended,
   commentsConfig,
   importConfig,
   unicornConfig,
