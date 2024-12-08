@@ -1,30 +1,20 @@
+import { resolve } from 'node:path';
+
+import globals from 'globals';
 import {
   jestConfig,
   jestTypescriptConfig,
-  nextConfig,
-  playwrightTestConfig,
-  reactConfig,
   recommendedConfig,
   testingLibraryConfig,
   typescriptConfig,
 } from '@codefast/style-guide';
-
-import { resolve } from 'node:path';
-import globals from 'globals';
 // @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
 import onlyWarn from 'eslint-plugin-only-warn';
+import { type Linter } from 'eslint';
 
-/** @type {import('eslint').Linter.Config[]} */
-export const config = [
+export const config: Linter.Config[] = [
   ...recommendedConfig,
   ...typescriptConfig,
-  ...reactConfig,
-  ...nextConfig,
-  {
-    plugins: {
-      'only-warn': onlyWarn,
-    },
-  },
   {
     ...jestConfig,
     ...jestTypescriptConfig,
@@ -37,56 +27,33 @@ export const config = [
     },
   },
   {
-    files: ['**/?(*.)+(test|spec|e2e).[jt]s?(x)'],
+    plugins: {
+      'only-warn': onlyWarn,
+    },
+  },
+  {
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
     rules: {
       'tsdoc/syntax': 'off',
     },
   },
   {
-    ...playwrightTestConfig,
-    files: ['**/?(*.)+(e2e).[jt]s?(x)'],
-  },
-  {
-    files: ['**/*.d.ts'],
-    rules: {
-      '@typescript-eslint/no-empty-object-type': 'off',
-    },
-  },
-  {
-    ignores: ['.next', 'coverage'],
+    ignores: ['dist', 'coverage'],
   },
   {
     languageOptions: {
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
         project: resolve(process.cwd(), 'tsconfig.json'),
         projectService: true,
       },
       globals: {
         ...globals.serviceworker,
-        ...globals.node,
         ...globals.browser,
       },
     },
   },
   {
     rules: {
-      /**
-       * Warns when Promises are used inappropriately
-       *
-       * 🚫 Not fixable - https://typescript-eslint.io/rules/no-misused-promises/
-       */
-      '@typescript-eslint/no-misused-promises': [
-        'warn',
-        {
-          checksVoidReturn: {
-            attributes: false,
-          },
-        },
-      ],
-
       /**
        * This configuration rule is part of the `@typescript-eslint` package.
        *
@@ -103,28 +70,25 @@ export const config = [
       '@typescript-eslint/no-unnecessary-type-parameters': 'off',
 
       /**
-       * Warns when non-string types are used in template expressions but allows numbers
+       * Disables the rule that prevents unbound methods
        *
-       * 🚫 Not fixable - https://typescript-eslint.io/rules/restrict-template-expressions/
+       * @remarks This rule will be removed when upgrading to Tailwind CSS v4.
+       *
+       * https://typescript-eslint.io/rules/unbound-method/
        */
-      '@typescript-eslint/restrict-template-expressions': [
-        'warn',
-        {
-          allowNumber: true,
-        },
-      ],
+      '@typescript-eslint/unbound-method': 'off',
 
       /**
        * Disables the rule that disallows default exports
        *
-       * 🚫 Not fixable - https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
+       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
        */
       'import/no-default-export': 'off',
 
       /**
        * Enforces consistent blank lines between statements
        *
-       * 🔧 Fixable - https://eslint.org/docs/latest/rules/padding-line-between-statements
+       * https://eslint.org/docs/latest/rules/padding-line-between-statements
        */
       'padding-line-between-statements': [
         'warn',
@@ -167,18 +131,6 @@ export const config = [
           blankLine: 'always',
           next: '*',
           prev: ['case', 'default'],
-        },
-      ],
-
-      /**
-       * Warns when using unknown DOM properties but ignores specified custom elements
-       *
-       * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
-       */
-      'react/no-unknown-property': [
-        'warn',
-        {
-          ignore: ['vaul-drawer-wrapper'],
         },
       ],
     },
