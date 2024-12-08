@@ -11,6 +11,8 @@ import {
 
 import { resolve } from 'node:path';
 import globals from 'globals';
+// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+import onlyWarn from 'eslint-plugin-only-warn';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
@@ -18,6 +20,11 @@ export const config = [
   ...typescriptConfig,
   ...reactConfig,
   ...nextConfig,
+  {
+    plugins: {
+      'only-warn': onlyWarn,
+    },
+  },
   {
     ...jestConfig,
     ...jestTypescriptConfig,
