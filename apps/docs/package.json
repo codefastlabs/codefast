@@ -6,7 +6,7 @@
     "build": "rm -rf .next && next build",
     "clean": "rm -rf node_modules .next",
     "dev": "next dev --turbopack",
-    "lint": "TIMING=all next lint --max-warnings 0",
+    "lint": "next lint --max-warnings 0",
     "start": "next start"
   },
   "dependencies": {
