@@ -14,8 +14,9 @@
   "sideEffects": false,
   "files": [
     "base.json",
+    "library.json",
     "nextjs.json",
-    "react-library.json",
+    "react.json",
     "CHANGELOG.md"
   ],
   "publishConfig": {
