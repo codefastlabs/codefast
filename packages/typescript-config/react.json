@@ -4,6 +4,6 @@
     "jsx": "react-jsx",
     "moduleResolution": "bundler"
   },
-  "display": "React Library",
+  "display": "React",
   "extends": "./base.json"
 }
