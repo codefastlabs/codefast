@@ -15,7 +15,9 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotI
 import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants'; /* -----------------------------------------------------------------------------
+import { buttonVariants } from '@/styles/button-variants';
+
+/* -----------------------------------------------------------------------------
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
