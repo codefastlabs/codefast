@@ -1,25 +1,25 @@
+import { resolve } from 'node:path';
+
 import {
   jestConfig,
   jestTypescriptConfig,
+  nextConfig,
+  playwrightTestConfig,
   reactConfig,
   recommendedConfig,
   testingLibraryConfig,
   typescriptConfig,
 } from '@codefast/style-guide';
-
-import { resolve } from 'node:path';
 import globals from 'globals';
-
 // @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
 import onlyWarn from 'eslint-plugin-only-warn';
+import { type Linter } from 'eslint';
 
-/**
- * @type {import('eslint').Linter.Config[]}
- */
-export const config = [
+export const config: Linter.Config[] = [
   ...recommendedConfig,
   ...typescriptConfig,
   ...reactConfig,
+  ...nextConfig,
   {
     plugins: {
       'only-warn': onlyWarn,
@@ -37,10 +37,14 @@ export const config = [
     },
   },
   {
-    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    files: ['**/?(*.)+(test|spec|e2e).[jt]s?(x)'],
     rules: {
       'tsdoc/syntax': 'off',
     },
+  },
+  {
+    ...playwrightTestConfig,
+    files: ['**/?(*.)+(e2e).[jt]s?(x)'],
   },
   {
     files: ['**/*.d.ts'],
@@ -49,7 +53,7 @@ export const config = [
     },
   },
   {
-    ignores: ['dist', 'coverage'],
+    ignores: ['.next', 'coverage'],
   },
   {
     languageOptions: {
@@ -62,10 +66,27 @@ export const config = [
       },
       globals: {
         ...globals.serviceworker,
+        ...globals.node,
         ...globals.browser,
       },
     },
+  },
+  {
     rules: {
+      /**
+       * Warns when Promises are used inappropriately
+       *
+       * 🚫 Not fixable - https://typescript-eslint.io/rules/no-misused-promises/
+       */
+      '@typescript-eslint/no-misused-promises': [
+        'warn',
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
+
       /**
        * This configuration rule is part of the `@typescript-eslint` package.
        *
@@ -82,13 +103,6 @@ export const config = [
       '@typescript-eslint/no-unnecessary-type-parameters': 'off',
 
       /**
-       * Disables the rule that enforces using nullish coalescing operator
-       *
-       * https://typescript-eslint.io/rules/prefer-nullish-coalescing/
-       */
-      '@typescript-eslint/prefer-nullish-coalescing': 'off',
-
-      /**
        * Warns when non-string types are used in template expressions but allows numbers
        *
        * 🚫 Not fixable - https://typescript-eslint.io/rules/restrict-template-expressions/
@@ -103,26 +117,14 @@ export const config = [
       /**
        * Disables the rule that disallows default exports
        *
-       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
+       * 🚫 Not fixable - https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
        */
       'import/no-default-export': 'off',
 
       /**
-       * Prevents fallthrough in switch statements but allows empty cases
-       *
-       * https://eslint.org/docs/latest/rules/no-fallthrough
-       */
-      'no-fallthrough': [
-        'error',
-        {
-          allowEmptyCase: true,
-        },
-      ],
-
-      /**
        * Enforces consistent blank lines between statements
        *
-       * https://eslint.org/docs/latest/rules/padding-line-between-statements
+       * 🔧 Fixable - https://eslint.org/docs/latest/rules/padding-line-between-statements
        */
       'padding-line-between-statements': [
         'warn',
@@ -176,7 +178,7 @@ export const config = [
       'react/no-unknown-property': [
         'warn',
         {
-          ignore: ['cmdk-input-wrapper'],
+          ignore: ['vaul-drawer-wrapper'],
         },
       ],
     },

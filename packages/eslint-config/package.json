@@ -14,20 +14,71 @@
   "sideEffects": false,
   "type": "module",
   "exports": {
-    "./library": "./library.js",
-    "./next": "./next.js",
-    "./react": "./react.js"
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./library": {
+      "import": {
+        "types": "./dist/library.d.ts",
+        "default": "./dist/library.js"
+      },
+      "require": {
+        "types": "./dist/library.d.cts",
+        "default": "./dist/library.cjs"
+      }
+    },
+    "./next": {
+      "import": {
+        "types": "./dist/next.d.ts",
+        "default": "./dist/next.js"
+      },
+      "require": {
+        "types": "./dist/next.d.cts",
+        "default": "./dist/next.cjs"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      },
+      "require": {
+        "types": "./dist/react.d.cts",
+        "default": "./dist/react.cjs"
+      }
+    }
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "files": [
-    "library.js",
-    "next.js",
-    "react.js",
+    "dist",
     "CHANGELOG.md"
   ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf node_modules dist",
+    "lint": "eslint . --max-warnings 0"
+  },
   "dependencies": {
     "@codefast/style-guide": "workspace:*",
     "eslint-plugin-only-warn": "1.1.0",
     "globals": "15.13.0"
+  },
+  "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
+    "@types/node": "22.10.1",
+    "eslint": "9.16.0",
+    "tsup": "8.3.5",
+    "typescript": "5.7.2"
   },
   "peerDependencies": {
     "eslint": ">=9"
