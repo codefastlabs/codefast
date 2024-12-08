@@ -36,7 +36,7 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
-    "lint": "eslint . --max-warnings 0 --flag unstable_ts_config"
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "4.4.1",
@@ -62,7 +62,6 @@
     "@types/node": "22.10.1",
     "eslint": "9.16.0",
     "globals": "15.13.0",
-    "jiti": "2.4.1",
     "tsup": "8.3.5",
     "typescript": "5.7.2"
   },

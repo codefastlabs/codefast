@@ -30,6 +30,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/hooks/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/style-guide/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/eslint-config/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
