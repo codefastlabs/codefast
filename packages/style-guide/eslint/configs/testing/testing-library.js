@@ -1,4 +1,4 @@
 import testingLibraryPlugin from 'eslint-plugin-testing-library';
 
 /** @type {import('eslint').Linter.Config} */
-export const testingLibrary = testingLibraryPlugin.configs['flat/react'];
+export const testingLibraryConfig = testingLibraryPlugin.configs['flat/react'];

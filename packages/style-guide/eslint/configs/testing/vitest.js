@@ -3,7 +3,7 @@ import vitestPlugin from '@vitest/eslint-plugin';
 import { vitestRules } from '../../rules/vitest.js';
 
 /** @type {import('eslint').Linter.Config} */
-export const vitest = {
+export const vitestConfig = {
   plugins: {
     vitest: vitestPlugin,
   },

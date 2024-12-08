@@ -8,7 +8,7 @@ import { typescriptExtensionRules } from '../../rules/typescript/extension.js';
 import { typescriptImportRules } from '../../rules/typescript/import.js';
 
 /** @type {import('eslint').Linter.Config[] | import('@typescript-eslint/utils').TSESLint.FlatConfig.ConfigFile} */
-export const typescript = [
+export const typescriptConfig = [
   ...tsConfig.configs.strictTypeChecked,
   ...tsConfig.configs.stylisticTypeChecked,
   importPlugin.flatConfigs.typescript,
