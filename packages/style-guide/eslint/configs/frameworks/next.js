@@ -1,7 +1,7 @@
 import nextPlugin from '@next/eslint-plugin-next';
 
 /** @type {import('eslint').Linter.Config[]} */
-export const next = [
+export const nextConfig = [
   {
     plugins: {
       '@next/next': nextPlugin,
