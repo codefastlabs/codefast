@@ -8,7 +8,7 @@
     "chromatic": "chromatic --exit-zero-on-changes",
     "clean": "rm -rf node_modules .next storybook-static",
     "dev": "storybook dev -p 6006 --quiet",
-    "lint": "TIMING=all next lint --max-warnings 0",
+    "lint": "next lint --max-warnings 0",
     "start": "serve storybook-static -p 6006"
   },
   "dependencies": {

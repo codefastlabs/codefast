@@ -37,7 +37,7 @@
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
     "dev": "tsup --watch",
-    "lint": "TIMING=all eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@codefast-ui/checkbox-group": "workspace:*",
