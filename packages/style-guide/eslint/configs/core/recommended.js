@@ -1,20 +1,21 @@
 import jsConfig from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
 
+import { importConfig } from '../utils/import.js';
+import { commentsConfig } from '../utils/comments.js';
+import { unicornConfig } from '../utils/unicorn.js';
+
 import { bestPracticeRules } from '../../rules/best-practice.js';
 import { es6Rules } from '../../rules/es6.js';
 import { possibleErrorsRules } from '../../rules/possible-errors.js';
 import { stylisticRules } from '../../rules/stylistic.js';
 import { variablesRules } from '../../rules/variables.js';
-import { importConfig } from '../utils/import.js';
-import { commentsConfig } from '../utils/comments.js';
-import { unicornConfig } from '../utils/unicorn.js';
 
 /**
  * This is the base for both our browser and Node ESLint config files.
  * @type {import('eslint').Linter.Config[]}
  */
-export const recommended = [
+export const recommendedConfig = [
   jsConfig.configs.recommended,
   commentsConfig,
   importConfig,

@@ -7,7 +7,7 @@ import { jsxA11yConfig } from '../utils/jsx-a11y.js';
 import { reactRules } from '../../rules/react.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-export const react = [
+export const reactConfig = [
   {
     ...reactPlugin.configs.flat.recommended,
     rules: {
