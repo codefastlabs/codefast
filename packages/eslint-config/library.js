@@ -1,3 +1,5 @@
+import { resolve } from 'node:path';
+import globals from 'globals';
 import {
   jestConfig,
   jestTypescriptConfig,
@@ -5,9 +7,8 @@ import {
   testingLibraryConfig,
   typescriptConfig,
 } from '@codefast/style-guide';
-
-import { resolve } from 'node:path';
-import globals from 'globals';
+// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+import onlyWarn from 'eslint-plugin-only-warn';
 
 /** @type {import('eslint').Linter.Config[]} */
 export const config = [
@@ -22,6 +23,11 @@ export const config = [
       globals: {
         ...globals.jest,
       },
+    },
+  },
+  {
+    plugins: {
+      'only-warn': onlyWarn,
     },
   },
   {
