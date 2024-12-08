@@ -1,5 +1,5 @@
 /** @type {import('eslint').Linter.Config} */
-export const jestTypescript = {
+export const jestTypescriptConfig = {
   rules: {
     '@typescript-eslint/unbound-method': 'off',
     'jest/unbound-method': 'error',
