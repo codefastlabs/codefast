@@ -3,9 +3,11 @@ import { resolve } from 'node:path';
 import globals from 'globals';
 import jsConfig from '@eslint/js';
 import tsConfig from 'typescript-eslint';
-// @ts-expect-error: awaiting official TypeScript support
+// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
 import importPlugin from 'eslint-plugin-import';
 import unicornPlugin from 'eslint-plugin-unicorn';
+// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+import onlyWarn from 'eslint-plugin-only-warn';
 
 export default [
   jsConfig.configs.recommended,
@@ -13,6 +15,11 @@ export default [
   ...tsConfig.configs.strictTypeChecked,
   ...tsConfig.configs.stylisticTypeChecked,
   unicornPlugin.configs['flat/recommended'],
+  {
+    plugins: {
+      'only-warn': onlyWarn,
+    },
+  },
   {
     settings: {
       'import/resolver': {
