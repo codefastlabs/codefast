@@ -4,7 +4,7 @@ import { config } from '@codefast/eslint-config/react';
 export default [
   ...config,
   {
-    ignores: ['*.config.js'],
+    ignores: ['dist', '*.config.js'],
   },
   {
     rules: {
