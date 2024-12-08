@@ -36,7 +36,6 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
-    "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0 --flag unstable_ts_config"
   },
   "dependencies": {
@@ -59,6 +58,7 @@
     "typescript-eslint": "8.17.0"
   },
   "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
     "@types/node": "22.10.1",
     "eslint": "9.16.0",
     "globals": "15.13.0",
