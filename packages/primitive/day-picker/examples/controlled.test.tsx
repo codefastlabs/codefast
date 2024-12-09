@@ -28,7 +28,7 @@ describe('controlled component', () => {
     const button = screen.getByRole('button', { name: /Go to Today/i });
 
     expect(button).toBeInTheDocument();
-    expect(button).toHaveStyle({ all: 'unset', cursor: 'pointer', color: 'blue' });
+    expect(button).toHaveStyle({ all: 'unset', color: 'blue', cursor: 'pointer' });
     expect(button).toBeEnabled();
   });
 

@@ -20,8 +20,8 @@ export type MonthProps = ComponentProps<'div'> & {
  */
 export function Month({
   calendarMonth: _calendarMonth,
-  displayIndex: _displayIndex,
   children,
+  displayIndex: _displayIndex,
   ...props
 }: MonthProps): JSX.Element {
   return <div {...props}>{children}</div>;

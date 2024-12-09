@@ -7,22 +7,22 @@ import { type Modifiers, type ModifiersStyles } from '@/lib/types';
 
 const defaultModifiers: Modifiers = {
   disabled: false,
+  focusable: false,
+  focused: false,
   hidden: false,
   outside: false,
   range_end: false,
   range_middle: false,
   range_start: false,
   selected: false,
-  focusable: false,
-  focused: false,
   today: false,
 };
 
 test('applies modifier styles to the base style', () => {
   const dayModifiers: Modifiers = {
     ...defaultModifiers,
-    selected: true,
     disabled: false,
+    selected: true,
   };
   const modifiersStyles: Partial<ModifiersStyles> = {
     selected: { backgroundColor: 'blue', color: 'white' },
@@ -39,8 +39,8 @@ test('applies modifier styles to the base style', () => {
 test('ignores modifiers that are not active', () => {
   const dayModifiers: Modifiers = {
     ...defaultModifiers,
-    selected: false,
     disabled: true,
+    selected: false,
   };
   const modifiersStyles: Partial<ModifiersStyles> = {
     disabled: { opacity: 0.5 },
@@ -54,12 +54,12 @@ test('ignores modifiers that are not active', () => {
 test('combines multiple active modifier styles', () => {
   const dayModifiers: Modifiers = {
     ...defaultModifiers,
-    selected: true,
     highlighted: true,
+    selected: true,
   };
   const modifiersStyles: Partial<ModifiersStyles> = {
-    selected: { backgroundColor: 'blue' },
     highlighted: { borderColor: 'yellow' },
+    selected: { backgroundColor: 'blue' },
   };
   const expectedStyle: CSSProperties = {
     ...modifiersStyles.selected,
@@ -74,12 +74,12 @@ test('combines multiple active modifier styles', () => {
 test('applies the most recent modifier style when there are conflicts', () => {
   const dayModifiers: Modifiers = {
     ...defaultModifiers,
-    selected: true,
     highlighted: true,
+    selected: true,
   };
   const modifiersStyles: Partial<ModifiersStyles> = {
-    selected: { backgroundColor: 'blue', color: 'red' }, // 'color' should be overridden.
     highlighted: { backgroundColor: 'yellow', color: 'green' },
+    selected: { backgroundColor: 'blue', color: 'red' }, // 'color' should be overridden.
   };
   const expectedStyle: CSSProperties = {
     backgroundColor: 'yellow', // from 'highlighted'

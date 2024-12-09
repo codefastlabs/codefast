@@ -91,7 +91,7 @@ export function useCalendar(
 ): Calendar {
   const [navStart, navEnd] = getNavMonths(props, dateLib);
 
-  const { startOfMonth, endOfMonth } = dateLib;
+  const { endOfMonth, startOfMonth } = dateLib;
   const initialMonth = getInitialMonth(props, dateLib);
   const [firstMonth, setFirstMonth] = useControlledValue(
     initialMonth,
@@ -169,17 +169,17 @@ export function useCalendar(
   };
 
   return {
-    months,
-    weeks,
     days,
+    goToDay,
+    goToMonth,
 
-    navStart,
+    months,
     navEnd,
 
-    previousMonth,
+    navStart,
     nextMonth,
 
-    goToMonth,
-    goToDay,
+    previousMonth,
+    weeks,
   };
 }

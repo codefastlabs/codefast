@@ -16,7 +16,7 @@ export function getMonthOptions(
     return undefined;
   }
 
-  const { addMonths, startOfMonth, isBefore } = dateLib;
+  const { addMonths, isBefore, startOfMonth } = dateLib;
   const year = displayMonth.getFullYear();
 
   const months: number[] = [];
@@ -34,6 +34,6 @@ export function getMonthOptions(
     const month = new dateLib.Date(year, value);
     const disabled = month < startOfMonth(navStart) || month > startOfMonth(navEnd) || false;
 
-    return { value, label, disabled };
+    return { disabled, label, value };
   });
 }
