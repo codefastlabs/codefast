@@ -20,10 +20,14 @@ export const recommendedConfig: Linter.Config[] = [
   commentsConfig,
   importConfig,
   unicornConfig,
-  bestPracticeRules,
-  es6Rules,
-  possibleErrorsRules,
-  stylisticRules,
-  variablesRules,
+  {
+    rules: {
+      ...bestPracticeRules.rules,
+      ...es6Rules.rules,
+      ...possibleErrorsRules.rules,
+      ...stylisticRules.rules,
+      ...variablesRules.rules,
+    },
+  },
   prettierConfig,
 ];
