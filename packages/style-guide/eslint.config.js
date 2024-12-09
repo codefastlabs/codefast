@@ -1,6 +1,6 @@
 import onlyWarn from 'eslint-plugin-only-warn';
 
-import { recommendedConfig } from './dist/index.js';
+import { recommendedConfig } from '@codefast/style-guide';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
