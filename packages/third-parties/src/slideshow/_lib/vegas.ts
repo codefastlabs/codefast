@@ -349,17 +349,17 @@ export class Vegas {
     const { src, video } = currentSlide;
 
     const {
-      delay,
       align,
       alignVertical,
+      animation: defaultAnimation,
+      animationDuration: defaultAnimationDuration,
       color = getComputedStyle(this.element).backgroundColor,
+      cover: defaultCover,
+      delay,
       firstTransition,
       firstTransitionDuration,
       transition: defaultTransition,
       transitionDuration: defaultTransitionDuration,
-      animation: defaultAnimation,
-      animationDuration: defaultAnimationDuration,
-      cover: defaultCover,
     } = this.settings;
 
     const cover = this.getCoverSetting(defaultCover);
@@ -369,31 +369,31 @@ export class Vegas {
     const animationDuration = this.getAnimationDuration(defaultAnimationDuration, delay);
 
     const slideElement = this.createSlideElement({
-      color,
       align,
       alignVertical,
+      color,
       cover,
       transition,
     });
     const videoElement = this.setupSlideContent({
-      slideElement,
-      src,
-      video,
-      color,
       align,
       alignVertical,
-      cover,
       animation,
       animationDuration,
+      color,
+      cover,
+      slideElement,
+      src,
       transitionDuration,
+      video,
     });
 
     this.handleSlideTransition({
       slideElement,
+      src,
       transition,
       transitionDuration,
       videoElement,
-      src,
     });
   }
 
@@ -524,13 +524,13 @@ export class Vegas {
 
     if (this.support.video && video) {
       videoElement = this.setupVideoElement({
-        slideElement,
-        video,
-        color,
         align,
         alignVertical,
+        color,
         cover,
+        slideElement,
         transitionDuration,
+        video,
       });
     } else if (src) {
       this.setupImageElement(slideElement, src, color, align, alignVertical, cover, animation, animationDuration);
@@ -540,13 +540,13 @@ export class Vegas {
   }
 
   private setupVideoElement({
-    slideElement,
-    video,
-    color,
     align,
     alignVertical,
+    color,
     cover,
+    slideElement,
     transitionDuration,
+    video,
   }: {
     align: string;
     alignVertical: string;
@@ -618,10 +618,10 @@ export class Vegas {
 
   private handleSlideTransition({
     slideElement,
+    src,
     transition,
     transitionDuration,
     videoElement,
-    src,
   }: {
     slideElement: HTMLElement;
     transition: VegasTransition | null;
