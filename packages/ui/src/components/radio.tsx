@@ -14,7 +14,7 @@ interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
   onValueChange?: (value: string) => void;
 }
 
-const Radio = forwardRef<RadioElement, RadioProps>(({ className, onValueChange, onChange, ...props }, forwardedRef) => (
+const Radio = forwardRef<RadioElement, RadioProps>(({ className, onChange, onValueChange, ...props }, forwardedRef) => (
   <input
     ref={forwardedRef}
     className={cn(

@@ -40,23 +40,23 @@ const buttonVariants = tv({
     icon: { false: '', true: 'px-0' },
     inside: { false: '', true: '' },
     size: {
-      xxs: 'h-7 [&>svg]:size-3', // 28px
-      xs: 'h-8 [&>svg]:size-3.5', // 32px
-      sm: 'h-9 [&>svg]:size-4', // 36px
-      md: 'h-10 [&>svg]:size-4', // 40px
       lg: 'h-11 [&>svg]:size-5', // 44px
+      md: 'h-10 [&>svg]:size-4', // 40px
+      sm: 'h-9 [&>svg]:size-4', // 36px
       xl: 'h-12 [&>svg]:size-5', // 48px
+      xs: 'h-8 [&>svg]:size-3.5', // 32px
+      xxs: 'h-7 [&>svg]:size-3', // 28px
     },
     variant: {
       default: ['bg-primary text-primary-foreground shadow-sm', 'hover:bg-primary/80'],
-      secondary: ['bg-secondary text-secondary-foreground shadow-sm', 'hover:bg-secondary/80'],
+      destructive: ['bg-destructive text-destructive-foreground shadow-sm', 'hover:bg-destructive/80'],
+      ghost: ['text-foreground', 'hover:bg-accent hover:text-accent-foreground'],
       info: ['bg-info text-info-foreground shadow-sm', 'hover:bg-info/80'],
+      link: ['text-primary underline-offset-4', 'hover:underline'],
+      outline: ['text-foreground border-input border shadow-sm', 'hover:bg-accent hover:text-accent-foreground'],
+      secondary: ['bg-secondary text-secondary-foreground shadow-sm', 'hover:bg-secondary/80'],
       success: ['bg-success text-success-foreground shadow-sm', 'hover:bg-success/80'],
       warning: ['bg-warning text-warning-foreground shadow-sm', 'hover:bg-warning/80'],
-      destructive: ['bg-destructive text-destructive-foreground shadow-sm', 'hover:bg-destructive/80'],
-      outline: ['text-foreground border-input border shadow-sm', 'hover:bg-accent hover:text-accent-foreground'],
-      ghost: ['text-foreground', 'hover:bg-accent hover:text-accent-foreground'],
-      link: ['text-primary underline-offset-4', 'hover:underline'],
     },
   },
 });
