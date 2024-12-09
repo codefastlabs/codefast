@@ -15,8 +15,12 @@ export const typescriptConfig: Linter.Config[] = [
   ...tsConfig.configs.stylisticTypeChecked,
   importPlugin.flatConfigs.typescript,
   tsdocConfig,
-  typescriptRules,
-  typescriptExtensionRules,
-  typescriptImportRules,
+  {
+    rules: {
+      ...typescriptRules.rules,
+      ...typescriptExtensionRules.rules,
+      ...typescriptImportRules.rules,
+    },
+  },
   prettierConfig,
 ];
