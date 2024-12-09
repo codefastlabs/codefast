@@ -69,7 +69,7 @@ describe('useStateParams Hook', () => {
   describe('setUrlParams', () => {
     test('should set and delete URL parameters correctly', () => {
       const params = new URLSearchParams();
-      const newParams = { foo: 'bar', baz: null };
+      const newParams = { baz: null, foo: 'bar' };
 
       setUrlParams(params, newParams);
       expect(params.toString()).toBe('foo=bar');
@@ -77,7 +77,7 @@ describe('useStateParams Hook', () => {
 
     test('should handle empty or invalid parameters', () => {
       const params = new URLSearchParams();
-      const newParams = { foo: undefined, bar: '', baz: 'value' };
+      const newParams = { bar: '', baz: 'value', foo: undefined };
 
       setUrlParams(params, newParams);
       expect(params.toString()).toBe('baz=value');
@@ -166,8 +166,8 @@ describe('useStateParams Hook', () => {
       const { result } = renderHook(() => useStateParams());
       const { push } = result.current;
 
-      push({ 'key&': 'value?', foo: 'bar@' });
-      expect(mockPushState).toHaveBeenCalledWith(null, '', '?key%26=value%3F&foo=bar%40');
+      push({ foo: 'bar@', 'key&': 'value?' });
+      expect(mockPushState).toHaveBeenCalledWith(null, '', '?foo=bar%40&key%26=value%3F');
     });
   });
 });

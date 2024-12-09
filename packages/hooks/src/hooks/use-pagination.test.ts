@@ -20,8 +20,8 @@ describe('usePagination', () => {
       usePagination({
         currentPage: 1,
         resultsPerPage: 10,
-        totalResults: 30,
         siblingPagesCount: 1,
+        totalResults: 30,
       }),
     );
 
@@ -33,8 +33,8 @@ describe('usePagination', () => {
       usePagination({
         currentPage: 1,
         resultsPerPage: 10,
-        totalResults: 100,
         siblingPagesCount: 1,
+        totalResults: 100,
       }),
     );
 
@@ -46,8 +46,8 @@ describe('usePagination', () => {
       usePagination({
         currentPage: 10,
         resultsPerPage: 10,
-        totalResults: 100,
         siblingPagesCount: 1,
+        totalResults: 100,
       }),
     );
 
@@ -59,8 +59,8 @@ describe('usePagination', () => {
       usePagination({
         currentPage: 5,
         resultsPerPage: 10,
-        totalResults: 100,
         siblingPagesCount: 1,
+        totalResults: 100,
       }),
     );
 
