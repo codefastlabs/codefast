@@ -23,13 +23,13 @@ export const Default: Story = {
         variant="outline"
         onClick={() =>
           toast.message('Event has been created', {
-            description: 'Sunday, December 03, 2023 at 9:00 AM',
             action: {
               label: 'Undo',
               onClick: () => {
                 consola.log('Undo');
               },
             },
+            description: 'Sunday, December 03, 2023 at 9:00 AM',
           })
         }
       >

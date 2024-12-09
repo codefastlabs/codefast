@@ -73,8 +73,8 @@ export const Sizes: Story = {
 
 export const Secondary: Story = {
   args: {
-    variant: 'secondary',
     children: 'Secondary Badge',
+    variant: 'secondary',
   },
 };
 
@@ -84,8 +84,8 @@ export const Secondary: Story = {
 
 export const Info: Story = {
   args: {
-    variant: 'info',
     children: 'Info Badge',
+    variant: 'info',
   },
 };
 
@@ -95,8 +95,8 @@ export const Info: Story = {
 
 export const Success: Story = {
   args: {
-    variant: 'success',
     children: 'Success Badge',
+    variant: 'success',
   },
 };
 
@@ -106,8 +106,8 @@ export const Success: Story = {
 
 export const Warning: Story = {
   args: {
-    variant: 'warning',
     children: 'Warning Badge',
+    variant: 'warning',
   },
 };
 
@@ -117,8 +117,8 @@ export const Warning: Story = {
 
 export const Destructive: Story = {
   args: {
-    variant: 'destructive',
     children: 'Destructive Badge',
+    variant: 'destructive',
   },
 };
 
@@ -128,7 +128,7 @@ export const Destructive: Story = {
 
 export const Outline: Story = {
   args: {
-    variant: 'outline',
     children: 'Outline Badge',
+    variant: 'outline',
   },
 };

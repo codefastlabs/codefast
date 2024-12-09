@@ -19,16 +19,16 @@ import { type ContentType } from 'recharts/types/component/Label';
 
 export const description = 'A radial chart with stacked sections';
 
-const chartData = [{ month: 'january', desktop: 1260, mobile: 570 }];
+const chartData = [{ desktop: 1260, mobile: 570, month: 'january' }];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
     color: 'hsl(var(--color-chart-1))',
+    label: 'Desktop',
   },
   mobile: {
-    label: 'Mobile',
     color: 'hsl(var(--color-chart-2))',
+    label: 'Mobile',
   },
 } satisfies ChartConfig;
 

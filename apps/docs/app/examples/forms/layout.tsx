@@ -6,30 +6,30 @@ import { type JSX, type ReactNode } from 'react';
 import { SidebarNav } from '@/app/examples/forms/_components/sidebar-nav';
 
 export const metadata: Metadata = {
-  title: 'Forms',
   description: 'Advanced form example using react-hook-form and Zod.',
+  title: 'Forms',
 };
 
 const sidebarNavItems = [
   {
-    title: 'Profile',
     href: '/examples/forms',
+    title: 'Profile',
   },
   {
-    title: 'Account',
     href: '/examples/forms/account',
+    title: 'Account',
   },
   {
-    title: 'Appearance',
     href: '/examples/forms/appearance',
+    title: 'Appearance',
   },
   {
-    title: 'Notifications',
     href: '/examples/forms/notifications',
+    title: 'Notifications',
   },
   {
-    title: 'Display',
     href: '/examples/forms/display',
+    title: 'Display',
   },
 ];
 

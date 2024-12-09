@@ -32,8 +32,8 @@ import { models, types } from '@/app/examples/playground/_data/models';
 import { presets } from '@/app/examples/playground/_data/presets';
 
 export const metadata: Metadata = {
-  title: 'Playground',
   description: 'The OpenAI Playground built using the components.',
+  title: 'Playground',
 };
 
 export default function PlaygroundPage(): JSX.Element {

@@ -7,8 +7,8 @@ import { type JSX } from 'react';
 import { UserAuthForm } from '@/app/examples/authentication/_components/user-auth-form';
 
 export const metadata: Metadata = {
-  title: 'Authentication',
   description: 'Authentication forms built using the components.',
+  title: 'Authentication',
 };
 
 export default function AuthenticationPage(): JSX.Element {

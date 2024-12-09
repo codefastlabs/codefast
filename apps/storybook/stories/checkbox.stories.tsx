@@ -88,10 +88,10 @@ export const ReactHookForm: Story = {
     });
 
     const form = useForm<z.infer<typeof formValues>>({
-      resolver: zodResolver(formValues),
       defaultValues: {
         mobile: true,
       },
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {
@@ -174,16 +174,16 @@ export const ReactHookForm2: Story = {
   ],
   render: (args) => {
     const formValues = z.object({
-      items: z.array(z.string()).refine((value) => value.some((item) => item), {
+      items: z.array(z.string()).refine((value) => value.some(Boolean), {
         message: 'You have to select at least one item.',
       }),
     });
 
     const form = useForm<z.infer<typeof formValues>>({
-      resolver: zodResolver(formValues),
       defaultValues: {
         items: ['recents', 'home'],
       },
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {

@@ -11,61 +11,61 @@ import {
 
 export const labels = [
   {
-    value: 'bug',
     label: 'Bug',
+    value: 'bug',
   },
   {
-    value: 'feature',
     label: 'Feature',
+    value: 'feature',
   },
   {
-    value: 'documentation',
     label: 'Documentation',
+    value: 'documentation',
   },
 ];
 
 export const statuses = [
   {
-    value: 'backlog',
-    label: 'Backlog',
     icon: QuestionMarkCircledIcon,
+    label: 'Backlog',
+    value: 'backlog',
   },
   {
-    value: 'todo',
-    label: 'Todo',
     icon: CircleIcon,
+    label: 'Todo',
+    value: 'todo',
   },
   {
-    value: 'in progress',
-    label: 'In Progress',
     icon: StopwatchIcon,
+    label: 'In Progress',
+    value: 'in progress',
   },
   {
-    value: 'done',
-    label: 'Done',
     icon: CheckCircledIcon,
+    label: 'Done',
+    value: 'done',
   },
   {
-    value: 'canceled',
-    label: 'Canceled',
     icon: CrossCircledIcon,
+    label: 'Canceled',
+    value: 'canceled',
   },
 ];
 
 export const priorities = [
   {
+    icon: ArrowDownIcon,
     label: 'Low',
     value: 'low',
-    icon: ArrowDownIcon,
   },
   {
+    icon: ArrowRightIcon,
     label: 'Medium',
     value: 'medium',
-    icon: ArrowRightIcon,
   },
   {
+    icon: ArrowUpIcon,
     label: 'High',
     value: 'high',
-    icon: ArrowUpIcon,
   },
 ];

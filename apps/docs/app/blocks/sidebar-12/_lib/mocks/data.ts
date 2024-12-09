@@ -1,21 +1,21 @@
 export const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/01.png',
-  },
   calendars: [
     {
-      name: 'My Calendars',
       items: ['Personal', 'Work', 'Family'],
+      name: 'My Calendars',
     },
     {
-      name: 'Favorites',
       items: ['Holidays', 'Birthdays'],
+      name: 'Favorites',
     },
     {
-      name: 'Other',
       items: ['Travel', 'Reminders', 'Deadlines'],
+      name: 'Other',
     },
   ],
+  user: {
+    avatar: '/avatars/01.png',
+    email: 'm@example.com',
+    name: 'shadcn',
+  },
 };

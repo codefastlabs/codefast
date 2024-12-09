@@ -27,7 +27,7 @@ interface NavFavoritesProps extends ComponentProps<typeof SidebarGroup> {
   }[];
 }
 
-export function NavFavorites({ favorites, className, ...props }: NavFavoritesProps): JSX.Element {
+export function NavFavorites({ className, favorites, ...props }: NavFavoritesProps): JSX.Element {
   const { isMobile } = useSidebar();
 
   return (

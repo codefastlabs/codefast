@@ -12,8 +12,8 @@ import { listenNowAlbums, madeForYouAlbums } from '@/app/examples/music/_data/al
 import { playlists } from '@/app/examples/music/_data/playlists';
 
 export const metadata: Metadata = {
-  title: 'Music App',
   description: 'Example music app using the components.',
+  title: 'Music App',
 };
 
 export default function MusicPage(): JSX.Element {

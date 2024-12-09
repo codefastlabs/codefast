@@ -3,11 +3,11 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Skeleton,
-  tags: ['autodocs'],
-  title: 'UI/Skeleton',
   parameters: {
     layout: 'centered',
   },
+  tags: ['autodocs'],
+  title: 'UI/Skeleton',
 } satisfies Meta<typeof Skeleton>;
 
 export default meta;

@@ -2,23 +2,23 @@ import { Separator, SeparatorItem, Text } from '@codefast/ui';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
+  args: {
+    align: 'start',
+    orientation: 'horizontal',
+  },
   argTypes: {
-    orientation: {
-      control: { type: 'inline-radio' },
-      options: ['horizontal', 'vertical'],
-      description: 'Choose the orientation of the separator.',
-      table: { defaultValue: { summary: 'horizontal' } },
-    },
     align: {
       control: 'inline-radio',
       description: 'Choose the alignment of the separator.',
       options: ['start', 'center', 'end'],
       table: { defaultValue: { summary: 'start' } },
     },
-  },
-  args: {
-    orientation: 'horizontal',
-    align: 'start',
+    orientation: {
+      control: { type: 'inline-radio' },
+      description: 'Choose the orientation of the separator.',
+      options: ['horizontal', 'vertical'],
+      table: { defaultValue: { summary: 'horizontal' } },
+    },
   },
   component: Separator,
   tags: ['autodocs'],
@@ -90,8 +90,8 @@ export const Label: Story = {
 
 export const VerticalLabel: Story = {
   args: {
-    orientation: 'vertical',
     align: 'center',
+    orientation: 'vertical',
   },
 
   render: (args) => (

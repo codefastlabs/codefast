@@ -13,7 +13,7 @@ interface NavProps {
   }[];
 }
 
-export function Nav({ links, isCollapsed }: NavProps): JSX.Element {
+export function Nav({ isCollapsed, links }: NavProps): JSX.Element {
   return (
     <div className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2" data-collapsed={isCollapsed}>
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
@@ -23,7 +23,7 @@ export function Nav({ links, isCollapsed }: NavProps): JSX.Element {
               <TooltipTrigger asChild>
                 <Link
                   className={cn(
-                    buttonVariants({ variant: link.variant, icon: true }),
+                    buttonVariants({ icon: true, variant: link.variant }),
                     'size-9',
                     link.variant === 'default' &&
                       'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white',
@@ -43,7 +43,7 @@ export function Nav({ links, isCollapsed }: NavProps): JSX.Element {
             <Link
               key={link.label}
               className={cn(
-                buttonVariants({ variant: link.variant, size: 'sm' }),
+                buttonVariants({ size: 'sm', variant: link.variant }),
                 link.variant === 'default' && 'dark:bg-muted dark:hover:bg-muted dark:text-white dark:hover:text-white',
                 'justify-start',
               )}

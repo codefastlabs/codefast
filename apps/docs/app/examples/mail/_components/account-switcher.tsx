@@ -12,7 +12,7 @@ interface AccountSwitcherProps {
   isCollapsed: boolean;
 }
 
-export function AccountSwitcher({ isCollapsed, accounts }: AccountSwitcherProps): JSX.Element {
+export function AccountSwitcher({ accounts, isCollapsed }: AccountSwitcherProps): JSX.Element {
   const [selectedAccount, setSelectedAccount] = useState<string>(accounts[0].email);
 
   return (

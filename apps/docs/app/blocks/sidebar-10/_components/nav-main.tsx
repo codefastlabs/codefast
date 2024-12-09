@@ -12,7 +12,7 @@ interface NavMainProps extends ComponentProps<typeof SidebarMenu> {
   }[];
 }
 
-export function NavMain({ items, className, ...props }: NavMainProps): JSX.Element {
+export function NavMain({ className, items, ...props }: NavMainProps): JSX.Element {
   return (
     <SidebarMenu className={cn('', className)} {...props}>
       {items.map((item) => (

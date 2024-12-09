@@ -125,7 +125,7 @@ export const WithPresets: Story = {
         <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
           <Select
             onValueChange={(value) => {
-              setDate(addDays(new Date(), parseInt(value)));
+              setDate(addDays(new Date(), Number.parseInt(value)));
             }}
           >
             <SelectTrigger>
@@ -187,7 +187,7 @@ export const ReactHookForm: Story = {
           <FormField
             control={form.control}
             name="dob"
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange, value } }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Date of birth</FormLabel>
                 <Popover {...args}>

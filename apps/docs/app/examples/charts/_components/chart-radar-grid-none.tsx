@@ -9,18 +9,18 @@ import { PolarAngleAxis, Radar, RadarChart } from 'recharts';
 export const description = 'A radar chart with no grid';
 
 const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 273 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { desktop: 186, month: 'January' },
+  { desktop: 305, month: 'February' },
+  { desktop: 237, month: 'March' },
+  { desktop: 273, month: 'April' },
+  { desktop: 209, month: 'May' },
+  { desktop: 214, month: 'June' },
 ];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
     color: 'hsl(var(--color-chart-1))',
+    label: 'Desktop',
   },
 } satisfies ChartConfig;
 
@@ -39,8 +39,8 @@ export function ChartRadarGridNone(): JSX.Element {
             <Radar
               dataKey="desktop"
               dot={{
-                r: 4,
                 fillOpacity: 1,
+                r: 4,
               }}
               fill="var(--color-desktop)"
               fillOpacity={0.6}

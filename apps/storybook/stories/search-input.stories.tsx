@@ -9,8 +9,8 @@ const meta: Meta<typeof SearchInput> = {
       control: { type: 'boolean' },
       description: 'Specifies that the input field should automatically get focus when the page loads',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     defaultValue: {
@@ -24,34 +24,34 @@ const meta: Meta<typeof SearchInput> = {
       control: { type: 'boolean' },
       description: 'Disables the search input.',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     inputSize: {
       control: { type: 'select' },
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Size of the search input.',
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'md' },
+        type: { summary: 'string' },
       },
     },
     loaderPosition: {
       control: { type: 'select' },
-      options: ['prefix', 'suffix'],
       description: 'Position of the loader/spinner.',
+      options: ['prefix', 'suffix'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'prefix' },
+        type: { summary: 'string' },
       },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Whether the search input is in a loading state.',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     onChange: {
@@ -79,16 +79,16 @@ const meta: Meta<typeof SearchInput> = {
       control: { type: 'boolean' },
       description: 'Specifies that the input field is read-only',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     required: {
       control: { type: 'boolean' },
       description: 'Specifies that the input field must be filled out before submitting the form',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     spinner: {
@@ -128,8 +128,8 @@ type Story = StoryObj<typeof SearchInput>;
 
 export const Default: Story = {
   args: {
-    loading: false,
     disabled: false,
+    loading: false,
   },
 };
 
@@ -176,8 +176,8 @@ export const Disabled: Story = {
 
 export const ReadOnly: Story = {
   args: {
-    readOnly: true,
     placeholder: 'Read-only search input',
+    readOnly: true,
   },
 };
 

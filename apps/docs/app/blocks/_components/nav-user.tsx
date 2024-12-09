@@ -28,7 +28,7 @@ interface NavUserProps extends ComponentProps<typeof SidebarMenu> {
   };
 }
 
-export function NavUser({ user, className, ...props }: NavUserProps): JSX.Element {
+export function NavUser({ className, user, ...props }: NavUserProps): JSX.Element {
   const { isMobile } = useSidebar();
 
   return (

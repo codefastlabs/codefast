@@ -16,8 +16,6 @@ import { type AnchorHTMLAttributes, forwardRef } from 'react';
 
 const meta = {
   component: NavigationMenu,
-  tags: ['autodocs'],
-  title: 'UI/Navigation Menu',
   decorators: [
     (Story) => (
       <div className="h-[70dvh]">
@@ -25,6 +23,8 @@ const meta = {
       </div>
     ),
   ],
+  tags: ['autodocs'],
+  title: 'UI/Navigation Menu',
 } satisfies Meta<typeof NavigationMenu>;
 
 export default meta;
@@ -37,41 +37,41 @@ type Story = StoryObj<typeof NavigationMenu>;
 
 const components: { description: string; href: string; title: string }[] = [
   {
-    title: 'Alert Dialog',
-    href: '/',
     description: 'A modal dialog that interrupts the user with important content and expects a response.',
+    href: '/',
+    title: 'Alert Dialog',
   },
   {
-    title: 'Hover Card',
-    href: '/',
     description: 'For sighted users to preview content available behind a link.',
+    href: '/',
+    title: 'Hover Card',
   },
   {
-    title: 'Progress',
-    href: '/',
     description:
       'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+    href: '/',
+    title: 'Progress',
   },
   {
-    title: 'Scroll-area',
-    href: '/',
     description: 'Visually or semantically separates content.',
+    href: '/',
+    title: 'Scroll-area',
   },
   {
-    title: 'Tabs',
-    href: '/',
     description: 'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
+    href: '/',
+    title: 'Tabs',
   },
   {
-    title: 'Tooltip',
-    href: '/',
     description:
       'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+    href: '/',
+    title: 'Tooltip',
   },
 ];
 
 const ListItem = forwardRef<HTMLAnchorElement, AnchorHTMLAttributes<HTMLAnchorElement>>(
-  ({ className, title, children, ...props }, ref) => {
+  ({ children, className, title, ...props }, ref) => {
     return (
       <li>
         <NavigationMenuLink asChild>

@@ -46,32 +46,8 @@ interface Data {
 }
 
 export const data: Data = {
-  user: {
-    name: 'codefast',
-    email: 'm@example.com',
-    avatar: '/avatars/01.png',
-  },
-  teams: [
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEndIcon,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveformIcon,
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: CommandIcon,
-      plan: 'Free',
-    },
-  ],
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
       icon: SquareTerminalIcon,
       isActive: true,
       items: [
@@ -88,10 +64,10 @@ export const data: Data = {
           url: '#',
         },
       ],
+      title: 'Playground',
+      url: '#',
     },
     {
-      title: 'Models',
-      url: '#',
       icon: BotIcon,
       items: [
         {
@@ -107,10 +83,10 @@ export const data: Data = {
           url: '#',
         },
       ],
+      title: 'Models',
+      url: '#',
     },
     {
-      title: 'Documentation',
-      url: '#',
       icon: BookOpenIcon,
       items: [
         {
@@ -130,10 +106,10 @@ export const data: Data = {
           url: '#',
         },
       ],
+      title: 'Documentation',
+      url: '#',
     },
     {
-      title: 'Settings',
-      url: '#',
       icon: Settings2Icon,
       items: [
         {
@@ -153,23 +129,47 @@ export const data: Data = {
           url: '#',
         },
       ],
+      title: 'Settings',
+      url: '#',
     },
   ],
   projects: [
     {
+      icon: FrameIcon,
       name: 'Design Engineering',
       url: '#',
-      icon: FrameIcon,
     },
     {
+      icon: PieChartIcon,
       name: 'Sales & Marketing',
       url: '#',
-      icon: PieChartIcon,
     },
     {
+      icon: MapIcon,
       name: 'Travel',
       url: '#',
-      icon: MapIcon,
     },
   ],
+  teams: [
+    {
+      logo: GalleryVerticalEndIcon,
+      name: 'Acme Inc',
+      plan: 'Enterprise',
+    },
+    {
+      logo: AudioWaveformIcon,
+      name: 'Acme Corp.',
+      plan: 'Startup',
+    },
+    {
+      logo: CommandIcon,
+      name: 'Evil Corp.',
+      plan: 'Free',
+    },
+  ],
+  user: {
+    avatar: '/avatars/01.png',
+    email: 'm@example.com',
+    name: 'codefast',
+  },
 };

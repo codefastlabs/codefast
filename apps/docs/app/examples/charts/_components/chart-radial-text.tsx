@@ -17,15 +17,15 @@ import { type ContentType } from 'recharts/types/component/Label';
 
 export const description = 'A radial chart with text';
 
-const chartData = [{ browser: 'safari', visitors: 200, fill: 'var(--color-safari)' }];
+const chartData = [{ browser: 'safari', fill: 'var(--color-safari)', visitors: 200 }];
 
 const chartConfig = {
+  safari: {
+    color: 'hsl(var(--color-chart-2))',
+    label: 'Safari',
+  },
   visitors: {
     label: 'Visitors',
-  },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--color-chart-2))',
   },
 } satisfies ChartConfig;
 

@@ -5,38 +5,50 @@ import { LoaderCircleIcon, PaletteIcon, ScanSearchIcon, TreeDeciduousIcon } from
 import { useState } from 'react';
 
 const meta = {
+  args: {
+    disabled: false,
+    icon: false,
+    loaderPosition: 'prefix',
+    loading: false,
+    onClick: fn(),
+    prefix: undefined,
+    size: 'md',
+    spinner: undefined,
+    suffix: undefined,
+    variant: 'default',
+  },
   argTypes: {
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the button',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     icon: {
       control: { type: 'boolean' },
       description: 'Indicates if the button should display an icon',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     loaderPosition: {
       control: { type: 'inline-radio' },
-      options: ['prefix', 'suffix'],
       description: 'Position of the loader',
+      options: ['prefix', 'suffix'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'prefix' },
+        type: { summary: 'string' },
       },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Shows a loading spinner when true',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     onClick: {
@@ -53,9 +65,9 @@ const meta = {
     },
     size: {
       control: { type: 'select' },
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Button size',
-      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      table: { defaultValue: { summary: 'md' }, type: { summary: 'string' } },
     },
     spinner: {
       control: { type: 'text' },
@@ -69,25 +81,13 @@ const meta = {
     },
     variant: {
       control: { type: 'select' },
-      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'],
       description: 'Button variant styles',
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'default' },
+        type: { summary: 'string' },
       },
     },
-  },
-  args: {
-    disabled: false,
-    icon: false,
-    loaderPosition: 'prefix',
-    loading: false,
-    onClick: fn(),
-    prefix: undefined,
-    size: 'md',
-    spinner: undefined,
-    suffix: undefined,
-    variant: 'default',
   },
   component: Button,
   tags: ['autodocs'],
@@ -148,8 +148,8 @@ export const Variants: Story = {
 
 export const Disabled: Story = {
   args: {
-    disabled: true,
     children: 'Disabled',
+    disabled: true,
   },
 };
 
@@ -159,8 +159,8 @@ export const Disabled: Story = {
 
 export const Loading: Story = {
   args: {
-    loading: true,
     children: 'Loading...',
+    loading: true,
   },
 };
 
@@ -171,8 +171,8 @@ export const Loading: Story = {
 export const CustomSpinner: Story = {
   args: {
     children: 'Loading...',
-    spinner: <LoaderCircleIcon className="animate-spin" />,
     loading: true,
+    spinner: <LoaderCircleIcon className="animate-spin" />,
   },
 };
 
@@ -182,8 +182,8 @@ export const CustomSpinner: Story = {
 
 export const Prefix: Story = {
   args: {
-    prefix: <PaletteIcon />,
     children: 'Submit',
+    prefix: <PaletteIcon />,
   },
 };
 
