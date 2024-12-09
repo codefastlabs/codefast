@@ -33,8 +33,8 @@ const ResizablePanel = ResizablePrimitive.Panel;
  * -------------------------------------------------------------------------- */
 
 function ResizableHandle({
-  withHandle,
   className,
+  withHandle,
   ...props
 }: ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
   withHandle?: boolean;

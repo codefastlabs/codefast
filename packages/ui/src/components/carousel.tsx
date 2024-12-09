@@ -46,7 +46,7 @@ type CarouselProps = HTMLAttributes<HTMLDivElement> & BaseCarouselProps;
 
 const Carousel = forwardRef<CarouselElement, CarouselProps>(
   (
-    { __scopeCarousel, children, orientation, opts, setApi, plugins, className, ...props }: ScopedProps<CarouselProps>,
+    { __scopeCarousel, children, className, opts, orientation, plugins, setApi, ...props }: ScopedProps<CarouselProps>,
     forwardedRef,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
@@ -226,7 +226,7 @@ const CarouselPrevious = forwardRef<CarouselPreviousElement, CarouselPreviousPro
     }: ScopedProps<CarouselPreviousProps>,
     forwardedRef,
   ) => {
-    const { orientation, scrollPrev, canScrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
+    const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
 
     return (
       <Button
@@ -275,7 +275,7 @@ const CarouselNext = forwardRef<CarouselNextElement, CarouselNextProps>(
     }: ScopedProps<CarouselNextProps>,
     forwardedRef,
   ) => {
-    const { orientation, scrollNext, canScrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
+    const { canScrollNext, orientation, scrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
 
     return (
       <Button

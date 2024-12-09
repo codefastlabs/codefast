@@ -155,7 +155,7 @@ type MenubarContentElement = ComponentRef<typeof MenubarPrimitive.Content>;
 type MenubarContentProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Content>;
 
 const MenubarContent = forwardRef<MenubarContentElement, MenubarContentProps>(
-  ({ className, align = 'start', alignOffset = -4, sideOffset = 8, ...props }, forwardedRef) => (
+  ({ align = 'start', alignOffset = -4, className, sideOffset = 8, ...props }, forwardedRef) => (
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.Content
         ref={forwardedRef}
@@ -210,7 +210,7 @@ type MenubarCheckboxItemElement = ComponentRef<typeof MenubarPrimitive.CheckboxI
 type MenubarCheckboxItemProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.CheckboxItem>;
 
 const MenubarCheckboxItem = forwardRef<MenubarCheckboxItemElement, MenubarCheckboxItemProps>(
-  ({ children, className, checked, ...props }, forwardedRef) => (
+  ({ checked, children, className, ...props }, forwardedRef) => (
     <MenubarPrimitive.CheckboxItem
       ref={forwardedRef}
       checked={checked}

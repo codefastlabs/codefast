@@ -27,14 +27,14 @@ const scrollAreaScrollbarVariants = tv({
   },
   variants: {
     orientation: {
-      vertical: 'h-full flex-row border-l border-l-transparent',
       horizontal: 'w-full flex-col border-t border-t-transparent',
+      vertical: 'h-full flex-row border-l border-l-transparent',
     },
     size: {
+      lg: '',
+      md: '',
       none: '',
       sm: '',
-      md: '',
-      lg: '',
     },
   },
 });
@@ -90,9 +90,9 @@ const ScrollAreaScrollbar = forwardRef<ScrollAreaScrollbarElement, ScrollAreaScr
       <ScrollAreaPrimitive.Scrollbar
         ref={forwardedRef}
         className={scrollAreaScrollbarVariants({
+          className,
           orientation,
           size,
-          className,
         })}
         orientation={orientation}
         {...props}

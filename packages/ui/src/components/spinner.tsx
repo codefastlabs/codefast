@@ -32,10 +32,10 @@ const Spinner = forwardRef<SpinnerElement, SpinnerProps>(
             className="before:fade-out-25 before:animate-out before:animate-repeat-infinite before:animate-delay-[var(--spinner-delay)] before:animate-duration-[var(--spinner-duration)] absolute h-full rotate-[var(--spinner-rotate)] before:block before:h-1/3 before:w-full before:rounded-full before:bg-current"
             style={
               {
-                width: `${(100 / spinnerCount).toString()}%`,
                 '--spinner-delay': `-${((spinnerCount - i) * 100).toString()}ms`,
-                '--spinner-rotate': `${((360 / spinnerCount) * i).toString()}deg`,
                 '--spinner-duration': `${(spinnerCount * 100).toString()}ms`,
+                '--spinner-rotate': `${((360 / spinnerCount) * i).toString()}deg`,
+                width: `${(100 / spinnerCount).toString()}%`,
               } as CSSProperties
             }
           />
