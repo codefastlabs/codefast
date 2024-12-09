@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@codefast/eslint-config": ["./dist/*"]
     }
   },
   "include": ["**/*.ts"],
