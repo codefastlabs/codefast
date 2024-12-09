@@ -20,8 +20,8 @@ const mockProps: Pick<DayPickerProps, 'fixedWeeks' | 'ISOWeek' | 'reverseMonths'
 };
 
 const dateLib = new DateLib({
-  weekStartsOn: 0, // Sunday
   firstWeekContainsDate: 1,
+  weekStartsOn: 0, // Sunday
 });
 
 test('should return the correct months without ISO weeks and reverse months', () => {

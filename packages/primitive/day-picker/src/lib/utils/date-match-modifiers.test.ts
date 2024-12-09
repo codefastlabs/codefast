@@ -56,8 +56,8 @@ describe('when matching the day of week', () => {
 
 describe('when matching date interval (closed)', () => {
   const matcher: DateInterval = {
-    before: addDays(testDay, 5),
     after: subDays(testDay, 3),
+    before: addDays(testDay, 5),
   };
   const result = dateMatchModifiers(testDay, [matcher], defaultDateLib);
 
@@ -68,8 +68,8 @@ describe('when matching date interval (closed)', () => {
 
 describe('when matching date interval (open)', () => {
   const matcher: DateInterval = {
-    before: subDays(testDay, 4),
     after: addDays(testDay, 5),
+    before: subDays(testDay, 4),
   };
 
   test('should return false', () => {

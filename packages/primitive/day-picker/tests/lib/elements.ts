@@ -58,9 +58,9 @@ export function dateButton(date: Date): HTMLElement {
     name: new RegExp(
       labelDayButton(date, {
         [DayFlag.disabled]: false,
+        [DayFlag.focused]: false,
         [DayFlag.hidden]: false,
         [DayFlag.outside]: false,
-        [DayFlag.focused]: false,
         [DayFlag.today]: false,
         [SelectionState.range_end]: false,
         [SelectionState.range_middle]: false,
@@ -136,7 +136,7 @@ export function nextButton(): HTMLElement {
  * @returns The first HTMLElement that matches the role "columnheader" and the specified name options.
  */
 export function columnHeader(name?: ByRoleOptions['name']): HTMLElement {
-  return screen.getByRole('columnheader', { name, hidden: true });
+  return screen.getByRole('columnheader', { hidden: true, name });
 }
 
 /**

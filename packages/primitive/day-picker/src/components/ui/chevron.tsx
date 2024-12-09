@@ -24,7 +24,7 @@ export interface ChevronProps {
 /**
  * Render the chevron icon used in the navigation buttons and dropdowns.
  */
-export function Chevron({ size = 24, orientation = 'left', className }: ChevronProps): JSX.Element {
+export function Chevron({ className, orientation = 'left', size = 24 }: ChevronProps): JSX.Element {
   return (
     <svg className={className} height={size} viewBox="0 0 24 24" width={size}>
       {orientation === 'up' && <polygon points="6.77 17 12.5 11.43 18.24 17 20 15.28 12.5 8 5 15.28" />}

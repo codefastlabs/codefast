@@ -11,8 +11,8 @@ describe('useSingle', () => {
     const selectedDate = new Date(2023, 9, 1);
     const props: DayPickerProps = {
       mode: 'single',
-      selected: selectedDate,
       onSelect: mockOnSelect,
+      selected: selectedDate,
     };
 
     const { result } = renderHook(() => useSingle(props, defaultDateLib));

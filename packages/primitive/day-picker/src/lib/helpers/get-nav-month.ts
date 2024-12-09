@@ -12,11 +12,11 @@ export function getNavMonths(
   props: Pick<DayPickerProps, 'captionLayout' | 'startMonth' | 'endMonth' | 'today' | 'timeZone'>,
   dateLib: DateLib,
 ): [start: Date | undefined, end: Date | undefined] {
-  const { startOfYear, startOfDay, startOfMonth, endOfMonth, addYears, endOfYear } = dateLib;
+  const { addYears, endOfMonth, endOfYear, startOfDay, startOfMonth, startOfYear } = dateLib;
 
   // Extract props
-  let { startMonth, endMonth } = props;
-  const { captionLayout, today, timeZone } = props;
+  let { endMonth, startMonth } = props;
+  const { captionLayout, timeZone, today } = props;
 
   const hasDropdowns = captionLayout?.startsWith('dropdown');
   const currentToday = today ?? (timeZone ? TZDate.tz(timeZone) : new dateLib.Date());

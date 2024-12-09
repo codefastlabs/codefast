@@ -10,7 +10,7 @@ import {
 } from '@/lib/utils/typeguards';
 
 test('isDateInterval return true for valid DateInterval', () => {
-  const validInterval: DateInterval = { before: new Date(), after: new Date() };
+  const validInterval: DateInterval = { after: new Date(), before: new Date() };
 
   expect(isDateInterval(validInterval)).toBe(true);
 });

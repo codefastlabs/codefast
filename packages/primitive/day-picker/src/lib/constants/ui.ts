@@ -96,16 +96,6 @@ export enum UI {
   Week = 'week',
 
   /**
-   * The cell containing the week number.
-   */
-  WeekNumber = 'week_number',
-
-  /**
-   * The cell header of the week numbers column.
-   */
-  WeekNumberHeader = 'week_number_header',
-
-  /**
    * The column header with the weekday.
    */
   Weekday = 'weekday',
@@ -114,6 +104,16 @@ export enum UI {
    * The row grouping the weekdays in the column headers.
    */
   Weekdays = 'weekdays',
+
+  /**
+   * The cell containing the week number.
+   */
+  WeekNumber = 'week_number',
+
+  /**
+   * The cell header of the week numbers column.
+   */
+  WeekNumberHeader = 'week_number_header',
 
   /**
    * The group of row weeks in a month (`tbody`).

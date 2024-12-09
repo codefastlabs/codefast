@@ -16,9 +16,9 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   const {
     disabled,
     excludeDisabled,
-    selected: initiallySelected,
-    required,
     onSelect,
+    required,
+    selected: initiallySelected,
   } = props as RangeProps | RangeRequiredProps;
 
   const [internallySelected, setSelected] = useControlledValue(
@@ -31,7 +31,7 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   const isSelected = (date: Date): boolean | undefined => selected && rangeIncludesDate(selected, date, false, dateLib);
 
   const select = (triggerDate: Date, modifiers: Modifiers, event: DayEvent): DateRange | undefined => {
-    const { min, max } = props as RangeProps;
+    const { max, min } = props as RangeProps;
     const newRange = addToRange(triggerDate, selected, min, max, required, dateLib);
 
     if (
@@ -60,8 +60,8 @@ export function useRange<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   };
 
   return {
-    selected,
-    select,
     isSelected,
+    select,
+    selected,
   } as Selection<T>;
 }

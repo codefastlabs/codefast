@@ -25,8 +25,8 @@ test('return correct dropdown options', () => {
   const result = getYearOptions(displayMonth, startMonth, endMonth, formatters, defaultDateLib);
 
   expect(result).toEqual([
-    { value: 2022, label: '2022', disabled: false },
-    { value: 2023, label: '2023', disabled: false },
-    { value: 2024, label: '2024', disabled: false },
+    { disabled: false, label: '2022', value: 2022 },
+    { disabled: false, label: '2023', value: 2023 },
+    { disabled: false, label: '2024', value: 2024 },
   ]);
 });
