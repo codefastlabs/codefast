@@ -19,37 +19,37 @@ import { CartesianGrid, LabelList, Line, LineChart } from 'recharts';
 export const description = 'A line chart with a custom label';
 
 const chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
-  { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 90, fill: 'var(--color-other)' },
+  { browser: 'chrome', fill: 'var(--color-chrome)', visitors: 275 },
+  { browser: 'safari', fill: 'var(--color-safari)', visitors: 200 },
+  { browser: 'firefox', fill: 'var(--color-firefox)', visitors: 187 },
+  { browser: 'edge', fill: 'var(--color-edge)', visitors: 173 },
+  { browser: 'other', fill: 'var(--color-other)', visitors: 90 },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: 'Visitors',
-    color: 'hsl(var(--color-chart-2))',
-  },
   chrome: {
-    label: 'Chrome',
     color: 'hsl(var(--color-chart-1))',
-  },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--color-chart-2))',
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--color-chart-3))',
+    label: 'Chrome',
   },
   edge: {
-    label: 'Edge',
     color: 'hsl(var(--color-chart-4))',
+    label: 'Edge',
+  },
+  firefox: {
+    color: 'hsl(var(--color-chart-3))',
+    label: 'Firefox',
   },
   other: {
-    label: 'Other',
     color: 'hsl(var(--color-chart-5))',
+    label: 'Other',
+  },
+  safari: {
+    color: 'hsl(var(--color-chart-2))',
+    label: 'Safari',
+  },
+  visitors: {
+    color: 'hsl(var(--color-chart-2))',
+    label: 'Visitors',
   },
 } satisfies ChartConfig;
 
@@ -66,9 +66,9 @@ export function ChartLineLabelCustom(): JSX.Element {
             accessibilityLayer
             data={chartData}
             margin={{
-              top: 24,
               left: 24,
               right: 24,
+              top: 24,
             }}
           >
             <CartesianGrid vertical={false} />

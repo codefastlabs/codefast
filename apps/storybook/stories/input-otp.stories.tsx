@@ -24,11 +24,11 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {
-  tags: ['autodocs'],
-  title: 'UI/Input OTP',
   parameters: {
     layout: 'centered',
   },
+  tags: ['autodocs'],
+  title: 'UI/Input OTP',
 } satisfies Meta<typeof InputOTP>;
 
 export default meta;
@@ -156,10 +156,10 @@ export const ReactHookForm: Story = {
     });
 
     const form = useForm<z.infer<typeof formValues>>({
-      resolver: zodResolver(formValues),
       defaultValues: {
         pin: '',
       },
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {

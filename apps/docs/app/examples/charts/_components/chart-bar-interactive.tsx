@@ -112,16 +112,16 @@ const chartData = [
 ];
 
 const chartConfig = {
-  views: {
-    label: 'Page Views',
-  },
   desktop: {
-    label: 'Desktop',
     color: 'hsl(var(--color-chart-1))',
+    label: 'Desktop',
   },
   mobile: {
-    label: 'Mobile',
     color: 'hsl(var(--color-chart-2))',
+    label: 'Mobile',
+  },
+  views: {
+    label: 'Page Views',
   },
 } satisfies ChartConfig;
 
@@ -187,8 +187,8 @@ export function ChartBarInteractive(props: ChartBarInteractiveProps): JSX.Elemen
                 const date = new Date(value);
 
                 return date.toLocaleDateString('en-US', {
-                  month: 'short',
                   day: 'numeric',
+                  month: 'short',
                 });
               }}
               tickLine={false}
@@ -200,8 +200,8 @@ export function ChartBarInteractive(props: ChartBarInteractiveProps): JSX.Elemen
                   className="w-[150px]"
                   labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString('en-US', {
-                      month: 'short',
                       day: 'numeric',
+                      month: 'short',
                       year: 'numeric',
                     });
                   }}

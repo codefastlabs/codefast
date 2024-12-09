@@ -14,8 +14,6 @@ import { useEffect, useRef, useState } from 'react';
 
 const meta = {
   component: Carousel,
-  tags: ['autodocs'],
-  title: 'UI/Carousel',
   decorators: [
     (Story) => (
       <div className="p-10">
@@ -23,6 +21,8 @@ const meta = {
       </div>
     ),
   ],
+  tags: ['autodocs'],
+  title: 'UI/Carousel',
 } satisfies Meta<typeof Carousel>;
 
 export default meta;

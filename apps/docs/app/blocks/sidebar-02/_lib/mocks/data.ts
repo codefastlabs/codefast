@@ -1,9 +1,6 @@
 export const data = {
-  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
   navMain: [
     {
-      title: 'Getting Started',
-      url: '#',
       items: [
         {
           title: 'Installation',
@@ -14,19 +11,19 @@ export const data = {
           url: '#',
         },
       ],
+      title: 'Getting Started',
+      url: '#',
     },
     {
-      title: 'Building Your Application',
-      url: '#',
       items: [
         {
           title: 'Routing',
           url: '#',
         },
         {
+          isActive: true,
           title: 'Data Fetching',
           url: '#',
-          isActive: true,
         },
         {
           title: 'Rendering',
@@ -69,10 +66,10 @@ export const data = {
           url: '#',
         },
       ],
+      title: 'Building Your Application',
+      url: '#',
     },
     {
-      title: 'API Reference',
-      url: '#',
       items: [
         {
           title: 'Components',
@@ -99,10 +96,10 @@ export const data = {
           url: '#',
         },
       ],
+      title: 'API Reference',
+      url: '#',
     },
     {
-      title: 'Architecture',
-      url: '#',
       items: [
         {
           title: 'Accessibility',
@@ -125,16 +122,19 @@ export const data = {
           url: '#',
         },
       ],
+      title: 'Architecture',
+      url: '#',
     },
     {
-      title: 'Community',
-      url: '#',
       items: [
         {
           title: 'Contribution Guide',
           url: '#',
         },
       ],
+      title: 'Community',
+      url: '#',
     },
   ],
+  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
 };

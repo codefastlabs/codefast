@@ -12,8 +12,8 @@ import { UserNav } from '@/app/examples/tasks/_components/user-nav';
 import { type Task, taskSchema } from '@/app/examples/tasks/_data/schema';
 
 export const metadata: Metadata = {
-  title: 'Tasks',
   description: 'A task and issue tracker build using Tanstack Table.',
+  title: 'Tasks',
 };
 
 // Simulate a database read for tasks.

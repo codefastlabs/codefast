@@ -29,21 +29,30 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {
+  args: {
+    autoFocus: false,
+    disabled: false,
+    max: undefined,
+    min: undefined,
+    onChange: fn(),
+    placeholder: 'Enter a number...',
+    step: 1,
+  },
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
       description: 'Specifies that the input field should automatically get focus when the page loads',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the input field',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     formatOptions: {
@@ -57,28 +66,28 @@ const meta = {
     },
     inputSize: {
       control: { type: 'select' },
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Sets the size of the input field',
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       table: {
-        type: { summary: 'xxs | xs | sm | md | lg | xl' },
         defaultValue: { summary: 'md' },
+        type: { summary: 'xxs | xs | sm | md | lg | xl' },
       },
     },
     loaderPosition: {
       control: { type: 'inline-radio' },
-      options: ['prefix', 'suffix'],
       description: 'Position of the loader in the input field',
+      options: ['prefix', 'suffix'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'prefix' },
+        type: { summary: 'string' },
       },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Determines if the loading spinner is shown',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     max: {
@@ -120,16 +129,16 @@ const meta = {
       control: { type: 'boolean' },
       description: 'Specifies that the input field is read-only',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     required: {
       control: { type: 'boolean' },
       description: 'Specifies that the input field must be filled out before submitting the form',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     step: {
@@ -147,15 +156,6 @@ const meta = {
       },
     },
   },
-  args: {
-    autoFocus: false,
-    disabled: false,
-    max: undefined,
-    min: undefined,
-    onChange: fn(),
-    placeholder: 'Enter a number...',
-    step: 1,
-  },
   component: NumberInput,
   tags: ['autodocs'],
   title: 'UI/Number Input',
@@ -165,11 +165,6 @@ export default meta;
 
 const units = {
   area: ['acre', 'hectare'],
-  volume: ['liter', 'milliliter', 'gallon', 'fluid-ounce'],
-  length: ['kilometer', 'meter', 'centimeter', 'inch', 'foot', 'yard', 'mile', 'mile-scandinavian'],
-  mass: ['gram', 'kilogram', 'ounce', 'pound', 'stone'],
-  time: ['second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'millisecond', 'microsecond', 'nanosecond'],
-  temperature: ['celsius', 'fahrenheit', 'degree'],
   data: [
     'bit',
     'kilobit',
@@ -183,7 +178,12 @@ const units = {
     'terabyte',
     'petabyte',
   ],
+  length: ['kilometer', 'meter', 'centimeter', 'inch', 'foot', 'yard', 'mile', 'mile-scandinavian'],
+  mass: ['gram', 'kilogram', 'ounce', 'pound', 'stone'],
   percentage: ['percent'],
+  temperature: ['celsius', 'fahrenheit', 'degree'],
+  time: ['second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'millisecond', 'microsecond', 'nanosecond'],
+  volume: ['liter', 'milliliter', 'gallon', 'fluid-ounce'],
 };
 
 type Story = StoryObj<typeof NumberInput>;
@@ -222,10 +222,10 @@ export const Sizes: Story = {
 export const CurrencyFormat: Story = {
   args: {
     formatOptions: {
-      style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 2,
       currencyDisplay: 'code',
+      minimumFractionDigits: 2,
+      style: 'currency',
     },
     placeholder: 'Enter a price...',
   },
@@ -238,11 +238,11 @@ export const CurrencyFormat: Story = {
 export const PercentageFormat: Story = {
   args: {
     formatOptions: {
-      style: 'percent',
       maximumFractionDigits: 2,
+      style: 'percent',
     },
-    step: 0.01,
     placeholder: 'Enter a percentage...',
+    step: 0.01,
   },
 };
 
@@ -293,7 +293,7 @@ export const UnitFormat: Story = {
  * -------------------------------------------------------------------------- */
 
 export const ReadOnly: Story = {
-  args: { readOnly: true, placeholder: 'Read-Only Number Input' },
+  args: { placeholder: 'Read-Only Number Input', readOnly: true },
 };
 
 /* -----------------------------------------------------------------------------
@@ -311,8 +311,8 @@ export const Loading: Story = {
 export const CustomSpinner: Story = {
   args: {
     loading: true,
-    spinner: <LoaderCircleIcon className="animate-spin" />,
     placeholder: 'Custom Spinner Number Input',
+    spinner: <LoaderCircleIcon className="animate-spin" />,
   },
 };
 
@@ -321,7 +321,7 @@ export const CustomSpinner: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Prefix: Story = {
-  args: { prefix: <ImportIcon />, placeholder: 'Number Input with Prefix' },
+  args: { placeholder: 'Number Input with Prefix', prefix: <ImportIcon /> },
 };
 
 /* -----------------------------------------------------------------------------
@@ -329,7 +329,7 @@ export const Prefix: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Suffix: Story = {
-  args: { suffix: <ImportIcon />, placeholder: 'Number Input with Suffix' },
+  args: { placeholder: 'Number Input with Suffix', suffix: <ImportIcon /> },
 };
 
 /* -----------------------------------------------------------------------------
@@ -338,8 +338,8 @@ export const Suffix: Story = {
 
 export const MinMax: Story = {
   args: {
-    min: 0,
     max: 100,
+    min: 0,
     placeholder: 'Number between 0 and 100',
   },
 };
@@ -373,7 +373,7 @@ export const MinValue: Story = {
  * -------------------------------------------------------------------------- */
 
 export const StepValue: Story = {
-  args: { step: 5, placeholder: 'Step Value Number Input (step=5)' },
+  args: { placeholder: 'Step Value Number Input (step=5)', step: 5 },
 };
 
 /* -----------------------------------------------------------------------------
@@ -421,10 +421,10 @@ export const ReactHookForm: Story = {
     });
 
     const form = useForm<z.infer<typeof formValues>>({
-      resolver: zodResolver(formValues),
       defaultValues: {
         number: 0,
       },
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit = async (values: z.infer<typeof formValues>): Promise<void> => {

@@ -77,229 +77,229 @@ interface SidebarRightData {
 }
 
 export const sidebarLeftData: SidebarLeftData = {
-  teams: [
+  favorites: [
     {
-      name: 'Acme Inc',
-      logo: CommandIcon,
-      plan: 'Enterprise',
+      emoji: '📊',
+      name: 'Project Management & Task Tracking',
+      url: '#',
     },
     {
-      name: 'Acme Corp.',
-      logo: AudioWaveformIcon,
-      plan: 'Startup',
+      emoji: '🍳',
+      name: 'Family Recipe Collection & Meal Planning',
+      url: '#',
     },
     {
-      name: 'Evil Corp.',
-      logo: CommandIcon,
-      plan: 'Free',
+      emoji: '💪',
+      name: 'Fitness Tracker & Workout Routines',
+      url: '#',
+    },
+    {
+      emoji: '📚',
+      name: 'Book Notes & Reading List',
+      url: '#',
+    },
+    {
+      emoji: '🌱',
+      name: 'Sustainable Gardening Tips & Plant Care',
+      url: '#',
+    },
+    {
+      emoji: '🗣️',
+      name: 'Language Learning Progress & Resources',
+      url: '#',
+    },
+    {
+      emoji: '🏠',
+      name: 'Home Renovation Ideas & Budget Tracker',
+      url: '#',
+    },
+    {
+      emoji: '💰',
+      name: 'Personal Finance & Investment Portfolio',
+      url: '#',
+    },
+    {
+      emoji: '🎬',
+      name: 'Movie & TV Show Watchlist with Reviews',
+      url: '#',
+    },
+    {
+      emoji: '✅',
+      name: 'Daily Habit Tracker & Goal Setting',
+      url: '#',
     },
   ],
   navMain: [
     {
+      icon: SearchIcon,
       title: 'Search',
       url: '#',
-      icon: SearchIcon,
     },
     {
+      icon: SparklesIcon,
       title: 'Ask AI',
       url: '#',
-      icon: SparklesIcon,
     },
     {
-      title: 'Home',
-      url: '#',
       icon: HomeIcon,
       isActive: true,
+      title: 'Home',
+      url: '#',
     },
     {
+      badge: '10',
+      icon: InboxIcon,
       title: 'Inbox',
       url: '#',
-      icon: InboxIcon,
-      badge: '10',
     },
   ],
   navSecondary: [
     {
+      icon: CalendarIcon,
       title: 'Calendar',
       url: '#',
-      icon: CalendarIcon,
     },
     {
+      icon: Settings2Icon,
       title: 'Settings',
       url: '#',
-      icon: Settings2Icon,
     },
     {
+      icon: BlocksIcon,
       title: 'Templates',
       url: '#',
-      icon: BlocksIcon,
     },
     {
+      icon: Trash2Icon,
       title: 'Trash',
       url: '#',
-      icon: Trash2Icon,
     },
     {
+      icon: MessageCircleQuestionIcon,
       title: 'Help',
       url: '#',
-      icon: MessageCircleQuestionIcon,
     },
   ],
-  favorites: [
+  teams: [
     {
-      name: 'Project Management & Task Tracking',
-      url: '#',
-      emoji: '📊',
+      logo: CommandIcon,
+      name: 'Acme Inc',
+      plan: 'Enterprise',
     },
     {
-      name: 'Family Recipe Collection & Meal Planning',
-      url: '#',
-      emoji: '🍳',
+      logo: AudioWaveformIcon,
+      name: 'Acme Corp.',
+      plan: 'Startup',
     },
     {
-      name: 'Fitness Tracker & Workout Routines',
-      url: '#',
-      emoji: '💪',
-    },
-    {
-      name: 'Book Notes & Reading List',
-      url: '#',
-      emoji: '📚',
-    },
-    {
-      name: 'Sustainable Gardening Tips & Plant Care',
-      url: '#',
-      emoji: '🌱',
-    },
-    {
-      name: 'Language Learning Progress & Resources',
-      url: '#',
-      emoji: '🗣️',
-    },
-    {
-      name: 'Home Renovation Ideas & Budget Tracker',
-      url: '#',
-      emoji: '🏠',
-    },
-    {
-      name: 'Personal Finance & Investment Portfolio',
-      url: '#',
-      emoji: '💰',
-    },
-    {
-      name: 'Movie & TV Show Watchlist with Reviews',
-      url: '#',
-      emoji: '🎬',
-    },
-    {
-      name: 'Daily Habit Tracker & Goal Setting',
-      url: '#',
-      emoji: '✅',
+      logo: CommandIcon,
+      name: 'Evil Corp.',
+      plan: 'Free',
     },
   ],
   workspaces: [
     {
-      name: 'Personal Life Management',
       emoji: '🏠',
+      name: 'Personal Life Management',
       pages: [
         {
+          emoji: '📔',
           name: 'Daily Journal & Reflection',
           url: '#',
-          emoji: '📔',
         },
         {
+          emoji: '🍏',
           name: 'Health & Wellness Tracker',
           url: '#',
-          emoji: '🍏',
         },
         {
+          emoji: '🌟',
           name: 'Personal Growth & Learning Goals',
           url: '#',
-          emoji: '🌟',
         },
       ],
     },
     {
-      name: 'Professional Development',
       emoji: '💼',
+      name: 'Professional Development',
       pages: [
         {
+          emoji: '🎯',
           name: 'Career Objectives & Milestones',
           url: '#',
-          emoji: '🎯',
         },
         {
+          emoji: '🧠',
           name: 'Skill Acquisition & Training Log',
           url: '#',
-          emoji: '🧠',
         },
         {
+          emoji: '🤝',
           name: 'Networking Contacts & Events',
           url: '#',
-          emoji: '🤝',
         },
       ],
     },
     {
-      name: 'Creative Projects',
       emoji: '🎨',
+      name: 'Creative Projects',
       pages: [
         {
+          emoji: '✍️',
           name: 'Writing Ideas & Story Outlines',
           url: '#',
-          emoji: '✍️',
         },
         {
+          emoji: '🖼️',
           name: 'Art & Design Portfolio',
           url: '#',
-          emoji: '🖼️',
         },
         {
+          emoji: '🎵',
           name: 'Music Composition & Practice Log',
           url: '#',
-          emoji: '🎵',
         },
       ],
     },
     {
-      name: 'Home Management',
       emoji: '🏡',
+      name: 'Home Management',
       pages: [
         {
+          emoji: '💰',
           name: 'Household Budget & Expense Tracking',
           url: '#',
-          emoji: '💰',
         },
         {
+          emoji: '🔧',
           name: 'Home Maintenance Schedule & Tasks',
           url: '#',
-          emoji: '🔧',
         },
         {
+          emoji: '📅',
           name: 'Family Calendar & Event Planning',
           url: '#',
-          emoji: '📅',
         },
       ],
     },
     {
-      name: 'Travel & Adventure',
       emoji: '🧳',
+      name: 'Travel & Adventure',
       pages: [
         {
+          emoji: '🗺️',
           name: 'Trip Planning & Itineraries',
           url: '#',
-          emoji: '🗺️',
         },
         {
+          emoji: '🌎',
           name: 'Travel Bucket List & Inspiration',
           url: '#',
-          emoji: '🌎',
         },
         {
+          emoji: '📸',
           name: 'Travel Journal & Photo Gallery',
           url: '#',
-          emoji: '📸',
         },
       ],
     },
@@ -307,23 +307,23 @@ export const sidebarLeftData: SidebarLeftData = {
 };
 
 export const sidebarRightData: SidebarRightData = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   calendars: [
     {
-      name: 'My Calendars',
       items: ['Personal', 'Work', 'Family'],
+      name: 'My Calendars',
     },
     {
-      name: 'Favorites',
       items: ['Holidays', 'Birthdays'],
+      name: 'Favorites',
     },
     {
-      name: 'Other',
       items: ['Travel', 'Reminders', 'Deadlines'],
+      name: 'Other',
     },
   ],
+  user: {
+    avatar: '/avatars/shadcn.jpg',
+    email: 'm@example.com',
+    name: 'shadcn',
+  },
 };

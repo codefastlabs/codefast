@@ -114,7 +114,7 @@ interface ModelItemProps {
   onSelect: () => void;
 }
 
-function ModelItem({ model, isSelected, onSelect, onPeek }: ModelItemProps): JSX.Element {
+function ModelItem({ isSelected, model, onPeek, onSelect }: ModelItemProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
 
   useMutationObserver(

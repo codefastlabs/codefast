@@ -23,42 +23,45 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {
-  title: 'UI/Password Input',
-  component: PasswordInput,
-  tags: ['autodocs'],
+  args: {
+    disabled: false,
+    inputSize: 'md',
+    loaderPosition: 'prefix',
+    loading: false,
+  },
   argTypes: {
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the input field',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     inputSize: {
       control: { type: 'select' },
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Sets the size of the input field',
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       table: {
-        type: { summary: 'xxs | xs | sm | md | lg | xl' },
         defaultValue: { summary: 'md' },
+        type: { summary: 'xxs | xs | sm | md | lg | xl' },
       },
     },
     loaderPosition: {
       control: { type: 'inline-radio' },
-      options: ['prefix', 'suffix'],
       description: 'Position of the loader in the input field',
+      options: ['prefix', 'suffix'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'prefix' },
+        type: { summary: 'string' },
       },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Determines if the loading spinner is shown',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     prefix: {
@@ -77,12 +80,9 @@ const meta = {
       table: { type: { summary: 'ReactNode' } },
     },
   },
-  args: {
-    disabled: false,
-    inputSize: 'md',
-    loaderPosition: 'prefix',
-    loading: false,
-  },
+  component: PasswordInput,
+  tags: ['autodocs'],
+  title: 'UI/Password Input',
 } satisfies Meta<typeof PasswordInput>;
 
 export default meta;
@@ -133,8 +133,8 @@ export const Loading: Story = {
 
 export const CustomSpinner: Story = {
   args: {
-    spinner: <LoaderCircleIcon className="animate-spin" />,
     loading: true,
+    spinner: <LoaderCircleIcon className="animate-spin" />,
   },
 };
 
@@ -206,11 +206,11 @@ export const ReactHookForm: Story = {
     });
 
     const form = useForm<z.infer<typeof formValues>>({
-      resolver: zodResolver(formValues),
       defaultValues: {
         email: '',
         password: '',
       },
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof formValues>> = async (values): Promise<void> => {
