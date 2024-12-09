@@ -1,7 +1,7 @@
 import reactPlugin from 'eslint-plugin-react';
-// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import importPlugin from 'eslint-plugin-import';
-// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import prettierConfig from 'eslint-config-prettier';
 import { type Linter } from 'eslint';
 
@@ -11,11 +11,9 @@ import { reactRules } from '@/rules/react';
 
 export const reactConfig: Linter.Config[] = [
   {
-    // @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
-    ...reactPlugin.configs.flat.recommended,
+    ...reactPlugin.configs.flat?.recommended,
     rules: {
-      // @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
-      ...reactPlugin.configs.flat.recommended.rules,
+      ...reactPlugin.configs.flat?.recommended.rules,
       ...reactRules.rules,
     },
     settings: {
@@ -24,8 +22,7 @@ export const reactConfig: Linter.Config[] = [
       },
     },
   },
-  // @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
-  reactPlugin.configs.flat['jsx-runtime'],
+  reactPlugin.configs.flat?.['jsx-runtime'],
   importPlugin.flatConfigs.react,
   jsxA11yConfig,
   reactHooksConfig,
