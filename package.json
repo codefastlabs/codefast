@@ -9,7 +9,7 @@
     "clean": "turbo run clean",
     "dev": "turbo run dev --concurrency=11",
     "postinstall": "pnpm exec simple-git-hooks",
-    "lint": "turbo run lint --force",
+    "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm clean && pnpm install && pnpm build",
