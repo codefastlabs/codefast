@@ -20,16 +20,16 @@ const setupMockMatchMedia = (
   const mockRemoveEventListener = vi.fn();
 
   const mockMediaQueryList = {
+    addEventListener: mockAddEventListener,
     matches,
     media: '',
-    addEventListener: mockAddEventListener,
-    removeEventListener: mockRemoveEventListener,
     onchange: null,
+    removeEventListener: mockRemoveEventListener,
   };
 
   window.matchMedia = vi.fn().mockImplementation(() => mockMediaQueryList);
 
-  return { mockMediaQueryList, mockAddEventListener, mockRemoveEventListener };
+  return { mockAddEventListener, mockMediaQueryList, mockRemoveEventListener };
 };
 
 describe('useMediaQuery', () => {
@@ -53,7 +53,7 @@ describe('useMediaQuery', () => {
   });
 
   test('should update when media query changes', () => {
-    const { mockMediaQueryList, mockAddEventListener } = setupMockMatchMedia(false);
+    const { mockAddEventListener, mockMediaQueryList } = setupMockMatchMedia(false);
 
     const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
 
