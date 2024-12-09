@@ -7,7 +7,7 @@ import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
 import { type Linter } from 'eslint';
-// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import onlyWarn from 'eslint-plugin-only-warn';
 import globals from 'globals';
 
