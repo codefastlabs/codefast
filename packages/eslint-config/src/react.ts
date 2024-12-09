@@ -48,16 +48,16 @@ export const config: Linter.Config[] = [
   },
   {
     languageOptions: {
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
         project: resolve(process.cwd(), 'tsconfig.json'),
         projectService: true,
-      },
-      globals: {
-        ...globals.serviceworker,
-        ...globals.browser,
       },
     },
     rules: {

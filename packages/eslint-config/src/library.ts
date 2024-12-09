@@ -40,13 +40,13 @@ export const config: Linter.Config[] = [
   },
   {
     languageOptions: {
-      parserOptions: {
-        project: resolve(process.cwd(), 'tsconfig.json'),
-        projectService: true,
-      },
       globals: {
         ...globals.serviceworker,
         ...globals.browser,
+      },
+      parserOptions: {
+        project: resolve(process.cwd(), 'tsconfig.json'),
+        projectService: true,
       },
     },
   },
