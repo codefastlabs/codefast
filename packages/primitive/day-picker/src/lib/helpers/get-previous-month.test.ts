@@ -6,8 +6,8 @@ test('should return undefined if navigation is disabled', () => {
   const calendarStartMonth = new Date(2022, 0, 1); // January 2022
   const props = {
     disableNavigation: true,
-    pagedNavigation: false,
     numberOfMonths: 1,
+    pagedNavigation: false,
   };
 
   const result = getPreviousMonth(firstDisplayedMonth, calendarStartMonth, props, defaultDateLib);
@@ -19,8 +19,8 @@ test('should return the previous month if startMonth is not provided', () => {
   const firstDisplayedMonth = new Date(2022, 1, 1); // February 2022
   const props = {
     disableNavigation: false,
-    pagedNavigation: false,
     numberOfMonths: 1,
+    pagedNavigation: false,
   };
 
   const result = getPreviousMonth(firstDisplayedMonth, undefined, props, defaultDateLib);
@@ -33,8 +33,8 @@ test('should return undefined if the previous month is before the startMonth', (
   const calendarStartMonth = new Date(2022, 0, 1); // January 2022
   const props = {
     disableNavigation: false,
-    pagedNavigation: false,
     numberOfMonths: 1,
+    pagedNavigation: false,
   };
   const result = getPreviousMonth(firstDisplayedMonth, calendarStartMonth, props, defaultDateLib);
 
@@ -46,8 +46,8 @@ test('should return the correct previous month when pagedNavigation is true', ()
   const calendarStartMonth = new Date(2022, 0, 1); // January 2022
   const props = {
     disableNavigation: false,
-    pagedNavigation: true,
     numberOfMonths: 2,
+    pagedNavigation: true,
     startMonth: new Date(2022, 0, 1),
   };
 

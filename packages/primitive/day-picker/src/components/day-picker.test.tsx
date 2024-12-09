@@ -43,14 +43,14 @@ test('use custom components', () => {
   render(
     <DayPicker
       components={{
-        Nav: () => <div>Custom Navigation</div>,
+        Footer: () => <div>Custom Footer</div>,
         Month: () => <div>Custom Month</div>,
         Months: (props: MonthsProps) => (
           <div {...props}>
             Custom Months<div>{props.children}</div>
           </div>
         ),
-        Footer: () => <div>Custom Footer</div>,
+        Nav: () => <div>Custom Navigation</div>,
       }}
       data-testid={testId}
       footer="Footer"
@@ -163,10 +163,10 @@ test('should render the custom components', () => {
     <DayPicker
       captionLayout="dropdown"
       components={{
+        Footer: () => <div>Custom Footer</div>,
+        MonthsDropdown: () => <div>Custom MonthsDropdown</div>,
         Nav: () => <div>Custom Nav</div>,
         YearsDropdown: () => <div>Custom YearsDropdown</div>,
-        MonthsDropdown: () => <div>Custom MonthsDropdown</div>,
-        Footer: () => <div>Custom Footer</div>,
       }}
       footer="test"
     />,
@@ -180,8 +180,8 @@ test('should render the custom components', () => {
 test('apply classNames prop correctly', () => {
   const classNames = {
     [UI.Day]: 'custom-day-class',
-    [UI.Week]: 'custom-week-class',
     [UI.Month]: 'custom-month-class',
+    [UI.Week]: 'custom-week-class',
   };
 
   render(<DayPicker classNames={classNames} data-testid={testId} />);

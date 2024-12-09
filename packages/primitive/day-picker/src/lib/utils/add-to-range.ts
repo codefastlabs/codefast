@@ -22,7 +22,7 @@ export function addToRange(
   dateLib: DateLib = defaultDateLib,
 ): DateRange | undefined {
   const { from, to } = initialRange || {};
-  const { isSameDay, isAfter, isBefore } = dateLib;
+  const { isAfter, isBefore, isSameDay } = dateLib;
 
   let range: DateRange | undefined;
 

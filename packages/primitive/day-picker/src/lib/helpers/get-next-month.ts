@@ -20,8 +20,8 @@ export function getNextMonth(
     return undefined;
   }
 
-  const { pagedNavigation, numberOfMonths = 1 } = options;
-  const { startOfMonth, addMonths, differenceInCalendarMonths } = dateLib;
+  const { numberOfMonths = 1, pagedNavigation } = options;
+  const { addMonths, differenceInCalendarMonths, startOfMonth } = dateLib;
   const offset = pagedNavigation ? numberOfMonths : 1;
   const month = startOfMonth(firstDisplayedMonth);
 

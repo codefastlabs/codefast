@@ -14,15 +14,15 @@ export function getInitialMonth(
   dateLib: DateLib,
 ): Date {
   const {
-    month,
     defaultMonth,
-    today = props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date(),
-    numberOfMonths = 1,
     endMonth,
+    month,
+    numberOfMonths = 1,
     startMonth,
+    today = props.timeZone ? TZDate.tz(props.timeZone) : new dateLib.Date(),
   } = props;
   let initialMonth = month || defaultMonth || today;
-  const { differenceInCalendarMonths, addMonths, startOfMonth } = dateLib;
+  const { addMonths, differenceInCalendarMonths, startOfMonth } = dateLib;
 
   // Fix the initialMonth if is after the to-date
   if (endMonth && differenceInCalendarMonths(endMonth, initialMonth) < 0) {

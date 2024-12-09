@@ -13,15 +13,15 @@ export function useGetModifiers(
   props: DayPickerProps,
   dateLib: DateLib,
 ): (day: CalendarDay) => Modifiers {
-  const { disabled, hidden, modifiers, showOutsideDays, today, startMonth, endMonth, broadcastCalendar } = props;
+  const { broadcastCalendar, disabled, endMonth, hidden, modifiers, showOutsideDays, startMonth, today } = props;
 
-  const { isSameDay, isSameMonth, startOfMonth, isBefore, endOfMonth, isAfter } = dateLib;
+  const { endOfMonth, isAfter, isBefore, isSameDay, isSameMonth, startOfMonth } = dateLib;
 
   const internalModifiersMap: Record<DayFlag, CalendarDay[]> = {
-    [DayFlag.focused]: [],
-    [DayFlag.outside]: [],
     [DayFlag.disabled]: [],
+    [DayFlag.focused]: [],
     [DayFlag.hidden]: [],
+    [DayFlag.outside]: [],
     [DayFlag.today]: [],
   };
 
@@ -86,8 +86,8 @@ export function useGetModifiers(
   return (day: CalendarDay): Modifiers => {
     // Initialize all the modifiers to false
     const dayFlags: Record<DayFlag, boolean> = {
-      [DayFlag.focused]: false,
       [DayFlag.disabled]: false,
+      [DayFlag.focused]: false,
       [DayFlag.hidden]: false,
       [DayFlag.outside]: false,
       [DayFlag.today]: false,

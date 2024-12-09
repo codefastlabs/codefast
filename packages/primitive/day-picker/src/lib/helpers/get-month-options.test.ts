@@ -14,17 +14,17 @@ test('return correct dropdown options', () => {
   const result = getMonthOptions(displayMonth, startMonth, endMonth, formatters, defaultDateLib);
 
   expect(result).toEqual([
-    { value: 0, label: 'January', disabled: false },
-    { value: 1, label: 'February', disabled: false },
-    { value: 2, label: 'March', disabled: false },
-    { value: 3, label: 'April', disabled: false },
-    { value: 4, label: 'May', disabled: false },
-    { value: 5, label: 'June', disabled: false },
-    { value: 6, label: 'July', disabled: false },
-    { value: 7, label: 'August', disabled: false },
-    { value: 8, label: 'September', disabled: false },
-    { value: 9, label: 'October', disabled: false },
-    { value: 10, label: 'November', disabled: false },
-    { value: 11, label: 'December', disabled: false },
+    { disabled: false, label: 'January', value: 0 },
+    { disabled: false, label: 'February', value: 1 },
+    { disabled: false, label: 'March', value: 2 },
+    { disabled: false, label: 'April', value: 3 },
+    { disabled: false, label: 'May', value: 4 },
+    { disabled: false, label: 'June', value: 5 },
+    { disabled: false, label: 'July', value: 6 },
+    { disabled: false, label: 'August', value: 7 },
+    { disabled: false, label: 'September', value: 8 },
+    { disabled: false, label: 'October', value: 9 },
+    { disabled: false, label: 'November', value: 10 },
+    { disabled: false, label: 'December', value: 11 },
   ]);
 });

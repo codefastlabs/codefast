@@ -5,10 +5,10 @@ import { DayPicker } from '@/components';
 import { type Formatters } from '@/lib';
 
 const seasonEmoji: Record<string, string> = {
-  winter: '⛄️',
+  autumn: '🍂',
   spring: '🌸',
   summer: '🌻',
-  autumn: '🍂',
+  winter: '⛄️',
 };
 
 const getSeason = (month: Date): string => {

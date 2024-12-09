@@ -20,7 +20,7 @@ export function getDates(
   // eslint-disable-next-line unicorn/prefer-at -- we need the last element
   const lastMonth = displayMonths[displayMonths.length - 1];
 
-  const { ISOWeek, fixedWeeks, broadcastCalendar } = props;
+  const { broadcastCalendar, fixedWeeks, ISOWeek } = props;
 
   const {
     addDays,

@@ -5,8 +5,8 @@ import { DayPicker } from '@/components';
 export const availableDays = [new Date(2021, 5, 23), new Date(2021, 5, 24)];
 
 const availableStyle = {
-  fontWeight: 900,
   color: 'lightgreen',
+  fontWeight: 900,
 };
 
 export function ModifiersStyle(): JSX.Element {

@@ -11,8 +11,8 @@ describe('useMulti', () => {
     const selectedDates = [new Date(2023, 9, 1), new Date(2023, 9, 2)];
     const props: DayPickerProps = {
       mode: 'multiple',
-      selected: selectedDates,
       onSelect: mockOnSelect,
+      selected: selectedDates,
     };
 
     const { result } = renderHook(() => useMulti(props, defaultDateLib));

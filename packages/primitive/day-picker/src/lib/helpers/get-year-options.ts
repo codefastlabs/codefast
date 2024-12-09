@@ -16,7 +16,7 @@ export function getYearOptions(
     return undefined;
   }
 
-  const { startOfMonth, startOfYear, endOfYear, addYears, isBefore, isSameYear } = dateLib;
+  const { addYears, endOfYear, isBefore, isSameYear, startOfMonth, startOfYear } = dateLib;
   const month = displayMonth.getMonth();
   const firstNavYear = startOfYear(calendarStart);
   const lastNavYear = endOfYear(calendarEnd);
@@ -35,9 +35,9 @@ export function getYearOptions(
     const label = formatters.formatYearDropdown(value);
 
     return {
-      value,
-      label,
       disabled,
+      label,
+      value,
     };
   });
 }

@@ -31,8 +31,8 @@ const props = {
   },
   selected: date7,
   showOutsideDays: true,
-  today: date5,
   timeZone: 'UTC',
+  today: date5,
 };
 
 describe('useGetModifiers', () => {
@@ -113,7 +113,7 @@ describe('useGetModifiers', () => {
 
     endMonth.setDate(1);
 
-    const getModifiers = useGetModifiers(days, { ...props, startMonth, endMonth }, dateLib);
+    const getModifiers = useGetModifiers(days, { ...props, endMonth, startMonth }, dateLib);
 
     test('return the modifiers for a given day', () => {
       const modifiers = getModifiers(day2);

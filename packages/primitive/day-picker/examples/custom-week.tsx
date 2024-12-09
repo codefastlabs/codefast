@@ -18,10 +18,10 @@ export function CustomWeek(): JSX.Element {
           : null
       }
       modifiers={{
-        selected: selectedWeek,
-        range_start: selectedWeek?.from,
         range_end: selectedWeek?.to,
         range_middle: (date: Date) => (selectedWeek ? rangeIncludesDate(selectedWeek, date, true) : false),
+        range_start: selectedWeek?.from,
+        selected: selectedWeek,
       }}
       onDayClick={(day, modifiers) => {
         if (modifiers.selected) {

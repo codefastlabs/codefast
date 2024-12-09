@@ -39,7 +39,7 @@ test('should return true when right date range contains left date range', () => 
 });
 
 test('should return true when a date range is inverted', () => {
-  const rightRange = { to: sunday, from: nextWeekSunday };
+  const rightRange = { from: nextWeekSunday, to: sunday };
   const result = rangeOverlaps(leftRange, rightRange, defaultDateLib);
 
   expect(result).toBe(true);
@@ -60,7 +60,7 @@ test('should return false on the edge of the "to" date', () => {
 });
 
 test('should return false when a date range is inverted', () => {
-  const rightRange = { to: nextWeekSunday, from: new Date(2077, 1, 1) };
+  const rightRange = { from: new Date(2077, 1, 1), to: nextWeekSunday };
   const result = rangeOverlaps(leftRange, rightRange, defaultDateLib);
 
   expect(result).toBe(false);

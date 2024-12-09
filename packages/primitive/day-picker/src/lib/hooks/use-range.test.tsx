@@ -12,7 +12,7 @@ describe('useRange', () => {
       to: new Date(2023, 6, 5),
     };
     const { result } = renderHook(() =>
-      useRange({ mode: 'range', selected: initiallySelected, required: false }, defaultDateLib),
+      useRange({ mode: 'range', required: false, selected: initiallySelected }, defaultDateLib),
     );
 
     expect(result.current.selected).toEqual(initiallySelected);
@@ -24,7 +24,7 @@ describe('useRange', () => {
       to: new Date(2023, 6, 5),
     };
     const { result } = renderHook(() =>
-      useRange({ mode: 'range', selected: initiallySelected, required: false }, defaultDateLib),
+      useRange({ mode: 'range', required: false, selected: initiallySelected }, defaultDateLib),
     );
 
     act(() => {
@@ -41,10 +41,10 @@ describe('useRange', () => {
     const { result } = renderHook(() =>
       useRange(
         {
-          mode: 'range',
-          selected: undefined,
-          required: false,
           max: 5,
+          mode: 'range',
+          required: false,
+          selected: undefined,
         },
         defaultDateLib,
       ),
@@ -63,7 +63,7 @@ describe('useRange', () => {
 
   test('reset range if new range is less than min days', () => {
     const { result } = renderHook(() =>
-      useRange({ mode: 'range', selected: undefined, required: false, min: 5 }, defaultDateLib),
+      useRange({ min: 5, mode: 'range', required: false, selected: undefined }, defaultDateLib),
     );
 
     act(() => {
@@ -82,11 +82,11 @@ describe('useRange', () => {
     const { result } = renderHook(() =>
       useRange(
         {
-          mode: 'range',
-          selected: undefined,
-          required: false,
-          excludeDisabled: true,
           disabled,
+          excludeDisabled: true,
+          mode: 'range',
+          required: false,
+          selected: undefined,
         },
         defaultDateLib,
       ),
@@ -111,8 +111,8 @@ describe('useRange', () => {
     const props: DayPickerProps = {
       mode: 'range',
 
-      selected: selectedRange,
       onSelect: mockOnSelect,
+      selected: selectedRange,
     };
 
     const { result } = renderHook(() => useRange(props, defaultDateLib));
