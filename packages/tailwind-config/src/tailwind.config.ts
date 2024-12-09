@@ -11,21 +11,21 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
   theme: {
     extend: {
       animation: {
-        'collapsible-open': 'collapsible-open 200ms ease',
-        'collapsible-closed': 'collapsible-closed 200ms ease',
         'caret-blink': 'caret-blink 1000ms ease infinite',
+        'collapsible-closed': 'collapsible-closed 200ms ease',
+        'collapsible-open': 'collapsible-open 200ms ease',
       },
       borderColor: {
         DEFAULT: 'hsl(var(--color-border) / <alpha-value>)',
       },
       borderRadius: {
-        sm: 'calc(var(--radius, 0.25rem) - 0.125rem)', // 2px
-        DEFAULT: 'var(--radius, 0.25rem)', // 4px
-        md: 'calc(var(--radius, 0.25rem) + 0.125rem)', // 6px
-        lg: 'calc(var(--radius, 0.25rem) + 0.25rem)', // 8px
-        xl: 'calc(var(--radius, 0.25rem) + 0.5rem)', // 12px
         '2xl': 'calc(var(--radius, 0.25rem) + 0.75rem)', // 16px
         '3xl': 'calc(var(--radius, 0.25rem) + 1.25rem)', // 24px
+        DEFAULT: 'var(--radius, 0.25rem)', // 4px
+        lg: 'calc(var(--radius, 0.25rem) + 0.25rem)', // 8px
+        md: 'calc(var(--radius, 0.25rem) + 0.125rem)', // 6px
+        sm: 'calc(var(--radius, 0.25rem) - 0.125rem)', // 2px
+        xl: 'calc(var(--radius, 0.25rem) + 0.5rem)', // 12px
       },
       colors: {
         accent: {
@@ -66,11 +66,11 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
           foreground: 'hsl(var(--color-secondary-foreground) / <alpha-value>)',
         },
         sidebar: {
-          DEFAULT: 'hsl(var(--color-sidebar-background) / <alpha-value>)',
-          foreground: 'hsl(var(--color-sidebar-foreground) / <alpha-value>)',
           accent: 'hsl(var(--color-sidebar-accent) / <alpha-value>)',
           'accent-foreground': 'hsl(var(--color-sidebar-accent-foreground) / <alpha-value>)',
           border: 'hsl(var(--color-sidebar-border) / <alpha-value>)',
+          DEFAULT: 'hsl(var(--color-sidebar-background) / <alpha-value>)',
+          foreground: 'hsl(var(--color-sidebar-foreground) / <alpha-value>)',
           primary: 'hsl(var(--color-sidebar-primary) / <alpha-value>)',
           'primary-foreground': 'hsl(var(--color-sidebar-primary-foreground) / <alpha-value>)',
           ring: 'hsl(var(--color-sidebar-ring) / <alpha-value>)',
@@ -88,12 +88,12 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
         sans: `var(--font-sans, ${fontFamily.sans.join(', ')})`,
       },
       keyframes: {
-        'collapsible-open': {
-          from: {
-            height: '0',
+        'caret-blink': {
+          '0%,70%,100%': {
+            opacity: '1',
           },
-          to: {
-            height: 'var(--radix-collapsible-content-height)',
+          '20%,50%': {
+            opacity: '0',
           },
         },
         'collapsible-closed': {
@@ -104,12 +104,12 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
             height: '0',
           },
         },
-        'caret-blink': {
-          '0%,70%,100%': {
-            opacity: '1',
+        'collapsible-open': {
+          from: {
+            height: '0',
           },
-          '20%,50%': {
-            opacity: '0',
+          to: {
+            height: 'var(--radix-collapsible-content-height)',
           },
         },
       },
