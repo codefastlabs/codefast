@@ -2,17 +2,34 @@ import plugin from 'tailwindcss/plugin';
 
 const base = plugin(({ addBase }) => {
   addBase({
-    body: {
-      '@apply bg-background text-foreground': '',
+    '*': {
+      scrollbarColor: 'hsl(var(--color-border)) transparent',
+      scrollbarWidth: 'thin',
     },
 
-    'input, textarea, select': {
-      '&:-webkit-autofill': {
-        '&, &:hover, &:focus': {
-          'box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background))',
-          '-webkit-box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background)) ',
-        },
+    '::-webkit-scrollbar': {
+      '&-thumb': {
+        background: 'hsl(var(--color-border))',
+        borderRadius: '5px',
       },
+
+      '&-track': {
+        background: 'transparent',
+      },
+
+      width: '5px',
+    },
+
+    '::selection': {
+      '@apply bg-primary text-background': '',
+    },
+
+    ':focus-visible': {
+      '@apply outline-ring': '',
+    },
+
+    body: {
+      '@apply bg-background text-foreground': '',
     },
 
     "button, [role='button']": {
@@ -20,39 +37,22 @@ const base = plugin(({ addBase }) => {
     },
 
     input: {
-      "&[type='button'], &[type='reset'], &[type='submit']": {
-        '@apply outline-transparent': '',
-      },
-
       '&::-webkit-search-cancel-button, &::-webkit-search-decoration': {
         '@apply appearance-none': '',
       },
-    },
 
-    ':focus-visible': {
-      '@apply outline-ring': '',
-    },
-
-    '::selection': {
-      '@apply bg-primary text-background': '',
-    },
-
-    '::-webkit-scrollbar': {
-      width: '5px',
-
-      '&-track': {
-        background: 'transparent',
-      },
-
-      '&-thumb': {
-        background: 'hsl(var(--color-border))',
-        borderRadius: '5px',
+      "&[type='button'], &[type='reset'], &[type='submit']": {
+        '@apply outline-transparent': '',
       },
     },
 
-    '*': {
-      scrollbarWidth: 'thin',
-      scrollbarColor: 'hsl(var(--color-border)) transparent',
+    'input, textarea, select': {
+      '&:-webkit-autofill': {
+        '&, &:hover, &:focus': {
+          '-webkit-box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background)) ',
+          'box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background))',
+        },
+      },
     },
   });
 });
