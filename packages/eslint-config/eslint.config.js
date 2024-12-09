@@ -1,4 +1,4 @@
-import { config } from './dist/library.js';
+import { config } from '@codefast/eslint-config/library';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [

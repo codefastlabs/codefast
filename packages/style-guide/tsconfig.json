@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@codefast/style-guide": ["./dist/*"]
     }
   },
   "include": ["**/*.ts"],
