@@ -82,7 +82,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     ariaIncrementLabel,
     defaultValue,
     disabled,
-    formatOptions = { style: 'decimal', minimumFractionDigits: 0 },
+    formatOptions = { minimumFractionDigits: 0, style: 'decimal' },
     id,
     locale = navigator.language,
     max,
@@ -97,12 +97,12 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [value, setValue] = useControllableState({
-    prop: valueProp,
     defaultProp: defaultValue,
     onChange,
+    prop: valueProp,
   });
 
-  const { thousandSeparator, decimalSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
+  const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = useCallback(
     (inputValue?: number): string => {
@@ -459,7 +459,7 @@ interface NumberInputButtonImplProps extends ButtonHTMLAttributes<HTMLButtonElem
 
 const NumberInputButtonImpl = forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
   ({ __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>, forwardedRef): JSX.Element => {
-    const { ariaIncrementLabel, ariaDecrementLabel, disabled, readOnly, id, onIncrement, onDecrement } =
+    const { ariaDecrementLabel, ariaIncrementLabel, disabled, id, onDecrement, onIncrement, readOnly } =
       useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
     const timeoutIdRef = useRef<number | null>(null);
 
@@ -579,13 +579,13 @@ function getNumberFormatSeparators(locale: string): {
       decimalSeparator = part.value;
     }
 
-    // Stop early if you have found enough.
+    // Stop early if you've found enough.
     if (thousandSeparator && decimalSeparator) {
       break;
     }
   }
 
-  return { thousandSeparator, decimalSeparator };
+  return { decimalSeparator, thousandSeparator };
 }
 
 function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
