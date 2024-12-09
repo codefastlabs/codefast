@@ -144,6 +144,16 @@
         "default": "./dist/configs/utils/jsx-a11y.cjs"
       }
     },
+    "./configs/utils/perfectionist": {
+      "import": {
+        "types": "./dist/configs/utils/perfectionist.d.ts",
+        "default": "./dist/configs/utils/perfectionist.js"
+      },
+      "require": {
+        "types": "./dist/configs/utils/perfectionist.d.cts",
+        "default": "./dist/configs/utils/perfectionist.cjs"
+      }
+    },
     "./configs/utils/react-hooks": {
       "import": {
         "types": "./dist/configs/utils/react-hooks.d.ts",
@@ -198,6 +208,7 @@
     "eslint-plugin-jest": "28.9.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-only-warn": "1.1.0",
+    "eslint-plugin-perfectionist": "4.2.0",
     "eslint-plugin-playwright": "2.1.0",
     "eslint-plugin-react": "7.37.2",
     "eslint-plugin-react-hooks": "5.1.0",

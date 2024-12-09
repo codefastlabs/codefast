@@ -11,6 +11,7 @@ import { variablesRules } from '@/rules/variables';
 import { importConfig } from '@/configs/utils/import';
 import { commentsConfig } from '@/configs/utils/comments';
 import { unicornConfig } from '@/configs/utils/unicorn';
+import { perfectionistConfig } from '@/configs/utils/perfectionist';
 
 /**
  * This is the base for both our browser and Node ESLint config files.
@@ -20,6 +21,7 @@ export const recommendedConfig: Linter.Config[] = [
   commentsConfig,
   importConfig,
   unicornConfig,
+  perfectionistConfig,
   {
     rules: {
       ...bestPracticeRules.rules,
