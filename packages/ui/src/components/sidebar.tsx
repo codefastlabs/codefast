@@ -69,7 +69,7 @@ interface SidebarProviderProps extends ComponentProps<'div'> {
 }
 
 const SidebarProvider = forwardRef<SidebarProviderElement, SidebarProviderProps>(
-  ({ defaultOpen = true, open: openProp, onOpenChange: setOpenProp, className, style, children, ...props }, ref) => {
+  ({ children, className, defaultOpen = true, onOpenChange: setOpenProp, open: openProp, style, ...props }, ref) => {
     const isMobile = useMediaQuery(`(max-width: ${SIDEBAR_MOBILE_BREAKPOINT - 1}px)`);
     const [openMobile, setOpenMobile] = useState(false);
 
@@ -89,8 +89,8 @@ const SidebarProvider = forwardRef<SidebarProviderElement, SidebarProviderProps>
 
         // This sets the cookie to keep the sidebar state.
         Cookies.set(SIDEBAR_COOKIE_NAME, String(openState), {
-          path: '/',
           expires: SIDEBAR_COOKIE_MAX_AGE,
+          path: '/',
         });
       },
       [setOpenProp, open],
@@ -127,12 +127,12 @@ const SidebarProvider = forwardRef<SidebarProviderElement, SidebarProviderProps>
 
     const contextValue = useMemo<SidebarContext>(
       () => ({
-        state,
-        open,
-        setOpen,
         isMobile,
+        open,
         openMobile,
+        setOpen,
         setOpenMobile,
+        state,
         toggleSidebar,
       }),
       [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
@@ -178,8 +178,8 @@ interface SidebarProps extends ComponentProps<'div'> {
 }
 
 const Sidebar = forwardRef<SidebarElement, SidebarProps>(
-  ({ side = 'left', variant = 'sidebar', collapsible = 'offcanvas', className, children, ...props }, ref) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  ({ children, className, collapsible = 'offcanvas', side = 'left', variant = 'sidebar', ...props }, ref) => {
+    const { isMobile, openMobile, setOpenMobile, state } = useSidebar();
 
     if (collapsible === 'none') {
       return (
@@ -479,7 +479,7 @@ interface SidebarGroupLabelProps extends ComponentProps<'div'> {
 }
 
 const SidebarGroupLabel = forwardRef<SidebarGroupLabelElement, SidebarGroupLabelProps>(
-  ({ className, asChild = false, ...props }, ref) => {
+  ({ asChild = false, className, ...props }, ref) => {
     const Comp = asChild ? Slot : 'div';
 
     return (
@@ -509,7 +509,7 @@ interface SidebarGroupActionProps extends ComponentProps<'button'> {
 }
 
 const SidebarGroupAction = forwardRef<SidebarGroupActionElement, SidebarGroupActionProps>(
-  ({ className, asChild = false, ...props }, ref) => {
+  ({ asChild = false, className, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
 
     return (
@@ -578,21 +578,21 @@ SidebarMenuItem.displayName = 'SidebarMenuItem';
 
 const sidebarMenuButtonVariants = tv({
   base: 'peer/menu-button ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none transition-[width,height,padding] focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+  defaultVariants: {
+    size: 'default',
+    variant: 'default',
+  },
   variants: {
+    size: {
+      default: 'h-8 text-sm',
+      lg: 'h-12 text-sm group-data-[collapsible=icon]:!p-0',
+      sm: 'h-7 text-xs',
+    },
     variant: {
       default: 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
       outline:
         'bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--color-sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--color-sidebar-accent))]',
     },
-    size: {
-      default: 'h-8 text-sm',
-      sm: 'h-7 text-xs',
-      lg: 'h-12 text-sm group-data-[collapsible=icon]:!p-0',
-    },
-  },
-  defaultVariants: {
-    variant: 'default',
-    size: 'default',
   },
 });
 
@@ -604,14 +604,14 @@ interface SidebarMenuButtonProps extends ComponentProps<'button'>, VariantProps<
 }
 
 const SidebarMenuButton = forwardRef<SidebarMenuButtonElement, SidebarMenuButtonProps>(
-  ({ asChild = false, isActive = false, variant = 'default', size = 'default', tooltip, className, ...props }, ref) => {
+  ({ asChild = false, className, isActive = false, size = 'default', tooltip, variant = 'default', ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
     const { isMobile, state } = useSidebar();
 
     const button = (
       <Comp
         ref={ref}
-        className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+        className={cn(sidebarMenuButtonVariants({ size, variant }), className)}
         data-active={isActive}
         data-sidebar="menu-button"
         data-size={size}
@@ -651,7 +651,7 @@ interface SidebarMenuActionProps extends ComponentProps<'button'> {
   showOnHover?: boolean;
 }
 const SidebarMenuAction = forwardRef<SidebarMenuActionElement, SidebarMenuActionProps>(
-  ({ className, asChild = false, showOnHover = false, ...props }, ref) => {
+  ({ asChild = false, className, showOnHover = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
 
     return (
@@ -787,7 +787,7 @@ interface SidebarMenuSubButtonProps extends ComponentProps<'a'> {
 }
 
 const SidebarMenuSubButton = forwardRef<SidebarMenuSubButtonElement, SidebarMenuSubButtonProps>(
-  ({ asChild = false, size = 'md', isActive, className, ...props }, ref) => {
+  ({ asChild = false, className, isActive, size = 'md', ...props }, ref) => {
     const Comp = asChild ? Slot : 'a';
 
     return (

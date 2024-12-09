@@ -50,7 +50,7 @@ interface InputOTPSlotProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const InputOTPSlot = forwardRef<InputOTPSlotElement, InputOTPSlotProps>(
-  ({ index, className, ...props }, forwardedRef) => {
+  ({ className, index, ...props }, forwardedRef) => {
     const inputOTPContext = useContext(OTPInputContext);
     const slot = inputOTPContext.slots[index];
 

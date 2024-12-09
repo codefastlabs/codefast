@@ -149,7 +149,7 @@ type FormControlProps = ComponentPropsWithoutRef<typeof Slot>;
 
 const FormControl = forwardRef<FormControlElement, FormControlProps>(
   ({ __scopeFormField, ...props }: ScopedProps<FormControlProps>, forwardedRef) => {
-    const { formItemId, formDescriptionId, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
+    const { formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
     const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
     const { errors } = useFormState({ name });
 

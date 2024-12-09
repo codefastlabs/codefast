@@ -25,20 +25,20 @@ const badgeVariants = tv({
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
-      sm: 'h-5 [&>svg]:size-3', // 20px
-      md: 'h-6 [&>svg]:size-3', // 24px
-      lg: 'h-7 [&>svg]:size-4', // 28px
-      xl: 'h-8 [&>svg]:size-5', // 32px
       '2xl': 'h-9 [&>svg]:size-5', // 36px
+      lg: 'h-7 [&>svg]:size-4', // 28px
+      md: 'h-6 [&>svg]:size-3', // 24px
+      sm: 'h-5 [&>svg]:size-3', // 20px
+      xl: 'h-8 [&>svg]:size-5', // 32px
     },
     variant: {
       default: 'bg-primary text-primary-foreground',
-      secondary: 'bg-secondary text-secondary-foreground',
+      destructive: 'bg-destructive text-destructive-foreground',
       info: 'bg-info text-info-foreground',
+      outline: 'bg-background border-input border',
+      secondary: 'bg-secondary text-secondary-foreground',
       success: 'bg-success text-success-foreground',
       warning: 'bg-warning text-warning-foreground',
-      destructive: 'bg-destructive text-destructive-foreground',
-      outline: 'bg-background border-input border',
     },
   },
 });
@@ -54,9 +54,9 @@ interface BadgeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'prefix'>, Bad
   suffix?: ReactNode;
 }
 
-function Badge({ className, variant, size, prefix, suffix, children, ...props }: BadgeProps): JSX.Element {
+function Badge({ children, className, prefix, size, suffix, variant, ...props }: BadgeProps): JSX.Element {
   return (
-    <div className={badgeVariants({ variant, className, size })} {...props}>
+    <div className={badgeVariants({ className, size, variant })} {...props}>
       {prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
       {suffix}

@@ -27,7 +27,7 @@ type ToggleGroupProps = ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Roo
 
 const ToggleGroup = forwardRef<ToggleGroupElement, ToggleGroupProps>(
   (
-    { __scopeToggleGroup, children, className, variant, size, icon, ...props }: ScopedProps<ToggleGroupProps>,
+    { __scopeToggleGroup, children, className, icon, size, variant, ...props }: ScopedProps<ToggleGroupProps>,
     forwardedRef,
   ) => {
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
@@ -63,7 +63,7 @@ interface ToggleGroupItemProps extends Omit<ComponentPropsWithoutRef<typeof Togg
 
 const ToggleGroupItem = forwardRef<ToggleGroupItemElement, ToggleGroupItemProps>(
   (
-    { __scopeToggleGroup, children, prefix, suffix, className, ...props }: ScopedProps<ToggleGroupItemProps>,
+    { __scopeToggleGroup, children, className, prefix, suffix, ...props }: ScopedProps<ToggleGroupItemProps>,
     forwardedRef,
   ) => {
     const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);

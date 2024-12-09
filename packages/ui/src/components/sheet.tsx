@@ -28,11 +28,6 @@ const sheetContentVariants = tv({
   },
   variants: {
     side: {
-      top: [
-        'inset-x-0 top-0 max-h-screen border-b',
-        'data-[state=open]:slide-in-from-top',
-        'data-[state=closed]:slide-out-to-top',
-      ],
       bottom: [
         'inset-x-0 bottom-0 max-h-screen border-t',
         'data-[state=open]:slide-in-from-bottom',
@@ -47,6 +42,11 @@ const sheetContentVariants = tv({
         'inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
         'data-[state=open]:slide-in-from-right',
         'data-[state=closed]:slide-out-to-right',
+      ],
+      top: [
+        'inset-x-0 top-0 max-h-screen border-b',
+        'data-[state=open]:slide-in-from-top',
+        'data-[state=closed]:slide-out-to-top',
       ],
     },
   },
@@ -76,7 +76,7 @@ type SheetContentElement = ComponentRef<typeof SheetPrimitive.Content>;
 type SheetContentProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
 
 const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
-  ({ children, side = 'right', className, ...props }, forwardedRef) => (
+  ({ children, className, side = 'right', ...props }, forwardedRef) => (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
@@ -85,7 +85,7 @@ const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
           'data-[state=closed]:animate-duration-300 data-[state=closed]:animate-fade-out',
         )}
       />
-      <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ side, className })} {...props}>
+      <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ className, side })} {...props}>
         {children}
         <SheetPrimitive.Close
           className={buttonVariants({
@@ -195,7 +195,7 @@ interface SheetCloseProps extends ComponentPropsWithoutRef<typeof SheetPrimitive
 
 const SheetClose = forwardRef<SheetCloseElement, SheetCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <SheetPrimitive.Close ref={forwardedRef} className={buttonVariants({ variant, size, className })} {...props} />
+    <SheetPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
   ),
 );
 

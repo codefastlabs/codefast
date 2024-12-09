@@ -16,7 +16,7 @@ interface ToggleProps
 }
 
 const Toggle = forwardRef<ToggleElement, ToggleProps>(
-  ({ className, size, icon, variant, prefix, children, suffix, ...props }, forwardedRef) => (
+  ({ children, className, icon, prefix, size, suffix, variant, ...props }, forwardedRef) => (
     <TogglePrimitive.Root ref={forwardedRef} className={toggleVariants({ className, icon, size, variant })} {...props}>
       {prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}

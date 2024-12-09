@@ -55,7 +55,7 @@ function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
  * Component: DayButton
  * -------------------------------------------------------------------------- */
 
-function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): JSX.Element {
+function DayButton({ className, day: _, modifiers, ...props }: DayButtonProps): JSX.Element {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -68,9 +68,6 @@ function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): 
     <button
       ref={buttonRef}
       className={buttonVariants({
-        icon: true,
-        size: 'sm',
-        variant: modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost',
         className: [
           'focus-visible:ring-1 focus-visible:ring-offset-0',
           (!modifiers.selected || modifiers.range_middle) && [
@@ -80,6 +77,9 @@ function DayButton({ modifiers, className, day: _, ...props }: DayButtonProps): 
           modifiers.range_middle && 'bg-transparent',
           className,
         ],
+        icon: true,
+        size: 'sm',
+        variant: modifiers.selected && !modifiers.range_middle ? 'default' : 'ghost',
       })}
       type="button"
       {...props}
@@ -156,10 +156,10 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         }),
         [UI.Root]: cn('inline-grid gap-4', classNames?.[UI.Root]),
         [UI.Week]: cn('flex justify-between', classNames?.[UI.Week]),
-        [UI.WeekNumber]: cn('text-foreground/50 size-9 text-center text-xs', classNames?.[UI.WeekNumber]),
-        [UI.WeekNumberHeader]: cn('', classNames?.[UI.WeekNumberHeader]),
         [UI.Weekday]: cn('text-muted-foreground flex-1 text-sm font-normal', classNames?.[UI.Weekday]),
         [UI.Weekdays]: cn('flex justify-between', classNames?.[UI.Weekdays]),
+        [UI.WeekNumber]: cn('text-foreground/50 size-9 text-center text-xs', classNames?.[UI.WeekNumber]),
+        [UI.WeekNumberHeader]: cn('', classNames?.[UI.WeekNumberHeader]),
         [UI.Weeks]: cn('grid gap-y-2', classNames?.[UI.Weeks]),
         [UI.YearsDropdown]: cn('', classNames?.[UI.YearsDropdown]),
       }}

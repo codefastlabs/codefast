@@ -25,9 +25,9 @@ export default defineConfig((options) => ({
   format: ['cjs', 'esm'],
   minify: !options.watch,
   plugins: [addUseClientDirective(clientLibs)],
-  sourcemap: Boolean(options.watch),
   shims: true,
   silent: true,
+  sourcemap: Boolean(options.watch),
   splitting: true,
   ...options,
 }));

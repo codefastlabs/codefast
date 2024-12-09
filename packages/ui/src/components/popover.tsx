@@ -32,7 +32,7 @@ type PopoverContentElement = ComponentRef<typeof PopoverPrimitive.Content>;
 type PopoverContentProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>;
 
 const PopoverContent = forwardRef<PopoverContentElement, PopoverContentProps>(
-  ({ className, align = 'center', sideOffset = 6, ...props }, forwardedRef) => (
+  ({ align = 'center', className, sideOffset = 6, ...props }, forwardedRef) => (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
         ref={forwardedRef}

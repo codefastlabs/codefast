@@ -30,7 +30,7 @@ type AlertElement = HTMLDivElement;
 type AlertProps = HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
 
 const Alert = forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, forwardedRef) => (
-  <div ref={forwardedRef} className={alertVariants({ variant, className })} role="alert" {...props} />
+  <div ref={forwardedRef} className={alertVariants({ className, variant })} role="alert" {...props} />
 ));
 
 Alert.displayName = 'Alert';

@@ -176,7 +176,7 @@ type ContextMenuCheckboxItemElement = ComponentRef<typeof ContextMenuPrimitive.C
 type ContextMenuCheckboxItemProps = ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem>;
 
 const ContextMenuCheckboxItem = forwardRef<ContextMenuCheckboxItemElement, ContextMenuCheckboxItemProps>(
-  ({ children, className, checked, ...props }, forwardedRef) => (
+  ({ checked, children, className, ...props }, forwardedRef) => (
     <ContextMenuPrimitive.CheckboxItem
       ref={forwardedRef}
       checked={checked}

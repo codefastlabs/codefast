@@ -59,7 +59,7 @@ export function addUseClientDirective(clientLibs?: string[]): NonNullable<Option
 
   return {
     name: 'add-use-client-directive',
-    renderChunk: (code, { imports, path, map }) => {
+    renderChunk: (code, { imports, map, path }) => {
       const relativePath = relative(process.cwd(), path);
 
       // Check if the code already contains the "use client" directive.

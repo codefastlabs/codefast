@@ -13,7 +13,7 @@ import { inputVariants, type InputVariantsProps } from '@/styles/input-variants'
  * Component: SearchInput
  * -------------------------------------------------------------------------- */
 
-const { root, input } = inputVariants();
+const { input, root } = inputVariants();
 
 type SearchInputElement = ComponentRef<typeof InputPrimitive.Item>;
 interface SearchInputProps
@@ -32,28 +32,28 @@ const SearchInput = forwardRef<SearchInputElement, SearchInputProps>(
   (
     {
       className,
+      defaultValue,
       inputSize,
       loaderPosition,
       loading,
+      onChange,
       prefix,
       spinner,
       suffix,
       value: valueProp,
-      defaultValue,
-      onChange,
       ...props
     },
     forwardedRef,
   ) => {
     const [value, setValue] = useControllableState({
-      prop: valueProp,
       defaultProp: defaultValue,
       onChange,
+      prop: valueProp,
     });
 
     return (
       <InputPrimitive.Root
-        className={root({ inputSize, className })}
+        className={root({ className, inputSize })}
         loaderPosition={loaderPosition}
         loading={loading}
         prefix={prefix || <SearchIcon />}

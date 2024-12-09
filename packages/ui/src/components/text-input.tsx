@@ -8,7 +8,7 @@ import { inputVariants, type InputVariantsProps } from '@/styles/input-variants'
  * Variant: Input
  * -------------------------------------------------------------------------- */
 
-const { root, input } = inputVariants();
+const { input, root } = inputVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: TextInput
@@ -38,7 +38,7 @@ interface TextInputProps
 const TextInput = forwardRef<TextInputElement, TextInputProps>(
   ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => (
     <InputPrimitive.Root
-      className={root({ inputSize, className })}
+      className={root({ className, inputSize })}
       loaderPosition={loaderPosition}
       loading={loading}
       prefix={prefix}

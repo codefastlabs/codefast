@@ -182,7 +182,7 @@ type DropdownMenuCheckboxItemElement = ComponentRef<typeof DropdownMenuPrimitive
 type DropdownMenuCheckboxItemProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>;
 
 const DropdownMenuCheckboxItem = forwardRef<DropdownMenuCheckboxItemElement, DropdownMenuCheckboxItemProps>(
-  ({ children, className, checked, ...props }, forwardedRef) => (
+  ({ checked, children, className, ...props }, forwardedRef) => (
     <DropdownMenuPrimitive.CheckboxItem
       ref={forwardedRef}
       checked={checked}
