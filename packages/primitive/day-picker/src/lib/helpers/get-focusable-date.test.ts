@@ -31,17 +31,17 @@ const testCases: {
   moveBy: MoveFocusBy;
   moveDir: MoveFocusDir;
 }[] = [
-  { moveBy: 'day', moveDir: 'after', expectedFn: addDays },
-  { moveBy: 'day', moveDir: 'before', expectedFn: addDays },
-  { moveBy: 'month', moveDir: 'after', expectedFn: addMonths },
-  { moveBy: 'month', moveDir: 'before', expectedFn: addMonths },
-  { moveBy: 'week', moveDir: 'after', expectedFn: addWeeks },
-  { moveBy: 'week', moveDir: 'before', expectedFn: addWeeks },
-  { moveBy: 'year', moveDir: 'after', expectedFn: addYears },
-  { moveBy: 'year', moveDir: 'before', expectedFn: addYears },
+  { expectedFn: addDays, moveBy: 'day', moveDir: 'after' },
+  { expectedFn: addDays, moveBy: 'day', moveDir: 'before' },
+  { expectedFn: addMonths, moveBy: 'month', moveDir: 'after' },
+  { expectedFn: addMonths, moveBy: 'month', moveDir: 'before' },
+  { expectedFn: addWeeks, moveBy: 'week', moveDir: 'after' },
+  { expectedFn: addWeeks, moveBy: 'week', moveDir: 'before' },
+  { expectedFn: addYears, moveBy: 'year', moveDir: 'after' },
+  { expectedFn: addYears, moveBy: 'year', moveDir: 'before' },
 ];
 
-for (const { moveBy, moveDir, expectedFn } of testCases) {
+for (const { expectedFn, moveBy, moveDir } of testCases) {
   test(`should move ${moveDir} by ${moveBy}`, () => {
     const expectedDate = expectedFn(focusedDate, moveDir === 'after' ? 1 : -1);
     const result = getFocusableDate(
@@ -69,11 +69,11 @@ const weekTestCases: {
   moveBy: MoveFocusBy;
   moveDir: MoveFocusDir;
 }[] = [
-  { moveBy: 'endOfWeek', moveDir: 'after', expectedFn: endOfWeek },
-  { moveBy: 'startOfWeek', moveDir: 'after', expectedFn: startOfWeek },
+  { expectedFn: endOfWeek, moveBy: 'endOfWeek', moveDir: 'after' },
+  { expectedFn: startOfWeek, moveBy: 'startOfWeek', moveDir: 'after' },
 ];
 
-for (const { moveBy, moveDir, expectedFn } of weekTestCases) {
+for (const { expectedFn, moveBy, moveDir } of weekTestCases) {
   test(`should move ${moveDir} by ${moveBy}`, () => {
     const expectedDate = expectedFn(focusedDate);
     const result = getFocusableDate(
@@ -95,11 +95,11 @@ const ISOWeekTestCases: {
   moveBy: MoveFocusBy;
   moveDir: MoveFocusDir;
 }[] = [
-  { moveBy: 'endOfWeek', moveDir: 'after', expectedFn: endOfISOWeek },
-  { moveBy: 'startOfWeek', moveDir: 'after', expectedFn: startOfISOWeek },
+  { expectedFn: endOfISOWeek, moveBy: 'endOfWeek', moveDir: 'after' },
+  { expectedFn: startOfISOWeek, moveBy: 'startOfWeek', moveDir: 'after' },
 ];
 
-for (const { moveBy, moveDir, expectedFn } of ISOWeekTestCases) {
+for (const { expectedFn, moveBy, moveDir } of ISOWeekTestCases) {
   test(`should move ${moveDir} by ${moveBy} when ISOWeek is true`, () => {
     const expectedDate = expectedFn(focusedDate);
     const result = getFocusableDate(

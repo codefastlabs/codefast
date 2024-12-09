@@ -42,16 +42,16 @@ import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
  * Render the date picker calendar.
  */
 export function DayPicker(props: DayPickerProps): JSX.Element {
-  const { components, formatters, labels, dateLib, locale, classNames } = useMemo(() => {
+  const { classNames, components, dateLib, formatters, labels, locale } = useMemo(() => {
     const mergedLocale = getLocale(props.locale);
 
     const mergedDateLib = new DateLib(
       {
-        locale: mergedLocale,
-        weekStartsOn: props.broadcastCalendar ? 1 : props.weekStartsOn,
         firstWeekContainsDate: props.firstWeekContainsDate,
-        useAdditionalWeekYearTokens: props.useAdditionalWeekYearTokens,
+        locale: mergedLocale,
         useAdditionalDayOfYearTokens: props.useAdditionalDayOfYearTokens,
+        useAdditionalWeekYearTokens: props.useAdditionalWeekYearTokens,
+        weekStartsOn: props.broadcastCalendar ? 1 : props.weekStartsOn,
       },
       props.dateLib,
     );
@@ -97,15 +97,15 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
     formatCaption,
     formatDay,
     formatMonthDropdown,
+    formatWeekdayName,
     formatWeekNumber,
     formatWeekNumberHeader,
-    formatWeekdayName,
     formatYearDropdown,
   } = formatters;
 
   const calendar = useCalendar(props, dateLib);
 
-  const { days, months, navStart, navEnd, previousMonth, nextMonth, goToMonth } = calendar;
+  const { days, goToMonth, months, navEnd, navStart, nextMonth, previousMonth } = calendar;
 
   const getModifiers = useGetModifiers(days, props, dateLib);
 
@@ -121,8 +121,8 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
 
   const {
     labelDayButton,
-    labelGridcell,
     labelGrid,
+    labelGridcell,
     labelMonthDropdown,
     labelNav,
     labelWeekday,
@@ -186,14 +186,14 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
   const handleDayKeyDown = useCallback(
     (day: CalendarDay, modifiers: Modifiers) => (event: KeyboardEvent) => {
       const keyMap: Record<string, [MoveFocusBy, MoveFocusDir]> = {
+        ArrowDown: ['week', 'after'],
         ArrowLeft: ['day', props.dir === 'rtl' ? 'after' : 'before'],
         ArrowRight: ['day', props.dir === 'rtl' ? 'before' : 'after'],
-        ArrowDown: ['week', 'after'],
         ArrowUp: ['week', 'before'],
-        PageUp: [event.shiftKey ? 'year' : 'month', 'before'],
-        PageDown: [event.shiftKey ? 'year' : 'month', 'after'],
-        Home: ['startOfWeek', 'before'],
         End: ['endOfWeek', 'after'],
+        Home: ['startOfWeek', 'before'],
+        PageDown: [event.shiftKey ? 'year' : 'month', 'after'],
+        PageUp: [event.shiftKey ? 'year' : 'month', 'before'],
       };
 
       if (event.key in keyMap) {
@@ -257,20 +257,20 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
   const dataAttributes = getDataAttributes(props);
 
   const contextValue: DayPickerContext<DayPickerProps> = {
+    classNames,
+    components,
     dayPickerProps: props,
-    selected: selectedValue as SelectedValue<DayPickerProps>,
-    select: select as SelectHandler<DayPickerProps>,
+    formatters,
+    getModifiers,
+    goToMonth,
     isSelected,
+    labels,
     months,
     nextMonth,
     previousMonth,
-    goToMonth,
-    getModifiers,
-    components,
-    classNames,
+    select: select as SelectHandler<DayPickerProps>,
+    selected: selectedValue as SelectedValue<DayPickerProps>,
     styles,
-    labels,
-    formatters,
   };
 
   return (

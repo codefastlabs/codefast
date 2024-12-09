@@ -174,19 +174,19 @@ describe('when matching date interval (closed)', () => {
 
 describe('when matching date interval (open)', () => {
   test('should return true when matching the "from" date', () => {
-    const matcher = { before: tuesday, after: saturday };
+    const matcher = { after: saturday, before: tuesday };
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return true when matching the "to" date', () => {
-    const matcher = { before: monday, after: friday };
+    const matcher = { after: friday, before: monday };
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(true);
   });
   test('should return false when date range is not part of the matcher', () => {
-    const matcher = { before: monday, after: saturday };
+    const matcher = { after: saturday, before: monday };
     const result = rangeContainsModifiers(testRange, [matcher], defaultDateLib);
 
     expect(result).toBe(false);

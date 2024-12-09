@@ -39,14 +39,14 @@ describe('when endMonth is given', () => {
 
     describe('when the number of month is 1', () => {
       test('return the endMonth', () => {
-        const startMonth = getInitialMonth({ month, endMonth }, defaultDateLib);
+        const startMonth = getInitialMonth({ endMonth, month }, defaultDateLib);
 
         expect(isSameMonth(startMonth, endMonth)).toBe(true);
       });
     });
     describe('when the number of month is 3', () => {
       test('return the endMonth plus the number of months', () => {
-        const startMonth = getInitialMonth({ month, numberOfMonths: 3, endMonth }, defaultDateLib);
+        const startMonth = getInitialMonth({ endMonth, month, numberOfMonths: 3 }, defaultDateLib);
         const expectedMonth = addMonths(endMonth, -1 * (3 - 1));
 
         expect(isSameMonth(startMonth, expectedMonth)).toBe(true);

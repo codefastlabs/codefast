@@ -10,7 +10,7 @@ import {
 } from '@/lib/types';
 
 export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> {
-  const { selected: initiallySelected, required, onSelect } = props as MultiProps | MultiRequiredProps;
+  const { onSelect, required, selected: initiallySelected } = props as MultiProps | MultiRequiredProps;
 
   const [internallySelected, setSelected] = useControlledValue(
     initiallySelected,
@@ -25,7 +25,7 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
     return selected?.some((d) => isSameDay(d, date)) ?? false;
   };
 
-  const { min, max } = props as MultiProps;
+  const { max, min } = props as MultiProps;
 
   const select = (triggerDate: Date, modifiers: Modifiers, event: DayEvent): Date[] | undefined => {
     let newDates: Date[] | undefined = [...(selected ?? [])];
@@ -64,8 +64,8 @@ export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): 
   };
 
   return {
-    selected,
-    select,
     isSelected,
+    select,
+    selected,
   } as Selection<T>;
 }

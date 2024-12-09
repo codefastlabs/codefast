@@ -70,10 +70,10 @@ export function useFocus<T extends DayPickerProps>(
   };
 
   return {
-    isFocusTarget,
-    setFocused,
-    focused,
     blur,
+    focused,
+    isFocusTarget,
     moveFocus,
+    setFocused,
   };
 }

@@ -30,7 +30,7 @@ export type DropdownProps = Omit<ComponentProps<'select'>, 'children'> & {
 /**
  * Render a dropdown component to use in the navigation bar.
  */
-export function Dropdown({ options, className, ...props }: DropdownProps): JSX.Element {
+export function Dropdown({ className, options, ...props }: DropdownProps): JSX.Element {
   const { classNames, components } = useDayPicker();
   const cssClassSelect = [classNames[UI.Dropdown], className].join(' ');
 
@@ -39,7 +39,7 @@ export function Dropdown({ options, className, ...props }: DropdownProps): JSX.E
   return (
     <span className={classNames[UI.DropdownRoot]} data-disabled={props.disabled}>
       <components.Select className={cssClassSelect} {...props}>
-        {options?.map(({ value, label, disabled }) => (
+        {options?.map(({ disabled, label, value }) => (
           <components.Option key={value} disabled={disabled} value={value}>
             {label}
           </components.Option>

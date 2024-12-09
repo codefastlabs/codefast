@@ -15,7 +15,7 @@ export function Controlled(props: ControlledProps): JSX.Element {
       <DayPicker month={month} onMonthChange={setMonth} />
       <button
         disabled={isSameMonth(today, month)}
-        style={{ all: 'unset', cursor: 'pointer', color: 'blue' }}
+        style={{ all: 'unset', color: 'blue', cursor: 'pointer' }}
         type="button"
         onClick={() => {
           setMonth(today);

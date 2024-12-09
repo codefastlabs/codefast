@@ -5,8 +5,8 @@ import { gridcell } from '@/tests/lib/elements';
 import { availableDays, ModifiersStyle } from './modifiers-style';
 
 const style = {
-  fontWeight: 900,
   color: 'lightgreen',
+  fontWeight: 900,
 };
 
 const today = new Date(2021, 10, 25);
