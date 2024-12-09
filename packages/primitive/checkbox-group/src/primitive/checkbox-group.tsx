@@ -53,15 +53,15 @@ const CheckboxGroup = forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
   (
     {
       __scopeCheckboxGroup,
-      name,
       defaultValue,
-      value: valueProp,
-      required = false,
-      disabled = false,
-      orientation,
       dir,
+      disabled = false,
       loop = true,
+      name,
       onValueChange,
+      orientation,
+      required = false,
+      value: valueProp,
       ...props
     }: ScopedProps<CheckboxGroupProps>,
     forwardedRef,
@@ -69,9 +69,9 @@ const CheckboxGroup = forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
     const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
     const direction = useDirection(dir);
     const [value = [], setValue] = useControllableState({
-      prop: valueProp,
       defaultProp: defaultValue,
       onChange: onValueChange,
+      prop: valueProp,
     });
 
     const handleItemCheck = useCallback(
