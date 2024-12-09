@@ -16,9 +16,9 @@ const separatorVariants = tv({
   },
   variants: {
     align: {
-      start: 'justify-start',
       center: 'justify-center',
       end: 'justify-end',
+      start: 'justify-start',
     },
     orientation: {
       horizontal: 'h-px w-full',
@@ -39,10 +39,10 @@ interface SeparatorProps
     Omit<SeparatorVariantsProps, 'orientation'> {}
 
 const Separator = forwardRef<SeparatorElement, SeparatorProps>(
-  ({ className, orientation, align, decorative = true, ...props }, forwardedRef) => (
+  ({ align, className, decorative = true, orientation, ...props }, forwardedRef) => (
     <SeparatorPrimitive.Root
       ref={forwardedRef}
-      className={separatorVariants({ align, orientation, className })}
+      className={separatorVariants({ align, className, orientation })}
       decorative={decorative}
       orientation={orientation}
       {...props}

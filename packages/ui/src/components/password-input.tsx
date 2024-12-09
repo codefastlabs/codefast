@@ -20,7 +20,7 @@ import { inputVariants, type InputVariantsProps } from '@/styles/input-variants'
  * Variant: PasswordInput
  * -------------------------------------------------------------------------- */
 
-const { root, input } = inputVariants();
+const { input, root } = inputVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: PasswordInput
@@ -42,7 +42,7 @@ const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
 
     return (
       <InputPrimitive.Root
-        className={root({ inputSize, className })}
+        className={root({ className, inputSize })}
         loaderPosition={loaderPosition}
         loading={loading}
         prefix={prefix}

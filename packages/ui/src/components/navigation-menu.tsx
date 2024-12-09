@@ -69,8 +69,8 @@ const NavigationMenuTrigger = forwardRef<NavigationMenuTriggerElement, Navigatio
     <NavigationMenuPrimitive.Trigger
       ref={forwardedRef}
       className={buttonVariants({
-        variant: 'ghost',
         className: ['data-[state=open]:bg-accent data-[state=open]:text-accent-foreground', 'group', className],
+        variant: 'ghost',
       })}
       {...props}
     >

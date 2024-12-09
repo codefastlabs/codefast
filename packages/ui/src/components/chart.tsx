@@ -18,8 +18,8 @@ import { type NameType, type Payload, type ValueType } from 'recharts/types/comp
 import { cn } from '@/lib/utils';
 
 const THEMES = {
-  light: '',
   dark: '.dark',
+  light: '',
 } as const;
 
 type Theme = keyof typeof THEMES;
@@ -116,7 +116,7 @@ interface ChartStyleProps {
   id: string;
 }
 
-function ChartStyle({ id, config }: ChartStyleProps): JSX.Element | null {
+function ChartStyle({ config, id }: ChartStyleProps): JSX.Element | null {
   const cssString = useMemo(() => generateCSS(id, config), [id, config]);
 
   return <style dangerouslySetInnerHTML={{ __html: cssString }} />;
@@ -227,9 +227,9 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
                         <div
                           className={cn('shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]', {
                             'h-2.5 w-2.5': indicator === 'dot',
-                            'w-1': indicator === 'line',
-                            'w-0 border-[1.5px] border-dashed bg-transparent': indicator === 'dashed',
                             'my-0.5': nestLabel && indicator === 'dashed',
+                            'w-0 border-[1.5px] border-dashed bg-transparent': indicator === 'dashed',
+                            'w-1': indicator === 'line',
                           })}
                           style={
                             {

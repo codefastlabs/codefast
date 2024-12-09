@@ -75,7 +75,7 @@ interface DataTablePaginationProps<TData> extends HTMLAttributes<HTMLDivElement>
   table: ReactTable.Table<TData>;
 }
 
-function DataTablePagination<TData>({ table, className, ...props }: DataTablePaginationProps<TData>): JSX.Element {
+function DataTablePagination<TData>({ className, table, ...props }: DataTablePaginationProps<TData>): JSX.Element {
   return (
     <div className={cn('flex flex-wrap items-center justify-between gap-4 px-2', className)} {...props}>
       <div className="text-muted-foreground min-w-max flex-1 text-sm">

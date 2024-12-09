@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
 import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
 
-const { root, input } = inputVariants();
+const { input, root } = inputVariants();
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
@@ -48,7 +48,7 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
     <NumberInputPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={root({ inputSize, className: ['pr-0', className] })}
+      className={root({ className: ['pr-0', className], inputSize })}
       defaultValue={defaultValue}
       disabled={disabled}
       formatOptions={formatOptions}
@@ -85,8 +85,8 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
           className={buttonVariants({
             className: 'h-full rounded-none rounded-tr-[calc(theme(borderRadius.md)-1px)]',
             icon: true,
-            variant: 'ghost',
             size: inputSize,
+            variant: 'ghost',
           })}
         >
           <ChevronUpIcon />
@@ -95,8 +95,8 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
           className={buttonVariants({
             className: 'h-full rounded-none rounded-br-[calc(theme(borderRadius.md)-1px)]',
             icon: true,
-            variant: 'ghost',
             size: inputSize,
+            variant: 'ghost',
           })}
         >
           <ChevronDownIcon />
