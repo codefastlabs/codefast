@@ -24,14 +24,14 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const notificationsFormValues = z.object({
+  communication_emails: z.boolean().default(false).optional(),
+  marketing_emails: z.boolean().default(false).optional(),
+  mobile: z.boolean().default(false).optional(),
+  security_emails: z.boolean(),
+  social_emails: z.boolean().default(false).optional(),
   type: z.enum(['all', 'mentions', 'none'], {
     required_error: 'You need to select a notification type.',
   }),
-  mobile: z.boolean().default(false).optional(),
-  communication_emails: z.boolean().default(false).optional(),
-  social_emails: z.boolean().default(false).optional(),
-  marketing_emails: z.boolean().default(false).optional(),
-  security_emails: z.boolean(),
 });
 
 type NotificationsFormValues = z.infer<typeof notificationsFormValues>;
@@ -40,14 +40,14 @@ type NotificationsFormValues = z.infer<typeof notificationsFormValues>;
 const defaultValues: Partial<NotificationsFormValues> = {
   communication_emails: false,
   marketing_emails: false,
-  social_emails: true,
   security_emails: true,
+  social_emails: true,
 };
 
 export function NotificationsForm(): JSX.Element {
   const form = useForm<NotificationsFormValues>({
-    resolver: zodResolver(notificationsFormValues),
     defaultValues,
+    resolver: zodResolver(notificationsFormValues),
   });
 
   const onSubmit: SubmitHandler<NotificationsFormValues> = (values): void => {

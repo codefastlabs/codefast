@@ -20,7 +20,7 @@ interface NavSecondaryProps extends ComponentProps<typeof SidebarGroup> {
   }[];
 }
 
-export function NavSecondary({ items, className, ...props }: NavSecondaryProps): JSX.Element {
+export function NavSecondary({ className, items, ...props }: NavSecondaryProps): JSX.Element {
   return (
     <SidebarGroup className={cn('', className)} {...props}>
       <SidebarGroupContent>

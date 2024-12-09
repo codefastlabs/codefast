@@ -14,8 +14,8 @@ import { ShareDocument } from '@/app/examples/cards/_components/share-document';
 import { TeamMembers } from '@/app/examples/cards/_components/team-members';
 
 export const metadata: Metadata = {
-  title: 'Cards',
   description: 'Examples of cards built using the components.',
+  title: 'Cards',
 };
 
 function Container({ className, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {

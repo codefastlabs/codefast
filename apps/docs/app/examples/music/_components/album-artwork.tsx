@@ -26,9 +26,9 @@ interface AlbumArtworkProps extends HTMLAttributes<HTMLDivElement> {
 export function AlbumArtwork({
   album,
   aspectRatio = 'portrait',
-  width,
-  height,
   className,
+  height,
+  width,
   ...props
 }: AlbumArtworkProps): JSX.Element {
   return (

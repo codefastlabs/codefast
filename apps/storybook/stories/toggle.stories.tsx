@@ -5,28 +5,28 @@ import { ExpandIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const meta = {
+  args: {
+    defaultPressed: false,
+    disabled: false,
+    onPressedChange: fn(),
+    size: 'md',
+    variant: 'default',
+  },
   argTypes: {
-    disabled: {
-      control: { type: 'boolean' },
-      description: 'Disables the toggle button.',
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: 'false' },
-      },
-    },
-    pressed: {
-      control: { type: 'boolean' },
-      description: 'The controlled state of the toggle (pressed or not).',
-      table: {
-        type: { summary: 'boolean' },
-      },
-    },
     defaultPressed: {
       control: { type: 'boolean' },
       description: 'The uncontrolled state of the toggle when initially rendered.',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
+      },
+    },
+    disabled: {
+      control: { type: 'boolean' },
+      description: 'Disables the toggle button.',
+      table: {
+        defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     onPressedChange: {
@@ -36,31 +36,31 @@ const meta = {
         type: { summary: '(pressed: boolean) => void' },
       },
     },
+    pressed: {
+      control: { type: 'boolean' },
+      description: 'The controlled state of the toggle (pressed or not).',
+      table: {
+        type: { summary: 'boolean' },
+      },
+    },
     size: {
       control: { type: 'select' },
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Toggle button size.',
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'md' },
+        type: { summary: 'string' },
       },
     },
     variant: {
       control: { type: 'select' },
-      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
       description: 'Toggle button variant styles.',
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'default' },
+        type: { summary: 'string' },
       },
     },
-  },
-  args: {
-    disabled: false,
-    defaultPressed: false,
-    size: 'md',
-    variant: 'default',
-    onPressedChange: fn(),
   },
   component: Toggle,
   tags: ['autodocs'],
@@ -122,8 +122,8 @@ export const Variants: Story = {
 
 export const Disabled: Story = {
   args: {
-    disabled: true,
     children: 'Disabled Toggle',
+    disabled: true,
   },
 };
 
@@ -133,8 +133,8 @@ export const Disabled: Story = {
 
 export const IconOnly: Story = {
   args: {
-    prefix: <ExpandIcon />,
     icon: true,
+    prefix: <ExpandIcon />,
   },
 };
 
@@ -144,8 +144,8 @@ export const IconOnly: Story = {
 
 export const Prefix: Story = {
   args: {
-    prefix: <ExpandIcon />,
     children: 'Option',
+    prefix: <ExpandIcon />,
   },
 };
 
@@ -155,8 +155,8 @@ export const Prefix: Story = {
 
 export const Suffix: Story = {
   args: {
-    suffix: <ExpandIcon />,
     children: 'Option',
+    suffix: <ExpandIcon />,
   },
 };
 
@@ -165,6 +165,12 @@ export const Suffix: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Interactive: Story = {
+  args: {
+    disabled: false,
+    icon: false,
+    size: 'md',
+    variant: 'default',
+  },
   render: (args) => {
     const [toggled, setToggled] = useState(false);
 
@@ -178,12 +184,6 @@ export const Interactive: Story = {
         {toggled ? 'On' : 'Off'}
       </Toggle>
     );
-  },
-  args: {
-    size: 'md',
-    variant: 'default',
-    icon: false,
-    disabled: false,
   },
 };
 

@@ -53,8 +53,8 @@ const defaultValues: Partial<AccountFormValues> = {
 
 export function AccountForm(): JSX.Element {
   const form = useForm<AccountFormValues>({
-    resolver: zodResolver(accountFormValues),
     defaultValues,
+    resolver: zodResolver(accountFormValues),
   });
 
   const onSubmit: SubmitHandler<AccountFormValues> = async (values): Promise<void> => {
@@ -74,8 +74,8 @@ export function AccountForm(): JSX.Element {
 
     for (const [field, error] of Object.entries(response.error.errors)) {
       form.setError(field as keyof AccountFormValues, {
-        type: 'manual',
         message: error.at(0),
+        type: 'manual',
       });
     }
   };

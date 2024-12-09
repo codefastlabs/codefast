@@ -9,17 +9,6 @@ import { type Task } from '@/app/examples/tasks/_data/schema';
 
 export const columns: ColumnDef<Task>[] = [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        aria-label="Select all"
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-        className="translate-y-0.5"
-        onCheckedChange={(value) => {
-          table.toggleAllPageRowsSelected(Boolean(value));
-        }}
-      />
-    ),
     cell: ({ row }) => (
       <Checkbox
         aria-label="Select row"
@@ -30,19 +19,29 @@ export const columns: ColumnDef<Task>[] = [
         }}
       />
     ),
-    enableSorting: false,
     enableHiding: false,
+    enableSorting: false,
+    header: ({ table }) => (
+      <Checkbox
+        aria-label="Select all"
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        className="translate-y-0.5"
+        onCheckedChange={(value) => {
+          table.toggleAllPageRowsSelected(Boolean(value));
+        }}
+      />
+    ),
+    id: 'select',
   },
   {
     accessorKey: 'id',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Task" />,
     cell: ({ row }) => <div className="w-[80px]">{row.getValue('id')}</div>,
-    enableSorting: false,
     enableHiding: false,
+    enableSorting: false,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Task" />,
   },
   {
     accessorKey: 'title',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
     cell: ({ row }) => {
       const label = labels.find(({ value }) => value === row.original.label);
 
@@ -53,10 +52,10 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       );
     },
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
   },
   {
     accessorKey: 'status',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = statuses.find(({ value }) => value === row.getValue('status'));
 
@@ -74,10 +73,10 @@ export const columns: ColumnDef<Task>[] = [
       );
     },
     filterFn: (row, id, value: string) => value.includes(row.getValue(id)),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
   },
   {
     accessorKey: 'priority',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Priority" />,
     cell: ({ row }) => {
       const priority = priorities.find(({ value }) => value === row.getValue('priority'));
 
@@ -95,9 +94,10 @@ export const columns: ColumnDef<Task>[] = [
       );
     },
     filterFn: (row, id, value: string) => value.includes(row.getValue(id)),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Priority" />,
   },
   {
-    id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
+    id: 'actions',
   },
 ];

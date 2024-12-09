@@ -119,16 +119,16 @@ const chartData = [
 ];
 
 const chartConfig = {
-  visitors: {
-    label: 'Visitors',
-  },
   desktop: {
-    label: 'Desktop',
     color: 'hsl(var(--color-chart-1))',
+    label: 'Desktop',
   },
   mobile: {
-    label: 'Mobile',
     color: 'hsl(var(--color-chart-2))',
+    label: 'Mobile',
+  },
+  visitors: {
+    label: 'Visitors',
   },
 } satisfies ChartConfig;
 
@@ -201,8 +201,8 @@ export function ChartAreaInteractive(props: ChartAreaInteractiveProps): JSX.Elem
                 const date = new Date(value);
 
                 return date.toLocaleDateString('en-US', {
-                  month: 'short',
                   day: 'numeric',
+                  month: 'short',
                 });
               }}
               tickLine={false}
@@ -214,8 +214,8 @@ export function ChartAreaInteractive(props: ChartAreaInteractiveProps): JSX.Elem
                   indicator="dot"
                   labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString('en-US', {
-                      month: 'short',
                       day: 'numeric',
+                      month: 'short',
                     });
                   }}
                 />

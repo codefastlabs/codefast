@@ -80,24 +80,24 @@ interface Framework {
 
 const frameworks: Framework[] = [
   {
-    value: 'next.js',
     label: 'Next.js',
+    value: 'next.js',
   },
   {
-    value: 'sveltekit',
     label: 'SvelteKit',
+    value: 'sveltekit',
   },
   {
-    value: 'nuxt.js',
     label: 'Nuxt.js',
+    value: 'nuxt.js',
   },
   {
-    value: 'remix',
     label: 'Remix',
+    value: 'remix',
   },
   {
-    value: 'astro',
     label: 'Astro',
+    value: 'astro',
   },
 ];
 
@@ -159,29 +159,29 @@ interface Status {
 
 const statuses: Status[] = [
   {
-    value: 'backlog',
-    label: 'Backlog',
     icon: HelpCircleIcon,
+    label: 'Backlog',
+    value: 'backlog',
   },
   {
-    value: 'todo',
-    label: 'Todo',
     icon: CircleIcon,
+    label: 'Todo',
+    value: 'todo',
   },
   {
-    value: 'in progress',
-    label: 'In Progress',
     icon: ArrowUpCircleIcon,
+    label: 'In Progress',
+    value: 'in progress',
   },
   {
-    value: 'done',
-    label: 'Done',
     icon: CheckCircle2Icon,
+    label: 'Done',
+    value: 'done',
   },
   {
-    value: 'canceled',
-    label: 'Canceled',
     icon: XCircleIcon,
+    label: 'Canceled',
+    value: 'canceled',
   },
 ];
 

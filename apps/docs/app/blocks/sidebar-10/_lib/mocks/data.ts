@@ -24,293 +24,293 @@ import {
 } from 'lucide-react';
 
 export const data = {
-  teams: [
+  actions: [
+    [
+      {
+        icon: Settings2Icon,
+        label: 'Customize Page',
+      },
+      {
+        icon: FileTextIcon,
+        label: 'Turn into wiki',
+      },
+    ],
+    [
+      {
+        icon: LinkIcon,
+        label: 'Copy Link',
+      },
+      {
+        icon: CopyIcon,
+        label: 'Duplicate',
+      },
+      {
+        icon: CornerUpRightIcon,
+        label: 'Move to',
+      },
+      {
+        icon: Trash2Icon,
+        label: 'Move to Trash',
+      },
+    ],
+    [
+      {
+        icon: CornerUpLeftIcon,
+        label: 'Undo',
+      },
+      {
+        icon: LineChartIcon,
+        label: 'View analytics',
+      },
+      {
+        icon: GalleryVerticalEndIcon,
+        label: 'Version History',
+      },
+      {
+        icon: TrashIcon,
+        label: 'Show delete pages',
+      },
+      {
+        icon: BellIcon,
+        label: 'Notifications',
+      },
+    ],
+    [
+      {
+        icon: ArrowUpIcon,
+        label: 'Import',
+      },
+      {
+        icon: ArrowDownIcon,
+        label: 'Export',
+      },
+    ],
+  ],
+  favorites: [
     {
-      name: 'Acme Inc',
-      logo: CommandIcon,
-      plan: 'Enterprise',
+      emoji: '📊',
+      name: 'Project Management & Task Tracking',
+      url: '#',
     },
     {
-      name: 'Acme Corp.',
-      logo: AudioWaveformIcon,
-      plan: 'Startup',
+      emoji: '🍳',
+      name: 'Family Recipe Collection & Meal Planning',
+      url: '#',
     },
     {
-      name: 'Evil Corp.',
-      logo: CommandIcon,
-      plan: 'Free',
+      emoji: '💪',
+      name: 'Fitness Tracker & Workout Routines',
+      url: '#',
+    },
+    {
+      emoji: '📚',
+      name: 'Book Notes & Reading List',
+      url: '#',
+    },
+    {
+      emoji: '🌱',
+      name: 'Sustainable Gardening Tips & Plant Care',
+      url: '#',
+    },
+    {
+      emoji: '🗣️',
+      name: 'Language Learning Progress & Resources',
+      url: '#',
+    },
+    {
+      emoji: '🏠',
+      name: 'Home Renovation Ideas & Budget Tracker',
+      url: '#',
+    },
+    {
+      emoji: '💰',
+      name: 'Personal Finance & Investment Portfolio',
+      url: '#',
+    },
+    {
+      emoji: '🎬',
+      name: 'Movie & TV Show Watchlist with Reviews',
+      url: '#',
+    },
+    {
+      emoji: '✅',
+      name: 'Daily Habit Tracker & Goal Setting',
+      url: '#',
     },
   ],
   navMain: [
     {
+      icon: SearchIcon,
       title: 'Search',
       url: '#',
-      icon: SearchIcon,
     },
     {
+      icon: SparklesIcon,
       title: 'Ask AI',
       url: '#',
-      icon: SparklesIcon,
     },
     {
-      title: 'Home',
-      url: '#',
       icon: HomeIcon,
       isActive: true,
+      title: 'Home',
+      url: '#',
     },
     {
+      badge: '10',
+      icon: InboxIcon,
       title: 'Inbox',
       url: '#',
-      icon: InboxIcon,
-      badge: '10',
     },
   ],
   navSecondary: [
     {
+      icon: CalendarIcon,
       title: 'Calendar',
       url: '#',
-      icon: CalendarIcon,
     },
     {
+      icon: Settings2Icon,
       title: 'Settings',
       url: '#',
-      icon: Settings2Icon,
     },
     {
+      icon: BlocksIcon,
       title: 'Templates',
       url: '#',
-      icon: BlocksIcon,
     },
     {
+      icon: Trash2Icon,
       title: 'Trash',
       url: '#',
-      icon: Trash2Icon,
     },
     {
+      icon: MessageCircleQuestionIcon,
       title: 'Help',
       url: '#',
-      icon: MessageCircleQuestionIcon,
     },
   ],
-  favorites: [
+  teams: [
     {
-      name: 'Project Management & Task Tracking',
-      url: '#',
-      emoji: '📊',
+      logo: CommandIcon,
+      name: 'Acme Inc',
+      plan: 'Enterprise',
     },
     {
-      name: 'Family Recipe Collection & Meal Planning',
-      url: '#',
-      emoji: '🍳',
+      logo: AudioWaveformIcon,
+      name: 'Acme Corp.',
+      plan: 'Startup',
     },
     {
-      name: 'Fitness Tracker & Workout Routines',
-      url: '#',
-      emoji: '💪',
-    },
-    {
-      name: 'Book Notes & Reading List',
-      url: '#',
-      emoji: '📚',
-    },
-    {
-      name: 'Sustainable Gardening Tips & Plant Care',
-      url: '#',
-      emoji: '🌱',
-    },
-    {
-      name: 'Language Learning Progress & Resources',
-      url: '#',
-      emoji: '🗣️',
-    },
-    {
-      name: 'Home Renovation Ideas & Budget Tracker',
-      url: '#',
-      emoji: '🏠',
-    },
-    {
-      name: 'Personal Finance & Investment Portfolio',
-      url: '#',
-      emoji: '💰',
-    },
-    {
-      name: 'Movie & TV Show Watchlist with Reviews',
-      url: '#',
-      emoji: '🎬',
-    },
-    {
-      name: 'Daily Habit Tracker & Goal Setting',
-      url: '#',
-      emoji: '✅',
+      logo: CommandIcon,
+      name: 'Evil Corp.',
+      plan: 'Free',
     },
   ],
   workspaces: [
     {
-      name: 'Personal Life Management',
       emoji: '🏠',
+      name: 'Personal Life Management',
       pages: [
         {
+          emoji: '📔',
           name: 'Daily Journal & Reflection',
           url: '#',
-          emoji: '📔',
         },
         {
+          emoji: '🍏',
           name: 'Health & Wellness Tracker',
           url: '#',
-          emoji: '🍏',
         },
         {
+          emoji: '🌟',
           name: 'Personal Growth & Learning Goals',
           url: '#',
-          emoji: '🌟',
         },
       ],
     },
     {
-      name: 'Professional Development',
       emoji: '💼',
+      name: 'Professional Development',
       pages: [
         {
+          emoji: '🎯',
           name: 'Career Objectives & Milestones',
           url: '#',
-          emoji: '🎯',
         },
         {
+          emoji: '🧠',
           name: 'Skill Acquisition & Training Log',
           url: '#',
-          emoji: '🧠',
         },
         {
+          emoji: '🤝',
           name: 'Networking Contacts & Events',
           url: '#',
-          emoji: '🤝',
         },
       ],
     },
     {
-      name: 'Creative Projects',
       emoji: '🎨',
+      name: 'Creative Projects',
       pages: [
         {
+          emoji: '✍️',
           name: 'Writing Ideas & Story Outlines',
           url: '#',
-          emoji: '✍️',
         },
         {
+          emoji: '🖼️',
           name: 'Art & Design Portfolio',
           url: '#',
-          emoji: '🖼️',
         },
         {
+          emoji: '🎵',
           name: 'Music Composition & Practice Log',
           url: '#',
-          emoji: '🎵',
         },
       ],
     },
     {
-      name: 'Home Management',
       emoji: '🏡',
+      name: 'Home Management',
       pages: [
         {
+          emoji: '💰',
           name: 'Household Budget & Expense Tracking',
           url: '#',
-          emoji: '💰',
         },
         {
+          emoji: '🔧',
           name: 'Home Maintenance Schedule & Tasks',
           url: '#',
-          emoji: '🔧',
         },
         {
+          emoji: '📅',
           name: 'Family Calendar & Event Planning',
           url: '#',
-          emoji: '📅',
         },
       ],
     },
     {
-      name: 'Travel & Adventure',
       emoji: '🧳',
+      name: 'Travel & Adventure',
       pages: [
         {
+          emoji: '🗺️',
           name: 'Trip Planning & Itineraries',
           url: '#',
-          emoji: '🗺️',
         },
         {
+          emoji: '🌎',
           name: 'Travel Bucket List & Inspiration',
           url: '#',
-          emoji: '🌎',
         },
         {
+          emoji: '📸',
           name: 'Travel Journal & Photo Gallery',
           url: '#',
-          emoji: '📸',
         },
       ],
     },
-  ],
-  actions: [
-    [
-      {
-        label: 'Customize Page',
-        icon: Settings2Icon,
-      },
-      {
-        label: 'Turn into wiki',
-        icon: FileTextIcon,
-      },
-    ],
-    [
-      {
-        label: 'Copy Link',
-        icon: LinkIcon,
-      },
-      {
-        label: 'Duplicate',
-        icon: CopyIcon,
-      },
-      {
-        label: 'Move to',
-        icon: CornerUpRightIcon,
-      },
-      {
-        label: 'Move to Trash',
-        icon: Trash2Icon,
-      },
-    ],
-    [
-      {
-        label: 'Undo',
-        icon: CornerUpLeftIcon,
-      },
-      {
-        label: 'View analytics',
-        icon: LineChartIcon,
-      },
-      {
-        label: 'Version History',
-        icon: GalleryVerticalEndIcon,
-      },
-      {
-        label: 'Show delete pages',
-        icon: TrashIcon,
-      },
-      {
-        label: 'Notifications',
-        icon: BellIcon,
-      },
-    ],
-    [
-      {
-        label: 'Import',
-        icon: ArrowUpIcon,
-      },
-      {
-        label: 'Export',
-        icon: ArrowDownIcon,
-      },
-    ],
   ],
 };
