@@ -87,17 +87,29 @@ export const importRules: Linter.Config = {
     'import/order': [
       'warn',
       {
+        alphabetize: {
+          order: 'asc', // Sort in ascending order
+          caseInsensitive: true, // Case-insensitive
+        },
         groups: [
           'builtin', // Node.js built-in modules
-          'external', // Packages
-          'internal', // Aliased modules
-          'parent', // Relative parent
-          'sibling', // Relative sibling
-          'index', // Relative index
-          'object', // Object imports
-          'type', // Type imports
+          'external', // Libraries from node_modules
+          'internal', // Internal modules
+          'parent', // Imports from the parent directory
+          'sibling', // Imports from the same directory
+          'index', // Imports from an index file
+          'object', // Import object
+          'type', // Import types
         ],
         'newlines-between': 'always',
+        pathGroups: [
+          {
+            pattern: '@/**', // Matches imports starting with @/
+            group: 'internal', // Places in an internal group
+            position: 'after', // Places after other internal imports
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['type'],
       },
     ],
   },

@@ -1,6 +1,5 @@
 'use client';
 
-import Cookies from 'js-cookie';
 import {
   cn,
   ResizableHandle,
@@ -13,6 +12,7 @@ import {
   TabsTrigger,
   TextInput,
 } from '@codefast/ui';
+import Cookies from 'js-cookie';
 import {
   AlertCircle,
   Archive,

@@ -1,19 +1,17 @@
 import { resolve } from 'node:path';
 
-import {
-  jestConfig,
-  jestTypescriptConfig,
-  nextConfig,
-  playwrightTestConfig,
-  reactConfig,
-  recommendedConfig,
-  testingLibraryConfig,
-  typescriptConfig,
-} from '@codefast/style-guide';
-import globals from 'globals';
+import { recommendedConfig } from '@codefast/style-guide/configs/core/recommended';
+import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript';
+import { nextConfig } from '@codefast/style-guide/configs/frameworks/next';
+import { reactConfig } from '@codefast/style-guide/configs/frameworks/react';
+import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
+import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
+import { playwrightTestConfig } from '@codefast/style-guide/configs/testing/playwright-test';
+import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
+import { type Linter } from 'eslint';
 // @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
 import onlyWarn from 'eslint-plugin-only-warn';
-import { type Linter } from 'eslint';
+import globals from 'globals';
 
 export const config: Linter.Config[] = [
   ...recommendedConfig,
