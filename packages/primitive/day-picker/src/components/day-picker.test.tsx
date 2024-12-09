@@ -4,9 +4,9 @@ import { startOfDay, startOfMonth } from 'date-fns';
 import { DayPicker } from '@/components/day-picker';
 import { type MonthsProps } from '@/components/ui';
 import { defaultLocale } from '@/lib/classes/date-lib';
+import { UI } from '@/lib/constants/ui';
 import { activeElement, dateButton, grid, nav, previousButton } from '@/tests/lib/elements';
 import { user } from '@/tests/lib/user';
-import { UI } from '@/lib/constants/ui';
 
 const testId = 'test';
 const dayPicker = (): HTMLElement => screen.getByTestId(testId);

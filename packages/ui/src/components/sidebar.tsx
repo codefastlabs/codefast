@@ -1,9 +1,9 @@
 'use client';
 
-import Cookies from 'js-cookie';
 import { useMediaQuery } from '@codefast/hooks';
 import { Slot } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import Cookies from 'js-cookie';
 import { PanelLeftIcon } from 'lucide-react';
 import {
   type ComponentProps,
