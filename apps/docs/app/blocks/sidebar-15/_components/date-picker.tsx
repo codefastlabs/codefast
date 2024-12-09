@@ -9,8 +9,8 @@ export function DatePicker({ className, ...props }: DatePickerProps): JSX.Elemen
       <SidebarGroupContent>
         <Calendar
           classNames={{
-            root: 'w-full',
             day: 'mx-0 min-h-8 min-w-8',
+            root: 'w-full',
           }}
         />
       </SidebarGroupContent>

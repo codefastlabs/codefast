@@ -28,6 +28,19 @@ import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const profileFormValues = z.object({
+  bio: z.string().max(160).min(4),
+  email: z
+    .string({
+      required_error: 'Please select an email to display.',
+    })
+    .email(),
+  urls: z
+    .array(
+      z.object({
+        value: z.string().url({ message: 'Please enter a valid URL.' }),
+      }),
+    )
+    .optional(),
   username: z
     .string()
     .min(2, {
@@ -36,19 +49,6 @@ const profileFormValues = z.object({
     .max(30, {
       message: 'Username must not be longer than 30 characters.',
     }),
-  email: z
-    .string({
-      required_error: 'Please select an email to display.',
-    })
-    .email(),
-  bio: z.string().max(160).min(4),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url({ message: 'Please enter a valid URL.' }),
-      }),
-    )
-    .optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormValues>;
@@ -66,14 +66,14 @@ const defaultValues: Partial<ProfileFormValues> = {
 
 export function ProfileForm(): JSX.Element {
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormValues),
     defaultValues,
     mode: 'onChange',
+    resolver: zodResolver(profileFormValues),
   });
 
-  const { fields, append } = useFieldArray({
-    name: 'urls',
+  const { append, fields } = useFieldArray({
     control: form.control,
+    name: 'urls',
   });
 
   const onSubmit: SubmitHandler<ProfileFormValues> = (values): void => {

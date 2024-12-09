@@ -10,52 +10,52 @@ const examples: {
   name: string;
 }[] = [
   {
-    name: 'Home',
     href: '/',
+    name: 'Home',
   },
   {
-    name: 'Authentication',
     href: '/examples/authentication',
+    name: 'Authentication',
   },
   {
-    name: 'Cards',
     href: '/examples/cards',
+    name: 'Cards',
   },
   {
-    name: 'Charts',
     href: '/examples/charts',
+    name: 'Charts',
   },
   {
-    name: 'Dashboard',
     href: '/examples/dashboard',
+    name: 'Dashboard',
   },
   {
-    name: 'Forms',
     href: '/examples/forms',
+    name: 'Forms',
   },
   {
-    name: 'Mail',
     href: '/examples/mail',
+    name: 'Mail',
   },
   {
-    name: 'Music',
     href: '/examples/music',
+    name: 'Music',
   },
   {
-    name: 'Playground',
     href: '/examples/playground',
+    name: 'Playground',
   },
   {
-    name: 'Slideshow',
     href: '/examples/slideshow',
+    name: 'Slideshow',
   },
   {
-    name: 'Tasks',
     href: '/examples/tasks',
+    name: 'Tasks',
   },
   {
-    name: 'Sidebars',
     href: '/examples/sidebars',
+    name: 'Sidebars',
   },
 ];
 

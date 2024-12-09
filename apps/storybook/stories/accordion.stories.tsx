@@ -17,8 +17,8 @@ type Story = StoryObj<typeof Accordion>;
 
 export const Default: Story = {
   args: {
-    type: 'single',
     collapsible: true,
+    type: 'single',
   },
   render: (args) => (
     <Accordion className="w-96" {...args}>
@@ -55,8 +55,8 @@ export const Default: Story = {
 
 export const LeftIcon: Story = {
   args: {
-    type: 'single',
     collapsible: true,
+    type: 'single',
   },
   render: (args) => (
     <Accordion className="w-96" {...args}>

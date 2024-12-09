@@ -5,6 +5,14 @@ import { ApertureIcon, ExpandIcon, PackageCheckIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const meta = {
+  args: {
+    disabled: false,
+    icon: false,
+    onValueChange: fn(),
+    size: 'md',
+    type: 'single',
+    variant: 'default',
+  },
   argTypes: {
     defaultValue: {
       control: { type: 'text' },
@@ -17,16 +25,16 @@ const meta = {
       control: { type: 'boolean' },
       description: 'Disables the toggle group and all its items.',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     icon: {
       control: { type: 'boolean' },
       description: 'If true, the toggle button will have an icon',
       table: {
-        type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
+        type: { summary: 'boolean' },
       },
     },
     onValueChange: {
@@ -38,18 +46,18 @@ const meta = {
     },
     size: {
       control: { type: 'select' },
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
       description: 'Toggle button size',
-      table: { type: { summary: 'string' }, defaultValue: { summary: 'md' } },
+      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      table: { defaultValue: { summary: 'md' }, type: { summary: 'string' } },
     },
     type: {
       control: { type: 'inline-radio' },
-      options: ['single', 'multiple'],
       description:
         'Defines whether only a single toggle item can be active at a time (`single`) or multiple items can be active (`multiple`).',
+      options: ['single', 'multiple'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'single' },
+        type: { summary: 'string' },
       },
     },
     value: {
@@ -62,21 +70,13 @@ const meta = {
     },
     variant: {
       control: { type: 'select' },
-      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
       description: 'Toggle button variant styles',
+      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
       table: {
-        type: { summary: 'string' },
         defaultValue: { summary: 'default' },
+        type: { summary: 'string' },
       },
     },
-  },
-  args: {
-    disabled: false,
-    icon: false,
-    onValueChange: fn(),
-    size: 'md',
-    type: 'single',
-    variant: 'default',
   },
   component: ToggleGroup,
   tags: ['autodocs'],

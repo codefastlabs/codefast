@@ -28,14 +28,14 @@ const chartData = [
 
 const chartConfig = {
   running: {
-    label: 'Running',
     color: 'hsl(var(--color-chart-1))',
     icon: Footprints,
+    label: 'Running',
   },
   swimming: {
-    label: 'Swimming',
     color: 'hsl(var(--color-chart-2))',
     icon: Waves,
+    label: 'Swimming',
   },
 } satisfies ChartConfig;
 

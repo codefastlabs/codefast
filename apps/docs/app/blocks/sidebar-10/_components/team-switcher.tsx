@@ -24,7 +24,7 @@ interface TeamSwitcherProps extends ComponentProps<typeof SidebarMenu> {
   }[];
 }
 
-export function TeamSwitcher({ teams, className, ...props }: TeamSwitcherProps): JSX.Element {
+export function TeamSwitcher({ className, teams, ...props }: TeamSwitcherProps): JSX.Element {
   const [activeTeam, setActiveTeam] = useState(teams[0]);
 
   return (

@@ -26,12 +26,12 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const appearanceFormValues = z.object({
-  theme: z.enum(['light', 'dark'], {
-    required_error: 'Please select a theme.',
-  }),
   font: z.enum(['inter', 'manrope', 'system'], {
     invalid_type_error: 'Select a font',
     required_error: 'Please select a font.',
+  }),
+  theme: z.enum(['light', 'dark'], {
+    required_error: 'Please select a theme.',
   }),
 });
 
@@ -44,8 +44,8 @@ const defaultValues: Partial<AppearanceFormValues> = {
 
 export function AppearanceForm(): JSX.Element {
   const form = useForm<AppearanceFormValues>({
-    resolver: zodResolver(appearanceFormValues),
     defaultValues,
+    resolver: zodResolver(appearanceFormValues),
   });
 
   const onSubmit: SubmitHandler<AppearanceFormValues> = (values): void => {

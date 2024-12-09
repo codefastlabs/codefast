@@ -10,6 +10,11 @@ export function SlideshowWedding({ ...props }: SlideshowWeddingProps): JSX.Eleme
   return (
     <Slideshow
       options={{
+        animation: 'kenburnsDown',
+        animationDuration: 20_000,
+        delay: 10_000,
+        overlay: true,
+        shuffle: true,
         slides: [
           { src: '/slideshow/london-wheelchair-photo.webp' },
           { src: '/slideshow/man-woman-standing.webp' },
@@ -20,13 +25,8 @@ export function SlideshowWedding({ ...props }: SlideshowWeddingProps): JSX.Eleme
           { src: '/slideshow/waterfall-canyon-aerial.webp' },
           { src: '/slideshow/wedding-reception-backyard.webp' },
         ],
-        overlay: true,
         transition: 'zoomOut',
-        animation: 'kenburnsDown',
         transitionDuration: 2000,
-        delay: 10_000,
-        animationDuration: 20_000,
-        shuffle: true,
       }}
       {...props}
     />

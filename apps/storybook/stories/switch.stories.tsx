@@ -66,10 +66,10 @@ export const ReactHookForm: Story = {
     });
 
     const form = useForm<z.infer<typeof formValues>>({
-      resolver: zodResolver(formValues),
       defaultValues: {
         security_emails: true,
       },
+      resolver: zodResolver(formValues),
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof formValues>> = (values): void => {

@@ -62,16 +62,6 @@ const payments = data as Payment[];
 
 const columns: ColumnDef<Payment>[] = [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        aria-label="Select all"
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-        onCheckedChange={(value) => {
-          table.toggleAllPageRowsSelected(Boolean(value));
-        }}
-      />
-    ),
     cell: ({ row }) => (
       <Checkbox
         aria-label="Select row"
@@ -81,36 +71,44 @@ const columns: ColumnDef<Payment>[] = [
         }}
       />
     ),
-    enableSorting: false,
     enableHiding: false,
+    enableSorting: false,
+    header: ({ table }) => (
+      <Checkbox
+        aria-label="Select all"
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={(value) => {
+          table.toggleAllPageRowsSelected(Boolean(value));
+        }}
+      />
+    ),
+    id: 'select',
   },
   {
     accessorKey: 'status',
-    header: 'Status',
     cell: ({ row }) => <div className="capitalize">{row.getValue('status')}</div>,
+    header: 'Status',
   },
   {
     accessorKey: 'email',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
     cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
   },
   {
     accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'));
+      const amount = Number.parseFloat(row.getValue('amount'));
 
       const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
         currency: 'USD',
+        style: 'currency',
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
+    header: () => <div className="text-right">Amount</div>,
   },
   {
-    id: 'actions',
-    enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original;
 
@@ -139,6 +137,8 @@ const columns: ColumnDef<Payment>[] = [
         </div>
       );
     },
+    enableHiding: false,
+    id: 'actions',
     meta: {},
   },
 ];
@@ -162,10 +162,10 @@ export const Default: Story = {
       onRowSelectionChange: setRowSelection,
       onSortingChange: setSorting,
       state: {
-        sorting,
         columnFilters,
         columnVisibility,
         rowSelection,
+        sorting,
       },
     });
 
@@ -198,7 +198,7 @@ export const Default: Story = {
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.length ? (
+              {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                     {row.getVisibleCells().map((cell) => (

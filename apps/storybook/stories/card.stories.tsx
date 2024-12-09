@@ -78,19 +78,19 @@ export const Default: Story = {
 
 const notifications = [
   {
+    description: '1 hour ago',
     id: 1,
     title: 'Your call has been confirmed.',
-    description: '1 hour ago',
   },
   {
+    description: '1 hour ago',
     id: 2,
     title: 'You have a new message!',
-    description: '1 hour ago',
   },
   {
+    description: '2 hours ago',
     id: 3,
     title: 'Your subscription is expiring soon!',
-    description: '2 hours ago',
   },
 ];
 

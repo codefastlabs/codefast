@@ -25,18 +25,31 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {
+  args: {
+    captionLayout: 'label',
+    disableNavigation: false,
+    fixedWeeks: false,
+    hideNavigation: false,
+    hideWeekdays: false,
+    mode: 'single',
+    numberOfMonths: 1,
+    pagedNavigation: false,
+    reverseMonths: false,
+    showOutsideDays: false,
+    showWeekNumber: false,
+  },
   argTypes: {
     captionLayout: {
       control: 'inline-radio',
       description: 'Choose the layout of the month caption.',
-      type: {
-        name: 'enum',
-        value: ['label', 'dropdown', 'dropdown-months', 'dropdown-years'],
-      },
       table: {
         defaultValue: {
           summary: 'label',
         },
+      },
+      type: {
+        name: 'enum',
+        value: ['label', 'dropdown', 'dropdown-months', 'dropdown-years'],
       },
     },
     disableNavigation: {
@@ -58,14 +71,14 @@ const meta = {
     mode: {
       control: 'inline-radio',
       description: 'Choose the selection mode.',
-      type: {
-        name: 'enum',
-        value: ['single', 'multiple', 'range'],
-      },
       table: {
         defaultValue: {
           summary: 'single',
         },
+      },
+      type: {
+        name: 'enum',
+        value: ['single', 'multiple', 'range'],
       },
     },
     numberOfMonths: {
@@ -93,19 +106,6 @@ const meta = {
       control: 'boolean',
       description: 'Display the column with the week numbers.',
     },
-  },
-  args: {
-    captionLayout: 'label',
-    disableNavigation: false,
-    fixedWeeks: false,
-    hideNavigation: false,
-    hideWeekdays: false,
-    mode: 'single',
-    numberOfMonths: 1,
-    pagedNavigation: false,
-    reverseMonths: false,
-    showOutsideDays: false,
-    showWeekNumber: false,
   },
   tags: ['autodocs'],
   title: 'UI/Calendar',

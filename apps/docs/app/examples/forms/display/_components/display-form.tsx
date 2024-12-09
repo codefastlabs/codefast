@@ -59,8 +59,8 @@ const defaultValues: Partial<DisplayFormValues> = {
 
 export function DisplayForm(): JSX.Element {
   const form = useForm<DisplayFormValues>({
-    resolver: zodResolver(displayFormValues),
     defaultValues,
+    resolver: zodResolver(displayFormValues),
   });
 
   const onSubmit: SubmitHandler<DisplayFormValues> = (values): void => {
