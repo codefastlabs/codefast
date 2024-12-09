@@ -1,4 +1,4 @@
-// @ts-expect-error: Library does not yet support TypeScript, awaiting update or @types support
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import importPlugin from 'eslint-plugin-import';
 import { type Linter } from 'eslint';
 
