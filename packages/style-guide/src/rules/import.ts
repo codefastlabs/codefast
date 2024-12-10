@@ -108,6 +108,11 @@ export const importRules: Linter.Config = {
             group: 'internal', // Places in an internal group
             position: 'after', // Places after other internal imports
           },
+          {
+            pattern: '~/**', // Matches imports starting with ~/
+            group: 'internal', // Places in an internal group
+            position: 'after', // Places after other internal imports
+          },
         ],
         pathGroupsExcludedImportTypes: ['type'],
       },
