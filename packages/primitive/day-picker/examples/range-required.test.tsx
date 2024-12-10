@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { addDays, startOfMonth } from 'date-fns';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
+import { dateButton, gridcell } from '~/lib/elements';
 
 import { RangeRequired } from './range-required';
 
@@ -10,11 +10,11 @@ const initialEndDate = addDays(startOfCurrentMonth, 4); // 4 days after the star
 const anotherDay = addDays(initialEndDate, 1);
 
 beforeAll(() => {
-  vi.setSystemTime(new Date());
+  jest.setSystemTime(new Date());
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

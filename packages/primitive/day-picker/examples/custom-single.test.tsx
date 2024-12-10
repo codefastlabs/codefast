@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
-
 import { CustomSingle } from './custom-single';
+
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 const today = new Date();
 

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { addDays, setDay } from 'date-fns';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { RangeExcludeDisabled } from './range-exclude-disabled';
 
@@ -10,11 +10,11 @@ const today = new Date();
 const nextMonday = setDay(addDays(today, 1), 1); // Ensure we have a Monday after today
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

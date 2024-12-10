@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
-
 import { Range } from './range';
+
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 const defaultMonth = new Date(2020, 5, 15);
 

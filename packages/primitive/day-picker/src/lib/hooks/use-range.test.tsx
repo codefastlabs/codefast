@@ -103,7 +103,7 @@ describe('useRange', () => {
     });
   });
   test('uses the selected value from props when onSelect is provided', () => {
-    const mockOnSelect = vi.fn();
+    const mockOnSelect = jest.fn();
     const selectedRange = {
       from: new Date(2023, 9, 1),
       to: new Date(2023, 9, 5),

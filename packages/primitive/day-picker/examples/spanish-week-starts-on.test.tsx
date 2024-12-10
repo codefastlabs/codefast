@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 
-import { columnHeader } from '@/tests/lib/elements';
-
 import { SpanishWeekStartsOn } from './spanish-week-starts-on';
+
+import { columnHeader } from '~/lib/elements';
 
 function setup(): void {
   render(<SpanishWeekStartsOn />);

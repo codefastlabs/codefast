@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { SingleRequired } from './single-required';
 
 const today = new Date(2024, 10, 5);
 
 beforeAll(() => {
-  vi.setSystemTime(today); // Thiết lập ngày cố định cho các test case
+  jest.setSystemTime(today); // Thiết lập ngày cố định cho các test case
 });
 
 afterAll(() => {
-  vi.useRealTimers(); // Reset lại thời gian sau khi hoàn thành các test case
+  jest.useRealTimers(); // Reset lại thời gian sau khi hoàn thành các test case
 });
 
 function setup(): void {

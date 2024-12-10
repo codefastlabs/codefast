@@ -1,19 +1,19 @@
 import { render } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { MultipleMinMax } from './multiple-min-max';
 
 const today = new Date(2021, 10, 10);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 const days = [today, addDays(today, 1), addDays(today, 2), addDays(today, 3), addDays(today, 4)];

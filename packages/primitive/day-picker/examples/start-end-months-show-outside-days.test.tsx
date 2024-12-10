@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
 
 import { StartEndMonthsShowOutsideDays } from './start-end-months-show-outside-days';
 

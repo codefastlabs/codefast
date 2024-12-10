@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { ControlledSelection } from './controlled-selection';
 
 const today = new Date(2024, 11, 13);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe('controlled-selection component', () => {

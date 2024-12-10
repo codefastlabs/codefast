@@ -2,19 +2,19 @@ import { act, render } from '@testing-library/react';
 import { addDays, addMonths, addWeeks, addYears, endOfWeek, lastDayOfMonth, setDate, startOfWeek } from 'date-fns';
 import { type ComponentProps } from 'react';
 
-import { activeElement, dateButton, grid, nextButton, previousButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { activeElement, dateButton, grid, nextButton, previousButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { Keyboard } from './keyboard';
 
 const today = new Date(2022, 5, 10);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(props: ComponentProps<typeof Keyboard>): void {

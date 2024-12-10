@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 
-import { grids, previousButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { grids, previousButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { MultipleMonths } from './multiple-months';
 
 const today = new Date(2023, 11, 3);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

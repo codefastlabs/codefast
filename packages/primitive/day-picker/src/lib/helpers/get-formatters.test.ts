@@ -3,8 +3,8 @@ import * as defaultFormatters from '@/lib/formatters';
 import { getFormatters } from '@/lib/helpers/get-formatters';
 
 const customFormattersMock = {
-  formatCaption: vi.fn(),
-  formatYearDropdown: vi.fn(),
+  formatCaption: jest.fn(),
+  formatYearDropdown: jest.fn(),
 };
 
 describe('getFormatters helpers', () => {
@@ -21,7 +21,7 @@ describe('getFormatters helpers', () => {
   });
 
   test('uses custom `formatCaption` if provided', () => {
-    const customFormatCaption = vi.fn(() => 'Custom Caption');
+    const customFormatCaption = jest.fn(() => 'Custom Caption');
     const formatters = getFormatters({ formatCaption: customFormatCaption });
 
     expect(formatters.formatCaption(new Date(), {}, defaultDateLib)).toBe('Custom Caption');
@@ -37,7 +37,7 @@ describe('getFormatters helpers', () => {
   });
 
   test('uses custom `formatYearDropdown` if provided', () => {
-    const customFormatYearDropdown = vi.fn(() => 'Custom Year Dropdown');
+    const customFormatYearDropdown = jest.fn(() => 'Custom Year Dropdown');
     const formatters = getFormatters({ formatYearDropdown: customFormatYearDropdown });
 
     expect(formatters.formatYearDropdown(2024)).toBe('Custom Year Dropdown');

@@ -1,17 +1,17 @@
 import { render } from '@testing-library/react';
 
-import { grid } from '@/tests/lib/elements';
+import { grid } from '~/lib/elements';
 
 import { Spanish } from './spanish';
 
 const today = new Date(2021, 10, 25);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {
