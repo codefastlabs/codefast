@@ -1,9 +1,8 @@
 import { render } from '@testing-library/react';
 
+import { FocusRecursive } from '~/focus-recursive';
 import { activeElement, dateButton } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { FocusRecursive } from './focus-recursive';
 
 const today = new Date(2022, 5, 10);
 

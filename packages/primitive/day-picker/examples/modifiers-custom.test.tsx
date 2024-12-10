@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
 
-import { ModifiersCustom } from './modifiers-custom';
-
 import { gridcell } from '~/lib/elements';
+import { ModifiersCustom } from '~/modifiers-custom';
 
 const bookedDaysInRange = [
   new Date(2024, 5, 15),

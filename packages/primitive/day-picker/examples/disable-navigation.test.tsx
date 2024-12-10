@@ -1,8 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { endOfMonth, startOfMonth } from 'date-fns';
 
-import { DisableNavigation } from './disable-navigation';
-
+import { DisableNavigation } from '~/disable-navigation';
 import { grid, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
 

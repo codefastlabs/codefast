@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { NumberingSystem } from './numbering-system';
+import { NumberingSystem } from '~/numbering-system';
 
 const today = new Date(2024, 8, 19);
 

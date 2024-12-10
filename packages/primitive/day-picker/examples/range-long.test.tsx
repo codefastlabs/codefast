@@ -3,8 +3,7 @@ import { subDays } from 'date-fns';
 
 import { dateButton, gridcell, grids } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { RangeLong } from './range-long';
+import { RangeLong } from '~/range-long';
 
 const currentMonth = new Date(2024, 9); // Tháng 10, 2024
 const rangeEnd = new Date(2024, 9, 10); // Ngày kết thúc: 10/10/2024

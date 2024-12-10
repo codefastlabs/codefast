@@ -2,8 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
 import { dateButton, gridcell } from '~/lib/elements';
-
-import { MultipleRequired } from './multiple-required';
+import { MultipleRequired } from '~/multiple-required';
 
 const today = new Date();
 const anotherDay = addDays(today, 1);
