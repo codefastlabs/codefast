@@ -66,7 +66,7 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint --max-warnings 0"
   },
   "dependencies": {
     "@codefast/style-guide": "workspace:*",
