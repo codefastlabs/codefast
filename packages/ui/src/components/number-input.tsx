@@ -22,13 +22,13 @@ interface NumberInputProps
 const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
   (
     {
+      id,
       ariaDecrementLabel,
       ariaIncrementLabel,
       className,
       defaultValue,
       disabled,
       formatOptions,
-      id,
       inputSize,
       loaderPosition,
       loading,
