@@ -212,11 +212,11 @@
     "eslint-plugin-playwright": "2.1.0",
     "eslint-plugin-react": "7.37.2",
     "eslint-plugin-react-hooks": "5.1.0",
-    "eslint-plugin-testing-library": "7.1.0",
+    "eslint-plugin-testing-library": "7.1.1",
     "eslint-plugin-tsdoc": "0.4.0",
     "eslint-plugin-turbo": "2.3.3",
     "eslint-plugin-unicorn": "56.0.1",
-    "typescript-eslint": "8.17.0"
+    "typescript-eslint": "8.18.0"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
