@@ -1,23 +1,24 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, type Mock, vi } from 'vitest';
 
 import { useMediaQuery } from './use-media-query';
+
+type ChangeHandler = (event: MediaQueryListEvent) => void;
 
 const setupMockMatchMedia = (
   matches: boolean,
 ): {
-  mockAddEventListener: Mock<(type: 'change', listener: (event: MediaQueryListEvent) => void) => void>;
+  mockAddEventListener: jest.Mock;
   mockMediaQueryList: {
-    addEventListener: Mock<(type: 'change', listener: (event: MediaQueryListEvent) => void) => void>;
+    addEventListener: jest.Mock;
     matches: boolean;
     media: string;
     onchange: null;
-    removeEventListener: Mock;
+    removeEventListener: jest.Mock;
   };
-  mockRemoveEventListener: Mock;
+  mockRemoveEventListener: jest.Mock;
 } => {
-  const mockAddEventListener = vi.fn<(type: 'change', listener: (event: MediaQueryListEvent) => void) => void>();
-  const mockRemoveEventListener = vi.fn();
+  const mockAddEventListener = jest.fn();
+  const mockRemoveEventListener = jest.fn();
 
   const mockMediaQueryList = {
     addEventListener: mockAddEventListener,
@@ -27,7 +28,7 @@ const setupMockMatchMedia = (
     removeEventListener: mockRemoveEventListener,
   };
 
-  window.matchMedia = vi.fn().mockImplementation(() => mockMediaQueryList);
+  window.matchMedia = jest.fn().mockImplementation(() => mockMediaQueryList);
 
   return { mockAddEventListener, mockMediaQueryList, mockRemoveEventListener };
 };
@@ -54,13 +55,14 @@ describe('useMediaQuery', () => {
 
   test('should update when media query changes', () => {
     const { mockAddEventListener, mockMediaQueryList } = setupMockMatchMedia(false);
-
     const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
 
     expect(result.current).toBe(false);
 
     act(() => {
-      const changeHandler = mockAddEventListener.mock.calls[0][1];
+      // Use an explicit type cast to ensure the correctness of the changeHandler type
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- keep
+      const changeHandler = mockAddEventListener.mock.calls[0][1] as ChangeHandler;
 
       mockMediaQueryList.matches = true;
       changeHandler({ matches: true } as MediaQueryListEvent);
