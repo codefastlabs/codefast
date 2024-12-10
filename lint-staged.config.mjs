@@ -1,5 +1,5 @@
 const config = {
-  '*': 'prettier --list-different --write --ignore-unknown',
+  '*': ['prettier --list-different --write --ignore-unknown'],
 };
 
 export default config;
