@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { FixedWeeks } from './fixed-weeks';
+import { FixedWeeks } from '~/fixed-weeks';
 
 describe('fixed-weeks component', () => {
   render(<FixedWeeks />);

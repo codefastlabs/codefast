@@ -1,7 +1,6 @@
 import { render, within } from '@testing-library/react';
 
-import { Dropdown } from './dropdown';
-
+import { Dropdown } from '~/dropdown';
 import { grid, monthDropdown, yearDropdown } from '~/lib/elements';
 import { user } from '~/lib/user';
 

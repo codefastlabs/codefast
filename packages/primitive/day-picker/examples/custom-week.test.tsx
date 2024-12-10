@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { endOfWeek, startOfWeek } from 'date-fns';
 
+import { CustomWeek } from '~/custom-week';
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { CustomWeek } from './custom-week';
 
 const today = new Date(2024, 11, 13);
 const startOfThisWeek = startOfWeek(today);

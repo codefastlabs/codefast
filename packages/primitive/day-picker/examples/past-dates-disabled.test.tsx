@@ -2,8 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { addDays, subDays } from 'date-fns';
 
 import { dateButton, gridcell } from '~/lib/elements';
-
-import { PastDatesDisabled } from './past-dates-disabled';
+import { PastDatesDisabled } from '~/past-dates-disabled';
 
 const today = new Date();
 
