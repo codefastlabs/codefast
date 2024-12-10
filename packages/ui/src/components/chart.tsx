@@ -70,7 +70,7 @@ interface ChartContainerProps extends ComponentProps<'div'> {
 }
 
 const ChartContainer = forwardRef<ChartContainerElement, ChartContainerProps>(
-  ({ children, className, config, id, ...props }, ref) => {
+  ({ id, children, className, config, ...props }, ref) => {
     const uniqueId = useId();
     const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
 
@@ -116,7 +116,7 @@ interface ChartStyleProps {
   id: string;
 }
 
-function ChartStyle({ config, id }: ChartStyleProps): JSX.Element | null {
+function ChartStyle({ id, config }: ChartStyleProps): JSX.Element | null {
   const cssString = useMemo(() => generateCSS(id, config), [id, config]);
 
   return <style dangerouslySetInnerHTML={{ __html: cssString }} />;
