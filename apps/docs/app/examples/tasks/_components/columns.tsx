@@ -9,6 +9,7 @@ import { type Task } from '@/app/examples/tasks/_data/schema';
 
 export const columns: ColumnDef<Task>[] = [
   {
+    id: 'select',
     cell: ({ row }) => (
       <Checkbox
         aria-label="Select row"
@@ -31,7 +32,6 @@ export const columns: ColumnDef<Task>[] = [
         }}
       />
     ),
-    id: 'select',
   },
   {
     accessorKey: 'id',
@@ -97,7 +97,7 @@ export const columns: ColumnDef<Task>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Priority" />,
   },
   {
-    cell: ({ row }) => <DataTableRowActions row={row} />,
     id: 'actions',
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

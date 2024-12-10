@@ -65,10 +65,10 @@ function useFormItem(
   const { id } = useFormItemContext(consumerName, scope);
 
   return {
+    id,
     formDescriptionId: `form-item-description-${id}`,
     formItemId: `form-item-${id}`,
     formMessageId: `form-item-message-${id}`,
-    id,
   };
 }
 
