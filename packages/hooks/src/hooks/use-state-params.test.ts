@@ -3,8 +3,8 @@ import { renderHook } from '@testing-library/react';
 import { HistoryMethod, setUrlParams, updateBrowserHistory, updateUrlParams, useStateParams } from './use-state-params';
 
 // Mock window.history methods
-const mockPushState = vi.fn();
-const mockReplaceState = vi.fn();
+const mockPushState = jest.fn();
+const mockReplaceState = jest.fn();
 
 Object.defineProperty(window, 'history', {
   value: {
@@ -16,7 +16,7 @@ Object.defineProperty(window, 'history', {
 
 describe('useStateParams Hook', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     Object.defineProperty(window, 'location', {
       value: { search: '' },
       writable: true,
