@@ -2,8 +2,7 @@ import { render } from '@testing-library/react';
 
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { Single } from './single';
+import { Single } from '~/single';
 
 const today = new Date(2021, 10, 25);
 

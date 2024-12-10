@@ -1,9 +1,8 @@
 import { render } from '@testing-library/react';
 
+import { ControlledSelection } from '~/controlled-selection';
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { ControlledSelection } from './controlled-selection';
 
 const today = new Date(2024, 11, 13);
 

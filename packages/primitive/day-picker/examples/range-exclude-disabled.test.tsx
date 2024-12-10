@@ -3,8 +3,7 @@ import { addDays, setDay } from 'date-fns';
 
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { RangeExcludeDisabled } from './range-exclude-disabled';
+import { RangeExcludeDisabled } from '~/range-exclude-disabled';
 
 const today = new Date();
 const nextMonday = setDay(addDays(today, 1), 1); // Ensure we have a Monday after today

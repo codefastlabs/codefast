@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { WeekNumberCustom } from './week-number-custom';
+import { WeekNumberCustom } from '~/week-number-custom';
 
 function setup(): void {
   render(<WeekNumberCustom />);

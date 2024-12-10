@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { FormatCaption } from './format-caption';
+import { FormatCaption } from '~/format-caption';
 
 const today = new Date(2021, 10, 25); // 25 November 2021
 

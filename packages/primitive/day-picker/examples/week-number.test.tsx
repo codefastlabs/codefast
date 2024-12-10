@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { WeekNumber } from './week-number';
+import { WeekNumber } from '~/week-number';
 
 const today = new Date(2021, 10, 25);
 

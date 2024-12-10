@@ -3,8 +3,7 @@ import { differenceInMonths } from 'date-fns';
 
 import { nextButton, previousButton } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { StartEndYear } from './start-end-year';
+import { StartEndYear } from '~/start-end-year';
 
 const fromMonth = new Date(2024, 0);
 const toMonth = new Date(2026, 11);

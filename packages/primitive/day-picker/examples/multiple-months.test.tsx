@@ -2,8 +2,7 @@ import { render } from '@testing-library/react';
 
 import { grids, previousButton } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { MultipleMonths } from './multiple-months';
+import { MultipleMonths } from '~/multiple-months';
 
 const today = new Date(2023, 11, 3);
 

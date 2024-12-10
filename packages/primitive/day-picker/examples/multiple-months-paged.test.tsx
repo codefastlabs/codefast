@@ -2,8 +2,7 @@ import { render } from '@testing-library/react';
 
 import { grids, previousButton } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { MultipleMonthsPaged } from './multiple-months-paged';
+import { MultipleMonthsPaged } from '~/multiple-months-paged';
 
 const today = new Date(2021, 10, 25); // Ngày hiện tại là 25/11/2021
 

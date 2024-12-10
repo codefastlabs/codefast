@@ -3,8 +3,7 @@ import { addDays } from 'date-fns';
 
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { MultipleMinMax } from './multiple-min-max';
+import { MultipleMinMax } from '~/multiple-min-max';
 
 const today = new Date(2021, 10, 10);
 

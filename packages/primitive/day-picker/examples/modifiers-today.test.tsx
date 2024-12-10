@@ -3,8 +3,7 @@ import { subDays } from 'date-fns';
 
 import { dateButton } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { ModifiersToday } from './modifiers-today';
+import { ModifiersToday } from '~/modifiers-today';
 
 const today = new Date(); // Đặt ngày hôm nay để kiểm tra các hành vi với ngày hôm nay
 const yesterday = subDays(today, 1); // Ngày trước hôm nay

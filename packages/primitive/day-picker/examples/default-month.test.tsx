@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { DefaultMonth } from './default-month';
-
+import { DefaultMonth } from '~/default-month';
 import { grid } from '~/lib/elements';
 
 describe('default-month component', () => {

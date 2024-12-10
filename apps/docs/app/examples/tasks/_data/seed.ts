@@ -4,7 +4,7 @@ import path from 'node:path';
 import { faker } from '@faker-js/faker';
 import { consola } from 'consola';
 
-import { labels, priorities, statuses } from './data';
+import { labels, priorities, statuses } from '@/app/examples/tasks/_data/data';
 
 const tasks = Array.from({ length: 100 }, () => ({
   id: `TASK-${faker.number.int({ max: 9999, min: 1000 }).toString()}`,

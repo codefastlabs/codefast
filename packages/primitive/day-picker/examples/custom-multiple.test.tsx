@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
 
+import { CustomMultiple } from '~/custom-multiple';
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { CustomMultiple } from './custom-multiple';
 
 const today = new Date(2024, 11, 13);
 const tomorrow = new Date(2024, 11, 14);

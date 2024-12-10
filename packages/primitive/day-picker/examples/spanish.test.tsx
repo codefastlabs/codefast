@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
 
 import { grid } from '~/lib/elements';
-
-import { Spanish } from './spanish';
+import { Spanish } from '~/spanish';
 
 const today = new Date(2021, 10, 25);
 

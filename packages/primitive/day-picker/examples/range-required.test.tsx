@@ -2,8 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { addDays, startOfMonth } from 'date-fns';
 
 import { dateButton, gridcell } from '~/lib/elements';
-
-import { RangeRequired } from './range-required';
+import { RangeRequired } from '~/range-required';
 
 const startOfCurrentMonth = startOfMonth(new Date());
 const initialEndDate = addDays(startOfCurrentMonth, 4); // 4 days after the start of the month

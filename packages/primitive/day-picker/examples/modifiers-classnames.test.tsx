@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
 
 import { gridcell } from '~/lib/elements';
-
-import { bookedDays, ModifiersClassnames } from './modifiers-classnames';
+import { bookedDays, ModifiersClassnames } from '~/modifiers-classnames';
 
 const today = new Date(2021, 10, 25);
 

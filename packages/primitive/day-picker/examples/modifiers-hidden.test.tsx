@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { ModifiersHidden } from './modifiers-hidden';
+import { ModifiersHidden } from '~/modifiers-hidden';
 
 const today = new Date(2022, 5, 10);
 

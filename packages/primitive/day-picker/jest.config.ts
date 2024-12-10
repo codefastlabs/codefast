@@ -15,7 +15,7 @@ const config: Config = {
    */
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^~/(.*)$': '<rootDir>/tests/$1',
+    '^~/(.*)$': ['<rootDir>/tests/$1', '<rootDir>/examples/$1'],
   },
 
   /**

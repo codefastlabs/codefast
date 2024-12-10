@@ -1,8 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { format } from 'date-fns';
 
-import { Input } from './input';
-
+import { Input } from '~/input';
 import { user } from '~/lib/user';
 
 function textbox(): HTMLElement {
