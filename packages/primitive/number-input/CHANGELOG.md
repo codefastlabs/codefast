@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.4
+
+### Patch Changes
+
+- [#47](https://github.com/codefastlabs/codefast/pull/47) [`7dafb16`](https://github.com/codefastlabs/codefast/commit/7dafb160d1fe03a17627b8c535be768cb1775ac2) Thanks [@thevuong](https://github.com/thevuong)! - reorder properties for consistency
+
+- Updated dependencies [[`7dafb16`](https://github.com/codefastlabs/codefast/commit/7dafb160d1fe03a17627b8c535be768cb1775ac2)]:
+  - @codefast-ui/input@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes
