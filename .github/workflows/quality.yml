@@ -32,4 +32,4 @@ jobs:
         run: pnpm run lint --filter="./packages/**"
 
       - name: Test Packages
-        run: pnpm run test --filter="./packages/**"
+        run: pnpm run test --filter="./packages/**" -- --ci
