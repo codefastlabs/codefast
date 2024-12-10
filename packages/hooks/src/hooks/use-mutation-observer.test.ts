@@ -4,7 +4,7 @@ import { useMutationObserver } from '@/hooks/use-mutation-observer';
 
 describe('useMutationObserver', () => {
   test('should attach a MutationObserver and call the callback on mutations', () => {
-    const callback = vi.fn();
+    const callback = jest.fn();
     const ref = { current: document.createElement('div') };
 
     ref.current.innerHTML = '<div></div>';
@@ -26,14 +26,14 @@ describe('useMutationObserver', () => {
   });
 
   test('should clean up the MutationObserver on unmount', () => {
-    const callback = vi.fn();
+    const callback = jest.fn();
     const ref = { current: document.createElement('div') };
 
     const { unmount } = renderHook(() => {
       useMutationObserver(ref, callback);
     });
 
-    const disconnectSpy = vi.spyOn(MutationObserver.prototype, 'disconnect');
+    const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
 
     unmount();
 
