@@ -1,17 +1,17 @@
 import { render } from '@testing-library/react';
 
-import { dateButton } from '@/tests/lib/elements';
+import { dateButton } from '~/lib/elements';
 
 import { ModifiersDisabled } from './modifiers-disabled';
 
 const today = new Date(2024, 10, 14);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 const disabledDays = [new Date(2024, 10, 9), new Date(2024, 10, 16), new Date(2024, 10, 23), new Date(2024, 10, 30)];

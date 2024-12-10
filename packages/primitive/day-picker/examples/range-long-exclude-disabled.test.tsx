@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import { addDays } from 'date-fns';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { RangeLongExcludeDisabled } from './range-long-exclude-disabled';
 
@@ -11,11 +11,11 @@ const rangeEnd = new Date(2024, 9, 10); // October 10, 2024
 const disabledDate = new Date(2000, 0, 1); // January 1, 2000 (disabled)
 
 beforeAll(() => {
-  vi.setSystemTime(new Date(2024, 9, 10)); // Freeze time for consistent results
+  jest.setSystemTime(new Date(2024, 9, 10)); // Freeze time for consistent results
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 
-import { grids, previousButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { grids, previousButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { MultipleMonthsPaged } from './multiple-months-paged';
 
 const today = new Date(2021, 10, 25); // Ngày hiện tại là 25/11/2021
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

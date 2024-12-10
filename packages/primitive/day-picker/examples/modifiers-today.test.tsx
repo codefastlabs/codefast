@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { subDays } from 'date-fns';
 
-import { dateButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { ModifiersToday } from './modifiers-today';
 
@@ -10,11 +10,11 @@ const today = new Date(); // Đặt ngày hôm nay để kiểm tra các hành v
 const yesterday = subDays(today, 1); // Ngày trước hôm nay
 
 beforeAll(() => {
-  vi.setSystemTime(today); // Thiết lập thời gian cố định cho ngày hôm nay
+  jest.setSystemTime(today); // Thiết lập thời gian cố định cho ngày hôm nay
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

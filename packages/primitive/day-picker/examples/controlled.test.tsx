@@ -1,18 +1,18 @@
 import { render, screen } from '@testing-library/react';
 
-import { grid } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { grid } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { Controlled } from './controlled';
 
 const today = new Date(2024, 10, 1);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { endOfWeek, startOfWeek } from 'date-fns';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { CustomWeek } from './custom-week';
 
@@ -11,11 +11,11 @@ const startOfThisWeek = startOfWeek(today);
 const endOfThisWeek = endOfWeek(today);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {
