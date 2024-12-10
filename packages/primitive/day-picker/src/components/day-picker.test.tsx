@@ -5,8 +5,9 @@ import { DayPicker } from '@/components/day-picker';
 import { type MonthsProps } from '@/components/ui';
 import { defaultLocale } from '@/lib/classes/date-lib';
 import { UI } from '@/lib/constants/ui';
-import { activeElement, dateButton, grid, nav, previousButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+
+import { activeElement, dateButton, grid, nav, previousButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 const testId = 'test';
 const dayPicker = (): HTMLElement => screen.getByTestId(testId);
@@ -80,8 +81,10 @@ describe('when the date picker is focused', () => {
 describe('when the grid is focused', () => {
   const today = new Date();
 
-  beforeAll(() => vi.setSystemTime(today));
-  afterAll(() => vi.useRealTimers());
+  beforeAll(() => {
+    jest.setSystemTime(today);
+  });
+  afterAll(() => jest.useRealTimers());
 
   test("should focus the today's date", async () => {
     render(<DayPicker mode="single" today={today} />);
@@ -102,8 +105,8 @@ describe('when the grid is focused', () => {
 });
 
 describe('when a day is mouse entered', () => {
-  const handleDayMouseEnter = vi.fn();
-  const handleDayMouseLeave = vi.fn();
+  const handleDayMouseEnter = jest.fn();
+  const handleDayMouseLeave = jest.fn();
   const today = startOfDay(new Date());
 
   const setup = (): void => {

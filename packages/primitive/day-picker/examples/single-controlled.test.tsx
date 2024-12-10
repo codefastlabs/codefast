@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { SingleControlled } from './single-controlled';
 
 const today = new Date(2024, 10, 25);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

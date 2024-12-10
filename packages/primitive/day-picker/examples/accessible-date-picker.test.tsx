@@ -1,18 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import { format, subDays } from 'date-fns';
 
-import { user } from '@/tests/lib/user';
+import { user } from '~/lib/user';
 
 import { AccessibleDatePicker } from './accessible-date-picker';
 
 const today = new Date();
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function customDateButton(date: Date): HTMLElement {

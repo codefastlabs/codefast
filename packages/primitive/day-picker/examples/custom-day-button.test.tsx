@@ -1,19 +1,19 @@
 import { render, screen } from '@testing-library/react';
 import { startOfMonth } from 'date-fns';
 
-import { dateButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { CustomDayButton } from './custom-day-button';
 
 const today = new Date(2024, 11, 13);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

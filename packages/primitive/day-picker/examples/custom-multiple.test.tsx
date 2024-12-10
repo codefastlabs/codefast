@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 
-import { dateButton, gridcell } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { CustomMultiple } from './custom-multiple';
 
@@ -9,7 +9,7 @@ const today = new Date(2024, 11, 13);
 const tomorrow = new Date(2024, 11, 14);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 function setup(): void {
@@ -17,7 +17,7 @@ function setup(): void {
 }
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe('custom-multiple component', () => {

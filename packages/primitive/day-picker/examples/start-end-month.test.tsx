@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 import { differenceInMonths } from 'date-fns';
 
-import { nextButton, previousButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
-
 import { StartEndMonth } from './start-end-month';
+
+import { nextButton, previousButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 function setup(): void {
   render(<StartEndMonth />);

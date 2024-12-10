@@ -1,18 +1,19 @@
 import { render, screen } from '@testing-library/react';
 
 import { labelGridcell } from '@/lib';
-import { gridcell } from '@/tests/lib/elements';
+
+import { gridcell } from '~/lib/elements';
 
 import { OutsideDays } from './outside-days';
 
 const today = new Date(2021, 10, 25);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {

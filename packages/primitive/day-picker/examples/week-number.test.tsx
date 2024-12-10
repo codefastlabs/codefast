@@ -5,11 +5,11 @@ import { WeekNumber } from './week-number';
 const today = new Date(2021, 10, 25);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {
