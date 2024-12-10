@@ -1,17 +1,17 @@
 import { render } from '@testing-library/react';
 
-import { gridcell } from '@/tests/lib/elements';
+import { gridcell } from '~/lib/elements';
 
 import { bookedDays, ModifiersClassnames } from './modifiers-classnames';
 
 const today = new Date(2021, 10, 25);
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 describe('modifiers-classnames component', () => {

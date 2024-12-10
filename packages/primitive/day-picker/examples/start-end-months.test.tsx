@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react';
 
-import { grid, gridcell, nextButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
-
 import { StartEndMonths } from './start-end-months';
+
+import { grid, gridcell, nextButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 function setup(): void {
   render(<StartEndMonths />);

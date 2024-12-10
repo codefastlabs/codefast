@@ -1,18 +1,18 @@
 import { render } from '@testing-library/react';
 
-import { dateButton, gridcell, nextButton, previousButton } from '@/tests/lib/elements';
-import { user } from '@/tests/lib/user';
+import { dateButton, gridcell, nextButton, previousButton } from '~/lib/elements';
+import { user } from '~/lib/user';
 
 import { Start } from './start';
 
 const today = new Date(2021, 10, 25); // November 25, 2021
 
 beforeAll(() => {
-  vi.setSystemTime(today);
+  jest.setSystemTime(today);
 });
 
 afterAll(() => {
-  vi.useRealTimers();
+  jest.useRealTimers();
 });
 
 function setup(): void {
