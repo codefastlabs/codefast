@@ -33,7 +33,18 @@ const config: Config = {
    * Uses \@swc/jest to quickly transform JavaScript/TypeScript files
    */
   transform: {
-    '^.+\\.(js|jsx|ts|tsx|mjs)$': '@swc/jest',
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          },
+        },
+      },
+    ],
   },
 
   /**
