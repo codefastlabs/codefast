@@ -78,12 +78,12 @@ interface NumberInputProps extends ComponentProps<typeof InputPrimitive.Root> {
 function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
   const {
     __scopeNumberInput,
+    id,
     ariaDecrementLabel,
     ariaIncrementLabel,
     defaultValue,
     disabled,
     formatOptions = { minimumFractionDigits: 0, style: 'decimal' },
-    id,
     locale = navigator.language,
     max,
     min,
@@ -223,9 +223,9 @@ const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>
   ): JSX.Element => {
     const inputScope = useInputScope(__scopeNumberInput);
     const {
+      id,
       disabled,
       formatValue,
-      id,
       inputRef,
       max,
       min,
@@ -459,7 +459,7 @@ interface NumberInputButtonImplProps extends ButtonHTMLAttributes<HTMLButtonElem
 
 const NumberInputButtonImpl = forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
   ({ __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>, forwardedRef): JSX.Element => {
-    const { ariaDecrementLabel, ariaIncrementLabel, disabled, id, onDecrement, onIncrement, readOnly } =
+    const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, readOnly } =
       useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
     const timeoutIdRef = useRef<number | null>(null);
 
