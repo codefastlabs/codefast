@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
 
 import { gridcell } from '~/lib/elements';
-
-import { availableDays, ModifiersStyle } from './modifiers-style';
+import { availableDays, ModifiersStyle } from '~/modifiers-style';
 
 const style = {
   color: 'lightgreen',

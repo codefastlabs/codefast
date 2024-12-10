@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { CustomSingle } from './custom-single';
-
+import { CustomSingle } from '~/custom-single';
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
 

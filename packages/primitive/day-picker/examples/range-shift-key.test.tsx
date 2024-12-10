@@ -2,8 +2,7 @@ import { render } from '@testing-library/react';
 
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { RangeShiftKey } from './range-shift-key';
+import { RangeShiftKey } from '~/range-shift-key';
 
 const today = new Date(2021, 10, 25);
 

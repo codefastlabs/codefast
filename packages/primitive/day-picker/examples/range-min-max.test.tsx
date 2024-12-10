@@ -3,8 +3,7 @@ import { addDays } from 'date-fns';
 
 import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
-
-import { RangeMinMax } from './range-min-max';
+import { RangeMinMax } from '~/range-min-max';
 
 const today = new Date(2022, 8, 12);
 
