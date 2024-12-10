@@ -1,5 +1,13 @@
 # @codefast/typescript-config
 
+## 0.2.3
+
+### Patch Changes
+
+- [#45](https://github.com/codefastlabs/codefast/pull/45) [`f9167c2`](https://github.com/codefastlabs/codefast/commit/f9167c297b6d6186660e35ec6c14315c499b8fcd) Thanks [@thevuong](https://github.com/thevuong)! - Replaced Vitest with Jest in the day-picker package to streamline testing frameworks and reduce dependency complexity. Removed Vitest configuration files and adapted the test setups for Jest usage.
+
+- [#45](https://github.com/codefastlabs/codefast/pull/45) [`8309af6`](https://github.com/codefastlabs/codefast/commit/8309af654595d31fbcafea9a24d550e68e96f660) Thanks [@thevuong](https://github.com/thevuong)! - refactor: reorganize import statements for consistency
+
 ## 0.2.2
 
 ### Patch Changes
