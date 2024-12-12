@@ -93,7 +93,7 @@
     "@codefast/tailwind-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@types/js-cookie": "3.0.6",
-    "@types/node": "22.10.1",
+    "@types/node": "22.10.2",
     "eslint": "9.16.0",
     "postcss": "8.4.49",
     "tailwindcss": "3.4.16",

@@ -201,8 +201,8 @@
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "4.4.1",
     "@eslint/js": "9.16.0",
-    "@next/eslint-plugin-next": "15.0.4",
-    "@vitest/eslint-plugin": "1.1.14",
+    "@next/eslint-plugin-next": "15.1.0",
+    "@vitest/eslint-plugin": "1.1.16",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jest": "28.9.0",
@@ -220,7 +220,6 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "22.10.1",
     "eslint": "9.16.0",
     "globals": "15.13.0",
     "tsup": "8.3.5",
