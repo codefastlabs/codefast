@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.5
+
+### Patch Changes
+
+- [`a46a008`](https://github.com/codefastlabs/codefast/commit/a46a0084f47f2a3447ffe6eeeed326aacff7e3a5) Thanks [@thevuong](https://github.com/thevuong)! - update peerDependencies and dependencies versions
+
+- Updated dependencies [[`a46a008`](https://github.com/codefastlabs/codefast/commit/a46a0084f47f2a3447ffe6eeeed326aacff7e3a5)]:
+  - @codefast/style-guide@0.2.5
+
 ## 0.2.4
 
 ### Patch Changes
