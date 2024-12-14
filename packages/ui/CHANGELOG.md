@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.6
+
+### Patch Changes
+
+- [`9e7bb52`](https://github.com/codefastlabs/codefast/commit/9e7bb522ca068a6ddf7636eb3ed17c6beefa4c9d) Thanks [@thevuong](https://github.com/thevuong)! - update package dependencies
+
+- Updated dependencies [[`9e7bb52`](https://github.com/codefastlabs/codefast/commit/9e7bb522ca068a6ddf7636eb3ed17c6beefa4c9d)]:
+  - @codefast-ui/checkbox-group@0.2.6
+  - @codefast-ui/number-input@0.2.6
+  - @codefast-ui/day-picker@0.2.6
+  - @codefast-ui/input@0.2.6
+  - @codefast/hooks@0.2.6
+
 ## 0.2.5
 
 ### Patch Changes
