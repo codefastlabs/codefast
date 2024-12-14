@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.6
+
+### Patch Changes
+
+- [`9e7bb52`](https://github.com/codefastlabs/codefast/commit/9e7bb522ca068a6ddf7636eb3ed17c6beefa4c9d) Thanks [@thevuong](https://github.com/thevuong)! - update package dependencies
+
+- Updated dependencies [[`9e7bb52`](https://github.com/codefastlabs/codefast/commit/9e7bb522ca068a6ddf7636eb3ed17c6beefa4c9d)]:
+  - @codefast/style-guide@0.2.6
+
 ## 0.2.5
 
 ### Patch Changes
