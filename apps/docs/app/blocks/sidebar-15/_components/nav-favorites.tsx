@@ -52,21 +52,21 @@ export function NavFavorites({ favorites }: NavFavoritesProps): JSX.Element {
                 side={isMobile ? 'bottom' : 'right'}
               >
                 <DropdownMenuItem>
-                  <StarOffIcon className="text-muted-foreground" />
+                  <StarOffIcon className="text-muted-foreground size-4" />
                   <span>Remove from Favorites</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <LinkIcon className="text-muted-foreground" />
+                  <LinkIcon className="text-muted-foreground size-4" />
                   <span>Copy Link</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <ArrowUpRightIcon className="text-muted-foreground" />
+                  <ArrowUpRightIcon className="text-muted-foreground size-4" />
                   <span>Open in New Tab</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Trash2Icon className="text-muted-foreground" />
+                  <Trash2Icon className="text-muted-foreground size-4" />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
