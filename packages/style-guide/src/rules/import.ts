@@ -78,44 +78,5 @@ export const importRules: Linter.Config = {
      * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-useless-path-segments.md
      */
     'import/no-useless-path-segments': ['error'],
-
-    /**
-     * Enforce a module import order convention.
-     *
-     * 🔧 Fixable - https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/order.md
-     */
-    'import/order': [
-      'warn',
-      {
-        alphabetize: {
-          order: 'asc', // Sort in ascending order
-          caseInsensitive: true, // Case-insensitive
-        },
-        groups: [
-          'builtin', // Node.js built-in modules
-          'external', // Libraries from node_modules
-          'internal', // Internal modules
-          'parent', // Imports from the parent directory
-          'sibling', // Imports from the same directory
-          'index', // Imports from an index file
-          'object', // Import object
-          'type', // Import types
-        ],
-        'newlines-between': 'always',
-        pathGroups: [
-          {
-            pattern: '@/**', // Matches imports starting with @/
-            group: 'internal', // Places in an internal group
-            position: 'after', // Places after other internal imports
-          },
-          {
-            pattern: '~/**', // Matches imports starting with ~/
-            group: 'internal', // Places in an internal group
-            position: 'after', // Places after other internal imports
-          },
-        ],
-        pathGroupsExcludedImportTypes: ['type'],
-      },
-    ],
   },
 };

@@ -3,7 +3,6 @@ import { type JSX } from 'react';
 
 import { Providers } from '@/components/providers';
 import { geistMono, geistSans } from '@/lib/fonts';
-
 import '@/app/globals.css';
 
 export const metadata: Metadata = {

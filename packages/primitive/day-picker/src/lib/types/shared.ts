@@ -1,5 +1,7 @@
 import { type CSSProperties } from 'react';
 
+import type * as components from '@/components/ui';
+
 import { type DayFlag, type SelectionState, type UI } from '@/lib/constants/ui';
 import {
   type formatCaption,
@@ -23,8 +25,6 @@ import {
   type labelWeekNumberHeader,
   type labelYearDropdown,
 } from '@/lib/labels';
-
-import type * as components from '@/components/ui';
 
 /**
  * Selection modes supported by DayPicker.

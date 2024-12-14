@@ -5,7 +5,6 @@ import { DayPicker } from '@/components/day-picker';
 import { type MonthsProps } from '@/components/ui';
 import { defaultLocale } from '@/lib/classes/date-lib';
 import { UI } from '@/lib/constants/ui';
-
 import { activeElement, dateButton, grid, nav, previousButton } from '~/lib/elements';
 import { user } from '~/lib/user';
 

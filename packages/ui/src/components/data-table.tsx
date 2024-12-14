@@ -1,5 +1,7 @@
 'use client';
 
+import type * as ReactTable from '@tanstack/react-table';
+
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -26,8 +28,6 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
-
-import type * as ReactTable from '@tanstack/react-table';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions

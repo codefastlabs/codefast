@@ -1,5 +1,3 @@
-import { resolve } from 'node:path';
-
 import { recommendedConfig } from '@codefast/style-guide/configs/core/recommended';
 import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript';
 import { nextConfig } from '@codefast/style-guide/configs/frameworks/next';
@@ -12,6 +10,7 @@ import { type Linter } from 'eslint';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import onlyWarn from 'eslint-plugin-only-warn';
 import globals from 'globals';
+import { resolve } from 'node:path';
 
 export const config: Linter.Config[] = [
   ...recommendedConfig,
