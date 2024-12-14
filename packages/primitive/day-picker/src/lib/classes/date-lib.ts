@@ -37,8 +37,8 @@ import { enUS, type Locale } from 'date-fns/locale';
 import { endOfBroadcastWeek } from '@/lib/helpers/end-of-broadcast-week';
 import { startOfBroadcastWeek } from '@/lib/helpers/start-of-broadcast-week';
 
-export type { Locale } from 'date-fns/locale';
 export type { Month as DateFnsMonth } from 'date-fns';
+export type { Locale } from 'date-fns/locale';
 
 /**
  * The options for the `DateLib` class.

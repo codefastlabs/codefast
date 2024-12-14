@@ -1,11 +1,3 @@
-// Export utility functions from the utils library
-export * from '@/lib/utils';
-
-// Export button, input, and toggle variants from the styles directory
-export * from '@/styles/button-variants';
-export * from '@/styles/input-variants';
-export * from '@/styles/toggle-variants';
-
 // Export various components from the components directory
 export * from '@/components/accordion';
 export * from '@/components/alert';
@@ -76,3 +68,11 @@ export * from '@/components/textarea';
 export * from '@/components/toggle';
 export * from '@/components/toggle-group';
 export * from '@/components/tooltip';
+
+// Export utility functions from the utils library
+export * from '@/lib/utils';
+
+// Export button, input, and toggle variants from the styles directory
+export * from '@/styles/button-variants';
+export * from '@/styles/input-variants';
+export * from '@/styles/toggle-variants';
