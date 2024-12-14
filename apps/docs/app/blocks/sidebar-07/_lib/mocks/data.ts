@@ -5,11 +5,11 @@ import {
   CommandIcon,
   FrameIcon,
   GalleryVerticalEndIcon,
+  type LucideIcon,
+  MapIcon,
   PieChartIcon,
   Settings2Icon,
   SquareTerminalIcon,
-  MapIcon,
-  type LucideIcon,
 } from 'lucide-react';
 
 interface User {

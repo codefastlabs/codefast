@@ -1,7 +1,15 @@
 import type { Linter } from 'eslint';
 
 const disabledRules: Partial<Linter.RulesRecord> = {
+  /**
+   * Disabled for `sort-objects` rule
+   */
   'sort-keys': 'off',
+
+  /**
+   * Disabled for `sort-interfaces` rule.
+   */
+  '@typescript-eslint/adjacent-overload-signatures': 'off',
 };
 
 export const perfectionistRules: Linter.Config = {
@@ -29,12 +37,24 @@ export const perfectionistRules: Linter.Config = {
       'warn',
       {
         type: 'natural',
-        groups: ['top', 'middle', ['multiline', 'method', 'unknown'], 'bottom'],
+        groups: ['top', ['multiline', 'method', 'unknown'], 'bottom'],
         customGroups: {
           top: ['^id$', '^__'],
-          middle: ['Id$', '_id$'],
           bottom: ['At$', '_at$'],
         },
+      },
+    ],
+
+    /**
+     * Enforce sorted TypeScript interface properties.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-interfaces
+     */
+    'perfectionist/sort-interfaces': [
+      'error',
+      {
+        type: 'natural',
+        groups: ['required-member', 'optional-member'],
       },
     ],
   },
