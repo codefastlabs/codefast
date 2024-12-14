@@ -86,7 +86,7 @@ export function ChartRadarLabelCustom(): JSX.Element {
 
 interface PolarAngleAxisTickProps {
   index?: number;
-  textAnchor?: 'start' | 'middle' | 'end';
+  textAnchor?: 'end' | 'middle' | 'start';
   x?: number;
   y?: number;
 }

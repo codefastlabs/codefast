@@ -26,7 +26,7 @@ export class Vegas {
   private ended: boolean;
   private timerElement: HTMLElement | null;
   private overlayElement: HTMLElement | null;
-  private timeout: number | null;
+  private timeout: null | number;
   private first: boolean;
   private readonly transitions: VegasTransition[];
   private readonly animations: VegasAnimation[];
@@ -322,7 +322,7 @@ export class Vegas {
     videoElement: HTMLVideoElement,
     duration: number,
     step: number,
-    direction: 'increase' | 'decrease',
+    direction: 'decrease' | 'increase',
   ): void {
     const delay = duration / 10;
     const volume = direction === 'increase' ? videoElement.volume + step : videoElement.volume - step;
@@ -397,7 +397,7 @@ export class Vegas {
     });
   }
 
-  private getCoverSetting(cover: string | boolean): string {
+  private getCoverSetting(cover: boolean | string): string {
     if (cover !== 'repeat') {
       return cover === true ? 'cover' : 'contain';
     }
@@ -406,7 +406,7 @@ export class Vegas {
   }
 
   private getTransition(
-    firstTransition: VegasTransition | null,
+    firstTransition: null | VegasTransition,
     defaultTransition: VegasTransitionWithRandom,
   ): VegasTransition {
     if (this.first) {
@@ -419,8 +419,8 @@ export class Vegas {
   }
 
   private getTransitionDuration(
-    firstTransitionDuration: number | 'auto',
-    defaultTransitionDuration: number | 'auto',
+    firstTransitionDuration: 'auto' | number,
+    defaultTransitionDuration: 'auto' | number,
     delay: number,
   ): number {
     if (this.first) {
@@ -445,7 +445,7 @@ export class Vegas {
     return this.getRandomAnimation(defaultAnimation);
   }
 
-  private getAnimationDuration(defaultAnimationDuration: number | 'auto', delay: number): number {
+  private getAnimationDuration(defaultAnimationDuration: 'auto' | number, delay: number): number {
     if (defaultAnimationDuration === 'auto') {
       return delay;
     }
@@ -480,7 +480,7 @@ export class Vegas {
     alignVertical: string;
     color: string;
     cover: string;
-    transition: VegasTransition | null;
+    transition: null | VegasTransition;
   }): HTMLElement {
     const slideElement = document.createElement('div');
 
@@ -518,7 +518,7 @@ export class Vegas {
     slideElement: HTMLElement;
     transitionDuration: number;
     src?: string | undefined;
-    video?: VegasVideo | undefined;
+    video?: undefined | VegasVideo;
   }): HTMLVideoElement | null {
     let videoElement: HTMLVideoElement | null = null;
 
@@ -624,7 +624,7 @@ export class Vegas {
     videoElement,
   }: {
     slideElement: HTMLElement;
-    transition: VegasTransition | null;
+    transition: null | VegasTransition;
     transitionDuration: number;
     videoElement: HTMLVideoElement | null;
     src?: string | undefined;
@@ -679,7 +679,7 @@ export class Vegas {
   }
 
   private performTransition(
-    transition: VegasTransition | null,
+    transition: null | VegasTransition,
     slideElements: HTMLElement[],
     transitionDuration: number,
     slideElement: HTMLElement,

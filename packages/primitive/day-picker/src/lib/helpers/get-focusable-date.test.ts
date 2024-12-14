@@ -60,7 +60,7 @@ for (const { expectedFn, moveBy, moveDir } of testCases) {
 
 const weekTestCases: {
   expectedFn: (
-    date: number | Date,
+    date: Date | number,
     options?: {
       locale?: Locale | undefined;
       weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined;

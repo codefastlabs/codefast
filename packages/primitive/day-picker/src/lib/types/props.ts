@@ -21,12 +21,12 @@ import {
  * The props for the `<DayPicker />` component.
  */
 export type DayPickerProps =
-  | (SingleProps | SingleRequiredProps)
   | (MultiProps | MultiRequiredProps)
+  | NoModeProps
   | (RangeProps | RangeRequiredProps)
-  | NoModeProps;
+  | (SingleProps | SingleRequiredProps);
 
-export type DayEvent = MouseEvent | KeyboardEvent;
+export type DayEvent = KeyboardEvent | MouseEvent;
 
 /**
  * Props for customizing the calendar, handling localization, and managing
@@ -69,7 +69,7 @@ export interface BaseProps {
    * Showing the dropdown will set the start/end months
    * {@link startMonth} to 100 years ago, and {@link endMonth} to the current year.
    */
-  captionLayout?: 'label' | 'dropdown' | 'dropdown-months' | 'dropdown-years';
+  captionLayout?: 'dropdown' | 'dropdown-months' | 'dropdown-years' | 'label';
 
   /**
    * Class name to add to the root element.

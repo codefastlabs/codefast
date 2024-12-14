@@ -3,7 +3,7 @@ import { defaultDateLib } from '@/lib/classes/date-lib';
 import { getNextFocus } from '@/lib/helpers/get-next-focus';
 import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
 
-const props: Pick<DayPickerProps, 'disabled' | 'hidden' | 'startMonth' | 'endMonth'> = {
+const props: Pick<DayPickerProps, 'disabled' | 'endMonth' | 'hidden' | 'startMonth'> = {
   disabled: [],
   hidden: [],
 };

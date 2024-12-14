@@ -119,7 +119,7 @@ type CheckboxGroupItemElement = ComponentRef<typeof CheckboxPrimitive.Root>;
 interface CheckboxGroupItemProps
   extends Omit<
     ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>,
-    'checked' | 'defaultChecked' | 'onCheckedChange' | 'name'
+    'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'
   > {
   value: string;
 }

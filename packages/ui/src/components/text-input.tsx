@@ -20,19 +20,19 @@ interface TextInputProps
     ComponentProps<typeof InputPrimitive.Root>,
     Omit<ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix' | 'type'> {
   type?:
-    | 'text'
-    | 'email'
-    | 'password'
-    | 'number'
-    | 'tel'
-    | 'url'
     | 'date'
-    | 'time'
     | 'datetime-local'
-    | 'month'
-    | 'week'
+    | 'email'
     | 'file'
-    | 'search';
+    | 'month'
+    | 'number'
+    | 'password'
+    | 'search'
+    | 'tel'
+    | 'text'
+    | 'time'
+    | 'url'
+    | 'week';
 }
 
 const TextInput = forwardRef<TextInputElement, TextInputProps>(
