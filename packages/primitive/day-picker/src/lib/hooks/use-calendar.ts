@@ -73,19 +73,19 @@ export interface Calendar {
 export function useCalendar(
   props: Pick<
     DayPickerProps,
+    | 'broadcastCalendar'
     | 'captionLayout'
+    | 'defaultMonth'
+    | 'disableNavigation'
     | 'endMonth'
-    | 'startMonth'
-    | 'today'
     | 'fixedWeeks'
     | 'ISOWeek'
-    | 'numberOfMonths'
-    | 'disableNavigation'
-    | 'onMonthChange'
     | 'month'
-    | 'defaultMonth'
+    | 'numberOfMonths'
+    | 'onMonthChange'
+    | 'startMonth'
     | 'timeZone'
-    | 'broadcastCalendar'
+    | 'today'
   >,
   dateLib: DateLib,
 ): Calendar {

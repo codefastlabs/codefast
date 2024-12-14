@@ -1,41 +1,41 @@
 export type VegasTransition =
-  | 'fade'
-  | 'fade2'
-  | 'blur'
   | 'blur2'
-  | 'flash'
-  | 'flash2'
-  | 'negative'
-  | 'negative2'
-  | 'burn'
+  | 'blur'
   | 'burn2'
-  | 'slideLeft'
-  | 'slideLeft2'
-  | 'slideRight'
-  | 'slideRight2'
-  | 'slideUp'
-  | 'slideUp2'
-  | 'slideDown'
+  | 'burn'
+  | 'fade2'
+  | 'fade'
+  | 'flash2'
+  | 'flash'
+  | 'negative2'
+  | 'negative'
   | 'slideDown2'
-  | 'zoomIn'
-  | 'zoomIn2'
-  | 'zoomOut'
-  | 'zoomOut2'
-  | 'swirlLeft'
+  | 'slideDown'
+  | 'slideLeft2'
+  | 'slideLeft'
+  | 'slideRight2'
+  | 'slideRight'
+  | 'slideUp2'
+  | 'slideUp'
   | 'swirlLeft2'
+  | 'swirlLeft'
+  | 'swirlRight2'
   | 'swirlRight'
-  | 'swirlRight2';
+  | 'zoomIn2'
+  | 'zoomIn'
+  | 'zoomOut2'
+  | 'zoomOut';
 
 export type VegasAnimation =
   | 'kenburns'
+  | 'kenburnsDown'
+  | 'kenburnsDownLeft'
+  | 'kenburnsDownRight'
   | 'kenburnsLeft'
   | 'kenburnsRight'
   | 'kenburnsUp'
   | 'kenburnsUpLeft'
-  | 'kenburnsUpRight'
-  | 'kenburnsDown'
-  | 'kenburnsDownLeft'
-  | 'kenburnsDownRight';
+  | 'kenburnsUpRight';
 
 export type VegasTransitionWithRandom = 'random' | VegasTransition;
 
@@ -45,12 +45,12 @@ export interface VegasBase {
   align: string;
   alignVertical: string;
   animation: VegasAnimationWithRandom;
-  animationDuration: number | 'auto';
+  animationDuration: 'auto' | number;
   color: string;
   cover: boolean | string;
   delay: number;
   transition: VegasTransitionWithRandom;
-  transitionDuration: number | 'auto';
+  transitionDuration: 'auto' | number;
 }
 
 export interface VegasCallback {
@@ -81,8 +81,8 @@ export interface VegasSupport {
 export interface VegasSettings extends VegasBase, VegasCallback {
   animationRegister: string[];
   autoplay: boolean;
-  firstTransition: VegasTransition | null;
-  firstTransitionDuration: number | 'auto';
+  firstTransition: null | VegasTransition;
+  firstTransitionDuration: 'auto' | number;
   loop: boolean;
   overlay: boolean | string;
   preload: boolean;

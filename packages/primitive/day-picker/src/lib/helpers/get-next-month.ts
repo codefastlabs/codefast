@@ -13,7 +13,7 @@ import { type DayPickerProps } from '@/lib/types';
 export function getNextMonth(
   firstDisplayedMonth: Date,
   calendarEndMonth: Date | undefined,
-  options: Pick<DayPickerProps, 'numberOfMonths' | 'pagedNavigation' | 'disableNavigation'>,
+  options: Pick<DayPickerProps, 'disableNavigation' | 'numberOfMonths' | 'pagedNavigation'>,
   dateLib: DateLib,
 ): Date | undefined {
   if (options.disableNavigation) {

@@ -41,11 +41,11 @@ interface SidebarContext {
   openMobile: boolean;
   setOpen: (open: boolean) => void;
   setOpenMobile: (open: boolean) => void;
-  state: 'expanded' | 'collapsed';
+  state: 'collapsed' | 'expanded';
   toggleSidebar: () => void;
 }
 
-const SidebarContext = createContext<SidebarContext | null>(null);
+const SidebarContext = createContext<null | SidebarContext>(null);
 
 function useSidebar(): SidebarContext {
   const context = useContext(SidebarContext);
@@ -78,7 +78,7 @@ const SidebarProvider = forwardRef<SidebarProviderElement, SidebarProviderProps>
     const [isOpen, setIsOpen] = useState(defaultOpen);
     const open = openProp ?? isOpen;
     const setOpen = useCallback(
-      (value: boolean | ((value: boolean) => boolean)) => {
+      (value: ((value: boolean) => boolean) | boolean) => {
         const openState = typeof value === 'function' ? value(open) : value;
 
         if (setOpenProp) {
@@ -172,9 +172,9 @@ SidebarProvider.displayName = 'SidebarProvider';
 
 type SidebarElement = HTMLDivElement;
 interface SidebarProps extends ComponentProps<'div'> {
-  collapsible?: 'offcanvas' | 'icon' | 'none';
+  collapsible?: 'icon' | 'none' | 'offcanvas';
   side?: 'left' | 'right';
-  variant?: 'sidebar' | 'floating' | 'inset';
+  variant?: 'floating' | 'inset' | 'sidebar';
 }
 
 const Sidebar = forwardRef<SidebarElement, SidebarProps>(
@@ -600,7 +600,7 @@ type SidebarMenuButtonElement = HTMLButtonElement;
 interface SidebarMenuButtonProps extends ComponentProps<'button'>, VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean;
   isActive?: boolean;
-  tooltip?: string | ComponentProps<typeof TooltipContent>;
+  tooltip?: ComponentProps<typeof TooltipContent> | string;
 }
 
 const SidebarMenuButton = forwardRef<SidebarMenuButtonElement, SidebarMenuButtonProps>(
@@ -783,7 +783,7 @@ type SidebarMenuSubButtonElement = HTMLAnchorElement;
 interface SidebarMenuSubButtonProps extends ComponentProps<'a'> {
   asChild?: boolean;
   isActive?: boolean;
-  size?: 'sm' | 'md';
+  size?: 'md' | 'sm';
 }
 
 const SidebarMenuSubButton = forwardRef<SidebarMenuSubButtonElement, SidebarMenuSubButtonProps>(

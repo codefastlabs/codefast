@@ -11,9 +11,9 @@ import { type JSX } from 'react';
 
 import { type NavItem } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 
-type NavSecondaryProps = {
+type NavSecondaryProps = React.ComponentPropsWithoutRef<typeof SidebarGroup> & {
   items: NavItem[];
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>;
+};
 
 export function NavSecondary({ items, ...props }: NavSecondaryProps): JSX.Element {
   return (
