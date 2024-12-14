@@ -238,4 +238,4 @@ export {
   type CalendarRangeLabelProps,
 };
 
-export { type Matcher, type DateRange } from '@codefast-ui/day-picker';
+export { type DateRange, type Matcher } from '@codefast-ui/day-picker';

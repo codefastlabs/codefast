@@ -49,7 +49,7 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-exports
      */
     'perfectionist/sort-exports': [
-      'error',
+      'warn',
       {
         type: 'natural',
       },
@@ -61,7 +61,7 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-imports
      */
     'perfectionist/sort-imports': [
-      'error',
+      'warn',
       {
         internalPattern: ['^@/.+', '^~/.+'],
         type: 'natural',
@@ -74,7 +74,7 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-interfaces
      */
     'perfectionist/sort-interfaces': [
-      'error',
+      'warn',
       {
         type: 'natural',
         groups: ['required-member', 'optional-member'],
@@ -87,9 +87,22 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-intersection-types
      */
     'perfectionist/sort-intersection-types': [
-      'error',
+      'warn',
       {
         type: 'natural',
+      },
+    ],
+
+    /**
+     * Enforce sorted named exports.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-named-exports
+     */
+    'perfectionist/sort-named-exports': [
+      'warn',
+      {
+        type: 'natural',
+        groupKind: 'values-first',
       },
     ],
 
@@ -99,7 +112,7 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-object-types
      */
     'perfectionist/sort-object-types': [
-      'error',
+      'warn',
       {
         type: 'natural',
         groups: ['required-member', 'optional-member'],
@@ -129,7 +142,7 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-union-types
      */
     'perfectionist/sort-union-types': [
-      'error',
+      'warn',
       {
         type: 'natural',
       },
