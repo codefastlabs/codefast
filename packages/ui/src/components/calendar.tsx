@@ -183,7 +183,7 @@ function CalendarRangeLabel({
   date,
   formatStr = 'LLL dd, y',
   placeholder = 'Pick a date',
-}: CalendarRangeLabelProps): string | JSX.Element {
+}: CalendarRangeLabelProps): JSX.Element | string {
   if (!date?.from) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -217,7 +217,7 @@ function CalendarLabel({
   date,
   formatStr = 'PPP',
   placeholder = 'Pick a date',
-}: CalendarLabelProps): string | JSX.Element {
+}: CalendarLabelProps): JSX.Element | string {
   if (!date) {
     return <span className="truncate">{placeholder}</span>;
   }

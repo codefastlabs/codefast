@@ -28,7 +28,7 @@ export function getNextFocus(
   refDay: CalendarDay,
   calendarStartMonth: Date | undefined,
   calendarEndMonth: Date | undefined,
-  props: Pick<DayPickerProps, 'disabled' | 'hidden' | 'modifiers' | 'ISOWeek' | 'timeZone'>,
+  props: Pick<DayPickerProps, 'disabled' | 'hidden' | 'ISOWeek' | 'modifiers' | 'timeZone'>,
   dateLib: DateLib,
   attempt = 0,
 ): CalendarDay | undefined {

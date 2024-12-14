@@ -7,7 +7,7 @@ import { Toaster as Sonner } from 'sonner';
  * -------------------------------------------------------------------------- */
 
 type ToasterProps = ComponentProps<typeof Sonner>;
-type Theme = 'light' | 'dark' | 'system' | undefined;
+type Theme = 'dark' | 'light' | 'system' | undefined;
 
 function Toaster({ ...props }: ToasterProps): JSX.Element {
   const { theme = 'system' } = useTheme() as { theme: Theme };

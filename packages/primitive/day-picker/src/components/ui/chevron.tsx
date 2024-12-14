@@ -11,7 +11,7 @@ export interface ChevronProps {
   /**
    * The orientation of the chevron.
    */
-  orientation?: 'up' | 'down' | 'left' | 'right';
+  orientation?: 'down' | 'left' | 'right' | 'up';
 
   /**
    * The size of the chevron.

@@ -1,9 +1,9 @@
 export interface Change {
   file: string;
-  state: 'M' | 'U' | 'A' | 'D'; // M for Modified, U for Untracked, A for Added, D for Deleted
+  state: 'A' | 'D' | 'M' | 'U'; // M for Modified, U for Untracked, A for Added, D for Deleted
 }
 
-export type TreeNode = string | [string, ...TreeNode[]];
+export type TreeNode = [string, ...TreeNode[]] | string;
 
 export interface Data {
   changes: Change[];

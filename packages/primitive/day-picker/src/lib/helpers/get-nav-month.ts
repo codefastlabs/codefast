@@ -9,7 +9,7 @@ const YEARS_OFFSET = 100;
  * Return the start and end months for the calendar navigation.
  */
 export function getNavMonths(
-  props: Pick<DayPickerProps, 'captionLayout' | 'startMonth' | 'endMonth' | 'today' | 'timeZone'>,
+  props: Pick<DayPickerProps, 'captionLayout' | 'endMonth' | 'startMonth' | 'timeZone' | 'today'>,
   dateLib: DateLib,
 ): [start: Date | undefined, end: Date | undefined] {
   const { addYears, endOfMonth, endOfYear, startOfDay, startOfMonth, startOfYear } = dateLib;

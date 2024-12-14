@@ -2,14 +2,19 @@ import type { Linter } from 'eslint';
 
 const disabledRules: Partial<Linter.RulesRecord> = {
   /**
-   * Disabled for `sort-objects` rule
-   */
-  'sort-keys': 'off',
-
-  /**
    * Disabled for `sort-interfaces`, `sort-object-types` rules.
    */
   '@typescript-eslint/adjacent-overload-signatures': 'off',
+
+  /**
+   * Disabled for `sort-intersection-types`, `sort-union-types` rule.
+   */
+  '@typescript-eslint/sort-type-constituents': 'off',
+
+  /**
+   * Disabled for `sort-objects` rule
+   */
+  'sort-keys': 'off',
 };
 
 export const perfectionistRules: Linter.Config = {
@@ -25,6 +30,44 @@ export const perfectionistRules: Linter.Config = {
       'warn',
       {
         type: 'natural',
+      },
+    ],
+
+    /**
+     * Enforce sorted TypeScript interface properties.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-interfaces
+     */
+    'perfectionist/sort-interfaces': [
+      'error',
+      {
+        type: 'natural',
+        groups: ['required-member', 'optional-member'],
+      },
+    ],
+
+    /**
+     * Enforce sorted intersection types in TypeScript.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-intersection-types
+     */
+    'perfectionist/sort-intersection-types': [
+      'error',
+      {
+        type: 'natural',
+      },
+    ],
+
+    /**
+     * Enforce sorted object types.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-object-types
+     */
+    'perfectionist/sort-object-types': [
+      'error',
+      {
+        type: 'natural',
+        groups: ['required-member', 'optional-member'],
       },
     ],
 
@@ -46,28 +89,14 @@ export const perfectionistRules: Linter.Config = {
     ],
 
     /**
-     * Enforce sorted TypeScript interface properties.
+     * Enforce sorted TypeScript union types.
      *
-     * 🔧 Fixable - https://perfectionist.dev/rules/sort-interfaces
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-union-types
      */
-    'perfectionist/sort-interfaces': [
+    'perfectionist/sort-union-types': [
       'error',
       {
         type: 'natural',
-        groups: ['required-member', 'optional-member'],
-      },
-    ],
-
-    /**
-     * Enforce sorted object types.
-     *
-     * 🔧 Fixable - https://perfectionist.dev/rules/sort-object-types
-     */
-    'perfectionist/sort-object-types': [
-      'error',
-      {
-        type: 'natural',
-        groups: ['required-member', 'optional-member'],
       },
     ],
   },

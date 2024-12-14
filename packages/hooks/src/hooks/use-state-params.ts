@@ -5,8 +5,8 @@ export enum HistoryMethod {
   Replace = 'replace',
 }
 
-export type UrlParamValue = string | number | boolean | null | undefined;
-export type ParamInput = string | Record<string, UrlParamValue>;
+export type UrlParamValue = boolean | null | number | string | undefined;
+export type ParamInput = Record<string, UrlParamValue> | string;
 
 /**
  * Updates the browser's history state using the specified method and URL parameters.

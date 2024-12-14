@@ -13,7 +13,7 @@ interface SlideshowProps {
 
 export function Slideshow({ options, ...props }: SlideshowProps): JSX.Element {
   const slideshowRef = useRef<HTMLDivElement>(null);
-  const vegasRef = useRef<Vegas | null>(null);
+  const vegasRef = useRef<null | Vegas>(null);
 
   useEffect(() => {
     if (!slideshowRef.current || vegasRef.current) {

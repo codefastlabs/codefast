@@ -44,7 +44,7 @@ interface NumberInputContextValue {
   onDecrementToMin: () => void;
   onIncrement: () => void;
   onIncrementToMax: () => void;
-  parseValue: (value: string | number | readonly string[] | undefined) => number;
+  parseValue: (value: number | readonly string[] | string | undefined) => number;
   ariaDecrementLabel?: string;
   ariaIncrementLabel?: string;
   disabled?: boolean;
@@ -116,7 +116,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
   );
 
   const parseValue = useCallback(
-    (inputValue: string | number | readonly string[] | undefined): number => {
+    (inputValue: number | readonly string[] | string | undefined): number => {
       if (typeof inputValue === 'number') {
         return clamp(inputValue, min, max);
       }
@@ -454,14 +454,14 @@ const NUMBER_INPUT_BUTTON_IMPL_NAME = 'NumberInputImplButton';
 
 type NumberInputButtonImplElement = HTMLButtonElement;
 interface NumberInputButtonImplProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  operation: 'increment' | 'decrement';
+  operation: 'decrement' | 'increment';
 }
 
 const NumberInputButtonImpl = forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
   ({ __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>, forwardedRef): JSX.Element => {
     const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, readOnly } =
       useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
-    const timeoutIdRef = useRef<number | null>(null);
+    const timeoutIdRef = useRef<null | number>(null);
 
     const startActionInterval = useCallback((callback: () => void) => {
       const interval = 100;
