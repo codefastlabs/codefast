@@ -1,5 +1,11 @@
 # @codefast/third-parties
 
+## 0.2.7
+
+### Patch Changes
+
+- [#51](https://github.com/codefastlabs/codefast/pull/51) [`bbbbe4b`](https://github.com/codefastlabs/codefast/commit/bbbbe4bac48004b88ae39911bd5909e062e967e8) Thanks [@thevuong](https://github.com/thevuong)! - enhance sorting and add new interface rules
+
 ## 0.2.6
 
 ### Patch Changes
