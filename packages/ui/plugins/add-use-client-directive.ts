@@ -1,6 +1,6 @@
-import { relative } from 'node:path';
-
 import type { Options } from 'tsup';
+
+import { relative } from 'node:path';
 
 // Set to track the imports of each code chunk.
 const trackedImports = new Set<string>();
