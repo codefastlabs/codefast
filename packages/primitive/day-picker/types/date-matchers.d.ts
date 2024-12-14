@@ -1,13 +1,13 @@
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toBeSunday: () => R;
+      toBeFriday: () => R;
       toBeMonday: () => R;
+      toBeSaturday: () => R;
+      toBeSunday: () => R;
+      toBeThursday: () => R;
       toBeTuesday: () => R;
       toBeWednesday: () => R;
-      toBeThursday: () => R;
-      toBeFriday: () => R;
-      toBeSaturday: () => R;
       toHaveDate: (expected: number) => R;
     }
   }

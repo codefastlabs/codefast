@@ -135,16 +135,6 @@ export interface Components {
   Week: typeof components.Week;
 
   /**
-   * Render the cell with the number of the week.
-   */
-  WeekNumber: typeof components.WeekNumber;
-
-  /**
-   * Render the header of the week number column.
-   */
-  WeekNumberHeader: typeof components.WeekNumberHeader;
-
-  /**
    * Render the weekday name in the header.
    */
   Weekday: typeof components.Weekday;
@@ -153,6 +143,16 @@ export interface Components {
    * Render the row containing the week days.
    */
   Weekdays: typeof components.Weekdays;
+
+  /**
+   * Render the cell with the number of the week.
+   */
+  WeekNumber: typeof components.WeekNumber;
+
+  /**
+   * Render the header of the week number column.
+   */
+  WeekNumberHeader: typeof components.WeekNumberHeader;
 
   /**
    * Render the weeks section in the month grid.
@@ -185,6 +185,11 @@ export interface Formatters {
   formatMonthDropdown: typeof formatMonthDropdown;
 
   /**
+   * Format the week day name in the header.
+   */
+  formatWeekdayName: typeof formatWeekdayName;
+
+  /**
    * Format the week number.
    */
   formatWeekNumber: typeof formatWeekNumber;
@@ -193,11 +198,6 @@ export interface Formatters {
    * Format the header of the week number column.
    */
   formatWeekNumberHeader: typeof formatWeekNumberHeader;
-
-  /**
-   * Format the week day name in the header.
-   */
-  formatWeekdayName: typeof formatWeekdayName;
 
   /**
    * Format the label in the year dropdown.
@@ -245,6 +245,11 @@ export interface Labels {
   labelPrevious: typeof labelPrevious;
 
   /**
+   * The label for the weekday.
+   */
+  labelWeekday: typeof labelWeekday;
+
+  /**
    * The label for the week number.
    */
   labelWeekNumber: typeof labelWeekNumber;
@@ -253,11 +258,6 @@ export interface Labels {
    * Return the label for the column of the week number.
    */
   labelWeekNumberHeader: typeof labelWeekNumberHeader;
-
-  /**
-   * The label for the weekday.
-   */
-  labelWeekday: typeof labelWeekday;
 
   /**
    * The label for the year dropdown.

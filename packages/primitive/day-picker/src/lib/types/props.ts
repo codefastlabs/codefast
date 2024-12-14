@@ -34,14 +34,6 @@ export type DayEvent = MouseEvent | KeyboardEvent;
  */
 export interface BaseProps {
   /**
-   * Use ISO week dates instead of the locale setting. Setting this prop will
-   * ignore `weekStartsOn` and `firstWeekContainsDate`.
-   *
-   * @see https://en.wikipedia.org/wiki/ISO_week_date
-   */
-  ISOWeek?: boolean;
-
-  /**
    * The aria-label attribute to add to the container element.
    */
   ['aria-label']?: string;
@@ -123,15 +115,15 @@ export interface BaseProps {
   dir?: HTMLDivElement['dir'];
 
   /**
+   * Apply the `disabled` modifier to the matching days.
+   */
+  disabled?: Matcher | Matcher[] | undefined;
+
+  /**
    * Disable the navigation between months. This prop won't hide the navigation:
    * to hide the navigation, use {@link hideNavigation}.
    */
   disableNavigation?: boolean;
-
-  /**
-   * Apply the `disabled` modifier to the matching days.
-   */
-  disabled?: Matcher | Matcher[] | undefined;
 
   /**
    * The latest month to end the month navigation.
@@ -183,6 +175,14 @@ export interface BaseProps {
    * A unique id to add to the root element.
    */
   id?: string;
+
+  /**
+   * Use ISO week dates instead of the locale setting. Setting this prop will
+   * ignore `weekStartsOn` and `firstWeekContainsDate`.
+   *
+   * @see https://en.wikipedia.org/wiki/ISO_week_date
+   */
+  ISOWeek?: boolean;
 
   /**
    * Labels creators to override the defaults. Use this prop to customize the aria-label attributes in DayPicker.
