@@ -5,7 +5,7 @@ import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, 
 import { Spinner } from '@/components/spinner';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
-import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
+import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
 
 const { input, root } = inputVariants();
 

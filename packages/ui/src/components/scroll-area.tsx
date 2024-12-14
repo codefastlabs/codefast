@@ -1,9 +1,9 @@
 'use client';
 
-import { createContextScope, type Scope } from '@radix-ui/react-context';
+import { type Scope, createContextScope } from '@radix-ui/react-context';
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 

@@ -1,12 +1,12 @@
 'use client';
 
 import {
+  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  type ChartConfig,
   ChartContainer,
   ChartStyle,
   ChartTooltip,

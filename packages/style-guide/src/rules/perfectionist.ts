@@ -107,6 +107,19 @@ export const perfectionistRules: Linter.Config = {
     ],
 
     /**
+     * Enforce sorted named imports.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-named-imports
+     */
+    'perfectionist/sort-named-imports': [
+      'warn',
+      {
+        type: 'natural',
+        groupKind: 'types-first',
+      },
+    ],
+
+    /**
      * Enforce sorted object types.
      *
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-object-types

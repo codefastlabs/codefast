@@ -1,5 +1,5 @@
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { type CSSProperties, forwardRef, type HTMLAttributes } from 'react';
+import { type CSSProperties, type HTMLAttributes, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
