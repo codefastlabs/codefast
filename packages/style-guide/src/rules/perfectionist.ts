@@ -44,6 +44,18 @@ export const perfectionistRules: Linter.Config = {
     ],
 
     /**
+     * Enforce sorted exports.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-exports
+     */
+    'perfectionist/sort-exports': [
+      'error',
+      {
+        type: 'natural',
+      },
+    ],
+
+    /**
      * Enforce sorted imports.
      *
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-imports
