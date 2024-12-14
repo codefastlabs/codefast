@@ -12,6 +12,16 @@ const disabledRules: Partial<Linter.RulesRecord> = {
   '@typescript-eslint/sort-type-constituents': 'off',
 
   /**
+   * Disabled for `sort-imports` rule
+   */
+  'import/order': 'off',
+
+  /**
+   * Disabled for `sort-imports` rule
+   */
+  'sort-imports': 'off',
+
+  /**
    * Disabled for `sort-objects` rule
    */
   'sort-keys': 'off',
@@ -29,6 +39,19 @@ export const perfectionistRules: Linter.Config = {
     'perfectionist/sort-enums': [
       'warn',
       {
+        type: 'natural',
+      },
+    ],
+
+    /**
+     * Enforce sorted imports.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-imports
+     */
+    'perfectionist/sort-imports': [
+      'error',
+      {
+        internalPattern: ['^@/.+', '^~/.+'],
         type: 'natural',
       },
     ],

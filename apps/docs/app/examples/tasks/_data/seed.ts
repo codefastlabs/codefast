@@ -1,8 +1,7 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
 import { faker } from '@faker-js/faker';
 import { consola } from 'consola';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { labels, priorities, statuses } from '@/app/examples/tasks/_data/data';
 

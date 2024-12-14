@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
 import { labelGridcell } from '@/lib';
-
 import { gridcell } from '~/lib/elements';
 import { OutsideDays } from '~/outside-days';
 

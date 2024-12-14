@@ -1,5 +1,7 @@
 'use client';
 
+import type * as LabelPrimitive from '@radix-ui/react-label';
+
 import { createContextScope, type Scope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
 import { result } from 'lodash-es';
@@ -24,8 +26,6 @@ import {
 
 import { Label } from '@/components/label';
 import { cn } from '@/lib/utils';
-
-import type * as LabelPrimitive from '@radix-ui/react-label';
 
 /* -----------------------------------------------------------------------------
  * Component: Form
