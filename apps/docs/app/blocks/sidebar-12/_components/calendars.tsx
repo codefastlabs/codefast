@@ -11,7 +11,7 @@ import {
   SidebarSeparator,
 } from '@codefast/ui';
 import { CheckIcon, ChevronRightIcon } from 'lucide-react';
-import { Fragment, type JSX } from 'react';
+import { type JSX, Fragment } from 'react';
 
 interface CalendarsProps {
   calendars: {

@@ -1,12 +1,12 @@
 // Adjust the import path
 import {
+  type Locale,
   addDays,
   addMonths,
   addWeeks,
   addYears,
   endOfISOWeek,
   endOfWeek,
-  type Locale,
   startOfISOWeek,
   startOfWeek,
 } from 'date-fns';

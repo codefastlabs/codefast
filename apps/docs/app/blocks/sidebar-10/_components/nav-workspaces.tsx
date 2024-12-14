@@ -1,9 +1,9 @@
 import {
+  type SidebarGroup,
   cn,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-  type SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,

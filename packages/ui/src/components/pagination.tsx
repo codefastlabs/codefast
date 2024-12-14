@@ -1,8 +1,8 @@
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
-import { type AnchorHTMLAttributes, forwardRef, type HTMLAttributes, type JSX, type LiHTMLAttributes } from 'react';
+import { type AnchorHTMLAttributes, type HTMLAttributes, type JSX, type LiHTMLAttributes, forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
+import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

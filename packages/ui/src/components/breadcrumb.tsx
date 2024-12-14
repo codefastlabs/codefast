@@ -2,12 +2,12 @@ import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 import {
   type AnchorHTMLAttributes,
-  forwardRef,
   type HTMLAttributes,
   type JSX,
   type LiHTMLAttributes,
   type OlHTMLAttributes,
   type ReactNode,
+  forwardRef,
 } from 'react';
 
 import { cn } from '@/lib/utils';
