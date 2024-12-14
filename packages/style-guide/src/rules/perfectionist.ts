@@ -7,7 +7,7 @@ const disabledRules: Partial<Linter.RulesRecord> = {
   'sort-keys': 'off',
 
   /**
-   * Disabled for `sort-interfaces` rule.
+   * Disabled for `sort-interfaces`, `sort-object-types` rules.
    */
   '@typescript-eslint/adjacent-overload-signatures': 'off',
 };
@@ -51,6 +51,19 @@ export const perfectionistRules: Linter.Config = {
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-interfaces
      */
     'perfectionist/sort-interfaces': [
+      'error',
+      {
+        type: 'natural',
+        groups: ['required-member', 'optional-member'],
+      },
+    ],
+
+    /**
+     * Enforce sorted object types.
+     *
+     * 🔧 Fixable - https://perfectionist.dev/rules/sort-object-types
+     */
+    'perfectionist/sort-object-types': [
       'error',
       {
         type: 'natural',
