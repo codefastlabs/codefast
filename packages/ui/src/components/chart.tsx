@@ -39,7 +39,7 @@ interface ThemeConfig {
   color?: never;
 }
 
-type ChartConfigItem = IconLabelConfig & (ColorConfig | ThemeConfig);
+type ChartConfigItem = (ColorConfig | ThemeConfig) & IconLabelConfig;
 
 type ChartConfig = Record<string, ChartConfigItem | undefined>;
 
@@ -139,7 +139,7 @@ interface ChartTooltipContentProps
     Omit<ComponentProps<'div'>, 'content'> {
   hideIndicator?: boolean;
   hideLabel?: boolean;
-  indicator?: 'line' | 'dot' | 'dashed';
+  indicator?: 'dashed' | 'dot' | 'line';
   labelKey?: string;
   nameKey?: string;
 }

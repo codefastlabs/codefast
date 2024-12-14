@@ -27,7 +27,7 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
  * -------------------------------------------------------------------------- */
 
 type AlertElement = HTMLDivElement;
-type AlertProps = HTMLAttributes<HTMLDivElement> & AlertVariantsProps;
+type AlertProps = AlertVariantsProps & HTMLAttributes<HTMLDivElement>;
 
 const Alert = forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, forwardedRef) => (
   <div ref={forwardedRef} className={alertVariants({ className, variant })} role="alert" {...props} />

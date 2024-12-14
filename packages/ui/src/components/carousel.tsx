@@ -30,19 +30,19 @@ interface BaseCarouselProps {
   setApi?: (api: CarouselApi) => void;
 }
 
-type CarouselContextValue = {
+type CarouselContextValue = BaseCarouselProps & {
   api: ReturnType<typeof useEmblaCarousel>[1];
   canScrollNext: boolean;
   canScrollPrev: boolean;
   carouselRef: ReturnType<typeof useEmblaCarousel>[0];
   scrollNext: () => void;
   scrollPrev: () => void;
-} & BaseCarouselProps;
+};
 
 const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 type CarouselElement = HTMLDivElement;
-type CarouselProps = HTMLAttributes<HTMLDivElement> & BaseCarouselProps;
+type CarouselProps = BaseCarouselProps & HTMLAttributes<HTMLDivElement>;
 
 const Carousel = forwardRef<CarouselElement, CarouselProps>(
   (

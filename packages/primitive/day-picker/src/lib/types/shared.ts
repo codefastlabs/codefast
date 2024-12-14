@@ -33,7 +33,7 @@ import type * as components from '@/components/ui';
  * - `multiple`: allow selecting multiple days.
  * - `range`: use DayPicker to select a range of days.
  */
-export type Mode = 'single' | 'multiple' | 'range';
+export type Mode = 'multiple' | 'range' | 'single';
 
 /**
  * The components that can be changed using the `components` prop.
@@ -312,14 +312,14 @@ export interface Labels {
  * ```
  */
 export type Matcher =
-  | boolean
   | ((date: Date) => boolean)
+  | boolean
   | Date
   | Date[]
-  | DateRange
-  | DateBefore
   | DateAfter
+  | DateBefore
   | DateInterval
+  | DateRange
   | DayOfWeek;
 
 /**
@@ -433,13 +433,13 @@ export type MonthChangeEventHandler = (month: Date) => void;
  *   };
  * ```
  */
-export type ClassNames = Record<UI | SelectionState | DayFlag, string>;
+export type ClassNames = Record<DayFlag | SelectionState | UI, string>;
 
 /**
  * The CSS styles to use for the {@link UI} elements, the {@link SelectionState}
  * and the {@link DayFlag}.
  */
-export type Styles = Record<UI | SelectionState | DayFlag, CSSProperties | undefined>;
+export type Styles = Record<DayFlag | SelectionState | UI, CSSProperties | undefined>;
 
 /**
  * Represents the modifiers that match a specific day in the calendar.
@@ -502,4 +502,4 @@ export type MoveFocusDir = 'after' | 'before';
 /**
  * The temporal unit to move the focus by.
  */
-export type MoveFocusBy = 'day' | 'week' | 'startOfWeek' | 'endOfWeek' | 'month' | 'year';
+export type MoveFocusBy = 'day' | 'endOfWeek' | 'month' | 'startOfWeek' | 'week' | 'year';

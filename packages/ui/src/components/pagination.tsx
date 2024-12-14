@@ -55,7 +55,7 @@ PaginationItem.displayName = 'PaginationItem';
 
 interface PaginationLinkProps
   extends AnchorHTMLAttributes<HTMLAnchorElement>,
-    Pick<ButtonVariantsProps, 'size' | 'icon'> {
+    Pick<ButtonVariantsProps, 'icon' | 'size'> {
   isActive?: boolean;
 }
 

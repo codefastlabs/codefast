@@ -10,7 +10,7 @@ export function getFocusableDate(
   refDate: Date,
   navStart: Date | undefined,
   navEnd: Date | undefined,
-  props: Pick<DayPickerProps, 'ISOWeek' | 'broadcastCalendar'>,
+  props: Pick<DayPickerProps, 'broadcastCalendar' | 'ISOWeek'>,
   dateLib: DateLib,
 ): Date {
   const { broadcastCalendar, ISOWeek } = props;

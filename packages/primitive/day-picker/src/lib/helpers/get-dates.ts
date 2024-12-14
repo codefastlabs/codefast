@@ -13,7 +13,7 @@ export const NrOfDaysBroadcast = 35;
 export function getDates(
   displayMonths: Date[],
   maxDate: Date | undefined,
-  props: Pick<DayPickerProps, 'ISOWeek' | 'fixedWeeks' | 'broadcastCalendar'>,
+  props: Pick<DayPickerProps, 'broadcastCalendar' | 'fixedWeeks' | 'ISOWeek'>,
   dateLib: DateLib,
 ): Date[] {
   const firstMonth = displayMonths[0];
