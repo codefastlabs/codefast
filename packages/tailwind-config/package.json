@@ -37,7 +37,7 @@
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
     "dev": "tsup --watch",
-    "lint": "eslint --max-warnings 0"
+    "lint": "TIMING=1 eslint --max-warnings 0"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
