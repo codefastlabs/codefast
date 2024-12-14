@@ -5,9 +5,7 @@ import { vitestRules } from '@/rules/vitest';
 
 /** @type {import('eslint').Linter.Config} */
 export const vitestConfig: Linter.Config = {
-  plugins: {
-    vitest: vitestPlugin,
-  },
+  ...vitestPlugin.configs.recommended,
   rules: {
     ...vitestPlugin.configs.recommended.rules,
     ...vitestRules.rules,
