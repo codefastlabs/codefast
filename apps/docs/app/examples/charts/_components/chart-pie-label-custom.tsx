@@ -1,20 +1,20 @@
 'use client';
 
 import {
+  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
 import { type JSX } from 'react';
-import { Pie, PieChart, type PieProps } from 'recharts';
+import { type PieProps, Pie, PieChart } from 'recharts';
 import { type PieLabel } from 'recharts/types/polar/Pie';
 
 export const description = 'A pie chart with a custom label';

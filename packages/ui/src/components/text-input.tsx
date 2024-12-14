@@ -2,7 +2,7 @@ import * as InputPrimitive from '@codefast-ui/input';
 import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
 
 import { Spinner } from '@/components/spinner';
-import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
+import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

@@ -8,8 +8,8 @@ import { PanelLeftIcon } from 'lucide-react';
 import {
   type ComponentProps,
   type ComponentRef,
-  createContext,
   type CSSProperties,
+  createContext,
   forwardRef,
   useCallback,
   useContext,
@@ -17,7 +17,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { Button } from '@/components/button';
 import { Separator } from '@/components/separator';

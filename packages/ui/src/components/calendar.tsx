@@ -4,9 +4,9 @@ import {
   type Components,
   type DateRange,
   type DayButtonProps,
+  type DayPickerProps,
   DayFlag,
   DayPicker,
-  type DayPickerProps,
   SelectionState,
   UI,
 } from '@codefast-ui/day-picker';

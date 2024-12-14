@@ -3,13 +3,13 @@ import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
   type ComponentRef,
-  forwardRef,
   type HTMLAttributes,
   type JSX,
+  forwardRef,
 } from 'react';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
+import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog

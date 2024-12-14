@@ -1,7 +1,7 @@
 import { addMonths } from 'date-fns';
 import { type JSX } from 'react';
 
-import { DayPicker, type WeekNumberProps } from '@/components';
+import { type WeekNumberProps, DayPicker } from '@/components';
 
 const today = new Date(2021, 0, 1);
 

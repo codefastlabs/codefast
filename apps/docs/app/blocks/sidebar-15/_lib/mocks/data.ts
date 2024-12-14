@@ -1,11 +1,11 @@
 import {
+  type LucideIcon,
   AudioWaveformIcon,
   BlocksIcon,
   CalendarIcon,
   CommandIcon,
   HomeIcon,
   InboxIcon,
-  type LucideIcon,
   MessageCircleQuestionIcon,
   SearchIcon,
   Settings2Icon,

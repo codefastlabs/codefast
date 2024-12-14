@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  type PopoverProps,
   Button,
   cn,
   Command,
@@ -12,7 +13,6 @@ import {
   CommandSeparator,
   Popover,
   PopoverContent,
-  type PopoverProps,
   PopoverTrigger,
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';

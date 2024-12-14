@@ -1,6 +1,6 @@
 'use client';
 
-import { HoverCard, HoverCardContent, HoverCardTrigger, Label, Slider, type SliderProps } from '@codefast/ui';
+import { type SliderProps, HoverCard, HoverCardContent, HoverCardTrigger, Label, Slider } from '@codefast/ui';
 import { type JSX, useState } from 'react';
 
 interface MaxLengthSelectorProps {

@@ -1,15 +1,15 @@
 'use client';
 
 import {
-  cn,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
+  cn,
+  Separator,
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-  Separator,
 } from '@codefast/ui';
 import { type ComponentProps, type JSX } from 'react';
 

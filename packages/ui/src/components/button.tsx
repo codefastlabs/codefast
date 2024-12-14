@@ -1,7 +1,7 @@
-import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode, forwardRef } from 'react';
 
 import { Spinner } from '@/components/spinner';
-import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
+import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Button

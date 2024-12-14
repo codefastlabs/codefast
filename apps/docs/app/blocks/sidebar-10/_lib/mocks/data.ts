@@ -1,10 +1,12 @@
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  CopyIcon,
+  AudioWaveformIcon,
   BellIcon,
   BlocksIcon,
   CalendarIcon,
+  CommandIcon,
+  CopyIcon,
   CornerUpLeftIcon,
   CornerUpRightIcon,
   FileTextIcon,
@@ -19,8 +21,6 @@ import {
   SparklesIcon,
   Trash2Icon,
   TrashIcon,
-  CommandIcon,
-  AudioWaveformIcon,
 } from 'lucide-react';
 
 export const data = {

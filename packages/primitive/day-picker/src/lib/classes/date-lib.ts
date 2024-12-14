@@ -1,18 +1,19 @@
 import {
+  type DateArg,
+  type FormatOptions as DateFnsFormatOptions,
+  type EndOfWeekOptions,
+  type StartOfWeekOptions,
   addDays,
   addMonths,
   addWeeks,
   addYears,
-  type DateArg,
   differenceInCalendarDays,
   differenceInCalendarMonths,
   endOfISOWeek,
   endOfMonth,
   endOfWeek,
-  type EndOfWeekOptions,
   endOfYear,
   format,
-  type FormatOptions as DateFnsFormatOptions,
   getISOWeek,
   getWeek,
   isAfter,
@@ -29,10 +30,9 @@ import {
   startOfISOWeek,
   startOfMonth,
   startOfWeek,
-  type StartOfWeekOptions,
   startOfYear,
 } from 'date-fns';
-import { enUS, type Locale } from 'date-fns/locale';
+import { type Locale, enUS } from 'date-fns/locale';
 
 import { endOfBroadcastWeek } from '@/lib/helpers/end-of-broadcast-week';
 import { startOfBroadcastWeek } from '@/lib/helpers/start-of-broadcast-week';

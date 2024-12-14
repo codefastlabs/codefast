@@ -1,11 +1,11 @@
 import {
+  type LucideIcon,
   AudioWaveformIcon,
   BookOpenIcon,
   BotIcon,
   CommandIcon,
   FrameIcon,
   GalleryVerticalEndIcon,
-  type LucideIcon,
   MapIcon,
   PieChartIcon,
   Settings2Icon,

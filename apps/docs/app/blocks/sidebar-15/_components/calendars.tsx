@@ -11,7 +11,7 @@ import {
   SidebarSeparator,
 } from '@codefast/ui';
 import { CheckIcon, ChevronRightIcon } from '@radix-ui/react-icons';
-import { Fragment, type JSX } from 'react';
+import { type JSX, Fragment } from 'react';
 
 import { type Calendar } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 

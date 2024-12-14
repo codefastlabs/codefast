@@ -3,7 +3,11 @@ import {
   AvatarFallback,
   AvatarImage,
   Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
   cn,
   Collapsible,
   CollapsibleContent,
@@ -34,10 +38,6 @@ import {
   SidebarMenuSubItem,
   SidebarProvider,
   SidebarTrigger,
-  BreadcrumbItem,
-  BreadcrumbSeparator,
-  BreadcrumbPage,
-  BreadcrumbLink,
 } from '@codefast/ui';
 import {
   BadgeCheckIcon,

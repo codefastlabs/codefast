@@ -1,6 +1,6 @@
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type HTMLAttributes } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { type ComponentPropsWithoutRef, type ComponentRef, type HTMLAttributes, forwardRef } from 'react';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 

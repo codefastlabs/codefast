@@ -1,13 +1,13 @@
 'use client';
 
 import {
+  type SidebarGroup,
   cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  type SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,

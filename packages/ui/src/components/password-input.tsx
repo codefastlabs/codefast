@@ -6,15 +6,15 @@ import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
   type ComponentRef,
-  forwardRef,
   type MouseEventHandler,
+  forwardRef,
   useCallback,
   useState,
 } from 'react';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
-import { inputVariants, type InputVariantsProps } from '@/styles/input-variants';
+import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: PasswordInput
