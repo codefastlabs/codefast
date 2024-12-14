@@ -1,4 +1,4 @@
-import { DateLib, type DateLibOptions } from '@/lib/classes/date-lib';
+import { type DateLibOptions, DateLib } from '@/lib/classes/date-lib';
 
 /**
  * Return an ARIA label for the month grid, that will be announced when entering

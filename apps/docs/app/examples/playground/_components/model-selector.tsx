@@ -2,6 +2,7 @@
 
 import { useMutationObserver } from '@codefast/hooks';
 import {
+  type PopoverProps,
   Button,
   cn,
   Command,
@@ -16,7 +17,6 @@ import {
   Label,
   Popover,
   PopoverContent,
-  type PopoverProps,
   PopoverTrigger,
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';

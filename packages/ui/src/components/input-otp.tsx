@@ -2,7 +2,7 @@
 
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { DotIcon } from 'lucide-react';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef, type HTMLAttributes, useContext } from 'react';
+import { type ComponentPropsWithoutRef, type ComponentRef, type HTMLAttributes, forwardRef, useContext } from 'react';
 
 import { cn } from '@/lib/utils';
 

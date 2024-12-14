@@ -1,4 +1,4 @@
-import { CalendarDay, CalendarWeek, CalendarMonth } from '@/lib/classes';
+import { CalendarDay, CalendarMonth, CalendarWeek } from '@/lib/classes';
 import { getDays } from '@/lib/helpers/get-days';
 
 const days1 = [

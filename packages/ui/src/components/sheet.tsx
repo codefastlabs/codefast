@@ -4,14 +4,14 @@ import {
   type ComponentProps,
   type ComponentPropsWithoutRef,
   type ComponentRef,
-  forwardRef,
   type HTMLAttributes,
   type JSX,
+  forwardRef,
 } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants, type ButtonVariantsProps } from '@/styles/button-variants';
+import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent

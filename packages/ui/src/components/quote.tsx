@@ -1,5 +1,5 @@
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef, type QuoteHTMLAttributes } from 'react';
+import { type QuoteHTMLAttributes, forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Quote
