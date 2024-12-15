@@ -1,4 +1,4 @@
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 /**
  * These are enabled by `import/recommended` but are better handled by

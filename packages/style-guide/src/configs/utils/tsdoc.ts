@@ -1,5 +1,5 @@
 import tsdocPlugin from 'eslint-plugin-tsdoc';
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import { tsdocRules } from '@/rules/tsdoc';
 
