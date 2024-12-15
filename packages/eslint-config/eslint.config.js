@@ -6,9 +6,4 @@ export default [
   {
     ignores: ['*.config.js'],
   },
-  {
-    rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-    },
-  },
 ];
