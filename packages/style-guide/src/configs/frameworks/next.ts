@@ -1,3 +1,5 @@
+import type { Linter } from 'eslint';
+
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import nextPlugin from '@next/eslint-plugin-next';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
@@ -5,7 +7,6 @@ import importPlugin from 'eslint-plugin-import';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import reactPlugin from 'eslint-plugin-react';
-import type { Linter } from 'eslint';
 
 export const nextConfig: Linter.Config[] = [
   {

@@ -1,6 +1,7 @@
+import type { Linter } from 'eslint';
+
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import type { Linter } from 'eslint';
 
 /**
  * Vì react-hooks chưa được nâng cấp lên eslint 9, chúng ta cần khai báo plugins.

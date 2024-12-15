@@ -76,8 +76,8 @@ export const perfectionistRules: Linter.Config = {
     'perfectionist/sort-interfaces': [
       'warn',
       {
-        type: 'natural',
         groups: ['required-member', 'optional-member'],
+        type: 'natural',
       },
     ],
 
@@ -101,8 +101,8 @@ export const perfectionistRules: Linter.Config = {
     'perfectionist/sort-named-exports': [
       'warn',
       {
-        type: 'natural',
         groupKind: 'values-first',
+        type: 'natural',
       },
     ],
 
@@ -114,8 +114,8 @@ export const perfectionistRules: Linter.Config = {
     'perfectionist/sort-named-imports': [
       'warn',
       {
-        type: 'natural',
         groupKind: 'types-first',
+        type: 'natural',
       },
     ],
 
@@ -127,8 +127,8 @@ export const perfectionistRules: Linter.Config = {
     'perfectionist/sort-object-types': [
       'warn',
       {
-        type: 'natural',
         groups: ['required-member', 'optional-member'],
+        type: 'natural',
       },
     ],
 
@@ -140,12 +140,12 @@ export const perfectionistRules: Linter.Config = {
     'perfectionist/sort-objects': [
       'warn',
       {
-        type: 'natural',
-        groups: ['top', ['multiline', 'method', 'unknown'], 'bottom'],
         customGroups: {
-          top: ['^id$', '^__'],
           bottom: ['At$', '_at$'],
+          top: ['^id$', '^__'],
         },
+        groups: ['top', ['multiline', 'method', 'unknown'], 'bottom'],
+        type: 'natural',
       },
     ],
 
