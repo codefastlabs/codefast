@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.8
+
+### Patch Changes
+
+- [`45a5576`](https://github.com/codefastlabs/codefast/commit/45a55762ad0b0a33376c0b74d8bcf05ac8f376a4) Thanks [@thevuong](https://github.com/thevuong)! - centralize shared rules configuration
+
+- Updated dependencies [[`45a5576`](https://github.com/codefastlabs/codefast/commit/45a55762ad0b0a33376c0b74d8bcf05ac8f376a4)]:
+  - @codefast/style-guide@0.2.8
+
 ## 0.2.7
 
 ### Patch Changes
