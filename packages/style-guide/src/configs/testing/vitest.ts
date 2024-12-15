@@ -1,5 +1,6 @@
-import vitestPlugin from '@vitest/eslint-plugin';
 import type { Linter } from 'eslint';
+
+import vitestPlugin from '@vitest/eslint-plugin';
 
 import { vitestRules } from '@/rules/vitest';
 

@@ -1,5 +1,6 @@
-import unicornPlugin from 'eslint-plugin-unicorn';
 import type { Linter } from 'eslint';
+
+import unicornPlugin from 'eslint-plugin-unicorn';
 
 import { unicornRules } from '@/rules/unicorn';
 

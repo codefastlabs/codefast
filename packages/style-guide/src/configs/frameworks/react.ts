@@ -1,12 +1,13 @@
-import reactPlugin from 'eslint-plugin-react';
-// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import importPlugin from 'eslint-plugin-import';
-// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import prettierConfig from 'eslint-config-prettier';
 import type { Linter } from 'eslint';
 
-import { reactHooksConfig } from '@/configs/utils/react-hooks';
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
+import prettierConfig from 'eslint-config-prettier';
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
+import importPlugin from 'eslint-plugin-import';
+import reactPlugin from 'eslint-plugin-react';
+
 import { jsxA11yConfig } from '@/configs/utils/jsx-a11y';
+import { reactHooksConfig } from '@/configs/utils/react-hooks';
 import { reactRules } from '@/rules/react';
 
 export const reactConfig: Linter.Config[] = [

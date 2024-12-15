@@ -1,5 +1,6 @@
-import playwrightPlugin from 'eslint-plugin-playwright';
 import type { Linter } from 'eslint';
+
+import playwrightPlugin from 'eslint-plugin-playwright';
 
 import { playwrightTestRules } from '@/rules/playwright-test';
 

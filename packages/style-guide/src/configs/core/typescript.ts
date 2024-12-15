@@ -1,9 +1,10 @@
-import tsConfig from 'typescript-eslint';
-// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import importPlugin from 'eslint-plugin-import';
+import type { Linter } from 'eslint';
+
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import prettierConfig from 'eslint-config-prettier';
-import type { Linter } from 'eslint';
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
+import importPlugin from 'eslint-plugin-import';
+import tsConfig from 'typescript-eslint';
 
 import { tsdocConfig } from '@/configs/utils/tsdoc';
 import { typescriptRules } from '@/rules/typescript';

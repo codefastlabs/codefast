@@ -1,6 +1,7 @@
+import type { Linter } from 'eslint';
+
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import importPlugin from 'eslint-plugin-import';
-import type { Linter } from 'eslint';
 
 import { importRules } from '@/rules/import';
 
