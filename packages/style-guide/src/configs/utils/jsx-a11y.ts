@@ -5,7 +5,6 @@ import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 
 import { jsxA11yRules } from '@/rules/jsx-a11y';
 
-/** @type {import('eslint').Linter.Config} */
 export const jsxA11yConfig: Linter.Config = {
   ...jsxA11yPlugin.flatConfigs.recommended,
   rules: {

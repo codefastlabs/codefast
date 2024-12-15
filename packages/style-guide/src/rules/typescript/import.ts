@@ -2,7 +2,7 @@ import type { Linter } from 'eslint';
 
 /**
  * These are enabled by `import/recommended` but are better handled by
- * TypeScript and @typescript-eslint.
+ * TypeScript and \@typescript-eslint.
  */
 const disabledRules: Partial<Linter.RulesRecord> = {
   'import/default': 'off',

@@ -4,11 +4,11 @@ import type { Linter } from 'eslint';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 /**
- * Vì react-hooks chưa được nâng cấp lên eslint 9, chúng ta cần khai báo plugins.
- * Cú pháp đề xuất:
+ * Because `eslint-plugin-react-hooks` hasn't been upgraded to eslint 9, we need to declare plugins.
+ * Suggested syntax:
  *
  * @example
- * ```js
+ * ```ts
  * {
  *   ...reactHooksPlugin.configs.recommended,
  *   rules: {
@@ -16,8 +16,6 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
  *   },
  * }
  * ```
- *
- * @type {import('eslint').Linter.Config}
  */
 export const reactHooksConfig: Linter.Config = {
   plugins: {

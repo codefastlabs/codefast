@@ -4,7 +4,6 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 
 import { unicornRules } from '@/rules/unicorn';
 
-/** @type {import('eslint').Linter.Config} */
 export const unicornConfig: Linter.Config = {
   ...unicornPlugin.configs['flat/recommended'],
   rules: {

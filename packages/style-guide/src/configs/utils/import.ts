@@ -5,7 +5,6 @@ import importPlugin from 'eslint-plugin-import';
 
 import { importRules } from '@/rules/import';
 
-/** @type {import('eslint').Linter.Config} */
 export const importConfig: Linter.Config = {
   ...importPlugin.flatConfigs.recommended,
   rules: {
