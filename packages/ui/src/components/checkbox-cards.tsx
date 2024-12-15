@@ -1,6 +1,8 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from 'lucide-react';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -57,4 +59,5 @@ CheckboxCardsItem.displayName = CheckboxGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { CheckboxCards, CheckboxCardsItem, type CheckboxCardsItemProps, type CheckboxCardsProps };
+export type { CheckboxCardsItemProps, CheckboxCardsProps };
+export { CheckboxCards, CheckboxCardsItem };

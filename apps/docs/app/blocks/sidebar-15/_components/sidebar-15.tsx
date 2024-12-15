@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +13,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@codefast/ui';
-import { type ComponentProps, type JSX } from 'react';
 
 import { SidebarLeft } from '@/app/blocks/sidebar-15/_components/sidebar-left';
 import { SidebarRight } from '@/app/blocks/sidebar-15/_components/sidebar-right';

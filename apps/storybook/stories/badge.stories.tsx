@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Badge } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { ShieldCheckIcon } from 'lucide-react';
 
 const meta = {

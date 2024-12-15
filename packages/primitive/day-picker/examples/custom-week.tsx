@@ -1,8 +1,12 @@
+import type { JSX } from 'react';
+
 import { endOfWeek, startOfWeek } from 'date-fns';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
+
+import type { DateRange } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DateRange, rangeIncludesDate } from '@/lib';
+import { rangeIncludesDate } from '@/lib';
 
 export function CustomWeek(): JSX.Element {
   const [selectedWeek, setSelectedWeek] = useState<DateRange | undefined>();

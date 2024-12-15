@@ -1,5 +1,6 @@
+import type { Config } from 'tailwindcss';
+
 import sharedConfig from '@codefast/tailwind-config';
-import { type Config } from 'tailwindcss';
 
 const tailwindcssConfig: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],

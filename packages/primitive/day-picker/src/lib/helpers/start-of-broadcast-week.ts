@@ -1,4 +1,4 @@
-import { type DateLib } from '@/lib';
+import type { DateLib } from '@/lib';
 
 /**
  * Return the start date of the week in the broadcast calendar.

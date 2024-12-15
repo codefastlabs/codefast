@@ -1,7 +1,8 @@
-import { type JSX, type MouseEvent } from 'react';
+import type { JSX, MouseEvent } from 'react';
+
+import type { DayEventHandler } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DayEventHandler } from '@/lib';
 
 export const bookedDays = [
   new Date(2024, 5, 8),

@@ -1,3 +1,6 @@
+import type { Row } from '@tanstack/react-table';
+import type { JSX } from 'react';
+
 import {
   Button,
   DropdownMenu,
@@ -13,8 +16,6 @@ import {
   DropdownMenuTrigger,
 } from '@codefast/ui';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { type Row } from '@tanstack/react-table';
-import { type JSX } from 'react';
 
 import { labels } from '@/app/examples/tasks/_data/data';
 import { taskSchema } from '@/app/examples/tasks/_data/schema';

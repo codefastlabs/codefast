@@ -1,3 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
+
 import {
   Button,
   Checkbox,
@@ -20,18 +23,13 @@ import {
   TextInput,
 } from '@codefast/ui';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type SortingState,
   useReactTable,
-  type VisibilityState,
 } from '@tanstack/react-table';
 import { SearchIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -55,13 +53,14 @@ interface Payment {
   amount: number;
   email: string;
   id: string;
-  status: 'pending' | 'processing' | 'success' | 'failed';
+  status: 'failed' | 'pending' | 'processing' | 'success';
 }
 
 const payments = data as Payment[];
 
 const columns: ColumnDef<Payment>[] = [
   {
+    id: 'select',
     cell: ({ row }) => (
       <Checkbox
         aria-label="Select row"
@@ -82,7 +81,6 @@ const columns: ColumnDef<Payment>[] = [
         }}
       />
     ),
-    id: 'select',
   },
   {
     accessorKey: 'status',
@@ -109,6 +107,7 @@ const columns: ColumnDef<Payment>[] = [
     header: () => <div className="text-right">Amount</div>,
   },
   {
+    id: 'actions',
     cell: ({ row }) => {
       const payment = row.original;
 
@@ -138,7 +137,6 @@ const columns: ColumnDef<Payment>[] = [
       );
     },
     enableHiding: false,
-    id: 'actions',
     meta: {},
   },
 ];

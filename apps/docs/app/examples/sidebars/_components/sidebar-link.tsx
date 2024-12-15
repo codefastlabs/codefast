@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
+
 import Link from 'next/link';
-import { type JSX } from 'react';
 
 export function SidebarLink({ href, title }: { href: string; title: string }): JSX.Element {
   return (

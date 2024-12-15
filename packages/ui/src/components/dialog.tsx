@@ -1,16 +1,13 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
+
+import type { ButtonVariantsProps } from '@/styles/button-variants';
 
 import { cn } from '@/lib/utils';
-import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -171,6 +168,17 @@ DialogClose.displayName = DialogPrimitive.Close.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  DialogBodyProps,
+  DialogCloseProps,
+  DialogContentProps,
+  DialogDescriptionProps,
+  DialogFooterProps,
+  DialogHeaderProps,
+  DialogProps,
+  DialogTitleProps,
+  DialogTriggerProps,
+};
 export {
   Dialog,
   DialogBody,
@@ -181,13 +189,4 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  type DialogBodyProps,
-  type DialogCloseProps,
-  type DialogContentProps,
-  type DialogDescriptionProps,
-  type DialogFooterProps,
-  type DialogHeaderProps,
-  type DialogProps,
-  type DialogTitleProps,
-  type DialogTriggerProps,
 };

@@ -1,7 +1,8 @@
+import type { DayPickerProps } from '@/lib/types';
+
 import { CalendarMonth } from '@/lib/classes';
 import { DateLib } from '@/lib/classes/date-lib';
 import { getMonths } from '@/lib/helpers/get-months';
-import { type DayPickerProps } from '@/lib/types';
 
 const mockDates = [
   new Date(2023, 4, 27), // May 1, 2023

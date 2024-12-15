@@ -1,5 +1,6 @@
+import type { DayPickerProps, Formatters } from '@/lib/types';
+
 import * as defaultFormatters from '@/lib/formatters';
-import { type DayPickerProps, type Formatters } from '@/lib/types';
 
 /**
  * Return the formatters from the props merged with the default formatters.

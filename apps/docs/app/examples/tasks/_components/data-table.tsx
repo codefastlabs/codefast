@@ -1,11 +1,10 @@
 'use client';
 
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
+import type { JSX } from 'react';
+
 import { DataTablePagination, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@codefast/ui';
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -15,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
 
 import { DataTableToolbar } from '@/app/examples/tasks/_components/data-table-toolbar';
 

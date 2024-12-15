@@ -1,7 +1,9 @@
 'use client';
 
+import type { JSX, ReactNode } from 'react';
+
 import { cn, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@codefast/ui';
-import { type JSX, type ReactNode, useState } from 'react';
+import { useState } from 'react';
 
 interface AccountSwitcherProps {
   accounts: {

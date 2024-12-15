@@ -1,15 +1,9 @@
+import type { Scope } from '@radix-ui/react-context';
+import type { InputHTMLAttributes, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from 'react';
+
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
-import { type Scope, createContextScope } from '@radix-ui/react-context';
-import {
-  type InputHTMLAttributes,
-  type JSX,
-  type PointerEventHandler,
-  type PropsWithChildren,
-  type ReactNode,
-  type RefObject,
-  forwardRef,
-  useRef,
-} from 'react';
+import { createContextScope } from '@radix-ui/react-context';
+import { forwardRef, useRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Input
@@ -110,4 +104,5 @@ InputItem.displayName = INPUT_ITEM_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { createInputScope, Input, InputItem, InputItem as Item, Input as Root, type InputItemProps, type InputProps };
+export type { InputItemProps, InputProps };
+export { createInputScope, Input, InputItem, InputItem as Item, Input as Root };

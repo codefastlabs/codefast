@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Button,
   Card,
@@ -10,7 +12,6 @@ import {
   PasswordInput,
   TextInput,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 
 import { Icons } from '@/components/icons';
 

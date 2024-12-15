@@ -1,6 +1,8 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { CheckIcon } from 'lucide-react';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -37,4 +39,5 @@ Checkbox.displayName = CheckboxPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Checkbox, type CheckboxProps };
+export type { CheckboxProps };
+export { Checkbox };

@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -11,7 +13,7 @@ import {
   SidebarSeparator,
 } from '@codefast/ui';
 import { CheckIcon, ChevronRightIcon } from 'lucide-react';
-import { type JSX, Fragment } from 'react';
+import { Fragment } from 'react';
 
 interface CalendarsProps {
   calendars: {

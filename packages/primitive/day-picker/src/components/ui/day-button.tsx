@@ -1,7 +1,9 @@
-import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
-import { type CalendarDay } from '@/lib/classes';
-import { type Modifiers } from '@/lib/types';
+import { useEffect, useRef } from 'react';
+
+import type { CalendarDay } from '@/lib/classes';
+import type { Modifiers } from '@/lib/types';
 
 export type DayButtonProps = ComponentProps<'button'> & {
   /**

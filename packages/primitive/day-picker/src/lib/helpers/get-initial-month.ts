@@ -1,7 +1,7 @@
 import { TZDate } from '@date-fns/tz';
 
-import { type DateLib } from '@/lib/classes/date-lib';
-import { type DayPickerProps } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps } from '@/lib/types';
 
 /**
  * Return the start month based on the props passed to DayPicker.

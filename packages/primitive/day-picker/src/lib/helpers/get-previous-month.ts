@@ -1,5 +1,5 @@
-import { type DateLib } from '@/lib/classes/date-lib';
-import { type DayPickerProps } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps } from '@/lib/types';
 
 /**
  * Return the next previous the user can navigate to, according to the given

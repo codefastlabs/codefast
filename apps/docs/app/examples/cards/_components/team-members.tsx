@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -19,7 +21,6 @@ import {
   PopoverTrigger,
 } from '@codefast/ui';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { type JSX } from 'react';
 
 export function TeamMembers(): JSX.Element {
   return (

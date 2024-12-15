@@ -1,9 +1,11 @@
+import type { JSX } from 'react';
+
 import { format } from 'date-fns';
 import { arSA } from 'date-fns/locale';
-import { type JSX } from 'react';
+
+import type { DateLibOptions } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DateLibOptions } from '@/lib';
 
 export const NU_LOCALE = 'ar-u-nu-arab';
 

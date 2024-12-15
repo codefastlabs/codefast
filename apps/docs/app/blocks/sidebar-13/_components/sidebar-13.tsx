@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,7 +26,7 @@ import {
   SidebarProvider,
 } from '@codefast/ui';
 import Link from 'next/link';
-import { type ComponentProps, type JSX, useState } from 'react';
+import { useState } from 'react';
 
 import { data } from '@/app/blocks/sidebar-13/_lib/mocks/data';
 

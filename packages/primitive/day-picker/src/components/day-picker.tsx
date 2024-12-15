@@ -1,14 +1,11 @@
-import {
-  type ChangeEvent,
-  type FocusEvent,
-  type JSX,
-  type KeyboardEvent,
-  type MouseEvent,
-  useCallback,
-  useMemo,
-} from 'react';
+import type { ChangeEvent, FocusEvent, JSX, KeyboardEvent, MouseEvent } from 'react';
 
-import { type CalendarDay } from '@/lib/classes/calendar-day';
+import { useCallback, useMemo } from 'react';
+
+import type { CalendarDay } from '@/lib/classes/calendar-day';
+import type { DayPickerContext } from '@/lib/hooks/use-day-picker';
+import type { DayPickerProps, Modifiers, MoveFocusBy, MoveFocusDir, SelectedValue, SelectHandler } from '@/lib/types';
+
 import { DateLib } from '@/lib/classes/date-lib';
 import { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
 import { getClassNames } from '@/lib/helpers/get-class-names';
@@ -23,18 +20,10 @@ import { getStyleForModifiers } from '@/lib/helpers/get-style-for-modifiers';
 import { getWeekdays } from '@/lib/helpers/get-weekdays';
 import { getYearOptions } from '@/lib/helpers/get-year-options';
 import { useCalendar } from '@/lib/hooks/use-calendar';
-import { type DayPickerContext, dayPickerContext } from '@/lib/hooks/use-day-picker';
+import { dayPickerContext } from '@/lib/hooks/use-day-picker';
 import { useFocus } from '@/lib/hooks/use-focus';
 import { useGetModifiers } from '@/lib/hooks/use-get-modifiers';
 import { useSelection } from '@/lib/hooks/use-selection';
-import {
-  type DayPickerProps,
-  type Modifiers,
-  type MoveFocusBy,
-  type MoveFocusDir,
-  type SelectedValue,
-  type SelectHandler,
-} from '@/lib/types';
 import { isDateRange } from '@/lib/utils';
 import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
 

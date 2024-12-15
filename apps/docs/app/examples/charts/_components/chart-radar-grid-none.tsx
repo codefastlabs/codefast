@@ -1,9 +1,20 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui';
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@codefast/ui';
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { PolarAngleAxis, Radar, RadarChart } from 'recharts';
 
 export const description = 'A radar chart with no grid';

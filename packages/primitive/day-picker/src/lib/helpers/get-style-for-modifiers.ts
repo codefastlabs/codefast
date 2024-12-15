@@ -1,7 +1,8 @@
-import { type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
+
+import type { Modifiers, ModifiersStyles, Styles } from '@/lib/types';
 
 import { UI } from '@/lib/constants/ui';
-import { type Modifiers, type ModifiersStyles, type Styles } from '@/lib/types';
 
 /**
  * Retrieves the style for the given day modifiers by merging base styles with modifier-specific styles.

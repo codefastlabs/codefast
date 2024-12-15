@@ -1,6 +1,7 @@
-import { type JSX } from 'react';
+import type { JSX } from 'react';
 
-import { type DropdownProps } from '@/components/ui/dropdown';
+import type { DropdownProps } from '@/components/ui/dropdown';
+
 import { useDayPicker } from '@/lib/hooks/use-day-picker';
 
 /**

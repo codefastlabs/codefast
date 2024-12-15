@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -18,7 +20,6 @@ import {
   useSidebar,
 } from '@codefast/ui';
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from 'lucide-react';
-import { type ComponentProps, type JSX } from 'react';
 
 interface NavUserProps extends ComponentProps<typeof SidebarMenu> {
   user: {

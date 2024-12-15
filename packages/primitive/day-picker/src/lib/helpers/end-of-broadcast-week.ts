@@ -1,4 +1,5 @@
-import { type DateLib } from '@/lib';
+import type { DateLib } from '@/lib';
+
 import { getBroadcastWeeksInMonth } from '@/lib/helpers/get-broadcast-weeks-in-month';
 import { startOfBroadcastWeek } from '@/lib/helpers/start-of-broadcast-week';
 

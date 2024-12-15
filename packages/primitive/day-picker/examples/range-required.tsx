@@ -1,8 +1,11 @@
+import type { JSX } from 'react';
+
 import { addDays, format, startOfMonth } from 'date-fns';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
+
+import type { DateRange } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DateRange } from '@/lib';
 
 export function RangeRequired(): JSX.Element {
   const [range, setRange] = useState<DateRange>({

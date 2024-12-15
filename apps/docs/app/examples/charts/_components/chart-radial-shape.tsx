@@ -1,19 +1,12 @@
 'use client';
 
-import {
-  type ChartConfig,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  ChartContainer,
-} from '@codefast/ui';
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+import type { ContentType } from 'recharts/types/component/Label';
+
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from 'recharts';
-import { type ContentType } from 'recharts/types/component/Label';
 
 export const description = 'A radial chart with a custom shape';
 

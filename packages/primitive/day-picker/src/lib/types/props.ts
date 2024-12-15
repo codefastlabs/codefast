@@ -1,20 +1,20 @@
-import { type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent, type ReactNode } from 'react';
+import type { CSSProperties, FocusEvent, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
-import { type DateLib, type Locale } from '@/lib/classes/date-lib';
-import {
-  type ClassNames,
-  type Components,
-  type DateRange,
-  type DayEventHandler,
-  type Formatters,
-  type Labels,
-  type Matcher,
-  type Mode,
-  type Modifiers,
-  type ModifiersClassNames,
-  type ModifiersStyles,
-  type MonthChangeEventHandler,
-  type Styles,
+import type { DateLib, Locale } from '@/lib/classes/date-lib';
+import type {
+  ClassNames,
+  Components,
+  DateRange,
+  DayEventHandler,
+  Formatters,
+  Labels,
+  Matcher,
+  Mode,
+  Modifiers,
+  ModifiersClassNames,
+  ModifiersStyles,
+  MonthChangeEventHandler,
+  Styles,
 } from '@/lib/types/shared';
 
 /**

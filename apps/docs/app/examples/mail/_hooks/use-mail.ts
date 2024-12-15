@@ -1,6 +1,8 @@
 import { atom, useAtom } from 'jotai';
 
-import { type EmailMessage, mails } from '@/app/examples/mail/_data/data';
+import type { EmailMessage } from '@/app/examples/mail/_data/data';
+
+import { mails } from '@/app/examples/mail/_data/data';
 
 interface MailState {
   selected: EmailMessage['id'] | null;

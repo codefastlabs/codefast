@@ -1,4 +1,4 @@
-import { type DateFnsMonth, type Locale } from '@/lib/classes/date-lib';
+import type { DateFnsMonth, Locale } from '@/lib/classes/date-lib';
 
 /**
  * Format the month number for the dropdown option label.

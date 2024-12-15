@@ -1,13 +1,8 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -311,6 +306,23 @@ DropdownMenuArrow.displayName = DropdownMenuPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  DropdownMenuArrowProps,
+  DropdownMenuCheckboxItemProps,
+  DropdownMenuContentProps,
+  DropdownMenuGroupProps,
+  DropdownMenuItemProps,
+  DropdownMenuLabelProps,
+  DropdownMenuProps,
+  DropdownMenuRadioGroupProps,
+  DropdownMenuRadioItemProps,
+  DropdownMenuSeparatorProps,
+  DropdownMenuShortcutProps,
+  DropdownMenuSubContentProps,
+  DropdownMenuSubProps,
+  DropdownMenuSubTriggerProps,
+  DropdownMenuTriggerProps,
+};
 export {
   DropdownMenu,
   DropdownMenuArrow,
@@ -327,19 +339,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-  type DropdownMenuArrowProps,
-  type DropdownMenuCheckboxItemProps,
-  type DropdownMenuContentProps,
-  type DropdownMenuGroupProps,
-  type DropdownMenuItemProps,
-  type DropdownMenuLabelProps,
-  type DropdownMenuProps,
-  type DropdownMenuRadioGroupProps,
-  type DropdownMenuRadioItemProps,
-  type DropdownMenuSeparatorProps,
-  type DropdownMenuShortcutProps,
-  type DropdownMenuSubContentProps,
-  type DropdownMenuSubProps,
-  type DropdownMenuSubTriggerProps,
-  type DropdownMenuTriggerProps,
 };

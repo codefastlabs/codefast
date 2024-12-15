@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 
-import { type CalendarDay, type CalendarMonth, type CalendarWeek, type DateLib } from '@/lib/classes';
+import type { CalendarDay, CalendarMonth, CalendarWeek, DateLib } from '@/lib/classes';
+import type { DayPickerProps } from '@/lib/types';
+
 import { getDates } from '@/lib/helpers/get-dates';
 import { getDays } from '@/lib/helpers/get-days';
 import { getDisplayMonths } from '@/lib/helpers/get-display-months';
@@ -11,7 +13,6 @@ import { getNextMonth } from '@/lib/helpers/get-next-month';
 import { getPreviousMonth } from '@/lib/helpers/get-previous-month';
 import { getWeeks } from '@/lib/helpers/get-weeks';
 import { useControlledValue } from '@/lib/hooks/use-controlled-value';
-import { type DayPickerProps } from '@/lib/types';
 
 /**
  * Return the calendar object to work with the calendar in custom components.

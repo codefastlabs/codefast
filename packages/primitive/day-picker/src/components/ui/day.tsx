@@ -1,7 +1,7 @@
-import { type ComponentProps, type JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
-import { type CalendarDay } from '@/lib/classes';
-import { type Modifiers } from '@/lib/types';
+import type { CalendarDay } from '@/lib/classes';
+import type { Modifiers } from '@/lib/types';
 
 export type DayProps = ComponentProps<'td'> & {
   /**

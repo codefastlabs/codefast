@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Button, Spinner, Switch } from '@codefast/ui';
 import { BookmarkIcon } from '@radix-ui/react-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Spinner,

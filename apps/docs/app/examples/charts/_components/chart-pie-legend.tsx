@@ -1,7 +1,9 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -11,7 +13,6 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 import { Pie, PieChart } from 'recharts';
 
 export const description = 'A pie chart with a legend';

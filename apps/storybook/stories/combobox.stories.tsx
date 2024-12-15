@@ -1,3 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import type { LucideIcon } from 'lucide-react';
+import type { JSX } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+
 import { useMediaQuery } from '@codefast/hooks';
 import {
   Badge,
@@ -40,7 +45,6 @@ import {
   Toaster,
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Meta, type StoryObj } from '@storybook/react';
 import {
   ArrowUpCircleIcon,
   CalendarIcon,
@@ -49,15 +53,14 @@ import {
   ChevronDownIcon,
   CircleIcon,
   HelpCircleIcon,
-  type LucideIcon,
   MoreHorizontalIcon,
   TagsIcon,
   TrashIcon,
   UserIcon,
   XCircleIcon,
 } from 'lucide-react';
-import { type JSX, useState } from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {
@@ -188,7 +191,7 @@ const statuses: Status[] = [
 export const WithPopover: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<null | Status>(null);
 
     return (
       <div className="flex items-center space-x-4">
@@ -321,7 +324,7 @@ function StatusList({
   setSelectedStatus,
 }: {
   setOpen: (open: boolean) => void;
-  setSelectedStatus: (status: Status | null) => void;
+  setSelectedStatus: (status: null | Status) => void;
 }): JSX.Element {
   return (
     <Command>
@@ -351,7 +354,7 @@ export const ResponsiveCombobox: Story = {
   render: (args) => {
     const isDesktop = useMediaQuery('(min-width: 768px)');
     const [open, setOpen] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<null | Status>(null);
 
     if (isDesktop) {
       return (

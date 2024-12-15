@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Button, toast, Toaster } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { consola } from 'consola';
 
 const meta = {

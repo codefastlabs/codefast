@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -27,4 +29,5 @@ Label.displayName = LabelPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Label, type LabelProps };
+export type { LabelProps };
+export { Label };

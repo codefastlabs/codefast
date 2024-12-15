@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { ToggleGroup, ToggleGroupItem } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { ApertureIcon, ExpandIcon, PackageCheckIcon } from 'lucide-react';
 import { useState } from 'react';

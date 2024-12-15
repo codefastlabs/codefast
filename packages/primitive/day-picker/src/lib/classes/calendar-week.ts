@@ -1,4 +1,4 @@
-import { type CalendarDay } from '@/lib/classes/calendar-day';
+import type { CalendarDay } from '@/lib/classes/calendar-day';
 
 /**
  * Represent a week in a calendar month.

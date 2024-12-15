@@ -1,7 +1,9 @@
 'use client';
 
+import type { InputHTMLAttributes } from 'react';
+
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { type InputHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 

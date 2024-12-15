@@ -1,8 +1,10 @@
+import type { JSX } from 'react';
+
 import { subDays } from 'date-fns';
-import { type JSX } from 'react';
+
+import type { OnSelectHandler } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type OnSelectHandler } from '@/lib';
 
 const handleSelect: OnSelectHandler<Date | undefined> = (_value, _date, modifiers) => {
   if (modifiers.selected) {

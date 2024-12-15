@@ -1,4 +1,6 @@
-import { type ClassNames, type DayPickerProps, getDefaultClassNames } from '@/lib';
+import type { ClassNames, DayPickerProps } from '@/lib';
+
+import { getDefaultClassNames } from '@/lib';
 
 /**
  * Merges the provided class names with default class names for a DayPicker component.

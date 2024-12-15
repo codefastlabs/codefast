@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { useMediaQuery } from '@codefast/hooks';
 import {
   Button,
@@ -22,7 +24,6 @@ import {
   Label,
   TextInput,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';

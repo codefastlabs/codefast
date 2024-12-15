@@ -1,4 +1,6 @@
-import { type VariantProps, tv } from 'tailwind-variants';
+import type { VariantProps } from 'tailwind-variants';
+
+import { tv } from 'tailwind-variants';
 
 const inputVariants = tv({
   defaultVariants: {
@@ -36,4 +38,5 @@ type InputVariantsProps = VariantProps<typeof inputVariants>;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { inputVariants, type InputVariantsProps };
+export type { InputVariantsProps };
+export { inputVariants };

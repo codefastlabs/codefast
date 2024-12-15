@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui';
 import { CaretSortIcon } from '@radix-ui/react-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 const meta = {

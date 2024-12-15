@@ -1,8 +1,11 @@
 'use client';
 
-import { type JSX, useEffect, useRef } from 'react';
+import type { JSX } from 'react';
 
-import { type VegasSettings } from '@/slideshow/_lib/types';
+import { useEffect, useRef } from 'react';
+
+import type { VegasSettings } from '@/slideshow/_lib/types';
+
 import { Vegas } from '@/slideshow/_lib/vegas';
 import '@/slideshow/_styles/sass/vegas.sass';
 

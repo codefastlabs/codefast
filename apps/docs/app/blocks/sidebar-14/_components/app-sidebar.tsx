@@ -1,3 +1,5 @@
+import type { ComponentProps, JSX } from 'react';
+
 import {
   cn,
   Sidebar,
@@ -13,7 +15,6 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@codefast/ui';
-import { type ComponentProps, type JSX } from 'react';
 
 import { data } from '@/app/blocks/sidebar-14/_lib/mocks/data';
 

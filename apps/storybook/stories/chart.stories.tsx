@@ -1,12 +1,7 @@
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
+import type { ChartConfig } from '@codefast/ui';
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@codefast/ui';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
 const meta = {

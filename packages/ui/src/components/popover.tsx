@@ -1,5 +1,7 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -77,15 +79,5 @@ PopoverArrow.displayName = PopoverPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Popover,
-  PopoverAnchor,
-  PopoverArrow,
-  PopoverContent,
-  PopoverTrigger,
-  type PopoverAnchorProps,
-  type PopoverArrowProps,
-  type PopoverContentProps,
-  type PopoverProps,
-  type PopoverTriggerProps,
-};
+export type { PopoverAnchorProps, PopoverArrowProps, PopoverContentProps, PopoverProps, PopoverTriggerProps };
+export { Popover, PopoverAnchor, PopoverArrow, PopoverContent, PopoverTrigger };

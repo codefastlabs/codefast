@@ -1,4 +1,4 @@
-import { type DateLibOptions } from '@/lib/classes/date-lib';
+import type { DateLibOptions } from '@/lib/classes/date-lib';
 
 /**
  * The ARIA label for the years dropdown.

@@ -1,3 +1,5 @@
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +13,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@codefast/ui';
-import { type ComponentProps, type JSX } from 'react';
 
 import { PlaceholderGrid } from '@/app/blocks/_components/placeholder-grid';
 import { AppSidebar } from '@/app/blocks/sidebar-09/_components/app-sidebar';

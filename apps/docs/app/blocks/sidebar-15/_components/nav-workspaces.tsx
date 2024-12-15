@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,9 +18,8 @@ import {
 import { ChevronRightIcon, PlusIcon } from '@radix-ui/react-icons';
 import { MoreHorizontalIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type JSX } from 'react';
 
-import { type Workspace } from '@/app/blocks/sidebar-15/_lib/mocks/data';
+import type { Workspace } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 
 interface NavWorkspacesProps {
   workspaces: Workspace[];

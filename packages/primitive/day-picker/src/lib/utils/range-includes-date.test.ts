@@ -1,6 +1,7 @@
 import { addDays } from 'date-fns/addDays';
 
-import { type DateRange } from '@/lib/types';
+import type { DateRange } from '@/lib/types';
+
 import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
 
 const date = new Date();

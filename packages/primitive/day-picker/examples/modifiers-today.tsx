@@ -1,7 +1,10 @@
-import { type JSX, type MouseEvent, useState } from 'react';
+import type { JSX, MouseEvent } from 'react';
+
+import { useState } from 'react';
+
+import type { DayEventHandler } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DayEventHandler } from '@/lib';
 
 export function ModifiersToday(): JSX.Element {
   const initialFooter = 'Try clicking the today’s date.';

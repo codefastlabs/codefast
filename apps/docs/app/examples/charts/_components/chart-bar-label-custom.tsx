@@ -1,7 +1,9 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -13,7 +15,6 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts';
 
 export const description = 'A bar chart with a custom label';

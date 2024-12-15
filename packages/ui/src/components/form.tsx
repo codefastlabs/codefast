@@ -1,28 +1,15 @@
 'use client';
 
+import type { Scope } from '@radix-ui/react-context';
 import type * as LabelPrimitive from '@radix-ui/react-label';
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type { ControllerProps, FieldPath, FieldValues, GlobalError } from 'react-hook-form';
 
-import { type Scope, createContextScope } from '@radix-ui/react-context';
+import { createContextScope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
 import { result } from 'lodash-es';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-  useId,
-} from 'react';
-import {
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
-  type GlobalError,
-  Controller,
-  FormProvider,
-  useFormState,
-} from 'react-hook-form';
+import { forwardRef, useId } from 'react';
+import { Controller, FormProvider, useFormState } from 'react-hook-form';
 
 import { Label } from '@/components/label';
 import { cn } from '@/lib/utils';
@@ -233,20 +220,13 @@ FormMessage.displayName = FORM_MESSAGE_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  createFormFieldScope,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  type FormControlProps,
-  type FormDescriptionProps,
-  type FormFieldProps,
-  type FormItemProps,
-  type FormLabelProps,
-  type FormMessageProps,
-  type FormProps,
+export type {
+  FormControlProps,
+  FormDescriptionProps,
+  FormFieldProps,
+  FormItemProps,
+  FormLabelProps,
+  FormMessageProps,
+  FormProps,
 };
+export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };

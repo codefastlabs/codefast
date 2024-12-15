@@ -1,5 +1,6 @@
+import type { ClassNames, ModifiersClassNames } from '@/lib/types';
+
 import { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
-import { type ClassNames, type ModifiersClassNames } from '@/lib/types';
 
 /**
  * Generates an array of class names based on the provided modifiers and corresponding class names.

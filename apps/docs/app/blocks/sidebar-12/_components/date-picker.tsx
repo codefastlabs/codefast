@@ -1,5 +1,6 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { Calendar, cn, SidebarGroup, SidebarGroupContent } from '@codefast/ui';
-import { type ComponentProps, type JSX } from 'react';
 
 type DatePickerProps = ComponentProps<typeof SidebarGroup>;
 

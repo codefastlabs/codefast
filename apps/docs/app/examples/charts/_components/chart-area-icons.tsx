@@ -1,7 +1,9 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -15,7 +17,6 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingDown, TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 export const description = 'An area chart with icons';

@@ -1,7 +1,9 @@
+import type { ComponentPropsWithoutRef, ComponentRef, JSX } from 'react';
+
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon } from 'lucide-react';
-import { type ComponentPropsWithoutRef, type ComponentRef, type JSX, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -99,15 +101,5 @@ AccordionContent.displayName = AccordionPrimitive.Content.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Accordion,
-  AccordionContent,
-  AccordionIcon,
-  AccordionItem,
-  AccordionTrigger,
-  type AccordionContentProps,
-  type AccordionIconProps,
-  type AccordionItemProps,
-  type AccordionProps,
-  type AccordionTriggerProps,
-};
+export type { AccordionContentProps, AccordionIconProps, AccordionItemProps, AccordionProps, AccordionTriggerProps };
+export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger };

@@ -1,13 +1,17 @@
 'use client';
 
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as InputPrimitive from '@codefast-ui/input';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { SearchIcon, XIcon } from 'lucide-react';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
+
+import type { InputVariantsProps } from '@/styles/input-variants';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
-import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: SearchInput
@@ -96,4 +100,5 @@ SearchInput.displayName = 'SearchInput';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { SearchInput, type SearchInputProps };
+export type { SearchInputProps };
+export { SearchInput };

@@ -1,5 +1,7 @@
+import type { HTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -34,4 +36,5 @@ Kbd.displayName = 'Kbd';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Kbd, type KbdProps };
+export type { KbdProps };
+export { Kbd };
