@@ -6,8 +6,6 @@ import { tsdocRules } from '@/rules/tsdoc';
 
 /**
  * We use a plugin because `tsdoc` is not compatible with eslint version 9 or later.
- *
- * @type {import('eslint').Linter.Config}
  */
 export const tsdocConfig: Linter.Config = {
   plugins: {
