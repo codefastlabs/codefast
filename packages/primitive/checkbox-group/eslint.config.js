@@ -6,9 +6,4 @@ export default [
   {
     ignores: ['dist', '*.config.js'],
   },
-  {
-    rules: {
-      'import/no-cycle': 'off',
-    },
-  },
 ];

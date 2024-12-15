@@ -9,7 +9,6 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      'import/no-cycle': 'off',
     },
   },
 ];
