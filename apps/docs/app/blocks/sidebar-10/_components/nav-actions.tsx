@@ -1,5 +1,8 @@
 'use client';
 
+import type { LucideIcon } from 'lucide-react';
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Button,
   cn,
@@ -14,8 +17,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@codefast/ui';
-import { type LucideIcon, MoreHorizontalIcon, StarIcon } from 'lucide-react';
-import { type ComponentProps, type JSX, useEffect, useState } from 'react';
+import { MoreHorizontalIcon, StarIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface NavActionsProps extends ComponentProps<'div'> {
   actions: {

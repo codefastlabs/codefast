@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -13,7 +15,6 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 const meta = {

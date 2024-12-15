@@ -1,7 +1,11 @@
-import { type ButtonHTMLAttributes, type ReactNode, forwardRef } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
+
+import { forwardRef } from 'react';
+
+import type { ButtonVariantsProps } from '@/styles/button-variants';
 
 import { Spinner } from '@/components/spinner';
-import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Button
@@ -61,4 +65,5 @@ Button.displayName = 'Button';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Button, type ButtonProps };
+export type { ButtonProps };
+export { Button };

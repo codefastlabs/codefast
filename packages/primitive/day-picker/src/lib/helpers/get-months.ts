@@ -1,7 +1,8 @@
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps } from '@/lib/types';
+
 import { CalendarDay, CalendarMonth, CalendarWeek } from '@/lib/classes';
-import { type DateLib } from '@/lib/classes/date-lib';
 import { NrOfDaysBroadcast, NrOfDaysWithFixedWeeks } from '@/lib/helpers/get-dates';
-import { type DayPickerProps } from '@/lib/types';
 
 /**
  * Return the months to display in the calendar.

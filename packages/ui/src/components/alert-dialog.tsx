@@ -1,15 +1,12 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
+
+import type { ButtonVariantsProps } from '@/styles/button-variants';
 
 import { cn } from '@/lib/utils';
-import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog
@@ -185,6 +182,18 @@ AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  AlertDialogActionProps,
+  AlertDialogBodyProps,
+  AlertDialogCancelProps,
+  AlertDialogContentProps,
+  AlertDialogDescriptionProps,
+  AlertDialogFooterProps,
+  AlertDialogHeaderProps,
+  AlertDialogProps,
+  AlertDialogTitleProps,
+  AlertDialogTriggerProps,
+};
 export {
   AlertDialog,
   AlertDialogAction,
@@ -196,14 +205,4 @@ export {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  type AlertDialogActionProps,
-  type AlertDialogBodyProps,
-  type AlertDialogCancelProps,
-  type AlertDialogContentProps,
-  type AlertDialogDescriptionProps,
-  type AlertDialogFooterProps,
-  type AlertDialogHeaderProps,
-  type AlertDialogProps,
-  type AlertDialogTitleProps,
-  type AlertDialogTriggerProps,
 };

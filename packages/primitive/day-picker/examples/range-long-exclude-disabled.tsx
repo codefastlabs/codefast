@@ -1,7 +1,10 @@
-import { type JSX, useState } from 'react';
+import type { JSX } from 'react';
+
+import { useState } from 'react';
+
+import type { DateRange } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DateRange } from '@/lib';
 
 export function RangeLongExcludeDisabled(): JSX.Element {
   const [range, setRange] = useState<DateRange | undefined>({

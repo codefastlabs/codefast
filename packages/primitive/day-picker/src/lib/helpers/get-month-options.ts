@@ -1,6 +1,8 @@
-import { type DropdownOption } from '@/components/ui/dropdown';
-import { type DateLib, defaultLocale } from '@/lib/classes/date-lib';
-import { type Formatters } from '@/lib/types';
+import type { DropdownOption } from '@/components/ui/dropdown';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { Formatters } from '@/lib/types';
+
+import { defaultLocale } from '@/lib/classes/date-lib';
 
 /**
  * Return the months to show in the dropdown.

@@ -1,5 +1,7 @@
+import type { HTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Text
@@ -30,4 +32,5 @@ Text.displayName = 'Text';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Text, type TextProps };
+export type { TextProps };
+export { Text };

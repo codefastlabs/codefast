@@ -1,5 +1,6 @@
+import type { Components, DayPickerProps } from '@/lib/types';
+
 import * as components from '@/components/ui';
-import { type Components, type DayPickerProps } from '@/lib/types';
 
 /**
  * Merges the default components with the custom components provided.

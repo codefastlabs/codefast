@@ -1,10 +1,12 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useStateParams } from '@codefast/hooks';
 import { SearchInput } from '@codefast/ui';
 import { SearchIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { type JSX, useCallback, useTransition } from 'react';
+import { useCallback, useTransition } from 'react';
 
 export function Search(): JSX.Element {
   const stateParams = useStateParams();

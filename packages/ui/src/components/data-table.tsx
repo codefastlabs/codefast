@@ -1,6 +1,7 @@
 'use client';
 
 import type * as ReactTable from '@tanstack/react-table';
+import type { HTMLAttributes, JSX } from 'react';
 
 import {
   ChevronDownIcon,
@@ -13,7 +14,6 @@ import {
   EyeOffIcon,
   Settings2Icon,
 } from 'lucide-react';
-import { type HTMLAttributes, type JSX } from 'react';
 
 import { Button } from '@/components/button';
 import {
@@ -249,11 +249,5 @@ function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): JSX
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  DataTableColumnHeader,
-  DataTablePagination,
-  DataTableViewOptions,
-  type DataTableColumnHeaderProps,
-  type DataTablePaginationProps,
-  type DataTableViewOptionsProps,
-};
+export type { DataTableColumnHeaderProps, DataTablePaginationProps, DataTableViewOptionsProps };
+export { DataTableColumnHeader, DataTablePagination, DataTableViewOptions };

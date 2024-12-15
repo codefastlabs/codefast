@@ -1,7 +1,8 @@
+import type { Metadata } from 'next';
+import type { JSX, ReactNode } from 'react';
+
 import { Separator } from '@codefast/ui';
-import { type Metadata } from 'next';
 import Image from 'next/image';
-import { type JSX, type ReactNode } from 'react';
 
 import { SidebarNav } from '@/app/examples/forms/_components/sidebar-nav';
 

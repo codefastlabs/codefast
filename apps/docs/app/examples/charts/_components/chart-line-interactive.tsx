@@ -1,7 +1,9 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { ComponentProps, JSX } from 'react';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -12,7 +14,6 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import * as React from 'react';
-import { type ComponentProps, type JSX } from 'react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
 export const description = 'An interactive line chart';

@@ -1,3 +1,5 @@
+import type { Linter } from 'eslint';
+
 import { recommendedConfig } from '@codefast/style-guide/configs/core/recommended';
 import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript';
 import { nextConfig } from '@codefast/style-guide/configs/frameworks/next';
@@ -6,7 +8,6 @@ import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { playwrightTestConfig } from '@codefast/style-guide/configs/testing/playwright-test';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
-import { type Linter } from 'eslint';
 import globals from 'globals';
 import { resolve } from 'node:path';
 

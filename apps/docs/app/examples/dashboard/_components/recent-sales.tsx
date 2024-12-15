@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui';
-import { type JSX } from 'react';
 
 export function RecentSales(): JSX.Element {
   return (

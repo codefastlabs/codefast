@@ -1,7 +1,11 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+import type { PieProps } from 'recharts';
+import type { PieLabel } from 'recharts/types/polar/Pie';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -13,9 +17,7 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
-import { type PieProps, Pie, PieChart } from 'recharts';
-import { type PieLabel } from 'recharts/types/polar/Pie';
+import { Pie, PieChart } from 'recharts';
 
 export const description = 'A pie chart with a custom label';
 

@@ -1,4 +1,6 @@
-import { type ByRoleOptions, screen } from '@testing-library/react';
+import type { ByRoleOptions } from '@testing-library/react';
+
+import { screen } from '@testing-library/react';
 
 import { DayFlag, labelDayButton, labelGridcell, labelMonthDropdown, labelYearDropdown, SelectionState } from '@/lib';
 

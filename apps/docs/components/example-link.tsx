@@ -1,8 +1,9 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { cn } from '@codefast/ui';
 import { formatUrl } from 'next/dist/shared/lib/router/utils/format-url';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { type ComponentProps, type JSX } from 'react';
 
 type ExampleLinkProps = ComponentProps<typeof Link>;
 

@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -29,7 +31,7 @@ import {
   TooltipTrigger,
 } from '@codefast/ui';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
 
 export function PresetActions(): JSX.Element {
   const [open, setOpen] = useState(false);

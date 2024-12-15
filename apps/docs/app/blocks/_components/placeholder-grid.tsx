@@ -1,5 +1,7 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { cn } from '@codefast/ui';
-import { type ComponentProps, type JSX, useMemo } from 'react';
+import { useMemo } from 'react';
 
 type PlaceholderGridProps = ComponentProps<'div'>;
 

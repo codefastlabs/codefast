@@ -1,5 +1,5 @@
-import { type DayEvent, type DayPickerProps } from '@/lib/types/props';
-import { type DateRange, type Mode, type Modifiers } from '@/lib/types/shared';
+import type { DayEvent, DayPickerProps } from '@/lib/types/props';
+import type { DateRange, Mode, Modifiers } from '@/lib/types/shared';
 
 export interface Selection<T extends DayPickerProps> {
   /**

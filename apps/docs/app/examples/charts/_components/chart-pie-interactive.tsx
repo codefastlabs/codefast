@@ -1,7 +1,12 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { ComponentProps, JSX } from 'react';
+import type { ContentType } from 'recharts/types/component/Label';
+import type { PieSectorDataItem } from 'recharts/types/polar/Pie';
+import type { ActiveShape } from 'recharts/types/util/types';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -18,11 +23,7 @@ import {
   SelectValue,
 } from '@codefast/ui';
 import * as React from 'react';
-import { type ComponentProps, type JSX } from 'react';
 import { Label, Pie, PieChart, Sector } from 'recharts';
-import { type ContentType } from 'recharts/types/component/Label';
-import { type PieSectorDataItem } from 'recharts/types/polar/Pie';
-import { type ActiveShape } from 'recharts/types/util/types';
 
 export const description = 'An interactive pie chart';
 

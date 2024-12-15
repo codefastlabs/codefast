@@ -1,8 +1,12 @@
+import type { AnchorHTMLAttributes, HTMLAttributes, JSX, LiHTMLAttributes } from 'react';
+
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
-import { type AnchorHTMLAttributes, type HTMLAttributes, type JSX, type LiHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
+
+import type { ButtonVariantsProps } from '@/styles/button-variants';
 
 import { cn } from '@/lib/utils';
-import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
@@ -132,6 +136,15 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  PaginationContentProps,
+  PaginationEllipsisProps,
+  PaginationItemProps,
+  PaginationLinkProps,
+  PaginationNextProps,
+  PaginationPreviousProps,
+  PaginationProps,
+};
 export {
   Pagination,
   PaginationContent,
@@ -140,11 +153,4 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  type PaginationContentProps,
-  type PaginationEllipsisProps,
-  type PaginationItemProps,
-  type PaginationLinkProps,
-  type PaginationNextProps,
-  type PaginationPreviousProps,
-  type PaginationProps,
 };

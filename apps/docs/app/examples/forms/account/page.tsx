@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
+
 import { Separator } from '@codefast/ui';
-import { type JSX } from 'react';
 
 import { AccountForm } from '@/app/examples/forms/account/_components/account-form';
 

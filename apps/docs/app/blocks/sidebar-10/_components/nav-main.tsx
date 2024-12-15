@@ -1,7 +1,8 @@
+import type { LucideIcon } from 'lucide-react';
+import type { ComponentProps, JSX } from 'react';
+
 import { cn, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@codefast/ui';
-import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX } from 'react';
 
 interface NavMainProps extends ComponentProps<typeof SidebarMenu> {
   items: {

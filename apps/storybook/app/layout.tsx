@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
-import { type JSX } from 'react';
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
 
 import { Providers } from '@/components/providers';
 import { geistMono, geistSans } from '@/lib/fonts';

@@ -1,4 +1,4 @@
-import { type ComponentProps, type JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { useDayPicker } from '@/lib';
 import { UI } from '@/lib/constants/ui';

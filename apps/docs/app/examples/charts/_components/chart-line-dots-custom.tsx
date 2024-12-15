@@ -1,7 +1,11 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+import type { LineDot } from 'recharts/types/cartesian/Line';
+import type { Props as DotProps } from 'recharts/types/shape/Dot';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -13,10 +17,7 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { GitCommitVerticalIcon, TrendingUpIcon } from 'lucide-react';
-import { type JSX } from 'react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
-import { type LineDot } from 'recharts/types/cartesian/Line';
-import { type Props as DotProps } from 'recharts/types/shape/Dot';
 
 export const description = 'A line chart with custom dots';
 

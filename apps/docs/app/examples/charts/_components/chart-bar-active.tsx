@@ -1,7 +1,11 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+import type { BarProps } from 'recharts/types/cartesian/Bar';
+import type { ActiveShape } from 'recharts/types/util/types';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -13,10 +17,7 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from 'recharts';
-import { type BarProps } from 'recharts/types/cartesian/Bar';
-import { type ActiveShape } from 'recharts/types/util/types';
 
 export const description = 'A bar chart with an active bar';
 

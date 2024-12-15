@@ -1,9 +1,10 @@
 'use client';
 
+import type { HTMLAttributes, JSX } from 'react';
+
 import { buttonVariants, cn } from '@codefast/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { type HTMLAttributes, type JSX } from 'react';
 
 interface SidebarNavProps extends HTMLAttributes<HTMLElement> {
   items: {

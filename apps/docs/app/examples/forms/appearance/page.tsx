@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
+
 import { Separator } from '@codefast/ui';
-import { type JSX } from 'react';
 
 import { AppearanceForm } from '@/app/examples/forms/appearance/_components/appearance-form';
 

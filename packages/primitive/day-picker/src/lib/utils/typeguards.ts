@@ -1,5 +1,5 @@
-import { type DateLib } from '@/lib/classes/date-lib';
-import { type DateAfter, type DateBefore, type DateInterval, type DateRange, type DayOfWeek } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DateAfter, DateBefore, DateInterval, DateRange, DayOfWeek } from '@/lib/types';
 
 /**
  * Returns true if `matcher` is of type {@link DateInterval}.

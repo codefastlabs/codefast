@@ -1,7 +1,8 @@
-import { Button, cn, ScrollArea } from '@codefast/ui';
-import { type HTMLAttributes, type JSX } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
-import { type Playlist } from '@/app/examples/music/_data/playlists';
+import { Button, cn, ScrollArea } from '@codefast/ui';
+
+import type { Playlist } from '@/app/examples/music/_data/playlists';
 
 interface SidebarProps extends HTMLAttributes<HTMLDivElement> {
   playlists: Playlist[];

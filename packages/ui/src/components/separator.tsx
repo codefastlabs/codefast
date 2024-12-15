@@ -1,6 +1,9 @@
+import type { ComponentPropsWithoutRef, ComponentRef, HTMLAttributes } from 'react';
+import type { VariantProps } from 'tailwind-variants';
+
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { type ComponentPropsWithoutRef, type ComponentRef, type HTMLAttributes, forwardRef } from 'react';
-import { type VariantProps, tv } from 'tailwind-variants';
+import { forwardRef } from 'react';
+import { tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 
@@ -73,4 +76,5 @@ SeparatorItem.displayName = 'SeparatorItem';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Separator, SeparatorItem, type SeparatorProps };
+export type { SeparatorProps };
+export { Separator, SeparatorItem };

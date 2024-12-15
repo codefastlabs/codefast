@@ -1,18 +1,12 @@
 'use client';
 
-import {
-  type Components,
-  type DateRange,
-  type DayButtonProps,
-  type DayPickerProps,
-  DayFlag,
-  DayPicker,
-  SelectionState,
-  UI,
-} from '@codefast-ui/day-picker';
+import type { Components, DateRange, DayButtonProps, DayPickerProps } from '@codefast-ui/day-picker';
+import type { ComponentProps, JSX } from 'react';
+
+import { DayFlag, DayPicker, SelectionState, UI } from '@codefast-ui/day-picker';
 import { format } from 'date-fns';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from 'lucide-react';
-import { type ComponentProps, type JSX, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
@@ -229,13 +223,7 @@ function CalendarLabel({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Calendar,
-  CalendarLabel,
-  CalendarRangeLabel,
-  type CalendarLabelProps,
-  type CalendarProps,
-  type CalendarRangeLabelProps,
-};
+export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps };
+export { Calendar, CalendarLabel, CalendarRangeLabel };
 
-export { type DateRange, type Matcher } from '@codefast-ui/day-picker';
+export type { DateRange, Matcher } from '@codefast-ui/day-picker';

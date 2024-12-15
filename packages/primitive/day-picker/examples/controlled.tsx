@@ -1,5 +1,7 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { addMonths, isSameMonth } from 'date-fns';
-import { type ComponentProps, type JSX, useState } from 'react';
+import { useState } from 'react';
 
 import { DayPicker } from '@/components';
 

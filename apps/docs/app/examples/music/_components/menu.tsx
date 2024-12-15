@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Menubar,
   MenubarCheckboxItem,
@@ -14,7 +16,6 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 
 export function Menu(): JSX.Element {
   return (

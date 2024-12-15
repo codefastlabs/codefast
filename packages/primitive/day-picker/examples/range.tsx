@@ -1,8 +1,11 @@
+import type { JSX } from 'react';
+
 import { addDays, format } from 'date-fns';
-import { type JSX, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+
+import type { DateRange } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DateRange } from '@/lib';
 
 export function Range(): JSX.Element {
   const defaultMonth = new Date(2020, 5, 15);

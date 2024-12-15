@@ -2,8 +2,10 @@
 
 import { wait } from 'next/dist/lib/wait';
 
-import { type AccountFormValues, accountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
-import { type FieldValidationErrors, type ServerResponse } from '@/lib/types/server-actions';
+import type { AccountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
+import type { FieldValidationErrors, ServerResponse } from '@/lib/types/server-actions';
+
+import { accountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
 
 export async function updateAccount(
   data: AccountFormValues,

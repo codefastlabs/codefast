@@ -1,8 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { startOfDay, startOfMonth } from 'date-fns';
 
+import type { MonthsProps } from '@/components/ui';
+
 import { DayPicker } from '@/components/day-picker';
-import { type MonthsProps } from '@/components/ui';
 import { defaultLocale } from '@/lib/classes/date-lib';
 import { UI } from '@/lib/constants/ui';
 import { activeElement, dateButton, grid, nav, previousButton } from '~/lib/elements';

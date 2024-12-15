@@ -1,7 +1,9 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { ComponentProps, JSX } from 'react';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -19,7 +21,6 @@ import {
   SelectValue,
 } from '@codefast/ui';
 import * as React from 'react';
-import { type ComponentProps, type JSX } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 export const description = 'An interactive area chart';

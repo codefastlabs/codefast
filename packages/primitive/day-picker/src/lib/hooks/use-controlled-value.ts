@@ -1,4 +1,6 @@
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+
+import { useState } from 'react';
 
 export type DispatchStateAction<T> = Dispatch<SetStateAction<T>>;
 

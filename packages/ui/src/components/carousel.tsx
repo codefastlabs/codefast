@@ -1,11 +1,16 @@
 'use client';
 
-import { type Scope, createContextScope } from '@radix-ui/react-context';
+import type { Scope } from '@radix-ui/react-context';
+import type { HTMLAttributes, KeyboardEvent } from 'react';
+
+import { createContextScope } from '@radix-ui/react-context';
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
-import { type HTMLAttributes, type KeyboardEvent, forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 
-import { type ButtonProps, Button } from '@/components/button';
+import type { ButtonProps } from '@/components/button';
+
+import { Button } from '@/components/button';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -307,17 +312,12 @@ CarouselNext.displayName = CAROUSEL_NEXT_NAME;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  createCarouselScope,
-  type CarouselApi,
-  type CarouselContentProps,
-  type CarouselItemProps,
-  type CarouselNextProps,
-  type CarouselPreviousProps,
-  type CarouselProps,
+export type {
+  CarouselApi,
+  CarouselContentProps,
+  CarouselItemProps,
+  CarouselNextProps,
+  CarouselPreviousProps,
+  CarouselProps,
 };
+export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };

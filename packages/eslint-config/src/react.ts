@@ -1,10 +1,11 @@
+import type { Linter } from 'eslint';
+
 import { recommendedConfig } from '@codefast/style-guide/configs/core/recommended';
 import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript';
 import { reactConfig } from '@codefast/style-guide/configs/frameworks/react';
 import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
-import { type Linter } from 'eslint';
 import globals from 'globals';
 import { resolve } from 'node:path';
 

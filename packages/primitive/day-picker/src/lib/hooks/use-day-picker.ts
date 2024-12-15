@@ -1,18 +1,18 @@
 import { createContext, useContext } from 'react';
 
-import { type CalendarDay } from '@/lib/classes/calendar-day';
-import { type CalendarMonth } from '@/lib/classes/calendar-month';
-import {
-  type ClassNames,
-  type Components,
-  type DayPickerProps,
-  type Formatters,
-  type Labels,
-  type Mode,
-  type Modifiers,
-  type SelectedValue,
-  type SelectHandler,
-  type Styles,
+import type { CalendarDay } from '@/lib/classes/calendar-day';
+import type { CalendarMonth } from '@/lib/classes/calendar-month';
+import type {
+  ClassNames,
+  Components,
+  DayPickerProps,
+  Formatters,
+  Labels,
+  Mode,
+  Modifiers,
+  SelectedValue,
+  SelectHandler,
+  Styles,
 } from '@/lib/types';
 
 export const dayPickerContext = createContext<

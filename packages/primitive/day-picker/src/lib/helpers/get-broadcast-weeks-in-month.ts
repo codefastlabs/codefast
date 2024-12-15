@@ -1,4 +1,4 @@
-import { type DateLib } from '@/lib';
+import type { DateLib } from '@/lib';
 
 const FIVE_WEEKS = 5;
 const FOUR_WEEKS = 4;

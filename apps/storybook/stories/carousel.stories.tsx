@@ -1,14 +1,15 @@
+import type { CarouselApi } from '@codefast/ui';
+import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   Card,
   CardContent,
   Carousel,
-  type CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import Autoplay from 'embla-carousel-autoplay';
 import { useEffect, useRef, useState } from 'react';
 

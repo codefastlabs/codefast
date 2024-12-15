@@ -1,5 +1,7 @@
+import type { BlockquoteHTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type BlockquoteHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Blockquote
@@ -22,4 +24,5 @@ Blockquote.displayName = 'Blockquote';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Blockquote, type BlockquoteProps };
+export type { BlockquoteProps };
+export { Blockquote };

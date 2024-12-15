@@ -1,3 +1,5 @@
+import type { ComponentProps, JSX } from 'react';
+
 import {
   cn,
   Sidebar,
@@ -12,7 +14,6 @@ import {
   SidebarRail,
 } from '@codefast/ui';
 import { FileIcon } from 'lucide-react';
-import { type ComponentProps, type JSX } from 'react';
 
 import { Tree } from '@/app/blocks/sidebar-11/_components/tree';
 import { data } from '@/app/blocks/sidebar-11/_lib/mocks/data';

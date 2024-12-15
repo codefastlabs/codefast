@@ -1,5 +1,7 @@
+import type { HTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -24,4 +26,5 @@ Container.displayName = 'Container';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Container, type ContainerProps };
+export type { ContainerProps };
+export { Container };

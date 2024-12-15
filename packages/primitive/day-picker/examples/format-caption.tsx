@@ -1,8 +1,10 @@
+import type { JSX } from 'react';
+
 import { format } from 'date-fns';
-import { type JSX } from 'react';
+
+import type { Formatters } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type Formatters } from '@/lib';
 
 const seasonEmoji: Record<string, string> = {
   autumn: '🍂',

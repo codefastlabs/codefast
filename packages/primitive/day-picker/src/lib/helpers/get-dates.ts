@@ -1,5 +1,5 @@
-import { type DateLib } from '@/lib/classes/date-lib';
-import { type DayPickerProps } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps } from '@/lib/types';
 
 /**
  * The number of days in a month when having 6 weeks.

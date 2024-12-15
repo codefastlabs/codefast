@@ -1,5 +1,8 @@
 'use client';
 
+import type { JSX } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+
 import {
   Button,
   cn,
@@ -23,8 +26,7 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { type JSX } from 'react';
-import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const profileFormValues = z.object({

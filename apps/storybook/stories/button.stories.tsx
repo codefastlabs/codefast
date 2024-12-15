@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Button } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { LoaderCircleIcon, PaletteIcon, ScanSearchIcon, TreeDeciduousIcon } from 'lucide-react';
 import { useState } from 'react';

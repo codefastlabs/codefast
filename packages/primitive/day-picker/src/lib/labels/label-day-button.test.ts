@@ -1,7 +1,8 @@
 import { es } from 'date-fns/locale/es';
 
+import type { Modifiers } from '@/lib/types';
+
 import { labelDayButton } from '@/lib/labels/label-day-button';
-import { type Modifiers } from '@/lib/types';
 
 const day = new Date(2022, 10, 21);
 const dayModifiers: Modifiers = {

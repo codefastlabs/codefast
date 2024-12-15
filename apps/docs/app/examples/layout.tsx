@@ -1,5 +1,6 @@
+import type { JSX, ReactNode } from 'react';
+
 import { TooltipProvider } from '@codefast/ui';
-import { type JSX, type ReactNode } from 'react';
 
 import { ExamplesNavigation } from '@/components/examples-navigation';
 

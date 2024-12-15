@@ -1,27 +1,25 @@
+import type { Scope } from '@radix-ui/react-context';
+import type {
+  ButtonHTMLAttributes,
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  FocusEventHandler,
+  JSX,
+  KeyboardEvent,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  PointerEventHandler,
+  RefObject,
+} from 'react';
+
 import * as InputPrimitive from '@codefast-ui/input';
 import { createInputScope } from '@codefast-ui/input';
 import { composeEventHandlers } from '@radix-ui/primitive';
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
-import { type Scope, createContextScope } from '@radix-ui/react-context';
+import { createContextScope } from '@radix-ui/react-context';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import {
-  type ButtonHTMLAttributes,
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type FocusEventHandler,
-  type JSX,
-  type KeyboardEvent,
-  type KeyboardEventHandler,
-  type MouseEventHandler,
-  type PointerEventHandler,
-  type RefObject,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
@@ -615,6 +613,12 @@ function clamp(value: number, min = -Infinity, max = Infinity): number {
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  NumberInputDecrementButtonProps,
+  NumberInputIncrementButtonProps,
+  NumberInputItemProps,
+  NumberInputProps,
+};
 export {
   createNumberInputScope,
   NumberInputDecrementButton as DecrementButton,
@@ -625,8 +629,4 @@ export {
   NumberInputIncrementButton,
   NumberInputItem,
   NumberInput as Root,
-  type NumberInputDecrementButtonProps,
-  type NumberInputIncrementButtonProps,
-  type NumberInputItemProps,
-  type NumberInputProps,
 };

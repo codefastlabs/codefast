@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
+
 import { addDays } from 'date-fns';
-import { type JSX } from 'react';
 
 import { DayPicker } from '@/components';
 

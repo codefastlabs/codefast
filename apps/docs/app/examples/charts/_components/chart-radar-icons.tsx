@@ -1,8 +1,15 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui';
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+
 import {
-  type ChartConfig,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -10,7 +17,6 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { ArrowDownFromLine, ArrowUpFromLine, TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts';
 
 export const description = 'A radar chart with icons';

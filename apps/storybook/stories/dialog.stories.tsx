@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   Button,
   Dialog,
@@ -16,7 +18,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { Copy } from 'lucide-react';
 import { useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type JSX } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -16,4 +16,5 @@ function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Skeleton, type SkeletonProps };
+export type { SkeletonProps };
+export { Skeleton };

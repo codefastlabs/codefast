@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Button,
   Card,
@@ -15,7 +17,6 @@ import {
   Separator,
 } from '@codefast/ui';
 import { ChevronDownIcon, CircleIcon, PlusIcon, StarIcon } from '@radix-ui/react-icons';
-import { type JSX } from 'react';
 
 export function Github(): JSX.Element {
   return (

@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
-import { type JSX } from 'react';
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
 
 import { Sidebar01 } from '@/app/blocks/sidebar-01/_components/sidebar-01';
 

@@ -1,7 +1,8 @@
+import type { LucideIcon } from 'lucide-react';
+import type { JSX } from 'react';
+
 import { buttonVariants, cn, Tooltip, TooltipContent, TooltipTrigger } from '@codefast/ui';
-import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type JSX } from 'react';
 
 interface NavProps {
   isCollapsed: boolean;

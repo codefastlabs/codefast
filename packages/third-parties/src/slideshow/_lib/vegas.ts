@@ -1,15 +1,16 @@
-import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/constants';
-import {
-  type VegasAnimation,
-  type VegasAnimationWithRandom,
-  type VegasCallback,
-  type VegasSettings,
-  type VegasSlide,
-  type VegasSupport,
-  type VegasTransition,
-  type VegasTransitionWithRandom,
-  type VegasVideo,
+import type {
+  VegasAnimation,
+  VegasAnimationWithRandom,
+  VegasCallback,
+  VegasSettings,
+  VegasSlide,
+  VegasSupport,
+  VegasTransition,
+  VegasTransitionWithRandom,
+  VegasVideo,
 } from '@/slideshow/_lib/types';
+
+import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/constants';
 import { isVideoCompatible, random } from '@/slideshow/_lib/utils';
 
 /**

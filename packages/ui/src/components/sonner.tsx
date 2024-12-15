@@ -1,5 +1,6 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { useTheme } from 'next-themes';
-import { type ComponentProps, type JSX } from 'react';
 import { Toaster as Sonner } from 'sonner';
 
 /* -----------------------------------------------------------------------------
@@ -35,6 +36,7 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Toaster, type ToasterProps };
+export type { ToasterProps };
+export { Toaster };
 
 export { toast } from 'sonner';

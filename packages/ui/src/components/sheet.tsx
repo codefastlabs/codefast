@@ -1,17 +1,15 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
+
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
-import { type VariantProps, tv } from 'tailwind-variants';
+import { forwardRef } from 'react';
+import { tv } from 'tailwind-variants';
+
+import type { ButtonVariantsProps } from '@/styles/button-variants';
 
 import { cn } from '@/lib/utils';
-import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent
@@ -205,6 +203,17 @@ SheetClose.displayName = SheetPrimitive.Close.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  SheetBodyProps,
+  SheetCloseProps,
+  SheetContentProps,
+  SheetDescriptionProps,
+  SheetFooterProps,
+  SheetHeaderProps,
+  SheetProps,
+  SheetTitleProps,
+  SheetTriggerProps,
+};
 export {
   Sheet,
   SheetBody,
@@ -215,13 +224,4 @@ export {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  type SheetBodyProps,
-  type SheetCloseProps,
-  type SheetContentProps,
-  type SheetDescriptionProps,
-  type SheetFooterProps,
-  type SheetHeaderProps,
-  type SheetProps,
-  type SheetTitleProps,
-  type SheetTriggerProps,
 };

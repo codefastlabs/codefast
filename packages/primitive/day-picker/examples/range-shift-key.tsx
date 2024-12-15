@@ -1,8 +1,13 @@
-import { isSameDay } from 'date-fns';
-import { type JSX, type MouseEventHandler, useState } from 'react';
+import type { JSX, MouseEventHandler } from 'react';
 
-import { type DayButtonProps, DayPicker } from '@/components';
-import { type DateRange, useDayPicker } from '@/lib';
+import { isSameDay } from 'date-fns';
+import { useState } from 'react';
+
+import type { DayButtonProps } from '@/components';
+import type { DateRange } from '@/lib';
+
+import { DayPicker } from '@/components';
+import { useDayPicker } from '@/lib';
 
 export function RangeShiftKey(): JSX.Element {
   const [range, setRange] = useState<DateRange | undefined>({

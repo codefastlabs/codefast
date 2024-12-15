@@ -1,5 +1,7 @@
-import { type HTMLAttributes, type JSX, type ReactNode } from 'react';
-import { type VariantProps, tv } from 'tailwind-variants';
+import type { HTMLAttributes, JSX, ReactNode } from 'react';
+import type { VariantProps } from 'tailwind-variants';
+
+import { tv } from 'tailwind-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Badge
@@ -68,4 +70,5 @@ function Badge({ children, className, prefix, size, suffix, variant, ...props }:
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Badge, type BadgeProps };
+export type { BadgeProps };
+export { Badge };

@@ -1,11 +1,15 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
+
+import type { InputVariantsProps } from '@/styles/input-variants';
 
 import { Spinner } from '@/components/spinner';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/styles/button-variants';
-import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/styles/input-variants';
 
 const { input, root } = inputVariants();
 
@@ -112,4 +116,5 @@ NumberInput.displayName = 'NumberInput';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { NumberInput, type NumberInputProps };
+export type { NumberInputProps };
+export { NumberInput };

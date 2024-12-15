@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentProps, JSX } from 'react';
+
 import {
   cn,
   Label,
@@ -18,7 +20,7 @@ import {
 } from '@codefast/ui';
 import { CommandIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX, useState } from 'react';
+import { useState } from 'react';
 
 import { NavUser } from '@/app/blocks/_components/nav-user';
 import { data } from '@/app/blocks/sidebar-09/_lib/mocks/data';

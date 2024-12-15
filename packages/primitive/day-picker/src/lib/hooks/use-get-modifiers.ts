@@ -1,8 +1,9 @@
 import { TZDate } from '@date-fns/tz';
 
-import { type CalendarDay, type DateLib } from '@/lib/classes';
+import type { CalendarDay, DateLib } from '@/lib/classes';
+import type { DayPickerProps, Modifiers } from '@/lib/types';
+
 import { DayFlag } from '@/lib/constants/ui';
-import { type DayPickerProps, type Modifiers } from '@/lib/types';
 import { dateMatchModifiers } from '@/lib/utils/date-match-modifiers';
 
 /**

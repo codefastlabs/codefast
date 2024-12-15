@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -16,7 +18,6 @@ import {
   Separator,
   TextInput,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 
 export function ShareDocument(): JSX.Element {
   return (

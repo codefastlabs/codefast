@@ -1,8 +1,10 @@
 'use client';
 
+import type { HTMLAttributes, JSX, SyntheticEvent } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+
 import { Button, cn, Label, TextInput } from '@codefast/ui';
-import { type HTMLAttributes, type JSX, type SyntheticEvent, useState } from 'react';
-import { type SubmitHandler } from 'react-hook-form';
+import { useState } from 'react';
 
 import { Icons } from '@/components/icons';
 

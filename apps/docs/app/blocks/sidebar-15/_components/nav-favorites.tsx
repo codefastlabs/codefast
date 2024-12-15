@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +18,8 @@ import {
 } from '@codefast/ui';
 import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { type JSX } from 'react';
 
-import { type FavoriteItem } from '@/app/blocks/sidebar-15/_lib/mocks/data';
+import type { FavoriteItem } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 
 interface NavFavoritesProps {
   favorites: FavoriteItem[];

@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   Button,
   Card,
@@ -17,7 +19,6 @@ import {
   TextInput,
 } from '@codefast/ui';
 import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   component: Card,
@@ -78,18 +79,18 @@ export const Default: Story = {
 
 const notifications = [
   {
-    description: '1 hour ago',
     id: 1,
+    description: '1 hour ago',
     title: 'Your call has been confirmed.',
   },
   {
-    description: '1 hour ago',
     id: 2,
+    description: '1 hour ago',
     title: 'You have a new message!',
   },
   {
-    description: '2 hours ago',
     id: 3,
+    description: '2 hours ago',
     title: 'Your subscription is expiring soon!',
   },
 ];

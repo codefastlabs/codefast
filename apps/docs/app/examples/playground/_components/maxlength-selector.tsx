@@ -1,7 +1,10 @@
 'use client';
 
-import { type SliderProps, HoverCard, HoverCardContent, HoverCardTrigger, Label, Slider } from '@codefast/ui';
-import { type JSX, useState } from 'react';
+import type { SliderProps } from '@codefast/ui';
+import type { JSX } from 'react';
+
+import { HoverCard, HoverCardContent, HoverCardTrigger, Label, Slider } from '@codefast/ui';
+import { useState } from 'react';
 
 interface MaxLengthSelectorProps {
   defaultValue: SliderProps['defaultValue'];

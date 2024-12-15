@@ -1,4 +1,4 @@
-import { type DayPickerProps } from '@/lib/types';
+import type { DayPickerProps } from '@/lib/types';
 
 /**
  * Return the `data-` attributes from the props.

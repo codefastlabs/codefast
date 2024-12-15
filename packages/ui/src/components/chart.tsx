@@ -1,19 +1,10 @@
 'use client';
 
-import {
-  type ComponentProps,
-  type ComponentType,
-  type CSSProperties,
-  type JSX,
-  type ReactNode,
-  createContext,
-  forwardRef,
-  useContext,
-  useId,
-  useMemo,
-} from 'react';
+import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from 'react';
+import type { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+
+import { createContext, forwardRef, useContext, useId, useMemo } from 'react';
 import * as RechartsPrimitive from 'recharts';
-import { type NameType, type Payload, type ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 import { cn } from '@/lib/utils';
 
@@ -463,18 +454,13 @@ function generateCSS(id: string, config: ChartConfig): string {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartStyle,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-  type ChartContainerProps,
-  type ChartLegendContentProps,
-  type ChartLegendProps,
-  type ChartStyleProps,
-  type ChartTooltipContentProps,
-  type ChartTooltipProps,
+export type {
+  ChartConfig,
+  ChartContainerProps,
+  ChartLegendContentProps,
+  ChartLegendProps,
+  ChartStyleProps,
+  ChartTooltipContentProps,
+  ChartTooltipProps,
 };
+export { ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent };

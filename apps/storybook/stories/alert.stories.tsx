@@ -1,6 +1,7 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Alert, AlertDescription, AlertTitle } from '@codefast/ui';
 import { ExclamationTriangleIcon, RocketIcon } from '@radix-ui/react-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
 
 const meta = {
   args: {

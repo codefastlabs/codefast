@@ -1,4 +1,6 @@
-import { type Locale, format } from 'date-fns';
+import type { Locale } from 'date-fns';
+
+import { format } from 'date-fns';
 
 import { defaultDateLib } from '@/lib/classes/date-lib';
 import { getFormatters } from '@/lib/helpers/get-formatters';

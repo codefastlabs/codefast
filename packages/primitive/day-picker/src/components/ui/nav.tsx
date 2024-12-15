@@ -1,4 +1,4 @@
-import { type ComponentProps, type JSX, type MouseEventHandler } from 'react';
+import type { ComponentProps, JSX, MouseEventHandler } from 'react';
 
 import { UI } from '@/lib/constants/ui';
 import { useDayPicker } from '@/lib/hooks/use-day-picker';

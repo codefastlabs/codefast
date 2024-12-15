@@ -1,3 +1,6 @@
+import type { Column } from '@tanstack/react-table';
+import type { ComponentType, JSX } from 'react';
+
 import {
   Badge,
   Button,
@@ -15,8 +18,6 @@ import {
   Separator,
 } from '@codefast/ui';
 import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { type Column } from '@tanstack/react-table';
-import { type ComponentType, type JSX } from 'react';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   options: {

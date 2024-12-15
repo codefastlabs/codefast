@@ -1,5 +1,7 @@
+import type { HTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Heading
@@ -24,4 +26,5 @@ Heading.displayName = 'Heading';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Heading, type HeadingProps };
+export type { HeadingProps };
+export { Heading };

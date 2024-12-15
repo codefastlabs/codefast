@@ -1,8 +1,10 @@
 'use client';
 
+import type { ComponentPropsWithoutRef, ComponentRef, HTMLAttributes } from 'react';
+
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { DotIcon } from 'lucide-react';
-import { type ComponentPropsWithoutRef, type ComponentRef, type HTMLAttributes, forwardRef, useContext } from 'react';
+import { forwardRef, useContext } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -98,15 +100,7 @@ InputOTPSeparator.displayName = 'InputOTPSeparator';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-  type InputOTPGroupProps,
-  type InputOTPProps,
-  type InputOTPSeparatorProps,
-  type InputOTPSlotProps,
-};
+export type { InputOTPGroupProps, InputOTPProps, InputOTPSeparatorProps, InputOTPSlotProps };
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot };
 
 export { REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp';

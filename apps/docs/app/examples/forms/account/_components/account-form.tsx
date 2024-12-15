@@ -1,5 +1,8 @@
 'use client';
 
+import type { JSX } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
+
 import {
   Button,
   Calendar,
@@ -27,11 +30,12 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { isNil } from 'lodash-es';
-import { type JSX } from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+
+import type { AccountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
 
 import { updateAccount } from '@/app/examples/forms/account/_lib/actions/account-actions';
-import { type AccountFormValues, accountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
+import { accountFormValues } from '@/app/examples/forms/account/_lib/schema/account-schema';
 
 const languages = [
   { label: 'English', value: 'en' },

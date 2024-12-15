@@ -1,7 +1,8 @@
 'use client';
 
+import type { JSX, ReactNode } from 'react';
+
 import { Toaster } from '@codefast/ui';
-import { type JSX, type ReactNode } from 'react';
 
 interface ProvidersProps {
   children?: ReactNode | undefined;

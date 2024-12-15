@@ -1,5 +1,5 @@
-import { type DateLib } from '@/lib/classes/date-lib';
-import { type DayPickerProps } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps } from '@/lib/types';
 
 /**
  * Gets an array of dates representing the months to be displayed in a calendar.

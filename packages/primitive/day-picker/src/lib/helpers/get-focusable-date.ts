@@ -1,5 +1,5 @@
-import { type DateLib } from '@/lib/classes/date-lib';
-import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/lib/types';
 
 /**
  * Return the next date that should be focused.

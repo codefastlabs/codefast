@@ -1,8 +1,9 @@
 'use client';
 
-import { Slideshow } from '@codefast/third-parties/slideshow';
+import type { HTMLAttributes, JSX } from 'react';
+
 import '@codefast/third-parties/slideshow.css';
-import { type HTMLAttributes, type JSX } from 'react';
+import { Slideshow } from '@codefast/third-parties/slideshow';
 
 type SlideshowWeddingProps = HTMLAttributes<HTMLDivElement>;
 

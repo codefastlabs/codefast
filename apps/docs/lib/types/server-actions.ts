@@ -1,4 +1,4 @@
-import { type typeToFlattenedError } from 'zod';
+import type { typeToFlattenedError } from 'zod';
 
 interface Response {
   ok: boolean;

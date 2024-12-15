@@ -1,3 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import type { SubmitHandler } from 'react-hook-form';
+
 import {
   Button,
   Checkbox,
@@ -16,10 +19,9 @@ import {
   Toaster,
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Meta, type StoryObj } from '@storybook/react';
 import Link from 'next/link';
 import { useId } from 'react';
-import { type SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const meta = {

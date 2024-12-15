@@ -1,3 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import type { ComponentProps } from 'react';
+
 import {
   Button,
   DropdownMenu,
@@ -15,8 +18,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
 
 const meta = {
   component: DropdownMenu,

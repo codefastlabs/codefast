@@ -1,5 +1,7 @@
-import { type DateLib, defaultDateLib } from '@/lib/classes/date-lib';
-import { type DateRange } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DateRange } from '@/lib/types';
+
+import { defaultDateLib } from '@/lib/classes/date-lib';
 
 /**
  * Add a day to an existing range.

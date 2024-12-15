@@ -1,7 +1,10 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+import type { ContentType } from 'recharts/types/component/Label';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -13,9 +16,7 @@ import {
   ChartTooltipContent,
 } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
-import { type JSX } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
-import { type ContentType } from 'recharts/types/component/Label';
 
 export const description = 'A donut chart with text';
 

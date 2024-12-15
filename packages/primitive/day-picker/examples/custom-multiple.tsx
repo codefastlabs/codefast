@@ -1,8 +1,11 @@
+import type { JSX, MouseEvent } from 'react';
+
 import { isSameDay } from 'date-fns';
-import { type JSX, type MouseEvent, useState } from 'react';
+import { useState } from 'react';
+
+import type { DayEventHandler } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type DayEventHandler } from '@/lib';
 
 export function CustomMultiple(): JSX.Element {
   const [value, setValue] = useState<Date[]>([]);

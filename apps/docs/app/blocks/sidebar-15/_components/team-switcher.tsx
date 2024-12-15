@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +15,9 @@ import {
   SidebarMenuItem,
 } from '@codefast/ui';
 import { ChevronDownIcon, PlusIcon } from '@radix-ui/react-icons';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
 
-import { type SidebarLeftData } from '@/app/blocks/sidebar-15/_lib/mocks/data';
+import type { SidebarLeftData } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 
 interface TeamSwitcherProps {
   teams: SidebarLeftData['teams'];

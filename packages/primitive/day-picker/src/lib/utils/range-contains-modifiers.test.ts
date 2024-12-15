@@ -1,5 +1,6 @@
+import type { DayOfWeek } from '@/lib/types';
+
 import { defaultDateLib } from '@/lib/classes/date-lib';
-import { type DayOfWeek } from '@/lib/types';
 import { rangeContainsModifiers } from '@/lib/utils/range-contains-modifiers';
 
 const sunday = new Date(2024, 8, 1); //  day of the week 0

@@ -1,4 +1,6 @@
-import { type DateLib, defaultDateLib } from '@/lib/classes/date-lib';
+import type { DateLib } from '@/lib/classes/date-lib';
+
+import { defaultDateLib } from '@/lib/classes/date-lib';
 
 /**
  * Returns whether a date range contains one or more days of the week.

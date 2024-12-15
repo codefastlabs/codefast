@@ -1,7 +1,8 @@
+import type { Metadata } from 'next';
+import type { HTMLAttributes, JSX } from 'react';
+
 import { cn } from '@codefast/ui';
-import { type Metadata } from 'next';
 import Image from 'next/image';
-import { type HTMLAttributes, type JSX } from 'react';
 
 import { Calendar } from '@/app/examples/cards/_components/calendar';
 import { CookieSettings } from '@/app/examples/cards/_components/cookie-settings';

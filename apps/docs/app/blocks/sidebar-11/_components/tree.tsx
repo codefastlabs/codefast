@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -7,9 +9,8 @@ import {
   SidebarMenuSub,
 } from '@codefast/ui';
 import { ChevronRightIcon, FileIcon, FolderIcon } from 'lucide-react';
-import { type JSX } from 'react';
 
-import { type TreeNode } from '@/app/blocks/sidebar-11/_lib/mocks/data';
+import type { TreeNode } from '@/app/blocks/sidebar-11/_lib/mocks/data';
 
 interface TreeProps {
   item: TreeNode;

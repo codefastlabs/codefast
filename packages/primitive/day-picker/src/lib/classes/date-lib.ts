@@ -1,8 +1,7 @@
+import type { DateArg, FormatOptions as DateFnsFormatOptions, EndOfWeekOptions, StartOfWeekOptions } from 'date-fns';
+import type { Locale } from 'date-fns/locale';
+
 import {
-  type DateArg,
-  type FormatOptions as DateFnsFormatOptions,
-  type EndOfWeekOptions,
-  type StartOfWeekOptions,
   addDays,
   addMonths,
   addWeeks,
@@ -32,7 +31,7 @@ import {
   startOfWeek,
   startOfYear,
 } from 'date-fns';
-import { type Locale, enUS } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 import { endOfBroadcastWeek } from '@/lib/helpers/end-of-broadcast-week';
 import { startOfBroadcastWeek } from '@/lib/helpers/start-of-broadcast-week';

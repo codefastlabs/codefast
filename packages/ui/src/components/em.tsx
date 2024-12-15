@@ -1,5 +1,7 @@
+import type { HTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Em
@@ -22,4 +24,5 @@ Em.displayName = 'Em';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Em, type EmProps };
+export type { EmProps };
+export { Em };

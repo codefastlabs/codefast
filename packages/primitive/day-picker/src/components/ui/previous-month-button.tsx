@@ -1,4 +1,4 @@
-import { type ComponentProps, type JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 export type PreviousMonthButtonProps = ComponentProps<'button'>;
 

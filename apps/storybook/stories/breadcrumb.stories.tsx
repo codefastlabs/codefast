@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { useMediaQuery } from '@codefast/hooks';
 import {
   Breadcrumb,
@@ -21,7 +23,6 @@ import {
   DropdownMenuTrigger,
 } from '@codefast/ui';
 import { ChevronDownIcon, SlashIcon } from '@radix-ui/react-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
 import Link from 'next/link';
 import { Fragment, useState } from 'react';
 

@@ -1,3 +1,6 @@
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
+
 import {
   Button,
   Card,
@@ -10,9 +13,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@codefast/ui';
-import { type Metadata } from 'next';
 import Image from 'next/image';
-import { type JSX, Suspense } from 'react';
+import { Suspense } from 'react';
 
 import { MainNav } from '@/app/examples/dashboard/_components/main-nav';
 import { Overview } from '@/app/examples/dashboard/_components/overview';

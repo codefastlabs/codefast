@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -31,4 +33,5 @@ Progress.displayName = ProgressPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Progress, type ProgressProps };
+export type { ProgressProps };
+export { Progress };

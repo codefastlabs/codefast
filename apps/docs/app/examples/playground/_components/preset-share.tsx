@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
+
 import { Button, Label, Popover, PopoverContent, PopoverTrigger, TextInput } from '@codefast/ui';
 import { CopyIcon } from '@radix-ui/react-icons';
-import { type JSX } from 'react';
 
 export function PresetShare(): JSX.Element {
   return (

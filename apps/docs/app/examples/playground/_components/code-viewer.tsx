@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Button,
   Dialog,
@@ -8,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 
 export function CodeViewer(): JSX.Element {
   return (

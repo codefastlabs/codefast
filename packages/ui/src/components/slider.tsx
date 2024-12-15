@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as SliderPrimitive from '@radix-ui/react-slider';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -43,4 +45,5 @@ Slider.displayName = SliderPrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Slider, type SliderProps };
+export type { SliderProps };
+export { Slider };

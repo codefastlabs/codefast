@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -17,9 +19,8 @@ import {
   useSidebar,
 } from '@codefast/ui';
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from 'lucide-react';
-import { type JSX } from 'react';
 
-import { type User } from '@/app/blocks/sidebar-15/_lib/mocks/data';
+import type { User } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 
 interface NavUserProps {
   user: User;

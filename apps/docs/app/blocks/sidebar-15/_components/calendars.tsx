@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -11,9 +13,9 @@ import {
   SidebarSeparator,
 } from '@codefast/ui';
 import { CheckIcon, ChevronRightIcon } from '@radix-ui/react-icons';
-import { type JSX, Fragment } from 'react';
+import { Fragment } from 'react';
 
-import { type Calendar } from '@/app/blocks/sidebar-15/_lib/mocks/data';
+import type { Calendar } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 
 interface CalendarsProps {
   calendars: Calendar[];

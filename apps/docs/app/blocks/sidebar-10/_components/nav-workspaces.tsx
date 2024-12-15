@@ -1,5 +1,7 @@
+import type { SidebarGroup } from '@codefast/ui';
+import type { ComponentProps, JSX } from 'react';
+
 import {
-  type SidebarGroup,
   cn,
   Collapsible,
   CollapsibleContent,
@@ -16,7 +18,6 @@ import {
 } from '@codefast/ui';
 import { ChevronRightIcon, MoreHorizontalIcon, PlusIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX } from 'react';
 
 interface NavWorkspacesProps extends ComponentProps<typeof SidebarGroup> {
   workspaces: {

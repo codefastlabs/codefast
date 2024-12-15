@@ -1,4 +1,6 @@
-import { type TextareaHTMLAttributes, forwardRef } from 'react';
+import type { TextareaHTMLAttributes } from 'react';
+
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -31,4 +33,5 @@ Textarea.displayName = 'Textarea';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Textarea, type TextareaProps };
+export type { TextareaProps };
+export { Textarea };

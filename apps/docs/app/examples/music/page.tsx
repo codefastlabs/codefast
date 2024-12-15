@@ -1,8 +1,9 @@
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
+
 import { Button, ScrollArea, Separator, Tabs, TabsContent, TabsList, TabsTrigger } from '@codefast/ui';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
-import { type Metadata } from 'next';
 import Image from 'next/image';
-import { type JSX } from 'react';
 
 import { AlbumArtwork } from '@/app/examples/music/_components/album-artwork';
 import { Menu } from '@/app/examples/music/_components/menu';

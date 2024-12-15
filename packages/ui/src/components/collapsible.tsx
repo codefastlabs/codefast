@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -45,11 +47,5 @@ CollapsibleContent.displayName = CollapsiblePrimitive.CollapsibleContent.display
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-  type CollapsibleContentProps,
-  type CollapsibleProps,
-  type CollapsibleTriggerProps,
-};
+export type { CollapsibleContentProps, CollapsibleProps, CollapsibleTriggerProps };
+export { Collapsible, CollapsibleContent, CollapsibleTrigger };

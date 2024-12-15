@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   Button,
   Label,
@@ -12,7 +14,6 @@ import {
   SheetTrigger,
   TextInput,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { useId } from 'react';
 
 const meta = {

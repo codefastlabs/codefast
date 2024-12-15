@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentProps, JSX } from 'react';
+
 import {
   cn,
   DropdownMenu,
@@ -14,7 +16,7 @@ import {
   SidebarMenuItem,
 } from '@codefast/ui';
 import { ChevronDownIcon, PlusIcon } from 'lucide-react';
-import { type ComponentProps, type JSX, useState } from 'react';
+import { useState } from 'react';
 
 interface TeamSwitcherProps extends ComponentProps<typeof SidebarMenu> {
   teams: {

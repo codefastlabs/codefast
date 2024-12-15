@@ -1,6 +1,6 @@
-import { type ComponentProps, type JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
-import { type CalendarMonth } from '@/lib/classes/calendar-month';
+import type { CalendarMonth } from '@/lib/classes/calendar-month';
 
 export type MonthProps = ComponentProps<'div'> & {
   /**

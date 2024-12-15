@@ -1,13 +1,7 @@
-import { type DateLib } from '@/lib/classes/date-lib';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayEvent, DayPickerProps, Modifiers, MultiProps, MultiRequiredProps, Selection } from '@/lib/types';
+
 import { useControlledValue } from '@/lib/hooks/use-controlled-value';
-import {
-  type DayEvent,
-  type DayPickerProps,
-  type Modifiers,
-  type MultiProps,
-  type MultiRequiredProps,
-  type Selection,
-} from '@/lib/types';
 
 export function useMulti<T extends DayPickerProps>(props: T, dateLib: DateLib): Selection<T> {
   const { onSelect, required, selected: initiallySelected } = props as MultiProps | MultiRequiredProps;

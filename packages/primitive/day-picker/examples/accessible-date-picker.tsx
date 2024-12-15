@@ -1,5 +1,7 @@
+import type { JSX } from 'react';
+
 import { format } from 'date-fns';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
 
 import { DayPicker } from '@/components';
 
