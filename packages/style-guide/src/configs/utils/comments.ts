@@ -5,7 +5,6 @@ import eslintCommentsPlugin from '@eslint-community/eslint-plugin-eslint-comment
 
 import { commentsRules } from '@/rules/comments';
 
-/** @type {import('eslint').Linter.Config} */
 export const commentsConfig: Linter.Config = {
   ...eslintCommentsPlugin.recommended,
   rules: {
