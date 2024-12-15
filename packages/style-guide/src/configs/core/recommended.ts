@@ -1,7 +1,7 @@
 import jsConfig from '@eslint/js';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import prettierConfig from 'eslint-config-prettier';
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import { bestPracticeRules } from '@/rules/best-practice';
 import { es6Rules } from '@/rules/es6';

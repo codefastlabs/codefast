@@ -1,5 +1,5 @@
 import jestPlugin from 'eslint-plugin-jest';
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import { jestRules } from '@/rules/jest';
 

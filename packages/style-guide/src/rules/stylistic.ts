@@ -1,4 +1,4 @@
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 export const stylisticRules: Linter.Config = {
   rules: {
