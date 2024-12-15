@@ -1,6 +1,6 @@
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import { jsxA11yRules } from '@/rules/jsx-a11y';
 

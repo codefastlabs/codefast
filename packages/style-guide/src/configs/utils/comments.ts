@@ -1,6 +1,6 @@
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import eslintCommentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import { commentsRules } from '@/rules/comments';
 

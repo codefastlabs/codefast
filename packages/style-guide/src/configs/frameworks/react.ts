@@ -3,7 +3,7 @@ import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import prettierConfig from 'eslint-config-prettier';
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 import { reactHooksConfig } from '@/configs/utils/react-hooks';
 import { jsxA11yConfig } from '@/configs/utils/jsx-a11y';

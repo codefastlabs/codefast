@@ -1,5 +1,5 @@
 // Source: https://github.com/playwright-community/eslint-plugin-playwright/blob/v1.5.1/src/index.ts#L101-L129
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 const recommended: Partial<Linter.RulesRecord> = {
   'no-empty-pattern': 'off',

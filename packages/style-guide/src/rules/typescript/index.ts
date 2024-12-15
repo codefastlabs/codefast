@@ -1,4 +1,4 @@
-import { type Linter } from 'eslint';
+import type { Linter } from 'eslint';
 
 export const typescriptRules: Linter.Config = {
   rules: {
@@ -10,7 +10,7 @@ export const typescriptRules: Linter.Config = {
     '@typescript-eslint/consistent-type-exports': [
       'warn',
       {
-        fixMixedExportsWithInlineTypeSpecifier: true,
+        fixMixedExportsWithInlineTypeSpecifier: false,
       },
     ],
 
@@ -23,7 +23,7 @@ export const typescriptRules: Linter.Config = {
       'warn',
       {
         disallowTypeAnnotations: true,
-        fixStyle: 'inline-type-imports',
+        fixStyle: 'separate-type-imports',
         prefer: 'type-imports',
       },
     ],
