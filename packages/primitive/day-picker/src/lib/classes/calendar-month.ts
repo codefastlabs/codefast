@@ -1,4 +1,4 @@
-import { type CalendarWeek } from '@/lib/classes/calendar-week';
+import type { CalendarWeek } from '@/lib/classes/calendar-week';
 
 /**
  * Represent a month in a calendar year. Contains the weeks within the month.

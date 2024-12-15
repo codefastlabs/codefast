@@ -1,3 +1,5 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -8,7 +10,6 @@ import {
   HoverCardTrigger,
   Text,
 } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { CalendarDays } from 'lucide-react';
 
 const meta = {

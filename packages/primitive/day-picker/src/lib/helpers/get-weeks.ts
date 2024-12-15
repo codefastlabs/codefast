@@ -1,4 +1,4 @@
-import { type CalendarMonth, type CalendarWeek } from '@/lib/classes';
+import type { CalendarMonth, CalendarWeek } from '@/lib/classes';
 
 /**
  *  Returns an array of calendar weeks from an array of calendar months.

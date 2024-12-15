@@ -1,19 +1,12 @@
 // Adjust the import path
-import {
-  type Locale,
-  addDays,
-  addMonths,
-  addWeeks,
-  addYears,
-  endOfISOWeek,
-  endOfWeek,
-  startOfISOWeek,
-  startOfWeek,
-} from 'date-fns';
+import type { Locale } from 'date-fns';
+
+import { addDays, addMonths, addWeeks, addYears, endOfISOWeek, endOfWeek, startOfISOWeek, startOfWeek } from 'date-fns';
+
+import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/lib/types';
 
 import { DateLib } from '@/lib/classes/date-lib';
 import { getFocusableDate } from '@/lib/helpers/get-focusable-date';
-import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
 
 const focusedDate = new Date(2023, 0, 1); // Jan 1, 2023
 const options: Pick<DayPickerProps, 'ISOWeek'> = {

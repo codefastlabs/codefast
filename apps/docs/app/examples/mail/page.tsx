@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
+
 import { cookies } from 'next/headers';
 import Image from 'next/image';
-import { type JSX } from 'react';
 
 import { Mail } from '@/app/examples/mail/_components/mail';
 import { accounts, mails } from '@/app/examples/mail/_data/data';

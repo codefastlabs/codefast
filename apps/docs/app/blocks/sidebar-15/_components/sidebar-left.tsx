@@ -1,5 +1,6 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { cn, Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@codefast/ui';
-import { type ComponentProps, type JSX } from 'react';
 
 import { NavFavorites } from '@/app/blocks/sidebar-15/_components/nav-favorites';
 import { NavMain } from '@/app/blocks/sidebar-15/_components/nav-main';

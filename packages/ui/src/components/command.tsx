@@ -1,15 +1,10 @@
 'use client';
 
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+
 import { Command as CommandPrimitive } from 'cmdk';
 import { SearchIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
 
 import { Dialog, DialogContent } from '@/components/dialog';
 import { cn } from '@/lib/utils';
@@ -192,6 +187,18 @@ function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Ele
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  CommandDialogProps,
+  CommandEmptyProps,
+  CommandGroupProps,
+  CommandInputProps,
+  CommandItemProps,
+  CommandListProps,
+  CommandLoadingProps,
+  CommandProps,
+  CommandSeparatorProps,
+  CommandShortcutProps,
+};
 export {
   Command,
   CommandDialog,
@@ -203,14 +210,4 @@ export {
   CommandLoading,
   CommandSeparator,
   CommandShortcut,
-  type CommandDialogProps,
-  type CommandEmptyProps,
-  type CommandGroupProps,
-  type CommandInputProps,
-  type CommandItemProps,
-  type CommandListProps,
-  type CommandLoadingProps,
-  type CommandProps,
-  type CommandSeparatorProps,
-  type CommandShortcutProps,
 };

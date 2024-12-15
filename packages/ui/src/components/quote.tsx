@@ -1,5 +1,7 @@
+import type { QuoteHTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type QuoteHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Quote
@@ -22,4 +24,5 @@ Quote.displayName = 'Quote';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Quote, type QuoteProps };
+export type { QuoteProps };
+export { Quote };

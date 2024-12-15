@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Button,
   Dialog,
@@ -11,7 +13,6 @@ import {
   Label,
   TextInput,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 
 export function PodcastEmptyPlaceholder(): JSX.Element {
   return (

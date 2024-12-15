@@ -1,5 +1,7 @@
-import { type DateLib, defaultDateLib } from '@/lib/classes/date-lib';
-import { type Matcher } from '@/lib/types';
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { Matcher } from '@/lib/types';
+
+import { defaultDateLib } from '@/lib/classes/date-lib';
 import { rangeIncludesDate } from '@/lib/utils/range-includes-date';
 import {
   isDateAfterType,

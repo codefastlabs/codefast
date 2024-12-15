@@ -1,23 +1,15 @@
 'use client';
 
+import type { ComponentProps, ComponentRef, CSSProperties } from 'react';
+import type { VariantProps } from 'tailwind-variants';
+
 import { useMediaQuery } from '@codefast/hooks';
 import { Slot } from '@radix-ui/react-slot';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import Cookies from 'js-cookie';
 import { PanelLeftIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentRef,
-  type CSSProperties,
-  createContext,
-  forwardRef,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { type VariantProps, tv } from 'tailwind-variants';
+import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { tv } from 'tailwind-variants';
 
 import { Button } from '@/components/button';
 import { Separator } from '@/components/separator';

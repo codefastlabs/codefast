@@ -1,4 +1,4 @@
-import { type CalendarDay, type CalendarMonth } from '@/lib/classes';
+import type { CalendarDay, CalendarMonth } from '@/lib/classes';
 
 /**
  * Returns all the days belonging to the calendar by merging the days in the

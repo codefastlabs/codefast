@@ -1,7 +1,9 @@
 'use client';
 
+import type { SidebarGroup } from '@codefast/ui';
+import type { ComponentProps, JSX } from 'react';
+
 import {
-  type SidebarGroup,
   cn,
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +19,6 @@ import {
 } from '@codefast/ui';
 import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX } from 'react';
 
 interface NavFavoritesProps extends ComponentProps<typeof SidebarGroup> {
   favorites: {

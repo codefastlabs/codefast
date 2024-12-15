@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Label, Radio } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import { useId } from 'react';
 
 const meta = {

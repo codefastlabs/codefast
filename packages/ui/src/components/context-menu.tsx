@@ -1,13 +1,8 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -304,6 +299,23 @@ ContextMenuArrow.displayName = ContextMenuPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  ContextMenuArrowProps,
+  ContextMenuCheckboxItemProps,
+  ContextMenuContentProps,
+  ContextMenuGroupProps,
+  ContextMenuItemProps,
+  ContextMenuLabelProps,
+  ContextMenuProps,
+  ContextMenuRadioGroupProps,
+  ContextMenuRadioItemProps,
+  ContextMenuSeparatorProps,
+  ContextMenuShortcutProps,
+  ContextMenuSubContentProps,
+  ContextMenuSubProps,
+  ContextMenuSubTriggerProps,
+  ContextMenuTriggerProps,
+};
 export {
   ContextMenu,
   ContextMenuArrow,
@@ -320,19 +332,4 @@ export {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-  type ContextMenuArrowProps,
-  type ContextMenuCheckboxItemProps,
-  type ContextMenuContentProps,
-  type ContextMenuGroupProps,
-  type ContextMenuItemProps,
-  type ContextMenuLabelProps,
-  type ContextMenuProps,
-  type ContextMenuRadioGroupProps,
-  type ContextMenuRadioItemProps,
-  type ContextMenuSeparatorProps,
-  type ContextMenuShortcutProps,
-  type ContextMenuSubContentProps,
-  type ContextMenuSubProps,
-  type ContextMenuSubTriggerProps,
-  type ContextMenuTriggerProps,
 };

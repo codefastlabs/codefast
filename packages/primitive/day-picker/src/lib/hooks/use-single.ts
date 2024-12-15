@@ -1,15 +1,16 @@
-import { type DateLib } from '@/lib/classes/date-lib';
-import { useControlledValue } from '@/lib/hooks/use-controlled-value';
-import {
-  type DayEvent,
-  type DayPickerProps,
-  type Modifiers,
-  type SelectedValue,
-  type SelectHandler,
-  type Selection,
-  type SingleProps,
-  type SingleRequiredProps,
+import type { DateLib } from '@/lib/classes/date-lib';
+import type {
+  DayEvent,
+  DayPickerProps,
+  Modifiers,
+  SelectedValue,
+  SelectHandler,
+  Selection,
+  SingleProps,
+  SingleRequiredProps,
 } from '@/lib/types';
+
+import { useControlledValue } from '@/lib/hooks/use-controlled-value';
 
 export interface UseSingle<T extends DayPickerProps> {
   isSelected: (date: Date) => boolean;

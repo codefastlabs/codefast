@@ -1,6 +1,7 @@
-import { type Locale } from 'date-fns/locale';
+import type { Locale } from 'date-fns/locale';
 
-import { type DayPickerProps } from '@/lib';
+import type { DayPickerProps } from '@/lib';
+
 import { defaultLocale } from '@/lib/classes/date-lib';
 
 /**

@@ -1,7 +1,8 @@
+import type { DateLib } from '@/lib/classes/date-lib';
+import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/lib/types';
+
 import { CalendarDay } from '@/lib/classes';
-import { type DateLib } from '@/lib/classes/date-lib';
 import { getFocusableDate } from '@/lib/helpers/get-focusable-date';
-import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
 import { dateMatchModifiers } from '@/lib/utils/date-match-modifiers';
 
 /**

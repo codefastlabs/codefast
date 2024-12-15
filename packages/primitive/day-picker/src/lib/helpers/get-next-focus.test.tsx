@@ -1,7 +1,8 @@
+import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/lib/types';
+
 import { CalendarDay } from '@/lib/classes';
 import { defaultDateLib } from '@/lib/classes/date-lib';
 import { getNextFocus } from '@/lib/helpers/get-next-focus';
-import { type DayPickerProps, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
 
 const props: Pick<DayPickerProps, 'disabled' | 'endMonth' | 'hidden' | 'startMonth'> = {
   disabled: [],

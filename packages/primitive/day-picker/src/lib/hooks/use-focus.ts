@@ -1,10 +1,11 @@
 import { useState } from 'react';
 
-import { type CalendarDay, type DateLib } from '@/lib/classes';
+import type { CalendarDay, DateLib } from '@/lib/classes';
+import type { Calendar } from '@/lib/hooks/use-calendar';
+import type { DayPickerProps, Modifiers, MoveFocusBy, MoveFocusDir } from '@/lib/types';
+
 import { calculateFocusTarget } from '@/lib/helpers/calculate-focus-target';
 import { getNextFocus } from '@/lib/helpers/get-next-focus';
-import { type Calendar } from '@/lib/hooks/use-calendar';
-import { type DayPickerProps, type Modifiers, type MoveFocusBy, type MoveFocusDir } from '@/lib/types';
 
 export interface UseFocus {
   /**

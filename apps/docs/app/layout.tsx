@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
-import { type JSX, type ReactNode } from 'react';
+import type { Metadata } from 'next';
+import type { JSX, ReactNode } from 'react';
 
 import { inter } from '@/app/fonts';
 import { Providers } from '@/components/providers';

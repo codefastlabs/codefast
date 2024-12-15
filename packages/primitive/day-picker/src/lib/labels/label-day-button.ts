@@ -1,5 +1,7 @@
-import { type DateLibOptions, DateLib } from '@/lib/classes/date-lib';
-import { type Modifiers } from '@/lib/types';
+import type { DateLibOptions } from '@/lib/classes/date-lib';
+import type { Modifiers } from '@/lib/types';
+
+import { DateLib } from '@/lib/classes/date-lib';
 
 /**
  * Generates a label for a day button based on the given date and modifiers.

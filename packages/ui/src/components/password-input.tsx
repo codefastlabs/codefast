@@ -1,20 +1,16 @@
 'use client';
 
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, MouseEventHandler } from 'react';
+
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type MouseEventHandler,
-  forwardRef,
-  useCallback,
-  useState,
-} from 'react';
+import { forwardRef, useCallback, useState } from 'react';
+
+import type { InputVariantsProps } from '@/styles/input-variants';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
-import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: PasswordInput
@@ -72,4 +68,5 @@ PasswordInput.displayName = 'PasswordInput';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { PasswordInput, type PasswordInputProps };
+export type { PasswordInputProps };
+export { PasswordInput };

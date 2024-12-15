@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentPropsWithoutRef, JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -33,7 +35,7 @@ import {
   TextInput,
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { type ComponentPropsWithoutRef, type JSX, useState } from 'react';
+import { useState } from 'react';
 
 const groups = [
   {

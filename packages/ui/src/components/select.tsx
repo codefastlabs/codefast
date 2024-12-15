@@ -1,9 +1,13 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from 'lucide-react';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
+
+import type { ButtonVariantsProps } from '@/styles/button-variants';
 
 import { cn } from '@/lib/utils';
-import { type ButtonVariantsProps, buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/styles/button-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Select
@@ -216,6 +220,18 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  SelectContentProps,
+  SelectGroupProps,
+  SelectItemProps,
+  SelectLabelProps,
+  SelectProps,
+  SelectScrollDownButtonProps,
+  SelectScrollUpButtonProps,
+  SelectSeparatorProps,
+  SelectTriggerProps,
+  SelectValueProps,
+};
 export {
   Select,
   SelectContent,
@@ -227,14 +243,4 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-  type SelectContentProps,
-  type SelectGroupProps,
-  type SelectItemProps,
-  type SelectLabelProps,
-  type SelectProps,
-  type SelectScrollDownButtonProps,
-  type SelectScrollUpButtonProps,
-  type SelectSeparatorProps,
-  type SelectTriggerProps,
-  type SelectValueProps,
 };

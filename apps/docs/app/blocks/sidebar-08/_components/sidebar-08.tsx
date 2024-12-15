@@ -1,3 +1,5 @@
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -53,7 +55,6 @@ import {
   Trash2Icon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX } from 'react';
 
 import { data } from '@/app/blocks/sidebar-08/_lib/mocks/data';
 

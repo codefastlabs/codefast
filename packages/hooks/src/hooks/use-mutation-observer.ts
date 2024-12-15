@@ -1,4 +1,6 @@
-import { type RefObject, useEffect } from 'react';
+import type { RefObject } from 'react';
+
+import { useEffect } from 'react';
 
 const defaultOptions: MutationObserverInit = {
   attributes: true,

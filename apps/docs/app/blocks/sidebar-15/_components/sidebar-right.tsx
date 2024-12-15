@@ -1,3 +1,5 @@
+import type { ComponentProps, JSX } from 'react';
+
 import {
   cn,
   Sidebar,
@@ -10,7 +12,6 @@ import {
   SidebarSeparator,
 } from '@codefast/ui';
 import { PlusIcon } from '@radix-ui/react-icons';
-import { type ComponentProps, type JSX } from 'react';
 
 import { Calendars } from '@/app/blocks/sidebar-15/_components/calendars';
 import { DatePicker } from '@/app/blocks/sidebar-15/_components/date-picker';

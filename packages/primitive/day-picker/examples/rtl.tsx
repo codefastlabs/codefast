@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
+
 import { arSA } from 'date-fns/locale';
-import { type JSX } from 'react';
 
 import { DayPicker } from '@/components';
 

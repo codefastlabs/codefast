@@ -1,8 +1,11 @@
+import type { JSX } from 'react';
+
 import { format, isValid, parse } from 'date-fns';
-import { type JSX, useId, useState } from 'react';
+import { useId, useState } from 'react';
+
+import type { OnSelectHandler } from '@/lib';
 
 import { DayPicker } from '@/components';
-import { type OnSelectHandler } from '@/lib';
 
 export function Input(): JSX.Element {
   const inputId = useId();

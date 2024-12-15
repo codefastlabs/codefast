@@ -1,14 +1,8 @@
+import type { AnchorHTMLAttributes, HTMLAttributes, JSX, LiHTMLAttributes, OlHTMLAttributes, ReactNode } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
-import {
-  type AnchorHTMLAttributes,
-  type HTMLAttributes,
-  type JSX,
-  type LiHTMLAttributes,
-  type OlHTMLAttributes,
-  type ReactNode,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -143,6 +137,15 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  BreadcrumbEllipsisProps,
+  BreadcrumbItemProps,
+  BreadcrumbLinkProps,
+  BreadcrumbListProps,
+  BreadcrumbPageProps,
+  BreadcrumbProps,
+  BreadcrumbSeparatorProps,
+};
 export {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -151,11 +154,4 @@ export {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  type BreadcrumbEllipsisProps,
-  type BreadcrumbItemProps,
-  type BreadcrumbLinkProps,
-  type BreadcrumbListProps,
-  type BreadcrumbPageProps,
-  type BreadcrumbProps,
-  type BreadcrumbSeparatorProps,
 };

@@ -1,5 +1,7 @@
+import type { CSSProperties, HTMLAttributes } from 'react';
+
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { type CSSProperties, type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -65,4 +67,5 @@ Spinner.displayName = 'Spinner';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Spinner, type SpinnerProps };
+export type { SpinnerProps };
+export { Spinner };

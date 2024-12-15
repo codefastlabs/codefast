@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as SwitchPrimitives from '@radix-ui/react-switch';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -37,4 +39,5 @@ Switch.displayName = SwitchPrimitives.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Switch, type SwitchProps };
+export type { SwitchProps };
+export { Switch };

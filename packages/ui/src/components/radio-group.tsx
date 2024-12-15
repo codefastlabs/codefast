@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -49,4 +51,5 @@ RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { RadioGroup, RadioGroupItem, type RadioGroupItemProps, type RadioGroupProps };
+export type { RadioGroupItemProps, RadioGroupProps };
+export { RadioGroup, RadioGroupItem };

@@ -1,7 +1,9 @@
 'use client';
 
+import type { PopoverProps } from '@codefast/ui';
+import type { JSX } from 'react';
+
 import {
-  type PopoverProps,
   Button,
   cn,
   Command,
@@ -17,9 +19,9 @@ import {
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/navigation';
-import { type JSX, useState } from 'react';
+import { useState } from 'react';
 
-import { type Preset } from '@/app/examples/playground/_data/presets';
+import type { Preset } from '@/app/examples/playground/_data/presets';
 
 interface PresetSelectorProps extends PopoverProps {
   presets: Preset[];

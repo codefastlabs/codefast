@@ -1,5 +1,8 @@
-import { type HTMLAttributes, forwardRef } from 'react';
-import { type VariantProps, tv } from 'tailwind-variants';
+import type { HTMLAttributes } from 'react';
+import type { VariantProps } from 'tailwind-variants';
+
+import { forwardRef } from 'react';
+import { tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 
@@ -69,4 +72,5 @@ AlertDescription.displayName = 'AlertDescription';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Alert, AlertDescription, AlertTitle, type AlertDescriptionProps, type AlertProps, type AlertTitleProps };
+export type { AlertDescriptionProps, AlertProps, AlertTitleProps };
+export { Alert, AlertDescription, AlertTitle };

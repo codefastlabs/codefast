@@ -1,5 +1,7 @@
-import { type DateLibOptions, DateLib } from '@/lib/classes/date-lib';
-import { type Modifiers } from '@/lib/types';
+import type { DateLibOptions } from '@/lib/classes/date-lib';
+import type { Modifiers } from '@/lib/types';
+
+import { DateLib } from '@/lib/classes/date-lib';
 
 /**
  * The label for the day gridcell when the calendar is not interactive.

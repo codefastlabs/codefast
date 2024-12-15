@@ -1,4 +1,6 @@
-import { type HTMLAttributes, forwardRef } from 'react';
+import type { HTMLAttributes } from 'react';
+
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -92,17 +94,5 @@ CardFooter.displayName = 'CardFooter';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  type CardContentProps,
-  type CardDescriptionProps,
-  type CardFooterProps,
-  type CardHeaderProps,
-  type CardProps,
-  type CardTitleProps,
-};
+export type { CardContentProps, CardDescriptionProps, CardFooterProps, CardHeaderProps, CardProps, CardTitleProps };
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };

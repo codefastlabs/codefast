@@ -1,4 +1,6 @@
-import { type DateLibOptions, DateLib } from '@/lib/classes/date-lib';
+import type { DateLibOptions } from '@/lib/classes/date-lib';
+
+import { DateLib } from '@/lib/classes/date-lib';
 
 /**
  * Format the day date shown in the day cell.

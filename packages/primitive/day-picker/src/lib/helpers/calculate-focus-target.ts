@@ -1,6 +1,7 @@
-import { type CalendarDay } from '@/lib/classes';
+import type { CalendarDay } from '@/lib/classes';
+import type { Modifiers } from '@/lib/types';
+
 import { DayFlag } from '@/lib/constants/ui';
-import { type Modifiers } from '@/lib/types';
 
 /**
  * Determines the focus target within a set of calendar days based on several conditions.

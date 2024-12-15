@@ -1,6 +1,6 @@
 import { TZDate } from '@date-fns/tz';
 
-import { type DateLib } from '@/lib/classes/date-lib';
+import type { DateLib } from '@/lib/classes/date-lib';
 
 /**
  * Generate a series of 7 days, starting from the week, to use for formatting

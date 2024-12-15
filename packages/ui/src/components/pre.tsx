@@ -1,5 +1,7 @@
+import type { HTMLAttributes } from 'react';
+
 import { Slot } from '@radix-ui/react-slot';
-import { type HTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Pre
@@ -22,4 +24,5 @@ Pre.displayName = 'Pre';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Pre, type PreProps };
+export type { PreProps };
+export { Pre };

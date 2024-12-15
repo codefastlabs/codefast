@@ -1,5 +1,6 @@
+import type { DateRange } from '@/lib/types';
+
 import { defaultDateLib } from '@/lib/classes';
-import { type DateRange } from '@/lib/types';
 
 /**
  * Determines if a given date is within a specified date range.

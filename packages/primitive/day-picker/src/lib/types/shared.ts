@@ -1,29 +1,28 @@
-import { type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 
 import type * as components from '@/components/ui';
-
-import { type DayFlag, type SelectionState, type UI } from '@/lib/constants/ui';
-import {
-  type formatCaption,
-  type formatDay,
-  type formatMonthDropdown,
-  type formatWeekdayName,
-  type formatWeekNumber,
-  type formatWeekNumberHeader,
-  type formatYearDropdown,
+import type { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
+import type {
+  formatCaption,
+  formatDay,
+  formatMonthDropdown,
+  formatWeekdayName,
+  formatWeekNumber,
+  formatWeekNumberHeader,
+  formatYearDropdown,
 } from '@/lib/formatters';
-import {
-  type labelDayButton,
-  type labelGrid,
-  type labelGridcell,
-  type labelMonthDropdown,
-  type labelNav,
-  type labelNext,
-  type labelPrevious,
-  type labelWeekday,
-  type labelWeekNumber,
-  type labelWeekNumberHeader,
-  type labelYearDropdown,
+import type {
+  labelDayButton,
+  labelGrid,
+  labelGridcell,
+  labelMonthDropdown,
+  labelNav,
+  labelNext,
+  labelPrevious,
+  labelWeekday,
+  labelWeekNumber,
+  labelWeekNumberHeader,
+  labelYearDropdown,
 } from '@/lib/labels';
 
 /**

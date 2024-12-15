@@ -1,5 +1,7 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -72,13 +74,5 @@ HoverCardArrow.displayName = HoverCardPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  HoverCard,
-  HoverCardArrow,
-  HoverCardContent,
-  HoverCardTrigger,
-  type HoverCardArrowProps,
-  type HoverCardContentProps,
-  type HoverCardProps,
-  type HoverCardTriggerProps,
-};
+export type { HoverCardArrowProps, HoverCardContentProps, HoverCardProps, HoverCardTriggerProps };
+export { HoverCard, HoverCardArrow, HoverCardContent, HoverCardTrigger };

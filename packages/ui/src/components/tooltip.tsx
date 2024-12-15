@@ -1,5 +1,7 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -77,15 +79,5 @@ TooltipArrow.displayName = TooltipPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Tooltip,
-  TooltipArrow,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  type TooltipArrowProps,
-  type TooltipContentProps,
-  type TooltipProps,
-  type TooltipProviderProps,
-  type TooltipTriggerProps,
-};
+export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };
+export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };

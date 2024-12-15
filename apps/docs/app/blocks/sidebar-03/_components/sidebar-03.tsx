@@ -1,3 +1,5 @@
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,7 +26,6 @@ import {
 } from '@codefast/ui';
 import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX } from 'react';
 
 import { data } from '@/app/blocks/sidebar-03/_lib/mocks/data';
 

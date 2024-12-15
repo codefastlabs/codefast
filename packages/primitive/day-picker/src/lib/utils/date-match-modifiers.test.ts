@@ -1,7 +1,8 @@
 import { addDays, subDays } from 'date-fns';
 
+import type { DateAfter, DateBefore, DateInterval, DateRange, DayOfWeek } from '@/lib/types';
+
 import { defaultDateLib } from '@/lib/classes/date-lib';
-import { type DateAfter, type DateBefore, type DateInterval, type DateRange, type DayOfWeek } from '@/lib/types';
 import { dateMatchModifiers } from '@/lib/utils/date-match-modifiers';
 
 const testDay = new Date();

@@ -1,8 +1,10 @@
+import type { ComponentProps, JSX } from 'react';
+
 import { Badge, cn, ScrollArea } from '@codefast/ui';
 import { formatDistanceToNow } from 'date-fns';
-import { type ComponentProps, type JSX } from 'react';
 
-import { type EmailMessage } from '@/app/examples/mail/_data/data';
+import type { EmailMessage } from '@/app/examples/mail/_data/data';
+
 import { useMail } from '@/app/examples/mail/_hooks/use-mail';
 
 interface MailListProps {

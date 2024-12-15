@@ -1,5 +1,7 @@
 'use client';
 
+import type { ComponentProps, JSX } from 'react';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -31,7 +33,7 @@ import {
 } from '@codefast/ui';
 import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon, SearchIcon } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, type JSX, useState } from 'react';
+import { useState } from 'react';
 
 import { data } from '@/app/blocks/sidebar-01/_lib/mocks/data';
 

@@ -1,7 +1,11 @@
-import * as TogglePrimitive from '@radix-ui/react-toggle';
-import { type ComponentPropsWithoutRef, type ComponentRef, type ReactNode, forwardRef } from 'react';
+import type { ComponentPropsWithoutRef, ComponentRef, ReactNode } from 'react';
 
-import { type ToggleVariantsProps, toggleVariants } from '@/styles/toggle-variants';
+import * as TogglePrimitive from '@radix-ui/react-toggle';
+import { forwardRef } from 'react';
+
+import type { ToggleVariantsProps } from '@/styles/toggle-variants';
+
+import { toggleVariants } from '@/styles/toggle-variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Toggle
@@ -31,4 +35,5 @@ Toggle.displayName = TogglePrimitive.Root.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Toggle, type ToggleProps };
+export type { ToggleProps };
+export { Toggle };

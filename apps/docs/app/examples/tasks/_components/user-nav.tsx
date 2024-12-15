@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import {
   Avatar,
   AvatarFallback,
@@ -12,7 +14,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 
 export function UserNav(): JSX.Element {
   return (

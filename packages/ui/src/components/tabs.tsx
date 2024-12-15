@@ -1,5 +1,7 @@
+import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -78,13 +80,5 @@ TabsContent.displayName = TabsPrimitive.Content.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  type TabsContentProps,
-  type TabsListProps,
-  type TabsProps,
-  type TabsTriggerProps,
-};
+export type { TabsContentProps, TabsListProps, TabsProps, TabsTriggerProps };
+export { Tabs, TabsContent, TabsList, TabsTrigger };

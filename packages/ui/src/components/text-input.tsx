@@ -1,8 +1,12 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+
 import * as InputPrimitive from '@codefast-ui/input';
-import { type ComponentProps, type ComponentPropsWithoutRef, type ComponentRef, forwardRef } from 'react';
+import { forwardRef } from 'react';
+
+import type { InputVariantsProps } from '@/styles/input-variants';
 
 import { Spinner } from '@/components/spinner';
-import { type InputVariantsProps, inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/styles/input-variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input
@@ -56,4 +60,5 @@ TextInput.displayName = 'TextInput';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { TextInput, type TextInputProps };
+export type { TextInputProps };
+export { TextInput };

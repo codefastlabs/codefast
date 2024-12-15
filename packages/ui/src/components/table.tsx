@@ -1,4 +1,6 @@
-import { type HTMLAttributes, type TdHTMLAttributes, type ThHTMLAttributes, forwardRef } from 'react';
+import type { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from 'react';
+
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -124,21 +126,14 @@ TableCaption.displayName = 'TableCaption';
  * Exports
  * -------------------------------------------------------------------------- */
 
-export {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-  type TableBodyProps,
-  type TableCaptionProps,
-  type TableCellProps,
-  type TableFooterProps,
-  type TableHeaderProps,
-  type TableHeadProps,
-  type TableProps,
-  type TableRowProps,
+export type {
+  TableBodyProps,
+  TableCaptionProps,
+  TableCellProps,
+  TableFooterProps,
+  TableHeaderProps,
+  TableHeadProps,
+  TableProps,
+  TableRowProps,
 };
+export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };

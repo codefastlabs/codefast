@@ -1,5 +1,6 @@
+import type { ClassNames } from '@/lib/types';
+
 import { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
-import { type ClassNames } from '@/lib/types';
 
 /**
  * Get the default class names for the UI elements.

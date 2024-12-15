@@ -1,7 +1,10 @@
 'use client';
 
+import type { ChartConfig } from '@codefast/ui';
+import type { JSX } from 'react';
+import type { Formatter, NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+
 import {
-  type ChartConfig,
   Card,
   CardContent,
   CardDescription,
@@ -11,9 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
-import { type JSX } from 'react';
 import { Bar, BarChart, XAxis } from 'recharts';
-import { type Formatter, type NameType, type ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 export const description = 'A stacked bar chart with a legend';
 

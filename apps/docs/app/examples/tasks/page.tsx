@@ -1,14 +1,17 @@
-import { type Metadata } from 'next';
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
+
 import Image from 'next/image';
 import fs from 'node:fs';
 import path from 'node:path';
-import { type JSX } from 'react';
 import { z } from 'zod';
+
+import type { Task } from '@/app/examples/tasks/_data/schema';
 
 import { columns } from '@/app/examples/tasks/_components/columns';
 import { DataTable } from '@/app/examples/tasks/_components/data-table';
 import { UserNav } from '@/app/examples/tasks/_components/user-nav';
-import { type Task, taskSchema } from '@/app/examples/tasks/_data/schema';
+import { taskSchema } from '@/app/examples/tasks/_data/schema';
 
 export const metadata: Metadata = {
   description: 'A task and issue tracker build using Tanstack Table.',

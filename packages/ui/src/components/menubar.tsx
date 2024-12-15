@@ -1,13 +1,8 @@
+import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
-import {
-  type ComponentProps,
-  type ComponentPropsWithoutRef,
-  type ComponentRef,
-  type HTMLAttributes,
-  type JSX,
-  forwardRef,
-} from 'react';
+import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -333,6 +328,24 @@ MenubarArrow.displayName = MenubarPrimitive.Arrow.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type {
+  MenubarArrowProps,
+  MenubarCheckboxItemProps,
+  MenubarContentProps,
+  MenubarGroupProps,
+  MenubarItemProps,
+  MenubarLabelProps,
+  MenubarMenuProps,
+  MenubarProps,
+  MenubarRadioGroupProps,
+  MenubarRadioItemProps,
+  MenubarSeparatorProps,
+  MenubarShortcutProps,
+  MenubarSubContentProps,
+  MenubarSubProps,
+  MenubarSubTriggerProps,
+  MenubarTriggerProps,
+};
 export {
   Menubar,
   MenubarArrow,
@@ -350,20 +363,4 @@ export {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-  type MenubarArrowProps,
-  type MenubarCheckboxItemProps,
-  type MenubarContentProps,
-  type MenubarGroupProps,
-  type MenubarItemProps,
-  type MenubarLabelProps,
-  type MenubarMenuProps,
-  type MenubarProps,
-  type MenubarRadioGroupProps,
-  type MenubarRadioItemProps,
-  type MenubarSeparatorProps,
-  type MenubarShortcutProps,
-  type MenubarSubContentProps,
-  type MenubarSubProps,
-  type MenubarSubTriggerProps,
-  type MenubarTriggerProps,
 };

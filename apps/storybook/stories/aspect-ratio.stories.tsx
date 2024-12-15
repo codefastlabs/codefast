@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { AspectRatio } from '@codefast/ui';
-import { type Meta, type StoryObj } from '@storybook/react';
 import Image from 'next/image';
 
 const meta = {

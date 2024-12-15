@@ -1,3 +1,6 @@
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
+
 import {
   Button,
   HoverCard,
@@ -15,9 +18,7 @@ import {
   TooltipTrigger,
 } from '@codefast/ui';
 import { CounterClockwiseClockIcon } from '@radix-ui/react-icons';
-import { type Metadata } from 'next';
 import Image from 'next/image';
-import { type JSX } from 'react';
 
 import { CodeViewer } from '@/app/examples/playground/_components/code-viewer';
 import { MaxLengthSelector } from '@/app/examples/playground/_components/maxlength-selector';
