@@ -70,14 +70,14 @@
   },
   "dependencies": {
     "@codefast/style-guide": "workspace:*",
-    "globals": "15.13.0"
+    "globals": "^15.13.0"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "22.10.2",
-    "eslint": "9.17.0",
-    "tsup": "8.3.5",
-    "typescript": "5.7.2"
+    "@types/node": "^22.10.2",
+    "eslint": "^9.17.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "eslint": ">=9"

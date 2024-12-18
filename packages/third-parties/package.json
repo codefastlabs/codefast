@@ -34,10 +34,10 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "esbuild-sass-plugin": "3.3.1",
-    "eslint": "9.17.0",
-    "tsup": "8.3.5",
-    "typescript": "5.7.2"
+    "esbuild-sass-plugin": "^3.3.1",
+    "eslint": "^9.17.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "@types/react": "*",
