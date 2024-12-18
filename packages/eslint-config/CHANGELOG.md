@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.9
+
+### Patch Changes
+
+- [#54](https://github.com/codefastlabs/codefast/pull/54) [`5ea2aa2`](https://github.com/codefastlabs/codefast/commit/5ea2aa225779ecb73825625c32a3d47474d9bd6d) Thanks [@thevuong](https://github.com/thevuong)! - switch to caret versioning for deps
+
+- Updated dependencies [[`5ea2aa2`](https://github.com/codefastlabs/codefast/commit/5ea2aa225779ecb73825625c32a3d47474d9bd6d)]:
+  - @codefast/style-guide@0.2.9
+
 ## 0.2.8
 
 ### Patch Changes
