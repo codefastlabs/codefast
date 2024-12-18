@@ -40,15 +40,15 @@
     "lint": "TIMING=1 eslint --max-warnings 0"
   },
   "dependencies": {
-    "@radix-ui/react-compose-refs": "1.1.1",
-    "@radix-ui/react-context": "1.1.1"
+    "@radix-ui/react-compose-refs": "^1.1.1",
+    "@radix-ui/react-context": "^1.1.1"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "eslint": "9.17.0",
-    "tsup": "8.3.5",
-    "typescript": "5.7.2"
+    "eslint": "^9.17.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
     "@types/react": "*",
