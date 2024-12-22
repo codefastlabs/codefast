@@ -1,5 +1,11 @@
 # @codefast-ui/input
 
+## 0.2.10
+
+### Patch Changes
+
+- [#56](https://github.com/codefastlabs/codefast/pull/56) [`1fafe94`](https://github.com/codefastlabs/codefast/commit/1fafe9495908447a3b031f18197de4aafdd11ae2) Thanks [@thevuong](https://github.com/thevuong)! - add reusable logger utility with formatting
+
 ## 0.2.9
 
 ### Patch Changes
