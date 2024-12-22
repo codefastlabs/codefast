@@ -6,4 +6,10 @@ export default [
   {
     ignores: ['*.config.js'],
   },
+  {
+    files: ['src/lib/logger.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
 ];
