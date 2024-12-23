@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.11
+
+### Patch Changes
+
+- [`90cd864`](https://github.com/codefastlabs/codefast/commit/90cd86403ec4e9d40133b9599909fbe18b191cc2) Thanks [@thevuong](https://github.com/thevuong)! - enhance log formatting with color improvements
+
+- Updated dependencies [[`90cd864`](https://github.com/codefastlabs/codefast/commit/90cd86403ec4e9d40133b9599909fbe18b191cc2)]:
+  - @codefast/hooks@0.2.11
+  - @codefast-ui/checkbox-group@0.2.11
+  - @codefast-ui/day-picker@0.2.11
+  - @codefast-ui/input@0.2.11
+  - @codefast-ui/number-input@0.2.11
+
 ## 0.2.10
 
 ### Patch Changes
