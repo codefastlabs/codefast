@@ -1,4 +1,8 @@
+import type { ChalkInstance } from 'chalk';
+
 import chalk from 'chalk';
+
+type LogLevel = 'error' | 'info' | 'log' | 'success' | 'warn';
 
 type LogMethod = (...args: unknown[]) => void;
 
@@ -10,12 +14,20 @@ interface Logger {
   warn: LogMethod;
 }
 
-const levels = {
-  error: chalk.bgBlack.red,
-  info: chalk.bgBlack.cyan,
-  log: chalk.bgBlack.white,
-  success: chalk.bgBlack.green,
-  warn: chalk.bgBlack.yellow,
+const levels: Record<LogLevel, ChalkInstance> = {
+  error: chalk.bgHex('#ef4444').hex('#450a0a').bold,
+  info: chalk.bgHex('#06b6d4').hex('#083344').bold,
+  log: chalk.bgHex('#64748b').hex('#020617').bold,
+  success: chalk.bgHex('#22c55e').hex('#052e16').bold,
+  warn: chalk.bgHex('#eab308').hex('#422006').bold,
+};
+
+const messages: Record<LogLevel, ChalkInstance> = {
+  error: chalk.hex('#ef4444'),
+  info: chalk.hex('#06b6d4'),
+  log: chalk.hex('#64748b'),
+  success: chalk.hex('#22c55e'),
+  warn: chalk.hex('#eab308'),
 };
 
 /**
@@ -28,8 +40,12 @@ const levels = {
  * indicating the presence of circular references or invalid structure.
  */
 function safeStringify(obj: unknown): string {
+  if (obj instanceof Error) {
+    return [chalk.italic(obj.message), obj.stack || '[No Stack]'].join('\n');
+  }
+
   try {
-    return JSON.stringify(obj);
+    return JSON.stringify(obj, null, 2);
   } catch {
     return '[Circular or Invalid Object]';
   }
@@ -49,36 +65,43 @@ function safeStringify(obj: unknown): string {
  * @param args - Log message parts.
  * @returns Formatted log string for output.
  */
-function formatLog(level: keyof typeof levels, tag: null | string, ...args: unknown[]): string {
+function formatLog(level: LogLevel, tag: null | string, ...args: unknown[]): string {
   // Level with colors
   const levelPart = levels[level](` ${level.toUpperCase()} `);
   // Tag if available
   const tagPart = tag ? chalk.magenta(` ${tag} `) : '';
   // Combine all arguments into one string
-  const messagePart = args.map((arg) => (typeof arg === 'string' ? arg : safeStringify(arg))).join(' ');
+  const messagePart = args.map((arg) => messages[level](typeof arg === 'string' ? arg : safeStringify(arg))).join(' ');
 
   return [levelPart, tagPart, messagePart].filter(Boolean).join(' ');
 }
 
-// Create a logger instance with optional tag support.
-// The tag is useful for distinguishing logs from different modules or contexts.
-const createLogger = (tag: null | string = null): Logger => ({
-  error: (...args: unknown[]): void => {
-    console.error(formatLog('error', tag, ...args));
-  },
-  info: (...args: unknown[]): void => {
-    console.log(formatLog('info', tag, ...args));
-  },
-  log: (...args: unknown[]): void => {
-    console.log(formatLog('log', tag, ...args));
-  },
-  success: (...args: unknown[]): void => {
-    console.log(formatLog('success', tag, ...args));
-  },
-  warn: (...args: unknown[]): void => {
-    console.warn(formatLog('warn', tag, ...args));
-  },
-});
+/**
+ * Create a logger instance with optional tag support.
+ * The tag is useful for distinguishing logs from different modules or contexts.
+ *
+ * @param tag - A string used as a tag in the log messages or null if no tag is desired.
+ * @returns An object containing methods for logging messages at various levels.
+ */
+function createLogger(tag: null | string = null): Logger {
+  return {
+    error: (...args: unknown[]): void => {
+      console.error(formatLog('error', tag, ...args));
+    },
+    info: (...args: unknown[]): void => {
+      console.log(formatLog('info', tag, ...args));
+    },
+    log: (...args: unknown[]): void => {
+      console.log(formatLog('log', tag, ...args));
+    },
+    success: (...args: unknown[]): void => {
+      console.log(formatLog('success', tag, ...args));
+    },
+    warn: (...args: unknown[]): void => {
+      console.warn(formatLog('warn', tag, ...args));
+    },
+  };
+}
 
 export const logger: Logger = createLogger();
 
