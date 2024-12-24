@@ -17,7 +17,7 @@ interface Logger {
 const levels: Record<LogLevel, ChalkInstance> = {
   error: chalk.bgHex('#ef4444').hex('#450a0a').bold,
   info: chalk.bgHex('#06b6d4').hex('#083344').bold,
-  log: chalk.bgHex('#64748b').hex('#020617').bold,
+  log: chalk.bgHex('#ffffff').hex('#020617').bold,
   success: chalk.bgHex('#22c55e').hex('#052e16').bold,
   warn: chalk.bgHex('#eab308').hex('#422006').bold,
 };
@@ -25,7 +25,7 @@ const levels: Record<LogLevel, ChalkInstance> = {
 const messages: Record<LogLevel, ChalkInstance> = {
   error: chalk.hex('#ef4444'),
   info: chalk.hex('#06b6d4'),
-  log: chalk.hex('#64748b'),
+  log: chalk.hex('#ffffff'),
   success: chalk.hex('#22c55e'),
   warn: chalk.hex('#eab308'),
 };
