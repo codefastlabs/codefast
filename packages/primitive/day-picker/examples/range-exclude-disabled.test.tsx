@@ -5,7 +5,7 @@ import { dateButton, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
 import { RangeExcludeDisabled } from '~/range-exclude-disabled';
 
-const today = new Date();
+const today = new Date(2024, 11, 27);
 const nextMonday = setDay(addDays(today, 1), 1); // Ensure we have a Monday after today
 
 beforeAll(() => {
