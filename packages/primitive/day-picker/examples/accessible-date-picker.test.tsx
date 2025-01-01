@@ -4,7 +4,7 @@ import { format, subDays } from 'date-fns';
 import { AccessibleDatePicker } from '~/accessible-date-picker';
 import { user } from '~/lib/user';
 
-const today = new Date();
+const today = new Date(2024, 11, 27);
 
 beforeAll(() => {
   jest.setSystemTime(today);

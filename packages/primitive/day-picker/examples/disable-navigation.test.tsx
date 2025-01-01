@@ -5,7 +5,15 @@ import { DisableNavigation } from '~/disable-navigation';
 import { grid, gridcell } from '~/lib/elements';
 import { user } from '~/lib/user';
 
-const today = new Date();
+const today = new Date(2024, 11, 27);
+
+beforeAll(() => {
+  jest.setSystemTime(today);
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+});
 
 function setup(): void {
   render(<DisableNavigation />);

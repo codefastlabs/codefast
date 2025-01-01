@@ -79,7 +79,7 @@ describe('when the date picker is focused', () => {
 });
 
 describe('when the grid is focused', () => {
-  const today = new Date();
+  const today = new Date(2024, 11, 27);
 
   beforeAll(() => {
     jest.setSystemTime(today);

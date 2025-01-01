@@ -37,7 +37,7 @@
     "@codefast/tailwind-config": "workspace:*",
     "@faker-js/faker": "^9.3.0",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.3",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.4.20",
