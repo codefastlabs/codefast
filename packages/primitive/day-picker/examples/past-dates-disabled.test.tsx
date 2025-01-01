@@ -4,7 +4,7 @@ import { addDays, subDays } from 'date-fns';
 import { dateButton, gridcell } from '~/lib/elements';
 import { PastDatesDisabled } from '~/past-dates-disabled';
 
-const today = new Date();
+const today = new Date(2024, 11, 27);
 
 beforeAll(() => {
   jest.setSystemTime(today);

@@ -5,11 +5,11 @@ import { dateButton } from '~/lib/elements';
 import { user } from '~/lib/user';
 import { ModifiersToday } from '~/modifiers-today';
 
-const today = new Date(); // Đặt ngày hôm nay để kiểm tra các hành vi với ngày hôm nay
-const yesterday = subDays(today, 1); // Ngày trước hôm nay
+const today = new Date(2024, 11, 27); // Set a date today to check the behaviors with today.
+const yesterday = subDays(today, 1); // The day before today
 
 beforeAll(() => {
-  jest.setSystemTime(today); // Thiết lập thời gian cố định cho ngày hôm nay
+  jest.setSystemTime(today); // Set a fixed time for today
 });
 
 afterAll(() => {
