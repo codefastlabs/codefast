@@ -1,11 +1,22 @@
 'use client';
 
-import type { Components, DateRange, DayButtonProps, DayPickerProps } from '@codefast-ui/day-picker';
+import type {
+  Components,
+  DateRange,
+  DayButtonProps,
+  DayPickerProps,
+} from '@codefast-ui/day-picker';
 import type { ComponentProps, JSX } from 'react';
 
 import { DayFlag, DayPicker, SelectionState, UI } from '@codefast-ui/day-picker';
 import { format } from 'date-fns';
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  DotIcon,
+} from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -115,11 +126,15 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         [UI.Chevron]: cn('', classNames?.[UI.Chevron]),
         [UI.Day]: cn(
           'py-0',
-          !props.mode && 'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
+          !props.mode &&
+            'text-foreground mx-px flex min-h-9 min-w-9 items-center justify-center text-sm font-medium',
           classNames?.[UI.Day],
         ),
         [UI.DayButton]: cn('border border-transparent', classNames?.[UI.DayButton]),
-        [UI.Dropdown]: cn('absolute size-full appearance-none opacity-0', classNames?.[UI.Dropdown]),
+        [UI.Dropdown]: cn(
+          'absolute size-full appearance-none opacity-0',
+          classNames?.[UI.Dropdown],
+        ),
         [UI.DropdownRoot]: cn('relative inline-flex', classNames?.[UI.DropdownRoot]),
         [UI.Dropdowns]: cn('inline-flex items-center gap-2', classNames?.[UI.Dropdowns]),
         [UI.Footer]: cn('text-sm', classNames?.[UI.Footer]),
@@ -128,7 +143,10 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
           !((props.numberOfMonths || 0) > 1) && 'w-full',
           classNames?.[UI.Month],
         ),
-        [UI.MonthCaption]: cn('flex w-full justify-center text-sm font-medium', classNames?.[UI.MonthCaption]),
+        [UI.MonthCaption]: cn(
+          'flex w-full justify-center text-sm font-medium',
+          classNames?.[UI.MonthCaption],
+        ),
         [UI.MonthGrid]: cn(
           'relative block table-fixed border-collapse space-y-2 [&>thead]:block',
           classNames?.[UI.MonthGrid],
@@ -150,9 +168,15 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         }),
         [UI.Root]: cn('inline-grid gap-4', classNames?.[UI.Root]),
         [UI.Week]: cn('flex justify-between', classNames?.[UI.Week]),
-        [UI.Weekday]: cn('text-muted-foreground flex-1 text-sm font-normal', classNames?.[UI.Weekday]),
+        [UI.Weekday]: cn(
+          'text-muted-foreground flex-1 text-sm font-normal',
+          classNames?.[UI.Weekday],
+        ),
         [UI.Weekdays]: cn('flex justify-between', classNames?.[UI.Weekdays]),
-        [UI.WeekNumber]: cn('text-foreground/50 size-9 text-center text-xs', classNames?.[UI.WeekNumber]),
+        [UI.WeekNumber]: cn(
+          'text-foreground/50 size-9 text-center text-xs',
+          classNames?.[UI.WeekNumber],
+        ),
         [UI.WeekNumberHeader]: cn('', classNames?.[UI.WeekNumberHeader]),
         [UI.Weeks]: cn('grid gap-y-2', classNames?.[UI.Weeks]),
         [UI.YearsDropdown]: cn('', classNames?.[UI.YearsDropdown]),

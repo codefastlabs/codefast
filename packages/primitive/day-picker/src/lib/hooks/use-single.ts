@@ -18,8 +18,15 @@ export interface UseSingle<T extends DayPickerProps> {
   selected: SelectedValue<T>;
 }
 
-export function useSingle<T extends DayPickerProps>(props: DayPickerProps, dateLib: DateLib): Selection<T> {
-  const { onSelect, required, selected: initiallySelected } = props as SingleProps | SingleRequiredProps;
+export function useSingle<T extends DayPickerProps>(
+  props: DayPickerProps,
+  dateLib: DateLib,
+): Selection<T> {
+  const {
+    onSelect,
+    required,
+    selected: initiallySelected,
+  } = props as SingleProps | SingleRequiredProps;
 
   const [internallySelected, setSelected] = useControlledValue(
     initiallySelected,

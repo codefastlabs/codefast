@@ -1,4 +1,10 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  HTMLAttributes,
+  JSX,
+} from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import * as SheetPrimitive from '@radix-ui/react-dialog';
@@ -71,7 +77,8 @@ const SheetTrigger = SheetPrimitive.Trigger;
  * -------------------------------------------------------------------------- */
 
 type SheetContentElement = ComponentRef<typeof SheetPrimitive.Content>;
-type SheetContentProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
+type SheetContentProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Content> &
+  SheetContentVariantsProps;
 
 const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
   ({ children, className, side = 'right', ...props }, forwardedRef) => (
@@ -83,7 +90,11 @@ const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
           'data-[state=closed]:animate-duration-300 data-[state=closed]:animate-fade-out',
         )}
       />
-      <SheetPrimitive.Content ref={forwardedRef} className={sheetContentVariants({ className, side })} {...props}>
+      <SheetPrimitive.Content
+        ref={forwardedRef}
+        className={sheetContentVariants({ className, side })}
+        {...props}
+      >
         {children}
         <SheetPrimitive.Close
           className={buttonVariants({
@@ -112,7 +123,10 @@ type SheetHeaderProps = HTMLAttributes<HTMLDivElement>;
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
-      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      className={cn(
+        'flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left',
+        className,
+      )}
       {...props}
     />
   );
@@ -137,7 +151,10 @@ type SheetFooterProps = HTMLAttributes<HTMLDivElement>;
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
-      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
+      className={cn(
+        'flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end',
+        className,
+      )}
       {...props}
     />
   );
@@ -152,13 +169,15 @@ SheetFooter.displayName = 'SheetFooter';
 type SheetTitleElement = ComponentRef<typeof SheetPrimitive.Title>;
 type SheetTitleProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Title>;
 
-const SheetTitle = forwardRef<SheetTitleElement, SheetTitleProps>(({ className, ...props }, forwardedRef) => (
-  <SheetPrimitive.Title
-    ref={forwardedRef}
-    className={cn('text-foreground text-lg font-semibold', className)}
-    {...props}
-  />
-));
+const SheetTitle = forwardRef<SheetTitleElement, SheetTitleProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <SheetPrimitive.Title
+      ref={forwardedRef}
+      className={cn('text-foreground text-lg font-semibold', className)}
+      {...props}
+    />
+  ),
+);
 
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
 
@@ -193,7 +212,11 @@ interface SheetCloseProps extends ComponentPropsWithoutRef<typeof SheetPrimitive
 
 const SheetClose = forwardRef<SheetCloseElement, SheetCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <SheetPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
+    <SheetPrimitive.Close
+      ref={forwardedRef}
+      className={buttonVariants({ className, size, variant })}
+      {...props}
+    />
   ),
 );
 

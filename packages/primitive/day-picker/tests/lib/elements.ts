@@ -2,7 +2,14 @@ import type { ByRoleOptions } from '@testing-library/react';
 
 import { screen } from '@testing-library/react';
 
-import { DayFlag, labelDayButton, labelGridcell, labelMonthDropdown, labelYearDropdown, SelectionState } from '@/lib';
+import {
+  DayFlag,
+  labelDayButton,
+  labelGridcell,
+  labelMonthDropdown,
+  labelYearDropdown,
+  SelectionState,
+} from '@/lib';
 
 /**
  * Retrieves an HTML element with the role of 'grid', optionally filtered by a given name.

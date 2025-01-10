@@ -16,7 +16,9 @@ const Collapsible = CollapsiblePrimitive.Root;
  * Component: CollapsibleTrigger
  * -------------------------------------------------------------------------- */
 
-type CollapsibleTriggerProps = ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleTrigger>;
+type CollapsibleTriggerProps = ComponentPropsWithoutRef<
+  typeof CollapsiblePrimitive.CollapsibleTrigger
+>;
 const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
 
 /* -----------------------------------------------------------------------------
@@ -24,7 +26,9 @@ const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
  * -------------------------------------------------------------------------- */
 
 type CollapsibleContentElement = ComponentRef<typeof CollapsiblePrimitive.CollapsibleContent>;
-type CollapsibleContentProps = ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleContent>;
+type CollapsibleContentProps = ComponentPropsWithoutRef<
+  typeof CollapsiblePrimitive.CollapsibleContent
+>;
 
 const CollapsibleContent = forwardRef<CollapsibleContentElement, CollapsibleContentProps>(
   ({ className, ...props }, forwardedRef) => (

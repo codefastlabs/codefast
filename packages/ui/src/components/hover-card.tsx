@@ -64,7 +64,11 @@ type HoverCardArrowProps = ComponentPropsWithoutRef<typeof HoverCardPrimitive.Ar
 
 const HoverCardArrow = forwardRef<HoverCardArrowElement, HoverCardArrowProps>(
   ({ className, ...props }, forwardedRef) => (
-    <HoverCardPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
+    <HoverCardPrimitive.Arrow
+      ref={forwardedRef}
+      className={cn('fill-popover', className)}
+      {...props}
+    />
   ),
 );
 

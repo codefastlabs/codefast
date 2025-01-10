@@ -36,7 +36,10 @@ export function updateBrowserHistory(urlParams: URLSearchParams, method: History
  *
  * @returns void
  */
-export function setUrlParams(params: URLSearchParams, newParams: Record<string, UrlParamValue>): void {
+export function setUrlParams(
+  params: URLSearchParams,
+  newParams: Record<string, UrlParamValue>,
+): void {
   for (const [key, value] of Object.entries(newParams)) {
     if (value) {
       params.set(key, value.toString());
@@ -56,7 +59,10 @@ export function setUrlParams(params: URLSearchParams, newParams: Record<string, 
  *
  * @returns void
  */
-export function updateUrlParams(newParams: Record<string, UrlParamValue>, method: HistoryMethod): void {
+export function updateUrlParams(
+  newParams: Record<string, UrlParamValue>,
+  method: HistoryMethod,
+): void {
   const params = new URLSearchParams(window.location.search);
 
   setUrlParams(params, newParams);
@@ -72,11 +78,14 @@ export function useStateParams(): {
   push: (paramInput: ParamInput, value?: UrlParamValue) => void;
   replace: (paramInput: ParamInput, value?: UrlParamValue) => void;
 } {
-  const updateParams = useCallback((paramInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
-    const newParams = typeof paramInput === 'object' ? paramInput : { [paramInput]: value };
+  const updateParams = useCallback(
+    (paramInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
+      const newParams = typeof paramInput === 'object' ? paramInput : { [paramInput]: value };
 
-    updateUrlParams(newParams, method);
-  }, []);
+      updateUrlParams(newParams, method);
+    },
+    [],
+  );
 
   return {
     push: (paramInput, value) => {

@@ -80,11 +80,17 @@ export function rangeContainsModifiers(
         );
       }
 
-      return dateMatchModifiers(range.from, matcher, dateLib) || dateMatchModifiers(range.to, matcher, dateLib);
+      return (
+        dateMatchModifiers(range.from, matcher, dateLib) ||
+        dateMatchModifiers(range.to, matcher, dateLib)
+      );
     }
 
     if (isDateAfterType(matcher) || isDateBeforeType(matcher)) {
-      return dateMatchModifiers(range.from, matcher, dateLib) || dateMatchModifiers(range.to, matcher, dateLib);
+      return (
+        dateMatchModifiers(range.from, matcher, dateLib) ||
+        dateMatchModifiers(range.to, matcher, dateLib)
+      );
     }
 
     return false;
@@ -100,7 +106,8 @@ export function rangeContainsModifiers(
     let date = range.from;
     const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);
 
-    const isMatch = (currentDate: Date): boolean => functionMatchers.some((matcher) => matcher(currentDate));
+    const isMatch = (currentDate: Date): boolean =>
+      functionMatchers.some((matcher) => matcher(currentDate));
 
     for (let i = 0; i <= totalDays; i++) {
       if (isMatch(date)) {

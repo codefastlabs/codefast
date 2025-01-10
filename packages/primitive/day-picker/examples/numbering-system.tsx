@@ -26,6 +26,11 @@ function formatCaption(date: Date, options: DateLibOptions | undefined): string 
 
 export function NumberingSystem(): JSX.Element {
   return (
-    <DayPicker showWeekNumber dir="rtl" formatters={{ formatCaption, formatDay, formatWeekNumber }} locale={arSA} />
+    <DayPicker
+      showWeekNumber
+      dir="rtl"
+      formatters={{ formatCaption, formatDay, formatWeekNumber }}
+      locale={arSA}
+    />
   );
 }

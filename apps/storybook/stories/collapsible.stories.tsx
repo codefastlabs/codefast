@@ -30,10 +30,16 @@ export const Default: Story = {
             <Button icon aria-label="Toggle" prefix={<CaretSortIcon />} size="sm" variant="ghost" />
           </CollapsibleTrigger>
         </div>
-        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@radix-ui/primitives</div>
+        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+          @radix-ui/primitives
+        </div>
         <CollapsibleContent className="space-y-2">
-          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@radix-ui/colors</div>
-          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">@stitches/react</div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+            @radix-ui/colors
+          </div>
+          <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
+            @stitches/react
+          </div>
         </CollapsibleContent>
       </Collapsible>
     );

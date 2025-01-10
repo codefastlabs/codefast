@@ -1,7 +1,16 @@
 // Adjust the import path
 import type { Locale } from 'date-fns';
 
-import { addDays, addMonths, addWeeks, addYears, endOfISOWeek, endOfWeek, startOfISOWeek, startOfWeek } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  addYears,
+  endOfISOWeek,
+  endOfWeek,
+  startOfISOWeek,
+  startOfWeek,
+} from 'date-fns';
 
 import type { DayPickerProps, MoveFocusBy, MoveFocusDir } from '@/lib/types';
 

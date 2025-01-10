@@ -96,7 +96,9 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
                     side="bottom"
                     sideOffset={4}
                   >
-                    <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
+                    <DropdownMenuLabel className="text-muted-foreground text-xs">
+                      Teams
+                    </DropdownMenuLabel>
                     {data.teams.map((team, index) => (
                       <DropdownMenuItem
                         key={team.name}
@@ -129,7 +131,12 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
               <SidebarGroupLabel>Platform</SidebarGroupLabel>
               <SidebarMenu>
                 {data.navMain.map((item) => (
-                  <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
+                  <Collapsible
+                    key={item.title}
+                    asChild
+                    className="group/collapsible"
+                    defaultOpen={item.isActive}
+                  >
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton tooltip={item.title}>

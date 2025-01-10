@@ -52,7 +52,9 @@ export default function TaskPage(): JSX.Element {
         <div className="flex items-center justify-between gap-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
-            <p className="text-muted-foreground">Here&apos;s a list of your tasks for this month!</p>
+            <p className="text-muted-foreground">
+              Here&apos;s a list of your tasks for this month!
+            </p>
           </div>
           <div className="flex items-center space-x-2">
             <UserNav />

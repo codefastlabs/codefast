@@ -17,7 +17,10 @@ export default function Home(): JSX.Element {
         <ol className="list-inside list-decimal text-center font-[family-name:var(--font-mono)] text-sm sm:text-left">
           <li className="mb-2">
             Get started by editing{' '}
-            <code className="rounded bg-black/[.05] px-1 py-0.5 font-semibold dark:bg-white/[.06]">app/page.tsx</code>.
+            <code className="rounded bg-black/[.05] px-1 py-0.5 font-semibold dark:bg-white/[.06]">
+              app/page.tsx
+            </code>
+            .
           </li>
           <li>Save and see your changes instantly.</li>
         </ol>
@@ -55,7 +58,13 @@ export default function Home(): JSX.Element {
           rel="noopener noreferrer"
           target="_blank"
         >
-          <Image aria-hidden alt="File icon" height={16} src="https://nextjs.org/icons/file.svg" width={16} />
+          <Image
+            aria-hidden
+            alt="File icon"
+            height={16}
+            src="https://nextjs.org/icons/file.svg"
+            width={16}
+          />
           Learn
         </a>
         <a
@@ -64,7 +73,13 @@ export default function Home(): JSX.Element {
           rel="noopener noreferrer"
           target="_blank"
         >
-          <Image aria-hidden alt="Window icon" height={16} src="https://nextjs.org/icons/window.svg" width={16} />
+          <Image
+            aria-hidden
+            alt="Window icon"
+            height={16}
+            src="https://nextjs.org/icons/window.svg"
+            width={16}
+          />
           Examples
         </a>
         <a
@@ -73,7 +88,13 @@ export default function Home(): JSX.Element {
           rel="noopener noreferrer"
           target="_blank"
         >
-          <Image aria-hidden alt="Globe icon" height={16} src="https://nextjs.org/icons/globe.svg" width={16} />
+          <Image
+            aria-hidden
+            alt="Globe icon"
+            height={16}
+            src="https://nextjs.org/icons/globe.svg"
+            width={16}
+          />
           Go to nextjs.org →
         </a>
       </footer>
