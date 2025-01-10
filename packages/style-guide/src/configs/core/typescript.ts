@@ -1,8 +1,6 @@
 import type { Linter } from 'eslint';
 
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import prettierConfig from 'eslint-config-prettier';
-// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
 import importPlugin from 'eslint-plugin-import';
 import { configs as tsConfig } from 'typescript-eslint';
 
@@ -23,5 +21,4 @@ export const typescriptConfig: Linter.Config[] = [
       ...typescriptImportRules.rules,
     },
   },
-  prettierConfig,
 ];
