@@ -18,7 +18,8 @@ const alertVariants = tv({
   variants: {
     variant: {
       default: 'bg-background text-foreground [&>svg]:text-foreground',
-      destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+      destructive:
+        'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
     },
   },
 });
@@ -32,9 +33,16 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
 type AlertElement = HTMLDivElement;
 type AlertProps = AlertVariantsProps & HTMLAttributes<HTMLDivElement>;
 
-const Alert = forwardRef<AlertElement, AlertProps>(({ className, variant, ...props }, forwardedRef) => (
-  <div ref={forwardedRef} className={alertVariants({ className, variant })} role="alert" {...props} />
-));
+const Alert = forwardRef<AlertElement, AlertProps>(
+  ({ className, variant, ...props }, forwardedRef) => (
+    <div
+      ref={forwardedRef}
+      className={alertVariants({ className, variant })}
+      role="alert"
+      {...props}
+    />
+  ),
+);
 
 Alert.displayName = 'Alert';
 
@@ -45,11 +53,17 @@ Alert.displayName = 'Alert';
 type AlertTitleElement = HTMLHeadingElement;
 type AlertTitleProps = HTMLAttributes<HTMLHeadingElement>;
 
-const AlertTitle = forwardRef<AlertTitleElement, AlertTitleProps>(({ children, className, ...props }, forwardedRef) => (
-  <h5 ref={forwardedRef} className={cn('mb-1 font-medium leading-none tracking-tight', className)} {...props}>
-    {children}
-  </h5>
-));
+const AlertTitle = forwardRef<AlertTitleElement, AlertTitleProps>(
+  ({ children, className, ...props }, forwardedRef) => (
+    <h5
+      ref={forwardedRef}
+      className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+      {...props}
+    >
+      {children}
+    </h5>
+  ),
+);
 
 AlertTitle.displayName = 'AlertTitle';
 

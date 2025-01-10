@@ -71,7 +71,11 @@ const NavigationMenuTrigger = forwardRef<NavigationMenuTriggerElement, Navigatio
     <NavigationMenuPrimitive.Trigger
       ref={forwardedRef}
       className={buttonVariants({
-        className: ['data-[state=open]:bg-accent data-[state=open]:text-accent-foreground', 'group', className],
+        className: [
+          'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+          'group',
+          className,
+        ],
         variant: 'ghost',
       })}
       {...props}
@@ -79,7 +83,10 @@ const NavigationMenuTrigger = forwardRef<NavigationMenuTriggerElement, Navigatio
       {children}
       <ChevronDownIcon
         aria-hidden="true"
-        className={cn('relative top-px ml-1 size-3 transition', 'group-data-[state=open]:rotate-180')}
+        className={cn(
+          'relative top-px ml-1 size-3 transition',
+          'group-data-[state=open]:rotate-180',
+        )}
       />
     </NavigationMenuPrimitive.Trigger>
   ),
@@ -128,25 +135,28 @@ const NavigationMenuLink = NavigationMenuPrimitive.Link;
  * -------------------------------------------------------------------------- */
 
 type NavigationMenuViewportElement = ComponentRef<typeof NavigationMenuPrimitive.Viewport>;
-type NavigationMenuViewportProps = ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>;
+type NavigationMenuViewportProps = ComponentPropsWithoutRef<
+  typeof NavigationMenuPrimitive.Viewport
+>;
 
-const NavigationMenuViewport = forwardRef<NavigationMenuViewportElement, NavigationMenuViewportProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div className="perspective-[125rem] absolute left-0 top-full flex justify-center">
-      <NavigationMenuPrimitive.Viewport
-        ref={forwardedRef}
-        className={cn(
-          'bg-popover text-popover-foreground relative mt-1.5 w-full origin-[top_center] overflow-hidden rounded-md border p-1 shadow-md transition-[width,height]',
-          'h-[var(--radix-navigation-menu-viewport-height)] sm:w-[var(--radix-navigation-menu-viewport-width)]',
-          'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90',
-          'data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
-          className,
-        )}
-        {...props}
-      />
-    </div>
-  ),
-);
+const NavigationMenuViewport = forwardRef<
+  NavigationMenuViewportElement,
+  NavigationMenuViewportProps
+>(({ className, ...props }, forwardedRef) => (
+  <div className="perspective-[125rem] absolute left-0 top-full flex justify-center">
+    <NavigationMenuPrimitive.Viewport
+      ref={forwardedRef}
+      className={cn(
+        'bg-popover text-popover-foreground relative mt-1.5 w-full origin-[top_center] overflow-hidden rounded-md border p-1 shadow-md transition-[width,height]',
+        'h-[var(--radix-navigation-menu-viewport-height)] sm:w-[var(--radix-navigation-menu-viewport-width)]',
+        'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90',
+        'data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
+        className,
+      )}
+      {...props}
+    />
+  </div>
+));
 
 NavigationMenuViewport.displayName = NavigationMenuPrimitive.Viewport.displayName;
 
@@ -155,22 +165,25 @@ NavigationMenuViewport.displayName = NavigationMenuPrimitive.Viewport.displayNam
  * -------------------------------------------------------------------------- */
 
 type NavigationMenuIndicatorElement = ComponentRef<typeof NavigationMenuPrimitive.Indicator>;
-type NavigationMenuIndicatorProps = ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>;
+type NavigationMenuIndicatorProps = ComponentPropsWithoutRef<
+  typeof NavigationMenuPrimitive.Indicator
+>;
 
-const NavigationMenuIndicator = forwardRef<NavigationMenuIndicatorElement, NavigationMenuIndicatorProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <NavigationMenuPrimitive.Indicator
-      ref={forwardedRef}
-      className={cn(
-        'data-[state=visible]:animate-fade-in data-[state=hidden]:animate-fade-out top-full z-10 flex h-1.5 items-center justify-center overflow-hidden transition',
-        className,
-      )}
-      {...props}
-    >
-      <div className="bg-popover relative top-[60%] size-2 rotate-45 rounded-tl-sm" />
-    </NavigationMenuPrimitive.Indicator>
-  ),
-);
+const NavigationMenuIndicator = forwardRef<
+  NavigationMenuIndicatorElement,
+  NavigationMenuIndicatorProps
+>(({ className, ...props }, forwardedRef) => (
+  <NavigationMenuPrimitive.Indicator
+    ref={forwardedRef}
+    className={cn(
+      'data-[state=visible]:animate-fade-in data-[state=hidden]:animate-fade-out top-full z-10 flex h-1.5 items-center justify-center overflow-hidden transition',
+      className,
+    )}
+    {...props}
+  >
+    <div className="bg-popover relative top-[60%] size-2 rotate-45 rounded-tl-sm" />
+  </NavigationMenuPrimitive.Indicator>
+));
 
 NavigationMenuIndicator.displayName = NavigationMenuPrimitive.Indicator.displayName;
 

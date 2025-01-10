@@ -1,4 +1,10 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  HTMLAttributes,
+  JSX,
+} from 'react';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
@@ -79,7 +85,10 @@ type DialogHeaderProps = HTMLAttributes<HTMLDivElement>;
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
-      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      className={cn(
+        'flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left',
+        className,
+      )}
       {...props}
     />
   );
@@ -104,7 +113,10 @@ type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
-      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
+      className={cn(
+        'flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end',
+        className,
+      )}
       {...props}
     />
   );
@@ -117,13 +129,15 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
 type DialogTitleElement = ComponentRef<typeof DialogPrimitive.Title>;
 type DialogTitleProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Title>;
 
-const DialogTitle = forwardRef<DialogTitleElement, DialogTitleProps>(({ className, ...props }, forwardedRef) => (
-  <DialogPrimitive.Title
-    ref={forwardedRef}
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
-    {...props}
-  />
-));
+const DialogTitle = forwardRef<DialogTitleElement, DialogTitleProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <DialogPrimitive.Title
+      ref={forwardedRef}
+      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+      {...props}
+    />
+  ),
+);
 
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
@@ -158,7 +172,11 @@ interface DialogCloseProps extends ComponentPropsWithoutRef<typeof DialogPrimiti
 
 const DialogClose = forwardRef<DialogCloseElement, DialogCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <DialogPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
+    <DialogPrimitive.Close
+      ref={forwardedRef}
+      className={buttonVariants({ className, size, variant })}
+      {...props}
+    />
   ),
 );
 

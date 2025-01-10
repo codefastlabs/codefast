@@ -37,11 +37,17 @@ describe('custom-week component', () => {
 
     // Check that the footer displays the selected week.
     expect(
-      screen.getByText(`Week from ${startOfThisWeek.toLocaleDateString()} to ${endOfThisWeek.toLocaleDateString()}`),
+      screen.getByText(
+        `Week from ${startOfThisWeek.toLocaleDateString()} to ${endOfThisWeek.toLocaleDateString()}`,
+      ),
     ).toBeInTheDocument();
 
     // Check the selected days of the week.
-    for (let date = new Date(startOfThisWeek); date <= endOfThisWeek; date.setDate(date.getDate() + 1)) {
+    for (
+      let date = new Date(startOfThisWeek);
+      date <= endOfThisWeek;
+      date.setDate(date.getDate() + 1)
+    ) {
       expect(gridcell(new Date(date), true)).toHaveAttribute('aria-selected', 'true');
     }
   });
@@ -52,7 +58,9 @@ describe('custom-week component', () => {
 
     // Check that the week has been selected
     expect(
-      screen.getByText(`Week from ${startOfThisWeek.toLocaleDateString()} to ${endOfThisWeek.toLocaleDateString()}`),
+      screen.getByText(
+        `Week from ${startOfThisWeek.toLocaleDateString()} to ${endOfThisWeek.toLocaleDateString()}`,
+      ),
     ).toBeInTheDocument();
 
     // Assume the user clicks on today to deselect the week.
@@ -62,7 +70,11 @@ describe('custom-week component', () => {
     expect(screen.queryByText(/Week from/)).toBeNull();
 
     // Make sure that no day of the week is selected.
-    for (let date = new Date(startOfThisWeek); date <= endOfThisWeek; date.setDate(date.getDate() + 1)) {
+    for (
+      let date = new Date(startOfThisWeek);
+      date <= endOfThisWeek;
+      date.setDate(date.getDate() + 1)
+    ) {
       expect(gridcell(new Date(date), true)).not.toHaveAttribute('aria-selected', 'true');
     }
   });

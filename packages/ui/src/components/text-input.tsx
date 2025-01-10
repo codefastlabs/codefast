@@ -40,7 +40,10 @@ interface TextInputProps
 }
 
 const TextInput = forwardRef<TextInputElement, TextInputProps>(
-  ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => (
+  (
+    { className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props },
+    forwardedRef,
+  ) => (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
       loaderPosition={loaderPosition}

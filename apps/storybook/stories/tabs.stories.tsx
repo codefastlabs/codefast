@@ -42,7 +42,9 @@ export const Default: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Account</CardTitle>
-            <CardDescription>Make changes to your account here. Click save when you&apos;re done.</CardDescription>
+            <CardDescription>
+              Make changes to your account here. Click save when you&apos;re done.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">
@@ -63,7 +65,9 @@ export const Default: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Password</CardTitle>
-            <CardDescription>Change your password here. After saving, you&#39;ll be logged out.</CardDescription>
+            <CardDescription>
+              Change your password here. After saving, you&#39;ll be logged out.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">

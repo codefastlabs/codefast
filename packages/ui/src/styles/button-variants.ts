@@ -51,11 +51,17 @@ const buttonVariants = tv({
     },
     variant: {
       default: ['bg-primary text-primary-foreground shadow-sm', 'hover:bg-primary/80'],
-      destructive: ['bg-destructive text-destructive-foreground shadow-sm', 'hover:bg-destructive/80'],
+      destructive: [
+        'bg-destructive text-destructive-foreground shadow-sm',
+        'hover:bg-destructive/80',
+      ],
       ghost: ['text-foreground', 'hover:bg-accent hover:text-accent-foreground'],
       info: ['bg-info text-info-foreground shadow-sm', 'hover:bg-info/80'],
       link: ['text-primary underline-offset-4', 'hover:underline'],
-      outline: ['text-foreground border-input border shadow-sm', 'hover:bg-accent hover:text-accent-foreground'],
+      outline: [
+        'text-foreground border-input border shadow-sm',
+        'hover:bg-accent hover:text-accent-foreground',
+      ],
       secondary: ['bg-secondary text-secondary-foreground shadow-sm', 'hover:bg-secondary/80'],
       success: ['bg-success text-success-foreground shadow-sm', 'hover:bg-success/80'],
       warning: ['bg-warning text-warning-foreground shadow-sm', 'hover:bg-warning/80'],

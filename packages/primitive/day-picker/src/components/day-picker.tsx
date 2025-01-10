@@ -4,7 +4,14 @@ import { useCallback, useMemo } from 'react';
 
 import type { CalendarDay } from '@/lib/classes/calendar-day';
 import type { DayPickerContext } from '@/lib/hooks/use-day-picker';
-import type { DayPickerProps, Modifiers, MoveFocusBy, MoveFocusDir, SelectedValue, SelectHandler } from '@/lib/types';
+import type {
+  DayPickerProps,
+  Modifiers,
+  MoveFocusBy,
+  MoveFocusDir,
+  SelectedValue,
+  SelectHandler,
+} from '@/lib/types';
 
 import { DateLib } from '@/lib/classes/date-lib';
 import { DayFlag, SelectionState, UI } from '@/lib/constants/ui';
@@ -289,9 +296,21 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
             />
           )}
           {months.map((calendarMonth, displayIndex) => {
-            const dropdownMonths = getMonthOptions(calendarMonth.date, navStart, navEnd, formatters, dateLib);
+            const dropdownMonths = getMonthOptions(
+              calendarMonth.date,
+              navStart,
+              navEnd,
+              formatters,
+              dateLib,
+            );
 
-            const dropdownYears = getYearOptions(months[0].date, navStart, navEnd, formatters, dateLib);
+            const dropdownYears = getYearOptions(
+              months[0].date,
+              navStart,
+              navEnd,
+              formatters,
+              dateLib,
+            );
 
             return (
               <components.Month
@@ -309,7 +328,10 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                   style={styles?.[UI.MonthCaption]}
                 >
                   {captionLayout?.startsWith('dropdown') ? (
-                    <components.DropdownNav className={classNames[UI.Dropdowns]} style={styles?.[UI.Dropdowns]}>
+                    <components.DropdownNav
+                      className={classNames[UI.Dropdowns]}
+                      style={styles?.[UI.Dropdowns]}
+                    >
                       {captionLayout === 'dropdown' || captionLayout === 'dropdown-months' ? (
                         <components.MonthsDropdown
                           aria-label={labelMonthDropdown()}
@@ -342,7 +364,11 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                       )}
                     </components.DropdownNav>
                   ) : (
-                    <components.CaptionLabel aria-live="polite" className={classNames[UI.CaptionLabel]} role="status">
+                    <components.CaptionLabel
+                      aria-live="polite"
+                      className={classNames[UI.CaptionLabel]}
+                      role="status"
+                    >
                       {formatCaption(calendarMonth.date, dateLib.options, dateLib)}
                     </components.CaptionLabel>
                   )}
@@ -355,7 +381,10 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                   style={styles?.[UI.MonthGrid]}
                 >
                   {!props.hideWeekdays && (
-                    <components.Weekdays className={classNames[UI.Weekdays]} style={styles?.[UI.Weekdays]}>
+                    <components.Weekdays
+                      className={classNames[UI.Weekdays]}
+                      style={styles?.[UI.Weekdays]}
+                    >
                       {showWeekNumber ? (
                         <components.WeekNumberHeader
                           aria-label={labelWeekNumberHeader(dateLib.options)}
@@ -407,7 +436,8 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                             const { date } = day;
                             const modifiers = getModifiers(day);
 
-                            modifiers[DayFlag.focused] = !modifiers.hidden && Boolean(focused?.isEqualTo(day));
+                            modifiers[DayFlag.focused] =
+                              !modifiers.hidden && Boolean(focused?.isEqualTo(day));
 
                             modifiers[SelectionState.selected] =
                               !modifiers.disabled && (isSelected?.(date) || modifiers.selected);
@@ -419,7 +449,9 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                               modifiers[SelectionState.range_start] = Boolean(
                                 from && to && dateLib.isSameDay(date, from),
                               );
-                              modifiers[SelectionState.range_end] = Boolean(from && to && dateLib.isSameDay(date, to));
+                              modifiers[SelectionState.range_end] = Boolean(
+                                from && to && dateLib.isSameDay(date, to),
+                              );
                               modifiers[SelectionState.range_middle] = rangeIncludesDate(
                                 selectedValue,
                                 date,
@@ -428,7 +460,11 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                               );
                             }
 
-                            const styleForModifiers = getStyleForModifiers(modifiers, styles, props.modifiersStyles);
+                            const styleForModifiers = getStyleForModifiers(
+                              modifiers,
+                              styles,
+                              props.modifiersStyles,
+                            );
 
                             const classNamesForModifiers = getClassNamesForModifiers(
                               modifiers,
@@ -452,7 +488,9 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                                 data-disabled={modifiers.disabled || undefined}
                                 data-focused={modifiers.focused || undefined}
                                 data-hidden={modifiers.hidden || undefined}
-                                data-month={day.outside ? dateLib.format(date, 'yyyy-MM') : undefined}
+                                data-month={
+                                  day.outside ? dateLib.format(date, 'yyyy-MM') : undefined
+                                }
                                 data-outside={day.outside || undefined}
                                 data-selected={modifiers.selected || undefined}
                                 data-today={modifiers.today || undefined}
@@ -463,7 +501,12 @@ export function DayPicker(props: DayPickerProps): JSX.Element {
                               >
                                 {!modifiers.hidden && isInteractive ? (
                                   <components.DayButton
-                                    aria-label={labelDayButton(date, modifiers, dateLib.options, dateLib)}
+                                    aria-label={labelDayButton(
+                                      date,
+                                      modifiers,
+                                      dateLib.options,
+                                      dateLib,
+                                    )}
                                     className={classNames[UI.DayButton]}
                                     day={day}
                                     disabled={modifiers.disabled || undefined}

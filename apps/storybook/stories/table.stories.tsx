@@ -1,6 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@codefast/ui';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@codefast/ui';
 
 const meta = {
   component: Table,

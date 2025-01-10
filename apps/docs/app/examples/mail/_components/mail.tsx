@@ -87,7 +87,12 @@ export function Mail({
           Cookies.set(RESIZABLE_PANELS_COLLAPSED_COOKIE_NAME, JSON.stringify(false));
         }}
       >
-        <div className={cn('flex h-[56px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}>
+        <div
+          className={cn(
+            'flex h-[56px] items-center justify-center',
+            isCollapsed ? 'h-[52px]' : 'px-2',
+          )}
+        >
           <AccountSwitcher accounts={accounts} isCollapsed={isCollapsed} />
         </div>
         <Separator />
@@ -186,7 +191,10 @@ export function Mail({
           <Separator />
           <div className="bg-background/95 supports-[backdrop-filter]:bg-background/60 p-4 backdrop-blur">
             <form>
-              <TextInput placeholder="Search" prefix={<SearchIcon className="text-muted-foreground" />} />
+              <TextInput
+                placeholder="Search"
+                prefix={<SearchIcon className="text-muted-foreground" />}
+              />
             </form>
           </div>
           <TabsContent className="m-0" value="all">

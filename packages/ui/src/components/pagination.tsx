@@ -34,7 +34,11 @@ type PaginationContentProps = HTMLAttributes<HTMLUListElement>;
 
 const PaginationContent = forwardRef<PaginationContentElement, PaginationContentProps>(
   ({ className, ...props }, forwardedRef) => (
-    <ul ref={forwardedRef} className={cn('flex flex-row items-center gap-1', className)} {...props} />
+    <ul
+      ref={forwardedRef}
+      className={cn('flex flex-row items-center gap-1', className)}
+      {...props}
+    />
   ),
 );
 
@@ -47,9 +51,9 @@ PaginationContent.displayName = 'PaginationContent';
 type PaginationItemElement = HTMLLIElement;
 type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
 
-const PaginationItem = forwardRef<PaginationItemElement, PaginationItemProps>((props, forwardedRef) => (
-  <li ref={forwardedRef} {...props} />
-));
+const PaginationItem = forwardRef<PaginationItemElement, PaginationItemProps>(
+  (props, forwardedRef) => <li ref={forwardedRef} {...props} />,
+);
 
 PaginationItem.displayName = 'PaginationItem';
 
@@ -125,7 +129,11 @@ type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
 
 function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (
-    <span aria-hidden className={cn('flex size-10 items-center justify-center', className)} {...props}>
+    <span
+      aria-hidden
+      className={cn('flex size-10 items-center justify-center', className)}
+      {...props}
+    >
       <EllipsisIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>

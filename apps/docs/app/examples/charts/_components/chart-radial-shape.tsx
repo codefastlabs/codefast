@@ -4,7 +4,15 @@ import type { ChartConfig } from '@codefast/ui';
 import type { JSX } from 'react';
 import type { ContentType } from 'recharts/types/component/Label';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from '@codefast/ui';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  ChartContainer,
+} from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from 'recharts';
 
@@ -50,7 +58,9 @@ export function ChartRadialShape(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

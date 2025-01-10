@@ -56,7 +56,16 @@ const meta = {
     variant: {
       control: { type: 'select' },
       description: 'Toggle button variant styles.',
-      options: ['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'],
+      options: [
+        'default',
+        'secondary',
+        'info',
+        'success',
+        'warning',
+        'destructive',
+        'outline',
+        'ghost',
+      ],
       table: {
         defaultValue: { summary: 'default' },
         type: { summary: 'string' },
@@ -106,13 +115,22 @@ export const Variants: Story = {
   },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'] as const).map(
-        (variant) => (
-          <Toggle key={variant} {...args} variant={variant}>
-            {variant} Toggle
-          </Toggle>
-        ),
-      )}
+      {(
+        [
+          'default',
+          'secondary',
+          'info',
+          'success',
+          'warning',
+          'destructive',
+          'outline',
+          'ghost',
+        ] as const
+      ).map((variant) => (
+        <Toggle key={variant} {...args} variant={variant}>
+          {variant} Toggle
+        </Toggle>
+      ))}
     </div>
   ),
 };

@@ -57,15 +57,24 @@ const [createCarouselContext] = createContextScope(SCROLL_AREA_NAME);
 
 type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 
-const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
+const [CarouselProvider, useCarouselContext] =
+  createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
 type ScrollAreaElement = ComponentRef<typeof ScrollAreaPrimitive.Root>;
-type ScrollAreaProps = ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
+type ScrollAreaProps = ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> &
+  ScrollAreaContextValue;
 
 const ScrollArea = forwardRef<ScrollAreaElement, ScrollAreaProps>(
-  ({ __scopeScrollArea, children, className, size, ...props }: ScopedProps<ScrollAreaProps>, forwardedRef) => (
+  (
+    { __scopeScrollArea, children, className, size, ...props }: ScopedProps<ScrollAreaProps>,
+    forwardedRef,
+  ) => (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root ref={forwardedRef} className={cn('relative overflow-hidden', className)} {...props}>
+      <ScrollAreaPrimitive.Root
+        ref={forwardedRef}
+        className={cn('relative overflow-hidden', className)}
+        {...props}
+      >
         <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit] [&>*]:h-full">
           {children}
         </ScrollAreaPrimitive.Viewport>
@@ -87,7 +96,10 @@ type ScrollAreaScrollbarElement = ComponentRef<typeof ScrollAreaPrimitive.Scroll
 type ScrollAreaScrollbarProps = ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Scrollbar>;
 
 const ScrollAreaScrollbar = forwardRef<ScrollAreaScrollbarElement, ScrollAreaScrollbarProps>(
-  ({ __scopeScrollArea, className, orientation, ...props }: ScopedProps<ScrollAreaScrollbarProps>, forwardedRef) => {
+  (
+    { __scopeScrollArea, className, orientation, ...props }: ScopedProps<ScrollAreaScrollbarProps>,
+    forwardedRef,
+  ) => {
     const { size } = useCarouselContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
     return (

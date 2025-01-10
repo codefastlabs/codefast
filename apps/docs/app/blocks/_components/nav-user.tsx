@@ -19,7 +19,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from 'lucide-react';
+import {
+  BadgeCheckIcon,
+  BellIcon,
+  ChevronsUpDownIcon,
+  CreditCardIcon,
+  LogOutIcon,
+  SparklesIcon,
+} from 'lucide-react';
 
 interface NavUserProps extends ComponentProps<typeof SidebarMenu> {
   user: {

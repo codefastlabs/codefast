@@ -85,7 +85,9 @@ export function DisplayForm(): JSX.Element {
             <FormItem>
               <div className="mb-4">
                 <FormLabel className="text-base">Sidebar</FormLabel>
-                <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
+                <FormDescription>
+                  Select the items you want to display in the sidebar.
+                </FormDescription>
               </div>
               {items.map((item) => (
                 <FormField

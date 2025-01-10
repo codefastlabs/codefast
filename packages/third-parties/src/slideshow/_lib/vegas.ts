@@ -10,7 +10,11 @@ import type {
   VegasVideo,
 } from '@/slideshow/_lib/types';
 
-import { DEFAULT_ANIMATIONS, DEFAULT_SETTINGS, DEFAULT_TRANSITIONS } from '@/slideshow/_lib/constants';
+import {
+  DEFAULT_ANIMATIONS,
+  DEFAULT_SETTINGS,
+  DEFAULT_TRANSITIONS,
+} from '@/slideshow/_lib/constants';
 import { isVideoCompatible, random } from '@/slideshow/_lib/utils';
 
 /**
@@ -231,7 +235,11 @@ export class Vegas {
         img.src = slide.src;
       }
 
-      if ((this.settings.preload || this.settings.preloadVideo) && this.support.video && slide.video) {
+      if (
+        (this.settings.preload || this.settings.preloadVideo) &&
+        this.support.video &&
+        slide.video
+      ) {
         if (Array.isArray(slide.video)) {
           this.preloadVideo(slide.video);
         } else {
@@ -326,7 +334,8 @@ export class Vegas {
     direction: 'decrease' | 'increase',
   ): void {
     const delay = duration / 10;
-    const volume = direction === 'increase' ? videoElement.volume + step : videoElement.volume - step;
+    const volume =
+      direction === 'increase' ? videoElement.volume + step : videoElement.volume - step;
 
     if ((direction === 'increase' && volume < 1) || (direction === 'decrease' && volume > 0)) {
       videoElement.volume = volume;
@@ -365,7 +374,11 @@ export class Vegas {
 
     const cover = this.getCoverSetting(defaultCover);
     const transition = this.getTransition(firstTransition, defaultTransition);
-    const transitionDuration = this.getTransitionDuration(firstTransitionDuration, defaultTransitionDuration, delay);
+    const transitionDuration = this.getTransitionDuration(
+      firstTransitionDuration,
+      defaultTransitionDuration,
+      delay,
+    );
     const animation = this.getAnimation(defaultAnimation);
     const animationDuration = this.getAnimationDuration(defaultAnimationDuration, delay);
 
@@ -534,7 +547,16 @@ export class Vegas {
         video,
       });
     } else if (src) {
-      this.setupImageElement(slideElement, src, color, align, alignVertical, cover, animation, animationDuration);
+      this.setupImageElement(
+        slideElement,
+        src,
+        color,
+        align,
+        alignVertical,
+        cover,
+        animation,
+        animationDuration,
+      );
     }
 
     return videoElement;
@@ -557,7 +579,9 @@ export class Vegas {
     transitionDuration: number;
     video: VegasVideo;
   }): HTMLVideoElement {
-    const videoElement = Array.isArray(video.src) ? this.preloadVideo(video.src) : this.preloadVideo(video.src);
+    const videoElement = Array.isArray(video.src)
+      ? this.preloadVideo(video.src)
+      : this.preloadVideo(video.src);
 
     videoElement.loop = video.loop ?? true;
     videoElement.muted = video.mute ?? true;

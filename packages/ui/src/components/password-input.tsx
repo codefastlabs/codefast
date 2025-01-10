@@ -1,6 +1,11 @@
 'use client';
 
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, MouseEventHandler } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  MouseEventHandler,
+} from 'react';
 
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
@@ -29,7 +34,10 @@ interface PasswordInputProps
     Omit<ComponentPropsWithoutRef<typeof InputPrimitive.Item>, 'prefix' | 'type'> {}
 
 const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
-  ({ className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props }, forwardedRef) => {
+  (
+    { className, inputSize, loaderPosition, loading, prefix, spinner, suffix, ...props },
+    forwardedRef,
+  ) => {
     const [type, setType] = useState<'password' | 'text'>('password');
 
     const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
@@ -45,7 +53,12 @@ const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
         spinner={spinner || <Spinner />}
         suffix={suffix}
       >
-        <InputPrimitive.Item ref={forwardedRef} className={input({ inputSize })} type={type} {...props} />
+        <InputPrimitive.Item
+          ref={forwardedRef}
+          className={input({ inputSize })}
+          type={type}
+          {...props}
+        />
         <Button
           icon
           inside

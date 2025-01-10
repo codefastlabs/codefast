@@ -13,9 +13,15 @@ import { cn } from '@/lib/utils';
 type CheckboxCardsElement = ComponentRef<typeof CheckboxGroupPrimitive.Root>;
 type CheckboxCardsProps = ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Root>;
 
-const CheckboxCards = forwardRef<CheckboxCardsElement, CheckboxCardsProps>(({ className, ...props }, forwardedRef) => (
-  <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={forwardedRef} />
-));
+const CheckboxCards = forwardRef<CheckboxCardsElement, CheckboxCardsProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <CheckboxGroupPrimitive.Root
+      className={cn('grid gap-2', className)}
+      {...props}
+      ref={forwardedRef}
+    />
+  ),
+);
 
 CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
 
@@ -25,13 +31,19 @@ CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
 
 type CheckboxCardsItemElement = ComponentRef<typeof CheckboxGroupPrimitive.Item>;
 
-interface CheckboxCardsItemProps extends ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
+interface CheckboxCardsItemProps
+  extends ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
   checkboxClassName?: string;
 }
 
 const CheckboxCardsItem = forwardRef<CheckboxCardsItemElement, CheckboxCardsItemProps>(
   ({ checkboxClassName, children, className, ...props }, forwardedRef) => (
-    <label className={cn('group flex items-center justify-center gap-4 rounded-md border p-4', className)}>
+    <label
+      className={cn(
+        'group flex items-center justify-center gap-4 rounded-md border p-4',
+        className,
+      )}
+    >
       {children}
       <CheckboxGroupPrimitive.Item
         ref={forwardedRef}

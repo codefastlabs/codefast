@@ -19,13 +19,15 @@ describe('modifiers-custom component', () => {
     expect(container).toBeInTheDocument();
   });
 
-  test.each([new Date(2024, 5, 8), new Date(2024, 5, 9), new Date(2024, 5, 10), ...bookedDaysInRange])(
-    'applies the "booked" style to booked day %s',
-    (day) => {
-      render(<ModifiersCustom />);
-      expect(gridcell(day, true)).toHaveClass('booked');
-    },
-  );
+  test.each([
+    new Date(2024, 5, 8),
+    new Date(2024, 5, 9),
+    new Date(2024, 5, 10),
+    ...bookedDaysInRange,
+  ])('applies the "booked" style to booked day %s', (day) => {
+    render(<ModifiersCustom />);
+    expect(gridcell(day, true)).toHaveClass('booked');
+  });
 
   test.each([new Date(2024, 5, 1), new Date(2024, 5, 14), new Date(2024, 5, 21)])(
     'does not apply the "booked" style to unbooked day %s',

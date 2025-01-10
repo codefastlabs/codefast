@@ -1,4 +1,11 @@
-import type { AnchorHTMLAttributes, HTMLAttributes, JSX, LiHTMLAttributes, OlHTMLAttributes, ReactNode } from 'react';
+import type {
+  AnchorHTMLAttributes,
+  HTMLAttributes,
+  JSX,
+  LiHTMLAttributes,
+  OlHTMLAttributes,
+  ReactNode,
+} from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
@@ -52,7 +59,11 @@ type BreadcrumbItemProps = LiHTMLAttributes<HTMLLIElement>;
 
 const BreadcrumbItem = forwardRef<BreadcrumbItemElement, BreadcrumbItemProps>(
   ({ className, ...props }, forwardedRef) => (
-    <li ref={forwardedRef} className={cn('inline-flex items-center gap-1.5', className)} {...props} />
+    <li
+      ref={forwardedRef}
+      className={cn('inline-flex items-center gap-1.5', className)}
+      {...props}
+    />
   ),
 );
 
@@ -71,7 +82,13 @@ const BreadcrumbLink = forwardRef<BreadcrumbLinkElement, BreadcrumbLinkProps>(
   ({ asChild, className, ...props }, forwardedRef) => {
     const Component = asChild ? Slot : 'a';
 
-    return <Component ref={forwardedRef} className={cn('hover:text-foreground transition', className)} {...props} />;
+    return (
+      <Component
+        ref={forwardedRef}
+        className={cn('hover:text-foreground transition', className)}
+        {...props}
+      />
+    );
   },
 );
 

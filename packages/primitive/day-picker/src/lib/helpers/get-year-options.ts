@@ -31,7 +31,8 @@ export function getYearOptions(
 
   return years.map((value) => {
     const year = new dateLib.Date(value, month);
-    const disabled = year < startOfMonth(calendarStart) || (month && year > startOfMonth(calendarEnd)) || false;
+    const disabled =
+      year < startOfMonth(calendarStart) || (month && year > startOfMonth(calendarEnd)) || false;
     const label = formatters.formatYearDropdown(value);
 
     return {

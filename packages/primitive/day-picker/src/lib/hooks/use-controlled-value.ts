@@ -21,7 +21,10 @@ export type DispatchStateAction<T> = Dispatch<SetStateAction<T>>;
  *   considered uncontrolled.
  * @returns A tuple containing the current value and a dispatcher to update the uncontrolled value.
  */
-export function useControlledValue<T>(defaultValue: T, controlledValue: T | undefined): [T, DispatchStateAction<T>] {
+export function useControlledValue<T>(
+  defaultValue: T,
+  controlledValue: T | undefined,
+): [T, DispatchStateAction<T>] {
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
 
   const value = controlledValue === undefined ? uncontrolledValue : controlledValue;

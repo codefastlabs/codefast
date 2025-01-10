@@ -35,8 +35,8 @@ export function TemperatureSelector({ defaultValue }: TemperatureSelectorProps):
           </div>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          Controls randomness: lowering results in less random completions. As the temperature approaches zero, the
-          model will become deterministic and repetitive.
+          Controls randomness: lowering results in less random completions. As the temperature
+          approaches zero, the model will become deterministic and repetitive.
         </HoverCardContent>
       </HoverCard>
     </div>

@@ -227,7 +227,10 @@ export const ResponsiveBreadcrumb: Story = {
               <BreadcrumbItem>
                 {isDesktop ? (
                   <DropdownMenu open={open} onOpenChange={setOpen}>
-                    <DropdownMenuTrigger aria-label="Toggle menu" className="flex items-center gap-1">
+                    <DropdownMenuTrigger
+                      aria-label="Toggle menu"
+                      className="flex items-center gap-1"
+                    >
                       <BreadcrumbEllipsis />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
@@ -250,7 +253,11 @@ export const ResponsiveBreadcrumb: Story = {
                       </DrawerHeader>
                       <div className="grid gap-1 px-4">
                         {items.slice(1, -2).map((item, index) => (
-                          <Link key={index} className="py-1 text-sm" href={item.href ? item.href : '#'}>
+                          <Link
+                            key={index}
+                            className="py-1 text-sm"
+                            href={item.href ? item.href : '#'}
+                          >
                             {item.label}
                           </Link>
                         ))}
@@ -273,7 +280,9 @@ export const ResponsiveBreadcrumb: Story = {
                     <Link href={item.href}>{item.label}</Link>
                   </BreadcrumbLink>
                 ) : (
-                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">{item.label}</BreadcrumbPage>
+                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
+                    {item.label}
+                  </BreadcrumbPage>
                 )}
               </BreadcrumbItem>
             </Fragment>

@@ -33,7 +33,10 @@ export default function AuthenticationPage(): JSX.Element {
       </div>
       <div className="container relative mx-auto hidden h-dvh flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          className={cn(buttonVariants({ variant: 'ghost' }), 'absolute right-4 top-4 md:right-8 md:top-8')}
+          className={cn(
+            buttonVariants({ variant: 'ghost' }),
+            'absolute right-4 top-4 md:right-8 md:top-8',
+          )}
           href="/examples/authentication"
         >
           Login
@@ -58,8 +61,8 @@ export default function AuthenticationPage(): JSX.Element {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and helped me deliver stunning designs to my
-                clients faster than ever before.&rdquo;
+                &ldquo;This library has saved me countless hours of work and helped me deliver
+                stunning designs to my clients faster than ever before.&rdquo;
               </p>
               <footer className="text-sm">Sofia Davis</footer>
             </blockquote>
@@ -69,7 +72,9 @@ export default function AuthenticationPage(): JSX.Element {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-              <p className="text-muted-foreground text-sm">Enter your email below to create your account</p>
+              <p className="text-muted-foreground text-sm">
+                Enter your email below to create your account
+              </p>
             </div>
             <UserAuthForm />
             <p className="text-muted-foreground px-8 text-center text-sm">

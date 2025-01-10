@@ -13,7 +13,13 @@ export type NavProps = ComponentProps<'nav'> & {
 /**
  * Render the toolbar with the navigation button.
  */
-export function Nav({ nextMonth, onNextClick, onPreviousClick, previousMonth, ...props }: NavProps): JSX.Element {
+export function Nav({
+  nextMonth,
+  onNextClick,
+  onPreviousClick,
+  previousMonth,
+  ...props
+}: NavProps): JSX.Element {
   const {
     classNames,
     components,

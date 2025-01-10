@@ -74,11 +74,16 @@ export function Sidebar05({ className, ...props }: Sidebar05Props): JSX.Element 
             <SidebarGroup>
               <SidebarMenu>
                 {data.navMain.map((nav, index) => (
-                  <Collapsible key={nav.title} className="group/collapsible" defaultOpen={index === 1}>
+                  <Collapsible
+                    key={nav.title}
+                    className="group/collapsible"
+                    defaultOpen={index === 1}
+                  >
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton>
-                          {nav.title} <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                          {nav.title}{' '}
+                          <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
                           <MinusIcon className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>

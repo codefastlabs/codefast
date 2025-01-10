@@ -79,7 +79,13 @@ export function ChartBarLabelCustom(): JSX.Element {
                 offset={8}
                 position="insideLeft"
               />
-              <LabelList className="fill-foreground" dataKey="desktop" fontSize={12} offset={8} position="right" />
+              <LabelList
+                className="fill-foreground"
+                dataKey="desktop"
+                fontSize={12}
+                offset={8}
+                position="right"
+              />
             </Bar>
           </BarChart>
         </ChartContainer>
@@ -88,7 +94,9 @@ export function ChartBarLabelCustom(): JSX.Element {
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

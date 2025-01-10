@@ -18,7 +18,15 @@ export default function Home(): JSX.Element {
             rel="noopener noreferrer"
             target="_blank"
           >
-            By <Image priority alt="Vercel Logo" className="dark:invert" height={24} src="/vercel.svg" width={100} />
+            By{' '}
+            <Image
+              priority
+              alt="Vercel Logo"
+              className="dark:invert"
+              height={24}
+              src="/vercel.svg"
+              width={100}
+            />
           </a>
         </div>
       </header>
@@ -61,7 +69,9 @@ export default function Home(): JSX.Element {
               -&gt;
             </span>
           </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">Send emails with ease using the Mail example.</p>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">
+            Send emails with ease using the Mail example.
+          </p>
         </Link>
         <Link
           className="text-foreground group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
@@ -87,7 +97,9 @@ export default function Home(): JSX.Element {
               -&gt;
             </span>
           </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">Learn how to create forms with the Forms example</p>
+          <p className="m-0 max-w-[30ch] text-sm opacity-50">
+            Learn how to create forms with the Forms example
+          </p>
         </Link>
       </footer>
     </main>

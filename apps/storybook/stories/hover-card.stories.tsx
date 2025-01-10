@@ -50,7 +50,9 @@ export const Default: Story = {
           </Avatar>
           <div className="space-y-1">
             <h4 className="text-sm font-semibold">@nextjs</h4>
-            <Text className="text-sm">The React Framework – created and maintained by @vercel.</Text>
+            <Text className="text-sm">
+              The React Framework – created and maintained by @vercel.
+            </Text>
             <div className="flex items-center pt-2">
               <CalendarDays className="mr-2 size-4 opacity-70" />{' '}
               <span className="text-muted-foreground text-xs">Joined December 2021</span>

@@ -29,9 +29,15 @@ Avatar.displayName = AvatarPrimitive.Root.displayName;
 type AvatarImageElement = ComponentRef<typeof AvatarPrimitive.Image>;
 type AvatarImageProps = ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>;
 
-const AvatarImage = forwardRef<AvatarImageElement, AvatarImageProps>(({ className, ...props }, forwardedRef) => (
-  <AvatarPrimitive.Image ref={forwardedRef} className={cn('aspect-square size-full', className)} {...props} />
-));
+const AvatarImage = forwardRef<AvatarImageElement, AvatarImageProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <AvatarPrimitive.Image
+      ref={forwardedRef}
+      className={cn('aspect-square size-full', className)}
+      {...props}
+    />
+  ),
+);
 
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 

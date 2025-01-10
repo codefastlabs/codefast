@@ -63,7 +63,10 @@ export function ReportAnIssue(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="description">Description</Label>
-          <Textarea id="description" placeholder="Please include all information relevant to your issue." />
+          <Textarea
+            id="description"
+            placeholder="Please include all information relevant to your issue."
+          />
         </div>
       </CardContent>
       <CardFooter className="justify-between space-x-2">

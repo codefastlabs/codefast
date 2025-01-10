@@ -33,7 +33,9 @@ export function Sidebar10({ className, ...props }: Sidebar10Props): JSX.Element 
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbPage className="line-clamp-1">Project Management & Task Tracking</BreadcrumbPage>
+                    <BreadcrumbPage className="line-clamp-1">
+                      Project Management & Task Tracking
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>

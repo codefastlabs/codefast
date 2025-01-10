@@ -165,10 +165,13 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
 
       const key = `${labelKey || item.dataKey || item.name || 'value'}`;
       const itemConfig = getPayloadConfigFromPayload(config, item, key);
-      const value = !labelKey && typeof label === 'string' ? config[label]?.label || label : itemConfig?.label;
+      const value =
+        !labelKey && typeof label === 'string' ? config[label]?.label || label : itemConfig?.label;
 
       if (labelFormatter) {
-        return <div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload)}</div>;
+        return (
+          <div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload)}</div>
+        );
       }
 
       if (!value) {
@@ -208,7 +211,13 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
                 )}
               >
                 {formatter && item.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload as Payload<ValueType, NameType>[])
+                  formatter(
+                    item.value,
+                    item.name,
+                    item,
+                    index,
+                    item.payload as Payload<ValueType, NameType>[],
+                  )
                 ) : (
                   <>
                     {itemConfig?.icon ? (
@@ -216,12 +225,16 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
                     ) : (
                       !hideIndicator && (
                         <div
-                          className={cn('shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]', {
-                            'h-2.5 w-2.5': indicator === 'dot',
-                            'my-0.5': nestLabel && indicator === 'dashed',
-                            'w-0 border-[1.5px] border-dashed bg-transparent': indicator === 'dashed',
-                            'w-1': indicator === 'line',
-                          })}
+                          className={cn(
+                            'shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]',
+                            {
+                              'h-2.5 w-2.5': indicator === 'dot',
+                              'my-0.5': nestLabel && indicator === 'dashed',
+                              'w-0 border-[1.5px] border-dashed bg-transparent':
+                                indicator === 'dashed',
+                              'w-1': indicator === 'line',
+                            },
+                          )}
                           style={
                             {
                               '--color-bg': indicatorColor,
@@ -239,7 +252,9 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
                     >
                       <div className="grid gap-1.5">
                         {nestLabel ? tooltipLabel : null}
-                        <span className="text-muted-foreground">{itemConfig?.label || item.name}</span>
+                        <span className="text-muted-foreground">
+                          {itemConfig?.label || item.name}
+                        </span>
                       </div>
                       {item.value ? (
                         <span className="text-foreground font-mono font-medium tabular-nums">
@@ -290,7 +305,11 @@ const ChartLegendContent = forwardRef<HTMLDivElement, ChartLegendContentProps>(
     return (
       <div
         ref={ref}
-        className={cn('flex items-center justify-center gap-4', verticalAlign === 'top' ? 'pb-3' : 'pt-3', className)}
+        className={cn(
+          'flex items-center justify-center gap-4',
+          verticalAlign === 'top' ? 'pb-3' : 'pt-3',
+          className,
+        )}
       >
         {payload.map((item) => {
           let key = 'value';
@@ -306,7 +325,9 @@ const ChartLegendContent = forwardRef<HTMLDivElement, ChartLegendContentProps>(
           return (
             <div
               key={String(item.value)}
-              className={cn('[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3')}
+              className={cn(
+                '[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3',
+              )}
             >
               {itemConfig?.icon && !hideIcon ? (
                 <itemConfig.icon />
@@ -346,12 +367,17 @@ ChartLegendContent.displayName = 'ChartLegendContent';
  *   `label`, `color` or `theme`, or `undefined` if the payload is invalid or
  *   no configuration is found for the provided key.
  */
-function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string): ChartConfigItem | undefined {
+function getPayloadConfigFromPayload(
+  config: ChartConfig,
+  payload: unknown,
+  key: string,
+): ChartConfigItem | undefined {
   if (!isValidObject(payload)) {
     return undefined;
   }
 
-  const nestedPayload = 'payload' in payload && isValidObject(payload.payload) ? payload.payload : undefined;
+  const nestedPayload =
+    'payload' in payload && isValidObject(payload.payload) ? payload.payload : undefined;
 
   const configLabelKey = getConfigLabelKey(payload, nestedPayload, key);
 
@@ -409,7 +435,11 @@ function getConfigLabelKey(
  *   key and a chart configuration.
  * @returns The generated CSS as a string.
  */
-function generateThemeCSS(theme: Theme, id: string, configEntries: [string, ChartConfig[string]][]): string {
+function generateThemeCSS(
+  theme: Theme,
+  id: string,
+  configEntries: [string, ChartConfig[string]][],
+): string {
   const rules: string[] = [];
 
   rules.push(`${THEMES[theme]} [data-chart=${id}] {`);
@@ -437,7 +467,9 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
  * @returns A string containing the generated CSS rules.
  */
 function generateCSS(id: string, config: ChartConfig): string {
-  const themeOrColorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig?.theme || itemConfig?.color);
+  const themeOrColorConfig = Object.entries(config).filter(
+    ([_, itemConfig]) => itemConfig?.theme || itemConfig?.color,
+  );
 
   const allRules: string[] = [];
 
@@ -463,4 +495,11 @@ export type {
   ChartTooltipContentProps,
   ChartTooltipProps,
 };
-export { ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent };
+export {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+  ChartTooltip,
+  ChartTooltipContent,
+};

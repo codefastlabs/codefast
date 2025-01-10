@@ -1,7 +1,16 @@
 import type { ComponentProps } from 'react';
 
 import { act, render } from '@testing-library/react';
-import { addDays, addMonths, addWeeks, addYears, endOfWeek, lastDayOfMonth, setDate, startOfWeek } from 'date-fns';
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  addYears,
+  endOfWeek,
+  lastDayOfMonth,
+  setDate,
+  startOfWeek,
+} from 'date-fns';
 
 import { Keyboard } from '~/keyboard';
 import { activeElement, dateButton, grid, nextButton, previousButton } from '~/lib/elements';

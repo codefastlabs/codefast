@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   title: 'Create Next App',
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): JSX.Element {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>): JSX.Element {
   return (
     <html className={`${geistSans.variable} ${geistMono.variable}`} lang="en">
       <body className="antialiased">

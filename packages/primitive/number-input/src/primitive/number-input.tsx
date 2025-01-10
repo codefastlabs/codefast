@@ -30,7 +30,9 @@ const NUMBER_INPUT_NAME = 'NumberInput';
 type ScopedProps<P> = P & {
   __scopeNumberInput?: Scope;
 };
-const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
+const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [
+  createInputScope,
+]);
 const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
@@ -100,7 +102,10 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     prop: valueProp,
   });
 
-  const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
+  const { decimalSeparator, thousandSeparator } = useMemo(
+    () => getNumberFormatSeparators(locale),
+    [locale],
+  );
 
   const formatValue = useCallback(
     (inputValue?: number): string => {
@@ -129,7 +134,11 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
         return Number.NaN;
       }
 
-      const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
+      const normalizedValue = normalizeInputValue(
+        cleanedValue,
+        thousandSeparator,
+        decimalSeparator,
+      );
       let parsedValue = Number.parseFloat(normalizedValue);
 
       if (formatOptions.style === 'percent') {
@@ -211,7 +220,16 @@ const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 type NumberInputItemElement = ComponentRef<typeof InputPrimitive.Item>;
 type NumberInputItemProps = Omit<
   ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
-  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
+  | 'defaultValue'
+  | 'disabled'
+  | 'id'
+  | 'max'
+  | 'min'
+  | 'onChange'
+  | 'prefix'
+  | 'readOnly'
+  | 'step'
+  | 'value'
 >;
 
 const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>(
@@ -456,9 +474,19 @@ interface NumberInputButtonImplProps extends ButtonHTMLAttributes<HTMLButtonElem
 }
 
 const NumberInputButtonImpl = forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
-  ({ __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>, forwardedRef): JSX.Element => {
-    const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, readOnly } =
-      useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
+  (
+    { __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>,
+    forwardedRef,
+  ): JSX.Element => {
+    const {
+      id,
+      ariaDecrementLabel,
+      ariaIncrementLabel,
+      disabled,
+      onDecrement,
+      onIncrement,
+      readOnly,
+    } = useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
     const timeoutIdRef = useRef<null | number>(null);
 
     const startActionInterval = useCallback((callback: () => void) => {
@@ -521,7 +549,10 @@ const NUMBER_INPUT_INCREMENT_BUTTON_NAME = 'NumberInputIncrementButton';
 type NumberInputIncrementButtonElement = NumberInputButtonImplElement;
 type NumberInputIncrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
 
-const NumberInputIncrementButton = forwardRef<NumberInputIncrementButtonElement, NumberInputIncrementButtonProps>(
+const NumberInputIncrementButton = forwardRef<
+  NumberInputIncrementButtonElement,
+  NumberInputIncrementButtonProps
+>(
   (props: NumberInputIncrementButtonProps, forwardedRef): JSX.Element => (
     <NumberInputButtonImpl ref={forwardedRef} operation="increment" {...props} />
   ),
@@ -538,7 +569,10 @@ const NUMBER_INPUT_DECREMENT_BUTTON_NAME = 'NumberInputDecrementButton';
 type NumberInputDecrementButtonElement = NumberInputButtonImplElement;
 type NumberInputDecrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
 
-const NumberInputDecrementButton = forwardRef<NumberInputDecrementButtonElement, NumberInputDecrementButtonProps>(
+const NumberInputDecrementButton = forwardRef<
+  NumberInputDecrementButtonElement,
+  NumberInputDecrementButtonProps
+>(
   (props: NumberInputDecrementButtonProps, forwardedRef): JSX.Element => (
     <NumberInputButtonImpl ref={forwardedRef} operation="decrement" {...props} />
   ),
@@ -586,7 +620,11 @@ function getNumberFormatSeparators(locale: string): {
   return { decimalSeparator, thousandSeparator };
 }
 
-function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
+function normalizeInputValue(
+  value: string,
+  thousandSeparator: string,
+  decimalSeparator: string,
+): string {
   return value
     .replaceAll(new RegExp(`\\${thousandSeparator}`, 'g'), '')
     .replace(new RegExp(`\\${decimalSeparator}`), '.')

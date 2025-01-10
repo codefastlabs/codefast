@@ -12,11 +12,13 @@ interface BlockquoteProps extends BlockquoteHTMLAttributes<HTMLQuoteElement> {
   asChild?: boolean;
 }
 
-const Blockquote = forwardRef<BlockquoteElement, BlockquoteProps>(({ asChild, ...props }, forwardedRef) => {
-  const Component = asChild ? Slot : 'blockquote';
+const Blockquote = forwardRef<BlockquoteElement, BlockquoteProps>(
+  ({ asChild, ...props }, forwardedRef) => {
+    const Component = asChild ? Slot : 'blockquote';
 
-  return <Component ref={forwardedRef} {...props} />;
-});
+    return <Component ref={forwardedRef} {...props} />;
+  },
+);
 
 Blockquote.displayName = 'Blockquote';
 

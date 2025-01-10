@@ -1,4 +1,10 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  HTMLAttributes,
+  JSX,
+} from 'react';
 
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
@@ -41,13 +47,18 @@ const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 type MenubarElement = ComponentRef<typeof MenubarPrimitive.Root>;
 type MenubarProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>;
 
-const Menubar = forwardRef<MenubarElement, MenubarProps>(({ className, ...props }, forwardedRef) => (
-  <MenubarPrimitive.Root
-    ref={forwardedRef}
-    className={cn('bg-background flex h-10 items-center space-x-1 rounded-md border p-1', className)}
-    {...props}
-  />
-));
+const Menubar = forwardRef<MenubarElement, MenubarProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <MenubarPrimitive.Root
+      ref={forwardedRef}
+      className={cn(
+        'bg-background flex h-10 items-center space-x-1 rounded-md border p-1',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 Menubar.displayName = MenubarPrimitive.Root.displayName;
 
@@ -82,7 +93,8 @@ MenubarTrigger.displayName = MenubarPrimitive.Trigger.displayName;
 
 type MenubarSubTriggerElement = ComponentRef<typeof MenubarPrimitive.SubTrigger>;
 
-interface MenubarSubTriggerProps extends ComponentPropsWithoutRef<typeof MenubarPrimitive.SubTrigger> {
+interface MenubarSubTriggerProps
+  extends ComponentPropsWithoutRef<typeof MenubarPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
@@ -180,20 +192,22 @@ interface MenubarItemProps extends ComponentPropsWithoutRef<typeof MenubarPrimit
   inset?: boolean;
 }
 
-const MenubarItem = forwardRef<MenubarItemElement, MenubarItemProps>(({ className, inset, ...props }, forwardedRef) => (
-  <MenubarPrimitive.Item
-    ref={forwardedRef}
-    className={cn(
-      'gap-x-2 px-3 py-1.5',
-      'relative flex cursor-pointer select-none items-center rounded text-sm',
-      'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-      'aria-disabled:pointer-events-none aria-disabled:opacity-50',
-      inset && 'pl-8',
-      className,
-    )}
-    {...props}
-  />
-));
+const MenubarItem = forwardRef<MenubarItemElement, MenubarItemProps>(
+  ({ className, inset, ...props }, forwardedRef) => (
+    <MenubarPrimitive.Item
+      ref={forwardedRef}
+      className={cn(
+        'gap-x-2 px-3 py-1.5',
+        'relative flex cursor-pointer select-none items-center rounded text-sm',
+        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
+        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        inset && 'pl-8',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 
 MenubarItem.displayName = MenubarPrimitive.Item.displayName;
 
@@ -278,7 +292,12 @@ const MenubarLabel = forwardRef<MenubarLabelElement, MenubarLabelProps>(
   ({ className, inset, ...props }, forwardedRef) => (
     <MenubarPrimitive.Label
       ref={forwardedRef}
-      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn(
+        'gap-x-2 px-3 py-1.5',
+        'flex items-center text-sm font-semibold',
+        inset && 'pl-8',
+        className,
+      )}
       {...props}
     />
   ),
@@ -295,7 +314,11 @@ type MenubarSeparatorProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Se
 
 const MenubarSeparator = forwardRef<MenubarSeparatorElement, MenubarSeparatorProps>(
   ({ className, ...props }, forwardedRef) => (
-    <MenubarPrimitive.Separator ref={forwardedRef} className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />
+    <MenubarPrimitive.Separator
+      ref={forwardedRef}
+      className={cn('bg-muted mx-2 my-1 h-px', className)}
+      {...props}
+    />
   ),
 );
 
@@ -308,7 +331,12 @@ MenubarSeparator.displayName = MenubarPrimitive.Separator.displayName;
 type MenubarShortcutProps = HTMLAttributes<HTMLSpanElement>;
 
 function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Element {
-  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
+  return (
+    <span
+      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -318,9 +346,15 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Ele
 type MenubarArrowElement = ComponentRef<typeof MenubarPrimitive.Arrow>;
 type MenubarArrowProps = MenubarPrimitive.MenubarArrowProps;
 
-const MenubarArrow = forwardRef<MenubarArrowElement, MenubarArrowProps>(({ className, ...props }, forwardedRef) => (
-  <MenubarPrimitive.Arrow ref={forwardedRef} className={cn('fill-popover', className)} {...props} />
-));
+const MenubarArrow = forwardRef<MenubarArrowElement, MenubarArrowProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <MenubarPrimitive.Arrow
+      ref={forwardedRef}
+      className={cn('fill-popover', className)}
+      {...props}
+    />
+  ),
+);
 
 MenubarArrow.displayName = MenubarPrimitive.Arrow.displayName;
 

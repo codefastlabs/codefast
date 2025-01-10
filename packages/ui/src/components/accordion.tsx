@@ -47,7 +47,11 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
   return (
     <ChevronRightIcon
       aria-hidden
-      className={cn('text-muted-foreground size-4 shrink-0 transition', 'group-data-[state=open]:rotate-90', className)}
+      className={cn(
+        'text-muted-foreground size-4 shrink-0 transition',
+        'group-data-[state=open]:rotate-90',
+        className,
+      )}
     />
   );
 }
@@ -64,7 +68,10 @@ const AccordionTrigger = forwardRef<AccordionTriggerElement, AccordionTriggerPro
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         ref={forwardedRef}
-        className={cn('group flex grow items-center gap-2 py-4 text-left text-sm font-medium', className)}
+        className={cn(
+          'group flex grow items-center gap-2 py-4 text-left text-sm font-medium',
+          className,
+        )}
         {...props}
       />
     </AccordionPrimitive.Header>
@@ -101,5 +108,11 @@ AccordionContent.displayName = AccordionPrimitive.Content.displayName;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { AccordionContentProps, AccordionIconProps, AccordionItemProps, AccordionProps, AccordionTriggerProps };
+export type {
+  AccordionContentProps,
+  AccordionIconProps,
+  AccordionItemProps,
+  AccordionProps,
+  AccordionTriggerProps,
+};
 export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger };

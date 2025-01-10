@@ -68,7 +68,9 @@ export function ChartRadialStacked(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );
@@ -80,7 +82,11 @@ const content: ContentType = ({ viewBox }) => {
   if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
     return (
       <text textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-        <tspan className="fill-foreground text-2xl font-bold" x={viewBox.cx} y={(viewBox.cy ?? 0) - 16}>
+        <tspan
+          className="fill-foreground text-2xl font-bold"
+          x={viewBox.cx}
+          y={(viewBox.cy ?? 0) - 16}
+        >
           {totalVisitors.toLocaleString()}
         </tspan>
         <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 4}>

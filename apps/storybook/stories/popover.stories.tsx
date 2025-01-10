@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Button, Label, Popover, PopoverContent, PopoverTrigger, Text, TextInput } from '@codefast/ui';
+import {
+  Button,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Text,
+  TextInput,
+} from '@codefast/ui';
 
 const meta = {
   component: Popover,

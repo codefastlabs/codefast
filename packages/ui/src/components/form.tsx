@@ -2,7 +2,13 @@
 
 import type { Scope } from '@radix-ui/react-context';
 import type * as LabelPrimitive from '@radix-ui/react-label';
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  HTMLAttributes,
+  JSX,
+} from 'react';
 import type { ControllerProps, FieldPath, FieldValues, GlobalError } from 'react-hook-form';
 
 import { createContextScope } from '@radix-ui/react-context';
@@ -38,7 +44,8 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const [FormFieldProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
+const [FormFieldProvider, useFormFieldContext] =
+  createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
 
 function useFormItem(
   consumerName: string,
@@ -68,7 +75,9 @@ function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(formFieldProps: FormFieldProps<TFieldValues, TName>): JSX.Element {
-  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<FormFieldProps<TFieldValues, TName>>;
+  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<
+    FormFieldProps<TFieldValues, TName>
+  >;
 
   return (
     <FormFieldProvider name={props.name} scope={__scopeFormField}>
@@ -87,7 +96,8 @@ interface FormItemContextValue {
   id: string;
 }
 
-const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
+const [FormItemProvider, useFormItemContext] =
+  createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 type FormItemElement = HTMLDivElement;
 type FormItemProps = HTMLAttributes<HTMLDivElement>;
@@ -136,14 +146,19 @@ type FormControlProps = ComponentPropsWithoutRef<typeof Slot>;
 
 const FormControl = forwardRef<FormControlElement, FormControlProps>(
   ({ __scopeFormField, ...props }: ScopedProps<FormControlProps>, forwardedRef) => {
-    const { formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
+    const { formDescriptionId, formItemId, formMessageId } = useFormItem(
+      FORM_MESSAGE_NAME,
+      __scopeFormField,
+    );
     const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
     const { errors } = useFormState({ name });
 
     return (
       <Slot
         ref={forwardedRef}
-        aria-describedby={errors[name] ? `${formDescriptionId} ${formMessageId}` : formDescriptionId}
+        aria-describedby={
+          errors[name] ? `${formDescriptionId} ${formMessageId}` : formDescriptionId
+        }
         aria-invalid={Boolean(errors[name])}
         id={formItemId}
         {...props}
@@ -190,7 +205,10 @@ type FormMessageElement = HTMLParagraphElement;
 type FormMessageProps = HTMLAttributes<HTMLParagraphElement>;
 
 const FormMessage = forwardRef<FormMessageElement, FormMessageProps>(
-  ({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>, forwardedRef) => {
+  (
+    { __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>,
+    forwardedRef,
+  ) => {
     const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
     const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
     const { errors } = useFormState({ name });
@@ -204,7 +222,11 @@ const FormMessage = forwardRef<FormMessageElement, FormMessageProps>(
     return (
       <p
         ref={forwardedRef}
-        className={cn('text-xs', error?.message ? 'text-destructive font-medium' : 'text-muted-foreground', className)}
+        className={cn(
+          'text-xs',
+          error?.message ? 'text-destructive font-medium' : 'text-muted-foreground',
+          className,
+        )}
         id={formMessageId}
         {...props}
       >
@@ -229,4 +251,13 @@ export type {
   FormMessageProps,
   FormProps,
 };
-export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };
+export {
+  createFormFieldScope,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+};

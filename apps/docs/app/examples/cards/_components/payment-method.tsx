@@ -46,7 +46,10 @@ export function PaymentMethod(): JSX.Element {
             </svg>
             Card
           </RadioCardsItem>
-          <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="paypal">
+          <RadioCardsItem
+            className="flex-col gap-3 text-sm font-medium leading-none"
+            value="paypal"
+          >
             <Icons.Paypal className="mb-3 size-6" />
             Paypal
           </RadioCardsItem>

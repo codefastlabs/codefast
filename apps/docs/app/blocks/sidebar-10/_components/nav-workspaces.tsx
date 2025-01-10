@@ -30,7 +30,11 @@ interface NavWorkspacesProps extends ComponentProps<typeof SidebarGroup> {
   }[];
 }
 
-export function NavWorkspaces({ className, workspaces, ...props }: NavWorkspacesProps): JSX.Element {
+export function NavWorkspaces({
+  className,
+  workspaces,
+  ...props
+}: NavWorkspacesProps): JSX.Element {
   return (
     <div className={cn('', className)} {...props}>
       <SidebarGroupLabel>Workspaces</SidebarGroupLabel>

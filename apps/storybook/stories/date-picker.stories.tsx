@@ -57,7 +57,10 @@ export const Default: Story = {
       <Popover {...args}>
         <PopoverTrigger asChild>
           <Button
-            className={cn('w-[280px] justify-start px-3 text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn(
+              'w-[280px] justify-start px-3 text-left font-normal',
+              !date && 'text-muted-foreground',
+            )}
             prefix={<CalendarIcon className="opacity-50" />}
             variant="outline"
           >
@@ -88,7 +91,10 @@ export const DateRangePicker: Story = {
         <Popover {...args}>
           <PopoverTrigger asChild>
             <Button
-              className={cn('w-[300px] justify-start px-3 text-left font-normal', !date && 'text-muted-foreground')}
+              className={cn(
+                'w-[300px] justify-start px-3 text-left font-normal',
+                !date && 'text-muted-foreground',
+              )}
               id="date"
               prefix={<CalendarIcon className="opacity-50" />}
               variant="outline"
@@ -97,7 +103,13 @@ export const DateRangePicker: Story = {
             </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-auto p-0">
-            <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
+            <Calendar
+              defaultMonth={date?.from}
+              mode="range"
+              numberOfMonths={2}
+              selected={date}
+              onSelect={setDate}
+            />
           </PopoverContent>
         </Popover>
       </div>
@@ -117,7 +129,10 @@ export const WithPresets: Story = {
       <Popover {...args}>
         <PopoverTrigger asChild>
           <Button
-            className={cn('w-[280px] justify-start px-3 text-left font-normal', !date && 'text-muted-foreground')}
+            className={cn(
+              'w-[280px] justify-start px-3 text-left font-normal',
+              !date && 'text-muted-foreground',
+            )}
             prefix={<CalendarIcon className="opacity-50" />}
             variant="outline"
           >

@@ -75,7 +75,9 @@ export function ChartRadarLabelCustom(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
+        <div className="text-muted-foreground flex items-center gap-2 leading-none">
+          January - June 2024
+        </div>
       </CardFooter>
     </Card>
   );
@@ -106,7 +108,14 @@ export function PolarAngleAxisTick({
   }
 
   return (
-    <text fontSize={13} fontWeight={500} textAnchor={textAnchor} x={x} y={index === 0 ? y - 10 : y} {...props}>
+    <text
+      fontSize={13}
+      fontWeight={500}
+      textAnchor={textAnchor}
+      x={x}
+      y={index === 0 ? y - 10 : y}
+      {...props}
+    >
       <tspan>{data.desktop}</tspan>
       <tspan className="fill-muted-foreground">/</tspan>
       <tspan>{data.mobile}</tspan>

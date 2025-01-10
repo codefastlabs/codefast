@@ -1,6 +1,12 @@
 'use client';
 
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  HTMLAttributes,
+  JSX,
+} from 'react';
 
 import { forwardRef } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
@@ -92,13 +98,15 @@ function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
 type DrawerTitleElement = ComponentRef<typeof DrawerPrimitive.Title>;
 type DrawerTitleProps = ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>;
 
-const DrawerTitle = forwardRef<DrawerTitleElement, DrawerTitleProps>(({ className, ...props }, forwardedRef) => (
-  <DrawerPrimitive.Title
-    ref={forwardedRef}
-    className={cn('text-lg font-semibold leading-none tracking-tight', className)}
-    {...props}
-  />
-));
+const DrawerTitle = forwardRef<DrawerTitleElement, DrawerTitleProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <DrawerPrimitive.Title
+      ref={forwardedRef}
+      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+      {...props}
+    />
+  ),
+);
 
 DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
 
@@ -134,7 +142,11 @@ interface DrawerCloseProps extends ComponentPropsWithoutRef<typeof DrawerPrimiti
 
 const DrawerClose = forwardRef<DrawerCloseElement, DrawerCloseProps>(
   ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <DrawerPrimitive.Close ref={forwardedRef} className={buttonVariants({ className, size, variant })} {...props} />
+    <DrawerPrimitive.Close
+      ref={forwardedRef}
+      className={buttonVariants({ className, size, variant })}
+      {...props}
+    />
   ),
 );
 

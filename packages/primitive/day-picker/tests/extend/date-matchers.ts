@@ -67,7 +67,8 @@ const toHaveDate: CustomMatcher = (received: Date, expected: number) => {
   const pass = received.getDate() === expected;
 
   return {
-    message: () => `expected ${received.toString()} ${pass ? 'not ' : ''}to have the date ${expected}`,
+    message: () =>
+      `expected ${received.toString()} ${pass ? 'not ' : ''}to have the date ${expected}`,
     pass,
   };
 };

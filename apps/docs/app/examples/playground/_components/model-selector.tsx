@@ -43,8 +43,8 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
           <Label htmlFor="model">Model</Label>
         </HoverCardTrigger>
         <HoverCardContent align="start" className="w-64 text-sm" side="left">
-          The model which will generate the completion. Some models are suitable for natural language tasks, others
-          specialize in code. Learn more.
+          The model which will generate the completion. Some models are suitable for natural
+          language tasks, others specialize in code. Learn more.
         </HoverCardContent>
       </HoverCard>
       <Popover open={open} onOpenChange={setOpen} {...props}>

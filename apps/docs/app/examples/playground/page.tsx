@@ -82,14 +82,20 @@ export default function PlaygroundPage(): JSX.Element {
                       </span>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-[320px] text-sm" side="left">
-                      Choose the interface that best suits your task. You can provide: a simple prompt to complete,
-                      starting and ending text to insert a completion within, or some text with instructions to edit it.
+                      Choose the interface that best suits your task. You can provide: a simple
+                      prompt to complete, starting and ending text to insert a completion within, or
+                      some text with instructions to edit it.
                     </HoverCardContent>
                   </HoverCard>
                   <TabsList className="grid grid-cols-3">
                     <TabsTrigger value="complete">
                       <span className="sr-only">Complete</span>
-                      <svg className="size-5" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        className="size-5"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="3" />
                         <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="7" />
                         <rect fill="currentColor" height="2" rx="1" width="3" x="4" y="11" />
@@ -101,7 +107,12 @@ export default function PlaygroundPage(): JSX.Element {
                     </TabsTrigger>
                     <TabsTrigger value="insert">
                       <span className="sr-only">Insert</span>
-                      <svg className="size-5" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        className="size-5"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path
                           clipRule="evenodd"
                           d="M14.491 7.769a.888.888 0 0 1 .287.648.888.888 0 0 1-.287.648l-3.916 3.667a1.013 1.013 0 0 1-.692.268c-.26 0-.509-.097-.692-.268L5.275 9.065A.886.886 0 0 1 5 8.42a.889.889 0 0 1 .287-.64c.181-.17.427-.267.683-.269.257-.002.504.09.69.258L8.903 9.87V3.917c0-.243.103-.477.287-.649.183-.171.432-.268.692-.268.26 0 .509.097.692.268a.888.888 0 0 1 .287.649V9.87l2.245-2.102c.183-.172.432-.269.692-.269.26 0 .508.097.692.269Z"
@@ -115,7 +126,12 @@ export default function PlaygroundPage(): JSX.Element {
                     </TabsTrigger>
                     <TabsTrigger value="edit">
                       <span className="sr-only">Edit</span>
-                      <svg className="size-5" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        className="size-5"
+                        fill="none"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="3" />
                         <rect fill="currentColor" height="2" rx="1" width="12" x="4" y="7" />
                         <rect fill="currentColor" height="2" rx="1" width="3" x="4" y="11" />

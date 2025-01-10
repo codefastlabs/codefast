@@ -119,7 +119,9 @@ export const Default: Story = {
             suffix={<ChevronDownIcon className="opacity-50" />}
             variant="outline"
           >
-            {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
+            {value
+              ? frameworks.find((framework) => framework.value === value)?.label
+              : 'Select framework...'}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
@@ -137,7 +139,12 @@ export const Default: Story = {
                       setOpen(false);
                     }}
                   >
-                    <CheckIcon className={cn('size-4', value === framework.value ? 'opacity-100' : 'opacity-0')} />
+                    <CheckIcon
+                      className={cn(
+                        'size-4',
+                        value === framework.value ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
                     {framework.label}
                   </CommandItem>
                 ))}
@@ -220,12 +227,17 @@ export const WithPopover: Story = {
                       key={status.value}
                       value={status.value}
                       onSelect={(value) => {
-                        setSelectedStatus(statuses.find((priority) => priority.value === value) ?? null);
+                        setSelectedStatus(
+                          statuses.find((priority) => priority.value === value) ?? null,
+                        );
                         setOpen(false);
                       }}
                     >
                       <Icon
-                        className={cn('size-4', status.value === selectedStatus?.value ? 'opacity-100' : 'opacity-40')}
+                        className={cn(
+                          'size-4',
+                          status.value === selectedStatus?.value ? 'opacity-100' : 'opacity-40',
+                        )}
                       />
                       <span>{status.label}</span>
                     </CommandItem>
@@ -244,7 +256,15 @@ export const WithPopover: Story = {
  * Story: Dropdown Menu
  * -------------------------------------------------------------------------- */
 
-const labels = ['feature', 'bug', 'enhancement', 'documentation', 'design', 'question', 'maintenance'];
+const labels = [
+  'feature',
+  'bug',
+  'enhancement',
+  'documentation',
+  'design',
+  'question',
+  'maintenance',
+];
 
 export const WithDropdownMenu: Story = {
   render: (args) => {
@@ -259,7 +279,13 @@ export const WithDropdownMenu: Story = {
         </div>
         <DropdownMenu open={open} onOpenChange={setOpen} {...args}>
           <DropdownMenuTrigger asChild>
-            <Button icon aria-label="Actions" prefix={<MoreHorizontalIcon />} size="sm" variant="ghost" />
+            <Button
+              icon
+              aria-label="Actions"
+              prefix={<MoreHorizontalIcon />}
+              size="sm"
+              variant="ghost"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -447,7 +473,10 @@ export const WithReactHookForm: Story = {
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
-                        className={cn('w-[200px] justify-between px-3', !field.value && 'text-muted-foreground')}
+                        className={cn(
+                          'w-[200px] justify-between px-3',
+                          !field.value && 'text-muted-foreground',
+                        )}
                         role="combobox"
                         suffix={<ChevronDownIcon className="opacity-50" />}
                         variant="outline"
@@ -473,7 +502,10 @@ export const WithReactHookForm: Story = {
                               }}
                             >
                               <CheckIcon
-                                className={cn('size-4', language.value === field.value ? 'opacity-100' : 'opacity-0')}
+                                className={cn(
+                                  'size-4',
+                                  language.value === field.value ? 'opacity-100' : 'opacity-0',
+                                )}
                               />
                               {language.label}
                             </CommandItem>
@@ -483,7 +515,9 @@ export const WithReactHookForm: Story = {
                     </Command>
                   </PopoverContent>
                 </Popover>
-                <FormDescription>This is the language that will be used in the dashboard.</FormDescription>
+                <FormDescription>
+                  This is the language that will be used in the dashboard.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

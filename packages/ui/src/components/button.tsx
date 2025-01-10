@@ -12,7 +12,9 @@ import { buttonVariants } from '@/styles/button-variants';
  * -------------------------------------------------------------------------- */
 
 type ButtonElement = HTMLButtonElement;
-interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>, ButtonVariantsProps {
+interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>,
+    ButtonVariantsProps {
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
   prefix?: ReactNode;
