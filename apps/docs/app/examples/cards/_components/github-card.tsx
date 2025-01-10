@@ -25,8 +25,8 @@ export function Github(): JSX.Element {
         <div className="space-y-1">
           <CardTitle>codefast/ui</CardTitle>
           <CardDescription>
-            Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open
-            Source.
+            Beautifully designed components that you can copy and paste into your apps. Accessible.
+            Customizable. Open Source.
           </CardDescription>
         </div>
 

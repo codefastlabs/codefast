@@ -21,8 +21,12 @@ describe('startOfBroadcastWeek', () => {
 
   test('startOfBroadcastWeek should return correct start date', () => {
     // Test for a month starting on a Monday
-    expect(startOfBroadcastWeek(new Date(2023, 0, 1), defaultDateLib)).toEqual(new Date(2022, 11, 26)); // December 26 2022
+    expect(startOfBroadcastWeek(new Date(2023, 0, 1), defaultDateLib)).toEqual(
+      new Date(2022, 11, 26),
+    ); // December 26 2022
     // Test for a month starting on a Wednesday
-    expect(startOfBroadcastWeek(new Date(2020, 0, 1), defaultDateLib)).toEqual(new Date(2019, 11, 30)); // December 30 2019
+    expect(startOfBroadcastWeek(new Date(2020, 0, 1), defaultDateLib)).toEqual(
+      new Date(2019, 11, 30),
+    ); // December 30 2019
   });
 });

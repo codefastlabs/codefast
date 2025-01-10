@@ -8,7 +8,8 @@ const meta: Meta<typeof SearchInput> = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
-      description: 'Specifies that the input field should automatically get focus when the page loads',
+      description:
+        'Specifies that the input field should automatically get focus when the page loads',
       table: {
         defaultValue: { summary: 'false' },
         type: { summary: 'boolean' },

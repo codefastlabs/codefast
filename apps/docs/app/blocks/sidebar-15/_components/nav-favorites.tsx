@@ -16,7 +16,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from 'lucide-react';
+import {
+  ArrowUpRightIcon,
+  LinkIcon,
+  MoreHorizontalIcon,
+  StarOffIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import type { FavoriteItem } from '@/app/blocks/sidebar-15/_lib/mocks/data';

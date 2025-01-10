@@ -198,7 +198,8 @@ export const ReactHookForm: Story = {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  You can manage email addresses in your <Link href="/apps/docs/public">email settings</Link>.
+                  You can manage email addresses in your{' '}
+                  <Link href="/apps/docs/public">email settings</Link>.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

@@ -43,7 +43,9 @@ export const Default: Story = {
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
-            <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
+            <SheetDescription>
+              Make changes to your profile here. Click save when you&apos;re done.
+            </SheetDescription>
           </SheetHeader>
 
           <SheetBody>
@@ -104,13 +106,21 @@ export const Side: Story = {
                     <Label className="text-right" htmlFor={`name-${side}-${id}`}>
                       Name
                     </Label>
-                    <TextInput className="col-span-3" id={`name-${side}-${id}`} value="Pedro Duarte" />
+                    <TextInput
+                      className="col-span-3"
+                      id={`name-${side}-${id}`}
+                      value="Pedro Duarte"
+                    />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right" htmlFor={`username-${side}-${id}`}>
                       Username
                     </Label>
-                    <TextInput className="col-span-3" id={`username-${side}-${id}`} value="@peduarte" />
+                    <TextInput
+                      className="col-span-3"
+                      id={`username-${side}-${id}`}
+                      value="@peduarte"
+                    />
                   </div>
                 </div>
               </SheetBody>
@@ -142,16 +152,18 @@ export const Scrollable: Story = {
           <SheetContent side={side}>
             <SheetHeader>
               <SheetTitle>Share link</SheetTitle>
-              <SheetDescription>Anyone who has this link will be able to view this.</SheetDescription>
+              <SheetDescription>
+                Anyone who has this link will be able to view this.
+              </SheetDescription>
             </SheetHeader>
 
             <SheetBody className="grow overflow-auto border-y">
               <div className="grid gap-2">
                 {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
                   <p key={id}>
-                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
-                    officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
-                    quos totam voluptas voluptatibus.
+                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta
+                    dolores, eligendi est officia voluptatem? Corporis culpa debitis ipsa ipsam
+                    maiores, nisi odit perspiciatis possimus quae, quos totam voluptas voluptatibus.
                   </p>
                 ))}
               </div>
@@ -183,16 +195,18 @@ export const ScrollingLongContent: Story = {
           <SheetContent side={side}>
             <SheetHeader>
               <SheetTitle>Share link</SheetTitle>
-              <SheetDescription>Anyone who has this link will be able to view this.</SheetDescription>
+              <SheetDescription>
+                Anyone who has this link will be able to view this.
+              </SheetDescription>
             </SheetHeader>
 
             <SheetBody className="border-y">
               <div className="grid gap-2">
                 {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
                   <p key={id}>
-                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
-                    officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
-                    quos totam voluptas voluptatibus.
+                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta
+                    dolores, eligendi est officia voluptatem? Corporis culpa debitis ipsa ipsam
+                    maiores, nisi odit perspiciatis possimus quae, quos totam voluptas voluptatibus.
                   </p>
                 ))}
               </div>

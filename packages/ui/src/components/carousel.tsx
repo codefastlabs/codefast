@@ -44,14 +44,24 @@ type CarouselContextValue = BaseCarouselProps & {
   scrollPrev: () => void;
 };
 
-const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
+const [CarouselProvider, useCarouselContext] =
+  createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 type CarouselElement = HTMLDivElement;
 type CarouselProps = BaseCarouselProps & HTMLAttributes<HTMLDivElement>;
 
 const Carousel = forwardRef<CarouselElement, CarouselProps>(
   (
-    { __scopeCarousel, children, className, opts, orientation, plugins, setApi, ...props }: ScopedProps<CarouselProps>,
+    {
+      __scopeCarousel,
+      children,
+      className,
+      opts,
+      orientation,
+      plugins,
+      setApi,
+      ...props
+    }: ScopedProps<CarouselProps>,
     forwardedRef,
   ) => {
     const [carouselRef, api] = useEmblaCarousel(
@@ -161,7 +171,10 @@ interface CarouselContentProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const CarouselContent = forwardRef<CarouselContentElement, CarouselContentProps>(
-  ({ __scopeCarousel, className, classNames, ...props }: ScopedProps<CarouselContentProps>, forwardedRef) => {
+  (
+    { __scopeCarousel, className, classNames, ...props }: ScopedProps<CarouselContentProps>,
+    forwardedRef,
+  ) => {
     const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
     return (
@@ -200,7 +213,11 @@ const CarouselItem = forwardRef<CarouselItemElement, CarouselItemProps>(
       <div
         ref={forwardedRef}
         aria-roledescription="slide"
-        className={cn('min-w-0 shrink-0 grow-0 basis-full', orientation === 'horizontal' ? 'pl-4' : 'pt-4', className)}
+        className={cn(
+          'min-w-0 shrink-0 grow-0 basis-full',
+          orientation === 'horizontal' ? 'pl-4' : 'pt-4',
+          className,
+        )}
         role="group"
         {...props}
       />
@@ -231,7 +248,10 @@ const CarouselPrevious = forwardRef<CarouselPreviousElement, CarouselPreviousPro
     }: ScopedProps<CarouselPreviousProps>,
     forwardedRef,
   ) => {
-    const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
+    const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(
+      CAROUSEL_PREVIOUS_NAME,
+      __scopeCarousel,
+    );
 
     return (
       <Button
@@ -280,7 +300,10 @@ const CarouselNext = forwardRef<CarouselNextElement, CarouselNextProps>(
     }: ScopedProps<CarouselNextProps>,
     forwardedRef,
   ) => {
-    const { canScrollNext, orientation, scrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
+    const { canScrollNext, orientation, scrollNext } = useCarouselContext(
+      CAROUSEL_NEXT_NAME,
+      __scopeCarousel,
+    );
 
     return (
       <Button
@@ -320,4 +343,11 @@ export type {
   CarouselPreviousProps,
   CarouselProps,
 };
-export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  createCarouselScope,
+};

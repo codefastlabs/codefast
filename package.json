@@ -25,20 +25,6 @@
     "pre-commit": "pnpm exec lint-staged",
     "commit-msg": "pnpm exec commitlint --edit $1"
   },
-  "prettier": {
-    "plugins": [
-      "prettier-plugin-packagejson",
-      "prettier-plugin-tailwindcss"
-    ],
-    "printWidth": 120,
-    "singleQuote": true,
-    "tailwindAttributes": [
-      "classNames"
-    ],
-    "tailwindFunctions": [
-      "tv"
-    ]
-  },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.27.10",

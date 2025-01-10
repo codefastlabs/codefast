@@ -4,7 +4,9 @@ import { TooltipProvider } from '@codefast/ui';
 
 import { ExamplesNavigation } from '@/components/examples-navigation';
 
-export default function ExamplesLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {
+export default function ExamplesLayout({
+  children,
+}: Readonly<{ children: ReactNode }>): JSX.Element {
   return (
     <TooltipProvider delayDuration={0}>
       <section>

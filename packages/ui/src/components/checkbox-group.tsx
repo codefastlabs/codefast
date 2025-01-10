@@ -13,9 +13,15 @@ import { cn } from '@/lib/utils';
 type CheckboxGroupElement = ComponentRef<typeof CheckboxGroupPrimitive.Root>;
 type CheckboxGroupProps = ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Root>;
 
-const CheckboxGroup = forwardRef<CheckboxGroupElement, CheckboxGroupProps>(({ className, ...props }, forwardedRef) => (
-  <CheckboxGroupPrimitive.Root ref={forwardedRef} className={cn('grid gap-2', className)} {...props} />
-));
+const CheckboxGroup = forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
+  ({ className, ...props }, forwardedRef) => (
+    <CheckboxGroupPrimitive.Root
+      ref={forwardedRef}
+      className={cn('grid gap-2', className)}
+      {...props}
+    />
+  ),
+);
 
 CheckboxGroup.displayName = 'CheckboxGroup';
 

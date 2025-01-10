@@ -42,7 +42,8 @@ const meta = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
-      description: 'Specifies that the input field should automatically get focus when the page loads',
+      description:
+        'Specifies that the input field should automatically get focus when the page loads',
       table: {
         defaultValue: { summary: 'false' },
         type: { summary: 'boolean' },
@@ -183,7 +184,18 @@ const units = {
   mass: ['gram', 'kilogram', 'ounce', 'pound', 'stone'],
   percentage: ['percent'],
   temperature: ['celsius', 'fahrenheit', 'degree'],
-  time: ['second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'millisecond', 'microsecond', 'nanosecond'],
+  time: [
+    'second',
+    'minute',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year',
+    'millisecond',
+    'microsecond',
+    'nanosecond',
+  ],
   volume: ['liter', 'milliliter', 'gallon', 'fluid-ounce'],
 };
 

@@ -21,7 +21,10 @@ export function Tree({ item }: TreeProps): JSX.Element {
 
   if (items.length === 0) {
     return (
-      <SidebarMenuButton className="data-[active=true]:bg-transparent" isActive={name === 'button.tsx'}>
+      <SidebarMenuButton
+        className="data-[active=true]:bg-transparent"
+        isActive={name === 'button.tsx'}
+      >
         <FileIcon />
         {name}
       </SidebarMenuButton>

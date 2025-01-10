@@ -12,9 +12,17 @@ import { cn } from '@/lib/utils';
 type RadioCardsElement = ComponentRef<typeof RadioGroupPrimitive.Root>;
 type RadioCardsProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
 
-const RadioCards = forwardRef<RadioCardsElement, RadioCardsProps>(({ className, ...props }, forwardedRef) => {
-  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} ref={forwardedRef} />;
-});
+const RadioCards = forwardRef<RadioCardsElement, RadioCardsProps>(
+  ({ className, ...props }, forwardedRef) => {
+    return (
+      <RadioGroupPrimitive.Root
+        className={cn('grid gap-2', className)}
+        {...props}
+        ref={forwardedRef}
+      />
+    );
+  },
+);
 
 RadioCards.displayName = RadioGroupPrimitive.Root.displayName;
 

@@ -23,7 +23,8 @@ export function AccountSwitcher({ accounts, isCollapsed }: AccountSwitcherProps)
         aria-label="Select account"
         className={cn(
           'flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:size-4 [&_svg]:shrink-0',
-          isCollapsed && 'flex size-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden',
+          isCollapsed &&
+            'flex size-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden',
         )}
       >
         <SelectValue placeholder="Select an account">

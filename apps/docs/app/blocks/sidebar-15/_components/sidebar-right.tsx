@@ -22,7 +22,11 @@ type SidebarRightProps = ComponentProps<typeof Sidebar>;
 
 export function SidebarRight({ className, ...props }: SidebarRightProps): JSX.Element {
   return (
-    <Sidebar className={cn('sticky top-0 hidden h-svh border-l lg:flex', className)} collapsible="none" {...props}>
+    <Sidebar
+      className={cn('sticky top-0 hidden h-svh border-l lg:flex', className)}
+      collapsible="none"
+      {...props}
+    >
       <SidebarHeader className="border-sidebar-border h-16 border-b">
         <NavUser user={sidebarRightData.user} />
       </SidebarHeader>

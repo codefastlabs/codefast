@@ -12,5 +12,7 @@ export function RangeLong(): JSX.Element {
     to: new Date(2024, 9, 10),
   });
 
-  return <DayPicker defaultMonth={new Date(2024, 9)} mode="range" selected={range} onSelect={setRange} />;
+  return (
+    <DayPicker defaultMonth={new Date(2024, 9)} mode="range" selected={range} onSelect={setRange} />
+  );
 }

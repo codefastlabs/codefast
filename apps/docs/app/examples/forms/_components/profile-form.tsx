@@ -101,8 +101,8 @@ export function ProfileForm(): JSX.Element {
                 <TextInput placeholder="codefast" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name. It can be your real name or a pseudonym. You can only change this once
-                every 30 days.
+                This is your public display name. It can be your real name or a pseudonym. You can
+                only change this once every 30 days.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -127,7 +127,8 @@ export function ProfileForm(): JSX.Element {
                 </SelectContent>
               </Select>
               <FormDescription>
-                You can manage verified email addresses in your <Link href="/examples/forms">email settings</Link>.
+                You can manage verified email addresses in your{' '}
+                <Link href="/examples/forms">email settings</Link>.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -140,7 +141,11 @@ export function ProfileForm(): JSX.Element {
             <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
-                <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
+                <Textarea
+                  className="resize-none"
+                  placeholder="Tell us a little bit about yourself"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
                 You can <span>@mention</span> other users and organizations to link to them.

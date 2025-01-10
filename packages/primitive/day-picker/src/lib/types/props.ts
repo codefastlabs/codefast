@@ -402,7 +402,12 @@ export interface BaseProps {
  * @param modifiers - An object containing flags or additional information about the selection state.
  * @param event - The event object representing the mouse or keyboard event that triggered the selection.
  */
-export type OnSelectHandler<T> = (selected: T, triggerDate: Date, modifiers: Modifiers, event: DayEvent) => void;
+export type OnSelectHandler<T> = (
+  selected: T,
+  triggerDate: Date,
+  modifiers: Modifiers,
+  event: DayEvent,
+) => void;
 
 /**
  * The props when the single selection is optional.

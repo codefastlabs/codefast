@@ -11,6 +11,11 @@ export function FocusRecursive(): JSX.Element {
   ];
 
   return (
-    <DayPicker defaultMonth={new Date(2022, 5)} disabled={disabledDays} mode="single" today={new Date(2022, 5, 1)} />
+    <DayPicker
+      defaultMonth={new Date(2022, 5)}
+      disabled={disabledDays}
+      mode="single"
+      today={new Date(2022, 5, 1)}
+    />
   );
 }

@@ -65,8 +65,20 @@ export function ChartLineMultiple(): JSX.Element {
               tickMargin={8}
             />
             <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
-            <Line dataKey="desktop" dot={false} stroke="var(--color-desktop)" strokeWidth={2} type="monotone" />
-            <Line dataKey="mobile" dot={false} stroke="var(--color-mobile)" strokeWidth={2} type="monotone" />
+            <Line
+              dataKey="desktop"
+              dot={false}
+              stroke="var(--color-desktop)"
+              strokeWidth={2}
+              type="monotone"
+            />
+            <Line
+              dataKey="mobile"
+              dot={false}
+              stroke="var(--color-mobile)"
+              strokeWidth={2}
+              type="monotone"
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>

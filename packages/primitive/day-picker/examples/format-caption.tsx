@@ -38,5 +38,11 @@ const formatCaption: Formatters['formatCaption'] = (month, options) => {
 };
 
 export function FormatCaption(): JSX.Element {
-  return <DayPicker endMonth={new Date(2025, 0)} formatters={{ formatCaption }} startMonth={new Date(2020, 0)} />;
+  return (
+    <DayPicker
+      endMonth={new Date(2025, 0)}
+      formatters={{ formatCaption }}
+      startMonth={new Date(2020, 0)}
+    />
+  );
 }

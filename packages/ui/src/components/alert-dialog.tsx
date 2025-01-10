@@ -1,4 +1,10 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef, HTMLAttributes, JSX } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentRef,
+  HTMLAttributes,
+  JSX,
+} from 'react';
 
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import { forwardRef } from 'react';
@@ -65,7 +71,10 @@ type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement>;
 function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX.Element {
   return (
     <div
-      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      className={cn(
+        'flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left',
+        className,
+      )}
       {...props}
     />
   );
@@ -90,7 +99,10 @@ type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement>;
 function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX.Element {
   return (
     <div
-      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
+      className={cn(
+        'flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end',
+        className,
+      )}
       {...props}
     />
   );
@@ -120,17 +132,20 @@ AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
  * -------------------------------------------------------------------------- */
 
 type AlertDialogDescriptionElement = ComponentRef<typeof AlertDialogPrimitive.Description>;
-type AlertDialogDescriptionProps = ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>;
+type AlertDialogDescriptionProps = ComponentPropsWithoutRef<
+  typeof AlertDialogPrimitive.Description
+>;
 
-const AlertDialogDescription = forwardRef<AlertDialogDescriptionElement, AlertDialogDescriptionProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <AlertDialogPrimitive.Description
-      ref={forwardedRef}
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
-  ),
-);
+const AlertDialogDescription = forwardRef<
+  AlertDialogDescriptionElement,
+  AlertDialogDescriptionProps
+>(({ className, ...props }, forwardedRef) => (
+  <AlertDialogPrimitive.Description
+    ref={forwardedRef}
+    className={cn('text-muted-foreground text-sm', className)}
+    {...props}
+  />
+));
 
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;
 
@@ -139,7 +154,8 @@ AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayNam
  * -------------------------------------------------------------------------- */
 
 type AlertDialogActionElement = ComponentRef<typeof AlertDialogPrimitive.Action>;
-interface AlertDialogActionProps extends ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> {
+interface AlertDialogActionProps
+  extends ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }
@@ -161,7 +177,8 @@ AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
  * -------------------------------------------------------------------------- */
 
 type AlertDialogCancelElement = ComponentRef<typeof AlertDialogPrimitive.Cancel>;
-interface AlertDialogCancelProps extends ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel> {
+interface AlertDialogCancelProps
+  extends ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }

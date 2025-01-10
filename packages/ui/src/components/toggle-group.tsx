@@ -25,14 +25,24 @@ const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [create
 
 const useToggleGroupScope = createToggleGroupScope();
 
-const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
+const [ToggleGroupProvider, useToggleGroupContext] =
+  createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
 type ToggleGroupElement = ComponentRef<typeof ToggleGroupPrimitive.Root>;
-type ToggleGroupProps = ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
+type ToggleGroupProps = ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
+  ToggleVariantsProps;
 
 const ToggleGroup = forwardRef<ToggleGroupElement, ToggleGroupProps>(
   (
-    { __scopeToggleGroup, children, className, icon, size, variant, ...props }: ScopedProps<ToggleGroupProps>,
+    {
+      __scopeToggleGroup,
+      children,
+      className,
+      icon,
+      size,
+      variant,
+      ...props
+    }: ScopedProps<ToggleGroupProps>,
     forwardedRef,
   ) => {
     const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
@@ -61,14 +71,22 @@ ToggleGroup.displayName = TOGGLE_GROUP_NAME;
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
 type ToggleGroupItemElement = ComponentRef<typeof ToggleGroupPrimitive.Item>;
-interface ToggleGroupItemProps extends Omit<ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
+interface ToggleGroupItemProps
+  extends Omit<ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
   prefix?: ReactNode;
   suffix?: ReactNode;
 }
 
 const ToggleGroupItem = forwardRef<ToggleGroupItemElement, ToggleGroupItemProps>(
   (
-    { __scopeToggleGroup, children, className, prefix, suffix, ...props }: ScopedProps<ToggleGroupItemProps>,
+    {
+      __scopeToggleGroup,
+      children,
+      className,
+      prefix,
+      suffix,
+      ...props
+    }: ScopedProps<ToggleGroupItemProps>,
     forwardedRef,
   ) => {
     const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);

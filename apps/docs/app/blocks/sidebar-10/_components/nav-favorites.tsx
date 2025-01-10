@@ -17,7 +17,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from 'lucide-react';
+import {
+  ArrowUpRightIcon,
+  LinkIcon,
+  MoreHorizontalIcon,
+  StarOffIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import Link from 'next/link';
 
 interface NavFavoritesProps extends ComponentProps<typeof SidebarGroup> {
