@@ -69,7 +69,7 @@ export default function MusicPage(): JSX.Element {
                         </Button>
                       </div>
                     </div>
-                    <TabsContent className="border-none p-0 outline-none" value="music">
+                    <TabsContent className="outline-hidden border-none p-0" value="music">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
                           <h2 className="text-2xl font-semibold tracking-tight">Listen Now</h2>

@@ -37,27 +37,27 @@ const chartData: DataItem[] = [
 
 const chartConfig = {
   chrome: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Chrome',
   },
   edge: {
-    color: 'hsl(var(--color-chart-4))',
+    color: 'var(--color-chart-4)',
     label: 'Edge',
   },
   firefox: {
-    color: 'hsl(var(--color-chart-3))',
+    color: 'var(--color-chart-3)',
     label: 'Firefox',
   },
   other: {
-    color: 'hsl(var(--color-chart-5))',
+    color: 'var(--color-chart-5)',
     label: 'Other',
   },
   safari: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Safari',
   },
   visitors: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Visitors',
   },
 } satisfies ChartConfig;

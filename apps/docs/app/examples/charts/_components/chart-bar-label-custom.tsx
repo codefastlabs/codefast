@@ -30,14 +30,14 @@ const chartData = [
 
 const chartConfig = {
   desktop: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Desktop',
   },
   label: {
-    color: 'hsl(var(--color-background))',
+    color: 'var(--color-background)',
   },
   mobile: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Mobile',
   },
 } satisfies ChartConfig;
@@ -73,7 +73,7 @@ export function ChartBarLabelCustom(): JSX.Element {
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
             <Bar dataKey="desktop" fill="var(--color-desktop)" layout="vertical" radius={4}>
               <LabelList
-                className="fill-[--color-label]"
+                className="fill-(--color-label)"
                 dataKey="month"
                 fontSize={12}
                 offset={8}

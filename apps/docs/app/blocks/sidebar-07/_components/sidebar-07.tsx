@@ -92,7 +92,7 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                    className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                     side="bottom"
                     sideOffset={4}
                   >
@@ -230,7 +230,7 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                    className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                     side="bottom"
                     sideOffset={4}
                   >
@@ -281,7 +281,7 @@ export function Sidebar07({ className, ...props }: Sidebar07Props): JSX.Element 
           <SidebarRail />
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator className="mr-2 h-4" orientation="vertical" />

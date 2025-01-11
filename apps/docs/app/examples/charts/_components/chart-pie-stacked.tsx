@@ -37,26 +37,26 @@ const mobileData = [
 
 const chartConfig = {
   april: {
-    color: 'hsl(var(--color-chart-4))',
+    color: 'var(--color-chart-4)',
     label: 'April',
   },
   desktop: {
     label: 'Desktop',
   },
   february: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'February',
   },
   january: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'January',
   },
   march: {
-    color: 'hsl(var(--color-chart-3))',
+    color: 'var(--color-chart-3)',
     label: 'March',
   },
   may: {
-    color: 'hsl(var(--color-chart-5))',
+    color: 'var(--color-chart-5)',
     label: 'May',
   },
   mobile: {
