@@ -1,7 +1,5 @@
 import type { Config } from 'tailwindcss';
 
-import sharedConfig from '@codefast/tailwind-config';
-
 const tailwindcssConfig: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,7 +7,6 @@ const tailwindcssConfig: Config = {
     './stories/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@codefast/ui/dist/**/*.js',
   ],
-  presets: [sharedConfig],
   theme: {
     extend: {
       backgroundImage: {
