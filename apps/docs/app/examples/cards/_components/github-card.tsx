@@ -49,7 +49,7 @@ export function Github(): JSX.Element {
                 variant="secondary"
               />
             </DropdownMenuTrigger>
-            <DropdownMenuContent forceMount align="end" alignOffset={-5} className="w-[200px]">
+            <DropdownMenuContent forceMount align="end" alignOffset={-5} className="w-[12.5rem]">
               <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem checked>Future Ideas</DropdownMenuCheckboxItem>

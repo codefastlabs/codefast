@@ -16,8 +16,8 @@ import {
 
 export function PodcastEmptyPlaceholder(): JSX.Element {
   return (
-    <div className="flex h-[450px] shrink-0 items-center justify-center rounded-md border border-dashed">
-      <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+    <div className="flex h-[28.125rem] shrink-0 items-center justify-center rounded-md border border-dashed">
+      <div className="mx-auto flex max-w-[26.25rem] flex-col items-center justify-center text-center">
         <svg
           className="text-muted-foreground size-10"
           fill="none"

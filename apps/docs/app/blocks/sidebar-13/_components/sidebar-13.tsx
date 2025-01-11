@@ -41,7 +41,7 @@ export function Sidebar13({ className, ...props }: Sidebar13Props): JSX.Element 
         <DialogTrigger asChild>
           <Button size="sm">Open Dialog</Button>
         </DialogTrigger>
-        <DialogContent className="grid overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[800px]">
+        <DialogContent className="grid overflow-hidden p-0 md:max-h-[31.25rem] md:max-w-[43.75rem] lg:max-w-[50rem]">
           <DialogTitle className="sr-only">Settings</DialogTitle>
           <DialogDescription className="sr-only">Customize your settings here.</DialogDescription>
           <SidebarProvider className="items-start">
@@ -65,7 +65,7 @@ export function Sidebar13({ className, ...props }: Sidebar13Props): JSX.Element 
                 </SidebarGroup>
               </SidebarContent>
             </Sidebar>
-            <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
+            <main className="flex h-[30rem] flex-1 flex-col overflow-hidden">
               <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                 <div className="flex items-center gap-2 px-4">
                   <Breadcrumb>

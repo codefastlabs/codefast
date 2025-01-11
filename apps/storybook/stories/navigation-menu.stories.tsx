@@ -107,7 +107,7 @@ export const Default: Story = {
         <NavigationMenuItem value="menu-0">
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-6 sm:w-[400px] md:w-[500px] md:grid-cols-[.75fr_1fr]">
+            <ul className="grid gap-3 p-6 sm:w-[25rem] md:w-[31.25rem] md:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
                   <a
@@ -139,7 +139,7 @@ export const Default: Story = {
         <NavigationMenuItem value="menu-1">
           <NavigationMenuTrigger>Components</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 sm:w-[500px] sm:grid-cols-2 md:w-[600px]">
+            <ul className="grid w-[25rem] gap-3 p-4 sm:w-[31.25rem] sm:grid-cols-2 md:w-[37.5rem]">
               {components.map((component) => (
                 <ListItem key={component.title} href={component.href} title={component.title}>
                   {component.description}
