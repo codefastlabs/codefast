@@ -49,7 +49,7 @@ export function ShareDocument(): JSX.Element {
                 </div>
               </div>
               <Select defaultValue="edit">
-                <SelectTrigger className="ml-auto w-[110px]">
+                <SelectTrigger className="ml-auto w-[6.875rem]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -70,7 +70,7 @@ export function ShareDocument(): JSX.Element {
                 </div>
               </div>
               <Select defaultValue="view">
-                <SelectTrigger className="ml-auto w-[110px]">
+                <SelectTrigger className="ml-auto w-[6.875rem]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -91,7 +91,7 @@ export function ShareDocument(): JSX.Element {
                 </div>
               </div>
               <Select defaultValue="view">
-                <SelectTrigger className="ml-auto w-[110px]">
+                <SelectTrigger className="ml-auto w-[6.875rem]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>

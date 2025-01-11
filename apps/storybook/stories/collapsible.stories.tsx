@@ -23,7 +23,12 @@ export const Default: Story = {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <Collapsible className="w-[350px] space-y-2" open={isOpen} onOpenChange={setIsOpen} {...args}>
+      <Collapsible
+        className="w-[21.875rem] space-y-2"
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        {...args}
+      >
         <div className="flex items-center justify-between gap-x-4 px-3">
           <h4 className="text-sm font-semibold">@peduarte starred 3 repositories</h4>
           <CollapsibleTrigger asChild>

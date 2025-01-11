@@ -49,7 +49,7 @@ export function ChartRadarLegend(): JSX.Element {
         <CardDescription>Showing total visitors for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer className="mx-auto aspect-square max-h-[250px]" config={chartConfig}>
+        <ChartContainer className="mx-auto aspect-square max-h-[15.625rem]" config={chartConfig}>
           <RadarChart
             data={chartData}
             margin={{

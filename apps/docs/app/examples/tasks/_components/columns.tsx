@@ -39,7 +39,7 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: 'id',
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue('id')}</div>,
+    cell: ({ row }) => <div className="w-[5rem]">{row.getValue('id')}</div>,
     enableHiding: false,
     enableSorting: false,
     header: ({ column }) => <DataTableColumnHeader column={column} title="Task" />,
@@ -52,7 +52,7 @@ export const columns: ColumnDef<Task>[] = [
       return (
         <div className="flex items-center gap-x-2">
           {label ? <Badge variant="outline">{label.label}</Badge> : null}
-          <span className="max-w-[500px] truncate font-medium">{row.getValue('title')}</span>
+          <span className="max-w-[31.25rem] truncate font-medium">{row.getValue('title')}</span>
         </div>
       );
     },
@@ -70,7 +70,7 @@ export const columns: ColumnDef<Task>[] = [
       const { icon: Icon } = status;
 
       return (
-        <div className="flex w-[100px] items-center">
+        <div className="flex w-[6.25rem] items-center">
           <Icon className="text-muted-foreground mr-2 size-4" />
           <span>{status.label}</span>
         </div>

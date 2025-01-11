@@ -72,7 +72,7 @@ export default function PlaygroundPage(): JSX.Element {
         <Separator />
         <Tabs className="flex-1" defaultValue="complete">
           <div className="container mx-auto h-full py-6">
-            <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_200px]">
+            <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_12.5rem]">
               <div className="hidden flex-col space-y-4 sm:flex md:order-2">
                 <div className="grid gap-2">
                   <HoverCard openDelay={200}>
@@ -81,7 +81,7 @@ export default function PlaygroundPage(): JSX.Element {
                         Mode
                       </span>
                     </HoverCardTrigger>
-                    <HoverCardContent className="w-[320px] text-sm" side="left">
+                    <HoverCardContent className="w-[20rem] text-sm" side="left">
                       Choose the interface that best suits your task. You can provide: a simple
                       prompt to complete, starting and ending text to insert a completion within, or
                       some text with instructions to edit it.
@@ -154,7 +154,7 @@ export default function PlaygroundPage(): JSX.Element {
                 <TabsContent className="mt-0 border-0 p-0" value="complete">
                   <div className="flex h-full flex-col space-y-4">
                     <Textarea
-                      className="min-h-[400px] flex-1 p-4 md:min-h-[700px] lg:min-h-[700px]"
+                      className="min-h-[25rem] flex-1 p-4 md:min-h-[43.75rem] lg:min-h-[43.75rem]"
                       placeholder="Write a tagline for an ice cream shop"
                     />
                     <div className="flex items-center space-x-2">
@@ -176,7 +176,7 @@ export default function PlaygroundPage(): JSX.Element {
                   <div className="flex flex-col space-y-4">
                     <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
                       <Textarea
-                        className="h-full min-h-[300px] lg:min-h-[700px] xl:min-h-[700px]"
+                        className="h-full min-h-[18.75rem] lg:min-h-[43.75rem] xl:min-h-[43.75rem]"
                         placeholder="We're writing to [inset]. Congrats from OpenAI!"
                       />
                       <div className="bg-muted rounded-md border" />
@@ -203,7 +203,7 @@ export default function PlaygroundPage(): JSX.Element {
                         <div className="flex flex-1 flex-col space-y-2">
                           <Label htmlFor="input">Input</Label>
                           <Textarea
-                            className="flex-1 lg:min-h-[580px]"
+                            className="flex-1 lg:min-h-[36.25rem]"
                             id="input"
                             placeholder="We is going to the market."
                           />
@@ -213,7 +213,7 @@ export default function PlaygroundPage(): JSX.Element {
                           <Textarea id="instructions" placeholder="Fix the grammar." />
                         </div>
                       </div>
-                      <div className="bg-muted mt-[21px] min-h-[400px] rounded-md border lg:min-h-[700px]" />
+                      <div className="bg-muted mt-[1.3125rem] min-h-[25rem] rounded-md border lg:min-h-[43.75rem]" />
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button>Submit</Button>

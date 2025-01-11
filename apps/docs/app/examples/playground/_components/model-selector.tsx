@@ -62,7 +62,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 p-0">
           <HoverCard openDelay={0}>
-            <HoverCardContent forceMount align="start" className="min-h-[280px] w-64" side="left">
+            <HoverCardContent forceMount align="start" className="min-h-[17.5rem] w-64" side="left">
               <div className="grid gap-2">
                 <h4 className="font-medium leading-none">{peekedModel.name}</h4>
                 <div className="text-muted-foreground text-sm">{peekedModel.description}</div>
@@ -77,7 +77,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
             <Command loop>
               <CommandInput placeholder="Search Models..." />
               <HoverCardTrigger>
-                <CommandList className="h-[var(--cmdk-list-height)] max-h-[400px]">
+                <CommandList className="h-[var(--cmdk-list-height)] max-h-[25rem]">
                   <CommandEmpty>No Models found.</CommandEmpty>
                   {types.map((type) => (
                     <CommandGroup key={type} heading={type}>

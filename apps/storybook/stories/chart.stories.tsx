@@ -42,7 +42,7 @@ const chartConfig = {
 
 export const Basic: Story = {
   render: () => (
-    <ChartContainer className="min-h-[200px] w-full" config={chartConfig}>
+    <ChartContainer className="min-h-[12.5rem] w-full" config={chartConfig}>
       <BarChart accessibilityLayer data={chartData}>
         <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
         <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
@@ -53,7 +53,7 @@ export const Basic: Story = {
 
 export const Grid: Story = {
   render: () => (
-    <ChartContainer className="min-h-[200px] w-full" config={chartConfig}>
+    <ChartContainer className="min-h-[12.5rem] w-full" config={chartConfig}>
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
@@ -65,7 +65,7 @@ export const Grid: Story = {
 
 export const Axis: Story = {
   render: () => (
-    <ChartContainer className="min-h-[200px] w-full" config={chartConfig}>
+    <ChartContainer className="min-h-[12.5rem] w-full" config={chartConfig}>
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis
@@ -84,7 +84,7 @@ export const Axis: Story = {
 
 export const Tooltip: Story = {
   render: () => (
-    <ChartContainer className="min-h-[200px] w-full" config={chartConfig}>
+    <ChartContainer className="min-h-[12.5rem] w-full" config={chartConfig}>
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis
@@ -104,7 +104,7 @@ export const Tooltip: Story = {
 
 export const Legend: Story = {
   render: () => (
-    <ChartContainer className="min-h-[200px] w-full" config={chartConfig}>
+    <ChartContainer className="min-h-[12.5rem] w-full" config={chartConfig}>
       <BarChart accessibilityLayer data={chartData}>
         <CartesianGrid vertical={false} />
         <XAxis

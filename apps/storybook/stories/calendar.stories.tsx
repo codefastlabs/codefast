@@ -182,7 +182,7 @@ export const ReactHookForm: Story = {
                     <FormControl>
                       <Button
                         className={cn(
-                          'w-[240px] justify-between pl-3 text-left font-normal',
+                          'w-[15rem] justify-between pl-3 text-left font-normal',
                           !field.value && 'text-muted-foreground',
                         )}
                         suffix={<CalendarIcon className="opacity-50" />}

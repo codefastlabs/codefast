@@ -87,7 +87,7 @@ export default function MusicPage(): JSX.Element {
                                 key={album.name}
                                 album={album}
                                 aspectRatio="portrait"
-                                className="w-[250px]"
+                                className="w-[15.625rem]"
                                 height={330}
                                 width={250}
                               />
@@ -110,7 +110,7 @@ export default function MusicPage(): JSX.Element {
                                 key={album.name}
                                 album={album}
                                 aspectRatio="square"
-                                className="w-[150px]"
+                                className="w-[9.375rem]"
                                 height={150}
                                 width={150}
                               />
