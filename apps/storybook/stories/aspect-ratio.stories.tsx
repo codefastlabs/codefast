@@ -19,7 +19,7 @@ type Story = StoryObj<typeof AspectRatio>;
 
 export const Default: Story = {
   render: (args) => (
-    <div className="w-[450px]">
+    <div className="w-[28.125rem]">
       <AspectRatio className="bg-muted" ratio={16 / 9} {...args}>
         <Image
           fill

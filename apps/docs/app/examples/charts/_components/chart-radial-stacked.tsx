@@ -41,7 +41,10 @@ export function ChartRadialStacked(): JSX.Element {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 items-center pb-0">
-        <ChartContainer className="mx-auto aspect-square w-full max-w-[250px]" config={chartConfig}>
+        <ChartContainer
+          className="mx-auto aspect-square w-full max-w-[15.625rem]"
+          config={chartConfig}
+        >
           <RadialBarChart data={chartData} endAngle={180} innerRadius={80} outerRadius={130}>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <PolarRadiusAxis axisLine={false} tick={false} tickLine={false}>

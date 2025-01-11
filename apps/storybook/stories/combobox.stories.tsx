@@ -114,7 +114,7 @@ export const Default: Story = {
         <PopoverTrigger asChild>
           <Button
             aria-expanded={open}
-            className="w-[200px] justify-between px-3"
+            className="w-[12.5rem] justify-between px-3"
             role="combobox"
             suffix={<ChevronDownIcon className="opacity-50" />}
             variant="outline"
@@ -124,7 +124,7 @@ export const Default: Story = {
               : 'Select framework...'}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-[12.5rem] p-0">
           <Command>
             <CommandInput placeholder="Search framework..." />
             <CommandList>
@@ -205,7 +205,7 @@ export const WithPopover: Story = {
         <Text className="text-muted-foreground text-sm">Status</Text>
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
-            <Button className="w-[150px] justify-start px-3" size="sm" variant="outline">
+            <Button className="w-[9.375rem] justify-start px-3" size="sm" variant="outline">
               {selectedStatus ? (
                 <>
                   <selectedStatus.icon className="size-4 shrink-0" />
@@ -287,7 +287,7 @@ export const WithDropdownMenu: Story = {
               variant="ghost"
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
+          <DropdownMenuContent align="end" className="w-[12.5rem]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuGroup>
               <DropdownMenuItem>
@@ -386,11 +386,11 @@ export const ResponsiveCombobox: Story = {
       return (
         <Popover open={open} onOpenChange={setOpen} {...args}>
           <PopoverTrigger asChild>
-            <Button className="w-[150px] justify-start px-3" variant="outline">
+            <Button className="w-[9.375rem] justify-start px-3" variant="outline">
               {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-[200px] p-0">
+          <PopoverContent align="start" className="w-[12.5rem] p-0">
             <StatusList setOpen={setOpen} setSelectedStatus={setSelectedStatus} />
           </PopoverContent>
         </Popover>
@@ -400,7 +400,7 @@ export const ResponsiveCombobox: Story = {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button className="w-[150px] justify-start px-3" variant="outline">
+          <Button className="w-[9.375rem] justify-start px-3" variant="outline">
             {selectedStatus ? <>{selectedStatus.label}</> : <>+ Set status</>}
           </Button>
         </DrawerTrigger>
@@ -474,7 +474,7 @@ export const WithReactHookForm: Story = {
                     <FormControl>
                       <Button
                         className={cn(
-                          'w-[200px] justify-between px-3',
+                          'w-[12.5rem] justify-between px-3',
                           !field.value && 'text-muted-foreground',
                         )}
                         role="combobox"
@@ -487,7 +487,7 @@ export const WithReactHookForm: Story = {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
+                  <PopoverContent className="w-[12.5rem] p-0">
                     <Command>
                       <CommandInput placeholder="Search language..." />
                       <CommandList>

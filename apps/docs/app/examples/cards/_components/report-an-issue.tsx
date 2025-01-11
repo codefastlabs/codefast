@@ -45,7 +45,7 @@ export function ReportAnIssue(): JSX.Element {
           <div className="grid gap-2">
             <Label htmlFor="security-level">Security Level</Label>
             <Select defaultValue="2">
-              <SelectTrigger className="w-[160px]" id="security-level">
+              <SelectTrigger className="w-[10rem]" id="security-level">
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
               <SelectContent>

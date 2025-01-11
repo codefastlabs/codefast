@@ -73,7 +73,7 @@ export function Mail({
     >
       <ResizablePanel
         collapsible
-        className={cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')}
+        className={cn(isCollapsed && 'min-w-[3.125rem] transition-all duration-300 ease-in-out')}
         collapsedSize={navCollapsedSize}
         defaultSize={defaultLayout[0]}
         maxSize={20}
@@ -89,8 +89,8 @@ export function Mail({
       >
         <div
           className={cn(
-            'flex h-[56px] items-center justify-center',
-            isCollapsed ? 'h-[52px]' : 'px-2',
+            'flex h-[3.5rem] items-center justify-center',
+            isCollapsed ? 'h-[3.25rem]' : 'px-2',
           )}
         >
           <AccountSwitcher accounts={accounts} isCollapsed={isCollapsed} />

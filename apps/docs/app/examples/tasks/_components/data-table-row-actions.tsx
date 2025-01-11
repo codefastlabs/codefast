@@ -39,7 +39,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
           variant="ghost"
         />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end" className="w-[10rem]">
         <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem>Make a copy</DropdownMenuItem>
         <DropdownMenuItem>Favorite</DropdownMenuItem>

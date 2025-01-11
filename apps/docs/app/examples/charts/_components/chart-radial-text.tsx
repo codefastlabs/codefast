@@ -38,7 +38,7 @@ export function ChartRadialText(): JSX.Element {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer className="mx-auto aspect-square max-h-[250px]" config={chartConfig}>
+        <ChartContainer className="mx-auto aspect-square max-h-[15.625rem]" config={chartConfig}>
           <RadialBarChart
             data={chartData}
             endAngle={250}

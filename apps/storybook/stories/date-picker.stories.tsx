@@ -58,7 +58,7 @@ export const Default: Story = {
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              'w-[280px] justify-start px-3 text-left font-normal',
+              'w-[17.5rem] justify-start px-3 text-left font-normal',
               !date && 'text-muted-foreground',
             )}
             prefix={<CalendarIcon className="opacity-50" />}
@@ -92,7 +92,7 @@ export const DateRangePicker: Story = {
           <PopoverTrigger asChild>
             <Button
               className={cn(
-                'w-[300px] justify-start px-3 text-left font-normal',
+                'w-[18.75rem] justify-start px-3 text-left font-normal',
                 !date && 'text-muted-foreground',
               )}
               id="date"
@@ -130,7 +130,7 @@ export const WithPresets: Story = {
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              'w-[280px] justify-start px-3 text-left font-normal',
+              'w-[17.5rem] justify-start px-3 text-left font-normal',
               !date && 'text-muted-foreground',
             )}
             prefix={<CalendarIcon className="opacity-50" />}
@@ -212,7 +212,7 @@ export const ReactHookForm: Story = {
                     <FormControl>
                       <Button
                         className={cn(
-                          'w-[240px] justify-between px-3 text-left font-normal',
+                          'w-[15rem] justify-between px-3 text-left font-normal',
                           !value && 'text-muted-foreground',
                         )}
                         suffix={<CalendarIcon className="opacity-50" />}

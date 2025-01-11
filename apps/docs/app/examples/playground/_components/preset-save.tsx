@@ -21,7 +21,7 @@ export function PresetSave(): JSX.Element {
       <DialogTrigger asChild>
         <Button variant="secondary">Save</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[475px]">
+      <DialogContent className="sm:max-w-[29.6875rem]">
         <DialogHeader>
           <DialogTitle>Save preset</DialogTitle>
           <DialogDescription>

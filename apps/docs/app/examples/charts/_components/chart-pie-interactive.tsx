@@ -88,7 +88,7 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
           <CardDescription>January - June 2024</CardDescription>
         </div>
         <Select value={activeMonth} onValueChange={setActiveMonth}>
-          <SelectTrigger aria-label="Select a value" className="ml-auto h-7 w-[130px] pl-2.5">
+          <SelectTrigger aria-label="Select a value" className="ml-auto h-7 w-[8.125rem] pl-2.5">
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
           <SelectContent align="end" className="">
@@ -114,7 +114,7 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
       </CardHeader>
       <CardContent className="flex flex-1 justify-center pb-0">
         <ChartContainer
-          className="mx-auto aspect-square w-full max-w-[300px]"
+          className="mx-auto aspect-square w-full max-w-[18.75rem]"
           config={chartConfig}
           id={id}
         >

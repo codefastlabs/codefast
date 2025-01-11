@@ -59,7 +59,7 @@ export function ChartPieLegend(): JSX.Element {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer className="mx-auto aspect-square max-h-[300px]" config={chartConfig}>
+        <ChartContainer className="mx-auto aspect-square max-h-[18.75rem]" config={chartConfig}>
           <PieChart>
             <Pie data={chartData} dataKey="visitors" />
             <ChartLegend

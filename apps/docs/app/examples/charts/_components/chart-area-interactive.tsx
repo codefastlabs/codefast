@@ -164,7 +164,7 @@ export function ChartAreaInteractive(props: ChartAreaInteractiveProps): JSX.Elem
           <CardDescription>Showing total visitors for the last 3 months</CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger aria-label="Select a value" className="w-[160px] sm:ml-auto">
+          <SelectTrigger aria-label="Select a value" className="w-[10rem] sm:ml-auto">
             <SelectValue placeholder="Last 3 months" />
           </SelectTrigger>
           <SelectContent className="">
@@ -181,7 +181,7 @@ export function ChartAreaInteractive(props: ChartAreaInteractiveProps): JSX.Elem
         </Select>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
+        <ChartContainer className="aspect-auto h-[15.625rem] w-full" config={chartConfig}>
           <AreaChart data={filteredData}>
             <defs>
               <linearGradient id="fillDesktop" x1="0" x2="0" y1="0" y2="1">

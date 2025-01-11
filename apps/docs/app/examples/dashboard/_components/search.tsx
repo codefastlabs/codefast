@@ -25,7 +25,7 @@ export function Search(): JSX.Element {
   return (
     <div>
       <SearchInput
-        className="md:w-[100px] lg:w-[300px]"
+        className="md:w-[6.25rem] lg:w-[18.75rem]"
         defaultValue={searchParams.get('search') ?? ''}
         placeholder="Search..."
         prefix={<SearchIcon />}

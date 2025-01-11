@@ -62,7 +62,7 @@ export function ChartPieLabel(): JSX.Element {
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
-          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[250px] pb-0"
+          className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[15.625rem] pb-0"
           config={chartConfig}
         >
           <PieChart>

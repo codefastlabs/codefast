@@ -9,7 +9,7 @@ export function PresetShare(): JSX.Element {
       <PopoverTrigger asChild>
         <Button variant="secondary">Share</Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[520px]">
+      <PopoverContent align="end" className="w-[32.5rem]">
         <div className="flex flex-col space-y-2 text-center sm:text-left">
           <h3 className="text-lg font-semibold">Share preset</h3>
           <p className="text-muted-foreground text-sm">

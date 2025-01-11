@@ -134,7 +134,7 @@ export const Default: Story = {
                   }}
                 />
               </div>
-              <div className="mt-3 h-[120px]">
+              <div className="mt-3 h-[7.5rem]">
                 <ResponsiveContainer height="100%" width="100%">
                   <BarChart data={data}>
                     <Bar
@@ -174,7 +174,7 @@ export const ResponsiveDialog: Story = {
           <DialogTrigger asChild>
             <Button variant="outline">Edit Profile</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[26.5625rem]">
             <form>
               <DialogHeader>
                 <DialogTitle>Edit profile</DialogTitle>

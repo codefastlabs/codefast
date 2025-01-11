@@ -17,7 +17,7 @@ export function CodeViewer(): JSX.Element {
       <DialogTrigger asChild>
         <Button variant="secondary">View code</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className="sm:max-w-[39.0625rem]">
         <DialogHeader>
           <DialogTitle>View code</DialogTitle>
           <DialogDescription>
