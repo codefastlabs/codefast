@@ -1,14 +1,11 @@
 import type { Config } from 'tailwindcss';
 
-import sharedConfig from '@codefast/tailwind-config';
-
 const tailwindcssConfig: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@codefast/ui/dist/**/*.js',
   ],
-  presets: [sharedConfig],
   theme: {
     extend: {
       backgroundImage: {
