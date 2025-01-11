@@ -32,12 +32,12 @@ const chartData = [
 
 const chartConfig = {
   desktop: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     icon: ArrowDownFromLine,
     label: 'Desktop',
   },
   mobile: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     icon: ArrowUpFromLine,
     label: 'Mobile',
   },

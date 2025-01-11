@@ -206,7 +206,7 @@ export function Sidebar08({ className, ...props }: Sidebar08Props): JSX.Element 
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                    className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                     side="bottom"
                     sideOffset={4}
                   >
