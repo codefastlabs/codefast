@@ -67,7 +67,7 @@ export function Sidebar01({ className, ...props }: Sidebar01Props): JSX.Element 
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
-                    className="w-[--radix-dropdown-menu-trigger-width]"
+                    className="w-(--radix-dropdown-menu-trigger-width)"
                   >
                     {data.versions.map((version) => (
                       <DropdownMenuItem

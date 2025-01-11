@@ -31,11 +31,11 @@ const chartConfig = {
     label: 'Activities',
   },
   running: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Running',
   },
   swimming: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Swimming',
   },
 } satisfies ChartConfig;

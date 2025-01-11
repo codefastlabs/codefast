@@ -22,7 +22,7 @@ const chartData = [{ browser: 'safari', fill: 'var(--color-safari)', visitors: 2
 
 const chartConfig = {
   safari: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Safari',
   },
   visitors: {

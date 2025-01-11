@@ -36,14 +36,14 @@ export function AppSidebar({ className, ...props }: AppSidebarProps): JSX.Elemen
 
   return (
     <Sidebar
-      className={cn('overflow-hidden [&>[data-sidebar=sidebar]]:flex-row', className)}
+      className={cn('overflow-hidden *:data-[sidebar=sidebar]:flex-row', className)}
       collapsible="icon"
       {...props}
     >
       {/* This is the first sidebar */}
       {/* We disable collapsible and adjust width to icon. */}
       {/* This will make the sidebar appear as icons. */}
-      <Sidebar className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r" collapsible="none">
+      <Sidebar className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r" collapsible="none">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>

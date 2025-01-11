@@ -30,15 +30,15 @@ const chartData = [
 
 const chartConfig = {
   desktop: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Desktop',
   },
   mobile: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Mobile',
   },
   other: {
-    color: 'hsl(var(--color-chart-3))',
+    color: 'var(--color-chart-3)',
     label: 'Other',
   },
 } satisfies ChartConfig;

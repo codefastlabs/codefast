@@ -115,7 +115,7 @@ export const ReactHookForm: Story = {
             control={form.control}
             name="mobile"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-y-0 rounded-md border p-4 shadow">
+              <FormItem className="flex flex-row items-start space-y-0 rounded-md border p-4 shadow-sm">
                 <FormControl>
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} {...args} />
                 </FormControl>

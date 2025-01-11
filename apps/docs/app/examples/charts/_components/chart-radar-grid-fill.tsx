@@ -30,7 +30,7 @@ const chartData = [
 
 const chartConfig = {
   desktop: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Desktop',
   },
 } satisfies ChartConfig;
@@ -46,7 +46,7 @@ export function ChartRadarGridFill(): JSX.Element {
         <ChartContainer className="mx-auto aspect-square max-h-[15.625rem]" config={chartConfig}>
           <RadarChart data={chartData}>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
-            <PolarGrid className="fill-[--color-desktop] opacity-20" />
+            <PolarGrid className="fill-(--color-desktop) opacity-20" />
             <PolarAngleAxis dataKey="month" />
             <Radar dataKey="desktop" fill="var(--color-desktop)" fillOpacity={0.5} />
           </RadarChart>

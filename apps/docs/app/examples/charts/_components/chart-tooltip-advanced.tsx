@@ -39,11 +39,11 @@ const chartData: DataItem[] = [
 
 const chartConfig = {
   running: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Running',
   },
   swimming: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Swimming',
   },
 } satisfies ChartConfig;
@@ -93,7 +93,7 @@ export function ChartTooltipAdvanced(): JSX.Element {
 const formatter: Formatter<ValueType, NameType> = (value, name, item, index) => (
   <>
     <div
-      className="h-2.5 w-2.5 shrink-0 rounded-[0.125rem] bg-[--color-bg]"
+      className="bg-(--color-bg) h-2.5 w-2.5 shrink-0 rounded-[0.125rem]"
       style={
         {
           '--color-bg': `var(--color-${name as string})`,

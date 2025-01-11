@@ -38,11 +38,11 @@ const chartData: DataItem[] = [
 
 const chartConfig = {
   desktop: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Desktop',
   },
   mobile: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Mobile',
   },
 } satisfies ChartConfig;
@@ -107,7 +107,7 @@ const dot: LineDot = ({
   return (
     <GitCommitVerticalIcon
       key={payload.month}
-      fill="hsl(var(--color-background))"
+      fill="var(--color-background)"
       height={r}
       stroke="var(--color-desktop)"
       width={r}
