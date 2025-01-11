@@ -27,23 +27,23 @@ const chartData = [
 
 const chartConfig = {
   chrome: {
-    color: 'hsl(var(--color-chart-1))',
+    color: 'var(--color-chart-1)',
     label: 'Chrome',
   },
   edge: {
-    color: 'hsl(var(--color-chart-4))',
+    color: 'var(--color-chart-4)',
     label: 'Edge',
   },
   firefox: {
-    color: 'hsl(var(--color-chart-3))',
+    color: 'var(--color-chart-3)',
     label: 'Firefox',
   },
   other: {
-    color: 'hsl(var(--color-chart-5))',
+    color: 'var(--color-chart-5)',
     label: 'Other',
   },
   safari: {
-    color: 'hsl(var(--color-chart-2))',
+    color: 'var(--color-chart-2)',
     label: 'Safari',
   },
   visitors: {
@@ -63,7 +63,7 @@ export function ChartPieLegend(): JSX.Element {
           <PieChart>
             <Pie data={chartData} dataKey="visitors" />
             <ChartLegend
-              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
               content={<ChartLegendContent nameKey="browser" />}
             />
           </PieChart>

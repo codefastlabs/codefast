@@ -140,7 +140,7 @@ export const Default: Story = {
                     <Bar
                       dataKey="goal"
                       style={{
-                        fill: 'hsl(var(--color-foreground))',
+                        fill: 'var(--color-foreground)',
                         opacity: 0.9,
                       }}
                     />

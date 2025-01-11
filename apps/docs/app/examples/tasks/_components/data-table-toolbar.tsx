@@ -16,7 +16,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
 
   return (
     <div className="flex items-center justify-between gap-x-4">
-      <div className="flex max-w-screen-sm flex-1 items-center space-x-2">
+      <div className="max-w-(--breakpoint-sm) flex flex-1 items-center space-x-2">
         <TextInput
           className="h-8 lg:w-64"
           placeholder="Filter tasks..."
