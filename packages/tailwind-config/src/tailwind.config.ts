@@ -1,14 +1,13 @@
 import type { Config } from 'tailwindcss';
 
-import { fontFamily } from 'tailwindcss/defaultTheme';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 import animate from '@/plugin/animate.plugin';
 import base from '@/plugin/base.plugin';
-import perspective from '@/plugin/perspective.plugin';
 
-const tailwindcssConfig: Omit<Config, 'content'> = {
-  darkMode: ['class'],
-  plugins: [base, animate, perspective],
+const tailwindcssConfig: Config = {
+  darkMode: 'class',
+  plugins: [base, animate],
   theme: {
     extend: {
       animation: {
@@ -86,7 +85,7 @@ const tailwindcssConfig: Omit<Config, 'content'> = {
         },
       },
       fontFamily: {
-        sans: `var(--font-sans, ${fontFamily.sans.join(', ')})`,
+        sans: `var(--font-sans, ${defaultTheme.fontFamily.sans.join(', ')})`,
       },
       keyframes: {
         'caret-blink': {

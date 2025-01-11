@@ -9,6 +9,7 @@ export default [
   {
     rules: {
       '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
     },
   },
 ];
