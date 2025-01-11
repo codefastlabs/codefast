@@ -132,7 +132,7 @@ export const Orientation: Story = {
       orientation="vertical"
       {...args}
     >
-      <CarouselContent className="-mt-1 h-[200px]">
+      <CarouselContent className="-mt-1 h-[12.5rem]">
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index} className="pt-1 md:basis-1/2">
             <div className="p-1">

@@ -46,7 +46,7 @@ export function Menu(): JSX.Element {
         <MenubarContent>
           <MenubarSub>
             <MenubarSubTrigger>New</MenubarSubTrigger>
-            <MenubarSubContent className="w-[230px]">
+            <MenubarSubContent className="w-[14.375rem]">
               <MenubarItem>
                 Playlist <MenubarShortcut>⌘N</MenubarShortcut>
               </MenubarItem>

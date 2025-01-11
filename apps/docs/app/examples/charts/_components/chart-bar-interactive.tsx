@@ -170,7 +170,7 @@ export function ChartBarInteractive(props: ChartBarInteractiveProps): JSX.Elemen
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
-        <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
+        <ChartContainer className="aspect-auto h-[15.625rem] w-full" config={chartConfig}>
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -198,7 +198,7 @@ export function ChartBarInteractive(props: ChartBarInteractiveProps): JSX.Elemen
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[150px]"
+                  className="w-[9.375rem]"
                   labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString('en-US', {
                       day: 'numeric',

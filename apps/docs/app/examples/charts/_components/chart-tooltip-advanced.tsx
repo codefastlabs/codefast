@@ -78,7 +78,7 @@ export function ChartTooltipAdvanced(): JSX.Element {
             />
             <ChartTooltip
               content={
-                <ChartTooltipContent hideLabel className="w-[180px]" formatter={formatter} />
+                <ChartTooltipContent hideLabel className="w-[11.25rem]" formatter={formatter} />
               }
               cursor={false}
               defaultIndex={1}
@@ -93,7 +93,7 @@ export function ChartTooltipAdvanced(): JSX.Element {
 const formatter: Formatter<ValueType, NameType> = (value, name, item, index) => (
   <>
     <div
-      className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]"
+      className="h-2.5 w-2.5 shrink-0 rounded-[0.125rem] bg-[--color-bg]"
       style={
         {
           '--color-bg': `var(--color-${name as string})`,

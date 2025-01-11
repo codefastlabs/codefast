@@ -80,7 +80,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
           <Button
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn('w-[200px] justify-between px-3', className)}
+            className={cn('w-[12.5rem] justify-between px-3', className)}
             role="combobox"
             suffix={<CaretSortIcon className="ml-auto opacity-50" />}
             variant="outline"
@@ -96,7 +96,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
             {selectedTeam.label}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-[12.5rem] p-0">
           <Command>
             <CommandInput placeholder="Search team..." />
             <CommandList>

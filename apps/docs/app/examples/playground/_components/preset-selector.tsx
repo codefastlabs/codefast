@@ -38,7 +38,7 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
         <Button
           aria-expanded={open}
           aria-label="Load a preset..."
-          className="flex-1 justify-between px-3 md:max-w-[200px] lg:max-w-[300px]"
+          className="flex-1 justify-between px-3 md:max-w-[12.5rem] lg:max-w-[18.75rem]"
           role="combobox"
           suffix={<CaretSortIcon className="opacity-50" />}
           variant="outline"
@@ -46,7 +46,7 @@ export function PresetSelector({ presets, ...props }: PresetSelectorProps): JSX.
           {selectedPreset ? selectedPreset.name : 'Load a preset...'}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-[18.75rem] p-0">
         <Command>
           <CommandInput placeholder="Search presets..." />
           <CommandList>
