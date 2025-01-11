@@ -1,11 +1,4 @@
-import type { Config } from 'tailwindcss/types/config';
-
 import plugin from 'tailwindcss/plugin';
-
-type Theme = <TDefaultValue = Config['theme']>(
-  path?: string,
-  defaultValue?: TDefaultValue,
-) => TDefaultValue;
 
 const animate = plugin(
   ({ addUtilities, matchUtilities, theme }) => {
@@ -91,7 +84,7 @@ const animate = plugin(
     // Delay
     matchUtilities(
       {
-        'animate-delay': (value: string) => ({
+        'animate-delay': (value) => ({
           animationDelay: value,
         }),
       },
@@ -103,7 +96,7 @@ const animate = plugin(
     // Direction
     matchUtilities(
       {
-        'animate-direction': (value: string) => ({
+        'animate-direction': (value) => ({
           animationDirection: value,
         }),
       },
@@ -115,7 +108,7 @@ const animate = plugin(
     // Duration
     matchUtilities(
       {
-        'animate-duration': (value: string) => ({
+        'animate-duration': (value) => ({
           animationDuration: value,
         }),
       },
@@ -127,7 +120,7 @@ const animate = plugin(
     // Fill mode
     matchUtilities(
       {
-        'animate-fill-mode': (value: string) => ({
+        'animate-fill-mode': (value) => ({
           animationFillMode: value,
         }),
       },
@@ -139,10 +132,10 @@ const animate = plugin(
     // Opacity
     matchUtilities(
       {
-        'fade-in': (value: string) => ({
+        'fade-in': (value) => ({
           '--animate-in-opacity': value,
         }),
-        'fade-out': (value: string) => ({
+        'fade-out': (value) => ({
           '--animate-out-opacity': value,
         }),
       },
@@ -154,7 +147,7 @@ const animate = plugin(
     // Repeat
     matchUtilities(
       {
-        'animate-repeat': (value: string) => ({
+        'animate-repeat': (value) => ({
           animationIterationCount: value,
         }),
       },
@@ -166,10 +159,10 @@ const animate = plugin(
     // Rotate
     matchUtilities(
       {
-        'spin-in': (value: string) => ({
+        'spin-in': (value) => ({
           '--animate-in-rotate': value,
         }),
-        'spin-out': (value: string) => ({
+        'spin-out': (value) => ({
           '--animate-out-rotate': value,
         }),
       },
@@ -181,10 +174,10 @@ const animate = plugin(
     // Scale – Zoom
     matchUtilities(
       {
-        'zoom-in': (value: string) => ({
+        'zoom-in': (value) => ({
           '--animate-in-scale': value,
         }),
-        'zoom-out': (value: string) => ({
+        'zoom-out': (value) => ({
           '--animate-out-scale': value,
         }),
       },
@@ -196,7 +189,7 @@ const animate = plugin(
     // Timing function
     matchUtilities(
       {
-        'animate-ease': (value: string) => ({
+        'animate-ease': (value) => ({
           animationTimingFunction: value,
         }),
       },
@@ -208,35 +201,35 @@ const animate = plugin(
     // Translate - Slide
     matchUtilities(
       {
-        'slide-in-from-bottom': (value: string) => ({
+        'slide-in-from-bottom': (value) => ({
           '--animate-in-translate-y': value,
         }),
 
-        'slide-in-from-left': (value: string) => ({
+        'slide-in-from-left': (value) => ({
           '--animate-in-translate-x': `-${value}`,
         }),
 
-        'slide-in-from-right': (value: string) => ({
+        'slide-in-from-right': (value) => ({
           '--animate-in-translate-x': value,
         }),
 
-        'slide-in-from-top': (value: string) => ({
+        'slide-in-from-top': (value) => ({
           '--animate-in-translate-y': `-${value}`,
         }),
 
-        'slide-out-to-bottom': (value: string) => ({
+        'slide-out-to-bottom': (value) => ({
           '--animate-out-translate-y': value,
         }),
 
-        'slide-out-to-left': (value: string) => ({
+        'slide-out-to-left': (value) => ({
           '--animate-out-translate-x': `-${value}`,
         }),
 
-        'slide-out-to-right': (value: string) => ({
+        'slide-out-to-right': (value) => ({
           '--animate-out-translate-x': value,
         }),
 
-        'slide-out-to-top': (value: string) => ({
+        'slide-out-to-top': (value) => ({
           '--animate-out-translate-y': `-${value}`,
         }),
       },
@@ -248,7 +241,7 @@ const animate = plugin(
   {
     theme: {
       extend: {
-        animationDelay: ({ theme }: { theme: Theme }) => ({
+        animationDelay: ({ theme }) => ({
           ...theme('transitionDelay'),
         }),
 
@@ -259,7 +252,7 @@ const animate = plugin(
           reverse: 'reverse',
         },
 
-        animationDuration: ({ theme }: { theme: Theme }) => ({
+        animationDuration: ({ theme }) => ({
           ...theme('transitionDuration'),
         }),
 
@@ -270,7 +263,7 @@ const animate = plugin(
           none: 'none',
         },
 
-        animationOpacity: ({ theme }: { theme: Theme }) => ({
+        animationOpacity: ({ theme }) => ({
           DEFAULT: 0,
           ...theme('opacity'),
         }),
@@ -281,21 +274,21 @@ const animate = plugin(
           infinite: 'infinite',
         },
 
-        animationRotate: ({ theme }: { theme: Theme }) => ({
+        animationRotate: ({ theme }) => ({
           DEFAULT: '30deg',
           ...theme('rotate'),
         }),
 
-        animationScale: ({ theme }: { theme: Theme }) => ({
+        animationScale: ({ theme }) => ({
           DEFAULT: 0,
           ...theme('scale'),
         }),
 
-        animationTimingFunction: ({ theme }: { theme: Theme }) => ({
+        animationTimingFunction: ({ theme }) => ({
           ...theme('transitionTimingFunction'),
         }),
 
-        animationTranslate: ({ theme }: { theme: Theme }) => ({
+        animationTranslate: ({ theme }) => ({
           DEFAULT: '100%',
           ...theme('translate'),
         }),
