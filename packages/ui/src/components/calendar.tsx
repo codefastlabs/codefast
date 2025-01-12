@@ -77,7 +77,7 @@ function DayButton({ className, day: _, modifiers, ...props }: DayButtonProps): 
           'focus-visible:ring-1 focus-visible:ring-offset-0',
           (!modifiers.selected || modifiers.range_middle) && [
             modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
-            modifiers.outside && 'text-opacity-30',
+            modifiers.outside && 'text-foreground/30',
           ],
           modifiers.range_middle && 'bg-transparent',
           className,
@@ -107,7 +107,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         [DayFlag.disabled]: cn('', classNames?.[DayFlag.disabled]),
         [DayFlag.focused]: cn('', classNames?.[DayFlag.focused]),
         [DayFlag.hidden]: cn('invisible', classNames?.[DayFlag.hidden]),
-        [DayFlag.outside]: cn(!props.mode && 'text-opacity-30', classNames?.[DayFlag.outside]),
+        [DayFlag.outside]: cn(!props.mode && 'text-foreground/30', classNames?.[DayFlag.outside]),
         [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md', classNames?.[DayFlag.today]),
         [SelectionState.range_end]: cn(
           'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50% first:rounded-l-md',

@@ -63,7 +63,7 @@ const ContextMenuSubTrigger = forwardRef<ContextMenuSubTriggerElement, ContextMe
       ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
-        'flex cursor-pointer select-none items-center rounded text-sm',
+        'flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
@@ -157,7 +157,7 @@ const ContextMenuItem = forwardRef<ContextMenuItemElement, ContextMenuItemProps>
       ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
-        'relative flex cursor-pointer select-none items-center rounded text-sm',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -189,7 +189,7 @@ const ContextMenuCheckboxItem = forwardRef<
     className={cn(
       'gap-x-2 px-3 py-1.5',
       'pl-8',
-      'relative flex cursor-pointer select-none items-center rounded text-sm',
+      'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
       'focus:bg-accent focus:text-accent-foreground focus:outline-none',
       'aria-disabled:pointer-events-none aria-disabled:opacity-50',
       className,
@@ -221,7 +221,7 @@ const ContextMenuRadioItem = forwardRef<ContextMenuRadioItemElement, ContextMenu
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'pl-8',
-        'relative flex cursor-pointer select-none items-center rounded text-sm',
+        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,

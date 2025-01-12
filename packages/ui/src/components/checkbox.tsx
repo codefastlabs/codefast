@@ -19,7 +19,7 @@ const Checkbox = forwardRef<CheckboxElement, CheckboxProps>(
       ref={forwardedRef}
       className={cn(
         'peer',
-        'border-input text-primary-foreground inline-flex size-4 shrink-0 items-center justify-center rounded border shadow-sm transition',
+        'border-input text-primary-foreground shadow-xs inline-flex size-4 shrink-0 items-center justify-center rounded-sm border transition',
         'hover:border-primary',
         'aria-checked:border-primary aria-checked:bg-primary',
         'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',

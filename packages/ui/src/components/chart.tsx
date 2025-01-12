@@ -226,7 +226,7 @@ const ChartTooltipContent = forwardRef<ChartTooltipContentElement, ChartTooltipC
                       !hideIndicator && (
                         <div
                           className={cn(
-                            'shrink-0 rounded-[0.125rem] border-[--color-border] bg-[--color-bg]',
+                            'border-(--color-border) bg-(--color-bg) shrink-0 rounded-[0.125rem]',
                             {
                               'h-2.5 w-2.5': indicator === 'dot',
                               'my-0.5': nestLabel && indicator === 'dashed',

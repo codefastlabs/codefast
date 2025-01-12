@@ -15,7 +15,7 @@ type SwitchProps = ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>;
 const Switch = forwardRef<SwitchElement, SwitchProps>(({ className, ...props }, forwardedRef) => (
   <SwitchPrimitives.Root
     className={cn(
-      'peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent shadow-sm transition',
+      'shadow-xs peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition',
       'data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
       'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
       'disabled:cursor-default disabled:opacity-50',
@@ -26,7 +26,7 @@ const Switch = forwardRef<SwitchElement, SwitchProps>(({ className, ...props }, 
   >
     <SwitchPrimitives.Thumb
       className={cn(
-        'bg-background pointer-events-none block size-4 rounded-full shadow transition',
+        'bg-background pointer-events-none block size-4 rounded-full shadow-sm transition',
         'data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0',
       )}
     />
