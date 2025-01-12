@@ -66,7 +66,7 @@ const InputOTPSlot = forwardRef<InputOTPSlotElement, InputOTPSlotProps>(
       <div
         ref={forwardedRef}
         className={cn(
-          'border-input relative flex size-10 items-center justify-center border-y border-r text-sm shadow-sm transition-all',
+          'border-input shadow-xs relative flex size-10 items-center justify-center border-y border-r text-sm transition-all',
           'first:rounded-l-md first:border-l',
           'last:rounded-r-md',
           slot.isActive && 'z-10 outline outline-2',

@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 @import '@codefast/tailwind-config/style.css';
 
-@import '@codefast/tailwind-config/plugins/animate.plugin';
-@import '@codefast/tailwind-config/plugins/base.plugin';
+@plugin '@codefast/tailwind-config/plugins/animate.plugin';
+@plugin '@codefast/tailwind-config/plugins/base.plugin';
 
 @source '../node_modules/@codefixlabs/ui/dist';
 
