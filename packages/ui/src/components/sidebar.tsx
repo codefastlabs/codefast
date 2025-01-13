@@ -398,7 +398,7 @@ const SidebarInput = forwardRef<SidebarInputElement, SidebarInputProps>(
       <TextInput
         ref={ref}
         className={cn(
-          'bg-background focus-visible:ring-sidebar-ring h-8 w-full shadow-none focus-visible:ring-2',
+          'bg-background focus-visible:ring-sidebar-ring focus-visible:ring-3 h-8 w-full shadow-none',
           className,
         )}
         data-sidebar="input"
@@ -540,7 +540,7 @@ const SidebarGroupLabel = forwardRef<SidebarGroupLabelElement, SidebarGroupLabel
       <Comp
         ref={ref}
         className={cn(
-          'text-sidebar-foreground/70 ring-sidebar-ring flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-none transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
+          'text-sidebar-foreground/70 ring-sidebar-ring focus-visible:ring-3 flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-none transition-[margin,opa] duration-200 ease-linear [&>svg]:size-4 [&>svg]:shrink-0',
           'group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0',
           className,
         )}
@@ -570,7 +570,7 @@ const SidebarGroupAction = forwardRef<SidebarGroupActionElement, SidebarGroupAct
       <Comp
         ref={ref}
         className={cn(
-          'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-none transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
+          'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-3 absolute right-3 top-3.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-none transition-transform [&>svg]:size-4 [&>svg]:shrink-0',
           // Increases the hit area of the button on mobile.
           'after:absolute after:-inset-2 after:md:hidden',
           'group-data-[collapsible=icon]:hidden',
@@ -650,7 +650,7 @@ SidebarMenuItem.displayName = 'SidebarMenuItem';
  * -------------------------------------------------------------------------- */
 
 const sidebarMenuButtonVariants = tv({
-  base: 'peer/menu-button ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none transition-[width,height,padding] focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+  base: 'peer/menu-button ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground focus-visible:ring-3 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none transition-[width,height,padding] disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
   defaultVariants: {
     size: 'default',
     variant: 'default',
@@ -749,7 +749,7 @@ const SidebarMenuAction = forwardRef<SidebarMenuActionElement, SidebarMenuAction
       <Comp
         ref={ref}
         className={cn(
-          'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-none transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
+          'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground focus-visible:ring-3 absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-none transition-transform [&>svg]:size-4 [&>svg]:shrink-0',
           // Increases the hit area of the button on mobile.
           'after:absolute after:-inset-2 after:md:hidden',
           'peer-data-[size=sm]/menu-button:top-1',
@@ -891,7 +891,7 @@ const SidebarMenuSubButton = forwardRef<SidebarMenuSubButtonElement, SidebarMenu
       <Comp
         ref={ref}
         className={cn(
-          'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground [&>svg]:text-sidebar-accent-foreground flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+          'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground [&>svg]:text-sidebar-accent-foreground focus-visible:ring-3 flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 outline-none disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
           'data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground',
           size === 'sm' && 'text-xs',
           size === 'md' && 'text-sm',
