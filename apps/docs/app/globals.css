@@ -160,11 +160,4 @@
   --color-sidebar-accent-foreground: var(--color-slate-900);
   --color-sidebar-border: var(--color-slate-200);
   --color-sidebar-ring: var(--color-primary);
-
-  /*--------------------------------------------------------------------------
-  | Radius
-  |---------------------------------------------------------------------------
-  | Border radius for card, input and buttons
-  --------------------------------------------------------------------------*/
-  --radius: 0.25rem;
 }
