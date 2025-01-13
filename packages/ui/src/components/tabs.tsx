@@ -48,7 +48,7 @@ const TabsTrigger = forwardRef<TabsTriggerElement, TabsTriggerProps>(
       className={cn(
         'inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium outline-transparent transition-all',
         'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-        'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
         'disabled:pointer-events-none disabled:opacity-50',
         className,
       )}
@@ -72,7 +72,7 @@ const TabsContent = forwardRef<TabsContentElement, TabsContentProps>(
       ref={forwardedRef}
       className={cn(
         'mt-2 rounded-md',
-        'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
         className,
       )}
       {...props}

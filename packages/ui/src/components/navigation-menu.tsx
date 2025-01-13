@@ -148,7 +148,7 @@ const NavigationMenuViewport = forwardRef<
       ref={forwardedRef}
       className={cn(
         'bg-popover text-popover-foreground relative mt-1.5 w-full origin-[top_center] overflow-hidden rounded-md border p-1 shadow-md transition-[width,height]',
-        'h-[var(--radix-navigation-menu-viewport-height)] sm:w-[var(--radix-navigation-menu-viewport-width)]',
+        'h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width)',
         'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-90',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
         className,
