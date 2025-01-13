@@ -65,7 +65,7 @@ export function Github(): JSX.Element {
       </CardHeader>
 
       <CardContent>
-        <div className="text-muted-foreground flex space-x-4 text-sm">
+        <div className="text-muted-foreground flex gap-x-4 text-sm">
           <div className="flex items-center">
             <CircleIcon className="mr-1 size-3 fill-sky-400 text-sky-400" />
             TypeScript

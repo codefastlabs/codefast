@@ -53,7 +53,7 @@ export default function DashboardPage(): JSX.Element {
           <div className="flex h-16 items-center px-4">
             <TeamSwitcher />
             <MainNav className="mx-6" />
-            <div className="ml-auto flex items-center space-x-4">
+            <div className="ml-auto flex items-center gap-x-4">
               <Suspense>
                 <Search />
               </Suspense>
@@ -64,7 +64,7 @@ export default function DashboardPage(): JSX.Element {
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-x-2">
               <DatePickerWithRange />
               <Button>Download</Button>
             </div>
