@@ -28,7 +28,7 @@ export function UserNav(): JSX.Element {
       </DropdownMenuTrigger>
       <DropdownMenuContent forceMount align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col gap-y-1">
             <p className="text-sm font-medium leading-none">codefast</p>
             <p className="text-muted-foreground text-xs leading-none">m@example.com</p>
           </div>

@@ -17,7 +17,7 @@ export function RecentSales(): JSX.Element {
         <div className="ml-auto font-medium">+$1,999.00</div>
       </div>
       <div className="flex items-center">
-        <Avatar className="flex size-9 items-center justify-center space-y-0 border">
+        <Avatar className="flex size-9 items-center justify-center gap-y-0 border">
           <AvatarImage alt="Avatar" src="/avatars/02.png" />
           <AvatarFallback>JL</AvatarFallback>
         </Avatar>
