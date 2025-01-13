@@ -82,12 +82,12 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
       <div
         className={cn(
           'peer-focus:divide-ring peer-focus:border-l-ring',
-          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(theme(borderRadius.md)-1px)] border-l transition',
+          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(var(--radius-md)-1px)] border-l transition',
         )}
       >
         <NumberInputPrimitive.IncrementButton
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-tr-[calc(theme(borderRadius.md)-1px)]',
+            className: 'h-full rounded-none rounded-tr-[calc(var(--radius-md)-1px)]',
             icon: true,
             size: inputSize,
             variant: 'ghost',
@@ -97,7 +97,7 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
         </NumberInputPrimitive.IncrementButton>
         <NumberInputPrimitive.DecrementButton
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-br-[calc(theme(borderRadius.md)-1px)]',
+            className: 'h-full rounded-none rounded-br-[calc(var(--radius-md)-1px)]',
             icon: true,
             size: inputSize,
             variant: 'ghost',
