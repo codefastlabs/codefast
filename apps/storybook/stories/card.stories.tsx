@@ -44,11 +44,11 @@ export const Default: Story = {
       <CardContent>
         <form>
           <div className="grid w-full items-center gap-4">
-            <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-col gap-y-1.5">
               <Label htmlFor="name">Name</Label>
               <TextInput id="name" placeholder="Name of your project" />
             </div>
-            <div className="flex flex-col space-y-1.5">
+            <div className="flex flex-col gap-y-1.5">
               <Label htmlFor="framework">Framework</Label>
               <Select>
                 <SelectTrigger id="framework">
@@ -103,7 +103,7 @@ export const Examples: Story = {
         <CardDescription>You have 3 unread messages.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <div className="flex items-center space-x-4 rounded-md border p-4">
+        <div className="flex items-center gap-x-4 rounded-md border p-4">
           <BellIcon />
           <div className="flex-1 space-y-1">
             <Text className="text-sm font-medium leading-none">Push Notifications</Text>

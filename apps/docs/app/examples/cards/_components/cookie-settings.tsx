@@ -21,7 +21,7 @@ export function CookieSettings(): JSX.Element {
       </CardHeader>
       <CardContent className="grid gap-6">
         <div className="flex items-center justify-between gap-x-2">
-          <Label className="flex flex-col space-y-1" htmlFor="necessary">
+          <Label className="flex flex-col gap-y-1" htmlFor="necessary">
             <span>Strictly Necessary</span>
             <span className="text-muted-foreground font-normal leading-snug">
               These cookies are essential in order to use the website and use its features.
@@ -30,7 +30,7 @@ export function CookieSettings(): JSX.Element {
           <Switch defaultChecked id="necessary" />
         </div>
         <div className="flex items-center justify-between gap-x-2">
-          <Label className="flex flex-col space-y-1" htmlFor="functional">
+          <Label className="flex flex-col gap-y-1" htmlFor="functional">
             <span>Functional Cookies</span>
             <span className="text-muted-foreground font-normal leading-snug">
               These cookies allow the website to provide personalized functionality.
@@ -39,7 +39,7 @@ export function CookieSettings(): JSX.Element {
           <Switch id="functional" />
         </div>
         <div className="flex items-center justify-between gap-x-2">
-          <Label className="flex flex-col space-y-1" htmlFor="performance">
+          <Label className="flex flex-col gap-y-1" htmlFor="performance">
             <span>Performance Cookies</span>
             <span className="text-muted-foreground font-normal leading-snug">
               These cookies help to improve the performance of the website.

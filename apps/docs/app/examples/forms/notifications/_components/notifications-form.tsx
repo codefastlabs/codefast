@@ -77,19 +77,19 @@ export function NotificationsForm(): JSX.Element {
                   defaultValue={field.value}
                   onValueChange={field.onChange}
                 >
-                  <FormItem className="flex items-center space-y-0">
+                  <FormItem className="flex items-center gap-y-0">
                     <FormControl>
                       <RadioGroupItem value="all" />
                     </FormControl>
                     <FormLabel className="font-normal">All new messages</FormLabel>
                   </FormItem>
-                  <FormItem className="flex items-center space-y-0">
+                  <FormItem className="flex items-center gap-y-0">
                     <FormControl>
                       <RadioGroupItem value="mentions" />
                     </FormControl>
                     <FormLabel className="font-normal">Direct messages and mentions</FormLabel>
                   </FormItem>
-                  <FormItem className="flex items-center space-y-0">
+                  <FormItem className="flex items-center gap-y-0">
                     <FormControl>
                       <RadioGroupItem value="none" />
                     </FormControl>
@@ -123,7 +123,7 @@ export function NotificationsForm(): JSX.Element {
               control={form.control}
               name="marketing_emails"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-4">
+                <FormItem className="flex flex-row items-center justify-between gap-y-0 rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Marketing emails</FormLabel>
                     <FormDescription>
@@ -140,7 +140,7 @@ export function NotificationsForm(): JSX.Element {
               control={form.control}
               name="social_emails"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between space-y-0 rounded-lg border p-4">
+                <FormItem className="flex flex-row items-center justify-between gap-y-0 rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Social emails</FormLabel>
                     <FormDescription>

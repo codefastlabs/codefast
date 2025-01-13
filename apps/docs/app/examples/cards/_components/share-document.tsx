@@ -27,7 +27,7 @@ export function ShareDocument(): JSX.Element {
         <CardDescription>Anyone with the link can view this document.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex space-x-2">
+        <div className="flex gap-x-2">
           <TextInput readOnly value="https://example.com/link/to/document" />
           <Button className="shrink-0" variant="secondary">
             Copy Link
@@ -38,7 +38,7 @@ export function ShareDocument(): JSX.Element {
           <h4 className="text-sm font-medium">People with access</h4>
           <div className="grid gap-6">
             <div className="flex items-center justify-between gap-x-4">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-x-4">
                 <Avatar>
                   <AvatarImage src="/avatars/03.png" />
                   <AvatarFallback>OM</AvatarFallback>
@@ -59,7 +59,7 @@ export function ShareDocument(): JSX.Element {
               </Select>
             </div>
             <div className="flex items-center justify-between gap-x-4">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-x-4">
                 <Avatar>
                   <AvatarImage src="/avatars/05.png" />
                   <AvatarFallback>IN</AvatarFallback>
@@ -80,7 +80,7 @@ export function ShareDocument(): JSX.Element {
               </Select>
             </div>
             <div className="flex items-center justify-between gap-x-4">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-x-4">
                 <Avatar>
                   <AvatarImage src="/avatars/01.png" />
                   <AvatarFallback>SD</AvatarFallback>

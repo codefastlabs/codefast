@@ -57,9 +57,9 @@ export default function PlaygroundPage(): JSX.Element {
         />
       </div>
       <div className="hidden h-full flex-col md:flex">
-        <div className="container mx-auto flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+        <div className="container mx-auto flex flex-col items-start justify-between gap-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
           <h2 className="text-lg font-semibold">Playground</h2>
-          <div className="ml-auto flex w-full space-x-2 sm:justify-end">
+          <div className="ml-auto flex w-full gap-x-2 sm:justify-end">
             <PresetSelector presets={presets} />
             <PresetSave />
             <div className="hidden space-x-2 md:flex">
@@ -73,7 +73,7 @@ export default function PlaygroundPage(): JSX.Element {
         <Tabs className="flex-1" defaultValue="complete">
           <div className="container mx-auto h-full py-6">
             <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_12.5rem]">
-              <div className="hidden flex-col space-y-4 sm:flex md:order-2">
+              <div className="flex flex-col gap-y-4 max-sm:hidden md:order-2">
                 <div className="grid gap-2">
                   <HoverCard openDelay={200}>
                     <HoverCardTrigger asChild>
@@ -152,12 +152,12 @@ export default function PlaygroundPage(): JSX.Element {
               </div>
               <div className="md:order-1">
                 <TabsContent className="mt-0 border-0 p-0" value="complete">
-                  <div className="flex h-full flex-col space-y-4">
+                  <div className="flex h-full flex-col gap-y-4">
                     <Textarea
                       className="min-h-[25rem] flex-1 p-4 md:min-h-[43.75rem] lg:min-h-[43.75rem]"
                       placeholder="Write a tagline for an ice cream shop"
                     />
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Button>Submit</Button>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -173,7 +173,7 @@ export default function PlaygroundPage(): JSX.Element {
                   </div>
                 </TabsContent>
                 <TabsContent className="mt-0 border-0 p-0" value="insert">
-                  <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col gap-y-4">
                     <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
                       <Textarea
                         className="h-full min-h-[18.75rem] lg:min-h-[43.75rem] xl:min-h-[43.75rem]"
@@ -181,7 +181,7 @@ export default function PlaygroundPage(): JSX.Element {
                       />
                       <div className="bg-muted rounded-md border" />
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Button>Submit</Button>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -197,10 +197,10 @@ export default function PlaygroundPage(): JSX.Element {
                   </div>
                 </TabsContent>
                 <TabsContent className="mt-0 border-0 p-0" value="edit">
-                  <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col gap-y-4">
                     <div className="grid h-full gap-6 lg:grid-cols-2">
                       <div className="flex flex-col space-y-4">
-                        <div className="flex flex-1 flex-col space-y-2">
+                        <div className="flex flex-1 flex-col gap-y-2">
                           <Label htmlFor="input">Input</Label>
                           <Textarea
                             className="flex-1 lg:min-h-[36.25rem]"
@@ -208,14 +208,14 @@ export default function PlaygroundPage(): JSX.Element {
                             placeholder="We is going to the market."
                           />
                         </div>
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col gap-y-2">
                           <Label htmlFor="instructions">Instructions</Label>
                           <Textarea id="instructions" placeholder="Fix the grammar." />
                         </div>
                       </div>
                       <div className="bg-muted mt-[1.3125rem] min-h-[25rem] rounded-md border lg:min-h-[43.75rem]" />
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-x-2">
                       <Button>Submit</Button>
                       <Tooltip>
                         <TooltipTrigger asChild>
