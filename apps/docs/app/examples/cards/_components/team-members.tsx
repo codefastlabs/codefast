@@ -31,7 +31,7 @@ export function TeamMembers(): JSX.Element {
       </CardHeader>
       <CardContent className="grid gap-6">
         <div className="flex items-center justify-between gap-x-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-x-4">
             <Avatar>
               <AvatarImage src="/avatars/01.png" />
               <AvatarFallback>OM</AvatarFallback>
@@ -84,7 +84,7 @@ export function TeamMembers(): JSX.Element {
           </Popover>
         </div>
         <div className="flex items-center justify-between gap-x-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-x-4">
             <Avatar>
               <AvatarImage src="/avatars/02.png" />
               <AvatarFallback>JL</AvatarFallback>

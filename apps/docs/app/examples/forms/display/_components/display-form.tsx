@@ -96,7 +96,7 @@ export function DisplayForm(): JSX.Element {
                   name="items"
                   render={({ field }) => {
                     return (
-                      <FormItem key={item.id} className="flex flex-row items-start space-y-0">
+                      <FormItem key={item.id} className="flex flex-row items-start gap-y-0">
                         <FormControl>
                           <Checkbox
                             checked={field.value.includes(item.id)}
