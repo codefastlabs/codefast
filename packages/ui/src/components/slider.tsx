@@ -30,7 +30,7 @@ const Slider = forwardRef<SliderElement, SliderProps>(({ className, ...props }, 
           'border-primary bg-primary shadow-xs flex size-4 items-center justify-center rounded-full border-2 transition',
           'after:bg-background after:size-full after:rounded-full after:transition-[width,height]',
           'active:after:size-1',
-          'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
           'disabled:pointer-events-none disabled:opacity-50',
         )}
         {...(props.tabIndex === undefined ? undefined : { tabIndex: props.tabIndex })}
