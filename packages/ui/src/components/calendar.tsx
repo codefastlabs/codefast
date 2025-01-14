@@ -74,7 +74,7 @@ function DayButton({ className, day: _, modifiers, ...props }: DayButtonProps): 
       ref={buttonRef}
       className={buttonVariants({
         className: [
-          'focus-visible:ring-1 focus-visible:ring-offset-0',
+          'focus-visible:ring-1',
           (!modifiers.selected || modifiers.range_middle) && [
             modifiers.today ? 'bg-accent' : 'hover:border-accent hover:bg-transparent',
             modifiers.outside && 'text-foreground/30',

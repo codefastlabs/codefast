@@ -38,7 +38,7 @@ export function Github(): JSX.Element {
           >
             Star
           </Button>
-          <Separator className="h-5 bg-slate-300" orientation="vertical" />
+          <Separator className="bg-border h-5" orientation="vertical" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button

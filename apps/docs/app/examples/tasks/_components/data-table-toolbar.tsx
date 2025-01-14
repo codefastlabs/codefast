@@ -13,14 +13,15 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>): JSX.Element {
   const isFiltered = table.getState().columnFilters.length > 0;
+  const value = (table.getColumn('title')?.getFilterValue() as string) || '';
 
   return (
     <div className="flex items-center justify-between gap-x-4">
-      <div className="max-w-(--breakpoint-sm) flex flex-1 items-center gap-x-2">
+      <div className="max-w-(--breakpoint-lg) flex flex-1 items-center gap-x-2">
         <TextInput
-          className="h-8 lg:w-64"
+          className="h-8 lg:max-w-80"
           placeholder="Filter tasks..."
-          value={String(table.getColumn('title')?.getFilterValue())}
+          value={value}
           onChange={(event) => table.getColumn('title')?.setFilterValue(event.target.value)}
         />
         {table.getColumn('status') && (
