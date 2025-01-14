@@ -36,7 +36,7 @@
   }
   /* endregion ANIMATE */
 
-  /* region COLOR */
+  /* region UI COLOR */
   --color-background: var(--ui-color-background);
   --color-foreground: var(--ui-color-foreground);
 
@@ -91,5 +91,5 @@
   --color-chart-3: var(--ui-color-chart-3);
   --color-chart-4: var(--ui-color-chart-4);
   --color-chart-5: var(--ui-color-chart-5);
-  /* endregion COLOR */
+  /* endregion UI COLOR */
 }

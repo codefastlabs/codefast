@@ -17,7 +17,7 @@ const Switch = forwardRef<SwitchElement, SwitchProps>(({ className, ...props }, 
     className={cn(
       'shadow-xs peer inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition',
       'data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
-      'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
+      'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
       'disabled:cursor-default disabled:opacity-50',
       className,
     )}
