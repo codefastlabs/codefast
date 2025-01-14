@@ -47,10 +47,6 @@ const examples: {
     name: 'Playground',
   },
   {
-    href: '/examples/slideshow',
-    name: 'Slideshow',
-  },
-  {
     href: '/examples/tasks',
     name: 'Tasks',
   },
