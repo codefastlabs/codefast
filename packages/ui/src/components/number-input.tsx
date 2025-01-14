@@ -4,12 +4,12 @@ import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { forwardRef } from 'react';
 
-import type { InputVariantsProps } from '@/styles/input-variants';
+import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Spinner } from '@/components/spinner';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
-import { inputVariants } from '@/styles/input-variants';
+import { buttonVariants } from '@/variants/button.variants';
+import { inputVariants } from '@/variants/input.variants';
 
 const { input, root } = inputVariants();
 

@@ -5,7 +5,7 @@ import { ChevronDownIcon } from 'lucide-react';
 import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenu

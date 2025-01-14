@@ -92,12 +92,13 @@ const AccordionContent = forwardRef<AccordionContentElement, AccordionContentPro
     <AccordionPrimitive.Content
       ref={forwardedRef}
       className={cn(
-        'overflow-hidden text-sm',
-        'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed',
+        'overflow-hidden',
+        'data-[state=open]:animate-collapsible-open',
+        'data-[state=closed]:animate-collapsible-closed',
       )}
       {...props}
     >
-      <div className={cn('pb-4 pt-0', className)}>{children}</div>
+      <div className={cn('pb-4 pt-0 text-sm', className)}>{children}</div>
     </AccordionPrimitive.Content>
   ),
 );

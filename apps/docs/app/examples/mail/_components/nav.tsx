@@ -23,7 +23,7 @@ export function Nav({ isCollapsed, links }: NavProps): JSX.Element {
       <nav className="grid gap-1 px-2 group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-2">
         {links.map((link) =>
           isCollapsed ? (
-            <Tooltip key={link.label} delayDuration={0}>
+            <Tooltip key={link.title} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
                   className={cn(
@@ -47,7 +47,7 @@ export function Nav({ isCollapsed, links }: NavProps): JSX.Element {
             </Tooltip>
           ) : (
             <Link
-              key={link.label}
+              key={link.title}
               className={cn(
                 buttonVariants({ size: 'sm', variant: link.variant }),
                 link.variant === 'default' &&
