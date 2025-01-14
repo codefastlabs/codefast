@@ -24,24 +24,14 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./tailwindcss/plugins/animate.plugin": {
+    "./tailwindcss/animate": {
       "import": {
-        "types": "./dist/tailwindcss/plugins/animate.plugin.d.ts",
-        "default": "./dist/tailwindcss/plugins/animate.plugin.js"
+        "types": "./dist/tailwindcss/animate.d.ts",
+        "default": "./dist/tailwindcss/animate.js"
       },
       "require": {
-        "types": "./dist/tailwindcss/plugins/animate.plugin.d.cts",
-        "default": "./dist/tailwindcss/plugins/animate.plugin.cjs"
-      }
-    },
-    "./tailwindcss/plugins/base.plugin": {
-      "import": {
-        "types": "./dist/tailwindcss/plugins/base.plugin.d.ts",
-        "default": "./dist/tailwindcss/plugins/base.plugin.js"
-      },
-      "require": {
-        "types": "./dist/tailwindcss/plugins/base.plugin.d.cts",
-        "default": "./dist/tailwindcss/plugins/base.plugin.cjs"
+        "types": "./dist/tailwindcss/animate.d.cts",
+        "default": "./dist/tailwindcss/animate.cjs"
       }
     },
     "./styles.css": "./dist/styles.css"

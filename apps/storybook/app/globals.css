@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import '@codefast/ui/styles.css';
 
-@plugin '@codefast/ui/tailwindcss/plugins/animate.plugin';
+@plugin '@codefast/ui/tailwindcss/animate';
 
 @source '../node_modules/@codefast/ui/dist';
 
@@ -19,7 +19,15 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-border, currentColor);
+    @apply border-border outline-transparent;
+  }
+
+  ::selection {
+    @apply bg-primary text-background;
+  }
+
+  :focus-visible {
+    @apply outline-ring/80 outline outline-2;
   }
 
   html,
@@ -27,8 +35,22 @@
     @apply bg-background text-foreground;
   }
 
+  [role='button'],
   button {
     @apply cursor-pointer;
+  }
+
+  input {
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      @apply appearance-none;
+    }
+
+    &[type='button'],
+    &[type='reset'],
+    &[type='submit'] {
+      @apply outline-transparent;
+    }
   }
 }
 
@@ -83,10 +105,10 @@
     --ui-color-sidebar-border: var(--color-slate-200);
     --ui-color-sidebar-ring: var(--color-sky-100);
 
-    --ui-color-chart-1: oklch(67.72% 0.1571 35.19);
-    --ui-color-chart-2: oklch(63.09% 0.1013 183.49);
-    --ui-color-chart-3: oklch(37.87% 0.044 225.54);
-    --ui-color-chart-4: oklch(83.36% 0.1186 88.15);
-    --ui-color-chart-5: oklch(78.34% 0.1261 58.75);
+    --ui-color-chart-1: var(--color-orange-500);
+    --ui-color-chart-2: var(--color-cyan-500);
+    --ui-color-chart-3: var(--color-lime-500);
+    --ui-color-chart-4: var(--color-yellow-500);
+    --ui-color-chart-5: var(--color-fuchsia-500);
   }
 }

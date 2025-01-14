@@ -80,6 +80,8 @@ function DataTablePagination<TData>({
   table,
   ...props
 }: DataTablePaginationProps<TData>): JSX.Element {
+  const pageSize = table.getState().pagination.pageSize;
+
   return (
     <div
       className={cn('flex flex-wrap items-center justify-between gap-4 px-2', className)}
@@ -94,18 +96,18 @@ function DataTablePagination<TData>({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-4">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
-            value={String(table.getState().pagination.pageSize)}
+            value={pageSize.toString()}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >
             <SelectTrigger className="w-18 h-8">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <SelectItem key={pageSize} value={String(pageSize)}>
-                  {pageSize}
+              {[10, 20, 30, 40, 50].map((size) => (
+                <SelectItem key={size} value={String(size)}>
+                  {size}
                 </SelectItem>
               ))}
             </SelectContent>
