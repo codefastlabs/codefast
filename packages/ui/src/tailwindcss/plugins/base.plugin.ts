@@ -3,13 +3,13 @@ import plugin from 'tailwindcss/plugin';
 const base = plugin(({ addBase }) => {
   addBase({
     '*': {
-      scrollbarColor: 'hsl(var(--color-border)) transparent',
+      scrollbarColor: 'var(--color-border) transparent',
       scrollbarWidth: 'thin',
     },
 
     '::-webkit-scrollbar': {
       '&-thumb': {
-        background: 'hsl(var(--color-border))',
+        background: 'var(--color-border)',
         borderRadius: '5px',
       },
 
@@ -49,8 +49,8 @@ const base = plugin(({ addBase }) => {
     'input, textarea, select': {
       '&:-webkit-autofill': {
         '&, &:hover, &:focus': {
-          '-webkit-box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background)) ',
-          'box-shadow': 'inset 0 0 0 1000px hsl(var(--color-background))',
+          '-webkit-box-shadow': 'inset 0 0 0 1000px var(--color-background)',
+          'box-shadow': 'inset 0 0 0 1000px var(--color-background)',
         },
       },
     },
