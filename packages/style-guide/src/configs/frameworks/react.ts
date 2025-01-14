@@ -10,9 +10,9 @@ import { reactRules } from '@/rules/react';
 
 export const reactConfig: Linter.Config[] = [
   {
-    ...reactPlugin.configs.flat?.recommended,
+    ...reactPlugin.configs.flat.recommended,
     rules: {
-      ...reactPlugin.configs.flat?.recommended.rules,
+      ...reactPlugin.configs.flat.recommended.rules,
       ...reactRules.rules,
     },
     settings: {
@@ -21,7 +21,7 @@ export const reactConfig: Linter.Config[] = [
       },
     },
   },
-  reactPlugin.configs.flat?.['jsx-runtime'],
+  reactPlugin.configs.flat['jsx-runtime'],
   importPlugin.flatConfigs.react,
   jsxA11yConfig,
   reactHooksConfig,

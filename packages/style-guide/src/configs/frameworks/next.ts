@@ -56,7 +56,7 @@ export const nextConfig: Linter.Config[] = [
     },
   },
   {
-    ...reactPlugin.configs.flat?.recommended,
+    ...reactPlugin.configs.flat.recommended,
     rules: {
       'react/jsx-no-target-blank': 'off',
     },
