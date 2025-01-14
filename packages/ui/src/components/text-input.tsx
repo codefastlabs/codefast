@@ -3,10 +3,10 @@ import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'rea
 import * as InputPrimitive from '@codefast-ui/input';
 import { forwardRef } from 'react';
 
-import type { InputVariantsProps } from '@/styles/input-variants';
+import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Spinner } from '@/components/spinner';
-import { inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

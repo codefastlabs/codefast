@@ -74,6 +74,6 @@ export * from '@/lib/logger';
 export * from '@/lib/utils';
 
 // Export button, input, and toggle variants from the styles directory
-export * from '@/styles/button-variants';
-export * from '@/styles/input-variants';
-export * from '@/styles/toggle-variants';
+export * from '@/variants/button.variants';
+export * from '@/variants/input.variants';
+export * from '@/variants/toggle.variants';

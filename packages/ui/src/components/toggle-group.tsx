@@ -8,10 +8,10 @@ import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
 import { forwardRef } from 'react';
 
-import type { ToggleVariantsProps } from '@/styles/toggle-variants';
+import type { ToggleVariantsProps } from '@/variants/toggle.variants';
 
 import { cn } from '@/lib/utils';
-import { toggleVariants } from '@/styles/toggle-variants';
+import { toggleVariants } from '@/variants/toggle.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroup

@@ -4,10 +4,10 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from 'lucide-react';
 import { forwardRef } from 'react';
 
-import type { ButtonVariantsProps } from '@/styles/button-variants';
+import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Select

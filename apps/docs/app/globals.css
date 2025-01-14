@@ -1,8 +1,7 @@
 @import 'tailwindcss';
-@import '@codefast/tailwind-config/style.css';
+@import '@codefast/ui/styles.css';
 
-@plugin '@codefast/tailwind-config/plugins/animate.plugin';
-@plugin '@codefast/tailwind-config/plugins/base.plugin';
+@plugin '@codefast/ui/tailwindcss/plugins/animate.plugin';
 
 @source '../node_modules/@codefast/ui/dist';
 
@@ -22,142 +21,131 @@
   ::file-selector-button {
     border-color: var(--color-border, currentColor);
   }
+
+  html,
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
 }
 
-@theme {
-  /*--------------------------------------------------------------------------
-    | Primary Colors
-    |---------------------------------------------------------------------------
-    | Used for primary actions such as <Button variant="primary">
-    --------------------------------------------------------------------------*/
-  --color-primary: var(--color-sky-600);
-  --color-primary-foreground: var(--color-sky-50);
+@layer theme {
+  :root {
+    --ui-color-background: var(--color-white);
+    --ui-color-foreground: var(--color-slate-950);
 
-  /*--------------------------------------------------------------------------
-  | Secondary Colors
-  |---------------------------------------------------------------------------
-  | Used for secondary actions such as <Button variant="secondary">
-  --------------------------------------------------------------------------*/
-  --color-secondary: var(--color-slate-200);
-  --color-secondary-foreground: var(--color-slate-950);
+    --ui-color-input: var(--color-slate-300);
+    --ui-color-border: var(--color-slate-300);
+    --ui-color-ring: var(--color-sky-400);
 
-  /*--------------------------------------------------------------------------
-  | Info Colors
-  |---------------------------------------------------------------------------
-  | Used for info actions such as <Button variant="info">
-  --------------------------------------------------------------------------*/
-  --color-info: var(--color-cyan-700);
-  --color-info-foreground: var(--color-cyan-50);
+    --ui-color-primary: var(--color-sky-600);
+    --ui-color-primary-foreground: var(--color-sky-50);
 
-  /*--------------------------------------------------------------------------
-  | Success Colors
-  |---------------------------------------------------------------------------
-  | Used for success actions such as <Button variant="success">
-  --------------------------------------------------------------------------*/
-  --color-success: var(--color-green-700);
-  --color-success-foreground: var(--color-green-50);
+    --ui-color-secondary: var(--color-slate-200);
+    --ui-color-secondary-foreground: var(--color-slate-950);
 
-  /*--------------------------------------------------------------------------
-  | Warning Colors
-  |---------------------------------------------------------------------------
-  | Used for warning actions such as <Button variant="warning">
-  --------------------------------------------------------------------------*/
-  --color-warning: var(--color-yellow-700);
-  --color-warning-foreground: var(--color-yellow-50);
+    --ui-color-accent: var(--color-slate-200);
+    --ui-color-accent-foreground: var(--color-slate-950);
 
-  /*--------------------------------------------------------------------------
-  | Destructive Colors
-  |---------------------------------------------------------------------------
-  | Used for destructive actions such as <Button variant="destructive">
-  --------------------------------------------------------------------------*/
-  --color-destructive: var(--color-red-500);
-  --color-destructive-foreground: var(--color-red-50);
+    --ui-color-muted: var(--color-slate-200);
+    --ui-color-muted-foreground: var(--color-slate-500);
 
-  /*--------------------------------------------------------------------------
-  | Accent Colors
-  |---------------------------------------------------------------------------
-  | Used for accents such as hover effects and active state.
-  --------------------------------------------------------------------------*/
-  --color-accent: var(--color-slate-200);
-  --color-accent-foreground: var(--color-slate-950);
+    --ui-color-destructive: var(--color-red-500);
+    --ui-color-destructive-foreground: var(--color-red-50);
 
-  /*--------------------------------------------------------------------------
-  | Muted Colors
-  |---------------------------------------------------------------------------
-  | Used for muted states such as placeholder, description, separator,
-  | table header.
-  --------------------------------------------------------------------------*/
-  --color-muted: var(--color-slate-200);
-  --color-muted-foreground: var(--color-slate-500);
+    --ui-color-info: var(--color-cyan-700);
+    --ui-color-info-foreground: var(--color-cyan-50);
 
-  /*--------------------------------------------------------------------------
-  | Background and Foreground Colors
-  |---------------------------------------------------------------------------
-  | Default background color of <body />...etc
-  --------------------------------------------------------------------------*/
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-slate-950);
+    --ui-color-success: var(--color-green-700);
+    --ui-color-success-foreground: var(--color-green-50);
 
-  /*--------------------------------------------------------------------------
-  | Card Colors
-  |---------------------------------------------------------------------------
-  | Background color for Card
-  --------------------------------------------------------------------------*/
-  --color-card: var(--color-background);
-  --color-card-foreground: var(--color-foreground);
+    --ui-color-warning: var(--color-yellow-700);
+    --ui-color-warning-foreground: var(--color-yellow-50);
 
-  /*--------------------------------------------------------------------------
-  | Popover Colors
-  |---------------------------------------------------------------------------
-  | Background color for popovers such as Command, ContextMenu, DropdownMenu,
-  | HoverCard, NavigationMenu, Popover, Select, Tooltip.
-  --------------------------------------------------------------------------*/
-  --color-popover: var(--color-background);
-  --color-popover-foreground: var(--color-foreground);
+    --ui-color-popover: var(--color-white);
+    --ui-color-popover-foreground: var(--color-slate-950);
 
-  /*--------------------------------------------------------------------------
-  | Border Color
-  |---------------------------------------------------------------------------
-  | Default border color
-  --------------------------------------------------------------------------*/
-  --color-border: var(--color-slate-300);
+    --ui-color-card: var(--color-white);
+    --ui-color-card-foreground: var(--color-slate-950);
 
-  /*--------------------------------------------------------------------------
-  | Input Color
-  |---------------------------------------------------------------------------
-  | Border color for inputs such as TextInput, NumberInput, TextArea.
-  --------------------------------------------------------------------------*/
-  --color-input: var(--color-border);
+    --ui-color-sidebar: var(--color-slate-50);
+    --ui-color-sidebar-foreground: var(--color-slate-700);
 
-  /*--------------------------------------------------------------------------
-  | Ring Color
-  |---------------------------------------------------------------------------
-  | Used for focus ring
-  --------------------------------------------------------------------------*/
-  --color-ring: var(--color-sky-400);
+    --ui-color-sidebar-primary: var(--color-slate-900);
+    --ui-color-sidebar-primary-foreground: var(--color-slate-50);
 
-  /*--------------------------------------------------------------------------
-  | Chart Colors
-  |---------------------------------------------------------------------------
-  | Colors used for charts
-  --------------------------------------------------------------------------*/
-  --color-chart-1: oklch(67.72% 0.1571 35.19);
-  --color-chart-2: oklch(63.09% 0.1013 183.49);
-  --color-chart-3: oklch(37.87% 0.044 225.54);
-  --color-chart-4: oklch(83.36% 0.1186 88.15);
-  --color-chart-5: oklch(78.34% 0.1261 58.75);
+    --ui-color-sidebar-accent: var(--color-slate-100);
+    --ui-color-sidebar-accent-foreground: var(--color-slate-900);
 
-  /*--------------------------------------------------------------------------
-  | Sidebar Colors
-  |---------------------------------------------------------------------------
-  | Used for Sidebar
-  --------------------------------------------------------------------------*/
-  --color-sidebar-background: var(--color-slate-50);
-  --color-sidebar-foreground: var(--color-slate-700);
-  --color-sidebar-primary: var(--color-slate-900);
-  --color-sidebar-primary-foreground: var(--color-slate-50);
-  --color-sidebar-accent: var(--color-slate-100);
-  --color-sidebar-accent-foreground: var(--color-slate-900);
-  --color-sidebar-border: var(--color-slate-200);
-  --color-sidebar-ring: var(--color-primary);
+    --ui-color-sidebar-border: var(--color-slate-200);
+    --ui-color-sidebar-ring: var(--color-sky-100);
+
+    --ui-color-chart-1: oklch(67.72% 0.1571 35.19);
+    --ui-color-chart-2: oklch(63.09% 0.1013 183.49);
+    --ui-color-chart-3: oklch(37.87% 0.044 225.54);
+    --ui-color-chart-4: oklch(83.36% 0.1186 88.15);
+    --ui-color-chart-5: oklch(78.34% 0.1261 58.75);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ui-color-background: var(--color-slate-950);
+      --ui-color-foreground: var(--color-slate-50);
+
+      --ui-color-input: var(--color-slate-700);
+      --ui-color-border: var(--color-slate-700);
+      --ui-color-ring: var(--color-sky-600);
+
+      --ui-color-primary: var(--color-sky-400);
+      --ui-color-primary-foreground: var(--color-sky-950);
+
+      --ui-color-secondary: var(--color-slate-800);
+      --ui-color-secondary-foreground: var(--color-slate-50);
+
+      --ui-color-accent: var(--color-slate-800);
+      --ui-color-accent-foreground: var(--color-slate-50);
+
+      --ui-color-muted: var(--color-slate-800);
+      --ui-color-muted-foreground: var(--color-slate-500);
+
+      --ui-color-destructive: var(--color-red-500);
+      --ui-color-destructive-foreground: var(--color-red-950);
+
+      --ui-color-info: var(--color-cyan-300);
+      --ui-color-info-foreground: var(--color-cyan-950);
+
+      --ui-color-success: var(--color-green-300);
+      --ui-color-success-foreground: var(--color-green-950);
+
+      --ui-color-warning: var(--color-yellow-300);
+      --ui-color-warning-foreground: var(--color-yellow-950);
+
+      --ui-color-popover: var(--color-slate-950);
+      --ui-color-popover-foreground: var(--color-slate-50);
+
+      --ui-color-card: var(--color-slate-950);
+      --ui-color-card-foreground: var(--color-slate-50);
+
+      --ui-color-sidebar: var(--color-slate-950);
+      --ui-color-sidebar-foreground: var(--color-slate-300);
+
+      --ui-color-sidebar-primary: var(--color-slate-100);
+      --ui-color-sidebar-primary-foreground: var(--color-slate-950);
+
+      --ui-color-sidebar-accent: var(--color-slate-900);
+      --ui-color-sidebar-accent-foreground: var(--color-slate-100);
+
+      --ui-color-sidebar-border: var(--color-slate-800);
+      --ui-color-sidebar-ring: var(--color-sky-900);
+
+      --ui-color-chart-1: oklch(67.72% 0.1571 35.19);
+      --ui-color-chart-2: oklch(63.09% 0.1013 183.49);
+      --ui-color-chart-3: oklch(37.87% 0.044 225.54);
+      --ui-color-chart-4: oklch(83.36% 0.1186 88.15);
+      --ui-color-chart-5: oklch(78.34% 0.1261 58.75);
+    }
+  }
 }
