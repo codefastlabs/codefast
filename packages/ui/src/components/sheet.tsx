@@ -12,10 +12,10 @@ import { XIcon } from 'lucide-react';
 import { forwardRef } from 'react';
 import { tv } from 'tailwind-variants';
 
-import type { ButtonVariantsProps } from '@/styles/button-variants';
+import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent
@@ -23,9 +23,9 @@ import { buttonVariants } from '@/styles/button-variants';
 
 const sheetContentVariants = tv({
   base: [
-    'bg-background animate-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
-    'data-[state=open]:animate-in data-[state=open]:animate-duration-500',
-    'data-[state=closed]:animate-out data-[state=closed]:animate-duration-300',
+    'bg-background animation-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
+    'data-[state=open]:animate-in data-[state=open]:animation-duration-500',
+    'data-[state=closed]:animate-out data-[state=closed]:animation-duration-300',
   ],
   defaultVariants: {
     side: 'right',
@@ -86,8 +86,8 @@ const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
       <SheetPrimitive.Overlay
         className={cn(
           'fixed inset-0 z-50 bg-black/80',
-          'data-[state=open]:animate-duration-500 data-[state=open]:animate-fade-in',
-          'data-[state=closed]:animate-duration-300 data-[state=closed]:animate-fade-out',
+          'data-[state=open]:animation-duration-500 data-[state=open]:animate-fade-in',
+          'data-[state=closed]:animation-duration-300 data-[state=closed]:animate-fade-out',
         )}
       />
       <SheetPrimitive.Content

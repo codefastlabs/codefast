@@ -7,11 +7,11 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { SearchIcon, XIcon } from 'lucide-react';
 import { forwardRef } from 'react';
 
-import type { InputVariantsProps } from '@/styles/input-variants';
+import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
-import { inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: SearchInput

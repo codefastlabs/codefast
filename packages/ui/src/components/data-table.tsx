@@ -27,7 +27,7 @@ import {
 } from '@/components/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions

@@ -8,14 +8,14 @@ import type {
 } from 'react';
 
 import * as InputPrimitive from '@codefast-ui/input';
-import { EyeClosedIcon, EyeIcon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { forwardRef, useCallback, useState } from 'react';
 
-import type { InputVariantsProps } from '@/styles/input-variants';
+import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
-import { inputVariants } from '@/styles/input-variants';
+import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: PasswordInput
@@ -65,7 +65,7 @@ const PasswordInput = forwardRef<PasswordInputElement, PasswordInputProps>(
           aria-label={type === 'password' ? 'Show password' : 'Hide password'}
           className="rounded-full"
           disabled={props.disabled}
-          prefix={type === 'password' ? <EyeClosedIcon /> : <EyeIcon />}
+          prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
           size={inputSize}
           variant="ghost"
           onClick={togglePasswordVisibility}

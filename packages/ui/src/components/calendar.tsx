@@ -20,7 +20,7 @@ import {
 import { useEffect, useRef } from 'react';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -110,7 +110,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
         [DayFlag.outside]: cn(!props.mode && 'text-foreground/30', classNames?.[DayFlag.outside]),
         [DayFlag.today]: cn(!props.mode && 'bg-accent rounded-md', classNames?.[DayFlag.today]),
         [SelectionState.range_end]: cn(
-          'to-accent rounded-r-md bg-gradient-to-l from-transparent to-50% first:rounded-l-md',
+          'to-accent bg-linear-to-l rounded-r-md from-transparent to-50% first:rounded-l-md',
           classNames?.[SelectionState.range_end],
         ),
         [SelectionState.range_middle]: cn(
@@ -118,7 +118,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
           classNames?.[SelectionState.range_middle],
         ),
         [SelectionState.range_start]: cn(
-          'to-accent rounded-l-md bg-gradient-to-r from-transparent to-50% last:rounded-r-md',
+          'to-accent bg-linear-to-r rounded-l-md from-transparent to-50% last:rounded-r-md',
           classNames?.[SelectionState.range_start],
         ),
         [SelectionState.selected]: cn('', classNames?.[SelectionState.selected]),

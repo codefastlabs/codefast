@@ -5,67 +5,67 @@ const animate = plugin(
     // Keyframes
     addUtilities({
       '.animate-fade-in': {
-        '--animate-in-opacity': 'initial',
+        '--animation-in-opacity': 'initial',
         animationDuration: theme('animationDuration.DEFAULT'),
-        animationName: 'fade-in',
+        animationName: 'animate-fade-in',
       },
 
       '.animate-fade-out': {
-        '--animate-out-opacity': 'initial',
+        '--animation-out-opacity': 'initial',
         animationDuration: theme('animationDuration.DEFAULT'),
-        animationName: 'fade-out',
+        animationName: 'animate-fade-out',
       },
 
       '.animate-in': {
-        '--animate-in-opacity': 'initial',
-        '--animate-in-rotate': 'initial',
-        '--animate-in-scale': 'initial',
-        '--animate-in-translate-x': 'initial',
-        '--animate-in-translate-y': 'initial',
+        '--animation-in-opacity': 'initial',
+        '--animation-in-rotate': 'initial',
+        '--animation-in-scale': 'initial',
+        '--animation-in-translate-x': 'initial',
+        '--animation-in-translate-y': 'initial',
         animationDuration: theme('animationDuration.DEFAULT'),
-        animationName: 'in',
+        animationName: 'animate-in',
       },
 
       '.animate-out': {
-        '--animate-out-opacity': 'initial',
-        '--animate-out-rotate': 'initial',
-        '--animate-out-scale': 'initial',
-        '--animate-out-translate-x': 'initial',
-        '--animate-out-translate-y': 'initial',
+        '--animation-out-opacity': 'initial',
+        '--animation-out-rotate': 'initial',
+        '--animation-out-scale': 'initial',
+        '--animation-out-translate-x': 'initial',
+        '--animation-out-translate-y': 'initial',
         animationDuration: theme('animationDuration.DEFAULT'),
-        animationName: 'out',
+        animationName: 'animate-out',
       },
 
-      '@keyframes fade-in': {
+      '@keyframes animate-fade-in': {
         from: {
-          opacity: 'var(--animate-in-opacity, 0)',
+          opacity: 'var(--animation-in-opacity, 0)',
         },
       },
 
-      '@keyframes fade-out': {
+      '@keyframes animate-fade-out': {
         to: {
-          opacity: 'var(--animate-out-opacity, 0)',
+          opacity: 'var(--animation-out-opacity, 0)',
         },
       },
 
-      '@keyframes in': {
+      '@keyframes animate-in': {
         from: {
-          opacity: 'var(--animate-in-opacity, 1)',
+          opacity: 'var(--animation-in-opacity, 1)',
           transform: [
-            'translate3d(var(--animate-in-translate-x, 0), var(--animate-in-translate-y, 0), 0)',
-            'scale3d(var(--animate-in-scale, 1), var(--animate-in-scale, 1), var(--animate-in-scale, 1))',
-            'rotate(var(--animate-in-rotate, 0))',
+            'translate3d(var(--animation-in-translate-x, 0), var(--animation-in-translate-y, 0), 0)',
+            'scale3d(var(--animation-in-scale, 1), var(--animation-in-scale, 1), var(--animation-in-scale, 1))',
+            'rotate(var(--animation-in-rotate, 0))',
           ].join(' '),
         },
       },
 
-      '@keyframes out': {
+      '@keyframes animate-out': {
         to: {
-          opacity: 'var(--animate-out-opacity, 1)',
+          opacity: 'var(--animation-out-opacity, 1)',
           transform: [
-            'translate3d(var(--animate-out-translate-x, 0), var(--animate-out-translate-y, 0), 0)',
-            'scale3d(var(--animate-out-scale, 1), var(--animate-out-scale, 1), var(--animate-out-scale, 1))',
-            'rotate(var(--animate-out-rotate, 0))',
+            'translate3d(var(--animation-out-translate-x, 0), var(--animation-out-translate-y, 0), 0)',
+            'scale3d(var(--animation-out-scale, 1), var(--animation-out-scale, 1), var(--animation-out-scale, 1))',
+            'rotate(var(--animation-out-rotate, 0))',
           ].join(' '),
         },
       },
@@ -84,7 +84,7 @@ const animate = plugin(
     // Delay
     matchUtilities(
       {
-        'animate-delay': (value) => ({
+        'animation-delay': (value) => ({
           animationDelay: value,
         }),
       },
@@ -96,7 +96,7 @@ const animate = plugin(
     // Direction
     matchUtilities(
       {
-        'animate-direction': (value) => ({
+        'animation-direction': (value) => ({
           animationDirection: value,
         }),
       },
@@ -108,7 +108,7 @@ const animate = plugin(
     // Duration
     matchUtilities(
       {
-        'animate-duration': (value) => ({
+        'animation-duration': (value) => ({
           animationDuration: value,
         }),
       },
@@ -120,7 +120,7 @@ const animate = plugin(
     // Fill mode
     matchUtilities(
       {
-        'animate-fill-mode': (value) => ({
+        'animation-fill-mode': (value) => ({
           animationFillMode: value,
         }),
       },
@@ -133,10 +133,10 @@ const animate = plugin(
     matchUtilities(
       {
         'fade-in': (value) => ({
-          '--animate-in-opacity': value,
+          '--animation-in-opacity': value,
         }),
         'fade-out': (value) => ({
-          '--animate-out-opacity': value,
+          '--animation-out-opacity': value,
         }),
       },
       {
@@ -147,7 +147,7 @@ const animate = plugin(
     // Repeat
     matchUtilities(
       {
-        'animate-repeat': (value) => ({
+        'animation-repeat': (value) => ({
           animationIterationCount: value,
         }),
       },
@@ -160,10 +160,10 @@ const animate = plugin(
     matchUtilities(
       {
         'spin-in': (value) => ({
-          '--animate-in-rotate': value,
+          '--animation-in-rotate': value,
         }),
         'spin-out': (value) => ({
-          '--animate-out-rotate': value,
+          '--animation-out-rotate': value,
         }),
       },
       {
@@ -175,10 +175,10 @@ const animate = plugin(
     matchUtilities(
       {
         'zoom-in': (value) => ({
-          '--animate-in-scale': value,
+          '--animation-in-scale': value,
         }),
         'zoom-out': (value) => ({
-          '--animate-out-scale': value,
+          '--animation-out-scale': value,
         }),
       },
       {
@@ -189,7 +189,7 @@ const animate = plugin(
     // Timing function
     matchUtilities(
       {
-        'animate-ease': (value) => ({
+        'animation-ease': (value) => ({
           animationTimingFunction: value,
         }),
       },
@@ -202,35 +202,35 @@ const animate = plugin(
     matchUtilities(
       {
         'slide-in-from-bottom': (value) => ({
-          '--animate-in-translate-y': value,
+          '--animation-in-translate-y': value,
         }),
 
         'slide-in-from-left': (value) => ({
-          '--animate-in-translate-x': `-${value}`,
+          '--animation-in-translate-x': `-${value}`,
         }),
 
         'slide-in-from-right': (value) => ({
-          '--animate-in-translate-x': value,
+          '--animation-in-translate-x': value,
         }),
 
         'slide-in-from-top': (value) => ({
-          '--animate-in-translate-y': `-${value}`,
+          '--animation-in-translate-y': `-${value}`,
         }),
 
         'slide-out-to-bottom': (value) => ({
-          '--animate-out-translate-y': value,
+          '--animation-out-translate-y': value,
         }),
 
         'slide-out-to-left': (value) => ({
-          '--animate-out-translate-x': `-${value}`,
+          '--animation-out-translate-x': `-${value}`,
         }),
 
         'slide-out-to-right': (value) => ({
-          '--animate-out-translate-x': value,
+          '--animation-out-translate-x': value,
         }),
 
         'slide-out-to-top': (value) => ({
-          '--animate-out-translate-y': `-${value}`,
+          '--animation-out-translate-y': `-${value}`,
         }),
       },
       {

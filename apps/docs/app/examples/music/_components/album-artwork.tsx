@@ -34,7 +34,7 @@ export function AlbumArtwork({
   ...props
 }: AlbumArtworkProps): JSX.Element {
   return (
-    <div className={cn('space-y-3', className)} {...props}>
+    <div className={cn('grid gap-y-3', className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="overflow-hidden rounded-md">

@@ -11,10 +11,10 @@ import type {
 import { forwardRef } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
-import type { ButtonVariantsProps } from '@/styles/button-variants';
+import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/styles/button-variants';
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer
