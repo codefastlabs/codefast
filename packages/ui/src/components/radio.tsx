@@ -27,7 +27,7 @@ const Radio = forwardRef<RadioElement, RadioProps>(
         'checked:border-primary checked:bg-primary',
         'after:bg-background after:size-full after:rounded-full after:transition-[width,height]',
         'checked:after:size-1',
-        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
+        'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
         'disabled:pointer-events-none disabled:opacity-50',
         className,
       )}

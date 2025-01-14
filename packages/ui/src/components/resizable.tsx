@@ -45,7 +45,7 @@ function ResizableHandle({
       className={cn(
         'bg-border relative flex w-px items-center justify-center transition',
         'after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2',
-        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
+        'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
         'data-[panel-group-direction=vertical]:h-px',
         'data-[panel-group-direction=vertical]:w-full',
         'data-[panel-group-direction=vertical]:after:left-0',

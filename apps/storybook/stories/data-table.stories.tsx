@@ -174,6 +174,8 @@ export const Default: Story = {
       },
     });
 
+    const value = (table.getColumn('email')?.getFilterValue() as string) || '';
+
     return (
       <div className="w-full">
         <div className="flex items-center gap-4 py-4">
@@ -183,7 +185,7 @@ export const Default: Story = {
               inputSize="xs"
               placeholder="Filter emails..."
               prefix={<SearchIcon className="text-muted-foreground" />}
-              value={String(table.getColumn('email')?.getFilterValue() ?? '')}
+              value={value}
               onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
             />
           </div>

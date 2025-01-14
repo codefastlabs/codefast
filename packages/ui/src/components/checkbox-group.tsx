@@ -41,7 +41,7 @@ const CheckboxGroupItem = forwardRef<CheckboxGroupItemElement, CheckboxGroupItem
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
           'hover:border-primary',
           'aria-checked:border-primary aria-checked:bg-primary',
-          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none focus-visible:ring-offset-2',
+          'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
           'disabled:pointer-events-none disabled:opacity-50',
         ],
         className,

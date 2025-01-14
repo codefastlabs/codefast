@@ -157,12 +157,12 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
           <DialogDescription>Add a new team to manage products and customers.</DialogDescription>
         </DialogHeader>
         <DialogBody>
-          <div className="space-y-4 py-2 pb-4">
-            <div className="space-y-2">
+          <div className="grid gap-y-4">
+            <div className="grid gap-y-2">
               <Label htmlFor="name">Team name</Label>
               <TextInput id="name" placeholder="Acme Inc." />
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-y-2">
               <Label htmlFor="plan">Subscription plan</Label>
               <Select>
                 <SelectTrigger>
