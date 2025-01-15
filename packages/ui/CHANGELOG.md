@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.12
+
+### Patch Changes
+
+- [#59](https://github.com/codefastlabs/codefast/pull/59) [`f18dae5`](https://github.com/codefastlabs/codefast/commit/f18dae50384ca50ebebc2ad1f8bd313f1bf3fa80) Thanks [@thevuong](https://github.com/thevuong)! - upgrade to TailwindCSS v4
+
+- Updated dependencies [[`f18dae5`](https://github.com/codefastlabs/codefast/commit/f18dae50384ca50ebebc2ad1f8bd313f1bf3fa80)]:
+  - @codefast-ui/checkbox-group@0.2.12
+  - @codefast-ui/number-input@0.2.12
+  - @codefast-ui/day-picker@0.2.12
+  - @codefast-ui/input@0.2.12
+  - @codefast/hooks@0.2.12
+
 ## 0.2.11
 
 ### Patch Changes
