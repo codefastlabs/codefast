@@ -28,7 +28,7 @@ export const Default: Story = {
     type: 'single',
   },
   render: (args) => (
-    <Accordion className="w-96" {...args}>
+    <Accordion {...args} className="w-96">
       <AccordionItem className="border-b" value="item-1">
         <AccordionTrigger>
           <span className="grow">Is it accessible?</span>
@@ -68,7 +68,7 @@ export const LeftIcon: Story = {
     type: 'single',
   },
   render: (args) => (
-    <Accordion className="w-96" {...args}>
+    <Accordion {...args} className="w-96">
       <AccordionItem className="border-b" value="item-1">
         <AccordionTrigger>
           <AccordionIcon />

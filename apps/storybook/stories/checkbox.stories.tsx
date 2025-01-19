@@ -44,7 +44,8 @@ export const Default: Story = {
 
     return (
       <div className="items-top flex space-x-2">
-        <Checkbox id={id} {...args} />
+        <Checkbox {...args} id={id} />
+        <Checkbox {...args} id={id} />
         <div className="grid gap-1.5 leading-none">
           <Label htmlFor={id}>Accept terms and conditions</Label>
           <Text className="text-muted-foreground text-sm">
@@ -66,7 +67,8 @@ export const Disabled: Story = {
 
     return (
       <div className="flex items-center space-x-2">
-        <Checkbox disabled id={id} {...args} />
+        <Checkbox {...args} disabled id={id} />
+        <Checkbox {...args} disabled id={id} />
         <Label htmlFor={id}>Accept terms and conditions</Label>
       </div>
     );
@@ -117,7 +119,8 @@ export const ReactHookForm: Story = {
             render={({ field }) => (
               <FormItem className="flex flex-row items-start space-y-0 rounded-md border p-4 shadow-sm">
                 <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} {...args} />
+                  <Checkbox {...args} checked={field.value} onCheckedChange={field.onChange} />
+                  <Checkbox {...args} checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel>Use different settings for my mobile devices</FormLabel>
@@ -223,13 +226,13 @@ export const ReactHookForm2: Story = {
                       <FormItem key={item.id} className="flex flex-row items-center space-y-0">
                         <FormControl>
                           <Checkbox
+                            {...args}
                             checked={field.value.includes(item.id)}
                             onCheckedChange={(checked) => {
                               checked
                                 ? field.onChange([...field.value, item.id])
                                 : field.onChange(field.value.filter((value) => value !== item.id));
                             }}
-                            {...args}
                           />
                         </FormControl>
                         <FormLabel className="text-sm font-normal">{item.label}</FormLabel>

@@ -36,7 +36,7 @@ type Story = StoryObj<typeof Card>;
 
 export const Default: Story = {
   render: (args) => (
-    <Card className="w-[21.875rem]" {...args}>
+    <Card {...args} className="w-[21.875rem]">
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
@@ -97,7 +97,7 @@ const notifications = [
 
 export const Examples: Story = {
   render: (args) => (
-    <Card className="w-[23.75rem]" {...args}>
+    <Card {...args} className="w-[23.75rem]">
       <CardHeader>
         <CardTitle>Notifications</CardTitle>
         <CardDescription>You have 3 unread messages.</CardDescription>

@@ -39,7 +39,7 @@ export const Default: Story = {
     const numbers = Array.from({ length: 5 }, (_, index) => index + 1);
 
     return (
-      <Carousel className="w-full max-w-xs" {...args}>
+      <Carousel {...args} className="w-full max-w-xs">
         <CarouselContent>
           {numbers.map((number, index) => (
             <CarouselItem key={number}>
@@ -67,11 +67,11 @@ export const Default: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <Carousel
+      {...args}
       className="w-full max-w-sm"
       opts={{
         align: 'start',
       }}
-      {...args}
     >
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
@@ -98,7 +98,7 @@ export const Sizes: Story = {
 
 export const Spacing: Story = {
   render: (args) => (
-    <Carousel className="w-full max-w-sm" {...args}>
+    <Carousel {...args} className="w-full max-w-sm">
       <CarouselContent className="-ml-1">
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index} className="pl-1 md:basis-1/2 lg:basis-1/3">
@@ -125,12 +125,12 @@ export const Spacing: Story = {
 export const Orientation: Story = {
   render: (args) => (
     <Carousel
+      {...args}
       className="w-full max-w-xs"
       opts={{
         align: 'start',
       }}
       orientation="vertical"
-      {...args}
     >
       <CarouselContent className="-mt-1 h-[12.5rem]">
         {Array.from({ length: 5 }).map((_, index) => (
@@ -179,7 +179,7 @@ export const API: Story = {
 
     return (
       <div>
-        <Carousel className="w-full max-w-xs" setApi={setApi} {...args}>
+        <Carousel {...args} className="w-full max-w-xs" setApi={setApi}>
           <CarouselContent>
             {Array.from({ length: 5 }).map((_, index) => (
               <CarouselItem key={index}>
@@ -214,11 +214,11 @@ export const Plugins: Story = {
 
     return (
       <Carousel
+        {...args}
         className="w-full max-w-xs"
         plugins={[plugin.current]}
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
-        {...args}
       >
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
