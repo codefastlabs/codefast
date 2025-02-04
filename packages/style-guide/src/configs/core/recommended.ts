@@ -7,11 +7,12 @@ import prettierConfig from 'eslint-config-prettier';
 import { commentsConfig } from '@/configs/utils/comments';
 import { importConfig } from '@/configs/utils/import';
 import { perfectionistConfig } from '@/configs/utils/perfectionist';
+import { stylisticConfig } from '@/configs/utils/stylistic';
 import { unicornConfig } from '@/configs/utils/unicorn';
 import { bestPracticeRules } from '@/rules/best-practice';
+import { commonRules } from '@/rules/common';
 import { es6Rules } from '@/rules/es6';
 import { possibleErrorsRules } from '@/rules/possible-errors';
-import { stylisticRules } from '@/rules/stylistic';
 import { variablesRules } from '@/rules/variables';
 
 /**
@@ -23,12 +24,13 @@ export const recommendedConfig: Linter.Config[] = [
   importConfig,
   unicornConfig,
   perfectionistConfig,
+  stylisticConfig,
   {
     rules: {
       ...bestPracticeRules.rules,
       ...es6Rules.rules,
       ...possibleErrorsRules.rules,
-      ...stylisticRules.rules,
+      ...commonRules.rules,
       ...variablesRules.rules,
     },
   },
