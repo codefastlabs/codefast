@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.14
+
+### Patch Changes
+
+- [`eca2850`](https://github.com/codefastlabs/codefast/commit/eca2850aceb521ed85695403cc61feacdd034bc4) Thanks [@thevuong](https://github.com/thevuong)! - refine ESLint rules and configs for consistency
+
+- Updated dependencies [[`eca2850`](https://github.com/codefastlabs/codefast/commit/eca2850aceb521ed85695403cc61feacdd034bc4)]:
+  - @codefast-ui/input@0.2.14
+
 ## 0.2.13
 
 ### Patch Changes
