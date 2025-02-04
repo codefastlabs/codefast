@@ -35,22 +35,5 @@ export const sharedRules: Linter.Config = {
      * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
      */
     'import/no-default-export': 'off',
-
-    /**
-     * Enforces consistent blank lines between statements
-     *
-     * 🔧 Fixable - https://eslint.org/docs/latest/rules/padding-line-between-statements
-     */
-    'padding-line-between-statements': [
-      'warn',
-      { blankLine: 'always', next: 'return', prev: '*' },
-      { blankLine: 'always', next: '*', prev: ['const', 'let', 'var'] },
-      { blankLine: 'any', next: ['const', 'let', 'var'], prev: ['const', 'let', 'var'] },
-      { blankLine: 'always', next: '*', prev: 'block-like' },
-      { blankLine: 'always', next: 'block-like', prev: '*' },
-      { blankLine: 'always', next: '*', prev: 'directive' },
-      { blankLine: 'any', next: 'directive', prev: 'directive' },
-      { blankLine: 'always', next: '*', prev: ['case', 'default'] },
-    ],
   },
 };
