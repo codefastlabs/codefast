@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.15
+
+### Patch Changes
+
+- [`e5336f2`](https://github.com/codefastlabs/codefast/commit/e5336f23732c86525a367f44beed68f05e0f9057) Thanks [@thevuong](https://github.com/thevuong)! - add eslint-config-prettier integration
+
+- Updated dependencies [[`e5336f2`](https://github.com/codefastlabs/codefast/commit/e5336f23732c86525a367f44beed68f05e0f9057)]:
+  - @codefast-ui/input@0.2.15
+
 ## 0.2.14
 
 ### Patch Changes
