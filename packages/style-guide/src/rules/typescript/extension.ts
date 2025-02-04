@@ -6,6 +6,7 @@ import { variablesRules } from '@/rules/variables';
 const noUnusedVariablesConfig = (variablesRules.rules as Linter.RulesRecord)['no-unused-vars'];
 
 export const typescriptExtensionRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/typescript/extension',
   rules: {
     /**
      * Require default parameters to be last.

@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const variablesRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/variables',
   rules: {
     /**
      * Disallow labels that share a name with a variable.

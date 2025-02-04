@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const importRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/import',
   rules: {
     /**
      * Disallow non-import statements appearing before import statements.

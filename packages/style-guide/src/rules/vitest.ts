@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const vitestRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/vitest',
   rules: {
     /**
      * Disallow duplicate setup and teardown hooks.

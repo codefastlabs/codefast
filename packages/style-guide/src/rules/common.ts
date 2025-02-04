@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const commonRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/common',
   rules: {
     /**
      * Require camel case names.

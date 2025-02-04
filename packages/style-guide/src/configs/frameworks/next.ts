@@ -24,6 +24,7 @@ import reactPlugin from 'eslint-plugin-react';
  */
 export const nextConfig: Linter.Config[] = [
   {
+    name: '@next/next',
     plugins: {
       '@next/next': nextPlugin,
     },
@@ -56,6 +57,7 @@ export const nextConfig: Linter.Config[] = [
     },
   },
   {
+    name: 'react',
     ...reactPlugin.configs.flat.recommended,
     rules: {
       'react/jsx-no-target-blank': 'off',

@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const jestRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/jest',
   rules: {
     /**
      * Disallow duplicate setup and teardown hooks.

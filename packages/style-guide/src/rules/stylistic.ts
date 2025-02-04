@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const stylisticRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/stylistic',
   rules: {
     /**
      * Disallow the omission of parentheses when invoking a constructor with

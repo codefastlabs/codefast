@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const typescriptRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/typescript',
   rules: {
     /**
      * Require consistent usage of type exports.

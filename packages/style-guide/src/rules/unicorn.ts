@@ -38,6 +38,7 @@ const disabledRules: Partial<Linter.RulesRecord> = {
 };
 
 export const unicornRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/unicorn',
   rules: {
     ...disabledRules,
 

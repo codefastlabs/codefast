@@ -28,6 +28,7 @@ const disabledRules: Partial<Linter.RulesRecord> = {
 };
 
 export const perfectionistRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/perfectionist',
   rules: {
     ...disabledRules,
 

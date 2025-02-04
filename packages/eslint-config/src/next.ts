@@ -19,6 +19,7 @@ export const config: Linter.Config[] = [
   ...reactConfig,
   ...nextConfig,
   {
+    name: '@codefast/eslint-config/next/jest',
     ...jestConfig,
     ...jestTypescriptConfig,
     ...testingLibraryConfig,
@@ -31,6 +32,7 @@ export const config: Linter.Config[] = [
   },
   {
     files: ['**/?(*.)+(test|spec|e2e).[jt]s?(x)'],
+    name: '@codefast/eslint-config/next/tsdoc',
     rules: {
       'tsdoc/syntax': 'off',
     },
@@ -41,12 +43,14 @@ export const config: Linter.Config[] = [
   },
   {
     files: ['**/*.d.ts'],
+    name: '@codefast/eslint-config/next/dts',
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
     },
   },
   {
     ignores: ['.next', 'coverage'],
+    name: '@codefast/eslint-config/next/ignore',
   },
   {
     languageOptions: {
@@ -63,8 +67,10 @@ export const config: Linter.Config[] = [
         projectService: true,
       },
     },
+    name: '@codefast/eslint-config/next/language',
   },
   {
+    name: '@codefast/eslint-config/next/shared',
     rules: {
       ...sharedRules.rules,
 

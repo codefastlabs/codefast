@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const possibleErrorsRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/possible-errors',
   rules: {
     /**
      * Disallow the use of console.
