@@ -18,6 +18,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
  * ```
  */
 export const reactHooksConfig: Linter.Config = {
+  name: 'react-hooks',
   plugins: {
     'react-hooks': reactHooksPlugin,
   },

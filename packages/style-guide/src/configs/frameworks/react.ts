@@ -10,6 +10,7 @@ import { reactRules } from '@/rules/react';
 
 export const reactConfig: Linter.Config[] = [
   {
+    name: 'react',
     ...reactPlugin.configs.flat.recommended,
     rules: {
       ...reactPlugin.configs.flat.recommended.rules,
