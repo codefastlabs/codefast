@@ -12,6 +12,13 @@ export const stylisticRules: Linter.Config = {
     '@stylistic/new-parens': 'warn',
 
     /**
+     * Disallow floating decimals.
+     *
+     * 🔧 Fixable - https://eslint.style/rules/js/no-floating-decimal
+     */
+    '@stylistic/no-floating-decimal': 'error',
+
+    /**
      * Enforces consistent blank lines between statements
      *
      * 🔧 Fixable - https://eslint.style/rules/js/padding-line-between-statements

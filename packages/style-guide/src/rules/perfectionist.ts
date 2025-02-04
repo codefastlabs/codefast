@@ -7,11 +7,6 @@ const disabledRules: Partial<Linter.RulesRecord> = {
   '@typescript-eslint/adjacent-overload-signatures': 'off',
 
   /**
-   * Disabled for `sort-intersection-types`, `sort-union-types` rule.
-   */
-  '@typescript-eslint/sort-type-constituents': 'off',
-
-  /**
    * Disabled for `sort-imports` rule
    */
   'import/order': 'off',
