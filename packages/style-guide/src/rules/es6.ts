@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const es6Rules: Linter.Config = {
+  name: '@codefast/style-guide/rules/es6',
   rules: {
     /**
      * Disallow useless computed property keys.

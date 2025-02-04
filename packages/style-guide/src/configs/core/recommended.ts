@@ -26,6 +26,7 @@ export const recommendedConfig: Linter.Config[] = [
   perfectionistConfig,
   stylisticConfig,
   {
+    name: '@codefast/style-guide/configs/core/recommended',
     rules: {
       ...bestPracticeRules.rules,
       ...es6Rules.rules,

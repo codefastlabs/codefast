@@ -12,6 +12,7 @@ const disabledRules: Partial<Linter.RulesRecord> = {
 };
 
 export const typescriptImportRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/typescript/import',
   rules: {
     ...disabledRules,
   },
