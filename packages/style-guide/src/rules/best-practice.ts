@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
 export const bestPracticeRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/best-practice',
   rules: {
     /**
      * Require return statements in array methods callbacks.

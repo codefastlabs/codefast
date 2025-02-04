@@ -10,6 +10,7 @@ const disabledRules: Partial<Linter.RulesRecord> = {
 };
 
 export const jsxA11yRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/jsx-a11y',
   rules: {
     ...disabledRules,
   },

@@ -30,6 +30,7 @@ const recommended: Partial<Linter.RulesRecord> = {
 };
 
 export const playwrightTestRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/playwright-test',
   rules: {
     ...recommended,
 

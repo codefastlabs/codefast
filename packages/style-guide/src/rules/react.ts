@@ -14,6 +14,7 @@ const disabledRules: Partial<Linter.RulesRecord> = {
 };
 
 export const reactRules: Linter.Config = {
+  name: '@codefast/style-guide/rules/react',
   rules: {
     ...disabledRules,
 

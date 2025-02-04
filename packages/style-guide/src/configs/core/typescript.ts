@@ -15,6 +15,7 @@ export const typescriptConfig: Linter.Config[] = [
   importPlugin.flatConfigs.typescript,
   tsdocConfig,
   {
+    name: '@codefast/style-guide/configs/core/typescript',
     rules: {
       ...typescriptRules.rules,
       ...typescriptExtensionRules.rules,
