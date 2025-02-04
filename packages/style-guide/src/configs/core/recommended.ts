@@ -1,6 +1,8 @@
 import type { Linter } from 'eslint';
 
 import jsConfig from '@eslint/js';
+// @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
+import prettierConfig from 'eslint-config-prettier';
 
 import { commentsConfig } from '@/configs/utils/comments';
 import { importConfig } from '@/configs/utils/import';
@@ -36,4 +38,5 @@ export const recommendedConfig: Linter.Config[] = [
       ...variablesRules.rules,
     },
   },
+  prettierConfig,
 ];
