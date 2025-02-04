@@ -17,7 +17,10 @@ import { variablesRules } from '@/rules/variables';
  * This is the base for both our browser and Node ESLint config files.
  */
 export const recommendedConfig: Linter.Config[] = [
-  jsConfig.configs.recommended,
+  {
+    name: 'eslint-recommended',
+    ...jsConfig.configs.recommended,
+  },
   commentsConfig,
   importConfig,
   unicornConfig,
