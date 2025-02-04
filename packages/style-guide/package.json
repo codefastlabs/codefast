@@ -202,6 +202,7 @@
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
     "@eslint/js": "^9.19.0",
     "@next/eslint-plugin-next": "^15.1.6",
+    "@stylistic/eslint-plugin": "^3.0.1",
     "@vitest/eslint-plugin": "^1.1.25",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-import": "^2.31.0",
