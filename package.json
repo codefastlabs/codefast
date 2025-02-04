@@ -29,17 +29,17 @@
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.27.10",
+    "@changesets/cli": "^2.27.12",
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@commitlint/cli": "^19.6.1",
-    "@commitlint/config-conventional": "^19.6.0",
-    "lint-staged": "^15.3.0",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.4.2",
-    "prettier-plugin-packagejson": "^2.5.6",
-    "prettier-plugin-tailwindcss": "^0.6.9",
+    "prettier-plugin-packagejson": "^2.5.8",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "simple-git-hooks": "^2.11.1",
-    "turbo": "^2.3.3"
+    "turbo": "^2.4.0"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {
