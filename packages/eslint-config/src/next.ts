@@ -67,9 +67,6 @@ export const config: Linter.Config[] = [
         projectService: true,
       },
     },
-    name: '@codefast/eslint-config/next/language',
-  },
-  {
     name: '@codefast/eslint-config/next/shared',
     rules: {
       ...sharedRules.rules,
@@ -91,7 +88,8 @@ export const config: Linter.Config[] = [
       /**
        * Warns when using unknown DOM properties but ignores specified custom elements
        *
-       * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
+       * 🔧 Fixable -
+       * https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
        */
       'react/no-unknown-property': [
         'warn',

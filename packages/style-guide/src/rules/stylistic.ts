@@ -4,16 +4,8 @@ export const stylisticRules: Linter.Config = {
   name: '@codefast/style-guide/rules/stylistic',
   rules: {
     /**
-     * A number of style guides require or disallow line breaks inside block statements and
-     * block-like code.
      *
-     * 🔧 Fixable - https://eslint.style/rules/default/curly-newline
-     */
-    '@stylistic/curly-newline': ['warn', 'always'],
-
-    /**
-     * Disallow the omission of parentheses when invoking a constructor with
-     * no arguments.
+     * Require parentheses when invoking a constructor with no arguments.
      *
      * 🔧 Fixable - https://eslint.style/rules/js/new-parens
      */
@@ -24,7 +16,7 @@ export const stylisticRules: Linter.Config = {
      *
      * 🔧 Fixable - https://eslint.style/rules/js/no-floating-decimal
      */
-    '@stylistic/no-floating-decimal': 'error',
+    '@stylistic/no-floating-decimal': 'warn',
 
     /**
      * Enforces consistent blank lines between statements
