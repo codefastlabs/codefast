@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.17
+
+### Patch Changes
+
+- [`70cf9f0`](https://github.com/codefastlabs/codefast/commit/70cf9f0511d16dbe0de1a8361861070d41dcf806) Thanks [@thevuong](https://github.com/thevuong)! - improve eslint configuration structure
+
+- Updated dependencies [[`70cf9f0`](https://github.com/codefastlabs/codefast/commit/70cf9f0511d16dbe0de1a8361861070d41dcf806)]:
+  - @codefast-ui/input@0.2.17
+
 ## 0.2.16
 
 ### Patch Changes
