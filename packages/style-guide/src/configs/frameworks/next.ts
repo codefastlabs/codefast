@@ -8,20 +8,6 @@ import importPlugin from 'eslint-plugin-import';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import reactPlugin from 'eslint-plugin-react';
 
-/**
- * Because `@next/eslint-plugin-next` hasn't been upgraded to eslint 9, we need to declare plugins.
- * Suggested syntax:
- *
- * @example
- * ```ts
- * {
- *   ...nextPlugin.configs.recommended,
- *   rules: {
- *     ...nextPlugin.configs.recommended.rules,
- *   },
- * }
- * ```
- */
 export const nextConfig: Linter.Config[] = [
   {
     name: '@next/next',
