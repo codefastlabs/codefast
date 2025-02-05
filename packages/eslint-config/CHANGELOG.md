@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.18
+
+### Patch Changes
+
+- [`246a8a7`](https://github.com/codefastlabs/codefast/commit/246a8a7e000ebcc86e36f2128028e2609bfab2cf) Thanks [@thevuong](https://github.com/thevuong)! - simplify and align config exports
+
+- Updated dependencies [[`246a8a7`](https://github.com/codefastlabs/codefast/commit/246a8a7e000ebcc86e36f2128028e2609bfab2cf)]:
+  - @codefast/style-guide@0.2.18
+
 ## 0.2.17
 
 ### Patch Changes
