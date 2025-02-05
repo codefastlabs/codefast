@@ -14,6 +14,7 @@ export const config: Linter.Config[] = [
   ...recommendedConfig,
   ...typescriptConfig,
   {
+    name: '@codefast/eslint-config/library/jest',
     ...jestConfig,
     ...jestTypescriptConfig,
     ...testingLibraryConfig,
@@ -26,12 +27,14 @@ export const config: Linter.Config[] = [
   },
   {
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    name: '@codefast/eslint-config/library/tsdoc',
     rules: {
       'tsdoc/syntax': 'off',
     },
   },
   {
     ignores: ['dist', 'coverage'],
+    name: '@codefast/eslint-config/library/ignore',
   },
   {
     languageOptions: {
@@ -44,6 +47,9 @@ export const config: Linter.Config[] = [
         projectService: true,
       },
     },
+    name: '@codefast/eslint-config/library/shared',
+    rules: {
+      ...sharedRules.rules,
+    },
   },
-  sharedRules,
 ];

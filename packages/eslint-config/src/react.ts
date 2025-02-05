@@ -16,6 +16,7 @@ export const config: Linter.Config[] = [
   ...typescriptConfig,
   ...reactConfig,
   {
+    name: '@codefast/eslint-config/react/jest',
     ...jestConfig,
     ...jestTypescriptConfig,
     ...testingLibraryConfig,
@@ -28,18 +29,21 @@ export const config: Linter.Config[] = [
   },
   {
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    name: '@codefast/eslint-config/react/tsdoc',
     rules: {
       'tsdoc/syntax': 'off',
     },
   },
   {
     files: ['**/*.d.ts'],
+    name: '@codefast/eslint-config/react/dts',
     rules: {
       '@typescript-eslint/no-empty-object-type': 'off',
     },
   },
   {
     ignores: ['dist', 'coverage'],
+    name: '@codefast/eslint-config/react/ignore',
   },
   {
     languageOptions: {
@@ -55,6 +59,7 @@ export const config: Linter.Config[] = [
         projectService: true,
       },
     },
+    name: '@codefast/eslint-config/react/shared',
     rules: {
       ...sharedRules.rules,
 
@@ -80,7 +85,8 @@ export const config: Linter.Config[] = [
       /**
        * Warns when using unknown DOM properties but ignores specified custom elements
        *
-       * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
+       * 🔧 Fixable -
+       * https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
        */
       'react/no-unknown-property': [
         'warn',
