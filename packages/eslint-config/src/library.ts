@@ -5,16 +5,16 @@ import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript'
 import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
+import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
-import { cwd } from 'node:process';
 
-import { sharedRules } from '@/rules/shared';
+import { importRules } from '@/rules/import';
+import { typescriptRules } from '@/rules/typescript';
 
 export const config: Linter.Config[] = [
   ...recommendedConfig,
   ...typescriptConfig,
   {
-    name: '@codefast/eslint-config/library/jest',
     ...jestConfig,
     ...jestTypescriptConfig,
     ...testingLibraryConfig,
@@ -24,6 +24,7 @@ export const config: Linter.Config[] = [
         ...globals.jest,
       },
     },
+    name: '@codefast/eslint-config/library/jest',
   },
   {
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
@@ -33,17 +34,8 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    ignores: ['node_modules/', 'dist/', 'build/', 'coverage/'],
-    name: '@codefast/eslint-config/library/ignore',
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: cwd(),
-      },
-    },
+    ignores: ['**/node_modules/', 'dist/', 'build/', 'coverage/'],
+    name: '@codefast/eslint-config/library/ignores',
   },
   {
     languageOptions: {
@@ -53,12 +45,19 @@ export const config: Linter.Config[] = [
         ...globals.browser,
       },
     },
-    name: '@codefast/eslint-config/library/language-options',
+    name: '@codefast/eslint-config/library/languages',
   },
   {
-    name: '@codefast/eslint-config/library/shared',
+    files: TYPESCRIPT_FILES,
+    name: '@codefast/eslint-config/library/typescript',
     rules: {
-      ...sharedRules.rules,
+      ...typescriptRules.rules,
+    },
+  },
+  {
+    name: '@codefast/eslint-config/library/rules',
+    rules: {
+      ...importRules.rules,
     },
   },
 ];

@@ -7,21 +7,12 @@ export default [
   ...recommendedConfig,
   ...typescriptConfig,
   {
-    ignores: ['node_modules/', 'dist/', 'build/', '*.config.js'],
+    ignores: ['**/node_modules/', 'dist/', 'build/', '*.config.js'],
   },
   {
     files: ['*.config.ts'],
     rules: {
       'import/no-default-export': 'off',
-    },
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
     },
   },
   {

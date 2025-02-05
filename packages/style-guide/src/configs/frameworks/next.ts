@@ -10,7 +10,7 @@ import reactPlugin from 'eslint-plugin-react';
 
 export const nextConfig: Linter.Config[] = [
   {
-    name: '@next/next',
+    name: '@codefast/style-guide/configs/frameworks/next',
     plugins: {
       '@next/next': nextPlugin,
     },
@@ -21,12 +21,14 @@ export const nextConfig: Linter.Config[] = [
   },
   {
     ...importPlugin.flatConfigs.recommended,
+    name: '@codefast/style-guide/configs/frameworks/next/import',
     rules: {
       'import/no-anonymous-default-export': 'warn',
     },
   },
   {
     ...jsxA11yPlugin.flatConfigs.recommended,
+    name: '@codefast/style-guide/configs/frameworks/next/jsx-a11y',
     rules: {
       'jsx-a11y/alt-text': [
         'warn',
@@ -43,8 +45,8 @@ export const nextConfig: Linter.Config[] = [
     },
   },
   {
-    name: 'react',
     ...reactPlugin.configs.flat.recommended,
+    name: '@codefast/style-guide/configs/frameworks/next/react',
     rules: {
       'react/jsx-no-target-blank': 'off',
     },

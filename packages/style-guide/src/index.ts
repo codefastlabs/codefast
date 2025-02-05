@@ -16,3 +16,5 @@ export { jsxA11yConfig } from '@/configs/utils/jsx-a11y';
 export { reactHooksConfig } from '@/configs/utils/react-hooks';
 export { tsdocConfig } from '@/configs/utils/tsdoc';
 export { unicornConfig } from '@/configs/utils/unicorn';
+
+export { TYPESCRIPT_FILES } from '@/lib/constants';

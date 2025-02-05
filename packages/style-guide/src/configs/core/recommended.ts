@@ -18,16 +18,31 @@ import { variablesRules } from '@/rules/variables';
  */
 export const recommendedConfig: Linter.Config[] = [
   {
-    name: 'eslint-recommended',
     ...jsConfig.configs.recommended,
-  },
-  commentsConfig,
-  importConfig,
-  unicornConfig,
-  perfectionistConfig,
-  stylisticConfig,
-  {
     name: '@codefast/style-guide/configs/core/recommended',
+  },
+  {
+    ...commentsConfig,
+    name: '@codefast/style-guide/configs/core/recommended/comments',
+  },
+  {
+    ...importConfig,
+    name: '@codefast/style-guide/configs/core/recommended/import',
+  },
+  {
+    ...unicornConfig,
+    name: '@codefast/style-guide/configs/core/recommended/unicorn',
+  },
+  {
+    ...perfectionistConfig,
+    name: '@codefast/style-guide/configs/core/recommended/perfectionist',
+  },
+  {
+    ...stylisticConfig,
+    name: '@codefast/style-guide/configs/core/recommended/stylistic',
+  },
+  {
+    name: '@codefast/style-guide/configs/core/recommended/rules',
     rules: {
       ...bestPracticeRules.rules,
       ...es6Rules.rules,

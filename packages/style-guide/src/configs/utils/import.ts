@@ -7,6 +7,7 @@ import { importRules } from '@/rules/import';
 
 export const importConfig: Linter.Config = {
   ...importPlugin.flatConfigs.recommended,
+  name: '@codefast/style-guide/configs/utils/import',
   rules: {
     ...importPlugin.flatConfigs.recommended.rules,
     ...importRules.rules,

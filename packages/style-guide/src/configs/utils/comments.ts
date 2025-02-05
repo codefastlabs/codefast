@@ -7,6 +7,7 @@ import { commentsRules } from '@/rules/comments';
 
 export const commentsConfig: Linter.Config = {
   ...eslintCommentsPlugin.recommended,
+  name: '@codefast/style-guide/configs/utils/comments',
   rules: {
     ...eslintCommentsPlugin.recommended.rules,
     ...commentsRules.rules,

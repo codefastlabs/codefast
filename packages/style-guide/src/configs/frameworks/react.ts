@@ -10,20 +10,34 @@ import { reactRules } from '@/rules/react';
 
 export const reactConfig: Linter.Config[] = [
   {
-    name: 'react',
     ...reactPlugin.configs.flat.recommended,
-    rules: {
-      ...reactPlugin.configs.flat.recommended.rules,
-      ...reactRules.rules,
-    },
+    name: '@codefast/style-guide/configs/frameworks/react',
     settings: {
       react: {
         version: 'detect',
       },
     },
   },
-  reactPlugin.configs.flat['jsx-runtime'],
-  importPlugin.flatConfigs.react,
-  jsxA11yConfig,
-  reactHooksConfig,
+  {
+    ...reactPlugin.configs.flat['jsx-runtime'],
+    name: '@codefast/style-guide/configs/frameworks/react/jsx-runtime',
+  },
+  {
+    ...importPlugin.flatConfigs.react,
+    name: '@codefast/style-guide/configs/frameworks/react/import',
+  },
+  {
+    ...jsxA11yConfig,
+    name: '@codefast/style-guide/configs/frameworks/react/jsx-a11y',
+  },
+  {
+    ...reactHooksConfig,
+    name: '@codefast/style-guide/configs/frameworks/react/react-hooks',
+  },
+  {
+    name: '@codefast/style-guide/configs/frameworks/react/rules',
+    rules: {
+      ...reactRules.rules,
+    },
+  },
 ];

@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 
-export const sharedRules: Linter.Config = {
+export const typescriptRules: Linter.Config = {
+  name: '@codefast/eslint-config/rules/typescript',
   rules: {
     /**
      * This configuration rule is part of the `@typescript-eslint` package.
@@ -30,12 +31,5 @@ export const sharedRules: Linter.Config = {
         allowNumber: true,
       },
     ],
-
-    /**
-     * Disables the rule that disallows default exports
-     *
-     * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
-     */
-    'import/no-default-export': 'off',
   },
 };
