@@ -1,4 +1,1 @@
-import { config } from '@codefast/eslint-config/next';
-
-/** @type {import('eslint').Linter.Config[]} */
-export default [...config];
+export { config as default } from '@codefast/eslint-config/next';
