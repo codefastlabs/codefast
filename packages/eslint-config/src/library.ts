@@ -34,7 +34,7 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    ignores: ['**/node_modules/', 'dist/', 'build/', 'coverage/'],
+    ignores: ['dist/', 'build/', 'coverage/'],
     name: '@codefast/eslint-config/library/ignores',
   },
   {

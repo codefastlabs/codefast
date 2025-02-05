@@ -15,10 +15,11 @@ export const typescriptConfig: Linter.Config[] = [
   ...tsConfig.strictTypeChecked,
   ...tsConfig.stylisticTypeChecked,
   {
-    files: TYPESCRIPT_FILES,
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ['*.js', '*.mjs', '*.cjs'],
+        },
         tsconfigRootDir: cwd(),
       },
     },
