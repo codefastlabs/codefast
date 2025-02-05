@@ -8,7 +8,6 @@ import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/test
 import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
 
-import { importRules } from '@/rules/import';
 import { typescriptRules } from '@/rules/typescript';
 
 export const config: Linter.Config[] = [
@@ -55,9 +54,15 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    name: '@codefast/eslint-config/library/rules',
+    files: ['*.config.{js,cjs,mjs,ts,cts,mts}'],
+    name: '@codefast/eslint-config/library/file-conventions',
     rules: {
-      ...importRules.rules,
+      /**
+       * Disables the rule that disallows default exports
+       *
+       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
+       */
+      'import/no-default-export': 'off',
     },
   },
 ];

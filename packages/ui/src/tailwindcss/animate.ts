@@ -297,4 +297,5 @@ const animate = plugin(
   },
 );
 
+// eslint-disable-next-line import/no-default-export -- exporting the animation utilities and theme extension as the default export
 export default animate;

@@ -9,7 +9,6 @@ import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/test
 import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
 
-import { importRules } from '@/rules/import';
 import { typescriptRules } from '@/rules/typescript';
 
 export const config: Linter.Config[] = [
@@ -73,8 +72,6 @@ export const config: Linter.Config[] = [
   {
     name: '@codefast/eslint-config/react/rules',
     rules: {
-      ...importRules.rules,
-
       /**
        * Prevents fallthrough in switch statements but allows empty cases
        *
@@ -99,6 +96,18 @@ export const config: Linter.Config[] = [
           ignore: ['cmdk-input-wrapper'],
         },
       ],
+    },
+  },
+  {
+    files: ['*.config.{js,cjs,mjs,ts,cts,mts}'],
+    name: '@codefast/eslint-config/react/file-conventions',
+    rules: {
+      /**
+       * Disables the rule that disallows default exports
+       *
+       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
+       */
+      'import/no-default-export': 'off',
     },
   },
 ];
