@@ -7,10 +7,10 @@ export default [
   ...recommendedConfig,
   ...typescriptConfig,
   {
-    ignores: ['**/node_modules/', 'dist/', 'build/', '*.config.js'],
+    ignores: ['dist/', 'build/'],
   },
   {
-    files: ['*.config.ts'],
+    files: ['*.config.*'],
     rules: {
       'import/no-default-export': 'off',
     },

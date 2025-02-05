@@ -1,9 +1,1 @@
-import { config } from '@codefast/eslint-config/react';
-
-/** @type {import('eslint').Linter.Config[]} */
-export default [
-  ...config,
-  {
-    ignores: ['*.config.js'],
-  },
-];
+export { config as default } from '@codefast/eslint-config/react';
