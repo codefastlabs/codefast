@@ -1,5 +1,11 @@
 # @codefast/style-guide
 
+## 0.2.19
+
+### Patch Changes
+
+- [`ef0e93d`](https://github.com/codefastlabs/codefast/commit/ef0e93d9e18559f3890b3ef7bfbab2755740b617) Thanks [@thevuong](https://github.com/thevuong)! - remove shared constant and inline file patterns
+
 ## 0.2.18
 
 ### Patch Changes
