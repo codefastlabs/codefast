@@ -6,7 +6,6 @@ import { reactConfig } from '@codefast/style-guide/configs/frameworks/react';
 import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
-import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
 
 import { typescriptRules } from '@/rules/typescript';
@@ -56,57 +55,28 @@ export const config: Linter.Config[] = [
     name: '@codefast/eslint-config/react/languages',
   },
   {
-    files: TYPESCRIPT_FILES,
+    files: ['**/*.{ts,tsx,mts,cts}'],
     name: '@codefast/eslint-config/react/typescript',
     rules: {
       ...typescriptRules.rules,
-
-      /**
-       * Disables the rule that enforces using nullish coalescing operator
-       *
-       * https://typescript-eslint.io/rules/prefer-nullish-coalescing/
-       */
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
     },
   },
   {
     name: '@codefast/eslint-config/react/rules',
     rules: {
-      /**
-       * Prevents fallthrough in switch statements but allows empty cases
-       *
-       * https://eslint.org/docs/latest/rules/no-fallthrough
-       */
-      'no-fallthrough': [
-        'error',
-        {
-          allowEmptyCase: true,
-        },
-      ],
-
-      /**
-       * Warns when using unknown DOM properties but ignores specified custom elements
-       *
-       * 🔧 Fixable -
-       * https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unknown-property.md
-       */
-      'react/no-unknown-property': [
-        'warn',
-        {
-          ignore: ['cmdk-input-wrapper'],
-        },
-      ],
+      'no-fallthrough': ['error', { allowEmptyCase: true }],
+      'react/no-unknown-property': ['warn', { ignore: ['cmdk-input-wrapper'] }],
     },
   },
   {
-    files: ['*.config.{js,cjs,mjs,ts,cts,mts}'],
+    files: ['**/*.config.{js,cjs,mjs,ts,cts,mts}'],
     name: '@codefast/eslint-config/react/file-conventions',
     rules: {
-      /**
-       * Disables the rule that disallows default exports
-       *
-       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
-       */
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
       'import/no-default-export': 'off',
     },
   },
