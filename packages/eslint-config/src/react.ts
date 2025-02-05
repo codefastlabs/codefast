@@ -7,7 +7,7 @@ import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
 import globals from 'globals';
-import { resolve } from 'node:path';
+import { cwd } from 'node:process';
 
 import { sharedRules } from '@/rules/shared';
 
@@ -42,11 +42,21 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    ignores: ['dist', 'coverage'],
+    ignores: ['node_modules/', 'dist/', 'build/', 'coverage/'],
     name: '@codefast/eslint-config/react/ignore',
   },
   {
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: cwd(),
+      },
+    },
+  },
+  {
+    languageOptions: {
+      ecmaVersion: 'latest',
       globals: {
         ...globals.serviceworker,
         ...globals.browser,
@@ -55,10 +65,11 @@ export const config: Linter.Config[] = [
         ecmaFeatures: {
           jsx: true,
         },
-        project: resolve(process.cwd(), 'tsconfig.json'),
-        projectService: true,
       },
     },
+    name: '@codefast/eslint-config/react/language-options',
+  },
+  {
     name: '@codefast/eslint-config/react/shared',
     rules: {
       ...sharedRules.rules,

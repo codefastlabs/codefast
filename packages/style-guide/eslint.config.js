@@ -1,5 +1,3 @@
-import { resolve } from 'node:path';
-
 import { recommendedConfig } from '@codefast/style-guide/configs/core/recommended';
 import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript';
 import globals from 'globals';
@@ -9,7 +7,7 @@ export default [
   ...recommendedConfig,
   ...typescriptConfig,
   {
-    ignores: ['dist', '*.config.js'],
+    ignores: ['node_modules/', 'dist/', 'build/', '*.config.js'],
   },
   {
     files: ['*.config.ts'],
@@ -18,13 +16,18 @@ export default [
     },
   },
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     languageOptions: {
       globals: {
         ...globals.serviceworker,
-      },
-      parserOptions: {
-        project: resolve(process.cwd(), 'tsconfig.json'),
-        projectService: true,
       },
     },
   },
