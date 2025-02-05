@@ -8,7 +8,8 @@ import { tsdocRules } from '@/rules/tsdoc';
  * We use a plugin because `tsdoc` is not compatible with eslint version 9 or later.
  */
 export const tsdocConfig: Linter.Config = {
-  name: 'tsdoc',
+  files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+  name: '@codefast/style-guide/configs/utils/tsdoc',
   plugins: {
     tsdoc: tsdocPlugin,
   },

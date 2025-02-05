@@ -6,17 +6,17 @@ import { reactConfig } from '@codefast/style-guide/configs/frameworks/react';
 import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
+import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
-import { cwd } from 'node:process';
 
-import { sharedRules } from '@/rules/shared';
+import { importRules } from '@/rules/import';
+import { typescriptRules } from '@/rules/typescript';
 
 export const config: Linter.Config[] = [
   ...recommendedConfig,
   ...typescriptConfig,
   ...reactConfig,
   {
-    name: '@codefast/eslint-config/react/jest',
     ...jestConfig,
     ...jestTypescriptConfig,
     ...testingLibraryConfig,
@@ -26,6 +26,7 @@ export const config: Linter.Config[] = [
         ...globals.jest,
       },
     },
+    name: '@codefast/eslint-config/react/jest',
   },
   {
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
@@ -42,17 +43,8 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    ignores: ['node_modules/', 'dist/', 'build/', 'coverage/'],
-    name: '@codefast/eslint-config/react/ignore',
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: cwd(),
-      },
-    },
+    ignores: ['**/node_modules/', 'dist/', 'build/', 'coverage/'],
+    name: '@codefast/eslint-config/react/ignores',
   },
   {
     languageOptions: {
@@ -61,18 +53,14 @@ export const config: Linter.Config[] = [
         ...globals.serviceworker,
         ...globals.browser,
       },
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
     },
-    name: '@codefast/eslint-config/react/language-options',
+    name: '@codefast/eslint-config/react/languages',
   },
   {
-    name: '@codefast/eslint-config/react/shared',
+    files: TYPESCRIPT_FILES,
+    name: '@codefast/eslint-config/react/typescript',
     rules: {
-      ...sharedRules.rules,
+      ...typescriptRules.rules,
 
       /**
        * Disables the rule that enforces using nullish coalescing operator
@@ -80,6 +68,12 @@ export const config: Linter.Config[] = [
        * https://typescript-eslint.io/rules/prefer-nullish-coalescing/
        */
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    },
+  },
+  {
+    name: '@codefast/eslint-config/react/rules',
+    rules: {
+      ...importRules.rules,
 
       /**
        * Prevents fallthrough in switch statements but allows empty cases
