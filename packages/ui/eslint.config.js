@@ -4,6 +4,12 @@ import { config } from '@codefast/eslint-config/react';
 export default [
   ...config,
   {
+    files: ['*.config.*'],
+    rules: {
+      'import/no-default-export': 'off',
+    },
+  },
+  {
     files: ['src/lib/logger.ts'],
     rules: {
       'no-console': 'off',
