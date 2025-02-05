@@ -5,7 +5,6 @@ import { typescriptConfig } from '@codefast/style-guide/configs/core/typescript'
 import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
-import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
 
 import { typescriptRules } from '@/rules/typescript';
@@ -47,21 +46,20 @@ export const config: Linter.Config[] = [
     name: '@codefast/eslint-config/library/languages',
   },
   {
-    files: TYPESCRIPT_FILES,
+    files: ['**/*.{ts,tsx,mts,cts}'],
     name: '@codefast/eslint-config/library/typescript',
     rules: {
       ...typescriptRules.rules,
     },
   },
   {
-    files: ['*.config.{js,cjs,mjs,ts,cts,mts}'],
-    name: '@codefast/eslint-config/library/file-conventions',
+    files: ['**/*.config.{js,cjs,mjs,ts,cts,mts}'],
+    name: '@codefast/eslint-config/library/configs',
     rules: {
-      /**
-       * Disables the rule that disallows default exports
-       *
-       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
-       */
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
       'import/no-default-export': 'off',
     },
   },
