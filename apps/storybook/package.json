@@ -9,6 +9,7 @@
     "clean": "rm -rf node_modules .next storybook-static",
     "dev": "storybook dev -p 6006 --quiet",
     "lint": "TIMING=1 next lint --max-warnings 0",
+    "lint:inspect": "npx @eslint/config-inspector@latest",
     "start": "serve storybook-static -p 6006"
   },
   "dependencies": {

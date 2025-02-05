@@ -206,7 +206,8 @@
   "scripts": {
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
-    "lint": "TIMING=1 eslint --max-warnings 0"
+    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:inspect": "npx @eslint/config-inspector@latest"
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
