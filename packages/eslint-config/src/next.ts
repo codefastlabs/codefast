@@ -11,7 +11,6 @@ import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/test
 import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
 
-import { importRules } from '@/rules/import';
 import { typescriptRules } from '@/rules/typescript';
 
 export const config: Linter.Config[] = [
@@ -89,8 +88,6 @@ export const config: Linter.Config[] = [
   {
     name: '@codefast/eslint-config/next/rules',
     rules: {
-      ...importRules.rules,
-
       /**
        * Warns when using unknown DOM properties but ignores specified custom elements
        *
@@ -103,6 +100,21 @@ export const config: Linter.Config[] = [
           ignore: ['vaul-drawer-wrapper'],
         },
       ],
+    },
+  },
+  {
+    files: [
+      '**/{default,error,forbidden,instrumentation,layout,loading,mdx-components,middleware,not-found,page,route,template,unauthorized}.{js,jsx,ts,tsx}',
+      '*.config.{js,cjs,mjs,ts,cts,mts}',
+    ],
+    name: '@codefast/eslint-config/next/file-conventions',
+    rules: {
+      /**
+       * Disables the rule that disallows default exports
+       *
+       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
+       */
+      'import/no-default-export': 'off',
     },
   },
 ];
