@@ -8,10 +8,11 @@ import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { playwrightTestConfig } from '@codefast/style-guide/configs/testing/playwright-test';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
+import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
-import { cwd } from 'node:process';
 
-import { sharedRules } from '@/rules/shared';
+import { importRules } from '@/rules/import';
+import { typescriptRules } from '@/rules/typescript';
 
 export const config: Linter.Config[] = [
   ...recommendedConfig,
@@ -19,7 +20,6 @@ export const config: Linter.Config[] = [
   ...reactConfig,
   ...nextConfig,
   {
-    name: '@codefast/eslint-config/next/jest',
     ...jestConfig,
     ...jestTypescriptConfig,
     ...testingLibraryConfig,
@@ -29,6 +29,7 @@ export const config: Linter.Config[] = [
         ...globals.jest,
       },
     },
+    name: '@codefast/eslint-config/next/jest',
   },
   {
     files: ['**/?(*.)+(test|spec|e2e).[jt]s?(x)'],
@@ -40,6 +41,7 @@ export const config: Linter.Config[] = [
   {
     ...playwrightTestConfig,
     files: ['**/?(*.)+(e2e).[jt]s?(x)'],
+    name: '@codefast/eslint-config/next/playwright',
   },
   {
     files: ['**/*.d.ts'],
@@ -49,17 +51,8 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    ignores: ['node_modules/', 'dist/', 'build/', '.next/', 'coverage/'],
-    name: '@codefast/eslint-config/next/ignore',
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: cwd(),
-      },
-    },
+    ignores: ['**/node_modules/', 'dist/', 'build/', '.next/', 'coverage/'],
+    name: '@codefast/eslint-config/next/ignores',
   },
   {
     languageOptions: {
@@ -69,18 +62,14 @@ export const config: Linter.Config[] = [
         ...globals.node,
         ...globals.browser,
       },
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
     },
-    name: '@codefast/eslint-config/next/language-options',
+    name: '@codefast/eslint-config/next/languages',
   },
   {
-    name: '@codefast/eslint-config/next/shared',
+    files: TYPESCRIPT_FILES,
+    name: '@codefast/eslint-config/next/typescript',
     rules: {
-      ...sharedRules.rules,
+      ...typescriptRules.rules,
 
       /**
        * Warns when Promises are used inappropriately
@@ -95,6 +84,12 @@ export const config: Linter.Config[] = [
           },
         },
       ],
+    },
+  },
+  {
+    name: '@codefast/eslint-config/next/rules',
+    rules: {
+      ...importRules.rules,
 
       /**
        * Warns when using unknown DOM properties but ignores specified custom elements

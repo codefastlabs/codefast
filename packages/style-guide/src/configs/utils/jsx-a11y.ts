@@ -7,6 +7,7 @@ import { jsxA11yRules } from '@/rules/jsx-a11y';
 
 export const jsxA11yConfig: Linter.Config = {
   ...jsxA11yPlugin.flatConfigs.recommended,
+  name: '@codefast/style-guide/configs/utils/jsx-a11y',
   rules: {
     ...jsxA11yPlugin.flatConfigs.recommended.rules,
     ...jsxA11yRules.rules,
