@@ -10,4 +10,6 @@
 '@codefast/ui': patch
 ---
 
-enhance configs and update dependencies
+enhance various configurations across the project, ensuring consistency and best practices are
+maintained, while also updating dependencies to their latest stable versions to improve performance
+and security.
