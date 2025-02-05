@@ -38,6 +38,7 @@
     "clean": "rm -rf node_modules dist",
     "dev": "tsup --watch",
     "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint:inspect": "npx @eslint/config-inspector@latest",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
