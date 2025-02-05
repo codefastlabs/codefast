@@ -183,16 +183,6 @@
         "types": "./dist/configs/utils/unicorn.d.cts",
         "default": "./dist/configs/utils/unicorn.cjs"
       }
-    },
-    "./lib/constants": {
-      "import": {
-        "types": "./dist/lib/constants.d.ts",
-        "default": "./dist/lib/constants.js"
-      },
-      "require": {
-        "types": "./dist/lib/constants.d.cts",
-        "default": "./dist/lib/constants.cjs"
-      }
     }
   },
   "main": "./dist/index.cjs",

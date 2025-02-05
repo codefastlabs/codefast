@@ -6,7 +6,6 @@ import { cwd } from 'node:process';
 import { configs as tsConfig } from 'typescript-eslint';
 
 import { tsdocConfig } from '@/configs/utils/tsdoc';
-import { TYPESCRIPT_FILES } from '@/lib/constants';
 import { typescriptRules } from '@/rules/typescript';
 import { typescriptExtensionRules } from '@/rules/typescript/extension';
 import { typescriptImportRules } from '@/rules/typescript/import';
@@ -26,7 +25,7 @@ export const typescriptConfig: Linter.Config[] = [
     name: '@codefast/style-guide/configs/core/typescript/languages',
   },
   {
-    files: TYPESCRIPT_FILES,
+    files: ['**/*.{ts,tsx,mts,cts}'],
     ...importPlugin.flatConfigs.typescript,
     name: '@codefast/style-guide/configs/core/typescript/import',
     rules: {
@@ -35,12 +34,12 @@ export const typescriptConfig: Linter.Config[] = [
     },
   },
   {
-    files: TYPESCRIPT_FILES,
+    files: ['**/*.{ts,tsx,mts,cts}'],
     ...tsdocConfig,
     name: '@codefast/style-guide/configs/core/typescript/tsdoc',
   },
   {
-    files: TYPESCRIPT_FILES,
+    files: ['**/*.{ts,tsx,mts,cts}'],
     name: '@codefast/style-guide/configs/core/typescript/rules',
     rules: {
       ...typescriptRules.rules,

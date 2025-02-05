@@ -8,7 +8,6 @@ import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { playwrightTestConfig } from '@codefast/style-guide/configs/testing/playwright-test';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
-import { TYPESCRIPT_FILES } from '@codefast/style-guide/lib/constants';
 import globals from 'globals';
 
 import { typescriptRules } from '@/rules/typescript';
@@ -65,23 +64,13 @@ export const config: Linter.Config[] = [
     name: '@codefast/eslint-config/next/languages',
   },
   {
-    files: TYPESCRIPT_FILES,
+    files: ['**/*.{ts,tsx,mts,cts}'],
     name: '@codefast/eslint-config/next/typescript',
     rules: {
       ...typescriptRules.rules,
-
-      /**
-       * Warns when Promises are used inappropriately
-       *
-       * 🚫 Not fixable - https://typescript-eslint.io/rules/no-misused-promises/
-       */
       '@typescript-eslint/no-misused-promises': [
         'warn',
-        {
-          checksVoidReturn: {
-            attributes: false,
-          },
-        },
+        { checksVoidReturn: { attributes: false } },
       ],
     },
   },
@@ -105,15 +94,21 @@ export const config: Linter.Config[] = [
   {
     files: [
       '**/{default,error,forbidden,instrumentation,layout,loading,mdx-components,middleware,not-found,page,route,template,unauthorized}.{js,jsx,ts,tsx}',
-      '*.config.{js,cjs,mjs,ts,cts,mts}',
     ],
     name: '@codefast/eslint-config/next/file-conventions',
     rules: {
-      /**
-       * Disables the rule that disallows default exports
-       *
-       * https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-default-export.md
-       */
+      'import/no-default-export': 'off',
+    },
+  },
+  {
+    files: ['**/*.config.{js,cjs,mjs,ts,cts,mts}'],
+    name: '@codefast/eslint-config/next/configs',
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      'import/no-anonymous-default-export': 'off',
       'import/no-default-export': 'off',
     },
   },
