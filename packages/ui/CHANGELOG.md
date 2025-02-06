@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.20
+
+### Patch Changes
+
+- [`db62588`](https://github.com/codefastlabs/codefast/commit/db62588e89f51df3703dc4401c947b3a72c7fed7) Thanks [@thevuong](https://github.com/thevuong)! - update file conventions pattern
+
+- Updated dependencies [[`db62588`](https://github.com/codefastlabs/codefast/commit/db62588e89f51df3703dc4401c947b3a72c7fed7)]:
+  - @codefast/hooks@0.2.20
+  - @codefast-ui/checkbox-group@0.2.20
+  - @codefast-ui/day-picker@0.2.20
+  - @codefast-ui/input@0.2.20
+  - @codefast-ui/number-input@0.2.20
+
 ## 0.2.19
 
 ### Patch Changes

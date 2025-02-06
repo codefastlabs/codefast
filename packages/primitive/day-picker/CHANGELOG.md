@@ -1,5 +1,11 @@
 # @codefast-ui/day-picker
 
+## 0.2.20
+
+### Patch Changes
+
+- [`db62588`](https://github.com/codefastlabs/codefast/commit/db62588e89f51df3703dc4401c947b3a72c7fed7) Thanks [@thevuong](https://github.com/thevuong)! - update file conventions pattern
+
 ## 0.2.19
 
 ### Patch Changes
