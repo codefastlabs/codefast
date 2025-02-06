@@ -93,7 +93,7 @@ export const config: Linter.Config[] = [
   },
   {
     files: [
-      '**/{default,error,forbidden,instrumentation,layout,loading,mdx-components,middleware,not-found,page,route,template,unauthorized}.{js,jsx,ts,tsx}',
+      '**/{default,error,forbidden,global-error,instrumentation,layout,loading,mdx-components,middleware,not-found,page,route,template,unauthorized}.{js,jsx,ts,tsx}',
     ],
     name: '@codefast/eslint-config/next/file-conventions',
     rules: {
