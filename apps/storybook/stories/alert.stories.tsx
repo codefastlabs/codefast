@@ -36,7 +36,63 @@ export const Default: Story = {
 
 export const Destructive: Story = {
   render: (args) => (
-    <Alert variant="destructive" {...args}>
+    <Alert {...args} variant="destructive">
+      <ExclamationTriangleIcon className="size-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+    </Alert>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Info
+ * -------------------------------------------------------------------------- */
+
+export const Info: Story = {
+  render: (args) => (
+    <Alert {...args} variant="info">
+      <ExclamationTriangleIcon className="size-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+    </Alert>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Primary
+ * -------------------------------------------------------------------------- */
+
+export const Primary: Story = {
+  render: (args) => (
+    <Alert {...args} variant="primary">
+      <ExclamationTriangleIcon className="size-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+    </Alert>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Success
+ * -------------------------------------------------------------------------- */
+
+export const Success: Story = {
+  render: (args) => (
+    <Alert {...args} variant="success">
+      <ExclamationTriangleIcon className="size-4" />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>Your session has expired. Please log in again.</AlertDescription>
+    </Alert>
+  ),
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Warning
+ * -------------------------------------------------------------------------- */
+
+export const Warning: Story = {
+  render: (args) => (
+    <Alert {...args} variant="warning">
       <ExclamationTriangleIcon className="size-4" />
       <AlertTitle>Error</AlertTitle>
       <AlertDescription>Your session has expired. Please log in again.</AlertDescription>

@@ -35,7 +35,7 @@ function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
 type TableBodyProps = HTMLAttributes<HTMLTableSectionElement>;
 
 function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
-  return <tbody className={cn('[&_tr:last-child]:border-0', className)} {...props} />;
+  return <tbody className={cn('[&>tr:last-child]:border-0', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -47,7 +47,7 @@ type TableFooterProps = HTMLAttributes<HTMLTableSectionElement>;
 function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
     <tfoot
-      className={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)}
+      className={cn('[&>tr]:border-b-0 [&>tr]:border-t [&>tr]:hover:bg-transparent', className)}
       {...props}
     />
   );
