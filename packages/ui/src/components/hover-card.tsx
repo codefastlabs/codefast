@@ -1,7 +1,6 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -16,21 +15,24 @@ const HoverCard = HoverCardPrimitive.Root;
  * Component: HoverCardTrigger
  * -------------------------------------------------------------------------- */
 
-type HoverCardTriggerProps = ComponentPropsWithoutRef<typeof HoverCardPrimitive.Trigger>;
+type HoverCardTriggerProps = ComponentProps<typeof HoverCardPrimitive.Trigger>;
 const HoverCardTrigger = HoverCardPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardContent
  * -------------------------------------------------------------------------- */
 
-type HoverCardContentElement = ComponentRef<typeof HoverCardPrimitive.Content>;
-type HoverCardContentProps = ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>;
+type HoverCardContentProps = ComponentProps<typeof HoverCardPrimitive.Content>;
 
-const HoverCardContent = forwardRef<HoverCardContentElement, HoverCardContentProps>(
-  ({ align = 'center', className, sideOffset = 6, ...props }, forwardedRef) => (
+function HoverCardContent({
+  align = 'center',
+  className,
+  sideOffset = 6,
+  ...props
+}: HoverCardContentProps): JSX.Element {
+  return (
     <HoverCardPrimitive.Portal>
       <HoverCardPrimitive.Content
-        ref={forwardedRef}
         align={align}
         className={cn(
           'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-4 shadow-md',
@@ -50,29 +52,18 @@ const HoverCardContent = forwardRef<HoverCardContentElement, HoverCardContentPro
         {...props}
       />
     </HoverCardPrimitive.Portal>
-  ),
-);
-
-HoverCardContent.displayName = HoverCardPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardArrow
  * -------------------------------------------------------------------------- */
 
-type HoverCardArrowElement = ComponentRef<typeof HoverCardPrimitive.Arrow>;
-type HoverCardArrowProps = ComponentPropsWithoutRef<typeof HoverCardPrimitive.Arrow>;
+type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
 
-const HoverCardArrow = forwardRef<HoverCardArrowElement, HoverCardArrowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <HoverCardPrimitive.Arrow
-      ref={forwardedRef}
-      className={cn('fill-popover', className)}
-      {...props}
-    />
-  ),
-);
-
-HoverCardArrow.displayName = HoverCardPrimitive.Arrow.displayName;
+function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
+  return <HoverCardPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

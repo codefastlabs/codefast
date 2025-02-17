@@ -1,14 +1,7 @@
-import type {
-  ComponentProps,
-  ComponentPropsWithoutRef,
-  ComponentRef,
-  HTMLAttributes,
-  JSX,
-} from 'react';
+import type { ComponentProps, HTMLAttributes, JSX } from 'react';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
@@ -26,18 +19,17 @@ const Dialog = DialogPrimitive.Root;
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
-type DialogTriggerProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Trigger>;
+type DialogTriggerProps = ComponentProps<typeof DialogPrimitive.Trigger>;
 const DialogTrigger = DialogPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
-type DialogContentElement = ComponentRef<typeof DialogPrimitive.Content>;
-type DialogContentProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Content>;
+type DialogContentProps = ComponentProps<typeof DialogPrimitive.Content>;
 
-const DialogContent = forwardRef<DialogContentElement, DialogContentProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+function DialogContent({ children, className, ...props }: DialogContentProps): JSX.Element {
+  return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
@@ -47,7 +39,6 @@ const DialogContent = forwardRef<DialogContentElement, DialogContentProps>(
         )}
       >
         <DialogPrimitive.Content
-          ref={forwardedRef}
           className={cn(
             'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
             'data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:animation-duration-200 data-[state=open]:fade-in',
@@ -71,10 +62,8 @@ const DialogContent = forwardRef<DialogContentElement, DialogContentProps>(
         </DialogPrimitive.Content>
       </DialogPrimitive.Overlay>
     </DialogPrimitive.Portal>
-  ),
-);
-
-DialogContent.displayName = DialogPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DialogHeader
@@ -126,61 +115,51 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
  * Component: DialogTitle
  * -------------------------------------------------------------------------- */
 
-type DialogTitleElement = ComponentRef<typeof DialogPrimitive.Title>;
-type DialogTitleProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Title>;
+type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 
-const DialogTitle = forwardRef<DialogTitleElement, DialogTitleProps>(
-  ({ className, ...props }, forwardedRef) => (
+function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
+  return (
     <DialogPrimitive.Title
-      ref={forwardedRef}
       className={cn('text-lg font-semibold leading-none tracking-tight', className)}
       {...props}
     />
-  ),
-);
-
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
-type DialogDescriptionElement = ComponentRef<typeof DialogPrimitive.Description>;
-type DialogDescriptionProps = ComponentPropsWithoutRef<typeof DialogPrimitive.Description>;
+type DialogDescriptionProps = ComponentProps<typeof DialogPrimitive.Description>;
 
-const DialogDescription = forwardRef<DialogDescriptionElement, DialogDescriptionProps>(
-  ({ className, ...props }, forwardedRef) => (
+function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX.Element {
+  return (
     <DialogPrimitive.Description
-      ref={forwardedRef}
       className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
-  ),
-);
-
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DialogClose
  * -------------------------------------------------------------------------- */
 
-type DialogCloseElement = ComponentRef<typeof DialogPrimitive.Close>;
-interface DialogCloseProps extends ComponentPropsWithoutRef<typeof DialogPrimitive.Close> {
+interface DialogCloseProps extends ComponentProps<typeof DialogPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }
 
-const DialogClose = forwardRef<DialogCloseElement, DialogCloseProps>(
-  ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <DialogPrimitive.Close
-      ref={forwardedRef}
-      className={buttonVariants({ className, size, variant })}
-      {...props}
-    />
-  ),
-);
-
-DialogClose.displayName = DialogPrimitive.Close.displayName;
+function DialogClose({
+  className,
+  size,
+  variant = 'outline',
+  ...props
+}: DialogCloseProps): JSX.Element {
+  return (
+    <DialogPrimitive.Close className={buttonVariants({ className, size, variant })} {...props} />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

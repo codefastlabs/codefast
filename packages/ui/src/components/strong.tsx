@@ -1,25 +1,20 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Strong
  * -------------------------------------------------------------------------- */
 
-type StrongElement = HTMLElement;
-
 interface StrongProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Strong = forwardRef<StrongElement, StrongProps>(({ asChild, ...props }, forwardedRef) => {
+function Strong({ asChild, ...props }: StrongProps): JSX.Element {
   const Component = asChild ? Slot : 'strong';
 
-  return <Component ref={forwardedRef} {...props} />;
-});
-
-Strong.displayName = 'Strong';
+  return <Component {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

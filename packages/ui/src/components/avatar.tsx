@@ -1,7 +1,6 @@
-import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -9,56 +8,41 @@ import { cn } from '@/lib/utils';
  * Component: Avatar
  * -------------------------------------------------------------------------- */
 
-type AvatarElement = ComponentRef<typeof AvatarPrimitive.Root>;
-type AvatarProps = ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>;
+type AvatarProps = ComponentProps<typeof AvatarPrimitive.Root>;
 
-const Avatar = forwardRef<AvatarElement, AvatarProps>(({ className, ...props }, forwardedRef) => (
-  <AvatarPrimitive.Root
-    ref={forwardedRef}
-    className={cn('relative flex size-10 shrink-0 overflow-hidden rounded-full', className)}
-    {...props}
-  />
-));
-
-Avatar.displayName = AvatarPrimitive.Root.displayName;
+function Avatar({ className, ...props }: AvatarProps): JSX.Element {
+  return (
+    <AvatarPrimitive.Root
+      className={cn('relative flex size-10 shrink-0 overflow-hidden rounded-full', className)}
+      {...props}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AvatarImage
  * -------------------------------------------------------------------------- */
 
-type AvatarImageElement = ComponentRef<typeof AvatarPrimitive.Image>;
-type AvatarImageProps = ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>;
+type AvatarImageProps = ComponentProps<typeof AvatarPrimitive.Image>;
 
-const AvatarImage = forwardRef<AvatarImageElement, AvatarImageProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <AvatarPrimitive.Image
-      ref={forwardedRef}
-      className={cn('aspect-square size-full', className)}
-      {...props}
-    />
-  ),
-);
-
-AvatarImage.displayName = AvatarPrimitive.Image.displayName;
+function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
+  return <AvatarPrimitive.Image className={cn('aspect-square size-full', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AvatarFallback
  * -------------------------------------------------------------------------- */
 
-type AvatarFallbackElement = ComponentRef<typeof AvatarPrimitive.Fallback>;
-type AvatarFallbackProps = ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>;
+type AvatarFallbackProps = ComponentProps<typeof AvatarPrimitive.Fallback>;
 
-const AvatarFallback = forwardRef<AvatarFallbackElement, AvatarFallbackProps>(
-  ({ className, ...props }, forwardedRef) => (
+function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Element {
+  return (
     <AvatarPrimitive.Fallback
-      ref={forwardedRef}
       className={cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
       {...props}
     />
-  ),
-);
-
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

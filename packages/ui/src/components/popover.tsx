@@ -1,7 +1,6 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -16,28 +15,31 @@ const Popover = PopoverPrimitive.Root;
  * Component: PopoverTrigger
  * -------------------------------------------------------------------------- */
 
-type PopoverTriggerProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Trigger>;
+type PopoverTriggerProps = ComponentProps<typeof PopoverPrimitive.Trigger>;
 const PopoverTrigger = PopoverPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverAnchor
  * -------------------------------------------------------------------------- */
 
-type PopoverAnchorProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Anchor>;
+type PopoverAnchorProps = ComponentProps<typeof PopoverPrimitive.Anchor>;
 const PopoverAnchor = PopoverPrimitive.Anchor;
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverContent
  * -------------------------------------------------------------------------- */
 
-type PopoverContentElement = ComponentRef<typeof PopoverPrimitive.Content>;
-type PopoverContentProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>;
+type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content>;
 
-const PopoverContent = forwardRef<PopoverContentElement, PopoverContentProps>(
-  ({ align = 'center', className, sideOffset = 6, ...props }, forwardedRef) => (
+function PopoverContent({
+  align = 'center',
+  className,
+  sideOffset = 6,
+  ...props
+}: PopoverContentProps): JSX.Element {
+  return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
-        ref={forwardedRef}
         align={align}
         className={cn(
           'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-4 shadow-md',
@@ -57,29 +59,18 @@ const PopoverContent = forwardRef<PopoverContentElement, PopoverContentProps>(
         {...props}
       />
     </PopoverPrimitive.Portal>
-  ),
-);
-
-PopoverContent.displayName = PopoverPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverArrow
  * -------------------------------------------------------------------------- */
 
-type PopoverArrowElement = ComponentRef<typeof PopoverPrimitive.Arrow>;
-type PopoverArrowProps = ComponentPropsWithoutRef<typeof PopoverPrimitive.Arrow>;
+type PopoverArrowProps = ComponentProps<typeof PopoverPrimitive.Arrow>;
 
-const PopoverArrow = forwardRef<PopoverArrowElement, PopoverArrowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <PopoverPrimitive.Arrow
-      ref={forwardedRef}
-      className={cn('fill-popover', className)}
-      {...props}
-    />
-  ),
-);
-
-PopoverArrow.displayName = PopoverPrimitive.Arrow.displayName;
+function PopoverArrow({ className, ...props }: PopoverArrowProps): JSX.Element {
+  return <PopoverPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

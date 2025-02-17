@@ -1,7 +1,6 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -23,21 +22,19 @@ const Tooltip = TooltipPrimitive.Root;
  * Component: TooltipTrigger
  * -------------------------------------------------------------------------- */
 
-type TooltipTriggerProps = ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>;
+type TooltipTriggerProps = ComponentProps<typeof TooltipPrimitive.Trigger>;
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipContent
  * -------------------------------------------------------------------------- */
 
-type TooltipContentElement = ComponentRef<typeof TooltipPrimitive.Content>;
-type TooltipContentProps = ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>;
+type TooltipContentProps = ComponentProps<typeof TooltipPrimitive.Content>;
 
-const TooltipContent = forwardRef<TooltipContentElement, TooltipContentProps>(
-  ({ className, sideOffset = 6, ...props }, forwardedRef) => (
+function TooltipContent({ className, sideOffset = 6, ...props }: TooltipContentProps): JSX.Element {
+  return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
-        ref={forwardedRef}
         className={cn(
           'bg-popover text-popover-foreground',
           'z-50 rounded-md border px-3 py-1.5 text-xs',
@@ -57,29 +54,18 @@ const TooltipContent = forwardRef<TooltipContentElement, TooltipContentProps>(
         {...props}
       />
     </TooltipPrimitive.Portal>
-  ),
-);
-
-TooltipContent.displayName = TooltipPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipArrow
  * -------------------------------------------------------------------------- */
 
-type TooltipArrowElement = ComponentRef<typeof TooltipPrimitive.Arrow>;
-type TooltipArrowProps = ComponentPropsWithoutRef<typeof TooltipPrimitive.Arrow>;
+type TooltipArrowProps = ComponentProps<typeof TooltipPrimitive.Arrow>;
 
-const TooltipArrow = forwardRef<TooltipArrowElement, TooltipArrowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <TooltipPrimitive.Arrow
-      ref={forwardedRef}
-      className={cn('fill-popover', className)}
-      {...props}
-    />
-  ),
-);
-
-TooltipArrow.displayName = TooltipPrimitive.Arrow.displayName;
+function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
+  return <TooltipPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

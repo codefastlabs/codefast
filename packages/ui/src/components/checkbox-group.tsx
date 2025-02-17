@@ -1,8 +1,7 @@
-import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -10,32 +9,21 @@ import { cn } from '@/lib/utils';
  * Component: CheckboxGroup
  * -------------------------------------------------------------------------- */
 
-type CheckboxGroupElement = ComponentRef<typeof CheckboxGroupPrimitive.Root>;
-type CheckboxGroupProps = ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Root>;
+type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
-const CheckboxGroup = forwardRef<CheckboxGroupElement, CheckboxGroupProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <CheckboxGroupPrimitive.Root
-      ref={forwardedRef}
-      className={cn('grid gap-2', className)}
-      {...props}
-    />
-  ),
-);
-
-CheckboxGroup.displayName = 'CheckboxGroup';
+function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
+  return <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroupItem
  * -------------------------------------------------------------------------- */
 
-type CheckboxGroupItemElement = ComponentRef<typeof CheckboxGroupPrimitive.Item>;
-type CheckboxGroupItemProps = ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item>;
+type CheckboxGroupItemProps = ComponentProps<typeof CheckboxGroupPrimitive.Item>;
 
-const CheckboxGroupItem = forwardRef<CheckboxGroupItemElement, CheckboxGroupItemProps>(
-  ({ className, ...props }, forwardedRef) => (
+function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX.Element {
+  return (
     <CheckboxGroupPrimitive.Item
-      ref={forwardedRef}
       className={cn(
         [
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
@@ -52,10 +40,8 @@ const CheckboxGroupItem = forwardRef<CheckboxGroupItemElement, CheckboxGroupItem
         <CheckIcon className="size-3.5" />
       </CheckboxGroupPrimitive.CheckboxGroupIndicator>
     </CheckboxGroupPrimitive.Item>
-  ),
-);
-
-CheckboxGroupItem.displayName = 'CheckboxGroupItem';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

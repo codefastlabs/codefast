@@ -1,8 +1,7 @@
-import type { ComponentPropsWithoutRef, ComponentRef, HTMLAttributes } from 'react';
+import type { ComponentProps, HTMLAttributes, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { forwardRef } from 'react';
 import { tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
@@ -36,43 +35,41 @@ type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
-type SeparatorElement = ComponentRef<typeof SeparatorPrimitive.Root>;
 interface SeparatorProps
-  extends ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>,
+  extends ComponentProps<typeof SeparatorPrimitive.Root>,
     Omit<SeparatorVariantsProps, 'orientation'> {}
 
-const Separator = forwardRef<SeparatorElement, SeparatorProps>(
-  ({ align, className, decorative = true, orientation, ...props }, forwardedRef) => (
+function Separator({
+  align,
+  className,
+  decorative = true,
+  orientation,
+  ...props
+}: SeparatorProps): JSX.Element {
+  return (
     <SeparatorPrimitive.Root
-      ref={forwardedRef}
       className={separatorVariants({ align, className, orientation })}
       decorative={decorative}
       orientation={orientation}
       {...props}
     />
-  ),
-);
-
-Separator.displayName = SeparatorPrimitive.Root.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SeparatorItem
  * -------------------------------------------------------------------------- */
 
-type SeparatorItemElement = HTMLDivElement;
 type SeparatorItemProps = HTMLAttributes<HTMLDivElement>;
 
-const SeparatorItem = forwardRef<SeparatorItemElement, SeparatorItemProps>(
-  ({ className, ...props }, forwardedRef) => (
+function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
+  return (
     <div
-      ref={forwardedRef}
       className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
       {...props}
     />
-  ),
-);
-
-SeparatorItem.displayName = 'SeparatorItem';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

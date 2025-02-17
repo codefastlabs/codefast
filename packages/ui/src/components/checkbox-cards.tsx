@@ -1,8 +1,7 @@
-import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -10,34 +9,27 @@ import { cn } from '@/lib/utils';
  * Component: CheckboxCards
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsElement = ComponentRef<typeof CheckboxGroupPrimitive.Root>;
-type CheckboxCardsProps = ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Root>;
+type CheckboxCardsProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
-const CheckboxCards = forwardRef<CheckboxCardsElement, CheckboxCardsProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <CheckboxGroupPrimitive.Root
-      className={cn('grid gap-2', className)}
-      {...props}
-      ref={forwardedRef}
-    />
-  ),
-);
-
-CheckboxCards.displayName = CheckboxGroupPrimitive.Root.displayName;
+function CheckboxCards({ className, ...props }: CheckboxCardsProps): JSX.Element {
+  return <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCardsItem
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsItemElement = ComponentRef<typeof CheckboxGroupPrimitive.Item>;
-
-interface CheckboxCardsItemProps
-  extends ComponentPropsWithoutRef<typeof CheckboxGroupPrimitive.Item> {
+interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrimitive.Item> {
   checkboxClassName?: string;
 }
 
-const CheckboxCardsItem = forwardRef<CheckboxCardsItemElement, CheckboxCardsItemProps>(
-  ({ checkboxClassName, children, className, ...props }, forwardedRef) => (
+function CheckboxCardsItem({
+  checkboxClassName,
+  children,
+  className,
+  ...props
+}: CheckboxCardsItemProps): JSX.Element {
+  return (
     <label
       className={cn(
         'group flex items-center justify-center gap-4 rounded-md border p-4',
@@ -46,7 +38,6 @@ const CheckboxCardsItem = forwardRef<CheckboxCardsItemElement, CheckboxCardsItem
     >
       {children}
       <CheckboxGroupPrimitive.Item
-        ref={forwardedRef}
         className={cn(
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 cursor-pointer rounded-sm border transition',
           'group-hover:border-primary',
@@ -62,10 +53,8 @@ const CheckboxCardsItem = forwardRef<CheckboxCardsItemElement, CheckboxCardsItem
         </CheckboxGroupPrimitive.CheckboxGroupIndicator>
       </CheckboxGroupPrimitive.Item>
     </label>
-  ),
-);
-
-CheckboxCardsItem.displayName = CheckboxGroupPrimitive.Item.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

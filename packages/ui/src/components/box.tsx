@@ -1,13 +1,11 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Box
  * -------------------------------------------------------------------------- */
 
-type BoxElement = HTMLDivElement;
 interface BoxDivProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div';
 }
@@ -20,15 +18,11 @@ type BoxProps = (BoxDivProps | BoxSpanProps) & {
   asChild?: boolean;
 };
 
-const Box = forwardRef<BoxElement, BoxProps>(
-  ({ as: Tag = 'div', asChild, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : Tag;
+function Box({ as: Tag = 'div', asChild, ...props }: BoxProps): JSX.Element {
+  const Component = asChild ? Slot : Tag;
 
-    return <Component ref={forwardedRef} {...props} />;
-  },
-);
-
-Box.displayName = 'Box';
+  return <Component {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

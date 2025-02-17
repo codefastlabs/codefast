@@ -1,6 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
-
-import { forwardRef } from 'react';
+import type { ButtonHTMLAttributes, JSX, ReactNode } from 'react';
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
@@ -11,7 +9,6 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Button
  * -------------------------------------------------------------------------- */
 
-type ButtonElement = HTMLButtonElement;
 interface ButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>,
     ButtonVariantsProps {
@@ -22,27 +19,23 @@ interface ButtonProps
   suffix?: ReactNode;
 }
 
-const Button = forwardRef<ButtonElement, ButtonProps>(
-  (
-    {
-      children,
-      className,
-      disabled,
-      icon,
-      inside,
-      loaderPosition = 'prefix',
-      loading,
-      prefix,
-      size,
-      spinner,
-      suffix,
-      variant,
-      ...props
-    },
-    forwardedRef,
-  ) => (
+function Button({
+  children,
+  className,
+  disabled,
+  icon,
+  inside,
+  loaderPosition = 'prefix',
+  loading,
+  prefix,
+  size,
+  spinner,
+  suffix,
+  variant,
+  ...props
+}: ButtonProps): JSX.Element {
+  return (
     <button
-      ref={forwardedRef}
       className={buttonVariants({
         className,
         icon,
@@ -58,10 +51,8 @@ const Button = forwardRef<ButtonElement, ButtonProps>(
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
       {loading && loaderPosition === 'suffix' ? spinner || <Spinner /> : suffix}
     </button>
-  ),
-);
-
-Button.displayName = 'Button';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

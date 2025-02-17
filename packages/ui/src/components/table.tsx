@@ -1,6 +1,4 @@
-import type { HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from 'react';
-
-import { forwardRef } from 'react';
+import type { HTMLAttributes, JSX, TdHTMLAttributes, ThHTMLAttributes } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -8,85 +6,62 @@ import { cn } from '@/lib/utils';
  * Component: Table
  * -------------------------------------------------------------------------- */
 
-type TableElement = HTMLTableElement;
 type TableProps = HTMLAttributes<HTMLTableElement>;
 
-const Table = forwardRef<TableElement, TableProps>(({ className, ...props }, forwardedRef) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={forwardedRef}
-      className={cn('w-full caption-bottom text-sm', className)}
-      {...props}
-    />
-  </div>
-));
-
-Table.displayName = 'Table';
+function Table({ className, ...props }: TableProps): JSX.Element {
+  return (
+    <div className="relative w-full overflow-auto">
+      <table className={cn('w-full caption-bottom text-sm', className)} {...props} />
+    </div>
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableHeader
  * -------------------------------------------------------------------------- */
 
-type TableHeaderElement = HTMLTableSectionElement;
 type TableHeaderProps = HTMLAttributes<HTMLTableSectionElement>;
 
-const TableHeader = forwardRef<TableHeaderElement, TableHeaderProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <thead
-      ref={forwardedRef}
-      className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)}
-      {...props}
-    />
-  ),
-);
-
-TableHeader.displayName = 'TableHeader';
+function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
+  return (
+    <thead className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)} {...props} />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableBody
  * -------------------------------------------------------------------------- */
 
-type TableBodyElement = HTMLTableSectionElement;
 type TableBodyProps = HTMLAttributes<HTMLTableSectionElement>;
 
-const TableBody = forwardRef<TableBodyElement, TableBodyProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <tbody ref={forwardedRef} className={cn('[&_tr:last-child]:border-0', className)} {...props} />
-  ),
-);
-
-TableBody.displayName = 'TableBody';
+function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
+  return <tbody className={cn('[&_tr:last-child]:border-0', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableFooter
  * -------------------------------------------------------------------------- */
 
-type TableFooterElement = HTMLTableSectionElement;
 type TableFooterProps = HTMLAttributes<HTMLTableSectionElement>;
 
-const TableFooter = forwardRef<TableFooterElement, TableFooterProps>(
-  ({ className, ...props }, forwardedRef) => (
+function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
+  return (
     <tfoot
-      ref={forwardedRef}
       className={cn('bg-muted/50 border-t font-medium [&>tr]:last:border-b-0', className)}
       {...props}
     />
-  ),
-);
-
-TableFooter.displayName = 'TableFooter';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableRow
  * -------------------------------------------------------------------------- */
 
-type TableRowElement = HTMLTableRowElement;
 type TableRowProps = HTMLAttributes<HTMLTableRowElement>;
 
-const TableRow = forwardRef<TableRowElement, TableRowProps>(
-  ({ className, ...props }, forwardedRef) => (
+function TableRow({ className, ...props }: TableRowProps): JSX.Element {
+  return (
     <tr
-      ref={forwardedRef}
       className={cn(
         'border-b transition',
         'hover:bg-accent',
@@ -95,63 +70,43 @@ const TableRow = forwardRef<TableRowElement, TableRowProps>(
       )}
       {...props}
     />
-  ),
-);
-
-TableRow.displayName = 'TableRow';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableHead
  * -------------------------------------------------------------------------- */
 
-type TableHeadElement = HTMLTableCellElement;
 type TableHeadProps = ThHTMLAttributes<HTMLTableCellElement>;
 
-const TableHead = forwardRef<TableHeadElement, TableHeadProps>(
-  ({ className, ...props }, forwardedRef) => (
+function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
+  return (
     <th
-      ref={forwardedRef}
       className={cn('text-muted-foreground p-2 text-left align-middle font-medium', className)}
       {...props}
     />
-  ),
-);
-
-TableHead.displayName = 'TableHead';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableCell
  * -------------------------------------------------------------------------- */
 
-type TableCellElement = HTMLTableCellElement;
 type TableCellProps = TdHTMLAttributes<HTMLTableCellElement>;
 
-const TableCell = forwardRef<TableCellElement, TableCellProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <td ref={forwardedRef} className={cn('p-2 align-middle', className)} {...props} />
-  ),
-);
-
-TableCell.displayName = 'TableCell';
+function TableCell({ className, ...props }: TableCellProps): JSX.Element {
+  return <td className={cn('p-2 align-middle', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TableCaption
  * -------------------------------------------------------------------------- */
 
-type TableCaptionElement = HTMLTableCaptionElement;
 type TableCaptionProps = HTMLAttributes<HTMLTableCaptionElement>;
 
-const TableCaption = forwardRef<TableCaptionElement, TableCaptionProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <caption
-      ref={forwardedRef}
-      className={cn('text-muted-foreground mt-4 text-sm', className)}
-      {...props}
-    />
-  ),
-);
-
-TableCaption.displayName = 'TableCaption';
+function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
+  return <caption className={cn('text-muted-foreground mt-4 text-sm', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports
