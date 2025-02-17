@@ -1,20 +1,15 @@
-import type {
-  ComponentProps,
-  ComponentPropsWithoutRef,
-  ComponentRef,
-  HTMLAttributes,
-  JSX,
-} from 'react';
+import type { ComponentProps, HTMLAttributes, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 import { tv } from 'tailwind-variants';
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils'; /* -----------------------------------------------------------------------------
+ * Variant: SheetContent
+ * -------------------------------------------------------------------------- */
 import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
@@ -69,19 +64,22 @@ const Sheet = SheetPrimitive.Root;
  * Component: SheetTrigger
  * -------------------------------------------------------------------------- */
 
-type SheetTriggerProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Trigger>;
+type SheetTriggerProps = ComponentProps<typeof SheetPrimitive.Trigger>;
 const SheetTrigger = SheetPrimitive.Trigger;
 
 /* -----------------------------------------------------------------------------
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
-type SheetContentElement = ComponentRef<typeof SheetPrimitive.Content>;
-type SheetContentProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Content> &
-  SheetContentVariantsProps;
+type SheetContentProps = ComponentProps<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
 
-const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
-  ({ children, className, side = 'right', ...props }, forwardedRef) => (
+function SheetContent({
+  children,
+  className,
+  side = 'right',
+  ...props
+}: SheetContentProps): JSX.Element {
+  return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
@@ -90,11 +88,7 @@ const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
           'data-[state=closed]:animation-duration-300 data-[state=closed]:animate-fade-out',
         )}
       />
-      <SheetPrimitive.Content
-        ref={forwardedRef}
-        className={sheetContentVariants({ className, side })}
-        {...props}
-      >
+      <SheetPrimitive.Content className={sheetContentVariants({ className, side })} {...props}>
         {children}
         <SheetPrimitive.Close
           className={buttonVariants({
@@ -109,10 +103,8 @@ const SheetContent = forwardRef<SheetContentElement, SheetContentProps>(
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPrimitive.Portal>
-  ),
-);
-
-SheetContent.displayName = SheetPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SheetHeader
@@ -160,67 +152,55 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   );
 }
 
-SheetFooter.displayName = 'SheetFooter';
-
 /* -----------------------------------------------------------------------------
  * Component: SheetTitle
  * -------------------------------------------------------------------------- */
 
-type SheetTitleElement = ComponentRef<typeof SheetPrimitive.Title>;
-type SheetTitleProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Title>;
+type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
 
-const SheetTitle = forwardRef<SheetTitleElement, SheetTitleProps>(
-  ({ className, ...props }, forwardedRef) => (
+function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
+  return (
     <SheetPrimitive.Title
-      ref={forwardedRef}
       className={cn('text-foreground text-lg font-semibold', className)}
       {...props}
     />
-  ),
-);
-
-SheetTitle.displayName = SheetPrimitive.Title.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SheetDescription
  * -------------------------------------------------------------------------- */
 
-type SheetDescriptionElement = ComponentRef<typeof SheetPrimitive.Description>;
-type SheetDescriptionProps = ComponentPropsWithoutRef<typeof SheetPrimitive.Description>;
+type SheetDescriptionProps = ComponentProps<typeof SheetPrimitive.Description>;
 
-const SheetDescription = forwardRef<SheetDescriptionElement, SheetDescriptionProps>(
-  ({ className, ...props }, forwardedRef) => (
+function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.Element {
+  return (
     <SheetPrimitive.Description
-      ref={forwardedRef}
       className={cn('text-muted-foreground text-sm', className)}
       {...props}
     />
-  ),
-);
-
-SheetDescription.displayName = SheetPrimitive.Description.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SheetClose
  * -------------------------------------------------------------------------- */
 
-type SheetCloseElement = ComponentRef<typeof SheetPrimitive.Close>;
-interface SheetCloseProps extends ComponentPropsWithoutRef<typeof SheetPrimitive.Close> {
+interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
 }
 
-const SheetClose = forwardRef<SheetCloseElement, SheetCloseProps>(
-  ({ className, size, variant = 'outline', ...props }, forwardedRef) => (
-    <SheetPrimitive.Close
-      ref={forwardedRef}
-      className={buttonVariants({ className, size, variant })}
-      {...props}
-    />
-  ),
-);
-
-SheetClose.displayName = SheetPrimitive.Close.displayName;
+function SheetClose({
+  className,
+  size,
+  variant = 'outline',
+  ...props
+}: SheetCloseProps): JSX.Element {
+  return (
+    <SheetPrimitive.Close className={buttonVariants({ className, size, variant })} {...props} />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

@@ -1,10 +1,10 @@
 'use client';
 
-import type { ComponentPropsWithoutRef, ComponentRef, HTMLAttributes } from 'react';
+import type { ComponentProps, HTMLAttributes, JSX } from 'react';
 
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { DotIcon } from 'lucide-react';
-import { forwardRef, useContext } from 'react';
+import { useContext } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -12,13 +12,11 @@ import { cn } from '@/lib/utils';
  * Component: InputOtp
  * -------------------------------------------------------------------------- */
 
-type InputOTPElement = ComponentRef<typeof OTPInput>;
-type InputOTPProps = ComponentPropsWithoutRef<typeof OTPInput>;
+type InputOTPProps = ComponentProps<typeof OTPInput>;
 
-const InputOTP = forwardRef<InputOTPElement, InputOTPProps>(
-  ({ className, containerClassName, ...props }, forwardedRef) => (
+function InputOTP({ className, containerClassName, ...props }: InputOTPProps): JSX.Element {
+  return (
     <OTPInput
-      ref={forwardedRef}
       className={cn('disabled:cursor-default', className)}
       containerClassName={cn(
         'flex items-center gap-2',
@@ -27,82 +25,65 @@ const InputOTP = forwardRef<InputOTPElement, InputOTPProps>(
       )}
       {...props}
     />
-  ),
-);
-
-InputOTP.displayName = 'InputOTP';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: InputOTPGroup
  * -------------------------------------------------------------------------- */
 
-type InputOTPGroupElement = HTMLDivElement;
 type InputOTPGroupProps = HTMLAttributes<HTMLDivElement>;
 
-const InputOTPGroup = forwardRef<InputOTPGroupElement, InputOTPGroupProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <div ref={forwardedRef} className={cn('flex items-center', className)} {...props} />
-  ),
-);
-
-InputOTPGroup.displayName = 'InputOTPGroup';
+function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
+  return <div className={cn('flex items-center', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: InputOTPSlot
  * -------------------------------------------------------------------------- */
 
-type InputOTPSlotElement = HTMLDivElement;
-
 interface InputOTPSlotProps extends HTMLAttributes<HTMLDivElement> {
   index: number;
 }
 
-const InputOTPSlot = forwardRef<InputOTPSlotElement, InputOTPSlotProps>(
-  ({ className, index, ...props }, forwardedRef) => {
-    const inputOTPContext = useContext(OTPInputContext);
-    const slot = inputOTPContext.slots[index];
+function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.Element {
+  const inputOTPContext = useContext(OTPInputContext);
+  const slot = inputOTPContext.slots[index];
 
-    return (
-      <div
-        ref={forwardedRef}
-        className={cn(
-          'border-input shadow-xs relative flex size-10 items-center justify-center border-y border-r text-sm transition-all',
-          'first:rounded-l-md first:border-l',
-          'last:rounded-r-md',
-          slot.isActive && 'z-10 outline outline-2',
-          className,
-        )}
-        {...props}
-      >
-        {slot.char}
-        {slot.hasFakeCaret ? (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="animate-caret-blink bg-foreground animation-duration-1000 h-4 w-px" />
-          </div>
-        ) : null}
-      </div>
-    );
-  },
-);
-
-InputOTPSlot.displayName = 'InputOTPSlot';
+  return (
+    <div
+      className={cn(
+        'border-input shadow-xs relative flex size-10 items-center justify-center border-y border-r text-sm transition-all',
+        'first:rounded-l-md first:border-l',
+        'last:rounded-r-md',
+        slot.isActive && 'z-10 outline-2',
+        className,
+      )}
+      {...props}
+    >
+      {slot.char}
+      {slot.hasFakeCaret ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="animate-caret-blink bg-foreground animation-duration-1000 h-4 w-px" />
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: InputOTPSeparator
  * -------------------------------------------------------------------------- */
 
-type InputOTPSeparatorElement = HTMLDivElement;
 type InputOTPSeparatorProps = HTMLAttributes<HTMLDivElement>;
 
-const InputOTPSeparator = forwardRef<InputOTPSeparatorElement, InputOTPSeparatorProps>(
-  ({ ...props }, forwardedRef) => (
-    <div ref={forwardedRef} role="separator" {...props}>
+function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
+  return (
+    <div role="separator" {...props}>
       <DotIcon />
     </div>
-  ),
-);
-
-InputOTPSeparator.displayName = 'InputOTPSeparator';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

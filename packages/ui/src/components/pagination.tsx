@@ -1,7 +1,6 @@
 import type { AnchorHTMLAttributes, HTMLAttributes, JSX, LiHTMLAttributes } from 'react';
 
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
@@ -29,33 +28,21 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
  * Component: PaginationContent
  * -------------------------------------------------------------------------- */
 
-type PaginationContentElement = HTMLUListElement;
 type PaginationContentProps = HTMLAttributes<HTMLUListElement>;
 
-const PaginationContent = forwardRef<PaginationContentElement, PaginationContentProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <ul
-      ref={forwardedRef}
-      className={cn('flex flex-row items-center gap-1', className)}
-      {...props}
-    />
-  ),
-);
-
-PaginationContent.displayName = 'PaginationContent';
+function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
+  return <ul className={cn('flex flex-row items-center gap-1', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: PaginationItem
  * -------------------------------------------------------------------------- */
 
-type PaginationItemElement = HTMLLIElement;
 type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
 
-const PaginationItem = forwardRef<PaginationItemElement, PaginationItemProps>(
-  (props, forwardedRef) => <li ref={forwardedRef} {...props} />,
-);
-
-PaginationItem.displayName = 'PaginationItem';
+function PaginationItem(props: PaginationItemProps): JSX.Element {
+  return <li {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: PaginationLink

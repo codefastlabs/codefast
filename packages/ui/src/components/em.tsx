@@ -1,24 +1,20 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Em
  * -------------------------------------------------------------------------- */
 
-type EmElement = HTMLElement;
 interface EmProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Em = forwardRef<EmElement, EmProps>(({ asChild, ...props }, forwardedRef) => {
+function Em({ asChild, ...props }: EmProps): JSX.Element {
   const Component = asChild ? Slot : 'em';
 
-  return <Component ref={forwardedRef} {...props} />;
-});
-
-Em.displayName = 'Em';
+  return <Component {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

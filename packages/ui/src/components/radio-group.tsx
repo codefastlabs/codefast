@@ -1,7 +1,6 @@
-import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -9,34 +8,21 @@ import { cn } from '@/lib/utils';
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
-type RadioGroupElement = ComponentRef<typeof RadioGroupPrimitive.Root>;
-type RadioGroupProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>;
+type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 
-const RadioGroup = forwardRef<RadioGroupElement, RadioGroupProps>(
-  ({ className, ...props }, forwardedRef) => {
-    return (
-      <RadioGroupPrimitive.Root
-        className={cn('grid gap-2', className)}
-        {...props}
-        ref={forwardedRef}
-      />
-    );
-  },
-);
-
-RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
+function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
-type RadioGroupItemElement = ComponentRef<typeof RadioGroupPrimitive.Item>;
-type RadioGroupItemProps = ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>;
+type RadioGroupItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
 
-const RadioGroupItem = forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
-  ({ className, ...props }, forwardedRef) => (
+function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Element {
+  return (
     <RadioGroupPrimitive.Item
-      ref={forwardedRef}
       className={cn(
         'peer',
         'border-input shadow-xs inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition',
@@ -50,10 +36,8 @@ const RadioGroupItem = forwardRef<RadioGroupItemElement, RadioGroupItemProps>(
     >
       <RadioGroupPrimitive.Indicator className="bg-background size-1 rounded-full" />
     </RadioGroupPrimitive.Item>
-  ),
-);
-
-RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

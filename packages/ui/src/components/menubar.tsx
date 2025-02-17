@@ -1,14 +1,7 @@
-import type {
-  ComponentProps,
-  ComponentPropsWithoutRef,
-  ComponentRef,
-  HTMLAttributes,
-  JSX,
-} from 'react';
+import type { ComponentProps, HTMLAttributes, JSX } from 'react';
 
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -23,56 +16,50 @@ const MenubarMenu = MenubarPrimitive.Menu;
  * Component: MenubarGroup
  * -------------------------------------------------------------------------- */
 
-type MenubarGroupProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Group>;
+type MenubarGroupProps = ComponentProps<typeof MenubarPrimitive.Group>;
 const MenubarGroup = MenubarPrimitive.Group;
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarSub
  * -------------------------------------------------------------------------- */
 
-type MenubarSubProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Sub>;
+type MenubarSubProps = ComponentProps<typeof MenubarPrimitive.Sub>;
 const MenubarSub = MenubarPrimitive.Sub;
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarRadioGroup
  * -------------------------------------------------------------------------- */
 
-type MenubarRadioGroupProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.RadioGroup>;
+type MenubarRadioGroupProps = ComponentProps<typeof MenubarPrimitive.RadioGroup>;
 const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 
 /* -----------------------------------------------------------------------------
  * Component: Menubar
  * -------------------------------------------------------------------------- */
 
-type MenubarElement = ComponentRef<typeof MenubarPrimitive.Root>;
-type MenubarProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>;
+type MenubarProps = ComponentProps<typeof MenubarPrimitive.Root>;
 
-const Menubar = forwardRef<MenubarElement, MenubarProps>(
-  ({ className, ...props }, forwardedRef) => (
+function Menubar({ className, ...props }: MenubarProps): JSX.Element {
+  return (
     <MenubarPrimitive.Root
-      ref={forwardedRef}
       className={cn(
         'bg-background flex h-10 items-center space-x-1 rounded-md border p-1',
         className,
       )}
       {...props}
     />
-  ),
-);
-
-Menubar.displayName = MenubarPrimitive.Root.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarTrigger
  * -------------------------------------------------------------------------- */
 
-type MenubarTriggerElement = ComponentRef<typeof MenubarPrimitive.Trigger>;
-type MenubarTriggerProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Trigger>;
+type MenubarTriggerProps = ComponentProps<typeof MenubarPrimitive.Trigger>;
 
-const MenubarTrigger = forwardRef<MenubarTriggerElement, MenubarTriggerProps>(
-  ({ className, ...props }, forwardedRef) => (
+function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Element {
+  return (
     <MenubarPrimitive.Trigger
-      ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'flex cursor-pointer select-none items-center rounded-sm text-sm font-medium',
@@ -82,26 +69,25 @@ const MenubarTrigger = forwardRef<MenubarTriggerElement, MenubarTriggerProps>(
       )}
       {...props}
     />
-  ),
-);
-
-MenubarTrigger.displayName = MenubarPrimitive.Trigger.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarSubTrigger
  * -------------------------------------------------------------------------- */
 
-type MenubarSubTriggerElement = ComponentRef<typeof MenubarPrimitive.SubTrigger>;
-
-interface MenubarSubTriggerProps
-  extends ComponentPropsWithoutRef<typeof MenubarPrimitive.SubTrigger> {
+interface MenubarSubTriggerProps extends ComponentProps<typeof MenubarPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
-const MenubarSubTrigger = forwardRef<MenubarSubTriggerElement, MenubarSubTriggerProps>(
-  ({ children, className, inset, ...props }, forwardedRef) => (
+function MenubarSubTrigger({
+  children,
+  className,
+  inset,
+  ...props
+}: MenubarSubTriggerProps): JSX.Element {
+  return (
     <MenubarPrimitive.SubTrigger
-      ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'flex cursor-pointer select-none items-center rounded-sm text-sm',
@@ -115,23 +101,19 @@ const MenubarSubTrigger = forwardRef<MenubarSubTriggerElement, MenubarSubTrigger
       {children}
       <ChevronRightIcon className="ml-auto size-4" />
     </MenubarPrimitive.SubTrigger>
-  ),
-);
-
-MenubarSubTrigger.displayName = MenubarPrimitive.SubTrigger.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarSubContent
  * -------------------------------------------------------------------------- */
 
-type MenubarSubContentElement = ComponentRef<typeof MenubarPrimitive.SubContent>;
-type MenubarSubContentProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.SubContent>;
+type MenubarSubContentProps = ComponentProps<typeof MenubarPrimitive.SubContent>;
 
-const MenubarSubContent = forwardRef<MenubarSubContentElement, MenubarSubContentProps>(
-  ({ className, ...props }, forwardedRef) => (
+function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX.Element {
+  return (
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.SubContent
-        ref={forwardedRef}
         className={cn(
           'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
           'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95',
@@ -149,23 +131,25 @@ const MenubarSubContent = forwardRef<MenubarSubContentElement, MenubarSubContent
         {...props}
       />
     </MenubarPrimitive.Portal>
-  ),
-);
-
-MenubarSubContent.displayName = MenubarPrimitive.SubContent.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarContent
  * -------------------------------------------------------------------------- */
 
-type MenubarContentElement = ComponentRef<typeof MenubarPrimitive.Content>;
-type MenubarContentProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Content>;
+type MenubarContentProps = ComponentProps<typeof MenubarPrimitive.Content>;
 
-const MenubarContent = forwardRef<MenubarContentElement, MenubarContentProps>(
-  ({ align = 'start', alignOffset = -4, className, sideOffset = 8, ...props }, forwardedRef) => (
+function MenubarContent({
+  align = 'start',
+  alignOffset = -4,
+  className,
+  sideOffset = 8,
+  ...props
+}: MenubarContentProps): JSX.Element {
+  return (
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.Content
-        ref={forwardedRef}
         align={align}
         alignOffset={alignOffset}
         className={cn(
@@ -177,25 +161,20 @@ const MenubarContent = forwardRef<MenubarContentElement, MenubarContentProps>(
         {...props}
       />
     </MenubarPrimitive.Portal>
-  ),
-);
-
-MenubarContent.displayName = MenubarPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarItem
  * -------------------------------------------------------------------------- */
 
-type MenubarItemElement = ComponentRef<typeof MenubarPrimitive.Item>;
-
-interface MenubarItemProps extends ComponentPropsWithoutRef<typeof MenubarPrimitive.Item> {
+interface MenubarItemProps extends ComponentProps<typeof MenubarPrimitive.Item> {
   inset?: boolean;
 }
 
-const MenubarItem = forwardRef<MenubarItemElement, MenubarItemProps>(
-  ({ className, inset, ...props }, forwardedRef) => (
+function MenubarItem({ className, inset, ...props }: MenubarItemProps): JSX.Element {
+  return (
     <MenubarPrimitive.Item
-      ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
@@ -206,22 +185,23 @@ const MenubarItem = forwardRef<MenubarItemElement, MenubarItemProps>(
       )}
       {...props}
     />
-  ),
-);
-
-MenubarItem.displayName = MenubarPrimitive.Item.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarCheckboxItem
  * -------------------------------------------------------------------------- */
 
-type MenubarCheckboxItemElement = ComponentRef<typeof MenubarPrimitive.CheckboxItem>;
-type MenubarCheckboxItemProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.CheckboxItem>;
+type MenubarCheckboxItemProps = ComponentProps<typeof MenubarPrimitive.CheckboxItem>;
 
-const MenubarCheckboxItem = forwardRef<MenubarCheckboxItemElement, MenubarCheckboxItemProps>(
-  ({ checked, children, className, ...props }, forwardedRef) => (
+function MenubarCheckboxItem({
+  checked,
+  children,
+  className,
+  ...props
+}: MenubarCheckboxItemProps): JSX.Element {
+  return (
     <MenubarPrimitive.CheckboxItem
-      ref={forwardedRef}
       checked={checked}
       className={cn(
         'gap-x-2 px-3 py-1.5',
@@ -240,22 +220,18 @@ const MenubarCheckboxItem = forwardRef<MenubarCheckboxItemElement, MenubarCheckb
       </span>
       {children}
     </MenubarPrimitive.CheckboxItem>
-  ),
-);
-
-MenubarCheckboxItem.displayName = MenubarPrimitive.CheckboxItem.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarRadioItem
  * -------------------------------------------------------------------------- */
 
-type MenubarRadioItemElement = ComponentRef<typeof MenubarPrimitive.RadioItem>;
-type MenubarRadioItemProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.RadioItem>;
+type MenubarRadioItemProps = ComponentProps<typeof MenubarPrimitive.RadioItem>;
 
-const MenubarRadioItem = forwardRef<MenubarRadioItemElement, MenubarRadioItemProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemProps): JSX.Element {
+  return (
     <MenubarPrimitive.RadioItem
-      ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'pl-8',
@@ -273,25 +249,20 @@ const MenubarRadioItem = forwardRef<MenubarRadioItemElement, MenubarRadioItemPro
       </span>
       {children}
     </MenubarPrimitive.RadioItem>
-  ),
-);
-
-MenubarRadioItem.displayName = MenubarPrimitive.RadioItem.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarLabel
  * -------------------------------------------------------------------------- */
 
-type MenubarLabelElement = ComponentRef<typeof MenubarPrimitive.Label>;
-
-interface MenubarLabelProps extends ComponentPropsWithoutRef<typeof MenubarPrimitive.Label> {
+interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label> {
   inset?: boolean;
 }
 
-const MenubarLabel = forwardRef<MenubarLabelElement, MenubarLabelProps>(
-  ({ className, inset, ...props }, forwardedRef) => (
+function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
+  return (
     <MenubarPrimitive.Label
-      ref={forwardedRef}
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'flex items-center text-sm font-semibold',
@@ -300,29 +271,20 @@ const MenubarLabel = forwardRef<MenubarLabelElement, MenubarLabelProps>(
       )}
       {...props}
     />
-  ),
-);
-
-MenubarLabel.displayName = MenubarPrimitive.Label.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarSeparator
  * -------------------------------------------------------------------------- */
 
-type MenubarSeparatorElement = ComponentRef<typeof MenubarPrimitive.Separator>;
-type MenubarSeparatorProps = ComponentPropsWithoutRef<typeof MenubarPrimitive.Separator>;
+type MenubarSeparatorProps = ComponentProps<typeof MenubarPrimitive.Separator>;
 
-const MenubarSeparator = forwardRef<MenubarSeparatorElement, MenubarSeparatorProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <MenubarPrimitive.Separator
-      ref={forwardedRef}
-      className={cn('bg-muted mx-2 my-1 h-px', className)}
-      {...props}
-    />
-  ),
-);
-
-MenubarSeparator.displayName = MenubarPrimitive.Separator.displayName;
+function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.Element {
+  return (
+    <MenubarPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarShortcut
@@ -343,20 +305,11 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Ele
  * Component: MenubarArrow
  * -------------------------------------------------------------------------- */
 
-type MenubarArrowElement = ComponentRef<typeof MenubarPrimitive.Arrow>;
 type MenubarArrowProps = MenubarPrimitive.MenubarArrowProps;
 
-const MenubarArrow = forwardRef<MenubarArrowElement, MenubarArrowProps>(
-  ({ className, ...props }, forwardedRef) => (
-    <MenubarPrimitive.Arrow
-      ref={forwardedRef}
-      className={cn('fill-popover', className)}
-      {...props}
-    />
-  ),
-);
-
-MenubarArrow.displayName = MenubarPrimitive.Arrow.displayName;
+function MenubarArrow({ className, ...props }: MenubarArrowProps): JSX.Element {
+  return <MenubarPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

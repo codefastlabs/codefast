@@ -1,7 +1,6 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -9,18 +8,15 @@ import { cn } from '@/lib/utils';
  * Component: Kbd
  * -------------------------------------------------------------------------- */
 
-type KbdElement = HTMLElement;
-
 interface KbdProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Kbd = forwardRef<KbdElement, KbdProps>(({ asChild, className, ...props }, forwardedRef) => {
+function Kbd({ asChild, className, ...props }: KbdProps): JSX.Element {
   const Component = asChild ? Slot : 'kbd';
 
   return (
     <Component
-      ref={forwardedRef}
       className={cn(
         'bg-muted text-muted-foreground inline-flex h-5 select-none items-center gap-1 rounded-sm border px-1.5 font-mono text-xs font-medium',
         className,
@@ -28,9 +24,7 @@ const Kbd = forwardRef<KbdElement, KbdProps>(({ asChild, className, ...props }, 
       {...props}
     />
   );
-});
-
-Kbd.displayName = 'Kbd';
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

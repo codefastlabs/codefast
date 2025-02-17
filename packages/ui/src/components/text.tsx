@@ -1,13 +1,11 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Text
  * -------------------------------------------------------------------------- */
 
-type TextElement = HTMLParagraphElement;
 interface TextParagraphProps extends HTMLAttributes<HTMLParagraphElement> {
   as?: 'p';
 }
@@ -20,15 +18,11 @@ type TextProps = (TextParagraphProps | TextSpanProps) & {
   asChild?: boolean;
 };
 
-const Text = forwardRef<TextElement, TextProps>(
-  ({ as: Tag = 'p', asChild, ...props }, forwardedRef) => {
-    const Component = asChild ? Slot : Tag;
+function Text({ as: Tag = 'p', asChild, ...props }: TextProps): JSX.Element {
+  const Component = asChild ? Slot : Tag;
 
-    return <Component ref={forwardedRef} {...props} />;
-  },
-);
-
-Text.displayName = 'Text';
+  return <Component {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

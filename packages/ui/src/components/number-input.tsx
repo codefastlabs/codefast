@@ -1,8 +1,7 @@
-import type { ComponentProps, ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as NumberInputPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import type { InputVariantsProps } from '@/variants/input.variants';
 
@@ -17,38 +16,34 @@ const { input, root } = inputVariants();
  * Component: NumberInput
  * -------------------------------------------------------------------------- */
 
-type NumberInputElement = ComponentRef<typeof NumberInputPrimitive.Item>;
 interface NumberInputProps
   extends InputVariantsProps,
     ComponentProps<typeof NumberInputPrimitive.Root>,
-    ComponentPropsWithoutRef<typeof NumberInputPrimitive.Item> {}
+    ComponentProps<typeof NumberInputPrimitive.Item> {}
 
-const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
-  (
-    {
-      id,
-      ariaDecrementLabel,
-      ariaIncrementLabel,
-      className,
-      defaultValue,
-      disabled,
-      formatOptions,
-      inputSize,
-      loaderPosition,
-      loading,
-      max,
-      min,
-      onChange,
-      prefix,
-      readOnly,
-      spinner,
-      step,
-      suffix,
-      value,
-      ...props
-    },
-    forwardedRef,
-  ) => (
+function NumberInput({
+  id,
+  ariaDecrementLabel,
+  ariaIncrementLabel,
+  className,
+  defaultValue,
+  disabled,
+  formatOptions,
+  inputSize,
+  loaderPosition,
+  loading,
+  max,
+  min,
+  onChange,
+  prefix,
+  readOnly,
+  spinner,
+  step,
+  suffix,
+  value,
+  ...props
+}: NumberInputProps): JSX.Element {
+  return (
     <NumberInputPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
@@ -70,7 +65,6 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
       onChange={onChange}
     >
       <NumberInputPrimitive.Item
-        ref={forwardedRef}
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
@@ -107,10 +101,8 @@ const NumberInput = forwardRef<NumberInputElement, NumberInputProps>(
         </NumberInputPrimitive.DecrementButton>
       </div>
     </NumberInputPrimitive.Root>
-  ),
-);
-
-NumberInput.displayName = 'NumberInput';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports
