@@ -111,4 +111,61 @@
     --ui-color-chart-4: var(--color-yellow-500);
     --ui-color-chart-5: var(--color-fuchsia-500);
   }
+
+  .dark {
+    --ui-color-background: var(--color-slate-950);
+    --ui-color-foreground: var(--color-slate-50);
+
+    --ui-color-input: var(--color-slate-700);
+    --ui-color-border: var(--color-slate-700);
+    --ui-color-ring: var(--color-sky-600);
+
+    --ui-color-primary: var(--color-sky-400);
+    --ui-color-primary-foreground: var(--color-sky-950);
+
+    --ui-color-secondary: var(--color-slate-800);
+    --ui-color-secondary-foreground: var(--color-slate-50);
+
+    --ui-color-accent: var(--color-slate-800);
+    --ui-color-accent-foreground: var(--color-slate-50);
+
+    --ui-color-muted: var(--color-slate-800);
+    --ui-color-muted-foreground: var(--color-slate-500);
+
+    --ui-color-destructive: var(--color-red-500);
+    --ui-color-destructive-foreground: var(--color-red-950);
+
+    --ui-color-info: var(--color-cyan-300);
+    --ui-color-info-foreground: var(--color-cyan-950);
+
+    --ui-color-success: var(--color-green-300);
+    --ui-color-success-foreground: var(--color-green-950);
+
+    --ui-color-warning: var(--color-yellow-300);
+    --ui-color-warning-foreground: var(--color-yellow-950);
+
+    --ui-color-popover: var(--color-slate-950);
+    --ui-color-popover-foreground: var(--color-slate-50);
+
+    --ui-color-card: var(--color-slate-950);
+    --ui-color-card-foreground: var(--color-slate-50);
+
+    --ui-color-sidebar: var(--color-slate-950);
+    --ui-color-sidebar-foreground: var(--color-slate-300);
+
+    --ui-color-sidebar-primary: var(--color-slate-100);
+    --ui-color-sidebar-primary-foreground: var(--color-slate-950);
+
+    --ui-color-sidebar-accent: var(--color-slate-900);
+    --ui-color-sidebar-accent-foreground: var(--color-slate-100);
+
+    --ui-color-sidebar-border: var(--color-slate-800);
+    --ui-color-sidebar-ring: var(--color-sky-900);
+
+    --ui-color-chart-1: var(--color-orange-500);
+    --ui-color-chart-2: var(--color-cyan-500);
+    --ui-color-chart-3: var(--color-lime-500);
+    --ui-color-chart-4: var(--color-yellow-500);
+    --ui-color-chart-5: var(--color-fuchsia-500);
+  }
 }
