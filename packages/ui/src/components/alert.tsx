@@ -19,6 +19,10 @@ const alertVariants = tv({
       default: 'bg-background text-foreground [&>svg]:text-foreground',
       destructive:
         'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
+      info: 'border-info/50 text-info dark:border-info [&>svg]:text-info',
+      primary: 'border-primary/50 text-primary dark:border-primary [&>svg]:text-primary',
+      success: 'border-success/50 text-success dark:border-success [&>svg]:text-success',
+      warning: 'border-warning/50 text-warning dark:border-warning [&>svg]:text-warning',
     },
   },
 });
