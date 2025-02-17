@@ -323,7 +323,7 @@ export const sidebarRightData: SidebarRightData = {
     },
   ],
   user: {
-    avatar: '/avatars/shadcn.jpg',
+    avatar: '/avatars/01.png',
     email: 'm@example.com',
     name: 'shadcn',
   },
