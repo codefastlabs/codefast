@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.2.21
+
+### Patch Changes
+
+- [`f0dc1d9`](https://github.com/codefastlabs/codefast/commit/f0dc1d9949627a511edd1c60c6a6bdc363a036f5) Thanks [@thevuong](https://github.com/thevuong)! - update dev and runtime dependencies
+
 ## 0.2.20
 
 ### Patch Changes
