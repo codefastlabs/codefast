@@ -2,19 +2,13 @@
 
 import type { Scope } from '@radix-ui/react-context';
 import type * as LabelPrimitive from '@radix-ui/react-label';
-import type {
-  ComponentProps,
-  ComponentPropsWithoutRef,
-  ComponentRef,
-  HTMLAttributes,
-  JSX,
-} from 'react';
+import type { ComponentProps, HTMLAttributes, JSX, ReactNode } from 'react';
 import type { ControllerProps, FieldPath, FieldValues, GlobalError } from 'react-hook-form';
 
 import { createContextScope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
 import { result } from 'lodash-es';
-import { forwardRef, useId } from 'react';
+import { useId } from 'react';
 import { Controller, FormProvider, useFormState } from 'react-hook-form';
 
 import { Label } from '@/components/label';
@@ -99,41 +93,33 @@ interface FormItemContextValue {
 const [FormItemProvider, useFormItemContext] =
   createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
-type FormItemElement = HTMLDivElement;
 type FormItemProps = HTMLAttributes<HTMLDivElement>;
 
-const FormItem = forwardRef<FormItemElement, FormItemProps>(
-  ({ __scopeFormField, className, ...props }: ScopedProps<FormItemProps>, forwardedRef) => {
-    const id = useId();
+function FormItem({
+  __scopeFormField,
+  className,
+  ...props
+}: ScopedProps<FormItemProps>): JSX.Element {
+  const id = useId();
 
-    return (
-      <FormItemProvider id={id} scope={__scopeFormField}>
-        <div ref={forwardedRef} className={cn('grid gap-2', className)} {...props} />
-      </FormItemProvider>
-    );
-  },
-);
-
-FormItem.displayName = FORM_ITEM_NAME;
+  return (
+    <FormItemProvider id={id} scope={__scopeFormField}>
+      <div className={cn('grid gap-2', className)} {...props} />
+    </FormItemProvider>
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: FormLabel
  * -------------------------------------------------------------------------- */
 
-const FORM_LABEL_NAME = 'FormLabel';
+type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 
-type FormFieldElement = ComponentRef<typeof LabelPrimitive.Root>;
-type FormLabelProps = ComponentPropsWithoutRef<typeof LabelPrimitive.Root>;
+function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
+  const { formItemId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
-const FormLabel = forwardRef<FormFieldElement, FormLabelProps>(
-  ({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>, forwardedRef) => {
-    const { formItemId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
-
-    return <Label ref={forwardedRef} htmlFor={formItemId} {...props} />;
-  },
-);
-
-FormLabel.displayName = FORM_LABEL_NAME;
+  return <Label htmlFor={formItemId} {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: FormControl
@@ -141,59 +127,47 @@ FormLabel.displayName = FORM_LABEL_NAME;
 
 const FORM_CONTROL_NAME = 'FormControl';
 
-type FormControlElement = ComponentRef<typeof Slot>;
-type FormControlProps = ComponentPropsWithoutRef<typeof Slot>;
+type FormControlProps = ComponentProps<typeof Slot>;
 
-const FormControl = forwardRef<FormControlElement, FormControlProps>(
-  ({ __scopeFormField, ...props }: ScopedProps<FormControlProps>, forwardedRef) => {
-    const { formDescriptionId, formItemId, formMessageId } = useFormItem(
-      FORM_MESSAGE_NAME,
-      __scopeFormField,
-    );
-    const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
-    const { errors } = useFormState({ name });
+function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
+  const { formDescriptionId, formItemId, formMessageId } = useFormItem(
+    FORM_MESSAGE_NAME,
+    __scopeFormField,
+  );
+  const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
+  const { errors } = useFormState({ name });
 
-    return (
-      <Slot
-        ref={forwardedRef}
-        aria-describedby={
-          errors[name] ? `${formDescriptionId} ${formMessageId}` : formDescriptionId
-        }
-        aria-invalid={Boolean(errors[name])}
-        id={formItemId}
-        {...props}
-      />
-    );
-  },
-);
-
-FormControl.displayName = FORM_CONTROL_NAME;
+  return (
+    <Slot
+      aria-describedby={errors[name] ? `${formDescriptionId} ${formMessageId}` : formDescriptionId}
+      aria-invalid={Boolean(errors[name])}
+      id={formItemId}
+      {...props}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: FormDescription
  * -------------------------------------------------------------------------- */
 
-const FORM_DESCRIPTION_NAME = 'FormDescription';
-
-type FormDescriptionElement = HTMLParagraphElement;
 type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
 
-const FormDescription = forwardRef<FormDescriptionElement, FormDescriptionProps>(
-  ({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>, forwardedRef) => {
-    const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
+function FormDescription({
+  __scopeFormField,
+  className,
+  ...props
+}: ScopedProps<FormDescriptionProps>): JSX.Element {
+  const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
-    return (
-      <p
-        ref={forwardedRef}
-        className={cn('text-muted-foreground text-xs', className)}
-        id={formDescriptionId}
-        {...props}
-      />
-    );
-  },
-);
-
-FormDescription.displayName = FORM_DESCRIPTION_NAME;
+  return (
+    <p
+      className={cn('text-muted-foreground text-xs', className)}
+      id={formDescriptionId}
+      {...props}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: FormMessage
@@ -201,42 +175,38 @@ FormDescription.displayName = FORM_DESCRIPTION_NAME;
 
 const FORM_MESSAGE_NAME = 'FormMessage';
 
-type FormMessageElement = HTMLParagraphElement;
 type FormMessageProps = HTMLAttributes<HTMLParagraphElement>;
 
-const FormMessage = forwardRef<FormMessageElement, FormMessageProps>(
-  (
-    { __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>,
-    forwardedRef,
-  ) => {
-    const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
-    const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
-    const { errors } = useFormState({ name });
-    const error = result<GlobalError | null>(errors, name);
-    const body = error?.message ? String(error.message) : children;
+function FormMessage({
+  __scopeFormField,
+  children,
+  className,
+  ...props
+}: ScopedProps<FormMessageProps>): ReactNode {
+  const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
+  const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
+  const { errors } = useFormState({ name });
+  const error = result<GlobalError | null>(errors, name);
+  const body = error?.message ? String(error.message) : children;
 
-    if (!body) {
-      return null;
-    }
+  if (!body) {
+    return null;
+  }
 
-    return (
-      <p
-        ref={forwardedRef}
-        className={cn(
-          'text-xs',
-          error?.message ? 'text-destructive font-medium' : 'text-muted-foreground',
-          className,
-        )}
-        id={formMessageId}
-        {...props}
-      >
-        {body}
-      </p>
-    );
-  },
-);
-
-FormMessage.displayName = FORM_MESSAGE_NAME;
+  return (
+    <p
+      className={cn(
+        'text-xs',
+        error?.message ? 'text-destructive font-medium' : 'text-muted-foreground',
+        className,
+      )}
+      id={formMessageId}
+      {...props}
+    >
+      {body}
+    </p>
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

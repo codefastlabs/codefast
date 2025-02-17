@@ -6,7 +6,7 @@ import type {
   DayButtonProps,
   DayPickerProps,
 } from '@codefast-ui/day-picker';
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 
 import { DayFlag, DayPicker, SelectionState, UI } from '@codefast-ui/day-picker';
 import { format } from 'date-fns';
@@ -201,7 +201,7 @@ function CalendarRangeLabel({
   date,
   formatStr = 'LLL dd, y',
   placeholder = 'Pick a date',
-}: CalendarRangeLabelProps): JSX.Element | string {
+}: CalendarRangeLabelProps): ReactNode {
   if (!date?.from) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -235,7 +235,7 @@ function CalendarLabel({
   date,
   formatStr = 'PPP',
   placeholder = 'Pick a date',
-}: CalendarLabelProps): JSX.Element | string {
+}: CalendarLabelProps): ReactNode {
   if (!date) {
     return <span className="truncate">{placeholder}</span>;
   }

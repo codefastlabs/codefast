@@ -1,9 +1,8 @@
 'use client';
 
-import type { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes, JSX } from 'react';
 
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -11,15 +10,13 @@ import { cn } from '@/lib/utils';
  * Component: Radio
  * -------------------------------------------------------------------------- */
 
-type RadioElement = HTMLInputElement;
 interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
   onValueChange?: (value: string) => void;
 }
 
-const Radio = forwardRef<RadioElement, RadioProps>(
-  ({ className, onChange, onValueChange, ...props }, forwardedRef) => (
+function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JSX.Element {
+  return (
     <input
-      ref={forwardedRef}
       className={cn(
         'peer appearance-none',
         'border-input shadow-xs inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition',
@@ -37,10 +34,8 @@ const Radio = forwardRef<RadioElement, RadioProps>(
       )}
       {...props}
     />
-  ),
-);
-
-Radio.displayName = 'Radio';
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

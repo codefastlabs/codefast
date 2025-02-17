@@ -1,9 +1,8 @@
-import type { ComponentPropsWithoutRef, ComponentRef, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon } from 'lucide-react';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -11,21 +10,21 @@ import { cn } from '@/lib/utils';
  * Component: Accordion
  * -------------------------------------------------------------------------- */
 
-type AccordionProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Root>;
+type AccordionProps = ComponentProps<typeof AccordionPrimitive.Root>;
 const Accordion = AccordionPrimitive.Root;
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
-type AccordionItemProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>;
+type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
 const AccordionItem = AccordionPrimitive.Item;
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionIcon
  * -------------------------------------------------------------------------- */
 
-interface AccordionIconProps extends ComponentPropsWithoutRef<typeof Slot> {
+interface AccordionIconProps extends ComponentProps<typeof Slot> {
   asChild?: boolean;
   className?: string;
 }
@@ -60,14 +59,12 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
-type AccordionTriggerElement = ComponentRef<typeof AccordionPrimitive.Trigger>;
-type AccordionTriggerProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>;
+type AccordionTriggerProps = ComponentProps<typeof AccordionPrimitive.Trigger>;
 
-const AccordionTrigger = forwardRef<AccordionTriggerElement, AccordionTriggerProps>(
-  ({ className, ...props }, forwardedRef) => (
+function AccordionTrigger({ className, ...props }: AccordionTriggerProps): JSX.Element {
+  return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
-        ref={forwardedRef}
         className={cn(
           'group flex grow items-center gap-2 py-4 text-left text-sm font-medium',
           className,
@@ -75,8 +72,8 @@ const AccordionTrigger = forwardRef<AccordionTriggerElement, AccordionTriggerPro
         {...props}
       />
     </AccordionPrimitive.Header>
-  ),
-);
+  );
+}
 
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
@@ -84,13 +81,11 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */
 
-type AccordionContentElement = ComponentRef<typeof AccordionPrimitive.Content>;
-type AccordionContentProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>;
+type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
 
-const AccordionContent = forwardRef<AccordionContentElement, AccordionContentProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
+  return (
     <AccordionPrimitive.Content
-      ref={forwardedRef}
       className={cn(
         'overflow-hidden',
         'data-[state=open]:animate-collapsible-open',
@@ -100,10 +95,8 @@ const AccordionContent = forwardRef<AccordionContentElement, AccordionContentPro
     >
       <div className={cn('pb-4 pt-0 text-sm', className)}>{children}</div>
     </AccordionPrimitive.Content>
-  ),
-);
-
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

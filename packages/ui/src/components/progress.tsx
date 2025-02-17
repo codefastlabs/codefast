@@ -1,7 +1,6 @@
-import type { ComponentPropsWithoutRef, ComponentRef } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as ProgressPrimitive from '@radix-ui/react-progress';
-import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -9,13 +8,11 @@ import { cn } from '@/lib/utils';
  * Component: Progress
  * -------------------------------------------------------------------------- */
 
-type ProgressElement = ComponentRef<typeof ProgressPrimitive.Root>;
-type ProgressProps = ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>;
+type ProgressProps = ComponentProps<typeof ProgressPrimitive.Root>;
 
-const Progress = forwardRef<ProgressElement, ProgressProps>(
-  ({ className, value, ...props }, forwardedRef) => (
+function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
+  return (
     <ProgressPrimitive.Root
-      ref={forwardedRef}
       className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', className)}
       {...props}
     >
@@ -26,10 +23,8 @@ const Progress = forwardRef<ProgressElement, ProgressProps>(
         }}
       />
     </ProgressPrimitive.Root>
-  ),
-);
-
-Progress.displayName = ProgressPrimitive.Root.displayName;
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

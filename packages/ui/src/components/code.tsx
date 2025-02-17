@@ -1,24 +1,20 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
-import { forwardRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Code
  * -------------------------------------------------------------------------- */
 
-type CodeElement = HTMLElement;
 interface CodeProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
 }
 
-const Code = forwardRef<CodeElement, CodeProps>(({ asChild, ...props }, forwardedRef) => {
+function Code({ asChild, ...props }: CodeProps): JSX.Element {
   const Component = asChild ? Slot : 'code';
 
-  return <Component ref={forwardedRef} {...props} />;
-});
-
-Code.displayName = 'Code';
+  return <Component {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

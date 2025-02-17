@@ -1,12 +1,11 @@
 'use client';
 
 import type { Scope } from '@radix-ui/react-context';
-import type { ComponentPropsWithoutRef, ComponentRef, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 
 import { createContextScope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
-import { forwardRef } from 'react';
 
 import type { ToggleVariantsProps } from '@/variants/toggle.variants';
 
@@ -28,41 +27,31 @@ const useToggleGroupScope = createToggleGroupScope();
 const [ToggleGroupProvider, useToggleGroupContext] =
   createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
-type ToggleGroupElement = ComponentRef<typeof ToggleGroupPrimitive.Root>;
-type ToggleGroupProps = ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-  ToggleVariantsProps;
+type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
 
-const ToggleGroup = forwardRef<ToggleGroupElement, ToggleGroupProps>(
-  (
-    {
-      __scopeToggleGroup,
-      children,
-      className,
-      icon,
-      size,
-      variant,
-      ...props
-    }: ScopedProps<ToggleGroupProps>,
-    forwardedRef,
-  ) => {
-    const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
+function ToggleGroup({
+  __scopeToggleGroup,
+  children,
+  className,
+  icon,
+  size,
+  variant,
+  ...props
+}: ScopedProps<ToggleGroupProps>): JSX.Element {
+  const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
-    return (
-      <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
-        <ToggleGroupPrimitive.Root
-          ref={forwardedRef}
-          className={cn('flex items-center justify-center gap-1.5', className)}
-          {...toggleGroupScope}
-          {...props}
-        >
-          {children}
-        </ToggleGroupPrimitive.Root>
-      </ToggleGroupProvider>
-    );
-  },
-);
-
-ToggleGroup.displayName = TOGGLE_GROUP_NAME;
+  return (
+    <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
+      <ToggleGroupPrimitive.Root
+        className={cn('flex items-center justify-center gap-1.5', className)}
+        {...toggleGroupScope}
+        {...props}
+      >
+        {children}
+      </ToggleGroupPrimitive.Root>
+    </ToggleGroupProvider>
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroupItem
@@ -70,44 +59,35 @@ ToggleGroup.displayName = TOGGLE_GROUP_NAME;
 
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
-type ToggleGroupItemElement = ComponentRef<typeof ToggleGroupPrimitive.Item>;
 interface ToggleGroupItemProps
-  extends Omit<ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
+  extends Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
   prefix?: ReactNode;
   suffix?: ReactNode;
 }
 
-const ToggleGroupItem = forwardRef<ToggleGroupItemElement, ToggleGroupItemProps>(
-  (
-    {
-      __scopeToggleGroup,
-      children,
-      className,
-      prefix,
-      suffix,
-      ...props
-    }: ScopedProps<ToggleGroupItemProps>,
-    forwardedRef,
-  ) => {
-    const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
-    const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
+function ToggleGroupItem({
+  __scopeToggleGroup,
+  children,
+  className,
+  prefix,
+  suffix,
+  ...props
+}: ScopedProps<ToggleGroupItemProps>): JSX.Element {
+  const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
+  const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
-    return (
-      <ToggleGroupPrimitive.Item
-        ref={forwardedRef}
-        className={toggleVariants({ ...context, className })}
-        {...toggleGroupScope}
-        {...props}
-      >
-        {prefix}
-        {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
-        {suffix}
-      </ToggleGroupPrimitive.Item>
-    );
-  },
-);
-
-ToggleGroupItem.displayName = TOGGLE_GROUP_ITEM_NAME;
+  return (
+    <ToggleGroupPrimitive.Item
+      className={toggleVariants({ ...context, className })}
+      {...toggleGroupScope}
+      {...props}
+    >
+      {prefix}
+      {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
+      {suffix}
+    </ToggleGroupPrimitive.Item>
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Exports
