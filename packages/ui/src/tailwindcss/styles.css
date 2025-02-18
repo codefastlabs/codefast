@@ -1,59 +1,59 @@
 @theme {
   /* region UI COLOR */
-  --color-background: var(--ui-color-background);
-  --color-foreground: var(--ui-color-foreground);
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-slate-950);
 
-  --color-input: var(--ui-color-input);
-  --color-border: var(--ui-color-border);
-  --color-ring: var(--ui-color-ring);
+  --color-input: var(--color-slate-300);
+  --color-border: var(--color-slate-300);
+  --color-ring: var(--color-sky-400);
 
-  --color-primary: var(--ui-color-primary);
-  --color-primary-foreground: var(--ui-color-primary-foreground);
+  --color-primary: var(--color-sky-600);
+  --color-primary-foreground: var(--color-sky-50);
 
-  --color-secondary: var(--ui-color-secondary);
-  --color-secondary-foreground: var(--ui-color-secondary-foreground);
+  --color-secondary: var(--color-slate-200);
+  --color-secondary-foreground: var(--color-slate-950);
 
-  --color-accent: var(--ui-color-accent);
-  --color-accent-foreground: var(--ui-color-accent-foreground);
+  --color-accent: var(--color-slate-200);
+  --color-accent-foreground: var(--color-slate-950);
 
-  --color-muted: var(--ui-color-muted);
-  --color-muted-foreground: var(--ui-color-muted-foreground);
+  --color-muted: var(--color-slate-200);
+  --color-muted-foreground: var(--color-slate-500);
 
-  --color-destructive: var(--ui-color-destructive);
-  --color-destructive-foreground: var(--ui-color-destructive-foreground);
+  --color-destructive: var(--color-red-500);
+  --color-destructive-foreground: var(--color-red-50);
 
-  --color-info: var(--ui-color-info);
-  --color-info-foreground: var(--ui-color-info-foreground);
+  --color-info: var(--color-cyan-700);
+  --color-info-foreground: var(--color-cyan-50);
 
-  --color-success: var(--ui-color-success);
-  --color-success-foreground: var(--ui-color-success-foreground);
+  --color-success: var(--color-green-700);
+  --color-success-foreground: var(--color-green-50);
 
-  --color-warning: var(--ui-color-warning);
-  --color-warning-foreground: var(--ui-color-warning-foreground);
+  --color-warning: var(--color-yellow-700);
+  --color-warning-foreground: var(--color-yellow-50);
 
-  --color-popover: var(--ui-color-popover);
-  --color-popover-foreground: var(--ui-color-popover-foreground);
+  --color-popover: var(--color-white);
+  --color-popover-foreground: var(--color-slate-950);
 
-  --color-card: var(--ui-color-card);
-  --color-card-foreground: var(--ui-color-card-foreground);
+  --color-card: var(--color-white);
+  --color-card-foreground: var(--color-slate-950);
 
-  --color-sidebar: var(--ui-color-sidebar);
-  --color-sidebar-foreground: var(--ui-color-sidebar-foreground);
+  --color-sidebar: var(--color-slate-50);
+  --color-sidebar-foreground: var(--color-slate-700);
 
-  --color-sidebar-primary: var(--ui-color-sidebar-primary);
-  --color-sidebar-primary-foreground: var(--ui-color-sidebar-primary-foreground);
+  --color-sidebar-primary: var(--color-slate-900);
+  --color-sidebar-primary-foreground: var(--color-slate-50);
 
-  --color-sidebar-accent: var(--ui-color-sidebar-accent);
-  --color-sidebar-accent-foreground: var(--ui-color-sidebar-accent-foreground);
+  --color-sidebar-accent: var(--color-slate-100);
+  --color-sidebar-accent-foreground: var(--color-slate-900);
 
-  --color-sidebar-border: var(--ui-color-sidebar-border);
-  --color-sidebar-ring: var(--ui-color-sidebar-ring);
+  --color-sidebar-border: var(--color-slate-200);
+  --color-sidebar-ring: var(--color-sky-100);
 
-  --color-chart-1: var(--ui-color-chart-1);
-  --color-chart-2: var(--ui-color-chart-2);
-  --color-chart-3: var(--ui-color-chart-3);
-  --color-chart-4: var(--ui-color-chart-4);
-  --color-chart-5: var(--ui-color-chart-5);
+  --color-chart-1: var(--color-orange-500);
+  --color-chart-2: var(--color-cyan-500);
+  --color-chart-3: var(--color-lime-500);
+  --color-chart-4: var(--color-yellow-500);
+  --color-chart-5: var(--color-fuchsia-500);
   /* endregion UI COLOR */
 
   /* region ANIMATE */
@@ -92,4 +92,32 @@
     }
   }
   /* endregion ANIMATE */
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border);
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+  }
+
+  html,
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  input {
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      appearance: none;
+    }
+  }
 }
