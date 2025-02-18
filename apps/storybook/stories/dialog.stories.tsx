@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
   Label,
-  TextInput,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -59,13 +59,13 @@ export const Default: Story = {
                 <Label className="text-right" htmlFor="name">
                   Name
                 </Label>
-                <TextInput className="col-span-3" defaultValue="Pedro Duarte" id="name" />
+                <Input className="col-span-3" defaultValue="Pedro Duarte" id="name" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor="username">
                   Username
                 </Label>
-                <TextInput className="col-span-3" defaultValue="@peduarte" id="username" />
+                <Input className="col-span-3" defaultValue="@peduarte" id="username" />
               </div>
             </div>
           </DialogBody>
@@ -110,11 +110,7 @@ export const CustomCloseButton: Story = {
               <Label className="sr-only" htmlFor="link">
                 Link
               </Label>
-              <TextInput
-                readOnly
-                defaultValue="https://ui.shadcn.com/docs/installation"
-                id="link"
-              />
+              <Input readOnly defaultValue="https://ui.shadcn.com/docs/installation" id="link" />
             </div>
             <TooltipProvider delayDuration={250}>
               <Tooltip>

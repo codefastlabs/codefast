@@ -8,6 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Input,
   Label,
   Select,
   SelectContent,
@@ -15,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  TextInput,
 } from '@codefast/ui';
 
 export function ReportAnIssue(): JSX.Element {
@@ -59,7 +59,7 @@ export function ReportAnIssue(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="subject">Subject</Label>
-          <TextInput id="subject" placeholder="I need help with..." />
+          <Input id="subject" placeholder="I need help with..." />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="description">Description</Label>

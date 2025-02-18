@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { SearchInput } from '@codefast/ui';
+import { InputSearch } from '@codefast/ui';
 import { NotebookIcon, SearchIcon } from 'lucide-react';
 import { useState } from 'react';
 
-const meta: Meta<typeof SearchInput> = {
+const meta: Meta<typeof InputSearch> = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
@@ -115,14 +115,14 @@ const meta: Meta<typeof SearchInput> = {
       },
     },
   },
-  component: SearchInput,
+  component: InputSearch,
   tags: ['autodocs'],
-  title: 'UI/Search Input',
+  title: 'UI/Input Search',
 };
 
 export default meta;
 
-type Story = StoryObj<typeof SearchInput>;
+type Story = StoryObj<typeof InputSearch>;
 
 /* -----------------------------------------------------------------------------
  * Story: Default
@@ -146,7 +146,7 @@ export const Sizes: Story = {
   render: (args) => (
     <div className="space-y-4">
       {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
-        <SearchInput key={size} {...args} inputSize={size} placeholder={size} />
+        <InputSearch key={size} {...args} inputSize={size} placeholder={size} />
       ))}
     </div>
   ),
@@ -213,7 +213,7 @@ export const Interactive: Story = {
     const [searchValue, setSearchValue] = useState('');
 
     return (
-      <SearchInput
+      <InputSearch
         {...args}
         value={searchValue}
         onChange={(value) => {

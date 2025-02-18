@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from 'react';
 
-import * as NumberInputPrimitive from '@codefast-ui/number-input';
+import * as InputNumberPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 import type { InputVariantsProps } from '@/variants/input.variants';
@@ -13,15 +13,15 @@ import { inputVariants } from '@/variants/input.variants';
 const { input, root } = inputVariants();
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInput
+ * Component: InputNumber
  * -------------------------------------------------------------------------- */
 
-interface NumberInputProps
+interface InputNumberProps
   extends InputVariantsProps,
-    ComponentProps<typeof NumberInputPrimitive.Root>,
-    ComponentProps<typeof NumberInputPrimitive.Item> {}
+    ComponentProps<typeof InputNumberPrimitive.Root>,
+    ComponentProps<typeof InputNumberPrimitive.Item> {}
 
-function NumberInput({
+function InputNumber({
   id,
   ariaDecrementLabel,
   ariaIncrementLabel,
@@ -42,9 +42,9 @@ function NumberInput({
   suffix,
   value,
   ...props
-}: NumberInputProps): JSX.Element {
+}: InputNumberProps): JSX.Element {
   return (
-    <NumberInputPrimitive.Root
+    <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
       className={root({ className: ['pr-0', className], inputSize })}
@@ -64,7 +64,7 @@ function NumberInput({
       value={value}
       onChange={onChange}
     >
-      <NumberInputPrimitive.Item
+      <InputNumberPrimitive.Item
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
@@ -79,7 +79,7 @@ function NumberInput({
           'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(var(--radius-md)-1px)] border-l transition',
         )}
       >
-        <NumberInputPrimitive.IncrementButton
+        <InputNumberPrimitive.IncrementButton
           className={buttonVariants({
             className: 'h-full rounded-none rounded-tr-[calc(var(--radius-md)-1px)]',
             icon: true,
@@ -88,8 +88,8 @@ function NumberInput({
           })}
         >
           <ChevronUpIcon />
-        </NumberInputPrimitive.IncrementButton>
-        <NumberInputPrimitive.DecrementButton
+        </InputNumberPrimitive.IncrementButton>
+        <InputNumberPrimitive.DecrementButton
           className={buttonVariants({
             className: 'h-full rounded-none rounded-br-[calc(var(--radius-md)-1px)]',
             icon: true,
@@ -98,15 +98,33 @@ function NumberInput({
           })}
         >
           <ChevronDownIcon />
-        </NumberInputPrimitive.DecrementButton>
+        </InputNumberPrimitive.DecrementButton>
       </div>
-    </NumberInputPrimitive.Root>
+    </InputNumberPrimitive.Root>
   );
 }
+
+/* -----------------------------------------------------------------------------
+ * Deprecated
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @deprecated
+ * This type is an alias of the InputNumberProps type.
+ * Please use the InputNumberProps type instead to ensure consistency.
+ */
+type NumberInputProps = InputNumberProps;
+
+/**
+ * @deprecated
+ * This component is an alias of the Input component.
+ * Please use the Input component instead to ensure consistency.
+ */
+const NumberInput = InputNumber;
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { NumberInputProps };
-export { NumberInput };
+export type { InputNumberProps, NumberInputProps };
+export { InputNumber, NumberInput };

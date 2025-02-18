@@ -10,13 +10,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Separator,
-  TextInput,
 } from '@codefast/ui';
 
 export function ShareDocument(): JSX.Element {
@@ -28,7 +28,7 @@ export function ShareDocument(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className="flex gap-x-2">
-          <TextInput readOnly value="https://example.com/link/to/document" />
+          <Input readOnly value="https://example.com/link/to/document" />
           <Button className="shrink-0" variant="secondary">
             Copy Link
           </Button>

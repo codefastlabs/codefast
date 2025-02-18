@@ -3,7 +3,7 @@
 import type { HTMLAttributes, JSX, SyntheticEvent } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 
-import { Button, cn, Label, TextInput } from '@codefast/ui';
+import { Button, cn, Input, Label } from '@codefast/ui';
 import { useState } from 'react';
 
 import { Icons } from '@/components/icons';
@@ -30,7 +30,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.El
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
-            <TextInput
+            <Input
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"

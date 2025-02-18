@@ -1,7 +1,7 @@
 import type { Table } from '@tanstack/react-table';
 import type { JSX } from 'react';
 
-import { Button, DataTableViewOptions, TextInput } from '@codefast/ui';
+import { Button, DataTableViewOptions, Input } from '@codefast/ui';
 import { Cross2Icon } from '@radix-ui/react-icons';
 
 import { DataTableFacetedFilter } from '@/app/examples/tasks/_components/data-table-faceted-filter';
@@ -18,7 +18,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
   return (
     <div className="flex items-center justify-between gap-x-4">
       <div className="max-w-(--breakpoint-lg) flex flex-1 items-center gap-x-2">
-        <TextInput
+        <Input
           className="h-8 lg:max-w-80"
           placeholder="Filter tasks..."
           value={value}

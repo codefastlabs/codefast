@@ -8,6 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Input,
   Label,
   Select,
   SelectContent,
@@ -16,7 +17,6 @@ import {
   SelectValue,
   Switch,
   Text,
-  TextInput,
 } from '@codefast/ui';
 import { BellIcon, CheckIcon } from '@radix-ui/react-icons';
 
@@ -46,7 +46,7 @@ export const Default: Story = {
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col gap-y-1.5">
               <Label htmlFor="name">Name</Label>
-              <TextInput id="name" placeholder="Name of your project" />
+              <Input id="name" placeholder="Name of your project" />
             </div>
             <div className="flex flex-col gap-y-1.5">
               <Label htmlFor="framework">Framework</Label>

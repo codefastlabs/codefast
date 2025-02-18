@@ -3,7 +3,7 @@
 import type { JSX } from 'react';
 
 import { useStateParams } from '@codefast/hooks';
-import { SearchInput } from '@codefast/ui';
+import { InputSearch } from '@codefast/ui';
 import { SearchIcon } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useTransition } from 'react';
@@ -24,7 +24,7 @@ export function Search(): JSX.Element {
 
   return (
     <div>
-      <SearchInput
+      <InputSearch
         className="md:w-[6.25rem] lg:w-[18.75rem]"
         defaultValue={searchParams.get('search') ?? ''}
         placeholder="Search..."

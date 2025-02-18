@@ -13,21 +13,21 @@ import { Spinner } from '@/components/spinner';
 import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
- * Variant: PasswordInput
+ * Variant: InputPassword
  * -------------------------------------------------------------------------- */
 
 const { input, root } = inputVariants();
 
 /* -----------------------------------------------------------------------------
- * Component: PasswordInput
+ * Component: InputPassword
  * -------------------------------------------------------------------------- */
 
-interface PasswordInputProps
+interface InputPasswordProps
   extends InputVariantsProps,
     ComponentProps<typeof InputPrimitive.Root>,
     Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> {}
 
-function PasswordInput({
+function InputPassword({
   className,
   inputSize,
   loaderPosition,
@@ -36,7 +36,7 @@ function PasswordInput({
   spinner,
   suffix,
   ...props
-}: PasswordInputProps): JSX.Element {
+}: InputPasswordProps): JSX.Element {
   const [type, setType] = useState<'password' | 'text'>('password');
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
@@ -69,8 +69,26 @@ function PasswordInput({
 }
 
 /* -----------------------------------------------------------------------------
+ * Deprecated
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @deprecated
+ * This type is an alias of the InputPasswordProps type.
+ * Please use the InputPasswordProps type instead to ensure consistency.
+ */
+type PasswordInputProps = InputPasswordProps;
+
+/**
+ * @deprecated
+ * This component is an alias of the Input component.
+ * Please use the Input component instead to ensure consistency.
+ */
+const PasswordInput = InputPassword;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { PasswordInputProps };
-export { PasswordInput };
+export type { InputPasswordProps, PasswordInputProps };
+export { InputPassword, PasswordInput };

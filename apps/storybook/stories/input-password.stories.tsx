@@ -11,9 +11,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  PasswordInput,
+  Input,
+  InputPassword,
   Pre,
-  TextInput,
   toast,
   Toaster,
 } from '@codefast/ui';
@@ -82,14 +82,14 @@ const meta = {
       table: { type: { summary: 'ReactNode' } },
     },
   },
-  component: PasswordInput,
+  component: InputPassword,
   tags: ['autodocs'],
-  title: 'UI/Password Input',
-} satisfies Meta<typeof PasswordInput>;
+  title: 'UI/Input Password',
+} satisfies Meta<typeof InputPassword>;
 
 export default meta;
 
-type Story = StoryObj<typeof PasswordInput>;
+type Story = StoryObj<typeof InputPassword>;
 
 /* -----------------------------------------------------------------------------
  * Story: Default
@@ -107,7 +107,7 @@ export const Sizes: Story = {
   render: () => (
     <div className="space-y-4">
       {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
-        <PasswordInput key={size} inputSize={size} placeholder={size} />
+        <InputPassword key={size} inputSize={size} placeholder={size} />
       ))}
     </div>
   ),
@@ -166,7 +166,7 @@ export const Controlled: Story = {
 
     return (
       <div className="space-y-4">
-        <PasswordInput
+        <InputPassword
           {...args}
           placeholder="Controlled"
           value={value}
@@ -237,7 +237,7 @@ export const ReactHookForm: Story = {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <TextInput
+                    <Input
                       disabled={disabled ?? form.formState.isSubmitting}
                       inputMode="email"
                       placeholder="info@codefast.one"
@@ -259,7 +259,7 @@ export const ReactHookForm: Story = {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <PasswordInput
+                    <InputPassword
                       disabled={disabled ?? form.formState.isSubmitting}
                       placeholder="Password"
                       prefix={<LockKeyholeOpenIcon />}

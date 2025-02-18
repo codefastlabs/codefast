@@ -4,6 +4,7 @@ import type { JSX, ReactNode } from 'react';
 
 import {
   cn,
+  Input,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
@@ -12,7 +13,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  TextInput,
 } from '@codefast/ui';
 import Cookies from 'js-cookie';
 import {
@@ -191,7 +191,7 @@ export function Mail({
           <Separator />
           <div className="bg-background/95 supports-backdrop-filter:bg-background/60 p-4 backdrop-blur-sm">
             <form>
-              <TextInput
+              <Input
                 placeholder="Search"
                 prefix={<SearchIcon className="text-muted-foreground" />}
               />

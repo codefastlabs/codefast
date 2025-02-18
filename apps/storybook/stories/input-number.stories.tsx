@@ -5,25 +5,25 @@ import {
   Code,
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  InputNumber,
   Pre,
-  TextInput,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
   toast,
   Toaster,
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { fn } from '@storybook/test';
-import {
-  ImportIcon,
-  LoaderCircleIcon,
-  MailIcon,
-  TextCursorInputIcon,
-  UsersIcon,
-} from 'lucide-react';
+import { ImportIcon, LoaderCircleIcon } from 'lucide-react';
 import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -33,18 +33,11 @@ const meta = {
   args: {
     autoFocus: false,
     disabled: false,
-    inputSize: 'md',
-    loaderPosition: 'prefix',
-    loading: false,
     max: undefined,
-    maxLength: undefined,
     min: undefined,
     onChange: fn(),
-    placeholder: 'Enter text...',
-    readOnly: false,
-    required: false,
-    step: undefined,
-    type: 'text',
+    placeholder: 'Enter a number...',
+    step: 1,
   },
   argTypes: {
     autoFocus: {
@@ -56,19 +49,21 @@ const meta = {
         type: { summary: 'boolean' },
       },
     },
-    defaultValue: {
-      control: { type: 'text' },
-      description: 'The default value of the search input.',
-      table: {
-        type: { summary: 'string' },
-      },
-    },
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the input field',
       table: {
         defaultValue: { summary: 'false' },
         type: { summary: 'boolean' },
+      },
+    },
+    formatOptions: {
+      control: {
+        type: 'object',
+      },
+      description: 'Options for formatting the number input',
+      table: {
+        type: { summary: 'Intl.NumberFormatOptions' },
       },
     },
     inputSize: {
@@ -104,13 +99,6 @@ const meta = {
         type: { summary: 'number' },
       },
     },
-    maxLength: {
-      control: { type: 'number' },
-      description: 'Maximum number of characters allowed in the input field',
-      table: {
-        type: { summary: 'number' },
-      },
-    },
     min: {
       control: { type: 'number' },
       description: 'Minimum value for number inputs',
@@ -123,7 +111,7 @@ const meta = {
       description: 'Function called when the input value changes',
       table: {
         type: {
-          summary: '(event: React.ChangeEvent<HTMLInputElement>) => void',
+          summary: '(value: number) => void',
         },
       },
     },
@@ -162,50 +150,56 @@ const meta = {
         type: { summary: 'number' },
       },
     },
-    suffix: {
-      control: { type: 'text' },
-      description: 'Suffix element shown after the input field',
-      table: { type: { summary: 'ReactNode' } },
-    },
-    type: {
-      control: { type: 'select' },
-      description: 'The type of input field',
-      options: [
-        'text',
-        'email',
-        'password',
-        'number',
-        'tel',
-        'url',
-        'date',
-        'time',
-        'datetime-local',
-        'month',
-        'week',
-        'file',
-        'search',
-      ],
-      table: {
-        defaultValue: { summary: 'text' },
-        type: { summary: 'string' },
-      },
-    },
     value: {
-      control: { type: 'text' },
+      control: { type: 'number' },
       description: 'Controlled value of the input field',
       table: {
-        type: { summary: 'string' },
+        type: { summary: 'number' },
       },
     },
   },
-  component: TextInput,
+  component: InputNumber,
   tags: ['autodocs'],
-  title: 'UI/Text Input',
-} satisfies Meta<typeof TextInput>;
+  title: 'UI/Input Number',
+} satisfies Meta<typeof InputNumber>;
 
 export default meta;
 
-type Story = StoryObj<typeof TextInput>;
+const units = {
+  area: ['acre', 'hectare'],
+  data: [
+    'bit',
+    'kilobit',
+    'megabit',
+    'gigabit',
+    'terabit',
+    'byte',
+    'kilobyte',
+    'megabyte',
+    'gigabyte',
+    'terabyte',
+    'petabyte',
+  ],
+  length: ['kilometer', 'meter', 'centimeter', 'inch', 'foot', 'yard', 'mile', 'mile-scandinavian'],
+  mass: ['gram', 'kilogram', 'ounce', 'pound', 'stone'],
+  percentage: ['percent'],
+  temperature: ['celsius', 'fahrenheit', 'degree'],
+  time: [
+    'second',
+    'minute',
+    'hour',
+    'day',
+    'week',
+    'month',
+    'year',
+    'millisecond',
+    'microsecond',
+    'nanosecond',
+  ],
+  volume: ['liter', 'milliliter', 'gallon', 'fluid-ounce'],
+};
+
+type Story = StoryObj<typeof InputNumber>;
 
 /* -----------------------------------------------------------------------------
  * Story: Default
@@ -213,7 +207,7 @@ type Story = StoryObj<typeof TextInput>;
 
 export const Default: Story = {
   args: {
-    placeholder: 'Basic Text Input',
+    placeholder: 'Basic Number Input',
   },
 };
 
@@ -228,51 +222,83 @@ export const Sizes: Story = {
   render: (args) => (
     <div className="space-y-4">
       {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
-        <TextInput key={size} {...args} inputSize={size} placeholder={size} />
+        <InputNumber key={size} {...args} inputSize={size} placeholder={size} />
       ))}
     </div>
   ),
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Types
+ * Story: CurrencyFormat
  * -------------------------------------------------------------------------- */
 
-export const Types: Story = {
+export const CurrencyFormat: Story = {
   args: {
-    prefix: <TextCursorInputIcon />,
+    formatOptions: {
+      currency: 'USD',
+      currencyDisplay: 'code',
+      minimumFractionDigits: 2,
+      style: 'currency',
+    },
+    placeholder: 'Enter a price...',
   },
-  render: (args) => (
-    <div className="space-y-4">
-      {(
-        [
-          'text',
-          'email',
-          'password',
-          'number',
-          'tel',
-          'url',
-          'date',
-          'time',
-          'datetime-local',
-          'month',
-          'week',
-          'file',
-          'search',
-        ] as const
-      ).map((type) => (
-        <TextInput key={type} {...args} placeholder={type} type={type} />
-      ))}
-    </div>
-  ),
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Disabled
+ * Story: PercentageFormat
  * -------------------------------------------------------------------------- */
 
-export const Disabled: Story = {
-  args: { disabled: true, placeholder: 'Disabled Text Input' },
+export const PercentageFormat: Story = {
+  args: {
+    formatOptions: {
+      maximumFractionDigits: 2,
+      style: 'percent',
+    },
+    placeholder: 'Enter a percentage...',
+    step: 0.01,
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: UnitFormat
+ * -------------------------------------------------------------------------- */
+
+export const UnitFormat: Story = {
+  render: (args) => {
+    const [value, setValue] = useState<string>('acre');
+
+    return (
+      <div className="space-y-4">
+        <Select value={value} onValueChange={setValue}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a unit..." />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(units).map(([group, unitList]) => (
+              <SelectGroup key={group}>
+                <SelectLabel>{group.charAt(0).toUpperCase() + group.slice(1)}</SelectLabel>
+
+                {unitList.map((unit) => (
+                  <SelectItem key={unit} value={unit}>
+                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <InputNumber
+          {...args}
+          formatOptions={{
+            style: 'unit',
+            unit: value,
+          }}
+          placeholder={`Enter a value in ${value}s...`}
+        />
+      </div>
+    );
+  },
 };
 
 /* -----------------------------------------------------------------------------
@@ -280,15 +306,7 @@ export const Disabled: Story = {
  * -------------------------------------------------------------------------- */
 
 export const ReadOnly: Story = {
-  args: { placeholder: 'Read-Only Text Input', readOnly: true },
-};
-
-/* -----------------------------------------------------------------------------
- * Story: Max Length
- * -------------------------------------------------------------------------- */
-
-export const MaxLength: Story = {
-  args: { maxLength: 10, placeholder: 'Max Length Text Input' },
+  args: { placeholder: 'Read-Only Number Input', readOnly: true },
 };
 
 /* -----------------------------------------------------------------------------
@@ -296,17 +314,17 @@ export const MaxLength: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Loading: Story = {
-  args: { loading: true, placeholder: 'Loading...' },
+  args: { loading: true, placeholder: 'Loading Number Input' },
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Custom Spinner
+ * Story: CustomSpinner
  * -------------------------------------------------------------------------- */
 
 export const CustomSpinner: Story = {
   args: {
     loading: true,
-    placeholder: 'Loading...',
+    placeholder: 'Custom Spinner Number Input',
     spinner: <LoaderCircleIcon className="animate-spin" />,
   },
 };
@@ -316,10 +334,7 @@ export const CustomSpinner: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Prefix: Story = {
-  args: {
-    placeholder: 'Email',
-    prefix: <MailIcon />,
-  },
+  args: { placeholder: 'Number Input with Prefix', prefix: <ImportIcon /> },
 };
 
 /* -----------------------------------------------------------------------------
@@ -327,10 +342,51 @@ export const Prefix: Story = {
  * -------------------------------------------------------------------------- */
 
 export const Suffix: Story = {
+  args: { placeholder: 'Number Input with Suffix', suffix: <ImportIcon /> },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: MinMax
+ * -------------------------------------------------------------------------- */
+
+export const MinMax: Story = {
   args: {
-    placeholder: 'Username',
-    suffix: <UsersIcon />,
+    max: 100,
+    min: 0,
+    placeholder: 'Number between 0 and 100',
   },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: Disabled
+ * -------------------------------------------------------------------------- */
+
+export const Disabled: Story = {
+  args: { disabled: true, placeholder: 'Disabled Number Input' },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: MaxValue
+ * -------------------------------------------------------------------------- */
+
+export const MaxValue: Story = {
+  args: { max: 50, placeholder: 'Max Value Number Input (max=50)' },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: MinValue
+ * -------------------------------------------------------------------------- */
+
+export const MinValue: Story = {
+  args: { min: 10, placeholder: 'Min Value Number Input (min=10)' },
+};
+
+/* -----------------------------------------------------------------------------
+ * Story: StepValue
+ * -------------------------------------------------------------------------- */
+
+export const StepValue: Story = {
+  args: { placeholder: 'Step Value Number Input (step=5)', step: 5 },
 };
 
 /* -----------------------------------------------------------------------------
@@ -339,21 +395,20 @@ export const Suffix: Story = {
 
 export const Controlled: Story = {
   render: (args) => {
-    const [value, setValue] = useState('');
+    const [number, setNumber] = useState(0);
 
     return (
       <div className="space-y-4">
-        <TextInput
+        <InputNumber
           {...args}
-          placeholder="Controlled Text Input"
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
+          placeholder="Controlled Number Input"
+          value={number}
+          onChange={(value) => {
+            setNumber(value);
           }}
         />
-
         <p>
-          <strong>Value:</strong> {value}
+          <strong>Value:</strong> {number}
         </p>
       </div>
     );
@@ -375,14 +430,12 @@ export const ReactHookForm: Story = {
   ],
   render: () => {
     const formValues = z.object({
-      email: z.string().email({
-        message: 'Invalid email address.',
-      }),
+      number: z.number().min(0, { message: 'Must be at least 0.' }),
     });
 
     const form = useForm<z.infer<typeof formValues>>({
       defaultValues: {
-        email: '',
+        number: 0,
       },
       resolver: zodResolver(formValues),
     });
@@ -403,19 +456,13 @@ export const ReactHookForm: Story = {
         <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
-            name="email"
+            name="number"
             render={({ field: { disabled, ...field } }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Number Input</FormLabel>
                 <FormControl>
-                  <TextInput
-                    disabled={disabled ?? form.formState.isSubmitting}
-                    placeholder="info@codefast.one"
-                    prefix={<MailIcon />}
-                    {...field}
-                  />
+                  <InputNumber disabled={disabled} {...field} placeholder="Enter a number" />
                 </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
