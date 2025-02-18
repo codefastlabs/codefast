@@ -59,7 +59,7 @@ function ContextMenuSubTrigger({
     <ContextMenuPrimitive.SubTrigger
       className={cn(
         'gap-x-2 px-3 py-1.5',
-        'flex cursor-pointer select-none items-center rounded-sm text-sm',
+        'flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
@@ -141,7 +141,7 @@ function ContextMenuItem({ className, inset, ...props }: ContextMenuItemProps): 
     <ContextMenuPrimitive.Item
       className={cn(
         'gap-x-2 px-3 py-1.5',
-        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
+        'relative flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -170,7 +170,7 @@ function ContextMenuCheckboxItem({
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'pl-8',
-        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
+        'relative flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
@@ -203,7 +203,7 @@ function ContextMenuRadioItem({
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'pl-8',
-        'relative flex cursor-pointer select-none items-center rounded-sm text-sm',
+        'relative flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
