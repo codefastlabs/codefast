@@ -48,7 +48,7 @@ export const Default: Story = {
             <CalendarIcon className="size-4" />
             <span>Calendar</span>
           </CommandItem>
-          <CommandItem>
+          <CommandItem disabled>
             <SmileIcon className="size-4" />
             <span>Search Emoji</span>
           </CommandItem>

@@ -35,6 +35,7 @@ export const Default: Story = {
   render: (args) => {
     const [bookmarksChecked, setBookmarksChecked] = useState(true);
     const [urlsChecked, setUrlsChecked] = useState(false);
+    const [cachesChecked, setCachesChecked] = useState(false);
     const [person, setPerson] = useState('pedro');
 
     return (
@@ -76,11 +77,21 @@ export const Default: Story = {
           <ContextMenuCheckboxItem checked={urlsChecked} onCheckedChange={setUrlsChecked}>
             Show Full URLs
           </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            disabled
+            checked={cachesChecked}
+            onCheckedChange={setCachesChecked}
+          >
+            Disable Cache
+          </ContextMenuCheckboxItem>
           <ContextMenuSeparator />
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuRadioGroup value={person} onValueChange={setPerson}>
             <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
             <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+            <ContextMenuRadioItem disabled value="lorem">
+              Colm Tuite
+            </ContextMenuRadioItem>
           </ContextMenuRadioGroup>
         </ContextMenuContent>
       </ContextMenu>

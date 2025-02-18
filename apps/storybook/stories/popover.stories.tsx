@@ -23,7 +23,7 @@ export const Default: Story = {
         <Button variant="outline">Open popover</Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
-        <div className="grid gap-4">
+        <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Dimensions</h4>
             <Text className="text-muted-foreground text-sm">Set the dimensions for the layer.</Text>
