@@ -48,8 +48,8 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
               <DialogTitle>Add Podcast</DialogTitle>
               <DialogDescription>Copy and paste the podcast feed URL to import.</DialogDescription>
             </DialogHeader>
-            <DialogBody className="grid gap-4">
-              <div className="grid gap-2">
+            <DialogBody className="space-y-4">
+              <div className="space-y-2">
                 <Label htmlFor="url">Podcast URL</Label>
                 <Input id="url" placeholder="https://example.com/feed.xml" />
               </div>

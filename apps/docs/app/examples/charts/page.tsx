@@ -78,7 +78,7 @@ export const metadata: Metadata = {
 
 export default function ChartsPage(): JSX.Element {
   return (
-    <main className="grid gap-4">
+    <main className="space-y-4">
       <div className="grid flex-1 scroll-mt-20 gap-10 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:gap-10">
         <ChartAreaInteractive className="col-span-full" />
         <ChartAreaAxes />

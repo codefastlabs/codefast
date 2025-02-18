@@ -27,7 +27,7 @@ export function ReportAnIssue(): JSX.Element {
       </CardHeader>
       <CardContent className="grid gap-6">
         <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
+          <div className="space-y-2">
             <Label htmlFor="area">Area</Label>
             <Select defaultValue="billing">
               <SelectTrigger id="area">
@@ -42,7 +42,7 @@ export function ReportAnIssue(): JSX.Element {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid gap-2">
+          <div className="space-y-2">
             <Label htmlFor="security-level">Security Level</Label>
             <Select defaultValue="2">
               <SelectTrigger className="w-[10rem]" id="security-level">
@@ -57,11 +57,11 @@ export function ReportAnIssue(): JSX.Element {
             </Select>
           </div>
         </div>
-        <div className="grid gap-2">
+        <div className="space-y-2">
           <Label htmlFor="subject">Subject</Label>
           <Input id="subject" placeholder="I need help with..." />
         </div>
-        <div className="grid gap-2">
+        <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
             id="description"

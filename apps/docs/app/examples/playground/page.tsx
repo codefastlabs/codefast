@@ -74,7 +74,7 @@ export default function PlaygroundPage(): JSX.Element {
           <div className="container mx-auto h-full py-6">
             <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_12.5rem]">
               <div className="flex flex-col gap-y-4 max-sm:hidden md:order-2">
-                <div className="grid gap-2">
+                <div className="space-y-2">
                   <HoverCard openDelay={200}>
                     <HoverCardTrigger asChild>
                       <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

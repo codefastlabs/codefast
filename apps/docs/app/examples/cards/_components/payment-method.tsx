@@ -58,16 +58,16 @@ export function PaymentMethod(): JSX.Element {
             Apple
           </RadioCardsItem>
         </RadioCards>
-        <div className="grid gap-2">
+        <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
           <Input id="name" placeholder="First Last" />
         </div>
-        <div className="grid gap-2">
+        <div className="space-y-2">
           <Label htmlFor="number">Card number</Label>
           <Input id="number" placeholder="" />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <div className="grid gap-2">
+          <div className="space-y-2">
             <Label htmlFor="month">Expires</Label>
             <Select>
               <SelectTrigger id="month">
@@ -89,7 +89,7 @@ export function PaymentMethod(): JSX.Element {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid gap-2">
+          <div className="space-y-2">
             <Label htmlFor="year">Year</Label>
             <Select>
               <SelectTrigger id="year">
@@ -104,7 +104,7 @@ export function PaymentMethod(): JSX.Element {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid gap-2">
+          <div className="space-y-2">
             <Label htmlFor="cvc">CVC</Label>
             <Input id="cvc" placeholder="CVC" />
           </div>

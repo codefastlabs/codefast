@@ -203,7 +203,8 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
                 <div className="font-semibold">{mail.name}</div>
                 <div className="line-clamp-1 text-xs">{mail.subject}</div>
                 <div className="line-clamp-1 text-xs">
-                  <span className="font-medium">Reply-To:</span> {mail.email}
+                  <span className="font-medium">Reply-To:</span>
+                  {mail.email}
                 </div>
               </div>
             </div>
@@ -218,7 +219,7 @@ export function MailDisplay({ mail }: MailDisplayProps): JSX.Element {
           <Separator className="mt-auto" />
           <div className="p-4">
             <form>
-              <div className="grid gap-4">
+              <div className="space-y-4">
                 <Textarea className="p-4" placeholder={`Reply ${mail.name}...`} />
                 <div className="flex items-center">
                   <Label className="flex items-center gap-2 text-xs font-normal" htmlFor="mute">

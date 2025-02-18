@@ -14,10 +14,10 @@ export function TemperatureSelector({ defaultValue }: TemperatureSelectorProps):
   const [value, setValue] = useState(defaultValue);
 
   return (
-    <div className="grid gap-2 pt-2">
+    <div className="space-y-2 pt-2">
       <HoverCard openDelay={200}>
         <HoverCardTrigger asChild>
-          <div className="grid gap-4">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label htmlFor="temperature">Temperature</Label>
               <span className="text-muted-foreground hover:border-border w-12 rounded-md border border-transparent px-2 py-0.5 text-right text-sm">

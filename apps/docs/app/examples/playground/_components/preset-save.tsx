@@ -29,12 +29,12 @@ export function PresetSave(): JSX.Element {
             share with others.
           </DialogDescription>
         </DialogHeader>
-        <DialogBody className="grid gap-4">
-          <div className="grid gap-2">
+        <DialogBody className="space-y-4">
+          <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" />
           </div>
-          <div className="grid gap-2">
+          <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Input id="description" />
           </div>
