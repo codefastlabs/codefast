@@ -37,7 +37,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
   const [peekedModel, setPeekedModel] = useState<Model>(models[0]);
 
   return (
-    <div className="grid gap-2">
+    <div className="space-y-2">
       <HoverCard openDelay={200}>
         <HoverCardTrigger asChild>
           <Label htmlFor="model">Model</Label>
@@ -63,7 +63,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps): 
         <PopoverContent align="end" className="w-64 p-0">
           <HoverCard openDelay={0}>
             <HoverCardContent forceMount align="start" className="min-h-[17.5rem] w-64" side="left">
-              <div className="grid gap-2">
+              <div className="space-y-2">
                 <h4 className="font-medium leading-none">{peekedModel.name}</h4>
                 <div className="text-muted-foreground text-sm">{peekedModel.description}</div>
                 {peekedModel.strengths ? (
