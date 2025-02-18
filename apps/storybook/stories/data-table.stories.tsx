@@ -18,6 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Input,
   Table,
   TableBody,
   TableCell,
@@ -25,7 +26,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TextInput,
 } from '@codefast/ui';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import {
@@ -180,7 +180,7 @@ export const Default: Story = {
       <div className="w-full">
         <div className="flex items-center gap-4 py-4">
           <div className="flex grow items-center">
-            <TextInput
+            <Input
               className="max-w-sm"
               inputSize="xs"
               placeholder="Filter emails..."

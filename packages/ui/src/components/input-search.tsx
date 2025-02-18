@@ -13,12 +13,12 @@ import { Spinner } from '@/components/spinner';
 import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
- * Component: SearchInput
+ * Component: InputSearch
  * -------------------------------------------------------------------------- */
 
 const { input, root } = inputVariants();
 
-interface SearchInputProps
+interface InputSearchProps
   extends InputVariantsProps,
     ComponentProps<typeof InputPrimitive.Root>,
     Omit<
@@ -30,7 +30,7 @@ interface SearchInputProps
   value?: string;
 }
 
-function SearchInput({
+function InputSearch({
   className,
   defaultValue,
   inputSize,
@@ -42,7 +42,7 @@ function SearchInput({
   suffix,
   value: valueProp,
   ...props
-}: SearchInputProps): JSX.Element {
+}: InputSearchProps): JSX.Element {
   const [value, setValue] = useControllableState({
     defaultProp: defaultValue,
     onChange,
@@ -87,8 +87,26 @@ function SearchInput({
 }
 
 /* -----------------------------------------------------------------------------
+ * Deprecated
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @deprecated
+ * This type is an alias of the InputSearchProps type.
+ * Please use the InputSearchProps type instead to ensure consistency.
+ */
+type SearchInputProps = InputSearchProps;
+
+/**
+ * @deprecated
+ * This component is an alias of the Input component.
+ * Please use the Input component instead to ensure consistency.
+ */
+const SearchInput = InputSearch;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SearchInputProps };
-export { SearchInput };
+export type { InputSearchProps, SearchInputProps };
+export { InputSearch, SearchInput };

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {
   Button,
+  Input,
   Label,
   Sheet,
   SheetBody,
@@ -12,7 +13,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  TextInput,
 } from '@codefast/ui';
 import { useId } from 'react';
 
@@ -54,13 +54,13 @@ export const Default: Story = {
                 <Label className="text-right" htmlFor={`name-${id}`}>
                   Name
                 </Label>
-                <TextInput className="col-span-3" id={`name-${id}`} value="Pedro Duarte" />
+                <Input className="col-span-3" id={`name-${id}`} value="Pedro Duarte" />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor={`username-${id}`}>
                   Username
                 </Label>
-                <TextInput className="col-span-3" id={`username-${id}`} value="@peduarte" />
+                <Input className="col-span-3" id={`username-${id}`} value="@peduarte" />
               </div>
             </div>
           </SheetBody>
@@ -106,21 +106,13 @@ export const Side: Story = {
                     <Label className="text-right" htmlFor={`name-${side}-${id}`}>
                       Name
                     </Label>
-                    <TextInput
-                      className="col-span-3"
-                      id={`name-${side}-${id}`}
-                      value="Pedro Duarte"
-                    />
+                    <Input className="col-span-3" id={`name-${side}-${id}`} value="Pedro Duarte" />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right" htmlFor={`username-${side}-${id}`}>
                       Username
                     </Label>
-                    <TextInput
-                      className="col-span-3"
-                      id={`username-${side}-${id}`}
-                      value="@peduarte"
-                    />
+                    <Input className="col-span-3" id={`username-${side}-${id}`} value="@peduarte" />
                   </div>
                 </div>
               </SheetBody>

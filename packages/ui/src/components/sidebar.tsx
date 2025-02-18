@@ -20,10 +20,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { tv } from 'tailwind-variants';
 
 import { Button } from '@/components/button';
+import { Input } from '@/components/input';
 import { Separator } from '@/components/separator';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/sheet';
 import { Skeleton } from '@/components/skeleton';
-import { TextInput } from '@/components/text-input';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -352,11 +352,11 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
  * Component: SidebarInput
  * -------------------------------------------------------------------------- */
 
-type SidebarInputProps = ComponentProps<typeof TextInput>;
+type SidebarInputProps = ComponentProps<typeof Input>;
 
 function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
   return (
-    <TextInput
+    <Input
       className={cn(
         'bg-background focus-visible:ring-sidebar-ring focus-visible:ring-3 h-8 w-full shadow-none',
         className,
