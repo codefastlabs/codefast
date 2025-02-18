@@ -104,7 +104,7 @@ function FormItem({
 
   return (
     <FormItemProvider id={id} scope={__scopeFormField}>
-      <div className={cn('grid gap-2', className)} {...props} />
+      <div className={cn('space-y-2', className)} {...props} />
     </FormItemProvider>
   );
 }

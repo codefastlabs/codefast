@@ -11,8 +11,8 @@ import { cn } from '@/lib/utils';
 
 type CheckboxCardsProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
-function CheckboxCards({ className, ...props }: CheckboxCardsProps): JSX.Element {
-  return <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} />;
+function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
+  return <CheckboxGroupPrimitive.Root {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

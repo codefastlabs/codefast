@@ -42,7 +42,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
         'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium outline-transparent transition-all',
         'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
         'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
-        'disabled:pointer-events-none disabled:opacity-50',
+        'disabled:opacity-50',
         className,
       )}
       {...props}
