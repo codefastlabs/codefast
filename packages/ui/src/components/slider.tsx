@@ -13,7 +13,11 @@ type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
 function Slider({ className, ...props }: SliderProps): JSX.Element {
   return (
     <SliderPrimitive.Root
-      className={cn('relative flex w-full touch-none select-none items-center', className)}
+      className={cn(
+        'relative flex w-full touch-none select-none items-center',
+        'data-disabled:opacity-50',
+        className,
+      )}
       {...props}
     >
       <SliderPrimitive.Track className="bg-muted relative h-1 w-full grow overflow-hidden rounded-full">
@@ -27,9 +31,8 @@ function Slider({ className, ...props }: SliderProps): JSX.Element {
           className={cn(
             'border-primary bg-primary shadow-xs flex size-4 items-center justify-center rounded-full border-2 transition',
             'after:bg-background after:size-full after:rounded-full after:transition-[width,height]',
-            'active:after:size-1',
+            'active:not-data-disabled:after:size-1',
             'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
-            'disabled:pointer-events-none disabled:opacity-50',
           )}
           {...(props.tabIndex === undefined ? undefined : { tabIndex: props.tabIndex })}
         />

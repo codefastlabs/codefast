@@ -50,7 +50,7 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
           {children}
           <DialogPrimitive.Close
             className={buttonVariants({
-              className: 'absolute right-4 top-4',
+              className: 'absolute right-2.5 top-2.5',
               icon: true,
               size: 'xxs',
               variant: 'ghost',
