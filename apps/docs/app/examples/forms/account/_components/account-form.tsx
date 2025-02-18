@@ -21,10 +21,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
-  TextInput,
   toast,
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -94,7 +94,7 @@ export function AccountForm(): JSX.Element {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <TextInput
+                <Input
                   disabled={disabled ?? form.formState.isSubmitting}
                   placeholder="Your name"
                   {...field}

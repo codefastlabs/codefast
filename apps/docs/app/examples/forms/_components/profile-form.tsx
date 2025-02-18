@@ -14,6 +14,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  Input,
   Pre,
   Select,
   SelectContent,
@@ -21,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  TextInput,
   toast,
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -98,7 +98,7 @@ export function ProfileForm(): JSX.Element {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <TextInput placeholder="codefast" {...field} />
+                <Input placeholder="codefast" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name. It can be your real name or a pseudonym. You can
@@ -167,7 +167,7 @@ export function ProfileForm(): JSX.Element {
                     Add links to your website, blog, or social media profiles.
                   </FormDescription>
                   <FormControl>
-                    <TextInput {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

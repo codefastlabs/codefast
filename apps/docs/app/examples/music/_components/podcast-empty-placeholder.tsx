@@ -10,8 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
   Label,
-  TextInput,
 } from '@codefast/ui';
 
 export function PodcastEmptyPlaceholder(): JSX.Element {
@@ -51,7 +51,7 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
             <DialogBody className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="url">Podcast URL</Label>
-                <TextInput id="url" placeholder="https://example.com/feed.xml" />
+                <Input id="url" placeholder="https://example.com/feed.xml" />
               </div>
             </DialogBody>
             <DialogFooter>

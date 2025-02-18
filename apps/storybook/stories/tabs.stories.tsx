@@ -8,13 +8,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Input,
+  InputPassword,
   Label,
-  PasswordInput,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  TextInput,
 } from '@codefast/ui';
 
 const meta = {
@@ -49,11 +49,11 @@ export const Default: Story = {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="name">Name</Label>
-              <TextInput defaultValue="Pedro Duarte" id="name" />
+              <Input defaultValue="Pedro Duarte" id="name" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="username">Username</Label>
-              <TextInput defaultValue="@peduarte" id="username" />
+              <Input defaultValue="@peduarte" id="username" />
             </div>
           </CardContent>
           <CardFooter>
@@ -72,11 +72,11 @@ export const Default: Story = {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="current">Current password</Label>
-              <PasswordInput id="current" />
+              <InputPassword id="current" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="new">New password</Label>
-              <PasswordInput id="new" />
+              <InputPassword id="new" />
             </div>
           </CardContent>
           <CardFooter>

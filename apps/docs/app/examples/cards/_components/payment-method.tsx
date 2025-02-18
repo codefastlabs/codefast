@@ -8,6 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Input,
   Label,
   RadioCards,
   RadioCardsItem,
@@ -16,7 +17,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  TextInput,
 } from '@codefast/ui';
 
 import { Icons } from '@/components/icons';
@@ -60,11 +60,11 @@ export function PaymentMethod(): JSX.Element {
         </RadioCards>
         <div className="grid gap-2">
           <Label htmlFor="name">Name</Label>
-          <TextInput id="name" placeholder="First Last" />
+          <Input id="name" placeholder="First Last" />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="number">Card number</Label>
-          <TextInput id="number" placeholder="" />
+          <Input id="number" placeholder="" />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="grid gap-2">
@@ -106,7 +106,7 @@ export function PaymentMethod(): JSX.Element {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="cvc">CVC</Label>
-            <TextInput id="cvc" placeholder="CVC" />
+            <Input id="cvc" placeholder="CVC" />
           </div>
         </div>
       </CardContent>

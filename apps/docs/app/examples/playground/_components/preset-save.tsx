@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
   Label,
-  TextInput,
 } from '@codefast/ui';
 
 export function PresetSave(): JSX.Element {
@@ -32,11 +32,11 @@ export function PresetSave(): JSX.Element {
         <DialogBody className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
-            <TextInput id="name" />
+            <Input id="name" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="description">Description</Label>
-            <TextInput id="description" />
+            <Input id="description" />
           </div>
         </DialogBody>
         <DialogFooter>

@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
   Label,
   Popover,
   PopoverContent,
@@ -32,7 +33,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  TextInput,
 } from '@codefast/ui';
 import { CaretSortIcon, CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
@@ -160,7 +160,7 @@ export function TeamSwitcher({ className }: TeamSwitcherProps): JSX.Element {
           <div className="grid gap-y-4">
             <div className="grid gap-y-2">
               <Label htmlFor="name">Team name</Label>
-              <TextInput id="name" placeholder="Acme Inc." />
+              <Input id="name" placeholder="Acme Inc." />
             </div>
             <div className="grid gap-y-2">
               <Label htmlFor="plan">Subscription plan</Label>

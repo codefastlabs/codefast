@@ -21,8 +21,8 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  Input,
   Label,
-  TextInput,
 } from '@codefast/ui';
 import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -185,11 +185,11 @@ export const ResponsiveDialog: Story = {
               <DialogBody className="grid items-start gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <TextInput defaultValue="codefast@example.com" id="email" type="email" />
+                  <Input defaultValue="codefast@example.com" id="email" type="email" />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="username">Username</Label>
-                  <TextInput defaultValue="@codefast" id="username" />
+                  <Input defaultValue="@codefast" id="username" />
                 </div>
               </DialogBody>
               <DialogFooter>
@@ -231,11 +231,11 @@ export const ResponsiveDialog: Story = {
             <DrawerBody className="grid items-start gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <TextInput defaultValue="codefast@example.com" id="email" type="email" />
+                <Input defaultValue="codefast@example.com" id="email" type="email" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="username">Username</Label>
-                <TextInput defaultValue="@codefast" id="username" />
+                <Input defaultValue="@codefast" id="username" />
               </div>
             </DrawerBody>
             <DrawerFooter className="pt-2">

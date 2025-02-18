@@ -8,9 +8,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Input,
+  InputPassword,
   Label,
-  PasswordInput,
-  TextInput,
 } from '@codefast/ui';
 
 import { Icons } from '@/components/icons';
@@ -41,11 +41,11 @@ export function CreateAccount(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <TextInput id="email" placeholder="m@example.com" type="email" />
+          <Input id="email" placeholder="m@example.com" type="email" />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <PasswordInput className="autofill:bg-red-500" id="password" placeholder="********" />
+          <InputPassword className="autofill:bg-red-500" id="password" placeholder="********" />
         </div>
       </CardContent>
       <CardFooter>

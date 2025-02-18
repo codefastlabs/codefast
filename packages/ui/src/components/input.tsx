@@ -14,10 +14,10 @@ import { inputVariants } from '@/variants/input.variants';
 const { input, root } = inputVariants();
 
 /* -----------------------------------------------------------------------------
- * Component: TextInput
+ * Component: Input
  * -------------------------------------------------------------------------- */
 
-interface TextInputProps
+interface InputProps
   extends InputVariantsProps,
     ComponentProps<typeof InputPrimitive.Root>,
     Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> {
@@ -37,7 +37,7 @@ interface TextInputProps
     | 'week';
 }
 
-function TextInput({
+function Input({
   className,
   inputSize,
   loaderPosition,
@@ -46,7 +46,7 @@ function TextInput({
   spinner,
   suffix,
   ...props
-}: TextInputProps): JSX.Element {
+}: InputProps): JSX.Element {
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
@@ -62,8 +62,26 @@ function TextInput({
 }
 
 /* -----------------------------------------------------------------------------
+ * Deprecated
+ * -------------------------------------------------------------------------- */
+
+/**
+ * @deprecated
+ * This type is an alias of the InputProps type.
+ * Please use the InputProps type instead to ensure consistency.
+ */
+type TextInputProps = InputProps;
+
+/**
+ * @deprecated
+ * This component is an alias of the Input component.
+ * Please use the Input component instead to ensure consistency.
+ */
+const TextInput = Input;
+
+/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { TextInputProps };
-export { TextInput };
+export type { InputProps, TextInputProps };
+export { Input, TextInput };
