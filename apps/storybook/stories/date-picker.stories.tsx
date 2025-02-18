@@ -87,7 +87,7 @@ export const DateRangePicker: Story = {
     });
 
     return (
-      <div className="grid gap-2">
+      <div className="space-y-2">
         <Popover {...args}>
           <PopoverTrigger asChild>
             <Button

@@ -183,11 +183,11 @@ export const ResponsiveDialog: Story = {
                 </DialogDescription>
               </DialogHeader>
               <DialogBody className="grid items-start gap-4">
-                <div className="grid gap-2">
+                <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input defaultValue="codefast@example.com" id="email" type="email" />
                 </div>
-                <div className="grid gap-2">
+                <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
                   <Input defaultValue="@codefast" id="username" />
                 </div>
@@ -229,11 +229,11 @@ export const ResponsiveDialog: Story = {
               </DrawerDescription>
             </DrawerHeader>
             <DrawerBody className="grid items-start gap-4">
-              <div className="grid gap-2">
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input defaultValue="codefast@example.com" id="email" type="email" />
               </div>
-              <div className="grid gap-2">
+              <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
                 <Input defaultValue="@codefast" id="username" />
               </div>

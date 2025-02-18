@@ -149,7 +149,7 @@ export const Scrollable: Story = {
         </DialogHeader>
 
         <DialogBody className="border-y">
-          <div className="grid gap-2 py-4">
+          <div className="space-y-2 py-4">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
                 {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores,
@@ -186,7 +186,7 @@ export const ScrollingLongContent: Story = {
         </DialogHeader>
 
         <DialogBody>
-          <div className="grid gap-2">
+          <div className="space-y-2">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
                 {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores,
