@@ -7,7 +7,7 @@ const buttonVariants = tv({
     'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium shadow-sm transition',
     '[&>svg]:shrink-0',
     'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
-    'disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none',
+    'disabled:opacity-50 disabled:shadow-none',
   ],
   compoundVariants: [
     // --
@@ -50,19 +50,25 @@ const buttonVariants = tv({
       xxs: 'h-7 [&>svg]:size-3', // 28px
     },
     variant: {
-      default: ['bg-primary text-primary-foreground', 'hover:bg-primary/80'],
-      destructive: ['bg-destructive text-destructive-foreground', 'hover:bg-destructive/80'],
-      ghost: ['text-foreground shadow-none', 'hover:bg-accent hover:text-accent-foreground'],
-      info: ['bg-info text-info-foreground', 'hover:bg-info/80'],
-      link: ['text-primary underline-offset-4 shadow-none', 'hover:underline'],
+      default: ['bg-primary text-primary-foreground', 'hover:not-disabled:bg-primary/80'],
+      destructive: [
+        'bg-destructive text-destructive-foreground',
+        'hover:not-disabled:bg-destructive/80',
+      ],
+      ghost: [
+        'text-foreground shadow-none',
+        'hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground',
+      ],
+      info: ['bg-info text-info-foreground', 'hover:not-disabled:bg-info/80'],
+      link: ['text-primary underline-offset-4 shadow-none', 'hover:not-disabled:underline'],
       outline: [
         'text-foreground border-input border',
         'focus-visible:border-ring',
-        'hover:bg-accent hover:text-accent-foreground',
+        'hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground',
       ],
-      secondary: ['bg-secondary text-secondary-foreground', 'hover:bg-secondary/80'],
-      success: ['bg-success text-success-foreground', 'hover:bg-success/80'],
-      warning: ['bg-warning text-warning-foreground', 'hover:bg-warning/80'],
+      secondary: ['bg-secondary text-secondary-foreground', 'hover:not-disabled:bg-secondary/80'],
+      success: ['bg-success text-success-foreground', 'hover:not-disabled:bg-success/80'],
+      warning: ['bg-warning text-warning-foreground', 'hover:not-disabled:bg-warning/80'],
     },
   },
 });

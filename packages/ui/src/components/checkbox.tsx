@@ -17,10 +17,10 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
       className={cn(
         'peer',
         'border-input text-primary-foreground shadow-xs inline-flex size-4 shrink-0 items-center justify-center rounded-sm border transition',
-        'hover:border-primary',
+        'hover:not-disabled:border-primary',
         'aria-checked:border-primary aria-checked:bg-primary',
         'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
-        'disabled:cursor-default disabled:opacity-50',
+        'disabled:opacity-50',
         className,
       )}
       {...props}

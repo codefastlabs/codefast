@@ -9,15 +9,14 @@ const inputVariants = tv({
   slots: {
     input: [
       'peer size-full rounded-[inherit] bg-inherit outline-none',
-      'file:cursor-pointer file:border-0 file:bg-transparent file:font-medium',
+      'file:border-0 file:bg-transparent file:font-medium',
       'placeholder:text-muted-foreground',
-      'disabled:cursor-default',
     ],
     root: [
-      'border-input bg-background shadow-xs flex w-full grow cursor-text items-center gap-2 rounded-md border px-3 text-sm transition',
+      'border-input bg-background shadow-xs flex w-full grow items-center gap-2 rounded-md border px-3 text-sm transition',
       '[&>svg]:text-muted-foreground [&>svg]:shrink-0',
       'focus-within:border-ring focus-within:ring-ring/40 focus-within:ring-3',
-      'has-[input:disabled]:cursor-default has-[input:disabled]:opacity-50',
+      'has-[input:disabled]:opacity-50',
     ],
   },
   variants: {
