@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.22
+
+### Patch Changes
+
+- [`fbdfdad`](https://github.com/codefastlabs/codefast/commit/fbdfdadc9d83a7999bb6711f764b8c4070d4f395) Thanks [@thevuong](https://github.com/thevuong)! - simplify prop types using `ComponentProps`
+
+- Updated dependencies [[`fbdfdad`](https://github.com/codefastlabs/codefast/commit/fbdfdadc9d83a7999bb6711f764b8c4070d4f395)]:
+  - @codefast/style-guide@0.2.22
+
 ## 0.2.21
 
 ### Patch Changes
