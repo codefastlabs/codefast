@@ -22,7 +22,7 @@ export function CreateAccount(): JSX.Element {
         <CardTitle className="text-2xl">Create an account</CardTitle>
         <CardDescription>Enter your email below to create your account</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
+      <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-6">
           <Button prefix={<Icons.GitHub />} variant="outline">
             Github
@@ -39,11 +39,11 @@ export function CreateAccount(): JSX.Element {
             <span className="bg-background text-muted-foreground px-2">Or continue with</span>
           </div>
         </div>
-        <div className="grid gap-2">
+        <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" placeholder="m@example.com" type="email" />
         </div>
-        <div className="grid gap-2">
+        <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <InputPassword className="autofill:bg-red-500" id="password" placeholder="********" />
         </div>

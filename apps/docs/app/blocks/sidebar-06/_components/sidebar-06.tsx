@@ -102,7 +102,7 @@ export function Sidebar06({ className, ...props }: Sidebar06Props): JSX.Element 
                       Opt-in to receive updates and news about the sidebar.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="grid gap-2.5 p-4">
+                  <CardContent className="space-y-2.5 p-4">
                     <SidebarInput placeholder="Email" type="email" />
                     <Button
                       className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none"
