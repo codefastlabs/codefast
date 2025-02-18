@@ -1,13 +1,6 @@
 'use client';
 
-import type {
-  ComponentProps,
-  ComponentType,
-  CSSProperties,
-  HTMLAttributes,
-  JSX,
-  ReactNode,
-} from 'react';
+import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from 'react';
 import type { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 import { createContext, useContext, useId, useMemo } from 'react';
@@ -61,7 +54,7 @@ function useChart(): ChartContextProps {
  * Component: Chart
  * -------------------------------------------------------------------------- */
 
-interface ChartContainerProps extends HTMLAttributes<HTMLDivElement> {
+interface ChartContainerProps extends ComponentProps<'div'> {
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
   config: ChartConfig;
 }
@@ -133,7 +126,7 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
 
 interface ChartTooltipContentProps
   extends ComponentProps<typeof RechartsPrimitive.Tooltip>,
-    Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
+    Omit<ComponentProps<'div'>, 'content'> {
   hideIndicator?: boolean;
   hideLabel?: boolean;
   indicator?: 'dashed' | 'dot' | 'line';
@@ -284,7 +277,7 @@ const ChartLegend = RechartsPrimitive.Legend;
  * -------------------------------------------------------------------------- */
 
 interface ChartLegendContentProps
-  extends HTMLAttributes<HTMLDivElement>,
+  extends ComponentProps<'div'>,
     Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> {
   hideIcon?: boolean;
   nameKey?: string;

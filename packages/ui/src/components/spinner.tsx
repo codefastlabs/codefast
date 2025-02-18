@@ -1,4 +1,4 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, CSSProperties, ReactNode } from 'react';
 
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 const spinnerCount = 8;
 
-interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
+interface SpinnerProps extends ComponentProps<'span'> {
   loading?: boolean;
 }
 

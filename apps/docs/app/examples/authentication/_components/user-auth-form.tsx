@@ -1,6 +1,6 @@
 'use client';
 
-import type { HTMLAttributes, JSX, SyntheticEvent } from 'react';
+import type { ComponentProps, JSX, SyntheticEvent } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 
 import { Button, cn, Input, Label } from '@codefast/ui';
@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 import { Icons } from '@/components/icons';
 
-type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
+type UserAuthFormProps = ComponentProps<'div'>;
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);

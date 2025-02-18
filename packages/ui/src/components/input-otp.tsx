@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { OTPInput, OTPInputContext } from 'input-otp';
 import { DotIcon } from 'lucide-react';
@@ -32,7 +32,7 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
  * Component: InputOTPGroup
  * -------------------------------------------------------------------------- */
 
-type InputOTPGroupProps = HTMLAttributes<HTMLDivElement>;
+type InputOTPGroupProps = ComponentProps<'div'>;
 
 function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
   return <div className={cn('flex items-center', className)} {...props} />;
@@ -42,7 +42,7 @@ function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element
  * Component: InputOTPSlot
  * -------------------------------------------------------------------------- */
 
-interface InputOTPSlotProps extends HTMLAttributes<HTMLDivElement> {
+interface InputOTPSlotProps extends ComponentProps<'div'> {
   index: number;
 }
 
@@ -76,7 +76,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
  * Component: InputOTPSeparator
  * -------------------------------------------------------------------------- */
 
-type InputOTPSeparatorProps = HTMLAttributes<HTMLDivElement>;
+type InputOTPSeparatorProps = ComponentProps<'div'>;
 
 function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
   return (

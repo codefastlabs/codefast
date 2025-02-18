@@ -1,20 +1,24 @@
 import type { ComponentProps, JSX } from 'react';
 
-import { cn } from '@/lib/utils';
+import { Slot } from '@radix-ui/react-slot';
 
 /* -----------------------------------------------------------------------------
- * Component: Skeleton
+ * Component: Inline
  * -------------------------------------------------------------------------- */
 
-type SkeletonProps = ComponentProps<'div'>;
+interface InlineProps extends ComponentProps<'span'> {
+  asChild?: boolean;
+}
 
-function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
-  return <div className={cn('bg-muted animate-pulse rounded', className)} {...props} />;
+function Inline({ asChild, ...props }: InlineProps): JSX.Element {
+  const Component = asChild ? Slot : 'span';
+
+  return <Component {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SkeletonProps };
-export { Skeleton };
+export type { InlineProps };
+export { Inline };

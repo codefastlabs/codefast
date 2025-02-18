@@ -1,9 +1,6 @@
 import type { Scope } from '@radix-ui/react-context';
 import type {
-  ButtonHTMLAttributes,
   ComponentProps,
-  ComponentPropsWithoutRef,
-  ComponentRef,
   FocusEventHandler,
   JSX,
   KeyboardEvent,
@@ -16,10 +13,9 @@ import type {
 import * as InputPrimitive from '@codefast-ui/input';
 import { createInputScope } from '@codefast-ui/input';
 import { composeEventHandlers } from '@radix-ui/primitive';
-import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { createContextScope } from '@radix-ui/react-context';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInput
@@ -209,17 +205,14 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
   );
 }
 
-NumberInput.displayName = NUMBER_INPUT_NAME;
-
 /* -----------------------------------------------------------------------------
  * Component: NumberInputItem
  * -------------------------------------------------------------------------- */
 
 const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 
-type NumberInputItemElement = ComponentRef<typeof InputPrimitive.Item>;
 type NumberInputItemProps = Omit<
-  ComponentPropsWithoutRef<typeof InputPrimitive.Item>,
+  ComponentProps<typeof InputPrimitive.Item>,
   | 'defaultValue'
   | 'disabled'
   | 'id'
@@ -232,353 +225,325 @@ type NumberInputItemProps = Omit<
   | 'value'
 >;
 
-const NumberInputItem = forwardRef<NumberInputItemElement, NumberInputItemProps>(
-  (
-    { __scopeNumberInput, onBlur, onKeyDown, ...props }: ScopedProps<NumberInputItemProps>,
-    forwardedRef,
-  ): JSX.Element => {
-    const inputScope = useInputScope(__scopeNumberInput);
-    const {
-      id,
-      disabled,
-      formatValue,
-      inputRef,
-      max,
-      min,
-      onChange,
-      onDecrement,
-      onDecrementToMin,
-      onIncrement,
-      onIncrementToMax,
-      parseValue,
-      readOnly,
-      step,
-      value,
-    } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
-    const composedNumberInputRef = useComposedRefs(forwardedRef, inputRef);
+function NumberInputItem({
+  __scopeNumberInput,
+  onBlur,
+  onKeyDown,
+  ...props
+}: ScopedProps<NumberInputItemProps>): JSX.Element {
+  const inputScope = useInputScope(__scopeNumberInput);
+  const {
+    id,
+    disabled,
+    formatValue,
+    inputRef,
+    max,
+    min,
+    onChange,
+    onDecrement,
+    onDecrementToMin,
+    onIncrement,
+    onIncrementToMax,
+    parseValue,
+    readOnly,
+    step,
+    value,
+  } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
 
-    // Handle blur event to format the value
-    const handleBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
-      (event) => {
-        const numericValue = parseValue(event.target.value);
-        const formattedValue = formatValue(numericValue);
+  // Handle blur event to format the value
+  const handleBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
+    (event) => {
+      const numericValue = parseValue(event.target.value);
+      const formattedValue = formatValue(numericValue);
 
-        if (formattedValue !== event.target.value) {
-          event.target.value = formattedValue;
-        }
+      if (formattedValue !== event.target.value) {
+        event.target.value = formattedValue;
+      }
 
-        onChange(numericValue);
-      },
-      [formatValue, onChange, parseValue],
-    );
+      onChange(numericValue);
+    },
+    [formatValue, onChange, parseValue],
+  );
 
-    // Handle keyboard events to increment/decrement the value
-    const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
-      (event) => {
-        switch (event.key) {
-          case 'ArrowUp': {
-            onIncrement();
-            event.preventDefault();
-            break;
-          }
-
-          case 'PageUp': {
-            onIncrementToMax();
-            event.preventDefault();
-            break;
-          }
-
-          case 'ArrowDown': {
-            onDecrement();
-            event.preventDefault();
-            break;
-          }
-
-          case 'PageDown': {
-            onDecrementToMin();
-            event.preventDefault();
-            break;
-          }
-
-          default: {
-            break;
-          }
-        }
-      },
-      [onIncrement, onIncrementToMax, onDecrement, onDecrementToMin],
-    );
-
-    // Prevent non-numeric input
-    const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
+  // Handle keyboard events to increment/decrement the value
+  const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    (event) => {
       switch (event.key) {
-        case 'ArrowUp':
+        case 'ArrowUp': {
+          onIncrement();
+          event.preventDefault();
+          break;
+        }
 
-        case 'ArrowDown':
+        case 'PageUp': {
+          onIncrementToMax();
+          event.preventDefault();
+          break;
+        }
 
-        case 'ArrowLeft':
+        case 'ArrowDown': {
+          onDecrement();
+          event.preventDefault();
+          break;
+        }
 
-        case 'ArrowRight':
-
-        case 'PageUp':
-
-        case 'PageDown':
-
-        case 'Tab':
-
-        case 'Escape':
-
-        case 'Enter':
-
-        case 'Backspace':
-
-        case 'Delete':
-
-        case 'Home':
-
-        case 'End':
-
-        case '.':
-
-        case ',':
-
-        case '-':
-
-        case '%': {
-          return;
+        case 'PageDown': {
+          onDecrementToMin();
+          event.preventDefault();
+          break;
         }
 
         default: {
-          if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
-            return;
-          }
-
-          event.preventDefault();
+          break;
         }
       }
-    }, []);
+    },
+    [onIncrement, onIncrementToMax, onDecrement, onDecrementToMin],
+  );
 
-    // Handle Enter key to format the value
-    const handleKeyDownEnter = useCallback<KeyboardEventHandler<HTMLInputElement>>(
-      (event) => {
-        const inputElement = inputRef.current;
+  // Prevent non-numeric input
+  const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
+    switch (event.key) {
+      case 'ArrowUp':
 
-        if (event.key !== 'Enter' || !inputElement) {
-          return;
-        }
+      case 'ArrowDown':
 
-        const numericValue = parseValue(inputElement.value);
-        const formattedValue = formatValue(numericValue);
+      case 'ArrowLeft':
 
-        if (formattedValue !== inputElement.value) {
-          inputElement.value = formattedValue;
-        }
+      case 'ArrowRight':
 
-        onChange(numericValue);
-      },
-      [formatValue, inputRef, onChange, parseValue],
-    );
+      case 'PageUp':
 
-    // Handle wheel event to increment/decrement the value
-    useEffect(() => {
-      const handleWheel = (event: WheelEvent): void => {
-        const inputElement = inputRef.current;
+      case 'PageDown':
 
-        if (!inputElement || disabled || readOnly || document.activeElement !== inputElement) {
+      case 'Tab':
+
+      case 'Escape':
+
+      case 'Enter':
+
+      case 'Backspace':
+
+      case 'Delete':
+
+      case 'Home':
+
+      case 'End':
+
+      case '.':
+
+      case ',':
+
+      case '-':
+
+      case '%': {
+        return;
+      }
+
+      default: {
+        if (isNumberKey(event.key) || isModifierKey(event) || isFunctionKey(event.key)) {
           return;
         }
 
         event.preventDefault();
-
-        if (event.deltaY > 0) {
-          onIncrement();
-        } else {
-          onDecrement();
-        }
-      };
-
-      const inputElement = inputRef.current;
-
-      inputElement?.addEventListener('wheel', handleWheel);
-
-      return () => {
-        inputElement?.removeEventListener('wheel', handleWheel);
-      };
-    }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
-
-    // Format the value when the value changes
-    useEffect(() => {
-      const inputElement = inputRef.current;
-
-      if (inputElement && inputElement !== document.activeElement) {
-        inputElement.value = formatValue(value);
       }
-    }, [formatValue, inputRef, value]);
+    }
+  }, []);
 
-    // Handle form reset
-    useEffect(() => {
+  // Handle Enter key to format the value
+  const handleKeyDownEnter = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    (event) => {
       const inputElement = inputRef.current;
 
-      if (!inputElement) {
+      if (event.key !== 'Enter' || !inputElement) {
         return;
       }
 
-      const handleReset = (): void => {
-        onChange();
-      };
+      const numericValue = parseValue(inputElement.value);
+      const formattedValue = formatValue(numericValue);
 
-      const form = inputElement.form;
+      if (formattedValue !== inputElement.value) {
+        inputElement.value = formattedValue;
+      }
 
-      form?.addEventListener('reset', handleReset);
+      onChange(numericValue);
+    },
+    [formatValue, inputRef, onChange, parseValue],
+  );
 
-      return () => {
-        form?.removeEventListener('reset', handleReset);
-      };
-    }, [inputRef, onChange]);
+  // Handle wheel event to increment/decrement the value
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent): void => {
+      const inputElement = inputRef.current;
 
-    return (
-      <InputPrimitive.Item
-        ref={composedNumberInputRef}
-        defaultValue={formatValue(value)}
-        disabled={disabled}
-        id={id}
-        max={max}
-        min={min}
-        readOnly={readOnly}
-        step={step}
-        onBlur={composeEventHandlers(onBlur, handleBlur)}
-        onKeyDown={composeEventHandlers(
-          onKeyDown,
-          useMemo(
-            () => chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
-            [handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
-          ),
-        )}
-        {...inputScope}
-        {...props}
-      />
-    );
-  },
-);
+      if (!inputElement || disabled || readOnly || document.activeElement !== inputElement) {
+        return;
+      }
 
-NumberInputItem.displayName = NUMBER_INPUT_ITEM_NAME;
+      event.preventDefault();
+
+      if (event.deltaY > 0) {
+        onIncrement();
+      } else {
+        onDecrement();
+      }
+    };
+
+    const inputElement = inputRef.current;
+
+    inputElement?.addEventListener('wheel', handleWheel);
+
+    return () => {
+      inputElement?.removeEventListener('wheel', handleWheel);
+    };
+  }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
+
+  // Format the value when the value changes
+  useEffect(() => {
+    const inputElement = inputRef.current;
+
+    if (inputElement && inputElement !== document.activeElement) {
+      inputElement.value = formatValue(value);
+    }
+  }, [formatValue, inputRef, value]);
+
+  // Handle form reset
+  useEffect(() => {
+    const inputElement = inputRef.current;
+
+    if (!inputElement) {
+      return;
+    }
+
+    const handleReset = (): void => {
+      onChange();
+    };
+
+    const form = inputElement.form;
+
+    form?.addEventListener('reset', handleReset);
+
+    return () => {
+      form?.removeEventListener('reset', handleReset);
+    };
+  }, [inputRef, onChange]);
+
+  return (
+    <InputPrimitive.Item
+      ref={inputRef}
+      defaultValue={formatValue(value)}
+      disabled={disabled}
+      id={id}
+      max={max}
+      min={min}
+      readOnly={readOnly}
+      step={step}
+      onBlur={composeEventHandlers(onBlur, handleBlur)}
+      onKeyDown={composeEventHandlers(
+        onKeyDown,
+        useMemo(
+          () => chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
+          [handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
+        ),
+      )}
+      {...inputScope}
+      {...props}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInputImplButton
+ * Component: NumberStepperButton
  * -------------------------------------------------------------------------- */
 
-const NUMBER_INPUT_BUTTON_IMPL_NAME = 'NumberInputImplButton';
+const NUMBER_STEPPER_BUTTON_NAME = 'NumberStepperButton';
 
-type NumberInputButtonImplElement = HTMLButtonElement;
-interface NumberInputButtonImplProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface NumberStepperButtonProps extends ComponentProps<'button'> {
   operation: 'decrement' | 'increment';
 }
 
-const NumberInputButtonImpl = forwardRef<NumberInputButtonImplElement, NumberInputButtonImplProps>(
-  (
-    { __scopeNumberInput, operation, ...props }: ScopedProps<NumberInputButtonImplProps>,
-    forwardedRef,
-  ): JSX.Element => {
-    const {
-      id,
-      ariaDecrementLabel,
-      ariaIncrementLabel,
-      disabled,
-      onDecrement,
-      onIncrement,
-      readOnly,
-    } = useNumberInputContext(NUMBER_INPUT_BUTTON_IMPL_NAME, __scopeNumberInput);
-    const timeoutIdRef = useRef<null | number>(null);
+function NumberStepperButton({
+  __scopeNumberInput,
+  operation,
+  ...props
+}: ScopedProps<NumberStepperButtonProps>): JSX.Element {
+  const {
+    id,
+    ariaDecrementLabel,
+    ariaIncrementLabel,
+    disabled,
+    onDecrement,
+    onIncrement,
+    readOnly,
+  } = useNumberInputContext(NUMBER_STEPPER_BUTTON_NAME, __scopeNumberInput);
+  const timeoutIdRef = useRef<null | number>(null);
 
-    const startActionInterval = useCallback((callback: () => void) => {
-      const interval = 100;
+  const startActionInterval = useCallback((callback: () => void) => {
+    const interval = 100;
 
-      const repeatAction = (): void => {
-        callback();
-        timeoutIdRef.current = setTimeout(repeatAction, interval);
-      };
-
+    const repeatAction = (): void => {
       callback();
-      timeoutIdRef.current = setTimeout(repeatAction, interval * 2);
-    }, []);
+      timeoutIdRef.current = setTimeout(repeatAction, interval);
+    };
 
-    const clearActionInterval = useCallback(() => {
-      if (timeoutIdRef.current) {
-        clearTimeout(timeoutIdRef.current);
-        timeoutIdRef.current = null;
-      }
-    }, []);
+    callback();
+    timeoutIdRef.current = setTimeout(repeatAction, interval * 2);
+  }, []);
 
-    const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(() => {
-      const action = operation === 'increment' ? onIncrement : onDecrement;
+  const clearActionInterval = useCallback(() => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
+  }, []);
 
-      startActionInterval(action);
-    }, [onDecrement, onIncrement, operation, startActionInterval]);
+  const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(() => {
+    const action = operation === 'increment' ? onIncrement : onDecrement;
 
-    const handleContextMenu = useCallback<MouseEventHandler<HTMLButtonElement>>((event) => {
-      event.preventDefault();
-    }, []);
+    startActionInterval(action);
+  }, [onDecrement, onIncrement, operation, startActionInterval]);
 
-    return (
-      <button
-        ref={forwardedRef}
-        aria-controls={id}
-        aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
-        aria-live="polite"
-        disabled={disabled || readOnly}
-        tabIndex={-1}
-        type="button"
-        onContextMenu={handleContextMenu}
-        onPointerCancel={clearActionInterval}
-        onPointerDown={handlePointerDown}
-        onPointerLeave={clearActionInterval}
-        onPointerUp={clearActionInterval}
-        {...props}
-      />
-    );
-  },
-);
+  const handleContextMenu = useCallback<MouseEventHandler<HTMLButtonElement>>((event) => {
+    event.preventDefault();
+  }, []);
 
-NumberInputButtonImpl.displayName = NUMBER_INPUT_BUTTON_IMPL_NAME;
+  return (
+    <button
+      aria-controls={id}
+      aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
+      aria-live="polite"
+      disabled={disabled || readOnly}
+      tabIndex={-1}
+      type="button"
+      onContextMenu={handleContextMenu}
+      onPointerCancel={clearActionInterval}
+      onPointerDown={handlePointerDown}
+      onPointerLeave={clearActionInterval}
+      onPointerUp={clearActionInterval}
+      {...props}
+    />
+  );
+}
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInputIncrementButton
  * -------------------------------------------------------------------------- */
 
-const NUMBER_INPUT_INCREMENT_BUTTON_NAME = 'NumberInputIncrementButton';
+type NumberInputIncrementButtonProps = Omit<NumberStepperButtonProps, 'operation'>;
 
-type NumberInputIncrementButtonElement = NumberInputButtonImplElement;
-type NumberInputIncrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
-
-const NumberInputIncrementButton = forwardRef<
-  NumberInputIncrementButtonElement,
-  NumberInputIncrementButtonProps
->(
-  (props: NumberInputIncrementButtonProps, forwardedRef): JSX.Element => (
-    <NumberInputButtonImpl ref={forwardedRef} operation="increment" {...props} />
-  ),
-);
-
-NumberInputIncrementButton.displayName = NUMBER_INPUT_INCREMENT_BUTTON_NAME;
+function NumberInputIncrementButton(props: NumberInputIncrementButtonProps): JSX.Element {
+  return <NumberStepperButton operation="increment" {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: NumberInputDecrementButton
  * -------------------------------------------------------------------------- */
 
-const NUMBER_INPUT_DECREMENT_BUTTON_NAME = 'NumberInputDecrementButton';
+type NumberInputDecrementButtonProps = Omit<NumberStepperButtonProps, 'operation'>;
 
-type NumberInputDecrementButtonElement = NumberInputButtonImplElement;
-type NumberInputDecrementButtonProps = Omit<NumberInputButtonImplProps, 'operation'>;
-
-const NumberInputDecrementButton = forwardRef<
-  NumberInputDecrementButtonElement,
-  NumberInputDecrementButtonProps
->(
-  (props: NumberInputDecrementButtonProps, forwardedRef): JSX.Element => (
-    <NumberInputButtonImpl ref={forwardedRef} operation="decrement" {...props} />
-  ),
-);
-
-NumberInputDecrementButton.displayName = NUMBER_INPUT_DECREMENT_BUTTON_NAME;
+function NumberInputDecrementButton(props: NumberInputDecrementButtonProps): JSX.Element {
+  return <NumberStepperButton operation="decrement" {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Utility Functions

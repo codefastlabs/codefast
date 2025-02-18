@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
@@ -9,9 +9,7 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Button
  * -------------------------------------------------------------------------- */
 
-interface ButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'prefix'>,
-    ButtonVariantsProps {
+interface ButtonProps extends Omit<ComponentProps<'button'>, 'prefix'>, ButtonVariantsProps {
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
   prefix?: ReactNode;

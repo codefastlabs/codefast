@@ -75,8 +75,6 @@ function AccordionTrigger({ className, ...props }: AccordionTriggerProps): JSX.E
   );
 }
 
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
-
 /* -----------------------------------------------------------------------------
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */

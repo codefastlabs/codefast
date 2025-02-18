@@ -2,7 +2,7 @@
 
 import type { Scope } from '@radix-ui/react-context';
 import type * as LabelPrimitive from '@radix-ui/react-label';
-import type { ComponentProps, HTMLAttributes, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 import type { ControllerProps, FieldPath, FieldValues, GlobalError } from 'react-hook-form';
 
 import { createContextScope } from '@radix-ui/react-context';
@@ -93,7 +93,7 @@ interface FormItemContextValue {
 const [FormItemProvider, useFormItemContext] =
   createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
-type FormItemProps = HTMLAttributes<HTMLDivElement>;
+type FormItemProps = ComponentProps<'div'>;
 
 function FormItem({
   __scopeFormField,
@@ -151,7 +151,7 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
  * Component: FormDescription
  * -------------------------------------------------------------------------- */
 
-type FormDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+type FormDescriptionProps = ComponentProps<'p'>;
 
 function FormDescription({
   __scopeFormField,
@@ -175,7 +175,7 @@ function FormDescription({
 
 const FORM_MESSAGE_NAME = 'FormMessage';
 
-type FormMessageProps = HTMLAttributes<HTMLParagraphElement>;
+type FormMessageProps = ComponentProps<'p'>;
 
 function FormMessage({
   __scopeFormField,
