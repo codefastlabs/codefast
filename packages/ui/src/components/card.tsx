@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Card
  * -------------------------------------------------------------------------- */
 
-type CardProps = HTMLAttributes<HTMLDivElement>;
+type CardProps = ComponentProps<'div'>;
 
 function Card({ className, ...props }: CardProps): JSX.Element {
   return (
@@ -21,7 +21,7 @@ function Card({ className, ...props }: CardProps): JSX.Element {
  * Component: CardHeader
  * -------------------------------------------------------------------------- */
 
-type CardHeaderProps = HTMLAttributes<HTMLDivElement>;
+type CardHeaderProps = ComponentProps<'div'>;
 
 function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
   return <div className={cn('flex flex-col gap-y-1.5 p-6', className)} {...props} />;
@@ -31,7 +31,7 @@ function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
  * Component: CardTitle
  * -------------------------------------------------------------------------- */
 
-type CardTitleProps = HTMLAttributes<HTMLHeadingElement>;
+type CardTitleProps = ComponentProps<'h3'>;
 
 function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Element {
   return (
@@ -45,7 +45,7 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
  * Component: CardDescription
  * -------------------------------------------------------------------------- */
 
-type CardDescriptionProps = HTMLAttributes<HTMLParagraphElement>;
+type CardDescriptionProps = ComponentProps<'p'>;
 
 function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Element {
   return <p className={cn('text-muted-foreground text-sm', className)} {...props} />;
@@ -55,7 +55,7 @@ function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Ele
  * Component: CardContent
  * -------------------------------------------------------------------------- */
 
-type CardContentProps = HTMLAttributes<HTMLDivElement>;
+type CardContentProps = ComponentProps<'div'>;
 
 function CardContent({ className, ...props }: CardContentProps): JSX.Element {
   return <div className={cn('p-6 pt-0', className)} {...props} />;
@@ -65,7 +65,7 @@ function CardContent({ className, ...props }: CardContentProps): JSX.Element {
  * Component: CardFooter
  * -------------------------------------------------------------------------- */
 
-type CardFooterProps = HTMLAttributes<HTMLDivElement>;
+type CardFooterProps = ComponentProps<'div'>;
 
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return <div className={cn('flex items-center p-6 pt-0', className)} {...props} />;

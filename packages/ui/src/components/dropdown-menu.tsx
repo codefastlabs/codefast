@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
@@ -271,7 +271,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
  * Component: DropdownMenuShortcut
  * -------------------------------------------------------------------------- */
 
-type DropdownMenuShortcutProps = HTMLAttributes<HTMLSpanElement>;
+type DropdownMenuShortcutProps = ComponentProps<'span'>;
 
 function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps): JSX.Element {
   return (

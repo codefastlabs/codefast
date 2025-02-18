@@ -1,4 +1,4 @@
-import type { JSX, QuoteHTMLAttributes } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 
@@ -6,7 +6,7 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Quote
  * -------------------------------------------------------------------------- */
 
-interface QuoteProps extends QuoteHTMLAttributes<HTMLQuoteElement> {
+interface QuoteProps extends ComponentProps<'q'> {
   asChild?: boolean;
 }
 

@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
@@ -261,7 +261,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
  * Component: ContextMenuShortcut
  * -------------------------------------------------------------------------- */
 
-type ContextMenuShortcutProps = HTMLAttributes<HTMLSpanElement>;
+type ContextMenuShortcutProps = ComponentProps<'span'>;
 
 function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): JSX.Element {
   return (

@@ -29,6 +29,7 @@ export * from '@/components/em';
 export * from '@/components/form';
 export * from '@/components/heading';
 export * from '@/components/hover-card';
+export * from '@/components/inline';
 export * from '@/components/input';
 // export * from '@/components/input-date';
 export * from '@/components/input-number';

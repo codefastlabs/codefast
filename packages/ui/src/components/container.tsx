@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 
@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: Container
  * -------------------------------------------------------------------------- */
 
-interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
+interface ContainerProps extends ComponentProps<'div'> {
   asChild?: boolean;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Command as CommandPrimitive } from 'cmdk';
 import { SearchIcon } from 'lucide-react';
@@ -159,7 +159,7 @@ function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Eleme
  * Component: CommandShortcut
  * -------------------------------------------------------------------------- */
 
-type CommandShortcutProps = HTMLAttributes<HTMLSpanElement>;
+type CommandShortcutProps = ComponentProps<'span'>;
 
 function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
   return (

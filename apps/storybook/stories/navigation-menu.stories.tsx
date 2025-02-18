@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { AnchorHTMLAttributes } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import {
   buttonVariants,
@@ -14,7 +14,6 @@ import {
 } from '@codefast/ui';
 import { SettingsIcon } from 'lucide-react';
 import Link from 'next/link';
-import { forwardRef } from 'react';
 
 const meta = {
   component: NavigationMenu,
@@ -74,31 +73,31 @@ const components: { description: string; href: string; title: string }[] = [
   },
 ];
 
-const ListItem = forwardRef<HTMLAnchorElement, AnchorHTMLAttributes<HTMLAnchorElement>>(
-  ({ children, className, title, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={cn(
-              'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-hidden block select-none space-y-1 rounded-md p-3 leading-none no-underline transition-colors',
-              className,
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-              {children}
-            </Text>
-          </a>
-        </NavigationMenuLink>
-      </li>
-    );
-  },
-);
-
-ListItem.displayName = 'ListItem';
+function ListItem({
+  children,
+  className,
+  title,
+  ...props
+}: ComponentProps<'a'> & { title?: string }): JSX.Element {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          className={cn(
+            'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-hidden block select-none space-y-1 rounded-md p-3 leading-none no-underline transition-colors',
+            className,
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+            {children}
+          </Text>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+}
 
 export const Default: Story = {
   render: () => (

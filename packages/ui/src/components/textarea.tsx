@@ -1,4 +1,4 @@
-import type { JSX, TextareaHTMLAttributes } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Textarea
  * -------------------------------------------------------------------------- */
 
-type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
+type TextareaProps = ComponentProps<'textarea'>;
 
 function Textarea({ className, ...props }: TextareaProps): JSX.Element {
   return (

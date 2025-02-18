@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import {
   cn,
@@ -18,7 +18,7 @@ import type { Album } from '@/app/examples/music/_data/albums';
 
 import { playlists } from '@/app/examples/music/_data/playlists';
 
-interface AlbumArtworkProps extends HTMLAttributes<HTMLDivElement> {
+interface AlbumArtworkProps extends ComponentProps<'div'> {
   album: Album;
   aspectRatio?: 'portrait' | 'square';
   height?: number;

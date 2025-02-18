@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 
@@ -6,20 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Box
  * -------------------------------------------------------------------------- */
 
-interface BoxDivProps extends HTMLAttributes<HTMLDivElement> {
-  as?: 'div';
-}
-
-interface BoxSpanProps extends HTMLAttributes<HTMLSpanElement> {
-  as: 'span';
-}
-
-type BoxProps = (BoxDivProps | BoxSpanProps) & {
+interface BoxProps extends ComponentProps<'div'> {
   asChild?: boolean;
-};
+}
 
-function Box({ as: Tag = 'div', asChild, ...props }: BoxProps): JSX.Element {
-  const Component = asChild ? Slot : Tag;
+function Box({ asChild, ...props }: BoxProps): JSX.Element {
+  const Component = asChild ? Slot : 'div';
 
   return <Component {...props} />;
 }

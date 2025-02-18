@@ -1,6 +1,6 @@
 'use client';
 
-import type { InputHTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { composeEventHandlers } from '@radix-ui/primitive';
 
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
  * Component: Radio
  * -------------------------------------------------------------------------- */
 
-interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
+interface RadioProps extends Omit<ComponentProps<'input'>, 'type'> {
   onValueChange?: (value: string) => void;
 }
 
