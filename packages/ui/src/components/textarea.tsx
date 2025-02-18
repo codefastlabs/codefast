@@ -16,7 +16,7 @@ function Textarea({ className, ...props }: TextareaProps): JSX.Element {
           'border-input shadow-xs flex min-h-16 w-full grow rounded-md border bg-transparent px-3 py-2 text-sm transition',
           'focus-visible:border-ring focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
           'placeholder:text-muted-foreground',
-          'disabled:cursor-default disabled:opacity-50',
+          'disabled:opacity-50',
         ],
         className,
       )}

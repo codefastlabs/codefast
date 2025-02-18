@@ -17,7 +17,7 @@ type InputOTPProps = ComponentProps<typeof OTPInput>;
 function InputOTP({ className, containerClassName, ...props }: InputOTPProps): JSX.Element {
   return (
     <OTPInput
-      className={cn('disabled:cursor-default', className)}
+      className={cn(className)}
       containerClassName={cn(
         'flex items-center gap-2',
         'has-[:disabled]:opacity-50',
@@ -35,7 +35,7 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
 type InputOTPGroupProps = ComponentProps<'div'>;
 
 function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
-  return <div className={cn('flex items-center', className)} {...props} />;
+  return <div className={cn('flex items-center -space-x-px', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -53,10 +53,10 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
   return (
     <div
       className={cn(
-        'border-input shadow-xs relative flex size-10 items-center justify-center border-y border-r text-sm transition-all',
-        'first:rounded-l-md first:border-l',
+        'border-input shadow-xs relative flex size-10 items-center justify-center border text-sm transition-all',
+        'first:rounded-l-md',
         'last:rounded-r-md',
-        'data-[state=active]:ring-3 data-[state=active]:ring-ring/40 data-[state=active]:z-10',
+        'data-[state=active]:ring-3 data-[state=active]:ring-ring/40 data-[state=active]:border-ring data-[state=active]:z-10',
         className,
       )}
       data-state={slot.isActive ? 'active' : 'inactive'}
