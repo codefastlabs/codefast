@@ -5,10 +5,10 @@ import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from 'l
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
-import { cn } from '@/lib/utils'; /* -----------------------------------------------------------------------------
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/variants/button.variants'; /* -----------------------------------------------------------------------------
  * Component: Select
  * -------------------------------------------------------------------------- */
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Select
@@ -66,7 +66,7 @@ type SelectScrollUpButtonProps = ComponentProps<typeof SelectPrimitive.ScrollUpB
 function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollUpButton
-      className={cn('flex cursor-pointer items-center justify-center py-1', className)}
+      className={cn('flex items-center justify-center py-1', className)}
       {...props}
     >
       <ChevronUpIcon />
@@ -83,7 +83,7 @@ type SelectScrollDownButtonProps = ComponentProps<typeof SelectPrimitive.ScrollD
 function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollDownButton
-      className={cn('flex cursor-pointer items-center justify-center py-1', className)}
+      className={cn('flex items-center justify-center py-1', className)}
       {...props}
     >
       <ChevronDownIcon />
@@ -170,7 +170,7 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
   return (
     <SelectPrimitive.Item
       className={cn(
-        'relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm',
+        'relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         className,
