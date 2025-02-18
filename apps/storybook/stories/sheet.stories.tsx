@@ -49,7 +49,7 @@ export const Default: Story = {
           </SheetHeader>
 
           <SheetBody>
-            <div className="grid gap-4">
+            <div className="space-y-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right" htmlFor={`name-${id}`}>
                   Name
@@ -101,7 +101,7 @@ export const Side: Story = {
               </SheetHeader>
 
               <SheetBody>
-                <div className="grid gap-4">
+                <div className="space-y-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label className="text-right" htmlFor={`name-${side}-${id}`}>
                       Name
@@ -150,7 +150,7 @@ export const Scrollable: Story = {
             </SheetHeader>
 
             <SheetBody className="grow overflow-auto border-y">
-              <div className="grid gap-2">
+              <div className="space-y-2">
                 {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
                   <p key={id}>
                     {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta
@@ -193,7 +193,7 @@ export const ScrollingLongContent: Story = {
             </SheetHeader>
 
             <SheetBody className="border-y">
-              <div className="grid gap-2">
+              <div className="space-y-2">
                 {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
                   <p key={id}>
                     {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta
