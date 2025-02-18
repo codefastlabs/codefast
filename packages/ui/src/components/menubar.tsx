@@ -179,7 +179,7 @@ function MenubarItem({ className, inset, ...props }: MenubarItemProps): JSX.Elem
         'gap-x-2 px-3 py-1.5',
         'relative flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'aria-disabled:opacity-50',
         inset && 'pl-8',
         className,
       )}
@@ -208,7 +208,7 @@ function MenubarCheckboxItem({
         'pl-8',
         'relative flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'aria-disabled:opacity-50',
         className,
       )}
       {...props}
@@ -237,7 +237,7 @@ function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemPro
         'pl-8',
         'relative flex select-none items-center rounded-sm text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'aria-disabled:opacity-50',
         className,
       )}
       {...props}

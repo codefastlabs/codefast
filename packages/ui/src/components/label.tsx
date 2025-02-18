@@ -14,7 +14,7 @@ function Label({ className, ...props }: LabelProps): JSX.Element {
   return (
     <LabelPrimitive.Root
       className={cn(
-        'text-sm font-medium leading-none peer-disabled:pointer-events-none peer-disabled:opacity-70',
+        'inline-block text-sm font-medium leading-none peer-disabled:opacity-70',
         className,
       )}
       {...props}

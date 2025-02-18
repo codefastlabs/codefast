@@ -66,10 +66,10 @@ type SelectScrollUpButtonProps = ComponentProps<typeof SelectPrimitive.ScrollUpB
 function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollUpButton
-      className={cn('flex items-center justify-center py-1', className)}
+      className={cn('text-muted-foreground flex items-center justify-center py-1', className)}
       {...props}
     >
-      <ChevronUpIcon />
+      <ChevronUpIcon size={16} />
     </SelectPrimitive.ScrollUpButton>
   );
 }
@@ -83,10 +83,10 @@ type SelectScrollDownButtonProps = ComponentProps<typeof SelectPrimitive.ScrollD
 function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollDownButton
-      className={cn('flex items-center justify-center py-1', className)}
+      className={cn('text-muted-foreground flex items-center justify-center py-1', className)}
       {...props}
     >
-      <ChevronDownIcon />
+      <ChevronDownIcon size={16} />
     </SelectPrimitive.ScrollDownButton>
   );
 }
@@ -172,7 +172,7 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
       className={cn(
         'relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
+        'aria-disabled:opacity-50',
         className,
       )}
       {...props}

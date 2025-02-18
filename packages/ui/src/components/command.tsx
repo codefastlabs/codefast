@@ -36,7 +36,17 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
   return (
     <Dialog {...props}>
       <DialogContent className="p-0">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
+        <Command
+          className={cn(
+            '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium',
+            '[&_[cmdk-group]]:px-2',
+            '[&_[cmdk-input-wrapper]_svg]:size-5',
+            '[&_[cmdk-input]]:h-12',
+            '[&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3',
+            '[&_[cmdk-item]_svg]:size-5',
+            '[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0',
+          )}
+        >
           {children}
         </Command>
       </DialogContent>
@@ -136,8 +146,8 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
       className={cn(
         'gap-x-2 px-3 py-1.5',
         'relative flex select-none items-center rounded-sm text-sm',
-        'aria-disabled:pointer-events-none aria-disabled:opacity-50',
         'aria-selected:bg-accent aria-selected:text-accent-foreground aria-selected:outline-none',
+        'aria-disabled:opacity-50',
         className,
       )}
       {...props}
