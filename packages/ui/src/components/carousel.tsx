@@ -1,7 +1,7 @@
 'use client';
 
 import type { Scope } from '@radix-ui/react-context';
-import type { HTMLAttributes, JSX, KeyboardEvent } from 'react';
+import type { ComponentProps, JSX, KeyboardEvent } from 'react';
 
 import { createContextScope } from '@radix-ui/react-context';
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
@@ -47,7 +47,7 @@ type CarouselContextValue = BaseCarouselProps & {
 const [CarouselProvider, useCarouselContext] =
   createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
-type CarouselProps = BaseCarouselProps & HTMLAttributes<HTMLDivElement>;
+type CarouselProps = BaseCarouselProps & ComponentProps<'div'>;
 
 function Carousel({
   __scopeCarousel,
@@ -153,7 +153,7 @@ function Carousel({
 
 const CAROUSEL_CONTENT_NAME = 'CarouselContent';
 
-interface CarouselContentProps extends HTMLAttributes<HTMLDivElement> {
+interface CarouselContentProps extends ComponentProps<'div'> {
   classNames?: {
     content?: string;
     wrapper?: string;
@@ -189,7 +189,7 @@ function CarouselContent({
 
 const CAROUSEL_ITEM_NAME = 'CarouselItem';
 
-type CarouselItemProps = HTMLAttributes<HTMLDivElement>;
+type CarouselItemProps = ComponentProps<'div'>;
 
 function CarouselItem({
   __scopeCarousel,

@@ -1,11 +1,4 @@
-import type {
-  AnchorHTMLAttributes,
-  HTMLAttributes,
-  JSX,
-  LiHTMLAttributes,
-  OlHTMLAttributes,
-  ReactNode,
-} from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
@@ -16,7 +9,7 @@ import { cn } from '@/lib/utils';
  * Component: Breadcrumb
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbProps extends HTMLAttributes<HTMLElement> {
+interface BreadcrumbProps extends ComponentProps<'nav'> {
   separator?: ReactNode;
 }
 
@@ -28,7 +21,7 @@ function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
  * Component: BreadcrumbList
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbListProps = OlHTMLAttributes<HTMLOListElement>;
+type BreadcrumbListProps = ComponentProps<'ol'>;
 
 function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Element {
   return (
@@ -46,7 +39,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
  * Component: BreadcrumbItem
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbItemProps = LiHTMLAttributes<HTMLLIElement>;
+type BreadcrumbItemProps = ComponentProps<'li'>;
 
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
   return <li className={cn('inline-flex items-center gap-1.5', className)} {...props} />;
@@ -56,7 +49,7 @@ function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Eleme
  * Component: BreadcrumbLink
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+interface BreadcrumbLinkProps extends ComponentProps<'a'> {
   asChild?: boolean;
 }
 
@@ -70,7 +63,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
  * Component: BreadcrumbPage
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbPageProps = HTMLAttributes<HTMLSpanElement>;
+type BreadcrumbPageProps = ComponentProps<'span'>;
 
 function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Element {
   return (
@@ -88,7 +81,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
  * Component: BreadcrumbSeparator
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbSeparatorProps = LiHTMLAttributes<HTMLLIElement>;
+type BreadcrumbSeparatorProps = ComponentProps<'li'>;
 
 function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
@@ -102,7 +95,7 @@ function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): 
  * Component: BreadcrumbEllipsis
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbEllipsisProps = HTMLAttributes<HTMLSpanElement>;
+type BreadcrumbEllipsisProps = ComponentProps<'span'>;
 
 function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): JSX.Element {
   return (

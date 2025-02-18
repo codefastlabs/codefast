@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn } from '@codefast/ui';
 import Image from 'next/image';
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: 'Cards',
 };
 
-function Container({ className, ...props }: HTMLAttributes<HTMLDivElement>): JSX.Element {
+function Container({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div className={cn('flex items-center justify-center [&>div]:w-full', className)} {...props} />
   );

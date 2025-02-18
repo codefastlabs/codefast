@@ -1,6 +1,6 @@
 import type { Scope } from '@radix-ui/react-context';
 import type {
-  InputHTMLAttributes,
+  ComponentProps,
   JSX,
   PointerEventHandler,
   PropsWithChildren,
@@ -10,7 +10,7 @@ import type {
 
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { createContextScope } from '@radix-ui/react-context';
-import { forwardRef, useRef } from 'react';
+import { useRef } from 'react';
 
 /* -----------------------------------------------------------------------------
  * Component: Input
@@ -85,27 +85,20 @@ function Input(inputProps: InputProps): JSX.Element {
   );
 }
 
-Input.displayName = INPUT_NAME;
-
 /* -----------------------------------------------------------------------------
  * Component: InputItem
  * -------------------------------------------------------------------------- */
 
 const INPUT_ITEM_NAME = 'InputItem';
 
-type InputItemElement = HTMLInputElement;
-type InputItemProps = InputHTMLAttributes<HTMLInputElement>;
+type InputItemProps = ComponentProps<'input'>;
 
-const InputItem = forwardRef<InputItemElement, InputItemProps>(
-  ({ __scopeInput, ...props }: ScopedProps<InputItemProps>, forwardedRef) => {
-    const { inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
-    const composedInputRef = useComposedRefs(forwardedRef, inputRef);
+function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX.Element {
+  const { inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
+  const composedInputRef = useComposedRefs(inputRef);
 
-    return <input ref={composedInputRef} type="text" {...props} />;
-  },
-);
-
-InputItem.displayName = INPUT_ITEM_NAME;
+  return <input ref={composedInputRef} type="text" {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Exports

@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX, TdHTMLAttributes, ThHTMLAttributes } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Table
  * -------------------------------------------------------------------------- */
 
-type TableProps = HTMLAttributes<HTMLTableElement>;
+type TableProps = ComponentProps<'table'>;
 
 function Table({ className, ...props }: TableProps): JSX.Element {
   return (
@@ -20,7 +20,7 @@ function Table({ className, ...props }: TableProps): JSX.Element {
  * Component: TableHeader
  * -------------------------------------------------------------------------- */
 
-type TableHeaderProps = HTMLAttributes<HTMLTableSectionElement>;
+type TableHeaderProps = ComponentProps<'thead'>;
 
 function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
   return (
@@ -32,7 +32,7 @@ function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
  * Component: TableBody
  * -------------------------------------------------------------------------- */
 
-type TableBodyProps = HTMLAttributes<HTMLTableSectionElement>;
+type TableBodyProps = ComponentProps<'tbody'>;
 
 function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
   return <tbody className={cn('[&>tr:last-child]:border-0', className)} {...props} />;
@@ -42,7 +42,7 @@ function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
  * Component: TableFooter
  * -------------------------------------------------------------------------- */
 
-type TableFooterProps = HTMLAttributes<HTMLTableSectionElement>;
+type TableFooterProps = ComponentProps<'tfoot'>;
 
 function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
@@ -57,7 +57,7 @@ function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
  * Component: TableRow
  * -------------------------------------------------------------------------- */
 
-type TableRowProps = HTMLAttributes<HTMLTableRowElement>;
+type TableRowProps = ComponentProps<'tr'>;
 
 function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
@@ -77,7 +77,7 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
  * Component: TableHead
  * -------------------------------------------------------------------------- */
 
-type TableHeadProps = ThHTMLAttributes<HTMLTableCellElement>;
+type TableHeadProps = ComponentProps<'th'>;
 
 function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
   return (
@@ -92,7 +92,7 @@ function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
  * Component: TableCell
  * -------------------------------------------------------------------------- */
 
-type TableCellProps = TdHTMLAttributes<HTMLTableCellElement>;
+type TableCellProps = ComponentProps<'td'>;
 
 function TableCell({ className, ...props }: TableCellProps): JSX.Element {
   return <td className={cn('p-2 align-middle', className)} {...props} />;
@@ -102,7 +102,7 @@ function TableCell({ className, ...props }: TableCellProps): JSX.Element {
  * Component: TableCaption
  * -------------------------------------------------------------------------- */
 
-type TableCaptionProps = HTMLAttributes<HTMLTableCaptionElement>;
+type TableCaptionProps = ComponentProps<'caption'>;
 
 function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
   return <caption className={cn('text-muted-foreground mt-4 text-sm', className)} {...props} />;

@@ -1,6 +1,6 @@
-import type { HTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 
-type IconProps = HTMLAttributes<SVGElement>;
+type IconProps = ComponentProps<'svg'>;
 
 export const Icons = {
   Apple: (props: IconProps) => (

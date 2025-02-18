@@ -1,7 +1,7 @@
 'use client';
 
 import type * as ReactTable from '@tanstack/react-table';
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import {
   ChevronDownIcon,
@@ -71,7 +71,7 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
  * Component: DataTablePagination
  * -------------------------------------------------------------------------- */
 
-interface DataTablePaginationProps<TData> extends HTMLAttributes<HTMLDivElement> {
+interface DataTablePaginationProps<TData> extends ComponentProps<'div'> {
   table: ReactTable.Table<TData>;
 }
 

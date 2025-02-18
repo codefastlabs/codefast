@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 
@@ -6,7 +6,7 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Strong
  * -------------------------------------------------------------------------- */
 
-interface StrongProps extends HTMLAttributes<HTMLElement> {
+interface StrongProps extends ComponentProps<'strong'> {
   asChild?: boolean;
 }
 

@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import { tv } from 'tailwind-variants';
@@ -33,7 +33,7 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
  * Component: Alert
  * -------------------------------------------------------------------------- */
 
-type AlertProps = AlertVariantsProps & HTMLAttributes<HTMLDivElement>;
+type AlertProps = AlertVariantsProps & ComponentProps<'div'>;
 
 function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
   return <div className={alertVariants({ className, variant })} role="alert" {...props} />;
@@ -43,7 +43,7 @@ function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
  * Component: AlertTitle
  * -------------------------------------------------------------------------- */
 
-type AlertTitleProps = HTMLAttributes<HTMLHeadingElement>;
+type AlertTitleProps = ComponentProps<'h5'>;
 
 function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Element {
   return (
@@ -57,7 +57,7 @@ function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Ele
  * Component: AlertDescription
  * -------------------------------------------------------------------------- */
 
-type AlertDescriptionProps = HTMLAttributes<HTMLDivElement>;
+type AlertDescriptionProps = ComponentProps<'div'>;
 
 function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.Element {
   return <div className={cn('text-sm [&_p]:leading-relaxed', className)} {...props} />;

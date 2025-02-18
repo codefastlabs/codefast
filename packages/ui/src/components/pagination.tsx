@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, HTMLAttributes, JSX, LiHTMLAttributes } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 
@@ -11,7 +11,7 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Pagination
  * -------------------------------------------------------------------------- */
 
-type PaginationProps = HTMLAttributes<HTMLElement>;
+type PaginationProps = ComponentProps<'nav'>;
 
 function Pagination({ className, ...props }: PaginationProps): JSX.Element {
   return (
@@ -28,7 +28,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
  * Component: PaginationContent
  * -------------------------------------------------------------------------- */
 
-type PaginationContentProps = HTMLAttributes<HTMLUListElement>;
+type PaginationContentProps = ComponentProps<'ul'>;
 
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
   return <ul className={cn('flex flex-row items-center gap-1', className)} {...props} />;
@@ -38,7 +38,7 @@ function PaginationContent({ className, ...props }: PaginationContentProps): JSX
  * Component: PaginationItem
  * -------------------------------------------------------------------------- */
 
-type PaginationItemProps = LiHTMLAttributes<HTMLLIElement>;
+type PaginationItemProps = ComponentProps<'li'>;
 
 function PaginationItem(props: PaginationItemProps): JSX.Element {
   return <li {...props} />;
@@ -49,7 +49,7 @@ function PaginationItem(props: PaginationItemProps): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 interface PaginationLinkProps
-  extends AnchorHTMLAttributes<HTMLAnchorElement>,
+  extends ComponentProps<'a'>,
     Pick<ButtonVariantsProps, 'icon' | 'size'> {
   isActive?: boolean;
 }
@@ -112,7 +112,7 @@ function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
  * Component: PaginationEllipsis
  * -------------------------------------------------------------------------- */
 
-type PaginationEllipsisProps = HTMLAttributes<HTMLSpanElement>;
+type PaginationEllipsisProps = ComponentProps<'span'>;
 
 function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Drawer as DrawerPrimitive } from 'vaul';
 
@@ -54,7 +54,7 @@ function DrawerContent({ children, className, ...props }: DrawerContentProps): J
  * Component: DrawerHeader
  * -------------------------------------------------------------------------- */
 
-type DrawerHeaderProps = HTMLAttributes<HTMLDivElement>;
+type DrawerHeaderProps = ComponentProps<'div'>;
 
 function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
   return <div className={cn('grid gap-1.5 p-4 text-center sm:text-left', className)} {...props} />;
@@ -64,7 +64,7 @@ function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
  * Component: DrawerBody
  * -------------------------------------------------------------------------- */
 
-type DrawerBodyProps = HTMLAttributes<HTMLDivElement>;
+type DrawerBodyProps = ComponentProps<'div'>;
 
 function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
   return <main className={cn('overflow-auto px-4 py-2', className)} {...props} />;
@@ -74,7 +74,7 @@ function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
  * Component: DrawerFooter
  * -------------------------------------------------------------------------- */
 
-type DrawerFooterProps = HTMLAttributes<HTMLDivElement>;
+type DrawerFooterProps = ComponentProps<'div'>;
 
 function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
   return <div className={cn('mt-auto flex flex-col-reverse gap-2 p-4', className)} {...props} />;

@@ -1,14 +1,6 @@
 'use client';
 
-import type {
-  AnchorHTMLAttributes,
-  ButtonHTMLAttributes,
-  ComponentProps,
-  CSSProperties,
-  HTMLAttributes,
-  JSX,
-  LiHTMLAttributes,
-} from 'react';
+import type { ComponentProps, CSSProperties, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import { useMediaQuery } from '@codefast/hooks';
@@ -61,7 +53,7 @@ function useSidebar(): SidebarContext {
  * Component: SidebarProvider
  * -------------------------------------------------------------------------- */
 
-interface SidebarProviderProps extends HTMLAttributes<HTMLDivElement> {
+interface SidebarProviderProps extends ComponentProps<'div'> {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
@@ -172,7 +164,7 @@ function SidebarProvider({
  * Component: Sidebar
  * -------------------------------------------------------------------------- */
 
-interface SidebarProps extends HTMLAttributes<HTMLDivElement> {
+interface SidebarProps extends ComponentProps<'div'> {
   collapsible?: 'icon' | 'none' | 'offcanvas';
   side?: 'left' | 'right';
   variant?: 'floating' | 'inset' | 'sidebar';
@@ -302,7 +294,7 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): 
  * Component: SidebarRail
  * -------------------------------------------------------------------------- */
 
-type SidebarRailProps = ButtonHTMLAttributes<HTMLButtonElement>;
+type SidebarRailProps = ComponentProps<'button'>;
 
 function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
   const { toggleSidebar } = useSidebar();
@@ -333,7 +325,7 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
  * Component: SidebarInset
  * -------------------------------------------------------------------------- */
 
-type SidebarInsetProps = HTMLAttributes<HTMLElement>;
+type SidebarInsetProps = ComponentProps<'main'>;
 
 function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
   return (
@@ -371,7 +363,7 @@ function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
  * Component: SidebarHeader
  * -------------------------------------------------------------------------- */
 
-type SidebarHeaderProps = HTMLAttributes<HTMLDivElement>;
+type SidebarHeaderProps = ComponentProps<'div'>;
 
 function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element {
   return (
@@ -383,7 +375,7 @@ function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element
  * Component: SidebarFooter
  * -------------------------------------------------------------------------- */
 
-type SidebarFooterProps = HTMLAttributes<HTMLDivElement>;
+type SidebarFooterProps = ComponentProps<'div'>;
 
 function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element {
   return (
@@ -411,7 +403,7 @@ function SidebarSeparator({ className, ...props }: SidebarSeparatorProps): JSX.E
  * Component: SidebarContent
  * -------------------------------------------------------------------------- */
 
-type SidebarContentProps = HTMLAttributes<HTMLDivElement>;
+type SidebarContentProps = ComponentProps<'div'>;
 
 function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Element {
   return (
@@ -430,7 +422,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
  * Component: SidebarGroup
  * -------------------------------------------------------------------------- */
 
-type SidebarGroupProps = HTMLAttributes<HTMLDivElement>;
+type SidebarGroupProps = ComponentProps<'div'>;
 
 function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
   return (
@@ -446,7 +438,7 @@ function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
  * Component: SidebarGroupLabel
  * -------------------------------------------------------------------------- */
 
-interface SidebarGroupLabelProps extends HTMLAttributes<HTMLDivElement> {
+interface SidebarGroupLabelProps extends ComponentProps<'div'> {
   asChild?: boolean;
 }
 
@@ -474,7 +466,7 @@ function SidebarGroupLabel({
  * Component: SidebarGroupAction
  * -------------------------------------------------------------------------- */
 
-interface SidebarGroupActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface SidebarGroupActionProps extends ComponentProps<'button'> {
   asChild?: boolean;
 }
 
@@ -504,7 +496,7 @@ function SidebarGroupAction({
  * Component: SidebarGroupContent
  * -------------------------------------------------------------------------- */
 
-type SidebarGroupContentProps = HTMLAttributes<HTMLDivElement>;
+type SidebarGroupContentProps = ComponentProps<'div'>;
 
 function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps): JSX.Element {
   return (
@@ -516,7 +508,7 @@ function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps):
  * Component: SidebarMenu
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuProps = HTMLAttributes<HTMLUListElement>;
+type SidebarMenuProps = ComponentProps<'ul'>;
 
 function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
   return (
@@ -532,7 +524,7 @@ function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
  * Component: SidebarMenuItem
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuItemProps = LiHTMLAttributes<HTMLLIElement>;
+type SidebarMenuItemProps = ComponentProps<'li'>;
 
 function SidebarMenuItem({ className, ...props }: SidebarMenuItemProps): JSX.Element {
   return (
@@ -565,7 +557,7 @@ const sidebarMenuButtonVariants = tv({
 });
 
 interface SidebarMenuButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends ComponentProps<'button'>,
     VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean;
   isActive?: boolean;
@@ -622,7 +614,7 @@ function SidebarMenuButton({
  * Component: SidebarMenuAction
  * -------------------------------------------------------------------------- */
 
-interface SidebarMenuActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface SidebarMenuActionProps extends ComponentProps<'button'> {
   asChild?: boolean;
   showOnHover?: boolean;
 }
@@ -659,7 +651,7 @@ function SidebarMenuAction({
  * Component: SidebarMenuBadge
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuBadgeProps = HTMLAttributes<HTMLDivElement>;
+type SidebarMenuBadgeProps = ComponentProps<'div'>;
 
 function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.Element {
   return (
@@ -683,7 +675,7 @@ function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.E
  * Component: SidebarMenuSkeleton
  * -------------------------------------------------------------------------- */
 
-interface SidebarMenuSkeletonProps extends HTMLAttributes<HTMLDivElement> {
+interface SidebarMenuSkeletonProps extends ComponentProps<'div'> {
   showIcon?: boolean;
 }
 
@@ -723,7 +715,7 @@ function SidebarMenuSkeleton({
  * Component: SidebarMenuSub
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuSubProps = HTMLAttributes<HTMLUListElement>;
+type SidebarMenuSubProps = ComponentProps<'ul'>;
 
 function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Element {
   return (
@@ -743,7 +735,7 @@ function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Eleme
  * Component: SidebarMenuSubItem
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuSubItemProps = LiHTMLAttributes<HTMLLIElement>;
+type SidebarMenuSubItemProps = ComponentProps<'li'>;
 
 function SidebarMenuSubItem({ ...props }: SidebarMenuSubItemProps): JSX.Element {
   return <li {...props} />;
@@ -753,7 +745,7 @@ function SidebarMenuSubItem({ ...props }: SidebarMenuSubItemProps): JSX.Element 
  * Component: SidebarMenuSubButton
  * -------------------------------------------------------------------------- */
 
-interface SidebarMenuSubButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+interface SidebarMenuSubButtonProps extends ComponentProps<'a'> {
   asChild?: boolean;
   isActive?: boolean;
   size?: 'md' | 'sm';

@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 
@@ -55,7 +55,7 @@ function AlertDialogContent({ className, ...props }: AlertDialogContentProps): J
  * Component: AlertDialogHeader
  * -------------------------------------------------------------------------- */
 
-type AlertDialogHeaderProps = HTMLAttributes<HTMLDivElement>;
+type AlertDialogHeaderProps = ComponentProps<'div'>;
 
 function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX.Element {
   return (
@@ -73,7 +73,7 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
-type AlertDialogBodyProps = HTMLAttributes<HTMLDivElement>;
+type AlertDialogBodyProps = ComponentProps<'div'>;
 
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
   return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
@@ -83,7 +83,7 @@ function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Ele
  * Component: AlertDialogFooter
  * -------------------------------------------------------------------------- */
 
-type AlertDialogFooterProps = HTMLAttributes<HTMLDivElement>;
+type AlertDialogFooterProps = ComponentProps<'div'>;
 
 function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX.Element {
   return (

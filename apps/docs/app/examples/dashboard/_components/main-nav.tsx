@@ -1,9 +1,9 @@
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn } from '@codefast/ui';
 import Link from 'next/link';
 
-export function MainNav({ className, ...props }: HTMLAttributes<HTMLElement>): JSX.Element {
+export function MainNav({ className, ...props }: ComponentProps<'nav'>): JSX.Element {
   return (
     <nav className={cn('flex items-center gap-x-4 lg:gap-x-6', className)} {...props}>
       <Link

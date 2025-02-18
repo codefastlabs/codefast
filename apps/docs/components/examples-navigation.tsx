@@ -1,6 +1,6 @@
 'use client';
 
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn, ScrollArea } from '@codefast/ui';
 
@@ -56,7 +56,7 @@ const examples: {
   },
 ];
 
-type ExamplesNavigationProps = HTMLAttributes<HTMLDivElement>;
+type ExamplesNavigationProps = ComponentProps<'div'>;
 
 export function ExamplesNavigation({ className, ...props }: ExamplesNavigationProps): JSX.Element {
   return (

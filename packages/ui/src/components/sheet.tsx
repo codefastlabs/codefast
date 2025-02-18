@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import * as SheetPrimitive from '@radix-ui/react-dialog';
@@ -7,10 +7,10 @@ import { tv } from 'tailwind-variants';
 
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
-import { cn } from '@/lib/utils'; /* -----------------------------------------------------------------------------
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/variants/button.variants'; /* -----------------------------------------------------------------------------
  * Variant: SheetContent
  * -------------------------------------------------------------------------- */
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent
@@ -110,7 +110,7 @@ function SheetContent({
  * Component: SheetHeader
  * -------------------------------------------------------------------------- */
 
-type SheetHeaderProps = HTMLAttributes<HTMLDivElement>;
+type SheetHeaderProps = ComponentProps<'div'>;
 
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
@@ -128,7 +128,7 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
  * Component: SheetBody
  * -------------------------------------------------------------------------- */
 
-type SheetBodyProps = HTMLAttributes<HTMLDivElement>;
+type SheetBodyProps = ComponentProps<'div'>;
 
 function SheetBody({ className, ...props }: SheetHeaderProps): JSX.Element {
   return <main className={cn('px-6 py-2', className)} {...props} />;
@@ -138,7 +138,7 @@ function SheetBody({ className, ...props }: SheetHeaderProps): JSX.Element {
  * Component: SheetFooter
  * -------------------------------------------------------------------------- */
 
-type SheetFooterProps = HTMLAttributes<HTMLDivElement>;
+type SheetFooterProps = ComponentProps<'div'>;
 
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (

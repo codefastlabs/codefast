@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
@@ -60,7 +60,7 @@ function Separator({
  * Component: SeparatorItem
  * -------------------------------------------------------------------------- */
 
-type SeparatorItemProps = HTMLAttributes<HTMLDivElement>;
+type SeparatorItemProps = ComponentProps<'div'>;
 
 function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
   return (

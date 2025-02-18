@@ -1,4 +1,4 @@
-import type { BlockquoteHTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { Slot } from '@radix-ui/react-slot';
 
@@ -6,7 +6,7 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Blockquote
  * -------------------------------------------------------------------------- */
 
-interface BlockquoteProps extends BlockquoteHTMLAttributes<HTMLQuoteElement> {
+interface BlockquoteProps extends ComponentProps<'blockquote'> {
   asChild?: boolean;
 }
 

@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
@@ -69,7 +69,7 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
  * Component: DialogHeader
  * -------------------------------------------------------------------------- */
 
-type DialogHeaderProps = HTMLAttributes<HTMLDivElement>;
+type DialogHeaderProps = ComponentProps<'div'>;
 
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
@@ -87,7 +87,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
-type DialogBodyProps = HTMLAttributes<HTMLDivElement>;
+type DialogBodyProps = ComponentProps<'div'>;
 
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
   return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
@@ -97,7 +97,7 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
  * Component: DialogFooter
  * -------------------------------------------------------------------------- */
 
-type DialogFooterProps = HTMLAttributes<HTMLDivElement>;
+type DialogFooterProps = ComponentProps<'div'>;
 
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (

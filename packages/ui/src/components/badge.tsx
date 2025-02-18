@@ -1,4 +1,4 @@
-import type { HTMLAttributes, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import { tv } from 'tailwind-variants';
@@ -51,7 +51,7 @@ type BadgeVariantsProps = VariantProps<typeof badgeVariants>;
  * Component: Badge
  * -------------------------------------------------------------------------- */
 
-interface BadgeProps extends Omit<HTMLAttributes<HTMLDivElement>, 'prefix'>, BadgeVariantsProps {
+interface BadgeProps extends Omit<ComponentProps<'div'>, 'prefix'>, BadgeVariantsProps {
   prefix?: ReactNode;
   suffix?: ReactNode;
 }

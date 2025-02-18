@@ -1,12 +1,12 @@
 'use client';
 
-import type { HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { buttonVariants, cn } from '@codefast/ui';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-interface SidebarNavProps extends HTMLAttributes<HTMLElement> {
+interface SidebarNavProps extends ComponentProps<'nav'> {
   items: {
     href: string;
     title: string;

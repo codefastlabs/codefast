@@ -1,4 +1,4 @@
-import type { ComponentProps, HTMLAttributes, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
 import { CheckIcon, ChevronRightIcon, DotIcon } from 'lucide-react';
@@ -290,7 +290,7 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.E
  * Component: MenubarShortcut
  * -------------------------------------------------------------------------- */
 
-type MenubarShortcutProps = HTMLAttributes<HTMLSpanElement>;
+type MenubarShortcutProps = ComponentProps<'span'>;
 
 function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Element {
   return (
