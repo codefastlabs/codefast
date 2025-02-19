@@ -7,10 +7,6 @@ import { DateLib } from '@/lib/classes/date-lib';
  *
  * @defaultValue `cccccc` (e.g., "Mo" for Monday)
  */
-export function formatWeekdayName(
-  weekday: Date,
-  options?: DateLibOptions,
-  dateLib?: DateLib,
-): string {
+export function formatWeekdayName(weekday: Date, options?: DateLibOptions, dateLib?: DateLib): string {
   return (dateLib ?? new DateLib(options)).format(weekday, 'cccccc');
 }

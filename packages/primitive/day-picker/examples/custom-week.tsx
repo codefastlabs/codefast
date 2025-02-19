@@ -23,8 +23,7 @@ export function CustomWeek(): JSX.Element {
       }
       modifiers={{
         range_end: selectedWeek?.to,
-        range_middle: (date: Date) =>
-          selectedWeek ? rangeIncludesDate(selectedWeek, date, true) : false,
+        range_middle: (date: Date) => (selectedWeek ? rangeIncludesDate(selectedWeek, date, true) : false),
         range_start: selectedWeek?.from,
         selected: selectedWeek,
       }}

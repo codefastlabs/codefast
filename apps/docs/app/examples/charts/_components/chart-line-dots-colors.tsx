@@ -85,13 +85,7 @@ export function ChartLineDotsColors(): JSX.Element {
               content={<ChartTooltipContent hideLabel indicator="line" nameKey="visitors" />}
               cursor={false}
             />
-            <Line
-              dataKey="visitors"
-              dot={dot}
-              stroke="var(--color-visitors)"
-              strokeWidth={2}
-              type="natural"
-            />
+            <Line dataKey="visitors" dot={dot} stroke="var(--color-visitors)" strokeWidth={2} type="natural" />
           </LineChart>
         </ChartContainer>
       </CardContent>
@@ -99,9 +93,7 @@ export function ChartLineDotsColors(): JSX.Element {
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
+        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
   );
@@ -113,14 +105,5 @@ const dot: LineDot = ({
 }: DotProps & {
   payload: DataItem;
 }) => {
-  return (
-    <Dot
-      key={payload.browser}
-      cx={props.cx}
-      cy={props.cy}
-      fill={payload.fill}
-      r={5}
-      stroke={payload.fill}
-    />
-  );
+  return <Dot key={payload.browser} cx={props.cx} cy={props.cy} fill={payload.fill} r={5} stroke={payload.fill} />;
 };

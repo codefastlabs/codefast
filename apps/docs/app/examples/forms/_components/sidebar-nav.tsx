@@ -22,10 +22,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps): JSX
         <Link
           key={item.href}
           className={buttonVariants({
-            className: [
-              pathname === item.href ? 'bg-muted hover:bg-muted' : 'hover:bg-muted/70',
-              'justify-start',
-            ],
+            className: [pathname === item.href ? 'bg-muted hover:bg-muted' : 'hover:bg-muted/70', 'justify-start'],
             variant: 'ghost',
           })}
           href={item.href}

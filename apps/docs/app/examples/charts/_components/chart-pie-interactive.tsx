@@ -73,10 +73,7 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
   const id = 'pie-interactive';
   const [activeMonth, setActiveMonth] = React.useState(desktopData[0].month);
 
-  const activeIndex = React.useMemo(
-    () => desktopData.findIndex((item) => item.month === activeMonth),
-    [activeMonth],
-  );
+  const activeIndex = React.useMemo(() => desktopData.findIndex((item) => item.month === activeMonth), [activeMonth]);
   const months = React.useMemo(() => desktopData.map((item) => item.month), []);
 
   return (
@@ -113,11 +110,7 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
         </Select>
       </CardHeader>
       <CardContent className="flex flex-1 justify-center pb-0">
-        <ChartContainer
-          className="mx-auto aspect-square w-full max-w-[18.75rem]"
-          config={chartConfig}
-          id={id}
-        >
+        <ChartContainer className="mx-auto aspect-square w-full max-w-[18.75rem]" config={chartConfig} id={id}>
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Pie
@@ -138,10 +131,7 @@ export function ChartPieInteractive(props: ChartPieInteractiveProps): JSX.Elemen
   );
 }
 
-const activeShape: ActiveShape<PieSectorDataItem> = ({
-  outerRadius = 0,
-  ...props
-}: PieSectorDataItem) => (
+const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props }: PieSectorDataItem) => (
   <g>
     <Sector {...props} outerRadius={outerRadius + 10} />
     <Sector {...props} innerRadius={outerRadius + 12} outerRadius={outerRadius + 25} />

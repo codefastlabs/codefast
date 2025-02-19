@@ -65,10 +65,7 @@ export function Sidebar01({ className, ...props }: Sidebar01Props): JSX.Element 
                       <ChevronsUpDownIcon className="ml-auto" />
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="w-(--radix-dropdown-menu-trigger-width)"
-                  >
+                  <DropdownMenuContent align="start" className="w-(--radix-dropdown-menu-trigger-width)">
                     {data.versions.map((version) => (
                       <DropdownMenuItem
                         key={version}
@@ -76,8 +73,7 @@ export function Sidebar01({ className, ...props }: Sidebar01Props): JSX.Element 
                           setSelectedVersion(version);
                         }}
                       >
-                        v{version}{' '}
-                        {version === selectedVersion && <CheckIcon className="ml-auto size-4" />}
+                        v{version} {version === selectedVersion && <CheckIcon className="ml-auto size-4" />}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>

@@ -18,14 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import {
-  BadgeCheckIcon,
-  BellIcon,
-  ChevronsUpDownIcon,
-  CreditCardIcon,
-  LogOutIcon,
-  SparklesIcon,
-} from 'lucide-react';
+import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from 'lucide-react';
 
 import type { User } from '@/app/blocks/sidebar-15/_lib/mocks/data';
 

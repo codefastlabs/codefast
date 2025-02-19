@@ -220,9 +220,7 @@ export const ReactHookForm: Story = {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
-                <FormDescription>
-                  Please enter the one-time password sent to your phone.
-                </FormDescription>
+                <FormDescription>Please enter the one-time password sent to your phone.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

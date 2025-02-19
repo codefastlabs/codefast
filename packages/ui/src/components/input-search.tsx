@@ -21,10 +21,7 @@ const { input, root } = inputVariants();
 interface InputSearchProps
   extends InputVariantsProps,
     ComponentProps<typeof InputPrimitive.Root>,
-    Omit<
-      ComponentProps<typeof InputPrimitive.Item>,
-      'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'
-    > {
+    Omit<ComponentProps<typeof InputPrimitive.Item>, 'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'> {
   defaultValue?: string;
   onChange?: (value: string) => void;
   value?: string;

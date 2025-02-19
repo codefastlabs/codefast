@@ -43,9 +43,7 @@ export const Default: Story = {
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Edit profile</SheetTitle>
-            <SheetDescription>
-              Make changes to your profile here. Click save when you&apos;re done.
-            </SheetDescription>
+            <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
           </SheetHeader>
 
           <SheetBody>
@@ -144,18 +142,16 @@ export const Scrollable: Story = {
           <SheetContent side={side}>
             <SheetHeader>
               <SheetTitle>Share link</SheetTitle>
-              <SheetDescription>
-                Anyone who has this link will be able to view this.
-              </SheetDescription>
+              <SheetDescription>Anyone who has this link will be able to view this.</SheetDescription>
             </SheetHeader>
 
             <SheetBody className="grow overflow-auto border-y">
               <div className="space-y-2">
                 {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
                   <p key={id}>
-                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta
-                    dolores, eligendi est officia voluptatem? Corporis culpa debitis ipsa ipsam
-                    maiores, nisi odit perspiciatis possimus quae, quos totam voluptas voluptatibus.
+                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
+                    officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
+                    quos totam voluptas voluptatibus.
                   </p>
                 ))}
               </div>
@@ -187,18 +183,16 @@ export const ScrollingLongContent: Story = {
           <SheetContent side={side}>
             <SheetHeader>
               <SheetTitle>Share link</SheetTitle>
-              <SheetDescription>
-                Anyone who has this link will be able to view this.
-              </SheetDescription>
+              <SheetDescription>Anyone who has this link will be able to view this.</SheetDescription>
             </SheetHeader>
 
             <SheetBody className="border-y">
               <div className="space-y-2">
                 {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
                   <p key={id}>
-                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta
-                    dolores, eligendi est officia voluptatem? Corporis culpa debitis ipsa ipsam
-                    maiores, nisi odit perspiciatis possimus quae, quos totam voluptas voluptatibus.
+                    {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
+                    officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
+                    quos totam voluptas voluptatibus.
                   </p>
                 ))}
               </div>

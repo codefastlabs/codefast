@@ -29,9 +29,7 @@ export const dayPickerContext = createContext<
  *
  * @typeParam T - A type extending an object with optional `mode` and `required` properties.
  */
-export interface DayPickerContext<
-  T extends { mode?: Mode | undefined; required?: boolean | undefined },
-> {
+export interface DayPickerContext<T extends { mode?: Mode | undefined; required?: boolean | undefined }> {
   /**
    * The class names for the UI elements.
    */

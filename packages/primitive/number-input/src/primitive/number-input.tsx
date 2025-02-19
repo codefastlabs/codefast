@@ -26,9 +26,7 @@ const NUMBER_INPUT_NAME = 'NumberInput';
 type ScopedProps<P> = P & {
   __scopeNumberInput?: Scope;
 };
-const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [
-  createInputScope,
-]);
+const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
 interface NumberInputContextValue {
@@ -98,10 +96,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     prop: valueProp,
   });
 
-  const { decimalSeparator, thousandSeparator } = useMemo(
-    () => getNumberFormatSeparators(locale),
-    [locale],
-  );
+  const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
   const formatValue = useCallback(
     (inputValue?: number): string => {
@@ -130,11 +125,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
         return Number.NaN;
       }
 
-      const normalizedValue = normalizeInputValue(
-        cleanedValue,
-        thousandSeparator,
-        decimalSeparator,
-      );
+      const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
       let parsedValue = Number.parseFloat(normalizedValue);
 
       if (formatOptions.style === 'percent') {
@@ -213,16 +204,7 @@ const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
 
 type NumberInputItemProps = Omit<
   ComponentProps<typeof InputPrimitive.Item>,
-  | 'defaultValue'
-  | 'disabled'
-  | 'id'
-  | 'max'
-  | 'min'
-  | 'onChange'
-  | 'prefix'
-  | 'readOnly'
-  | 'step'
-  | 'value'
+  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
 >;
 
 function NumberInputItem({
@@ -467,15 +449,8 @@ function NumberStepperButton({
   operation,
   ...props
 }: ScopedProps<NumberStepperButtonProps>): JSX.Element {
-  const {
-    id,
-    ariaDecrementLabel,
-    ariaIncrementLabel,
-    disabled,
-    onDecrement,
-    onIncrement,
-    readOnly,
-  } = useNumberInputContext(NUMBER_STEPPER_BUTTON_NAME, __scopeNumberInput);
+  const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, readOnly } =
+    useNumberInputContext(NUMBER_STEPPER_BUTTON_NAME, __scopeNumberInput);
   const timeoutIdRef = useRef<null | number>(null);
 
   const startActionInterval = useCallback((callback: () => void) => {
@@ -585,11 +560,7 @@ function getNumberFormatSeparators(locale: string): {
   return { decimalSeparator, thousandSeparator };
 }
 
-function normalizeInputValue(
-  value: string,
-  thousandSeparator: string,
-  decimalSeparator: string,
-): string {
+function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
     .replaceAll(new RegExp(`\\${thousandSeparator}`, 'g'), '')
     .replace(new RegExp(`\\${decimalSeparator}`), '.')

@@ -30,11 +30,7 @@ function NavigationMenu({ children, className, ...props }: NavigationMenuProps):
 
 type NavigationMenuListProps = ComponentProps<typeof NavigationMenuPrimitive.List>;
 
-function NavigationMenuList({
-  children,
-  className,
-  ...props
-}: NavigationMenuListProps): JSX.Element {
+function NavigationMenuList({ children, className, ...props }: NavigationMenuListProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.List
       className={cn('group flex flex-1 list-none items-center justify-center space-x-1', className)}
@@ -60,19 +56,11 @@ const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 type NavigationMenuTriggerProps = ComponentProps<typeof NavigationMenuPrimitive.Trigger>;
 
-function NavigationMenuTrigger({
-  children,
-  className,
-  ...props
-}: NavigationMenuTriggerProps): JSX.Element {
+function NavigationMenuTrigger({ children, className, ...props }: NavigationMenuTriggerProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Trigger
       className={buttonVariants({
-        className: [
-          'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
-          'group',
-          className,
-        ],
+        className: ['data-[state=open]:bg-accent data-[state=open]:text-accent-foreground', 'group', className],
         variant: 'ghost',
       })}
       {...props}
@@ -80,10 +68,7 @@ function NavigationMenuTrigger({
       {children}
       <ChevronDownIcon
         aria-hidden="true"
-        className={cn(
-          'relative top-px ml-1 size-3 transition',
-          'group-data-[state=open]:rotate-180',
-        )}
+        className={cn('relative top-px ml-1 size-3 transition', 'group-data-[state=open]:rotate-180')}
       />
     </NavigationMenuPrimitive.Trigger>
   );
@@ -150,10 +135,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
 
 type NavigationMenuIndicatorProps = ComponentProps<typeof NavigationMenuPrimitive.Indicator>;
 
-function NavigationMenuIndicator({
-  className,
-  ...props
-}: NavigationMenuIndicatorProps): JSX.Element {
+function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicatorProps): JSX.Element {
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(

@@ -19,11 +19,7 @@ type Story = StoryObj<typeof CheckboxCards>;
 export const Default: Story = {
   render: (args) => (
     <div>
-      <CheckboxCards
-        className="grid grid-cols-1 gap-2 sm:grid-cols-3"
-        defaultValue={['1']}
-        {...args}
-      >
+      <CheckboxCards className="grid grid-cols-1 gap-2 sm:grid-cols-3" defaultValue={['1']} {...args}>
         <CheckboxCardsItem value="1">
           <div className="flex w-full flex-col items-start">
             <Text className="font-bold">8-core CPU</Text>

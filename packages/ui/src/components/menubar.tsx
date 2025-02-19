@@ -42,10 +42,7 @@ type MenubarProps = ComponentProps<typeof MenubarPrimitive.Root>;
 function Menubar({ className, ...props }: MenubarProps): JSX.Element {
   return (
     <MenubarPrimitive.Root
-      className={cn(
-        'bg-background flex h-10 items-center space-x-1 rounded-md border p-1',
-        className,
-      )}
+      className={cn('bg-background flex h-10 items-center space-x-1 rounded-md border p-1', className)}
       {...props}
     />
   );
@@ -80,12 +77,7 @@ interface MenubarSubTriggerProps extends ComponentProps<typeof MenubarPrimitive.
   inset?: boolean;
 }
 
-function MenubarSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: MenubarSubTriggerProps): JSX.Element {
+function MenubarSubTrigger({ children, className, inset, ...props }: MenubarSubTriggerProps): JSX.Element {
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
@@ -194,12 +186,7 @@ function MenubarItem({ className, inset, ...props }: MenubarItemProps): JSX.Elem
 
 type MenubarCheckboxItemProps = ComponentProps<typeof MenubarPrimitive.CheckboxItem>;
 
-function MenubarCheckboxItem({
-  checked,
-  children,
-  className,
-  ...props
-}: MenubarCheckboxItemProps): JSX.Element {
+function MenubarCheckboxItem({ checked, children, className, ...props }: MenubarCheckboxItemProps): JSX.Element {
   return (
     <MenubarPrimitive.CheckboxItem
       checked={checked}
@@ -263,12 +250,7 @@ interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex items-center text-sm font-semibold',
-        inset && 'pl-8',
-        className,
-      )}
+      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   );
@@ -281,9 +263,7 @@ function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.El
 type MenubarSeparatorProps = ComponentProps<typeof MenubarPrimitive.Separator>;
 
 function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.Element {
-  return (
-    <MenubarPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />
-  );
+  return <MenubarPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -293,12 +273,7 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.E
 type MenubarShortcutProps = ComponentProps<'span'>;
 
 function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Element {
-  return (
-    <span
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
-      {...props}
-    />
-  );
+  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

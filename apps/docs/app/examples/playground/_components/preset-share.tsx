@@ -28,13 +28,7 @@ export function PresetShare(): JSX.Element {
               id="link"
             />
           </div>
-          <Button
-            aria-label="Copy"
-            className="px-3"
-            prefix={<CopyIcon />}
-            size="sm"
-            type="submit"
-          />
+          <Button aria-label="Copy" className="px-3" prefix={<CopyIcon />} size="sm" type="submit" />
         </div>
       </PopoverContent>
     </Popover>

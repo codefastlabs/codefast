@@ -68,10 +68,7 @@ export const config: Linter.Config[] = [
     name: '@codefast/eslint-config/next/typescript',
     rules: {
       ...typescriptRules.rules,
-      '@typescript-eslint/no-misused-promises': [
-        'warn',
-        { checksVoidReturn: { attributes: false } },
-      ],
+      '@typescript-eslint/no-misused-promises': ['warn', { checksVoidReturn: { attributes: false } }],
     },
   },
   {

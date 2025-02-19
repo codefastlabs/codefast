@@ -48,13 +48,9 @@ export function getNextFocus(
     dateLib,
   );
 
-  const isDisabled = Boolean(
-    props.disabled && dateMatchModifiers(focusableDate, props.disabled, dateLib),
-  );
+  const isDisabled = Boolean(props.disabled && dateMatchModifiers(focusableDate, props.disabled, dateLib));
 
-  const isHidden = Boolean(
-    props.hidden && dateMatchModifiers(focusableDate, props.hidden, dateLib),
-  );
+  const isHidden = Boolean(props.hidden && dateMatchModifiers(focusableDate, props.hidden, dateLib));
 
   const targetMonth = focusableDate;
   const focusDay = new CalendarDay(focusableDate, targetMonth, dateLib);
@@ -64,14 +60,5 @@ export function getNextFocus(
   }
 
   // Recursively attempt to find the next focusable date
-  return getNextFocus(
-    moveBy,
-    moveDir,
-    focusDay,
-    calendarStartMonth,
-    calendarEndMonth,
-    props,
-    dateLib,
-    attempt + 1,
-  );
+  return getNextFocus(moveBy, moveDir, focusDay, calendarStartMonth, calendarEndMonth, props, dateLib, attempt + 1);
 }

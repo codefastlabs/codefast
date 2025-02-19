@@ -114,11 +114,7 @@ export const Checkboxes: Story = {
           <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             Status Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            disabled
-            checked={showActivityBar}
-            onCheckedChange={setShowActivityBar}
-          >
+          <DropdownMenuCheckboxItem disabled checked={showActivityBar} onCheckedChange={setShowActivityBar}>
             Activity Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>

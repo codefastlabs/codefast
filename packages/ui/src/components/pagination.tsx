@@ -48,9 +48,7 @@ function PaginationItem(props: PaginationItemProps): JSX.Element {
  * Component: PaginationLink
  * -------------------------------------------------------------------------- */
 
-interface PaginationLinkProps
-  extends ComponentProps<'a'>,
-    Pick<ButtonVariantsProps, 'icon' | 'size'> {
+interface PaginationLinkProps extends ComponentProps<'a'>, Pick<ButtonVariantsProps, 'icon' | 'size'> {
   isActive?: boolean;
 }
 
@@ -116,11 +114,7 @@ type PaginationEllipsisProps = ComponentProps<'span'>;
 
 function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (
-    <span
-      aria-hidden
-      className={cn('flex size-10 items-center justify-center', className)}
-      {...props}
-    >
+    <span aria-hidden className={cn('flex size-10 items-center justify-center', className)} {...props}>
       <EllipsisIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>

@@ -23,19 +23,9 @@ interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrim
   checkboxClassName?: string;
 }
 
-function CheckboxCardsItem({
-  checkboxClassName,
-  children,
-  className,
-  ...props
-}: CheckboxCardsItemProps): JSX.Element {
+function CheckboxCardsItem({ checkboxClassName, children, className, ...props }: CheckboxCardsItemProps): JSX.Element {
   return (
-    <label
-      className={cn(
-        'group flex items-center justify-center gap-4 rounded-md border p-4',
-        className,
-      )}
-    >
+    <label className={cn('group flex items-center justify-center gap-4 rounded-md border p-4', className)}>
       {children}
       <CheckboxGroupPrimitive.Item
         className={cn(
