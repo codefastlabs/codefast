@@ -11,8 +11,7 @@ test('return correct dropdown options', () => {
   const startMonth = new Date(2022, 0, 1); // January 2022
   const endMonth = new Date(2022, 11, 31); // December 2022
   const formatters = getFormatters({
-    formatMonthDropdown: (month: number, locale?: Locale) =>
-      format(new Date(2022, month), 'MMMM', { locale }),
+    formatMonthDropdown: (month: number, locale?: Locale) => format(new Date(2022, month), 'MMMM', { locale }),
   });
   const result = getMonthOptions(displayMonth, startMonth, endMonth, formatters, defaultDateLib);
 

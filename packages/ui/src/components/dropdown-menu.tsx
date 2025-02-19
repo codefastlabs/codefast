@@ -44,17 +44,11 @@ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-interface DropdownMenuSubTriggerProps
-  extends ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> {
+interface DropdownMenuSubTriggerProps extends ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
-function DropdownMenuSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: DropdownMenuSubTriggerProps): JSX.Element {
+function DropdownMenuSubTrigger({ children, className, inset, ...props }: DropdownMenuSubTriggerProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
@@ -109,11 +103,7 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
 
 type DropdownMenuContentProps = ComponentProps<typeof DropdownMenuPrimitive.Content>;
 
-function DropdownMenuContent({
-  className,
-  sideOffset = 6,
-  ...props
-}: DropdownMenuContentProps): JSX.Element {
+function DropdownMenuContent({ className, sideOffset = 6, ...props }: DropdownMenuContentProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -203,11 +193,7 @@ function DropdownMenuCheckboxItem({
 
 type DropdownMenuRadioItemProps = ComponentProps<typeof DropdownMenuPrimitive.RadioItem>;
 
-function DropdownMenuRadioItem({
-  children,
-  className,
-  ...props
-}: DropdownMenuRadioItemProps): JSX.Element {
+function DropdownMenuRadioItem({ children, className, ...props }: DropdownMenuRadioItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
@@ -241,12 +227,7 @@ interface DropdownMenuLabelProps extends ComponentProps<typeof DropdownMenuPrimi
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex items-center text-sm font-semibold',
-        inset && 'pl-8',
-        className,
-      )}
+      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   );
@@ -259,12 +240,7 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
 type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuPrimitive.Separator>;
 
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps): JSX.Element {
-  return (
-    <DropdownMenuPrimitive.Separator
-      className={cn('bg-muted mx-2 my-1 h-px', className)}
-      {...props}
-    />
-  );
+  return <DropdownMenuPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -274,9 +250,7 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
 type DropdownMenuShortcutProps = ComponentProps<'span'>;
 
 function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps): JSX.Element {
-  return (
-    <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...props} />
-  );
+  return <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

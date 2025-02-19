@@ -20,10 +20,7 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
   }
 
   const spinner = (
-    <span
-      className={cn('relative flex size-4 items-center justify-center opacity-60', className)}
-      {...props}
-    >
+    <span className={cn('relative flex size-4 items-center justify-center opacity-60', className)} {...props}>
       {Array.from({ length: spinnerCount }, (_, i) => (
         <span
           key={i}

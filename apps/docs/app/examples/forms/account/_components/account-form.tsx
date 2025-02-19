@@ -94,15 +94,9 @@ export function AccountForm(): JSX.Element {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  disabled={disabled ?? form.formState.isSubmitting}
-                  placeholder="Your name"
-                  {...field}
-                />
+                <Input disabled={disabled ?? form.formState.isSubmitting} placeholder="Your name" {...field} />
               </FormControl>
-              <FormDescription>
-                This is the name that will be displayed on your profile and in emails.
-              </FormDescription>
+              <FormDescription>This is the name that will be displayed on your profile and in emails.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -153,10 +147,7 @@ export function AccountForm(): JSX.Element {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      className={cn(
-                        'w-56 justify-between px-3',
-                        !field.value && 'text-muted-foreground',
-                      )}
+                      className={cn('w-56 justify-between px-3', !field.value && 'text-muted-foreground')}
                       disabled={disabled ?? form.formState.isSubmitting}
                       role="combobox"
                       suffix={<CaretSortIcon className="opacity-50" />}
@@ -196,9 +187,7 @@ export function AccountForm(): JSX.Element {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                This is the language that will be used in the dashboard.
-              </FormDescription>
+              <FormDescription>This is the language that will be used in the dashboard.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

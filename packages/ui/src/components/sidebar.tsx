@@ -140,10 +140,7 @@ function SidebarProvider({
     <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
-          className={cn(
-            'group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh w-full',
-            className,
-          )}
+          className={cn('group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh w-full', className)}
           style={
             {
               '--sidebar-width': SIDEBAR_WIDTH,
@@ -183,10 +180,7 @@ function Sidebar({
   if (collapsible === 'none') {
     return (
       <div
-        className={cn(
-          'bg-sidebar text-sidebar-foreground w-(--sidebar-width) flex h-full flex-col',
-          className,
-        )}
+        className={cn('bg-sidebar text-sidebar-foreground w-(--sidebar-width) flex h-full flex-col', className)}
         {...props}
       >
         {children}
@@ -366,9 +360,7 @@ function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
 type SidebarHeaderProps = ComponentProps<'div'>;
 
 function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element {
-  return (
-    <div className={cn('flex flex-col gap-2 p-2', className)} data-sidebar="header" {...props} />
-  );
+  return <div className={cn('flex flex-col gap-2 p-2', className)} data-sidebar="header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -378,9 +370,7 @@ function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element
 type SidebarFooterProps = ComponentProps<'div'>;
 
 function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element {
-  return (
-    <div className={cn('flex flex-col gap-2 p-2', className)} data-sidebar="footer" {...props} />
-  );
+  return <div className={cn('flex flex-col gap-2 p-2', className)} data-sidebar="footer" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -390,13 +380,7 @@ function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element
 type SidebarSeparatorProps = ComponentProps<typeof Separator>;
 
 function SidebarSeparator({ className, ...props }: SidebarSeparatorProps): JSX.Element {
-  return (
-    <Separator
-      className={cn('bg-sidebar-border mx-2 w-auto', className)}
-      data-sidebar="separator"
-      {...props}
-    />
-  );
+  return <Separator className={cn('bg-sidebar-border mx-2 w-auto', className)} data-sidebar="separator" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -425,13 +409,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
 type SidebarGroupProps = ComponentProps<'div'>;
 
 function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
-  return (
-    <div
-      className={cn('relative flex w-full min-w-0 flex-col p-2', className)}
-      data-sidebar="group"
-      {...props}
-    />
-  );
+  return <div className={cn('relative flex w-full min-w-0 flex-col p-2', className)} data-sidebar="group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -442,11 +420,7 @@ interface SidebarGroupLabelProps extends ComponentProps<'div'> {
   asChild?: boolean;
 }
 
-function SidebarGroupLabel({
-  asChild = false,
-  className,
-  ...props
-}: SidebarGroupLabelProps): JSX.Element {
+function SidebarGroupLabel({ asChild = false, className, ...props }: SidebarGroupLabelProps): JSX.Element {
   const Component = asChild ? Slot : 'div';
 
   return (
@@ -470,11 +444,7 @@ interface SidebarGroupActionProps extends ComponentProps<'button'> {
   asChild?: boolean;
 }
 
-function SidebarGroupAction({
-  asChild = false,
-  className,
-  ...props
-}: SidebarGroupActionProps): JSX.Element {
+function SidebarGroupAction({ asChild = false, className, ...props }: SidebarGroupActionProps): JSX.Element {
   const Component = asChild ? Slot : 'button';
 
   return (
@@ -502,9 +472,7 @@ function SidebarGroupAction({
 type SidebarGroupContentProps = ComponentProps<'div'>;
 
 function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps): JSX.Element {
-  return (
-    <div className={cn('w-full text-sm', className)} data-sidebar="group-content" {...props} />
-  );
+  return <div className={cn('w-full text-sm', className)} data-sidebar="group-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -514,13 +482,7 @@ function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps):
 type SidebarMenuProps = ComponentProps<'ul'>;
 
 function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
-  return (
-    <ul
-      className={cn('flex w-full min-w-0 flex-col gap-1', className)}
-      data-sidebar="menu"
-      {...props}
-    />
-  );
+  return <ul className={cn('flex w-full min-w-0 flex-col gap-1', className)} data-sidebar="menu" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -530,9 +492,7 @@ function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
 type SidebarMenuItemProps = ComponentProps<'li'>;
 
 function SidebarMenuItem({ className, ...props }: SidebarMenuItemProps): JSX.Element {
-  return (
-    <li className={cn('group/menu-item relative', className)} data-sidebar="menu-item" {...props} />
-  );
+  return <li className={cn('group/menu-item relative', className)} data-sidebar="menu-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -571,9 +531,7 @@ const sidebarMenuButtonVariants = tv({
   },
 });
 
-interface SidebarMenuButtonProps
-  extends ComponentProps<'button'>,
-    VariantProps<typeof sidebarMenuButtonVariants> {
+interface SidebarMenuButtonProps extends ComponentProps<'button'>, VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean;
   isActive?: boolean;
   tooltip?: ComponentProps<typeof TooltipContent> | string;
@@ -615,12 +573,7 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        align="center"
-        hidden={state !== 'collapsed' || isMobile}
-        side="right"
-        {...tooltipProps}
-      />
+      <TooltipContent align="center" hidden={state !== 'collapsed' || isMobile} side="right" {...tooltipProps} />
     </Tooltip>
   );
 }
@@ -701,11 +654,7 @@ interface SidebarMenuSkeletonProps extends ComponentProps<'div'> {
   showIcon?: boolean;
 }
 
-function SidebarMenuSkeleton({
-  className,
-  showIcon = false,
-  ...props
-}: SidebarMenuSkeletonProps): JSX.Element {
+function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
   // Random width between 50 to 90%.
   const width = useMemo(() => {
     return `${Math.floor(Math.random() * 40) + 50}%`;
@@ -717,9 +666,7 @@ function SidebarMenuSkeleton({
       data-sidebar="menu-skeleton"
       {...props}
     >
-      {showIcon ? (
-        <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
-      ) : null}
+      {showIcon ? <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" /> : null}
       <Skeleton
         className="max-w-(--skeleton-width) h-4 flex-1"
         data-sidebar="menu-skeleton-text"

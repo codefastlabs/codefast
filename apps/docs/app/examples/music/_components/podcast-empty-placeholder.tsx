@@ -34,9 +34,7 @@ export function PodcastEmptyPlaceholder(): JSX.Element {
         </svg>
 
         <h3 className="mt-4 text-lg font-semibold">No episodes added</h3>
-        <p className="text-muted-foreground mb-4 mt-2 text-sm">
-          You have not added any podcasts. Add one below.
-        </p>
+        <p className="text-muted-foreground mb-4 mt-2 text-sm">You have not added any podcasts. Add one below.</p>
         <Dialog>
           <DialogTrigger asChild>
             <Button className="relative" size="sm">

@@ -48,9 +48,7 @@ export const Default: Story = {
         <DialogContent className="sm:max-w-[26.5625rem]">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re done.
-            </DialogDescription>
+            <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
           </DialogHeader>
 
           <DialogBody>
@@ -152,9 +150,9 @@ export const Scrollable: Story = {
           <div className="space-y-2 py-4">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
-                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores,
-                eligendi est officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi
-                odit perspiciatis possimus quae, quos totam voluptas voluptatibus.
+                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
+                officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
+                quos totam voluptas voluptatibus.
               </p>
             ))}
           </div>
@@ -189,9 +187,9 @@ export const ScrollingLongContent: Story = {
           <div className="space-y-2">
             {Array.from({ length: 40 }, (_, k) => ({ id: k })).map(({ id }) => (
               <p key={id}>
-                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores,
-                eligendi est officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi
-                odit perspiciatis possimus quae, quos totam voluptas voluptatibus.
+                {id} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dicta dolores, eligendi est
+                officia voluptatem? Corporis culpa debitis ipsa ipsam maiores, nisi odit perspiciatis possimus quae,
+                quos totam voluptas voluptatibus.
               </p>
             ))}
           </div>

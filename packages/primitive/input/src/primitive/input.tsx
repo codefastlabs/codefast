@@ -1,12 +1,5 @@
 import type { Scope } from '@radix-ui/react-context';
-import type {
-  ComponentProps,
-  JSX,
-  PointerEventHandler,
-  PropsWithChildren,
-  ReactNode,
-  RefObject,
-} from 'react';
+import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from 'react';
 
 import { useComposedRefs } from '@radix-ui/react-compose-refs';
 import { createContextScope } from '@radix-ui/react-context';

@@ -122,9 +122,7 @@ export function AppSidebar({ className, ...props }: AppSidebarProps): JSX.Elemen
                     <span>{mail.name}</span> <span className="ml-auto text-xs">{mail.date}</span>
                   </div>
                   <span className="font-medium">{mail.subject}</span>
-                  <span className="line-clamp-2 w-[16.25rem] whitespace-break-spaces text-xs">
-                    {mail.teaser}
-                  </span>
+                  <span className="line-clamp-2 w-[16.25rem] whitespace-break-spaces text-xs">{mail.teaser}</span>
                 </Link>
               ))}
             </SidebarGroupContent>

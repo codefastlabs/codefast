@@ -42,12 +42,7 @@ export function TeamSwitcher({ className, teams, ...props }: TeamSwitcherProps):
               <ChevronDownIcon className="opacity-50" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="w-64 rounded-lg"
-            side="bottom"
-            sideOffset={4}
-          >
+          <DropdownMenuContent align="start" className="w-64 rounded-lg" side="bottom" sideOffset={4}>
             <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem

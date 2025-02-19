@@ -23,9 +23,7 @@ function Table({ className, ...props }: TableProps): JSX.Element {
 type TableHeaderProps = ComponentProps<'thead'>;
 
 function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
-  return (
-    <thead className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)} {...props} />
-  );
+  return <thead className={cn('[&>tr]:border-b [&>tr]:hover:bg-transparent', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -46,10 +44,7 @@ type TableFooterProps = ComponentProps<'tfoot'>;
 
 function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
-    <tfoot
-      className={cn('[&>tr]:border-b-0 [&>tr]:border-t [&>tr]:hover:bg-transparent', className)}
-      {...props}
-    />
+    <tfoot className={cn('[&>tr]:border-b-0 [&>tr]:border-t [&>tr]:hover:bg-transparent', className)} {...props} />
   );
 }
 
@@ -62,12 +57,7 @@ type TableRowProps = ComponentProps<'tr'>;
 function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
     <tr
-      className={cn(
-        'border-b transition',
-        'hover:bg-accent',
-        'data-[state=selected]:bg-muted',
-        className,
-      )}
+      className={cn('border-b transition', 'hover:bg-accent', 'data-[state=selected]:bg-muted', className)}
       {...props}
     />
   );
@@ -80,12 +70,7 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
 type TableHeadProps = ComponentProps<'th'>;
 
 function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
-  return (
-    <th
-      className={cn('text-muted-foreground p-2 text-left align-middle font-medium', className)}
-      {...props}
-    />
-  );
+  return <th className={cn('text-muted-foreground p-2 text-left align-middle font-medium', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

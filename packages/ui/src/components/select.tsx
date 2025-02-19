@@ -97,12 +97,7 @@ function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonP
 
 type SelectContentProps = ComponentProps<typeof SelectPrimitive.Content>;
 
-function SelectContent({
-  children,
-  className,
-  position = 'popper',
-  ...props
-}: SelectContentProps): JSX.Element {
+function SelectContent({ children, className, position = 'popper', ...props }: SelectContentProps): JSX.Element {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -133,8 +128,7 @@ function SelectContent({
         <SelectPrimitive.Viewport
           className={cn(
             'p-1',
-            position === 'popper' &&
-              'h-(--radix-select-trigger-height) min-w-(--radix-select-trigger-width) w-full',
+            position === 'popper' && 'h-(--radix-select-trigger-height) min-w-(--radix-select-trigger-width) w-full',
           )}
         >
           {children}
@@ -194,9 +188,7 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
 type SelectSeparatorProps = ComponentProps<typeof SelectPrimitive.Separator>;
 
 function SelectSeparator({ className, ...props }: SelectSeparatorProps): JSX.Element {
-  return (
-    <SelectPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />
-  );
+  return <SelectPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

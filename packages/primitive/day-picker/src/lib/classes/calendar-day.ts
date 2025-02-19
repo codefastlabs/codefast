@@ -45,9 +45,6 @@ export class CalendarDay {
    * Check if the day is the same as the given day: considering if it is in the same display month.
    */
   isEqualTo(day: CalendarDay): boolean {
-    return (
-      this.dateLib.isSameDay(day.date, this.date) &&
-      this.dateLib.isSameMonth(day.displayMonth, this.displayMonth)
-    );
+    return this.dateLib.isSameDay(day.date, this.date) && this.dateLib.isSameMonth(day.displayMonth, this.displayMonth);
   }
 }

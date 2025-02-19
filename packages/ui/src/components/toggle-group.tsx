@@ -24,8 +24,7 @@ const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [create
 
 const useToggleGroupScope = createToggleGroupScope();
 
-const [ToggleGroupProvider, useToggleGroupContext] =
-  createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
+const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
 type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
 
@@ -59,8 +58,7 @@ function ToggleGroup({
 
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
-interface ToggleGroupItemProps
-  extends Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
+interface ToggleGroupItemProps extends Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
   prefix?: ReactNode;
   suffix?: ReactNode;
 }
@@ -77,11 +75,7 @@ function ToggleGroupItem({
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
-    <ToggleGroupPrimitive.Item
-      className={toggleVariants({ ...context, className })}
-      {...toggleGroupScope}
-      {...props}
-    >
+    <ToggleGroupPrimitive.Item className={toggleVariants({ ...context, className })} {...toggleGroupScope} {...props}>
       {prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
       {suffix}

@@ -20,29 +20,15 @@ export const metadata: Metadata = {
 };
 
 function Container({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return (
-    <div className={cn('flex items-center justify-center [&>div]:w-full', className)} {...props} />
-  );
+  return <div className={cn('flex items-center justify-center [&>div]:w-full', className)} {...props} />;
 }
 
 export default function CardsPage(): JSX.Element {
   return (
     <>
       <div className="md:hidden">
-        <Image
-          alt="Cards"
-          className="block dark:hidden"
-          height={1214}
-          src="/examples/cards-light.png"
-          width={1280}
-        />
-        <Image
-          alt="Cards"
-          className="hidden dark:block"
-          height={1214}
-          src="/examples/cards-dark.png"
-          width={1280}
-        />
+        <Image alt="Cards" className="block dark:hidden" height={1214} src="/examples/cards-light.png" width={1280} />
+        <Image alt="Cards" className="hidden dark:block" height={1214} src="/examples/cards-dark.png" width={1280} />
       </div>
       <div className="hidden items-start justify-center gap-6 rounded-lg p-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
         <div className="col-span-2 grid items-start gap-6 lg:col-span-1">

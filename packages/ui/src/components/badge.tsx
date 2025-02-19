@@ -56,15 +56,7 @@ interface BadgeProps extends Omit<ComponentProps<'div'>, 'prefix'>, BadgeVariant
   suffix?: ReactNode;
 }
 
-function Badge({
-  children,
-  className,
-  prefix,
-  size,
-  suffix,
-  variant,
-  ...props
-}: BadgeProps): JSX.Element {
+function Badge({ children, className, prefix, size, suffix, variant, ...props }: BadgeProps): JSX.Element {
   return (
     <div className={badgeVariants({ className, size, variant })} {...props}>
       {prefix}

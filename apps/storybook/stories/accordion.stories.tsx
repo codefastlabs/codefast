@@ -1,12 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionIcon,
-  AccordionItem,
-  AccordionTrigger,
-} from '@codefast/ui';
+import { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger } from '@codefast/ui';
 
 const meta = {
   component: Accordion,
@@ -50,9 +44,7 @@ export const Default: Story = {
           <span className="grow">Is it animated?</span>
           <AccordionIcon />
         </AccordionTrigger>
-        <AccordionContent>
-          Yes. It&apos;s animated by default, but you can disable it if you prefer.
-        </AccordionContent>
+        <AccordionContent>Yes. It&apos;s animated by default, but you can disable it if you prefer.</AccordionContent>
       </AccordionItem>
     </Accordion>
   ),
@@ -90,9 +82,7 @@ export const LeftIcon: Story = {
           <AccordionIcon />
           <span className="grow">Is it animated?</span>
         </AccordionTrigger>
-        <AccordionContent>
-          Yes. It&apos;s animated by default, but you can disable it if you prefer.
-        </AccordionContent>
+        <AccordionContent>Yes. It&apos;s animated by default, but you can disable it if you prefer.</AccordionContent>
       </AccordionItem>
     </Accordion>
   ),

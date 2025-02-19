@@ -13,8 +13,7 @@ export function getDefaultClassNames(): ClassNames {
   }
 
   for (const key in DayFlag) {
-    classNames[DayFlag[key as keyof typeof DayFlag]] =
-      `rdp-${DayFlag[key as keyof typeof DayFlag]}`;
+    classNames[DayFlag[key as keyof typeof DayFlag]] = `rdp-${DayFlag[key as keyof typeof DayFlag]}`;
   }
 
   for (const key in SelectionState) {

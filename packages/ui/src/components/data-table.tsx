@@ -75,21 +75,13 @@ interface DataTablePaginationProps<TData> extends ComponentProps<'div'> {
   table: ReactTable.Table<TData>;
 }
 
-function DataTablePagination<TData>({
-  className,
-  table,
-  ...props
-}: DataTablePaginationProps<TData>): JSX.Element {
+function DataTablePagination<TData>({ className, table, ...props }: DataTablePaginationProps<TData>): JSX.Element {
   const pageSize = table.getState().pagination.pageSize;
 
   return (
-    <div
-      className={cn('flex flex-wrap items-center justify-between gap-4 px-2', className)}
-      {...props}
-    >
+    <div className={cn('flex flex-wrap items-center justify-between gap-4 px-2', className)} {...props}>
       <div className="text-muted-foreground min-w-max flex-1 text-sm">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+        {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
 
       <div className="flex grow flex-wrap items-center justify-between gap-4 md:justify-end md:gap-x-6 lg:gap-x-8">

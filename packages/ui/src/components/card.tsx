@@ -9,12 +9,7 @@ import { cn } from '@/lib/utils';
 type CardProps = ComponentProps<'div'>;
 
 function Card({ className, ...props }: CardProps): JSX.Element {
-  return (
-    <div
-      className={cn('bg-card text-card-foreground rounded-lg border shadow', className)}
-      {...props}
-    />
-  );
+  return <div className={cn('bg-card text-card-foreground rounded-lg border shadow', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -75,12 +70,5 @@ function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  CardContentProps,
-  CardDescriptionProps,
-  CardFooterProps,
-  CardHeaderProps,
-  CardProps,
-  CardTitleProps,
-};
+export type { CardContentProps, CardDescriptionProps, CardFooterProps, CardHeaderProps, CardProps, CardTitleProps };
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };

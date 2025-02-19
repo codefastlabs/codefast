@@ -114,12 +114,7 @@ export function useCalendar(
   /**
    * The dates displayed in the calendar.
    */
-  const dates = getDates(
-    displayMonths,
-    props.endMonth ? endOfMonth(props.endMonth) : undefined,
-    props,
-    dateLib,
-  );
+  const dates = getDates(displayMonths, props.endMonth ? endOfMonth(props.endMonth) : undefined, props, dateLib);
 
   /**
    * The Months displayed in the calendar.

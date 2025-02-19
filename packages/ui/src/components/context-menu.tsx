@@ -44,17 +44,11 @@ const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
  * Component: ContextMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-interface ContextMenuSubTriggerProps
-  extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
+interface ContextMenuSubTriggerProps extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
-function ContextMenuSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: ContextMenuSubTriggerProps): JSX.Element {
+function ContextMenuSubTrigger({ children, className, inset, ...props }: ContextMenuSubTriggerProps): JSX.Element {
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
@@ -193,11 +187,7 @@ function ContextMenuCheckboxItem({
 
 type ContextMenuRadioItemProps = ComponentProps<typeof ContextMenuPrimitive.RadioItem>;
 
-function ContextMenuRadioItem({
-  children,
-  className,
-  ...props
-}: ContextMenuRadioItemProps): JSX.Element {
+function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadioItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
@@ -231,12 +221,7 @@ interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimiti
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
-      className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex items-center text-sm font-semibold',
-        inset && 'pl-8',
-        className,
-      )}
+      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   );
@@ -249,12 +234,7 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
 type ContextMenuSeparatorProps = ComponentProps<typeof ContextMenuPrimitive.Separator>;
 
 function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps): JSX.Element {
-  return (
-    <ContextMenuPrimitive.Separator
-      className={cn('bg-muted mx-2 my-1 h-px', className)}
-      {...props}
-    />
-  );
+  return <ContextMenuPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -264,12 +244,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
 type ContextMenuShortcutProps = ComponentProps<'span'>;
 
 function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): JSX.Element {
-  return (
-    <span
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
-      {...props}
-    />
-  );
+  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

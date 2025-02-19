@@ -13,11 +13,7 @@ type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
 function Slider({ className, ...props }: SliderProps): JSX.Element {
   return (
     <SliderPrimitive.Root
-      className={cn(
-        'relative flex w-full touch-none select-none items-center',
-        'data-disabled:opacity-50',
-        className,
-      )}
+      className={cn('relative flex w-full touch-none select-none items-center', 'data-disabled:opacity-50', className)}
       {...props}
     >
       <SliderPrimitive.Track className="bg-muted relative h-1 w-full grow overflow-hidden rounded-full">

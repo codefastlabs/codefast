@@ -1,9 +1,4 @@
-import type {
-  DateArg,
-  FormatOptions as DateFnsFormatOptions,
-  EndOfWeekOptions,
-  StartOfWeekOptions,
-} from 'date-fns';
+import type { DateArg, FormatOptions as DateFnsFormatOptions, EndOfWeekOptions, StartOfWeekOptions } from 'date-fns';
 import type { Locale } from 'date-fns/locale';
 
 import {
@@ -120,9 +115,7 @@ export class DateLib {
    * @returns The new date with the months added.
    */
   addMonths: typeof addMonths = (date, amount) => {
-    return this.overrides?.addMonths
-      ? this.overrides.addMonths(date, amount)
-      : addMonths(date, amount);
+    return this.overrides?.addMonths ? this.overrides.addMonths(date, amount) : addMonths(date, amount);
   };
 
   /**
@@ -133,9 +126,7 @@ export class DateLib {
    * @returns The new date with the weeks added.
    */
   addWeeks: typeof addWeeks = (date, amount) => {
-    return this.overrides?.addWeeks
-      ? this.overrides.addWeeks(date, amount)
-      : addWeeks(date, amount);
+    return this.overrides?.addWeeks ? this.overrides.addWeeks(date, amount) : addWeeks(date, amount);
   };
 
   /**
@@ -146,9 +137,7 @@ export class DateLib {
    * @returns The new date with the years added.
    */
   addYears: typeof addYears = (date, amount) => {
-    return this.overrides?.addYears
-      ? this.overrides.addYears(date, amount)
-      : addYears(date, amount);
+    return this.overrides?.addYears ? this.overrides.addYears(date, amount) : addYears(date, amount);
   };
 
   /**
@@ -251,9 +240,7 @@ export class DateLib {
    * @returns The week number.
    */
   getWeek: typeof getWeek = (date) => {
-    return this.overrides?.getWeek
-      ? this.overrides.getWeek(date, this.options)
-      : getWeek(date, this.options);
+    return this.overrides?.getWeek ? this.overrides.getWeek(date, this.options) : getWeek(date, this.options);
   };
 
   /**
@@ -264,9 +251,7 @@ export class DateLib {
    * @returns True if the first date is after the second date.
    */
   isAfter: typeof isAfter = (date, dateToCompare) => {
-    return this.overrides?.isAfter
-      ? this.overrides.isAfter(date, dateToCompare)
-      : isAfter(date, dateToCompare);
+    return this.overrides?.isAfter ? this.overrides.isAfter(date, dateToCompare) : isAfter(date, dateToCompare);
   };
 
   /**
@@ -277,9 +262,7 @@ export class DateLib {
    * @returns True if the first date is before the second date.
    */
   isBefore: typeof isBefore = (date, dateToCompare) => {
-    return this.overrides?.isBefore
-      ? this.overrides.isBefore(date, dateToCompare)
-      : isBefore(date, dateToCompare);
+    return this.overrides?.isBefore ? this.overrides.isBefore(date, dateToCompare) : isBefore(date, dateToCompare);
   };
 
   /**
@@ -300,9 +283,7 @@ export class DateLib {
    * @returns True if the dates are on the same day.
    */
   isSameDay: typeof isSameDay = (dateLeft, dateRight) => {
-    return this.overrides?.isSameDay
-      ? this.overrides.isSameDay(dateLeft, dateRight)
-      : isSameDay(dateLeft, dateRight);
+    return this.overrides?.isSameDay ? this.overrides.isSameDay(dateLeft, dateRight) : isSameDay(dateLeft, dateRight);
   };
 
   /**
@@ -414,9 +395,7 @@ export class DateLib {
    * @returns The start of the ISO week.
    */
   startOfISOWeek: typeof startOfISOWeek = (date) => {
-    return this.overrides?.startOfISOWeek
-      ? this.overrides.startOfISOWeek(date)
-      : startOfISOWeek(date);
+    return this.overrides?.startOfISOWeek ? this.overrides.startOfISOWeek(date) : startOfISOWeek(date);
   };
 
   /**

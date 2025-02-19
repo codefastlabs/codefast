@@ -34,13 +34,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@codefast/ui';
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  ChevronsUpDownIcon,
-  GalleryVerticalEndIcon,
-  SearchIcon,
-} from 'lucide-react';
+import { CheckIcon, ChevronRightIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon, SearchIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -75,10 +69,7 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
                       <ChevronsUpDownIcon className="ml-auto" />
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="w-(--radix-dropdown-menu-trigger-width)"
-                  >
+                  <DropdownMenuContent align="start" className="w-(--radix-dropdown-menu-trigger-width)">
                     {data.versions.map((version) => (
                       <DropdownMenuItem
                         key={version}
@@ -86,8 +77,7 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
                           setSelectedVersion(version);
                         }}
                       >
-                        v{version}{' '}
-                        {version === selectedVersion && <CheckIcon className="ml-auto size-4" />}
+                        v{version} {version === selectedVersion && <CheckIcon className="ml-auto size-4" />}
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -109,12 +99,7 @@ export function Sidebar02({ className, ...props }: Sidebar02Props): JSX.Element 
           <SidebarContent className="gap-0">
             {/* We create a collapsible SidebarGroup for each parent. */}
             {data.navMain.map((nav) => (
-              <Collapsible
-                key={nav.title}
-                defaultOpen
-                className="group/collapsible"
-                title={nav.title}
-              >
+              <Collapsible key={nav.title} defaultOpen className="group/collapsible" title={nav.title}>
                 <SidebarGroup>
                   <SidebarGroupLabel
                     asChild

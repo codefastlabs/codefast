@@ -17,13 +17,7 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { fn } from '@storybook/test';
-import {
-  ImportIcon,
-  LoaderCircleIcon,
-  MailIcon,
-  TextCursorInputIcon,
-  UsersIcon,
-} from 'lucide-react';
+import { ImportIcon, LoaderCircleIcon, MailIcon, TextCursorInputIcon, UsersIcon } from 'lucide-react';
 import { wait } from 'next/dist/lib/wait';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -49,8 +43,7 @@ const meta = {
   argTypes: {
     autoFocus: {
       control: { type: 'boolean' },
-      description:
-        'Specifies that the input field should automatically get focus when the page loads',
+      description: 'Specifies that the input field should automatically get focus when the page loads',
       table: {
         defaultValue: { summary: 'false' },
         type: { summary: 'boolean' },

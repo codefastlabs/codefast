@@ -71,9 +71,7 @@ function formatLog(level: LogLevel, tag: null | string, ...args: unknown[]): str
   // Tag if available
   const tagPart = tag ? chalk.magenta(` ${tag} `) : '';
   // Combine all arguments into one string
-  const messagePart = args
-    .map((arg) => messages[level](typeof arg === 'string' ? arg : safeStringify(arg)))
-    .join(' ');
+  const messagePart = args.map((arg) => messages[level](typeof arg === 'string' ? arg : safeStringify(arg))).join(' ');
 
   return [levelPart, tagPart, messagePart].filter(Boolean).join(' ');
 }

@@ -38,8 +38,7 @@ type Story = StoryObj<typeof NavigationMenu>;
 
 const components: { description: string; href: string; title: string }[] = [
   {
-    description:
-      'A modal dialog that interrupts the user with important content and expects a response.',
+    description: 'A modal dialog that interrupts the user with important content and expects a response.',
     href: '/',
     title: 'Alert Dialog',
   },
@@ -60,8 +59,7 @@ const components: { description: string; href: string; title: string }[] = [
     title: 'Scroll-area',
   },
   {
-    description:
-      'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
+    description: 'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
     href: '/',
     title: 'Tabs',
   },
@@ -73,12 +71,7 @@ const components: { description: string; href: string; title: string }[] = [
   },
 ];
 
-function ListItem({
-  children,
-  className,
-  title,
-  ...props
-}: ComponentProps<'a'> & { title?: string }): JSX.Element {
+function ListItem({ children, className, title, ...props }: ComponentProps<'a'> & { title?: string }): JSX.Element {
   return (
     <li>
       <NavigationMenuLink asChild>
@@ -90,9 +83,7 @@ function ListItem({
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </Text>
+          <Text className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</Text>
         </a>
       </NavigationMenuLink>
     </li>
@@ -116,8 +107,8 @@ export const Default: Story = {
                     <SettingsIcon className="size-6" />
                     <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
                     <Text className="text-muted-foreground text-sm leading-tight">
-                      Beautifully designed components that you can copy and paste into your apps.
-                      Accessible. Customizable. Open Source.
+                      Beautifully designed components that you can copy and paste into your apps. Accessible.
+                      Customizable. Open Source.
                     </Text>
                   </a>
                 </NavigationMenuLink>

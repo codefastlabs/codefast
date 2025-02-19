@@ -10,23 +10,12 @@ import { toggleVariants } from '@/variants/toggle.variants';
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
-interface ToggleProps
-  extends Omit<ComponentProps<typeof TogglePrimitive.Root>, 'prefix'>,
-    ToggleVariantsProps {
+interface ToggleProps extends Omit<ComponentProps<typeof TogglePrimitive.Root>, 'prefix'>, ToggleVariantsProps {
   prefix?: ReactNode;
   suffix?: ReactNode;
 }
 
-function Toggle({
-  children,
-  className,
-  icon,
-  prefix,
-  size,
-  suffix,
-  variant,
-  ...props
-}: ToggleProps): JSX.Element {
+function Toggle({ children, className, icon, prefix, size, suffix, variant, ...props }: ToggleProps): JSX.Element {
   return (
     <TogglePrimitive.Root className={toggleVariants({ className, icon, size, variant })} {...props}>
       {prefix}

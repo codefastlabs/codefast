@@ -16,8 +16,7 @@ export const models: Model<ModelType>[] = [
     description:
       'Most capable GPT-3 model. Can do any task the other models can do, often with higher quality, longer output and better instruction-following. Also supports inserting completions within text.',
     name: 'text-davinci-003',
-    strengths:
-      'Complex intent, cause and effect, creative generation, search, summarization for audience',
+    strengths: 'Complex intent, cause and effect, creative generation, search, summarization for audience',
     type: 'GPT-3',
   },
   {
@@ -36,8 +35,7 @@ export const models: Model<ModelType>[] = [
   },
   {
     id: 'be638fb1-973b-4471-a49c-290325085802',
-    description:
-      'Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost.',
+    description: 'Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost.',
     name: 'text-ada-001',
     strengths: 'Parsing text, simple classification, address correction, keywords',
     type: 'GPT-3',

@@ -223,20 +223,8 @@ export function ChartAreaInteractive(props: ChartAreaInteractiveProps): JSX.Elem
               }
               cursor={false}
             />
-            <Area
-              dataKey="mobile"
-              fill="url(#fillMobile)"
-              stackId="a"
-              stroke="var(--color-mobile)"
-              type="natural"
-            />
-            <Area
-              dataKey="desktop"
-              fill="url(#fillDesktop)"
-              stackId="a"
-              stroke="var(--color-desktop)"
-              type="natural"
-            />
+            <Area dataKey="mobile" fill="url(#fillMobile)" stackId="a" stroke="var(--color-mobile)" type="natural" />
+            <Area dataKey="desktop" fill="url(#fillDesktop)" stackId="a" stroke="var(--color-desktop)" type="natural" />
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>

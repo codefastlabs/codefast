@@ -13,14 +13,7 @@ import {
   Kbd,
   Text,
 } from '@codefast/ui';
-import {
-  CalculatorIcon,
-  CalendarIcon,
-  CreditCardIcon,
-  SettingsIcon,
-  SmileIcon,
-  UserIcon,
-} from 'lucide-react';
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const meta = {

@@ -78,9 +78,7 @@ export const WithText: Story = {
       <div className="grid w-full gap-1.5">
         <Label htmlFor={`message-${id}`}>Your message</Label>
         <Textarea id={`message-${id}`} placeholder="Type your message here." {...args} />
-        <Text className="text-muted-foreground text-sm">
-          Your message will be copied to the support team.
-        </Text>
+        <Text className="text-muted-foreground text-sm">Your message will be copied to the support team.</Text>
       </div>
     );
   },
@@ -150,11 +148,7 @@ export const ReactHookForm: Story = {
               <FormItem>
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
-                  <Textarea
-                    className="resize-none"
-                    placeholder="Tell us a little bit about yourself"
-                    {...field}
-                  />
+                  <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
                 </FormControl>
                 <FormDescription>
                   You can <span>@mention</span> other users and organizations.

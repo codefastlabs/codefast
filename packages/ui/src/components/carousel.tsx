@@ -44,8 +44,7 @@ type CarouselContextValue = BaseCarouselProps & {
   scrollPrev: () => void;
 };
 
-const [CarouselProvider, useCarouselContext] =
-  createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
+const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 type CarouselProps = BaseCarouselProps & ComponentProps<'div'>;
 
@@ -191,21 +190,13 @@ const CAROUSEL_ITEM_NAME = 'CarouselItem';
 
 type CarouselItemProps = ComponentProps<'div'>;
 
-function CarouselItem({
-  __scopeCarousel,
-  className,
-  ...props
-}: ScopedProps<CarouselItemProps>): JSX.Element {
+function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>): JSX.Element {
   const { orientation } = useCarouselContext(CAROUSEL_ITEM_NAME, __scopeCarousel);
 
   return (
     <div
       aria-roledescription="slide"
-      className={cn(
-        'min-w-0 shrink-0 grow-0 basis-full',
-        orientation === 'horizontal' ? 'pl-4' : 'pt-4',
-        className,
-      )}
+      className={cn('min-w-0 shrink-0 grow-0 basis-full', orientation === 'horizontal' ? 'pl-4' : 'pt-4', className)}
       role="group"
       {...props}
     />
@@ -228,10 +219,7 @@ function CarouselPrevious({
   variant = 'outline',
   ...props
 }: ScopedProps<CarouselPreviousProps>): JSX.Element {
-  const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(
-    CAROUSEL_PREVIOUS_NAME,
-    __scopeCarousel,
-  );
+  const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
 
   return (
     <Button
@@ -271,10 +259,7 @@ function CarouselNext({
   variant = 'outline',
   ...props
 }: ScopedProps<CarouselNextProps>): JSX.Element {
-  const { canScrollNext, orientation, scrollNext } = useCarouselContext(
-    CAROUSEL_NEXT_NAME,
-    __scopeCarousel,
-  );
+  const { canScrollNext, orientation, scrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
 
   return (
     <Button
@@ -310,11 +295,4 @@ export type {
   CarouselPreviousProps,
   CarouselProps,
 };
-export {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  createCarouselScope,
-};
+export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };

@@ -71,11 +71,5 @@ function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  TooltipArrowProps,
-  TooltipContentProps,
-  TooltipProps,
-  TooltipProviderProps,
-  TooltipTriggerProps,
-};
+export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };
 export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };

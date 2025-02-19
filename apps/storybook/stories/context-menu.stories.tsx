@@ -77,11 +77,7 @@ export const Default: Story = {
           <ContextMenuCheckboxItem checked={urlsChecked} onCheckedChange={setUrlsChecked}>
             Show Full URLs
           </ContextMenuCheckboxItem>
-          <ContextMenuCheckboxItem
-            disabled
-            checked={cachesChecked}
-            onCheckedChange={setCachesChecked}
-          >
+          <ContextMenuCheckboxItem disabled checked={cachesChecked} onCheckedChange={setCachesChecked}>
             Disable Cache
           </ContextMenuCheckboxItem>
           <ContextMenuSeparator />

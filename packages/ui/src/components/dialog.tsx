@@ -74,10 +74,7 @@ type DialogHeaderProps = ComponentProps<'div'>;
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
-      className={cn(
-        'flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left',
-        className,
-      )}
+      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
       {...props}
     />
   );
@@ -102,10 +99,7 @@ type DialogFooterProps = ComponentProps<'div'>;
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
-      className={cn(
-        'flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end',
-        className,
-      )}
+      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
       {...props}
     />
   );
@@ -119,10 +113,7 @@ type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
 
 function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
   return (
-    <DialogPrimitive.Title
-      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
-      {...props}
-    />
+    <DialogPrimitive.Title className={cn('text-lg font-semibold leading-none tracking-tight', className)} {...props} />
   );
 }
 
@@ -133,12 +124,7 @@ function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
 type DialogDescriptionProps = ComponentProps<typeof DialogPrimitive.Description>;
 
 function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX.Element {
-  return (
-    <DialogPrimitive.Description
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
-  );
+  return <DialogPrimitive.Description className={cn('text-muted-foreground text-sm', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -150,15 +136,8 @@ interface DialogCloseProps extends ComponentProps<typeof DialogPrimitive.Close> 
   variant?: ButtonVariantsProps['variant'];
 }
 
-function DialogClose({
-  className,
-  size,
-  variant = 'outline',
-  ...props
-}: DialogCloseProps): JSX.Element {
-  return (
-    <DialogPrimitive.Close className={buttonVariants({ className, size, variant })} {...props} />
-  );
+function DialogClose({ className, size, variant = 'outline', ...props }: DialogCloseProps): JSX.Element {
+  return <DialogPrimitive.Close className={buttonVariants({ className, size, variant })} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
