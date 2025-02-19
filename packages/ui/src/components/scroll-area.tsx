@@ -56,8 +56,7 @@ const [createCarouselContext] = createContextScope(SCROLL_AREA_NAME);
 
 type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 
-const [CarouselProvider, useCarouselContext] =
-  createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
+const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
 type ScrollAreaProps = ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
 

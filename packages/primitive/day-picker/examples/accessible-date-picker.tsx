@@ -11,15 +11,11 @@ export function AccessibleDatePicker(): JSX.Element {
   return (
     <DayPicker
       footer={
-        meetingDate
-          ? `Meeting date is set to ${format(meetingDate, 'PPPP')}`
-          : 'Please pick a date for the meeting.'
+        meetingDate ? `Meeting date is set to ${format(meetingDate, 'PPPP')}` : 'Please pick a date for the meeting.'
       }
       labels={{
         labelDayButton: (date, modifiers) => {
-          return modifiers.selected
-            ? `Selected Meeting Date: ${format(date, 'PPP')}`
-            : format(date, 'PPP');
+          return modifiers.selected ? `Selected Meeting Date: ${format(date, 'PPP')}` : format(date, 'PPP');
         },
       }}
       mode="single"

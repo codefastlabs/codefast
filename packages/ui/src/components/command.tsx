@@ -84,12 +84,7 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
 type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
 
 function CommandList({ className, ...props }: CommandListProps): JSX.Element {
-  return (
-    <CommandPrimitive.List
-      className={cn('max-h-72 overflow-y-auto overflow-x-hidden', className)}
-      {...props}
-    />
-  );
+  return <CommandPrimitive.List className={cn('max-h-72 overflow-y-auto overflow-x-hidden', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -99,9 +94,7 @@ function CommandList({ className, ...props }: CommandListProps): JSX.Element {
 type CommandEmptyProps = ComponentProps<typeof CommandPrimitive.Empty>;
 
 function CommandEmpty({ className, ...props }: CommandEmptyProps): JSX.Element {
-  return (
-    <CommandPrimitive.Empty className={cn('py-6 text-center text-sm', className)} {...props} />
-  );
+  return <CommandPrimitive.Empty className={cn('py-6 text-center text-sm', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -129,9 +122,7 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
 type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
 
 function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
-  return (
-    <CommandPrimitive.Separator className={cn('bg-border -mx-1 h-px', className)} {...props} />
-  );
+  return <CommandPrimitive.Separator className={cn('bg-border -mx-1 h-px', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -162,9 +153,7 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
 type CommandLoadingProps = ComponentProps<typeof CommandPrimitive.Loading>;
 
 function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Element {
-  return (
-    <CommandPrimitive.Loading className={cn('flex justify-center p-2', className)} {...props} />
-  );
+  return <CommandPrimitive.Loading className={cn('flex justify-center p-2', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -174,12 +163,7 @@ function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Eleme
 type CommandShortcutProps = ComponentProps<'span'>;
 
 function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
-  return (
-    <span
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
-      {...props}
-    />
-  );
+  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

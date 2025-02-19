@@ -5,9 +5,7 @@ import type { DateAfter, DateBefore, DateInterval, DateRange, DayOfWeek } from '
  * Returns true if `matcher` is of type {@link DateInterval}.
  */
 export function isDateInterval(matcher?: unknown): matcher is DateInterval {
-  return Boolean(
-    matcher && typeof matcher === 'object' && 'before' in matcher && 'after' in matcher,
-  );
+  return Boolean(matcher && typeof matcher === 'object' && 'before' in matcher && 'after' in matcher);
 }
 
 /**

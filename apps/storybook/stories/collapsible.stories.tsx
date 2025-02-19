@@ -23,28 +23,17 @@ export const Default: Story = {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-      <Collapsible
-        className="w-[21.875rem] space-y-2"
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        {...args}
-      >
+      <Collapsible className="w-[21.875rem] space-y-2" open={isOpen} onOpenChange={setIsOpen} {...args}>
         <div className="flex items-center justify-between gap-x-4 px-3">
           <h4 className="text-sm font-semibold">@peduarte starred 3 repositories</h4>
           <CollapsibleTrigger asChild>
             <Button icon aria-label="Toggle" prefix={<CaretSortIcon />} size="sm" variant="ghost" />
           </CollapsibleTrigger>
         </div>
-        <div className="shadow-xs rounded-md border px-4 py-2 font-mono text-sm">
-          @radix-ui/primitives
-        </div>
+        <div className="shadow-xs rounded-md border px-4 py-2 font-mono text-sm">@radix-ui/primitives</div>
         <CollapsibleContent className="space-y-2">
-          <div className="shadow-xs rounded-md border px-4 py-2 font-mono text-sm">
-            @radix-ui/colors
-          </div>
-          <div className="shadow-xs rounded-md border px-4 py-2 font-mono text-sm">
-            @stitches/react
-          </div>
+          <div className="shadow-xs rounded-md border px-4 py-2 font-mono text-sm">@radix-ui/colors</div>
+          <div className="shadow-xs rounded-md border px-4 py-2 font-mono text-sm">@stitches/react</div>
         </CollapsibleContent>
       </Collapsible>
     );

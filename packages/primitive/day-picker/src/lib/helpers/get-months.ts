@@ -63,9 +63,7 @@ export function getMonths(
       return date >= firstDateOfFirstWeek && date <= lastDateOfLastWeek;
     });
 
-    const nrOfDaysWithFixedWeeks = props.broadcastCalendar
-      ? NrOfDaysBroadcast
-      : NrOfDaysWithFixedWeeks;
+    const nrOfDaysWithFixedWeeks = props.broadcastCalendar ? NrOfDaysBroadcast : NrOfDaysWithFixedWeeks;
 
     if (props.fixedWeeks && monthDates.length < nrOfDaysWithFixedWeeks) {
       const extraDates = dates.filter((date) => {

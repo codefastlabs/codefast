@@ -7,20 +7,8 @@ test('return undefined if startMonth or endMonth is not provided', () => {
   const formatters = getFormatters({
     formatYearDropdown: (year: number) => `${year}`,
   });
-  const result1 = getYearOptions(
-    displayMonth,
-    undefined,
-    new Date(2022, 11, 31),
-    formatters,
-    defaultDateLib,
-  );
-  const result2 = getYearOptions(
-    displayMonth,
-    new Date(2022, 0, 1),
-    undefined,
-    formatters,
-    defaultDateLib,
-  );
+  const result1 = getYearOptions(displayMonth, undefined, new Date(2022, 11, 31), formatters, defaultDateLib);
+  const result2 = getYearOptions(displayMonth, new Date(2022, 0, 1), undefined, formatters, defaultDateLib);
 
   expect(result1).toBeUndefined();
   expect(result2).toBeUndefined();

@@ -88,10 +88,7 @@ type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>;
 
 function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
   return (
-    <DrawerPrimitive.Title
-      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
-      {...props}
-    />
+    <DrawerPrimitive.Title className={cn('text-lg font-semibold leading-none tracking-tight', className)} {...props} />
   );
 }
 
@@ -102,12 +99,7 @@ function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
 type DrawerDescriptionProps = ComponentProps<typeof DrawerPrimitive.Description>;
 
 function DrawerDescription({ className, ...props }: DrawerDescriptionProps): JSX.Element {
-  return (
-    <DrawerPrimitive.Description
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
-  );
+  return <DrawerPrimitive.Description className={cn('text-muted-foreground text-sm', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -119,15 +111,8 @@ interface DrawerCloseProps extends ComponentProps<typeof DrawerPrimitive.Close> 
   variant?: ButtonVariantsProps['variant'];
 }
 
-function DrawerClose({
-  className,
-  size,
-  variant = 'outline',
-  ...props
-}: DrawerCloseProps): JSX.Element {
-  return (
-    <DrawerPrimitive.Close className={buttonVariants({ className, size, variant })} {...props} />
-  );
+function DrawerClose({ className, size, variant = 'outline', ...props }: DrawerCloseProps): JSX.Element {
+  return <DrawerPrimitive.Close className={buttonVariants({ className, size, variant })} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

@@ -63,10 +63,7 @@ export function ChartRadialSimple(): JSX.Element {
       <CardContent className="flex-1 pb-0">
         <ChartContainer className="mx-auto aspect-square max-h-[15.625rem]" config={chartConfig}>
           <RadialBarChart data={chartData} innerRadius={30} outerRadius={110}>
-            <ChartTooltip
-              content={<ChartTooltipContent hideLabel nameKey="browser" />}
-              cursor={false}
-            />
+            <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="browser" />} cursor={false} />
             <RadialBar background dataKey="visitors" />
           </RadialBarChart>
         </ChartContainer>
@@ -75,9 +72,7 @@ export function ChartRadialSimple(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
+        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
   );

@@ -113,12 +113,7 @@ describe('getDates Helper Function', () => {
 
     describe('and fixed weeks are disabled', () => {
       test('should return dates spanning multiple months without fixed weeks', () => {
-        const dates = getDates(
-          [firstMonth, lastMonth],
-          undefined,
-          { fixedWeeks: false },
-          defaultDateLib,
-        );
+        const dates = getDates([firstMonth, lastMonth], undefined, { fixedWeeks: false }, defaultDateLib);
 
         expect(dates).toHaveLength(252);
         expect(dates[0]).toEqual(new Date(2023, 3, 30)); // First day
@@ -130,12 +125,7 @@ describe('getDates Helper Function', () => {
       const maxDate = new Date(2023, 5, 15);
 
       test('should limit the last day to the max date', () => {
-        const dates = getDates(
-          [firstMonth, lastMonth],
-          maxDate,
-          {},
-          new DateLib({ weekStartsOn: 1 }),
-        );
+        const dates = getDates([firstMonth, lastMonth], maxDate, {}, new DateLib({ weekStartsOn: 1 }));
 
         expect(dates).toHaveLength(46);
         expect(dates.at(-1)).toEqual(maxDate); // Max date

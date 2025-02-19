@@ -39,9 +39,7 @@ function buildClientLibsRegex(clientLibs: string[] | undefined): RegExp | undefi
   }
 
   // Escape special characters in each library name to safely use in regex.
-  const escapedLibs = clientLibs.map((lib) =>
-    lib.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`),
-  );
+  const escapedLibs = clientLibs.map((lib) => lib.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
 
   // Return a regex pattern that matches any of the provided client libraries.
   return new RegExp(`(?:${escapedLibs.join('|')})`);
@@ -56,9 +54,7 @@ function buildClientLibsRegex(clientLibs: string[] | undefined): RegExp | undefi
  * @returns A plugin object that contains a `renderChunk` method to process and
  *   potentially modify the code chunks.
  */
-export function addUseClientDirective(
-  clientLibs?: string[],
-): NonNullable<Options['plugins']>[number] {
+export function addUseClientDirective(clientLibs?: string[]): NonNullable<Options['plugins']>[number] {
   const clientLibsRegex = buildClientLibsRegex(clientLibs);
 
   return {

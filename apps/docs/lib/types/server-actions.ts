@@ -19,8 +19,6 @@ export interface FailedResponse<ErrorType> extends Response {
   ok: false;
 }
 
-export type ServerResponse<DataType, ErrorType> =
-  | FailedResponse<ErrorType>
-  | SuccessfulResponse<DataType>;
+export type ServerResponse<DataType, ErrorType> = FailedResponse<ErrorType> | SuccessfulResponse<DataType>;
 
 export type FieldValidationErrors<Schema> = typeToFlattenedError<Schema>['fieldErrors'];

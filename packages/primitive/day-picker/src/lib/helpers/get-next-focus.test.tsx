@@ -13,16 +13,7 @@ test('should return `undefined` if `attempt` exceeds 365', () => {
   const focusedDay = new CalendarDay(new Date(2020, 0, 1), new Date(2020, 0, 1), defaultDateLib);
   const moveBy: MoveFocusBy = 'day';
   const moveDir: MoveFocusDir = 'after';
-  const result = getNextFocus(
-    moveBy,
-    moveDir,
-    focusedDay,
-    undefined,
-    undefined,
-    props,
-    defaultDateLib,
-    366,
-  );
+  const result = getNextFocus(moveBy, moveDir, focusedDay, undefined, undefined, props, defaultDateLib, 366);
 
   expect(result).toBeUndefined();
 });
@@ -30,15 +21,7 @@ test('should return `undefined` if `attempt` exceeds 365', () => {
 test('should return the focus date if it is not disabled or hidden', () => {
   const focusedDay = new CalendarDay(new Date(2020, 0, 1), new Date(2020, 0, 1), defaultDateLib);
   const expectedDate = new Date(2020, 0, 2);
-  const result = getNextFocus(
-    'day',
-    'after',
-    focusedDay,
-    undefined,
-    undefined,
-    props,
-    defaultDateLib,
-  );
+  const result = getNextFocus('day', 'after', focusedDay, undefined, undefined, props, defaultDateLib);
 
   expect(result?.date).toEqual(expectedDate);
 });

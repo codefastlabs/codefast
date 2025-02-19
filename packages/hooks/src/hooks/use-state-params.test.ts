@@ -135,11 +135,7 @@ describe('useStateParams Hook', () => {
       expect(mockPushState).toHaveBeenCalledWith(null, '', '?foo=%27+OR+%271%27%3D%271');
 
       push({ bar: '<script>alert(1)</script>' });
-      expect(mockPushState).toHaveBeenCalledWith(
-        null,
-        '',
-        '?bar=%3Cscript%3Ealert%281%29%3C%2Fscript%3E',
-      );
+      expect(mockPushState).toHaveBeenCalledWith(null, '', '?bar=%3Cscript%3Ealert%281%29%3C%2Fscript%3E');
     });
 
     test('should encode XSS payloads to prevent XSS attacks', () => {

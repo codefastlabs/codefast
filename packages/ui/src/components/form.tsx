@@ -38,8 +38,7 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const [FormFieldProvider, useFormFieldContext] =
-  createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
+const [FormFieldProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
 
 function useFormItem(
   consumerName: string,
@@ -69,9 +68,7 @@ function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >(formFieldProps: FormFieldProps<TFieldValues, TName>): JSX.Element {
-  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<
-    FormFieldProps<TFieldValues, TName>
-  >;
+  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<FormFieldProps<TFieldValues, TName>>;
 
   return (
     <FormFieldProvider name={props.name} scope={__scopeFormField}>
@@ -90,16 +87,11 @@ interface FormItemContextValue {
   id: string;
 }
 
-const [FormItemProvider, useFormItemContext] =
-  createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
+const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 type FormItemProps = ComponentProps<'div'>;
 
-function FormItem({
-  __scopeFormField,
-  className,
-  ...props
-}: ScopedProps<FormItemProps>): JSX.Element {
+function FormItem({ __scopeFormField, className, ...props }: ScopedProps<FormItemProps>): JSX.Element {
   const id = useId();
 
   return (
@@ -130,10 +122,7 @@ const FORM_CONTROL_NAME = 'FormControl';
 type FormControlProps = ComponentProps<typeof Slot>;
 
 function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
-  const { formDescriptionId, formItemId, formMessageId } = useFormItem(
-    FORM_MESSAGE_NAME,
-    __scopeFormField,
-  );
+  const { formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
   const { errors } = useFormState({ name });
 
@@ -153,20 +142,10 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
 
 type FormDescriptionProps = ComponentProps<'p'>;
 
-function FormDescription({
-  __scopeFormField,
-  className,
-  ...props
-}: ScopedProps<FormDescriptionProps>): JSX.Element {
+function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>): JSX.Element {
   const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
-  return (
-    <p
-      className={cn('text-muted-foreground text-xs', className)}
-      id={formDescriptionId}
-      {...props}
-    />
-  );
+  return <p className={cn('text-muted-foreground text-xs', className)} id={formDescriptionId} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -177,12 +156,7 @@ const FORM_MESSAGE_NAME = 'FormMessage';
 
 type FormMessageProps = ComponentProps<'p'>;
 
-function FormMessage({
-  __scopeFormField,
-  children,
-  className,
-  ...props
-}: ScopedProps<FormMessageProps>): ReactNode {
+function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>): ReactNode {
   const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
   const { errors } = useFormState({ name });
@@ -195,11 +169,7 @@ function FormMessage({
 
   return (
     <p
-      className={cn(
-        'text-xs',
-        error?.message ? 'text-destructive font-medium' : 'text-muted-foreground',
-        className,
-      )}
+      className={cn('text-xs', error?.message ? 'text-destructive font-medium' : 'text-muted-foreground', className)}
       id={formMessageId}
       {...props}
     >
@@ -221,13 +191,4 @@ export type {
   FormMessageProps,
   FormProps,
 };
-export {
-  createFormFieldScope,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-};
+export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };

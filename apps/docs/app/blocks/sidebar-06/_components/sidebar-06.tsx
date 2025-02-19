@@ -74,11 +74,7 @@ export function Sidebar06({ className, ...props }: Sidebar06Props): JSX.Element 
                         </SidebarMenuButton>
                       </DropdownMenuTrigger>
                       {nav.items.length > 0 ? (
-                        <DropdownMenuContent
-                          align="end"
-                          className="min-w-56 rounded-lg"
-                          side="bottom"
-                        >
+                        <DropdownMenuContent align="end" className="min-w-56 rounded-lg" side="bottom">
                           {nav.items.map((item) => (
                             <DropdownMenuItem key={item.title} asChild>
                               <Link href={item.url}>{item.title}</Link>
@@ -98,16 +94,11 @@ export function Sidebar06({ className, ...props }: Sidebar06Props): JSX.Element 
                 <form>
                   <CardHeader className="p-4 pb-0">
                     <CardTitle className="text-sm">Subscribe to our newsletter</CardTitle>
-                    <CardDescription>
-                      Opt-in to receive updates and news about the sidebar.
-                    </CardDescription>
+                    <CardDescription>Opt-in to receive updates and news about the sidebar.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2.5 p-4">
                     <SidebarInput placeholder="Email" type="email" />
-                    <Button
-                      className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none"
-                      size="sm"
-                    >
+                    <Button className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none" size="sm">
                       Subscribe
                     </Button>
                   </CardContent>

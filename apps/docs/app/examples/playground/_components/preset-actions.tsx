@@ -73,9 +73,8 @@ export function PresetActions(): JSX.Element {
           <DialogHeader>
             <DialogTitle>Content filter preferences</DialogTitle>
             <DialogDescription>
-              The content filter flags text that may violate our content policy. It&apos;s powered
-              by our moderation endpoint which is free to use to moderate your OpenAI API traffic.
-              Learn more.
+              The content filter flags text that may violate our content policy. It&apos;s powered by our moderation
+              endpoint which is free to use to moderate your OpenAI API traffic. Learn more.
             </DialogDescription>
           </DialogHeader>
           <DialogBody>
@@ -85,8 +84,7 @@ export function PresetActions(): JSX.Element {
               <Label className="grid gap-1 font-normal" htmlFor="show">
                 <span className="font-semibold">Show a warning when content is flagged</span>
                 <span className="text-muted-foreground text-sm">
-                  A warning will be shown when sexual, hateful, violent or self-harm content is
-                  detected.
+                  A warning will be shown when sexual, hateful, violent or self-harm content is detected.
                 </span>
               </Label>
             </div>
@@ -109,8 +107,8 @@ export function PresetActions(): JSX.Element {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This preset will no longer be accessible by you or
-              others you&apos;ve shared it with.
+              This action cannot be undone. This preset will no longer be accessible by you or others you&apos;ve shared
+              it with.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

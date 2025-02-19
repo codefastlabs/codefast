@@ -44,9 +44,7 @@ export function useFocus<T extends DayPickerProps>(
   const { autoFocus } = props;
   const [lastFocused, setLastFocused] = useState<CalendarDay | undefined>();
   const focusTarget = calculateFocusTarget(calendar.days, getModifiers, isSelected, lastFocused);
-  const [focused, setFocused] = useState<CalendarDay | undefined>(
-    autoFocus ? focusTarget : undefined,
-  );
+  const [focused, setFocused] = useState<CalendarDay | undefined>(autoFocus ? focusTarget : undefined);
 
   const blur = (): void => {
     setLastFocused(focused);
@@ -58,15 +56,7 @@ export function useFocus<T extends DayPickerProps>(
       return;
     }
 
-    const nextFocus = getNextFocus(
-      moveBy,
-      moveDir,
-      focused,
-      calendar.navStart,
-      calendar.navEnd,
-      props,
-      dateLib,
-    );
+    const nextFocus = getNextFocus(moveBy, moveDir, focused, calendar.navStart, calendar.navEnd, props, dateLib);
 
     if (!nextFocus) {
       return;

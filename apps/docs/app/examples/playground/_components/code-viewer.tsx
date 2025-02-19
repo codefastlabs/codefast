@@ -21,8 +21,7 @@ export function CodeViewer(): JSX.Element {
         <DialogHeader>
           <DialogTitle>View code</DialogTitle>
           <DialogDescription>
-            You can use the following code to start integrating your current prompt and settings
-            into your application.
+            You can use the following code to start integrating your current prompt and settings into your application.
           </DialogDescription>
         </DialogHeader>
         <DialogBody className="grid gap-4 pb-6">
@@ -77,8 +76,8 @@ export function CodeViewer(): JSX.Element {
           </div>
           <div>
             <p className="text-muted-foreground text-sm">
-              Your API Key can be found here. You should use environment variables or a secret
-              management tool to expose your key to your applications.
+              Your API Key can be found here. You should use environment variables or a secret management tool to expose
+              your key to your applications.
             </p>
           </div>
         </DialogBody>
