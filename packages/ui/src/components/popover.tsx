@@ -45,9 +45,9 @@ function PopoverContent({ align = 'center', className, sideOffset = 6, ...props 
           'data-[state=open]:data-[side=left]:slide-in-from-right-2',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95',
           'data-[state=closed]:data-[side=top]:slide-out-to-bottom-2',
-          'data-[state=closed]:data-[side=left]:slide-out-to-right-2',
-          'data-[state=closed]:data-[side=bottom]:slide-out-to-top-2',
           'data-[state=closed]:data-[side=right]:slide-out-to-left-2',
+          'data-[state=closed]:data-[side=bottom]:slide-out-to-top-2',
+          'data-[state=closed]:data-[side=left]:slide-out-to-right-2',
           className,
         )}
         sideOffset={sideOffset}
