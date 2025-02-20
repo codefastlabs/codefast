@@ -45,7 +45,7 @@ export function ReportAnIssue(): JSX.Element {
           <div className="space-y-2">
             <Label htmlFor="security-level">Security Level</Label>
             <Select defaultValue="2">
-              <SelectTrigger className="w-[10rem]" id="security-level">
+              <SelectTrigger id="security-level">
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
               <SelectContent>
@@ -57,10 +57,12 @@ export function ReportAnIssue(): JSX.Element {
             </Select>
           </div>
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="subject">Subject</Label>
           <Input id="subject" placeholder="I need help with..." />
         </div>
+
         <div className="space-y-2">
           <Label htmlFor="description">Description</Label>
           <Textarea id="description" placeholder="Please include all information relevant to your issue." />
