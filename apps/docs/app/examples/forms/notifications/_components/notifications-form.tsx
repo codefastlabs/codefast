@@ -77,19 +77,19 @@ export function NotificationsForm(): JSX.Element {
                   defaultValue={field.value}
                   onValueChange={field.onChange}
                 >
-                  <FormItem className="flex items-center gap-y-0">
+                  <FormItem inline className="flex items-center gap-x-2">
                     <FormControl>
                       <RadioGroupItem value="all" />
                     </FormControl>
                     <FormLabel className="font-normal">All new messages</FormLabel>
                   </FormItem>
-                  <FormItem className="flex items-center gap-y-0">
+                  <FormItem inline className="flex items-center gap-x-2">
                     <FormControl>
                       <RadioGroupItem value="mentions" />
                     </FormControl>
                     <FormLabel className="font-normal">Direct messages and mentions</FormLabel>
                   </FormItem>
-                  <FormItem className="flex items-center gap-y-0">
+                  <FormItem inline className="flex items-center gap-x-2">
                     <FormControl>
                       <RadioGroupItem value="none" />
                     </FormControl>
