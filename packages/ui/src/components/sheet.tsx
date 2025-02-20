@@ -8,9 +8,7 @@ import { tv } from 'tailwind-variants';
 import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants'; /* -----------------------------------------------------------------------------
- * Variant: SheetContent
- * -------------------------------------------------------------------------- */
+import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent
@@ -19,8 +17,8 @@ import { buttonVariants } from '@/variants/button.variants'; /* ----------------
 const sheetContentVariants = tv({
   base: [
     'bg-background animation-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
-    'data-[state=open]:animate-in data-[state=open]:animation-duration-500',
-    'data-[state=closed]:animate-out data-[state=closed]:animation-duration-300',
+    'data-[state=open]:animate-in',
+    'data-[state=closed]:animate-out',
   ],
   defaultVariants: {
     side: 'right',
@@ -29,23 +27,23 @@ const sheetContentVariants = tv({
     side: {
       bottom: [
         'inset-x-0 bottom-0 max-h-screen border-t',
-        'data-[state=open]:slide-in-from-bottom',
-        'data-[state=closed]:slide-out-to-bottom',
+        'data-[state=open]:slide-in-from-bottom-full',
+        'data-[state=closed]:slide-out-to-bottom-full',
       ],
       left: [
         'inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
-        'data-[state=open]:slide-in-from-left',
-        'data-[state=closed]:slide-out-to-left',
+        'data-[state=open]:slide-in-from-left-full',
+        'data-[state=closed]:slide-out-to-left-full',
       ],
       right: [
         'inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
-        'data-[state=open]:slide-in-from-right',
-        'data-[state=closed]:slide-out-to-right',
+        'data-[state=open]:slide-in-from-right-full',
+        'data-[state=closed]:slide-out-to-right-full',
       ],
       top: [
         'inset-x-0 top-0 max-h-screen border-b',
-        'data-[state=open]:slide-in-from-top',
-        'data-[state=closed]:slide-out-to-top',
+        'data-[state=open]:slide-in-from-top-full',
+        'data-[state=closed]:slide-out-to-top-full',
       ],
     },
   },
@@ -79,7 +77,7 @@ function SheetContent({ children, className, side = 'right', ...props }: SheetCo
       <SheetPrimitive.Overlay
         className={cn(
           'fixed inset-0 z-50 bg-black/80',
-          'data-[state=open]:animation-duration-500 data-[state=open]:animate-fade-in',
+          'data-[state=open]:animate-fade-in',
           'data-[state=closed]:animation-duration-300 data-[state=closed]:animate-fade-out',
         )}
       />
