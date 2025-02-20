@@ -89,14 +89,16 @@ interface FormItemContextValue {
 
 const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
-type FormItemProps = ComponentProps<'div'>;
+interface FormItemProps extends ComponentProps<'div'> {
+  inline?: boolean;
+}
 
-function FormItem({ __scopeFormField, className, ...props }: ScopedProps<FormItemProps>): JSX.Element {
+function FormItem({ __scopeFormField, className, inline, ...props }: ScopedProps<FormItemProps>): JSX.Element {
   const id = useId();
 
   return (
     <FormItemProvider id={id} scope={__scopeFormField}>
-      <div className={cn('space-y-2', className)} {...props} />
+      <div className={cn(!inline && 'space-y-2', className)} {...props} />
     </FormItemProvider>
   );
 }
