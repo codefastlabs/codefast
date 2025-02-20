@@ -2,8 +2,6 @@
 
 @import '@codefast/ui/styles.css';
 
-@plugin '@codefast/ui/tailwindcss/animate';
-
 @source '../node_modules/@codefast/ui/dist';
 
 @custom-variant dark (&:where(.dark, .dark *));

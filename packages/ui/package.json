@@ -24,17 +24,7 @@
         "default": "./dist/index.cjs"
       }
     },
-    "./tailwindcss/animate": {
-      "import": {
-        "types": "./dist/tailwindcss/animate.d.ts",
-        "default": "./dist/tailwindcss/animate.js"
-      },
-      "require": {
-        "types": "./dist/tailwindcss/animate.d.cts",
-        "default": "./dist/tailwindcss/animate.cjs"
-      }
-    },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/index.css"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
