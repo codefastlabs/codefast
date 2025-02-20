@@ -1,5 +1,11 @@
 # @codefast/style-guide
 
+## 0.2.23
+
+### Patch Changes
+
+- [`814d40e`](https://github.com/codefastlabs/codefast/commit/814d40ea6708d7a0a01f9d56dc9feb7b6713b731) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): consolidate styles and animations into a single CSS file
+
 ## 0.2.22
 
 ### Patch Changes
