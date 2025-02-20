@@ -203,7 +203,7 @@
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
     "@eslint/js": "^9.20.0",
     "@next/eslint-plugin-next": "^15.1.7",
-    "@stylistic/eslint-plugin": "^3.1.0",
+    "@stylistic/eslint-plugin": "^4.0.1",
     "@vitest/eslint-plugin": "^1.1.31",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest": "^28.9.0",
@@ -215,14 +215,14 @@
     "eslint-plugin-testing-library": "^7.1.1",
     "eslint-plugin-tsdoc": "^0.4.0",
     "eslint-plugin-turbo": "^2.4.2",
-    "eslint-plugin-unicorn": "^56.0.1",
-    "typescript-eslint": "^8.24.0"
+    "eslint-plugin-unicorn": "^57.0.0",
+    "typescript-eslint": "^8.24.1"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "^22.13.4",
     "eslint": "^9.20.1",
-    "globals": "^15.15.0",
+    "globals": "^16.0.0",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3"
   },
