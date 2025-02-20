@@ -18,27 +18,15 @@ const clientLibs = [
   'vaul',
 ];
 
-export default defineConfig((options) => [
-  {
-    clean: !options.watch,
-    dts: true,
-    entry: ['src/**/*.ts*', '!src/**/*.test.ts*'],
-    format: ['cjs', 'esm'],
-    minify: !options.watch,
-    plugins: [addUseClientDirective(clientLibs)],
-    silent: true,
-    sourcemap: true,
-    splitting: true,
-    ...options,
-  },
-  {
-    clean: !options.watch,
-    dts: true,
-    entry: ['src/**/*.css'],
-    minify: !options.watch,
-    silent: true,
-    sourcemap: true,
-    splitting: true,
-    ...options,
-  },
-]);
+export default defineConfig((options) => ({
+  clean: !options.watch,
+  dts: true,
+  entry: ['src/**/*.ts*', '!src/**/*.test.ts*'],
+  format: ['cjs', 'esm'],
+  minify: !options.watch,
+  plugins: [addUseClientDirective(clientLibs)],
+  silent: true,
+  sourcemap: true,
+  splitting: true,
+  ...options,
+}));

@@ -1,3 +1,5 @@
+import '@/styles/index.css';
+
 // Export various components from the components directory
 export * from '@/components/accordion';
 export * from '@/components/alert';
