@@ -34,15 +34,15 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
       <DialogPrimitive.Overlay
         className={cn(
           'fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8',
-          'data-[state=open]:animation-duration-200 data-[state=open]:animate-fade-in',
-          'data-[state=closed]:animation-duration-150 data-[state=closed]:animate-fade-out',
+          'data-[state=open]:animate-fade-in',
+          'data-[state=closed]:animate-fade-out',
         )}
       >
         <DialogPrimitive.Content
           className={cn(
             'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
-            'data-[state=open]:animation-duration-200 data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0',
-            'data-[state=closed]:animation-duration-150 data-[state=closed]:zoom-out-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
+            'data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0',
+            'data-[state=closed]:zoom-out-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
             className,
           )}
           {...props}

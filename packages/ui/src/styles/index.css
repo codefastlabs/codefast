@@ -106,9 +106,10 @@
   appearance/disappearance animations with variable duration and easing.
 */
 @theme {
-  --animate-fade-in: fade-in 500ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-fade-in: fade-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
   --animate-fade-out: fade-out 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  --animate-in: in 500ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  --animate-in: in 300ms cubic-bezier(0.32, 0.72, 0, 1);
   --animate-out: out 300ms cubic-bezier(0.32, 0.72, 0, 1);
 
   @keyframes fade-in {
