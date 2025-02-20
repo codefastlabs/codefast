@@ -1,3 +1,8 @@
+/*
+  Named color theme definitions, providing a set of CSS variables for consistent color usage
+  in various components and elements throughout the application.
+  Each color has its purpose (e.g., background, primary, accent, sidebar).
+*/
 @theme {
   --color-background: var(--color-white);
   --color-foreground: var(--color-slate-950);
@@ -55,6 +60,10 @@
   --color-chart-5: var(--color-fuchsia-500);
 }
 
+/*
+  Animation definitions using keyframes for seamless UI transitions.
+  These include cursor blinking and collapsible sections opening/closing.
+*/
 @theme {
   --animate-caret-blink: caret-blink 1000ms ease infinite;
   --animate-collapsible-closed: collapsible-closed 200ms ease;
@@ -92,11 +101,15 @@
   }
 }
 
+/*
+  Base layer for general animations. Defines fade-in/out and general
+  appearance/disappearance animations with variable duration and easing.
+*/
 @theme {
-  --animate-fade-in: fade-in var(--default-transition-duration) var(--default-transition-timing-function);
-  --animate-fade-out: fade-out var(--default-transition-duration) var(--default-transition-timing-function);
-  --animate-in: in var(--default-transition-duration) var(--default-transition-timing-function);
-  --animate-out: out var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-fade-in: fade-in 500ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-fade-out: fade-out 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-in: in 500ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-out: out 300ms cubic-bezier(0.32, 0.72, 0, 1);
 
   @keyframes fade-in {
     from {
@@ -129,6 +142,10 @@
   }
 }
 
+/*
+  Base styles applied across all elements. Handles general appearance such as
+  border color and text selection background styling.
+*/
 @layer base {
   *,
   ::after,
@@ -157,7 +174,6 @@
   }
 }
 
-/* region ANIMATION TIMING FUNCTION */
 @utility animate-ease-linear {
   animation-timing-function: linear;
 }
@@ -181,9 +197,7 @@
 @utility animate-ease-* {
   animation-timing-function: --value([ *]);
 }
-/* endregion ANIMATION TIMING FUNCTION */
 
-/* region ANIMATION PLAY STATE */
 @utility animation-state-paused {
   animation-play-state: paused;
 }
@@ -199,9 +213,7 @@
 @utility animation-state-* {
   animation-play-state: --value([ *]);
 }
-/* endregion ANIMATION PLAY STATE */
 
-/* region ANIMATION ITERATION COUNT */
 @utility animation-repeat-infinite {
   animation-iteration-count: infinite;
 }
@@ -213,9 +225,7 @@
 @utility animation-repeat-* {
   animation-iteration-count: --value(integer, [integer]);
 }
-/* endregion ANIMATION ITERATION COUNT */
 
-/* region ANIMATION COMPOSITION */
 @utility animation-composition-replace {
   animation-composition: replace;
 }
@@ -235,9 +245,7 @@
 @utility animation-composition-* {
   animation-composition: --value([ *]);
 }
-/* endregion ANIMATION COMPOSITION */
 
-/* region ANIMATION DELAY */
 @utility animation-delay-initial {
   animation-delay: initial;
 }
@@ -246,9 +254,7 @@
   animation-delay: calc(--value(integer) * 1ms);
   animation-delay: --value([ *]);
 }
-/* endregion ANIMATION DELAY */
 
-/* region ANIMATION DIRECTION */
 @utility animate-direction-normal {
   animation-direction: normal;
 }
@@ -272,9 +278,7 @@
 @utility animate-direction-* {
   animation-direction: --value([ *]);
 }
-/* endregion ANIMATION DIRECTION */
 
-/* region ANIMATION DURATION */
 @utility animation-duration-initial {
   animation-duration: initial;
 }
@@ -283,9 +287,7 @@
   animation-duration: calc(--value(integer) * 1ms);
   animation-duration: --value([ *]);
 }
-/* endregion ANIMATION DURATION */
 
-/* region ANIMATION FILL MODE */
 @utility animation-fill-mode-none {
   animation-fill-mode: none;
 }
@@ -305,22 +307,10 @@
 @utility animation-fill-mode-* {
   animation-fill-mode: --value([ *]);
 }
-/* endregion ANIMATION FILL MODE */
-
-/* region ANIMATION VARIABLE */
-@utility fade-in {
-  --animation-in-opacity: 0;
-}
 
 @utility fade-in-* {
   --animation-in-opacity: --value([percentage]);
   --animation-in-opacity: calc(--value(integer) * 1%);
-}
-
-/* -- */
-
-@utility fade-out {
-  --animation-out-opacity: 0;
 }
 
 @utility fade-out-* {
@@ -328,30 +318,12 @@
   --animation-out-opacity: calc(--value(integer) * 1%);
 }
 
-/* -- */
-
-@utility spin-in {
-  --animation-in-rotate: 30deg;
-}
-
 @utility spin-in-* {
   --animation-in-rotate: calc(1deg * --value(integer));
 }
 
-/* -- */
-
-@utility spin-out {
-  --animation-out-rotate: 30deg;
-}
-
 @utility spin-out-* {
   --animation-out-rotate: calc(1deg * --value(integer));
-}
-
-/* -- */
-
-@utility zoom-in {
-  --animation-in-scale: 0;
 }
 
 @utility zoom-in-* {
@@ -359,20 +331,12 @@
   --animation-in-scale: calc(--value(integer) * 1%);
 }
 
-/* -- */
-
-@utility zoom-out {
-  --animation-out-scale: 0;
-}
-
 @utility zoom-out-* {
   --animation-out-scale: --value([percentage]);
   --animation-out-scale: calc(--value(integer) * 1%);
 }
 
-/* -- */
-
-@utility slide-in-from-left {
+@utility slide-in-from-left-full {
   --animation-in-translate-x: -100%;
 }
 
@@ -380,9 +344,7 @@
   --animation-in-translate-x: calc(var(--spacing) * --value(integer) * -1);
 }
 
-/* -- */
-
-@utility slide-in-from-right {
+@utility slide-in-from-right-full {
   --animation-in-translate-x: 100%;
 }
 
@@ -390,9 +352,7 @@
   --animation-in-translate-x: calc(var(--spacing) * --value(integer));
 }
 
-/* -- */
-
-@utility slide-in-from-top {
+@utility slide-in-from-top-full {
   --animation-in-translate-y: -100%;
 }
 
@@ -400,9 +360,7 @@
   --animation-in-translate-y: calc(var(--spacing) * --value(integer) * -1);
 }
 
-/* -- */
-
-@utility slide-in-from-bottom {
+@utility slide-in-from-bottom-full {
   --animation-in-translate-y: 100%;
 }
 
@@ -410,9 +368,7 @@
   --animation-in-translate-y: calc(var(--spacing) * --value(integer));
 }
 
-/* -- */
-
-@utility slide-out-to-left {
+@utility slide-out-to-left-full {
   --animation-out-translate-x: -100%;
 }
 
@@ -420,9 +376,7 @@
   --animation-out-translate-x: calc(var(--spacing) * --value(integer) * -1);
 }
 
-/* -- */
-
-@utility slide-out-to-right {
+@utility slide-out-to-right-full {
   --animation-out-translate-x: 100%;
 }
 
@@ -430,9 +384,7 @@
   --animation-out-translate-x: calc(var(--spacing) * --value(integer));
 }
 
-/* -- */
-
-@utility slide-out-to-top {
+@utility slide-out-to-top-full {
   --animation-out-translate-y: -100%;
 }
 
@@ -440,13 +392,10 @@
   --animation-out-translate-y: calc(var(--spacing) * --value(integer) * -1);
 }
 
-/* -- */
-
-@utility slide-out-to-bottom {
+@utility slide-out-to-bottom-full {
   --animation-out-translate-y: 100%;
 }
 
 @utility slide-out-to-bottom-* {
   --animation-out-translate-y: calc(var(--spacing) * --value(integer));
 }
-/* endregion ANIMATION VARIABLE */
