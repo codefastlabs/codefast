@@ -113,7 +113,7 @@ export const ReactHookForm: Story = {
             control={form.control}
             name="mobile"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-y-0 rounded-md border p-4 shadow-sm">
+              <FormItem inline className="flex flex-row items-start gap-x-2 rounded-md border p-4 shadow-sm">
                 <FormControl>
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} {...args} />
                 </FormControl>
@@ -216,14 +216,16 @@ export const ReactHookForm2: Story = {
                     control={form.control}
                     name="items"
                     render={({ field }) => (
-                      <FormItem key={item.id} className="flex flex-row items-center space-y-0">
+                      <FormItem key={item.id} inline className="flex flex-row items-center gap-x-2">
                         <FormControl>
                           <Checkbox
                             checked={field.value.includes(item.id)}
                             onCheckedChange={(checked) => {
-                              checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(field.value.filter((value) => value !== item.id));
+                              if (checked) {
+                                field.onChange([...field.value, item.id]);
+                              } else {
+                                field.onChange(field.value.filter((value) => value !== item.id));
+                              }
                             }}
                             {...args}
                           />
