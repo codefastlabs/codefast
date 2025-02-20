@@ -77,8 +77,8 @@ function SheetContent({ children, className, side = 'right', ...props }: SheetCo
       <SheetPrimitive.Overlay
         className={cn(
           'fixed inset-0 z-50 bg-black/80',
-          'data-[state=open]:animate-fade-in',
-          'data-[state=closed]:animation-duration-300 data-[state=closed]:animate-fade-out',
+          'data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500',
+          'data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500',
         )}
       />
       <SheetPrimitive.Content className={sheetContentVariants({ className, side })} {...props}>
