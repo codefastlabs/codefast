@@ -40,8 +40,8 @@ function AlertDialogContent({ className, ...props }: AlertDialogContentProps): J
         <AlertDialogPrimitive.Content
           className={cn(
             'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
-            'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-            'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+            'data-[state=open]:animate-motion-in data-[state=open]:motion-fade-in-0 data-[state=open]:motion-zoom-in-95',
+            'data-[state=closed]:animate-motion-out data-[state=closed]:motion-fade-out-0 data-[state=closed]:motion-zoom-out-95',
             className,
           )}
           {...props}
