@@ -39,11 +39,11 @@ const toggleVariants = tv({
     },
     variant: {
       default: [
-        'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-sm',
+        'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground',
         'hover:not-disabled:bg-primary/80 hover:not-disabled:text-primary-foreground',
       ],
       destructive: [
-        'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground data-[state=on]:shadow-sm',
+        'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground',
         'hover:not-disabled:bg-destructive/80 hover:not-disabled:text-destructive-foreground',
       ],
       ghost: [
@@ -51,24 +51,24 @@ const toggleVariants = tv({
         'hover:not-disabled:bg-accent/80 hover:not-disabled:text-accent-foreground',
       ],
       info: [
-        'data-[state=on]:bg-info data-[state=on]:text-info-foreground data-[state=on]:shadow-sm',
+        'data-[state=on]:bg-info data-[state=on]:text-info-foreground',
         'hover:not-disabled:bg-info/80 hover:not-disabled:text-info-foreground',
       ],
       outline: [
         'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
         'hover:not-disabled:bg-accent/80 hover:not-disabled:text-accent-foreground',
-        'bg-background border-input border shadow-sm',
+        'bg-background border-input border',
       ],
       secondary: [
-        'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground data-[state=on]:shadow-sm',
+        'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground',
         'hover:not-disabled:bg-secondary/80 hover:not-disabled:text-secondary-foreground',
       ],
       success: [
-        'data-[state=on]:bg-success data-[state=on]:text-success-foreground data-[state=on]:shadow-sm',
+        'data-[state=on]:bg-success data-[state=on]:text-success-foreground',
         'hover:not-disabled:bg-success/80 hover:not-disabled:text-success-foreground',
       ],
       warning: [
-        'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground data-[state=on]:shadow-sm',
+        'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground',
         'hover:not-disabled:bg-warning/80 hover:not-disabled:text-warning-foreground',
       ],
     },
