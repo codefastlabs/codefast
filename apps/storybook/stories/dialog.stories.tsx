@@ -45,7 +45,7 @@ export const Default: Story = {
           <Button variant="outline">Edit Profile</Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-[26.5625rem]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
             <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>

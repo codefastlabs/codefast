@@ -174,7 +174,7 @@ export const ResponsiveDialog: Story = {
           <DialogTrigger asChild>
             <Button variant="outline">Edit Profile</Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[26.5625rem]">
+          <DialogContent>
             <form>
               <DialogHeader>
                 <DialogTitle>Edit profile</DialogTitle>
