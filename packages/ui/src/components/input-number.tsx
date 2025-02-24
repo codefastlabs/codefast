@@ -75,7 +75,8 @@ function InputNumber({
       />
       <div
         className={cn(
-          'peer-focus:divide-ring peer-focus:border-l-ring',
+          'peer-hover:divide-input-hover peer-hover:border-l-input-hover',
+          'peer-focus:divide-input-focus peer-focus:border-l-input-focus',
           'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(var(--radius-md)-1px)] border-l transition',
         )}
       >
