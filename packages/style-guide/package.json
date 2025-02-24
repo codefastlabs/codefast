@@ -201,7 +201,7 @@
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
-    "@eslint/js": "^9.20.0",
+    "@eslint/js": "^9.21.0",
     "@next/eslint-plugin-next": "^15.1.7",
     "@stylistic/eslint-plugin": "^4.0.1",
     "@vitest/eslint-plugin": "^1.1.31",
@@ -220,8 +220,8 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@types/node": "^22.13.4",
-    "eslint": "^9.20.1",
+    "@types/node": "^22.13.5",
+    "eslint": "^9.21.0",
     "globals": "^16.0.0",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3"
