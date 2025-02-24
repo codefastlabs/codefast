@@ -38,16 +38,16 @@ function PopoverContent({ align = 'center', className, sideOffset = 6, ...props 
         align={align}
         className={cn(
           'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-4 shadow-md',
-          'data-[state=open]:animate-motion-in data-[state=open]:motion-fade-in-0 data-[state=open]:motion-zoom-in-95',
-          'data-[state=open]:data-[side=top]:motion-slide-in-b-2',
-          'data-[state=open]:data-[side=right]:motion-slide-in-l-2',
-          'data-[state=open]:data-[side=bottom]:motion-slide-in-t-2',
-          'data-[state=open]:data-[side=left]:motion-slide-in-r-2',
-          'data-[state=closed]:animate-motion-out data-[state=closed]:motion-fade-out-0 data-[state=closed]:motion-zoom-out-95',
-          'data-[state=closed]:data-[side=top]:motion-slide-out-b-2',
-          'data-[state=closed]:data-[side=right]:motion-slide-out-l-2',
-          'data-[state=closed]:data-[side=bottom]:motion-slide-out-t-2',
-          'data-[state=closed]:data-[side=left]:motion-slide-out-r-2',
+          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+          'data-[state=open]:data-[side=top]:slide-from-b-2',
+          'data-[state=open]:data-[side=right]:slide-from-l-2',
+          'data-[state=open]:data-[side=bottom]:slide-from-t-2',
+          'data-[state=open]:data-[side=left]:slide-from-r-2',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+          'data-[state=closed]:data-[side=top]:slide-to-b-2',
+          'data-[state=closed]:data-[side=right]:slide-to-l-2',
+          'data-[state=closed]:data-[side=bottom]:slide-to-t-2',
+          'data-[state=closed]:data-[side=left]:slide-to-r-2',
           className,
         )}
         sideOffset={sideOffset}

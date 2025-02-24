@@ -27,26 +27,29 @@ const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 
 type AlertDialogContentProps = ComponentProps<typeof AlertDialogPrimitive.Content>;
 
-function AlertDialogContent({ className, ...props }: AlertDialogContentProps): JSX.Element {
+function AlertDialogContent({ children, className, ...props }: AlertDialogContentProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          'fixed inset-0 z-50 grid place-items-center overflow-auto bg-black/80 p-4 sm:pb-12 sm:pt-8',
+          'fixed inset-0 z-50 bg-black/80',
           'data-[state=open]:animate-fade-in',
           'data-[state=closed]:animate-fade-out',
         )}
+      />
+      <AlertDialogPrimitive.Content
+        className={cn(
+          'fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4',
+          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+          className,
+        )}
+        {...props}
       >
-        <AlertDialogPrimitive.Content
-          className={cn(
-            'bg-background relative z-50 flex w-full max-w-lg flex-col rounded-lg border shadow-lg',
-            'data-[state=open]:animate-motion-in data-[state=open]:motion-fade-in-0 data-[state=open]:motion-zoom-in-95',
-            'data-[state=closed]:animate-motion-out data-[state=closed]:motion-fade-out-0 data-[state=closed]:motion-zoom-out-95',
-            className,
-          )}
-          {...props}
-        />
-      </AlertDialogPrimitive.Overlay>
+        <div className="bg-background relative row-start-2 flex w-full max-w-lg flex-col rounded-lg border shadow-lg">
+          {children}
+        </div>
+      </AlertDialogPrimitive.Content>
     </AlertDialogPrimitive.Portal>
   );
 }

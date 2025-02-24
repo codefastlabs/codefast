@@ -85,12 +85,12 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
     <NavigationMenuPrimitive.Content
       className={cn(
         'left-0 top-0 w-full md:absolute md:w-auto',
-        'data-[motion^=from-]:animate-motion-in data-[motion^=from-]:motion-fade-in-0',
-        'data-[motion=from-end]:motion-slide-in-r-52',
-        'data-[motion=from-start]:motion-slide-in-l-52',
-        'data-[motion^=to-]:animate-motion-out data-[motion^=to-]:motion-fade-out-0',
-        'data-[motion=to-end]:motion-slide-out-r-52',
-        'data-[motion=to-start]:motion-slide-out-l-52',
+        'data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0',
+        'data-[motion=from-end]:slide-from-r-52',
+        'data-[motion=from-start]:slide-from-l-52',
+        'data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0',
+        'data-[motion=to-end]:slide-to-r-52',
+        'data-[motion=to-start]:slide-to-l-52',
         className,
       )}
       {...props}
@@ -119,8 +119,8 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
         className={cn(
           'bg-popover text-popover-foreground relative mt-1.5 w-full origin-[top_center] overflow-hidden rounded-md border p-1 shadow-md transition-[width,height]',
           'h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width)',
-          'data-[state=open]:animate-motion-in data-[state=open]:motion-fade-in-0 data-[state=open]:motion-zoom-in-90',
-          'data-[state=closed]:animate-motion-out data-[state=closed]:motion-fade-out-0 data-[state=closed]:motion-zoom-out-95',
+          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
           className,
         )}
         {...props}

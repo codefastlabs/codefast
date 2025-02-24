@@ -138,281 +138,281 @@
   appearance/disappearance animations with variable duration and easing.
 */
 @theme {
-  --animate-fade-in: fade-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  --animate-fade-out: fade-out 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-fade-in: fadeIn 250ms ease-out;
+  --animate-fade-out: fadeOut 250ms ease-in;
 
-  --animate-motion-in: motion-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  --animate-motion-out: motion-out 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-in: enter 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-out: exit 250ms cubic-bezier(0.32, 0.72, 0, 1);
 
-  @keyframes fade-in {
+  @keyframes fadeIn {
     from {
-      opacity: var(--animation-in-opacity, 0);
+      opacity: var(--animation-enter-opacity, 0);
     }
   }
 
-  @keyframes fade-out {
+  @keyframes fadeOut {
     to {
-      opacity: var(--animation-out-opacity, 0);
+      opacity: var(--animation-exit-opacity, 0);
     }
   }
 
-  @keyframes motion-in {
+  @keyframes enter {
     from {
-      opacity: var(--animation-in-opacity, 1);
-      transform: translate3d(var(--animation-in-translate-x, 0), var(--animation-in-translate-y, 0), 0)
-        scale3d(var(--animation-in-scale, 1), var(--animation-in-scale, 1), var(--animation-in-scale, 1))
-        rotate(var(--animation-in-rotate, 0));
+      opacity: var(--animation-enter-opacity, 1);
+      transform: translate3d(var(--animation-enter-translate-x, 0), var(--animation-enter-translate-y, 0), 0)
+        scale3d(var(--animation-enter-scale, 1), var(--animation-enter-scale, 1), var(--animation-enter-scale, 1))
+        rotate(var(--animation-enter-rotate, 0));
     }
   }
 
-  @keyframes motion-out {
+  @keyframes exit {
     to {
-      opacity: var(--animation-out-opacity, 1);
-      transform: translate3d(var(--animation-out-translate-x, 0), var(--animation-out-translate-y, 0), 0)
-        scale3d(var(--animation-out-scale, 1), var(--animation-out-scale, 1), var(--animation-out-scale, 1))
-        rotate(var(--animation-out-rotate, 0));
+      opacity: var(--animation-exit-opacity, 1);
+      transform: translate3d(var(--animation-exit-translate-x, 0), var(--animation-exit-translate-y, 0), 0)
+        scale3d(var(--animation-exit-scale, 1), var(--animation-exit-scale, 1), var(--animation-exit-scale, 1))
+        rotate(var(--animation-exit-rotate, 0));
     }
   }
 }
 
-@utility motion-ease-linear {
+@utility animation-ease-linear {
   animation-timing-function: linear;
 }
 
-@utility motion-ease-in {
+@utility animation-ease-in {
   animation-timing-function: var(--ease-in);
 }
 
-@utility motion-ease-out {
+@utility animation-ease-out {
   animation-timing-function: var(--ease-out);
 }
 
-@utility motion-ease-in-out {
+@utility animation-ease-in-out {
   animation-timing-function: var(--ease-in-out);
 }
 
-@utility motion-ease-initial {
+@utility animation-ease-initial {
   animation-timing-function: initial;
 }
 
-@utility motion-ease-* {
-  animation-timing-function: --value([*]);
+@utility animation-ease-* {
+  animation-timing-function: --value([ *]);
 }
 
-@utility motion-state-paused {
+@utility animation-state-paused {
   animation-play-state: paused;
 }
 
-@utility motion-state-running {
+@utility animation-state-running {
   animation-play-state: running;
 }
 
-@utility motion-state-initial {
+@utility animation-state-initial {
   animation-play-state: initial;
 }
 
-@utility motion-state-* {
-  animation-play-state: --value([*]);
+@utility animation-state-* {
+  animation-play-state: --value([ *]);
 }
 
-@utility motion-repeat-infinite {
+@utility animation-repeat-infinite {
   animation-iteration-count: infinite;
 }
 
-@utility motion-repeat-initial {
+@utility animation-repeat-initial {
   animation-iteration-count: initial;
 }
 
-@utility motion-repeat-* {
+@utility animation-repeat-* {
   animation-iteration-count: --value(integer, [integer]);
 }
 
-@utility motion-composition-replace {
+@utility animation-composition-replace {
   animation-composition: replace;
 }
 
-@utility motion-composition-add {
+@utility animation-composition-add {
   animation-composition: add;
 }
 
-@utility motion-composition-accumulate {
+@utility animation-composition-accumulate {
   animation-composition: accumulate;
 }
 
-@utility motion-composition-initial {
+@utility animation-composition-initial {
   animation-composition: initial;
 }
 
-@utility motion-composition-* {
-  animation-composition: --value([*]);
+@utility animation-composition-* {
+  animation-composition: --value([ *]);
 }
 
-@utility motion-delay-initial {
+@utility animation-delay-initial {
   animation-delay: initial;
 }
 
-@utility motion-delay-* {
+@utility animation-delay-* {
   animation-delay: calc(--value(integer) * 1ms);
-  animation-delay: --value([*]);
+  animation-delay: --value([ *]);
 }
 
-@utility motion-direction-normal {
+@utility animation-direction-normal {
   animation-direction: normal;
 }
 
-@utility motion-direction-reverse {
+@utility animation-direction-reverse {
   animation-direction: reverse;
 }
 
-@utility motion-direction-alternate {
+@utility animation-direction-alternate {
   animation-direction: alternate;
 }
 
-@utility motion-direction-alternate-reverse {
+@utility animation-direction-alternate-reverse {
   animation-direction: alternate-reverse;
 }
 
-@utility motion-direction-initial {
+@utility animation-direction-initial {
   animation-direction: initial;
 }
 
-@utility motion-direction-* {
-  animation-direction: --value([*]);
+@utility animation-direction-* {
+  animation-direction: --value([ *]);
 }
 
-@utility motion-duration-initial {
+@utility animation-duration-initial {
   animation-duration: initial;
 }
 
-@utility motion-duration-* {
+@utility animation-duration-* {
   animation-duration: calc(--value(integer) * 1ms);
-  animation-duration: --value([*]);
+  animation-duration: --value([ *]);
 }
 
-@utility motion-fill-none {
+@utility animation-fill-none {
   animation-fill-mode: none;
 }
 
-@utility motion-fill-forwards {
+@utility animation-fill-forwards {
   animation-fill-mode: forwards;
 }
 
-@utility motion-fill-backwards {
+@utility animation-fill-backwards {
   animation-fill-mode: backwards;
 }
 
-@utility motion-fill-both {
+@utility animation-fill-both {
   animation-fill-mode: both;
 }
 
-@utility motion-fill-* {
-  animation-fill-mode: --value([*]);
+@utility animation-fill-* {
+  animation-fill-mode: --value([ *]);
 }
 
-@utility motion-fade-in-* {
-  --animation-in-opacity: calc(--value(integer) * 1%);
-  --animation-in-opacity: --value(--opacity-*, [percentage]);
+@utility fade-in-* {
+  --animation-enter-opacity: calc(--value(integer) * 1%);
+  --animation-enter-opacity: --value(--opacity- *, [percentage]);
 }
 
-@utility motion-fade-out-* {
-  --animation-out-opacity: calc(--value(integer) * 1%);
-  --animation-out-opacity: --value(--opacity-*, [percentage]);
+@utility fade-out-* {
+  --animation-exit-opacity: calc(--value(integer) * 1%);
+  --animation-exit-opacity: --value(--opacity- *, [percentage]);
 }
 
-@utility motion-spin-in-* {
-  --animation-in-rotate: calc(1deg * --value(integer));
+@utility spin-in-* {
+  --animation-enter-rotate: calc(1deg * --value(integer));
 }
 
-@utility motion-spin-out-* {
-  --animation-out-rotate: calc(1deg * --value(integer));
+@utility spin-out-* {
+  --animation-exit-rotate: calc(1deg * --value(integer));
 }
 
-@utility motion-zoom-in-* {
-  --animation-in-scale: --value([percentage]);
-  --animation-in-scale: calc(--value(integer) * 1%);
+@utility zoom-in-* {
+  --animation-enter-scale: --value([percentage]);
+  --animation-enter-scale: calc(--value(integer) * 1%);
 }
 
-@utility motion-zoom-out-* {
-  --animation-out-scale: --value([percentage]);
-  --animation-out-scale: calc(--value(integer) * 1%);
+@utility zoom-out-* {
+  --animation-exit-scale: --value([percentage]);
+  --animation-exit-scale: calc(--value(integer) * 1%);
 }
 
-@utility motion-slide-in-l-full {
-  --animation-in-translate-x: -100%;
+@utility slide-from-l-full {
+  --animation-enter-translate-x: -100%;
 }
 
-@utility motion-slide-in-l-* {
-  --animation-in-translate-x: calc(var(--spacing) * --value(integer) * -1);
-  --animation-in-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --animation-in-translate-x: calc(--value([length], [percentage]) * -1);
+@utility slide-from-l-* {
+  --animation-enter-translate-x: calc(var(--spacing) * --value(number) * -1);
+  --animation-enter-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-enter-translate-x: calc(--value([length], [percentage]) * -1);
 }
 
-@utility motion-slide-in-r-full {
-  --animation-in-translate-x: 100%;
+@utility slide-from-r-full {
+  --animation-enter-translate-x: 100%;
 }
 
-@utility motion-slide-in-r-* {
-  --animation-in-translate-x: calc(var(--spacing) * --value(integer));
-  --animation-in-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --animation-in-translate-x: --value([length], [percentage]);
+@utility slide-from-r-* {
+  --animation-enter-translate-x: calc(var(--spacing) * --value(number));
+  --animation-enter-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-enter-translate-x: --value([length], [percentage]);
 }
 
-@utility motion-slide-in-t-full {
-  --animation-in-translate-y: -100%;
+@utility slide-from-t-full {
+  --animation-enter-translate-y: -100%;
 }
 
-@utility motion-slide-in-t-* {
-  --animation-in-translate-y: calc(var(--spacing) * --value(integer) * -1);
-  --animation-in-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --animation-in-translate-y: calc(--value([length], [percentage]) * -1);
+@utility slide-from-t-* {
+  --animation-enter-translate-y: calc(var(--spacing) * --value(number) * -1);
+  --animation-enter-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-enter-translate-y: calc(--value([length], [percentage]) * -1);
 }
 
-@utility motion-slide-in-b-full {
-  --animation-in-translate-y: 100%;
+@utility slide-from-b-full {
+  --animation-enter-translate-y: 100%;
 }
 
-@utility motion-slide-in-b-* {
-  --animation-in-translate-y: calc(var(--spacing) * --value(integer));
-  --animation-in-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --animation-in-translate-y: --value([length], [percentage]);
+@utility slide-from-b-* {
+  --animation-enter-translate-y: calc(var(--spacing) * --value(number));
+  --animation-enter-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-enter-translate-y: --value([length], [percentage]);
 }
 
-@utility motion-slide-out-l-full {
-  --animation-out-translate-x: -100%;
+@utility slide-to-l-full {
+  --animation-exit-translate-x: -100%;
 }
 
-@utility motion-slide-out-l-* {
-  --animation-out-translate-x: calc(var(--spacing) * --value(integer) * -1);
-  --animation-out-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --animation-out-translate-x: calc(--value([length], [percentage]) * -1);
+@utility slide-to-l-* {
+  --animation-exit-translate-x: calc(var(--spacing) * --value(number) * -1);
+  --animation-exit-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-exit-translate-x: calc(--value([length], [percentage]) * -1);
 }
 
-@utility motion-slide-out-r-full {
-  --animation-out-translate-x: 100%;
+@utility slide-to-r-full {
+  --animation-exit-translate-x: 100%;
 }
 
-@utility motion-slide-out-r-* {
-  --animation-out-translate-x: calc(var(--spacing) * --value(integer));
-  --animation-out-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --animation-out-translate-x: --value([length], [percentage]);
+@utility slide-to-r-* {
+  --animation-exit-translate-x: calc(var(--spacing) * --value(number));
+  --animation-exit-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-exit-translate-x: --value([length], [percentage]);
 }
 
-@utility motion-slide-out-t-full {
-  --animation-out-translate-y: -100%;
+@utility slide-to-t-full {
+  --animation-exit-translate-y: -100%;
 }
 
-@utility motion-slide-out-t-* {
-  --animation-out-translate-y: calc(var(--spacing) * --value(integer) * -1);
-  --animation-out-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --animation-out-translate-y: calc(--value([length], [percentage]) * -1);
+@utility slide-to-t-* {
+  --animation-exit-translate-y: calc(var(--spacing) * --value(number) * -1);
+  --animation-exit-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-exit-translate-y: calc(--value([length], [percentage]) * -1);
 }
 
-@utility motion-slide-out-b-full {
-  --animation-out-translate-y: 100%;
+@utility slide-to-b-full {
+  --animation-exit-translate-y: 100%;
 }
 
-@utility motion-slide-out-b-* {
-  --animation-out-translate-y: calc(var(--spacing) * --value(integer));
-  --animation-out-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --animation-out-translate-y: --value([length], [percentage]);
+@utility slide-to-b-* {
+  --animation-exit-translate-y: calc(var(--spacing) * --value(number));
+  --animation-exit-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-exit-translate-y: --value([length], [percentage]);
 }
