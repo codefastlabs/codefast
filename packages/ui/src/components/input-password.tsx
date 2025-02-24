@@ -29,10 +29,12 @@ interface InputPasswordProps
 
 function InputPassword({
   className,
+  disabled,
   inputSize,
   loaderPosition,
   loading,
   prefix,
+  readOnly,
   spinner,
   suffix,
   ...props
@@ -46,9 +48,11 @@ function InputPassword({
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
+      disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
       prefix={prefix}
+      readOnly={readOnly}
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
@@ -58,7 +62,7 @@ function InputPassword({
         inside
         aria-label={type === 'password' ? 'Show password' : 'Hide password'}
         className="rounded-full"
-        disabled={props.disabled}
+        disabled={disabled}
         prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
         size={inputSize}
         variant="ghost"

@@ -39,10 +39,12 @@ interface InputProps
 
 function Input({
   className,
+  disabled,
   inputSize,
   loaderPosition,
   loading,
   prefix,
+  readOnly,
   spinner,
   suffix,
   ...props
@@ -50,9 +52,11 @@ function Input({
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
+      disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
       prefix={prefix}
+      readOnly={readOnly}
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
