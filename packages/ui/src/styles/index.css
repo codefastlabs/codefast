@@ -8,6 +8,9 @@
   --color-foreground: var(--color-slate-950);
 
   --color-input: var(--color-slate-300);
+  --color-input-hover: var(--color-slate-400);
+  --color-input-focus: var(--color-sky-400);
+
   --color-border: var(--color-slate-300);
   --color-ring: var(--color-sky-400);
 

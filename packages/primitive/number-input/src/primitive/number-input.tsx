@@ -57,14 +57,12 @@ interface NumberInputProps extends ComponentProps<typeof InputPrimitive.Root> {
   ariaDecrementLabel?: string;
   ariaIncrementLabel?: string;
   defaultValue?: number;
-  disabled?: boolean;
   formatOptions?: Intl.NumberFormatOptions;
   id?: string;
   locale?: string;
   max?: number;
   min?: number;
   onChange?: (value: number) => void;
-  readOnly?: boolean;
   step?: number;
   value?: number;
 }
@@ -76,13 +74,11 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     ariaDecrementLabel,
     ariaIncrementLabel,
     defaultValue,
-    disabled,
     formatOptions = { minimumFractionDigits: 0, style: 'decimal' },
     locale = navigator.language,
     max,
     min,
     onChange,
-    readOnly,
     step = 1,
     value: valueProp,
     ...props
@@ -141,7 +137,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     (operation: (number: number) => number) => {
       const inputElement = inputRef.current;
 
-      if (!inputElement || disabled || readOnly) {
+      if (!inputElement || props.disabled || props.readOnly) {
         return;
       }
 
@@ -151,7 +147,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
       inputElement.value = formatValue(newValue);
       setValue(newValue);
     },
-    [disabled, formatValue, max, min, parseValue, readOnly, setValue],
+    [props.disabled, formatValue, max, min, parseValue, props.readOnly, setValue],
   );
 
   const handleIncrement = useCallback(() => {
@@ -174,7 +170,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     <NumberInputProvider
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      disabled={disabled}
+      disabled={props.disabled}
       formatOptions={formatOptions}
       formatValue={formatValue}
       id={id}
@@ -182,7 +178,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
       max={max}
       min={min}
       parseValue={parseValue}
-      readOnly={readOnly}
+      readOnly={props.readOnly}
       scope={__scopeNumberInput}
       value={value}
       onChange={setValue}

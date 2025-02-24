@@ -30,11 +30,13 @@ interface InputSearchProps
 function InputSearch({
   className,
   defaultValue,
+  disabled,
   inputSize,
   loaderPosition,
   loading,
   onChange,
   prefix,
+  readOnly,
   spinner,
   suffix,
   value: valueProp,
@@ -49,9 +51,11 @@ function InputSearch({
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
+      disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
       prefix={prefix || <SearchIcon />}
+      readOnly={readOnly}
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
@@ -70,7 +74,7 @@ function InputSearch({
           inside
           aria-label="Clear search"
           className="rounded-full"
-          disabled={props.disabled}
+          disabled={disabled}
           size={inputSize}
           suffix={<XIcon />}
           variant="ghost"

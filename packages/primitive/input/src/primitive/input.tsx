@@ -16,15 +16,19 @@ const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
 
 interface InputContextValue {
   inputRef: RefObject<HTMLInputElement | null>;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
 const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
 type InputProps = PropsWithChildren<{
   className?: string;
+  disabled?: boolean;
   loaderPosition?: 'prefix' | 'suffix';
   loading?: boolean;
   prefix?: ReactNode;
+  readOnly?: boolean;
   spinner?: ReactNode;
   suffix?: ReactNode;
 }>;
@@ -33,9 +37,11 @@ function Input(inputProps: InputProps): JSX.Element {
   const {
     __scopeInput,
     children,
+    disabled,
     loaderPosition = 'prefix',
     loading,
     prefix,
+    readOnly,
     spinner,
     suffix,
     ...props
@@ -68,8 +74,14 @@ function Input(inputProps: InputProps): JSX.Element {
   };
 
   return (
-    <InputProvider inputRef={inputRef} scope={__scopeInput}>
-      <div role="presentation" onPointerDown={handlePointerDown} {...props}>
+    <InputProvider disabled={disabled} inputRef={inputRef} readOnly={readOnly} scope={__scopeInput}>
+      <div
+        data-disabled={disabled}
+        data-readonly={readOnly}
+        role="presentation"
+        onPointerDown={handlePointerDown}
+        {...props}
+      >
         {loading && loaderPosition === 'prefix' ? spinner : prefix}
         {children}
         {loading && loaderPosition === 'suffix' ? spinner : suffix}
@@ -87,10 +99,10 @@ const INPUT_ITEM_NAME = 'InputItem';
 type InputItemProps = ComponentProps<'input'>;
 
 function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX.Element {
-  const { inputRef } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
+  const { disabled, inputRef, readOnly } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
   const composedInputRef = useComposedRefs(inputRef);
 
-  return <input ref={composedInputRef} type="text" {...props} />;
+  return <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
