@@ -40,14 +40,6 @@ const meta = {
     step: 1,
   },
   argTypes: {
-    autoFocus: {
-      control: { type: 'boolean' },
-      description: 'Specifies that the input field should automatically get focus when the page loads',
-      table: {
-        defaultValue: { summary: 'false' },
-        type: { summary: 'boolean' },
-      },
-    },
     disabled: {
       control: { type: 'boolean' },
       description: 'Disables the input field',
