@@ -26,7 +26,7 @@ function RadioCardsItem({ className, ...props }: RadioCardsItemProps): JSX.Eleme
       className={cn(
         'shadow-xs group peer flex items-center justify-center rounded-md border p-4 transition',
         'hover:bg-accent hover:text-accent-foreground',
-        'focus-visible:ring-ring/40 focus-visible:border-ring focus-visible:ring-3 focus-visible:outline-none',
+        'focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 focus-visible:outline-none',
         'disabled:opacity-50',
         'aria-checked:border-primary',
         className,

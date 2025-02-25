@@ -29,7 +29,7 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
           'hover:not-disabled:border-primary',
           'aria-checked:border-primary aria-checked:bg-primary',
-          'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
+          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
           'disabled:opacity-50',
         ],
         className,

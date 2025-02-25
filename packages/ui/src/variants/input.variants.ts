@@ -16,7 +16,7 @@ const inputVariants = tv({
       'border-input bg-background shadow-xs flex w-full grow items-center gap-2 rounded-md border px-3 text-sm transition',
       '[&>svg]:text-muted-foreground [&>svg]:shrink-0',
       'hover:not-data-[disabled=true]:not-focus-within:border-input-hover',
-      'focus-within:border-input-focus focus-within:ring-ring/40 focus-within:ring-3',
+      'focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3',
       'has-[input:disabled]:opacity-50',
     ],
   },
