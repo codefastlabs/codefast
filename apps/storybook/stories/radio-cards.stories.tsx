@@ -38,6 +38,12 @@ export const Default: Story = {
             <Text>16GB RAM</Text>
           </div>
         </RadioCardsItem>
+        <RadioCardsItem disabled value="4">
+          <div className="flex w-full flex-col items-start">
+            <Text className="font-bold">4-core CPU</Text>
+            <Text>16GB RAM</Text>
+          </div>
+        </RadioCardsItem>
       </RadioCards>
     </div>
   ),

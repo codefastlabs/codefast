@@ -25,15 +25,23 @@ interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrim
 
 function CheckboxCardsItem({ checkboxClassName, children, className, ...props }: CheckboxCardsItemProps): JSX.Element {
   return (
-    <label className={cn('group flex items-center justify-center gap-4 rounded-md border p-4', className)}>
+    <label
+      className={cn(
+        'group flex items-center justify-center gap-4 rounded-md border p-4 transition',
+        'hover:not-has-disabled:not-has-aria-checked:border-input-hover',
+        'has-aria-checked:border-primary',
+        'has-focus-visible:border-input-focus has-focus-visible:ring-ring has-focus-visible:ring-3 has-focus-visible:outline-none',
+        'has-disabled:opacity-50',
+        className,
+      )}
+    >
       {children}
       <CheckboxGroupPrimitive.Item
         className={cn(
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
           'group-hover:not-disabled:not-aria-checked:border-input-hover',
           'aria-checked:border-primary aria-checked:bg-primary',
-          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
-          'disabled:opacity-50',
+          'focus-visible:outline-none',
           checkboxClassName,
         )}
         {...props}
