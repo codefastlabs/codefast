@@ -32,7 +32,7 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
           'group-hover:not-disabled:border-primary',
           'aria-checked:border-primary aria-checked:bg-primary',
-          'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
+          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
           'disabled:opacity-50',
           checkboxClassName,
         )}
