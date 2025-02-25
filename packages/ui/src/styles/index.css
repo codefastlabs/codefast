@@ -24,7 +24,7 @@
    * --color-ring - Soft focus indicator for interactive elements
    */
   --color-border: var(--color-zinc-300);
-  --color-ring: var(--color-sky-400);
+  --color-ring: color-mix(in oklab, var(--color-sky-400) 35%, transparent);
 
   /**
    * Base Theme
