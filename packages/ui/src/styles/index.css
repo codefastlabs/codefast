@@ -5,26 +5,26 @@
 */
 @theme {
   --color-background: var(--color-white);
-  --color-foreground: var(--color-slate-950);
+  --color-foreground: var(--color-zinc-950);
 
-  --color-input: var(--color-slate-300);
-  --color-input-hover: var(--color-slate-400);
+  --color-input: var(--color-zinc-300);
+  --color-input-hover: var(--color-zinc-950);
   --color-input-focus: var(--color-sky-400);
 
-  --color-border: var(--color-slate-300);
-  --color-ring: var(--color-sky-400);
+  --color-border: var(--color-zinc-300);
+  --color-ring: --alpha(var(--color-sky-400) / 32%);
 
   --color-primary: var(--color-sky-600);
   --color-primary-foreground: var(--color-sky-50);
 
-  --color-secondary: var(--color-slate-200);
-  --color-secondary-foreground: var(--color-slate-950);
+  --color-secondary: var(--color-zinc-200);
+  --color-secondary-foreground: var(--color-zinc-950);
 
-  --color-accent: var(--color-slate-200);
-  --color-accent-foreground: var(--color-slate-950);
+  --color-accent: var(--color-zinc-200);
+  --color-accent-foreground: var(--color-zinc-950);
 
-  --color-muted: var(--color-slate-200);
-  --color-muted-foreground: var(--color-slate-500);
+  --color-muted: var(--color-zinc-200);
+  --color-muted-foreground: var(--color-zinc-500);
 
   --color-destructive: var(--color-red-500);
   --color-destructive-foreground: var(--color-red-50);
@@ -39,21 +39,21 @@
   --color-warning-foreground: var(--color-yellow-50);
 
   --color-popover: var(--color-white);
-  --color-popover-foreground: var(--color-slate-950);
+  --color-popover-foreground: var(--color-zinc-950);
 
   --color-card: var(--color-white);
-  --color-card-foreground: var(--color-slate-950);
+  --color-card-foreground: var(--color-zinc-950);
 
-  --color-sidebar: var(--color-slate-50);
-  --color-sidebar-foreground: var(--color-slate-700);
+  --color-sidebar: var(--color-zinc-50);
+  --color-sidebar-foreground: var(--color-zinc-700);
 
-  --color-sidebar-primary: var(--color-slate-900);
-  --color-sidebar-primary-foreground: var(--color-slate-50);
+  --color-sidebar-primary: var(--color-zinc-900);
+  --color-sidebar-primary-foreground: var(--color-zinc-50);
 
-  --color-sidebar-accent: var(--color-slate-100);
-  --color-sidebar-accent-foreground: var(--color-slate-900);
+  --color-sidebar-accent: var(--color-zinc-100);
+  --color-sidebar-accent-foreground: var(--color-zinc-900);
 
-  --color-sidebar-border: var(--color-slate-200);
+  --color-sidebar-border: var(--color-zinc-200);
   --color-sidebar-ring: var(--color-sky-100);
 
   --color-chart-1: var(--color-orange-500);

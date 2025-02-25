@@ -52,7 +52,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
         'border-input shadow-xs relative flex size-10 items-center justify-center border text-sm transition-all',
         'first:rounded-l-md',
         'last:rounded-r-md',
-        'data-[state=active]:ring-3 data-[state=active]:ring-ring/40 data-[state=active]:border-ring data-[state=active]:z-10',
+        'data-[state=active]:ring-3 data-[state=active]:ring-ring data-[state=active]:border-ring data-[state=active]:z-10',
         className,
       )}
       data-state={slot.isActive ? 'active' : 'inactive'}

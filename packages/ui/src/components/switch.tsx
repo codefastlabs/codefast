@@ -16,7 +16,7 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
       className={cn(
         'shadow-xs p-0.75 peer inline-flex h-5 w-8 shrink-0 items-center rounded-full transition',
         'data-[state=checked]:bg-primary data-[state=unchecked]:bg-input',
-        'focus-visible:ring-ring/40 focus-visible:ring-3 focus-visible:outline-none',
+        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
         'disabled:opacity-50',
         className,
       )}
