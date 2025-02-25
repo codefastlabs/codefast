@@ -30,7 +30,7 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
       <CheckboxGroupPrimitive.Item
         className={cn(
           'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
-          'group-hover:not-disabled:border-primary',
+          'group-hover:not-disabled:not-aria-checked:border-input-hover',
           'aria-checked:border-primary aria-checked:bg-primary',
           'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
           'disabled:opacity-50',
