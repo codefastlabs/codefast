@@ -4,28 +4,91 @@
   Each color has its purpose (e.g., background, primary, accent, sidebar).
 */
 @theme {
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-zinc-950);
+  /**
+   * Input Controls
+   * ---------------------------------------------------------------------------
+   * --color-input - Default border/outline for form controls
+   * --color-input-hover - Interactive state for better visual feedback
+   * --color-input-focus - Strong visual indicator for focused state
+   */
 
   --color-input: var(--color-zinc-300);
   --color-input-hover: var(--color-zinc-950);
   --color-input-focus: var(--color-sky-400);
 
+  /**
+   * Core UI Elements
+   * ---------------------------------------------------------------------------
+   * --color-border - Subtle boundaries between UI elements
+   * --color-ring - Soft focus indicator for interactive elements
+   */
   --color-border: var(--color-zinc-300);
   --color-ring: --alpha(var(--color-sky-400) / 32%);
 
+  /**
+   * Base Theme
+   * ---------------------------------------------------------------------------
+   * --color-background - Main canvas color
+   * --color-foreground - Primary text color
+   */
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-zinc-950);
+
+  /**
+   * Primary Theme
+   * ---------------------------------------------------------------------------
+   * Used for:
+   * - Call-to-action buttons
+   * - Active navigation items
+   * - Selected states
+   * - Focus indicators
+   */
   --color-primary: var(--color-sky-600);
   --color-primary-foreground: var(--color-sky-50);
 
+  /**
+   * Secondary Theme
+   * ---------------------------------------------------------------------------
+   * Used for:
+   * - Secondary buttons
+   * - Alternative actions
+   * - Less prominent UI elements
+   */
   --color-secondary: var(--color-zinc-200);
   --color-secondary-foreground: var(--color-zinc-950);
 
+  /**
+   * Accent Theme
+   * ---------------------------------------------------------------------------
+   * Used for:
+   * - Highlighting key features
+   * - Brand elements
+   * - Important UI components
+   */
   --color-accent: var(--color-zinc-200);
   --color-accent-foreground: var(--color-zinc-950);
 
+  /**
+   * Muted Theme
+   * ---------------------------------------------------------------------------
+   * Used for:
+   * - Helper text
+   * - Placeholders
+   * - Disabled states
+   * - Secondary text
+   */
   --color-muted: var(--color-zinc-200);
   --color-muted-foreground: var(--color-zinc-500);
 
+  /**
+   * Status Colors
+   * ---------------------------------------------------------------------------
+   * Semantic colors for system feedback:
+   * - Destructive: Errors, deletions, warnings
+   * - Info: System messages, notifications
+   * - Success: Confirmations, completed actions
+   * - Warning: Alerts, important notices
+   */
   --color-destructive: var(--color-red-500);
   --color-destructive-foreground: var(--color-red-50);
 
@@ -38,12 +101,37 @@
   --color-warning: var(--color-yellow-700);
   --color-warning-foreground: var(--color-yellow-50);
 
+  /**
+   * Overlay Components
+   * ---------------------------------------------------------------------------
+   * Used for floating elements:
+   * - Dropdowns
+   * - Tooltips
+   * - Modal dialogs
+   */
   --color-popover: var(--color-white);
   --color-popover-foreground: var(--color-zinc-950);
 
+  /**
+   * Card Components
+   * ---------------------------------------------------------------------------
+   * Used for contained content blocks:
+   * - Dashboard widgets
+   * - Content panels
+   * - Feature boxes
+   */
   --color-card: var(--color-white);
   --color-card-foreground: var(--color-zinc-950);
 
+  /**
+   * Sidebar Navigation
+   * ---------------------------------------------------------------------------
+   * Comprehensive theme for sidebar components:
+   * - Background & text colors
+   * - Active/hover states
+   * - Borders and separators
+   * - Focus indicators
+   */
   --color-sidebar: var(--color-zinc-50);
   --color-sidebar-foreground: var(--color-zinc-700);
 
@@ -56,6 +144,14 @@
   --color-sidebar-border: var(--color-zinc-200);
   --color-sidebar-ring: var(--color-sky-100);
 
+  /**
+   * Data Visualization
+   * ---------------------------------------------------------------------------
+   * Distinct colors for charts and graphs:
+   * - Ensures sufficient contrast
+   * - Maintains accessibility
+   * - Provides visual hierarchy
+   */
   --color-chart-1: var(--color-orange-500);
   --color-chart-2: var(--color-cyan-500);
   --color-chart-3: var(--color-lime-500);
