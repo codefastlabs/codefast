@@ -25,10 +25,10 @@ function RadioCardsItem({ className, ...props }: RadioCardsItemProps): JSX.Eleme
     <RadioGroupPrimitive.Item
       className={cn(
         'shadow-xs group peer flex items-center justify-center rounded-md border p-4 transition',
-        'hover:bg-accent hover:text-accent-foreground',
+        'hover:not-aria-checked:border-input-hover',
         'focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 focus-visible:outline-none',
-        'disabled:opacity-50',
         'aria-checked:border-primary',
+        'disabled:opacity-50',
         className,
       )}
       {...props}
