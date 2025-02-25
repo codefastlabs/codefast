@@ -17,7 +17,7 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
       className={cn(
         'peer',
         'border-input text-primary-foreground shadow-xs inline-flex size-4 shrink-0 items-center justify-center rounded-sm border transition',
-        'hover:not-disabled:border-primary',
+        'hover:not-disabled:not-aria-checked:border-input-hover',
         'aria-checked:border-primary aria-checked:bg-primary',
         'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
         'disabled:opacity-50',
