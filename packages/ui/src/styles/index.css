@@ -1,8 +1,10 @@
-/*
-  Named color theme definitions, providing a set of CSS variables for consistent color usage
-  in various components and elements throughout the application.
-  Each color has its purpose (e.g., background, primary, accent, sidebar).
-*/
+/**
+ * Named Color Theme Definitions
+ * -----------------------------------------------------------------------------
+ * Defines color variables used throughout the application to ensure interface
+ * consistency. Each color group serves a specific purpose
+ * (e.g., background, border, highlights).
+ */
 @theme {
   /**
    * Input Controls
@@ -11,7 +13,6 @@
    * --color-input-hover - Interactive state for better visual feedback
    * --color-input-focus - Strong visual indicator for focused state
    */
-
   --color-input: var(--color-zinc-300);
   --color-input-hover: var(--color-zinc-950);
   --color-input-focus: var(--color-sky-400);
@@ -23,7 +24,7 @@
    * --color-ring - Soft focus indicator for interactive elements
    */
   --color-border: var(--color-zinc-300);
-  --color-ring: --alpha(var(--color-sky-400) / 32%);
+  --color-ring: var(--color-sky-400);
 
   /**
    * Base Theme
@@ -159,10 +160,12 @@
   --color-chart-5: var(--color-fuchsia-500);
 }
 
-/*
-  Base styles applied across all elements. Handles general appearance such as
-  border color and text selection background styling.
-*/
+/**
+ * Base Styles
+ * -----------------------------------------------------------------------------
+ * Apply general settings for the entire interface, including background color,
+ * text color, default border color, and customizations for input.
+ */
 @layer base {
   *,
   ::after,
@@ -191,10 +194,12 @@
   }
 }
 
-/*
-  Animation definitions using keyframes for seamless UI transitions.
-  These include cursor blinking and collapsible sections opening/closing.
-*/
+/**
+ * Keyframe Animations
+ * -----------------------------------------------------------------------------
+ * Defines basic animations such as cursor blinking effects,
+ * expanding/collapsing content effects.
+ */
 @theme {
   --animate-caret-blink: caret-blink 1000ms ease infinite;
   --animate-collapsible-closed: collapsible-closed 200ms ease;
@@ -232,10 +237,11 @@
   }
 }
 
-/*
-  Base layer for general animations. Defines fade-in/out and general
-  appearance/disappearance animations with variable duration and easing.
-*/
+/**
+ * Animation Timing Functions
+ * -----------------------------------------------------------------------------
+ * Easing functions used to adjust the speed of animation transitions.
+ */
 @theme {
   --animate-fade-in: fadeIn 250ms ease-out;
   --animate-fade-out: fadeOut 250ms ease-in;
@@ -274,6 +280,11 @@
   }
 }
 
+/**
+ * Animation Timing Functions
+ * -----------------------------------------------------------------------------
+ * Defines utilities to adjust animation speed.
+ */
 @utility animation-ease-linear {
   animation-timing-function: linear;
 }
@@ -298,6 +309,11 @@
   animation-timing-function: --value([ *]);
 }
 
+/**
+ * Animation Play State
+ * -----------------------------------------------------------------------------
+ * Adjust the playback state of the animation.
+ */
 @utility animation-state-paused {
   animation-play-state: paused;
 }
@@ -314,6 +330,11 @@
   animation-play-state: --value([ *]);
 }
 
+/**
+ * Animation Repeat
+ * -----------------------------------------------------------------------------
+ * Controls the number of repetitions of the animation.
+ */
 @utility animation-repeat-infinite {
   animation-iteration-count: infinite;
 }
@@ -326,6 +347,11 @@
   animation-iteration-count: --value(integer, [integer]);
 }
 
+/**
+ * Animation Composition
+ * -----------------------------------------------------------------------------
+ * Defines how animations combine with each other.
+ */
 @utility animation-composition-replace {
   animation-composition: replace;
 }
@@ -346,6 +372,11 @@
   animation-composition: --value([ *]);
 }
 
+/**
+ * Animation Delay
+ * -----------------------------------------------------------------------------
+ * Adjust the delay time before the animation starts.
+ */
 @utility animation-delay-initial {
   animation-delay: initial;
 }
@@ -355,6 +386,11 @@
   animation-delay: --value([ *]);
 }
 
+/**
+ * Animation Direction
+ * -----------------------------------------------------------------------------
+ * Determines the playback direction of the animation.
+ */
 @utility animation-direction-normal {
   animation-direction: normal;
 }
@@ -379,6 +415,11 @@
   animation-direction: --value([ *]);
 }
 
+/**
+ * Animation Duration
+ * -----------------------------------------------------------------------------
+ * Defines the duration of the animation execution.
+ */
 @utility animation-duration-initial {
   animation-duration: initial;
 }
@@ -388,6 +429,11 @@
   animation-duration: --value([ *]);
 }
 
+/**
+ * Animation Fill Mode
+ * -----------------------------------------------------------------------------
+ * Defines the state of the element after the animation ends.
+ */
 @utility animation-fill-none {
   animation-fill-mode: none;
 }
@@ -408,6 +454,11 @@
   animation-fill-mode: --value([ *]);
 }
 
+/**
+ * Fade Animations
+ * -----------------------------------------------------------------------------
+ * Create fade-in and fade-out effects.
+ */
 @utility fade-in-* {
   --animation-enter-opacity: calc(--value(integer) * 1%);
   --animation-enter-opacity: --value(--opacity- *, [percentage]);
@@ -418,6 +469,11 @@
   --animation-exit-opacity: --value(--opacity- *, [percentage]);
 }
 
+/**
+ * Rotate Animations
+ * -----------------------------------------------------------------------------
+ * Adjust the rotation angle of the element when it appears or disappears.
+ */
 @utility spin-in-* {
   --animation-enter-rotate: calc(1deg * --value(integer));
 }
@@ -426,6 +482,11 @@
   --animation-exit-rotate: calc(1deg * --value(integer));
 }
 
+/**
+ * Scale Animations
+ * -----------------------------------------------------------------------------
+ * Adjust the size of the element when it appears or disappears.
+ */
 @utility zoom-in-* {
   --animation-enter-scale: --value([percentage]);
   --animation-enter-scale: calc(--value(integer) * 1%);
@@ -436,6 +497,11 @@
   --animation-exit-scale: calc(--value(integer) * 1%);
 }
 
+/**
+ * Slide Animations - Enter
+ * -----------------------------------------------------------------------------
+ * Effects for sliding in from directions: left, right, top, bottom.
+ */
 @utility slide-from-l-full {
   --animation-enter-translate-x: -100%;
 }
@@ -476,6 +542,11 @@
   --animation-enter-translate-y: --value([length], [percentage]);
 }
 
+/**
+ * Slide Animations - Exit
+ * -----------------------------------------------------------------------------
+ * Effects for sliding out of the screen in directions: left, right, top, bottom.
+ */
 @utility slide-to-l-full {
   --animation-exit-translate-x: -100%;
 }
