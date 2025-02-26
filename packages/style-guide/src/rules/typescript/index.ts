@@ -8,12 +8,7 @@ export const typescriptRules: Linter.Config = {
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/consistent-type-exports/
      */
-    '@typescript-eslint/consistent-type-exports': [
-      'warn',
-      {
-        fixMixedExportsWithInlineTypeSpecifier: false,
-      },
-    ],
+    '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: false }],
 
     /**
      * Require consistent usage of type imports.
@@ -22,11 +17,7 @@ export const typescriptRules: Linter.Config = {
      */
     '@typescript-eslint/consistent-type-imports': [
       'warn',
-      {
-        disallowTypeAnnotations: true,
-        fixStyle: 'separate-type-imports',
-        prefer: 'type-imports',
-      },
+      { disallowTypeAnnotations: true, fixStyle: 'separate-type-imports', prefer: 'type-imports' },
     ],
 
     /**
@@ -34,12 +25,7 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/explicit-function-return-type/
      */
-    '@typescript-eslint/explicit-function-return-type': [
-      'warn',
-      {
-        allowExpressions: true,
-      },
-    ],
+    '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
 
     /**
      * Require using function property types in method signatures.
@@ -60,16 +46,10 @@ export const typescriptRules: Linter.Config = {
     '@typescript-eslint/naming-convention': [
       'error',
       // Anything type-like should be written in PascalCase.
-      {
-        format: ['PascalCase'],
-        selector: ['typeLike', 'enumMember'],
-      },
+      { format: ['PascalCase'], selector: ['typeLike', 'enumMember'] },
       // Interfaces cannot be prefixed with `I`, or have restricted names.
       {
-        custom: {
-          match: false,
-          regex: '^I[A-Z]|^(Interface|Props|State)$',
-        },
+        custom: { match: false, regex: '^I[A-Z]|^(Interface|Props|State)$' },
         format: ['PascalCase'],
         selector: 'interface',
       },
@@ -101,12 +81,7 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/require-array-sort-compare/
      */
-    '@typescript-eslint/require-array-sort-compare': [
-      'error',
-      {
-        ignoreStringArrays: true,
-      },
-    ],
+    '@typescript-eslint/require-array-sort-compare': ['error', { ignoreStringArrays: true }],
 
     /**
      * Require exhaustive checks when using union types in switch statements.
@@ -115,11 +90,6 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/switch-exhaustiveness-check/
      */
-    '@typescript-eslint/switch-exhaustiveness-check': [
-      'error',
-      {
-        considerDefaultExhaustiveForUnions: true,
-      },
-    ],
+    '@typescript-eslint/switch-exhaustiveness-check': ['error', { considerDefaultExhaustiveForUnions: true }],
   },
 };

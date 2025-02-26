@@ -24,13 +24,7 @@ export const variablesRules: Linter.Config = {
      */
     'no-unused-vars': [
       'error',
-      {
-        args: 'after-used',
-        argsIgnorePattern: '^_',
-        ignoreRestSiblings: false,
-        vars: 'all',
-        varsIgnorePattern: '^_',
-      },
+      { args: 'after-used', argsIgnorePattern: '^_', ignoreRestSiblings: false, vars: 'all', varsIgnorePattern: '^_' },
     ],
   },
 };
