@@ -76,36 +76,21 @@ export const reactRules: Linter.Config = {
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-target-blank.md
      */
-    'react/jsx-no-target-blank': [
-      'error',
-      {
-        allowReferrer: true,
-      },
-    ],
+    'react/jsx-no-target-blank': ['error', { allowReferrer: true }],
 
     /**
      * Disallow empty React fragments.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-useless-fragment.md
      */
-    'react/jsx-no-useless-fragment': [
-      'warn',
-      {
-        allowExpressions: true,
-      },
-    ],
+    'react/jsx-no-useless-fragment': ['warn', { allowExpressions: true }],
 
     /**
      * Require the use of PascalCase for user-defined JSX components.
      *
      * 🚫 Not fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md
      */
-    'react/jsx-pascal-case': [
-      'warn',
-      {
-        allowNamespace: true,
-      },
-    ],
+    'react/jsx-pascal-case': ['warn', { allowNamespace: true }],
 
     /**
      * Request to sort attributes in JSX.
@@ -116,12 +101,7 @@ export const reactRules: Linter.Config = {
      */
     'react/jsx-sort-props': [
       'warn',
-      {
-        callbacksLast: true,
-        ignoreCase: true,
-        reservedFirst: true,
-        shorthandFirst: true,
-      },
+      { callbacksLast: true, ignoreCase: true, reservedFirst: true, shorthandFirst: true },
     ],
 
     /**

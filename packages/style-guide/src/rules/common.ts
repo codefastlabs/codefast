@@ -8,14 +8,7 @@ export const commonRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/camelcase
      */
-    camelcase: [
-      'error',
-      {
-        allow: ['^UNSAFE_'],
-        ignoreDestructuring: false,
-        properties: 'never',
-      },
-    ],
+    camelcase: ['error', { allow: ['^UNSAFE_'], ignoreDestructuring: false, properties: 'never' }],
 
     /**
      * Require function expressions to have a name.
@@ -29,12 +22,7 @@ export const commonRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/new-cap
      */
-    'new-cap': [
-      'error',
-      {
-        capIsNew: false,
-      },
-    ],
+    'new-cap': ['error', { capIsNew: false }],
 
     /**
      * Disallow use of the Array constructor.
