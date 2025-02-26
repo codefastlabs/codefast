@@ -2,7 +2,7 @@ import { config } from '@codefast/eslint-config/next';
 import storybookPlugin from 'eslint-plugin-storybook';
 
 /** @type {import('eslint').Linter.Config[]} */
-export default [
+const nextConfig = [
   ...config,
   ...storybookPlugin.configs['flat/recommended'],
   {
@@ -13,3 +13,5 @@ export default [
     },
   },
 ];
+
+export default nextConfig;
