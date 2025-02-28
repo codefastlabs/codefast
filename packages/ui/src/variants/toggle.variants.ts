@@ -30,12 +30,12 @@ const toggleVariants = tv({
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
-      lg: 'h-11 [&>svg]:size-5', // 44px
-      md: 'h-10 [&>svg]:size-4', // 40px
-      sm: 'h-9 [&>svg]:size-4', // 36px
-      xl: 'h-12 [&>svg]:size-5', // 48px
-      xs: 'h-8 [&>svg]:size-3.5', // 32px
       xxs: 'h-7 [&>svg]:size-3', // 28px
+      xs: 'h-8 [&>svg]:size-3.5', // 32px
+      sm: 'h-9 [&>svg]:size-4', // 36px
+      md: 'h-10 [&>svg]:size-4', // 40px
+      lg: 'h-11 [&>svg]:size-5', // 44px
+      xl: 'h-12 [&>svg]:size-5', // 48px
     },
     variant: {
       default: [
