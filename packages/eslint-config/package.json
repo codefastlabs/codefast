@@ -77,7 +77,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "^22.13.5",
     "eslint": "^9.21.0",
-    "tsup": "^8.3.6",
+    "tsup": "^8.4.0",
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
