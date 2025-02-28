@@ -61,7 +61,11 @@ function AccordionTrigger({ className, ...props }: AccordionTriggerProps): JSX.E
   return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
-        className={cn('group flex grow items-center gap-2 py-4 text-left text-sm font-medium', className)}
+        className={cn(
+          'group flex grow items-center gap-2 py-4 text-left text-sm font-medium',
+          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
+          className,
+        )}
         {...props}
       />
     </AccordionPrimitive.Header>
