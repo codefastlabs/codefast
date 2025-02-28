@@ -1,14 +1,14 @@
 import type { Linter } from 'eslint';
 
-import vitestPlugin from '@vitest/eslint-plugin';
+import eslintPluginVitest from '@vitest/eslint-plugin';
 
 import { vitestRules } from '@/rules/vitest';
 
 export const vitestConfig: Linter.Config = {
-  ...vitestPlugin.configs.recommended,
+  ...eslintPluginVitest.configs.recommended,
   name: '@codefast/style-guide/configs/testing/vitest',
   rules: {
-    ...vitestPlugin.configs.recommended.rules,
+    ...eslintPluginVitest.configs.recommended.rules,
     ...vitestRules.rules,
   },
 };

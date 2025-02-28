@@ -154,6 +154,16 @@
         "default": "./dist/configs/utils/perfectionist.cjs"
       }
     },
+    "./configs/utils/prettier": {
+      "import": {
+        "types": "./dist/configs/utils/prettier.d.ts",
+        "default": "./dist/configs/utils/prettier.js"
+      },
+      "require": {
+        "types": "./dist/configs/utils/prettier.d.cts",
+        "default": "./dist/configs/utils/prettier.cjs"
+      }
+    },
     "./configs/utils/react-hooks": {
       "import": {
         "types": "./dist/configs/utils/react-hooks.d.ts",
@@ -210,6 +220,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-perfectionist": "^4.9.0",
     "eslint-plugin-playwright": "^2.2.0",
+    "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-testing-library": "^7.1.1",
@@ -223,6 +234,7 @@
     "@types/node": "^22.13.5",
     "eslint": "^9.21.0",
     "globals": "^16.0.0",
+    "prettier": "^3.5.2",
     "tsup": "^8.4.0",
     "typescript": "^5.7.3"
   },
