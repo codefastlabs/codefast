@@ -190,7 +190,7 @@ function DataTableColumnHeader<TData, TValue>({
             'text-muted-foreground p-0',
             'hover:bg-transparent',
             'data-[state=open]:text-accent-foreground',
-            'focus-visible:text-accent-foreground focus-visible:bg-transparent focus-visible:outline-0',
+            'focus-visible:text-accent-foreground focus-visible:bg-transparent focus-visible:outline-none',
           )}
           size="xs"
           suffix={<SortIcon sorted={column.getIsSorted()} />}
