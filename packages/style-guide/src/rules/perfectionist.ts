@@ -46,7 +46,7 @@ export const perfectionistRules: Linter.Config = {
      *
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-imports
      */
-    'perfectionist/sort-imports': ['warn', { internalPattern: ['^@/.+', '^~/.+'], type: 'natural' }],
+    'perfectionist/sort-imports': ['warn', { internalPattern: ['^~/.*', '^@/.*'], type: 'natural' }],
 
     /**
      * Enforce sorted TypeScript interface properties.
