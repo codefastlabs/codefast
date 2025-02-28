@@ -27,11 +27,11 @@ const badgeVariants = tv({
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
-      '2xl': 'h-9 [&>svg]:size-5', // 36px
-      lg: 'h-7 [&>svg]:size-4', // 28px
-      md: 'h-6 [&>svg]:size-3', // 24px
       sm: 'h-5 [&>svg]:size-3', // 20px
+      md: 'h-6 [&>svg]:size-3', // 24px
+      lg: 'h-7 [&>svg]:size-4', // 28px
       xl: 'h-8 [&>svg]:size-5', // 32px
+      '2xl': 'h-9 [&>svg]:size-5', // 36px
     },
     variant: {
       default: 'bg-primary text-primary-foreground',
