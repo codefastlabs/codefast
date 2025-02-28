@@ -55,6 +55,7 @@
     "eslint-config-next": "^15.2.0",
     "eslint-plugin-storybook": "^0.11.3",
     "postcss": "^8.5.3",
+    "prettier": "^3.5.2",
     "serve": "^14.2.4",
     "storybook": "^8.6.2",
     "tailwindcss": "^4.0.9",
