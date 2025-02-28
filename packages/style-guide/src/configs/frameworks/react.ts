@@ -1,8 +1,8 @@
 import type { Linter } from 'eslint';
 
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import importPlugin from 'eslint-plugin-import';
-import reactPlugin from 'eslint-plugin-react';
+import eslintPluginImport from 'eslint-plugin-import';
+import eslintPluginReact from 'eslint-plugin-react';
 
 import { jsxA11yConfig } from '@/configs/utils/jsx-a11y';
 import { reactHooksConfig } from '@/configs/utils/react-hooks';
@@ -10,7 +10,7 @@ import { reactRules } from '@/rules/react';
 
 export const reactConfig: Linter.Config[] = [
   {
-    ...reactPlugin.configs.flat.recommended,
+    ...eslintPluginReact.configs.flat.recommended,
     name: '@codefast/style-guide/configs/frameworks/react',
     settings: {
       react: {
@@ -19,11 +19,11 @@ export const reactConfig: Linter.Config[] = [
     },
   },
   {
-    ...reactPlugin.configs.flat['jsx-runtime'],
+    ...eslintPluginReact.configs.flat['jsx-runtime'],
     name: '@codefast/style-guide/configs/frameworks/react/jsx-runtime',
   },
   {
-    ...importPlugin.flatConfigs.react,
+    ...eslintPluginImport.flatConfigs.react,
     name: '@codefast/style-guide/configs/frameworks/react/import',
   },
   {

@@ -1,6 +1,6 @@
 import type { Linter } from 'eslint';
 
-import tsdocPlugin from 'eslint-plugin-tsdoc';
+import eslintPluginTsdoc from 'eslint-plugin-tsdoc';
 
 import { tsdocRules } from '@/rules/tsdoc';
 
@@ -11,7 +11,7 @@ export const tsdocConfig: Linter.Config = {
   files: ['**/*.{ts,tsx,mts,cts}'],
   name: '@codefast/style-guide/configs/utils/tsdoc',
   plugins: {
-    tsdoc: tsdocPlugin,
+    tsdoc: eslintPluginTsdoc,
   },
   rules: {
     ...tsdocRules.rules,

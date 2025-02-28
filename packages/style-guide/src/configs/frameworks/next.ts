@@ -1,33 +1,33 @@
 import type { Linter } from 'eslint';
 
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import nextPlugin from '@next/eslint-plugin-next';
+import eslintPluginNext from '@next/eslint-plugin-next';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import importPlugin from 'eslint-plugin-import';
+import eslintPluginImport from 'eslint-plugin-import';
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
-import reactPlugin from 'eslint-plugin-react';
+import eslintPluginJsxA11y from 'eslint-plugin-jsx-a11y';
+import eslintPluginReact from 'eslint-plugin-react';
 
 export const nextConfig: Linter.Config[] = [
   {
     name: '@codefast/style-guide/configs/frameworks/next',
     plugins: {
-      '@next/next': nextPlugin,
+      '@next/next': eslintPluginNext,
     },
     rules: {
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs['core-web-vitals'].rules,
+      ...eslintPluginNext.configs.recommended.rules,
+      ...eslintPluginNext.configs['core-web-vitals'].rules,
     },
   },
   {
-    ...importPlugin.flatConfigs.recommended,
+    ...eslintPluginImport.flatConfigs.recommended,
     name: '@codefast/style-guide/configs/frameworks/next/import',
     rules: {
       'import/no-anonymous-default-export': 'warn',
     },
   },
   {
-    ...jsxA11yPlugin.flatConfigs.recommended,
+    ...eslintPluginJsxA11y.flatConfigs.recommended,
     name: '@codefast/style-guide/configs/frameworks/next/jsx-a11y',
     rules: {
       'jsx-a11y/alt-text': [
@@ -45,7 +45,7 @@ export const nextConfig: Linter.Config[] = [
     },
   },
   {
-    ...reactPlugin.configs.flat.recommended,
+    ...eslintPluginReact.configs.flat.recommended,
     name: '@codefast/style-guide/configs/frameworks/next/react',
     rules: {
       'react/jsx-no-target-blank': 'off',

@@ -8,6 +8,7 @@ import { jestConfig } from '@codefast/style-guide/configs/testing/jest';
 import { jestTypescriptConfig } from '@codefast/style-guide/configs/testing/jest-typescript';
 import { playwrightTestConfig } from '@codefast/style-guide/configs/testing/playwright-test';
 import { testingLibraryConfig } from '@codefast/style-guide/configs/testing/testing-library';
+import { prettierConfig } from '@codefast/style-guide/configs/utils/prettier';
 import globals from 'globals';
 
 import { typescriptRules } from '@/rules/typescript';
@@ -109,4 +110,5 @@ export const config: Linter.Config[] = [
       'import/no-default-export': 'off',
     },
   },
+  prettierConfig,
 ];

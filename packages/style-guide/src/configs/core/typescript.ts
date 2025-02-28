@@ -1,7 +1,7 @@
 import type { Linter } from 'eslint';
 
 // @ts-expect-error: Library doesn't yet support TypeScript, awaiting update or @types support
-import importPlugin from 'eslint-plugin-import';
+import eslintPluginImport from 'eslint-plugin-import';
 import { cwd } from 'node:process';
 import { configs as tsConfig } from 'typescript-eslint';
 
@@ -26,10 +26,10 @@ export const typescriptConfig: Linter.Config[] = [
   },
   {
     files: ['**/*.{ts,tsx,mts,cts}'],
-    ...importPlugin.flatConfigs.typescript,
+    ...eslintPluginImport.flatConfigs.typescript,
     name: '@codefast/style-guide/configs/core/typescript/import',
     rules: {
-      ...importPlugin.flatConfigs.typescript.rules,
+      ...eslintPluginImport.flatConfigs.typescript.rules,
       ...typescriptImportRules.rules,
     },
   },

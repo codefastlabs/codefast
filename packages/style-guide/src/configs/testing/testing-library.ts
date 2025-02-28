@@ -1,8 +1,8 @@
 import type { Linter } from 'eslint';
 
-import testingLibraryPlugin from 'eslint-plugin-testing-library';
+import eslintPluginTestingLibrary from 'eslint-plugin-testing-library';
 
 export const testingLibraryConfig: Linter.Config = {
-  ...testingLibraryPlugin.configs['flat/react'],
+  ...eslintPluginTestingLibrary.configs['flat/react'],
   name: '@codefast/style-guide/configs/testing/testing-library',
 };
