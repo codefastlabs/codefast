@@ -46,7 +46,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@swc/core": "^1.11.4",
+    "@swc/core": "^1.11.5",
     "@swc/jest": "^0.2.37",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -57,7 +57,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.5.2",
     "tsup": "^8.4.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "peerDependencies": {
     "@types/react": "*",
