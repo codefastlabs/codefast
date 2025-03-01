@@ -25,7 +25,7 @@ function Slider({ className, ...props }: SliderProps): JSX.Element {
           // eslint-disable-next-line react/no-array-index-key -- index is stable
           key={index}
           className={cn(
-            'border-primary bg-primary shadow-xs flex size-4 items-center justify-center rounded-full border-2 transition',
+            'border-primary shadow-input bg-primary flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition',
             'after:bg-background after:size-full after:rounded-full after:transition-[width,height]',
             'active:not-data-disabled:after:size-1',
             'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',

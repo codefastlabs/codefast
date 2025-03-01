@@ -42,7 +42,7 @@ type MenubarProps = ComponentProps<typeof MenubarPrimitive.Root>;
 function Menubar({ className, ...props }: MenubarProps): JSX.Element {
   return (
     <MenubarPrimitive.Root
-      className={cn('bg-background flex h-10 items-center space-x-1 rounded-md border p-1', className)}
+      className={cn('bg-background flex items-center space-x-1 rounded-lg border p-1', className)}
       {...props}
     />
   );
@@ -107,7 +107,7 @@ function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.SubContent
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -145,7 +145,7 @@ function MenubarContent({
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',

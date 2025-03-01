@@ -21,7 +21,7 @@
    * --color-input-focus - Strong visual indicator for focused state
    */
   --color-input: var(--color-zinc-300);
-  --color-input-hover: var(--color-zinc-950);
+  --color-input-hover: var(--color-sky-500);
   --color-input-focus: var(--color-sky-400);
 
   /**
@@ -52,6 +52,7 @@
    * - Focus indicators
    */
   --color-primary: var(--color-sky-600);
+  --color-primary-hover: var(--color-sky-700);
   --color-primary-foreground: var(--color-sky-50);
 
   /**
@@ -63,7 +64,33 @@
    * - Less prominent UI elements
    */
   --color-secondary: var(--color-zinc-200);
+  --color-secondary-hover: var(--color-zinc-300);
   --color-secondary-foreground: var(--color-zinc-950);
+
+  /**
+   * Status Colors
+   * ---------------------------------------------------------------------------
+   * Semantic colors for system feedback:
+   * - Destructive: Errors, deletions, warnings
+   * - Info: System messages, notifications
+   * - Success: Confirmations, completed actions
+   * - Warning: Alerts, important notices
+   */
+  --color-destructive: var(--color-red-500);
+  --color-destructive-hover: var(--color-red-600);
+  --color-destructive-foreground: var(--color-red-50);
+
+  --color-info: var(--color-cyan-700);
+  --color-info-hover: var(--color-cyan-800);
+  --color-info-foreground: var(--color-cyan-50);
+
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
+  --color-success-foreground: var(--color-green-50);
+
+  --color-warning: var(--color-yellow-700);
+  --color-warning-hover: var(--color-yellow-800);
+  --color-warning-foreground: var(--color-yellow-50);
 
   /**
    * Accent Theme
@@ -74,6 +101,7 @@
    * - Important UI components
    */
   --color-accent: var(--color-zinc-200);
+  --color-accent-hover: var(--color-zinc-300);
   --color-accent-foreground: var(--color-zinc-950);
 
   /**
@@ -86,28 +114,8 @@
    * - Secondary text
    */
   --color-muted: var(--color-zinc-200);
+  --color-muted-hover: var(--color-zinc-300);
   --color-muted-foreground: var(--color-zinc-500);
-
-  /**
-   * Status Colors
-   * ---------------------------------------------------------------------------
-   * Semantic colors for system feedback:
-   * - Destructive: Errors, deletions, warnings
-   * - Info: System messages, notifications
-   * - Success: Confirmations, completed actions
-   * - Warning: Alerts, important notices
-   */
-  --color-destructive: var(--color-red-500);
-  --color-destructive-foreground: var(--color-red-50);
-
-  --color-info: var(--color-cyan-700);
-  --color-info-foreground: var(--color-cyan-50);
-
-  --color-success: var(--color-green-700);
-  --color-success-foreground: var(--color-green-50);
-
-  --color-warning: var(--color-yellow-700);
-  --color-warning-foreground: var(--color-yellow-50);
 
   /**
    * Overlay Components
@@ -118,6 +126,7 @@
    * - Modal dialogs
    */
   --color-popover: var(--color-white);
+  --color-popover-overlay: color-mix(in oklab, var(--color-zinc-950) 15%, transparent);
   --color-popover-foreground: var(--color-zinc-950);
 
   /**

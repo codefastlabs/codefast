@@ -24,10 +24,6 @@ const scrollAreaScrollbarVariants = tv({
     { className: 'h-2', orientation: 'horizontal', size: 'md' },
     { className: 'h-2.5', orientation: 'horizontal', size: 'lg' },
   ],
-  defaultVariants: {
-    size: 'md',
-    vertical: 'vertical',
-  },
   variants: {
     orientation: {
       horizontal: 'w-full flex-col border-t border-t-transparent',
@@ -39,6 +35,10 @@ const scrollAreaScrollbarVariants = tv({
       md: '',
       lg: '',
     },
+  },
+  defaultVariants: {
+    size: 'md',
+    vertical: 'vertical',
   },
 });
 
