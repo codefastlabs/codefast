@@ -1,5 +1,20 @@
 # @codefast/ui
 
+## 0.2.24
+
+### Patch Changes
+
+- [`a3cdbb5`](https://github.com/codefastlabs/codefast/commit/a3cdbb59e9c3c93e806154aefce6be9c717f332c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): standardize animation utilities and classes
+
+- [`ed44ada`](https://github.com/codefastlabs/codefast/commit/ed44adadc1a339e7d0bc7be5bcfc5c45836ab26e) Thanks [@thevuong](https://github.com/thevuong)! - feat(animations): refactor animation utilities and naming
+
+- Updated dependencies [[`a3cdbb5`](https://github.com/codefastlabs/codefast/commit/a3cdbb59e9c3c93e806154aefce6be9c717f332c), [`ed44ada`](https://github.com/codefastlabs/codefast/commit/ed44adadc1a339e7d0bc7be5bcfc5c45836ab26e)]:
+  - @codefast/hooks@0.2.24
+  - @codefast-ui/checkbox-group@0.2.24
+  - @codefast-ui/day-picker@0.2.24
+  - @codefast-ui/input@0.2.24
+  - @codefast-ui/number-input@0.2.24
+
 ## 0.2.23
 
 ### Patch Changes
