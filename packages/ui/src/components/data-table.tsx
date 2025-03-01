@@ -186,12 +186,7 @@ function DataTableColumnHeader<TData, TValue>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className={cn(
-            'text-muted-foreground p-0',
-            'hover:bg-transparent',
-            'data-[state=open]:text-accent-foreground',
-            'focus-visible:text-accent-foreground focus-visible:bg-transparent focus-visible:outline-none',
-          )}
+          className={cn('p-0', 'hover:not-disabled:bg-initial', 'focus-visible:ring-0')}
           size="xs"
           suffix={<SortIcon sorted={column.getIsSorted()} />}
           variant="ghost"
@@ -206,7 +201,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleSorting(false);
           }}
         >
-          <ChevronUpIcon className="text-muted-foreground size-4" />
+          <ChevronUpIcon className="text-muted-foreground group-focus:text-accent-foreground size-4" />
           Asc
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -214,7 +209,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleSorting(true);
           }}
         >
-          <ChevronDownIcon className="text-muted-foreground size-4" />
+          <ChevronDownIcon className="text-muted-foreground group-focus:text-accent-foreground size-4" />
           Desc
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -223,7 +218,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleVisibility(false);
           }}
         >
-          <EyeOffIcon className="text-muted-foreground size-4" />
+          <EyeOffIcon className="text-muted-foreground group-focus:text-accent-foreground size-4" />
           Hide
         </DropdownMenuItem>
       </DropdownMenuContent>

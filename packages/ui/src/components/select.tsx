@@ -41,7 +41,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
   return (
     <SelectPrimitive.Trigger
       className={buttonVariants({
-        className: ['w-full justify-between px-3 font-normal', '[&>span]:truncate', className],
+        className: ['w-full justify-between px-3 font-normal shadow-sm', '[&>span]:truncate', className],
         size,
         variant: 'outline',
       })}
@@ -100,7 +100,7 @@ function SelectContent({ children, className, position = 'popper', ...props }: S
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground relative z-50 max-h-96 min-w-32 overflow-hidden rounded-md border shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border relative z-50 max-h-96 min-w-32 overflow-hidden rounded-lg shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -169,12 +169,12 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
       )}
       {...props}
     >
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       <span className="absolute right-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   );
 }

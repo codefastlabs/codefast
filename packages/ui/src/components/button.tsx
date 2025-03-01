@@ -41,6 +41,7 @@ function Button({
         size,
         variant,
       })}
+      data-variant={variant}
       disabled={loading || disabled}
       type="button"
       {...props}

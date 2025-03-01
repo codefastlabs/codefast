@@ -38,7 +38,7 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
       {children}
       <CheckboxGroupPrimitive.Item
         className={cn(
-          'border-input text-primary-foreground shadow-xs peer flex size-4 shrink-0 rounded-sm border transition',
+          'border-input text-primary-foreground peer flex size-4 shrink-0 rounded-sm border-2 transition',
           'group-hover:not-disabled:not-aria-checked:border-input-hover',
           'aria-checked:border-primary aria-checked:bg-primary',
           'focus-visible:outline-none',

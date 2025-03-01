@@ -49,9 +49,9 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
   return (
     <div
       className={cn(
-        'border-input shadow-xs relative flex size-10 items-center justify-center border text-sm transition-all',
-        'first:rounded-l-md',
-        'last:rounded-r-md',
+        'border-input relative flex size-10 items-center justify-center border text-sm shadow-sm transition-all',
+        'first:rounded-l-lg',
+        'last:rounded-r-lg',
         'data-[state=active]:ring-3 data-[state=active]:ring-ring data-[state=active]:border-ring data-[state=active]:z-10',
         className,
       )}

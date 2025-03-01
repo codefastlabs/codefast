@@ -25,7 +25,7 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
     <RadioGroupPrimitive.Item
       className={cn(
         'peer',
-        'border-input shadow-xs inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition',
+        'border-input inline-flex size-4 shrink-0 items-center justify-center rounded-full border shadow-sm transition',
         'hover:not-disabled:not-aria-checked:border-input-hover',
         'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
         'aria-checked:border-primary aria-checked:bg-primary',

@@ -33,7 +33,7 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
         className={cn(
-          'fixed inset-0 z-50 bg-black/80',
+          'bg-popover-overlay fixed inset-0 z-50',
           'data-[state=open]:animate-fade-in',
           'data-[state=closed]:animate-fade-out',
         )}
@@ -56,7 +56,8 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
       >
         <div
           className={cn(
-            'bg-background relative row-start-2 flex w-full flex-col rounded-t-lg border shadow-lg sm:max-w-lg sm:rounded-lg',
+            'bg-background ring-border shadow-border relative row-start-2 flex w-full flex-col rounded-t-2xl shadow-lg ring',
+            'sm:max-w-lg sm:rounded-2xl',
             className,
           )}
         >

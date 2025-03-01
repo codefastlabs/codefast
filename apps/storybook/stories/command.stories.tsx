@@ -32,7 +32,7 @@ type Story = StoryObj<typeof Command>;
 
 export const Default: Story = {
   render: (args) => (
-    <Command className="rounded-lg border shadow-md" {...args}>
+    <Command {...args}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
@@ -104,6 +104,7 @@ export const WithDialog: Story = {
             <span>⌘</span>J
           </Kbd>
         </Text>
+
         <CommandDialog open={open} onOpenChange={setOpen}>
           <CommandInput placeholder="Type a command or search..." />
           <CommandList>

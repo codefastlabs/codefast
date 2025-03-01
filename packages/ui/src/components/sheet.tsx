@@ -16,13 +16,10 @@ import { buttonVariants } from '@/variants/button.variants';
 
 const sheetContentVariants = tv({
   base: [
-    'bg-background animation-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
+    'bg-background animation-ease-in-out shadow-xs fixed z-50 flex flex-col overflow-auto',
     'data-[state=open]:animate-in data-[state=open]:animation-duration-500',
     'data-[state=closed]:animate-out data-[state=closed]:animation-duration-500',
   ],
-  defaultVariants: {
-    side: 'right',
-  },
   variants: {
     side: {
       bottom: [
@@ -46,6 +43,9 @@ const sheetContentVariants = tv({
         'data-[state=closed]:slide-to-t-full',
       ],
     },
+  },
+  defaultVariants: {
+    side: 'right',
   },
 });
 
@@ -76,7 +76,7 @@ function SheetContent({ children, className, side = 'right', ...props }: SheetCo
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          'fixed inset-0 z-50 bg-black/80',
+          'bg-popover-overlay fixed inset-0 z-50',
           'data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500',
           'data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500',
         )}

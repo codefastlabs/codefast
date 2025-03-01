@@ -36,8 +36,7 @@ function TooltipContent({ className, sideOffset = 6, ...props }: TooltipContentP
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground',
-          'z-50 rounded-md border px-3 py-1.5 text-xs',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 rounded-lg px-3 py-1.5 text-xs shadow-lg ring',
           'data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95',
           'data-[state=delayed-open]:data-[side=top]:slide-from-b-2',
           'data-[state=delayed-open]:data-[side=right]:slide-from-l-2',

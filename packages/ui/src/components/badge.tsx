@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants';
 
 const badgeVariants = tv({
   base: [
-    'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 text-sm font-medium',
+    'shadow-xs inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 text-sm font-medium',
     '[&>svg]:shrink-0',
   ],
   compoundVariants: [
@@ -19,11 +19,6 @@ const badgeVariants = tv({
     { className: 'w-11', icon: true, size: 'xl' },
     { className: 'w-12', icon: true, size: '2xl' },
   ],
-  defaultVariants: {
-    icon: false,
-    size: 'md',
-    variant: 'default',
-  },
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
@@ -34,14 +29,19 @@ const badgeVariants = tv({
       '2xl': 'h-9 [&>svg]:size-5', // 36px
     },
     variant: {
-      default: 'bg-primary text-primary-foreground',
-      destructive: 'bg-destructive text-destructive-foreground',
-      info: 'bg-info text-info-foreground',
-      outline: 'bg-background border-input border',
-      secondary: 'bg-secondary text-secondary-foreground',
-      success: 'bg-success text-success-foreground',
-      warning: 'bg-warning text-warning-foreground',
+      default: 'bg-primary text-primary-foreground shadow-primary',
+      secondary: 'bg-secondary shadow-secondary text-secondary-foreground',
+      info: 'bg-info shadow-info text-info-foreground',
+      success: 'bg-success shadow-success text-success-foreground',
+      warning: 'bg-warning shadow-warning text-warning-foreground',
+      destructive: 'bg-destructive shadow-destructive text-destructive-foreground',
+      outline: 'bg-background border-input shadow-input border',
     },
+  },
+  defaultVariants: {
+    icon: false,
+    size: 'md',
+    variant: 'default',
   },
 });
 

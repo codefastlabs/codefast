@@ -24,7 +24,7 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
           content: 'w-full flex flex-col gap-1',
           description: 'group-[.toast]:text-muted-foreground',
           toast:
-            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
+            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-xs',
         },
       }}
       {...props}

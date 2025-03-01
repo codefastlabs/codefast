@@ -246,7 +246,7 @@ function Sidebar({
         {...props}
       >
         <div
-          className="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow"
+          className="bg-sidebar group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-xs flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border"
           data-sidebar="sidebar"
         >
           {children}
@@ -326,7 +326,7 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
     <main
       className={cn(
         'bg-background relative flex min-h-svh flex-1 flex-col',
-        'peer-data-[variant=inset]:min-h-[calc(100svh-var(--spacing-4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow',
+        'md:peer-data-[variant=inset]:shadow-xs peer-data-[variant=inset]:min-h-[calc(100svh-var(--spacing-4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl',
         className,
       )}
       {...props}
@@ -513,10 +513,6 @@ const sidebarMenuButtonVariants = tv({
     'disabled:pointer-events-none disabled:opacity-50',
     'aria-disabled:pointer-events-none aria-disabled:opacity-50',
   ],
-  defaultVariants: {
-    size: 'default',
-    variant: 'default',
-  },
   variants: {
     size: {
       default: 'h-8 text-sm',
@@ -528,6 +524,10 @@ const sidebarMenuButtonVariants = tv({
       outline:
         'bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--color-sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--color-sidebar-accent))]',
     },
+  },
+  defaultVariants: {
+    size: 'default',
+    variant: 'default',
   },
 });
 

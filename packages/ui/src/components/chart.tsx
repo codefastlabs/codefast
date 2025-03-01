@@ -176,7 +176,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        'border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
+        'bg-popover ring-border shadow-border grid min-w-32 items-start gap-1.5 rounded-lg px-2.5 py-1.5 text-xs shadow-lg ring',
         className,
       )}
     >
@@ -204,7 +204,7 @@ function ChartTooltipContent({
                   ) : (
                     !hideIndicator && (
                       <div
-                        className={cn('border-(--color-border) bg-(--color-bg) shrink-0 rounded-[0.125rem]', {
+                        className={cn('border-(--color-border) bg-(--color-bg) rounded-xs shrink-0', {
                           'h-2.5 w-2.5': indicator === 'dot',
                           'my-0.5': nestLabel && indicator === 'dashed',
                           'w-0 border border-dashed bg-transparent': indicator === 'dashed',
@@ -266,7 +266,6 @@ function ChartLegendContent({
   nameKey,
   payload,
   verticalAlign = 'bottom',
-  ...props
 }: ChartLegendContentProps): ReactNode {
   const { config } = useChart();
 
@@ -275,10 +274,7 @@ function ChartLegendContent({
   }
 
   return (
-    <div
-      className={cn('flex items-center justify-center gap-4', verticalAlign === 'top' ? 'pb-3' : 'pt-3', className)}
-      {...props}
-    >
+    <div className={cn('flex items-center justify-center gap-4', verticalAlign === 'top' ? 'pb-3' : 'pt-3', className)}>
       {payload.map((item) => {
         let key = 'value';
 
@@ -299,7 +295,7 @@ function ChartLegendContent({
               <itemConfig.icon />
             ) : (
               <div
-                className="size-2 shrink-0 rounded"
+                className="size-2 shrink-0 rounded-md"
                 style={{
                   backgroundColor: item.color,
                 }}
