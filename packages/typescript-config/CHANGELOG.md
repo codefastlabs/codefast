@@ -1,5 +1,13 @@
 # @codefast/typescript-config
 
+## 0.2.24
+
+### Patch Changes
+
+- [`a3cdbb5`](https://github.com/codefastlabs/codefast/commit/a3cdbb59e9c3c93e806154aefce6be9c717f332c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): standardize animation utilities and classes
+
+- [`ed44ada`](https://github.com/codefastlabs/codefast/commit/ed44adadc1a339e7d0bc7be5bcfc5c45836ab26e) Thanks [@thevuong](https://github.com/thevuong)! - feat(animations): refactor animation utilities and naming
+
 ## 0.2.23
 
 ### Patch Changes
