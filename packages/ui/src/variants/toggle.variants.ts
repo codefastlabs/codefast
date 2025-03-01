@@ -4,10 +4,11 @@ import { tv } from 'tailwind-variants';
 
 const toggleVariants = tv({
   base: [
-    'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
+    'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition',
     '[&>svg]:shrink-0',
     'focus-visible:outline-none',
     'focus-visible:ring-ring focus-visible:ring-3',
+    'not-disabled:data-[state=on]:shadow-xs',
     'disabled:opacity-50',
   ],
   compoundVariants: [
@@ -22,11 +23,6 @@ const toggleVariants = tv({
     { className: '[&>svg]:size-3', size: 'xxs' },
     { className: '[&>svg]:size-3.5', size: 'xs' },
   ],
-  defaultVariants: {
-    icon: false,
-    size: 'md',
-    variant: 'default',
-  },
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
@@ -39,39 +35,52 @@ const toggleVariants = tv({
     },
     variant: {
       default: [
+        'not-disabled:data-[state=on]:shadow-primary',
         'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground',
-        'hover:not-disabled:bg-primary/80 hover:not-disabled:text-primary-foreground',
-      ],
-      destructive: [
-        'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground',
-        'hover:not-disabled:bg-destructive/80 hover:not-disabled:text-destructive-foreground',
-      ],
-      ghost: [
-        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-        'hover:not-disabled:bg-accent/80 hover:not-disabled:text-accent-foreground',
-      ],
-      info: [
-        'data-[state=on]:bg-info data-[state=on]:text-info-foreground',
-        'hover:not-disabled:bg-info/80 hover:not-disabled:text-info-foreground',
-      ],
-      outline: [
-        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-        'hover:not-disabled:bg-accent/80 hover:not-disabled:text-accent-foreground',
-        'bg-background border-input border',
+        'hover:not-disabled:bg-primary-hover hover:not-disabled:text-primary-foreground',
       ],
       secondary: [
+        'not-disabled:data-[state=on]:shadow-secondary',
         'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground',
-        'hover:not-disabled:bg-secondary/80 hover:not-disabled:text-secondary-foreground',
+        'hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground',
+      ],
+      info: [
+        'not-disabled:data-[state=on]:shadow-info',
+        'data-[state=on]:bg-info data-[state=on]:text-info-foreground',
+        'hover:not-disabled:bg-info-hover hover:not-disabled:text-info-foreground',
       ],
       success: [
+        'not-disabled:data-[state=on]:shadow-success',
         'data-[state=on]:bg-success data-[state=on]:text-success-foreground',
-        'hover:not-disabled:bg-success/80 hover:not-disabled:text-success-foreground',
+        'hover:not-disabled:bg-success-hover hover:not-disabled:text-success-foreground',
       ],
       warning: [
+        'not-disabled:data-[state=on]:shadow-warning',
         'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground',
-        'hover:not-disabled:bg-warning/80 hover:not-disabled:text-warning-foreground',
+        'hover:not-disabled:bg-warning-hover hover:not-disabled:text-warning-foreground',
+      ],
+      destructive: [
+        'not-disabled:data-[state=on]:shadow-destructive',
+        'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground',
+        'hover:not-disabled:bg-destructive-hover hover:not-disabled:text-destructive-foreground',
+      ],
+      outline: [
+        'not-disabled:data-[state=on]:shadow-accent',
+        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
+        'hover:not-disabled:bg-accent-hover hover:not-disabled:text-accent-foreground',
+        'bg-background border-input border',
+      ],
+      ghost: [
+        'not-disabled:data-[state=on]:shadow-accent',
+        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
+        'hover:not-disabled:bg-accent-hover hover:not-disabled:text-accent-foreground',
       ],
     },
+  },
+  defaultVariants: {
+    icon: false,
+    size: 'md',
+    variant: 'default',
   },
 });
 

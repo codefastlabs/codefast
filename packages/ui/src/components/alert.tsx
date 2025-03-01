@@ -10,10 +10,7 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 const alertVariants = tv({
-  base: '[&>svg+div]:-translate-y-0.75 relative w-full rounded-lg border p-4 text-sm [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7',
-  defaultVariants: {
-    variant: 'default',
-  },
+  base: '[&>svg+div]:-translate-y-0.75 relative w-full rounded-xl border p-4 text-sm [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7',
   variants: {
     variant: {
       default: 'bg-background text-foreground [&>svg]:text-foreground',
@@ -23,6 +20,9 @@ const alertVariants = tv({
       success: 'border-success/50 text-success dark:border-success [&>svg]:text-success',
       warning: 'border-warning/50 text-warning dark:border-warning [&>svg]:text-warning',
     },
+  },
+  defaultVariants: {
+    variant: 'default',
   },
 });
 

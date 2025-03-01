@@ -35,10 +35,10 @@ type DrawerContentProps = ComponentProps<typeof DrawerPrimitive.Content>;
 function DrawerContent({ children, className, ...props }: DrawerContentProps): JSX.Element {
   return (
     <DrawerPrimitive.Portal>
-      <DrawerPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80" />
+      <DrawerPrimitive.Overlay className="bg-popover-overlay fixed inset-0 z-50" />
       <DrawerPrimitive.Content
         className={cn(
-          'bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-xl border',
+          'bg-background ring-border fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-2xl ring',
           className,
         )}
         {...props}

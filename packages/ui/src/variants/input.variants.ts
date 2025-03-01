@@ -3,21 +3,18 @@ import type { VariantProps } from 'tailwind-variants';
 import { tv } from 'tailwind-variants';
 
 const inputVariants = tv({
-  defaultVariants: {
-    inputSize: 'md',
-  },
   slots: {
-    input: [
-      'peer size-full rounded-[inherit] bg-inherit outline-none',
-      'file:border-0 file:bg-transparent file:font-medium',
-      'placeholder:text-muted-foreground',
-    ],
     root: [
-      'border-input bg-background shadow-xs flex w-full grow items-center gap-2 rounded-md border px-3 text-sm transition',
+      'border-input shadow-input bg-background flex w-full grow items-center gap-2 rounded-lg border px-3 text-sm shadow-sm transition',
       '[&>svg]:text-muted-foreground [&>svg]:shrink-0',
       'hover:not-data-disabled:not-focus-within:border-input-hover',
       'focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3',
       'has-disabled:opacity-50',
+    ],
+    input: [
+      'peer size-full rounded-[inherit] bg-inherit outline-none',
+      'file:bg-background file:border-0 file:font-medium',
+      'placeholder:text-muted-foreground',
     ],
   },
   variants: {
@@ -29,6 +26,9 @@ const inputVariants = tv({
       xs: { input: 'file:py-1.25', root: 'h-8 [&>svg]:size-3.5' }, // 32px
       xxs: { input: 'file:py-0.75', root: 'h-7 [&>svg]:size-3' }, // 28px
     },
+  },
+  defaultVariants: {
+    inputSize: 'md',
   },
 });
 

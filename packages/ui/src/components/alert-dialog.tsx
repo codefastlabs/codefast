@@ -32,7 +32,7 @@ function AlertDialogContent({ children, className, ...props }: AlertDialogConten
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          'fixed inset-0 z-50 bg-black/80',
+          'bg-popover-overlay fixed inset-0 z-50',
           'data-[state=open]:animate-fade-in',
           'data-[state=closed]:animate-fade-out',
         )}
@@ -46,7 +46,7 @@ function AlertDialogContent({ children, className, ...props }: AlertDialogConten
         )}
         {...props}
       >
-        <div className="bg-background relative row-start-2 flex w-full max-w-lg flex-col rounded-lg border shadow-lg">
+        <div className="bg-popover ring-border shadow-border relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl shadow-lg ring">
           {children}
         </div>
       </AlertDialogPrimitive.Content>

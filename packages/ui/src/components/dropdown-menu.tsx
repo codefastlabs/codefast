@@ -52,8 +52,7 @@ function DropdownMenuSubTrigger({ children, className, inset, ...props }: Dropdo
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex select-none items-center rounded-sm text-sm',
+        'flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
@@ -78,7 +77,7 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.SubContent
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -108,7 +107,7 @@ function DropdownMenuContent({ className, sideOffset = 6, ...props }: DropdownMe
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -140,8 +139,7 @@ function DropdownMenuItem({ className, inset, ...props }: DropdownMenuItemProps)
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -168,9 +166,7 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'pl-8',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:opacity-50',
         className,
@@ -197,9 +193,7 @@ function DropdownMenuRadioItem({ children, className, ...props }: DropdownMenuRa
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'pl-8',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:opacity-50',
         className,
@@ -227,7 +221,7 @@ interface DropdownMenuLabelProps extends ComponentProps<typeof DropdownMenuPrimi
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   );
@@ -250,7 +244,16 @@ function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorPro
 type DropdownMenuShortcutProps = ComponentProps<'span'>;
 
 function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps): JSX.Element {
-  return <span className={cn('ml-auto text-xs tracking-widest opacity-60', className)} {...props} />;
+  return (
+    <span
+      className={cn(
+        'text-muted-foreground ml-auto text-xs tracking-widest',
+        'group-aria-selected:text-accent-foreground',
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

@@ -21,7 +21,7 @@ function TabsList({ className, ...props }: TabsListProps): JSX.Element {
   return (
     <TabsPrimitive.List
       className={cn(
-        'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center gap-1 rounded-md p-1',
+        'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center gap-1 rounded-lg p-1',
         className,
       )}
       {...props}
@@ -60,7 +60,7 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
-        'mt-2 rounded-md',
+        'mt-2 rounded-xl',
         'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
         className,
       )}

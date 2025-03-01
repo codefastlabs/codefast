@@ -37,7 +37,7 @@ function PopoverContent({ align = 'center', className, sideOffset = 6, ...props 
       <PopoverPrimitive.Content
         align={align}
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-4 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-xl p-4 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',

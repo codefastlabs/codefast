@@ -114,10 +114,10 @@ type NavigationMenuViewportProps = ComponentProps<typeof NavigationMenuPrimitive
 
 function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportProps): JSX.Element {
   return (
-    <div className="perspective-[125rem] absolute left-0 top-full flex justify-center">
+    <div className="perspective-2000 absolute left-0 top-full flex justify-center">
       <NavigationMenuPrimitive.Viewport
         className={cn(
-          'bg-popover text-popover-foreground relative mt-1.5 w-full origin-[top_center] overflow-hidden rounded-md border p-1 shadow-md transition-[width,height]',
+          'bg-popover text-popover-foreground ring-border shadow-border relative mt-2 w-full origin-[top_center] overflow-hidden rounded-xl p-1 shadow-lg ring transition-[width,height]',
           'h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width)',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
@@ -139,12 +139,14 @@ function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicato
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(
-        'data-[state=visible]:animate-fade-in data-[state=hidden]:animate-fade-out top-full z-10 flex h-1.5 items-center justify-center overflow-hidden transition',
+        'top-full z-10 flex h-2 origin-[bottom_center] items-center justify-center overflow-hidden transition',
+        'data-[state=visible]:animate-fade-in data-[state=visible]:animation-duration-100',
+        'data-[state=hidden]:animate-fade-out data-[state=hidden]:animation-duration-100 data-[state=hidden]:animation-ease-[cubic-bezier(0.32, 0.72, 0, 1)]',
         className,
       )}
       {...props}
     >
-      <div className="bg-popover relative top-[60%] size-2 rotate-45 rounded-tl-sm" />
+      <div className="bg-popover ring-border rounded-tl-xs relative top-[60%] size-2.5 rotate-45 ring" />
     </NavigationMenuPrimitive.Indicator>
   );
 }

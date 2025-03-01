@@ -18,7 +18,7 @@ function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JS
   return (
     <input
       className={cn(
-        'border-input shadow-xs peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border transition',
+        'border-input peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border shadow-sm transition',
         'hover:not-disabled:not-checked:border-input-hover',
         'checked:border-primary checked:bg-primary',
         'checked:after:size-1',

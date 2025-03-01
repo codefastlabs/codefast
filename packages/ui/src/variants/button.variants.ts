@@ -4,8 +4,9 @@ import { tv } from 'tailwind-variants';
 
 const buttonVariants = tv({
   base: [
-    'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium transition',
+    'inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium',
     '[&>svg]:shrink-0',
+    'not-disabled:shadow-xs',
     'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
     'disabled:opacity-50',
   ],
@@ -32,12 +33,6 @@ const buttonVariants = tv({
     { className: 'w-9', icon: true, inside: true, size: 'lg' },
     { className: 'w-10', icon: true, inside: true, size: 'xl' },
   ],
-  defaultVariants: {
-    icon: false,
-    inside: false,
-    size: 'md',
-    variant: 'default',
-  },
   variants: {
     icon: { false: '', true: 'px-0' },
     inside: { false: '', true: '' },
@@ -50,20 +45,47 @@ const buttonVariants = tv({
       xl: 'h-12 [&>svg]:size-5', // 48px
     },
     variant: {
-      default: ['bg-primary text-primary-foreground', 'hover:not-disabled:bg-primary/80'],
-      destructive: ['bg-destructive text-destructive-foreground', 'hover:not-disabled:bg-destructive/80'],
-      ghost: ['text-foreground', 'hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground'],
-      info: ['bg-info text-info-foreground', 'hover:not-disabled:bg-info/80'],
-      link: ['text-primary underline-offset-4', 'hover:not-disabled:underline'],
-      outline: [
-        'text-foreground border-input border',
-        'focus-visible:border-ring',
-        'hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground',
+      default: [
+        'bg-primary text-primary-foreground',
+        'not-disabled:shadow-primary',
+        'hover:not-disabled:bg-primary-hover',
       ],
-      secondary: ['bg-secondary text-secondary-foreground', 'hover:not-disabled:bg-secondary/80'],
-      success: ['bg-success text-success-foreground', 'hover:not-disabled:bg-success/80'],
-      warning: ['bg-warning text-warning-foreground', 'hover:not-disabled:bg-warning/80'],
+      secondary: [
+        'bg-secondary text-secondary-foreground',
+        'not-disabled:shadow-secondary',
+        'hover:not-disabled:bg-secondary-hover',
+      ],
+      info: ['bg-info text-info-foreground', 'not-disabled:shadow-info', 'hover:not-disabled:bg-info-hover'],
+      success: [
+        'bg-success text-success-foreground',
+        'not-disabled:shadow-success',
+        'hover:not-disabled:bg-success-hover',
+      ],
+      warning: [
+        'bg-warning text-warning-foreground',
+        'not-disabled:shadow-warning',
+        'hover:not-disabled:bg-warning-hover',
+      ],
+      destructive: [
+        'bg-destructive text-destructive-foreground',
+        'not-disabled:shadow-destructive',
+        'hover:not-disabled:bg-destructive-hover',
+      ],
+      outline: [
+        'border-input border',
+        'not-disabled:shadow-input',
+        'hover:not-disabled:hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground',
+        'focus-visible:border-input-focus',
+      ],
+      ghost: ['not-disabled:shadow-none', 'hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground'],
+      link: ['not-disabled:shadow-none', 'text-primary underline-offset-4', 'hover:not-disabled:underline'],
     },
+  },
+  defaultVariants: {
+    icon: false,
+    inside: false,
+    size: 'md',
+    variant: 'default',
   },
 });
 

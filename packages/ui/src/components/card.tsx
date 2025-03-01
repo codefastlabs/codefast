@@ -9,7 +9,12 @@ import { cn } from '@/lib/utils';
 type CardProps = ComponentProps<'div'>;
 
 function Card({ className, ...props }: CardProps): JSX.Element {
-  return <div className={cn('bg-card text-card-foreground rounded-lg border shadow', className)} {...props} />;
+  return (
+    <div
+      className={cn('bg-card text-card-foreground ring-border shadow-border rounded-xl shadow-md ring', className)}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

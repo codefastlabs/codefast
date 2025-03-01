@@ -18,7 +18,8 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        'bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md',
+        'bg-popover text-popover-foreground ring-border shadow-border shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg ring',
+        'focus-visible:outline-none',
         className,
       )}
       {...props}
@@ -38,12 +39,9 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
       <DialogContent className="p-0">
         <Command
           className={cn(
+            'shadow-none ring-0',
             '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium',
-            '[&_[cmdk-group]]:px-2',
-            '[&_[cmdk-input-wrapper]_svg]:size-5',
             '[&_[cmdk-input]]:h-12',
-            '[&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3',
-            '[&_[cmdk-item]_svg]:size-5',
             '[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0',
           )}
         >
@@ -107,7 +105,8 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
   return (
     <CommandPrimitive.Group
       className={cn(
-        'text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium',
+        'text-foreground overflow-hidden p-1',
+        '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium',
         className,
       )}
       {...props}
@@ -135,8 +134,7 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
   return (
     <CommandPrimitive.Item
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         'aria-selected:bg-accent aria-selected:text-accent-foreground aria-selected:outline-none',
         'aria-disabled:opacity-50',
         className,
@@ -163,7 +161,16 @@ function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Eleme
 type CommandShortcutProps = ComponentProps<'span'>;
 
 function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
-  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
+  return (
+    <span
+      className={cn(
+        'text-muted-foreground ml-auto text-xs tracking-widest',
+        'group-aria-selected:text-accent-foreground',
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

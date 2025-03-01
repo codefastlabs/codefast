@@ -84,10 +84,10 @@ export const Default: Story = {
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuRadioGroup value={person} onValueChange={setPerson}>
             <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
-            <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
-            <ContextMenuRadioItem disabled value="lorem">
+            <ContextMenuRadioItem disabled value="colm">
               Colm Tuite
             </ContextMenuRadioItem>
+            <ContextMenuRadioItem value="lorem">Colm Tuite</ContextMenuRadioItem>
           </ContextMenuRadioGroup>
         </ContextMenuContent>
       </ContextMenu>

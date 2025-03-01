@@ -52,8 +52,7 @@ function ContextMenuSubTrigger({ children, className, inset, ...props }: Context
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex select-none items-center rounded-sm text-sm',
+        'flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
         inset && 'pl-8',
@@ -78,7 +77,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentPro
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.SubContent
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border shadow-xs z-50 min-w-32 rounded-lg p-1 ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -108,7 +107,7 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground z-50 min-w-32 rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground ring-border shadow-border shadow-xs z-50 min-w-32 rounded-lg p-1 ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -134,8 +133,7 @@ function ContextMenuItem({ className, inset, ...props }: ContextMenuItemProps): 
   return (
     <ContextMenuPrimitive.Item
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:opacity-50',
         inset && 'pl-8',
@@ -162,9 +160,7 @@ function ContextMenuCheckboxItem({
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'pl-8',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:opacity-50',
         className,
@@ -191,9 +187,7 @@ function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadi
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'pl-8',
-        'relative flex select-none items-center rounded-sm text-sm',
+        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm',
         'focus:bg-accent focus:text-accent-foreground focus:outline-none',
         'aria-disabled:opacity-50',
         className,
@@ -221,7 +215,7 @@ interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimiti
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
-      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   );
@@ -244,7 +238,16 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
 type ContextMenuShortcutProps = ComponentProps<'span'>;
 
 function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): JSX.Element {
-  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
+  return (
+    <span
+      className={cn(
+        'text-muted-foreground ml-auto text-xs tracking-widest',
+        'group-data-highlighted:text-accent-foreground',
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
