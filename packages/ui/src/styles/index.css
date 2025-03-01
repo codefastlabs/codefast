@@ -4,6 +4,7 @@
  * Defines custom variants for utility classes or components.
  */
 @custom-variant data-disabled (&[data-disabled="true"]);
+@custom-variant data-disabled (&[data-disabled]);
 
 /**
  * Named Color Theme Definitions
