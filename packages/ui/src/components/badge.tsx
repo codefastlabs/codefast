@@ -8,17 +8,7 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const badgeVariants = tv({
-  base: [
-    'shadow-xs inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 text-sm font-medium',
-    '[&>svg]:shrink-0',
-  ],
-  compoundVariants: [
-    { className: 'w-8', icon: true, size: 'sm' },
-    { className: 'w-9', icon: true, size: 'md' },
-    { className: 'w-10', icon: true, size: 'lg' },
-    { className: 'w-11', icon: true, size: 'xl' },
-    { className: 'w-12', icon: true, size: '2xl' },
-  ],
+  base: 'shadow-xs inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 text-sm font-medium [&>svg]:shrink-0',
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
@@ -43,6 +33,33 @@ const badgeVariants = tv({
     size: 'md',
     variant: 'default',
   },
+  compoundVariants: [
+    {
+      className: 'w-8',
+      icon: true,
+      size: 'sm',
+    },
+    {
+      className: 'w-9',
+      icon: true,
+      size: 'md',
+    },
+    {
+      className: 'w-10',
+      icon: true,
+      size: 'lg',
+    },
+    {
+      className: 'w-11',
+      icon: true,
+      size: 'xl',
+    },
+    {
+      className: 'w-12',
+      icon: true,
+      size: '2xl',
+    },
+  ],
 });
 
 type BadgeVariantsProps = VariantProps<typeof badgeVariants>;

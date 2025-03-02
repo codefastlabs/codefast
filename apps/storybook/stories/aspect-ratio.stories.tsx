@@ -20,11 +20,11 @@ type Story = StoryObj<typeof AspectRatio>;
 export const Default: Story = {
   render: (args) => (
     <div className="w-[28.125rem]">
-      <AspectRatio className="bg-muted rounded-md" ratio={16 / 9} {...args}>
+      <AspectRatio className="bg-muted w-full rounded-lg" ratio={16 / 9} {...args}>
         <Image
           fill
           alt="Photo by Drew Beamer"
-          className="rounded-md object-cover"
+          className="rounded-lg object-cover"
           sizes="(min-width: 1024px) 100vw, 50vw"
           src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
         />

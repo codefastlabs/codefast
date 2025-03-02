@@ -32,16 +32,12 @@ function AlertDialogContent({ children, className, ...props }: AlertDialogConten
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          'bg-popover-overlay fixed inset-0 z-50',
-          'data-[state=open]:animate-fade-in',
-          'data-[state=closed]:animate-fade-out',
+          'bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50',
         )}
       />
       <AlertDialogPrimitive.Content
         className={cn(
-          'fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4',
-          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4',
           className,
         )}
         {...props}

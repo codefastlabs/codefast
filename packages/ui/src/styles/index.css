@@ -104,10 +104,8 @@
    * - Helper text
    * - Placeholders
    * - Disabled states
-   * - Secondary text
    */
   --color-muted: var(--color-zinc-200);
-  --color-muted-hover: var(--color-zinc-300);
   --color-muted-foreground: var(--color-zinc-500);
 
   /**

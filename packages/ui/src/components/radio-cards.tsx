@@ -24,8 +24,8 @@ function RadioCardsItem({ className, ...props }: RadioCardsItemProps): JSX.Eleme
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        'group peer flex items-center justify-center rounded-lg border-2 p-4 transition',
-        'hover:not-disabled:not-aria-checked:border-input-hover',
+        'border-accent group peer flex items-center justify-center rounded-lg border-2 p-4 transition',
+        'hover:not-disabled:bg-accent',
         'focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 focus-visible:outline-none',
         'aria-checked:border-primary',
         'disabled:opacity-50',

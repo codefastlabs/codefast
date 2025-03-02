@@ -6,7 +6,6 @@ import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Spinner } from '@/components/spinner';
-import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
 import { inputVariants } from '@/variants/input.variants';
 
@@ -73,13 +72,7 @@ function InputNumber({
         spellCheck="false"
         {...props}
       />
-      <div
-        className={cn(
-          'peer-hover:divide-input-hover peer-hover:border-l-input-hover',
-          'peer-focus:divide-input-focus peer-focus:border-l-input-focus',
-          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(var(--radius-lg)-1px)] border-l transition',
-        )}
-      >
+      <div className="peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l transition">
         <InputNumberPrimitive.IncrementButton
           className={buttonVariants({
             className: 'h-full rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]',
