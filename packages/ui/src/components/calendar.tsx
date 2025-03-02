@@ -182,7 +182,6 @@ function CalendarLabel({ date, formatStr = 'PPP', placeholder = 'Pick a date' }:
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type { DateRange, Matcher } from '@codefast-ui/day-picker';
 export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps };
 export { Calendar, CalendarLabel, CalendarRangeLabel };
-
-export type { DateRange, Matcher } from '@codefast-ui/day-picker';
