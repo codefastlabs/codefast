@@ -77,12 +77,12 @@ function InputNumber({
         className={cn(
           'peer-hover:divide-input-hover peer-hover:border-l-input-hover',
           'peer-focus:divide-input-focus peer-focus:border-l-input-focus',
-          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(var(--radius-md)-1px)] border-l transition',
+          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y overflow-hidden rounded-r-[calc(var(--radius-lg)-1px)] border-l transition',
         )}
       >
         <InputNumberPrimitive.IncrementButton
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-tr-[calc(var(--radius-md)-1px)]',
+            className: 'h-full rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]',
             icon: true,
             size: inputSize,
             variant: 'ghost',
@@ -92,7 +92,7 @@ function InputNumber({
         </InputNumberPrimitive.IncrementButton>
         <InputNumberPrimitive.DecrementButton
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-br-[calc(var(--radius-md)-1px)]',
+            className: 'h-full rounded-none rounded-br-[calc(var(--radius-lg)-1px)]',
             icon: true,
             size: inputSize,
             variant: 'ghost',
