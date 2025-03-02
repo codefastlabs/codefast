@@ -60,10 +60,10 @@ const meta = {
     inputSize: {
       control: { type: 'select' },
       description: 'Sets the size of the input field',
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl'],
       table: {
         defaultValue: { summary: 'md' },
-        type: { summary: 'xxs | xs | sm | md | lg | xl' },
+        type: { summary: '2xs | xs | sm | md | lg | xl' },
       },
     },
     loaderPosition: {
@@ -201,7 +201,7 @@ export const Sizes: Story = {
   },
   render: (args) => (
     <div className="space-y-4">
-      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+      {(['2xs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <InputNumber key={size} {...args} inputSize={size} placeholder={size} />
       ))}
     </div>
