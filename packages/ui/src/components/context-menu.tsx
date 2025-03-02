@@ -77,7 +77,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentPro
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.SubContent
         className={cn(
-          'bg-popover text-popover-foreground ring-border shadow-border shadow-xs z-50 min-w-32 rounded-lg p-1 ring',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
@@ -107,7 +107,7 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground ring-border shadow-border shadow-xs z-50 min-w-32 rounded-lg p-1 ring',
+          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=open]:data-[side=top]:slide-from-b-2',
           'data-[state=open]:data-[side=right]:slide-from-l-2',
