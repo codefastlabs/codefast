@@ -31,33 +31,14 @@ type DialogContentProps = ComponentProps<typeof DialogPrimitive.Content>;
 function DialogContent({ children, className, ...props }: DialogContentProps): JSX.Element {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay
-        className={cn(
-          'bg-popover-overlay fixed inset-0 z-50',
-          'data-[state=open]:animate-fade-in',
-          'data-[state=closed]:animate-fade-out',
-        )}
-      />
+      <DialogPrimitive.Overlay className="bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50" />
       <DialogPrimitive.Content
-        className={cn(
-          'fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4',
-          [
-            'data-[state=open]:animate-in',
-            'max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-from-b-full',
-            'sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95',
-          ],
-          [
-            'data-[state=closed]:animate-out',
-            'max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-to-b-full',
-            'sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95',
-          ],
-        )}
+        className="data-[state=open]:animate-in max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-from-b-full sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95 data-[state=closed]:animate-out max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-to-b-full sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4"
         {...props}
       >
         <div
           className={cn(
-            'bg-background ring-border shadow-border relative row-start-2 flex w-full flex-col rounded-t-2xl shadow-lg ring',
-            'sm:max-w-lg sm:rounded-2xl',
+            'bg-background ring-border shadow-border relative row-start-2 flex w-full flex-col rounded-t-2xl shadow-lg ring sm:max-w-lg sm:rounded-2xl',
             className,
           )}
         >
