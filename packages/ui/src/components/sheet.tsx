@@ -87,7 +87,7 @@ function SheetContent({ children, className, side = 'right', ...props }: SheetCo
           className={buttonVariants({
             className: 'absolute right-4 top-4',
             icon: true,
-            size: 'xxs',
+            size: '2xs',
             variant: 'ghost',
           })}
         >

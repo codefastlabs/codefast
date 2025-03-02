@@ -67,7 +67,7 @@ const meta = {
     size: {
       control: { type: 'select' },
       description: 'Button size',
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl'],
       table: { defaultValue: { summary: 'md' }, type: { summary: 'string' } },
     },
     spinner: {
@@ -115,7 +115,7 @@ export const Sizes: Story = {
   },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+      {(['2xs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <Button key={size} {...args} size={size}>
           {size} button
         </Button>

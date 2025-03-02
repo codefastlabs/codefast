@@ -66,7 +66,7 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
             className={buttonVariants({
               className: 'absolute right-2.5 top-2.5',
               icon: true,
-              size: 'xxs',
+              size: '2xs',
               variant: 'ghost',
             })}
           >

@@ -48,7 +48,7 @@ const meta = {
     size: {
       control: { type: 'select' },
       description: 'Toggle button size',
-      options: ['xxs', 'xs', 'sm', 'md', 'lg', 'xl'],
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl'],
       table: { defaultValue: { summary: 'md' }, type: { summary: 'string' } },
     },
     type: {
@@ -109,7 +109,7 @@ export const Default: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-col gap-2">
-      {(['xxs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
+      {(['2xs', 'xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <ToggleGroup key={size} {...args} size={size}>
           <ToggleGroupItem value="1">{size} 1</ToggleGroupItem>
           <ToggleGroupItem value="2">{size} 2</ToggleGroupItem>
