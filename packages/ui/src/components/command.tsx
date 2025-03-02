@@ -64,7 +64,7 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
       <SearchIcon className="size-5 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
-          'flex h-10 w-full rounded-md bg-transparent text-sm outline-none',
+          'bg-popover flex h-10 w-full rounded-md text-sm outline-none',
           'placeholder:text-muted-foreground',
           'disabled:opacity-50',
           className,
