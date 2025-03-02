@@ -18,7 +18,7 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
   return (
     <OTPInput
       className={cn(className)}
-      containerClassName={cn('flex items-center gap-2', 'has-[:disabled]:opacity-50', containerClassName)}
+      containerClassName={cn('flex items-center gap-2 has-[:disabled]:opacity-50', containerClassName)}
       {...props}
     />
   );
@@ -49,10 +49,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
   return (
     <div
       className={cn(
-        'border-input relative flex size-10 items-center justify-center border text-sm shadow-sm transition-all',
-        'first:rounded-l-lg',
-        'last:rounded-r-lg',
-        'data-[state=active]:ring-3 data-[state=active]:ring-ring data-[state=active]:border-ring data-[state=active]:z-10',
+        'border-input data-[state=active]:ring-3 data-[state=active]:ring-ring data-[state=active]:border-ring relative flex size-10 items-center justify-center border text-sm shadow-sm transition-all first:rounded-l-lg last:rounded-r-lg data-[state=active]:z-10',
         className,
       )}
       data-state={slot.isActive ? 'active' : 'inactive'}

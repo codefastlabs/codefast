@@ -33,11 +33,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
   if (asChild) {
     return (
       <Slot
-        className={cn(
-          'text-muted-foreground size-4 shrink-0 transition',
-          'group-data-[state=open]:rotate-90',
-          className,
-        )}
+        className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
         {...props}
       />
     );
@@ -46,7 +42,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
   return (
     <ChevronRightIcon
       aria-hidden
-      className={cn('text-muted-foreground size-4 shrink-0 transition', 'group-data-[state=open]:rotate-90', className)}
+      className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
     />
   );
 }
@@ -62,8 +58,7 @@ function AccordionTrigger({ className, ...props }: AccordionTriggerProps): JSX.E
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
         className={cn(
-          'group flex grow items-center gap-2 py-4 text-left text-sm font-medium',
-          'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
+          'focus-visible:ring-ring focus-visible:ring-3 group flex grow items-center gap-2 py-4 text-left text-sm font-medium focus-visible:outline-none',
           className,
         )}
         {...props}
@@ -81,11 +76,7 @@ type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
 function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
   return (
     <AccordionPrimitive.Content
-      className={cn(
-        'overflow-hidden',
-        'data-[state=open]:animate-collapsible-open',
-        'data-[state=closed]:animate-collapsible-closed',
-      )}
+      className="data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden"
       {...props}
     >
       <div className={cn('pb-4 pt-0 text-sm', className)}>{children}</div>

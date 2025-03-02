@@ -18,8 +18,7 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        'bg-popover text-popover-foreground ring-border shadow-border shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg ring',
-        'focus-visible:outline-none',
+        'bg-popover text-popover-foreground ring-border shadow-border shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg ring focus-visible:outline-none',
         className,
       )}
       {...props}
@@ -37,14 +36,7 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
   return (
     <Dialog {...props}>
       <DialogContent className="p-0">
-        <Command
-          className={cn(
-            'shadow-none ring-0',
-            '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium',
-            '[&_[cmdk-input]]:h-12',
-            '[&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0',
-          )}
-        >
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground shadow-none ring-0 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
           {children}
         </Command>
       </DialogContent>
@@ -64,9 +56,7 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
       <SearchIcon className="size-5 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
-          'flex h-10 w-full text-sm outline-none',
-          'placeholder:text-muted-foreground',
-          'disabled:opacity-50',
+          'placeholder:text-muted-foreground flex h-10 w-full text-sm outline-none disabled:opacity-50',
           className,
         )}
         {...props}
@@ -105,8 +95,7 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
   return (
     <CommandPrimitive.Group
       className={cn(
-        'text-foreground overflow-hidden p-1',
-        '[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium',
+        'text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium',
         className,
       )}
       {...props}
@@ -134,9 +123,7 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
   return (
     <CommandPrimitive.Item
       className={cn(
-        'group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
-        'aria-selected:bg-accent aria-selected:text-accent-foreground aria-selected:outline-none',
-        'aria-disabled:opacity-50',
+        'aria-selected:bg-accent aria-selected:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 aria-selected:outline-none',
         className,
       )}
       {...props}
@@ -164,8 +151,7 @@ function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Ele
   return (
     <span
       className={cn(
-        'text-muted-foreground ml-auto text-xs tracking-widest',
-        'group-aria-selected:text-accent-foreground',
+        'text-muted-foreground group-aria-selected:text-accent-foreground ml-auto text-xs tracking-widest',
         className,
       )}
       {...props}
