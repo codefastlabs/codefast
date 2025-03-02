@@ -37,12 +37,12 @@ export function NavActions({ actions, className, ...props }: NavActionsProps): J
   return (
     <div className={cn('flex items-center gap-2 text-sm', className)} {...props}>
       <div className="text-muted-foreground hidden font-medium md:inline-block">Edit Oct 08</div>
-      <Button icon className="h-7 w-7" size="xxs" variant="ghost">
+      <Button icon className="h-7 w-7" size="2xs" variant="ghost">
         <StarIcon />
       </Button>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <Button icon className="data-[state=open]:bg-accent h-7 w-7" size="xxs" variant="ghost">
+          <Button icon className="data-[state=open]:bg-accent h-7 w-7" size="2xs" variant="ghost">
             <MoreHorizontalIcon />
           </Button>
         </PopoverTrigger>

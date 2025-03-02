@@ -270,7 +270,7 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): 
       icon
       className={cn('', className)}
       data-sidebar="trigger"
-      size="xxs"
+      size="2xs"
       variant="ghost"
       onClick={(event) => {
         onClick?.(event);
