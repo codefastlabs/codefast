@@ -186,7 +186,7 @@ function DataTableColumnHeader<TData, TValue>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className={cn('p-0', 'hover:not-disabled:bg-initial', 'focus-visible:ring-0')}
+          className={cn('hover:not-disabled:bg-initial p-0 focus-visible:ring-0')}
           size="xs"
           suffix={<SortIcon sorted={column.getIsSorted()} />}
           variant="ghost"

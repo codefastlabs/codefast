@@ -58,10 +58,7 @@ function MenubarTrigger({ className, ...props }: MenubarTriggerProps): JSX.Eleme
   return (
     <MenubarPrimitive.Trigger
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex select-none items-center rounded-sm text-sm font-medium',
-        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm font-medium focus:outline-none',
         className,
       )}
       {...props}
@@ -81,10 +78,7 @@ function MenubarSubTrigger({ children, className, inset, ...props }: MenubarSubT
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'flex select-none items-center rounded-sm text-sm',
-        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
         inset && 'pl-8',
         className,
       )}
@@ -107,17 +101,7 @@ function MenubarSubContent({ className, ...props }: MenubarSubContentProps): JSX
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.SubContent
         className={cn(
-          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
-          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-          'data-[state=open]:data-[side=top]:slide-from-b-2',
-          'data-[state=open]:data-[side=right]:slide-from-l-2',
-          'data-[state=open]:data-[side=bottom]:slide-from-t-2',
-          'data-[state=open]:data-[side=left]:slide-from-r-2',
-          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-          'data-[state=closed]:data-[side=top]:slide-to-b-2',
-          'data-[state=closed]:data-[side=right]:slide-to-l-2',
-          'data-[state=closed]:data-[side=bottom]:slide-to-t-2',
-          'data-[state=closed]:data-[side=left]:slide-to-r-2',
+          'bg-popover text-popover-foreground ring-border shadow-border data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=right]:slide-to-l-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=left]:slide-to-r-2 z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           className,
         )}
         {...props}
@@ -145,12 +129,7 @@ function MenubarContent({
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          'bg-popover text-popover-foreground ring-border shadow-border z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
-          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-          'data-[state=open]:data-[side=top]:slide-from-b-2',
-          'data-[state=open]:data-[side=right]:slide-from-l-2',
-          'data-[state=open]:data-[side=bottom]:slide-from-t-2',
-          'data-[state=open]:data-[side=left]:slide-from-r-2',
+          'bg-popover text-popover-foreground ring-border shadow-border data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 z-50 min-w-32 rounded-lg p-1 shadow-lg ring',
           className,
         )}
         sideOffset={sideOffset}
@@ -172,10 +151,7 @@ function MenubarItem({ className, inset, ...props }: MenubarItemProps): JSX.Elem
   return (
     <MenubarPrimitive.Item
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'relative flex select-none items-center rounded-sm text-sm',
-        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         inset && 'pl-8',
         className,
       )}
@@ -195,11 +171,7 @@ function MenubarCheckboxItem({ checked, children, className, ...props }: Menubar
     <MenubarPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'pl-8',
-        'relative flex select-none items-center rounded-sm text-sm',
-        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
       {...props}
@@ -224,11 +196,7 @@ function MenubarRadioItem({ children, className, ...props }: MenubarRadioItemPro
   return (
     <MenubarPrimitive.RadioItem
       className={cn(
-        'gap-x-2 px-3 py-1.5',
-        'pl-8',
-        'relative flex select-none items-center rounded-sm text-sm',
-        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
       {...props}
@@ -254,7 +222,7 @@ interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
       {...props}
     />
   );
