@@ -43,7 +43,7 @@ function DrawerContent({ children, className, ...props }: DrawerContentProps): J
         )}
         {...props}
       >
-        <div className="bg-muted mx-auto mt-4 h-2 w-24 rounded-full" />
+        <div className="bg-muted mx-auto my-3 h-1.5 w-12 rounded-full" />
         {children}
       </DrawerPrimitive.Content>
     </DrawerPrimitive.Portal>
