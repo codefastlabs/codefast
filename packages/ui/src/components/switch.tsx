@@ -25,7 +25,7 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
     >
       <SwitchPrimitives.Thumb
         className={cn(
-          'bg-background shadow-xs pointer-events-none block size-3.5 rounded-full shadow transition',
+          'bg-background pointer-events-none block size-3.5 rounded-full shadow-sm transition',
           'data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0',
         )}
       />
