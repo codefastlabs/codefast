@@ -135,7 +135,7 @@ function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicato
       )}
       {...props}
     >
-      <div className="bg-popover ring-border rounded-tl-xs relative top-[60%] size-2.5 rotate-45 ring" />
+      <div className="bg-popover text-popover-foreground ring-border rounded-tl-xs relative top-[60%] size-2.5 rotate-45 ring" />
     </NavigationMenuPrimitive.Indicator>
   );
 }
