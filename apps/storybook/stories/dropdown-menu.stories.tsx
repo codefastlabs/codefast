@@ -22,6 +22,9 @@ import { useState } from 'react';
 
 const meta = {
   component: DropdownMenu,
+  parameters: {
+    layout: 'centered',
+  },
   tags: ['autodocs'],
   title: 'UI/Dropdown Menu',
 } satisfies Meta<typeof DropdownMenu>;
