@@ -11,7 +11,7 @@ type CardProps = ComponentProps<'div'>;
 function Card({ className, ...props }: CardProps): JSX.Element {
   return (
     <div
-      className={cn('bg-card text-card-foreground ring-border shadow-border rounded-xl shadow-md ring', className)}
+      className={cn('bg-card text-card-foreground ring-border shadow-border rounded-xl shadow-sm ring', className)}
       {...props}
     />
   );
