@@ -38,7 +38,7 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
       >
         <div
           className={cn(
-            'bg-background ring-border shadow-border relative row-start-2 flex w-full flex-col rounded-t-2xl shadow-lg ring sm:max-w-lg sm:rounded-2xl',
+            'bg-background ring-border relative row-start-2 flex w-full flex-col rounded-t-2xl shadow-lg ring sm:max-w-lg sm:rounded-2xl',
             className,
           )}
         >

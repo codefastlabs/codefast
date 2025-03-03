@@ -18,7 +18,7 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        'bg-popover text-popover-foreground ring-border shadow-border shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg ring focus-visible:outline-none',
+        'bg-popover text-popover-foreground ring-border shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg ring focus-visible:outline-none',
         className,
       )}
       {...props}
