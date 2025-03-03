@@ -41,7 +41,10 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
   return (
     <SelectPrimitive.Trigger
       className={buttonVariants({
-        className: ['w-full justify-between px-3 font-normal shadow-sm [&>span]:truncate', className],
+        className: [
+          'focus:ring-ring focus:ring-3 focus:border-input-focus w-full justify-between px-3 font-normal [&>span]:truncate',
+          className,
+        ],
         size,
         variant: 'outline',
       })}

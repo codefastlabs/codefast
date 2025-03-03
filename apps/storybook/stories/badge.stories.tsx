@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Badge } from '@codefast/ui';
-import { ShieldCheckIcon } from 'lucide-react';
 
 const meta = {
   args: {
@@ -33,37 +32,41 @@ export const Default: Story = {
 export const Sizes: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-4">
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="sm">
-        sm badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="md">
-        md badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="lg">
-        lg badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="xl">
-        xl badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="2xl">
-        2xl badge
-      </Badge>
+      <div className="flex flex-wrap items-center gap-4">
+        <Badge {...args} size="xs">
+          xs badge
+        </Badge>
+        <Badge {...args} size="sm">
+          sm badge
+        </Badge>
+        <Badge {...args} size="md">
+          md badge
+        </Badge>
+        <Badge {...args} size="lg">
+          lg badge
+        </Badge>
+        <Badge {...args} size="xl">
+          xl badge
+        </Badge>
+      </div>
 
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="sm" variant="outline">
-        sm badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="md" variant="outline">
-        md badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="lg" variant="outline">
-        lg badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="xl" variant="outline">
-        xl badge
-      </Badge>
-      <Badge {...args} prefix={<ShieldCheckIcon />} size="2xl" variant="outline">
-        2xl badge
-      </Badge>
+      <div className="flex flex-wrap items-center gap-4">
+        <Badge {...args} size="xs" variant="outline">
+          xs badge
+        </Badge>
+        <Badge {...args} size="sm" variant="outline">
+          sm badge
+        </Badge>
+        <Badge {...args} size="md" variant="outline">
+          md badge
+        </Badge>
+        <Badge {...args} size="lg" variant="outline">
+          lg badge
+        </Badge>
+        <Badge {...args} size="xl" variant="outline">
+          xl badge
+        </Badge>
+      </div>
     </div>
   ),
 };

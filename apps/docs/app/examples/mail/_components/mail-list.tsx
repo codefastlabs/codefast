@@ -21,8 +21,8 @@ export function MailList({ items }: MailListProps): JSX.Element {
           <button
             key={item.id}
             className={cn(
-              'hover:bg-accent flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all',
-              mail.selected === item.id && 'bg-muted',
+              'hover:bg-accent/60 flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all',
+              mail.selected === item.id && 'bg-accent',
             )}
             type="button"
             onClick={() => {
@@ -38,6 +38,7 @@ export function MailList({ items }: MailListProps): JSX.Element {
                   <div className="font-semibold">{item.name}</div>
                   {!item.read && <span className="flex size-2 rounded-full bg-blue-600" />}
                 </div>
+
                 <div
                   className={cn(
                     'ml-auto text-xs',
@@ -49,8 +50,10 @@ export function MailList({ items }: MailListProps): JSX.Element {
                   })}
                 </div>
               </div>
+
               <div className="text-xs font-medium">{item.subject}</div>
             </div>
+
             <div className="text-muted-foreground line-clamp-2 text-xs">{item.text.slice(0, 300)}</div>
             {item.labels.length > 0 ? (
               <div className="flex items-center gap-2">

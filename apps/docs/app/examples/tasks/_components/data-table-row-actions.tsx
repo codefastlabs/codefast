@@ -39,13 +39,19 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
           variant="ghost"
         />
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end" className="w-[10rem]">
         <DropdownMenuItem>Edit</DropdownMenuItem>
+
         <DropdownMenuItem>Make a copy</DropdownMenuItem>
+
         <DropdownMenuItem>Favorite</DropdownMenuItem>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
+
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup value={task.label}>
               {labels.map((label) => (
@@ -56,7 +62,9 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuItem>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>

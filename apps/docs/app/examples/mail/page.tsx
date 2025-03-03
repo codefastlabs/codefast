@@ -18,8 +18,10 @@ export default async function MailPage(): Promise<JSX.Element> {
     <>
       <div className="md:hidden">
         <Image alt="Mail" className="hidden dark:block" height={727} src="/examples/mail-dark.png" width={1280} />
+
         <Image alt="Mail" className="block dark:hidden" height={727} src="/examples/mail-light.png" width={1280} />
       </div>
+
       <div className="hidden flex-col md:flex">
         <Mail
           accounts={accounts}

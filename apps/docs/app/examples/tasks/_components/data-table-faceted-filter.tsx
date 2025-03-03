@@ -45,9 +45,11 @@ export function DataTableFacetedFilter<TData, TValue>({
           {selectedValues.size > 0 && (
             <>
               <Separator className="mx-2 h-4" orientation="vertical" />
+
               <Badge className="rounded-sm px-1 font-normal lg:hidden" variant="secondary">
                 {selectedValues.size}
               </Badge>
+
               <div className="flex gap-x-1 max-lg:hidden">
                 {selectedValues.size > 2 ? (
                   <Badge className="rounded text-xs font-normal" variant="secondary">
@@ -67,11 +69,14 @@ export function DataTableFacetedFilter<TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent align="start" className="w-[12.5rem] p-0">
         <Command>
           <CommandInput placeholder={title} />
+
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
+
             <CommandGroup>
               {options.map(({ icon: Icon, ...option }) => {
                 const isSelected = selectedValues.has(option.value);
@@ -102,6 +107,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                       <CheckIcon className="size-4" />
                     </div>
                     {Icon ? <Icon className="text-muted-foreground mr-2 size-4" /> : null}
+
                     <span>{option.label}</span>
                     {facets?.get(option.value) ? (
                       <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
@@ -115,6 +121,7 @@ export function DataTableFacetedFilter<TData, TValue>({
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />
+
                 <CommandGroup>
                   <CommandItem
                     className="justify-center text-center"

@@ -4,7 +4,7 @@ import { tv } from 'tailwind-variants';
 
 const inputVariants = tv({
   slots: {
-    root: 'border-input shadow-input bg-background [&>svg]:text-muted-foreground hover:not-data-[disabled=true]:not-focus-within:border-input-hover focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 flex w-full grow items-center gap-3 rounded-lg border px-3 text-sm shadow-sm transition [&>svg]:shrink-0',
+    root: 'border-input bg-background [&>svg]:text-muted-foreground hover:not-has-disabled:not-focus-within:border-input-hover focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 not-has-disabled:shadow-xs flex w-full grow items-center gap-3 rounded-lg border px-3 text-sm transition [&>svg]:shrink-0',
     input: 'placeholder:text-muted-foreground peer size-full outline-none file:bg-transparent file:font-medium',
   },
   variants: {

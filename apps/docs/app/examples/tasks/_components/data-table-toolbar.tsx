@@ -43,6 +43,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           </Button>
         ) : null}
       </div>
+
       <DataTableViewOptions table={table} />
     </div>
   );

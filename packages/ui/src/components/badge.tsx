@@ -8,56 +8,56 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const badgeVariants = tv({
-  base: 'shadow-xs inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-2.5 text-sm font-medium [&>svg]:shrink-0',
+  base: 'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg font-semibold [&>svg]:shrink-0',
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
-      sm: 'h-5 [&>svg]:size-3', // 20px
-      md: 'h-6 [&>svg]:size-3', // 24px
-      lg: 'h-7 [&>svg]:size-4', // 28px
-      xl: 'h-8 [&>svg]:size-5', // 32px
-      '2xl': 'h-9 [&>svg]:size-5', // 36px
+      xs: 'px-2.25 h-5 text-xs [&>svg]:size-3', // 20px
+      sm: 'h-6 px-2.5 text-xs [&>svg]:size-3', // 24px
+      md: 'px-2.75 h-7 text-sm [&>svg]:size-4', // 28px
+      lg: 'h-8 px-3 text-sm [&>svg]:size-5', // 32px
+      xl: 'px-3.25 h-9 text-sm [&>svg]:size-5', // 36px
     },
     variant: {
-      default: 'bg-primary text-primary-foreground shadow-primary',
-      secondary: 'bg-secondary shadow-secondary text-secondary-foreground',
-      info: 'bg-info shadow-info text-info-foreground',
-      success: 'bg-success shadow-success text-success-foreground',
-      warning: 'bg-warning shadow-warning text-warning-foreground',
-      destructive: 'bg-destructive shadow-destructive text-destructive-foreground',
-      outline: 'bg-background border-input shadow-input border',
+      default: 'bg-primary text-primary-foreground',
+      secondary: 'bg-secondary text-secondary-foreground',
+      info: 'bg-info text-info-foreground',
+      success: 'bg-success text-success-foreground',
+      warning: 'bg-warning text-warning-foreground',
+      destructive: 'bg-destructive text-destructive-foreground',
+      outline: 'bg-background border-input border',
     },
   },
   defaultVariants: {
     icon: false,
-    size: 'md',
+    size: 'sm',
     variant: 'default',
   },
   compoundVariants: [
     {
       className: 'w-8',
       icon: true,
-      size: 'sm',
+      size: 'xs',
     },
     {
       className: 'w-9',
       icon: true,
-      size: 'md',
+      size: 'sm',
     },
     {
       className: 'w-10',
       icon: true,
-      size: 'lg',
+      size: 'md',
     },
     {
       className: 'w-11',
       icon: true,
-      size: 'xl',
+      size: 'lg',
     },
     {
       className: 'w-12',
       icon: true,
-      size: '2xl',
+      size: 'xl',
     },
   ],
 });
