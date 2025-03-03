@@ -90,7 +90,9 @@ export function Mail({
         <div className={cn('flex h-[3.5rem] items-center justify-center', isCollapsed ? 'h-[3.25rem]' : 'px-2')}>
           <AccountSwitcher accounts={accounts} isCollapsed={isCollapsed} />
         </div>
+
         <Separator />
+
         <Nav
           isCollapsed={isCollapsed}
           links={[
@@ -132,7 +134,9 @@ export function Mail({
             },
           ]}
         />
+
         <Separator />
+
         <Nav
           isCollapsed={isCollapsed}
           links={[
@@ -169,35 +173,41 @@ export function Mail({
           ]}
         />
       </ResizablePanel>
+
       <ResizableHandle withHandle />
+
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
         <Tabs defaultValue="all">
           <div className="flex items-center px-4 py-2">
             <h1 className="text-xl font-bold">Inbox</h1>
+
             <TabsList className="ml-auto">
-              <TabsTrigger className="text-zinc-600 dark:text-zinc-200" value="all">
-                All mail
-              </TabsTrigger>
-              <TabsTrigger className="text-zinc-600 dark:text-zinc-200" value="unread">
-                Unread
-              </TabsTrigger>
+              <TabsTrigger value="all">All mail</TabsTrigger>
+
+              <TabsTrigger value="unread">Unread</TabsTrigger>
             </TabsList>
           </div>
+
           <Separator />
+
           <div className="bg-background/95 supports-backdrop-filter:bg-background/60 p-4 backdrop-blur-sm">
             <form>
               <Input placeholder="Search" prefix={<SearchIcon className="text-muted-foreground" />} />
             </form>
           </div>
+
           <TabsContent className="m-0" value="all">
             <MailList items={mails} />
           </TabsContent>
+
           <TabsContent className="m-0" value="unread">
             <MailList items={mails.filter((item) => !item.read)} />
           </TabsContent>
         </Tabs>
       </ResizablePanel>
+
       <ResizableHandle withHandle />
+
       <ResizablePanel defaultSize={defaultLayout[2]}>
         <MailDisplay mail={mails.find((item) => item.id === mail.selected)} />
       </ResizablePanel>
