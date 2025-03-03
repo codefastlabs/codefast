@@ -39,10 +39,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        'inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium outline-transparent transition-all',
-        'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
-        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
-        'disabled:opacity-50',
+        'data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:ring-ring focus-visible:ring-3 inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium outline-transparent transition-all focus-visible:outline-none disabled:opacity-50 data-[state=active]:shadow-sm',
         className,
       )}
       {...props}
@@ -60,8 +57,7 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
-        'mt-2 rounded-xl',
-        'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
+        'focus-visible:ring-ring focus-visible:ring-3 mt-2 rounded-xl focus-visible:outline-none',
         className,
       )}
       {...props}

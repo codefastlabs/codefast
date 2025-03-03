@@ -15,33 +15,15 @@ import { buttonVariants } from '@/variants/button.variants';
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: [
-    'bg-background animation-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
-    'data-[state=open]:animate-in data-[state=open]:animation-duration-500',
-    'data-[state=closed]:animate-out data-[state=closed]:animation-duration-500',
-  ],
+  base: 'bg-background animation-ease-in-out data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 fixed z-50 flex flex-col overflow-auto shadow-lg',
   variants: {
     side: {
-      bottom: [
-        'inset-x-0 bottom-0 max-h-screen border-t',
-        'data-[state=open]:slide-from-b-full',
-        'data-[state=closed]:slide-to-b-full',
-      ],
-      left: [
-        'inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
-        'data-[state=open]:slide-from-l-full',
-        'data-[state=closed]:slide-to-l-full',
-      ],
-      right: [
-        'inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
-        'data-[state=open]:slide-from-r-full',
-        'data-[state=closed]:slide-to-r-full',
-      ],
-      top: [
-        'inset-x-0 top-0 max-h-screen border-b',
-        'data-[state=open]:slide-from-t-full',
-        'data-[state=closed]:slide-to-t-full',
-      ],
+      bottom:
+        'data-[state=open]:slide-from-b-full data-[state=closed]:slide-to-b-full inset-x-0 bottom-0 max-h-screen border-t',
+      left: 'data-[state=open]:slide-from-l-full data-[state=closed]:slide-to-l-full inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+      right:
+        'data-[state=open]:slide-from-r-full data-[state=closed]:slide-to-r-full inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
+      top: 'data-[state=open]:slide-from-t-full data-[state=closed]:slide-to-t-full inset-x-0 top-0 max-h-screen border-b',
     },
   },
   defaultVariants: {
@@ -74,13 +56,7 @@ type SheetContentProps = ComponentProps<typeof SheetPrimitive.Content> & SheetCo
 function SheetContent({ children, className, side = 'right', ...props }: SheetContentProps): JSX.Element {
   return (
     <SheetPrimitive.Portal>
-      <SheetPrimitive.Overlay
-        className={cn(
-          'bg-popover-overlay fixed inset-0 z-50',
-          'data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500',
-          'data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500',
-        )}
-      />
+      <SheetPrimitive.Overlay className="bg-popover-overlay data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500 fixed inset-0 z-50" />
       <SheetPrimitive.Content className={sheetContentVariants({ className, side })} {...props}>
         {children}
         <SheetPrimitive.Close
