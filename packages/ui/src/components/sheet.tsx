@@ -16,7 +16,7 @@ import { buttonVariants } from '@/variants/button.variants';
 
 const sheetContentVariants = tv({
   base: [
-    'bg-background animation-ease-in-out shadow-xs fixed z-50 flex flex-col overflow-auto',
+    'bg-background animation-ease-in-out fixed z-50 flex flex-col overflow-auto shadow-lg',
     'data-[state=open]:animate-in data-[state=open]:animation-duration-500',
     'data-[state=closed]:animate-out data-[state=closed]:animation-duration-500',
   ],
