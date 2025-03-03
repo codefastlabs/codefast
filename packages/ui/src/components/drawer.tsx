@@ -38,7 +38,7 @@ function DrawerContent({ children, className, ...props }: DrawerContentProps): J
       <DrawerPrimitive.Overlay className="bg-popover-overlay fixed inset-0 z-50" />
       <DrawerPrimitive.Content
         className={cn(
-          'bg-background ring-border fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-2xl ring',
+          'bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-2xl border',
           className,
         )}
         {...props}
