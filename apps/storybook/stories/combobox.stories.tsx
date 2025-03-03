@@ -50,7 +50,7 @@ import {
   CalendarIcon,
   CheckCircle2Icon,
   CheckIcon,
-  ChevronDownIcon,
+  ChevronsUpDownIcon,
   CircleIcon,
   HelpCircleIcon,
   MoreHorizontalIcon,
@@ -116,7 +116,7 @@ export const Default: Story = {
             aria-expanded={open}
             className="w-[12.5rem] justify-between px-3"
             role="combobox"
-            suffix={<ChevronDownIcon className="opacity-50" />}
+            suffix={<ChevronsUpDownIcon className="opacity-50" />}
             variant="outline"
           >
             {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
@@ -449,7 +449,7 @@ export const WithReactHookForm: Story = {
                       <Button
                         className={cn('w-[12.5rem] justify-between px-3', !field.value && 'text-muted-foreground')}
                         role="combobox"
-                        suffix={<ChevronDownIcon className="opacity-50" />}
+                        suffix={<ChevronsUpDownIcon className="opacity-50" />}
                         variant="outline"
                       >
                         {field.value
