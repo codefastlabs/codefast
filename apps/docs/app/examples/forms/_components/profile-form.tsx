@@ -64,6 +64,8 @@ const defaultValues: Partial<ProfileFormValues> = {
       value: 'https://www.chromatic.com/library?appId=65f6e20be4fe47733636320a',
     },
   ],
+  username: '',
+  email: '',
 };
 
 export function ProfileForm(): JSX.Element {

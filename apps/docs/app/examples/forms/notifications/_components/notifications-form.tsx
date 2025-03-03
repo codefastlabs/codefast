@@ -170,7 +170,7 @@ export function NotificationsForm(): JSX.Element {
           control={form.control}
           name="mobile"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-y-0">
+            <FormItem inline className="flex flex-row items-start gap-x-2">
               <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
