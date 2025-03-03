@@ -18,7 +18,7 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        'bg-popover text-popover-foreground ring-border shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg ring focus-visible:outline-none',
+        'bg-popover text-popover-foreground shadow-xs flex h-full w-full flex-col overflow-hidden rounded-lg border focus-visible:outline-none',
         className,
       )}
       {...props}
@@ -36,7 +36,7 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
   return (
     <Dialog {...props}>
       <DialogContent className="p-0">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground shadow-none ring-0 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
+        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground border-none shadow-none [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
           {children}
         </Command>
       </DialogContent>

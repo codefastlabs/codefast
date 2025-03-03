@@ -111,7 +111,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
     <div className="perspective-2000 absolute left-0 top-full flex justify-center">
       <NavigationMenuPrimitive.Viewport
         className={cn(
-          'bg-popover text-popover-foreground ring-border h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width) data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 relative mt-2 w-full origin-[top_center] overflow-hidden rounded-xl p-1 shadow-lg ring transition-[width,height]',
+          'bg-popover text-popover-foreground h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width) data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 relative mt-2 w-full origin-[top_center] overflow-hidden rounded-xl border p-1 shadow-lg transition-[width,height]',
           className,
         )}
         {...props}
@@ -135,7 +135,7 @@ function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicato
       )}
       {...props}
     >
-      <div className="bg-popover text-popover-foreground ring-border rounded-tl-xs relative top-[60%] size-2.5 rotate-45 ring" />
+      <div className="bg-popover text-popover-foreground rounded-tl-xs relative top-[60%] size-2.5 rotate-45 border" />
     </NavigationMenuPrimitive.Indicator>
   );
 }

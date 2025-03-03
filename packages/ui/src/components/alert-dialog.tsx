@@ -42,7 +42,7 @@ function AlertDialogContent({ children, className, ...props }: AlertDialogConten
         )}
         {...props}
       >
-        <div className="bg-popover text-popover-foreground ring-border relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl shadow-lg ring">
+        <div className="bg-popover text-popover-foreground relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border shadow-lg">
           {children}
         </div>
       </AlertDialogPrimitive.Content>
