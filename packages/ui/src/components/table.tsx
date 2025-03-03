@@ -69,10 +69,7 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
     <tr
       className={cn(
-        'border-b',
-        'hover:bg-muted/50',
-        'has-aria-expanded:bg-muted/50',
-        'data-[state=selected]:bg-muted',
+        'hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted border-b',
         className,
       )}
       {...props}

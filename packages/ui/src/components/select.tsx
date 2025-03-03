@@ -41,7 +41,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
   return (
     <SelectPrimitive.Trigger
       className={buttonVariants({
-        className: ['w-full justify-between px-3 font-normal shadow-sm', '[&>span]:truncate', className],
+        className: ['w-full justify-between px-3 font-normal shadow-sm [&>span]:truncate', className],
         size,
         variant: 'outline',
       })}
@@ -100,23 +100,9 @@ function SelectContent({ children, className, position = 'popper', ...props }: S
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground ring-border shadow-border relative z-50 max-h-96 min-w-32 overflow-hidden rounded-lg shadow-lg ring',
-          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-          'data-[state=open]:data-[side=top]:slide-from-b-2',
-          'data-[state=open]:data-[side=right]:slide-from-l-2',
-          'data-[state=open]:data-[side=bottom]:slide-from-t-2',
-          'data-[state=open]:data-[side=left]:slide-from-r-2',
-          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-          'data-[state=closed]:data-[side=top]:slide-to-b-2',
-          'data-[state=closed]:data-[side=right]:slide-to-l-2',
-          'data-[state=closed]:data-[side=bottom]:slide-to-t-2',
-          'data-[state=closed]:data-[side=left]:slide-to-r-2',
-          position === 'popper' && [
-            'data-[side=top]:-translate-y-1',
-            'data-[side=right]:translate-x-1',
-            'data-[side=bottom]:translate-y-1',
-            'data-[side=left]:-translate-x-1',
-          ],
+          'bg-popover text-popover-foreground ring-border shadow-border data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=right]:slide-to-l-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=left]:slide-to-r-2 relative z-50 max-h-96 min-w-32 overflow-hidden rounded-lg shadow-lg ring',
+          position === 'popper' &&
+            'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
           className,
         )}
         position={position}
@@ -146,7 +132,7 @@ type SelectLabelProps = ComponentProps<typeof SelectPrimitive.Label>;
 function SelectLabel({ className, ...props }: SelectLabelProps): JSX.Element {
   return (
     <SelectPrimitive.Label
-      className={cn('gap-x-2 px-3 py-1.5', 'flex items-center text-sm font-semibold', className)}
+      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
       {...props}
     />
   );
@@ -162,9 +148,7 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
   return (
     <SelectPrimitive.Item
       className={cn(
-        'relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm',
-        'focus:bg-accent focus:text-accent-foreground focus:outline-none',
-        'aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
       {...props}

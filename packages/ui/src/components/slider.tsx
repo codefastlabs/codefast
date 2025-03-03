@@ -13,7 +13,7 @@ type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
 function Slider({ className, ...props }: SliderProps): JSX.Element {
   return (
     <SliderPrimitive.Root
-      className={cn('relative flex w-full touch-none select-none items-center', 'data-disabled:opacity-50', className)}
+      className={cn('data-disabled:opacity-50 relative flex w-full touch-none select-none items-center', className)}
       {...props}
     >
       <SliderPrimitive.Track className="bg-muted relative h-1 w-full grow overflow-hidden rounded-full">
@@ -25,10 +25,7 @@ function Slider({ className, ...props }: SliderProps): JSX.Element {
           // eslint-disable-next-line react/no-array-index-key -- index is stable
           key={index}
           className={cn(
-            'border-primary shadow-input bg-primary flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition',
-            'after:bg-background after:size-full after:rounded-full after:transition-[width,height]',
-            'active:not-data-disabled:after:size-1',
-            'focus-visible:ring-ring focus-visible:ring-3 focus-visible:outline-none',
+            'border-primary shadow-input bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-ring focus-visible:ring-3 flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition after:size-full after:rounded-full after:transition-[width,height] focus-visible:outline-none',
           )}
           {...(props.tabIndex === undefined ? undefined : { tabIndex: props.tabIndex })}
         />

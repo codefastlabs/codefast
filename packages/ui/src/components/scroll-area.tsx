@@ -17,12 +17,36 @@ import { cn } from '@/lib/utils';
 const scrollAreaScrollbarVariants = tv({
   base: 'flex touch-none select-none p-px transition',
   compoundVariants: [
-    { className: 'w-1.5', orientation: 'vertical', size: 'sm' },
-    { className: 'w-2', orientation: 'vertical', size: 'md' },
-    { className: 'w-2.5', orientation: 'vertical', size: 'lg' },
-    { className: 'h-1.5', orientation: 'horizontal', size: 'sm' },
-    { className: 'h-2', orientation: 'horizontal', size: 'md' },
-    { className: 'h-2.5', orientation: 'horizontal', size: 'lg' },
+    {
+      className: 'w-1.5',
+      orientation: 'vertical',
+      size: 'sm',
+    },
+    {
+      className: 'w-2',
+      orientation: 'vertical',
+      size: 'md',
+    },
+    {
+      className: 'w-2.5',
+      orientation: 'vertical',
+      size: 'lg',
+    },
+    {
+      className: 'h-1.5',
+      orientation: 'horizontal',
+      size: 'sm',
+    },
+    {
+      className: 'h-2',
+      orientation: 'horizontal',
+      size: 'md',
+    },
+    {
+      className: 'h-2.5',
+      orientation: 'horizontal',
+      size: 'lg',
+    },
   ],
   variants: {
     orientation: {
