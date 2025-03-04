@@ -128,15 +128,13 @@ export const Variants: Story = {
   args: { className: '[&_button]:capitalize' },
   render: (args) => (
     <div className="flex flex-col gap-2">
-      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'] as const).map(
-        (variant) => (
-          <ToggleGroup key={variant} {...args} variant={variant}>
-            <ToggleGroupItem value="1">{variant} 1</ToggleGroupItem>
-            <ToggleGroupItem value="2">{variant} 2</ToggleGroupItem>
-            <ToggleGroupItem value="3">{variant} 3</ToggleGroupItem>
-          </ToggleGroup>
-        ),
-      )}
+      {(['default', 'outline'] as const).map((variant) => (
+        <ToggleGroup key={variant} {...args} variant={variant}>
+          <ToggleGroupItem value="1">{variant} 1</ToggleGroupItem>
+          <ToggleGroupItem value="2">{variant} 2</ToggleGroupItem>
+          <ToggleGroupItem value="3">{variant} 3</ToggleGroupItem>
+        </ToggleGroup>
+      ))}
     </div>
   ),
 };
