@@ -13,9 +13,9 @@
    * --color-input-hover - Interactive state for better visual feedback
    * --color-input-focus - Strong visual indicator for focused state
    */
-  --color-input: var(--color-zinc-300);
-  --color-input-hover: var(--color-sky-500);
-  --color-input-focus: var(--color-sky-400);
+  --color-input: var(--color-slate-300);
+  --color-input-hover: var(--color-slate-500);
+  --color-input-focus: var(--color-slate-400);
 
   /**
    * Core UI Elements
@@ -23,8 +23,8 @@
    * --color-border - Subtle boundaries between UI elements
    * --color-ring - Soft focus indicator for interactive elements
    */
-  --color-border: var(--color-zinc-300);
-  --color-ring: color-mix(in oklab, var(--color-sky-400) 35%, transparent);
+  --color-border: var(--color-slate-300);
+  --color-ring: color-mix(in oklab, var(--color-slate-400) 35%, transparent);
 
   /**
    * Base Theme
@@ -33,7 +33,7 @@
    * --color-foreground - Primary text color
    */
   --color-background: var(--color-white);
-  --color-foreground: var(--color-zinc-950);
+  --color-foreground: var(--color-slate-950);
 
   /**
    * Primary Theme
@@ -44,9 +44,9 @@
    * - Selected states
    * - Focus indicators
    */
-  --color-primary: var(--color-sky-600);
-  --color-primary-hover: var(--color-sky-700);
-  --color-primary-foreground: var(--color-sky-50);
+  --color-primary: var(--color-slate-600);
+  --color-primary-hover: var(--color-slate-700);
+  --color-primary-foreground: var(--color-slate-50);
 
   /**
    * Secondary Theme
@@ -56,9 +56,9 @@
    * - Alternative actions
    * - Less prominent UI elements
    */
-  --color-secondary: var(--color-zinc-200);
-  --color-secondary-hover: var(--color-zinc-300);
-  --color-secondary-foreground: var(--color-zinc-950);
+  --color-secondary: var(--color-slate-200);
+  --color-secondary-hover: var(--color-slate-300);
+  --color-secondary-foreground: var(--color-slate-950);
 
   /**
    * Status Colors
@@ -90,12 +90,10 @@
    * ---------------------------------------------------------------------------
    * Used for:
    * - Highlighting key features
-   * - Brand elements
-   * - Important UI components
    */
-  --color-accent: var(--color-zinc-100);
-  --color-accent-hover: var(--color-zinc-300);
-  --color-accent-foreground: var(--color-zinc-950);
+  --color-accent: var(--color-sky-100);
+  --color-accent-hover: var(--color-sky-300);
+  --color-accent-foreground: var(--color-sky-950);
 
   /**
    * Muted Theme
@@ -105,8 +103,8 @@
    * - Placeholders
    * - Disabled states
    */
-  --color-muted: var(--color-zinc-200);
-  --color-muted-foreground: var(--color-zinc-500);
+  --color-muted: var(--color-slate-200);
+  --color-muted-foreground: var(--color-slate-600);
 
   /**
    * Overlay Components
@@ -117,8 +115,8 @@
    * - Modal dialogs
    */
   --color-popover: var(--color-white);
-  --color-popover-overlay: color-mix(in oklab, var(--color-zinc-950) 15%, transparent);
-  --color-popover-foreground: var(--color-zinc-950);
+  --color-popover-overlay: color-mix(in oklab, var(--color-slate-950) 15%, transparent);
+  --color-popover-foreground: var(--color-slate-950);
 
   /**
    * Card Components
@@ -129,7 +127,7 @@
    * - Feature boxes
    */
   --color-card: var(--color-white);
-  --color-card-foreground: var(--color-zinc-950);
+  --color-card-foreground: var(--color-slate-950);
 
   /**
    * Sidebar Navigation
@@ -140,17 +138,17 @@
    * - Borders and separators
    * - Focus indicators
    */
-  --color-sidebar: var(--color-zinc-50);
-  --color-sidebar-foreground: var(--color-zinc-700);
+  --color-sidebar: var(--color-slate-50);
+  --color-sidebar-foreground: var(--color-slate-700);
 
-  --color-sidebar-primary: var(--color-zinc-900);
-  --color-sidebar-primary-foreground: var(--color-zinc-50);
+  --color-sidebar-primary: var(--color-slate-900);
+  --color-sidebar-primary-foreground: var(--color-slate-50);
 
-  --color-sidebar-accent: var(--color-zinc-100);
-  --color-sidebar-accent-foreground: var(--color-zinc-900);
+  --color-sidebar-accent: var(--color-slate-100);
+  --color-sidebar-accent-foreground: var(--color-slate-900);
 
-  --color-sidebar-border: var(--color-zinc-200);
-  --color-sidebar-ring: var(--color-sky-100);
+  --color-sidebar-border: var(--color-slate-200);
+  --color-sidebar-ring: var(--color-slate-100);
 
   /**
    * Data Visualization

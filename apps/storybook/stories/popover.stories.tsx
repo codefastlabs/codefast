@@ -4,6 +4,9 @@ import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger, Text } f
 
 const meta = {
   component: Popover,
+  parameters: {
+    layout: 'centered',
+  },
   tags: ['autodocs'],
   title: 'UI/Popover',
 } satisfies Meta<typeof Popover>;
