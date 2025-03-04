@@ -106,13 +106,11 @@ export const Variants: Story = {
   },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost'] as const).map(
-        (variant) => (
-          <Toggle key={variant} {...args} variant={variant}>
-            {variant} Toggle
-          </Toggle>
-        ),
-      )}
+      {(['default', 'outline'] as const).map((variant) => (
+        <Toggle key={variant} {...args} variant={variant}>
+          {variant} Toggle
+        </Toggle>
+      ))}
     </div>
   ),
 };

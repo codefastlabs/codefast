@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants';
 import { tv } from 'tailwind-variants';
 
 const toggleVariants = tv({
-  base: 'focus-visible:ring-ring focus-visible:ring-3 inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition focus-visible:outline-none disabled:opacity-50 [&>svg]:shrink-0',
+  base: 'focus-visible:ring-ring focus-visible:ring-3 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition focus-visible:outline-none disabled:opacity-50 [&>svg]:shrink-0',
   variants: {
     icon: { false: '', true: 'px-0' },
     size: {
@@ -15,21 +15,8 @@ const toggleVariants = tv({
       xl: 'h-12 [&>svg]:size-5', // 48px
     },
     variant: {
-      default:
-        'data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:not-disabled:bg-primary-hover hover:not-disabled:text-primary-foreground',
-      secondary:
-        'data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground hover:not-disabled:bg-secondary-hover hover:not-disabled:text-secondary-foreground',
-      info: 'data-[state=on]:bg-info data-[state=on]:text-info-foreground hover:not-disabled:bg-info-hover hover:not-disabled:text-info-foreground',
-      success:
-        'data-[state=on]:bg-success data-[state=on]:text-success-foreground hover:not-disabled:bg-success-hover hover:not-disabled:text-success-foreground',
-      warning:
-        'data-[state=on]:bg-warning data-[state=on]:text-warning-foreground hover:not-disabled:bg-warning-hover hover:not-disabled:text-warning-foreground',
-      destructive:
-        'data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground hover:not-disabled:bg-destructive-hover hover:not-disabled:text-destructive-foreground',
-      outline:
-        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground hover:not-disabled:bg-accent-hover hover:not-disabled:text-accent-foreground bg-background border-input border',
-      ghost:
-        'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground hover:not-disabled:bg-accent-hover hover:not-disabled:text-accent-foreground',
+      default: 'bg-transparent',
+      outline: 'border-input border',
     },
   },
   defaultVariants: {
@@ -44,8 +31,6 @@ const toggleVariants = tv({
     { className: 'w-10', icon: true, size: 'md' },
     { className: 'w-11', icon: true, size: 'lg' },
     { className: 'w-12', icon: true, size: 'xl' },
-    { className: '[&>svg]:size-3', size: '2xs' },
-    { className: '[&>svg]:size-3.5', size: 'xs' },
   ],
 });
 
