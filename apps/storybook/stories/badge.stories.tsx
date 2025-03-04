@@ -26,52 +26,6 @@ export const Default: Story = {
 };
 
 /* -----------------------------------------------------------------------------
- * Story: Sizes
- * -------------------------------------------------------------------------- */
-
-export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-wrap items-center gap-4">
-      <div className="flex flex-wrap items-center gap-4">
-        <Badge {...args} size="xs">
-          xs badge
-        </Badge>
-        <Badge {...args} size="sm">
-          sm badge
-        </Badge>
-        <Badge {...args} size="md">
-          md badge
-        </Badge>
-        <Badge {...args} size="lg">
-          lg badge
-        </Badge>
-        <Badge {...args} size="xl">
-          xl badge
-        </Badge>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4">
-        <Badge {...args} size="xs" variant="outline">
-          xs badge
-        </Badge>
-        <Badge {...args} size="sm" variant="outline">
-          sm badge
-        </Badge>
-        <Badge {...args} size="md" variant="outline">
-          md badge
-        </Badge>
-        <Badge {...args} size="lg" variant="outline">
-          lg badge
-        </Badge>
-        <Badge {...args} size="xl" variant="outline">
-          xl badge
-        </Badge>
-      </div>
-    </div>
-  ),
-};
-
-/* -----------------------------------------------------------------------------
  * Story: Secondary
  * -------------------------------------------------------------------------- */
 
