@@ -57,7 +57,7 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
-        'focus-visible:ring-ring focus-visible:ring-3 mt-2 rounded-xl focus-visible:outline-none',
+        'focus-visible:ring-ring focus-visible:ring-3 mt-2 rounded-lg focus-visible:outline-none',
         className,
       )}
       {...props}

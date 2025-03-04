@@ -317,7 +317,7 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
   return (
     <main
       className={cn(
-        'bg-background md:peer-data-[variant=inset]:shadow-xs relative flex min-h-svh flex-1 flex-col peer-data-[variant=inset]:min-h-[calc(100svh-var(--spacing-4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl',
+        'bg-background md:peer-data-[variant=inset]:shadow-xs relative flex min-h-svh flex-1 flex-col peer-data-[variant=inset]:min-h-[calc(100svh-var(--spacing-4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-lg',
         className,
       )}
       {...props}

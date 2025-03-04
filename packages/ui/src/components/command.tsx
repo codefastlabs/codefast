@@ -18,7 +18,7 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
-        'bg-popover text-popover-foreground flex flex-col rounded-[inherit] focus-visible:outline-none',
+        'bg-popover text-popover-foreground flex flex-col overflow-hidden rounded-[inherit] focus-visible:outline-none',
         className,
       )}
       {...props}
@@ -72,7 +72,7 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
 type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
 
 function CommandList({ className, ...props }: CommandListProps): JSX.Element {
-  return <CommandPrimitive.List className={cn('max-h-72 overflow-y-auto overflow-x-hidden', className)} {...props} />;
+  return <CommandPrimitive.List className={cn('max-h-75 overflow-y-auto overflow-x-hidden', className)} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
