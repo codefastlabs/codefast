@@ -1,12 +1,12 @@
 'use client';
 
-import type { Components, DateRange, DayButtonProps, DayPickerProps } from '@codefast-ui/day-picker';
 import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { CustomComponents, DateRange, DayButtonProps, DayPickerProps } from 'react-day-picker';
 
-import { DayFlag, DayPicker, SelectionState, UI } from '@codefast-ui/day-picker';
 import { format } from 'date-fns';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { DayFlag, DayPicker, SelectionState, UI } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
 
@@ -14,11 +14,7 @@ import { cn } from '@/lib/utils';
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-/* -----------------------------------------------------------------------------
- * Component: Chevron
- * -------------------------------------------------------------------------- */
-
-type ChevronProps = ComponentProps<Components['Chevron']>;
+type ChevronProps = ComponentProps<CustomComponents['Chevron']>;
 
 function Chevron({ orientation, ...props }: ChevronProps): JSX.Element {
   switch (orientation) {
@@ -84,41 +80,41 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
       showOutsideDays
       className={cn('', className)}
       classNames={{
-        [UI.CaptionLabel]: cn('', classNames?.[UI.CaptionLabel]),
-        [UI.Chevron]: cn('', classNames?.[UI.Chevron]),
-        [UI.Day]: cn('', classNames?.[UI.Day]),
-        [UI.DayButton]: cn('', classNames?.[UI.DayButton]),
-        [UI.Dropdown]: cn('', classNames?.[UI.Dropdown]),
-        [UI.DropdownRoot]: cn('', classNames?.[UI.DropdownRoot]),
-        [UI.Dropdowns]: cn('', classNames?.[UI.Dropdowns]),
-        [UI.Footer]: cn('', classNames?.[UI.Footer]),
-        [UI.Month]: cn('', classNames?.[UI.Month]),
-        [UI.MonthCaption]: cn('', classNames?.[UI.MonthCaption]),
-        [UI.MonthGrid]: cn('', classNames?.[UI.MonthGrid]),
-        [UI.Months]: cn('', classNames?.[UI.Months]),
-        [UI.MonthsDropdown]: cn('', classNames?.[UI.MonthsDropdown]),
-        [UI.Nav]: cn('', classNames?.[UI.Nav]),
-        [UI.NextMonthButton]: cn('', classNames?.[UI.NextMonthButton]),
-        [UI.PreviousMonthButton]: cn('', classNames?.[UI.PreviousMonthButton]),
-        [UI.Root]: cn('', classNames?.[UI.Root]),
-        [UI.Week]: cn('', classNames?.[UI.Week]),
-        [UI.Weekday]: cn('', classNames?.[UI.Weekday]),
-        [UI.Weekdays]: cn('', classNames?.[UI.Weekdays]),
-        [UI.WeekNumber]: cn('', classNames?.[UI.WeekNumber]),
-        [UI.WeekNumberHeader]: cn('', classNames?.[UI.WeekNumberHeader]),
-        [UI.Weeks]: cn('', classNames?.[UI.Weeks]),
-        [UI.YearsDropdown]: cn('', classNames?.[UI.YearsDropdown]),
+        [UI.Root]: cn('UI.Root', '', classNames?.[UI.Root]),
+        [UI.Chevron]: cn('UI.Chevron', '', classNames?.[UI.Chevron]),
+        [UI.Day]: cn('UI.Day', '', classNames?.[UI.Day]),
+        [UI.DayButton]: cn('UI.DayButton', '', classNames?.[UI.DayButton]),
+        [UI.CaptionLabel]: cn('UI.CaptionLabel', '', classNames?.[UI.CaptionLabel]),
+        [UI.Dropdowns]: cn('UI.Dropdowns', '', classNames?.[UI.Dropdowns]),
+        [UI.Dropdown]: cn('UI.Dropdown', '', classNames?.[UI.Dropdown]),
+        [UI.DropdownRoot]: cn('UI.DropdownRoot', '', classNames?.[UI.DropdownRoot]),
+        [UI.Footer]: cn('UI.Footer', '', classNames?.[UI.Footer]),
+        [UI.MonthGrid]: cn('UI.MonthGrid', '', classNames?.[UI.MonthGrid]),
+        [UI.MonthCaption]: cn('UI.MonthCaption', '', classNames?.[UI.MonthCaption]),
+        [UI.MonthsDropdown]: cn('UI.MonthsDropdown', '', classNames?.[UI.MonthsDropdown]),
+        [UI.Month]: cn('UI.Month', '', classNames?.[UI.Month]),
+        [UI.Months]: cn('UI.Months', '', classNames?.[UI.Months]),
+        [UI.Nav]: cn('UI.Nav', '', classNames?.[UI.Nav]),
+        [UI.NextMonthButton]: cn('UI.NextMonthButton', '', classNames?.[UI.NextMonthButton]),
+        [UI.PreviousMonthButton]: cn('UI.PreviousMonthButton', '', classNames?.[UI.PreviousMonthButton]),
+        [UI.Week]: cn('UI.Week', '', classNames?.[UI.Week]),
+        [UI.Weeks]: cn('UI.Weeks', '', classNames?.[UI.Weeks]),
+        [UI.Weekday]: cn('UI.Weekday', '', classNames?.[UI.Weekday]),
+        [UI.Weekdays]: cn('UI.Weekdays', '', classNames?.[UI.Weekdays]),
+        [UI.WeekNumber]: cn('UI.WeekNumber', '', classNames?.[UI.WeekNumber]),
+        [UI.WeekNumberHeader]: cn('UI.WeekNumberHeader', '', classNames?.[UI.WeekNumberHeader]),
+        [UI.YearsDropdown]: cn('UI.YearsDropdown', '', classNames?.[UI.YearsDropdown]),
 
-        [SelectionState.range_end]: cn('', classNames?.[SelectionState.range_end]),
-        [SelectionState.range_middle]: cn('', classNames?.[SelectionState.range_middle]),
-        [SelectionState.range_start]: cn('', classNames?.[SelectionState.range_start]),
-        [SelectionState.selected]: cn('', classNames?.[SelectionState.selected]),
+        [SelectionState.range_end]: cn('SelectionState.range_end', '', classNames?.[SelectionState.range_end]),
+        [SelectionState.range_middle]: cn('SelectionState.range_middle', '', classNames?.[SelectionState.range_middle]),
+        [SelectionState.range_start]: cn('SelectionState.range_start', '', classNames?.[SelectionState.range_start]),
+        [SelectionState.selected]: cn('SelectionState.selected', '', classNames?.[SelectionState.selected]),
 
-        [DayFlag.disabled]: cn('', classNames?.[DayFlag.disabled]),
-        [DayFlag.focused]: cn('', classNames?.[DayFlag.focused]),
-        [DayFlag.hidden]: cn('', classNames?.[DayFlag.hidden]),
-        [DayFlag.outside]: cn('', classNames?.[DayFlag.outside]),
-        [DayFlag.today]: cn('', classNames?.[DayFlag.today]),
+        [DayFlag.disabled]: cn('DayFlag.disabled', '', classNames?.[DayFlag.disabled]),
+        [DayFlag.focused]: cn('DayFlag.focused', '', classNames?.[DayFlag.focused]),
+        [DayFlag.hidden]: cn('DayFlag.hidden', '', classNames?.[DayFlag.hidden]),
+        [DayFlag.outside]: cn('DayFlag.outside', '', classNames?.[DayFlag.outside]),
+        [DayFlag.today]: cn('DayFlag.today', '', classNames?.[DayFlag.today]),
       }}
       components={{ Chevron, DayButton }}
       {...props}
@@ -182,6 +178,6 @@ function CalendarLabel({ date, formatStr = 'PPP', placeholder = 'Pick a date' }:
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { DateRange, Matcher } from '@codefast-ui/day-picker';
+export type { DateRange, Matcher } from 'react-day-picker';
 export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps };
 export { Calendar, CalendarLabel, CalendarRangeLabel };

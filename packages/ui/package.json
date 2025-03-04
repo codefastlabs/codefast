@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@codefast-ui/checkbox-group": "workspace:*",
-    "@codefast-ui/day-picker": "workspace:*",
     "@codefast-ui/input": "workspace:*",
     "@codefast-ui/number-input": "workspace:*",
     "@codefast/hooks": "workspace:*",
@@ -85,6 +84,7 @@
     "input-otp": "^1.4.2",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.477.0",
+    "react-day-picker": "^9.5.1",
     "react-resizable-panels": "^2.1.7",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
