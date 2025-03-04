@@ -32,7 +32,7 @@ type Story = StoryObj<typeof Command>;
 
 export const Default: Story = {
   render: (args) => (
-    <Command {...args}>
+    <Command className="rounded-lg border shadow-sm" {...args}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>

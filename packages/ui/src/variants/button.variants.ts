@@ -5,14 +5,8 @@ import { tv } from 'tailwind-variants';
 const buttonVariants = tv({
   base: 'focus-visible:ring-ring focus-visible:ring-3 inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium focus-visible:outline-none disabled:opacity-50 [&>svg]:shrink-0',
   variants: {
-    icon: {
-      false: '',
-      true: 'px-0',
-    },
-    inside: {
-      false: '',
-      true: '',
-    },
+    icon: { false: '', true: 'px-0' },
+    inside: { false: '', true: '' },
     size: {
       '2xs': 'h-7 px-3 text-xs [&>svg]:size-3', // 28px
       xs: 'h-8 px-3 text-xs [&>svg]:size-3.5', // 32px
@@ -41,102 +35,26 @@ const buttonVariants = tv({
     variant: 'default',
   },
   compoundVariants: [
-    {
-      className: 'w-7',
-      icon: true,
-      size: '2xs',
-    },
-    {
-      className: 'w-8',
-      icon: true,
-      size: 'xs',
-    },
-    {
-      className: 'w-9',
-      icon: true,
-      size: 'sm',
-    },
-    {
-      className: 'w-10',
-      icon: true,
-      size: 'md',
-    },
-    {
-      className: 'w-11',
-      icon: true,
-      size: 'lg',
-    },
-    {
-      className: 'w-12',
-      icon: true,
-      size: 'xl',
-    },
-    {
-      className: 'h-6',
-      inside: true,
-      size: '2xs',
-    },
-    {
-      className: 'h-6',
-      inside: true,
-      size: 'xs',
-    },
-    {
-      className: 'h-7',
-      inside: true,
-      size: 'sm',
-    },
-    {
-      className: 'h-8',
-      inside: true,
-      size: 'md',
-    },
-    {
-      className: 'h-9',
-      inside: true,
-      size: 'lg',
-    },
-    {
-      className: 'h-10',
-      inside: true,
-      size: 'xl',
-    },
-    {
-      className: 'w-6',
-      icon: true,
-      inside: true,
-      size: '2xs',
-    },
-    {
-      className: 'w-6',
-      icon: true,
-      inside: true,
-      size: 'xs',
-    },
-    {
-      className: 'w-7',
-      icon: true,
-      inside: true,
-      size: 'sm',
-    },
-    {
-      className: 'w-8',
-      icon: true,
-      inside: true,
-      size: 'md',
-    },
-    {
-      className: 'w-9',
-      icon: true,
-      inside: true,
-      size: 'lg',
-    },
-    {
-      className: 'w-10',
-      icon: true,
-      inside: true,
-      size: 'xl',
-    },
+    { className: 'w-7', icon: true, size: '2xs' },
+    { className: 'w-8', icon: true, size: 'xs' },
+    { className: 'w-9', icon: true, size: 'sm' },
+    { className: 'w-10', icon: true, size: 'md' },
+    { className: 'w-11', icon: true, size: 'lg' },
+    { className: 'w-12', icon: true, size: 'xl' },
+
+    { className: 'h-6', inside: true, size: '2xs' },
+    { className: 'h-6', inside: true, size: 'xs' },
+    { className: 'h-7', inside: true, size: 'sm' },
+    { className: 'h-8', inside: true, size: 'md' },
+    { className: 'h-9', inside: true, size: 'lg' },
+    { className: 'h-10', inside: true, size: 'xl' },
+
+    { className: 'w-6', icon: true, inside: true, size: '2xs' },
+    { className: 'w-6', icon: true, inside: true, size: 'xs' },
+    { className: 'w-7', icon: true, inside: true, size: 'sm' },
+    { className: 'w-8', icon: true, inside: true, size: 'md' },
+    { className: 'w-9', icon: true, inside: true, size: 'lg' },
+    { className: 'w-10', icon: true, inside: true, size: 'xl' },
   ],
 });
 

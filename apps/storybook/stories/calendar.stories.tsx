@@ -23,6 +23,7 @@ import {
 } from '@codefast/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CalendarIcon } from '@radix-ui/react-icons';
+import { isEmpty } from 'lodash-es';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -183,7 +184,7 @@ export const ReactHookForm: Story = {
                       <Button
                         className={cn(
                           'w-[15rem] justify-between pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground',
+                          isEmpty(field.value) && 'text-muted-foreground',
                         )}
                         suffix={<CalendarIcon className="opacity-50" />}
                         variant="outline"
@@ -192,7 +193,7 @@ export const ReactHookForm: Story = {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-auto p-0">
+                  <PopoverContent align="start" className="w-auto p-3">
                     <Calendar
                       disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                       mode="single"

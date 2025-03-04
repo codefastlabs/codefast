@@ -27,7 +27,7 @@ export function DatePickerWithRange({ className }: ComponentProps<'div'>): JSX.E
             <ButtonValue date={date} />
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto p-0">
+        <PopoverContent align="start" className="w-auto p-3">
           <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
         </PopoverContent>
       </Popover>
