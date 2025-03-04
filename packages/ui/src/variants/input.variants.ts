@@ -9,30 +9,12 @@ const inputVariants = tv({
   },
   variants: {
     inputSize: {
-      '2xs': {
-        root: 'h-7 [&>svg]:size-3', // 28px
-        input: 'file:py-0.75',
-      },
-      xs: {
-        root: 'h-8 [&>svg]:size-3.5', // 32px
-        input: 'file:py-1.25',
-      },
-      sm: {
-        root: 'h-9 [&>svg]:size-4', // 36px
-        input: 'file:py-1.75',
-      },
-      md: {
-        root: 'h-10 [&>svg]:size-4', // 40px
-        input: 'file:py-2.25',
-      },
-      lg: {
-        root: 'h-11 [&>svg]:size-5', // 44px
-        input: 'file:py-2.75',
-      },
-      xl: {
-        root: 'h-12 [&>svg]:size-5', // 48px
-        input: 'file:py-3.25',
-      },
+      '2xs': { root: 'h-7 [&>svg]:size-3', input: 'file:py-0.75' }, // 28px
+      xs: { root: 'h-8 [&>svg]:size-3.5', input: 'file:py-1.25' }, // 32px
+      sm: { root: 'h-9 [&>svg]:size-4', input: 'file:py-1.75' }, // 36px
+      md: { root: 'h-10 [&>svg]:size-4', input: 'file:py-2.25' }, // 40px
+      lg: { root: 'h-11 [&>svg]:size-5', input: 'file:py-2.75' }, // 44px
+      xl: { root: 'h-12 [&>svg]:size-5', input: 'file:py-3.25' }, // 48px
     },
   },
   defaultVariants: {

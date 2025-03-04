@@ -47,11 +47,11 @@ export function PaymentMethod(): JSX.Element {
             Card
           </RadioCardsItem>
           <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="paypal">
-            <Icons.Paypal className="mb-3 size-6" />
+            <Icons.Paypal className="size-6" />
             Paypal
           </RadioCardsItem>
           <RadioCardsItem className="flex-col gap-3 text-sm font-medium leading-none" value="apple">
-            <Icons.Apple className="mb-3 size-6" />
+            <Icons.Apple className="size-6" />
             Apple
           </RadioCardsItem>
         </RadioCards>

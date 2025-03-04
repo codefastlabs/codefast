@@ -64,7 +64,7 @@ export const Default: Story = {
             <CalendarLabel date={date} />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-3">
           <Calendar mode="single" selected={date} onSelect={setDate} />
         </PopoverContent>
       </Popover>
@@ -96,7 +96,7 @@ export const DateRangePicker: Story = {
               <CalendarRangeLabel date={date} />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-auto p-0">
+          <PopoverContent align="start" className="w-auto p-3">
             <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
           </PopoverContent>
         </Popover>
@@ -140,7 +140,7 @@ export const WithPresets: Story = {
               <SelectItem value="7">In a week</SelectItem>
             </SelectContent>
           </Select>
-          <div className="rounded-md border">
+          <div className="rounded-md border p-3">
             <Calendar mode="single" selected={date} onSelect={setDate} />
           </div>
         </PopoverContent>
@@ -207,7 +207,7 @@ export const ReactHookForm: Story = {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-auto p-0">
+                  <PopoverContent align="start" className="w-auto p-3">
                     <Calendar
                       disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                       mode="single"
