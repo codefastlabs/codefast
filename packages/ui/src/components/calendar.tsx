@@ -46,12 +46,11 @@ function Chevron({ orientation, className, ...props }: ChevronProps): JSX.Elemen
 
 type CalendarProps = DayPickerProps;
 
-function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Element {
+function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProps): JSX.Element {
   const isInteractive = props.mode !== undefined || props.onDayClick !== undefined;
 
   return (
     <DayPicker
-      className={cn('', className)}
       classNames={{
         [UI.Root]: cn('UI.Root', '', classNames?.[UI.Root]),
         [UI.Chevron]: cn('UI.Chevron', '', classNames?.[UI.Chevron]),
@@ -125,6 +124,7 @@ function Calendar({ className, classNames, ...props }: CalendarProps): JSX.Eleme
       components={{
         Chevron,
       }}
+      showOutsideDays={showOutsideDays}
       {...props}
     />
   );

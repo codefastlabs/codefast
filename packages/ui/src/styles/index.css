@@ -93,7 +93,7 @@
    * - Brand elements
    * - Important UI components
    */
-  --color-accent: var(--color-zinc-200);
+  --color-accent: var(--color-zinc-100);
   --color-accent-hover: var(--color-zinc-300);
   --color-accent-foreground: var(--color-zinc-950);
 
