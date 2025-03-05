@@ -27,7 +27,7 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
   return (
     <label
       className={cn(
-        'hover:not-has-disabled:bg-accent has-aria-checked:border-primary has-focus-visible:border-input-focus has-focus-visible:ring-ring has-focus-visible:ring-3 has-focus-visible:outline-none has-disabled:opacity-50 border-accent group flex items-center justify-center gap-4 rounded-lg border-2 p-4 transition',
+        'hover:not-has-disabled:bg-secondary has-aria-checked:border-primary has-focus-visible:border-input-focus has-focus-visible:ring-ring has-focus-visible:ring-3 has-focus-visible:outline-none has-disabled:opacity-50 border-secondary group flex items-center justify-center gap-4 rounded-lg border-2 p-4 transition',
         className,
       )}
     >
