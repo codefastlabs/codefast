@@ -6,138 +6,41 @@
  * (e.g., background, border, highlights).
  */
 @theme {
-  /* -----------------------------------------------------------------------------
-   * Input Theme Colors
-   * -----------------------------------------------------------------------------
-   * These variables define the color scheme for input elements in the UI:
-   * - `--color-input`: Base color for input fields.
-   * - `--color-input-hover`: Color applied when the user hovers over input fields.
-   * - `--color-input-focus`: Color used to indicate focus state for input fields.
-   * -----------------------------------------------------------------------------
-   */
   --color-input: var(--color-slate-300);
   --color-input-hover: var(--color-slate-500);
   --color-input-focus: var(--color-slate-400);
 
-  /**
-   * Core UI Elements
-   * ---------------------------------------------------------------------------
-   * --color-border - Subtle boundaries between UI elements
-   * --color-ring - Soft focus indicator for interactive elements
-   */
   --color-border: var(--color-slate-300);
   --color-ring: color-mix(in oklab, var(--color-slate-400) 35%, transparent);
 
-  /**
-   * Base Theme
-   * ---------------------------------------------------------------------------
-   * --color-background - Main canvas color
-   * --color-foreground - Primary text color
-   */
   --color-background: var(--color-white);
   --color-foreground: var(--color-slate-950);
 
-  /**
-   * Primary Theme Colors
-   * ---------------------------------------------------------------------------
-   * These variables define the primary theme's visual appearance, commonly used
-   * for primary actions, buttons, or elements that require attention. The hover
-   * and foreground variants ensure consistency and clear interactivity.
-   *
-   * --color-primary: Base color for primary elements.
-   * --color-primary-hover: Hover effect for better visual feedback on primary elements.
-   * --color-primary-foreground: Text or icon color displayed over primary elements.
-   */
   --color-primary: var(--color-slate-600);
   --color-primary-hover: var(--color-slate-700);
   --color-primary-foreground: var(--color-slate-50);
 
-  /**
-   * Secondary Theme Colors
-   * -----------------------------------------------------------------------------
-   * These color variables are utilized for secondary elements in the interface:
-   * - Generally used for less prominent actions or UI elements.
-   * - Hover and foreground variants provide better interactivity and contrast.
-   *
-   * --color-secondary: Base color for secondary-themed elements.
-   * --color-secondary-hover: Hover state for better visual interaction.
-   * --color-secondary-foreground: Text or icon color on secondary elements.
-   */
   --color-secondary: var(--color-slate-200);
   --color-secondary-hover: var(--color-slate-300);
   --color-secondary-foreground: var(--color-slate-950);
 
-  /**
-   * Destructive Theme Colors
-   * ---------------------------------------------------------------------------
-   * Defines variables for the "destructive" theme. These colors are typically
-   * used for destructive actions or alerts, such as error messages, delete
-   * buttons, or other UI elements requiring attention.
-   *
-   * --color-destructive: Default color for destructive elements.
-   * --color-destructive-hover: Hover or interactive state for destructive elements.
-   * --color-destructive-foreground: Foreground color for text/icons on destructive elements.
-   */
   --color-destructive: var(--color-red-500);
   --color-destructive-hover: var(--color-red-600);
   --color-destructive-foreground: var(--color-red-50);
 
-  /**
-   * Accent Theme Colors
-   * -----------------------------------------------------------------------------
-   * Defines colors for accent elements, adding subtle highlights or emphasis in
-   * the UI. These colors are generally used for small decorative or attention-drawing
-   * components without being overly dominant:
-   *
-   * --color-accent: Background color for accent elements.
-   * --color-accent-foreground: Text or icon color placed on accent elements.
-   */
-  --color-accent: var(--color-slate-100);
+  --color-accent: var(--color-slate-200);
   --color-accent-foreground: var(--color-slate-950);
 
-  /**
-   * Muted Theme
-   * ---------------------------------------------------------------------------
-   * Used for:
-   * - Helper text
-   * - Placeholders
-   * - Disabled states
-   */
   --color-muted: var(--color-slate-200);
   --color-muted-foreground: var(--color-slate-600);
 
-  /**
-   * Overlay Components
-   * ---------------------------------------------------------------------------
-   * Used for floating elements:
-   * - Dropdowns
-   * - Tooltips
-   * - Modal dialogs
-   */
   --color-popover: var(--color-white);
-  --color-popover-overlay: color-mix(in oklab, var(--color-slate-950) 15%, transparent);
+  --color-popover-overlay: color-mix(in oklab, var(--color-slate-950) 35%, transparent);
   --color-popover-foreground: var(--color-slate-950);
 
-  /**
-   * Card Components
-   * ---------------------------------------------------------------------------
-   * Used for contained content blocks:
-   * - Dashboard widgets
-   * - Content panels
-   * - Feature boxes
-   */
   --color-card: var(--color-white);
   --color-card-foreground: var(--color-slate-950);
 
-  /**
-   * Sidebar Navigation
-   * ---------------------------------------------------------------------------
-   * Comprehensive theme for sidebar components:
-   * - Background & text colors
-   * - Active/hover states
-   * - Borders and separators
-   * - Focus indicators
-   */
   --color-sidebar: var(--color-slate-50);
   --color-sidebar-foreground: var(--color-slate-700);
 
@@ -150,14 +53,6 @@
   --color-sidebar-border: var(--color-slate-200);
   --color-sidebar-ring: var(--color-slate-100);
 
-  /**
-   * Data Visualization
-   * ---------------------------------------------------------------------------
-   * Distinct colors for charts and graphs:
-   * - Ensures sufficient contrast
-   * - Maintains accessibility
-   * - Provides visual hierarchy
-   */
   --color-chart-1: var(--color-orange-500);
   --color-chart-2: var(--color-cyan-500);
   --color-chart-3: var(--color-lime-500);
