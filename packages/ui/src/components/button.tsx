@@ -34,13 +34,7 @@ function Button({
 }: ButtonProps): JSX.Element {
   return (
     <button
-      className={buttonVariants({
-        className,
-        icon,
-        inside,
-        size,
-        variant,
-      })}
+      className={buttonVariants({ className, icon, inside, size, variant })}
       data-variant={variant}
       disabled={loading || disabled}
       type="button"

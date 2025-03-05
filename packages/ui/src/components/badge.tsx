@@ -13,9 +13,6 @@ const badgeVariants = tv({
     variant: {
       default: 'bg-primary text-primary-foreground',
       secondary: 'bg-secondary text-secondary-foreground',
-      info: 'bg-info text-info-foreground',
-      success: 'bg-success text-success-foreground',
-      warning: 'bg-warning text-warning-foreground',
       destructive: 'bg-destructive text-destructive-foreground',
       outline: 'bg-background border-input border',
     },

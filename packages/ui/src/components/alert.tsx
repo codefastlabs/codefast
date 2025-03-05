@@ -10,15 +10,11 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 const alertVariants = tv({
-  base: '[&>svg+div]:-translate-y-0.75 relative w-full rounded-lg border p-4 text-sm [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7',
+  base: 'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[--spacing(4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
   variants: {
     variant: {
-      default: 'bg-background text-foreground [&>svg]:text-foreground',
-      destructive: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive',
-      info: 'border-info/50 text-info dark:border-info [&>svg]:text-info',
-      primary: 'border-primary/50 text-primary dark:border-primary [&>svg]:text-primary',
-      success: 'border-success/50 text-success dark:border-success [&>svg]:text-success',
-      warning: 'border-warning/50 text-warning dark:border-warning [&>svg]:text-warning',
+      default: 'bg-background text-foreground',
+      destructive: 'text-destructive *:data-[slot=alert-description]:text-destructive/80 [&>svg]:text-current',
     },
   },
   defaultVariants: {
@@ -35,20 +31,24 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
 type AlertProps = AlertVariantsProps & ComponentProps<'div'>;
 
 function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
-  return <div className={alertVariants({ className, variant })} role="alert" {...props} />;
+  return <div className={alertVariants({ className, variant })} data-slot="alert" role="alert" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: AlertTitle
  * -------------------------------------------------------------------------- */
 
-type AlertTitleProps = ComponentProps<'h5'>;
+type AlertTitleProps = ComponentProps<'div'>;
 
 function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Element {
   return (
-    <h5 className={cn('mb-1 font-medium leading-none tracking-tight', className)} {...props}>
+    <div
+      className={cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', className)}
+      data-slot="alert-title"
+      {...props}
+    >
       {children}
-    </h5>
+    </div>
   );
 }
 
@@ -59,7 +59,16 @@ function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Ele
 type AlertDescriptionProps = ComponentProps<'div'>;
 
 function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.Element {
-  return <div className={cn('text-sm [&_p]:leading-relaxed', className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        'text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed',
+        className,
+      )}
+      data-slot="alert-description"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
