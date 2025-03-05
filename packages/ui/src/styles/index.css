@@ -6,12 +6,14 @@
  * (e.g., background, border, highlights).
  */
 @theme {
-  /**
-   * Input Controls
-   * ---------------------------------------------------------------------------
-   * --color-input - Default border/outline for form controls
-   * --color-input-hover - Interactive state for better visual feedback
-   * --color-input-focus - Strong visual indicator for focused state
+  /* -----------------------------------------------------------------------------
+   * Input Theme Colors
+   * -----------------------------------------------------------------------------
+   * These variables define the color scheme for input elements in the UI:
+   * - `--color-input`: Base color for input fields.
+   * - `--color-input-hover`: Color applied when the user hovers over input fields.
+   * - `--color-input-focus`: Color used to indicate focus state for input fields.
+   * -----------------------------------------------------------------------------
    */
   --color-input: var(--color-slate-300);
   --color-input-hover: var(--color-slate-500);
@@ -36,63 +38,62 @@
   --color-foreground: var(--color-slate-950);
 
   /**
-   * Primary Theme
+   * Primary Theme Colors
    * ---------------------------------------------------------------------------
-   * Used for:
-   * - Call-to-action buttons
-   * - Active navigation items
-   * - Selected states
-   * - Focus indicators
+   * These variables define the primary theme's visual appearance, commonly used
+   * for primary actions, buttons, or elements that require attention. The hover
+   * and foreground variants ensure consistency and clear interactivity.
+   *
+   * --color-primary: Base color for primary elements.
+   * --color-primary-hover: Hover effect for better visual feedback on primary elements.
+   * --color-primary-foreground: Text or icon color displayed over primary elements.
    */
   --color-primary: var(--color-slate-600);
   --color-primary-hover: var(--color-slate-700);
   --color-primary-foreground: var(--color-slate-50);
 
   /**
-   * Secondary Theme
-   * ---------------------------------------------------------------------------
-   * Used for:
-   * - Secondary buttons
-   * - Alternative actions
-   * - Less prominent UI elements
+   * Secondary Theme Colors
+   * -----------------------------------------------------------------------------
+   * These color variables are utilized for secondary elements in the interface:
+   * - Generally used for less prominent actions or UI elements.
+   * - Hover and foreground variants provide better interactivity and contrast.
+   *
+   * --color-secondary: Base color for secondary-themed elements.
+   * --color-secondary-hover: Hover state for better visual interaction.
+   * --color-secondary-foreground: Text or icon color on secondary elements.
    */
   --color-secondary: var(--color-slate-200);
   --color-secondary-hover: var(--color-slate-300);
   --color-secondary-foreground: var(--color-slate-950);
 
   /**
-   * Status Colors
+   * Destructive Theme Colors
    * ---------------------------------------------------------------------------
-   * Semantic colors for system feedback:
-   * - Destructive: Errors, deletions, warnings
-   * - Info: System messages, notifications
-   * - Success: Confirmations, completed actions
-   * - Warning: Alerts, important notices
+   * Defines variables for the "destructive" theme. These colors are typically
+   * used for destructive actions or alerts, such as error messages, delete
+   * buttons, or other UI elements requiring attention.
+   *
+   * --color-destructive: Default color for destructive elements.
+   * --color-destructive-hover: Hover or interactive state for destructive elements.
+   * --color-destructive-foreground: Foreground color for text/icons on destructive elements.
    */
   --color-destructive: var(--color-red-500);
   --color-destructive-hover: var(--color-red-600);
   --color-destructive-foreground: var(--color-red-50);
 
-  --color-success: var(--color-green-700);
-  --color-success-hover: var(--color-green-800);
-  --color-success-foreground: var(--color-green-50);
-
-  --color-info: var(--color-cyan-700);
-  --color-info-hover: var(--color-cyan-800);
-  --color-info-foreground: var(--color-cyan-50);
-
-  --color-warning: var(--color-yellow-700);
-  --color-warning-hover: var(--color-yellow-800);
-  --color-warning-foreground: var(--color-yellow-50);
-
   /**
-   * Accent Theme
-   * ---------------------------------------------------------------------------
-   * Used for:
-   * - Highlighting key features
+   * Accent Theme Colors
+   * -----------------------------------------------------------------------------
+   * Defines colors for accent elements, adding subtle highlights or emphasis in
+   * the UI. These colors are generally used for small decorative or attention-drawing
+   * components without being overly dominant:
+   *
+   * --color-accent: Background color for accent elements.
+   * --color-accent-foreground: Text or icon color placed on accent elements.
    */
-  --color-accent: var(--color-sky-100);
-  --color-accent-foreground: var(--color-sky-950);
+  --color-accent: var(--color-slate-100);
+  --color-accent-foreground: var(--color-slate-950);
 
   /**
    * Muted Theme
