@@ -18,13 +18,10 @@ const buttonVariants = tv({
     variant: {
       default: 'bg-primary text-primary-foreground hover:not-disabled:bg-primary-hover',
       secondary: 'bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary-hover',
-      info: 'bg-info text-info-foreground hover:not-disabled:bg-info-hover',
-      success: 'bg-success text-success-foreground hover:not-disabled:bg-success-hover',
-      warning: 'bg-warning text-warning-foreground hover:not-disabled:bg-warning-hover',
       destructive: 'bg-destructive text-destructive-foreground hover:not-disabled:bg-destructive-hover',
       outline:
-        'border-input not-disabled:shadow-xs hover:not-disabled:hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground focus-visible:border-input-focus border',
-      ghost: 'hover:not-disabled:bg-accent hover:not-disabled:text-accent-foreground',
+        'border-input not-disabled:shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-input-focus border',
+      ghost: 'hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground',
       link: 'text-primary hover:not-disabled:underline underline-offset-4',
     },
   },

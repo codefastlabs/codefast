@@ -60,12 +60,7 @@ function SheetContent({ children, className, side = 'right', ...props }: SheetCo
       <SheetPrimitive.Content className={sheetContentVariants({ className, side })} {...props}>
         {children}
         <SheetPrimitive.Close
-          className={buttonVariants({
-            className: 'absolute right-4 top-4',
-            icon: true,
-            size: '2xs',
-            variant: 'ghost',
-          })}
+          className={buttonVariants({ className: 'absolute right-4 top-4', icon: true, size: '2xs', variant: 'ghost' })}
         >
           <XIcon className="size-4" />
           <span className="sr-only">Close</span>

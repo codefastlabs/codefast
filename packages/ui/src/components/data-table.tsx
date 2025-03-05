@@ -188,7 +188,7 @@ function DataTableColumnHeader<TData, TValue>({
         <Button
           className={cn('hover:not-disabled:bg-initial p-0 text-sm focus-visible:ring-0')}
           size="xs"
-          suffix={<SortIcon sorted={column.getIsSorted()} />}
+          suffix={<SortIcon className="opacity-50" sorted={column.getIsSorted()} />}
           variant="ghost"
         >
           {title}
@@ -201,7 +201,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleSorting(false);
           }}
         >
-          <ChevronUpIcon className="text-muted-foreground group-focus:text-accent-foreground size-4" />
+          <ChevronUpIcon className="size-4 opacity-50" />
           Asc
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -209,7 +209,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleSorting(true);
           }}
         >
-          <ChevronDownIcon className="text-muted-foreground group-focus:text-accent-foreground size-4" />
+          <ChevronDownIcon className="size-4 opacity-50" />
           Desc
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -218,7 +218,7 @@ function DataTableColumnHeader<TData, TValue>({
             column.toggleVisibility(false);
           }}
         >
-          <EyeOffIcon className="text-muted-foreground group-focus:text-accent-foreground size-4" />
+          <EyeOffIcon className="size-4 opacity-50" />
           Hide
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -226,18 +226,24 @@ function DataTableColumnHeader<TData, TValue>({
   );
 }
 
-function SortIcon({ sorted }: { sorted: false | ReactTable.SortDirection }): JSX.Element {
+function SortIcon({
+  sorted,
+  className,
+}: {
+  sorted: false | ReactTable.SortDirection;
+  className?: string;
+}): JSX.Element {
   switch (sorted) {
     case 'desc': {
-      return <ChevronDownIcon />;
+      return <ChevronDownIcon className={className} />;
     }
 
     case 'asc': {
-      return <ChevronUpIcon />;
+      return <ChevronUpIcon className={className} />;
     }
 
     default: {
-      return <ChevronsUpDownIcon />;
+      return <ChevronsUpDownIcon className={className} />;
     }
   }
 }

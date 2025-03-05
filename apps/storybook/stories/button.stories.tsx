@@ -132,13 +132,11 @@ export const Variants: Story = {
   args: { className: 'capitalize' },
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      {(['default', 'secondary', 'info', 'success', 'warning', 'destructive', 'outline', 'ghost', 'link'] as const).map(
-        (variant) => (
-          <Button key={variant} {...args} variant={variant}>
-            {variant} Button
-          </Button>
-        ),
-      )}
+      {(['default', 'secondary', 'destructive', 'outline', 'ghost', 'link'] as const).map((variant) => (
+        <Button key={variant} {...args} variant={variant}>
+          {variant} Button
+        </Button>
+      ))}
     </div>
   ),
 };

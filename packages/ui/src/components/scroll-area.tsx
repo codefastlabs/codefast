@@ -121,11 +121,7 @@ function ScrollAreaScrollbar({
 
   return (
     <ScrollAreaPrimitive.Scrollbar
-      className={scrollAreaScrollbarVariants({
-        className,
-        orientation,
-        size,
-      })}
+      className={scrollAreaScrollbarVariants({ className, orientation, size })}
       orientation={orientation}
       {...props}
     >
