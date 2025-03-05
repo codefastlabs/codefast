@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.2.25
+
+### Patch Changes
+
+- [`929bc06`](https://github.com/codefastlabs/codefast/commit/929bc069506962408673e129e90f72047f90594c) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): simplify variants and streamline components
+
+- Updated dependencies [[`929bc06`](https://github.com/codefastlabs/codefast/commit/929bc069506962408673e129e90f72047f90594c)]:
+  - @codefast/hooks@0.2.25
+  - @codefast-ui/checkbox-group@0.2.25
+  - @codefast-ui/input@0.2.25
+  - @codefast-ui/number-input@0.2.25
+
 ## 0.2.24
 
 ### Patch Changes
