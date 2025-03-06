@@ -16,7 +16,7 @@ Or using **npm**:
 npm install @codefast/ui
 ```
 
-## 🎨 Configuration
+## Configuration
 
 To enable **@codefast/ui**, import the required styles into your global CSS file (e.g., `/app/globals.css`):
 
