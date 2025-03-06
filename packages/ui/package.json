@@ -99,7 +99,6 @@
     "@types/node": "^22.13.9",
     "eslint": "^9.21.0",
     "postcss": "^8.5.3",
-    "prettier": "^3.5.3",
     "tailwindcss": "^4.0.10",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2"

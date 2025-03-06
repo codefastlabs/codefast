@@ -34,6 +34,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.changeset" />
       <excludeFolder url="file://$MODULE_DIR$/.github" />
       <excludeFolder url="file://$MODULE_DIR$/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/block/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
