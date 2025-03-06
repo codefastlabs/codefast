@@ -9,7 +9,7 @@
     "changeset:version": "changeset version",
     "clean": "turbo run clean && rm -rf node_modules pnpm-lock.yaml",
     "dev": "turbo run dev --concurrency=11",
-    "dev:docs": "turbo run dev --filter=@app/docs...",
+    "dev:block": "turbo run dev --filter=@app/block...",
     "dev:storybook": "turbo run dev --filter=@app/storybook...",
     "postinstall": "pnpm exec simple-git-hooks",
     "lint": "turbo run lint",

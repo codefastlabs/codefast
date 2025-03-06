@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 const separatorVariants = tv({
-  base: 'bg-muted relative flex shrink-0 items-center',
+  base: 'bg-border relative flex shrink-0 items-center',
   variants: {
     align: {
       center: 'justify-center',
