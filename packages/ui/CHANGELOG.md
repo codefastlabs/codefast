@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.2.27
+
+### Patch Changes
+
+- [`8ad4efd`](https://github.com/codefastlabs/codefast/commit/8ad4efd676847c29f0ba8e1810bd1daea1aafcbe) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): add eslint-config-prettier dependency
+
+- Updated dependencies [[`8ad4efd`](https://github.com/codefastlabs/codefast/commit/8ad4efd676847c29f0ba8e1810bd1daea1aafcbe)]:
+  - @codefast/hooks@0.2.27
+  - @codefast-ui/checkbox-group@0.2.27
+  - @codefast-ui/input@0.2.27
+  - @codefast-ui/number-input@0.2.27
+
 ## 0.2.26
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @codefast/style-guide
 
+## 0.2.27
+
+### Patch Changes
+
+- [`8ad4efd`](https://github.com/codefastlabs/codefast/commit/8ad4efd676847c29f0ba8e1810bd1daea1aafcbe) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): add eslint-config-prettier dependency
+
 ## 0.2.26
 
 ### Patch Changes
