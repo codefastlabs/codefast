@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.2.26
+
+### Patch Changes
+
+- [`20fa2ef`](https://github.com/codefastlabs/codefast/commit/20fa2efc3460f70bcf2f0d420b494b45777f85dc) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance theme handling and component styles
+
+- Updated dependencies [[`20fa2ef`](https://github.com/codefastlabs/codefast/commit/20fa2efc3460f70bcf2f0d420b494b45777f85dc)]:
+  - @codefast/hooks@0.2.26
+  - @codefast-ui/checkbox-group@0.2.26
+  - @codefast-ui/input@0.2.26
+  - @codefast-ui/number-input@0.2.26
+
 ## 0.2.25
 
 ### Patch Changes
