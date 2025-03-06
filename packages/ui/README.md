@@ -66,6 +66,15 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --card: var(--color-zinc-50);
     --card-foreground: var(--color-zinc-900);
 
+    --sidebar: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--color-accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
+
     --chart-1: var(--color-orange-400);
     --chart-2: var(--color-cyan-400);
     --chart-3: var(--color-lime-400);
