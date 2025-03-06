@@ -3,3 +3,106 @@
 @import '@codefast/ui/styles.css';
 
 @source '../node_modules/@codefast/ui/dist';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+}
+
+@layer base {
+  :root {
+    --input: var(--color-zinc-300);
+    --input-hover: var(--color-zinc-400);
+    --input-focus: var(--color-zinc-500);
+
+    --border: var(--color-zinc-200);
+    --ring: --alpha(var(--color-zinc-400) / 35%);
+
+    --background: var(--color-zinc-50);
+    --foreground: var(--color-zinc-950);
+
+    --primary: var(--color-zinc-900);
+    --primary-hover: var(--color-zinc-800);
+    --primary-foreground: var(--color-zinc-50);
+
+    --secondary: var(--color-zinc-200);
+    --secondary-hover: var(--color-zinc-300);
+    --secondary-foreground: var(--color-zinc-900);
+
+    --destructive: var(--color-red-500);
+    --destructive-hover: var(--color-red-600);
+    --destructive-foreground: var(--color-red-950);
+
+    --accent: var(--color-zinc-100);
+    --accent-foreground: var(--color-zinc-900);
+
+    --muted: var(--color-zinc-200);
+    --muted-foreground: var(--color-zinc-600);
+
+    --popover: var(--color-zinc-50);
+    --popover-overlay: --alpha(var(--color-zinc-900) / 35%);
+    --popover-foreground: var(--color-zinc-900);
+
+    --card: var(--color-zinc-50);
+    --card-foreground: var(--color-zinc-900);
+
+    --sidebar: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--color-accent);
+    --sidebar-accent-foreground: var(--accent-foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
+
+    --chart-1: var(--color-orange-400);
+    --chart-2: var(--color-cyan-400);
+    --chart-3: var(--color-lime-400);
+    --chart-4: var(--color-yellow-400);
+    --chart-5: var(--color-fuchsia-400);
+  }
+
+  .dark {
+    --input: var(--color-zinc-800);
+    --input-hover: var(--color-zinc-700);
+    --input-focus: var(--color-zinc-600);
+
+    --border: var(--color-zinc-800);
+    --ring: --alpha(var(--color-zinc-600) / 35%);
+
+    --background: var(--color-zinc-950);
+    --foreground: var(--color-zinc-50);
+
+    --primary: var(--color-zinc-100);
+    --primary-hover: var(--color-zinc-200);
+    --primary-foreground: var(--color-zinc-950);
+
+    --secondary: var(--color-zinc-800);
+    --secondary-hover: var(--color-zinc-700);
+    --secondary-foreground: var(--color-zinc-100);
+
+    --destructive: var(--color-red-500);
+    --destructive-hover: var(--color-red-400);
+    --destructive-foreground: var(--color-red-50);
+
+    --accent: var(--color-zinc-900);
+    --accent-foreground: var(--color-zinc-100);
+
+    --muted: var(--color-zinc-800);
+    --muted-foreground: var(--color-zinc-400);
+
+    --popover: var(--color-zinc-950);
+    --popover-overlay: --alpha(var(--color-zinc-100) / 35%);
+    --popover-foreground: var(--color-zinc-100);
+
+    --card: var(--color-zinc-950);
+    --card-foreground: var(--color-zinc-100);
+
+    --chart-1: var(--color-orange-600);
+    --chart-2: var(--color-cyan-600);
+    --chart-3: var(--color-lime-600);
+    --chart-4: var(--color-yellow-600);
+    --chart-5: var(--color-fuchsia-600);
+  }
+}
