@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.2.28
+
+### Patch Changes
+
+- [`6d53482`](https://github.com/codefastlabs/codefast/commit/6d5348215986b4a9850e8e8078d3bcfd2d754a6e) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enable client-side rendering for Sonner component
+
+- Updated dependencies [[`6d53482`](https://github.com/codefastlabs/codefast/commit/6d5348215986b4a9850e8e8078d3bcfd2d754a6e)]:
+  - @codefast/hooks@0.2.28
+  - @codefast-ui/checkbox-group@0.2.28
+  - @codefast-ui/input@0.2.28
+  - @codefast-ui/number-input@0.2.28
+
 ## 0.2.27
 
 ### Patch Changes
