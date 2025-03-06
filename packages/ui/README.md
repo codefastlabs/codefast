@@ -126,9 +126,11 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 Example usage of the **Button** component:
 
 ```tsx
+import type { JSX } from 'react';
+
 import { Button } from '@codefast/ui';
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return <Button variant="primary">Get Started</Button>;
 }
 ```
