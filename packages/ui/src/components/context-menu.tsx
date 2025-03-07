@@ -10,35 +10,50 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type ContextMenuProps = ComponentProps<typeof ContextMenuPrimitive.Root>;
-const ContextMenu = ContextMenuPrimitive.Root;
+
+function ContextMenu({ ...props }: ContextMenuProps): JSX.Element {
+  return <ContextMenuPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenuTrigger
  * -------------------------------------------------------------------------- */
 
 type ContextMenuTriggerProps = ComponentProps<typeof ContextMenuPrimitive.Trigger>;
-const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
+
+function ContextMenuTrigger({ ...props }: ContextMenuTriggerProps): JSX.Element {
+  return <ContextMenuPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenuGroup
  * -------------------------------------------------------------------------- */
 
 type ContextMenuGroupProps = ComponentProps<typeof ContextMenuPrimitive.Group>;
-const ContextMenuGroup = ContextMenuPrimitive.Group;
+
+function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
+  return <ContextMenuPrimitive.Group {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenuSub
  * -------------------------------------------------------------------------- */
 
 type ContextMenuSubProps = ComponentProps<typeof ContextMenuPrimitive.Sub>;
-const ContextMenuSub = ContextMenuPrimitive.Sub;
+
+function ContextMenuSub({ ...props }: ContextMenuSubProps): JSX.Element {
+  return <ContextMenuPrimitive.Sub {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenuRadioGroup
  * -------------------------------------------------------------------------- */
 
 type ContextMenuRadioGroupProps = ComponentProps<typeof ContextMenuPrimitive.RadioGroup>;
-const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
+
+function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.Element {
+  return <ContextMenuPrimitive.RadioGroup {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenuSubTrigger
@@ -113,14 +128,15 @@ interface ContextMenuItemProps extends ComponentProps<typeof ContextMenuPrimitiv
   variant?: 'default' | 'destructive';
 }
 
-function ContextMenuItem({ className, inset, ...props }: ContextMenuItemProps): JSX.Element {
+function ContextMenuItem({ className, inset, variant, ...props }: ContextMenuItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:focus:bg-destructive data-[variant=destructive]:focus:text-destructive-foreground data-inset:pl-8 group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
       data-inset={inset}
+      data-variant={variant}
       {...props}
     />
   );
@@ -219,10 +235,7 @@ type ContextMenuShortcutProps = ComponentProps<'span'>;
 function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): JSX.Element {
   return (
     <span
-      className={cn(
-        'text-muted-foreground group-data-highlighted:text-accent-foreground ml-auto text-xs tracking-widest',
-        className,
-      )}
+      className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
       {...props}
     />
   );

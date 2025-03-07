@@ -9,21 +9,30 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type TooltipProviderProps = ComponentProps<typeof TooltipPrimitive.Provider>;
-const TooltipProvider = TooltipPrimitive.Provider;
+
+function TooltipProvider({ ...props }: TooltipProviderProps): JSX.Element {
+  return <TooltipPrimitive.Provider {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: Tooltip
  * -------------------------------------------------------------------------- */
 
 type TooltipProps = ComponentProps<typeof TooltipPrimitive.Root>;
-const Tooltip = TooltipPrimitive.Root;
+
+function Tooltip({ ...props }: TooltipProps): JSX.Element {
+  return <TooltipPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipTrigger
  * -------------------------------------------------------------------------- */
 
 type TooltipTriggerProps = ComponentProps<typeof TooltipPrimitive.Trigger>;
-const TooltipTrigger = TooltipPrimitive.Trigger;
+
+function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
+  return <TooltipPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipContent

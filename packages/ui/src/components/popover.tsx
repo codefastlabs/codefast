@@ -9,21 +9,30 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type PopoverProps = ComponentProps<typeof PopoverPrimitive.Root>;
-const Popover = PopoverPrimitive.Root;
+
+function Popover({ ...props }: PopoverProps): JSX.Element {
+  return <PopoverPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverTrigger
  * -------------------------------------------------------------------------- */
 
 type PopoverTriggerProps = ComponentProps<typeof PopoverPrimitive.Trigger>;
-const PopoverTrigger = PopoverPrimitive.Trigger;
+
+function PopoverTrigger({ ...props }: PopoverTriggerProps): JSX.Element {
+  return <PopoverPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverAnchor
  * -------------------------------------------------------------------------- */
 
 type PopoverAnchorProps = ComponentProps<typeof PopoverPrimitive.Anchor>;
-const PopoverAnchor = PopoverPrimitive.Anchor;
+
+function PopoverAnchor({ ...props }: PopoverAnchorProps): JSX.Element {
+  return <PopoverPrimitive.Anchor {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: PopoverContent

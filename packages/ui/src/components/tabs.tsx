@@ -9,7 +9,10 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type TabsProps = ComponentProps<typeof TabsPrimitive.Root>;
-const Tabs = TabsPrimitive.Root;
+
+function Tabs({ ...props }: TabsProps): JSX.Element {
+  return <TabsPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: TabsList

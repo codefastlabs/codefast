@@ -10,35 +10,50 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuProps = ComponentProps<typeof DropdownMenuPrimitive.Root>;
-const DropdownMenu = DropdownMenuPrimitive.Root;
+
+function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
+  return <DropdownMenuPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenuTrigger
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuTriggerProps = ComponentProps<typeof DropdownMenuPrimitive.Trigger>;
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
+
+function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Element {
+  return <DropdownMenuPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenuGroup
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuGroupProps = ComponentProps<typeof DropdownMenuPrimitive.Group>;
-const DropdownMenuGroup = DropdownMenuPrimitive.Group;
+
+function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
+  return <DropdownMenuPrimitive.Group {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenuSub
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuSubProps = ComponentProps<typeof DropdownMenuPrimitive.Sub>;
-const DropdownMenuSub = DropdownMenuPrimitive.Sub;
+
+function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
+  return <DropdownMenuPrimitive.Sub {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
 type DropdownMenuRadioGroupProps = ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>;
-const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+
+function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.Element {
+  return <DropdownMenuPrimitive.RadioGroup {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DropdownMenuSubTrigger
@@ -114,11 +129,11 @@ interface DropdownMenuItemProps extends ComponentProps<typeof DropdownMenuPrimit
   variant?: 'default' | 'destructive';
 }
 
-function DropdownMenuItem({ className, inset, variant = 'default', ...props }: DropdownMenuItemProps): JSX.Element {
+function DropdownMenuItem({ className, inset, variant, ...props }: DropdownMenuItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:focus:bg-destructive data-[variant=destructive]:focus:text-destructive-foreground data-inset:pl-8 group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
       data-inset={inset}
@@ -221,10 +236,7 @@ type DropdownMenuShortcutProps = ComponentProps<'span'>;
 function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps): JSX.Element {
   return (
     <span
-      className={cn(
-        'text-muted-foreground group-aria-selected:text-accent-foreground ml-auto text-xs tracking-widest',
-        className,
-      )}
+      className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
       {...props}
     />
   );
