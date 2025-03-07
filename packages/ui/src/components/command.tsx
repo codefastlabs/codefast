@@ -151,7 +151,7 @@ function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Ele
   return (
     <span
       className={cn(
-        'text-muted-foreground group-aria-selected:text-accent-foreground ml-auto text-xs tracking-widest',
+        'text-muted-foreground ml-auto text-xs tracking-widest group-aria-selected:text-current',
         className,
       )}
       {...props}

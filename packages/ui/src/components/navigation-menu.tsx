@@ -48,7 +48,9 @@ function NavigationMenuList({ children, className, ...props }: NavigationMenuLis
 
 type NavigationMenuItemProps = ComponentProps<typeof NavigationMenuPrimitive.Item>;
 
-const NavigationMenuItem = NavigationMenuPrimitive.Item;
+function NavigationMenuItem({ ...props }: NavigationMenuItemProps): JSX.Element {
+  return <NavigationMenuPrimitive.Item {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenuContent
@@ -98,7 +100,9 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
 
 type NavigationMenuLinkProps = ComponentProps<typeof NavigationMenuPrimitive.Link>;
 
-const NavigationMenuLink = NavigationMenuPrimitive.Link;
+function NavigationMenuLink({ ...props }: NavigationMenuLinkProps): JSX.Element {
+  return <NavigationMenuPrimitive.Link {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenuViewport
