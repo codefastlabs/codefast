@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 type RadioCardsProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 
 function RadioCards({ className, ...props }: RadioCardsProps): JSX.Element {
-  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} {...props} />;
+  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} data-slot="radio-cards" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -27,6 +27,7 @@ function RadioCardsItem({ className, ...props }: RadioCardsItemProps): JSX.Eleme
         'border-secondary hover:not-disabled:bg-secondary focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 aria-checked:border-primary group peer flex items-center justify-center rounded-lg border-2 p-4 transition focus-visible:outline-none disabled:opacity-50',
         className,
       )}
+      data-slot="radio-card"
       {...props}
     />
   );

@@ -15,7 +15,7 @@ import { buttonVariants } from '@/variants/button.variants';
 type SelectProps = ComponentProps<typeof SelectPrimitive.Root>;
 
 function Select({ ...props }: ComponentProps<typeof SelectPrimitive.Root>): JSX.Element {
-  return <SelectPrimitive.Root {...props} />;
+  return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ function Select({ ...props }: ComponentProps<typeof SelectPrimitive.Root>): JSX.
 type SelectGroupProps = ComponentProps<typeof SelectPrimitive.Group>;
 
 function SelectGroup({ ...props }: SelectGroupProps): JSX.Element {
-  return <SelectPrimitive.Group {...props} />;
+  return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ function SelectGroup({ ...props }: SelectGroupProps): JSX.Element {
 type SelectValueProps = ComponentProps<typeof SelectPrimitive.Value>;
 
 function SelectValue({ ...props }: SelectValueProps): JSX.Element {
-  return <SelectPrimitive.Value {...props} />;
+  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -57,6 +57,7 @@ function SelectTrigger({ children, className, size, ...props }: SelectTriggerPro
         size,
         variant: 'outline',
       })}
+      data-slot="select-trigger"
       {...props}
     >
       {children}
@@ -77,6 +78,7 @@ function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps
   return (
     <SelectPrimitive.ScrollUpButton
       className={cn('text-muted-foreground flex items-center justify-center py-1', className)}
+      data-slot="select-scroll-up-button"
       {...props}
     >
       <ChevronUpIcon size={16} />
@@ -94,6 +96,7 @@ function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonP
   return (
     <SelectPrimitive.ScrollDownButton
       className={cn('text-muted-foreground flex items-center justify-center py-1', className)}
+      data-slot="select-scroll-down-button"
       {...props}
     >
       <ChevronDownIcon size={16} />
@@ -117,6 +120,7 @@ function SelectContent({ children, className, position = 'popper', ...props }: S
             'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
           className,
         )}
+        data-slot="select-content"
         position={position}
         {...props}
       >
@@ -145,6 +149,7 @@ function SelectLabel({ className, ...props }: SelectLabelProps): JSX.Element {
   return (
     <SelectPrimitive.Label
       className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      data-slot="select-label"
       {...props}
     />
   );
@@ -163,6 +168,7 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
         'focus:bg-accent focus:text-accent-foreground relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-slot="select-item"
       {...props}
     >
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -182,7 +188,13 @@ function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Ele
 type SelectSeparatorProps = ComponentProps<typeof SelectPrimitive.Separator>;
 
 function SelectSeparator({ className, ...props }: SelectSeparatorProps): JSX.Element {
-  return <SelectPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
+  return (
+    <SelectPrimitive.Separator
+      className={cn('bg-muted mx-2 my-1 h-px', className)}
+      data-slot="select-separator"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

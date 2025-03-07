@@ -13,7 +13,7 @@ interface InlineProps extends ComponentProps<'span'> {
 function Inline({ asChild, ...props }: InlineProps): JSX.Element {
   const Component = asChild ? Slot : 'span';
 
-  return <Component {...props} />;
+  return <Component data-slot="inline" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

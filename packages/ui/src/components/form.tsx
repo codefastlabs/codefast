@@ -101,7 +101,7 @@ function FormItem({ __scopeFormField, className, inline, ...props }: ScopedProps
 
   return (
     <FormItemProvider id={id} scope={__scopeFormField}>
-      <div className={cn(!inline && 'space-y-2', className)} {...props} />
+      <div className={cn(!inline && 'space-y-2', className)} data-slot="form-item" {...props} />
     </FormItemProvider>
   );
 }
@@ -115,7 +115,7 @@ type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
   const { formItemId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
-  return <Label htmlFor={formItemId} {...props} />;
+  return <Label data-slot="form-label" htmlFor={formItemId} {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -135,6 +135,7 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
     <Slot
       aria-describedby={errors[name] ? `${formDescriptionId} ${formMessageId}` : formDescriptionId}
       aria-invalid={Boolean(errors[name])}
+      data-slot="form-control"
       id={formItemId}
       {...props}
     />
@@ -150,7 +151,14 @@ type FormDescriptionProps = ComponentProps<'p'>;
 function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>): JSX.Element {
   const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
-  return <p className={cn('text-muted-foreground text-xs', className)} id={formDescriptionId} {...props} />;
+  return (
+    <p
+      className={cn('text-muted-foreground text-xs', className)}
+      data-slot="form-description"
+      id={formDescriptionId}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -176,6 +184,7 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
   return (
     <p
       className={cn('text-xs', error?.message ? 'text-destructive font-medium' : 'text-muted-foreground', className)}
+      data-slot="form-message"
       id={formMessageId}
       {...props}
     >

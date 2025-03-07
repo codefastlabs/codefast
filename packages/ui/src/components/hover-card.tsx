@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 type HoverCardProps = ComponentProps<typeof HoverCardPrimitive.Root>;
 
 function HoverCard({ ...props }: HoverCardProps): JSX.Element {
-  return <HoverCardPrimitive.Root {...props} />;
+  return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ function HoverCard({ ...props }: HoverCardProps): JSX.Element {
 type HoverCardTriggerProps = ComponentProps<typeof HoverCardPrimitive.Trigger>;
 
 function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
-  return <HoverCardPrimitive.Trigger {...props} />;
+  return <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -44,6 +44,7 @@ function HoverCardContent({
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=left]:slide-from-r-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=left]:slide-to-r-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=right]:slide-to-l-2 z-50 min-w-32 rounded-lg border p-4 shadow-lg',
           className,
         )}
+        data-slot="hover-card-content"
         sideOffset={sideOffset}
         {...props}
       />
@@ -58,7 +59,7 @@ function HoverCardContent({
 type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
 
 function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
-  return <HoverCardPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+  return <HoverCardPrimitive.Arrow className={cn('fill-popover', className)} data-slot="hover-card-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

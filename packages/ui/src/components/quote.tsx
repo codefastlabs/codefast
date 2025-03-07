@@ -13,7 +13,7 @@ interface QuoteProps extends ComponentProps<'q'> {
 function Quote({ asChild, ...props }: QuoteProps): JSX.Element {
   const Component = asChild ? Slot : 'q';
 
-  return <Component {...props} />;
+  return <Component data-slot="quote" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

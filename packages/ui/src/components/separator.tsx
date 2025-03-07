@@ -43,6 +43,7 @@ function Separator({ align, className, decorative = true, orientation, ...props 
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}
+      data-slot="separator"
       decorative={decorative}
       orientation={orientation}
       {...props}
@@ -57,7 +58,13 @@ function Separator({ align, className, decorative = true, orientation, ...props 
 type SeparatorItemProps = ComponentProps<'div'>;
 
 function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
-  return <div className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)} {...props} />;
+  return (
+    <div
+      className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
+      data-slot="separator-item"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

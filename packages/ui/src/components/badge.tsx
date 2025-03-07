@@ -35,7 +35,7 @@ interface BadgeProps extends Omit<ComponentProps<'div'>, 'prefix'>, BadgeVariant
 
 function Badge({ children, className, prefix, suffix, variant, ...props }: BadgeProps): JSX.Element {
   return (
-    <div className={badgeVariants({ className, variant })} {...props}>
+    <div className={badgeVariants({ className, variant })} data-slot="badge" {...props}>
       {prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
       {suffix}

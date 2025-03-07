@@ -21,6 +21,7 @@ function Command({ className, ...props }: CommandProps): JSX.Element {
         'bg-popover text-popover-foreground flex flex-col overflow-hidden rounded-[inherit] focus-visible:outline-none',
         className,
       )}
+      data-slot="command"
       {...props}
     />
   );
@@ -34,8 +35,8 @@ type CommandDialogProps = ComponentProps<typeof Dialog>;
 
 function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element {
   return (
-    <Dialog {...props}>
-      <DialogContent className="p-0">
+    <Dialog data-slot="command-dialog" {...props}>
+      <DialogContent className="p-0" data-slot="command-dialog-content">
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
           {children}
         </Command>
@@ -52,13 +53,14 @@ type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
 
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
-    <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="">
+    <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="" data-slot="command-input-wrapper">
       <SearchIcon className="size-5 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
           'placeholder:text-muted-foreground flex h-10 w-full text-sm outline-none disabled:opacity-50',
           className,
         )}
+        data-slot="command-input"
         {...props}
       />
     </div>
@@ -72,7 +74,13 @@ function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
 type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
 
 function CommandList({ className, ...props }: CommandListProps): JSX.Element {
-  return <CommandPrimitive.List className={cn('max-h-75 overflow-y-auto overflow-x-hidden', className)} {...props} />;
+  return (
+    <CommandPrimitive.List
+      className={cn('max-h-75 overflow-y-auto overflow-x-hidden', className)}
+      data-slot="command-list"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -82,7 +90,13 @@ function CommandList({ className, ...props }: CommandListProps): JSX.Element {
 type CommandEmptyProps = ComponentProps<typeof CommandPrimitive.Empty>;
 
 function CommandEmpty({ className, ...props }: CommandEmptyProps): JSX.Element {
-  return <CommandPrimitive.Empty className={cn('py-6 text-center text-sm', className)} {...props} />;
+  return (
+    <CommandPrimitive.Empty
+      className={cn('py-6 text-center text-sm', className)}
+      data-slot="command-empty"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -98,6 +112,7 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
         'text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium',
         className,
       )}
+      data-slot="command-group"
       {...props}
     />
   );
@@ -110,7 +125,13 @@ function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
 type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
 
 function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
-  return <CommandPrimitive.Separator className={cn('bg-border -mx-1 h-px', className)} {...props} />;
+  return (
+    <CommandPrimitive.Separator
+      className={cn('bg-border -mx-1 h-px', className)}
+      data-slot="command-separator"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -126,6 +147,7 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
         'aria-selected:bg-accent aria-selected:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 aria-selected:outline-none',
         className,
       )}
+      data-slot="command-item"
       {...props}
     />
   );
@@ -138,7 +160,13 @@ function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
 type CommandLoadingProps = ComponentProps<typeof CommandPrimitive.Loading>;
 
 function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Element {
-  return <CommandPrimitive.Loading className={cn('flex justify-center p-2', className)} {...props} />;
+  return (
+    <CommandPrimitive.Loading
+      className={cn('flex justify-center p-2', className)}
+      data-slot="command-loading"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -154,6 +182,7 @@ function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Ele
         'text-muted-foreground ml-auto text-xs tracking-widest group-aria-selected:text-current',
         className,
       )}
+      data-slot="command-shortcut"
       {...props}
     />
   );

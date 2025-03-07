@@ -71,6 +71,7 @@ function ChartContainer({ id, children, className, config, ...props }: ChartCont
           className,
         )}
         data-chart={chartId}
+        data-slot="chart"
         {...props}
       >
         <ChartStyle config={config} id={chartId} />

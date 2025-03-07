@@ -17,8 +17,10 @@ type InputOTPProps = ComponentProps<typeof OTPInput>;
 function InputOTP({ className, containerClassName, ...props }: InputOTPProps): JSX.Element {
   return (
     <OTPInput
+      aria-label="One-time password"
       className={cn(className)}
       containerClassName={cn('flex items-center gap-2 has-disabled:opacity-50', containerClassName)}
+      data-slot="input-otp"
       {...props}
     />
   );
@@ -31,7 +33,14 @@ function InputOTP({ className, containerClassName, ...props }: InputOTPProps): J
 type InputOTPGroupProps = ComponentProps<'div'>;
 
 function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
-  return <div className={cn('flex items-center -space-x-px', className)} {...props} />;
+  return (
+    <div
+      className={cn('flex items-center -space-x-px', className)}
+      data-slot="input-otp-group"
+      role="group"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -52,6 +61,7 @@ function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.El
         'border-input data-[state=active]:ring-3 data-[state=active]:ring-ring data-[state=active]:border-ring not-has-disabled:shadow-xs relative flex size-10 items-center justify-center border text-sm transition-all first:rounded-l-lg last:rounded-r-lg data-[state=active]:z-10',
         className,
       )}
+      data-slot="input-otp-slot"
       data-state={slot.isActive ? 'active' : 'inactive'}
       {...props}
     >
@@ -73,7 +83,7 @@ type InputOTPSeparatorProps = ComponentProps<'div'>;
 
 function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
   return (
-    <div role="separator" {...props}>
+    <div data-slot="input-otp-separator" role="separator" {...props}>
       <DotIcon />
     </div>
   );
