@@ -7,5 +7,5 @@
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@app/block", "@app/docs", "@app/storybook"]
+  "ignore": ["@app/docs"]
 }
