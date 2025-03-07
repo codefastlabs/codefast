@@ -9,9 +9,7 @@
     "changeset:version": "changeset version",
     "clean": "turbo run clean && rm -rf node_modules pnpm-lock.yaml",
     "dev": "turbo run dev --concurrency=11",
-    "dev:block": "turbo run dev --filter=@app/block...",
     "dev:docs": "turbo run dev --filter=@app/docs...",
-    "dev:storybook": "turbo run dev --filter=@app/storybook...",
     "postinstall": "pnpm exec simple-git-hooks",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint -- --fix",
@@ -28,6 +26,9 @@
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged",
     "commit-msg": "pnpm exec commitlint --edit $1"
+  },
+  "dependencies": {
+    "tsx": "^4.19.3"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
