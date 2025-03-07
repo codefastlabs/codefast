@@ -7,7 +7,7 @@ import type { ControllerProps, FieldPath, FieldValues, GlobalError } from 'react
 
 import { createContextScope } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
-import { result } from 'lodash-es';
+import result from 'lodash.result';
 import { useId } from 'react';
 import { Controller, FormProvider, useFormState } from 'react-hook-form';
 
@@ -165,6 +165,7 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
   const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
   const { errors } = useFormState({ name });
+
   const error = result<GlobalError | null>(errors, name);
   const body = error?.message ? String(error.message) : children;
 
