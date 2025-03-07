@@ -13,21 +13,30 @@ import { buttonVariants } from '@/variants/button.variants';
  * -------------------------------------------------------------------------- */
 
 type SelectProps = ComponentProps<typeof SelectPrimitive.Root>;
-const Select = SelectPrimitive.Root;
+
+function Select({ ...props }: ComponentProps<typeof SelectPrimitive.Root>): JSX.Element {
+  return <SelectPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SelectGroup
  * -------------------------------------------------------------------------- */
 
 type SelectGroupProps = ComponentProps<typeof SelectPrimitive.Group>;
-const SelectGroup = SelectPrimitive.Group;
+
+function SelectGroup({ ...props }: SelectGroupProps): JSX.Element {
+  return <SelectPrimitive.Group {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SelectValue
  * -------------------------------------------------------------------------- */
 
 type SelectValueProps = ComponentProps<typeof SelectPrimitive.Value>;
-const SelectValue = SelectPrimitive.Value;
+
+function SelectValue({ ...props }: SelectValueProps): JSX.Element {
+  return <SelectPrimitive.Value {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SelectTrigger

@@ -13,14 +13,20 @@ import { buttonVariants } from '@/variants/button.variants';
  * -------------------------------------------------------------------------- */
 
 type DialogProps = ComponentProps<typeof DialogPrimitive.Root>;
-const Dialog = DialogPrimitive.Root;
+
+function Dialog({ ...props }: DialogProps): JSX.Element {
+  return <DialogPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
 type DialogTriggerProps = ComponentProps<typeof DialogPrimitive.Trigger>;
-const DialogTrigger = DialogPrimitive.Trigger;
+
+function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
+  return <DialogPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DialogContent

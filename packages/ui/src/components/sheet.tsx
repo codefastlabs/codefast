@@ -38,14 +38,20 @@ type SheetContentVariantsProps = VariantProps<typeof sheetContentVariants>;
  * -------------------------------------------------------------------------- */
 
 type SheetProps = ComponentProps<typeof SheetPrimitive.Root>;
-const Sheet = SheetPrimitive.Root;
+
+function Sheet({ children, ...props }: SheetProps): JSX.Element {
+  return <SheetPrimitive.Root {...props}>{children}</SheetPrimitive.Root>;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SheetTrigger
  * -------------------------------------------------------------------------- */
 
 type SheetTriggerProps = ComponentProps<typeof SheetPrimitive.Trigger>;
-const SheetTrigger = SheetPrimitive.Trigger;
+
+function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
+  return <SheetPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: SheetContent

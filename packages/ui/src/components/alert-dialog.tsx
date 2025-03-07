@@ -12,14 +12,20 @@ import { buttonVariants } from '@/variants/button.variants';
  * -------------------------------------------------------------------------- */
 
 type AlertDialogProps = ComponentProps<typeof AlertDialogPrimitive.Root>;
-const AlertDialog = AlertDialogPrimitive.Root;
+
+function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
+  return <AlertDialogPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialogTrigger
  * -------------------------------------------------------------------------- */
 
 type AlertDialogTriggerProps = ComponentProps<typeof AlertDialogPrimitive.Trigger>;
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
+
+function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element {
+  return <AlertDialogPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialogContent

@@ -11,10 +11,9 @@ import { cn } from '@/lib/utils';
  * Component: ResizablePanelGroup
  * -------------------------------------------------------------------------- */
 
-function ResizablePanelGroup({
-  className,
-  ...props
-}: ComponentProps<typeof ResizablePrimitive.PanelGroup>): JSX.Element {
+type ResizablePanelGroupProps = ComponentProps<typeof ResizablePrimitive.PanelGroup>;
+
+function ResizablePanelGroup({ className, ...props }: ResizablePanelGroupProps): JSX.Element {
   return (
     <ResizablePrimitive.PanelGroup
       className={cn('flex size-full data-[panel-group-direction=vertical]:flex-col', className)}
@@ -27,19 +26,21 @@ function ResizablePanelGroup({
  * Component: ResizablePanel
  * -------------------------------------------------------------------------- */
 
-const ResizablePanel = ResizablePrimitive.Panel;
+type ResizablePanelProps = ComponentProps<typeof ResizablePrimitive.Panel>;
+
+function ResizablePanel({ ...props }: ResizablePanelProps): JSX.Element {
+  return <ResizablePrimitive.Panel {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ResizableHandle
  * -------------------------------------------------------------------------- */
 
-function ResizableHandle({
-  className,
-  withHandle,
-  ...props
-}: ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+interface ResizableHandleProps extends ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> {
   withHandle?: boolean;
-}): JSX.Element {
+}
+
+function ResizableHandle({ className, withHandle, ...props }: ResizableHandleProps): JSX.Element {
   return (
     <ResizablePrimitive.PanelResizeHandle
       className={cn(
@@ -61,4 +62,5 @@ function ResizableHandle({
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type { ResizableHandleProps, ResizablePanelGroupProps, ResizablePanelProps };
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup };

@@ -10,28 +10,40 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type MenubarMenuProps = ComponentProps<typeof MenubarPrimitive.Menu>;
-const MenubarMenu = MenubarPrimitive.Menu;
+
+function MenubarMenu({ ...props }: MenubarMenuProps): JSX.Element {
+  return <MenubarPrimitive.Menu {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarGroup
  * -------------------------------------------------------------------------- */
 
 type MenubarGroupProps = ComponentProps<typeof MenubarPrimitive.Group>;
-const MenubarGroup = MenubarPrimitive.Group;
+
+function MenubarGroup({ ...props }: MenubarGroupProps): JSX.Element {
+  return <MenubarPrimitive.Group {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarSub
  * -------------------------------------------------------------------------- */
 
 type MenubarSubProps = ComponentProps<typeof MenubarPrimitive.Sub>;
-const MenubarSub = MenubarPrimitive.Sub;
+
+function MenubarSub({ ...props }: MenubarSubProps): JSX.Element {
+  return <MenubarPrimitive.Sub {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: MenubarRadioGroup
  * -------------------------------------------------------------------------- */
 
 type MenubarRadioGroupProps = ComponentProps<typeof MenubarPrimitive.RadioGroup>;
-const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
+
+function MenubarRadioGroup({ ...props }: MenubarRadioGroupProps): JSX.Element {
+  return <MenubarPrimitive.RadioGroup {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: Menubar
@@ -148,14 +160,15 @@ interface MenubarItemProps extends ComponentProps<typeof MenubarPrimitive.Item> 
   variant?: 'default' | 'destructive';
 }
 
-function MenubarItem({ className, inset, ...props }: MenubarItemProps): JSX.Element {
+function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps): JSX.Element {
   return (
     <MenubarPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:focus:bg-destructive data-[variant=destructive]:focus:text-destructive-foreground data-inset:pl-8 relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
       data-inset={inset}
+      data-variant={variant}
       {...props}
     />
   );
@@ -247,7 +260,12 @@ function MenubarSeparator({ className, ...props }: MenubarSeparatorProps): JSX.E
 type MenubarShortcutProps = ComponentProps<'span'>;
 
 function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Element {
-  return <span className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)} {...props} />;
+  return (
+    <span
+      className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

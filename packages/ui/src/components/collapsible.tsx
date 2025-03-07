@@ -9,14 +9,20 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type CollapsibleProps = ComponentProps<typeof CollapsiblePrimitive.Root>;
-const Collapsible = CollapsiblePrimitive.Root;
+
+function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
+  return <CollapsiblePrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: CollapsibleTrigger
  * -------------------------------------------------------------------------- */
 
 type CollapsibleTriggerProps = ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>;
-const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
+
+function CollapsibleTrigger({ ...props }: CollapsibleTriggerProps): JSX.Element {
+  return <CollapsiblePrimitive.CollapsibleTrigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: CollapsibleContent

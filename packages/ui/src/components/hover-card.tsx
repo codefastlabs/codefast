@@ -9,14 +9,20 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type HoverCardProps = ComponentProps<typeof HoverCardPrimitive.Root>;
-const HoverCard = HoverCardPrimitive.Root;
+
+function HoverCard({ ...props }: HoverCardProps): JSX.Element {
+  return <HoverCardPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardTrigger
  * -------------------------------------------------------------------------- */
 
 type HoverCardTriggerProps = ComponentProps<typeof HoverCardPrimitive.Trigger>;
-const HoverCardTrigger = HoverCardPrimitive.Trigger;
+
+function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
+  return <HoverCardPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCardContent

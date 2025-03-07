@@ -19,7 +19,10 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type FormProps = ComponentProps<typeof FormProvider>;
-const Form = FormProvider;
+
+function Form({ ...props }: FormProps): JSX.Element {
+  return <FormProvider {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: FormField

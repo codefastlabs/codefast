@@ -100,7 +100,10 @@ function ChartStyle({ id, config }: ChartStyleProps): ReactNode {
  * -------------------------------------------------------------------------- */
 
 type ChartTooltipProps = ComponentProps<typeof RechartsPrimitive.Tooltip>;
-const ChartTooltip = RechartsPrimitive.Tooltip;
+
+function ChartTooltip({ ...props }: ChartTooltipProps): JSX.Element {
+  return <RechartsPrimitive.Tooltip {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: ChartTooltipContent

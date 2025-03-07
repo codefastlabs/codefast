@@ -24,7 +24,10 @@ function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.El
  * -------------------------------------------------------------------------- */
 
 type DrawerTriggerProps = ComponentProps<typeof DrawerPrimitive.Trigger>;
-const DrawerTrigger = DrawerPrimitive.Trigger;
+
+function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
+  return <DrawerPrimitive.Trigger {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: DrawerContent

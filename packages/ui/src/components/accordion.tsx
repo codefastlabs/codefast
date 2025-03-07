@@ -11,14 +11,20 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 type AccordionProps = ComponentProps<typeof AccordionPrimitive.Root>;
-const Accordion = AccordionPrimitive.Root;
+
+function Accordion({ ...props }: AccordionProps): JSX.Element {
+  return <AccordionPrimitive.Root {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
 type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
-const AccordionItem = AccordionPrimitive.Item;
+
+function AccordionItem({ ...props }: AccordionItemProps): JSX.Element {
+  return <AccordionPrimitive.Item {...props} />;
+}
 
 /* -----------------------------------------------------------------------------
  * Component: AccordionIcon
