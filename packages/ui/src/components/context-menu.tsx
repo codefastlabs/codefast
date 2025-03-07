@@ -52,10 +52,10 @@ function ContextMenuSubTrigger({ children, className, inset, ...props }: Context
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
-        inset && 'pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
         className,
       )}
+      data-inset={inset}
       {...props}
     >
       {children}
@@ -110,16 +110,17 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
 
 interface ContextMenuItemProps extends ComponentProps<typeof ContextMenuPrimitive.Item> {
   inset?: boolean;
+  variant?: 'default' | 'destructive';
 }
 
 function ContextMenuItem({ className, inset, ...props }: ContextMenuItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
-        inset && 'pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:focus:bg-destructive data-[variant=destructive]:focus:text-destructive-foreground data-inset:pl-8 group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-inset={inset}
       {...props}
     />
   );
@@ -192,7 +193,8 @@ interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimiti
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
-      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      data-inset={inset}
       {...props}
     />
   );

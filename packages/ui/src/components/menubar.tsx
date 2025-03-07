@@ -78,10 +78,10 @@ function MenubarSubTrigger({ children, className, inset, ...props }: MenubarSubT
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
-        inset && 'pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
         className,
       )}
+      data-inset={inset}
       {...props}
     >
       {children}
@@ -145,16 +145,17 @@ function MenubarContent({
 
 interface MenubarItemProps extends ComponentProps<typeof MenubarPrimitive.Item> {
   inset?: boolean;
+  variant?: 'default' | 'destructive';
 }
 
 function MenubarItem({ className, inset, ...props }: MenubarItemProps): JSX.Element {
   return (
     <MenubarPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
-        inset && 'pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:focus:bg-destructive data-[variant=destructive]:focus:text-destructive-foreground data-inset:pl-8 relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-inset={inset}
       {...props}
     />
   );
@@ -222,7 +223,8 @@ interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      data-inset={inset}
       {...props}
     />
   );
