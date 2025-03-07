@@ -52,10 +52,10 @@ function DropdownMenuSubTrigger({ children, className, inset, ...props }: Dropdo
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
-        inset && 'pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none',
         className,
       )}
+      data-inset={inset}
       {...props}
     >
       {children}
@@ -111,16 +111,18 @@ function DropdownMenuContent({ className, sideOffset = 6, ...props }: DropdownMe
 
 interface DropdownMenuItemProps extends ComponentProps<typeof DropdownMenuPrimitive.Item> {
   inset?: boolean;
+  variant?: 'default' | 'destructive';
 }
 
-function DropdownMenuItem({ className, inset, ...props }: DropdownMenuItemProps): JSX.Element {
+function DropdownMenuItem({ className, inset, variant = 'default', ...props }: DropdownMenuItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
-        inset && 'pl-8',
+        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:focus:bg-destructive data-[variant=destructive]:focus:text-destructive-foreground data-inset:pl-8 group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-inset={inset}
+      data-variant={variant}
       {...props}
     />
   );
@@ -193,7 +195,8 @@ interface DropdownMenuLabelProps extends ComponentProps<typeof DropdownMenuPrimi
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', inset && 'pl-8', className)}
+      className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      data-inset={inset}
       {...props}
     />
   );
