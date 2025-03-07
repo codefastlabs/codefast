@@ -13,7 +13,7 @@ interface CodeProps extends ComponentProps<'code'> {
 function Code({ asChild, ...props }: CodeProps): JSX.Element {
   const Component = asChild ? Slot : 'code';
 
-  return <Component {...props} />;
+  return <Component data-slot="code" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

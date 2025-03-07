@@ -136,6 +136,7 @@ function Carousel({
       <div
         aria-roledescription="carousel"
         className={cn('relative', className)}
+        data-slot="carousel"
         role="region"
         onKeyDownCapture={handleKeyDown}
         {...props}
@@ -168,7 +169,7 @@ function CarouselContent({
   const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
   return (
-    <div ref={carouselRef} className={cn('overflow-hidden', classNames?.wrapper)}>
+    <div ref={carouselRef} className={cn('overflow-hidden', classNames?.wrapper)} data-slot="carousel-content">
       <div
         className={cn(
           'flex',
@@ -197,6 +198,7 @@ function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<Caro
     <div
       aria-roledescription="slide"
       className={cn('min-w-0 shrink-0 grow-0 basis-full', orientation === 'horizontal' ? 'pl-4' : 'pt-4', className)}
+      data-slot="carousel-item"
       role="group"
       {...props}
     />
@@ -223,6 +225,7 @@ function CarouselPrevious({
 
   return (
     <Button
+      aria-label="Previous slide"
       className={cn(
         'not-disabled:shadow-none absolute',
         orientation === 'horizontal'
@@ -230,6 +233,7 @@ function CarouselPrevious({
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
         className,
       )}
+      data-slot="carousel-previous"
       disabled={!canScrollPrev}
       icon={icon}
       prefix={<ArrowLeftIcon />}
@@ -263,6 +267,7 @@ function CarouselNext({
 
   return (
     <Button
+      aria-label="Next slide"
       className={cn(
         'not-disabled:shadow-none absolute',
         orientation === 'horizontal'
@@ -270,6 +275,7 @@ function CarouselNext({
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
         className,
       )}
+      data-slot="carousel-next"
       disabled={!canScrollNext}
       icon={icon}
       prefix={<ArrowRightIcon />}

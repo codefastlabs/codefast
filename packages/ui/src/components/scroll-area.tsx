@@ -93,8 +93,15 @@ function ScrollArea({
 }: ScopedProps<ScrollAreaProps>): JSX.Element {
   return (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root className={cn('relative overflow-hidden', className)} {...props}>
-        <ScrollAreaPrimitive.Viewport className="size-full rounded-[inherit] [&>*]:h-full">
+      <ScrollAreaPrimitive.Root
+        className={cn('relative overflow-hidden', className)}
+        data-slot="scroll-area"
+        {...props}
+      >
+        <ScrollAreaPrimitive.Viewport
+          className="size-full rounded-[inherit] [&>*]:h-full"
+          data-slot="scroll-area-viewport"
+        >
           {children}
         </ScrollAreaPrimitive.Viewport>
         <ScrollAreaScrollbar orientation="vertical" />
@@ -122,6 +129,7 @@ function ScrollAreaScrollbar({
   return (
     <ScrollAreaPrimitive.Scrollbar
       className={scrollAreaScrollbarVariants({ className, orientation, size })}
+      data-slot="scroll-area-scrollbar"
       orientation={orientation}
       {...props}
     >

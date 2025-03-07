@@ -16,6 +16,7 @@ function NavigationMenu({ children, className, ...props }: NavigationMenuProps):
   return (
     <NavigationMenuPrimitive.Root
       className={cn('relative z-10 flex max-w-max flex-1 items-center justify-center', className)}
+      data-slot="navigation-menu"
       {...props}
     >
       {children}
@@ -34,6 +35,7 @@ function NavigationMenuList({ children, className, ...props }: NavigationMenuLis
   return (
     <NavigationMenuPrimitive.List
       className={cn('group flex flex-1 list-none items-center justify-center space-x-1', className)}
+      data-slot="navigation-menu-list"
       {...props}
     >
       {children}
@@ -49,7 +51,7 @@ function NavigationMenuList({ children, className, ...props }: NavigationMenuLis
 type NavigationMenuItemProps = ComponentProps<typeof NavigationMenuPrimitive.Item>;
 
 function NavigationMenuItem({ ...props }: NavigationMenuItemProps): JSX.Element {
-  return <NavigationMenuPrimitive.Item {...props} />;
+  return <NavigationMenuPrimitive.Item data-slot="navigation-menu-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -65,6 +67,7 @@ function NavigationMenuTrigger({ children, className, ...props }: NavigationMenu
         className: ['data-[state=open]:bg-accent data-[state=open]:text-accent-foreground group', className],
         variant: 'ghost',
       })}
+      data-slot="navigation-menu-trigger"
       {...props}
     >
       {children}
@@ -89,6 +92,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
         'data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0 data-[motion=from-end]:slide-from-r-52 data-[motion=from-start]:slide-from-l-52 data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0 data-[motion=to-end]:slide-to-r-52 data-[motion=to-start]:slide-to-l-52 left-0 top-0 w-full md:absolute md:w-auto',
         className,
       )}
+      data-slot="navigation-menu-content"
       {...props}
     />
   );
@@ -101,7 +105,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
 type NavigationMenuLinkProps = ComponentProps<typeof NavigationMenuPrimitive.Link>;
 
 function NavigationMenuLink({ ...props }: NavigationMenuLinkProps): JSX.Element {
-  return <NavigationMenuPrimitive.Link {...props} />;
+  return <NavigationMenuPrimitive.Link data-slot="navigation-menu-link" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -118,6 +122,7 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
           'bg-popover text-popover-foreground h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width) data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 relative mt-2 w-full origin-[top_center] overflow-hidden rounded-lg border p-1 shadow-lg transition-[width,height]',
           className,
         )}
+        data-slot="navigation-menu-viewport"
         {...props}
       />
     </div>
@@ -137,6 +142,7 @@ function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicato
         'data-[state=visible]:animate-fade-in data-[state=visible]:animation-duration-100 data-[state=hidden]:animate-fade-out data-[state=hidden]:animation-duration-100 data-[state=hidden]:animation-ease-[cubic-bezier(0.32, 0.72, 0, 1)] top-full z-10 flex h-2 origin-[bottom_center] items-center justify-center overflow-hidden transition',
         className,
       )}
+      data-slot="navigation-menu-indicator"
       {...props}
     >
       <div className="bg-popover text-popover-foreground rounded-tl-xs relative top-[60%] size-2.5 rotate-45" />

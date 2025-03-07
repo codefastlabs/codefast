@@ -48,6 +48,7 @@ function InputPassword({
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
+      data-slot="input-password"
       disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
@@ -56,12 +57,19 @@ function InputPassword({
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
-      <InputPrimitive.Item className={input({ inputSize })} type={type} {...props} />
+      <InputPrimitive.Item
+        autoCapitalize="off"
+        className={input({ inputSize })}
+        data-slot="input-password-item"
+        type={type}
+        {...props}
+      />
       <Button
         icon
         inside
         aria-label={type === 'password' ? 'Show password' : 'Hide password'}
         className="rounded-full"
+        data-slot="input-password-toggle"
         disabled={disabled}
         prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
         size={inputSize}

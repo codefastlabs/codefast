@@ -18,9 +18,10 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
         'border-input text-primary-foreground hover:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary focus-visible:ring-ring focus-visible:ring-3 not-disabled:shadow-xs peer inline-flex size-4 shrink-0 items-center justify-center rounded-sm border transition focus-visible:outline-none disabled:opacity-50',
         className,
       )}
+      data-slot="checkbox"
       {...props}
     >
-      <CheckboxPrimitive.Indicator>
+      <CheckboxPrimitive.Indicator data-slot="checkbox-indicator">
         <CheckIcon className="size-3.5" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

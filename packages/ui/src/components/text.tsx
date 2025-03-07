@@ -13,7 +13,7 @@ interface TextProps extends ComponentProps<'p'> {
 function Text({ asChild, ...props }: TextProps): JSX.Element {
   const Component = asChild ? Slot : 'p';
 
-  return <Component {...props} />;
+  return <Component data-slot="text" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

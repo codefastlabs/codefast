@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 type CollapsibleProps = ComponentProps<typeof CollapsiblePrimitive.Root>;
 
 function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
-  return <CollapsiblePrimitive.Root {...props} />;
+  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
 type CollapsibleTriggerProps = ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>;
 
 function CollapsibleTrigger({ ...props }: CollapsibleTriggerProps): JSX.Element {
-  return <CollapsiblePrimitive.CollapsibleTrigger {...props} />;
+  return <CollapsiblePrimitive.CollapsibleTrigger data-slot="collapsible-trigger" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -37,6 +37,7 @@ function CollapsibleContent({ className, ...props }: CollapsibleContentProps): J
         'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden',
         className,
       )}
+      data-slot="collapsible-content"
       {...props}
     />
   );

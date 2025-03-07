@@ -52,6 +52,7 @@ function Input({
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
+      data-slot="input"
       disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
@@ -60,7 +61,7 @@ function Input({
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
-      <InputPrimitive.Item className={input({ inputSize })} {...props} />
+      <InputPrimitive.Item className={input({ inputSize })} data-slot="input-item" {...props} />
     </InputPrimitive.Root>
   );
 }

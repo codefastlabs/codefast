@@ -13,7 +13,7 @@ interface SectionProps extends ComponentProps<'section'> {
 function Section({ asChild, ...props }: SectionProps): JSX.Element {
   const Component = asChild ? Slot : 'section';
 
-  return <Component {...props} />;
+  return <Component data-slot="section" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

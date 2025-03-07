@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 type ContextMenuProps = ComponentProps<typeof ContextMenuPrimitive.Root>;
 
 function ContextMenu({ ...props }: ContextMenuProps): JSX.Element {
-  return <ContextMenuPrimitive.Root {...props} />;
+  return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -22,7 +22,7 @@ function ContextMenu({ ...props }: ContextMenuProps): JSX.Element {
 type ContextMenuTriggerProps = ComponentProps<typeof ContextMenuPrimitive.Trigger>;
 
 function ContextMenuTrigger({ ...props }: ContextMenuTriggerProps): JSX.Element {
-  return <ContextMenuPrimitive.Trigger {...props} />;
+  return <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ function ContextMenuTrigger({ ...props }: ContextMenuTriggerProps): JSX.Element 
 type ContextMenuGroupProps = ComponentProps<typeof ContextMenuPrimitive.Group>;
 
 function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
-  return <ContextMenuPrimitive.Group {...props} />;
+  return <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
 type ContextMenuSubProps = ComponentProps<typeof ContextMenuPrimitive.Sub>;
 
 function ContextMenuSub({ ...props }: ContextMenuSubProps): JSX.Element {
-  return <ContextMenuPrimitive.Sub {...props} />;
+  return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ function ContextMenuSub({ ...props }: ContextMenuSubProps): JSX.Element {
 type ContextMenuRadioGroupProps = ComponentProps<typeof ContextMenuPrimitive.RadioGroup>;
 
 function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.Element {
-  return <ContextMenuPrimitive.RadioGroup {...props} />;
+  return <ContextMenuPrimitive.RadioGroup data-slot="context-menu-radio-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -71,6 +71,7 @@ function ContextMenuSubTrigger({ children, className, inset, ...props }: Context
         className,
       )}
       data-inset={inset}
+      data-slot="context-menu-sub-trigger"
       {...props}
     >
       {children}
@@ -93,6 +94,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentPro
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=right]:slide-to-l-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=left]:slide-to-r-2 z-50 min-w-32 rounded-lg border p-1 shadow-lg',
           className,
         )}
+        data-slot="context-menu-sub-content"
         {...props}
       />
     </ContextMenuPrimitive.Portal>
@@ -113,6 +115,7 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 z-50 min-w-32 rounded-lg border p-1 shadow-lg',
           className,
         )}
+        data-slot="context-menu-content"
         {...props}
       />
     </ContextMenuPrimitive.Portal>
@@ -136,6 +139,7 @@ function ContextMenuItem({ className, inset, variant, ...props }: ContextMenuIte
         className,
       )}
       data-inset={inset}
+      data-slot="context-menu-item"
       data-variant={variant}
       {...props}
     />
@@ -161,6 +165,7 @@ function ContextMenuCheckboxItem({
         'focus:bg-accent focus:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-slot="context-menu-checkbox-item"
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
@@ -186,6 +191,7 @@ function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadi
         'focus:bg-accent focus:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-slot="context-menu-radio-item"
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
@@ -211,6 +217,7 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
     <ContextMenuPrimitive.Label
       className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
       data-inset={inset}
+      data-slot="context-menu-label"
       {...props}
     />
   );
@@ -223,7 +230,13 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
 type ContextMenuSeparatorProps = ComponentProps<typeof ContextMenuPrimitive.Separator>;
 
 function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps): JSX.Element {
-  return <ContextMenuPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
+  return (
+    <ContextMenuPrimitive.Separator
+      className={cn('bg-muted mx-2 my-1 h-px', className)}
+      data-slot="context-menu-separator"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -236,6 +249,7 @@ function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps):
   return (
     <span
       className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
+      data-slot="context-menu-shortcut"
       {...props}
     />
   );
@@ -248,7 +262,9 @@ function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps):
 type ContextMenuArrowProps = ContextMenuPrimitive.ContextMenuArrowProps;
 
 function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.Element {
-  return <ContextMenuPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+  return (
+    <ContextMenuPrimitive.Arrow className={cn('fill-popover', className)} data-slot="context-menu-arrow" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------

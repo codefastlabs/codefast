@@ -14,7 +14,7 @@ interface HeadingProps extends ComponentProps<'h1' | 'h2' | 'h3' | 'h4' | 'h5' |
 function Heading({ as: Tag = 'h1', asChild, ...props }: HeadingProps): JSX.Element {
   const Component = asChild ? Slot : Tag;
 
-  return <Component {...props} />;
+  return <Component data-slot="heading" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

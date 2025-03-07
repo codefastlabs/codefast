@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 type SkeletonProps = ComponentProps<'div'>;
 
 function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
-  return <div className={cn('bg-muted animate-pulse rounded-lg', className)} {...props} />;
+  return <div className={cn('bg-muted animate-pulse rounded-lg', className)} data-slot="skeleton" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 'use client';
 
-import type { ComponentProps, JSX } from 'react';
+import type { JSX } from 'react';
+import type { ToasterProps } from 'sonner';
 
 import { useTheme } from 'next-themes';
 import { Toaster as Sonner } from 'sonner';
@@ -9,24 +10,20 @@ import { Toaster as Sonner } from 'sonner';
  * Component: Sonner
  * -------------------------------------------------------------------------- */
 
-type ToasterProps = ComponentProps<typeof Sonner>;
-type Theme = 'dark' | 'light' | 'system' | undefined;
-
 function Toaster({ ...props }: ToasterProps): JSX.Element {
-  const { theme = 'system' } = useTheme() as { theme: Theme };
+  const { theme = 'system' } = useTheme();
 
   return (
     <Sonner
       className="toaster group"
-      theme={theme}
+      theme={theme as ToasterProps['theme']}
       toastOptions={{
         classNames: {
-          actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
-          cancelButton: 'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
-          content: 'w-full flex flex-col gap-1',
-          description: 'group-[.toast]:text-muted-foreground',
           toast:
-            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-xs',
+            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
+          description: 'group-[.toast]:text-muted-foreground',
+          actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground font-medium',
+          cancelButton: 'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground font-medium',
         },
       }}
       {...props}
@@ -38,6 +35,6 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { toast } from 'sonner';
-export type { ToasterProps };
+export { toast, type ToasterProps } from 'sonner';
+
 export { Toaster };

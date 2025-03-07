@@ -13,7 +13,7 @@ interface StrongProps extends ComponentProps<'strong'> {
 function Strong({ asChild, ...props }: StrongProps): JSX.Element {
   const Component = asChild ? Slot : 'strong';
 
-  return <Component {...props} />;
+  return <Component data-slot="strong" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

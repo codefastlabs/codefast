@@ -13,7 +13,7 @@ interface PreProps extends ComponentProps<'pre'> {
 function Pre({ asChild, ...props }: PreProps): JSX.Element {
   const Component = asChild ? Slot : 'pre';
 
-  return <Component {...props} />;
+  return <Component data-slot="pre" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 type TooltipProviderProps = ComponentProps<typeof TooltipPrimitive.Provider>;
 
 function TooltipProvider({ ...props }: TooltipProviderProps): JSX.Element {
-  return <TooltipPrimitive.Provider {...props} />;
+  return <TooltipPrimitive.Provider data-slot="tooltip-provider" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ function TooltipProvider({ ...props }: TooltipProviderProps): JSX.Element {
 type TooltipProps = ComponentProps<typeof TooltipPrimitive.Root>;
 
 function Tooltip({ ...props }: TooltipProps): JSX.Element {
-  return <TooltipPrimitive.Root {...props} />;
+  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -31,7 +31,7 @@ function Tooltip({ ...props }: TooltipProps): JSX.Element {
 type TooltipTriggerProps = ComponentProps<typeof TooltipPrimitive.Trigger>;
 
 function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
-  return <TooltipPrimitive.Trigger {...props} />;
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -48,6 +48,7 @@ function TooltipContent({ className, sideOffset = 6, ...props }: TooltipContentP
           'bg-popover text-popover-foreground data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=delayed-open]:data-[side=top]:slide-from-b-2 data-[state=delayed-open]:data-[side=right]:slide-from-l-2 data-[state=delayed-open]:data-[side=bottom]:slide-from-t-2 data-[state=delayed-open]:data-[side=left]:slide-from-r-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=right]:slide-to-l-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=left]:slide-to-r-2 z-50 rounded-lg border px-3 py-1.5 text-xs shadow-lg',
           className,
         )}
+        data-slot="tooltip-content"
         sideOffset={sideOffset}
         {...props}
       />
@@ -62,7 +63,7 @@ function TooltipContent({ className, sideOffset = 6, ...props }: TooltipContentP
 type TooltipArrowProps = ComponentProps<typeof TooltipPrimitive.Arrow>;
 
 function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
-  return <TooltipPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+  return <TooltipPrimitive.Arrow className={cn('fill-popover', className)} data-slot="tooltip-arrow" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

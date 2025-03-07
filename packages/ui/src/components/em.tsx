@@ -13,7 +13,7 @@ interface EmProps extends ComponentProps<'em'> {
 function Em({ asChild, ...props }: EmProps): JSX.Element {
   const Component = asChild ? Slot : 'em';
 
-  return <Component {...props} />;
+  return <Component data-slot="em" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

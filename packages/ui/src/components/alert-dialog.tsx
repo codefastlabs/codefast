@@ -14,7 +14,7 @@ import { buttonVariants } from '@/variants/button.variants';
 type AlertDialogProps = ComponentProps<typeof AlertDialogPrimitive.Root>;
 
 function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
-  return <AlertDialogPrimitive.Root {...props} />;
+  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -24,7 +24,7 @@ function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
 type AlertDialogTriggerProps = ComponentProps<typeof AlertDialogPrimitive.Trigger>;
 
 function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element {
-  return <AlertDialogPrimitive.Trigger {...props} />;
+  return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -40,15 +40,20 @@ function AlertDialogContent({ children, className, ...props }: AlertDialogConten
         className={cn(
           'bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50',
         )}
+        data-slot="alert-dialog-overlay"
       />
       <AlertDialogPrimitive.Content
         className={cn(
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4',
           className,
         )}
+        data-slot="alert-dialog-content-wrapper"
         {...props}
       >
-        <div className="bg-popover text-popover-foreground relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border shadow-lg">
+        <div
+          className="bg-popover text-popover-foreground relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border shadow-lg"
+          data-slot="alert-dialog-content"
+        >
           {children}
         </div>
       </AlertDialogPrimitive.Content>
@@ -66,6 +71,7 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
   return (
     <div
       className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      data-slot="alert-dialog-header"
       {...props}
     />
   );
@@ -78,7 +84,7 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
 type AlertDialogBodyProps = ComponentProps<'div'>;
 
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
-  return <main className={cn('overflow-auto px-6 py-2', className)} {...props} />;
+  return <main className={cn('overflow-auto px-6 py-2', className)} data-slot="alert-dialog-body" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -91,6 +97,7 @@ function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX
   return (
     <div
       className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
+      data-slot="alert-dialog-footer"
       {...props}
     />
   );
@@ -106,6 +113,7 @@ function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.E
   return (
     <AlertDialogPrimitive.Title
       className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+      data-slot="alert-dialog-title"
       {...props}
     />
   );
@@ -118,7 +126,13 @@ function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.E
 type AlertDialogDescriptionProps = ComponentProps<typeof AlertDialogPrimitive.Description>;
 
 function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionProps): JSX.Element {
-  return <AlertDialogPrimitive.Description className={cn('text-muted-foreground text-sm', className)} {...props} />;
+  return (
+    <AlertDialogPrimitive.Description
+      className={cn('text-muted-foreground text-sm', className)}
+      data-slot="alert-dialog-description"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -131,7 +145,13 @@ interface AlertDialogActionProps extends ComponentProps<typeof AlertDialogPrimit
 }
 
 function AlertDialogAction({ className, size, variant, ...props }: AlertDialogActionProps): JSX.Element {
-  return <AlertDialogPrimitive.Action className={buttonVariants({ className, size, variant })} {...props} />;
+  return (
+    <AlertDialogPrimitive.Action
+      className={buttonVariants({ className, size, variant })}
+      data-slot="alert-dialog-action"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -144,7 +164,13 @@ interface AlertDialogCancelProps extends ComponentProps<typeof AlertDialogPrimit
 }
 
 function AlertDialogCancel({ className, size, variant = 'outline', ...props }: AlertDialogCancelProps): JSX.Element {
-  return <AlertDialogPrimitive.Cancel className={buttonVariants({ className, size, variant })} {...props} />;
+  return (
+    <AlertDialogPrimitive.Cancel
+      className={buttonVariants({ className, size, variant })}
+      data-slot="alert-dialog-cancel"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
