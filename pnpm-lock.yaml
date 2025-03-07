@@ -156,9 +156,15 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      lucide-react:
+        specifier: ^0.477.0
+        version: 0.477.0(react@19.0.0)
       next:
         specifier: 15.2.1
         version: 15.2.1(@babel/core@7.26.9)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next-themes:
+        specifier: ^0.4.4
+        version: 0.4.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -763,12 +769,12 @@ importers:
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      js-cookie:
-        specifier: ^3.0.5
-        version: 3.0.5
       lodash-es:
         specifier: '>=4'
         version: 4.17.21
+      lodash.result:
+        specifier: ^4.5.2
+        version: 4.5.2
       lucide-react:
         specifier: ^0.477.0
         version: 0.477.0(react@19.0.0)
@@ -815,9 +821,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.0.11
         version: 4.0.11
-      '@types/js-cookie':
-        specifier: ^3.0.6
-        version: 3.0.6
+      '@types/lodash.result':
+        specifier: ^4.5.9
+        version: 4.5.9
       '@types/node':
         specifier: ^22.13.9
         version: 22.13.9
@@ -3404,6 +3410,9 @@ packages:
 
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
+
+  '@types/lodash.result@4.5.9':
+    resolution: {integrity: sha512-26YrN13B4mOLG90BC4zBdlHtcDZ9j/3FOMPqYZ+6cqHNif2Gq+sCBN0Qw/92CSl4SZPuVqOUppwiebQkvCPEIQ==}
 
   '@types/lodash@4.17.16':
     resolution: {integrity: sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==}
@@ -6020,6 +6029,9 @@ packages:
 
   lodash.mergewith@4.6.2:
     resolution: {integrity: sha512-GK3g5RPZWTRSeLSpgP8Xhra+pnjBC56q9FZYe1d5RN3TJ35dbkGy3YqBSMbyCrlbi+CM9Z3Jk5yTL7RCsqboyQ==}
+
+  lodash.result@4.5.2:
+    resolution: {integrity: sha512-dlgJvozORK2oE4jXzTGIsJz9Vk6huNAINxYYvWc/R44x3/ah/F7OkNwr9c0wO2poh2cbdjS0jF3j8VgyCEOVfw==}
 
   lodash.snakecase@4.1.1:
     resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
@@ -10946,6 +10958,10 @@ snapshots:
     dependencies:
       '@types/lodash': 4.17.16
 
+  '@types/lodash.result@4.5.9':
+    dependencies:
+      '@types/lodash': 4.17.16
+
   '@types/lodash@4.17.16': {}
 
   '@types/mdx@2.0.13': {}
@@ -14040,6 +14056,8 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash.mergewith@4.6.2: {}
+
+  lodash.result@4.5.2: {}
 
   lodash.snakecase@4.1.1: {}
 
