@@ -51,7 +51,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
     --destructive: var(--color-red-500);
     --destructive-hover: var(--color-red-600);
-    --destructive-foreground: var(--color-red-950);
+    --destructive-foreground: var(--color-red-50);
 
     --accent: var(--color-zinc-100);
     --accent-foreground: var(--color-zinc-900);
@@ -104,7 +104,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
     --destructive: var(--color-red-500);
     --destructive-hover: var(--color-red-400);
-    --destructive-foreground: var(--color-red-50);
+    --destructive-foreground: var(--color-red-950);
 
     --accent: var(--color-zinc-900);
     --accent-foreground: var(--color-zinc-100);
