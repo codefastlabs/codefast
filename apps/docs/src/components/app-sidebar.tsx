@@ -3,7 +3,7 @@ import type { ComponentProps, JSX } from 'react';
 import { Sidebar, SidebarHeader } from '@codefast/ui';
 import { AudioWaveform, BookOpen, Bot, Command, GalleryVerticalEnd, Settings2, SquareTerminal } from 'lucide-react';
 
-import { Index } from '@/registry';
+import { Index } from '@/__registry__';
 import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
 
 export type AppSidebarProps = ComponentProps<typeof Sidebar>;
