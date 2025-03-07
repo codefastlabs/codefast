@@ -43,6 +43,7 @@ function ToggleGroup({
     <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
       <ToggleGroupPrimitive.Root
         className={cn('flex items-center justify-center gap-1.5', className)}
+        data-slot="toggle-group"
         {...toggleGroupScope}
         {...props}
       >
@@ -75,7 +76,12 @@ function ToggleGroupItem({
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
-    <ToggleGroupPrimitive.Item className={toggleVariants({ ...context, className })} {...toggleGroupScope} {...props}>
+    <ToggleGroupPrimitive.Item
+      className={toggleVariants({ ...context, className })}
+      data-slot="toggle-group-item"
+      {...toggleGroupScope}
+      {...props}
+    >
       {prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
       {suffix}

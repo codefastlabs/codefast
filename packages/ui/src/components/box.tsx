@@ -13,7 +13,7 @@ interface BoxProps extends ComponentProps<'div'> {
 function Box({ asChild, ...props }: BoxProps): JSX.Element {
   const Component = asChild ? Slot : 'div';
 
-  return <Component {...props} />;
+  return <Component data-slot="box" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

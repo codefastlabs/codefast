@@ -14,10 +14,12 @@ function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
   return (
     <ProgressPrimitive.Root
       className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', className)}
+      data-slot="progress"
       {...props}
     >
       <ProgressPrimitive.Indicator
         className="bg-primary size-full flex-1 transition"
+        data-slot="progress-indicator"
         style={{
           transform: `translateX(-${String(100 - (value ?? 0))}%)`,
         }}

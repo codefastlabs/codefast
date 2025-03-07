@@ -17,7 +17,7 @@ interface ToggleProps extends Omit<ComponentProps<typeof TogglePrimitive.Root>, 
 
 function Toggle({ children, className, icon, prefix, size, suffix, variant, ...props }: ToggleProps): JSX.Element {
   return (
-    <TogglePrimitive.Root className={toggleVariants({ className, icon, size, variant })} {...props}>
+    <TogglePrimitive.Root className={toggleVariants({ className, icon, size, variant })} data-slot="toggle" {...props}>
       {prefix}
       {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
       {suffix}

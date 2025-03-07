@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 type DropdownMenuProps = ComponentProps<typeof DropdownMenuPrimitive.Root>;
 
 function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
-  return <DropdownMenuPrimitive.Root {...props} />;
+  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -22,7 +22,7 @@ function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
 type DropdownMenuTriggerProps = ComponentProps<typeof DropdownMenuPrimitive.Trigger>;
 
 function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Element {
-  return <DropdownMenuPrimitive.Trigger {...props} />;
+  return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Elemen
 type DropdownMenuGroupProps = ComponentProps<typeof DropdownMenuPrimitive.Group>;
 
 function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
-  return <DropdownMenuPrimitive.Group {...props} />;
+  return <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
 type DropdownMenuSubProps = ComponentProps<typeof DropdownMenuPrimitive.Sub>;
 
 function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
-  return <DropdownMenuPrimitive.Sub {...props} />;
+  return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
 type DropdownMenuRadioGroupProps = ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>;
 
 function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.Element {
-  return <DropdownMenuPrimitive.RadioGroup {...props} />;
+  return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -71,6 +71,7 @@ function DropdownMenuSubTrigger({ children, className, inset, ...props }: Dropdo
         className,
       )}
       data-inset={inset}
+      data-slot="dropdown-menu-sub-trigger"
       {...props}
     >
       {children}
@@ -93,6 +94,7 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=right]:slide-to-l-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=left]:slide-to-r-2 z-50 min-w-32 rounded-lg border p-1 shadow-lg',
           className,
         )}
+        data-slot="dropdown-menu-sub-content"
         {...props}
       />
     </DropdownMenuPrimitive.Portal>
@@ -113,6 +115,7 @@ function DropdownMenuContent({ className, sideOffset = 6, ...props }: DropdownMe
           'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:data-[side=top]:slide-from-b-2 data-[state=open]:data-[side=right]:slide-from-l-2 data-[state=open]:data-[side=bottom]:slide-from-t-2 data-[state=open]:data-[side=left]:slide-from-r-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:data-[side=top]:slide-to-b-2 data-[state=closed]:data-[side=right]:slide-to-l-2 data-[state=closed]:data-[side=bottom]:slide-to-t-2 data-[state=closed]:data-[side=left]:slide-to-r-2 z-50 min-w-32 rounded-lg border p-1 shadow-lg',
           className,
         )}
+        data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         {...props}
       />
@@ -137,6 +140,7 @@ function DropdownMenuItem({ className, inset, variant, ...props }: DropdownMenuI
         className,
       )}
       data-inset={inset}
+      data-slot="dropdown-menu-item"
       data-variant={variant}
       {...props}
     />
@@ -162,6 +166,7 @@ function DropdownMenuCheckboxItem({
         'focus:bg-accent focus:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-slot="dropdown-menu-checkbox-item"
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
@@ -187,6 +192,7 @@ function DropdownMenuRadioItem({ children, className, ...props }: DropdownMenuRa
         'focus:bg-accent focus:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
         className,
       )}
+      data-slot="dropdown-menu-radio-item"
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
@@ -212,6 +218,7 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
     <DropdownMenuPrimitive.Label
       className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
       data-inset={inset}
+      data-slot="dropdown-menu-label"
       {...props}
     />
   );
@@ -224,7 +231,13 @@ function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProp
 type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuPrimitive.Separator>;
 
 function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps): JSX.Element {
-  return <DropdownMenuPrimitive.Separator className={cn('bg-muted mx-2 my-1 h-px', className)} {...props} />;
+  return (
+    <DropdownMenuPrimitive.Separator
+      className={cn('bg-muted mx-2 my-1 h-px', className)}
+      data-slot="dropdown-menu-separator"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -237,6 +250,7 @@ function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps
   return (
     <span
       className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
+      data-slot="dropdown-menu-shortcut"
       {...props}
     />
   );
@@ -249,7 +263,9 @@ function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps
 type DropdownMenuArrowProps = DropdownMenuPrimitive.DropdownMenuArrowProps;
 
 function DropdownMenuArrow({ className, ...props }: DropdownMenuArrowProps): JSX.Element {
-  return <DropdownMenuPrimitive.Arrow className={cn('fill-popover', className)} {...props} />;
+  return (
+    <DropdownMenuPrimitive.Arrow className={cn('fill-popover', className)} data-slot="dropdown-menu-arrow" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------

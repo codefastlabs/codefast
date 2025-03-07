@@ -14,7 +14,7 @@ interface BreadcrumbProps extends ComponentProps<'nav'> {
 }
 
 function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
-  return <nav aria-label="breadcrumb" {...props} />;
+  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -30,6 +30,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
         'text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2',
         className,
       )}
+      data-slot="breadcrumb-list"
       {...props}
     />
   );
@@ -42,7 +43,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
 type BreadcrumbItemProps = ComponentProps<'li'>;
 
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
-  return <li className={cn('inline-flex items-center gap-1.5', className)} {...props} />;
+  return <li className={cn('inline-flex items-center gap-1.5', className)} data-slot="breadcrumb-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -56,7 +57,9 @@ interface BreadcrumbLinkProps extends ComponentProps<'a'> {
 function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): JSX.Element {
   const Component = asChild ? Slot : 'a';
 
-  return <Component className={cn('hover:text-foreground transition', className)} {...props} />;
+  return (
+    <Component className={cn('hover:text-foreground transition', className)} data-slot="breadcrumb-link" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -71,6 +74,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
       aria-current="page"
       aria-disabled="true"
       className={cn('text-foreground font-normal', className)}
+      data-slot="breadcrumb-page"
       role="link"
       {...props}
     />
@@ -85,7 +89,7 @@ type BreadcrumbSeparatorProps = ComponentProps<'li'>;
 
 function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
   return (
-    <li aria-hidden="true" role="presentation" {...props}>
+    <li aria-hidden="true" data-slot="breadcrumb-separator" role="presentation" {...props}>
       {children ?? <ChevronRightIcon className="size-3.5" />}
     </li>
   );
@@ -102,6 +106,7 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
     <span
       aria-hidden="true"
       className={cn('flex size-4 items-center justify-center', className)}
+      data-slot="breadcrumb-ellipsis"
       role="presentation"
       {...props}
     >

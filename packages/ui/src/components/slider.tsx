@@ -14,10 +14,14 @@ function Slider({ className, ...props }: SliderProps): JSX.Element {
   return (
     <SliderPrimitive.Root
       className={cn('data-disabled:opacity-50 relative flex w-full touch-none select-none items-center', className)}
+      data-slot="slider"
       {...props}
     >
-      <SliderPrimitive.Track className="bg-muted relative h-1 w-full grow overflow-hidden rounded-full">
-        <SliderPrimitive.Range className="bg-primary absolute h-full" />
+      <SliderPrimitive.Track
+        className="bg-muted relative h-1 w-full grow overflow-hidden rounded-full"
+        data-slot="slider-track"
+      >
+        <SliderPrimitive.Range className="bg-primary absolute h-full" data-slot="slider-range" />
       </SliderPrimitive.Track>
 
       {(props.value ?? props.defaultValue ?? []).map((_, index) => (
@@ -27,6 +31,7 @@ function Slider({ className, ...props }: SliderProps): JSX.Element {
           className={cn(
             'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-ring focus-visible:ring-3 flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition after:size-full after:rounded-full after:transition-[width,height] focus-visible:outline-none',
           )}
+          data-slot="slider-thumb"
           {...(props.tabIndex === undefined ? undefined : { tabIndex: props.tabIndex })}
         />
       ))}

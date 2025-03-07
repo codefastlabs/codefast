@@ -15,7 +15,7 @@ interface ContainerProps extends ComponentProps<'div'> {
 function Container({ asChild, className, ...props }: ContainerProps): JSX.Element {
   const Component = asChild ? Slot : 'div';
 
-  return <Component className={cn('container', className)} {...props} />;
+  return <Component className={cn('container', className)} data-slot="container" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

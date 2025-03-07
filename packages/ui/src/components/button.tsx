@@ -35,6 +35,7 @@ function Button({
   return (
     <button
       className={buttonVariants({ className, icon, inside, size, variant })}
+      data-slot="button"
       data-variant={variant}
       disabled={loading || disabled}
       type="button"

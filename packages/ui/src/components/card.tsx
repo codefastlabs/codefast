@@ -9,7 +9,13 @@ import { cn } from '@/lib/utils';
 type CardProps = ComponentProps<'div'>;
 
 function Card({ className, ...props }: CardProps): JSX.Element {
-  return <div className={cn('bg-card text-card-foreground rounded-lg border shadow-sm', className)} {...props} />;
+  return (
+    <div
+      className={cn('bg-card text-card-foreground rounded-lg border shadow-sm', className)}
+      data-slot="card"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -19,7 +25,7 @@ function Card({ className, ...props }: CardProps): JSX.Element {
 type CardHeaderProps = ComponentProps<'div'>;
 
 function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
-  return <div className={cn('flex flex-col gap-y-1.5 p-6', className)} {...props} />;
+  return <div className={cn('flex flex-col gap-y-1.5 p-6', className)} data-slot="card-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -30,7 +36,7 @@ type CardTitleProps = ComponentProps<'h3'>;
 
 function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Element {
   return (
-    <h3 className={cn('font-semibold leading-none tracking-tight', className)} {...props}>
+    <h3 className={cn('font-semibold leading-none tracking-tight', className)} data-slot="card-title" {...props}>
       {children}
     </h3>
   );
@@ -43,7 +49,7 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
 type CardDescriptionProps = ComponentProps<'p'>;
 
 function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Element {
-  return <p className={cn('text-muted-foreground text-sm', className)} {...props} />;
+  return <p className={cn('text-muted-foreground text-sm', className)} data-slot="card-description" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -53,7 +59,7 @@ function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Ele
 type CardContentProps = ComponentProps<'div'>;
 
 function CardContent({ className, ...props }: CardContentProps): JSX.Element {
-  return <div className={cn('p-6 pt-0', className)} {...props} />;
+  return <div className={cn('p-6 pt-0', className)} data-slot="card-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -63,7 +69,7 @@ function CardContent({ className, ...props }: CardContentProps): JSX.Element {
 type CardFooterProps = ComponentProps<'div'>;
 
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
-  return <div className={cn('flex items-center p-6 pt-0', className)} {...props} />;
+  return <div className={cn('flex items-center p-6 pt-0', className)} data-slot="card-footer" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

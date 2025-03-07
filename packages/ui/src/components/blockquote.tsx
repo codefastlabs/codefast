@@ -13,7 +13,7 @@ interface BlockquoteProps extends ComponentProps<'blockquote'> {
 function Blockquote({ asChild, ...props }: BlockquoteProps): JSX.Element {
   const Component = asChild ? Slot : 'blockquote';
 
-  return <Component {...props} />;
+  return <Component data-slot="blockquote" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

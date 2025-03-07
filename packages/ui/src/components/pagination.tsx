@@ -18,6 +18,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
     <nav
       aria-label="pagination"
       className={cn('mx-auto flex w-full justify-center', className)}
+      data-slot="pagination"
       role="navigation"
       {...props}
     />
@@ -31,7 +32,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
 type PaginationContentProps = ComponentProps<'ul'>;
 
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
-  return <ul className={cn('flex flex-row items-center gap-1', className)} {...props} />;
+  return <ul className={cn('flex flex-row items-center gap-1', className)} data-slot="pagination-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -41,7 +42,7 @@ function PaginationContent({ className, ...props }: PaginationContentProps): JSX
 type PaginationItemProps = ComponentProps<'li'>;
 
 function PaginationItem(props: PaginationItemProps): JSX.Element {
-  return <li {...props} />;
+  return <li data-slot="pagination-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -64,6 +65,7 @@ function PaginationLink({
     <a
       aria-current={isActive ? 'page' : undefined}
       className={buttonVariants({ className, icon, size, variant: isActive ? 'outline' : 'ghost' })}
+      data-slot="pagination-link"
       {...props}
     >
       {children}
@@ -79,7 +81,7 @@ type PaginationPreviousProps = PaginationLinkProps;
 
 function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element {
   return (
-    <PaginationLink aria-label="Go to previous page" icon={false} {...props}>
+    <PaginationLink aria-label="Go to previous page" data-slot="pagination-previous" icon={false} {...props}>
       <ChevronLeftIcon className="size-4" />
       <span>Previous</span>
     </PaginationLink>
@@ -94,7 +96,7 @@ type PaginationNextProps = PaginationLinkProps;
 
 function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
   return (
-    <PaginationLink aria-label="Go to next page" icon={false} {...props}>
+    <PaginationLink aria-label="Go to next page" data-slot="pagination-next" icon={false} {...props}>
       <span>Next</span>
       <ChevronRightIcon />
     </PaginationLink>
@@ -109,7 +111,12 @@ type PaginationEllipsisProps = ComponentProps<'span'>;
 
 function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
   return (
-    <span aria-hidden className={cn('flex size-10 items-center justify-center', className)} {...props}>
+    <span
+      aria-hidden
+      className={cn('flex size-10 items-center justify-center', className)}
+      data-slot="pagination-ellipsis"
+      {...props}
+    >
       <EllipsisIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
