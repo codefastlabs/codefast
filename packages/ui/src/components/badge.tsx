@@ -22,8 +22,6 @@ const badgeVariants = tv({
   },
 });
 
-type BadgeVariantsProps = VariantProps<typeof badgeVariants>;
-
 /* -----------------------------------------------------------------------------
  * Component: Badge
  * -------------------------------------------------------------------------- */
@@ -35,8 +33,8 @@ function Badge({
   suffix,
   variant,
   ...props
-}: BadgeVariantsProps &
-  Omit<ComponentProps<'div'>, 'prefix'> & {
+}: Omit<ComponentProps<'div'>, 'prefix'> &
+  VariantProps<typeof badgeVariants> & {
     prefix?: ReactNode;
     suffix?: ReactNode;
   }): JSX.Element {

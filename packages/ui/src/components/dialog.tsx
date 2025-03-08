@@ -1,9 +1,8 @@
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
-
-import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
@@ -140,8 +139,8 @@ function DialogClose({
   variant = 'outline',
   ...props
 }: Omit<ComponentProps<typeof DialogPrimitive.Close>, 'ref'> & {
-  size?: ButtonVariantsProps['size'];
-  variant?: ButtonVariantsProps['variant'];
+  size?: VariantProps<typeof buttonVariants>['size'];
+  variant?: VariantProps<typeof buttonVariants>['variant'];
 }): JSX.Element {
   return (
     <DialogPrimitive.Close

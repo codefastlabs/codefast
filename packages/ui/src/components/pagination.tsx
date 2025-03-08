@@ -1,8 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
-
-import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
@@ -51,7 +50,7 @@ function PaginationLink({
   size,
   ...props
 }: ComponentProps<'a'> &
-  Pick<ButtonVariantsProps, 'icon' | 'size'> & {
+  Pick<VariantProps<typeof buttonVariants>, 'icon' | 'size'> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
@@ -73,7 +72,7 @@ function PaginationLink({
 function PaginationPrevious({
   ...props
 }: ComponentProps<'a'> &
-  Pick<ButtonVariantsProps, 'icon' | 'size'> & {
+  Pick<VariantProps<typeof buttonVariants>, 'icon' | 'size'> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
@@ -91,7 +90,7 @@ function PaginationPrevious({
 function PaginationNext({
   ...props
 }: ComponentProps<'a'> &
-  Pick<ButtonVariantsProps, 'icon' | 'size'> & {
+  Pick<VariantProps<typeof buttonVariants>, 'icon' | 'size'> & {
     isActive?: boolean;
   }): JSX.Element {
   return (

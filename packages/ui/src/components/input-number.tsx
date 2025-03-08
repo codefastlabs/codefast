@@ -1,9 +1,8 @@
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as InputNumberPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-
-import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Spinner } from '@/components/spinner';
 import { buttonVariants } from '@/variants/button.variants';
@@ -38,7 +37,7 @@ function InputNumber({
   ...props
 }: ComponentProps<typeof InputNumberPrimitive.Item> &
   ComponentProps<typeof InputNumberPrimitive.Root> &
-  InputVariantsProps): JSX.Element {
+  VariantProps<typeof inputVariants>): JSX.Element {
   return (
     <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}

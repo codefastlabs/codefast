@@ -5,8 +5,6 @@ import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
 import { tv } from 'tailwind-variants';
 
-import type { ButtonVariantsProps } from '@/variants/button.variants';
-
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
 
@@ -30,8 +28,6 @@ const sheetContentVariants = tv({
     side: 'right',
   },
 });
-
-type SheetContentVariantsProps = VariantProps<typeof sheetContentVariants>;
 
 /* -----------------------------------------------------------------------------
  * Component: Sheet
@@ -62,7 +58,7 @@ function SheetContent({
   className,
   side = 'right',
   ...props
-}: ComponentProps<typeof SheetPrimitive.Content> & SheetContentVariantsProps): JSX.Element {
+}: ComponentProps<typeof SheetPrimitive.Content> & VariantProps<typeof sheetContentVariants>): JSX.Element {
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
@@ -161,8 +157,8 @@ function SheetClose({
   variant = 'outline',
   ...props
 }: ComponentProps<typeof SheetPrimitive.Close> & {
-  size?: ButtonVariantsProps['size'];
-  variant?: ButtonVariantsProps['variant'];
+  size?: VariantProps<typeof buttonVariants>['size'];
+  variant?: VariantProps<typeof buttonVariants>['variant'];
 }): JSX.Element {
   return (
     <SheetPrimitive.Close className={buttonVariants({ className, size, variant })} data-slot="sheet-close" {...props} />
