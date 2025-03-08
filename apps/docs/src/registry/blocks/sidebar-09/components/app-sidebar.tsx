@@ -25,42 +25,13 @@ import { NavUser } from '@/registry/blocks/sidebar-09/components/nav-user';
 
 // This is sample data
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
+  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
   navMain: [
-    {
-      title: 'Inbox',
-      url: '#',
-      icon: Inbox,
-      isActive: true,
-    },
-    {
-      title: 'Drafts',
-      url: '#',
-      icon: File,
-      isActive: false,
-    },
-    {
-      title: 'Sent',
-      url: '#',
-      icon: Send,
-      isActive: false,
-    },
-    {
-      title: 'Junk',
-      url: '#',
-      icon: ArchiveX,
-      isActive: false,
-    },
-    {
-      title: 'Trash',
-      url: '#',
-      icon: Trash2,
-      isActive: false,
-    },
+    { title: 'Inbox', url: '#', icon: Inbox, isActive: true },
+    { title: 'Drafts', url: '#', icon: File, isActive: false },
+    { title: 'Sent', url: '#', icon: Send, isActive: false },
+    { title: 'Junk', url: '#', icon: ArchiveX, isActive: false },
+    { title: 'Trash', url: '#', icon: Trash2, isActive: false },
   ],
   mails: [
     {
@@ -185,10 +156,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                     <SidebarMenuButton
                       className="px-2.5 md:px-2"
                       isActive={activeItem.title === item.title}
-                      tooltip={{
-                        children: item.title,
-                        hidden: false,
-                      }}
+                      tooltip={{ children: item.title, hidden: false }}
                       onClick={() => {
                         setActiveItem(item);
                         const mail = data.mails.sort(() => Math.random() - 0.5);

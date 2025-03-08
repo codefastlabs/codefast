@@ -15,12 +15,7 @@ export function NavSecondary({
   items,
   ...props
 }: ComponentProps<typeof SidebarGroup> & {
-  items: {
-    icon: LucideIcon;
-    title: string;
-    url: string;
-    badge?: ReactNode;
-  }[];
+  items: { icon: LucideIcon; title: string; url: string; badge?: ReactNode }[];
 }): JSX.Element {
   return (
     <SidebarGroup {...props}>

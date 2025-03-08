@@ -1,46 +1,60 @@
+'use client';
+
 import type { ComponentProps, JSX } from 'react';
 
-import { Sidebar, SidebarHeader } from '@codefast/ui';
-import { AudioWaveform, BookOpen, Bot, Command, GalleryVerticalEnd, Settings2, SquareTerminal } from 'lucide-react';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Label,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInput,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
+} from '@codefast/ui';
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  ChevronRightIcon,
+  Command,
+  GalleryVerticalEnd,
+  Search,
+  Settings2,
+  SquareTerminal,
+} from 'lucide-react';
+
+import type { Component, NavItem, Team, User } from '@/types';
 
 import { Index } from '@/__registry__';
+import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
 import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
 
 export type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
-export function AppSidebar({ ...props }: AppSidebarProps): JSX.Element {
-  return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader>
-    </Sidebar>
-  );
-}
-
 // This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
+const data: {
+  components: Component[];
+  navMain: NavItem[];
+  teams: Team[];
+  user: User;
+} = {
+  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
   teams: [
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free',
-    },
+    { name: 'Acme Inc', logo: GalleryVerticalEnd, plan: 'Enterprise' },
+    { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
+    { name: 'Evil Corp.', logo: Command, plan: 'Free' },
   ],
   navMain: [
     {
@@ -49,18 +63,9 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
       items: [
-        {
-          title: 'History',
-          url: '#',
-        },
-        {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
-        },
+        { title: 'History', url: '#' },
+        { title: 'Starred', url: '#' },
+        { title: 'Settings', url: '#' },
       ],
     },
     {
@@ -68,18 +73,9 @@ const data = {
       url: '#',
       icon: Bot,
       items: [
-        {
-          title: 'Genesis',
-          url: '#',
-        },
-        {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
-        },
+        { title: 'Genesis', url: '#' },
+        { title: 'Explorer', url: '#' },
+        { title: 'Quantum', url: '#' },
       ],
     },
     {
@@ -87,22 +83,10 @@ const data = {
       url: '#',
       icon: BookOpen,
       items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
+        { title: 'Introduction', url: '#' },
+        { title: 'Get Started', url: '#' },
+        { title: 'Tutorials', url: '#' },
+        { title: 'Changelog', url: '#' },
       ],
     },
     {
@@ -110,31 +94,16 @@ const data = {
       url: '#',
       icon: Settings2,
       items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
+        { title: 'General', url: '#' },
+        { title: 'Team', url: '#' },
+        { title: 'Billing', url: '#' },
+        { title: 'Limits', url: '#' },
       ],
     },
   ],
-  components: [
-    ...Object.values(Index).filter((item) => item.type === 'registry:ui'),
-    {
-      name: 'combobox',
-    },
-  ].sort((a, b) => a.name.localeCompare(b.name)),
+  components: [...Object.values(Index).filter((item) => item.type === 'registry:ui'), { name: 'combobox' }].sort(
+    (a, b) => a.name.localeCompare(b.name),
+  ),
 };
 
 /**
@@ -145,4 +114,76 @@ const data = {
  */
 function getComponentName(name: string): string {
   return name.replaceAll('-', ' ').replaceAll(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function AppSidebar({ ...props }: AppSidebarProps): JSX.Element {
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <TeamSwitcher teams={data.teams} />
+        <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupContent>
+            <form className="relative">
+              <Label className="sr-only" htmlFor="search">
+                Search
+              </Label>
+              <SidebarInput className="pl-8" id="search" placeholder="Search the docs..." />
+              <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+            </form>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.navMain.map((item) => (
+              <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon ? <item.icon /> : null}
+                      <span>{item.title}</span>
+                      <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Components</SidebarGroupLabel>
+          <SidebarMenu>
+            {data.components.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={`/#${item.name}`}>
+                    <span>{getComponentName(item.name)}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
 }

@@ -1,7 +1,8 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
+import type { Props } from 'recharts/types/component/Label';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
@@ -38,22 +39,7 @@ export function ChartRadialText(): JSX.Element {
             />
             <RadialBar background cornerRadius={10} dataKey="visitors" />
             <PolarRadiusAxis axisLine={false} tick={false} tickLine={false}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                        <tspan className="fill-foreground text-4xl font-bold" x={viewBox.cx} y={viewBox.cy}>
-                          {chartData[0].visitors.toLocaleString()}
-                        </tspan>
-                        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
+              <Label content={Content} />
             </PolarRadiusAxis>
           </RadialBarChart>
         </ChartContainer>
@@ -66,4 +52,21 @@ export function ChartRadialText(): JSX.Element {
       </CardFooter>
     </Card>
   );
+}
+
+function Content({ viewBox }: Props): ReactNode {
+  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+    return (
+      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
+        <tspan className="fill-foreground text-4xl font-bold" x={viewBox.cx} y={viewBox.cy}>
+          {chartData[0].visitors.toLocaleString()}
+        </tspan>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
+          Visitors
+        </tspan>
+      </text>
+    );
+  }
+
+  return null;
 }

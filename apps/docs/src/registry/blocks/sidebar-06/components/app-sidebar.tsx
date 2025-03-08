@@ -13,135 +13,63 @@ import {
 import { GalleryVerticalEnd } from 'lucide-react';
 import Link from 'next/link';
 
+import type { NavItem } from '@/types';
+
 import { NavMain } from '@/registry/blocks/sidebar-06/components/nav-main';
 import { SidebarOptInForm } from '@/registry/blocks/sidebar-06/components/sidebar-opt-in-form';
 
 // This is sample data.
-const data = {
+const data: {
+  navMain: NavItem[];
+} = {
   navMain: [
     {
       title: 'Getting Started',
       url: '#',
       items: [
-        {
-          title: 'Installation',
-          url: '#',
-        },
-        {
-          title: 'Project Structure',
-          url: '#',
-        },
+        { title: 'Installation', url: '#' },
+        { title: 'Project Structure', url: '#' },
       ],
     },
     {
       title: 'Building Your Application',
       url: '#',
       items: [
-        {
-          title: 'Routing',
-          url: '#',
-        },
-        {
-          title: 'Data Fetching',
-          url: '#',
-          isActive: true,
-        },
-        {
-          title: 'Rendering',
-          url: '#',
-        },
-        {
-          title: 'Caching',
-          url: '#',
-        },
-        {
-          title: 'Styling',
-          url: '#',
-        },
-        {
-          title: 'Optimizing',
-          url: '#',
-        },
-        {
-          title: 'Configuring',
-          url: '#',
-        },
-        {
-          title: 'Testing',
-          url: '#',
-        },
-        {
-          title: 'Authentication',
-          url: '#',
-        },
-        {
-          title: 'Deploying',
-          url: '#',
-        },
-        {
-          title: 'Upgrading',
-          url: '#',
-        },
-        {
-          title: 'Examples',
-          url: '#',
-        },
+        { title: 'Routing', url: '#' },
+        { title: 'Data Fetching', url: '#', isActive: true },
+        { title: 'Rendering', url: '#' },
+        { title: 'Caching', url: '#' },
+        { title: 'Styling', url: '#' },
+        { title: 'Optimizing', url: '#' },
+        { title: 'Configuring', url: '#' },
+        { title: 'Testing', url: '#' },
+        { title: 'Authentication', url: '#' },
+        { title: 'Deploying', url: '#' },
+        { title: 'Upgrading', url: '#' },
+        { title: 'Examples', url: '#' },
       ],
     },
     {
       title: 'API Reference',
       url: '#',
       items: [
-        {
-          title: 'Components',
-          url: '#',
-        },
-        {
-          title: 'File Conventions',
-          url: '#',
-        },
-        {
-          title: 'Functions',
-          url: '#',
-        },
-        {
-          title: 'next.config.js Options',
-          url: '#',
-        },
-        {
-          title: 'CLI',
-          url: '#',
-        },
-        {
-          title: 'Edge Runtime',
-          url: '#',
-        },
+        { title: 'Components', url: '#' },
+        { title: 'File Conventions', url: '#' },
+        { title: 'Functions', url: '#' },
+        { title: 'next.config.js Options', url: '#' },
+        { title: 'CLI', url: '#' },
+        { title: 'Edge Runtime', url: '#' },
       ],
     },
     {
       title: 'Architecture',
       url: '#',
       items: [
-        {
-          title: 'Accessibility',
-          url: '#',
-        },
-        {
-          title: 'Fast Refresh',
-          url: '#',
-        },
-        {
-          title: 'Next.js Compiler',
-          url: '#',
-        },
-        {
-          title: 'Supported Browsers',
-          url: '#',
-        },
-        {
-          title: 'Turbopack',
-          url: '#',
-        },
+        { title: 'Accessibility', url: '#' },
+        { title: 'Fast Refresh', url: '#' },
+        { title: 'Next.js Compiler', url: '#' },
+        { title: 'Supported Browsers', url: '#' },
+        { title: 'Turbopack', url: '#' },
       ],
     },
   ],
