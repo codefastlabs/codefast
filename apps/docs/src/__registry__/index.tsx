@@ -24,15 +24,6 @@ interface RegistryItem {
 type Registry = Record<string, RegistryItem>;
 
 export const Index: Registry = {
-  index: {
-    name: 'index',
-    description: '',
-    type: 'registry:style',
-    registryDependencies: ['utils'],
-    files: [],
-    component: null,
-    meta: undefined,
-  },
   'sidebar-01': {
     name: 'sidebar-01',
     description: 'A simple sidebar with navigation grouped by section.',
@@ -779,6 +770,31 @@ export const Index: Registry = {
     ],
     component: lazy(async () => {
       const mod = await import('@/registry/blocks/login-05/page.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default || mod[exportName] };
+    }),
+    meta: undefined,
+  },
+  'products-01': {
+    name: 'products-01',
+    description: 'A table of products',
+    type: 'registry:block',
+    registryDependencies: ['checkbox', 'badge', 'button', 'dropdown-menu', 'pagination', 'table', 'tabs', 'select'],
+    files: [
+      {
+        path: 'registry/blocks/products-01/page.tsx',
+        type: 'registry:page',
+        target: 'app/products/page.tsx',
+      },
+      {
+        path: 'registry/blocks/products-01/components/products-table.tsx',
+        type: 'registry:component',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/blocks/products-01/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
       return { default: mod.default || mod[exportName] };
@@ -2179,51 +2195,6 @@ export const Index: Registry = {
     ],
     component: lazy(async () => {
       const mod = await import('@/registry/charts/chart-tooltip-advanced.tsx');
-      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
-
-      return { default: mod.default || mod[exportName] };
-    }),
-    meta: undefined,
-  },
-  'use-mobile': {
-    name: 'use-mobile',
-    description: '',
-    type: 'registry:hook',
-    registryDependencies: undefined,
-    files: [
-      {
-        path: 'registry/hooks/use-mobile.ts',
-        type: 'registry:hook',
-        target: '',
-      },
-    ],
-    component: lazy(async () => {
-      const mod = await import('@/registry/hooks/use-mobile.ts');
-      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
-
-      return { default: mod.default || mod[exportName] };
-    }),
-    meta: undefined,
-  },
-  'products-01': {
-    name: 'products-01',
-    description: 'A table of products',
-    type: 'registry:block',
-    registryDependencies: ['checkbox', 'badge', 'button', 'dropdown-menu', 'pagination', 'table', 'tabs', 'select'],
-    files: [
-      {
-        path: 'registry/blocks/products-01/page.tsx',
-        type: 'registry:page',
-        target: 'app/products/page.tsx',
-      },
-      {
-        path: 'registry/blocks/products-01/components/products-table.tsx',
-        type: 'registry:component',
-        target: '',
-      },
-    ],
-    component: lazy(async () => {
-      const mod = await import('@/registry/blocks/products-01/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
       return { default: mod.default || mod[exportName] };
