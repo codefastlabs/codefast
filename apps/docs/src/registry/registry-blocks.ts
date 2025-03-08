@@ -566,4 +566,21 @@ export const blocks: Registry['items'] = [
     ],
     categories: ['authentication', 'login'],
   },
+  {
+    name: 'products-01',
+    description: 'A table of products',
+    type: 'registry:block',
+    registryDependencies: ['checkbox', 'badge', 'button', 'dropdown-menu', 'pagination', 'table', 'tabs', 'select'],
+    files: [
+      {
+        path: 'blocks/products-01/page.tsx',
+        type: 'registry:page',
+        target: 'app/products/page.tsx',
+      },
+      {
+        path: 'blocks/products-01/components/products-table.tsx',
+        type: 'registry:component',
+      },
+    ],
+  },
 ];
