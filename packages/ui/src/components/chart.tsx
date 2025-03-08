@@ -17,7 +17,7 @@ type Theme = keyof typeof THEMES;
 
 interface IconLabelConfig {
   icon?: ComponentType;
-  label?: ReactNode | undefined;
+  label?: ReactNode;
 }
 
 interface ColorConfig {
@@ -54,12 +54,16 @@ function useChart(): ChartContextProps {
  * Component: Chart
  * -------------------------------------------------------------------------- */
 
-interface ChartContainerProps extends ComponentProps<'div'> {
+function ChartContainer({
+  id,
+  children,
+  className,
+  config,
+  ...props
+}: ComponentProps<'div'> & {
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
   config: ChartConfig;
-}
-
-function ChartContainer({ id, children, className, config, ...props }: ChartContainerProps): JSX.Element {
+}): JSX.Element {
   const uniqueId = useId();
   const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
 
@@ -67,7 +71,7 @@ function ChartContainer({ id, children, className, config, ...props }: ChartCont
     <ChartContext.Provider value={{ config }}>
       <div
         className={cn(
-          '[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-reference-line_]:stroke-border [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted flex aspect-video justify-center text-xs [&_.recharts-dot]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-sector]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none',
+          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden flex aspect-video justify-center text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-sector[stroke='#fff']]:stroke-transparent",
           className,
         )}
         data-chart={chartId}
@@ -85,12 +89,7 @@ function ChartContainer({ id, children, className, config, ...props }: ChartCont
  * Component: ChartStyle
  * -------------------------------------------------------------------------- */
 
-interface ChartStyleProps {
-  config: ChartConfig;
-  id: string;
-}
-
-function ChartStyle({ id, config }: ChartStyleProps): ReactNode {
+function ChartStyle({ id, config }: { config: ChartConfig; id: string }): ReactNode {
   const cssString = useMemo(() => generateCSS(id, config), [id, config]);
 
   return <style dangerouslySetInnerHTML={{ __html: cssString }} />;
@@ -100,25 +99,11 @@ function ChartStyle({ id, config }: ChartStyleProps): ReactNode {
  * Component: ChartTooltip
  * -------------------------------------------------------------------------- */
 
-type ChartTooltipProps = ComponentProps<typeof RechartsPrimitive.Tooltip>;
-
-function ChartTooltip({ ...props }: ChartTooltipProps): JSX.Element {
-  return <RechartsPrimitive.Tooltip {...props} />;
-}
+const ChartTooltip = RechartsPrimitive.Tooltip;
 
 /* -----------------------------------------------------------------------------
  * Component: ChartTooltipContent
  * -------------------------------------------------------------------------- */
-
-interface ChartTooltipContentProps
-  extends ComponentProps<typeof RechartsPrimitive.Tooltip>,
-    Omit<ComponentProps<'div'>, 'content'> {
-  hideIndicator?: boolean;
-  hideLabel?: boolean;
-  indicator?: 'dashed' | 'dot' | 'line';
-  labelKey?: string;
-  nameKey?: string;
-}
 
 function ChartTooltipContent({
   active,
@@ -134,7 +119,14 @@ function ChartTooltipContent({
   labelKey,
   nameKey,
   payload,
-}: ChartTooltipContentProps): ReactNode {
+}: ComponentProps<typeof RechartsPrimitive.Tooltip> &
+  Omit<ComponentProps<'div'>, 'content'> & {
+    hideIndicator?: boolean;
+    hideLabel?: boolean;
+    indicator?: 'dashed' | 'dot' | 'line';
+    labelKey?: string;
+    nameKey?: string;
+  }): ReactNode {
   const { config } = useChart();
 
   const tooltipLabel = useMemo(() => {
@@ -168,7 +160,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        'bg-background grid min-w-32 items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-lg',
+        'bg-background grid min-w-32 items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
         className,
       )}
     >
@@ -238,19 +230,11 @@ function ChartTooltipContent({
  * Component: ChartLegend
  * -------------------------------------------------------------------------- */
 
-type ChartLegendProps = ComponentProps<typeof RechartsPrimitive.Legend>;
 const ChartLegend = RechartsPrimitive.Legend;
 
 /* -----------------------------------------------------------------------------
  * Component: ChartLegendContent
  * -------------------------------------------------------------------------- */
-
-interface ChartLegendContentProps
-  extends ComponentProps<'div'>,
-    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> {
-  hideIcon?: boolean;
-  nameKey?: string;
-}
 
 function ChartLegendContent({
   className,
@@ -258,7 +242,11 @@ function ChartLegendContent({
   nameKey,
   payload,
   verticalAlign = 'bottom',
-}: ChartLegendContentProps): ReactNode {
+}: ComponentProps<'div'> &
+  Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
+    hideIcon?: boolean;
+    nameKey?: string;
+  }): ReactNode {
   const { config } = useChart();
 
   if (!payload?.length) {
@@ -426,13 +414,4 @@ function generateCSS(id: string, config: ChartConfig): string {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  ChartConfig,
-  ChartContainerProps,
-  ChartLegendContentProps,
-  ChartLegendProps,
-  ChartStyleProps,
-  ChartTooltipContentProps,
-  ChartTooltipProps,
-};
 export { ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent };
