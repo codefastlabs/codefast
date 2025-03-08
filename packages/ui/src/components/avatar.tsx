@@ -8,9 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: Avatar
  * -------------------------------------------------------------------------- */
 
-type AvatarProps = ComponentProps<typeof AvatarPrimitive.Root>;
-
-function Avatar({ className, ...props }: AvatarProps): JSX.Element {
+function Avatar({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Root>): JSX.Element {
   return (
     <AvatarPrimitive.Root
       className={cn('relative flex size-10 shrink-0 overflow-hidden rounded-full', className)}
@@ -24,9 +22,7 @@ function Avatar({ className, ...props }: AvatarProps): JSX.Element {
  * Component: AvatarImage
  * -------------------------------------------------------------------------- */
 
-type AvatarImageProps = ComponentProps<typeof AvatarPrimitive.Image>;
-
-function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
+function AvatarImage({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Image>): JSX.Element {
   return (
     <AvatarPrimitive.Image className={cn('aspect-square size-full', className)} data-slot="avatar-image" {...props} />
   );
@@ -36,9 +32,7 @@ function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
  * Component: AvatarFallback
  * -------------------------------------------------------------------------- */
 
-type AvatarFallbackProps = ComponentProps<typeof AvatarPrimitive.Fallback>;
-
-function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Element {
+function AvatarFallback({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Fallback>): JSX.Element {
   return (
     <AvatarPrimitive.Fallback
       className={cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
@@ -52,5 +46,4 @@ function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Eleme
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { AvatarFallbackProps, AvatarImageProps, AvatarProps };
 export { Avatar, AvatarFallback, AvatarImage };

@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Text
  * -------------------------------------------------------------------------- */
 
-interface TextProps extends ComponentProps<'p'> {
+function Text({
+  asChild,
+  ...props
+}: ComponentProps<'p'> & {
   asChild?: boolean;
-}
-
-function Text({ asChild, ...props }: TextProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'p';
 
   return <Component data-slot="text" {...props} />;
@@ -20,5 +21,4 @@ function Text({ asChild, ...props }: TextProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { TextProps };
 export { Text };

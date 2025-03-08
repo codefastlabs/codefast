@@ -8,20 +8,23 @@ import { cn } from '@/lib/utils';
  * Component: Spinner
  * -------------------------------------------------------------------------- */
 
-const spinnerCount = 8;
+const SPINNER_COUNT = 8;
 
-interface SpinnerProps extends ComponentProps<'span'> {
+function Spinner({
+  children,
+  className,
+  loading = true,
+  ...props
+}: ComponentProps<'span'> & {
   loading?: boolean;
-}
-
-function Spinner({ children, className, loading = true, ...props }: SpinnerProps): ReactNode {
+}): ReactNode {
   if (!loading) {
     return children;
   }
 
   const spinner = (
     <span className={cn('relative flex size-4 items-center justify-center opacity-60', className)} {...props}>
-      {Array.from({ length: spinnerCount }, (_, i) => (
+      {Array.from({ length: SPINNER_COUNT }, (_, i) => (
         <span
           key={i}
           className={cn(
@@ -29,10 +32,10 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
           )}
           style={
             {
-              '--spinner-delay': `-${((spinnerCount - i) * 100).toString()}ms`,
-              '--spinner-duration': `${(spinnerCount * 100).toString()}ms`,
-              '--spinner-rotate': `${((360 / spinnerCount) * i).toString()}deg`,
-              width: `${(100 / spinnerCount).toString()}%`,
+              '--spinner-delay': `-${((SPINNER_COUNT - i) * 100).toString()}ms`,
+              '--spinner-duration': `${(SPINNER_COUNT * 100).toString()}ms`,
+              '--spinner-rotate': `${((360 / SPINNER_COUNT) * i).toString()}deg`,
+              width: `${(100 / SPINNER_COUNT).toString()}%`,
             } as CSSProperties
           }
         />
@@ -59,5 +62,4 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SpinnerProps };
 export { Spinner };

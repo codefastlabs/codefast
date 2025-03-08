@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Section
  * -------------------------------------------------------------------------- */
 
-interface SectionProps extends ComponentProps<'section'> {
+function Section({
+  asChild,
+  ...props
+}: ComponentProps<'section'> & {
   asChild?: boolean;
-}
-
-function Section({ asChild, ...props }: SectionProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'section';
 
   return <Component data-slot="section" {...props} />;
@@ -20,5 +21,4 @@ function Section({ asChild, ...props }: SectionProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SectionProps };
 export { Section };

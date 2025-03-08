@@ -8,9 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: TooltipProvider
  * -------------------------------------------------------------------------- */
 
-type TooltipProviderProps = ComponentProps<typeof TooltipPrimitive.Provider>;
-
-function TooltipProvider({ ...props }: TooltipProviderProps): JSX.Element {
+function TooltipProvider({ ...props }: ComponentProps<typeof TooltipPrimitive.Provider>): JSX.Element {
   return <TooltipPrimitive.Provider data-slot="tooltip-provider" {...props} />;
 }
 
@@ -18,9 +16,7 @@ function TooltipProvider({ ...props }: TooltipProviderProps): JSX.Element {
  * Component: Tooltip
  * -------------------------------------------------------------------------- */
 
-type TooltipProps = ComponentProps<typeof TooltipPrimitive.Root>;
-
-function Tooltip({ ...props }: TooltipProps): JSX.Element {
+function Tooltip({ ...props }: ComponentProps<typeof TooltipPrimitive.Root>): JSX.Element {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 
@@ -28,9 +24,7 @@ function Tooltip({ ...props }: TooltipProps): JSX.Element {
  * Component: TooltipTrigger
  * -------------------------------------------------------------------------- */
 
-type TooltipTriggerProps = ComponentProps<typeof TooltipPrimitive.Trigger>;
-
-function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
+function TooltipTrigger({ ...props }: ComponentProps<typeof TooltipPrimitive.Trigger>): JSX.Element {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
@@ -38,9 +32,11 @@ function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
  * Component: TooltipContent
  * -------------------------------------------------------------------------- */
 
-type TooltipContentProps = ComponentProps<typeof TooltipPrimitive.Content>;
-
-function TooltipContent({ className, sideOffset = 6, ...props }: TooltipContentProps): JSX.Element {
+function TooltipContent({
+  className,
+  sideOffset = 8,
+  ...props
+}: ComponentProps<typeof TooltipPrimitive.Content>): JSX.Element {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -60,9 +56,7 @@ function TooltipContent({ className, sideOffset = 6, ...props }: TooltipContentP
  * Component: TooltipArrow
  * -------------------------------------------------------------------------- */
 
-type TooltipArrowProps = ComponentProps<typeof TooltipPrimitive.Arrow>;
-
-function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
+function TooltipArrow({ className, ...props }: ComponentProps<typeof TooltipPrimitive.Arrow>): JSX.Element {
   return <TooltipPrimitive.Arrow className={cn('fill-popover', className)} data-slot="tooltip-arrow" {...props} />;
 }
 
@@ -70,5 +64,4 @@ function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };
 export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };

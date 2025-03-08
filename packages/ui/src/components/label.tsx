@@ -8,9 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: Label
  * -------------------------------------------------------------------------- */
 
-type LabelProps = ComponentProps<typeof LabelPrimitive.Root>;
-
-function Label({ className, ...props }: LabelProps): JSX.Element {
+function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Root>): JSX.Element {
   return (
     <LabelPrimitive.Root
       className={cn('inline-block text-sm font-medium leading-none peer-disabled:opacity-70', className)}
@@ -24,5 +22,4 @@ function Label({ className, ...props }: LabelProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { LabelProps };
 export { Label };

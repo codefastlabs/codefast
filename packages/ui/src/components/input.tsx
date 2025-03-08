@@ -17,26 +17,6 @@ const { input, root } = inputVariants();
  * Component: Input
  * -------------------------------------------------------------------------- */
 
-interface InputProps
-  extends InputVariantsProps,
-    ComponentProps<typeof InputPrimitive.Root>,
-    Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> {
-  type?:
-    | 'date'
-    | 'datetime-local'
-    | 'email'
-    | 'file'
-    | 'month'
-    | 'number'
-    | 'password'
-    | 'search'
-    | 'tel'
-    | 'text'
-    | 'time'
-    | 'url'
-    | 'week';
-}
-
 function Input({
   className,
   disabled,
@@ -48,7 +28,24 @@ function Input({
   spinner,
   suffix,
   ...props
-}: InputProps): JSX.Element {
+}: ComponentProps<typeof InputPrimitive.Root> &
+  InputVariantsProps &
+  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> & {
+    type?:
+      | 'date'
+      | 'datetime-local'
+      | 'email'
+      | 'file'
+      | 'month'
+      | 'number'
+      | 'password'
+      | 'search'
+      | 'tel'
+      | 'text'
+      | 'time'
+      | 'url'
+      | 'week';
+  }): JSX.Element {
   return (
     <InputPrimitive.Root
       className={root({ className, inputSize })}
@@ -72,13 +69,6 @@ function Input({
 
 /**
  * @deprecated
- * This type is an alias of the InputProps type.
- * Please use the InputProps type instead to ensure consistency.
- */
-type TextInputProps = InputProps;
-
-/**
- * @deprecated
  * This component is an alias of the Input component.
  * Please use the Input component instead to ensure consistency.
  */
@@ -88,5 +78,4 @@ const TextInput = Input;
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { InputProps, TextInputProps };
 export { Input, TextInput };

@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentProps, JSX, ReactNode } from 'react';
-import type { CustomComponents, DateRange, DayPickerProps } from 'react-day-picker';
+import type { CustomComponents, DateRange } from 'react-day-picker';
 
 import { format } from 'date-fns';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from 'lucide-react';
@@ -14,9 +14,7 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-type ChevronProps = ComponentProps<CustomComponents['Chevron']>;
-
-function Chevron({ orientation, className, ...props }: ChevronProps): JSX.Element {
+function Chevron({ orientation, className, ...props }: ComponentProps<CustomComponents['Chevron']>): JSX.Element {
   switch (orientation) {
     case 'up': {
       return <ChevronUpIcon className={cn('size-4', className)} {...props} />;
@@ -44,9 +42,7 @@ function Chevron({ orientation, className, ...props }: ChevronProps): JSX.Elemen
  * Component: Calendar
  * -------------------------------------------------------------------------- */
 
-type CalendarProps = DayPickerProps;
-
-function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProps): JSX.Element {
+function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentProps<typeof DayPicker>): JSX.Element {
   const isInteractive = props.mode !== undefined || props.onDayClick !== undefined;
 
   return (
@@ -126,17 +122,15 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProp
  * Component: CalendarRangeLabel
  * -------------------------------------------------------------------------- */
 
-interface CalendarRangeLabelProps {
-  date: DateRange | undefined;
-  formatStr?: string;
-  placeholder?: string;
-}
-
 function CalendarRangeLabel({
   date,
   formatStr = 'LLL dd, y',
   placeholder = 'Pick a date',
-}: CalendarRangeLabelProps): ReactNode {
+}: {
+  date: DateRange | undefined;
+  formatStr?: string;
+  placeholder?: string;
+}): ReactNode {
   if (!date?.from) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -160,13 +154,15 @@ function CalendarRangeLabel({
  * Component: CalendarLabel
  * -------------------------------------------------------------------------- */
 
-interface CalendarLabelProps {
+function CalendarLabel({
+  date,
+  formatStr = 'PPP',
+  placeholder = 'Pick a date',
+}: {
   date: Date | undefined;
   formatStr?: string;
   placeholder?: string;
-}
-
-function CalendarLabel({ date, formatStr = 'PPP', placeholder = 'Pick a date' }: CalendarLabelProps): ReactNode {
+}): ReactNode {
   if (!date) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -179,5 +175,4 @@ function CalendarLabel({ date, formatStr = 'PPP', placeholder = 'Pick a date' }:
  * -------------------------------------------------------------------------- */
 
 export type { DateRange, Matcher } from 'react-day-picker';
-export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps };
 export { Calendar, CalendarLabel, CalendarRangeLabel };

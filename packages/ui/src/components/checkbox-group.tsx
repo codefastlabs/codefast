@@ -9,9 +9,7 @@ import { cn } from '@/lib/utils';
  * Component: CheckboxGroup
  * -------------------------------------------------------------------------- */
 
-type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
-
-function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
+function CheckboxGroup({ className, ...props }: ComponentProps<typeof CheckboxGroupPrimitive.Root>): JSX.Element {
   return <CheckboxGroupPrimitive.Root className={cn('grid gap-2', className)} data-slot="checkbox-group" {...props} />;
 }
 
@@ -19,9 +17,7 @@ function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element
  * Component: CheckboxGroupItem
  * -------------------------------------------------------------------------- */
 
-type CheckboxGroupItemProps = ComponentProps<typeof CheckboxGroupPrimitive.Item>;
-
-function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX.Element {
+function CheckboxGroupItem({ className, ...props }: ComponentProps<typeof CheckboxGroupPrimitive.Item>): JSX.Element {
   return (
     <CheckboxGroupPrimitive.Item
       className={cn(
@@ -42,5 +38,4 @@ function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CheckboxGroupItemProps, CheckboxGroupProps };
 export { CheckboxGroup, CheckboxGroupItem };

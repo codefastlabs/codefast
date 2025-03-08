@@ -6,9 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Card
  * -------------------------------------------------------------------------- */
 
-type CardProps = ComponentProps<'div'>;
-
-function Card({ className, ...props }: CardProps): JSX.Element {
+function Card({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('bg-card text-card-foreground rounded-xl border shadow-sm', className)}
@@ -22,9 +20,7 @@ function Card({ className, ...props }: CardProps): JSX.Element {
  * Component: CardHeader
  * -------------------------------------------------------------------------- */
 
-type CardHeaderProps = ComponentProps<'div'>;
-
-function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
+function CardHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return <div className={cn('flex flex-col gap-y-1.5 p-6', className)} data-slot="card-header" {...props} />;
 }
 
@@ -32,13 +28,11 @@ function CardHeader({ className, ...props }: CardHeaderProps): JSX.Element {
  * Component: CardTitle
  * -------------------------------------------------------------------------- */
 
-type CardTitleProps = ComponentProps<'h3'>;
-
-function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Element {
+function CardTitle({ children, className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
-    <h3 className={cn('font-semibold leading-none tracking-tight', className)} data-slot="card-title" {...props}>
+    <div className={cn('font-semibold leading-none tracking-tight', className)} data-slot="card-title" {...props}>
       {children}
-    </h3>
+    </div>
   );
 }
 
@@ -46,19 +40,15 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
  * Component: CardDescription
  * -------------------------------------------------------------------------- */
 
-type CardDescriptionProps = ComponentProps<'p'>;
-
-function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Element {
-  return <p className={cn('text-muted-foreground text-sm', className)} data-slot="card-description" {...props} />;
+function CardDescription({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+  return <div className={cn('text-muted-foreground text-sm', className)} data-slot="card-description" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: CardContent
  * -------------------------------------------------------------------------- */
 
-type CardContentProps = ComponentProps<'div'>;
-
-function CardContent({ className, ...props }: CardContentProps): JSX.Element {
+function CardContent({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return <div className={cn('p-6 pt-0', className)} data-slot="card-content" {...props} />;
 }
 
@@ -66,9 +56,7 @@ function CardContent({ className, ...props }: CardContentProps): JSX.Element {
  * Component: CardFooter
  * -------------------------------------------------------------------------- */
 
-type CardFooterProps = ComponentProps<'div'>;
-
-function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
+function CardFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return <div className={cn('flex items-center p-6 pt-0', className)} data-slot="card-footer" {...props} />;
 }
 
@@ -76,5 +64,4 @@ function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CardContentProps, CardDescriptionProps, CardFooterProps, CardHeaderProps, CardProps, CardTitleProps };
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
