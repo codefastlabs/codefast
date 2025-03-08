@@ -414,4 +414,5 @@ function generateCSS(id: string, config: ChartConfig): string {
  * Exports
  * -------------------------------------------------------------------------- */
 
+export type { ChartConfig };
 export { ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent };

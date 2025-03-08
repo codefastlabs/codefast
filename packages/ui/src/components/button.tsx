@@ -9,14 +9,6 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Button
  * -------------------------------------------------------------------------- */
 
-interface ButtonProps extends Omit<ComponentProps<'button'>, 'prefix'>, ButtonVariantsProps {
-  loaderPosition?: 'prefix' | 'suffix';
-  loading?: boolean;
-  prefix?: ReactNode;
-  spinner?: ReactNode;
-  suffix?: ReactNode;
-}
-
 function Button({
   children,
   className,
@@ -31,7 +23,14 @@ function Button({
   suffix,
   variant,
   ...props
-}: ButtonProps): JSX.Element {
+}: ButtonVariantsProps &
+  Omit<ComponentProps<'button'>, 'prefix'> & {
+    loaderPosition?: 'prefix' | 'suffix';
+    loading?: boolean;
+    prefix?: ReactNode;
+    spinner?: ReactNode;
+    suffix?: ReactNode;
+  }): JSX.Element {
   return (
     <button
       className={buttonVariants({ className, icon, inside, size, variant })}
@@ -52,5 +51,4 @@ function Button({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ButtonProps };
 export { Button };

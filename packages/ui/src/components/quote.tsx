@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Quote
  * -------------------------------------------------------------------------- */
 
-interface QuoteProps extends ComponentProps<'q'> {
+function Quote({
+  asChild,
+  ...props
+}: ComponentProps<'q'> & {
   asChild?: boolean;
-}
-
-function Quote({ asChild, ...props }: QuoteProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'q';
 
   return <Component data-slot="quote" {...props} />;
@@ -20,5 +21,4 @@ function Quote({ asChild, ...props }: QuoteProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { QuoteProps };
 export { Quote };

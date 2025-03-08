@@ -101,9 +101,9 @@
  * expanding/collapsing content effects.
  */
 @theme inline {
-  --animate-caret-blink: caret-blink 1000ms ease infinite;
-  --animate-collapsible-closed: collapsible-closed 200ms ease;
-  --animate-collapsible-open: collapsible-open 200ms ease;
+  --animate-caret-blink: caret-blink 1250ms ease-out infinite;
+  --animate-accordion-up: accordion-up 200ms ease-in;
+  --animate-accordion-down: accordion-down 200ms ease-out;
 
   @keyframes caret-blink {
     0%,
@@ -118,21 +118,21 @@
     }
   }
 
-  @keyframes collapsible-closed {
+  @keyframes accordion-up {
     from {
-      height: var(--radix-collapsible-content-height);
+      height: var(--radix-accordion-content-height);
     }
     to {
       height: 0;
     }
   }
 
-  @keyframes collapsible-open {
+  @keyframes accordion-down {
     from {
       height: 0;
     }
     to {
-      height: var(--radix-collapsible-content-height);
+      height: var(--radix-accordion-content-height);
     }
   }
 }

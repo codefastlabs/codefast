@@ -8,11 +8,13 @@ import { cn } from '@/lib/utils';
  * Component: Container
  * -------------------------------------------------------------------------- */
 
-interface ContainerProps extends ComponentProps<'div'> {
+function Container({
+  asChild,
+  className,
+  ...props
+}: ComponentProps<'div'> & {
   asChild?: boolean;
-}
-
-function Container({ asChild, className, ...props }: ContainerProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'div';
 
   return <Component className={cn('container', className)} data-slot="container" {...props} />;
@@ -22,5 +24,4 @@ function Container({ asChild, className, ...props }: ContainerProps): JSX.Elemen
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ContainerProps };
 export { Container };

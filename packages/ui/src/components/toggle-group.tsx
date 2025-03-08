@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { toggleVariants } from '@/variants/toggle.variants';
 
 /* -----------------------------------------------------------------------------
- * Component: ToggleGroup
+ * Context: ToggleGroup
  * -------------------------------------------------------------------------- */
 
 const TOGGLE_GROUP_NAME = 'ToggleGroup';
@@ -26,7 +26,9 @@ const useToggleGroupScope = createToggleGroupScope();
 
 const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
 
-type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps;
+/* -----------------------------------------------------------------------------
+ * Component: ToggleGroup
+ * -------------------------------------------------------------------------- */
 
 function ToggleGroup({
   __scopeToggleGroup,
@@ -36,7 +38,7 @@ function ToggleGroup({
   size,
   variant,
   ...props
-}: ScopedProps<ToggleGroupProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps>): JSX.Element {
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
@@ -59,11 +61,6 @@ function ToggleGroup({
 
 const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
 
-interface ToggleGroupItemProps extends Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, 'prefix'> {
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-}
-
 function ToggleGroupItem({
   __scopeToggleGroup,
   children,
@@ -71,7 +68,12 @@ function ToggleGroupItem({
   prefix,
   suffix,
   ...props
-}: ScopedProps<ToggleGroupItemProps>): JSX.Element {
+}: ScopedProps<
+  Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, 'prefix'> & {
+    prefix?: ReactNode;
+    suffix?: ReactNode;
+  }
+>): JSX.Element {
   const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
@@ -93,5 +95,4 @@ function ToggleGroupItem({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ToggleGroupItemProps, ToggleGroupProps };
 export { ToggleGroup, ToggleGroupItem };

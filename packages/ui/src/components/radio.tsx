@@ -10,11 +10,14 @@ import { cn } from '@/lib/utils';
  * Component: Radio
  * -------------------------------------------------------------------------- */
 
-interface RadioProps extends Omit<ComponentProps<'input'>, 'type'> {
+function Radio({
+  className,
+  onChange,
+  onValueChange,
+  ...props
+}: Omit<ComponentProps<'input'>, 'type'> & {
   onValueChange?: (value: string) => void;
-}
-
-function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JSX.Element {
+}): JSX.Element {
   return (
     <input
       className={cn(

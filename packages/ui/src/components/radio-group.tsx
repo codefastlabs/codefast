@@ -8,9 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
-type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
-
-function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
+function RadioGroup({ className, ...props }: ComponentProps<typeof RadioGroupPrimitive.Root>): JSX.Element {
   return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} data-slot="radio-group" {...props} />;
 }
 
@@ -18,9 +16,7 @@ function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
-type RadioGroupItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
-
-function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Element {
+function RadioGroupItem({ className, ...props }: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
   return (
     <RadioGroupPrimitive.Item
       className={cn(
@@ -39,5 +35,4 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { RadioGroupItemProps, RadioGroupProps };
 export { RadioGroup, RadioGroupItem };

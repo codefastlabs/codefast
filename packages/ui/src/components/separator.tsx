@@ -35,11 +35,13 @@ type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
  * Component: Separator
  * -------------------------------------------------------------------------- */
 
-interface SeparatorProps
-  extends ComponentProps<typeof SeparatorPrimitive.Root>,
-    Omit<SeparatorVariantsProps, 'orientation'> {}
-
-function Separator({ align, className, decorative = true, orientation, ...props }: SeparatorProps): JSX.Element {
+function Separator({
+  align,
+  className,
+  decorative = true,
+  orientation,
+  ...props
+}: ComponentProps<typeof SeparatorPrimitive.Root> & Omit<SeparatorVariantsProps, 'orientation'>): JSX.Element {
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}
@@ -55,9 +57,7 @@ function Separator({ align, className, decorative = true, orientation, ...props 
  * Component: SeparatorItem
  * -------------------------------------------------------------------------- */
 
-type SeparatorItemProps = ComponentProps<'div'>;
-
-function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element {
+function SeparatorItem({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
@@ -71,5 +71,4 @@ function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SeparatorProps };
 export { Separator, SeparatorItem };
