@@ -38,10 +38,9 @@ import {
 import type { Component, NavItem, Team, User } from '@/types';
 
 import { Index } from '@/__registry__';
+import { getComponentName } from '@/lib/utils';
 import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
 import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
-
-export type AppSidebarProps = ComponentProps<typeof Sidebar>;
 
 // This is sample data.
 const data: {
@@ -106,36 +105,31 @@ const data: {
   ),
 };
 
-/**
- * Converts a kebab-case string to a title case string.
- *
- * @param name - The kebab-case string to be converted.
- * @returns The converted string in title case.
- */
-function getComponentName(name: string): string {
-  return name.replaceAll('-', ' ').replaceAll(/\b\w/g, (char) => char.toUpperCase());
-}
-
-export function AppSidebar({ ...props }: AppSidebarProps): JSX.Element {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
+
         <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
           <SidebarGroupContent>
             <form className="relative">
               <Label className="sr-only" htmlFor="search">
                 Search
               </Label>
+
               <SidebarInput className="pl-8" id="search" placeholder="Search the docs..." />
+
               <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
             </form>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
+
           <SidebarMenu>
             {data.navMain.map((item) => (
               <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
@@ -143,10 +137,13 @@ export function AppSidebar({ ...props }: AppSidebarProps): JSX.Element {
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton tooltip={item.title}>
                       {item.icon ? <item.icon /> : null}
+
                       <span>{item.title}</span>
+
                       <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
+
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {item.items.map((subItem) => (
@@ -165,8 +162,10 @@ export function AppSidebar({ ...props }: AppSidebarProps): JSX.Element {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Components</SidebarGroupLabel>
+
           <SidebarMenu>
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
@@ -180,9 +179,11 @@ export function AppSidebar({ ...props }: AppSidebarProps): JSX.Element {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   );
