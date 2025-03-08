@@ -1,7 +1,8 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
+import type { Props } from 'recharts/types/component/Label';
 
 import {
   Card,
@@ -53,10 +54,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartPieDonutText(): JSX.Element {
-  const totalVisitors = useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
-
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -68,22 +65,7 @@ export function ChartPieDonutText(): JSX.Element {
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Pie data={chartData} dataKey="visitors" innerRadius={60} nameKey="browser" strokeWidth={5}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                        <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
+              <Label content={Content} />
             </Pie>
           </PieChart>
         </ChartContainer>
@@ -96,4 +78,25 @@ export function ChartPieDonutText(): JSX.Element {
       </CardFooter>
     </Card>
   );
+}
+
+function Content({ viewBox }: Props): ReactNode {
+  const totalVisitors = useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+  }, []);
+
+  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+    return (
+      <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
+        <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
+          {totalVisitors.toLocaleString()}
+        </tspan>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
+          Visitors
+        </tspan>
+      </text>
+    );
+  }
+
+  return null;
 }

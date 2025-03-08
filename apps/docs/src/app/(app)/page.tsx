@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function AppPage(): JSX.Element {
-  return <main className="@container grid flex-1 gap-4 p-4">App Page</main>;
+  return <div className="@container grid flex-1 gap-4 p-4">App Page</div>;
 }

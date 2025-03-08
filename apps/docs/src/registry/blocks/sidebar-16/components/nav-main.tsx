@@ -27,10 +27,7 @@ export function NavMain({
     title: string;
     url: string;
     isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
+    items?: { title: string; url: string }[];
   }[];
 }): JSX.Element {
   return (

@@ -60,44 +60,6 @@ const data: Data = {
   ],
 };
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
-  return (
-    <Sidebar {...props}>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Changes</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.changes.map((item, index) => (
-                // eslint-disable-next-line react/no-array-index-key -- we need index
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton>
-                    <File />
-                    {item.file}
-                  </SidebarMenuButton>
-                  <SidebarMenuBadge>{item.state}</SidebarMenuBadge>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Files</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.tree.map((item, index) => (
-                // eslint-disable-next-line react/no-array-index-key -- we need index
-                <Tree key={index} item={item} />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarRail />
-    </Sidebar>
-  );
-}
-
 function Tree({ item }: { item: TreeNode }): JSX.Element {
   const [name, ...items] = Array.isArray(item) ? item : [item];
 
@@ -133,5 +95,43 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
         </CollapsibleContent>
       </Collapsible>
     </SidebarMenuItem>
+  );
+}
+
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+  return (
+    <Sidebar {...props}>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Changes</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.changes.map((item, index) => (
+                // eslint-disable-next-line react/no-array-index-key -- we need index
+                <SidebarMenuItem key={index}>
+                  <SidebarMenuButton>
+                    <File />
+                    {item.file}
+                  </SidebarMenuButton>
+                  <SidebarMenuBadge>{item.state}</SidebarMenuBadge>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Files</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.tree.map((item, index) => (
+                // eslint-disable-next-line react/no-array-index-key -- we need index
+                <Tree key={index} item={item} />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarRail />
+    </Sidebar>
   );
 }

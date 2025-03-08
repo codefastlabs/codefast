@@ -13,23 +13,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { type LucideIcon, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}): JSX.Element {
+import type { NavItem } from '@/types';
+
+export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
   const { isMobile } = useSidebar();
 
   return (
@@ -43,7 +32,7 @@ export function NavMain({
                   {item.title} <MoreHorizontal className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              {item.items?.length ? (
+              {item.items.length > 0 ? (
                 <DropdownMenuContent
                   align={isMobile ? 'end' : 'start'}
                   className="min-w-56 rounded-lg"
