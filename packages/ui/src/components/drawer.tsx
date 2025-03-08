@@ -1,10 +1,9 @@
 'use client';
 
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import { Drawer as DrawerPrimitive } from 'vaul';
-
-import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
@@ -114,8 +113,8 @@ function DrawerClose({
   variant = 'outline',
   ...props
 }: ComponentProps<typeof DrawerPrimitive.Close> & {
-  size?: ButtonVariantsProps['size'];
-  variant?: ButtonVariantsProps['variant'];
+  size?: VariantProps<typeof buttonVariants>['size'];
+  variant?: VariantProps<typeof buttonVariants>['variant'];
 }): JSX.Element {
   return (
     <DrawerPrimitive.Close

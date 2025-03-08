@@ -1,12 +1,11 @@
 'use client';
 
 import type { ComponentProps, JSX, MouseEventHandler } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
-
-import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
@@ -34,8 +33,8 @@ function InputPassword({
   suffix,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  InputVariantsProps &
-  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'>): JSX.Element {
+  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> &
+  VariantProps<typeof inputVariants>): JSX.Element {
   const [type, setType] = useState<'password' | 'text'>('password');
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {

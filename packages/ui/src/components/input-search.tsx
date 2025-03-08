@@ -1,12 +1,11 @@
 'use client';
 
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as InputPrimitive from '@codefast-ui/input';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { SearchIcon, XIcon } from 'lucide-react';
-
-import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Button } from '@/components/button';
 import { Spinner } from '@/components/spinner';
@@ -33,8 +32,8 @@ function InputSearch({
   value: valueProp,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  InputVariantsProps &
-  Omit<ComponentProps<typeof InputPrimitive.Item>, 'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'> & {
+  Omit<ComponentProps<typeof InputPrimitive.Item>, 'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'> &
+  VariantProps<typeof inputVariants> & {
     defaultValue?: string;
     onChange?: (value: string) => void;
     value?: string;

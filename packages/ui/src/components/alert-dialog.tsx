@@ -1,8 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
-
-import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
@@ -136,8 +135,8 @@ function AlertDialogAction({
   variant,
   ...props
 }: ComponentProps<typeof AlertDialogPrimitive.Action> & {
-  size?: ButtonVariantsProps['size'];
-  variant?: ButtonVariantsProps['variant'];
+  size?: VariantProps<typeof buttonVariants>['size'];
+  variant?: VariantProps<typeof buttonVariants>['variant'];
 }): JSX.Element {
   return (
     <AlertDialogPrimitive.Action
@@ -158,8 +157,8 @@ function AlertDialogCancel({
   variant = 'outline',
   ...props
 }: ComponentProps<typeof AlertDialogPrimitive.Cancel> & {
-  size?: ButtonVariantsProps['size'];
-  variant?: ButtonVariantsProps['variant'];
+  size?: VariantProps<typeof buttonVariants>['size'];
+  variant?: VariantProps<typeof buttonVariants>['variant'];
 }): JSX.Element {
   return (
     <AlertDialogPrimitive.Cancel

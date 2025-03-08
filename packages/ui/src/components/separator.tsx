@@ -29,8 +29,6 @@ const separatorVariants = tv({
   },
 });
 
-type SeparatorVariantsProps = VariantProps<typeof separatorVariants>;
-
 /* -----------------------------------------------------------------------------
  * Component: Separator
  * -------------------------------------------------------------------------- */
@@ -41,7 +39,8 @@ function Separator({
   decorative = true,
   orientation,
   ...props
-}: ComponentProps<typeof SeparatorPrimitive.Root> & Omit<SeparatorVariantsProps, 'orientation'>): JSX.Element {
+}: ComponentProps<typeof SeparatorPrimitive.Root> &
+  Omit<VariantProps<typeof separatorVariants>, 'orientation'>): JSX.Element {
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}

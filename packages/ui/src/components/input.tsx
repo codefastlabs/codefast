@@ -1,8 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as InputPrimitive from '@codefast-ui/input';
-
-import type { InputVariantsProps } from '@/variants/input.variants';
 
 import { Spinner } from '@/components/spinner';
 import { inputVariants } from '@/variants/input.variants';
@@ -29,8 +28,8 @@ function Input({
   suffix,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  InputVariantsProps &
-  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> & {
+  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> &
+  VariantProps<typeof inputVariants> & {
     type?:
       | 'date'
       | 'datetime-local'

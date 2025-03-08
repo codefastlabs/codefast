@@ -531,8 +531,6 @@ const sidebarMenuButtonVariants = tv({
   },
 });
 
-type SidebarMenuButtonVariantsProps = VariantProps<typeof sidebarMenuButtonVariants>;
-
 /* -----------------------------------------------------------------------------
  * Component: SidebarMenuButton
  * -------------------------------------------------------------------------- */
@@ -546,7 +544,7 @@ function SidebarMenuButton({
   className,
   ...props
 }: ComponentProps<'button'> &
-  SidebarMenuButtonVariantsProps & {
+  VariantProps<typeof sidebarMenuButtonVariants> & {
     asChild?: boolean;
     isActive?: boolean;
     tooltip?: ComponentProps<typeof TooltipContent> | string;

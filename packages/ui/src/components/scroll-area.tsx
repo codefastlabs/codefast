@@ -66,8 +66,6 @@ const scrollAreaScrollbarVariants = tv({
   },
 });
 
-type ScrollAreaScrollbarVariantsProps = VariantProps<typeof scrollAreaScrollbarVariants>;
-
 /* -----------------------------------------------------------------------------
  * Context: ScrollArea
  * -------------------------------------------------------------------------- */
@@ -78,7 +76,7 @@ type ScopedProps<P> = P & { __scopeScrollArea?: Scope };
 
 const [createCarouselContext] = createContextScope(SCROLL_AREA_NAME);
 
-type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
+type ScrollAreaContextValue = Pick<VariantProps<typeof scrollAreaScrollbarVariants>, 'size'>;
 
 const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 

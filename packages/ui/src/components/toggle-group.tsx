@@ -2,12 +2,11 @@
 
 import type { Scope } from '@radix-ui/react-context';
 import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import { createContextScope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
-
-import type { ToggleVariantsProps } from '@/variants/toggle.variants';
 
 import { cn } from '@/lib/utils';
 import { toggleVariants } from '@/variants/toggle.variants';
@@ -24,7 +23,8 @@ const [createToggleGroupContext] = createContextScope(TOGGLE_GROUP_NAME, [create
 
 const useToggleGroupScope = createToggleGroupScope();
 
-const [ToggleGroupProvider, useToggleGroupContext] = createToggleGroupContext<ToggleVariantsProps>(TOGGLE_GROUP_NAME);
+const [ToggleGroupProvider, useToggleGroupContext] =
+  createToggleGroupContext<VariantProps<typeof toggleVariants>>(TOGGLE_GROUP_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: ToggleGroup
@@ -38,7 +38,7 @@ function ToggleGroup({
   size,
   variant,
   ...props
-}: ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Root> & ToggleVariantsProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants>>): JSX.Element {
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (

@@ -1,8 +1,7 @@
 import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as TogglePrimitive from '@radix-ui/react-toggle';
-
-import type { ToggleVariantsProps } from '@/variants/toggle.variants';
 
 import { toggleVariants } from '@/variants/toggle.variants';
 
@@ -20,7 +19,7 @@ function Toggle({
   variant,
   ...props
 }: Omit<ComponentProps<typeof TogglePrimitive.Root>, 'prefix'> &
-  ToggleVariantsProps & {
+  VariantProps<typeof toggleVariants> & {
     prefix?: ReactNode;
     suffix?: ReactNode;
   }): JSX.Element {
