@@ -1,8 +1,8 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
-import type { ContentType } from 'recharts/types/component/Label';
+import type { JSX, ReactNode } from 'react';
+import type { Props } from 'recharts/types/component/Label';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from '@codefast/ui';
 import { TrendingUp } from 'lucide-react';
@@ -39,7 +39,7 @@ export function ChartRadialShape(): JSX.Element {
             />
             <RadialBar background dataKey="visitors" />
             <PolarRadiusAxis axisLine={false} tick={false} tickLine={false}>
-              <Label content={content} />
+              <Label content={Content} />
             </PolarRadiusAxis>
           </RadialBarChart>
         </ChartContainer>
@@ -54,7 +54,7 @@ export function ChartRadialShape(): JSX.Element {
   );
 }
 
-const content: ContentType = ({ viewBox }) => {
+function Content({ viewBox }: Props): ReactNode {
   if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
     return (
       <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
@@ -67,4 +67,6 @@ const content: ContentType = ({ viewBox }) => {
       </text>
     );
   }
-};
+
+  return null;
+}

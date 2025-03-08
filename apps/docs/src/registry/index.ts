@@ -2,9 +2,10 @@ import type { Registry } from '@/scripts/lib/schema';
 
 import { blocks } from '@/registry/registry-blocks';
 import { charts } from '@/registry/registry-charts';
+import { ui } from '@/registry/registry-ui';
 
 export const registry = {
   name: '@codefast/ui',
   homepage: 'https://codefastlabs.vercel.app/',
-  items: [...blocks, ...charts],
+  items: [...ui, ...blocks, ...charts],
 } satisfies Registry;

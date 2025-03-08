@@ -54,7 +54,7 @@ export function ProductsTable({
             <TabsTrigger value="low-stock">Low Stock</TabsTrigger>
             <TabsTrigger value="archived">Archived</TabsTrigger>
             <TabsTrigger asChild value="add-product">
-              <button>
+              <button type="button">
                 <PlusIcon />
               </button>
             </TabsTrigger>

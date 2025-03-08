@@ -88,6 +88,7 @@ export function ChartPieInteractive(): JSX.Element {
             {months.map((key) => {
               const config = chartConfig[key as keyof typeof chartConfig];
 
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- keep
               if (!config) {
                 return null;
               }

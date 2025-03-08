@@ -7,13 +7,7 @@ import Link from 'next/link';
 export function NavSecondary({
   items,
   ...props
-}: ComponentProps<typeof SidebarGroup> & {
-  items: {
-    icon: LucideIcon;
-    title: string;
-    url: string;
-  }[];
-}): JSX.Element {
+}: ComponentProps<typeof SidebarGroup> & { items: { icon: LucideIcon; title: string; url: string }[] }): JSX.Element {
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>

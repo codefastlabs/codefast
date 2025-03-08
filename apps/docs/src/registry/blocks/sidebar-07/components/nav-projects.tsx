@@ -16,18 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { type LucideIcon, Folder, Forward, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Folder, Forward, MoreHorizontal, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    icon: LucideIcon;
-    name: string;
-    url: string;
-  }[];
-}): JSX.Element {
+import type { Project } from '@/types';
+
+export function NavProjects({ projects }: { projects: Project[] }): JSX.Element {
   const { isMobile } = useSidebar();
 
   return (

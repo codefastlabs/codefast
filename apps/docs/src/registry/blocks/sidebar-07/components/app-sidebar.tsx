@@ -16,34 +16,25 @@ import {
   SquareTerminal,
 } from 'lucide-react';
 
+import type { NavItem, Project, Team, User } from '@/types';
+
 import { NavMain } from '@/registry/blocks/sidebar-07/components/nav-main';
 import { NavProjects } from '@/registry/blocks/sidebar-07/components/nav-projects';
 import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
 import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
 
 // This is sample data.
-const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
+const data: {
+  navMain: NavItem[];
+  projects: Project[];
+  teams: Team[];
+  user: User;
+} = {
+  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
   teams: [
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free',
-    },
+    { name: 'Acme Inc', logo: GalleryVerticalEnd, plan: 'Enterprise' },
+    { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
+    { name: 'Evil Corp.', logo: Command, plan: 'Free' },
   ],
   navMain: [
     {
@@ -52,18 +43,9 @@ const data = {
       icon: SquareTerminal,
       isActive: true,
       items: [
-        {
-          title: 'History',
-          url: '#',
-        },
-        {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
-        },
+        { title: 'History', url: '#' },
+        { title: 'Starred', url: '#' },
+        { title: 'Settings', url: '#' },
       ],
     },
     {
@@ -71,18 +53,9 @@ const data = {
       url: '#',
       icon: Bot,
       items: [
-        {
-          title: 'Genesis',
-          url: '#',
-        },
-        {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
-        },
+        { title: 'Genesis', url: '#' },
+        { title: 'Explorer', url: '#' },
+        { title: 'Quantum', url: '#' },
       ],
     },
     {
@@ -90,22 +63,10 @@ const data = {
       url: '#',
       icon: BookOpen,
       items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
+        { title: 'Introduction', url: '#' },
+        { title: 'Get Started', url: '#' },
+        { title: 'Tutorials', url: '#' },
+        { title: 'Changelog', url: '#' },
       ],
     },
     {
@@ -113,41 +74,17 @@ const data = {
       url: '#',
       icon: Settings2,
       items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
+        { title: 'General', url: '#' },
+        { title: 'Team', url: '#' },
+        { title: 'Billing', url: '#' },
+        { title: 'Limits', url: '#' },
       ],
     },
   ],
   projects: [
-    {
-      name: 'Design Engineering',
-      url: '#',
-      icon: Frame,
-    },
-    {
-      name: 'Sales & Marketing',
-      url: '#',
-      icon: PieChart,
-    },
-    {
-      name: 'Travel',
-      url: '#',
-      icon: Map,
-    },
+    { name: 'Design Engineering', url: '#', icon: Frame },
+    { name: 'Sales & Marketing', url: '#', icon: PieChart },
+    { name: 'Travel', url: '#', icon: Map },
   ],
 };
 

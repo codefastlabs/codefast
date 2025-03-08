@@ -1,3 +1,5 @@
+import type { JSX } from 'react';
+
 import { ProductsTable } from '@/registry/blocks/products-01/components/products-table';
 
 // Load from database.
@@ -164,7 +166,7 @@ const products = [
   },
 ];
 
-export default function ProductsPage() {
+export default function ProductsPage(): JSX.Element {
   return (
     <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
       <ProductsTable products={products} />

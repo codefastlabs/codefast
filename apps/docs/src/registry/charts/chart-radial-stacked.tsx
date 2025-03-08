@@ -1,7 +1,8 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
+import type { Props } from 'recharts/types/component/Label';
 
 import {
   Card,
@@ -31,8 +32,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartRadialStacked(): JSX.Element {
-  const totalVisitors = chartData[0].desktop + chartData[0].mobile;
-
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -44,22 +43,7 @@ export function ChartRadialStacked(): JSX.Element {
           <RadialBarChart data={chartData} endAngle={180} innerRadius={80} outerRadius={130}>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <PolarRadiusAxis axisLine={false} tick={false} tickLine={false}>
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                    return (
-                      <text textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
-                        <tspan className="fill-foreground text-2xl font-bold" x={viewBox.cx} y={(viewBox.cy || 0) - 16}>
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 4}>
-                          Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
+              <Label content={Content} />
             </PolarRadiusAxis>
             <RadialBar
               className="stroke-transparent stroke-2"
@@ -86,4 +70,23 @@ export function ChartRadialStacked(): JSX.Element {
       </CardFooter>
     </Card>
   );
+}
+
+function Content({ viewBox }: Props): ReactNode {
+  const totalVisitors = chartData[0].desktop + chartData[0].mobile;
+
+  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+    return (
+      <text textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
+        <tspan className="fill-foreground text-2xl font-bold" x={viewBox.cx} y={(viewBox.cy ?? 0) - 16}>
+          {totalVisitors.toLocaleString()}
+        </tspan>
+        <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 4}>
+          Visitors
+        </tspan>
+      </text>
+    );
+  }
+
+  return null;
 }

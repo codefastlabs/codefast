@@ -9,12 +9,7 @@ import Link from 'next/link';
 export function NavMain({
   items,
 }: {
-  items: {
-    icon: LucideIcon;
-    title: string;
-    url: string;
-    isActive?: boolean;
-  }[];
+  items: { icon: LucideIcon; title: string; url: string; isActive?: boolean }[];
 }): JSX.Element {
   return (
     <SidebarMenu>
