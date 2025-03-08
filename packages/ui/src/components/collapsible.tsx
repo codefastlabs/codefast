@@ -2,15 +2,11 @@ import type { ComponentProps, JSX } from 'react';
 
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 
-import { cn } from '@/lib/utils';
-
 /* -----------------------------------------------------------------------------
  * Component: Collapsible
  * -------------------------------------------------------------------------- */
 
-type CollapsibleProps = ComponentProps<typeof CollapsiblePrimitive.Root>;
-
-function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
+function Collapsible({ ...props }: ComponentProps<typeof CollapsiblePrimitive.Root>): JSX.Element {
   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
 }
 
@@ -18,9 +14,7 @@ function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
  * Component: CollapsibleTrigger
  * -------------------------------------------------------------------------- */
 
-type CollapsibleTriggerProps = ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>;
-
-function CollapsibleTrigger({ ...props }: CollapsibleTriggerProps): JSX.Element {
+function CollapsibleTrigger({ ...props }: ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>): JSX.Element {
   return <CollapsiblePrimitive.CollapsibleTrigger data-slot="collapsible-trigger" {...props} />;
 }
 
@@ -28,24 +22,12 @@ function CollapsibleTrigger({ ...props }: CollapsibleTriggerProps): JSX.Element 
  * Component: CollapsibleContent
  * -------------------------------------------------------------------------- */
 
-type CollapsibleContentProps = ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>;
-
-function CollapsibleContent({ className, ...props }: CollapsibleContentProps): JSX.Element {
-  return (
-    <CollapsiblePrimitive.CollapsibleContent
-      className={cn(
-        'data-[state=open]:animate-collapsible-open data-[state=closed]:animate-collapsible-closed overflow-hidden',
-        className,
-      )}
-      data-slot="collapsible-content"
-      {...props}
-    />
-  );
+function CollapsibleContent({ ...props }: ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>): JSX.Element {
+  return <CollapsiblePrimitive.CollapsibleContent data-slot="collapsible-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CollapsibleContentProps, CollapsibleProps, CollapsibleTriggerProps };
 export { Collapsible, CollapsibleContent, CollapsibleTrigger };

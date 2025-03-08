@@ -11,9 +11,7 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Pagination
  * -------------------------------------------------------------------------- */
 
-type PaginationProps = ComponentProps<'nav'>;
-
-function Pagination({ className, ...props }: PaginationProps): JSX.Element {
+function Pagination({ className, ...props }: ComponentProps<'nav'>): JSX.Element {
   return (
     <nav
       aria-label="pagination"
@@ -29,9 +27,7 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
  * Component: PaginationContent
  * -------------------------------------------------------------------------- */
 
-type PaginationContentProps = ComponentProps<'ul'>;
-
-function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
+function PaginationContent({ className, ...props }: ComponentProps<'ul'>): JSX.Element {
   return <ul className={cn('flex flex-row items-center gap-1', className)} data-slot="pagination-content" {...props} />;
 }
 
@@ -39,19 +35,13 @@ function PaginationContent({ className, ...props }: PaginationContentProps): JSX
  * Component: PaginationItem
  * -------------------------------------------------------------------------- */
 
-type PaginationItemProps = ComponentProps<'li'>;
-
-function PaginationItem(props: PaginationItemProps): JSX.Element {
+function PaginationItem(props: ComponentProps<'li'>): JSX.Element {
   return <li data-slot="pagination-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: PaginationLink
  * -------------------------------------------------------------------------- */
-
-interface PaginationLinkProps extends ComponentProps<'a'>, Pick<ButtonVariantsProps, 'icon' | 'size'> {
-  isActive?: boolean;
-}
 
 function PaginationLink({
   children,
@@ -60,7 +50,10 @@ function PaginationLink({
   isActive,
   size,
   ...props
-}: PaginationLinkProps): JSX.Element {
+}: ComponentProps<'a'> &
+  Pick<ButtonVariantsProps, 'icon' | 'size'> & {
+    isActive?: boolean;
+  }): JSX.Element {
   return (
     <a
       aria-current={isActive ? 'page' : undefined}
@@ -77,9 +70,12 @@ function PaginationLink({
  * Component: PaginationPrevious
  * -------------------------------------------------------------------------- */
 
-type PaginationPreviousProps = PaginationLinkProps;
-
-function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element {
+function PaginationPrevious({
+  ...props
+}: ComponentProps<'a'> &
+  Pick<ButtonVariantsProps, 'icon' | 'size'> & {
+    isActive?: boolean;
+  }): JSX.Element {
   return (
     <PaginationLink aria-label="Go to previous page" data-slot="pagination-previous" icon={false} {...props}>
       <ChevronLeftIcon className="size-4" />
@@ -92,9 +88,12 @@ function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element 
  * Component: PaginationNext
  * -------------------------------------------------------------------------- */
 
-type PaginationNextProps = PaginationLinkProps;
-
-function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
+function PaginationNext({
+  ...props
+}: ComponentProps<'a'> &
+  Pick<ButtonVariantsProps, 'icon' | 'size'> & {
+    isActive?: boolean;
+  }): JSX.Element {
   return (
     <PaginationLink aria-label="Go to next page" data-slot="pagination-next" icon={false} {...props}>
       <span>Next</span>
@@ -107,9 +106,7 @@ function PaginationNext({ ...props }: PaginationNextProps): JSX.Element {
  * Component: PaginationEllipsis
  * -------------------------------------------------------------------------- */
 
-type PaginationEllipsisProps = ComponentProps<'span'>;
-
-function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): JSX.Element {
+function PaginationEllipsis({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
       aria-hidden
@@ -127,15 +124,6 @@ function PaginationEllipsis({ className, ...props }: PaginationEllipsisProps): J
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  PaginationContentProps,
-  PaginationEllipsisProps,
-  PaginationItemProps,
-  PaginationLinkProps,
-  PaginationNextProps,
-  PaginationPreviousProps,
-  PaginationProps,
-};
 export {
   Pagination,
   PaginationContent,

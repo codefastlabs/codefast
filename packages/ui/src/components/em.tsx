@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Em
  * -------------------------------------------------------------------------- */
 
-interface EmProps extends ComponentProps<'em'> {
+function Em({
+  asChild,
+  ...props
+}: ComponentProps<'em'> & {
   asChild?: boolean;
-}
-
-function Em({ asChild, ...props }: EmProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'em';
 
   return <Component data-slot="em" {...props} />;
@@ -20,5 +21,4 @@ function Em({ asChild, ...props }: EmProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { EmProps };
 export { Em };

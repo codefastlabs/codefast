@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Box
  * -------------------------------------------------------------------------- */
 
-interface BoxProps extends ComponentProps<'div'> {
+function Box({
+  asChild,
+  ...props
+}: ComponentProps<'div'> & {
   asChild?: boolean;
-}
-
-function Box({ asChild, ...props }: BoxProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'div';
 
   return <Component data-slot="box" {...props} />;
@@ -20,5 +21,4 @@ function Box({ asChild, ...props }: BoxProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { BoxProps };
 export { Box };

@@ -6,9 +6,7 @@ import { cn } from '@/lib/utils';
  * Component: Skeleton
  * -------------------------------------------------------------------------- */
 
-type SkeletonProps = ComponentProps<'div'>;
-
-function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
+function Skeleton({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return <div className={cn('bg-muted animate-pulse rounded-lg', className)} data-slot="skeleton" {...props} />;
 }
 
@@ -16,5 +14,4 @@ function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SkeletonProps };
 export { Skeleton };

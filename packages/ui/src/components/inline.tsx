@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Inline
  * -------------------------------------------------------------------------- */
 
-interface InlineProps extends ComponentProps<'span'> {
+function Inline({
+  asChild,
+  ...props
+}: ComponentProps<'span'> & {
   asChild?: boolean;
-}
-
-function Inline({ asChild, ...props }: InlineProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'span';
 
   return <Component data-slot="inline" {...props} />;
@@ -20,5 +21,4 @@ function Inline({ asChild, ...props }: InlineProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { InlineProps };
 export { Inline };

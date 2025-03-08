@@ -8,9 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: Switch
  * -------------------------------------------------------------------------- */
 
-type SwitchProps = ComponentProps<typeof SwitchPrimitives.Root>;
-
-function Switch({ className, ...props }: SwitchProps): JSX.Element {
+function Switch({ className, ...props }: ComponentProps<typeof SwitchPrimitives.Root>): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
@@ -32,5 +30,4 @@ function Switch({ className, ...props }: SwitchProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { SwitchProps };
 export { Switch };

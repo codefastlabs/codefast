@@ -28,12 +28,18 @@ type BadgeVariantsProps = VariantProps<typeof badgeVariants>;
  * Component: Badge
  * -------------------------------------------------------------------------- */
 
-interface BadgeProps extends Omit<ComponentProps<'div'>, 'prefix'>, BadgeVariantsProps {
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-}
-
-function Badge({ children, className, prefix, suffix, variant, ...props }: BadgeProps): JSX.Element {
+function Badge({
+  children,
+  className,
+  prefix,
+  suffix,
+  variant,
+  ...props
+}: BadgeVariantsProps &
+  Omit<ComponentProps<'div'>, 'prefix'> & {
+    prefix?: ReactNode;
+    suffix?: ReactNode;
+  }): JSX.Element {
   return (
     <div className={badgeVariants({ className, variant })} data-slot="badge" {...props}>
       {prefix}
@@ -47,5 +53,4 @@ function Badge({ children, className, prefix, suffix, variant, ...props }: Badge
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { BadgeProps };
 export { Badge };

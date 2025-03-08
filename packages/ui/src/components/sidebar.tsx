@@ -50,12 +50,6 @@ function useSidebar(): SidebarContext {
  * Component: SidebarProvider
  * -------------------------------------------------------------------------- */
 
-interface SidebarProviderProps extends ComponentProps<'div'> {
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  open?: boolean;
-}
-
 function SidebarProvider({
   defaultOpen = true,
   open: openProp,
@@ -64,7 +58,11 @@ function SidebarProvider({
   style,
   children,
   ...props
-}: SidebarProviderProps): JSX.Element {
+}: ComponentProps<'div'> & {
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  open?: boolean;
+}): JSX.Element {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = useState(false);
 
@@ -156,12 +154,6 @@ function SidebarProvider({
  * Component: Sidebar
  * -------------------------------------------------------------------------- */
 
-interface SidebarProps extends ComponentProps<'div'> {
-  collapsible?: 'icon' | 'none' | 'offcanvas';
-  side?: 'left' | 'right';
-  variant?: 'floating' | 'inset' | 'sidebar';
-}
-
 function Sidebar({
   side = 'left',
   variant = 'sidebar',
@@ -169,7 +161,11 @@ function Sidebar({
   className,
   children,
   ...props
-}: SidebarProps): JSX.Element {
+}: ComponentProps<'div'> & {
+  collapsible?: 'icon' | 'none' | 'offcanvas';
+  side?: 'left' | 'right';
+  variant?: 'floating' | 'inset' | 'sidebar';
+}): JSX.Element {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
   if (collapsible === 'none') {
@@ -256,9 +252,7 @@ function Sidebar({
  * Component: SidebarTrigger
  * -------------------------------------------------------------------------- */
 
-type SidebarTriggerProps = ComponentProps<typeof Button>;
-
-function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): JSX.Element {
+function SidebarTrigger({ className, onClick, ...props }: ComponentProps<typeof Button>): JSX.Element {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -285,9 +279,7 @@ function SidebarTrigger({ className, onClick, ...props }: SidebarTriggerProps): 
  * Component: SidebarRail
  * -------------------------------------------------------------------------- */
 
-type SidebarRailProps = ComponentProps<'button'>;
-
-function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
+function SidebarRail({ className, ...props }: ComponentProps<'button'>): JSX.Element {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -312,9 +304,7 @@ function SidebarRail({ className, ...props }: SidebarRailProps): JSX.Element {
  * Component: SidebarInset
  * -------------------------------------------------------------------------- */
 
-type SidebarInsetProps = ComponentProps<'main'>;
-
-function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
+function SidebarInset({ className, ...props }: ComponentProps<'main'>): JSX.Element {
   return (
     <main
       className={cn(
@@ -331,9 +321,7 @@ function SidebarInset({ className, ...props }: SidebarInsetProps): JSX.Element {
  * Component: SidebarInput
  * -------------------------------------------------------------------------- */
 
-type SidebarInputProps = ComponentProps<typeof Input>;
-
-function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
+function SidebarInput({ className, ...props }: ComponentProps<typeof Input>): JSX.Element {
   return (
     <Input
       className={cn('bg-background h-8 w-full shadow-none', className)}
@@ -348,9 +336,7 @@ function SidebarInput({ className, ...props }: SidebarInputProps): JSX.Element {
  * Component: SidebarHeader
  * -------------------------------------------------------------------------- */
 
-type SidebarHeaderProps = ComponentProps<'div'>;
-
-function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element {
+function SidebarHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('flex flex-col gap-2 p-2', className)}
@@ -365,9 +351,7 @@ function SidebarHeader({ className, ...props }: SidebarHeaderProps): JSX.Element
  * Component: SidebarFooter
  * -------------------------------------------------------------------------- */
 
-type SidebarFooterProps = ComponentProps<'div'>;
-
-function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element {
+function SidebarFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('flex flex-col gap-2 p-2', className)}
@@ -382,9 +366,7 @@ function SidebarFooter({ className, ...props }: SidebarFooterProps): JSX.Element
  * Component: SidebarSeparator
  * -------------------------------------------------------------------------- */
 
-type SidebarSeparatorProps = ComponentProps<typeof Separator>;
-
-function SidebarSeparator({ className, ...props }: SidebarSeparatorProps): JSX.Element {
+function SidebarSeparator({ className, ...props }: ComponentProps<typeof Separator>): JSX.Element {
   return (
     <Separator
       className={cn('bg-sidebar-border mx-2 w-auto', className)}
@@ -399,9 +381,7 @@ function SidebarSeparator({ className, ...props }: SidebarSeparatorProps): JSX.E
  * Component: SidebarContent
  * -------------------------------------------------------------------------- */
 
-type SidebarContentProps = ComponentProps<'div'>;
-
-function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Element {
+function SidebarContent({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn(
@@ -419,9 +399,7 @@ function SidebarContent({ className, ...props }: SidebarContentProps): JSX.Eleme
  * Component: SidebarGroup
  * -------------------------------------------------------------------------- */
 
-type SidebarGroupProps = ComponentProps<'div'>;
-
-function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
+function SidebarGroup({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('relative flex w-full min-w-0 flex-col p-2', className)}
@@ -436,11 +414,13 @@ function SidebarGroup({ className, ...props }: SidebarGroupProps): JSX.Element {
  * Component: SidebarGroupLabel
  * -------------------------------------------------------------------------- */
 
-interface SidebarGroupLabelProps extends ComponentProps<'div'> {
+function SidebarGroupLabel({
+  className,
+  asChild = false,
+  ...props
+}: ComponentProps<'div'> & {
   asChild?: boolean;
-}
-
-function SidebarGroupLabel({ className, asChild = false, ...props }: SidebarGroupLabelProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'div';
 
   return (
@@ -460,11 +440,13 @@ function SidebarGroupLabel({ className, asChild = false, ...props }: SidebarGrou
  * Component: SidebarGroupAction
  * -------------------------------------------------------------------------- */
 
-interface SidebarGroupActionProps extends ComponentProps<'button'> {
+function SidebarGroupAction({
+  className,
+  asChild = false,
+  ...props
+}: ComponentProps<'button'> & {
   asChild?: boolean;
-}
-
-function SidebarGroupAction({ className, asChild = false, ...props }: SidebarGroupActionProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'button';
 
   return (
@@ -484,9 +466,7 @@ function SidebarGroupAction({ className, asChild = false, ...props }: SidebarGro
  * Component: SidebarGroupContent
  * -------------------------------------------------------------------------- */
 
-type SidebarGroupContentProps = ComponentProps<'div'>;
-
-function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps): JSX.Element {
+function SidebarGroupContent({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('w-full text-sm', className)}
@@ -501,9 +481,7 @@ function SidebarGroupContent({ className, ...props }: SidebarGroupContentProps):
  * Component: SidebarMenu
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuProps = ComponentProps<'ul'>;
-
-function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
+function SidebarMenu({ className, ...props }: ComponentProps<'ul'>): JSX.Element {
   return (
     <ul
       className={cn('flex w-full min-w-0 flex-col gap-1', className)}
@@ -518,9 +496,7 @@ function SidebarMenu({ className, ...props }: SidebarMenuProps): JSX.Element {
  * Component: SidebarMenuItem
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuItemProps = ComponentProps<'li'>;
-
-function SidebarMenuItem({ className, ...props }: SidebarMenuItemProps): JSX.Element {
+function SidebarMenuItem({ className, ...props }: ComponentProps<'li'>): JSX.Element {
   return (
     <li
       className={cn('group/menu-item relative', className)}
@@ -544,14 +520,14 @@ const sidebarMenuButtonVariants = tv({
         'bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
     },
     size: {
-      default: 'h-8 text-sm',
       sm: 'h-7 text-xs',
+      md: 'h-8 text-sm',
       lg: 'group-data-[collapsible=icon]:p-0! h-12 text-sm',
     },
   },
   defaultVariants: {
     variant: 'default',
-    size: 'default',
+    size: 'md',
   },
 });
 
@@ -561,22 +537,20 @@ type SidebarMenuButtonVariantsProps = VariantProps<typeof sidebarMenuButtonVaria
  * Component: SidebarMenuButton
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuButtonProps = ComponentProps<'button'> &
-  SidebarMenuButtonVariantsProps & {
-    asChild?: boolean;
-    isActive?: boolean;
-    tooltip?: ComponentProps<typeof TooltipContent> | string;
-  };
-
 function SidebarMenuButton({
   asChild = false,
   isActive = false,
   variant = 'default',
-  size = 'default',
+  size = 'md',
   tooltip,
   className,
   ...props
-}: SidebarMenuButtonProps): JSX.Element {
+}: ComponentProps<'button'> &
+  SidebarMenuButtonVariantsProps & {
+    asChild?: boolean;
+    isActive?: boolean;
+    tooltip?: ComponentProps<typeof TooltipContent> | string;
+  }): JSX.Element {
   const Component = asChild ? Slot : 'button';
   const { isMobile, state } = useSidebar();
 
@@ -614,17 +588,15 @@ function SidebarMenuButton({
  * Component: SidebarMenuAction
  * -------------------------------------------------------------------------- */
 
-interface SidebarMenuActionProps extends ComponentProps<'button'> {
-  asChild?: boolean;
-  showOnHover?: boolean;
-}
-
 function SidebarMenuAction({
   className,
   asChild = false,
   showOnHover = false,
   ...props
-}: SidebarMenuActionProps): JSX.Element {
+}: ComponentProps<'button'> & {
+  asChild?: boolean;
+  showOnHover?: boolean;
+}): JSX.Element {
   const Component = asChild ? Slot : 'button';
 
   return (
@@ -646,9 +618,7 @@ function SidebarMenuAction({
  * Component: SidebarMenuBadge
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuBadgeProps = ComponentProps<'div'>;
-
-function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.Element {
+function SidebarMenuBadge({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn(
@@ -666,11 +636,13 @@ function SidebarMenuBadge({ className, ...props }: SidebarMenuBadgeProps): JSX.E
  * Component: SidebarMenuSkeleton
  * -------------------------------------------------------------------------- */
 
-interface SidebarMenuSkeletonProps extends ComponentProps<'div'> {
+function SidebarMenuSkeleton({
+  className,
+  showIcon = false,
+  ...props
+}: ComponentProps<'div'> & {
   showIcon?: boolean;
-}
-
-function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
+}): JSX.Element {
   // Random width between 50 to 90%.
   const width = useMemo(() => {
     return `${Math.floor(Math.random() * 40) + 50}%`;
@@ -701,9 +673,7 @@ function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarM
  * Component: SidebarMenuSub
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuSubProps = ComponentProps<'ul'>;
-
-function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Element {
+function SidebarMenuSub({ className, ...props }: ComponentProps<'ul'>): JSX.Element {
   return (
     <ul
       className={cn(
@@ -721,9 +691,7 @@ function SidebarMenuSub({ className, ...props }: SidebarMenuSubProps): JSX.Eleme
  * Component: SidebarMenuSubItem
  * -------------------------------------------------------------------------- */
 
-type SidebarMenuSubItemProps = ComponentProps<'li'>;
-
-function SidebarMenuSubItem({ className, ...props }: SidebarMenuSubItemProps): JSX.Element {
+function SidebarMenuSubItem({ className, ...props }: ComponentProps<'li'>): JSX.Element {
   return (
     <li
       className={cn('group/menu-sub-item relative', className)}
@@ -738,19 +706,17 @@ function SidebarMenuSubItem({ className, ...props }: SidebarMenuSubItemProps): J
  * Component: SidebarMenuSubButton
  * -------------------------------------------------------------------------- */
 
-interface SidebarMenuSubButtonProps extends ComponentProps<'a'> {
-  asChild?: boolean;
-  isActive?: boolean;
-  size?: 'md' | 'sm';
-}
-
 function SidebarMenuSubButton({
   asChild = false,
   size = 'md',
   isActive = false,
   className,
   ...props
-}: SidebarMenuSubButtonProps): JSX.Element {
+}: ComponentProps<'a'> & {
+  asChild?: boolean;
+  isActive?: boolean;
+  size?: 'md' | 'sm';
+}): JSX.Element {
   const Component = asChild ? Slot : 'a';
 
   return (
@@ -775,32 +741,6 @@ function SidebarMenuSubButton({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  SidebarContentProps,
-  SidebarFooterProps,
-  SidebarGroupActionProps,
-  SidebarGroupContentProps,
-  SidebarGroupLabelProps,
-  SidebarGroupProps,
-  SidebarHeaderProps,
-  SidebarInputProps,
-  SidebarInsetProps,
-  SidebarMenuActionProps,
-  SidebarMenuBadgeProps,
-  SidebarMenuButtonProps,
-  SidebarMenuButtonVariantsProps,
-  SidebarMenuItemProps,
-  SidebarMenuProps,
-  SidebarMenuSkeletonProps,
-  SidebarMenuSubButtonProps,
-  SidebarMenuSubItemProps,
-  SidebarMenuSubProps,
-  SidebarProps,
-  SidebarProviderProps,
-  SidebarRailProps,
-  SidebarSeparatorProps,
-  SidebarTriggerProps,
-};
 export {
   Sidebar,
   SidebarContent,

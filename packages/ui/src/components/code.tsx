@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Code
  * -------------------------------------------------------------------------- */
 
-interface CodeProps extends ComponentProps<'code'> {
+function Code({
+  asChild,
+  ...props
+}: ComponentProps<'code'> & {
   asChild?: boolean;
-}
-
-function Code({ asChild, ...props }: CodeProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'code';
 
   return <Component data-slot="code" {...props} />;
@@ -20,5 +21,4 @@ function Code({ asChild, ...props }: CodeProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CodeProps };
 export { Code };

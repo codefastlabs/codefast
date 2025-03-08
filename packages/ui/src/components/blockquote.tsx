@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Blockquote
  * -------------------------------------------------------------------------- */
 
-interface BlockquoteProps extends ComponentProps<'blockquote'> {
+function Blockquote({
+  asChild,
+  ...props
+}: ComponentProps<'blockquote'> & {
   asChild?: boolean;
-}
-
-function Blockquote({ asChild, ...props }: BlockquoteProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'blockquote';
 
   return <Component data-slot="blockquote" {...props} />;
@@ -20,5 +21,4 @@ function Blockquote({ asChild, ...props }: BlockquoteProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { BlockquoteProps };
 export { Blockquote };

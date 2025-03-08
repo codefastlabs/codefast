@@ -33,11 +33,7 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: DataTableViewOptions
  * -------------------------------------------------------------------------- */
 
-interface DataTableViewOptionsProps<TData> {
-  table: ReactTable.Table<TData>;
-}
-
-function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>): JSX.Element {
+function DataTableViewOptions<TData>({ table }: { table: ReactTable.Table<TData> }): JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={buttonVariants({ size: 'xs', variant: 'outline' })}>
@@ -71,11 +67,13 @@ function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>
  * Component: DataTablePagination
  * -------------------------------------------------------------------------- */
 
-interface DataTablePaginationProps<TData> extends ComponentProps<'div'> {
+function DataTablePagination<TData>({
+  className,
+  table,
+  ...props
+}: ComponentProps<'div'> & {
   table: ReactTable.Table<TData>;
-}
-
-function DataTablePagination<TData>({ className, table, ...props }: DataTablePaginationProps<TData>): JSX.Element {
+}): JSX.Element {
   const pageSize = table.getState().pagination.pageSize;
 
   return (
@@ -169,15 +167,13 @@ function DataTablePagination<TData>({ className, table, ...props }: DataTablePag
  * Component: DataTableColumnHeader
  * -------------------------------------------------------------------------- */
 
-interface DataTableColumnHeaderProps<TData, TValue> {
-  column: ReactTable.Column<TData, TValue>;
-  title: string;
-}
-
 function DataTableColumnHeader<TData, TValue>({
   column,
   title,
-}: DataTableColumnHeaderProps<TData, TValue>): JSX.Element {
+}: {
+  column: ReactTable.Column<TData, TValue>;
+  title: string;
+}): JSX.Element {
   if (!column.getCanSort()) {
     return <>{title}</>;
   }
@@ -252,5 +248,4 @@ function SortIcon({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { DataTableColumnHeaderProps, DataTablePaginationProps, DataTableViewOptionsProps };
 export { DataTableColumnHeader, DataTablePagination, DataTableViewOptions };

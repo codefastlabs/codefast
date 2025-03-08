@@ -9,9 +9,7 @@ import { cn } from '@/lib/utils';
  * Component: ContextMenu
  * -------------------------------------------------------------------------- */
 
-type ContextMenuProps = ComponentProps<typeof ContextMenuPrimitive.Root>;
-
-function ContextMenu({ ...props }: ContextMenuProps): JSX.Element {
+function ContextMenu({ ...props }: ComponentProps<typeof ContextMenuPrimitive.Root>): JSX.Element {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
 }
 
@@ -19,9 +17,7 @@ function ContextMenu({ ...props }: ContextMenuProps): JSX.Element {
  * Component: ContextMenuTrigger
  * -------------------------------------------------------------------------- */
 
-type ContextMenuTriggerProps = ComponentProps<typeof ContextMenuPrimitive.Trigger>;
-
-function ContextMenuTrigger({ ...props }: ContextMenuTriggerProps): JSX.Element {
+function ContextMenuTrigger({ ...props }: ComponentProps<typeof ContextMenuPrimitive.Trigger>): JSX.Element {
   return <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />;
 }
 
@@ -29,9 +25,7 @@ function ContextMenuTrigger({ ...props }: ContextMenuTriggerProps): JSX.Element 
  * Component: ContextMenuGroup
  * -------------------------------------------------------------------------- */
 
-type ContextMenuGroupProps = ComponentProps<typeof ContextMenuPrimitive.Group>;
-
-function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
+function ContextMenuGroup({ ...props }: ComponentProps<typeof ContextMenuPrimitive.Group>): JSX.Element {
   return <ContextMenuPrimitive.Group data-slot="context-menu-group" {...props} />;
 }
 
@@ -39,9 +33,7 @@ function ContextMenuGroup({ ...props }: ContextMenuGroupProps): JSX.Element {
  * Component: ContextMenuSub
  * -------------------------------------------------------------------------- */
 
-type ContextMenuSubProps = ComponentProps<typeof ContextMenuPrimitive.Sub>;
-
-function ContextMenuSub({ ...props }: ContextMenuSubProps): JSX.Element {
+function ContextMenuSub({ ...props }: ComponentProps<typeof ContextMenuPrimitive.Sub>): JSX.Element {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />;
 }
 
@@ -49,9 +41,7 @@ function ContextMenuSub({ ...props }: ContextMenuSubProps): JSX.Element {
  * Component: ContextMenuRadioGroup
  * -------------------------------------------------------------------------- */
 
-type ContextMenuRadioGroupProps = ComponentProps<typeof ContextMenuPrimitive.RadioGroup>;
-
-function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.Element {
+function ContextMenuRadioGroup({ ...props }: ComponentProps<typeof ContextMenuPrimitive.RadioGroup>): JSX.Element {
   return <ContextMenuPrimitive.RadioGroup data-slot="context-menu-radio-group" {...props} />;
 }
 
@@ -59,11 +49,14 @@ function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.El
  * Component: ContextMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-interface ContextMenuSubTriggerProps extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
+function ContextMenuSubTrigger({
+  children,
+  className,
+  inset,
+  ...props
+}: ComponentProps<typeof ContextMenuPrimitive.SubTrigger> & {
   inset?: boolean;
-}
-
-function ContextMenuSubTrigger({ children, className, inset, ...props }: ContextMenuSubTriggerProps): JSX.Element {
+}): JSX.Element {
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
@@ -84,9 +77,10 @@ function ContextMenuSubTrigger({ children, className, inset, ...props }: Context
  * Component: ContextMenuSubContent
  * -------------------------------------------------------------------------- */
 
-type ContextMenuSubContentProps = ComponentProps<typeof ContextMenuPrimitive.SubContent>;
-
-function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentProps): JSX.Element {
+function ContextMenuSubContent({
+  className,
+  ...props
+}: ComponentProps<typeof ContextMenuPrimitive.SubContent>): JSX.Element {
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.SubContent
@@ -105,9 +99,7 @@ function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentPro
  * Component: ContextMenuContent
  * -------------------------------------------------------------------------- */
 
-type ContextMenuContentProps = ComponentProps<typeof ContextMenuPrimitive.Content>;
-
-function ContextMenuContent({ className, ...props }: ContextMenuContentProps): JSX.Element {
+function ContextMenuContent({ className, ...props }: ComponentProps<typeof ContextMenuPrimitive.Content>): JSX.Element {
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
@@ -126,12 +118,15 @@ function ContextMenuContent({ className, ...props }: ContextMenuContentProps): J
  * Component: ContextMenuItem
  * -------------------------------------------------------------------------- */
 
-interface ContextMenuItemProps extends ComponentProps<typeof ContextMenuPrimitive.Item> {
+function ContextMenuItem({
+  className,
+  inset,
+  variant,
+  ...props
+}: ComponentProps<typeof ContextMenuPrimitive.Item> & {
   inset?: boolean;
   variant?: 'default' | 'destructive';
-}
-
-function ContextMenuItem({ className, inset, variant, ...props }: ContextMenuItemProps): JSX.Element {
+}): JSX.Element {
   return (
     <ContextMenuPrimitive.Item
       className={cn(
@@ -150,14 +145,12 @@ function ContextMenuItem({ className, inset, variant, ...props }: ContextMenuIte
  * Component: ContextMenuCheckboxItem
  * -------------------------------------------------------------------------- */
 
-type ContextMenuCheckboxItemProps = ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>;
-
 function ContextMenuCheckboxItem({
   checked,
   children,
   className,
   ...props
-}: ContextMenuCheckboxItemProps): JSX.Element {
+}: ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>): JSX.Element {
   return (
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
@@ -182,9 +175,11 @@ function ContextMenuCheckboxItem({
  * Component: ContextMenuRadioItem
  * -------------------------------------------------------------------------- */
 
-type ContextMenuRadioItemProps = ComponentProps<typeof ContextMenuPrimitive.RadioItem>;
-
-function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadioItemProps): JSX.Element {
+function ContextMenuRadioItem({
+  children,
+  className,
+  ...props
+}: ComponentProps<typeof ContextMenuPrimitive.RadioItem>): JSX.Element {
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
@@ -208,11 +203,13 @@ function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadi
  * Component: ContextMenuLabel
  * -------------------------------------------------------------------------- */
 
-interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimitive.Label> {
+function ContextMenuLabel({
+  className,
+  inset,
+  ...props
+}: ComponentProps<typeof ContextMenuPrimitive.Label> & {
   inset?: boolean;
-}
-
-function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
+}): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
       className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
@@ -227,9 +224,10 @@ function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps)
  * Component: ContextMenuSeparator
  * -------------------------------------------------------------------------- */
 
-type ContextMenuSeparatorProps = ComponentProps<typeof ContextMenuPrimitive.Separator>;
-
-function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps): JSX.Element {
+function ContextMenuSeparator({
+  className,
+  ...props
+}: ComponentProps<typeof ContextMenuPrimitive.Separator>): JSX.Element {
   return (
     <ContextMenuPrimitive.Separator
       className={cn('bg-muted mx-2 my-1 h-px', className)}
@@ -243,9 +241,7 @@ function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps
  * Component: ContextMenuShortcut
  * -------------------------------------------------------------------------- */
 
-type ContextMenuShortcutProps = ComponentProps<'span'>;
-
-function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps): JSX.Element {
+function ContextMenuShortcut({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
       className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
@@ -259,9 +255,7 @@ function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps):
  * Component: ContextMenuArrow
  * -------------------------------------------------------------------------- */
 
-type ContextMenuArrowProps = ContextMenuPrimitive.ContextMenuArrowProps;
-
-function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.Element {
+function ContextMenuArrow({ className, ...props }: ComponentProps<typeof ContextMenuPrimitive.Arrow>): JSX.Element {
   return (
     <ContextMenuPrimitive.Arrow className={cn('fill-popover', className)} data-slot="context-menu-arrow" {...props} />
   );
@@ -271,23 +265,6 @@ function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.E
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  ContextMenuArrowProps,
-  ContextMenuCheckboxItemProps,
-  ContextMenuContentProps,
-  ContextMenuGroupProps,
-  ContextMenuItemProps,
-  ContextMenuLabelProps,
-  ContextMenuProps,
-  ContextMenuRadioGroupProps,
-  ContextMenuRadioItemProps,
-  ContextMenuSeparatorProps,
-  ContextMenuShortcutProps,
-  ContextMenuSubContentProps,
-  ContextMenuSubProps,
-  ContextMenuSubTriggerProps,
-  ContextMenuTriggerProps,
-};
 export {
   ContextMenu,
   ContextMenuArrow,

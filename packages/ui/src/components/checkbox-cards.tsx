@@ -9,9 +9,7 @@ import { cn } from '@/lib/utils';
  * Component: CheckboxCards
  * -------------------------------------------------------------------------- */
 
-type CheckboxCardsProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
-
-function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
+function CheckboxCards(props: ComponentProps<typeof CheckboxGroupPrimitive.Root>): JSX.Element {
   return <CheckboxGroupPrimitive.Root {...props} />;
 }
 
@@ -19,11 +17,14 @@ function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
  * Component: CheckboxCardsItem
  * -------------------------------------------------------------------------- */
 
-interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrimitive.Item> {
+function CheckboxCardsItem({
+  checkboxClassName,
+  children,
+  className,
+  ...props
+}: ComponentProps<typeof CheckboxGroupPrimitive.Item> & {
   checkboxClassName?: string;
-}
-
-function CheckboxCardsItem({ checkboxClassName, children, className, ...props }: CheckboxCardsItemProps): JSX.Element {
+}): JSX.Element {
   return (
     <label
       className={cn(
@@ -53,5 +54,4 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CheckboxCardsItemProps, CheckboxCardsProps };
 export { CheckboxCards, CheckboxCardsItem };

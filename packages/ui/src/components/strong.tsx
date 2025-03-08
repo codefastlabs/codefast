@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Strong
  * -------------------------------------------------------------------------- */
 
-interface StrongProps extends ComponentProps<'strong'> {
+function Strong({
+  asChild,
+  ...props
+}: ComponentProps<'strong'> & {
   asChild?: boolean;
-}
-
-function Strong({ asChild, ...props }: StrongProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'strong';
 
   return <Component data-slot="strong" {...props} />;
@@ -20,5 +21,4 @@ function Strong({ asChild, ...props }: StrongProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { StrongProps };
 export { Strong };

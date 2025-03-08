@@ -9,11 +9,11 @@ import { cn } from '@/lib/utils';
  * Component: Breadcrumb
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbProps extends ComponentProps<'nav'> {
+function Breadcrumb({
+  ...props
+}: ComponentProps<'nav'> & {
   separator?: ReactNode;
-}
-
-function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
+}): JSX.Element {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
@@ -21,9 +21,7 @@ function Breadcrumb({ ...props }: BreadcrumbProps): JSX.Element {
  * Component: BreadcrumbList
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbListProps = ComponentProps<'ol'>;
-
-function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Element {
+function BreadcrumbList({ className, ...props }: ComponentProps<'ol'>): JSX.Element {
   return (
     <ol
       className={cn(
@@ -40,9 +38,7 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
  * Component: BreadcrumbItem
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbItemProps = ComponentProps<'li'>;
-
-function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
+function BreadcrumbItem({ className, ...props }: ComponentProps<'li'>): JSX.Element {
   return <li className={cn('inline-flex items-center gap-1.5', className)} data-slot="breadcrumb-item" {...props} />;
 }
 
@@ -50,11 +46,13 @@ function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Eleme
  * Component: BreadcrumbLink
  * -------------------------------------------------------------------------- */
 
-interface BreadcrumbLinkProps extends ComponentProps<'a'> {
+function BreadcrumbLink({
+  asChild,
+  className,
+  ...props
+}: ComponentProps<'a'> & {
   asChild?: boolean;
-}
-
-function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'a';
 
   return (
@@ -66,9 +64,7 @@ function BreadcrumbLink({ asChild, className, ...props }: BreadcrumbLinkProps): 
  * Component: BreadcrumbPage
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbPageProps = ComponentProps<'span'>;
-
-function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Element {
+function BreadcrumbPage({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
       aria-current="page"
@@ -85,9 +81,7 @@ function BreadcrumbPage({ className, ...props }: BreadcrumbPageProps): JSX.Eleme
  * Component: BreadcrumbSeparator
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbSeparatorProps = ComponentProps<'li'>;
-
-function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): JSX.Element {
+function BreadcrumbSeparator({ children, ...props }: ComponentProps<'li'>): JSX.Element {
   return (
     <li aria-hidden="true" data-slot="breadcrumb-separator" role="presentation" {...props}>
       {children ?? <ChevronRightIcon className="size-3.5" />}
@@ -99,9 +93,7 @@ function BreadcrumbSeparator({ children, ...props }: BreadcrumbSeparatorProps): 
  * Component: BreadcrumbEllipsis
  * -------------------------------------------------------------------------- */
 
-type BreadcrumbEllipsisProps = ComponentProps<'span'>;
-
-function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): JSX.Element {
+function BreadcrumbEllipsis({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
       aria-hidden="true"
@@ -120,15 +112,6 @@ function BreadcrumbEllipsis({ className, ...props }: BreadcrumbEllipsisProps): J
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  BreadcrumbEllipsisProps,
-  BreadcrumbItemProps,
-  BreadcrumbLinkProps,
-  BreadcrumbListProps,
-  BreadcrumbPageProps,
-  BreadcrumbProps,
-  BreadcrumbSeparatorProps,
-};
 export {
   Breadcrumb,
   BreadcrumbEllipsis,

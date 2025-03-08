@@ -69,7 +69,7 @@ const scrollAreaScrollbarVariants = tv({
 type ScrollAreaScrollbarVariantsProps = VariantProps<typeof scrollAreaScrollbarVariants>;
 
 /* -----------------------------------------------------------------------------
- * Component: ScrollArea
+ * Context: ScrollArea
  * -------------------------------------------------------------------------- */
 
 const SCROLL_AREA_NAME = 'ScrollArea';
@@ -82,7 +82,9 @@ type ScrollAreaContextValue = Pick<ScrollAreaScrollbarVariantsProps, 'size'>;
 
 const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
-type ScrollAreaProps = ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue;
+/* -----------------------------------------------------------------------------
+ * Component: ScrollArea
+ * -------------------------------------------------------------------------- */
 
 function ScrollArea({
   __scopeScrollArea,
@@ -90,7 +92,7 @@ function ScrollArea({
   className,
   size,
   ...props
-}: ScopedProps<ScrollAreaProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>): JSX.Element {
   return (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root
@@ -116,14 +118,12 @@ function ScrollArea({
  * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
-type ScrollAreaScrollbarProps = ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>;
-
 function ScrollAreaScrollbar({
   __scopeScrollArea,
   className,
   orientation,
   ...props
-}: ScopedProps<ScrollAreaScrollbarProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>>): JSX.Element {
   const { size } = useCarouselContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
   return (
@@ -142,5 +142,4 @@ function ScrollAreaScrollbar({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ScrollAreaProps, ScrollAreaScrollbarProps };
 export { ScrollArea, ScrollAreaScrollbar };

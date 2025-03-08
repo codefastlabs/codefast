@@ -9,9 +9,7 @@ import { cn } from '@/lib/utils';
  * Component: Checkbox
  * -------------------------------------------------------------------------- */
 
-type CheckboxProps = ComponentProps<typeof CheckboxPrimitive.Root>;
-
-function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
+function Checkbox({ className, ...props }: ComponentProps<typeof CheckboxPrimitive.Root>): JSX.Element {
   return (
     <CheckboxPrimitive.Root
       className={cn(
@@ -32,5 +30,4 @@ function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CheckboxProps };
 export { Checkbox };

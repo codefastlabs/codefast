@@ -18,14 +18,10 @@ import { cn } from '@/lib/utils';
  * Component: Form
  * -------------------------------------------------------------------------- */
 
-type FormProps = ComponentProps<typeof FormProvider>;
-
-function Form({ ...props }: FormProps): JSX.Element {
-  return <FormProvider {...props} />;
-}
+const Form = FormProvider;
 
 /* -----------------------------------------------------------------------------
- * Component: FormField
+ * Context: FormField
  * -------------------------------------------------------------------------- */
 
 const FORM_FIELD_NAME = 'FormField';
@@ -62,16 +58,15 @@ function useFormItem(
   };
 }
 
-type FormFieldProps<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = ControllerProps<TFieldValues, TName>;
+/* -----------------------------------------------------------------------------
+ * Component: FormField
+ * -------------------------------------------------------------------------- */
 
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(formFieldProps: FormFieldProps<TFieldValues, TName>): JSX.Element {
-  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<FormFieldProps<TFieldValues, TName>>;
+>(formFieldProps: ControllerProps<TFieldValues, TName>): JSX.Element {
+  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<ControllerProps<TFieldValues, TName>>;
 
   return (
     <FormFieldProvider name={props.name} scope={__scopeFormField}>
@@ -81,7 +76,7 @@ function FormField<
 }
 
 /* -----------------------------------------------------------------------------
- * Component: FormItem
+ * Context: FormItem
  * -------------------------------------------------------------------------- */
 
 const FORM_ITEM_NAME = 'FormItem';
@@ -92,11 +87,20 @@ interface FormItemContextValue {
 
 const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
-interface FormItemProps extends ComponentProps<'div'> {
-  inline?: boolean;
-}
+/* -----------------------------------------------------------------------------
+ * Component: FormItem
+ * -------------------------------------------------------------------------- */
 
-function FormItem({ __scopeFormField, className, inline, ...props }: ScopedProps<FormItemProps>): JSX.Element {
+function FormItem({
+  __scopeFormField,
+  className,
+  inline,
+  ...props
+}: ScopedProps<
+  ComponentProps<'div'> & {
+    inline?: boolean;
+  }
+>): JSX.Element {
   const id = useId();
 
   return (
@@ -110,9 +114,10 @@ function FormItem({ __scopeFormField, className, inline, ...props }: ScopedProps
  * Component: FormLabel
  * -------------------------------------------------------------------------- */
 
-type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
-
-function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
+function FormLabel({
+  __scopeFormField,
+  ...props
+}: ScopedProps<ComponentProps<typeof LabelPrimitive.Root>>): JSX.Element {
   const { formItemId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
   return <Label data-slot="form-label" htmlFor={formItemId} {...props} />;
@@ -124,9 +129,7 @@ function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>):
 
 const FORM_CONTROL_NAME = 'FormControl';
 
-type FormControlProps = ComponentProps<typeof Slot>;
-
-function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
+function FormControl({ __scopeFormField, ...props }: ScopedProps<ComponentProps<typeof Slot>>): JSX.Element {
   const { formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const { name } = useFormFieldContext(FORM_CONTROL_NAME, __scopeFormField);
   const { errors } = useFormState({ name });
@@ -146,9 +149,7 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
  * Component: FormDescription
  * -------------------------------------------------------------------------- */
 
-type FormDescriptionProps = ComponentProps<'p'>;
-
-function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>): JSX.Element {
+function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<ComponentProps<'p'>>): JSX.Element {
   const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
   return (
@@ -167,9 +168,7 @@ function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<
 
 const FORM_MESSAGE_NAME = 'FormMessage';
 
-type FormMessageProps = ComponentProps<'p'>;
-
-function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>): ReactNode {
+function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<ComponentProps<'p'>>): ReactNode {
   const { formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const { name } = useFormFieldContext(FORM_MESSAGE_NAME, __scopeFormField);
   const { errors } = useFormState({ name });
@@ -197,13 +196,4 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  FormControlProps,
-  FormDescriptionProps,
-  FormFieldProps,
-  FormItemProps,
-  FormLabelProps,
-  FormMessageProps,
-  FormProps,
-};
 export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };

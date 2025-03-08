@@ -12,9 +12,7 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: Dialog
  * -------------------------------------------------------------------------- */
 
-type DialogProps = ComponentProps<typeof DialogPrimitive.Root>;
-
-function Dialog({ ...props }: DialogProps): JSX.Element {
+function Dialog({ ...props }: ComponentProps<typeof DialogPrimitive.Root>): JSX.Element {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
@@ -22,9 +20,7 @@ function Dialog({ ...props }: DialogProps): JSX.Element {
  * Component: DialogTrigger
  * -------------------------------------------------------------------------- */
 
-type DialogTriggerProps = ComponentProps<typeof DialogPrimitive.Trigger>;
-
-function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
+function DialogTrigger({ ...props }: ComponentProps<typeof DialogPrimitive.Trigger>): JSX.Element {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
@@ -32,9 +28,7 @@ function DialogTrigger({ ...props }: DialogTriggerProps): JSX.Element {
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
-type DialogContentProps = ComponentProps<typeof DialogPrimitive.Content>;
-
-function DialogContent({ children, className, ...props }: DialogContentProps): JSX.Element {
+function DialogContent({ children, className, ...props }: ComponentProps<typeof DialogPrimitive.Content>): JSX.Element {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
@@ -76,9 +70,7 @@ function DialogContent({ children, className, ...props }: DialogContentProps): J
  * Component: DialogHeader
  * -------------------------------------------------------------------------- */
 
-type DialogHeaderProps = ComponentProps<'div'>;
-
-function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
+function DialogHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <header
       className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
@@ -92,9 +84,7 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
-type DialogBodyProps = ComponentProps<'div'>;
-
-function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
+function DialogBody({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return <main className={cn('overflow-auto px-6 py-2', className)} data-slot="dialog-body" {...props} />;
 }
 
@@ -102,9 +92,7 @@ function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
  * Component: DialogFooter
  * -------------------------------------------------------------------------- */
 
-type DialogFooterProps = ComponentProps<'div'>;
-
-function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
+function DialogFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <footer
       className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
@@ -118,9 +106,7 @@ function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
  * Component: DialogTitle
  * -------------------------------------------------------------------------- */
 
-type DialogTitleProps = ComponentProps<typeof DialogPrimitive.Title>;
-
-function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
+function DialogTitle({ className, ...props }: ComponentProps<typeof DialogPrimitive.Title>): JSX.Element {
   return (
     <DialogPrimitive.Title
       className={cn('text-lg font-semibold leading-none tracking-tight', className)}
@@ -134,9 +120,7 @@ function DialogTitle({ className, ...props }: DialogTitleProps): JSX.Element {
  * Component: DialogDescription
  * -------------------------------------------------------------------------- */
 
-type DialogDescriptionProps = ComponentProps<typeof DialogPrimitive.Description>;
-
-function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX.Element {
+function DialogDescription({ className, ...props }: ComponentProps<typeof DialogPrimitive.Description>): JSX.Element {
   return (
     <DialogPrimitive.Description
       className={cn('text-muted-foreground text-sm', className)}
@@ -150,12 +134,15 @@ function DialogDescription({ className, ...props }: DialogDescriptionProps): JSX
  * Component: DialogClose
  * -------------------------------------------------------------------------- */
 
-interface DialogCloseProps extends ComponentProps<typeof DialogPrimitive.Close> {
+function DialogClose({
+  className,
+  size,
+  variant = 'outline',
+  ...props
+}: Omit<ComponentProps<typeof DialogPrimitive.Close>, 'ref'> & {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
-}
-
-function DialogClose({ className, size, variant = 'outline', ...props }: DialogCloseProps): JSX.Element {
+}): JSX.Element {
   return (
     <DialogPrimitive.Close
       className={buttonVariants({ className, size, variant })}
@@ -169,17 +156,6 @@ function DialogClose({ className, size, variant = 'outline', ...props }: DialogC
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  DialogBodyProps,
-  DialogCloseProps,
-  DialogContentProps,
-  DialogDescriptionProps,
-  DialogFooterProps,
-  DialogHeaderProps,
-  DialogProps,
-  DialogTitleProps,
-  DialogTriggerProps,
-};
 export {
   Dialog,
   DialogBody,

@@ -10,9 +10,11 @@ import { buttonVariants } from '@/variants/button.variants';
  * Component: NavigationMenu
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuProps = ComponentProps<typeof NavigationMenuPrimitive.Root>;
-
-function NavigationMenu({ children, className, ...props }: NavigationMenuProps): JSX.Element {
+function NavigationMenu({
+  children,
+  className,
+  ...props
+}: ComponentProps<typeof NavigationMenuPrimitive.Root>): JSX.Element {
   return (
     <NavigationMenuPrimitive.Root
       className={cn('relative z-10 flex max-w-max flex-1 items-center justify-center', className)}
@@ -29,9 +31,11 @@ function NavigationMenu({ children, className, ...props }: NavigationMenuProps):
  * Component: NavigationMenuList
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuListProps = ComponentProps<typeof NavigationMenuPrimitive.List>;
-
-function NavigationMenuList({ children, className, ...props }: NavigationMenuListProps): JSX.Element {
+function NavigationMenuList({
+  children,
+  className,
+  ...props
+}: ComponentProps<typeof NavigationMenuPrimitive.List>): JSX.Element {
   return (
     <NavigationMenuPrimitive.List
       className={cn('group flex flex-1 list-none items-center justify-center space-x-1', className)}
@@ -48,9 +52,7 @@ function NavigationMenuList({ children, className, ...props }: NavigationMenuLis
  * Component: NavigationMenuItem
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuItemProps = ComponentProps<typeof NavigationMenuPrimitive.Item>;
-
-function NavigationMenuItem({ ...props }: NavigationMenuItemProps): JSX.Element {
+function NavigationMenuItem({ ...props }: ComponentProps<typeof NavigationMenuPrimitive.Item>): JSX.Element {
   return <NavigationMenuPrimitive.Item data-slot="navigation-menu-item" {...props} />;
 }
 
@@ -58,9 +60,11 @@ function NavigationMenuItem({ ...props }: NavigationMenuItemProps): JSX.Element 
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuTriggerProps = ComponentProps<typeof NavigationMenuPrimitive.Trigger>;
-
-function NavigationMenuTrigger({ children, className, ...props }: NavigationMenuTriggerProps): JSX.Element {
+function NavigationMenuTrigger({
+  children,
+  className,
+  ...props
+}: ComponentProps<typeof NavigationMenuPrimitive.Trigger>): JSX.Element {
   return (
     <NavigationMenuPrimitive.Trigger
       className={buttonVariants({
@@ -83,9 +87,10 @@ function NavigationMenuTrigger({ children, className, ...props }: NavigationMenu
  * Component: NavigationMenuContent
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuContentProps = ComponentProps<typeof NavigationMenuPrimitive.Content>;
-
-function NavigationMenuContent({ className, ...props }: NavigationMenuContentProps): JSX.Element {
+function NavigationMenuContent({
+  className,
+  ...props
+}: ComponentProps<typeof NavigationMenuPrimitive.Content>): JSX.Element {
   return (
     <NavigationMenuPrimitive.Content
       className={cn(
@@ -102,9 +107,7 @@ function NavigationMenuContent({ className, ...props }: NavigationMenuContentPro
  * Component: NavigationMenuLink
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuLinkProps = ComponentProps<typeof NavigationMenuPrimitive.Link>;
-
-function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): JSX.Element {
+function NavigationMenuLink({ className, ...props }: ComponentProps<typeof NavigationMenuPrimitive.Link>): JSX.Element {
   return (
     <NavigationMenuPrimitive.Link
       className={cn(
@@ -121,9 +124,10 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuLinkProps): J
  * Component: NavigationMenuViewport
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuViewportProps = ComponentProps<typeof NavigationMenuPrimitive.Viewport>;
-
-function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportProps): JSX.Element {
+function NavigationMenuViewport({
+  className,
+  ...props
+}: ComponentProps<typeof NavigationMenuPrimitive.Viewport>): JSX.Element {
   return (
     <div className="perspective-2000 absolute left-0 top-full flex justify-center">
       <NavigationMenuPrimitive.Viewport
@@ -142,9 +146,10 @@ function NavigationMenuViewport({ className, ...props }: NavigationMenuViewportP
  * Component: NavigationMenuIndicator
  * -------------------------------------------------------------------------- */
 
-type NavigationMenuIndicatorProps = ComponentProps<typeof NavigationMenuPrimitive.Indicator>;
-
-function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicatorProps): JSX.Element {
+function NavigationMenuIndicator({
+  className,
+  ...props
+}: ComponentProps<typeof NavigationMenuPrimitive.Indicator>): JSX.Element {
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(
@@ -163,14 +168,6 @@ function NavigationMenuIndicator({ className, ...props }: NavigationMenuIndicato
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  NavigationMenuContentProps,
-  NavigationMenuItemProps,
-  NavigationMenuLinkProps,
-  NavigationMenuListProps,
-  NavigationMenuProps,
-  NavigationMenuTriggerProps,
-};
 export {
   NavigationMenu,
   NavigationMenuContent,

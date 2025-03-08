@@ -8,9 +8,7 @@ import { cn } from '@/lib/utils';
  * Component: Tabs
  * -------------------------------------------------------------------------- */
 
-type TabsProps = ComponentProps<typeof TabsPrimitive.Root>;
-
-function Tabs({ ...props }: TabsProps): JSX.Element {
+function Tabs({ ...props }: ComponentProps<typeof TabsPrimitive.Root>): JSX.Element {
   return <TabsPrimitive.Root data-slot="tabs" {...props} />;
 }
 
@@ -18,9 +16,7 @@ function Tabs({ ...props }: TabsProps): JSX.Element {
  * Component: TabsList
  * -------------------------------------------------------------------------- */
 
-type TabsListProps = ComponentProps<typeof TabsPrimitive.List>;
-
-function TabsList({ className, ...props }: TabsListProps): JSX.Element {
+function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>): JSX.Element {
   return (
     <TabsPrimitive.List
       className={cn(
@@ -37,9 +33,7 @@ function TabsList({ className, ...props }: TabsListProps): JSX.Element {
  * Component: TabsTrigger
  * -------------------------------------------------------------------------- */
 
-type TabsTriggerProps = ComponentProps<typeof TabsPrimitive.Trigger>;
-
-function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
+function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitive.Trigger>): JSX.Element {
   return (
     <TabsPrimitive.Trigger
       className={cn(
@@ -56,9 +50,7 @@ function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
  * Component: TabsContent
  * -------------------------------------------------------------------------- */
 
-type TabsContentProps = ComponentProps<typeof TabsPrimitive.Content>;
-
-function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
+function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
@@ -75,5 +67,4 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { TabsContentProps, TabsListProps, TabsProps, TabsTriggerProps };
 export { Tabs, TabsContent, TabsList, TabsTrigger };

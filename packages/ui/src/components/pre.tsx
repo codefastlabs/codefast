@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
  * Component: Pre
  * -------------------------------------------------------------------------- */
 
-interface PreProps extends ComponentProps<'pre'> {
+function Pre({
+  asChild,
+  ...props
+}: ComponentProps<'pre'> & {
   asChild?: boolean;
-}
-
-function Pre({ asChild, ...props }: PreProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'pre';
 
   return <Component data-slot="pre" {...props} />;
@@ -20,5 +21,4 @@ function Pre({ asChild, ...props }: PreProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { PreProps };
 export { Pre };

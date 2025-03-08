@@ -8,11 +8,13 @@ import { cn } from '@/lib/utils';
  * Component: Kbd
  * -------------------------------------------------------------------------- */
 
-interface KbdProps extends ComponentProps<'kbd'> {
+function Kbd({
+  asChild,
+  className,
+  ...props
+}: ComponentProps<'kbd'> & {
   asChild?: boolean;
-}
-
-function Kbd({ asChild, className, ...props }: KbdProps): JSX.Element {
+}): JSX.Element {
   const Component = asChild ? Slot : 'kbd';
 
   return (
@@ -31,5 +33,4 @@ function Kbd({ asChild, className, ...props }: KbdProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { KbdProps };
 export { Kbd };

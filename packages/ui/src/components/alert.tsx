@@ -28,9 +28,7 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
  * Component: Alert
  * -------------------------------------------------------------------------- */
 
-type AlertProps = AlertVariantsProps & ComponentProps<'div'>;
-
-function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
+function Alert({ className, variant, ...props }: AlertVariantsProps & ComponentProps<'div'>): JSX.Element {
   return <div className={alertVariants({ className, variant })} data-slot="alert" role="alert" {...props} />;
 }
 
@@ -38,9 +36,7 @@ function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
  * Component: AlertTitle
  * -------------------------------------------------------------------------- */
 
-type AlertTitleProps = ComponentProps<'div'>;
-
-function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Element {
+function AlertTitle({ children, className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', className)}
@@ -56,9 +52,7 @@ function AlertTitle({ children, className, ...props }: AlertTitleProps): JSX.Ele
  * Component: AlertDescription
  * -------------------------------------------------------------------------- */
 
-type AlertDescriptionProps = ComponentProps<'div'>;
-
-function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.Element {
+function AlertDescription({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
       className={cn(
@@ -75,5 +69,4 @@ function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.E
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { AlertDescriptionProps, AlertProps, AlertTitleProps };
 export { Alert, AlertDescription, AlertTitle };

@@ -8,13 +8,11 @@ import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-reac
 import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
-import type { ButtonProps } from '@/components/button';
-
 import { Button } from '@/components/button';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
- * Component: Carousel
+ * Context: Carousel
  * -------------------------------------------------------------------------- */
 
 const CAROUSEL_NAME = 'Carousel';
@@ -46,7 +44,9 @@ type CarouselContextValue = BaseCarouselProps & {
 
 const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
-type CarouselProps = BaseCarouselProps & ComponentProps<'div'>;
+/* -----------------------------------------------------------------------------
+ * Component: Carousel
+ * -------------------------------------------------------------------------- */
 
 function Carousel({
   __scopeCarousel,
@@ -57,7 +57,7 @@ function Carousel({
   plugins,
   setApi,
   ...props
-}: ScopedProps<CarouselProps>): JSX.Element {
+}: ScopedProps<BaseCarouselProps & ComponentProps<'div'>>): JSX.Element {
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
@@ -153,19 +153,19 @@ function Carousel({
 
 const CAROUSEL_CONTENT_NAME = 'CarouselContent';
 
-interface CarouselContentProps extends ComponentProps<'div'> {
-  classNames?: {
-    content?: string;
-    wrapper?: string;
-  };
-}
-
 function CarouselContent({
   __scopeCarousel,
   className,
   classNames,
   ...props
-}: ScopedProps<CarouselContentProps>): JSX.Element {
+}: ScopedProps<
+  ComponentProps<'div'> & {
+    classNames?: {
+      content?: string;
+      wrapper?: string;
+    };
+  }
+>): JSX.Element {
   const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
   return (
@@ -189,9 +189,7 @@ function CarouselContent({
 
 const CAROUSEL_ITEM_NAME = 'CarouselItem';
 
-type CarouselItemProps = ComponentProps<'div'>;
-
-function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>): JSX.Element {
+function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<ComponentProps<'div'>>): JSX.Element {
   const { orientation } = useCarouselContext(CAROUSEL_ITEM_NAME, __scopeCarousel);
 
   return (
@@ -211,8 +209,6 @@ function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<Caro
 
 const CAROUSEL_PREVIOUS_NAME = 'CarouselPrevious';
 
-type CarouselPreviousProps = ButtonProps;
-
 function CarouselPrevious({
   __scopeCarousel,
   className,
@@ -220,7 +216,7 @@ function CarouselPrevious({
   size = 'sm',
   variant = 'outline',
   ...props
-}: ScopedProps<CarouselPreviousProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof Button>>): JSX.Element {
   const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
 
   return (
@@ -253,8 +249,6 @@ function CarouselPrevious({
 
 const CAROUSEL_NEXT_NAME = 'CarouselNext';
 
-type CarouselNextProps = ButtonProps;
-
 function CarouselNext({
   __scopeCarousel,
   className,
@@ -262,7 +256,7 @@ function CarouselNext({
   size = 'sm',
   variant = 'outline',
   ...props
-}: ScopedProps<CarouselNextProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof Button>>): JSX.Element {
   const { canScrollNext, orientation, scrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
 
   return (
@@ -293,12 +287,5 @@ function CarouselNext({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  CarouselApi,
-  CarouselContentProps,
-  CarouselItemProps,
-  CarouselNextProps,
-  CarouselPreviousProps,
-  CarouselProps,
-};
+export type { CarouselApi };
 export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };

@@ -37,9 +37,7 @@ type SheetContentVariantsProps = VariantProps<typeof sheetContentVariants>;
  * Component: Sheet
  * -------------------------------------------------------------------------- */
 
-type SheetProps = ComponentProps<typeof SheetPrimitive.Root>;
-
-function Sheet({ children, ...props }: SheetProps): JSX.Element {
+function Sheet({ children, ...props }: ComponentProps<typeof SheetPrimitive.Root>): JSX.Element {
   return (
     <SheetPrimitive.Root data-slot="sheet" {...props}>
       {children}
@@ -51,9 +49,7 @@ function Sheet({ children, ...props }: SheetProps): JSX.Element {
  * Component: SheetTrigger
  * -------------------------------------------------------------------------- */
 
-type SheetTriggerProps = ComponentProps<typeof SheetPrimitive.Trigger>;
-
-function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
+function SheetTrigger({ ...props }: ComponentProps<typeof SheetPrimitive.Trigger>): JSX.Element {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
@@ -61,9 +57,12 @@ function SheetTrigger({ ...props }: SheetTriggerProps): JSX.Element {
  * Component: SheetContent
  * -------------------------------------------------------------------------- */
 
-type SheetContentProps = ComponentProps<typeof SheetPrimitive.Content> & SheetContentVariantsProps;
-
-function SheetContent({ children, className, side = 'right', ...props }: SheetContentProps): JSX.Element {
+function SheetContent({
+  children,
+  className,
+  side = 'right',
+  ...props
+}: ComponentProps<typeof SheetPrimitive.Content> & SheetContentVariantsProps): JSX.Element {
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
@@ -92,9 +91,7 @@ function SheetContent({ children, className, side = 'right', ...props }: SheetCo
  * Component: SheetHeader
  * -------------------------------------------------------------------------- */
 
-type SheetHeaderProps = ComponentProps<'div'>;
-
-function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
+function SheetHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <header
       className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
@@ -108,9 +105,7 @@ function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
  * Component: SheetBody
  * -------------------------------------------------------------------------- */
 
-type SheetBodyProps = ComponentProps<'div'>;
-
-function SheetBody({ className, ...props }: SheetHeaderProps): JSX.Element {
+function SheetBody({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return <main className={cn('px-6 py-2', className)} data-slot="sheet-body" {...props} />;
 }
 
@@ -118,9 +113,7 @@ function SheetBody({ className, ...props }: SheetHeaderProps): JSX.Element {
  * Component: SheetFooter
  * -------------------------------------------------------------------------- */
 
-type SheetFooterProps = ComponentProps<'div'>;
-
-function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
+function SheetFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <footer
       className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
@@ -134,9 +127,7 @@ function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
  * Component: SheetTitle
  * -------------------------------------------------------------------------- */
 
-type SheetTitleProps = ComponentProps<typeof SheetPrimitive.Title>;
-
-function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
+function SheetTitle({ className, ...props }: ComponentProps<typeof SheetPrimitive.Title>): JSX.Element {
   return (
     <SheetPrimitive.Title
       className={cn('text-foreground text-lg font-semibold', className)}
@@ -150,9 +141,7 @@ function SheetTitle({ className, ...props }: SheetTitleProps): JSX.Element {
  * Component: SheetDescription
  * -------------------------------------------------------------------------- */
 
-type SheetDescriptionProps = ComponentProps<typeof SheetPrimitive.Description>;
-
-function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.Element {
+function SheetDescription({ className, ...props }: ComponentProps<typeof SheetPrimitive.Description>): JSX.Element {
   return (
     <SheetPrimitive.Description
       className={cn('text-muted-foreground text-sm', className)}
@@ -166,12 +155,15 @@ function SheetDescription({ className, ...props }: SheetDescriptionProps): JSX.E
  * Component: SheetClose
  * -------------------------------------------------------------------------- */
 
-interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
+function SheetClose({
+  className,
+  size,
+  variant = 'outline',
+  ...props
+}: ComponentProps<typeof SheetPrimitive.Close> & {
   size?: ButtonVariantsProps['size'];
   variant?: ButtonVariantsProps['variant'];
-}
-
-function SheetClose({ className, size, variant = 'outline', ...props }: SheetCloseProps): JSX.Element {
+}): JSX.Element {
   return (
     <SheetPrimitive.Close className={buttonVariants({ className, size, variant })} data-slot="sheet-close" {...props} />
   );
@@ -181,17 +173,6 @@ function SheetClose({ className, size, variant = 'outline', ...props }: SheetClo
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  SheetBodyProps,
-  SheetCloseProps,
-  SheetContentProps,
-  SheetDescriptionProps,
-  SheetFooterProps,
-  SheetHeaderProps,
-  SheetProps,
-  SheetTitleProps,
-  SheetTriggerProps,
-};
 export {
   Sheet,
   SheetBody,
