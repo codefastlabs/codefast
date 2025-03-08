@@ -1,9 +1,8 @@
 import type { ComponentProps, JSX } from 'react';
+import type { VariantProps } from 'tailwind-variants';
 
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from 'lucide-react';
-
-import type { ButtonVariantsProps } from '@/variants/button.variants';
 
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/variants/button.variants';
@@ -42,7 +41,7 @@ function SelectTrigger({
   size,
   ...props
 }: ComponentProps<typeof SelectPrimitive.Trigger> & {
-  size?: ButtonVariantsProps['size'];
+  size?: VariantProps<typeof buttonVariants>['size'];
 }): JSX.Element {
   return (
     <SelectPrimitive.Trigger

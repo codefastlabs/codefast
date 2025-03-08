@@ -1,5 +1,3 @@
-import type { VariantProps } from 'tailwind-variants';
-
 import { tv } from 'tailwind-variants';
 
 const toggleVariants = tv({
@@ -34,11 +32,8 @@ const toggleVariants = tv({
   ],
 });
 
-type ToggleVariantsProps = VariantProps<typeof toggleVariants>;
-
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ToggleVariantsProps };
 export { toggleVariants };

@@ -22,13 +22,15 @@ const alertVariants = tv({
   },
 });
 
-type AlertVariantsProps = VariantProps<typeof alertVariants>;
-
 /* -----------------------------------------------------------------------------
  * Component: Alert
  * -------------------------------------------------------------------------- */
 
-function Alert({ className, variant, ...props }: AlertVariantsProps & ComponentProps<'div'>): JSX.Element {
+function Alert({
+  className,
+  variant,
+  ...props
+}: ComponentProps<'div'> & VariantProps<typeof alertVariants>): JSX.Element {
   return <div className={alertVariants({ className, variant })} data-slot="alert" role="alert" {...props} />;
 }
 

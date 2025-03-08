@@ -1,6 +1,5 @@
 import type { ComponentProps, JSX, ReactNode } from 'react';
-
-import type { ButtonVariantsProps } from '@/variants/button.variants';
+import type { VariantProps } from 'tailwind-variants';
 
 import { Spinner } from '@/components/spinner';
 import { buttonVariants } from '@/variants/button.variants';
@@ -23,8 +22,8 @@ function Button({
   suffix,
   variant,
   ...props
-}: ButtonVariantsProps &
-  Omit<ComponentProps<'button'>, 'prefix'> & {
+}: Omit<ComponentProps<'button'>, 'prefix'> &
+  VariantProps<typeof buttonVariants> & {
     loaderPosition?: 'prefix' | 'suffix';
     loading?: boolean;
     prefix?: ReactNode;
