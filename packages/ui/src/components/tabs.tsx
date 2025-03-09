@@ -37,7 +37,7 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:ring-ring focus-visible:ring-3 inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium outline-transparent transition-[color,box-shadow,border-color,background-color] focus-visible:outline-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:ring-ring focus-visible:ring-3 outline-hidden inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-[color,box-shadow,border-color,background-color] disabled:opacity-50 data-[state=active]:shadow-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="tabs-trigger"
@@ -53,10 +53,7 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
 function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>): JSX.Element {
   return (
     <TabsPrimitive.Content
-      className={cn(
-        'focus-visible:ring-ring focus-visible:ring-3 mt-2 rounded-lg focus-visible:outline-none',
-        className,
-      )}
+      className={cn('focus-visible:ring-ring focus-visible:ring-3 outline-hidden mt-2 rounded-lg', className)}
       data-slot="tabs-content"
       {...props}
     />

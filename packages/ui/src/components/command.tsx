@@ -15,10 +15,7 @@ import { cn } from '@/lib/utils';
 function Command({ className, ...props }: ComponentProps<typeof CommandPrimitive>): JSX.Element {
   return (
     <CommandPrimitive
-      className={cn(
-        'bg-popover text-popover-foreground flex flex-col overflow-hidden rounded-[inherit] focus-visible:outline-none',
-        className,
-      )}
+      className={cn('bg-popover text-popover-foreground flex flex-col overflow-hidden rounded-[inherit]', className)}
       data-slot="command"
       {...props}
     />
@@ -51,7 +48,7 @@ function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrim
       <SearchIcon className="size-5 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
-          'placeholder:text-muted-foreground flex h-10 w-full text-sm outline-none disabled:opacity-50',
+          'placeholder:text-muted-foreground outline-hidden flex h-10 w-full text-sm disabled:opacity-50',
           className,
         )}
         data-slot="command-input"
@@ -128,7 +125,7 @@ function CommandItem({ className, ...props }: ComponentProps<typeof CommandPrimi
   return (
     <CommandPrimitive.Item
       className={cn(
-        'aria-selected:bg-accent aria-selected:text-accent-foreground group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 aria-selected:outline-none',
+        'aria-selected:bg-accent aria-selected:text-accent-foreground outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50',
         className,
       )}
       data-slot="command-item"
