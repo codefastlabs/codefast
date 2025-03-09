@@ -10,7 +10,7 @@ import { Spinner } from '@/components/spinner';
  * -------------------------------------------------------------------------- */
 
 const buttonVariants = tv({
-  base: "focus-visible:ring-ring focus-visible:ring-3 inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[color,box-shadow,border-color,background-color] focus-visible:outline-none disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+  base: "focus-visible:ring-ring focus-visible:ring-3 inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium outline-none transition-[color,box-shadow,border-color,background-color] disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
   variants: {
     icon: { false: '', true: 'px-0' },
     inside: { false: '', true: '' },
