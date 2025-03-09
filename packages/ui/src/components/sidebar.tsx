@@ -207,7 +207,7 @@ function Sidebar({
 
   return (
     <div
-      className="text-sidebar-foreground group peer hidden md:block"
+      className={cn('text-sidebar-foreground group peer hidden md:block', className)}
       data-collapsible={state === 'collapsed' ? collapsible : ''}
       data-side={side}
       data-slot="sidebar"
@@ -284,7 +284,6 @@ function SidebarRail({ className, ...props }: ComponentProps<'button'>): JSX.Ele
 
   return (
     <button
-      aria-label="Toggle Sidebar"
       className={cn(
         'hover:after:bg-sidebar-border in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize hover:group-data-[collapsible=offcanvas]:bg-sidebar absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] group-data-[side=left]:-right-4 group-data-[side=right]:left-0 group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full sm:flex [[data-side=left][data-collapsible=offcanvas]_&]:-right-2 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-collapsible=offcanvas]_&]:-left-2 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize',
         className,
