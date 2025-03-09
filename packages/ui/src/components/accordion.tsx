@@ -62,7 +62,7 @@ function AccordionTrigger({ className, ...props }: ComponentProps<typeof Accordi
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
         className={cn(
-          'focus-visible:ring-ring focus-visible:ring-3 group flex grow items-center gap-2 py-4 text-left text-sm font-medium outline-none transition-all',
+          'focus-visible:ring-ring focus-visible:ring-3 outline-hidden group flex grow items-center gap-2 py-4 text-left text-sm font-medium transition-all',
           className,
         )}
         data-slot="accordion-trigger"
