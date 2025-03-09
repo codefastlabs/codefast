@@ -3,8 +3,8 @@ import type { VariantProps } from 'tailwind-variants';
 
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 
+import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog

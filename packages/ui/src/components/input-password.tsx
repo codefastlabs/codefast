@@ -8,8 +8,8 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
 import { Button } from '@/components/button';
+import { inputVariants } from '@/components/input';
 import { Spinner } from '@/components/spinner';
-import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
  * Variant: InputPassword

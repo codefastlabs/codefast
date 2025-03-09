@@ -28,7 +28,7 @@ function CheckboxCardsItem({
   return (
     <label
       className={cn(
-        'hover:not-has-disabled:bg-secondary has-aria-checked:border-primary has-focus-visible:border-input-focus has-focus-visible:ring-ring has-focus-visible:ring-3 has-focus-visible:outline-none has-disabled:opacity-50 border-secondary group flex items-center justify-center gap-4 rounded-lg border-2 p-4 transition',
+        'hover:not-has-disabled:bg-secondary has-aria-checked:border-primary has-focus-visible:border-input-focus has-focus-visible:ring-ring has-focus-visible:ring-3 has-focus-visible:outline-none has-disabled:opacity-50 border-secondary group flex items-center justify-center gap-4 rounded-lg border-2 p-4',
         className,
       )}
       data-slot="checkbox-card"
@@ -36,7 +36,7 @@ function CheckboxCardsItem({
       {children}
       <CheckboxGroupPrimitive.Item
         className={cn(
-          'border-input text-primary-foreground group-hover:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary peer flex size-4 shrink-0 rounded-sm border transition focus-visible:outline-none',
+          'border-input text-primary-foreground group-hover:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary peer flex size-4 shrink-0 rounded-sm border focus-visible:outline-none',
           checkboxClassName,
         )}
         data-slot="checkbox-card-item"
