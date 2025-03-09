@@ -20,7 +20,7 @@ import { NavSecondary } from '@/registry/blocks/sidebar-16/components/nav-second
 import { NavUser } from '@/registry/blocks/sidebar-16/components/nav-user';
 
 const data = {
-  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
+  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   navMain: [
     {
       title: 'Playground',

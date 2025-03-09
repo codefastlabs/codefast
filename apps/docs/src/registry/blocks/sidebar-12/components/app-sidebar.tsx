@@ -20,9 +20,9 @@ import { NavUser } from '@/registry/blocks/sidebar-12/components/nav-user';
 // This is sample data.
 const data = {
   user: {
-    name: 'shadcn',
+    name: '@codefast/ui',
     email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    avatar: '/avatars/codefast-ui.webp',
   },
   calendars: [
     {

@@ -25,7 +25,7 @@ import { NavUser } from '@/registry/blocks/sidebar-09/components/nav-user';
 
 // This is sample data
 const data = {
-  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
+  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   navMain: [
     { title: 'Inbox', url: '#', icon: Inbox, isActive: true },
     { title: 'Drafts', url: '#', icon: File, isActive: false },
