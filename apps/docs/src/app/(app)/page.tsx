@@ -6,6 +6,8 @@ import { AlertDemo } from '@/components/alert-demo';
 import { AlertDialogDemo } from '@/components/alert-dialog-demo';
 import { AspectRatioDemo } from '@/components/aspect-ratio-demo';
 import { AvatarDemo } from '@/components/avatar-demo';
+import { BadgeDemo } from '@/components/badge-demo';
+import { BreadcrumbDemo } from '@/components/breadcrumb-demo';
 import { ChartDemo } from '@/components/chart-demo';
 import { ComponentWrapper } from '@/components/component-wrapper';
 
@@ -38,6 +40,14 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="avatar">
         <AvatarDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="badge">
+        <BadgeDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="breadcrumb">
+        <BreadcrumbDemo />
       </ComponentWrapper>
     </div>
   );
