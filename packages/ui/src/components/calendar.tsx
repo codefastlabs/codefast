@@ -48,7 +48,7 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
   return (
     <DayPicker
       classNames={{
-        [UI.Root]: cn(classNames?.[UI.Root]),
+        [UI.Root]: cn('p-3', classNames?.[UI.Root]),
         [UI.Chevron]: cn(classNames?.[UI.Chevron]),
         [UI.Day]: cn(
           'grid place-items-center text-center text-sm',

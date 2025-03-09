@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 function Card({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div
-      className={cn('bg-card text-card-foreground rounded-xl border shadow-sm', className)}
+      className={cn('bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm', className)}
       data-slot="card"
       {...props}
     />
@@ -21,7 +21,7 @@ function Card({ className, ...props }: ComponentProps<'div'>): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 function CardHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return <div className={cn('flex flex-col gap-y-1.5 p-6', className)} data-slot="card-header" {...props} />;
+  return <div className={cn('flex flex-col gap-1.5 px-6', className)} data-slot="card-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -30,7 +30,7 @@ function CardHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element
 
 function CardTitle({ children, className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
-    <div className={cn('font-semibold leading-none tracking-tight', className)} data-slot="card-title" {...props}>
+    <div className={cn('font-semibold leading-none', className)} data-slot="card-title" {...props}>
       {children}
     </div>
   );
@@ -49,7 +49,7 @@ function CardDescription({ className, ...props }: ComponentProps<'div'>): JSX.El
  * -------------------------------------------------------------------------- */
 
 function CardContent({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return <div className={cn('p-6 pt-0', className)} data-slot="card-content" {...props} />;
+  return <div className={cn('px-6', className)} data-slot="card-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ function CardContent({ className, ...props }: ComponentProps<'div'>): JSX.Elemen
  * -------------------------------------------------------------------------- */
 
 function CardFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return <div className={cn('flex items-center p-6 pt-0', className)} data-slot="card-footer" {...props} />;
+  return <div className={cn('flex items-center px-6', className)} data-slot="card-footer" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

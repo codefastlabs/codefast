@@ -8,6 +8,9 @@ import { AspectRatioDemo } from '@/components/aspect-ratio-demo';
 import { AvatarDemo } from '@/components/avatar-demo';
 import { BadgeDemo } from '@/components/badge-demo';
 import { BreadcrumbDemo } from '@/components/breadcrumb-demo';
+import { ButtonDemo } from '@/components/button-demo';
+import { CalendarDemo } from '@/components/calendar-demo';
+import { CardDemo } from '@/components/card-demo';
 import { ChartDemo } from '@/components/chart-demo';
 import { ComponentWrapper } from '@/components/component-wrapper';
 
@@ -48,6 +51,18 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="breadcrumb">
         <BreadcrumbDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="button">
+        <ButtonDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="calendar">
+        <CalendarDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="card">
+        <CardDemo />
       </ComponentWrapper>
     </div>
   );
