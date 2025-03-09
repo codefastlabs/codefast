@@ -47,7 +47,7 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       className={buttonVariants({
         className: [
-          'focus:ring-ring focus:ring-3 focus:border-input-focus w-full justify-between px-3 font-normal [&>span]:truncate',
+          'focus:ring-ring focus:ring-3 focus:border-input-focus w-full justify-between px-3 font-normal *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate',
           className,
         ],
         size,
@@ -57,8 +57,9 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon asChild>
-        <ChevronsUpDownIcon className="size-4 shrink-0 opacity-50" />
+
+      <SelectPrimitive.Icon asChild className="size-4 shrink-0 opacity-50">
+        <ChevronsUpDownIcon />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -126,6 +127,7 @@ function SelectContent({
         {...props}
       >
         <SelectScrollUpButton />
+
         <SelectPrimitive.Viewport
           className={cn(
             'p-1',
@@ -134,6 +136,7 @@ function SelectContent({
         >
           {children}
         </SelectPrimitive.Viewport>
+
         <SelectScrollDownButton />
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
@@ -162,18 +165,19 @@ function SelectItem({ children, className, ...props }: ComponentProps<typeof Sel
   return (
     <SelectPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm focus:outline-none aria-disabled:opacity-50',
+        'focus:bg-accent focus:text-accent-foreground outline-hidden *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm aria-disabled:opacity-50',
         className,
       )}
       data-slot="select-item"
       {...props}
     >
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       <span className="absolute right-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
+
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   );
 }
