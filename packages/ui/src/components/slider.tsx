@@ -44,7 +44,7 @@ function Slider({
           key={index}
           aria-label="Volume"
           className={cn(
-            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-ring focus-visible:ring-3 flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition-[color,box-shadow,border-color,background-color] after:size-full after:rounded-full focus-visible:outline-none',
+            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-ring focus-visible:ring-3 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition-[color,box-shadow,border-color,background-color] after:size-full after:rounded-full',
           )}
           data-slot="slider-thumb"
         />
