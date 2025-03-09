@@ -30,7 +30,7 @@ const data: {
   teams: Team[];
   user: User;
 } = {
-  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
+  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   teams: [
     { name: 'Acme Inc', logo: GalleryVerticalEnd, plan: 'Enterprise' },
     { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
