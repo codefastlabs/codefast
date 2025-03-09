@@ -4,9 +4,9 @@ import type { VariantProps } from 'tailwind-variants';
 import * as InputNumberPrimitive from '@codefast-ui/number-input';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
+import { buttonVariants } from '@/components/button';
+import { inputVariants } from '@/components/input';
 import { Spinner } from '@/components/spinner';
-import { buttonVariants } from '@/variants/button.variants';
-import { inputVariants } from '@/variants/input.variants';
 
 const { input, root } = inputVariants();
 
@@ -70,7 +70,7 @@ function InputNumber({
         {...props}
       />
       <div
-        className="peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l transition"
+        className="peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l"
         data-slot="input-number-buttons"
       >
         <InputNumberPrimitive.IncrementButton

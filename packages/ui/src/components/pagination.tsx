@@ -3,8 +3,8 @@ import type { VariantProps } from 'tailwind-variants';
 
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
 
+import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination

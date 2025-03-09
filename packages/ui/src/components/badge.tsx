@@ -1,6 +1,7 @@
-import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
+import { Slot } from '@radix-ui/react-slot';
 import { tv } from 'tailwind-variants';
 
 /* -----------------------------------------------------------------------------
@@ -8,13 +9,13 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const badgeVariants = tv({
-  base: 'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 [&>svg]:shrink-0',
+  base: 'focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-3 inline-flex w-fit shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium transition-[color,box-shadow,border-color,background-color] [&>svg]:size-3 [&>svg]:shrink-0',
   variants: {
     variant: {
-      default: 'bg-primary text-primary-foreground',
-      secondary: 'bg-secondary text-secondary-foreground',
-      destructive: 'bg-destructive text-destructive-foreground',
-      outline: 'bg-background border-input border',
+      default: 'bg-primary [a&]:hover:bg-primary-hover text-primary-foreground border-transparent',
+      secondary: 'bg-secondary [a&]:hover:bg-secondary-hover text-secondary-foreground border-transparent',
+      destructive: 'bg-destructive [a&]:hover:bg-destructive-hover text-destructive-foreground border-transparent',
+      outline: 'bg-background border-input [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
     },
   },
   defaultVariants: {
@@ -27,28 +28,21 @@ const badgeVariants = tv({
  * -------------------------------------------------------------------------- */
 
 function Badge({
-  children,
   className,
-  prefix,
-  suffix,
+  asChild,
   variant,
   ...props
-}: Omit<ComponentProps<'div'>, 'prefix'> &
+}: ComponentProps<'span'> &
   VariantProps<typeof badgeVariants> & {
-    prefix?: ReactNode;
-    suffix?: ReactNode;
+    asChild?: boolean;
   }): JSX.Element {
-  return (
-    <div className={badgeVariants({ className, variant })} data-slot="badge" {...props}>
-      {prefix}
-      {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
-      {suffix}
-    </div>
-  );
+  const Component = asChild ? Slot : 'span';
+
+  return <Component className={badgeVariants({ className, variant })} data-slot="badge" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Badge };
+export { Badge, badgeVariants };

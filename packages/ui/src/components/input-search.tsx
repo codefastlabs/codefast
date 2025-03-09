@@ -8,8 +8,8 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { SearchIcon, XIcon } from 'lucide-react';
 
 import { Button } from '@/components/button';
+import { inputVariants } from '@/components/input';
 import { Spinner } from '@/components/spinner';
-import { inputVariants } from '@/variants/input.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch

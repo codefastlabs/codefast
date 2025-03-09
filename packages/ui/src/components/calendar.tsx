@@ -7,8 +7,8 @@ import { format } from 'date-fns';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from 'lucide-react';
 import { DayFlag, DayPicker, SelectionState, UI } from 'react-day-picker';
 
+import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -56,7 +56,7 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
           classNames?.[UI.Day],
         ),
         [UI.DayButton]: cn(
-          'group-[.is-outside]:text-muted-foreground hover:not-disabled:not-group-aria-selected:bg-secondary hover:not-disabled:not-group-aria-selected:text-secondary-foreground group-data-today:not-group-aria-selected:bg-secondary group-data-today:not-group-aria-selected:text-secondary-foreground group-aria-selected:not-group-[.is-range-middle]:bg-primary group-aria-selected:not-group-[.is-range-middle]:text-primary-foreground size-8 rounded-lg transition disabled:opacity-50',
+          'group-[.is-outside]:text-muted-foreground hover:not-disabled:not-group-aria-selected:bg-secondary hover:not-disabled:not-group-aria-selected:text-secondary-foreground group-data-today:not-group-aria-selected:bg-secondary group-data-today:not-group-aria-selected:text-secondary-foreground group-aria-selected:not-group-[.is-range-middle]:bg-primary group-aria-selected:not-group-[.is-range-middle]:text-primary-foreground size-8 rounded-lg disabled:opacity-50',
           classNames?.[UI.DayButton],
         ),
         [UI.CaptionLabel]: cn('flex items-center gap-2 [&>svg]:opacity-50', classNames?.[UI.CaptionLabel]),
