@@ -52,7 +52,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
 }
 
 const data = {
-  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
+  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   navMain: [
     {
       title: 'Playground',
