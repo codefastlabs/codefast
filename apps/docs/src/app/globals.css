@@ -28,7 +28,7 @@
     --primary-foreground: var(--color-zinc-50);
 
     --secondary: var(--color-zinc-200);
-    --secondary-hover: var(--color-zinc-200);
+    --secondary-hover: var(--color-zinc-300);
     --secondary-foreground: var(--color-zinc-900);
 
     --accent: var(--color-zinc-100);
