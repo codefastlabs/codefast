@@ -1,7 +1,7 @@
 import { tv } from 'tailwind-variants';
 
 const buttonVariants = tv({
-  base: 'focus-visible:ring-ring focus-visible:ring-3 inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium focus-visible:outline-none disabled:opacity-50 [&>svg]:shrink-0',
+  base: 'focus-visible:ring-ring focus-visible:ring-3 inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[color,box-shadow] focus-visible:outline-none disabled:opacity-50 [&>svg]:shrink-0',
   variants: {
     icon: { false: '', true: 'px-0' },
     inside: { false: '', true: '' },
