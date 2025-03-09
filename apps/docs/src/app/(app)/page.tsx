@@ -3,6 +3,7 @@ import { type JSX } from 'react';
 
 import { AccordionDemo } from '@/components/accordion-demo';
 import { AlertDemo } from '@/components/alert-demo';
+import { AlertDialogDemo } from '@/components/alert-dialog-demo';
 import { ChartDemo } from '@/components/chart-demo';
 import { ComponentWrapper } from '@/components/component-wrapper';
 
@@ -23,6 +24,10 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="alert">
         <AlertDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="alert-dialog">
+        <AlertDialogDemo />
       </ComponentWrapper>
     </div>
   );
