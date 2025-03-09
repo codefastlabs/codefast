@@ -165,7 +165,7 @@ function SelectItem({ children, className, ...props }: ComponentProps<typeof Sel
   return (
     <SelectPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground outline-hidden *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm aria-disabled:opacity-50',
+        "focus:bg-accent focus:text-accent-foreground outline-hidden *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="select-item"
