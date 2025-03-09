@@ -159,7 +159,7 @@ function MenubarItem({
   return (
     <MenubarPrimitive.Item
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50',
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm focus:outline-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-inset={inset}
@@ -184,7 +184,7 @@ function MenubarCheckboxItem({
     <MenubarPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
+        "focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="menubar-checkbox-item"
@@ -212,7 +212,7 @@ function MenubarRadioItem({
   return (
     <MenubarPrimitive.RadioItem
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50',
+        "focus:bg-accent focus:text-accent-foreground relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 pl-8 text-sm focus:outline-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="menubar-radio-item"
