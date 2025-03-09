@@ -42,8 +42,10 @@ export function ChartLineDemo(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>Line Chart - Multiple</CardTitle>
+
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
+
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
@@ -55,25 +57,31 @@ export function ChartLineDemo(): JSX.Element {
             }}
           >
             <CartesianGrid vertical={false} />
+
             <XAxis
               axisLine={false}
               dataKey="month"
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value: string) => value.slice(0, 3)}
               tickLine={false}
               tickMargin={8}
             />
+
             <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
+
             <Line dataKey="desktop" dot={false} stroke="var(--color-desktop)" strokeWidth={2} type="monotone" />
+
             <Line dataKey="mobile" dot={false} stroke="var(--color-mobile)" strokeWidth={2} type="monotone" />
           </LineChart>
         </ChartContainer>
       </CardContent>
+
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
+
             <div className="text-muted-foreground flex items-center gap-2 leading-none">
               Showing total visitors for the last 6 months
             </div>

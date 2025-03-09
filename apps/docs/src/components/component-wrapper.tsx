@@ -24,6 +24,7 @@ export function ComponentWrapper({
         <div className="border-b px-4 py-3">
           <div className="text-sm font-medium">{getComponentName(name)}</div>
         </div>
+
         <div className="flex flex-1 items-center gap-2 p-4">{children}</div>
       </div>
     </ErrorBoundary>
