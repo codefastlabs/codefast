@@ -51,7 +51,7 @@ function InputOTPSlot({
   index: number;
 }): JSX.Element {
   const inputOTPContext = useContext(OTPInputContext);
-  const slot = inputOTPContext.slots[index];
+  const { isActive, char, hasFakeCaret } = inputOTPContext.slots[index];
 
   return (
     <div
@@ -60,11 +60,11 @@ function InputOTPSlot({
         className,
       )}
       data-slot="input-otp-slot"
-      data-state={slot.isActive ? 'active' : 'inactive'}
+      data-state={isActive ? 'active' : 'inactive'}
       {...props}
     >
-      {slot.char}
-      {slot.hasFakeCaret ? (
+      {char}
+      {hasFakeCaret ? (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="animate-caret-blink bg-foreground animation-duration-1000 h-4 w-px" />
         </div>

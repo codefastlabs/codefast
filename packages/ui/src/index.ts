@@ -75,8 +75,3 @@ export * from '@/components/tooltip';
 // Export utility functions from the utils library
 export * from '@/lib/logger';
 export * from '@/lib/utils';
-
-// Export button, input, and toggle variants from the styles directory
-export * from '@/variants/button.variants';
-export * from '@/variants/input.variants';
-export * from '@/variants/toggle.variants';

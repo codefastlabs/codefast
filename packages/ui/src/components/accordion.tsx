@@ -37,7 +37,7 @@ function AccordionIcon({
   if (asChild) {
     return (
       <Slot
-        className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
+        className={cn('text-muted-foreground size-4 shrink-0 group-data-[state=open]:rotate-90', className)}
         data-slot="accordion-icon"
         {...props}
       />
@@ -47,7 +47,7 @@ function AccordionIcon({
   return (
     <ChevronRightIcon
       aria-hidden
-      className={cn('text-muted-foreground size-4 shrink-0 transition group-data-[state=open]:rotate-90', className)}
+      className={cn('text-muted-foreground size-4 shrink-0 group-data-[state=open]:rotate-90', className)}
       data-slot="accordion-icon"
     />
   );
@@ -62,7 +62,7 @@ function AccordionTrigger({ className, ...props }: ComponentProps<typeof Accordi
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
         className={cn(
-          'focus-visible:ring-ring focus-visible:ring-3 group flex grow items-center gap-2 py-4 text-left text-sm font-medium focus-visible:outline-none',
+          'focus-visible:ring-ring focus-visible:ring-3 group flex grow items-center gap-2 py-4 text-left text-sm font-medium transition-all focus-visible:outline-none',
           className,
         )}
         data-slot="accordion-trigger"

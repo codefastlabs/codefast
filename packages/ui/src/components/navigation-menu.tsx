@@ -3,8 +3,8 @@ import type { ComponentProps, JSX } from 'react';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import { ChevronDownIcon } from 'lucide-react';
 
+import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenu
@@ -77,7 +77,7 @@ function NavigationMenuTrigger({
       {children}
       <ChevronDownIcon
         aria-hidden="true"
-        className={cn('relative top-px ml-1 size-3 transition group-data-[state=open]:rotate-180')}
+        className={cn('relative top-px ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180')}
       />
     </NavigationMenuPrimitive.Trigger>
   );
@@ -111,7 +111,7 @@ function NavigationMenuLink({ className, ...props }: ComponentProps<typeof Navig
   return (
     <NavigationMenuPrimitive.Link
       className={cn(
-        "data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow] focus-visible:outline-1 focus-visible:ring-4 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "data-[active=true]:focus:bg-accent data-[active=true]:hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow,border-color,background-color] focus-visible:outline-1 focus-visible:ring-4 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="navigation-menu-link"
@@ -132,7 +132,7 @@ function NavigationMenuViewport({
     <div className="perspective-2000 absolute left-0 top-full flex justify-center">
       <NavigationMenuPrimitive.Viewport
         className={cn(
-          'bg-popover text-popover-foreground h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width) data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 relative mt-2 w-full origin-[top_center] overflow-hidden rounded-lg border p-1 shadow-lg transition-[width,height]',
+          'bg-popover text-popover-foreground h-(--radix-navigation-menu-viewport-height) sm:w-(--radix-navigation-menu-viewport-width) data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-90 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 relative mt-2 w-full origin-[top_center] overflow-hidden rounded-lg border p-1 shadow-lg',
           className,
         )}
         data-slot="navigation-menu-viewport"
@@ -153,7 +153,7 @@ function NavigationMenuIndicator({
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(
-        'data-[state=visible]:animate-fade-in data-[state=visible]:animation-duration-100 data-[state=hidden]:animate-fade-out data-[state=hidden]:animation-duration-100 data-[state=hidden]:animation-ease-[cubic-bezier(0.32, 0.72, 0, 1)] top-full z-10 flex h-2 origin-[bottom_center] items-center justify-center overflow-hidden transition',
+        'data-[state=visible]:animate-fade-in data-[state=visible]:animation-duration-100 data-[state=hidden]:animate-fade-out data-[state=hidden]:animation-duration-100 data-[state=hidden]:animation-ease-[cubic-bezier(0.32, 0.72, 0, 1)] top-full z-10 flex h-2 origin-[bottom_center] items-center justify-center overflow-hidden',
         className,
       )}
       data-slot="navigation-menu-indicator"

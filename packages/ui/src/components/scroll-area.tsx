@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 const scrollAreaScrollbarVariants = tv({
-  base: 'flex touch-none select-none p-px transition',
+  base: 'flex touch-none select-none p-px transition-colors',
   compoundVariants: [
     {
       className: 'w-1.5',
@@ -99,7 +99,7 @@ function ScrollArea({
         {...props}
       >
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] [&>*]:h-full"
+          className="size-full rounded-[inherit] transition-[color,box-shadow,border-color,background-color] [&>*]:h-full"
           data-slot="scroll-area-viewport"
         >
           {children}

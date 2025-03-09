@@ -4,8 +4,8 @@ import type { VariantProps } from 'tailwind-variants';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
 
+import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog

@@ -15,7 +15,7 @@ import {
   Settings2Icon,
 } from 'lucide-react';
 
-import { Button } from '@/components/button';
+import { Button, buttonVariants } from '@/components/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -27,7 +27,6 @@ import {
 } from '@/components/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/variants/button.variants';
 
 /* -----------------------------------------------------------------------------
  * Component: DataTableViewOptions

@@ -8,8 +8,8 @@ import { createContextScope } from '@radix-ui/react-context';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
 
+import { toggleVariants } from '@/components/toggle';
 import { cn } from '@/lib/utils';
-import { toggleVariants } from '@/variants/toggle.variants';
 
 /* -----------------------------------------------------------------------------
  * Context: ToggleGroup
