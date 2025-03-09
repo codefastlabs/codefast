@@ -42,12 +42,15 @@ export function ChartBarDemo(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart - Multiple</CardTitle>
+
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
+
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
+
             <XAxis
               axisLine={false}
               dataKey="month"
@@ -55,16 +58,21 @@ export function ChartBarDemo(): JSX.Element {
               tickLine={false}
               tickMargin={10}
             />
+
             <ChartTooltip content={<ChartTooltipContent indicator="dashed" />} cursor={false} />
+
             <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+
             <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>
+
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
+
         <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>

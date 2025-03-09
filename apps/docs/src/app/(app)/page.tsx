@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import { type JSX } from 'react';
 
+import { AccordionDemo } from '@/components/accordion-demo';
 import { ChartDemo } from '@/components/chart-demo';
 import { ComponentWrapper } from '@/components/component-wrapper';
 
@@ -13,6 +14,10 @@ export default function AppPage(): JSX.Element {
     <div className="@container grid flex-1 gap-4 p-4">
       <ComponentWrapper className="w-full" name="chart">
         <ChartDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="accordion">
+        <AccordionDemo />
       </ComponentWrapper>
     </div>
   );
