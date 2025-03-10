@@ -30,6 +30,9 @@ import { LabelDemo } from '@/components/label-demo';
 import { MenubarDemo } from '@/components/menubar-demo';
 import { NavigationMenuDemo } from '@/components/navigation-menu-demo';
 import { PaginationDemo } from '@/components/pagination-demo';
+import { PopoverDemo } from '@/components/popover-demo';
+import { ProgressDemo } from '@/components/progress-demo';
+import { RadioGroupDemo } from '@/components/radio-group-demo';
 
 export const metadata: Metadata = {
   title: 'App',
@@ -148,6 +151,18 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="pagination">
         <PaginationDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="popover">
+        <PopoverDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="progress">
+        <ProgressDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="radio-group">
+        <RadioGroupDemo />
       </ComponentWrapper>
     </div>
   );
