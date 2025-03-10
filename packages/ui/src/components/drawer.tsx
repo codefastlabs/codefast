@@ -34,13 +34,13 @@ function DrawerContent({ children, className, ...props }: ComponentProps<typeof 
       <DrawerPrimitive.Overlay className="bg-popover-overlay fixed inset-0 z-50" data-slot="drawer-overlay" />
       <DrawerPrimitive.Content
         className={cn(
-          'bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-2xl border',
+          'group/drawer-content bg-background fixed z-50 flex h-auto flex-col data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=left]:sm:max-w-sm data-[vaul-drawer-direction=right]:sm:max-w-sm',
           className,
         )}
         data-slot="drawer-content"
         {...props}
       >
-        <div className="bg-muted mx-auto my-3 h-1.5 w-12 rounded-full" />
+        <div className="bg-muted mx-auto mt-4 hidden h-1.5 w-12 shrink-0 rounded-full group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
         {children}
       </DrawerPrimitive.Content>
     </DrawerPrimitive.Portal>
@@ -52,9 +52,7 @@ function DrawerContent({ children, className, ...props }: ComponentProps<typeof 
  * -------------------------------------------------------------------------- */
 
 function DrawerHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return (
-    <div className={cn('grid gap-1.5 p-4 text-center sm:text-left', className)} data-slot="drawer-header" {...props} />
-  );
+  return <div className={cn('flex flex-col gap-1.5 p-4', className)} data-slot="drawer-header" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -70,9 +68,7 @@ function DrawerBody({ className, ...props }: ComponentProps<'div'>): JSX.Element
  * -------------------------------------------------------------------------- */
 
 function DrawerFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return (
-    <div className={cn('mt-auto flex flex-col-reverse gap-2 p-4', className)} data-slot="drawer-footer" {...props} />
-  );
+  return <div className={cn('mt-auto flex flex-col gap-2 p-4', className)} data-slot="drawer-footer" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -82,7 +78,7 @@ function DrawerFooter({ className, ...props }: ComponentProps<'div'>): JSX.Eleme
 function DrawerTitle({ className, ...props }: ComponentProps<typeof DrawerPrimitive.Title>): JSX.Element {
   return (
     <DrawerPrimitive.Title
-      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+      className={cn('text-foreground font-semibold', className)}
       data-slot="drawer-title"
       {...props}
     />

@@ -32,14 +32,16 @@ export function CalendarDemo(): JSX.Element {
         onSelect={setDateRange}
       />
 
-      <Calendar
-        className="@4xl:flex hidden rounded-md border shadow-sm [&>div]:gap-5"
-        defaultMonth={range?.from}
-        mode="range"
-        numberOfMonths={3}
-        selected={range}
-        onSelect={setRange}
-      />
+      <div className="">
+        <Calendar
+          className="rounded-md border shadow-sm"
+          defaultMonth={range?.from}
+          mode="range"
+          numberOfMonths={3}
+          selected={range}
+          onSelect={setRange}
+        />
+      </div>
     </div>
   );
 }

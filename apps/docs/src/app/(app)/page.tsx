@@ -11,8 +11,16 @@ import { BreadcrumbDemo } from '@/components/breadcrumb-demo';
 import { ButtonDemo } from '@/components/button-demo';
 import { CalendarDemo } from '@/components/calendar-demo';
 import { CardDemo } from '@/components/card-demo';
+import { CarouselDemo } from '@/components/carousel-demo';
 import { ChartDemo } from '@/components/chart-demo';
+import { CheckboxDemo } from '@/components/checkbox-demo';
+import { CollapsibleDemo } from '@/components/collapsible-demo';
+import { ComboboxDemo } from '@/components/combobox-demo';
 import { ComponentWrapper } from '@/components/component-wrapper';
+import { ContextMenuDemo } from '@/components/context-menu-demo';
+import { DatePickerDemo } from '@/components/date-picker-demo';
+import { DialogDemo } from '@/components/dialog-demo';
+import { DrawerDemo } from '@/components/drawer-demo';
 
 export const metadata: Metadata = {
   title: 'App',
@@ -20,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function AppPage(): JSX.Element {
   return (
-    <div className="@container grid flex-1 gap-4 p-4">
+    <div className="@container grid flex-1 gap-4 p-4 sm:pb-[120vh]">
       <ComponentWrapper className="w-full" name="chart">
         <ChartDemo />
       </ComponentWrapper>
@@ -63,6 +71,38 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="card">
         <CardDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="carousel">
+        <CarouselDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="checkbox">
+        <CheckboxDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="collapsible">
+        <CollapsibleDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="combobox">
+        <ComboboxDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="context-menu">
+        <ContextMenuDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="date-picker">
+        <DatePickerDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="dialog">
+        <DialogDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="drawer">
+        <DrawerDemo />
       </ComponentWrapper>
     </div>
   );

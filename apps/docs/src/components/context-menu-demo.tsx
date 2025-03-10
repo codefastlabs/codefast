@@ -1,0 +1,108 @@
+'use client';
+
+import type { JSX } from 'react';
+
+import {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '@codefast/ui';
+import { Code2Icon, PlusIcon, TrashIcon } from 'lucide-react';
+import { useState } from 'react';
+
+export function ContextMenuDemo(): JSX.Element {
+  // State để quản lý checkbox
+  const [showBookmarksBar, setShowBookmarksBar] = useState<boolean>(true);
+  const [showFullUrls, setShowFullUrls] = useState<boolean>(false);
+
+  // State để quản lý radio
+  const [selectedPerson, setSelectedPerson] = useState<string>('pedro');
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
+        Right click here
+      </ContextMenuTrigger>
+
+      <ContextMenuContent className="w-64">
+        <ContextMenuItem inset>
+          Back
+          <ContextMenuShortcut>⌘[</ContextMenuShortcut>
+        </ContextMenuItem>
+
+        <ContextMenuItem disabled inset>
+          Forward
+          <ContextMenuShortcut>⌘]</ContextMenuShortcut>
+        </ContextMenuItem>
+
+        <ContextMenuItem inset>
+          Reload
+          <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+        </ContextMenuItem>
+
+        <ContextMenuSub>
+          <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
+
+          <ContextMenuSubContent className="w-48">
+            <ContextMenuItem inset>
+              Save Page As...
+              <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
+            </ContextMenuItem>
+
+            <ContextMenuItem>
+              <PlusIcon />
+              Create Shortcut...
+            </ContextMenuItem>
+
+            <ContextMenuItem inset>Name Window...</ContextMenuItem>
+
+            <ContextMenuSeparator />
+
+            <ContextMenuItem>
+              <Code2Icon />
+              Developer Tools
+            </ContextMenuItem>
+
+            <ContextMenuSeparator />
+
+            <ContextMenuItem variant="destructive">
+              <TrashIcon />
+              Delete
+            </ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuCheckboxItem checked={showBookmarksBar} onCheckedChange={setShowBookmarksBar}>
+          Show Bookmarks Bar
+          <ContextMenuShortcut>⌘⇧B</ContextMenuShortcut>
+        </ContextMenuCheckboxItem>
+
+        <ContextMenuCheckboxItem checked={showFullUrls} onCheckedChange={setShowFullUrls}>
+          Show Full URLs
+        </ContextMenuCheckboxItem>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuRadioGroup value={selectedPerson} onValueChange={setSelectedPerson}>
+          <ContextMenuLabel inset>People</ContextMenuLabel>
+
+          <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+
+          <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+        </ContextMenuRadioGroup>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}

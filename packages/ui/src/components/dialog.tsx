@@ -72,7 +72,7 @@ function DialogContent({ children, className, ...props }: ComponentProps<typeof 
 function DialogHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <header
-      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left', className)}
+      className={cn('flex shrink-0 flex-col gap-1.5 px-6 pb-2 pt-6 text-center sm:text-left', className)}
       data-slot="dialog-header"
       {...props}
     />
@@ -94,7 +94,7 @@ function DialogBody({ className, ...props }: ComponentProps<'div'>): JSX.Element
 function DialogFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <footer
-      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end', className)}
+      className={cn('flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-2 sm:flex-row sm:justify-end', className)}
       data-slot="dialog-footer"
       {...props}
     />

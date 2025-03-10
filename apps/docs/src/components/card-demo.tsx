@@ -151,7 +151,7 @@ export function CardDemo(): JSX.Element {
         </CardFooter>
       </Card>
 
-      <div className="flex w-full flex-wrap items-start gap-8 md:*:data-[slot=card]:basis-1/4">
+      <div className="flex w-full flex-wrap items-start gap-8 lg:*:data-[slot=card]:basis-1/4">
         <Card>
           <CardContent className="text-sm">Content Only</CardContent>
         </Card>
