@@ -27,12 +27,12 @@
     --primary-hover: var(--color-zinc-800);
     --primary-foreground: var(--color-zinc-50);
 
-    --secondary: var(--color-zinc-200);
-    --secondary-hover: var(--color-zinc-300);
-    --secondary-foreground: var(--color-zinc-900);
+    --secondary: var(--color-zinc-100);
+    --secondary-hover: var(--color-zinc-200);
+    --secondary-foreground: var(--color-zinc-950);
 
     --accent: var(--color-zinc-100);
-    --accent-foreground: var(--color-zinc-900);
+    --accent-foreground: var(--color-zinc-950);
 
     --destructive: var(--color-red-500);
     --destructive-hover: var(--color-red-600);
@@ -43,10 +43,10 @@
 
     --popover: var(--color-white);
     --popover-overlay: --alpha(var(--color-zinc-900) / 35%);
-    --popover-foreground: var(--color-zinc-900);
+    --popover-foreground: var(--color-zinc-950);
 
     --card: var(--color-white);
-    --card-foreground: var(--color-zinc-900);
+    --card-foreground: var(--color-zinc-950);
 
     --sidebar: var(--background);
     --sidebar-foreground: var(--foreground);
@@ -79,26 +79,26 @@
     --primary-hover: var(--color-zinc-200);
     --primary-foreground: var(--color-zinc-950);
 
-    --secondary: var(--color-zinc-800);
-    --secondary-hover: var(--color-zinc-700);
-    --secondary-foreground: var(--color-zinc-100);
+    --secondary: var(--color-zinc-900);
+    --secondary-hover: var(--color-zinc-800);
+    --secondary-foreground: var(--color-zinc-50);
 
     --accent: var(--color-zinc-900);
-    --accent-foreground: var(--color-zinc-100);
+    --accent-foreground: var(--color-zinc-50);
 
     --destructive: var(--color-red-500);
-    --destructive-hover: var(--color-red-400);
-    --destructive-foreground: var(--color-red-950);
+    --destructive-hover: var(--color-red-600);
+    --destructive-foreground: var(--color-red-50);
 
     --muted: var(--color-zinc-800);
     --muted-foreground: var(--color-zinc-400);
 
     --popover: var(--color-zinc-950);
     --popover-overlay: --alpha(var(--color-zinc-100) / 35%);
-    --popover-foreground: var(--color-zinc-100);
+    --popover-foreground: var(--color-zinc-50);
 
     --card: var(--color-zinc-950);
-    --card-foreground: var(--color-zinc-100);
+    --card-foreground: var(--color-zinc-50);
 
     --chart-1: var(--color-orange-400);
     --chart-2: var(--color-cyan-400);
