@@ -29,6 +29,7 @@ import { InputOTPDemo } from '@/components/input-otp-demo';
 import { LabelDemo } from '@/components/label-demo';
 import { MenubarDemo } from '@/components/menubar-demo';
 import { NavigationMenuDemo } from '@/components/navigation-menu-demo';
+import { PaginationDemo } from '@/components/pagination-demo';
 
 export const metadata: Metadata = {
   title: 'App',
@@ -143,6 +144,10 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="navigation-menu">
         <NavigationMenuDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="pagination">
+        <PaginationDemo />
       </ComponentWrapper>
     </div>
   );
