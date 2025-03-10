@@ -17,11 +17,11 @@ const sheetContentVariants = tv({
   variants: {
     side: {
       bottom:
-        'data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full inset-x-0 bottom-0 max-h-screen border-t',
+        'data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full inset-x-0 bottom-0 max-h-[80vh] border-t',
       left: 'data-[state=open]:slide-in-from-left-full data-[state=closed]:slide-out-to-left-full inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
       right:
         'data-[state=open]:slide-in-from-right-full data-[state=closed]:slide-out-to-right-full inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
-      top: 'data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-top-full inset-x-0 top-0 max-h-screen border-b',
+      top: 'data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-top-full inset-x-0 top-0 max-h-[80vh] border-b',
     },
   },
   defaultVariants: {

@@ -33,6 +33,11 @@ import { PaginationDemo } from '@/components/pagination-demo';
 import { PopoverDemo } from '@/components/popover-demo';
 import { ProgressDemo } from '@/components/progress-demo';
 import { RadioGroupDemo } from '@/components/radio-group-demo';
+import { ResizableDemo } from '@/components/resizable-demo';
+import { ScrollAreaDemo } from '@/components/scroll-area-demo';
+import { SelectDemo } from '@/components/select-demo';
+import { SeparatorDemo } from '@/components/separator-demo';
+import { SheetDemo } from '@/components/sheet-demo';
 
 export const metadata: Metadata = {
   title: 'App',
@@ -163,6 +168,26 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="radio-group">
         <RadioGroupDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="resizable">
+        <ResizableDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="scroll-area">
+        <ScrollAreaDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="select">
+        <SelectDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="separator">
+        <SeparatorDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="sheet">
+        <SheetDemo />
       </ComponentWrapper>
     </div>
   );
