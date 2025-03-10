@@ -102,8 +102,8 @@
  */
 @theme inline {
   --animate-caret-blink: caret-blink 1250ms ease-out infinite;
-  --animate-accordion-up: accordion-up 200ms ease-in;
-  --animate-accordion-down: accordion-down 200ms ease-out;
+  --animate-collapsible-up: collapsible-up 200ms ease-in;
+  --animate-collapsible-down: collapsible-down 200ms ease-out;
 
   @keyframes caret-blink {
     0%,
@@ -118,21 +118,21 @@
     }
   }
 
-  @keyframes accordion-up {
+  @keyframes collapsible-up {
     from {
-      height: var(--radix-accordion-content-height);
+      height: var(--radix-collapsible-content-height);
     }
     to {
       height: 0;
     }
   }
 
-  @keyframes accordion-down {
+  @keyframes collapsible-down {
     from {
       height: 0;
     }
     to {
-      height: var(--radix-accordion-content-height);
+      height: var(--radix-collapsible-content-height);
     }
   }
 }
