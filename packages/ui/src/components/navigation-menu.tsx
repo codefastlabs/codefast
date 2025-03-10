@@ -17,7 +17,7 @@ function NavigationMenu({
 }: ComponentProps<typeof NavigationMenuPrimitive.Root>): JSX.Element {
   return (
     <NavigationMenuPrimitive.Root
-      className={cn('relative z-10 flex max-w-max flex-1 items-center justify-center', className)}
+      className={cn('relative z-30 flex max-w-max flex-1 items-center justify-center', className)}
       data-slot="navigation-menu"
       {...props}
     >
@@ -153,7 +153,7 @@ function NavigationMenuIndicator({
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(
-        'data-[state=visible]:animate-fade-in data-[state=visible]:animation-duration-100 data-[state=hidden]:animate-fade-out data-[state=hidden]:animation-duration-100 data-[state=hidden]:animation-ease-[cubic-bezier(0.32, 0.72, 0, 1)] top-full z-10 flex h-2 origin-[bottom_center] items-center justify-center overflow-hidden',
+        'data-[state=visible]:animate-fade-in data-[state=visible]:animation-duration-100 data-[state=hidden]:animate-fade-out data-[state=hidden]:animation-duration-100 data-[state=hidden]:animation-ease-[cubic-bezier(0.32, 0.72, 0, 1)] top-full z-30 flex h-2 origin-[bottom_center] items-center justify-center overflow-hidden',
         className,
       )}
       data-slot="navigation-menu-indicator"
