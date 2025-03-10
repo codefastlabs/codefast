@@ -91,21 +91,12 @@ const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemCo
  * Component: FormItem
  * -------------------------------------------------------------------------- */
 
-function FormItem({
-  __scopeFormField,
-  className,
-  inline,
-  ...props
-}: ScopedProps<
-  ComponentProps<'div'> & {
-    inline?: boolean;
-  }
->): JSX.Element {
+function FormItem({ __scopeFormField, className, ...props }: ScopedProps<ComponentProps<'div'>>): JSX.Element {
   const id = useId();
 
   return (
     <FormItemProvider id={id} scope={__scopeFormField}>
-      <div className={cn(!inline && 'space-y-2', className)} data-slot="form-item" {...props} />
+      <div className={cn('grid gap-2', className)} data-slot="form-item" {...props} />
     </FormItemProvider>
   );
 }

@@ -11,7 +11,10 @@ import { cn } from '@/lib/utils';
 function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Root>): JSX.Element {
   return (
     <LabelPrimitive.Root
-      className={cn('inline-block text-sm font-medium leading-none peer-disabled:opacity-70', className)}
+      className={cn(
+        'peer-data-disabled:opacity-50 group-data-disabled:opacity-50 inline-block text-sm font-medium leading-none peer-disabled:opacity-50',
+        className,
+      )}
       data-slot="label"
       {...props}
     />

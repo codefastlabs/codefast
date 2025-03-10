@@ -13,16 +13,20 @@ import { cn } from '@/lib/utils';
 function NavigationMenu({
   children,
   className,
+  viewport = true,
   ...props
-}: ComponentProps<typeof NavigationMenuPrimitive.Root>): JSX.Element {
+}: ComponentProps<typeof NavigationMenuPrimitive.Root> & {
+  viewport?: boolean;
+}): JSX.Element {
   return (
     <NavigationMenuPrimitive.Root
       className={cn('relative z-30 flex max-w-max flex-1 items-center justify-center', className)}
       data-slot="navigation-menu"
+      data-viewport={viewport}
       {...props}
     >
       {children}
-      <NavigationMenuViewport />
+      {viewport ? <NavigationMenuViewport /> : null}
     </NavigationMenuPrimitive.Root>
   );
 }
@@ -94,7 +98,7 @@ function NavigationMenuContent({
   return (
     <NavigationMenuPrimitive.Content
       className={cn(
-        'data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0 data-[motion=from-end]:slide-from-r-52 data-[motion=from-start]:slide-from-l-52 data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0 data-[motion=to-end]:slide-to-r-52 data-[motion=to-start]:slide-to-l-52 left-0 top-0 w-full md:absolute md:w-auto',
+        'data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in-0 data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out-0 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 left-0 top-0 w-full md:absolute md:w-auto',
         className,
       )}
       data-slot="navigation-menu-content"

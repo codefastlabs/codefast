@@ -402,41 +402,41 @@
  * -----------------------------------------------------------------------------
  * Effects for sliding in from directions: left, right, top, bottom.
  */
-@utility slide-from-l-full {
+@utility slide-in-from-left-full {
   --animation-enter-translate-x: -100%;
 }
 
-@utility slide-from-l-* {
+@utility slide-in-from-left-* {
   --animation-enter-translate-x: calc(var(--spacing) * --value(number) * -1);
   --animation-enter-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
   --animation-enter-translate-x: calc(--value([length], [percentage]) * -1);
 }
 
-@utility slide-from-r-full {
+@utility slide-in-from-right-full {
   --animation-enter-translate-x: 100%;
 }
 
-@utility slide-from-r-* {
+@utility slide-in-from-right-* {
   --animation-enter-translate-x: calc(var(--spacing) * --value(number));
   --animation-enter-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
   --animation-enter-translate-x: --value([length], [percentage]);
 }
 
-@utility slide-from-t-full {
+@utility slide-in-from-top-full {
   --animation-enter-translate-y: -100%;
 }
 
-@utility slide-from-t-* {
+@utility slide-in-from-top-* {
   --animation-enter-translate-y: calc(var(--spacing) * --value(number) * -1);
   --animation-enter-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
   --animation-enter-translate-y: calc(--value([length], [percentage]) * -1);
 }
 
-@utility slide-from-b-full {
+@utility slide-in-from-bottom-full {
   --animation-enter-translate-y: 100%;
 }
 
-@utility slide-from-b-* {
+@utility slide-in-from-bottom-* {
   --animation-enter-translate-y: calc(var(--spacing) * --value(number));
   --animation-enter-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
   --animation-enter-translate-y: --value([length], [percentage]);
@@ -447,41 +447,41 @@
  * -----------------------------------------------------------------------------
  * Effects for sliding out of the screen in directions: left, right, top, bottom.
  */
-@utility slide-to-l-full {
+@utility slide-out-to-left-full {
   --animation-exit-translate-x: -100%;
 }
 
-@utility slide-to-l-* {
+@utility slide-out-to-left-* {
   --animation-exit-translate-x: calc(var(--spacing) * --value(number) * -1);
   --animation-exit-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
   --animation-exit-translate-x: calc(--value([length], [percentage]) * -1);
 }
 
-@utility slide-to-r-full {
+@utility slide-out-to-right-full {
   --animation-exit-translate-x: 100%;
 }
 
-@utility slide-to-r-* {
+@utility slide-out-to-right-* {
   --animation-exit-translate-x: calc(var(--spacing) * --value(number));
   --animation-exit-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
   --animation-exit-translate-x: --value([length], [percentage]);
 }
 
-@utility slide-to-t-full {
+@utility slide-out-to-top-full {
   --animation-exit-translate-y: -100%;
 }
 
-@utility slide-to-t-* {
+@utility slide-out-to-top-* {
   --animation-exit-translate-y: calc(var(--spacing) * --value(number) * -1);
   --animation-exit-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
   --animation-exit-translate-y: calc(--value([length], [percentage]) * -1);
 }
 
-@utility slide-to-b-full {
+@utility slide-out-to-bottom-full {
   --animation-exit-translate-y: 100%;
 }
 
-@utility slide-to-b-* {
+@utility slide-out-to-bottom-* {
   --animation-exit-translate-y: calc(var(--spacing) * --value(number));
   --animation-exit-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
   --animation-exit-translate-y: --value([length], [percentage]);
