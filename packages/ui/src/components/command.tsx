@@ -45,7 +45,7 @@ function CommandDialog({ children, ...props }: ComponentProps<typeof Dialog>): J
 function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrimitive.Input>): JSX.Element {
   return (
     <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="" data-slot="command-input-wrapper">
-      <SearchIcon className="size-5 shrink-0 opacity-50" />
+      <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
           'placeholder:text-muted-foreground outline-hidden flex h-10 w-full text-sm disabled:opacity-50',
@@ -125,7 +125,7 @@ function CommandItem({ className, ...props }: ComponentProps<typeof CommandPrimi
   return (
     <CommandPrimitive.Item
       className={cn(
-        'aria-selected:bg-accent aria-selected:text-accent-foreground outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50',
+        "aria-selected:bg-accent aria-selected:text-accent-foreground outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="command-item"
