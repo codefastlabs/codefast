@@ -65,7 +65,7 @@ function ChartContainer({
   config: ChartConfig;
 }): JSX.Element {
   const uniqueId = useId();
-  const chartId = `chart-${id || uniqueId.replaceAll(':', '')}`;
+  const chartId = `chart-${id || uniqueId}`;
 
   return (
     <ChartContext.Provider value={{ config }}>

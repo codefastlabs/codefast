@@ -128,59 +128,57 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
       </SidebarHeader>
 
       <SidebarContent>
-        <ScrollArea>
-          <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
 
-            <SidebarMenu>
-              {data.navMain.map((item) => (
-                <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
-                        {item.icon ? <item.icon /> : null}
+          <SidebarMenu>
+            {data.navMain.map((item) => (
+              <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon ? <item.icon /> : null}
 
-                        <span>{item.title}</span>
+                      <span>{item.title}</span>
 
-                        <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
+                      <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
 
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild>
-                              <a href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </a>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-
-          <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Components</SidebarGroupLabel>
-
-            <SidebarMenu>
-              {data.components.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
-                    <a href={`/#${item.name}`}>
-                      <span>{getComponentName(item.name)}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {item.items.map((subItem) => (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton asChild>
+                            <a href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </ScrollArea>
+              </Collapsible>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Components</SidebarGroupLabel>
+
+          <SidebarMenu>
+            {data.components.map((item) => (
+              <SidebarMenuItem key={item.name}>
+                <SidebarMenuButton asChild>
+                  <a href={`/#${item.name}`}>
+                    <span>{getComponentName(item.name)}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
