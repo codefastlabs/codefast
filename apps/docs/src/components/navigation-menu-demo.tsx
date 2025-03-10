@@ -52,7 +52,7 @@ export function NavigationMenuDemo(): JSX.Element {
     <div className="@xl:flex hidden w-full flex-col items-center justify-center gap-6">
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
+          <NavigationMenuItem value="getting-started">
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
 
             <NavigationMenuContent>
@@ -87,7 +87,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuContent>
           </NavigationMenuItem>
 
-          <NavigationMenuItem>
+          <NavigationMenuItem value="components">
             <NavigationMenuTrigger>Components</NavigationMenuTrigger>
 
             <NavigationMenuContent>
@@ -101,7 +101,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuContent>
           </NavigationMenuItem>
 
-          <NavigationMenuItem>
+          <NavigationMenuItem value="forms">
             <NavigationMenuLink asChild className={buttonVariants({ variant: 'ghost' })}>
               <Link href="/#docs">Documentation</Link>
             </NavigationMenuLink>
@@ -117,7 +117,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuLink>
           </NavigationMenuItem>
 
-          <NavigationMenuItem>
+          <NavigationMenuItem value="list">
             <NavigationMenuTrigger>List</NavigationMenuTrigger>
 
             <NavigationMenuContent>
@@ -151,7 +151,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuContent>
           </NavigationMenuItem>
 
-          <NavigationMenuItem>
+          <NavigationMenuItem value="simple-list">
             <NavigationMenuTrigger>Simple List</NavigationMenuTrigger>
 
             <NavigationMenuContent>
@@ -173,7 +173,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuContent>
           </NavigationMenuItem>
 
-          <NavigationMenuItem>
+          <NavigationMenuItem value="with-icon">
             <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
 
             <NavigationMenuContent>
