@@ -7,7 +7,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Label,
-  ScrollArea,
   Sidebar,
   SidebarContent,
   SidebarFooter,
