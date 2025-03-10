@@ -21,6 +21,14 @@ import { ContextMenuDemo } from '@/components/context-menu-demo';
 import { DatePickerDemo } from '@/components/date-picker-demo';
 import { DialogDemo } from '@/components/dialog-demo';
 import { DrawerDemo } from '@/components/drawer-demo';
+import { DropdownMenuDemo } from '@/components/dropdown-menu-demo';
+import { FormDemo } from '@/components/form-demo';
+import { HoverCardDemo } from '@/components/hover-card-demo';
+import { InputDemo } from '@/components/input-demo';
+import { InputOTPDemo } from '@/components/input-otp-demo';
+import { LabelDemo } from '@/components/label-demo';
+import { MenubarDemo } from '@/components/menubar-demo';
+import { NavigationMenuDemo } from '@/components/navigation-menu-demo';
 
 export const metadata: Metadata = {
   title: 'App',
@@ -103,6 +111,38 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="drawer">
         <DrawerDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="dropdown-menu">
+        <DropdownMenuDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="form">
+        <FormDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="hover-card">
+        <HoverCardDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="input">
+        <InputDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="input-otp">
+        <InputOTPDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="label">
+        <LabelDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="menubar">
+        <MenubarDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="navigation-menu">
+        <NavigationMenuDemo />
       </ComponentWrapper>
     </div>
   );
