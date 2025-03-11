@@ -121,7 +121,7 @@ function NavigationMenuLink({ className, ...props }: ComponentProps<typeof Navig
   return (
     <NavigationMenuPrimitive.Link
       className={cn(
-        "data-[active=true]:focus:bg-secondary-hover data-[active=true]:hover:bg-secondary data-[active=true]:bg-secondary data-[active=true]:text-secondary-foreground hover:bg-secondary hover:text-secondary-foreground focus:bg-secondary focus:text-secondary-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow,background-color] [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "data-[active=true]:focus:bg-secondary-hover data-[active=true]:hover:bg-secondary data-[active=true]:bg-secondary data-[active=true]:text-secondary-foreground hover:bg-secondary hover:text-secondary-foreground focus:bg-secondary focus:text-secondary-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="navigation-menu-link"
