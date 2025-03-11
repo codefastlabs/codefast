@@ -53,7 +53,7 @@ export function ContextMenuDemo(): JSX.Element {
         <ContextMenuSub>
           <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
 
-          <ContextMenuSubContent className="w-48">
+          <ContextMenuSubContent>
             <ContextMenuItem inset>
               Save Page As...
               <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
