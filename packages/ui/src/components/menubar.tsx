@@ -83,7 +83,7 @@ function MenubarSubTrigger({
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 outline-hidden flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-9 outline-hidden flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         className,
       )}
       data-inset={inset}
@@ -159,7 +159,7 @@ function MenubarItem({
   return (
     <MenubarPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-9 outline-hidden relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-inset={inset}
@@ -190,7 +190,7 @@ function MenubarCheckboxItem({
       data-slot="menubar-checkbox-item"
       {...props}
     >
-      <span className="absolute left-2 flex size-3.5 items-center justify-center">
+      <span className="absolute left-2 flex items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </MenubarPrimitive.ItemIndicator>
@@ -218,7 +218,7 @@ function MenubarRadioItem({
       data-slot="menubar-radio-item"
       {...props}
     >
-      <span className="absolute left-2 flex size-3.5 items-center justify-center">
+      <span className="absolute left-2 flex items-center justify-center">
         <MenubarPrimitive.ItemIndicator>
           <DotIcon className="size-4 fill-current" />
         </MenubarPrimitive.ItemIndicator>
@@ -241,7 +241,7 @@ function MenubarLabel({
 }): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      className={cn('data-inset:pl-9 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
       data-inset={inset}
       data-slot="menubar-label"
       {...props}
