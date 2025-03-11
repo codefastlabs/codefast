@@ -214,12 +214,12 @@
     "@eslint/js": "^9.22.0",
     "@next/eslint-plugin-next": "^15.2.1",
     "@stylistic/eslint-plugin": "^4.2.0",
-    "@vitest/eslint-plugin": "^1.1.36",
+    "@vitest/eslint-plugin": "^1.1.37",
     "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest": "^28.9.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-perfectionist": "^4.10.0",
+    "eslint-plugin-perfectionist": "^4.10.1",
     "eslint-plugin-playwright": "^2.2.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
@@ -228,7 +228,7 @@
     "eslint-plugin-tsdoc": "^0.4.0",
     "eslint-plugin-turbo": "^2.4.4",
     "eslint-plugin-unicorn": "^57.0.0",
-    "typescript-eslint": "^8.26.0"
+    "typescript-eslint": "^8.26.1"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
