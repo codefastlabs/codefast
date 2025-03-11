@@ -4,7 +4,7 @@ export const registryItemTypeSchema = z.enum([
   'registry:lib',
   'registry:block',
   'registry:component',
-  'registry:demo',
+  'registry:ui',
   'registry:hook',
   'registry:page',
   'registry:file',
@@ -32,23 +32,7 @@ export const registryItemFileSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
-export const registryItemTailwindSchema = z.object({
-  config: z
-    .object({
-      content: z.array(z.string()).optional(),
-      theme: z.record(z.string(), z.any()).optional(),
-      plugins: z.array(z.string()).optional(),
-    })
-    .optional(),
-});
-
-export const registryItemCssVarsSchema = z.object({
-  light: z.record(z.string(), z.string()).optional(),
-  dark: z.record(z.string(), z.string()).optional(),
-});
-
 export const registryItemSchema = z.object({
-  $schema: z.string().optional(),
   name: z.string(),
   type: registryItemTypeSchema,
   title: z.string().optional(),
@@ -57,8 +41,6 @@ export const registryItemSchema = z.object({
   dependencies: z.array(z.string()).optional(),
   devDependencies: z.array(z.string()).optional(),
   files: z.array(registryItemFileSchema).optional(),
-  tailwind: registryItemTailwindSchema.optional(),
-  cssVars: registryItemCssVarsSchema.optional(),
   meta: z.record(z.string(), z.any()).optional(),
   docs: z.string().optional(),
   categories: z.array(z.string()).optional(),
