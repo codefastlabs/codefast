@@ -65,9 +65,9 @@ export function ProductsTable({
           </TabsList>
         </Tabs>
 
-        <div className="flex items-center gap-2">
+        <div className="**:data-[slot=button]:size-8 **:data-[slot=select-trigger]:h-8 flex items-center gap-2">
           <Select defaultValue="all">
-            <SelectTrigger size="xs">
+            <SelectTrigger>
               <span className="text-muted-foreground text-sm">Category:</span>
 
               <SelectValue placeholder="Select a product" />
@@ -85,7 +85,7 @@ export function ProductsTable({
           </Select>
 
           <Select defaultValue="all">
-            <SelectTrigger size="xs">
+            <SelectTrigger>
               <span className="text-muted-foreground text-sm">Price:</span>
 
               <SelectValue placeholder="Select a product" />
@@ -103,7 +103,7 @@ export function ProductsTable({
           </Select>
 
           <Select defaultValue="all">
-            <SelectTrigger size="xs">
+            <SelectTrigger>
               <span className="text-muted-foreground text-sm">Status:</span>
 
               <SelectValue placeholder="Select a product" />
@@ -120,11 +120,11 @@ export function ProductsTable({
             </SelectContent>
           </Select>
 
-          <Button icon size="xs" variant="outline">
+          <Button size="icon" variant="outline">
             <ListFilterIcon />
           </Button>
 
-          <Button icon size="xs" variant="outline">
+          <Button size="icon" variant="outline">
             <ArrowUpDownIcon />
           </Button>
         </div>
@@ -189,7 +189,7 @@ export function ProductsTable({
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button icon size="2xs" variant="ghost">
+                      <Button className="size-7" size="icon" variant="ghost">
                         <EllipsisVerticalIcon />
                       </Button>
                     </DropdownMenuTrigger>

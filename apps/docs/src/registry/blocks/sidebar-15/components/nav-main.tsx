@@ -18,6 +18,7 @@ export function NavMain({
           <SidebarMenuButton asChild isActive={item.isActive}>
             <Link href={item.url}>
               <item.icon />
+
               <span>{item.title}</span>
             </Link>
           </SidebarMenuButton>

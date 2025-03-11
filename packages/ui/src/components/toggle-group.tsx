@@ -34,7 +34,6 @@ function ToggleGroup({
   __scopeToggleGroup,
   children,
   className,
-  icon,
   size,
   variant,
   ...props
@@ -42,7 +41,7 @@ function ToggleGroup({
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
-    <ToggleGroupProvider icon={icon} scope={__scopeToggleGroup} size={size} variant={variant}>
+    <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
       <ToggleGroupPrimitive.Root
         className={cn('flex items-center justify-center gap-1.5', className)}
         data-size={size}

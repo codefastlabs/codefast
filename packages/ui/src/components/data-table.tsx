@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils';
 function DataTableViewOptions<TData>({ table }: { table: ReactTable.Table<TData> }): JSX.Element {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={buttonVariants({ size: 'xs', variant: 'outline' })}>
+      <DropdownMenuTrigger className={buttonVariants({ size: 'sm', variant: 'outline' })}>
         <Settings2Icon className="size-4" />
         View
       </DropdownMenuTrigger>
@@ -107,10 +107,9 @@ function DataTablePagination<TData>({
         </div>
         <div className="flex flex-wrap items-center gap-x-2 gap-y-4">
           <Button
-            icon
-            className="max-md:hidden"
+            className="size-8 max-md:hidden"
             disabled={!table.getCanPreviousPage()}
-            size="xs"
+            size="icon"
             variant="outline"
             onClick={() => {
               table.setPageIndex(0);
@@ -120,9 +119,9 @@ function DataTablePagination<TData>({
             <ChevronsLeftIcon className="size-4" />
           </Button>
           <Button
-            icon
+            className="size-8"
             disabled={!table.getCanPreviousPage()}
-            size="xs"
+            size="icon"
             variant="outline"
             onClick={() => {
               table.previousPage();
@@ -132,9 +131,9 @@ function DataTablePagination<TData>({
             <ChevronLeftIcon className="size-4" />
           </Button>
           <Button
-            icon
+            className="size-8"
             disabled={!table.getCanNextPage()}
-            size="xs"
+            size="icon"
             variant="outline"
             onClick={() => {
               table.nextPage();
@@ -144,10 +143,9 @@ function DataTablePagination<TData>({
             <ChevronRightIcon className="size-4" />
           </Button>
           <Button
-            icon
-            className="max-md:hidden"
+            className="size-8 max-md:hidden"
             disabled={!table.getCanNextPage()}
-            size="xs"
+            size="icon"
             variant="outline"
             onClick={() => {
               table.setPageIndex(table.getPageCount() - 1);
@@ -182,7 +180,7 @@ function DataTableColumnHeader<TData, TValue>({
       <DropdownMenuTrigger asChild>
         <Button
           className={cn('hover:not-disabled:bg-initial p-0 text-sm focus-visible:ring-0')}
-          size="xs"
+          size="sm"
           suffix={<SortIcon className="opacity-50" sorted={column.getIsSorted()} />}
           variant="ghost"
         >

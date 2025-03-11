@@ -212,8 +212,7 @@ const CAROUSEL_PREVIOUS_NAME = 'CarouselPrevious';
 function CarouselPrevious({
   __scopeCarousel,
   className,
-  icon = true,
-  size = 'sm',
+  size = 'icon',
   variant = 'outline',
   ...props
 }: ScopedProps<ComponentProps<typeof Button>>): JSX.Element {
@@ -223,7 +222,7 @@ function CarouselPrevious({
     <Button
       aria-label="Previous slide"
       className={cn(
-        'not-disabled:shadow-none absolute',
+        'not-disabled:shadow-none absolute size-8',
         orientation === 'horizontal'
           ? '-left-12 top-1/2 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -231,7 +230,6 @@ function CarouselPrevious({
       )}
       data-slot="carousel-previous"
       disabled={!canScrollPrev}
-      icon={icon}
       prefix={<ArrowLeftIcon />}
       size={size}
       variant={variant}
@@ -252,8 +250,7 @@ const CAROUSEL_NEXT_NAME = 'CarouselNext';
 function CarouselNext({
   __scopeCarousel,
   className,
-  icon = true,
-  size = 'sm',
+  size = 'icon',
   variant = 'outline',
   ...props
 }: ScopedProps<ComponentProps<typeof Button>>): JSX.Element {
@@ -263,7 +260,7 @@ function CarouselNext({
     <Button
       aria-label="Next slide"
       className={cn(
-        'not-disabled:shadow-none absolute',
+        'not-disabled:shadow-none absolute size-8',
         orientation === 'horizontal'
           ? '-right-12 top-1/2 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -271,7 +268,6 @@ function CarouselNext({
       )}
       data-slot="carousel-next"
       disabled={!canScrollNext}
-      icon={icon}
       prefix={<ArrowRightIcon />}
       size={size}
       variant={variant}

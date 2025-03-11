@@ -49,9 +49,8 @@ function DialogContent({ children, className, ...props }: ComponentProps<typeof 
           {children}
           <DialogPrimitive.Close
             className={buttonVariants({
-              className: 'absolute right-2.5 top-2.5',
-              icon: true,
-              size: '2xs',
+              className: 'absolute right-2.5 top-2.5 size-7',
+              size: 'icon',
               variant: 'ghost',
             })}
             data-slot="dialog-close"

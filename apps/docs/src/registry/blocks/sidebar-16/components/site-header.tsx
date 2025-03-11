@@ -23,7 +23,7 @@ export function SiteHeader(): JSX.Element {
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
       <div className="h-(--header-height) flex w-full items-center gap-2 px-4">
-        <Button icon className="h-8 w-8" variant="ghost" onClick={toggleSidebar}>
+        <Button className="size-8" size="icon" variant="ghost" onClick={toggleSidebar}>
           <SidebarIcon />
         </Button>
         <Separator className="mr-2 h-4" orientation="vertical" />

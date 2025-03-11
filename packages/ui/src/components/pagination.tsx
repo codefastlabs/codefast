@@ -45,18 +45,17 @@ function PaginationItem(props: ComponentProps<'li'>): JSX.Element {
 function PaginationLink({
   children,
   className,
-  icon = true,
   isActive,
-  size,
+  size = 'icon',
   ...props
 }: ComponentProps<'a'> &
-  Pick<VariantProps<typeof buttonVariants>, 'icon' | 'size'> & {
+  Pick<VariantProps<typeof buttonVariants>, 'size'> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
     <a
       aria-current={isActive ? 'page' : undefined}
-      className={buttonVariants({ className, icon, size, variant: isActive ? 'outline' : 'ghost' })}
+      className={buttonVariants({ className, size, variant: isActive ? 'outline' : 'ghost' })}
       data-slot="pagination-link"
       {...props}
     >
@@ -72,11 +71,11 @@ function PaginationLink({
 function PaginationPrevious({
   ...props
 }: ComponentProps<'a'> &
-  Pick<VariantProps<typeof buttonVariants>, 'icon' | 'size'> & {
+  Pick<VariantProps<typeof buttonVariants>, 'size'> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
-    <PaginationLink aria-label="Go to previous page" data-slot="pagination-previous" icon={false} {...props}>
+    <PaginationLink aria-label="Go to previous page" data-slot="pagination-previous" size="md" {...props}>
       <ChevronLeftIcon className="size-4" />
       <span>Previous</span>
     </PaginationLink>
@@ -90,11 +89,11 @@ function PaginationPrevious({
 function PaginationNext({
   ...props
 }: ComponentProps<'a'> &
-  Pick<VariantProps<typeof buttonVariants>, 'icon' | 'size'> & {
+  Pick<VariantProps<typeof buttonVariants>, 'size'> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
-    <PaginationLink aria-label="Go to next page" data-slot="pagination-next" icon={false} {...props}>
+    <PaginationLink aria-label="Go to next page" data-slot="pagination-next" size="md" {...props}>
       <span>Next</span>
       <ChevronRightIcon />
     </PaginationLink>

@@ -79,9 +79,9 @@ function DrawerBottom(): JSX.Element {
           <DrawerBody className="text-sm">
             <div className="flex items-center justify-center space-x-2">
               <Button
-                icon
-                className="h-8 w-8 shrink-0 rounded-full"
+                className="size-8 shrink-0 rounded-full"
                 disabled={goal <= 200}
+                size="icon"
                 variant="outline"
                 onClick={() => {
                   onClick(-10);
@@ -99,9 +99,9 @@ function DrawerBottom(): JSX.Element {
               </div>
 
               <Button
-                icon
-                className="h-8 w-8 shrink-0 rounded-full"
+                className="size-8 shrink-0 rounded-full"
                 disabled={goal >= 400}
+                size="icon"
                 variant="outline"
                 onClick={() => {
                   onClick(10);
@@ -201,7 +201,7 @@ function DrawerDirections(): JSX.Element {
         >
           <Drawer direction={direction}>
             <DrawerTrigger asChild>
-              <Button icon className="capitalize" variant="outline">
+              <Button className="capitalize" size="icon" variant="outline">
                 {direction === 'top' && <ChevronUpIcon />}
                 {direction === 'bottom' && <ChevronUpIcon className="rotate-180" />}
                 {direction === 'left' && <ChevronUpIcon className="rotate-270" />}

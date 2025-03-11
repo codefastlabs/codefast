@@ -11,6 +11,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
+  Kbd,
 } from '@codefast/ui';
 import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -37,43 +38,61 @@ export function CommandDemo(): JSX.Element {
     <>
       <p className="text-muted-foreground text-sm">
         Press{' '}
-        <kbd className="bg-muted text-muted-foreground pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100">
-          <span className="text-xs">⌘</span>J
-        </kbd>
+        <Kbd>
+          <span className="text-sm">⌘</span>J
+        </Kbd>
       </p>
+
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
+
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
+
           <CommandGroup heading="Suggestions">
             <CommandItem>
               <Calendar />
+
               <span>Calendar</span>
             </CommandItem>
+
             <CommandItem>
               <Smile />
+
               <span>Search Emoji</span>
             </CommandItem>
+
             <CommandItem>
               <Calculator />
+
               <span>Calculator</span>
             </CommandItem>
           </CommandGroup>
+
           <CommandSeparator />
+
           <CommandGroup heading="Settings">
             <CommandItem>
               <User />
+
               <span>Profile</span>
+
               <CommandShortcut>⌘P</CommandShortcut>
             </CommandItem>
+
             <CommandItem>
               <CreditCard />
+
               <span>Billing</span>
+
               <CommandShortcut>⌘B</CommandShortcut>
             </CommandItem>
+
             <CommandItem>
               <Settings />
+
               <span>Settings</span>
+
               <CommandShortcut>⌘S</CommandShortcut>
             </CommandItem>
           </CommandGroup>

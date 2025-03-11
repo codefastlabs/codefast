@@ -72,7 +72,7 @@ function SheetContent({
       >
         {children}
         <SheetPrimitive.Close
-          className={buttonVariants({ className: 'absolute right-4 top-4', icon: true, size: '2xs', variant: 'ghost' })}
+          className={buttonVariants({ className: 'absolute right-4 top-4 size-7', size: 'icon', variant: 'ghost' })}
           data-slot="sheet-close"
         >
           <XIcon className="size-4" />

@@ -10,17 +10,13 @@ import { Spinner } from '@/components/spinner';
  * -------------------------------------------------------------------------- */
 
 const buttonVariants = tv({
-  base: "focus-visible:ring-ring focus-visible:ring-3 outline-hidden inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+  base: "focus-visible:ring-ring focus-visible:ring-3 outline-hidden inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
   variants: {
-    icon: { false: '', true: 'px-0' },
-    inside: { false: '', true: '' },
     size: {
-      '2xs': 'h-7 px-3 text-xs', // 28px
-      xs: 'h-8 px-3 text-xs', // 32px
-      sm: 'h-9 px-4 text-sm', // 36px
-      md: 'h-10 px-4 text-sm', // 40px
-      lg: 'h-11 px-4 text-sm', // 44px
-      xl: 'h-12 px-4 text-sm', // 48px
+      sm: 'h-8 px-3 has-[>svg]:px-2.5', // 32px
+      md: 'h-9 px-4 has-[>svg]:px-3', // 36px
+      lg: 'h-10 px-6 has-[>svg]:px-4', // 40px
+      icon: 'size-9',
     },
     variant: {
       default: 'bg-primary text-primary-foreground hover:not-disabled:bg-primary-hover',
@@ -33,33 +29,9 @@ const buttonVariants = tv({
     },
   },
   defaultVariants: {
-    icon: false,
-    inside: false,
     size: 'md',
     variant: 'default',
   },
-  compoundVariants: [
-    { className: 'w-7', icon: true, size: '2xs' },
-    { className: 'w-8', icon: true, size: 'xs' },
-    { className: 'w-9', icon: true, size: 'sm' },
-    { className: 'w-10', icon: true, size: 'md' },
-    { className: 'w-11', icon: true, size: 'lg' },
-    { className: 'w-12', icon: true, size: 'xl' },
-
-    { className: 'h-5', inside: true, size: '2xs' },
-    { className: 'h-6', inside: true, size: 'xs' },
-    { className: 'h-7', inside: true, size: 'sm' },
-    { className: 'h-8', inside: true, size: 'md' },
-    { className: 'h-9', inside: true, size: 'lg' },
-    { className: 'h-10', inside: true, size: 'xl' },
-
-    { className: 'w-5', icon: true, inside: true, size: '2xs' },
-    { className: 'w-6', icon: true, inside: true, size: 'xs' },
-    { className: 'w-7', icon: true, inside: true, size: 'sm' },
-    { className: 'w-8', icon: true, inside: true, size: 'md' },
-    { className: 'w-9', icon: true, inside: true, size: 'lg' },
-    { className: 'w-10', icon: true, inside: true, size: 'xl' },
-  ],
 });
 
 /* -----------------------------------------------------------------------------
@@ -70,8 +42,6 @@ function Button({
   children,
   className,
   disabled,
-  icon,
-  inside,
   loaderPosition = 'prefix',
   loading,
   prefix,
@@ -90,7 +60,7 @@ function Button({
   }): JSX.Element {
   return (
     <button
-      className={buttonVariants({ className, icon, inside, size, variant })}
+      className={buttonVariants({ className, size, variant })}
       data-slot="button"
       data-variant={variant}
       disabled={loading || disabled}

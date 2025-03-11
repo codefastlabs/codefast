@@ -16,7 +16,10 @@ import { cn } from '@/lib/utils';
 function Command({ className, ...props }: ComponentProps<typeof CommandPrimitive>): JSX.Element {
   return (
     <CommandPrimitive
-      className={cn('bg-popover text-popover-foreground flex flex-col overflow-hidden rounded-[inherit]', className)}
+      className={cn(
+        'bg-popover text-popover-foreground outline-hidden flex flex-col overflow-hidden rounded-[inherit]',
+        className,
+      )}
       data-slot="command"
       {...props}
     />
