@@ -2,9 +2,11 @@ import type { JSX } from 'react';
 
 import { Checkbox, Input, Label, Textarea } from '@codefast/ui';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function LabelDemo(): JSX.Element {
   return (
-    <div className="grid w-full max-w-sm gap-6">
+    <GridWrapper>
       <div className="flex items-center gap-3">
         <Checkbox id="label-demo-terms" />
 
@@ -28,6 +30,6 @@ export function LabelDemo(): JSX.Element {
 
         <Textarea id="label-demo-message" placeholder="Message" />
       </div>
-    </div>
+    </GridWrapper>
   );
 }

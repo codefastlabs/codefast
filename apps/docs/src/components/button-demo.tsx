@@ -6,33 +6,7 @@ import { ArrowRightIcon, SendIcon } from 'lucide-react';
 export function ButtonDemo(): JSX.Element {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
-        <Button>Medium</Button>
-
-        <Button variant="outline">Outline</Button>
-
-        <Button variant="ghost">Ghost</Button>
-
-        <Button variant="destructive">Destructive</Button>
-
-        <Button variant="secondary">Secondary</Button>
-
-        <Button variant="link">Link</Button>
-
-        <Button prefix={<SendIcon />} variant="outline">
-          Send
-        </Button>
-
-        <Button suffix={<ArrowRightIcon />} variant="outline">
-          Learn More
-        </Button>
-
-        <Button disabled loading variant="outline">
-          Please wait
-        </Button>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
         <Button size="2xs">Tiny</Button>
 
         <Button size="2xs" variant="outline">
@@ -68,7 +42,7 @@ export function ButtonDemo(): JSX.Element {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
         <Button size="xs">Extra Small</Button>
 
         <Button size="xs" variant="outline">
@@ -104,7 +78,7 @@ export function ButtonDemo(): JSX.Element {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
         <Button size="sm">Small</Button>
 
         <Button size="sm" variant="outline">
@@ -140,7 +114,33 @@ export function ButtonDemo(): JSX.Element {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
+        <Button>Medium</Button>
+
+        <Button variant="outline">Outline</Button>
+
+        <Button variant="ghost">Ghost</Button>
+
+        <Button variant="destructive">Destructive</Button>
+
+        <Button variant="secondary">Secondary</Button>
+
+        <Button variant="link">Link</Button>
+
+        <Button prefix={<SendIcon />} variant="outline">
+          Send
+        </Button>
+
+        <Button suffix={<ArrowRightIcon />} variant="outline">
+          Learn More
+        </Button>
+
+        <Button disabled loading variant="outline">
+          Please wait
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
         <Button size="lg">Large</Button>
 
         <Button size="lg" variant="outline">
@@ -176,7 +176,7 @@ export function ButtonDemo(): JSX.Element {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 md:flex-row">
+      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
         <Button size="xl">Extra Large</Button>
 
         <Button size="xl" variant="outline">
