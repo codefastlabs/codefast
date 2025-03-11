@@ -39,21 +39,35 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function DropdownMenuDemo(): JSX.Element {
   return (
-    <div className="flex flex-wrap items-start gap-4">
-      <DropdownMenuSimple />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <DropdownMenuSimple />
+      </div>
 
-      <DropdownMenuCheckboxes />
+      <div className="">
+        <DropdownMenuCheckboxes />
+      </div>
 
-      <DropdownMenuRadioGroupDemo />
+      <div className="">
+        <DropdownMenuRadioGroupDemo />
+      </div>
 
-      <DropdownMenuWithAvatar />
+      <div className="">
+        <DropdownMenuWithAvatar />
+      </div>
 
-      <DropdownMenuAvatarOnly />
+      <div className="">
+        <DropdownMenuAvatarOnly />
+      </div>
 
-      <DropdownMenuIconColor />
-    </div>
+      <div className="">
+        <DropdownMenuIconColor />
+      </div>
+    </GridWrapper>
   );
 }
 
@@ -225,15 +239,15 @@ function DropdownMenuWithAvatar(): JSX.Element {
       <DropdownMenuTrigger asChild>
         <Button className="h-12 justify-start px-2 md:max-w-[200px]" variant="outline">
           <Avatar>
-            <AvatarImage alt="Shadcn" src="https://github.com/shadcn.png" />
+            <AvatarImage alt="@codefast/ui" src="/avatars/codefast-ui.webp" />
 
             <AvatarFallback className="rounded-lg">CN</AvatarFallback>
           </Avatar>
 
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">shadcn</span>
+            <span className="truncate font-semibold">@codefast/ui</span>
 
-            <span className="text-muted-foreground truncate text-xs">shadcn@example.com</span>
+            <span className="text-muted-foreground truncate text-xs">codefastlabs@example.com</span>
           </div>
 
           <ChevronsUpDownIcon className="text-muted-foreground ml-auto" />
@@ -244,15 +258,15 @@ function DropdownMenuWithAvatar(): JSX.Element {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
-              <AvatarImage alt="Shadcn" src="https://github.com/shadcn.png" />
+              <AvatarImage alt="@codefast/ui" src="/avatars/codefast-ui.webp" />
 
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
 
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">shadcn</span>
+              <span className="truncate font-semibold">@codefast/ui</span>
 
-              <span className="text-muted-foreground truncate text-xs">shadcn@example.com</span>
+              <span className="text-muted-foreground truncate text-xs">codefastlabs@example.com</span>
             </div>
           </div>
         </DropdownMenuLabel>

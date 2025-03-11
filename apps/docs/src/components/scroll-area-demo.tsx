@@ -4,13 +4,19 @@ import { ScrollArea, Separator } from '@codefast/ui';
 import Image from 'next/image';
 import { Fragment } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function ScrollAreaDemo(): JSX.Element {
   return (
-    <div className="flex flex-col gap-6">
-      <ScrollAreaVertical />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <ScrollAreaVertical />
+      </div>
 
-      <ScrollAreaHorizontalDemo />
-    </div>
+      <div className="">
+        <ScrollAreaHorizontalDemo />
+      </div>
+    </GridWrapper>
   );
 }
 

@@ -63,7 +63,7 @@ export function NavigationMenuDemo(): JSX.Element {
                       className="from-muted/50 to-muted bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
                       href="/#"
                     >
-                      <div className="mb-2 mt-4 text-lg font-medium">shadcn/ui</div>
+                      <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
 
                       <p className="text-muted-foreground text-sm leading-tight">
                         Beautifully designed components built with Tailwind CSS.

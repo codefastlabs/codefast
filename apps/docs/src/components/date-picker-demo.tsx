@@ -14,17 +14,23 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@codefast/ui';
-import { addDays, format } from 'date-fns';
+import { addDays } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function DatePickerDemo(): JSX.Element {
   return (
-    <div className="flex flex-col items-start gap-4 md:flex-row">
-      <DatePickerSimple />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <DatePickerSimple />
+      </div>
 
-      <DatePickerWithRange />
-    </div>
+      <div className="">
+        <DatePickerWithRange />
+      </div>
+    </GridWrapper>
   );
 }
 

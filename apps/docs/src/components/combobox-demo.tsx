@@ -22,44 +22,22 @@ import {
 import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 const frameworkOptions = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
+  { value: 'next.js', label: 'Next.js' },
+  { value: 'sveltekit', label: 'SvelteKit' },
+  { value: 'nuxt.js', label: 'Nuxt.js' },
+  { value: 'remix', label: 'Remix' },
+  { value: 'astro', label: 'Astro' },
 ];
 
 type Framework = (typeof frameworkOptions)[number];
 
 const usersOptions = [
-  {
-    id: '1',
-    username: 'shadcn',
-  },
-  {
-    id: '2',
-    username: 'leerob',
-  },
-  {
-    id: '3',
-    username: 'evilrabbit',
-  },
+  { id: '1', username: 'codefastlabs' },
+  { id: '2', username: 'leerob' },
+  { id: '3', username: 'evilrabbit' },
 ] as const;
 
 type User = (typeof usersOptions)[number];
@@ -104,15 +82,23 @@ type Timezone = (typeof timezonesOptions)[number];
 
 export function ComboboxDemo(): JSX.Element {
   return (
-    <div className="flex w-full flex-wrap items-start gap-4">
-      <FrameworkCombobox frameworks={[...frameworkOptions]} />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <FrameworkCombobox frameworks={[...frameworkOptions]} />
+      </div>
 
-      <UserCombobox selectedUserId={usersOptions[0].id} users={[...usersOptions]} />
+      <div className="">
+        <UserCombobox selectedUserId={usersOptions[0].id} users={[...usersOptions]} />
+      </div>
 
-      <TimezoneCombobox selectedTimezone={timezonesOptions[0].timezones[0]} timezones={[...timezonesOptions]} />
+      <div className="">
+        <TimezoneCombobox selectedTimezone={timezonesOptions[0].timezones[0]} timezones={[...timezonesOptions]} />
+      </div>
 
-      <ComboboxWithCheckbox frameworks={[...frameworkOptions]} />
-    </div>
+      <div className="">
+        <ComboboxWithCheckbox frameworks={[...frameworkOptions]} />
+      </div>
+    </GridWrapper>
   );
 }
 

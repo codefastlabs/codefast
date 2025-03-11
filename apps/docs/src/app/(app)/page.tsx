@@ -38,6 +38,16 @@ import { ScrollAreaDemo } from '@/components/scroll-area-demo';
 import { SelectDemo } from '@/components/select-demo';
 import { SeparatorDemo } from '@/components/separator-demo';
 import { SheetDemo } from '@/components/sheet-demo';
+import { SkeletonDemo } from '@/components/skeleton-demo';
+import { SliderDemo } from '@/components/slider-demo';
+import { SonnerDemo } from '@/components/sonner-demo';
+import { SwitchDemo } from '@/components/switch-demo';
+import { TableDemo } from '@/components/table-demo';
+import { TabsDemo } from '@/components/tabs-demo';
+import { TextareaDemo } from '@/components/textarea-demo';
+import { ToggleDemo } from '@/components/toggle-demo';
+import { ToggleGroupDemo } from '@/components/toggle-group-demo';
+import { TooltipDemo } from '@/components/tooltip-demo';
 
 export const metadata: Metadata = {
   title: 'App',
@@ -45,11 +55,7 @@ export const metadata: Metadata = {
 
 export default function AppPage(): JSX.Element {
   return (
-    <div className="@container grid flex-1 gap-4 p-4 sm:pb-[120vh]">
-      <ComponentWrapper className="w-full" name="chart">
-        <ChartDemo />
-      </ComponentWrapper>
-
+    <div className="@container grid gap-4 p-4 2xl:container 2xl:mx-auto">
       <ComponentWrapper name="accordion">
         <AccordionDemo />
       </ComponentWrapper>
@@ -92,6 +98,10 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="carousel">
         <CarouselDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper className="w-full" name="chart">
+        <ChartDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="checkbox">
@@ -188,6 +198,46 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="sheet">
         <SheetDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="skeleton">
+        <SkeletonDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="slider">
+        <SliderDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="sonner">
+        <SonnerDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="switch">
+        <SwitchDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="table">
+        <TableDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="tabs">
+        <TabsDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="textarea">
+        <TextareaDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="toggle">
+        <ToggleDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="toggle-group">
+        <ToggleGroupDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="tooltip">
+        <TooltipDemo />
       </ComponentWrapper>
     </div>
   );

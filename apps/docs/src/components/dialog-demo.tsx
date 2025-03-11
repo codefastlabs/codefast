@@ -15,15 +15,23 @@ import {
   Label,
 } from '@codefast/ui';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function DialogDemo(): JSX.Element {
   return (
-    <div className="flex flex-col items-start gap-4 md:flex-row">
-      <DialogWithForm />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <DialogWithForm />
+      </div>
 
-      <DialogScrollableContent />
+      <div className="">
+        <DialogScrollableContent />
+      </div>
 
-      <DialogWithStickyFooter />
-    </div>
+      <div className="">
+        <DialogWithStickyFooter />
+      </div>
+    </GridWrapper>
   );
 }
 

@@ -3,20 +3,27 @@ import type { JSX } from 'react';
 import { ChartAreaDemo } from '@/components/chart-area-demo';
 import { ChartBarDemo } from '@/components/chart-bar-demo';
 import { ChartLineDemo } from '@/components/chart-line-demo';
+import { GridWrapper } from '@/components/grid-wrapper';
 import { ChartBarMixed } from '@/registry/charts/chart-bar-mixed';
 
 export function ChartDemo(): JSX.Element {
   return (
-    <div className="@2xl:grid-cols-2 @6xl:grid-cols-3 grid w-full max-w-screen-2xl gap-4 *:data-[slot=card]:flex-1">
-      <ChartAreaDemo />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <ChartAreaDemo />
+      </div>
 
-      <ChartBarDemo />
+      <div className="">
+        <ChartBarDemo />
+      </div>
 
-      <ChartBarMixed />
+      <div className="">
+        <ChartBarMixed />
+      </div>
 
-      <div className="@6xl:hidden">
+      <div className="">
         <ChartLineDemo />
       </div>
-    </div>
+    </GridWrapper>
   );
 }
