@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import { type JSX } from 'react';
 
 import { ComponentWrapper } from '@/components/component-wrapper';
-import { TextareaDemo } from '@/components/demo/textarea-demo';
+import { TextareaDemo } from '@/registry/demos/textarea-demo';
 
 export const metadata: Metadata = {
   title: 'Component',

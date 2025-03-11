@@ -100,7 +100,7 @@ const data: {
       ],
     },
   ],
-  components: [...Object.values(Index).filter((item) => item.type === 'registry:ui'), { name: 'combobox' }].sort(
+  components: [...Object.values(Index).filter((item) => item.type === 'registry:demo'), { name: 'combobox' }].sort(
     (a, b) => a.name.localeCompare(b.name),
   ),
 };
