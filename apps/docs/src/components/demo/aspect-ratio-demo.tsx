@@ -7,7 +7,7 @@ import { GridWrapper } from '@/components/grid-wrapper';
 
 export function AspectRatioDemo(): JSX.Element {
   return (
-    <GridWrapper className="*:grid *:place-items-center">
+    <GridWrapper>
       <div className="">
         <AspectRatio className="bg-muted rounded-lg" ratio={16 / 9}>
           <Image

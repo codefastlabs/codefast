@@ -17,7 +17,6 @@ interface RegistryItem {
   files: RegistryFile[];
   meta: undefined;
   name: string;
-  registryDependencies: string[];
   type: string;
 }
 
@@ -310,7 +309,6 @@ export const Index: Registry = {
     name: 'sidebar-01',
     description: 'A simple sidebar with navigation grouped by section.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'label', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-01/page.tsx',
@@ -337,7 +335,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-01/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -345,7 +343,6 @@ export const Index: Registry = {
     name: 'sidebar-02',
     description: 'A sidebar with collapsible sections.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'label', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-02/page.tsx',
@@ -372,7 +369,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-02/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -380,7 +377,6 @@ export const Index: Registry = {
     name: 'sidebar-03',
     description: 'A sidebar with submenus.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb'],
     files: [
       {
         path: '@/registry/blocks/sidebar-03/page.tsx',
@@ -397,7 +393,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-03/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -405,7 +401,6 @@ export const Index: Registry = {
     name: 'sidebar-04',
     description: 'A floating sidebar with submenus.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator'],
     files: [
       {
         path: '@/registry/blocks/sidebar-04/page.tsx',
@@ -422,7 +417,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-04/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -430,7 +425,6 @@ export const Index: Registry = {
     name: 'sidebar-05',
     description: 'A sidebar with collapsible submenus.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'label', 'collapsible'],
     files: [
       {
         path: '@/registry/blocks/sidebar-05/page.tsx',
@@ -452,7 +446,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-05/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -460,7 +454,6 @@ export const Index: Registry = {
     name: 'sidebar-06',
     description: 'A sidebar with submenus as dropdowns.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'card', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-06/page.tsx',
@@ -487,7 +480,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-06/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -495,7 +488,6 @@ export const Index: Registry = {
     name: 'sidebar-07',
     description: 'A sidebar that collapses to icons.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible', 'dropdown-menu', 'avatar'],
     files: [
       {
         path: '@/registry/blocks/sidebar-07/page.tsx',
@@ -532,7 +524,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-07/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -540,7 +532,6 @@ export const Index: Registry = {
     name: 'sidebar-08',
     description: 'An inset sidebar with secondary navigation.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible', 'dropdown-menu', 'avatar'],
     files: [
       {
         path: '@/registry/blocks/sidebar-08/page.tsx',
@@ -577,7 +568,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-08/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -585,16 +576,6 @@ export const Index: Registry = {
     name: 'sidebar-09',
     description: 'Collapsible nested sidebars.',
     type: 'registry:block',
-    registryDependencies: [
-      'sidebar',
-      'breadcrumb',
-      'separator',
-      'collapsible',
-      'dropdown-menu',
-      'avatar',
-      'switch',
-      'label',
-    ],
     files: [
       {
         path: '@/registry/blocks/sidebar-09/page.tsx',
@@ -616,7 +597,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-09/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -624,7 +605,6 @@ export const Index: Registry = {
     name: 'sidebar-10',
     description: 'A sidebar in a popover.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'popover', 'collapsible', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-10/page.tsx',
@@ -671,7 +651,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-10/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -679,7 +659,6 @@ export const Index: Registry = {
     name: 'sidebar-11',
     description: 'A sidebar with a collapsible file tree.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible'],
     files: [
       {
         path: '@/registry/blocks/sidebar-11/page.tsx',
@@ -696,7 +675,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-11/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -704,7 +683,6 @@ export const Index: Registry = {
     name: 'sidebar-12',
     description: 'A sidebar with a calendar.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible', 'calendar', 'dropdown-menu', 'avatar'],
     files: [
       {
         path: '@/registry/blocks/sidebar-12/page.tsx',
@@ -736,7 +714,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-12/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -744,7 +722,6 @@ export const Index: Registry = {
     name: 'sidebar-13',
     description: 'A sidebar in a dialog.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'button', 'dialog'],
     files: [
       {
         path: '@/registry/blocks/sidebar-13/page.tsx',
@@ -761,7 +738,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-13/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -769,7 +746,6 @@ export const Index: Registry = {
     name: 'sidebar-14',
     description: 'A sidebar on the right.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb'],
     files: [
       {
         path: '@/registry/blocks/sidebar-14/page.tsx',
@@ -786,7 +762,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-14/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -794,16 +770,6 @@ export const Index: Registry = {
     name: 'sidebar-15',
     description: 'A left and right sidebar.',
     type: 'registry:block',
-    registryDependencies: [
-      'sidebar',
-      'breadcrumb',
-      'separator',
-      'popover',
-      'collapsible',
-      'dropdown-menu',
-      'calendar',
-      'avatar',
-    ],
     files: [
       {
         path: '@/registry/blocks/sidebar-15/page.tsx',
@@ -865,7 +831,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-15/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -873,16 +839,6 @@ export const Index: Registry = {
     name: 'sidebar-16',
     description: 'A sidebar with a sticky site header.',
     type: 'registry:block',
-    registryDependencies: [
-      'sidebar',
-      'breadcrumb',
-      'separator',
-      'collapsible',
-      'dropdown-menu',
-      'avatar',
-      'button',
-      'label',
-    ],
     files: [
       {
         path: '@/registry/blocks/sidebar-16/page.tsx',
@@ -929,7 +885,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/sidebar-16/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -937,7 +893,6 @@ export const Index: Registry = {
     name: 'login-01',
     description: 'A simple login form.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-01/page.tsx',
@@ -954,7 +909,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/login-01/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -962,7 +917,6 @@ export const Index: Registry = {
     name: 'login-02',
     description: 'A two column login page with a cover image.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-02/page.tsx',
@@ -979,7 +933,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/login-02/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -987,7 +941,6 @@ export const Index: Registry = {
     name: 'login-03',
     description: 'A login page with a muted background color.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-03/page.tsx',
@@ -1004,7 +957,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/login-03/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1012,7 +965,6 @@ export const Index: Registry = {
     name: 'login-04',
     description: 'A login page with form and image.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-04/page.tsx',
@@ -1029,7 +981,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/login-04/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1037,7 +989,6 @@ export const Index: Registry = {
     name: 'login-05',
     description: 'A simple email-only login page.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-05/page.tsx',
@@ -1054,7 +1005,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/login-05/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1062,7 +1013,6 @@ export const Index: Registry = {
     name: 'products-01',
     description: 'A table of products',
     type: 'registry:block',
-    registryDependencies: ['checkbox', 'badge', 'button', 'dropdown-menu', 'pagination', 'table', 'tabs', 'select'],
     files: [
       {
         path: '@/registry/blocks/products-01/page.tsx',
@@ -1079,7 +1029,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/blocks/products-01/page.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1087,7 +1037,6 @@ export const Index: Registry = {
     name: 'chart-area-axes',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-axes.tsx',
@@ -1099,7 +1048,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-axes.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1107,7 +1056,6 @@ export const Index: Registry = {
     name: 'chart-area-default',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-default.tsx',
@@ -1119,7 +1067,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-default.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1127,7 +1075,6 @@ export const Index: Registry = {
     name: 'chart-area-gradient',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-gradient.tsx',
@@ -1139,7 +1086,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-gradient.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1147,7 +1094,6 @@ export const Index: Registry = {
     name: 'chart-area-icons',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-icons.tsx',
@@ -1159,7 +1105,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-icons.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1167,7 +1113,6 @@ export const Index: Registry = {
     name: 'chart-area-interactive',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart', 'select'],
     files: [
       {
         path: '@/registry/charts/chart-area-interactive.tsx',
@@ -1179,7 +1124,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-interactive.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1187,7 +1132,6 @@ export const Index: Registry = {
     name: 'chart-area-legend',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-legend.tsx',
@@ -1199,7 +1143,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-legend.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1207,7 +1151,6 @@ export const Index: Registry = {
     name: 'chart-area-linear',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-linear.tsx',
@@ -1219,7 +1162,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-linear.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1227,7 +1170,6 @@ export const Index: Registry = {
     name: 'chart-area-stacked-expand',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-stacked-expand.tsx',
@@ -1239,7 +1181,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-stacked-expand.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1247,7 +1189,6 @@ export const Index: Registry = {
     name: 'chart-area-stacked',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-stacked.tsx',
@@ -1259,7 +1200,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-stacked.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1267,7 +1208,6 @@ export const Index: Registry = {
     name: 'chart-area-step',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-step.tsx',
@@ -1279,7 +1219,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-area-step.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1287,7 +1227,6 @@ export const Index: Registry = {
     name: 'chart-bar-active',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-active.tsx',
@@ -1299,7 +1238,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-active.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1307,7 +1246,6 @@ export const Index: Registry = {
     name: 'chart-bar-default',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-default.tsx',
@@ -1319,7 +1257,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-default.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1327,7 +1265,6 @@ export const Index: Registry = {
     name: 'chart-bar-horizontal',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-horizontal.tsx',
@@ -1339,7 +1276,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-horizontal.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1347,7 +1284,6 @@ export const Index: Registry = {
     name: 'chart-bar-interactive',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-interactive.tsx',
@@ -1359,7 +1295,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-interactive.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1367,7 +1303,6 @@ export const Index: Registry = {
     name: 'chart-bar-label-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-label-custom.tsx',
@@ -1379,7 +1314,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-label-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1387,7 +1322,6 @@ export const Index: Registry = {
     name: 'chart-bar-label',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-label.tsx',
@@ -1399,7 +1333,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-label.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1407,7 +1341,6 @@ export const Index: Registry = {
     name: 'chart-bar-mixed',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-mixed.tsx',
@@ -1419,7 +1352,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-mixed.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1427,7 +1360,6 @@ export const Index: Registry = {
     name: 'chart-bar-multiple',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-multiple.tsx',
@@ -1439,7 +1371,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-multiple.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1447,7 +1379,6 @@ export const Index: Registry = {
     name: 'chart-bar-negative',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-negative.tsx',
@@ -1459,7 +1390,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-negative.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1467,7 +1398,6 @@ export const Index: Registry = {
     name: 'chart-bar-stacked',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-stacked.tsx',
@@ -1479,7 +1409,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-bar-stacked.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1487,7 +1417,6 @@ export const Index: Registry = {
     name: 'chart-line-default',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-default.tsx',
@@ -1499,7 +1428,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-default.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1507,7 +1436,6 @@ export const Index: Registry = {
     name: 'chart-line-dots-colors',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-dots-colors.tsx',
@@ -1519,7 +1447,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-dots-colors.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1527,7 +1455,6 @@ export const Index: Registry = {
     name: 'chart-line-dots-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-dots-custom.tsx',
@@ -1539,7 +1466,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-dots-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1547,7 +1474,6 @@ export const Index: Registry = {
     name: 'chart-line-dots',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-dots.tsx',
@@ -1559,7 +1485,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-dots.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1567,7 +1493,6 @@ export const Index: Registry = {
     name: 'chart-line-interactive',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-interactive.tsx',
@@ -1579,7 +1504,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-interactive.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1587,7 +1512,6 @@ export const Index: Registry = {
     name: 'chart-line-label-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-label-custom.tsx',
@@ -1599,7 +1523,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-label-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1607,7 +1531,6 @@ export const Index: Registry = {
     name: 'chart-line-label',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-label.tsx',
@@ -1619,7 +1542,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-label.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1627,7 +1550,6 @@ export const Index: Registry = {
     name: 'chart-line-linear',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-linear.tsx',
@@ -1639,7 +1561,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-linear.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1647,7 +1569,6 @@ export const Index: Registry = {
     name: 'chart-line-multiple',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-multiple.tsx',
@@ -1659,7 +1580,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-multiple.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1667,7 +1588,6 @@ export const Index: Registry = {
     name: 'chart-line-step',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-step.tsx',
@@ -1679,7 +1599,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-line-step.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1687,7 +1607,6 @@ export const Index: Registry = {
     name: 'chart-pie-donut-active',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-donut-active.tsx',
@@ -1699,7 +1618,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-donut-active.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1707,7 +1626,6 @@ export const Index: Registry = {
     name: 'chart-pie-donut-text',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-donut-text.tsx',
@@ -1719,7 +1637,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-donut-text.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1727,7 +1645,6 @@ export const Index: Registry = {
     name: 'chart-pie-donut',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-donut.tsx',
@@ -1739,7 +1656,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-donut.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1747,7 +1664,6 @@ export const Index: Registry = {
     name: 'chart-pie-interactive',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-interactive.tsx',
@@ -1759,7 +1675,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-interactive.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1767,7 +1683,6 @@ export const Index: Registry = {
     name: 'chart-pie-label-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-label-custom.tsx',
@@ -1779,7 +1694,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-label-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1787,7 +1702,6 @@ export const Index: Registry = {
     name: 'chart-pie-label-list',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-label-list.tsx',
@@ -1799,7 +1713,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-label-list.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1807,7 +1721,6 @@ export const Index: Registry = {
     name: 'chart-pie-label',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-label.tsx',
@@ -1819,7 +1732,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-label.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1827,7 +1740,6 @@ export const Index: Registry = {
     name: 'chart-pie-legend',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-legend.tsx',
@@ -1839,7 +1751,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-legend.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1847,7 +1759,6 @@ export const Index: Registry = {
     name: 'chart-pie-separator-none',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-separator-none.tsx',
@@ -1859,7 +1770,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-separator-none.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1867,7 +1778,6 @@ export const Index: Registry = {
     name: 'chart-pie-simple',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-simple.tsx',
@@ -1879,7 +1789,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-simple.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1887,7 +1797,6 @@ export const Index: Registry = {
     name: 'chart-pie-stacked',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-stacked.tsx',
@@ -1899,7 +1808,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-pie-stacked.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1907,7 +1816,6 @@ export const Index: Registry = {
     name: 'chart-radar-default',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-default.tsx',
@@ -1919,7 +1827,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-default.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1927,7 +1835,6 @@ export const Index: Registry = {
     name: 'chart-radar-dots',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-dots.tsx',
@@ -1939,7 +1846,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-dots.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1947,7 +1854,6 @@ export const Index: Registry = {
     name: 'chart-radar-grid-circle-fill',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-circle-fill.tsx',
@@ -1959,7 +1865,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-grid-circle-fill.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1967,7 +1873,6 @@ export const Index: Registry = {
     name: 'chart-radar-grid-circle-no-lines',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-circle-no-lines.tsx',
@@ -1979,7 +1884,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-grid-circle-no-lines.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -1987,7 +1892,6 @@ export const Index: Registry = {
     name: 'chart-radar-grid-circle',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-circle.tsx',
@@ -1999,7 +1903,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-grid-circle.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2007,7 +1911,6 @@ export const Index: Registry = {
     name: 'chart-radar-grid-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-custom.tsx',
@@ -2019,7 +1922,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-grid-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2027,7 +1930,6 @@ export const Index: Registry = {
     name: 'chart-radar-grid-fill',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-fill.tsx',
@@ -2039,7 +1941,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-grid-fill.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2047,7 +1949,6 @@ export const Index: Registry = {
     name: 'chart-radar-grid-none',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-none.tsx',
@@ -2059,7 +1960,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-grid-none.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2067,7 +1968,6 @@ export const Index: Registry = {
     name: 'chart-radar-icons',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-icons.tsx',
@@ -2079,7 +1979,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-icons.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2087,7 +1987,6 @@ export const Index: Registry = {
     name: 'chart-radar-label-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-label-custom.tsx',
@@ -2099,7 +1998,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-label-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2107,7 +2006,6 @@ export const Index: Registry = {
     name: 'chart-radar-legend',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-legend.tsx',
@@ -2119,7 +2017,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-legend.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2127,7 +2025,6 @@ export const Index: Registry = {
     name: 'chart-radar-lines-only',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-lines-only.tsx',
@@ -2139,7 +2036,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-lines-only.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2147,7 +2044,6 @@ export const Index: Registry = {
     name: 'chart-radar-multiple',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-multiple.tsx',
@@ -2159,7 +2055,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-multiple.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2167,7 +2063,6 @@ export const Index: Registry = {
     name: 'chart-radar-radius',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-radius.tsx',
@@ -2179,7 +2074,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radar-radius.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2187,7 +2082,6 @@ export const Index: Registry = {
     name: 'chart-radial-grid',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-grid.tsx',
@@ -2199,7 +2093,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radial-grid.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2207,7 +2101,6 @@ export const Index: Registry = {
     name: 'chart-radial-label',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-label.tsx',
@@ -2219,7 +2112,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radial-label.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2227,7 +2120,6 @@ export const Index: Registry = {
     name: 'chart-radial-shape',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-shape.tsx',
@@ -2239,7 +2131,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radial-shape.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2247,7 +2139,6 @@ export const Index: Registry = {
     name: 'chart-radial-simple',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-simple.tsx',
@@ -2259,7 +2150,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radial-simple.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2267,7 +2158,6 @@ export const Index: Registry = {
     name: 'chart-radial-stacked',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-stacked.tsx',
@@ -2279,7 +2169,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radial-stacked.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2287,7 +2177,6 @@ export const Index: Registry = {
     name: 'chart-radial-text',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-text.tsx',
@@ -2299,7 +2188,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-radial-text.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2307,7 +2196,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-default',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-default.tsx',
@@ -2319,7 +2207,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-default.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2327,7 +2215,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-indicator-line',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-indicator-line.tsx',
@@ -2339,7 +2226,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-indicator-line.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2347,7 +2234,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-indicator-none',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-indicator-none.tsx',
@@ -2359,7 +2245,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-indicator-none.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2367,7 +2253,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-label-none',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-label-none.tsx',
@@ -2379,7 +2264,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-label-none.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2387,7 +2272,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-label-custom',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-label-custom.tsx',
@@ -2399,7 +2283,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-label-custom.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2407,7 +2291,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-label-formatter',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-label-formatter.tsx',
@@ -2419,7 +2302,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-label-formatter.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2427,7 +2310,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-formatter',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-formatter.tsx',
@@ -2439,7 +2321,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-formatter.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2447,7 +2329,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-icons',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-icons.tsx',
@@ -2459,7 +2340,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-icons.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },
@@ -2467,7 +2348,6 @@ export const Index: Registry = {
     name: 'chart-tooltip-advanced',
     description: '',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-advanced.tsx',
@@ -2479,7 +2359,7 @@ export const Index: Registry = {
       const mod = await import('@/registry/charts/chart-tooltip-advanced.tsx');
       const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-      return { default: mod.default || mod[exportName] };
+      return { default: mod.default ?? mod[exportName] };
     }),
     meta: undefined,
   },

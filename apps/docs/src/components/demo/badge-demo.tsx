@@ -57,7 +57,7 @@ export function BadgeDemo(): JSX.Element {
 
       <div className="">
         <Badge asChild>
-          <Link href="/#badge">
+          <Link href="/apps/docs/public#badge">
             Link <ArrowRightIcon />
           </Link>
         </Badge>
@@ -65,7 +65,7 @@ export function BadgeDemo(): JSX.Element {
 
       <div className="">
         <Badge asChild variant="secondary">
-          <Link href="/#badge">
+          <Link href="/apps/docs/public#badge">
             Link <ArrowRightIcon />
           </Link>
         </Badge>
@@ -73,7 +73,7 @@ export function BadgeDemo(): JSX.Element {
 
       <div className="">
         <Badge asChild variant="destructive">
-          <Link href="/#badge">
+          <Link href="/apps/docs/public#badge">
             Link <ArrowRightIcon />
           </Link>
         </Badge>
@@ -81,7 +81,7 @@ export function BadgeDemo(): JSX.Element {
 
       <div className="">
         <Badge asChild variant="outline">
-          <Link href="/#badge">
+          <Link href="/apps/docs/public#badge">
             Link <ArrowRightIcon />
           </Link>
         </Badge>

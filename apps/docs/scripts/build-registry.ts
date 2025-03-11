@@ -19,7 +19,7 @@ function createComponentImport(componentPath: string): string {
     const mod = await import("${componentPath}")
     const exportName = Object.keys(mod).find(key => typeof mod[key] === 'function' || typeof mod[key] === 'object');
 
-    return { default: mod.default || mod[exportName] }
+    return { default: mod.default ?? mod[exportName] }
   })`;
 }
 
@@ -41,7 +41,6 @@ interface RegistryItem {
   files: RegistryFile[];
   meta: undefined;
   name: string;
-  registryDependencies: string[];
   type: string;
 }
 
@@ -70,7 +69,6 @@ export const Index: Registry = {`;
     name: "${item.name}",
     description: "${item.description ?? ''}",
     type: "${item.type}",
-    registryDependencies: ${JSON.stringify(item.registryDependencies)},
     files: [
       ${item.files?.map((file) => {
         const filePath = typeof file === 'string' ? file : file.path;

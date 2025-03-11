@@ -14,7 +14,7 @@ import { GridWrapper } from '@/components/grid-wrapper';
 
 export function AlertDemo(): JSX.Element {
   return (
-    <GridWrapper className="*:grid *:place-items-center">
+    <GridWrapper>
       <div className="">
         <Alert>
           <CheckCircle2Icon />

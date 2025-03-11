@@ -82,7 +82,7 @@ type Timezone = (typeof timezonesOptions)[number];
 
 export function ComboboxDemo(): JSX.Element {
   return (
-    <GridWrapper className="*:grid *:place-items-center">
+    <GridWrapper>
       <div className="">
         <FrameworkCombobox frameworks={[...frameworkOptions]} />
       </div>

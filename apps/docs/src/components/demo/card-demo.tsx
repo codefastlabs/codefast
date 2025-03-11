@@ -23,7 +23,7 @@ import { GridWrapper } from '@/components/grid-wrapper';
 
 export function CardDemo(): JSX.Element {
   return (
-    <GridWrapper className="*:grid *:place-items-center">
+    <GridWrapper>
       <div className="">
         <form>
           <Card>

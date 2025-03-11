@@ -5,7 +5,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-axes',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-axes.tsx',
@@ -17,7 +16,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-default',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-default.tsx',
@@ -29,7 +27,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-gradient',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-gradient.tsx',
@@ -41,7 +38,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-icons',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-icons.tsx',
@@ -53,7 +49,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-interactive',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart', 'select'],
     files: [
       {
         path: '@/registry/charts/chart-area-interactive.tsx',
@@ -65,7 +60,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-legend',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-legend.tsx',
@@ -77,7 +71,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-linear',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-linear.tsx',
@@ -89,7 +82,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-stacked-expand',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-stacked-expand.tsx',
@@ -101,7 +93,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-stacked',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-stacked.tsx',
@@ -113,7 +104,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-area-step',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-area-step.tsx',
@@ -127,7 +117,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-active',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-active.tsx',
@@ -139,7 +128,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-default',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-default.tsx',
@@ -151,7 +139,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-horizontal',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-horizontal.tsx',
@@ -163,7 +150,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-interactive',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-interactive.tsx',
@@ -175,7 +161,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-label-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-label-custom.tsx',
@@ -187,7 +172,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-label',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-label.tsx',
@@ -199,7 +183,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-mixed',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-mixed.tsx',
@@ -211,7 +194,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-multiple',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-multiple.tsx',
@@ -223,7 +205,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-negative',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-negative.tsx',
@@ -235,7 +216,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-bar-stacked',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-bar-stacked.tsx',
@@ -249,7 +229,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-default',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-default.tsx',
@@ -261,7 +240,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-dots-colors',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-dots-colors.tsx',
@@ -273,7 +251,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-dots-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-dots-custom.tsx',
@@ -285,7 +262,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-dots',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-dots.tsx',
@@ -297,7 +273,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-interactive',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-interactive.tsx',
@@ -309,7 +284,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-label-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-label-custom.tsx',
@@ -321,7 +295,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-label',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-label.tsx',
@@ -333,7 +306,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-linear',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-linear.tsx',
@@ -345,7 +317,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-multiple',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-multiple.tsx',
@@ -357,7 +328,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-line-step',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-line-step.tsx',
@@ -371,7 +341,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-donut-active',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-donut-active.tsx',
@@ -383,7 +352,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-donut-text',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-donut-text.tsx',
@@ -395,7 +363,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-donut',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-donut.tsx',
@@ -407,7 +374,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-interactive',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-interactive.tsx',
@@ -419,7 +385,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-label-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-label-custom.tsx',
@@ -431,7 +396,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-label-list',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-label-list.tsx',
@@ -443,7 +407,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-label',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-label.tsx',
@@ -455,7 +418,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-legend',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-legend.tsx',
@@ -467,7 +429,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-separator-none',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-separator-none.tsx',
@@ -479,7 +440,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-simple',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-simple.tsx',
@@ -491,7 +451,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-pie-stacked',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-pie-stacked.tsx',
@@ -505,7 +464,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-default',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-default.tsx',
@@ -517,7 +475,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-dots',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-dots.tsx',
@@ -529,7 +486,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-grid-circle-fill',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-circle-fill.tsx',
@@ -541,7 +497,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-grid-circle-no-lines',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-circle-no-lines.tsx',
@@ -553,7 +508,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-grid-circle',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-circle.tsx',
@@ -565,7 +519,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-grid-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-custom.tsx',
@@ -577,7 +530,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-grid-fill',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-fill.tsx',
@@ -589,7 +541,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-grid-none',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-grid-none.tsx',
@@ -601,7 +552,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-icons',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-icons.tsx',
@@ -613,7 +563,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-label-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-label-custom.tsx',
@@ -625,7 +574,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-legend',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-legend.tsx',
@@ -637,7 +585,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-lines-only',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-lines-only.tsx',
@@ -649,7 +596,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-multiple',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-multiple.tsx',
@@ -661,7 +607,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radar-radius',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radar-radius.tsx',
@@ -675,7 +620,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radial-grid',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-grid.tsx',
@@ -687,7 +631,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radial-label',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-label.tsx',
@@ -699,7 +642,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radial-shape',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-shape.tsx',
@@ -711,7 +653,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radial-simple',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-simple.tsx',
@@ -723,7 +664,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radial-stacked',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-stacked.tsx',
@@ -735,7 +675,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-radial-text',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-radial-text.tsx',
@@ -747,7 +686,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-default',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-default.tsx',
@@ -759,7 +697,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-indicator-line',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-indicator-line.tsx',
@@ -771,7 +708,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-indicator-none',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-indicator-none.tsx',
@@ -783,7 +719,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-label-none',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-label-none.tsx',
@@ -795,7 +730,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-label-custom',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-label-custom.tsx',
@@ -807,7 +741,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-label-formatter',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-label-formatter.tsx',
@@ -819,7 +752,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-formatter',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-formatter.tsx',
@@ -831,7 +763,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-icons',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-icons.tsx',
@@ -843,7 +774,6 @@ export const charts: Registry['items'] = [
   {
     name: 'chart-tooltip-advanced',
     type: 'registry:block',
-    registryDependencies: ['card', 'chart'],
     files: [
       {
         path: '@/registry/charts/chart-tooltip-advanced.tsx',

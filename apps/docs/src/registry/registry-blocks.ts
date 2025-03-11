@@ -5,7 +5,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-01',
     type: 'registry:block',
     description: 'A simple sidebar with navigation grouped by section.',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'label', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-01/page.tsx',
@@ -31,7 +30,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-02',
     description: 'A sidebar with collapsible sections.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'label', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-02/page.tsx',
@@ -57,7 +55,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-03',
     description: 'A sidebar with submenus.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb'],
     files: [
       {
         path: '@/registry/blocks/sidebar-03/page.tsx',
@@ -75,7 +72,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-04',
     description: 'A floating sidebar with submenus.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator'],
     files: [
       {
         path: '@/registry/blocks/sidebar-04/page.tsx',
@@ -93,7 +89,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-05',
     description: 'A sidebar with collapsible submenus.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'label', 'collapsible'],
     files: [
       {
         path: '@/registry/blocks/sidebar-05/page.tsx',
@@ -115,7 +110,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-06',
     description: 'A sidebar with submenus as dropdowns.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'card', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-06/page.tsx',
@@ -141,7 +135,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-07',
     type: 'registry:block',
     description: 'A sidebar that collapses to icons.',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible', 'dropdown-menu', 'avatar'],
     files: [
       {
         path: '@/registry/blocks/sidebar-07/page.tsx',
@@ -175,7 +168,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-08',
     description: 'An inset sidebar with secondary navigation.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible', 'dropdown-menu', 'avatar'],
     files: [
       {
         path: '@/registry/blocks/sidebar-08/page.tsx',
@@ -209,16 +201,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-09',
     description: 'Collapsible nested sidebars.',
     type: 'registry:block',
-    registryDependencies: [
-      'sidebar',
-      'breadcrumb',
-      'separator',
-      'collapsible',
-      'dropdown-menu',
-      'avatar',
-      'switch',
-      'label',
-    ],
     files: [
       {
         path: '@/registry/blocks/sidebar-09/page.tsx',
@@ -240,7 +222,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-10',
     description: 'A sidebar in a popover.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'popover', 'collapsible', 'dropdown-menu'],
     files: [
       {
         path: '@/registry/blocks/sidebar-10/page.tsx',
@@ -282,7 +263,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-11',
     description: 'A sidebar with a collapsible file tree.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible'],
     files: [
       {
         path: '@/registry/blocks/sidebar-11/page.tsx',
@@ -300,7 +280,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-12',
     description: 'A sidebar with a calendar.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'separator', 'collapsible', 'calendar', 'dropdown-menu', 'avatar'],
     files: [
       {
         path: '@/registry/blocks/sidebar-12/page.tsx',
@@ -330,7 +309,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-13',
     description: 'A sidebar in a dialog.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb', 'button', 'dialog'],
     files: [
       {
         path: '@/registry/blocks/sidebar-13/page.tsx',
@@ -348,7 +326,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-14',
     description: 'A sidebar on the right.',
     type: 'registry:block',
-    registryDependencies: ['sidebar', 'breadcrumb'],
     files: [
       {
         path: '@/registry/blocks/sidebar-14/page.tsx',
@@ -366,16 +343,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-15',
     description: 'A left and right sidebar.',
     type: 'registry:block',
-    registryDependencies: [
-      'sidebar',
-      'breadcrumb',
-      'separator',
-      'popover',
-      'collapsible',
-      'dropdown-menu',
-      'calendar',
-      'avatar',
-    ],
     files: [
       {
         path: '@/registry/blocks/sidebar-15/page.tsx',
@@ -429,16 +396,6 @@ export const blocks: Registry['items'] = [
     name: 'sidebar-16',
     description: 'A sidebar with a sticky site header.',
     type: 'registry:block',
-    registryDependencies: [
-      'sidebar',
-      'breadcrumb',
-      'separator',
-      'collapsible',
-      'dropdown-menu',
-      'avatar',
-      'button',
-      'label',
-    ],
     files: [
       {
         path: '@/registry/blocks/sidebar-16/page.tsx',
@@ -480,7 +437,6 @@ export const blocks: Registry['items'] = [
     name: 'login-01',
     description: 'A simple login form.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-01/page.tsx',
@@ -498,7 +454,6 @@ export const blocks: Registry['items'] = [
     name: 'login-02',
     description: 'A two column login page with a cover image.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-02/page.tsx',
@@ -516,7 +471,6 @@ export const blocks: Registry['items'] = [
     name: 'login-03',
     description: 'A login page with a muted background color.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-03/page.tsx',
@@ -534,7 +488,6 @@ export const blocks: Registry['items'] = [
     name: 'login-04',
     description: 'A login page with form and image.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-04/page.tsx',
@@ -552,7 +505,6 @@ export const blocks: Registry['items'] = [
     name: 'login-05',
     description: 'A simple email-only login page.',
     type: 'registry:block',
-    registryDependencies: ['button', 'card', 'input', 'label'],
     files: [
       {
         path: '@/registry/blocks/login-05/page.tsx',
@@ -570,7 +522,6 @@ export const blocks: Registry['items'] = [
     name: 'products-01',
     description: 'A table of products',
     type: 'registry:block',
-    registryDependencies: ['checkbox', 'badge', 'button', 'dropdown-menu', 'pagination', 'table', 'tabs', 'select'],
     files: [
       {
         path: '@/registry/blocks/products-01/page.tsx',
