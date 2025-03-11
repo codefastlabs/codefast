@@ -6,7 +6,7 @@ import { GridWrapper } from '@/components/grid-wrapper';
 
 export function CheckboxDemo(): JSX.Element {
   return (
-    <GridWrapper className="*:grid *:place-items-center">
+    <GridWrapper>
       <div className="">
         <div className="flex items-center gap-3">
           <Checkbox id="terms" />
