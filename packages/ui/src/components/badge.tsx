@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const badgeVariants = tv({
-  base: 'focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-3 inline-flex w-fit shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium transition-[color,box-shadow,border-color,background-color] [&>svg]:size-3 [&>svg]:shrink-0',
+  base: 'focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-3 inline-flex w-fit shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium transition [&>svg]:size-3 [&>svg]:shrink-0',
   variants: {
     variant: {
       default: 'bg-primary [a&]:hover:bg-primary-hover text-primary-foreground border-transparent',

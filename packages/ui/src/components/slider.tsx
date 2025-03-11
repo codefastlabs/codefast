@@ -25,7 +25,10 @@ function Slider({
 
   return (
     <SliderPrimitive.Root
-      className={cn('data-disabled:opacity-50 relative flex w-full touch-none select-none items-center', className)}
+      className={cn(
+        'data-disabled:opacity-50 relative flex w-full touch-none select-none items-center data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col',
+        className,
+      )}
       data-slot="slider"
       defaultValue={defaultValue}
       max={max}
@@ -34,17 +37,21 @@ function Slider({
       {...props}
     >
       <SliderPrimitive.Track
-        className="bg-muted relative h-1 w-full grow overflow-hidden rounded-full"
+        className="bg-muted relative w-full grow overflow-hidden rounded-full data-[orientation=horizontal]:h-1 data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-1"
         data-slot="slider-track"
       >
-        <SliderPrimitive.Range className="bg-primary absolute h-full" data-slot="slider-range" />
+        <SliderPrimitive.Range
+          className="bg-primary absolute data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
+          data-slot="slider-range"
+        />
       </SliderPrimitive.Track>
+
       {Array.from({ length: _values.length }, (_, index) => (
         <SliderPrimitive.Thumb
           key={index}
           aria-label="Volume"
           className={cn(
-            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-ring focus-visible:ring-3 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm transition-[color,box-shadow,border-color,background-color] after:size-full after:rounded-full',
+            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-ring focus-visible:ring-3 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm after:size-full after:rounded-full after:transition-[width,height]',
           )}
           data-slot="slider-thumb"
         />
