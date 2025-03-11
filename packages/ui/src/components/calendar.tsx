@@ -70,14 +70,16 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
         [UI.Month]: cn('flex flex-col gap-4', classNames?.[UI.Month]),
         [UI.Months]: cn('relative inline-flex flex-wrap gap-4', classNames?.[UI.Months]),
         [UI.Nav]: cn('absolute end-0 flex gap-2', classNames?.[UI.Nav]),
-        [UI.NextMonthButton]: cn(
-          buttonVariants({ variant: 'ghost', size: '2xs', icon: true }),
-          classNames?.[UI.NextMonthButton],
-        ),
-        [UI.PreviousMonthButton]: cn(
-          buttonVariants({ variant: 'ghost', size: '2xs', icon: true }),
-          classNames?.[UI.PreviousMonthButton],
-        ),
+        [UI.NextMonthButton]: buttonVariants({
+          variant: 'ghost',
+          size: 'icon',
+          className: cn('size-7', classNames?.[UI.NextMonthButton]),
+        }),
+        [UI.PreviousMonthButton]: buttonVariants({
+          variant: 'ghost',
+          size: 'icon',
+          className: cn('size-7', classNames?.[UI.PreviousMonthButton]),
+        }),
         [UI.Week]: cn('mt-2 flex justify-between', classNames?.[UI.Week]),
         [UI.Weeks]: cn(classNames?.[UI.Weeks]),
         [UI.Weekday]: cn('text-muted-foreground min-w-8.5 text-xs font-medium', classNames?.[UI.Weekday]),

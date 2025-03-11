@@ -37,7 +37,7 @@ export function TooltipDemo(): JSX.Element {
             >
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button icon className="capitalize" variant="outline">
+                  <Button className="capitalize" size="icon" variant="outline">
                     {side === 'top' && <ChevronUpIcon />}
                     {side === 'bottom' && <ChevronUpIcon className="rotate-180" />}
                     {side === 'left' && <ChevronUpIcon className="rotate-270" />}
@@ -60,7 +60,7 @@ export function TooltipDemo(): JSX.Element {
       <div>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button icon variant="ghost">
+            <Button size="icon" variant="ghost">
               <InfoIcon />
 
               <span className="sr-only">Info</span>
