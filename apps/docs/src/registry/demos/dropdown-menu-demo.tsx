@@ -383,7 +383,7 @@ function DropdownMenuIconColor(): JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button icon variant="ghost">
+        <Button size="icon" variant="ghost">
           <MoreHorizontalIcon />
 
           <span className="sr-only">Toggle menu</span>

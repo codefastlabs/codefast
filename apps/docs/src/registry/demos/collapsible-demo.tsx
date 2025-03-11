@@ -15,8 +15,8 @@ export function CollapsibleDemo(): JSX.Element {
         <h4 className="line-clamp-1 text-sm font-semibold">@peduarte starred 3 repositories</h4>
 
         <CollapsibleTrigger asChild>
-          <Button icon size="sm" variant="ghost">
-            <ChevronsUpDown className="h-4 w-4" />
+          <Button size="icon" variant="ghost">
+            <ChevronsUpDown />
 
             <span className="sr-only">Toggle</span>
           </Button>

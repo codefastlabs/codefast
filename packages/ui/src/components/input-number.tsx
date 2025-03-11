@@ -22,7 +22,6 @@ function InputNumber({
   defaultValue,
   disabled,
   formatOptions,
-  inputSize,
   loaderPosition,
   loading,
   max,
@@ -42,7 +41,7 @@ function InputNumber({
     <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={root({ className: ['pr-0', className], inputSize })}
+      className={root({ className: ['pr-0', className] })}
       data-slot="input-number"
       defaultValue={defaultValue}
       disabled={disabled}
@@ -64,7 +63,7 @@ function InputNumber({
         autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        className={input({ inputSize })}
+        className={input()}
         inputMode="numeric"
         spellCheck="false"
         {...props}
@@ -77,8 +76,6 @@ function InputNumber({
           aria-label="Increment"
           className={buttonVariants({
             className: 'h-full rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]',
-            icon: true,
-            size: inputSize,
             variant: 'ghost',
           })}
           data-slot="input-number-increment-button"
@@ -89,8 +86,6 @@ function InputNumber({
           aria-label="Decrement"
           className={buttonVariants({
             className: 'h-full rounded-none rounded-br-[calc(var(--radius-lg)-1px)]',
-            icon: true,
-            size: inputSize,
             variant: 'ghost',
           })}
           data-slot="input-number-decrement-button"

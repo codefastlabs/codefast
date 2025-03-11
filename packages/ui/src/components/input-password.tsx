@@ -24,7 +24,6 @@ const { input, root } = inputVariants();
 function InputPassword({
   className,
   disabled,
-  inputSize,
   loaderPosition,
   loading,
   prefix,
@@ -43,7 +42,7 @@ function InputPassword({
 
   return (
     <InputPrimitive.Root
-      className={root({ className, inputSize })}
+      className={root({ className })}
       data-slot="input-password"
       disabled={disabled}
       loaderPosition={loaderPosition}
@@ -55,20 +54,17 @@ function InputPassword({
     >
       <InputPrimitive.Item
         autoCapitalize="off"
-        className={input({ inputSize })}
+        className={input()}
         data-slot="input-password-item"
         type={type}
         {...props}
       />
       <Button
-        icon
-        inside
         aria-label={type === 'password' ? 'Show password' : 'Hide password'}
         className="rounded-full"
         data-slot="input-password-toggle"
         disabled={disabled}
         prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
-        size={inputSize}
         variant="ghost"
         onClick={togglePasswordVisibility}
       />
