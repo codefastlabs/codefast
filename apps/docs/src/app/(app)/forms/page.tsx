@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import { type JSX } from 'react';
 
-import { FormsDemo } from '@/components/demo/forms-demo';
+import { FormsDemo } from '@/registry/demos/forms-demo';
 
 export const metadata: Metadata = {
   title: 'Forms',

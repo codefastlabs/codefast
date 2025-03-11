@@ -3,7 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
 
-import type { Registry } from '@/scripts/lib/schema';
+import type { Registry } from '@/types/registry';
 
 import { registry } from '@/registry';
 

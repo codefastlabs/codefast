@@ -1,20 +1,20 @@
 import type { JSX } from 'react';
 
-import { ChartAreaDemo } from '@/components/demo/chart-area-demo';
-import { ChartBarDemo } from '@/components/demo/chart-bar-demo';
-import { ChartLineDemo } from '@/components/demo/chart-line-demo';
 import { GridWrapper } from '@/components/grid-wrapper';
+import { ChartAreaDefault } from '@/registry/charts/chart-area-default';
 import { ChartBarMixed } from '@/registry/charts/chart-bar-mixed';
+import { ChartBarMultiple } from '@/registry/charts/chart-bar-multiple';
+import { ChartLineMultiple } from '@/registry/charts/chart-line-multiple';
 
 export function ChartDemo(): JSX.Element {
   return (
     <GridWrapper>
       <div className="">
-        <ChartAreaDemo />
+        <ChartAreaDefault />
       </div>
 
       <div className="">
-        <ChartBarDemo />
+        <ChartBarMultiple />
       </div>
 
       <div className="">
@@ -22,7 +22,7 @@ export function ChartDemo(): JSX.Element {
       </div>
 
       <div className="">
-        <ChartLineDemo />
+        <ChartLineMultiple />
       </div>
     </GridWrapper>
   );

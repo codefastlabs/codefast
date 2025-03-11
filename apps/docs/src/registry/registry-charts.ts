@@ -1,4 +1,4 @@
-import type { Registry } from '@/scripts/lib/schema';
+import type { Registry } from '@/types/registry';
 
 export const charts: Registry['items'] = [
   // Area Charts
