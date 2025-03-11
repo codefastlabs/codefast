@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@codefast/ui';
+import { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger } from '@codefast/ui';
 
 import { GridWrapper } from '@/components/grid-wrapper';
 
@@ -10,13 +10,19 @@ export function AccordionDemo(): JSX.Element {
       <div className="">
         <Accordion collapsible className="w-full" type="single">
           <AccordionItem value="item-1">
-            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionTrigger>
+              Is it accessible?
+              <AccordionIcon />
+            </AccordionTrigger>
 
             <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-2">
-            <AccordionTrigger>Is it styled?</AccordionTrigger>
+            <AccordionTrigger>
+              Is it styled?
+              <AccordionIcon />
+            </AccordionTrigger>
 
             <AccordionContent>
               Yes. It comes with default styles that matches the other components&apos; aesthetic.
@@ -24,10 +30,70 @@ export function AccordionDemo(): JSX.Element {
           </AccordionItem>
 
           <AccordionItem value="item-3">
-            <AccordionTrigger>Is it animated?</AccordionTrigger>
+            <AccordionTrigger>
+              Is it animated?
+              <AccordionIcon />
+            </AccordionTrigger>
 
             <AccordionContent>
               Yes. It&apos;s animated by default, but you can disable it if you prefer.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-4">
+            <AccordionTrigger disabled>
+              Is it responsive?
+              <AccordionIcon />
+            </AccordionTrigger>
+
+            <AccordionContent>
+              Yes. It&apos;s responsive by default, but you can disable it if you prefer.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
+      <div className="">
+        <Accordion className="w-full" type="multiple">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>
+              Is it accessible?
+              <AccordionIcon />
+            </AccordionTrigger>
+
+            <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-2">
+            <AccordionTrigger>
+              Is it styled?
+              <AccordionIcon />
+            </AccordionTrigger>
+
+            <AccordionContent>
+              Yes. It comes with default styles that matches the other components&apos; aesthetic.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-3">
+            <AccordionTrigger>
+              Is it animated?
+              <AccordionIcon />
+            </AccordionTrigger>
+
+            <AccordionContent>
+              Yes. It&apos;s animated by default, but you can disable it if you prefer.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-4">
+            <AccordionTrigger disabled>
+              Is it responsive?
+              <AccordionIcon />
+            </AccordionTrigger>
+
+            <AccordionContent>
+              Yes. It&apos;s responsive by default, but you can disable it if you prefer.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -38,6 +104,7 @@ export function AccordionDemo(): JSX.Element {
           <AccordionItem value="item-1">
             <AccordionTrigger>
               What are the key considerations when implementing a comprehensive enterprise-level authentication system?
+              <AccordionIcon />
             </AccordionTrigger>
 
             <AccordionContent>
@@ -54,6 +121,7 @@ export function AccordionDemo(): JSX.Element {
             <AccordionTrigger>
               How does modern distributed system architecture handle eventual consistency and data synchronization
               across multiple regions?
+              <AccordionIcon />
             </AccordionTrigger>
 
             <AccordionContent>

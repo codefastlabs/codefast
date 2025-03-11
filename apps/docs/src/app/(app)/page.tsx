@@ -17,6 +17,7 @@ import { ChartDemo } from '@/registry/demos/chart-demo';
 import { CheckboxDemo } from '@/registry/demos/checkbox-demo';
 import { CollapsibleDemo } from '@/registry/demos/collapsible-demo';
 import { ComboboxDemo } from '@/registry/demos/combobox-demo';
+import { CommandDemo } from '@/registry/demos/command-demo';
 import { ContextMenuDemo } from '@/registry/demos/context-menu-demo';
 import { DatePickerDemo } from '@/registry/demos/date-picker-demo';
 import { DialogDemo } from '@/registry/demos/dialog-demo';
@@ -118,6 +119,10 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="context-menu">
         <ContextMenuDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="command">
+        <CommandDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="date-picker">

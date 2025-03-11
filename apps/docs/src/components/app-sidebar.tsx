@@ -34,6 +34,7 @@ import {
   Settings2,
   SquareTerminal,
 } from 'lucide-react';
+import Link from 'next/link';
 
 import type { Component, NavItem, Team, User } from '@/types';
 
@@ -100,9 +101,9 @@ const data: {
       ],
     },
   ],
-  components: [...Object.values(Index).filter((item) => item.type === 'registry:demo'), { name: 'combobox' }].sort(
-    (a, b) => a.name.localeCompare(b.name),
-  ),
+  components: Object.values(Index)
+    .filter((item) => item.type === 'registry:ui')
+    .sort((a, b) => a.name.localeCompare(b.name)),
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
@@ -170,9 +171,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
-                  <a href={`/#${item.name}`}>
-                    <span>{getComponentName(item.name)}</span>
-                  </a>
+                  <Link href={`/view/${item.name}`}>{getComponentName(item.name)}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

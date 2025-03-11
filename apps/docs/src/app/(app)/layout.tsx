@@ -14,17 +14,22 @@ export default async function AppLayout({ children }: Readonly<{ children: React
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar className="z-30" />
+
       <SidebarInset>
         <header className="bg-background sticky inset-x-0 top-0 isolate z-20 flex shrink-0 items-center gap-2 border-b">
           <div className="flex h-14 w-full items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1.5" />
+
             <Separator className="mr-2 data-[orientation=vertical]:h-4" orientation="vertical" />
+
             <NavHeader />
+
             <div className="ml-auto flex items-center gap-2">
               <ModeSwitcher />
             </div>
           </div>
         </header>
+
         {children}
       </SidebarInset>
     </SidebarProvider>

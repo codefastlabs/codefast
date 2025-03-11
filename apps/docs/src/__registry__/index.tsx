@@ -26,283 +26,881 @@ export const Index: Registry = {
   accordion: {
     name: 'accordion',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/accordion-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/accordion-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   alert: {
     name: 'alert',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/alert-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/alert-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'alert-dialog': {
     name: 'alert-dialog',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/alert-dialog-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/alert-dialog-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'aspect-ratio': {
     name: 'aspect-ratio',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/aspect-ratio-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/aspect-ratio-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   avatar: {
     name: 'avatar',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/avatar-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/avatar-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   badge: {
     name: 'badge',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/badge-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/badge-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   breadcrumb: {
     name: 'breadcrumb',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/breadcrumb-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/breadcrumb-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   button: {
     name: 'button',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/button-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/button-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   calendar: {
     name: 'calendar',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/calendar-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/calendar-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   card: {
     name: 'card',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/card-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/card-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   carousel: {
     name: 'carousel',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/carousel-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/carousel-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   chart: {
     name: 'chart',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/chart-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/chart-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   checkbox: {
     name: 'checkbox',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/checkbox-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/checkbox-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   collapsible: {
     name: 'collapsible',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/collapsible-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/collapsible-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   command: {
     name: 'command',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/command-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/command-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
+    meta: undefined,
+  },
+  combobox: {
+    name: 'combobox',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/combobox-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/combobox-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'context-menu': {
     name: 'context-menu',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/context-menu-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/context-menu-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   dialog: {
     name: 'dialog',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/dialog-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/dialog-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   drawer: {
     name: 'drawer',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/drawer-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/drawer-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'dropdown-menu': {
     name: 'dropdown-menu',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/dropdown-menu-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/dropdown-menu-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   form: {
     name: 'form',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/form-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/form-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'hover-card': {
     name: 'hover-card',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/hover-card-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/hover-card-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   input: {
     name: 'input',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'input-otp': {
     name: 'input-otp',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-otp-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-otp-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   label: {
     name: 'label',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/label-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/label-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   menubar: {
     name: 'menubar',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/menubar-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/menubar-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'navigation-menu': {
     name: 'navigation-menu',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/navigation-menu-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/navigation-menu-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   pagination: {
     name: 'pagination',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/pagination-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/pagination-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   popover: {
     name: 'popover',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/popover-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/popover-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   progress: {
     name: 'progress',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/progress-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/progress-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'radio-group': {
     name: 'radio-group',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/radio-group-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/radio-group-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   resizable: {
     name: 'resizable',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/resizable-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/resizable-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'scroll-area': {
     name: 'scroll-area',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/scroll-area-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/scroll-area-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   select: {
     name: 'select',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/select-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/select-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   separator: {
     name: 'separator',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/separator-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/separator-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   sheet: {
     name: 'sheet',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/sheet-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/sheet-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   sidebar: {
     name: 'sidebar',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
     meta: undefined,
   },
   skeleton: {
     name: 'skeleton',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/skeleton-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/skeleton-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   slider: {
     name: 'slider',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/slider-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/slider-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   sonner: {
     name: 'sonner',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/sonner-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/sonner-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   switch: {
     name: 'switch',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/switch-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/switch-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   table: {
     name: 'table',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/table-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/table-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   tabs: {
     name: 'tabs',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/tabs-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/tabs-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   textarea: {
     name: 'textarea',
     description: '',
-    type: 'registry:demo',
-    meta: undefined,
-  },
-  toast: {
-    name: 'toast',
-    description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/textarea-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/textarea-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   toggle: {
     name: 'toggle',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/toggle-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/toggle-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'toggle-group': {
     name: 'toggle-group',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/toggle-group-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/toggle-group-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   tooltip: {
     name: 'tooltip',
     description: '',
-    type: 'registry:demo',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/tooltip-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/tooltip-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
     meta: undefined,
   },
   'sidebar-01': {
