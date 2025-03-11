@@ -167,9 +167,5 @@ const products = [
 ];
 
 export default function ProductsPage(): JSX.Element {
-  return (
-    <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-      <ProductsTable products={products} />
-    </div>
-  );
+  return <ProductsTable products={products} />;
 }

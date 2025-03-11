@@ -2,7 +2,7 @@ import type { ComponentProps, JSX } from 'react';
 
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { Slot } from '@radix-ui/react-slot';
-import { ChevronRightIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -18,8 +18,14 @@ function Accordion({ ...props }: ComponentProps<typeof AccordionPrimitive.Root>)
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
-function AccordionItem({ ...props }: ComponentProps<typeof AccordionPrimitive.Item>): JSX.Element {
-  return <AccordionPrimitive.Item data-slot="accordion-item" {...props} />;
+function AccordionItem({ className, ...props }: ComponentProps<typeof AccordionPrimitive.Item>): JSX.Element {
+  return (
+    <AccordionPrimitive.Item
+      className={cn('border-b last:border-b-0', className)}
+      data-slot="accordion-item"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -34,21 +40,17 @@ function AccordionIcon({
   asChild?: boolean;
   className?: string;
 }): JSX.Element {
-  if (asChild) {
-    return (
-      <Slot
-        className={cn('text-muted-foreground size-4 shrink-0 group-data-[state=open]:rotate-90', className)}
-        data-slot="accordion-icon"
-        {...props}
-      />
-    );
-  }
+  const Component = (asChild ? Slot : ChevronDownIcon) as typeof Slot;
 
   return (
-    <ChevronRightIcon
+    <Component
       aria-hidden
-      className={cn('text-muted-foreground size-4 shrink-0 group-data-[state=open]:rotate-90', className)}
+      className={cn(
+        'text-muted-foreground size-4 shrink-0 translate-y-0.5 transition-transform duration-200',
+        className,
+      )}
       data-slot="accordion-icon"
+      {...props}
     />
   );
 }
@@ -57,17 +59,23 @@ function AccordionIcon({
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
-function AccordionTrigger({ className, ...props }: ComponentProps<typeof AccordionPrimitive.Trigger>): JSX.Element {
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof AccordionPrimitive.Trigger>): JSX.Element {
   return (
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
         className={cn(
-          'focus-visible:ring-ring focus-visible:ring-3 outline-hidden group flex grow items-center gap-2 py-4 text-left text-sm font-medium transition-all',
+          'focus-visible:ring-ring focus-visible:ring-3 outline-hidden hover:not-disabled:underline group flex grow items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium disabled:opacity-50 [&[data-state=open]>svg]:rotate-180',
           className,
         )}
         data-slot="accordion-trigger"
         {...props}
-      />
+      >
+        {children}
+      </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );
 }

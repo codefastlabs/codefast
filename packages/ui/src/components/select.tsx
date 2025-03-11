@@ -47,7 +47,7 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       className={buttonVariants({
         className: [
-          'focus:ring-ring focus:ring-3 focus:border-input-focus hover:not-disabled:border-input-hover w-full justify-between px-3 font-normal *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate',
+          'focus:ring-ring focus:ring-3 focus:border-input-focus hover:not-disabled:border-input-hover w-fit justify-between px-3 font-normal *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate',
           className,
         ],
         size,
