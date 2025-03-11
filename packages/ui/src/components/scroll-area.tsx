@@ -99,7 +99,7 @@ function ScrollArea({
         {...props}
       >
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] transition-[color,box-shadow,border-color,background-color] [&>*]:h-full"
+          className="size-full rounded-[inherit] transition [&>*]:h-full"
           data-slot="scroll-area-viewport"
         >
           {children}

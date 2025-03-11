@@ -12,7 +12,7 @@ import { Spinner } from '@/components/spinner';
 
 const inputVariants = tv({
   slots: {
-    root: 'border-input bg-background [&>svg]:text-muted-foreground hover:not-has-disabled:not-focus-within:border-input-hover focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 not-has-disabled:shadow-xs peer flex w-full grow items-center gap-3 rounded-lg border px-3 text-sm transition-[color,box-shadow,border-color,background-color] [&>svg]:shrink-0',
+    root: 'border-input bg-background [&>svg]:text-muted-foreground hover:not-has-disabled:not-focus-within:border-input-hover focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 not-has-disabled:shadow-xs peer flex w-full grow items-center gap-3 rounded-lg border px-3 text-sm transition [&>svg]:shrink-0',
     input: 'placeholder:text-muted-foreground outline-hidden size-full file:bg-transparent file:font-medium',
   },
   variants: {
