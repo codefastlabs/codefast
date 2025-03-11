@@ -124,7 +124,7 @@ export function FormDemo(): JSX.Element {
               <FormLabel>Username</FormLabel>
 
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="@codefast/ui" {...field} />
               </FormControl>
 
               <FormDescription>This is your public display name.</FormDescription>

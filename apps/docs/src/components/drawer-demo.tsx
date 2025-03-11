@@ -4,6 +4,7 @@ import type { CSSProperties, JSX } from 'react';
 
 import {
   Button,
+  cn,
   Drawer,
   DrawerBody,
   DrawerClose,
@@ -14,61 +15,43 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui';
-import { Minus, Plus } from 'lucide-react';
+import { ChevronUpIcon, CircleIcon, Minus, Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 const data = [
-  {
-    goal: 400,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
-  },
+  { goal: 400 },
+  { goal: 300 },
+  { goal: 200 },
+  { goal: 300 },
+  { goal: 200 },
+  { goal: 278 },
+  { goal: 189 },
+  { goal: 239 },
+  { goal: 300 },
+  { goal: 200 },
+  { goal: 278 },
+  { goal: 189 },
+  { goal: 349 },
 ];
 
 export function DrawerDemo(): JSX.Element {
   return (
-    <div className="flex flex-wrap items-start gap-4">
-      <DrawerBottom />
+    <GridWrapper className="*:grid *:place-items-center">
+      <div className="">
+        <DrawerBottom />
+      </div>
 
-      <DrawerScrollableContent />
+      <div className="">
+        <DrawerScrollableContent />
+      </div>
 
-      <DrawerDirections />
-    </div>
+      <div className="">
+        <DrawerDirections />
+      </div>
+    </GridWrapper>
   );
 }
 
@@ -200,49 +183,67 @@ function DrawerScrollableContent(): JSX.Element {
   );
 }
 
-const directions = ['top', 'right', 'bottom', 'left'] as const;
+const DIRECTIONS = ['top', 'right', 'bottom', 'left'] as const;
 
 function DrawerDirections(): JSX.Element {
   return (
-    <>
-      {directions.map((direction) => (
-        <Drawer key={direction} direction={direction}>
-          <DrawerTrigger asChild>
-            <Button className="capitalize" variant="outline">
-              {direction}
-            </Button>
-          </DrawerTrigger>
+    <div className="grid grid-cols-3 gap-1">
+      {DIRECTIONS.map((direction) => (
+        <div
+          key={direction}
+          className={cn(
+            'flex items-center justify-center',
+            direction === 'top' && 'col-start-2',
+            direction === 'right' && 'col-start-3 row-start-2',
+            direction === 'bottom' && 'col-start-2 row-start-3',
+            direction === 'left' && 'row-start-2',
+          )}
+        >
+          <Drawer direction={direction}>
+            <DrawerTrigger asChild>
+              <Button icon className="capitalize" variant="outline">
+                {direction === 'top' && <ChevronUpIcon />}
+                {direction === 'bottom' && <ChevronUpIcon className="rotate-180" />}
+                {direction === 'left' && <ChevronUpIcon className="rotate-270" />}
+                {direction === 'right' && <ChevronUpIcon className="rotate-90" />}
+              </Button>
+            </DrawerTrigger>
 
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Move Goal</DrawerTitle>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Move Goal</DrawerTitle>
 
-              <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-            </DrawerHeader>
+                <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+              </DrawerHeader>
 
-            <DrawerBody className="border-y text-sm">
-              {Array.from({ length: 10 }).map((_, index) => (
-                // eslint-disable-next-line react/no-array-index-key -- keep
-                <p key={index} className="mb-4 leading-normal">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                  aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                  officia deserunt mollit anim id est laborum.
-                </p>
-              ))}
-            </DrawerBody>
+              <DrawerBody className="border-y text-sm">
+                {Array.from({ length: 10 }).map((_, index) => (
+                  // eslint-disable-next-line react/no-array-index-key -- keep
+                  <p key={index} className="mb-4 leading-normal">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa qui officia deserunt mollit anim id est laborum.
+                  </p>
+                ))}
+              </DrawerBody>
 
-            <DrawerFooter>
-              <Button>Submit</Button>
+              <DrawerFooter>
+                <Button>Submit</Button>
 
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+                <DrawerClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </div>
       ))}
-    </>
+
+      <div className="col-start-2 row-start-2 flex items-center justify-center">
+        <CircleIcon className="text-muted-foreground size-4" />
+      </div>
+    </div>
   );
 }

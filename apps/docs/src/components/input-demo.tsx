@@ -3,46 +3,86 @@ import type { JSX } from 'react';
 import { Input } from '@codefast/ui';
 import { MailIcon } from 'lucide-react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function InputDemo(): JSX.Element {
   return (
-    <div className="flex flex-col flex-wrap gap-4 md:flex-row">
-      <Input placeholder="Email" type="email" />
+    <GridWrapper>
+      <div className="">
+        <Input placeholder="Email" type="email" />
+      </div>
 
-      <Input aria-invalid="true" placeholder="Error" type="text" />
+      <div className="">
+        <Input aria-invalid="true" placeholder="Error" type="text" />
+      </div>
 
-      <Input placeholder="Password" type="password" />
+      <div className="">
+        <Input placeholder="Password" type="password" />
+      </div>
 
-      <Input placeholder="Number" type="number" />
+      <div className="">
+        <Input placeholder="Number" type="number" />
+      </div>
 
-      <Input placeholder="File" type="file" />
+      <div className="">
+        <Input placeholder="File" type="file" />
+      </div>
 
-      <Input placeholder="Tel" type="tel" />
+      <div className="">
+        <Input placeholder="Tel" type="tel" />
+      </div>
 
-      <Input placeholder="Text" type="text" />
+      <div className="">
+        <Input placeholder="Text" type="text" />
+      </div>
 
-      <Input placeholder="URL" type="url" />
+      <div className="">
+        <Input placeholder="URL" type="url" />
+      </div>
 
-      <Input placeholder="Search" type="search" />
+      <div className="">
+        <Input placeholder="Search" type="search" />
+      </div>
 
-      <Input placeholder="Date" type="date" />
+      <div className="">
+        <Input placeholder="Date" type="date" />
+      </div>
 
-      <Input placeholder="Datetime Local" type="datetime-local" />
+      <div className="">
+        <Input placeholder="Datetime Local" type="datetime-local" />
+      </div>
 
-      <Input placeholder="Month" type="month" />
+      <div className="">
+        <Input placeholder="Month" type="month" />
+      </div>
 
-      <Input placeholder="Time" type="time" />
+      <div className="">
+        <Input placeholder="Time" type="time" />
+      </div>
 
-      <Input placeholder="Week" type="week" />
+      <div className="">
+        <Input placeholder="Week" type="week" />
+      </div>
 
-      <Input loading placeholder="Loading..." />
+      <div className="">
+        <Input loading placeholder="Loading..." />
+      </div>
 
-      <Input disabled placeholder="Disabled" />
+      <div className="">
+        <Input disabled placeholder="Disabled" />
+      </div>
 
-      <Input readOnly defaultValue="Read Only" placeholder="Read Only" />
+      <div className="">
+        <Input readOnly defaultValue="Read Only" placeholder="Read Only" />
+      </div>
 
-      <Input placeholder="Email" prefix={<MailIcon />} type="email" />
+      <div className="">
+        <Input placeholder="Email" prefix={<MailIcon />} type="email" />
+      </div>
 
-      <Input placeholder="Email" suffix={<MailIcon />} type="email" />
-    </div>
+      <div className="">
+        <Input placeholder="Email" suffix={<MailIcon />} type="email" />
+      </div>
+    </GridWrapper>
   );
 }

@@ -5,9 +5,11 @@ import type { JSX } from 'react';
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Label, REGEXP_ONLY_DIGITS } from '@codefast/ui';
 import { useState } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function InputOTPDemo(): JSX.Element {
   return (
-    <div className="flex flex-col flex-wrap gap-6 md:flex-row">
+    <GridWrapper>
       <InputOTPSimple />
 
       <InputOTPPattern />
@@ -15,7 +17,7 @@ export function InputOTPDemo(): JSX.Element {
       <InputOTPWithSeparator />
 
       <InputOTPWithSpacing />
-    </div>
+    </GridWrapper>
   );
 }
 
