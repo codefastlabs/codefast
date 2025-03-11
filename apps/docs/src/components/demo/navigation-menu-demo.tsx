@@ -61,7 +61,7 @@ export function NavigationMenuDemo(): JSX.Element {
                   <NavigationMenuLink asChild>
                     <Link
                       className="from-muted/50 to-muted bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
-                      href="/#"
+                      href="/apps/docs/public#"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
 
@@ -103,7 +103,7 @@ export function NavigationMenuDemo(): JSX.Element {
 
           <NavigationMenuItem value="forms">
             <NavigationMenuLink asChild className={buttonVariants({ variant: 'ghost' })}>
-              <Link href="/#docs">Documentation</Link>
+              <Link href="/apps/docs/public#docs">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -113,7 +113,7 @@ export function NavigationMenuDemo(): JSX.Element {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={buttonVariants({ variant: 'ghost' })}>
-              <Link href="/#docs">Documentation</Link>
+              <Link href="/apps/docs/public#docs">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
 
