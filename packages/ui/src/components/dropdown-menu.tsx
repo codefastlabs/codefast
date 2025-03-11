@@ -60,7 +60,7 @@ function DropdownMenuSubTrigger({
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
-        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 outline-hidden flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
+        'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-9 outline-hidden flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm',
         className,
       )}
       data-inset={inset}
@@ -135,7 +135,7 @@ function DropdownMenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-9 outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-3 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-inset={inset}
@@ -166,7 +166,7 @@ function DropdownMenuCheckboxItem({
       data-slot="dropdown-menu-checkbox-item"
       {...props}
     >
-      <span className="absolute left-2 flex size-3.5 items-center justify-center">
+      <span className="absolute left-2 flex items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </DropdownMenuPrimitive.ItemIndicator>
@@ -194,7 +194,7 @@ function DropdownMenuRadioItem({
       data-slot="dropdown-menu-radio-item"
       {...props}
     >
-      <span className="absolute left-2 flex size-3.5 items-center justify-center">
+      <span className="absolute left-2 flex items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <DotIcon className="size-4 fill-current" />
         </DropdownMenuPrimitive.ItemIndicator>
@@ -217,7 +217,7 @@ function DropdownMenuLabel({
 }): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn('data-inset:pl-8 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      className={cn('data-inset:pl-9 flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
       data-inset={inset}
       data-slot="dropdown-menu-label"
       {...props}
