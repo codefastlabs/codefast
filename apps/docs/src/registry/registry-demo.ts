@@ -277,6 +277,17 @@ export const ui: Registry['items'] = [
     categories: ['demos', 'input-otp'],
   },
   {
+    name: 'input-password',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-password-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'input-password'],
+  },
+  {
     name: 'label',
     type: 'registry:ui',
     files: [
