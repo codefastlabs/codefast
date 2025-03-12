@@ -42,7 +42,7 @@ function InputNumber({
     <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={root({ className: ['group/input-number pr-0', className] })}
+      className={root({ className: ['group pr-0', className] })}
       data-slot="input-number"
       defaultValue={defaultValue}
       disabled={disabled}
@@ -71,9 +71,7 @@ function InputNumber({
 
       <div
         className={cn(
-          'peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus',
-          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
-          'group-hover/input-number:border-input-hover group-hover/input-number:divide-input-hover',
+          'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-input-hover group-hover:not-group-focus-within:not-has-disabled:divide-input-hover group-focus-within:border-l-input-focus group-focus-within:divide-input-focus group-has-aria-invalid:border-l-destructive group-has-aria-invalid:divide-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
         )}
         data-slot="input-number-buttons"
       >

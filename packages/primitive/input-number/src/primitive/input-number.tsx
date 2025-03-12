@@ -450,8 +450,10 @@ function NumberStepperButton({
     operation: 'decrement' | 'increment';
   }
 >): JSX.Element {
-  const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, readOnly } =
-    useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
+  const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement } = useInputNumberContext(
+    NUMBER_STEPPER_BUTTON_NAME,
+    __scopeInputNumber,
+  );
   const timeoutIdRef = useRef<null | number>(null);
 
   const startActionInterval = useCallback((callback: () => void) => {
@@ -488,7 +490,7 @@ function NumberStepperButton({
       aria-controls={id}
       aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
       aria-live="polite"
-      disabled={disabled || readOnly}
+      disabled={disabled}
       tabIndex={-1}
       type="button"
       onContextMenu={handleContextMenu}
