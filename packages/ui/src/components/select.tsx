@@ -150,7 +150,7 @@ function SelectContent({
 function SelectLabel({ className, ...props }: ComponentProps<typeof SelectPrimitive.Label>): JSX.Element {
   return (
     <SelectPrimitive.Label
-      className={cn('flex items-center gap-x-2 px-3 py-1.5 text-sm font-semibold', className)}
+      className={cn('flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold', className)}
       data-slot="select-label"
       {...props}
     />
