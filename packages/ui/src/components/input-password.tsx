@@ -53,7 +53,7 @@ function InputPassword({
       suffix={suffix}
     >
       <InputPrimitive.Item
-        autoCapitalize="off"
+        autoCapitalize="none"
         className={input()}
         data-slot="input-password-item"
         type={type}

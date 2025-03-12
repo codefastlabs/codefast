@@ -460,6 +460,25 @@ export const Index: Registry = {
     }),
     meta: undefined,
   },
+  'input-number': {
+    name: 'input-number',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-number-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-number-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
+    meta: undefined,
+  },
   'input-otp': {
     name: 'input-otp',
     description: '',

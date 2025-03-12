@@ -75,7 +75,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     ariaIncrementLabel,
     defaultValue,
     formatOptions = { minimumFractionDigits: 0, style: 'decimal' },
-    locale = navigator.language,
+    locale,
     max,
     min,
     onChange,
@@ -412,6 +412,7 @@ function NumberInputItem({
       defaultValue={formatValue(value)}
       disabled={disabled}
       id={id}
+      inputMode="numeric"
       max={max}
       min={min}
       readOnly={readOnly}
@@ -528,7 +529,7 @@ function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (..
   };
 }
 
-function getNumberFormatSeparators(locale: string): {
+function getNumberFormatSeparators(locale?: string): {
   decimalSeparator: string;
   thousandSeparator: string;
 } {

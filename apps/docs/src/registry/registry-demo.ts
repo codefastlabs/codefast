@@ -255,6 +255,17 @@ export const ui: Registry['items'] = [
     categories: ['demos', 'input'],
   },
   {
+    name: 'input-number',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-number-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'input-number'],
+  },
+  {
     name: 'input-otp',
     type: 'registry:ui',
     files: [

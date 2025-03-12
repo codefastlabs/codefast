@@ -26,6 +26,7 @@ import { DropdownMenuDemo } from '@/registry/demos/dropdown-menu-demo';
 import { FormDemo } from '@/registry/demos/form-demo';
 import { HoverCardDemo } from '@/registry/demos/hover-card-demo';
 import { InputDemo } from '@/registry/demos/input-demo';
+import { InputNumberDemo } from '@/registry/demos/input-number-demo';
 import { InputOTPDemo } from '@/registry/demos/input-otp-demo';
 import { LabelDemo } from '@/registry/demos/label-demo';
 import { MenubarDemo } from '@/registry/demos/menubar-demo';
@@ -151,6 +152,10 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="input">
         <InputDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="input-number">
+        <InputNumberDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="input-otp">
