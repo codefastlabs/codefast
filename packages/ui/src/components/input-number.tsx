@@ -60,14 +60,14 @@ function InputNumber({
       onChange={onChange}
     >
       <InputNumberPrimitive.Item
-        autoCapitalize="off"
+        autoCapitalize="none"
         autoComplete="off"
         autoCorrect="off"
         className={input()}
-        inputMode="numeric"
         spellCheck="false"
         {...props}
       />
+
       <div
         className="peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l"
         data-slot="input-number-buttons"
@@ -82,6 +82,7 @@ function InputNumber({
         >
           <ChevronUpIcon />
         </InputNumberPrimitive.IncrementButton>
+
         <InputNumberPrimitive.DecrementButton
           aria-label="Decrement"
           className={buttonVariants({
