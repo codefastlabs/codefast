@@ -32,6 +32,17 @@ export function CalendarDemo(): JSX.Element {
         onSelect={setDateRange}
       />
 
+      <Calendar
+        showWeekNumber
+        captionLayout="dropdown"
+        className="rounded-md border shadow-sm"
+        defaultMonth={dateRange?.from}
+        disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
+        mode="range"
+        selected={dateRange}
+        onSelect={setDateRange}
+      />
+
       <div className="">
         <Calendar
           className="rounded-md border shadow-sm"
