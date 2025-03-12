@@ -416,7 +416,7 @@ function InputNumberItem({
       defaultValue={formatValue(value)}
       disabled={disabled}
       id={id}
-      inputMode="numeric"
+      inputMode="decimal"
       max={max}
       min={min}
       readOnly={readOnly}

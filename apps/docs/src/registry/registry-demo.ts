@@ -288,6 +288,17 @@ export const ui: Registry['items'] = [
     categories: ['demos', 'input-password'],
   },
   {
+    name: 'input-search',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-search-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'input-search'],
+  },
+  {
     name: 'label',
     type: 'registry:ui',
     files: [
