@@ -517,6 +517,25 @@ export const Index: Registry = {
     }),
     meta: undefined,
   },
+  'input-search': {
+    name: 'input-search',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-search-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-search-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
+    meta: undefined,
+  },
   label: {
     name: 'label',
     description: '',

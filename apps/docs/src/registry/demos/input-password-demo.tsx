@@ -9,11 +9,11 @@ export function InputPasswordDemo(): JSX.Element {
   return (
     <GridWrapper>
       <div className="">
-        <InputPassword placeholder="Enter a number" />
+        <InputPassword placeholder="Enter password" />
       </div>
 
       <div className="">
-        <InputPassword aria-invalid="true" placeholder="Invalid number" />
+        <InputPassword aria-invalid="true" placeholder="Invalid password" />
       </div>
 
       <div className="">
@@ -29,11 +29,11 @@ export function InputPasswordDemo(): JSX.Element {
       </div>
 
       <div className="">
-        <InputPassword placeholder="Enter a number" prefix={<LockIcon />} />
+        <InputPassword placeholder="Enter password" prefix={<LockIcon />} />
       </div>
 
       <div className="">
-        <InputPassword placeholder="Enter a number" suffix={<LockIcon />} />
+        <InputPassword placeholder="Enter password" suffix={<LockIcon />} />
       </div>
     </GridWrapper>
   );

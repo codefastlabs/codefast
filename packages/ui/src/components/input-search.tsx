@@ -45,7 +45,7 @@ function InputSearch({
 
   return (
     <InputPrimitive.Root
-      className={root({ className })}
+      className={root({ className: [!suffix && 'pr-1.5', className] })}
       data-slot="input-search"
       disabled={disabled}
       loaderPosition={loaderPosition}
@@ -59,7 +59,7 @@ function InputSearch({
         className={input()}
         data-slot="input-search-item"
         type="search"
-        value={value}
+        value={value ?? ''}
         onChange={(event) => {
           setValue(event.target.value);
         }}
@@ -68,9 +68,10 @@ function InputSearch({
       {value ? (
         <Button
           aria-label="Clear search"
-          className="rounded-full"
+          className="size-7 rounded-full"
           data-slot="input-search-clear"
-          disabled={disabled}
+          disabled={disabled || readOnly}
+          size="icon"
           suffix={<XIcon />}
           variant="ghost"
           onClick={() => {

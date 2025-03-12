@@ -29,6 +29,7 @@ import { InputDemo } from '@/registry/demos/input-demo';
 import { InputNumberDemo } from '@/registry/demos/input-number-demo';
 import { InputOTPDemo } from '@/registry/demos/input-otp-demo';
 import { InputPasswordDemo } from '@/registry/demos/input-password-demo';
+import { InputSearchDemo } from '@/registry/demos/input-search-demo';
 import { LabelDemo } from '@/registry/demos/label-demo';
 import { MenubarDemo } from '@/registry/demos/menubar-demo';
 import { NavigationMenuDemo } from '@/registry/demos/navigation-menu-demo';
@@ -165,6 +166,10 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="input-password">
         <InputPasswordDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="input-search">
+        <InputSearchDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="label">
