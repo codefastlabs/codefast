@@ -216,7 +216,7 @@
 }
 
 @utility animation-ease-* {
-  animation-timing-function: --value([ *]);
+  animation-timing-function: --value([*]);
 }
 
 /**
@@ -237,7 +237,7 @@
 }
 
 @utility animation-state-* {
-  animation-play-state: --value([ *]);
+  animation-play-state: --value([*]);
 }
 
 /**
@@ -279,7 +279,7 @@
 }
 
 @utility animation-composition-* {
-  animation-composition: --value([ *]);
+  animation-composition: --value([*]);
 }
 
 /**
@@ -293,7 +293,7 @@
 
 @utility animation-delay-* {
   animation-delay: calc(--value(integer) * 1ms);
-  animation-delay: --value([ *]);
+  animation-delay: --value([*]);
 }
 
 /**
@@ -322,7 +322,7 @@
 }
 
 @utility animation-direction-* {
-  animation-direction: --value([ *]);
+  animation-direction: --value([*]);
 }
 
 /**
@@ -336,7 +336,7 @@
 
 @utility animation-duration-* {
   animation-duration: calc(--value(integer) * 1ms);
-  animation-duration: --value([ *]);
+  animation-duration: --value([*]);
 }
 
 /**
@@ -361,7 +361,7 @@
 }
 
 @utility animation-fill-* {
-  animation-fill-mode: --value([ *]);
+  animation-fill-mode: --value([*]);
 }
 
 /**
@@ -371,12 +371,12 @@
  */
 @utility fade-in-* {
   --animation-enter-opacity: calc(--value(integer) * 1%);
-  --animation-enter-opacity: --value(--opacity- *, [percentage]);
+  --animation-enter-opacity: --value(--opacity-*, [percentage]);
 }
 
 @utility fade-out-* {
   --animation-exit-opacity: calc(--value(integer) * 1%);
-  --animation-exit-opacity: --value(--opacity- *, [percentage]);
+  --animation-exit-opacity: --value(--opacity-*, [percentage]);
 }
 
 /**
@@ -418,7 +418,7 @@
 
 @utility slide-in-from-left-* {
   --animation-enter-translate-x: calc(var(--spacing) * --value(number) * -1);
-  --animation-enter-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-enter-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
   --animation-enter-translate-x: calc(--value([length], [percentage]) * -1);
 }
 
@@ -428,7 +428,7 @@
 
 @utility slide-in-from-right-* {
   --animation-enter-translate-x: calc(var(--spacing) * --value(number));
-  --animation-enter-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-enter-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
   --animation-enter-translate-x: --value([length], [percentage]);
 }
 
@@ -438,7 +438,7 @@
 
 @utility slide-in-from-top-* {
   --animation-enter-translate-y: calc(var(--spacing) * --value(number) * -1);
-  --animation-enter-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-enter-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
   --animation-enter-translate-y: calc(--value([length], [percentage]) * -1);
 }
 
@@ -448,7 +448,7 @@
 
 @utility slide-in-from-bottom-* {
   --animation-enter-translate-y: calc(var(--spacing) * --value(number));
-  --animation-enter-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-enter-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
   --animation-enter-translate-y: --value([length], [percentage]);
 }
 
@@ -463,7 +463,7 @@
 
 @utility slide-out-to-left-* {
   --animation-exit-translate-x: calc(var(--spacing) * --value(number) * -1);
-  --animation-exit-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-exit-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
   --animation-exit-translate-x: calc(--value([length], [percentage]) * -1);
 }
 
@@ -473,7 +473,7 @@
 
 @utility slide-out-to-right-* {
   --animation-exit-translate-x: calc(var(--spacing) * --value(number));
-  --animation-exit-translate-x: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-exit-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
   --animation-exit-translate-x: --value([length], [percentage]);
 }
 
@@ -483,7 +483,7 @@
 
 @utility slide-out-to-top-* {
   --animation-exit-translate-y: calc(var(--spacing) * --value(number) * -1);
-  --animation-exit-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * -100%);
+  --animation-exit-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
   --animation-exit-translate-y: calc(--value([length], [percentage]) * -1);
 }
 
@@ -493,6 +493,6 @@
 
 @utility slide-out-to-bottom-* {
   --animation-exit-translate-y: calc(var(--spacing) * --value(number));
-  --animation-exit-translate-y: calc(--value(--aspect-ratio- *, ratio, [ratio]) * 100%);
+  --animation-exit-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
   --animation-exit-translate-y: --value([length], [percentage]);
 }
