@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
-import * as InputNumberPrimitive from '@codefast-ui/number-input';
+import * as InputNumberPrimitive from '@codefast-ui/input-number';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 import { buttonVariants } from '@/components/button';

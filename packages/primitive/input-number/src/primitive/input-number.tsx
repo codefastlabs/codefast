@@ -18,18 +18,16 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInput
+ * Context: InputNumber
  * -------------------------------------------------------------------------- */
 
-const NUMBER_INPUT_NAME = 'NumberInput';
+const NUMBER_INPUT_NAME = 'InputNumber';
 
-type ScopedProps<P> = P & {
-  __scopeNumberInput?: Scope;
-};
-const [createNumberInputContext, createNumberInputScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
+type ScopedProps<P> = P & { __scopeInputNumber?: Scope };
+const [createInputNumberContext, createInputNumberScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
-interface NumberInputContextValue {
+interface InputNumberContextValue {
   formatOptions: Intl.NumberFormatOptions;
   formatValue: (value?: number) => string;
   inputRef: RefObject<HTMLInputElement | null>;
@@ -50,26 +48,32 @@ interface NumberInputContextValue {
   value?: number;
 }
 
-const [NumberInputProvider, useNumberInputContext] =
-  createNumberInputContext<NumberInputContextValue>(NUMBER_INPUT_NAME);
+const [InputNumberProvider, useInputNumberContext] =
+  createInputNumberContext<InputNumberContextValue>(NUMBER_INPUT_NAME);
 
-interface NumberInputProps extends ComponentProps<typeof InputPrimitive.Root> {
-  ariaDecrementLabel?: string;
-  ariaIncrementLabel?: string;
-  defaultValue?: number;
-  formatOptions?: Intl.NumberFormatOptions;
-  id?: string;
-  locale?: string;
-  max?: number;
-  min?: number;
-  onChange?: (value: number) => void;
-  step?: number;
-  value?: number;
-}
+/* -----------------------------------------------------------------------------
+ * Component: InputNumber
+ * -------------------------------------------------------------------------- */
 
-function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
+function InputNumber(
+  numberInputProps: ScopedProps<
+    ComponentProps<typeof InputPrimitive.Root> & {
+      ariaDecrementLabel?: string;
+      ariaIncrementLabel?: string;
+      defaultValue?: number;
+      formatOptions?: Intl.NumberFormatOptions;
+      id?: string;
+      locale?: string;
+      max?: number;
+      min?: number;
+      onChange?: (value: number) => void;
+      step?: number;
+      value?: number;
+    }
+  >,
+): JSX.Element {
   const {
-    __scopeNumberInput,
+    __scopeInputNumber,
     id,
     ariaDecrementLabel,
     ariaIncrementLabel,
@@ -82,8 +86,8 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
     step = 1,
     value: valueProp,
     ...props
-  } = numberInputProps as ScopedProps<NumberInputProps>;
-  const inputScope = useInputScope(__scopeNumberInput);
+  } = numberInputProps;
+  const inputScope = useInputScope(__scopeInputNumber);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [value, setValue] = useControllableState({
@@ -167,7 +171,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
   }, [changeNumberValue, min, step]);
 
   return (
-    <NumberInputProvider
+    <InputNumberProvider
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
       disabled={props.disabled}
@@ -179,7 +183,7 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
       min={min}
       parseValue={parseValue}
       readOnly={props.readOnly}
-      scope={__scopeNumberInput}
+      scope={__scopeInputNumber}
       value={value}
       onChange={setValue}
       onDecrement={handleDecrement}
@@ -188,28 +192,28 @@ function NumberInput(numberInputProps: NumberInputProps): JSX.Element {
       onIncrementToMax={handleIncrementToMax}
     >
       <InputPrimitive.Root {...inputScope} {...props} />
-    </NumberInputProvider>
+    </InputNumberProvider>
   );
 }
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInputItem
+ * Component: InputNumberItem
  * -------------------------------------------------------------------------- */
 
-const NUMBER_INPUT_ITEM_NAME = 'NumberInputItem';
+const NUMBER_INPUT_ITEM_NAME = 'InputNumberItem';
 
-type NumberInputItemProps = Omit<
-  ComponentProps<typeof InputPrimitive.Item>,
-  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
->;
-
-function NumberInputItem({
-  __scopeNumberInput,
+function InputNumberItem({
+  __scopeInputNumber,
   onBlur,
   onKeyDown,
   ...props
-}: ScopedProps<NumberInputItemProps>): JSX.Element {
-  const inputScope = useInputScope(__scopeNumberInput);
+}: ScopedProps<
+  Omit<
+    ComponentProps<typeof InputPrimitive.Item>,
+    'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
+  >
+>): JSX.Element {
+  const inputScope = useInputScope(__scopeInputNumber);
   const {
     id,
     disabled,
@@ -226,7 +230,7 @@ function NumberInputItem({
     readOnly,
     step,
     value,
-  } = useNumberInputContext(NUMBER_INPUT_ITEM_NAME, __scopeNumberInput);
+  } = useInputNumberContext(NUMBER_INPUT_ITEM_NAME, __scopeInputNumber);
 
   // Handle blur event to format the value
   const handleBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
@@ -328,7 +332,7 @@ function NumberInputItem({
     }
   }, []);
 
-  // Handle Enter key to format the value
+  // Handle the Enter key to format the value
   const handleKeyDownEnter = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       const inputElement = inputRef.current;
@@ -437,17 +441,17 @@ function NumberInputItem({
 
 const NUMBER_STEPPER_BUTTON_NAME = 'NumberStepperButton';
 
-interface NumberStepperButtonProps extends ComponentProps<'button'> {
-  operation: 'decrement' | 'increment';
-}
-
 function NumberStepperButton({
-  __scopeNumberInput,
+  __scopeInputNumber,
   operation,
   ...props
-}: ScopedProps<NumberStepperButtonProps>): JSX.Element {
+}: ScopedProps<
+  ComponentProps<'button'> & {
+    operation: 'decrement' | 'increment';
+  }
+>): JSX.Element {
   const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, readOnly } =
-    useNumberInputContext(NUMBER_STEPPER_BUTTON_NAME, __scopeNumberInput);
+    useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
   const timeoutIdRef = useRef<null | number>(null);
 
   const startActionInterval = useCallback((callback: () => void) => {
@@ -498,22 +502,32 @@ function NumberStepperButton({
 }
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInputIncrementButton
+ * Component: InputNumberIncrementButton
  * -------------------------------------------------------------------------- */
 
-type NumberInputIncrementButtonProps = Omit<NumberStepperButtonProps, 'operation'>;
-
-function NumberInputIncrementButton(props: NumberInputIncrementButtonProps): JSX.Element {
+function InputNumberIncrementButton(
+  props: Omit<
+    ComponentProps<'button'> & {
+      operation: 'decrement' | 'increment';
+    },
+    'operation'
+  >,
+): JSX.Element {
   return <NumberStepperButton operation="increment" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
- * Component: NumberInputDecrementButton
+ * Component: InputNumberDecrementButton
  * -------------------------------------------------------------------------- */
 
-type NumberInputDecrementButtonProps = Omit<NumberStepperButtonProps, 'operation'>;
-
-function NumberInputDecrementButton(props: NumberInputDecrementButtonProps): JSX.Element {
+function InputNumberDecrementButton(
+  props: Omit<
+    ComponentProps<'button'> & {
+      operation: 'decrement' | 'increment';
+    },
+    'operation'
+  >,
+): JSX.Element {
   return <NumberStepperButton operation="decrement" {...props} />;
 }
 
@@ -584,20 +598,14 @@ function clamp(value: number, min = -Infinity, max = Infinity): number {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type {
-  NumberInputDecrementButtonProps,
-  NumberInputIncrementButtonProps,
-  NumberInputItemProps,
-  NumberInputProps,
-};
 export {
-  createNumberInputScope,
-  NumberInputDecrementButton as DecrementButton,
-  NumberInputIncrementButton as IncrementButton,
-  NumberInputItem as Item,
-  NumberInput,
-  NumberInputDecrementButton,
-  NumberInputIncrementButton,
-  NumberInputItem,
-  NumberInput as Root,
+  createInputNumberScope,
+  InputNumberDecrementButton as DecrementButton,
+  InputNumberIncrementButton as IncrementButton,
+  InputNumber,
+  InputNumberDecrementButton,
+  InputNumberIncrementButton,
+  InputNumberItem,
+  InputNumberItem as Item,
+  InputNumber as Root,
 };
