@@ -133,7 +133,7 @@ function CommandItem({ className, ...props }: ComponentProps<typeof CommandPrimi
   return (
     <CommandPrimitive.Item
       className={cn(
-        "aria-selected:bg-accent aria-selected:text-accent-foreground outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "aria-selected:bg-accent aria-selected:text-accent-foreground outline-hidden group/command-item relative flex select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="command-item"
@@ -164,7 +164,7 @@ function CommandShortcut({ className, ...props }: ComponentProps<'span'>): JSX.E
   return (
     <span
       className={cn(
-        'text-muted-foreground ml-auto text-xs tracking-widest group-aria-selected:text-current',
+        'text-muted-foreground ml-auto text-xs tracking-widest group-aria-selected/command-item:text-current',
         className,
       )}
       data-slot="command-shortcut"

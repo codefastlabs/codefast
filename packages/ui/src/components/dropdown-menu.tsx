@@ -135,7 +135,7 @@ function DropdownMenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden group/dropdown-menu-item relative flex select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-inset={inset}
@@ -160,7 +160,7 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden group/dropdown-menu-item relative flex select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="dropdown-menu-checkbox-item"
@@ -188,7 +188,7 @@ function DropdownMenuRadioItem({
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden group relative flex select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden group/dropdown-menu-item relative flex select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="dropdown-menu-radio-item"
@@ -249,7 +249,10 @@ function DropdownMenuSeparator({
 function DropdownMenuShortcut({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
+      className={cn(
+        'text-muted-foreground ml-auto text-xs tracking-widest group-focus/dropdown-menu-item:text-current',
+        className,
+      )}
       data-slot="dropdown-menu-shortcut"
       {...props}
     />

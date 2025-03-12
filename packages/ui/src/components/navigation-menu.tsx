@@ -78,7 +78,10 @@ function NavigationMenuTrigger({
   return (
     <NavigationMenuPrimitive.Trigger
       className={buttonVariants({
-        className: ['data-[state=open]:bg-secondary data-[state=open]:text-secondary-foreground group', className],
+        className: [
+          'data-[state=open]:bg-secondary data-[state=open]:text-secondary-foreground group/navigation-menu-trigger',
+          className,
+        ],
         variant: 'ghost',
       })}
       data-slot="navigation-menu-trigger"
@@ -87,7 +90,7 @@ function NavigationMenuTrigger({
       {children}
       <ChevronDownIcon
         aria-hidden="true"
-        className={cn('relative top-px ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180')}
+        className="relative top-px ml-1 size-3 transition duration-300 group-data-[state=open]/navigation-menu-trigger:rotate-180"
       />
     </NavigationMenuPrimitive.Trigger>
   );

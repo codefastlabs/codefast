@@ -20,7 +20,7 @@ function RadioCardsItem({ className, ...props }: ComponentProps<typeof RadioGrou
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        'border-secondary hover:not-disabled:bg-secondary focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 aria-checked:border-primary outline-hidden group peer flex items-center justify-center rounded-lg border-2 p-4 disabled:opacity-50',
+        'border-secondary hover:not-disabled:bg-secondary focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 aria-checked:border-primary outline-hidden group/radio-card peer flex items-center justify-center rounded-lg border-2 p-4 disabled:opacity-50',
         className,
       )}
       data-slot="radio-card"

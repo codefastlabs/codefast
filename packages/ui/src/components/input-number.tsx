@@ -7,6 +7,7 @@ import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import { buttonVariants } from '@/components/button';
 import { inputVariants } from '@/components/input';
 import { Spinner } from '@/components/spinner';
+import { cn } from '@/lib/utils';
 
 const { input, root } = inputVariants();
 
@@ -41,7 +42,7 @@ function InputNumber({
     <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
-      className={root({ className: ['pr-0', className] })}
+      className={root({ className: ['group/input-number pr-0', className] })}
       data-slot="input-number"
       defaultValue={defaultValue}
       disabled={disabled}
@@ -69,13 +70,17 @@ function InputNumber({
       />
 
       <div
-        className="peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l"
+        className={cn(
+          'peer-hover:divide-input-hover peer-hover:border-l-input-hover peer-focus:divide-input-focus peer-focus:border-l-input-focus',
+          'divide-input border-input order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
+          'group-hover/input-number:border-input-hover group-hover/input-number:divide-input-hover',
+        )}
         data-slot="input-number-buttons"
       >
         <InputNumberPrimitive.IncrementButton
           aria-label="Increment"
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]',
+            className: 'text-muted-foreground h-auto rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]',
             variant: 'ghost',
           })}
           data-slot="input-number-increment-button"
@@ -86,7 +91,7 @@ function InputNumber({
         <InputNumberPrimitive.DecrementButton
           aria-label="Decrement"
           className={buttonVariants({
-            className: 'h-full rounded-none rounded-br-[calc(var(--radius-lg)-1px)]',
+            className: 'text-muted-foreground h-auto rounded-none rounded-br-[calc(var(--radius-lg)-1px)]',
             variant: 'ghost',
           })}
           data-slot="input-number-decrement-button"

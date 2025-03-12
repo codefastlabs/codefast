@@ -16,7 +16,7 @@ const inputVariants = tv({
       "[&>svg]:text-muted-foreground border-input bg-background not-has-disabled:shadow-xs hover:not-has-disabled:not-focus-within:border-input-hover focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 has-aria-invalid:border-destructive/60 hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/80 focus-within:has-aria-invalid:border-destructive focus-within:has-aria-invalid:ring-destructive/20 peer flex h-9 w-full grow items-center gap-3 rounded-lg border px-3 text-sm transition [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
     ],
     input:
-      'placeholder:text-muted-foreground outline-hidden file:py-1.75 size-full file:bg-transparent file:font-medium',
+      'placeholder:text-muted-foreground outline-hidden file:py-1.75 peer size-full file:bg-transparent file:font-medium',
   },
 });
 
