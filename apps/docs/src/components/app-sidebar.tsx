@@ -171,7 +171,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
-                  <Link href={`/view/${item.name}`}>{getComponentName(item.name)}</Link>
+                  <Link href={`/#${item.name}`}>{getComponentName(item.name)}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

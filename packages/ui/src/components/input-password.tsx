@@ -42,7 +42,7 @@ function InputPassword({
 
   return (
     <InputPrimitive.Root
-      className={root({ className })}
+      className={root({ className: [!suffix && 'pr-1.5', className] })}
       data-slot="input-password"
       disabled={disabled}
       loaderPosition={loaderPosition}
@@ -61,10 +61,11 @@ function InputPassword({
       />
       <Button
         aria-label={type === 'password' ? 'Show password' : 'Hide password'}
-        className="rounded-full"
+        className="size-7 rounded-full"
         data-slot="input-password-toggle"
         disabled={disabled}
         prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
+        size="icon"
         variant="ghost"
         onClick={togglePasswordVisibility}
       />
