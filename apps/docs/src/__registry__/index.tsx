@@ -498,6 +498,25 @@ export const Index: Registry = {
     }),
     meta: undefined,
   },
+  'input-password': {
+    name: 'input-password',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-password-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-password-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
+    meta: undefined,
+  },
   label: {
     name: 'label',
     description: '',
