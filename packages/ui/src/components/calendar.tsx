@@ -73,12 +73,12 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
         [UI.NextMonthButton]: buttonVariants({
           variant: 'ghost',
           size: 'icon',
-          className: cn('size-7', classNames?.[UI.NextMonthButton]),
+          className: ['size-7', classNames?.[UI.NextMonthButton]],
         }),
         [UI.PreviousMonthButton]: buttonVariants({
           variant: 'ghost',
           size: 'icon',
-          className: cn('size-7', classNames?.[UI.PreviousMonthButton]),
+          className: ['size-7', classNames?.[UI.PreviousMonthButton]],
         }),
         [UI.Week]: cn('mt-2 flex justify-between', classNames?.[UI.Week]),
         [UI.Weeks]: cn(classNames?.[UI.Weeks]),
