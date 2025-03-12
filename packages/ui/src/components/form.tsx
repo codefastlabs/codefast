@@ -65,8 +65,8 @@ function useFormItem(
 function FormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(formFieldProps: ControllerProps<TFieldValues, TName>): JSX.Element {
-  const { __scopeFormField, ...props } = formFieldProps as ScopedProps<ControllerProps<TFieldValues, TName>>;
+>(formFieldProps: ScopedProps<ControllerProps<TFieldValues, TName>>): JSX.Element {
+  const { __scopeFormField, ...props } = formFieldProps;
 
   return (
     <FormFieldProvider name={props.name} scope={__scopeFormField}>

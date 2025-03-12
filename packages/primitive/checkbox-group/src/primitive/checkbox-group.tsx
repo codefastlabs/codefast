@@ -11,7 +11,7 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { useCallback } from 'react';
 
 /* -----------------------------------------------------------------------------
- * Component: CheckboxGroup
+ * Context: CheckboxGroup
  * ---------------------------------------------------------------------------*/
 
 const CHECKBOX_GROUP_NAME = 'CheckboxGroup';
@@ -38,17 +38,9 @@ interface CheckboxGroupContextValue {
 const [CheckboxGroupProvider, useCheckboxGroupContext] =
   createCheckboxGroupContext<CheckboxGroupContextValue>(CHECKBOX_GROUP_NAME);
 
-interface CheckboxGroupProps extends ComponentProps<'div'> {
-  defaultValue?: string[];
-  dir?: RovingFocusGroup.RovingFocusGroupProps['dir'];
-  disabled?: boolean;
-  loop?: RovingFocusGroup.RovingFocusGroupProps['loop'];
-  name?: CheckboxGroupContextValue['name'];
-  onValueChange?: (value: string[]) => void;
-  orientation?: RovingFocusGroup.RovingFocusGroupProps['orientation'];
-  required?: boolean;
-  value?: CheckboxGroupContextValue['value'];
-}
+/* -----------------------------------------------------------------------------
+ * Component: CheckboxGroup
+ * ---------------------------------------------------------------------------*/
 
 function CheckboxGroup({
   __scopeCheckboxGroup,
@@ -62,10 +54,22 @@ function CheckboxGroup({
   required = false,
   value: valueProp,
   ...props
-}: ScopedProps<CheckboxGroupProps>): JSX.Element {
+}: ScopedProps<
+  ComponentProps<'div'> & {
+    defaultValue?: string[];
+    dir?: RovingFocusGroup.RovingFocusGroupProps['dir'];
+    disabled?: boolean;
+    loop?: RovingFocusGroup.RovingFocusGroupProps['loop'];
+    name?: CheckboxGroupContextValue['name'];
+    onValueChange?: (value: string[]) => void;
+    orientation?: RovingFocusGroup.RovingFocusGroupProps['orientation'];
+    required?: boolean;
+    value?: CheckboxGroupContextValue['value'];
+  }
+>): JSX.Element {
   const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
   const direction = useDirection(dir);
-  const [value = [], setValue] = useControllableState({
+  const [value = [], setValue] = useControllableState<string[]>({
     defaultProp: defaultValue,
     onChange: onValueChange,
     prop: valueProp,
@@ -108,19 +112,15 @@ function CheckboxGroup({
 
 const ITEM_NAME = 'CheckboxGroupItem';
 
-interface CheckboxGroupItemProps
-  extends Omit<
-    ComponentProps<typeof CheckboxPrimitive.Root>,
-    'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'
-  > {
-  value: string;
-}
-
 function CheckboxGroupItem({
   __scopeCheckboxGroup,
   disabled,
   ...props
-}: ScopedProps<CheckboxGroupItemProps>): JSX.Element {
+}: ScopedProps<
+  Omit<ComponentProps<typeof CheckboxPrimitive.Root>, 'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'> & {
+    value: string;
+  }
+>): JSX.Element {
   const context = useCheckboxGroupContext(ITEM_NAME, __scopeCheckboxGroup);
   const isDisabled = context.disabled || disabled;
   const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
@@ -152,12 +152,10 @@ function CheckboxGroupItem({
  * Component: CheckboxGroupIndicator
  * ---------------------------------------------------------------------------*/
 
-type CheckboxGroupIndicatorProps = ComponentProps<typeof CheckboxPrimitive.Indicator>;
-
 function CheckboxGroupIndicator({
   __scopeCheckboxGroup,
   ...props
-}: ScopedProps<CheckboxGroupIndicatorProps>): JSX.Element {
+}: ScopedProps<ComponentProps<typeof CheckboxPrimitive.Indicator>>): JSX.Element {
   const checkboxScope = useCheckboxScope(__scopeCheckboxGroup);
 
   return <CheckboxPrimitive.Indicator {...checkboxScope} {...props} />;
@@ -167,7 +165,6 @@ function CheckboxGroupIndicator({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { CheckboxGroupIndicatorProps, CheckboxGroupItemProps, CheckboxGroupProps };
 export {
   CheckboxGroup,
   CheckboxGroupIndicator,

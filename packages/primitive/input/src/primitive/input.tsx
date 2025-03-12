@@ -22,18 +22,20 @@ interface InputContextValue {
 
 const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
-type InputProps = PropsWithChildren<{
-  className?: string;
-  disabled?: boolean;
-  loaderPosition?: 'prefix' | 'suffix';
-  loading?: boolean;
-  prefix?: ReactNode;
-  readOnly?: boolean;
-  spinner?: ReactNode;
-  suffix?: ReactNode;
-}>;
-
-function Input(inputProps: InputProps): JSX.Element {
+function Input(
+  inputProps: ScopedProps<
+    PropsWithChildren<{
+      className?: string;
+      disabled?: boolean;
+      loaderPosition?: 'prefix' | 'suffix';
+      loading?: boolean;
+      prefix?: ReactNode;
+      readOnly?: boolean;
+      spinner?: ReactNode;
+      suffix?: ReactNode;
+    }>
+  >,
+): JSX.Element {
   const {
     __scopeInput,
     children,
@@ -45,7 +47,7 @@ function Input(inputProps: InputProps): JSX.Element {
     spinner,
     suffix,
     ...props
-  } = inputProps as ScopedProps<InputProps>;
+  } = inputProps;
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handlePointerDown: PointerEventHandler<HTMLDivElement> = (event) => {
@@ -96,9 +98,7 @@ function Input(inputProps: InputProps): JSX.Element {
 
 const INPUT_ITEM_NAME = 'InputItem';
 
-type InputItemProps = ComponentProps<'input'>;
-
-function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX.Element {
+function InputItem({ __scopeInput, ...props }: ScopedProps<ComponentProps<'input'>>): JSX.Element {
   const { disabled, inputRef, readOnly } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
   const composedInputRef = useComposedRefs(inputRef);
 
@@ -109,5 +109,4 @@ function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { InputItemProps, InputProps };
 export { createInputScope, Input, InputItem, InputItem as Item, Input as Root };
