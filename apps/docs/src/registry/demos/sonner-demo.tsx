@@ -5,6 +5,8 @@ import type { JSX } from 'react';
 import { Button, logger, toast } from '@codefast/ui';
 import { useState } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 const allTypes = [
   {
     name: 'Default',
@@ -82,41 +84,45 @@ export function SonnerDemo(): JSX.Element {
   const [activeType, setActiveType] = useState(allTypes[0]);
 
   return (
-    <div className="flex flex-wrap gap-4">
-      <Button variant="outline" onClick={() => toast('My first toast')}>
-        Give me a toast
-      </Button>
-
-      <Button
-        variant="outline"
-        onClick={() =>
-          toast('Event has been created', {
-            description: 'Sunday, December 03, 2023 at 9:00 AM',
-            action: {
-              label: 'Undo',
-              onClick: () => {
-                logger.log('Undo');
-              },
-            },
-          })
-        }
-      >
-        Show Toast
-      </Button>
-
-      {allTypes.map((type) => (
-        <Button
-          key={type.name}
-          data-active={activeType.name === type.name}
-          variant="ghost"
-          onClick={() => {
-            type.action();
-            setActiveType(type);
-          }}
-        >
-          {type.name}
+    <GridWrapper className="*:grid *:place-items-center">
+      <div>
+        <Button variant="outline" onClick={() => toast('My first toast')}>
+          Give me a toast
         </Button>
+      </div>
+
+      <div>
+        <Button
+          variant="outline"
+          onClick={() =>
+            toast('Event has been created', {
+              description: 'Sunday, December 03, 2023 at 9:00 AM',
+              action: {
+                label: 'Undo',
+                onClick: () => {
+                  logger.log('Undo');
+                },
+              },
+            })
+          }
+        >
+          Show Toast
+        </Button>
+      </div>
+      {allTypes.map((type) => (
+        <div key={type.name}>
+          <Button
+            data-active={activeType.name === type.name}
+            variant="ghost"
+            onClick={() => {
+              type.action();
+              setActiveType(type);
+            }}
+          >
+            {type.name}
+          </Button>
+        </div>
       ))}
-    </div>
+    </GridWrapper>
   );
 }
