@@ -20,8 +20,6 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/number-input/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/number-input/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/day-picker/dist" />
       <excludeFolder url="file://$MODULE_DIR$/apps/storybook/.turbo" />
@@ -34,6 +32,8 @@
       <excludeFolder url="file://$MODULE_DIR$/.github" />
       <excludeFolder url="file://$MODULE_DIR$/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/apps/block/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

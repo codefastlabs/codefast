@@ -8,3 +8,4 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+packages/ui/src/styles/index.css
