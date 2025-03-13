@@ -43,7 +43,7 @@ function DialogWithForm(): JSX.Element {
           <Button variant="outline">Edit Profile</Button>
         </DialogTrigger>
 
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
 
@@ -84,7 +84,7 @@ function DialogScrollableContent(): JSX.Element {
         <Button variant="outline">Scrollable Content</Button>
       </DialogTrigger>
 
-      <DialogContent className="overflow-auto sm:max-w-[425px]">
+      <DialogContent className="overflow-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Scrollable Content</DialogTitle>
 
@@ -116,7 +116,7 @@ function DialogWithStickyFooter(): JSX.Element {
         <Button variant="outline">Sticky Footer</Button>
       </DialogTrigger>
 
-      <DialogContent className="overflow-auto sm:max-w-lg">
+      <DialogContent className="overflow-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Scrollable Content</DialogTitle>
 
