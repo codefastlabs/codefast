@@ -7,10 +7,11 @@
  */
 @theme inline {
   --color-input: var(--input);
-  --color-input-hover: var(--input-hover);
-  --color-input-focus: var(--input-focus);
 
   --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-border-focus: var(--border-focus);
+
   --color-ring: var(--ring);
 
   --color-background: var(--background);
