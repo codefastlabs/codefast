@@ -13,8 +13,8 @@ import {
   Checkbox,
   Input,
   Label,
-  RadioGroup,
-  RadioGroupItem,
+  RadioCards,
+  RadioCardsItem,
   Select,
   SelectContent,
   SelectItem,
@@ -415,22 +415,17 @@ export function FormsDemo(): JSX.Element {
 
               <p className="text-muted-foreground text-sm">Select the plan that best fits your needs.</p>
 
-              <RadioGroup className="grid gap-3 md:grid-cols-2" defaultValue="starter">
+              <RadioCards className="grid gap-3 md:grid-cols-2" defaultValue="starter">
                 {plans.map((plan) => (
-                  <Label
-                    key={plan.id}
-                    className="has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10 hover:not-has-disabled:border-input-hover flex items-start gap-3 rounded-lg border p-3 transition"
-                  >
-                    <RadioGroupItem className="data-[state=checked]:border-primary" id={plan.name} value={plan.id} />
-
+                  <RadioCardsItem key={plan.id} id={plan.name} value={plan.id}>
                     <div className="grid gap-1 font-normal">
                       <div className="font-medium">{plan.name}</div>
 
                       <div className="text-muted-foreground text-xs leading-snug">{plan.description}</div>
                     </div>
-                  </Label>
+                  </RadioCardsItem>
                 ))}
-              </RadioGroup>
+              </RadioCards>
             </fieldset>
 
             <div className="flex flex-col gap-2">
