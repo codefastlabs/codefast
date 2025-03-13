@@ -39,7 +39,6 @@ interface RegistryItem {
   component: LazyExoticComponent<() => JSX.Element> | null;
   description: string;
   files: RegistryFile[];
-  meta: undefined;
   name: string;
   type: string;
 }
@@ -57,7 +56,6 @@ export const Index: Registry = {`;
     name: "${item.name}",
     description: "${item.description ?? ''}",
     type: "${item.type}",
-    meta: ${JSON.stringify(item.meta)},
   },`;
       continue;
     }
@@ -84,7 +82,6 @@ export const Index: Registry = {`;
       })}
     ],
     component: ${componentPath ? createComponentImport(componentPath) : 'null'},
-    meta: ${JSON.stringify(item.meta)},
   },`;
   }
 

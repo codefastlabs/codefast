@@ -134,6 +134,17 @@ export const ui: Registry['items'] = [
     categories: ['demos', 'chart'],
   },
   {
+    name: 'checkbox-cards',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/checkbox-cards-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'checkbox-cards'],
+  },
+  {
     name: 'checkbox',
     type: 'registry:ui',
     files: [
@@ -143,6 +154,17 @@ export const ui: Registry['items'] = [
       },
     ],
     categories: ['demos', 'checkbox'],
+  },
+  {
+    name: 'checkbox-group',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/checkbox-group-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'checkbox-group'],
   },
   {
     name: 'collapsible',
@@ -244,6 +266,17 @@ export const ui: Registry['items'] = [
     categories: ['demos', 'hover-card'],
   },
   {
+    name: 'input-date',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-date-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'input-date'],
+  },
+  {
     name: 'input',
     type: 'registry:ui',
     files: [
@@ -297,6 +330,28 @@ export const ui: Registry['items'] = [
       },
     ],
     categories: ['demos', 'input-search'],
+  },
+  {
+    name: 'input-time',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-time-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'input-time'],
+  },
+  {
+    name: 'kbd',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/kbd-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'kbd'],
   },
   {
     name: 'label',
@@ -363,6 +418,28 @@ export const ui: Registry['items'] = [
       },
     ],
     categories: ['demos', 'progress'],
+  },
+  {
+    name: 'radio-cards',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/radio-cards-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'radio-cards'],
+  },
+  {
+    name: 'radio',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/radio-demo.tsx',
+        type: 'registry:block',
+      },
+    ],
+    categories: ['demos', 'radio'],
   },
   {
     name: 'radio-group',

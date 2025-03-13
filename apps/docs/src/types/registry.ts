@@ -38,11 +38,7 @@ export const registryItemSchema = z.object({
   title: z.string().optional(),
   author: z.string().min(2).optional(),
   description: z.string().optional(),
-  dependencies: z.array(z.string()).optional(),
-  devDependencies: z.array(z.string()).optional(),
   files: z.array(registryItemFileSchema).optional(),
-  meta: z.record(z.string(), z.any()).optional(),
-  docs: z.string().optional(),
   categories: z.array(z.string()).optional(),
 });
 
@@ -50,7 +46,6 @@ export type RegistryItem = z.infer<typeof registryItemSchema>;
 
 export const registrySchema = z.object({
   name: z.string(),
-  homepage: z.string(),
   items: z.array(registryItemSchema),
 });
 

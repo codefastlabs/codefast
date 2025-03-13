@@ -117,7 +117,7 @@ export function AlertDemo(): JSX.Element {
         </Alert>
       </div>
 
-      <div className="">
+      <div className="lg:col-span-2">
         <Alert>
           <CheckCircle2Icon />
 

@@ -23,8 +23,8 @@
     --border: var(--color-zinc-200);
     --ring: --alpha(var(--color-zinc-400) / 35%);
 
-    --primary: var(--color-zinc-900);
-    --primary-hover: var(--color-zinc-800);
+    --primary: var(--color-blue-600);
+    --primary-hover: var(--color-blue-700);
     --primary-foreground: var(--color-zinc-50);
 
     --secondary: var(--color-zinc-100);
