@@ -43,7 +43,7 @@ function ToggleGroup({
   return (
     <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
       <ToggleGroupPrimitive.Root
-        className={cn('flex items-center justify-center gap-1.5', className)}
+        className={cn('group/toggle-group flex w-fit items-center rounded-md', className)}
         data-size={size}
         data-slot="toggle-group"
         data-variant={variant}
@@ -75,18 +75,26 @@ function ToggleGroupItem({
     suffix?: ReactNode;
   }
 >): JSX.Element {
-  const context = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
+  const { variant, size } = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
     <ToggleGroupPrimitive.Item
-      className={toggleVariants({ ...context, className })}
+      className={toggleVariants({
+        className: [
+          'min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l',
+          className,
+        ],
+        size,
+        variant,
+      })}
       data-slot="toggle-group-item"
+      data-variant={variant}
       {...toggleGroupScope}
       {...props}
     >
       {prefix}
-      {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
+      {children}
       {suffix}
     </ToggleGroupPrimitive.Item>
   );
