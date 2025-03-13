@@ -14,7 +14,9 @@ import { CalendarDemo } from '@/registry/demos/calendar-demo';
 import { CardDemo } from '@/registry/demos/card-demo';
 import { CarouselDemo } from '@/registry/demos/carousel-demo';
 import { ChartDemo } from '@/registry/demos/chart-demo';
+import { CheckboxCardsDemo } from '@/registry/demos/checkbox-cards-demo';
 import { CheckboxDemo } from '@/registry/demos/checkbox-demo';
+import { CheckboxGroupDemo } from '@/registry/demos/checkbox-group-demo';
 import { CollapsibleDemo } from '@/registry/demos/collapsible-demo';
 import { ComboboxDemo } from '@/registry/demos/combobox-demo';
 import { CommandDemo } from '@/registry/demos/command-demo';
@@ -25,17 +27,22 @@ import { DrawerDemo } from '@/registry/demos/drawer-demo';
 import { DropdownMenuDemo } from '@/registry/demos/dropdown-menu-demo';
 import { FormDemo } from '@/registry/demos/form-demo';
 import { HoverCardDemo } from '@/registry/demos/hover-card-demo';
+import { InputDateDemo } from '@/registry/demos/input-date-demo';
 import { InputDemo } from '@/registry/demos/input-demo';
 import { InputNumberDemo } from '@/registry/demos/input-number-demo';
 import { InputOTPDemo } from '@/registry/demos/input-otp-demo';
 import { InputPasswordDemo } from '@/registry/demos/input-password-demo';
 import { InputSearchDemo } from '@/registry/demos/input-search-demo';
+import { InputTimeDemo } from '@/registry/demos/input-time-demo';
+import { KbdDemo } from '@/registry/demos/kbd-demo';
 import { LabelDemo } from '@/registry/demos/label-demo';
 import { MenubarDemo } from '@/registry/demos/menubar-demo';
 import { NavigationMenuDemo } from '@/registry/demos/navigation-menu-demo';
 import { PaginationDemo } from '@/registry/demos/pagination-demo';
 import { PopoverDemo } from '@/registry/demos/popover-demo';
 import { ProgressDemo } from '@/registry/demos/progress-demo';
+import { RadioCardsDemo } from '@/registry/demos/radio-cards-demo';
+import { RadioDemo } from '@/registry/demos/radio-demo';
 import { RadioGroupDemo } from '@/registry/demos/radio-group-demo';
 import { ResizableDemo } from '@/registry/demos/resizable-demo';
 import { ScrollAreaDemo } from '@/registry/demos/scroll-area-demo';
@@ -104,12 +111,20 @@ export default function AppPage(): JSX.Element {
         <CarouselDemo />
       </ComponentWrapper>
 
-      <ComponentWrapper className="w-full" name="chart">
+      <ComponentWrapper name="chart">
         <ChartDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="checkbox">
         <CheckboxDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="checkbox-cards">
+        <CheckboxCardsDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="checkbox-group">
+        <CheckboxGroupDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="collapsible">
@@ -156,6 +171,10 @@ export default function AppPage(): JSX.Element {
         <InputDemo />
       </ComponentWrapper>
 
+      <ComponentWrapper name="input-date">
+        <InputDateDemo />
+      </ComponentWrapper>
+
       <ComponentWrapper name="input-number">
         <InputNumberDemo />
       </ComponentWrapper>
@@ -170,6 +189,14 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="input-search">
         <InputSearchDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="input-time">
+        <InputTimeDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="kbd">
+        <KbdDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="label">
@@ -194,6 +221,14 @@ export default function AppPage(): JSX.Element {
 
       <ComponentWrapper name="progress">
         <ProgressDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="radio">
+        <RadioDemo />
+      </ComponentWrapper>
+
+      <ComponentWrapper name="radio-cards">
+        <RadioCardsDemo />
       </ComponentWrapper>
 
       <ComponentWrapper name="radio-group">

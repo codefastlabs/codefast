@@ -34,14 +34,13 @@ import {
   Settings2,
   SquareTerminal,
 } from 'lucide-react';
-import Link from 'next/link';
 
 import type { Component, NavItem, Team, User } from '@/types';
 
-import { Index } from '@/__registry__';
 import { getComponentName } from '@/lib/utils';
 import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
 import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
+import { ui } from '@/registry/registry-demo';
 
 // This is sample data.
 const data: {
@@ -101,9 +100,7 @@ const data: {
       ],
     },
   ],
-  components: Object.values(Index)
-    .filter((item) => item.type === 'registry:ui')
-    .sort((a, b) => a.name.localeCompare(b.name)),
+  components: ui.sort((a, b) => a.name.localeCompare(b.name)),
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
@@ -171,7 +168,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
-                  <Link href={`/#${item.name}`}>{getComponentName(item.name)}</Link>
+                  <a href={`/#${item.name}`}>{getComponentName(item.name)}</a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

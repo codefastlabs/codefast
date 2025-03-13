@@ -17,18 +17,14 @@ export function SwitchDemo(): JSX.Element {
 
       <div>
         <div className="flex items-center gap-2">
-          <Switch
-            defaultChecked
-            className="data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-600"
-            id="switch-demo-bluetooth"
-          />
+          <Switch defaultChecked className="data-[state=checked]:bg-primary" id="switch-demo-bluetooth" />
 
           <Label htmlFor="switch-demo-bluetooth">Bluetooth</Label>
         </div>
       </div>
 
       <div>
-        <Label className="flex items-center gap-6 rounded-lg border p-4 has-[[data-state=checked]]:border-blue-600">
+        <Label className="has-data-[state=checked]:border-blue-600 flex items-center gap-6 rounded-lg border p-4">
           <div className="flex flex-col gap-1">
             <div className="font-medium">Share across devices</div>
 
@@ -37,10 +33,7 @@ export function SwitchDemo(): JSX.Element {
             </div>
           </div>
 
-          <Switch
-            className="data-[state=checked]:bg-blue-500 dark:data-[state=checked]:bg-blue-600"
-            id="switch-demo-focus-mode"
-          />
+          <Switch className="data-[state=checked]:bg-primary" id="switch-demo-focus-mode" />
         </Label>
       </div>
     </GridWrapper>

@@ -42,10 +42,10 @@ export function CardDemo(): JSX.Element {
                 </div>
 
                 <div className="grid gap-2">
-                  <div className="flex items-center">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <Label htmlFor="password">Password</Label>
 
-                    <Link className="ml-auto inline-block text-sm underline-offset-4 hover:underline" href="#">
+                    <Link className="inline-block text-sm underline-offset-4 hover:underline" href="#">
                       Forgot your password?
                     </Link>
                   </div>
@@ -141,7 +141,7 @@ export function CardDemo(): JSX.Element {
             />
           </CardContent>
 
-          <CardFooter className="flex items-center gap-2">
+          <CardFooter className="flex flex-wrap items-center justify-between gap-2">
             <Badge variant="outline">
               <BedIcon /> 4
             </Badge>
@@ -154,7 +154,7 @@ export function CardDemo(): JSX.Element {
               <LandPlotIcon /> 350m²
             </Badge>
 
-            <div className="ml-auto font-medium tabular-nums">$135,000</div>
+            <div className="font-medium tabular-nums">$135,000</div>
           </CardFooter>
         </Card>
       </div>

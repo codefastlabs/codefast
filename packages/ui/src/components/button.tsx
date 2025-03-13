@@ -68,7 +68,7 @@ function Button({
       {...props}
     >
       {loading && loaderPosition === 'prefix' ? spinner || <Spinner /> : prefix}
-      {typeof children === 'string' ? <span className="truncate">{children}</span> : children}
+      {children}
       {loading && loaderPosition === 'suffix' ? spinner || <Spinner /> : suffix}
     </button>
   );

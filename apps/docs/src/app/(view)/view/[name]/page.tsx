@@ -2,7 +2,6 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { type JSX, cache, Suspense } from 'react';
 
-import { ComponentWrapper } from '@/components/component-wrapper';
 import { getRegistryComponent, getRegistryItem } from '@/lib/registry';
 
 const getCachedRegistryItem = cache((name: string) => getRegistryItem(name));
@@ -34,12 +33,8 @@ export default async function ViewPage({ params }: { params: Promise<{ name: str
   }
 
   return (
-    <div className="@container grid gap-4 p-4 2xl:container 2xl:mx-auto">
-      <Suspense>
-        <ComponentWrapper name={name}>
-          <Component />
-        </ComponentWrapper>
-      </Suspense>
-    </div>
+    <Suspense>
+      <Component />
+    </Suspense>
   );
 }

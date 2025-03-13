@@ -13,6 +13,10 @@ export function CalendarDemo(): JSX.Element {
     from: new Date(new Date().getFullYear(), 0, 12),
     to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
   });
+  const [dateRange2, setDateRange2] = useState<DateRange | undefined>({
+    from: new Date(new Date().getFullYear(), 0, 12),
+    to: addDays(new Date(new Date().getFullYear(), 0, 12), 30),
+  });
   const [range, setRange] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 0, 12),
     to: addDays(new Date(new Date().getFullYear(), 0, 12), 50),
@@ -39,8 +43,8 @@ export function CalendarDemo(): JSX.Element {
         defaultMonth={dateRange?.from}
         disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
         mode="range"
-        selected={dateRange}
-        onSelect={setDateRange}
+        selected={dateRange2}
+        onSelect={setDateRange2}
       />
 
       <div className="">

@@ -4,7 +4,22 @@ import { Label, RadioGroup, RadioGroupItem } from '@codefast/ui';
 
 import { GridWrapper } from '@/components/grid-wrapper';
 
-const plans = [
+interface Plan {
+  /** Mô tả ngắn về tính năng của gói dịch vụ */
+  description: string;
+  /** Định danh duy nhất của gói dịch vụ */
+  id: string;
+  /** Tên hiển thị của gói dịch vụ */
+  name: string;
+  /** Giá gói dịch vụ (bao gồm ký hiệu tiền tệ) */
+  price: string;
+  /** Xác định xem gói dịch vụ có bị vô hiệu hóa không */
+  disabled?: boolean;
+  /** Giá trị được sử dụng khi chọn plan (tùy chọn, nếu không có sẽ dùng id) */
+  value?: string;
+}
+
+const plans: readonly Plan[] = [
   {
     id: 'starter',
     name: 'Starter Plan',
@@ -17,7 +32,15 @@ const plans = [
     description: 'Advanced features for growing businesses with higher demands',
     price: '$20',
   },
-] as const;
+  {
+    id: 'business',
+    value: '3',
+    name: 'Business Plan',
+    description: 'Comprehensive solution for medium-sized businesses',
+    price: '$50',
+    disabled: true,
+  },
+];
 
 export function RadioGroupDemo(): JSX.Element {
   return (
@@ -25,21 +48,27 @@ export function RadioGroupDemo(): JSX.Element {
       <div>
         <RadioGroup defaultValue="comfortable">
           <div className="flex items-center gap-3">
-            <RadioGroupItem id="r1" value="default" />
+            <RadioGroupItem id="radio-group-1" value="default" />
 
-            <Label htmlFor="r1">Default</Label>
+            <Label htmlFor="radio-group-1">Default</Label>
           </div>
 
           <div className="flex items-center gap-3">
-            <RadioGroupItem id="r2" value="comfortable" />
+            <RadioGroupItem id="radio-group-2" value="comfortable" />
 
-            <Label htmlFor="r2">Comfortable</Label>
+            <Label htmlFor="radio-group-2">Comfortable</Label>
           </div>
 
           <div className="flex items-center gap-3">
-            <RadioGroupItem id="r3" value="compact" />
+            <RadioGroupItem id="radio-group-3" value="compact" />
 
-            <Label htmlFor="r3">Compact</Label>
+            <Label htmlFor="radio-group-3">Compact</Label>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <RadioGroupItem disabled id="radio-group-4" value="disabled" />
+
+            <Label htmlFor="radio-group-4">Disabled</Label>
           </div>
         </RadioGroup>
       </div>
@@ -49,10 +78,11 @@ export function RadioGroupDemo(): JSX.Element {
           {plans.map((plan) => (
             <Label
               key={plan.id}
-              className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-4 has-[[data-state=checked]]:border-green-600 has-[[data-state=checked]]:bg-green-50 dark:has-[[data-state=checked]]:border-green-900 dark:has-[[data-state=checked]]:bg-green-950"
+              className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:border-primary has-aria-checked:bg-primary/10 has-disabled:opacity-50 flex items-start gap-3 rounded-lg border p-3"
             >
               <RadioGroupItem
-                className="shadow-none data-[state=checked]:border-green-600 data-[state=checked]:bg-green-600 *:data-[slot=radio-group-indicator]:[&>svg]:fill-white *:data-[slot=radio-group-indicator]:[&>svg]:stroke-white"
+                className="aria-checked:border-primary aria-checked:bg-primary shadow-none disabled:opacity-100"
+                disabled={plan.disabled}
                 id={plan.name}
                 value={plan.id}
               />

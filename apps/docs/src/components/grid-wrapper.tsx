@@ -7,8 +7,7 @@ export function GridWrapper({ className, ...props }: ComponentProps<'div'>): JSX
     <div className="mx-auto w-full overflow-hidden" {...props}>
       <div
         className={cn(
-          '-m-px grid divide-y md:grid-cols-2 md:divide-x lg:grid-cols-3',
-          '*:px-1 *:py-12 *:last:border-r *:sm:px-8 *:xl:px-12',
+          '-m-px grid grid-flow-dense divide-y *:px-1 *:py-8 *:last:border-r *:sm:px-8 md:grid-cols-2 md:divide-x lg:grid-cols-3',
           className,
         )}
         {...props}

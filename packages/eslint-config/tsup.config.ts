@@ -6,7 +6,6 @@ export default defineConfig((options) => ({
   entry: ['src/**/*.ts*', '!src/**/*.test.ts*'],
   format: ['cjs', 'esm'],
   minify: !options.watch,
-  silent: true,
   sourcemap: true,
   splitting: true,
   treeshake: true,
