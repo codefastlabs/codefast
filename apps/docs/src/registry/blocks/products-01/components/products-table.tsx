@@ -65,9 +65,9 @@ export function ProductsTable({
           </TabsList>
         </Tabs>
 
-        <div className="**:data-[slot=button]:size-8 **:data-[slot=select-trigger]:h-8 flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Select defaultValue="all">
-            <SelectTrigger>
+            <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Category:</span>
 
               <SelectValue placeholder="Select a product" />
@@ -85,7 +85,7 @@ export function ProductsTable({
           </Select>
 
           <Select defaultValue="all">
-            <SelectTrigger>
+            <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Price:</span>
 
               <SelectValue placeholder="Select a product" />
@@ -103,7 +103,7 @@ export function ProductsTable({
           </Select>
 
           <Select defaultValue="all">
-            <SelectTrigger>
+            <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Status:</span>
 
               <SelectValue placeholder="Select a product" />
@@ -120,11 +120,11 @@ export function ProductsTable({
             </SelectContent>
           </Select>
 
-          <Button size="icon" variant="outline">
+          <Button className="size-8" size="icon" variant="outline">
             <ListFilterIcon />
           </Button>
 
-          <Button size="icon" variant="outline">
+          <Button className="size-8" size="icon" variant="outline">
             <ArrowUpDownIcon />
           </Button>
         </div>

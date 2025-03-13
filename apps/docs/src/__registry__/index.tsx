@@ -15,7 +15,6 @@ interface RegistryItem {
   component: LazyExoticComponent<() => JSX.Element> | null;
   description: string;
   files: RegistryFile[];
-  meta: undefined;
   name: string;
   type: string;
 }
@@ -40,7 +39,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   alert: {
     name: 'alert',
@@ -59,7 +57,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'alert-dialog': {
     name: 'alert-dialog',
@@ -78,7 +75,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'aspect-ratio': {
     name: 'aspect-ratio',
@@ -97,7 +93,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   avatar: {
     name: 'avatar',
@@ -116,7 +111,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   badge: {
     name: 'badge',
@@ -135,7 +129,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   breadcrumb: {
     name: 'breadcrumb',
@@ -154,7 +147,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   button: {
     name: 'button',
@@ -173,7 +165,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   calendar: {
     name: 'calendar',
@@ -192,7 +183,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   card: {
     name: 'card',
@@ -211,7 +201,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   carousel: {
     name: 'carousel',
@@ -230,7 +219,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   chart: {
     name: 'chart',
@@ -249,7 +237,24 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
+  },
+  'checkbox-cards': {
+    name: 'checkbox-cards',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/checkbox-cards-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/checkbox-cards-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
   },
   checkbox: {
     name: 'checkbox',
@@ -268,7 +273,24 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
+  },
+  'checkbox-group': {
+    name: 'checkbox-group',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/checkbox-group-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/checkbox-group-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
   },
   collapsible: {
     name: 'collapsible',
@@ -287,7 +309,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   command: {
     name: 'command',
@@ -306,7 +327,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   combobox: {
     name: 'combobox',
@@ -325,7 +345,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'context-menu': {
     name: 'context-menu',
@@ -344,7 +363,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   dialog: {
     name: 'dialog',
@@ -363,7 +381,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   drawer: {
     name: 'drawer',
@@ -382,7 +399,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'dropdown-menu': {
     name: 'dropdown-menu',
@@ -401,7 +417,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   form: {
     name: 'form',
@@ -420,7 +435,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'hover-card': {
     name: 'hover-card',
@@ -439,7 +453,24 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
+  },
+  'input-date': {
+    name: 'input-date',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-date-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-date-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
   },
   input: {
     name: 'input',
@@ -458,7 +489,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'input-number': {
     name: 'input-number',
@@ -477,7 +507,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'input-otp': {
     name: 'input-otp',
@@ -496,7 +525,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'input-password': {
     name: 'input-password',
@@ -515,7 +543,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'input-search': {
     name: 'input-search',
@@ -534,7 +561,42 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
+  },
+  'input-time': {
+    name: 'input-time',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/input-time-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/input-time-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
+  },
+  kbd: {
+    name: 'kbd',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/kbd-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/kbd-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
   },
   label: {
     name: 'label',
@@ -553,7 +615,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   menubar: {
     name: 'menubar',
@@ -572,7 +633,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'navigation-menu': {
     name: 'navigation-menu',
@@ -591,7 +651,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   pagination: {
     name: 'pagination',
@@ -610,7 +669,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   popover: {
     name: 'popover',
@@ -629,7 +687,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   progress: {
     name: 'progress',
@@ -648,7 +705,42 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
+  },
+  'radio-cards': {
+    name: 'radio-cards',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/radio-cards-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/radio-cards-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
+  },
+  radio: {
+    name: 'radio',
+    description: '',
+    type: 'registry:ui',
+    files: [
+      {
+        path: '@/registry/demos/radio-demo.tsx',
+        type: 'registry:block',
+        target: '',
+      },
+    ],
+    component: lazy(async () => {
+      const mod = await import('@/registry/demos/radio-demo.tsx');
+      const exportName = Object.keys(mod).find((key) => typeof mod[key] === 'function' || typeof mod[key] === 'object');
+
+      return { default: mod.default ?? mod[exportName] };
+    }),
   },
   'radio-group': {
     name: 'radio-group',
@@ -667,7 +759,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   resizable: {
     name: 'resizable',
@@ -686,7 +777,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'scroll-area': {
     name: 'scroll-area',
@@ -705,7 +795,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   select: {
     name: 'select',
@@ -724,7 +813,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   separator: {
     name: 'separator',
@@ -743,7 +831,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   sheet: {
     name: 'sheet',
@@ -762,13 +849,11 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   sidebar: {
     name: 'sidebar',
     description: '',
     type: 'registry:ui',
-    meta: undefined,
   },
   skeleton: {
     name: 'skeleton',
@@ -787,7 +872,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   slider: {
     name: 'slider',
@@ -806,7 +890,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   sonner: {
     name: 'sonner',
@@ -825,7 +908,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   switch: {
     name: 'switch',
@@ -844,7 +926,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   table: {
     name: 'table',
@@ -863,7 +944,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   tabs: {
     name: 'tabs',
@@ -882,7 +962,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   textarea: {
     name: 'textarea',
@@ -901,7 +980,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   toggle: {
     name: 'toggle',
@@ -920,7 +998,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'toggle-group': {
     name: 'toggle-group',
@@ -939,7 +1016,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   tooltip: {
     name: 'tooltip',
@@ -958,7 +1034,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-01': {
     name: 'sidebar-01',
@@ -992,7 +1067,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-02': {
     name: 'sidebar-02',
@@ -1026,7 +1100,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-03': {
     name: 'sidebar-03',
@@ -1050,7 +1123,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-04': {
     name: 'sidebar-04',
@@ -1074,7 +1146,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-05': {
     name: 'sidebar-05',
@@ -1103,7 +1174,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-06': {
     name: 'sidebar-06',
@@ -1137,7 +1207,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-07': {
     name: 'sidebar-07',
@@ -1181,7 +1250,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-08': {
     name: 'sidebar-08',
@@ -1225,7 +1293,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-09': {
     name: 'sidebar-09',
@@ -1254,7 +1321,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-10': {
     name: 'sidebar-10',
@@ -1308,7 +1374,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-11': {
     name: 'sidebar-11',
@@ -1332,7 +1397,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-12': {
     name: 'sidebar-12',
@@ -1371,7 +1435,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-13': {
     name: 'sidebar-13',
@@ -1395,7 +1458,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-14': {
     name: 'sidebar-14',
@@ -1419,7 +1481,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-15': {
     name: 'sidebar-15',
@@ -1488,7 +1549,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'sidebar-16': {
     name: 'sidebar-16',
@@ -1542,7 +1602,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'login-01': {
     name: 'login-01',
@@ -1566,7 +1625,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'login-02': {
     name: 'login-02',
@@ -1590,7 +1648,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'login-03': {
     name: 'login-03',
@@ -1614,7 +1671,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'login-04': {
     name: 'login-04',
@@ -1638,7 +1694,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'login-05': {
     name: 'login-05',
@@ -1662,7 +1717,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'products-01': {
     name: 'products-01',
@@ -1686,7 +1740,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-axes': {
     name: 'chart-area-axes',
@@ -1705,7 +1758,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-default': {
     name: 'chart-area-default',
@@ -1724,7 +1776,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-gradient': {
     name: 'chart-area-gradient',
@@ -1743,7 +1794,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-icons': {
     name: 'chart-area-icons',
@@ -1762,7 +1812,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-interactive': {
     name: 'chart-area-interactive',
@@ -1781,7 +1830,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-legend': {
     name: 'chart-area-legend',
@@ -1800,7 +1848,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-linear': {
     name: 'chart-area-linear',
@@ -1819,7 +1866,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-stacked-expand': {
     name: 'chart-area-stacked-expand',
@@ -1838,7 +1884,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-stacked': {
     name: 'chart-area-stacked',
@@ -1857,7 +1902,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-area-step': {
     name: 'chart-area-step',
@@ -1876,7 +1920,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-active': {
     name: 'chart-bar-active',
@@ -1895,7 +1938,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-default': {
     name: 'chart-bar-default',
@@ -1914,7 +1956,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-horizontal': {
     name: 'chart-bar-horizontal',
@@ -1933,7 +1974,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-interactive': {
     name: 'chart-bar-interactive',
@@ -1952,7 +1992,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-label-custom': {
     name: 'chart-bar-label-custom',
@@ -1971,7 +2010,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-label': {
     name: 'chart-bar-label',
@@ -1990,7 +2028,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-mixed': {
     name: 'chart-bar-mixed',
@@ -2009,7 +2046,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-multiple': {
     name: 'chart-bar-multiple',
@@ -2028,7 +2064,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-negative': {
     name: 'chart-bar-negative',
@@ -2047,7 +2082,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-bar-stacked': {
     name: 'chart-bar-stacked',
@@ -2066,7 +2100,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-default': {
     name: 'chart-line-default',
@@ -2085,7 +2118,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-dots-colors': {
     name: 'chart-line-dots-colors',
@@ -2104,7 +2136,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-dots-custom': {
     name: 'chart-line-dots-custom',
@@ -2123,7 +2154,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-dots': {
     name: 'chart-line-dots',
@@ -2142,7 +2172,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-interactive': {
     name: 'chart-line-interactive',
@@ -2161,7 +2190,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-label-custom': {
     name: 'chart-line-label-custom',
@@ -2180,7 +2208,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-label': {
     name: 'chart-line-label',
@@ -2199,7 +2226,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-linear': {
     name: 'chart-line-linear',
@@ -2218,7 +2244,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-multiple': {
     name: 'chart-line-multiple',
@@ -2237,7 +2262,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-line-step': {
     name: 'chart-line-step',
@@ -2256,7 +2280,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-donut-active': {
     name: 'chart-pie-donut-active',
@@ -2275,7 +2298,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-donut-text': {
     name: 'chart-pie-donut-text',
@@ -2294,7 +2316,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-donut': {
     name: 'chart-pie-donut',
@@ -2313,7 +2334,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-interactive': {
     name: 'chart-pie-interactive',
@@ -2332,7 +2352,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-label-custom': {
     name: 'chart-pie-label-custom',
@@ -2351,7 +2370,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-label-list': {
     name: 'chart-pie-label-list',
@@ -2370,7 +2388,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-label': {
     name: 'chart-pie-label',
@@ -2389,7 +2406,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-legend': {
     name: 'chart-pie-legend',
@@ -2408,7 +2424,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-separator-none': {
     name: 'chart-pie-separator-none',
@@ -2427,7 +2442,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-simple': {
     name: 'chart-pie-simple',
@@ -2446,7 +2460,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-pie-stacked': {
     name: 'chart-pie-stacked',
@@ -2465,7 +2478,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-default': {
     name: 'chart-radar-default',
@@ -2484,7 +2496,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-dots': {
     name: 'chart-radar-dots',
@@ -2503,7 +2514,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-grid-circle-fill': {
     name: 'chart-radar-grid-circle-fill',
@@ -2522,7 +2532,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-grid-circle-no-lines': {
     name: 'chart-radar-grid-circle-no-lines',
@@ -2541,7 +2550,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-grid-circle': {
     name: 'chart-radar-grid-circle',
@@ -2560,7 +2568,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-grid-custom': {
     name: 'chart-radar-grid-custom',
@@ -2579,7 +2586,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-grid-fill': {
     name: 'chart-radar-grid-fill',
@@ -2598,7 +2604,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-grid-none': {
     name: 'chart-radar-grid-none',
@@ -2617,7 +2622,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-icons': {
     name: 'chart-radar-icons',
@@ -2636,7 +2640,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-label-custom': {
     name: 'chart-radar-label-custom',
@@ -2655,7 +2658,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-legend': {
     name: 'chart-radar-legend',
@@ -2674,7 +2676,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-lines-only': {
     name: 'chart-radar-lines-only',
@@ -2693,7 +2694,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-multiple': {
     name: 'chart-radar-multiple',
@@ -2712,7 +2712,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radar-radius': {
     name: 'chart-radar-radius',
@@ -2731,7 +2730,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radial-grid': {
     name: 'chart-radial-grid',
@@ -2750,7 +2748,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radial-label': {
     name: 'chart-radial-label',
@@ -2769,7 +2766,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radial-shape': {
     name: 'chart-radial-shape',
@@ -2788,7 +2784,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radial-simple': {
     name: 'chart-radial-simple',
@@ -2807,7 +2802,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radial-stacked': {
     name: 'chart-radial-stacked',
@@ -2826,7 +2820,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-radial-text': {
     name: 'chart-radial-text',
@@ -2845,7 +2838,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-default': {
     name: 'chart-tooltip-default',
@@ -2864,7 +2856,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-indicator-line': {
     name: 'chart-tooltip-indicator-line',
@@ -2883,7 +2874,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-indicator-none': {
     name: 'chart-tooltip-indicator-none',
@@ -2902,7 +2892,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-label-none': {
     name: 'chart-tooltip-label-none',
@@ -2921,7 +2910,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-label-custom': {
     name: 'chart-tooltip-label-custom',
@@ -2940,7 +2928,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-label-formatter': {
     name: 'chart-tooltip-label-formatter',
@@ -2959,7 +2946,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-formatter': {
     name: 'chart-tooltip-formatter',
@@ -2978,7 +2964,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-icons': {
     name: 'chart-tooltip-icons',
@@ -2997,7 +2982,6 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
   'chart-tooltip-advanced': {
     name: 'chart-tooltip-advanced',
@@ -3016,6 +3000,5 @@ export const Index: Registry = {
 
       return { default: mod.default ?? mod[exportName] };
     }),
-    meta: undefined,
   },
 };

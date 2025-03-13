@@ -53,6 +53,7 @@ function SelectTrigger({
         size,
         variant: 'outline',
       })}
+      data-size={size}
       data-slot="select-trigger"
       {...props}
     >

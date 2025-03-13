@@ -37,11 +37,11 @@ export function CheckboxDemo(): JSX.Element {
         </div>
       </div>
 
-      <div className="">
-        <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
+      <div className="lg:col-span-2">
+        <Label className="hover:not-has-disabled:bg-secondary has-aria-[checked=true]:border-primary has-aria-[checked=true]:bg-primary/10 flex items-start gap-3 rounded-lg border p-3">
           <Checkbox
             defaultChecked
-            className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
+            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-white"
             id="toggle-2"
           />
 

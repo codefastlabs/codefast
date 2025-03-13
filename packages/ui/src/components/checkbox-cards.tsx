@@ -3,6 +3,7 @@ import type { ComponentProps, JSX } from 'react';
 import * as CheckboxGroupPrimitive from '@codefast-ui/checkbox-group';
 import { CheckIcon } from 'lucide-react';
 
+import { Label } from '@/components/label';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
@@ -10,7 +11,7 @@ import { cn } from '@/lib/utils';
  * -------------------------------------------------------------------------- */
 
 function CheckboxCards(props: ComponentProps<typeof CheckboxGroupPrimitive.Root>): JSX.Element {
-  return <CheckboxGroupPrimitive.Root {...props} />;
+  return <CheckboxGroupPrimitive.Root data-slot="checkbox-cards" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -26,17 +27,16 @@ function CheckboxCardsItem({
   checkboxClassName?: string;
 }): JSX.Element {
   return (
-    <label
+    <Label
       className={cn(
-        'hover:not-has-disabled:bg-secondary has-aria-checked:border-primary has-focus-visible:border-input-focus has-focus-visible:ring-ring has-focus-visible:ring-3 has-disabled:opacity-50 border-secondary group/checkbox-card flex items-center justify-center gap-4 rounded-lg border-2 p-4',
+        'hover:not-has-disabled:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-input-focus has-aria-checked:has-focus-visible:ring-primary/10 has-focus-visible:ring-ring has-focus-visible:ring-3 has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition',
         className,
       )}
       data-slot="checkbox-card"
     >
-      {children}
       <CheckboxGroupPrimitive.Item
         className={cn(
-          'border-input text-primary-foreground group-hover/checkbox-card:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary outline-hidden peer flex size-4 shrink-0 rounded-sm border',
+          'border-input text-primary-foreground group-hover/checkbox-card:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary outline-hidden peer flex size-4 shrink-0 rounded-sm border transition',
           checkboxClassName,
         )}
         data-slot="checkbox-card-item"
@@ -46,7 +46,8 @@ function CheckboxCardsItem({
           <CheckIcon className="size-3.5" />
         </CheckboxGroupPrimitive.CheckboxGroupIndicator>
       </CheckboxGroupPrimitive.Item>
-    </label>
+      {children}
+    </Label>
   );
 }
 

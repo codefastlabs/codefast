@@ -419,7 +419,7 @@ export function FormsDemo(): JSX.Element {
                 {plans.map((plan) => (
                   <Label
                     key={plan.id}
-                    className="has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/10 hover:not-has-disabled:border-input-hover flex items-start gap-3 rounded-lg border p-3 transition"
+                    className="has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/10 hover:not-has-disabled:border-input-hover flex items-start gap-3 rounded-lg border p-3 transition"
                   >
                     <RadioGroupItem className="data-[state=checked]:border-primary" id={plan.name} value={plan.id} />
 

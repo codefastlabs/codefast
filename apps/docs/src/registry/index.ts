@@ -6,6 +6,5 @@ import { ui } from '@/registry/registry-demo';
 
 export const registry = {
   name: '@codefast/ui',
-  homepage: 'https://codefastlabs.vercel.app/',
   items: [...ui, ...blocks, ...charts],
 } satisfies Registry;

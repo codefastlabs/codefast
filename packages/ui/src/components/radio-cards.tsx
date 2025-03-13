@@ -2,30 +2,43 @@ import type { ComponentProps, JSX } from 'react';
 
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 
+import { Label } from '@/components/label';
 import { cn } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Component: RadioCards
  * -------------------------------------------------------------------------- */
 
-function RadioCards({ className, ...props }: ComponentProps<typeof RadioGroupPrimitive.Root>): JSX.Element {
-  return <RadioGroupPrimitive.Root className={cn('grid gap-2', className)} data-slot="radio-cards" {...props} />;
+function RadioCards(props: ComponentProps<typeof RadioGroupPrimitive.Root>): JSX.Element {
+  return <RadioGroupPrimitive.Root data-slot="radio-cards" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: RadioCardsItem
  * -------------------------------------------------------------------------- */
 
-function RadioCardsItem({ className, ...props }: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
+function RadioCardsItem({
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
   return (
-    <RadioGroupPrimitive.Item
-      className={cn(
-        'border-secondary hover:not-disabled:bg-secondary focus-visible:ring-ring focus-visible:border-ring focus-visible:ring-3 aria-checked:border-primary outline-hidden group/radio-card peer flex items-center justify-center rounded-lg border-2 p-4 disabled:opacity-50',
-        className,
-      )}
+    <Label
+      className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-input-focus has-aria-checked:has-focus-visible:ring-primary/10 has-focus-visible:ring-ring has-focus-visible:ring-3 has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
       data-slot="radio-card"
-      {...props}
-    />
+    >
+      <RadioGroupPrimitive.Item
+        className={cn(
+          'border-input text-primary-foreground group-hover/radio-card:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary outline-hidden peer flex size-4 shrink-0 items-center justify-center rounded-full border transition',
+          className,
+        )}
+        data-slot="radio-card-item"
+        {...props}
+      >
+        <RadioGroupPrimitive.Indicator className="bg-background size-1 rounded-full" data-slot="radio-card-indicator" />
+      </RadioGroupPrimitive.Item>
+      {children}
+    </Label>
   );
 }
 
