@@ -12,7 +12,7 @@ import { Spinner } from '@/components/spinner';
 
 const inputVariants = tv({
   slots: {
-    root: "border-input bg-background not-has-disabled:shadow-xs hover:not-has-disabled:not-focus-within:border-input-hover focus-within:border-input-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 has-aria-invalid:border-destructive hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60 focus-within:has-aria-invalid:ring-destructive/20 [&>svg]:text-muted-foreground peer flex h-9 w-full grow items-center gap-3 rounded-lg border px-3 text-sm transition [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+    root: "border-input bg-background not-has-disabled:shadow-xs hover:not-has-disabled:not-focus-within:border-border-hover focus-within:border-border-focus focus-within:ring-ring focus-within:ring-3 has-disabled:opacity-50 has-aria-invalid:border-destructive hover:not-has-disabled:not-focus-within:has-aria-invalid:border-destructive/60 focus-within:has-aria-invalid:ring-destructive/20 [&>svg]:text-muted-foreground peer flex h-9 w-full grow items-center gap-3 rounded-lg border px-3 text-sm transition [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
     input:
       'placeholder:text-muted-foreground outline-hidden file:py-1.75 size-full file:bg-transparent file:font-medium',
   },

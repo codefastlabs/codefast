@@ -24,12 +24,12 @@ function RadioCardsItem({
 }: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
   return (
     <Label
-      className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-input-focus has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
+      className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-border-focus has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
       data-slot="radio-card"
     >
       <RadioGroupPrimitive.Item
         className={cn(
-          'border-input aria-checked:focus-visible:ring-3 aria-checked:focus-visible:ring-primary/20 text-primary-foreground group-hover/radio-card:not-disabled:not-aria-checked:border-input-hover aria-checked:border-primary aria-checked:bg-primary outline-hidden peer flex size-4 shrink-0 items-center justify-center rounded-full border transition',
+          'border-input aria-checked:focus-visible:ring-3 aria-checked:focus-visible:ring-primary/20 text-primary-foreground group-hover/radio-card:not-disabled:not-aria-checked:border-border-hover aria-checked:border-primary aria-checked:bg-primary outline-hidden peer flex size-4 shrink-0 items-center justify-center rounded-full border transition',
           className,
         )}
         data-slot="radio-card-item"
