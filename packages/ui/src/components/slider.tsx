@@ -51,7 +51,7 @@ function Slider({
           key={index}
           aria-label="Volume"
           className={cn(
-            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-primary/15 focus-visible:ring-3 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm after:size-full after:rounded-full after:transition-[width,height]',
+            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-primary/20 focus-visible:ring-3 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm after:size-full after:rounded-full after:transition-[width,height]',
           )}
           data-slot="slider-thumb"
         />
