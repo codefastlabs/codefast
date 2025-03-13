@@ -24,28 +24,34 @@ export function CalendarDemo(): JSX.Element {
 
   return (
     <div className="@md:flex-row flex flex-col flex-wrap items-start gap-2">
-      <Calendar className="rounded-md border shadow-sm" mode="single" selected={date} onSelect={setDate} />
+      <div className="">
+        <Calendar className="rounded-md border shadow-sm" mode="single" selected={date} onSelect={setDate} />
+      </div>
 
-      <Calendar
-        className="rounded-md border shadow-sm"
-        defaultMonth={dateRange?.from}
-        disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
-        mode="range"
-        numberOfMonths={2}
-        selected={dateRange}
-        onSelect={setDateRange}
-      />
+      <div className="">
+        <Calendar
+          className="rounded-md border shadow-sm"
+          defaultMonth={dateRange?.from}
+          disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
+          mode="range"
+          numberOfMonths={2}
+          selected={dateRange}
+          onSelect={setDateRange}
+        />
+      </div>
 
-      <Calendar
-        showWeekNumber
-        captionLayout="dropdown"
-        className="rounded-md border shadow-sm"
-        defaultMonth={dateRange?.from}
-        disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
-        mode="range"
-        selected={dateRange2}
-        onSelect={setDateRange2}
-      />
+      <div className="">
+        <Calendar
+          showWeekNumber
+          captionLayout="dropdown"
+          className="rounded-md border shadow-sm"
+          defaultMonth={dateRange?.from}
+          disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
+          mode="range"
+          selected={dateRange2}
+          onSelect={setDateRange2}
+        />
+      </div>
 
       <div className="">
         <Calendar

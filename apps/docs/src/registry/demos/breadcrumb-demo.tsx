@@ -29,8 +29,8 @@ export function BreadcrumbDemo(): JSX.Element {
 
         <BreadcrumbItem>
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1">
-              <BreadcrumbEllipsis className="h-4 w-4" />
+            <DropdownMenuTrigger className="outline-hidden hover:bg-secondary flex items-center gap-1 rounded-sm px-1">
+              <BreadcrumbEllipsis className="size-4" />
 
               <span className="sr-only">Toggle menu</span>
             </DropdownMenuTrigger>
