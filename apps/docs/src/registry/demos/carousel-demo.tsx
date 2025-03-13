@@ -12,10 +12,13 @@ import {
 
 export function CarouselDemo(): JSX.Element {
   return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <Carousel className="max-w-lg *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex">
+    <div className="**:select-none flex w-full flex-col items-center gap-4 *:w-full *:max-w-md">
+      <Carousel
+        className="*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
+        opts={{ loop: true }}
+      >
         <CarouselContent>
-          {Array.from({ length: 15 }).map((_, index) => (
+          {Array.from({ length: 10 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key -- keep
             <CarouselItem key={index}>
               <div className="p-1">
@@ -35,19 +38,17 @@ export function CarouselDemo(): JSX.Element {
       </Carousel>
 
       <Carousel
-        className="max-w-lg *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
-        opts={{
-          align: 'start',
-        }}
+        className="*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
+        opts={{ loop: true }}
       >
-        <CarouselContent>
-          {Array.from({ length: 15 }).map((_, index) => (
+        <CarouselContent className="-ml-1">
+          {Array.from({ length: 10 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key -- keep
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+            <CarouselItem key={index} className="basis-1/2 pl-1">
               <div className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-6">
-                    <span className="text-3xl font-semibold">{index + 1}</span>
+                    <span className="text-2xl font-semibold">{index + 1}</span>
                   </CardContent>
                 </Card>
               </div>
@@ -60,15 +61,21 @@ export function CarouselDemo(): JSX.Element {
         <CarouselNext />
       </Carousel>
 
-      <Carousel className="max-w-lg *:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex">
-        <CarouselContent className="-ml-1">
-          {Array.from({ length: 15 }).map((_, index) => (
+      <Carousel
+        className="*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
+        opts={{
+          align: 'start',
+          loop: true,
+        }}
+      >
+        <CarouselContent>
+          {Array.from({ length: 10 }).map((_, index) => (
             // eslint-disable-next-line react/no-array-index-key -- keep
-            <CarouselItem key={index} className="pl-1 md:basis-1/2">
+            <CarouselItem key={index} className="basis-1/3">
               <div className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-6">
-                    <span className="text-2xl font-semibold">{index + 1}</span>
+                    <span className="text-3xl font-semibold">{index + 1}</span>
                   </CardContent>
                 </Card>
               </div>
