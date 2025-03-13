@@ -17,10 +17,11 @@
     --foreground: var(--color-zinc-950);
 
     --input: var(--color-zinc-200);
-    --input-hover: var(--color-zinc-400);
-    --input-focus: var(--color-zinc-500);
 
     --border: var(--color-zinc-200);
+    --border-hover: var(--color-zinc-400);
+    --border-focus: var(--color-zinc-500);
+
     --ring: --alpha(var(--color-zinc-400) / 35%);
 
     --primary: var(--color-blue-600);
@@ -69,10 +70,11 @@
     --foreground: var(--color-zinc-50);
 
     --input: var(--color-zinc-800);
-    --input-hover: var(--color-zinc-700);
-    --input-focus: var(--color-zinc-600);
 
     --border: var(--color-zinc-800);
+    --border-hover: var(--color-zinc-700);
+    --border-focus: var(--color-zinc-600);
+
     --ring: --alpha(var(--color-zinc-600) / 35%);
 
     --primary: var(--color-blue-500);

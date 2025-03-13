@@ -20,7 +20,7 @@ function RadioGroupItem({ className, ...props }: ComponentProps<typeof RadioGrou
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        'border-input hover:not-disabled:not-aria-checked:border-input-hover focus-visible:ring-primary/20 focus-visible:ring-3 aria-checked:border-primary aria-checked:bg-primary not-disabled:shadow-xs outline-hidden peer inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition disabled:opacity-50',
+        'border-input hover:not-disabled:not-aria-checked:border-border-hover focus-visible:ring-primary/20 focus-visible:ring-3 aria-checked:border-primary aria-checked:bg-primary not-disabled:shadow-xs outline-hidden peer inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition disabled:opacity-50',
         className,
       )}
       data-slot="radio-group-item"

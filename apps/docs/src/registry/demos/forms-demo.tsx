@@ -43,8 +43,8 @@ const plans = [
 const themes = {
   blue: {
     light: {
-      '--input-hover': 'var(--color-blue-400)',
-      '--input-focus': 'var(--color-blue-500)',
+      '--border-hover': 'var(--color-blue-400)',
+      '--border-focus': 'var(--color-blue-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-blue-400) 35%, transparent)',
 
@@ -60,8 +60,8 @@ const themes = {
       '--accent-foreground': 'var(--color-blue-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-blue-500)',
-      '--input-focus': 'var(--color-blue-600)',
+      '--border-hover': 'var(--color-blue-500)',
+      '--border-focus': 'var(--color-blue-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-blue-600) 35%, transparent)',
 
@@ -79,8 +79,8 @@ const themes = {
   },
   cyan: {
     light: {
-      '--input-hover': 'var(--color-cyan-400)',
-      '--input-focus': 'var(--color-cyan-500)',
+      '--border-hover': 'var(--color-cyan-400)',
+      '--border-focus': 'var(--color-cyan-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-cyan-400) 35%, transparent)',
 
@@ -96,8 +96,8 @@ const themes = {
       '--accent-foreground': 'var(--color-cyan-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-cyan-500)',
-      '--input-focus': 'var(--color-cyan-600)',
+      '--border-hover': 'var(--color-cyan-500)',
+      '--border-focus': 'var(--color-cyan-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-cyan-600) 35%, transparent)',
 
@@ -115,8 +115,8 @@ const themes = {
   },
   lime: {
     light: {
-      '--input-hover': 'var(--color-lime-400)',
-      '--input-focus': 'var(--color-lime-500)',
+      '--border-hover': 'var(--color-lime-400)',
+      '--border-focus': 'var(--color-lime-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-lime-400) 35%, transparent)',
 
@@ -132,8 +132,8 @@ const themes = {
       '--accent-foreground': 'var(--color-lime-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-lime-500)',
-      '--input-focus': 'var(--color-lime-600)',
+      '--border-hover': 'var(--color-lime-500)',
+      '--border-focus': 'var(--color-lime-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-lime-600) 35%, transparent)',
 
@@ -151,8 +151,8 @@ const themes = {
   },
   neutral: {
     light: {
-      '--input-hover': 'var(--color-neutral-400)',
-      '--input-focus': 'var(--color-neutral-500)',
+      '--border-hover': 'var(--color-neutral-400)',
+      '--border-focus': 'var(--color-neutral-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-neutral-400) 35%, transparent)',
 
@@ -168,8 +168,8 @@ const themes = {
       '--accent-foreground': 'var(--color-neutral-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-neutral-500)',
-      '--input-focus': 'var(--color-neutral-600)',
+      '--border-hover': 'var(--color-neutral-500)',
+      '--border-focus': 'var(--color-neutral-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-neutral-600) 35%, transparent)',
 
@@ -187,8 +187,8 @@ const themes = {
   },
   rose: {
     light: {
-      '--input-hover': 'var(--color-rose-400)',
-      '--input-focus': 'var(--color-rose-500)',
+      '--border-hover': 'var(--color-rose-400)',
+      '--border-focus': 'var(--color-rose-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-rose-400) 35%, transparent)',
 
@@ -204,8 +204,8 @@ const themes = {
       '--accent-foreground': 'var(--color-rose-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-rose-500)',
-      '--input-focus': 'var(--color-rose-600)',
+      '--border-hover': 'var(--color-rose-500)',
+      '--border-focus': 'var(--color-rose-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-rose-600) 35%, transparent)',
 
@@ -223,8 +223,8 @@ const themes = {
   },
   sky: {
     light: {
-      '--input-hover': 'var(--color-sky-400)',
-      '--input-focus': 'var(--color-sky-500)',
+      '--border-hover': 'var(--color-sky-400)',
+      '--border-focus': 'var(--color-sky-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-sky-400) 35%, transparent)',
 
@@ -240,8 +240,8 @@ const themes = {
       '--accent-foreground': 'var(--color-sky-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-sky-500)',
-      '--input-focus': 'var(--color-sky-600)',
+      '--border-hover': 'var(--color-sky-500)',
+      '--border-focus': 'var(--color-sky-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-sky-600) 35%, transparent)',
 
@@ -259,8 +259,8 @@ const themes = {
   },
   stone: {
     light: {
-      '--input-hover': 'var(--color-stone-400)',
-      '--input-focus': 'var(--color-stone-500)',
+      '--border-hover': 'var(--color-stone-400)',
+      '--border-focus': 'var(--color-stone-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-stone-400) 35%, transparent)',
 
@@ -276,8 +276,8 @@ const themes = {
       '--accent-foreground': 'var(--color-stone-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-stone-500)',
-      '--input-focus': 'var(--color-stone-600)',
+      '--border-hover': 'var(--color-stone-500)',
+      '--border-focus': 'var(--color-stone-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-stone-600) 35%, transparent)',
 
@@ -295,8 +295,8 @@ const themes = {
   },
   yellow: {
     light: {
-      '--input-hover': 'var(--color-yellow-400)',
-      '--input-focus': 'var(--color-yellow-500)',
+      '--border-hover': 'var(--color-yellow-400)',
+      '--border-focus': 'var(--color-yellow-500)',
 
       '--ring': 'color-mix(in oklab, var(--color-yellow-400) 35%, transparent)',
 
@@ -312,8 +312,8 @@ const themes = {
       '--accent-foreground': 'var(--color-yellow-900)',
     },
     dark: {
-      '--input-hover': 'var(--color-yellow-500)',
-      '--input-focus': 'var(--color-yellow-600)',
+      '--border-hover': 'var(--color-yellow-500)',
+      '--border-focus': 'var(--color-yellow-600)',
 
       '--ring': 'color-mix(in oklab, var(--color-yellow-600) 35%, transparent)',
 

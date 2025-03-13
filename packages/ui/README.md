@@ -34,23 +34,24 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --background: var(--color-white);
     --foreground: var(--color-zinc-950);
 
-    --input: var(--color-zinc-300);
-    --input-hover: var(--color-zinc-400);
-    --input-focus: var(--color-zinc-500);
+    --input: var(--color-zinc-200);
 
-    --border: var(--color-zinc-300);
+    --border: var(--color-zinc-200);
+    --border-hover: var(--color-zinc-400);
+    --border-focus: var(--color-zinc-500);
+
     --ring: --alpha(var(--color-zinc-400) / 35%);
 
-    --primary: var(--color-zinc-900);
-    --primary-hover: var(--color-zinc-800);
+    --primary: var(--color-blue-600);
+    --primary-hover: var(--color-blue-700);
     --primary-foreground: var(--color-zinc-50);
 
-    --secondary: var(--color-zinc-200);
-    --secondary-hover: var(--color-zinc-300);
-    --secondary-foreground: var(--color-zinc-900);
+    --secondary: var(--color-zinc-100);
+    --secondary-hover: var(--color-zinc-200);
+    --secondary-foreground: var(--color-zinc-950);
 
     --accent: var(--color-zinc-100);
-    --accent-foreground: var(--color-zinc-900);
+    --accent-foreground: var(--color-zinc-950);
 
     --destructive: var(--color-red-500);
     --destructive-hover: var(--color-red-600);
@@ -61,12 +62,12 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
     --popover: var(--color-white);
     --popover-overlay: --alpha(var(--color-zinc-900) / 35%);
-    --popover-foreground: var(--color-zinc-900);
+    --popover-foreground: var(--color-zinc-950);
 
     --card: var(--color-white);
-    --card-foreground: var(--color-zinc-900);
+    --card-foreground: var(--color-zinc-950);
 
-    --sidebar: var(--background);
+    --sidebar: var(--color-zinc-50);
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: var(--primary);
     --sidebar-primary-foreground: var(--primary-foreground);
@@ -82,28 +83,28 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --chart-5: var(--color-fuchsia-600);
   }
 
-  /* Dark mode */
   .dark {
     --background: var(--color-zinc-950);
     --foreground: var(--color-zinc-50);
 
     --input: var(--color-zinc-800);
-    --input-hover: var(--color-zinc-700);
-    --input-focus: var(--color-zinc-600);
 
     --border: var(--color-zinc-800);
+    --border-hover: var(--color-zinc-700);
+    --border-focus: var(--color-zinc-600);
+
     --ring: --alpha(var(--color-zinc-600) / 35%);
 
-    --primary: var(--color-zinc-100);
-    --primary-hover: var(--color-zinc-200);
-    --primary-foreground: var(--color-zinc-950);
+    --primary: var(--color-blue-500);
+    --primary-hover: var(--color-blue-400);
+    --primary-foreground: var(--color-zinc-50);
 
-    --secondary: var(--color-zinc-800);
-    --secondary-hover: var(--color-zinc-700);
-    --secondary-foreground: var(--color-zinc-100);
+    --secondary: var(--color-zinc-900);
+    --secondary-hover: var(--color-zinc-800);
+    --secondary-foreground: var(--color-zinc-50);
 
     --accent: var(--color-zinc-900);
-    --accent-foreground: var(--color-zinc-100);
+    --accent-foreground: var(--color-zinc-50);
 
     --destructive: var(--color-red-500);
     --destructive-hover: var(--color-red-400);
@@ -114,10 +115,12 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
     --popover: var(--color-zinc-950);
     --popover-overlay: --alpha(var(--color-zinc-100) / 35%);
-    --popover-foreground: var(--color-zinc-100);
+    --popover-foreground: var(--color-zinc-50);
 
     --card: var(--color-zinc-950);
-    --card-foreground: var(--color-zinc-100);
+    --card-foreground: var(--color-zinc-50);
+
+    --sidebar: var(--color-zinc-950);
 
     --chart-1: var(--color-orange-400);
     --chart-2: var(--color-cyan-400);
