@@ -2,21 +2,11 @@ import type { Metadata, Viewport } from 'next';
 import type { JSX } from 'react';
 
 import { cn, Toaster } from '@codefast/ui';
-import { Geist, Geist_Mono as GeistMono } from 'next/font/google';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { siteConfig } from '@/config/site';
+import { geistMono, geistSans } from '@/lib/fonts';
 import '@/app/globals.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = GeistMono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 const META_THEME_COLORS = {
   light: '#ffffff',
