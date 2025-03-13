@@ -14,7 +14,7 @@ export function ComponentWrapper({
 }: ComponentPropsWithoutRef<'div'> & { name: string }): JSX.Element {
   return (
     <div
-      className={cn('scroll-mt-18.25 flex w-full flex-col rounded-lg border', className)}
+      className={cn('scroll-mt-18.25 flex w-full min-w-0 flex-col rounded-lg border', className)}
       data-name={name.toLowerCase()}
       id={name}
       {...props}
