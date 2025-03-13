@@ -60,7 +60,7 @@ function ContextMenuSubTrigger({
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 outline-hidden flex select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground data-inset:pl-8 outline-hidden flex cursor-default select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-inset={inset}
@@ -130,7 +130,7 @@ function ContextMenuItem({
   return (
     <ContextMenuPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden group/context-menu-item relative flex select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden group/context-menu-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-inset={inset}
@@ -155,7 +155,7 @@ function ContextMenuCheckboxItem({
     <ContextMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden group/context-menu-item relative flex select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden group/context-menu-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="context-menu-checkbox-item"
@@ -183,7 +183,7 @@ function ContextMenuRadioItem({
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden group/context-menu-item relative flex select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden group/context-menu-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="context-menu-radio-item"
