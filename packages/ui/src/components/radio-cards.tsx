@@ -24,7 +24,7 @@ function RadioCardsItem({
 }: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
   return (
     <Label
-      className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-input-focus has-aria-checked:has-focus-visible:ring-primary/10 has-focus-visible:ring-ring has-focus-visible:ring-3 has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
+      className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-input-focus has-focus-visible:ring-primary/15 has-focus-visible:ring-3 has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
       data-slot="radio-card"
     >
       <RadioGroupPrimitive.Item
