@@ -106,7 +106,7 @@ export function FormDemo(): JSX.Element {
   function onSubmit(data: z.infer<typeof FormSchema>): void {
     toast('You submitted the following values:', {
       description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-3">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
@@ -228,8 +228,8 @@ export function FormDemo(): JSX.Element {
           control={form.control}
           name="mobile"
           render={({ field }) => (
-            <FormItem className="shadow-xs flex flex-row items-start gap-3 rounded-md border p-4">
-              <FormControl>
+            <FormItem className="shadow-xs flex flex-row items-start gap-3 rounded-md border p-3">
+              <FormControl className="translate-y-0.25">
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
 
@@ -339,7 +339,7 @@ export function FormDemo(): JSX.Element {
               control={form.control}
               name="marketing_emails"
               render={({ field }) => (
-                <FormItem className="shadow-xs flex flex-row items-start justify-between rounded-lg border p-4">
+                <FormItem className="shadow-xs flex flex-row items-start justify-between rounded-lg border p-3">
                   <div className="flex flex-col gap-0.5">
                     <FormLabel className="leading-normal">Marketing emails</FormLabel>
 
@@ -359,7 +359,7 @@ export function FormDemo(): JSX.Element {
               control={form.control}
               name="security_emails"
               render={({ field }) => (
-                <FormItem className="shadow-xs flex flex-row items-start justify-between rounded-lg border p-4">
+                <FormItem className="shadow-xs flex flex-row items-start justify-between rounded-lg border p-3">
                   <div className="flex flex-col gap-0.5 opacity-60">
                     <FormLabel className="leading-normal">Security emails</FormLabel>
 
