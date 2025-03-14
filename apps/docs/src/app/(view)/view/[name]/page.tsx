@@ -33,8 +33,10 @@ export default async function ViewPage({ params }: { params: Promise<{ name: str
   }
 
   return (
-    <Suspense>
-      <Component />
-    </Suspense>
+    <div className="@container">
+      <Suspense>
+        <Component />
+      </Suspense>
+    </div>
   );
 }
