@@ -20,7 +20,7 @@ function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.L
   return (
     <TabsPrimitive.List
       className={cn(
-        'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center gap-1 rounded-lg p-1',
+        'bg-muted text-muted-foreground inline-flex h-10 items-center justify-center gap-1 rounded-xl p-1',
         className,
       )}
       data-slot="tabs-list"
@@ -37,7 +37,7 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
   return (
     <TabsPrimitive.Trigger
       className={cn(
-        "data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:ring-ring focus-visible:ring-3 outline-hidden inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-2 py-1.5 text-sm font-medium transition disabled:opacity-50 data-[state=active]:shadow-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:ring-ring/20 focus-visible:ring-3 outline-ring/60 inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-2 py-1.5 text-sm font-medium transition focus-visible:outline-1 disabled:opacity-50 data-[state=active]:shadow-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="tabs-trigger"
@@ -53,7 +53,10 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
 function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>): JSX.Element {
   return (
     <TabsPrimitive.Content
-      className={cn('outline-hidden mt-2 rounded-lg', className)}
+      className={cn(
+        'outline-ring/60 ring-ring/20 mt-2 rounded-xl focus-visible:outline-1 focus-visible:ring-4',
+        className,
+      )}
       data-slot="tabs-content"
       {...props}
     />
