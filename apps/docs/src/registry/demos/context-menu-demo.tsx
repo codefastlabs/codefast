@@ -78,6 +78,7 @@ export function ContextMenuDemo(): JSX.Element {
             <ContextMenuItem variant="destructive">
               <TrashIcon />
               Delete
+              <ContextMenuShortcut>⌘D</ContextMenuShortcut>
             </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>

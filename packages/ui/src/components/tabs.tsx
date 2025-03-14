@@ -53,7 +53,7 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
 function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>): JSX.Element {
   return (
     <TabsPrimitive.Content
-      className={cn('focus-visible:ring-ring focus-visible:ring-3 outline-hidden mt-2 rounded-lg', className)}
+      className={cn('outline-hidden mt-2 rounded-lg', className)}
       data-slot="tabs-content"
       {...props}
     />

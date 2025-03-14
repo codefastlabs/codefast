@@ -292,7 +292,6 @@ function SidebarRail({ className, ...props }: ComponentProps<'button'>): JSX.Ele
       )}
       data-sidebar="rail"
       data-slot="sidebar-rail"
-      tabIndex={-1}
       title="Toggle Sidebar"
       type="button"
       onClick={toggleSidebar}

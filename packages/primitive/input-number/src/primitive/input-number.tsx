@@ -491,7 +491,6 @@ function NumberStepperButton({
       aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
       aria-live="polite"
       disabled={disabled}
-      tabIndex={-1}
       type="button"
       onContextMenu={handleContextMenu}
       onPointerCancel={clearActionInterval}

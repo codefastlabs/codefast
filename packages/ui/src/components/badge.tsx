@@ -9,13 +9,16 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const badgeVariants = tv({
-  base: 'focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-3 inline-flex w-fit shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium transition [&>svg]:size-3 [&>svg]:shrink-0',
+  base: 'focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-3 outline-hidden inline-flex w-fit shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium transition [&>svg]:size-3 [&>svg]:shrink-0',
   variants: {
     variant: {
-      default: 'bg-primary [a&]:hover:bg-primary-hover text-primary-foreground border-transparent',
+      default:
+        'bg-primary [a&]:hover:bg-primary-hover text-primary-foreground focus-visible:ring-primary/20 border-transparent',
       secondary: 'bg-secondary [a&]:hover:bg-secondary-hover text-secondary-foreground border-transparent',
-      destructive: 'bg-destructive [a&]:hover:bg-destructive-hover text-destructive-foreground border-transparent',
-      outline: 'bg-background border-input [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+      destructive:
+        'bg-destructive [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 border-transparent text-white',
+      outline:
+        'bg-background border-input [a&]:hover:bg-accent [a&]:hover:text-accent-foreground focus-visible:border-border-focus',
     },
   },
   defaultVariants: {

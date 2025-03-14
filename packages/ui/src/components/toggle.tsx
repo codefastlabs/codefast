@@ -18,7 +18,7 @@ const toggleVariants = tv({
     },
     variant: {
       default: 'bg-transparent',
-      outline: 'border-input not-disabled:shadow-xs border',
+      outline: 'border-input not-disabled:shadow-xs focus-visible:border-border-focus border',
     },
   },
   defaultVariants: {

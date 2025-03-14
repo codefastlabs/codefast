@@ -33,6 +33,12 @@ export function ToggleDemo(): JSX.Element {
       </div>
 
       <div>
+        <Toggle aria-invalid aria-label="Toggle book" className="data-[state=on]:[&_svg]:fill-accent-foreground">
+          <BookmarkIcon />
+        </Toggle>
+      </div>
+
+      <div>
         <Toggle disabled aria-label="Toggle italic" variant="outline">
           Disabled
         </Toggle>
@@ -47,6 +53,17 @@ export function ToggleDemo(): JSX.Element {
 
       <div>
         <Toggle aria-label="Toggle book" className="data-[state=on]:[&_svg]:fill-accent-foreground" variant="outline">
+          <BookmarkIcon />
+        </Toggle>
+      </div>
+
+      <div>
+        <Toggle
+          aria-invalid
+          aria-label="Toggle book"
+          className="data-[state=on]:[&_svg]:fill-accent-foreground"
+          variant="outline"
+        >
           <BookmarkIcon />
         </Toggle>
       </div>
