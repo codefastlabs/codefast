@@ -56,7 +56,7 @@ function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrim
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
-          'placeholder:text-muted-foreground outline-hidden flex h-10 w-full text-sm disabled:opacity-50',
+          'placeholder:text-muted-foreground outline-hidden flex h-10 w-full text-base disabled:opacity-50 md:text-sm',
           className,
         )}
         data-slot="command-input"

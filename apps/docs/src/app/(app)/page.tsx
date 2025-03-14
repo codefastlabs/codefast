@@ -99,7 +99,7 @@ export default function AppPage(): JSX.Element {
         <ButtonDemo />
       </ComponentWrapper>
 
-      <ComponentWrapper name="calendar">
+      <ComponentWrapper classNames={{ body: 'overflow-auto' }} name="calendar">
         <CalendarDemo />
       </ComponentWrapper>
 
