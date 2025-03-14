@@ -24,7 +24,7 @@ const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 
-interface SidebarContext {
+interface SidebarContextProps {
   isMobile: boolean;
   open: boolean;
   openMobile: boolean;
@@ -34,9 +34,9 @@ interface SidebarContext {
   toggleSidebar: () => void;
 }
 
-const SidebarContext = createContext<null | SidebarContext>(null);
+const SidebarContext = createContext<null | SidebarContextProps>(null);
 
-function useSidebar(): SidebarContext {
+function useSidebar(): SidebarContextProps {
   const context = useContext(SidebarContext);
 
   if (!context) {
@@ -115,7 +115,7 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? 'expanded' : 'collapsed';
 
-  const contextValue = useMemo<SidebarContext>(
+  const contextValue = useMemo<SidebarContextProps>(
     () => ({
       state,
       open,
