@@ -99,11 +99,11 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --primary-hover: var(--color-blue-400);
     --primary-foreground: var(--color-zinc-50);
 
-    --secondary: var(--color-zinc-900);
+    --secondary: var(--color-zinc-800);
     --secondary-hover: var(--color-zinc-800);
     --secondary-foreground: var(--color-zinc-50);
 
-    --accent: var(--color-zinc-900);
+    --accent: var(--color-zinc-800);
     --accent-foreground: var(--color-zinc-50);
 
     --destructive: var(--color-red-500);
@@ -113,7 +113,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --muted: var(--color-zinc-800);
     --muted-foreground: var(--color-zinc-400);
 
-    --popover: var(--color-zinc-950);
+    --popover: var(--color-zinc-900);
     --popover-overlay: --alpha(var(--color-zinc-100) / 35%);
     --popover-foreground: var(--color-zinc-50);
 

@@ -16,6 +16,14 @@ export function CheckboxDemo(): JSX.Element {
       </div>
 
       <div className="">
+        <div className="flex items-center gap-3">
+          <Checkbox aria-invalid="true" id="terms-aria-invalid" />
+
+          <Label htmlFor="terms-aria-invalid">Accept terms and conditions</Label>
+        </div>
+      </div>
+
+      <div className="">
         <div className="flex items-start gap-3">
           <Checkbox defaultChecked id="terms-2" />
 

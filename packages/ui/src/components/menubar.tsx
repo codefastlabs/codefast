@@ -159,7 +159,8 @@ function MenubarItem({
   return (
     <MenubarPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden relative flex cursor-default select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-inset:pl-8 outline-hidden group/menubar-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        'data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10',
         className,
       )}
       data-inset={inset}
@@ -184,7 +185,7 @@ function MenubarCheckboxItem({
     <MenubarPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden relative flex cursor-default select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden group/menubar-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="menubar-checkbox-item"
@@ -212,7 +213,7 @@ function MenubarRadioItem({
   return (
     <MenubarPrimitive.RadioItem
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden relative flex cursor-default select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden group/menubar-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm py-1.5 pl-8 pr-2 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="menubar-radio-item"
@@ -270,7 +271,10 @@ function MenubarSeparator({ className, ...props }: ComponentProps<typeof Menubar
 function MenubarShortcut({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest group-focus:text-current', className)}
+      className={cn(
+        'text-muted-foreground group-data-[variant=destructive]/menubar-item:text-destructive/80 ml-auto text-xs tracking-widest',
+        className,
+      )}
       data-slot="menubar-shortcut"
       {...props}
     />

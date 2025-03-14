@@ -21,7 +21,7 @@ function CheckboxGroupItem({ className, ...props }: ComponentProps<typeof Checkb
   return (
     <CheckboxGroupPrimitive.Item
       className={cn(
-        'border-input text-primary-foreground hover:not-disabled:not-aria-checked:border-border-hover aria-checked:border-primary aria-checked:bg-primary focus-visible:border-border-focus aria-checked:focus-visible:ring-primary/20 focus-visible:ring-ring focus-visible:ring-3 not-disabled:shadow-xs outline-hidden peer inline-flex size-4 shrink-0 items-center justify-center rounded-sm border transition disabled:opacity-50',
+        'border-input text-primary-foreground hover:not-disabled:not-aria-checked:border-border-hover aria-checked:border-primary aria-checked:bg-primary focus-visible:border-border-focus aria-checked:focus-visible:ring-primary/20 focus-visible:ring-ring focus-visible:ring-3 not-disabled:shadow-xs outline-hidden aria-invalid:ring-destructive/20 aria-invalid:border-destructive hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 peer inline-flex size-4 shrink-0 items-center justify-center rounded-sm border transition disabled:opacity-50',
         className,
       )}
       data-slot="checkbox-group-item"

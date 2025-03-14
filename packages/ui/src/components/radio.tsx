@@ -21,7 +21,7 @@ function Radio({
   return (
     <input
       className={cn(
-        'border-input hover:not-disabled:not-checked:border-border-hover checked:border-primary checked:bg-primary after:bg-background focus-visible:ring-primary/20 focus-visible:ring-3 not-disabled:shadow-xs outline-hidden peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border transition after:size-full after:rounded-full checked:after:size-1 disabled:opacity-50',
+        'border-input checked:border-primary checked:bg-primary after:bg-background focus-visible:ring-primary/20 focus-visible:ring-3 not-disabled:shadow-xs outline-hidden hover:not-disabled:not-checked:border-border-hover hover:not-disabled:not-checked:aria-invalid:border-destructive/60 aria-invalid:ring-destructive/20 aria-invalid:border-destructive peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border transition after:size-full after:rounded-full checked:after:size-1 disabled:opacity-50',
         className,
       )}
       data-slot="radio"

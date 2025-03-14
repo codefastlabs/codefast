@@ -130,7 +130,8 @@ function ContextMenuItem({
   return (
     <ContextMenuPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive-foreground data-inset:pl-8 outline-hidden group/context-menu-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground data-inset:pl-8 outline-hidden group/context-menu-item relative flex cursor-default select-none items-center gap-x-2 rounded-sm px-2 py-1.5 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        'data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10',
         className,
       )}
       data-inset={inset}
@@ -245,7 +246,7 @@ function ContextMenuShortcut({ className, ...props }: ComponentProps<'span'>): J
   return (
     <span
       className={cn(
-        'text-muted-foreground ml-auto text-xs tracking-widest group-focus/context-menu-item:text-current',
+        'text-muted-foreground group-data-[variant=destructive]/context-menu-item:text-destructive/80 ml-auto text-xs tracking-widest',
         className,
       )}
       data-slot="context-menu-shortcut"
