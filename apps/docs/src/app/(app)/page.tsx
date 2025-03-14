@@ -107,7 +107,7 @@ export default function AppPage(): JSX.Element {
         <CardDemo />
       </ComponentWrapper>
 
-      <ComponentWrapper name="carousel">
+      <ComponentWrapper classNames={{ body: 'overflow-auto' }} name="carousel">
         <CarouselDemo />
       </ComponentWrapper>
 

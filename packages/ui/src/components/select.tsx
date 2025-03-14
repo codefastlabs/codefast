@@ -47,7 +47,7 @@ function SelectTrigger({
     <SelectPrimitive.Trigger
       className={buttonVariants({
         className: [
-          'focus:ring-ring focus:ring-3 focus:border-border-focus hover:not-disabled:border-border-hover w-fit justify-between px-3 font-normal *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate',
+          "[&_svg:not([class*='text-'])]:text-muted-foreground focus:ring-ring focus:ring-3 focus:border-border-focus hover:not-disabled:border-border-hover w-fit justify-between px-3 font-normal *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 *:data-[slot=select-value]:truncate",
           className,
         ],
         size,
@@ -166,7 +166,7 @@ function SelectItem({ children, className, ...props }: ComponentProps<typeof Sel
   return (
     <SelectPrimitive.Item
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground outline-hidden *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+        "focus:bg-accent focus:text-accent-foreground outline-hidden *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 data-[variant=destructive]:[&_svg:not([class*='text-'])]:text-destructive/80 [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
         className,
       )}
       data-slot="select-item"

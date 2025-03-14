@@ -10,20 +10,28 @@ export function ComponentWrapper({
   className,
   name,
   children,
+  classNames,
   ...props
-}: ComponentPropsWithoutRef<'div'> & { name: string }): JSX.Element {
+}: ComponentPropsWithoutRef<'div'> & {
+  name: string;
+  classNames?: {
+    body?: string;
+    container?: string;
+    header?: string;
+  };
+}): JSX.Element {
   return (
     <div
-      className={cn('scroll-mt-18.25 flex w-full min-w-0 flex-col rounded-lg border', className)}
+      className={cn('scroll-mt-18.25 flex w-full min-w-0 flex-col rounded-lg border', classNames?.container, className)}
       data-name={name.toLowerCase()}
       id={name}
       {...props}
     >
-      <div className="bg-muted/20 rounded-t-lg border-b px-4 py-3">
+      <div className={cn('bg-muted/20 rounded-t-lg border-b px-4 py-3', classNames?.header)}>
         <div className="text-sm font-medium">{getComponentName(name)}</div>
       </div>
 
-      <div className="flex flex-1 items-center gap-2 overflow-auto p-4">{children}</div>
+      <div className={cn('flex flex-1 items-center gap-2 p-4', classNames?.body)}>{children}</div>
     </div>
   );
 }
