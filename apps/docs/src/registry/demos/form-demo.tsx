@@ -90,8 +90,8 @@ const FormSchema = z.object({
   dob: z.date({
     required_error: 'A date of birth is required.',
   }),
-  marketing_emails: z.boolean().default(false).optional(),
-  security_emails: z.boolean(),
+  marketing_emails: z.boolean(),
+  security_emails: z.boolean().default(false).optional(),
 });
 
 export function FormDemo(): JSX.Element {

@@ -142,17 +142,19 @@ export function CardDemo(): JSX.Element {
           </CardContent>
 
           <CardFooter className="flex flex-wrap items-center justify-between gap-2">
-            <Badge variant="outline">
-              <BedIcon /> 4
-            </Badge>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">
+                <BedIcon /> 4
+              </Badge>
 
-            <Badge variant="outline">
-              <BathIcon /> 2
-            </Badge>
+              <Badge variant="outline">
+                <BathIcon /> 2
+              </Badge>
 
-            <Badge variant="outline">
-              <LandPlotIcon /> 350m²
-            </Badge>
+              <Badge variant="outline">
+                <LandPlotIcon /> 350m²
+              </Badge>
+            </div>
 
             <div className="font-medium tabular-nums">$135,000</div>
           </CardFooter>

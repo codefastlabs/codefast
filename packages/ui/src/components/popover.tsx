@@ -35,7 +35,7 @@ function PopoverAnchor({ ...props }: ComponentProps<typeof PopoverPrimitive.Anch
 function PopoverContent({
   align = 'center',
   className,
-  sideOffset = 8,
+  sideOffset = 4,
   ...props
 }: ComponentProps<typeof PopoverPrimitive.Content>): JSX.Element {
   return (
