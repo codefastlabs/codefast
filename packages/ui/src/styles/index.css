@@ -7,11 +7,7 @@
  */
 @theme inline {
   --color-input: var(--input);
-
   --color-border: var(--border);
-  --color-border-hover: var(--border-hover);
-  --color-border-focus: var(--border-focus);
-
   --color-ring: var(--ring);
 
   --color-background: var(--background);
@@ -26,8 +22,6 @@
   --color-secondary-foreground: var(--secondary-foreground);
 
   --color-destructive: var(--destructive);
-  --color-destructive-hover: var(--destructive-hover);
-  --color-destructive-foreground: var(--destructive-foreground);
 
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);

@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const toggleVariants = tv({
-  base: "focus-visible:ring-ring focus-visible:ring-3 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground outline-hidden hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+  base: "focus-visible:ring-ring/20 focus-visible:ring-3 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground outline-hidden hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
   variants: {
     size: {
       sm: 'h-8 min-w-8 px-1.5', // 32px
@@ -18,7 +18,7 @@ const toggleVariants = tv({
     },
     variant: {
       default: 'bg-transparent',
-      outline: 'border-input not-disabled:shadow-xs focus-visible:border-border-focus border',
+      outline: 'border-input not-disabled:shadow-xs focus-visible:border-ring border',
     },
   },
   defaultVariants: {

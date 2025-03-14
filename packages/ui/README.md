@@ -35,12 +35,8 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --foreground: var(--color-zinc-950);
 
     --input: var(--color-zinc-200);
-
     --border: var(--color-zinc-200);
-    --border-hover: var(--color-zinc-400);
-    --border-focus: var(--color-zinc-500);
-
-    --ring: --alpha(var(--color-zinc-400) / 35%);
+    --ring: var(--color-zinc-500);
 
     --primary: var(--color-blue-600);
     --primary-hover: var(--color-blue-700);
@@ -54,8 +50,6 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --accent-foreground: var(--color-zinc-950);
 
     --destructive: var(--color-red-500);
-    --destructive-hover: var(--color-red-600);
-    --destructive-foreground: var(--color-red-50);
 
     --muted: var(--color-zinc-200);
     --muted-foreground: var(--color-zinc-600);
@@ -88,12 +82,8 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --foreground: var(--color-zinc-50);
 
     --input: var(--color-zinc-800);
-
     --border: var(--color-zinc-800);
-    --border-hover: var(--color-zinc-700);
-    --border-focus: var(--color-zinc-600);
-
-    --ring: --alpha(var(--color-zinc-600) / 35%);
+    --ring: var(--color-zinc-600);
 
     --primary: var(--color-blue-500);
     --primary-hover: var(--color-blue-400);
@@ -107,8 +97,6 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --accent-foreground: var(--color-zinc-50);
 
     --destructive: var(--color-red-500);
-    --destructive-hover: var(--color-red-400);
-    --destructive-foreground: var(--color-red-950);
 
     --muted: var(--color-zinc-800);
     --muted-foreground: var(--color-zinc-400);

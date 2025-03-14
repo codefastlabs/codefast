@@ -71,7 +71,7 @@ function InputNumber({
 
       <div
         className={cn(
-          'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-hover group-hover:not-group-focus-within:not-has-disabled:divide-border-hover group-focus-within:border-l-border-focus group-focus-within:divide-border-focus order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
+          'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 group-focus-within:border-l-ring group-focus-within:divide-ring order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
           'group-has-aria-invalid:border-l-destructive group-has-aria-invalid:divide-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60',
         )}
         data-slot="input-number-buttons"
