@@ -43,7 +43,7 @@ function ToggleGroup({
   return (
     <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
       <ToggleGroupPrimitive.Root
-        className={cn('group/toggle-group flex w-fit items-center rounded-md', className)}
+        className={cn('group/toggle-group flex w-fit items-center -space-x-px rounded-md', className)}
         data-size={size}
         data-slot="toggle-group"
         data-variant={variant}
@@ -82,7 +82,7 @@ function ToggleGroupItem({
     <ToggleGroupPrimitive.Item
       className={toggleVariants({
         className: [
-          'min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10 data-[variant=outline]:border-l-0 data-[variant=outline]:first:border-l',
+          'min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10',
           className,
         ],
         size,

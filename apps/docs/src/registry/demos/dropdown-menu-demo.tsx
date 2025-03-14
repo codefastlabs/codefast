@@ -391,7 +391,7 @@ function DropdownMenuIconColor(): JSX.Element {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="start">
-        <DropdownMenuGroup className="*:data-[slot=dropdown-menu-item]:[&>svg]:text-muted-foreground">
+        <DropdownMenuGroup>
           <DropdownMenuItem>
             <PencilIcon />
             Edit

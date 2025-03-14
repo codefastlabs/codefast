@@ -19,13 +19,12 @@ const buttonVariants = tv({
       icon: 'size-9',
     },
     variant: {
-      default: 'bg-primary text-primary-foreground hover:not-disabled:bg-primary-hover',
+      default: 'bg-primary text-primary-foreground focus-visible:ring-primary/20 hover:not-disabled:bg-primary-hover',
       secondary: 'bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary-hover',
-      destructive: 'bg-destructive text-destructive-foreground hover:not-disabled:bg-destructive-hover',
-      outline: [
-        'border-input not-disabled:shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-border-focus border',
-        'aria-invalid:border-destructive hover:not-disabled:not-focus-within:aria-invalid:border-destructive/60 focus-within:aria-invalid:ring-destructive/20',
-      ],
+      destructive:
+        'bg-destructive text-destructive-foreground focus-visible:ring-destructive/20 hover:not-disabled:bg-destructive/90',
+      outline:
+        'border-input not-disabled:shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-border-focus aria-invalid:border-destructive hover:not-disabled:aria-invalid:border-destructive/60 focus-within:aria-invalid:ring-destructive/20 border',
       ghost: 'hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground',
       link: 'text-primary hover:not-disabled:underline underline-offset-4',
     },

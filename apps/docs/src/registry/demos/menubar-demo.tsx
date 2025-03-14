@@ -167,6 +167,7 @@ export function MenubarDemo(): JSX.Element {
             <MenubarItem variant="destructive">
               <Trash2Icon />
               Delete
+              <MenubarShortcut>⌘T</MenubarShortcut>
             </MenubarItem>
           </MenubarGroup>
         </MenubarContent>
