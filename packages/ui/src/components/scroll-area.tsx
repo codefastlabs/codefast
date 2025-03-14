@@ -93,13 +93,9 @@ function ScrollArea({
 }: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>): JSX.Element {
   return (
     <CarouselProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root
-        className={cn('relative overflow-hidden', className)}
-        data-slot="scroll-area"
-        {...props}
-      >
+      <ScrollAreaPrimitive.Root className={cn('relative', className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
-          className="size-full rounded-[inherit] transition [&>*]:h-full"
+          className="outline-ring/60 ring-ring/20 size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4 [&>*]:h-full"
           data-slot="scroll-area-viewport"
         >
           {children}
