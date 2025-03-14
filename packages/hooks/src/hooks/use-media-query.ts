@@ -21,15 +21,15 @@ export function useMediaQuery(query: string): boolean {
     const mediaQueryList = window.matchMedia(query);
 
     // Update state when the media query status changes
-    const listener = (event: MediaQueryListEvent): void => {
+    const onChange = (event: MediaQueryListEvent): void => {
       setMatches(event.matches);
     };
 
-    mediaQueryList.addEventListener('change', listener);
+    mediaQueryList.addEventListener('change', onChange);
 
     // Clean up listener on a component unmount
     return () => {
-      mediaQueryList.removeEventListener('change', listener);
+      mediaQueryList.removeEventListener('change', onChange);
     };
   }, [query]);
 
