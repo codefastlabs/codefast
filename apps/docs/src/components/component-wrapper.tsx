@@ -23,7 +23,7 @@ export function ComponentWrapper({
         <div className="text-sm font-medium">{getComponentName(name)}</div>
       </div>
 
-      <div className="flex flex-1 items-center gap-2 p-4">{children}</div>
+      <div className="flex flex-1 items-center gap-2 overflow-auto p-4">{children}</div>
     </div>
   );
 }

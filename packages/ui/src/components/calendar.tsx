@@ -52,11 +52,11 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
         [UI.Chevron]: cn(classNames?.[UI.Chevron]),
         [UI.Day]: cn(
           'grid place-items-center text-center text-sm',
-          isInteractive ? 'min-w-8.5 group' : 'min-w-8.5 h-8',
+          isInteractive ? 'min-w-8.5 has-focus-visible:z-20 group' : 'min-w-8.5 h-8',
           classNames?.[UI.Day],
         ),
         [UI.DayButton]: cn(
-          'group-[.is-outside]:text-muted-foreground hover:not-disabled:not-group-aria-selected:bg-secondary hover:not-disabled:not-group-aria-selected:text-secondary-foreground group-data-today:not-group-aria-selected:bg-secondary group-data-today:not-group-aria-selected:text-secondary-foreground group-aria-selected:not-group-[.is-range-middle]:bg-primary group-aria-selected:not-group-[.is-range-middle]:text-primary-foreground size-8 rounded-lg disabled:opacity-50',
+          'group-[.is-outside]:text-muted-foreground hover:not-disabled:not-group-aria-selected:bg-secondary hover:not-disabled:not-group-aria-selected:text-secondary-foreground group-data-today:not-group-aria-selected:bg-secondary group-data-today:not-group-aria-selected:text-secondary-foreground group-aria-selected:not-group-[.is-range-middle]:bg-primary group-aria-selected:not-group-[.is-range-middle]:text-primary-foreground outline-hidden focus-visible:border-border-focus focus-visible:ring-ring focus-visible:ring-3 group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:ring-primary/20 group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:border-primary size-8 rounded-lg border border-transparent disabled:opacity-50',
           classNames?.[UI.DayButton],
         ),
         [UI.CaptionLabel]: cn('flex items-center gap-2 [&>svg]:opacity-50', classNames?.[UI.CaptionLabel]),
@@ -68,7 +68,7 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
         [UI.MonthCaption]: cn('py-1 text-sm font-medium', classNames?.[UI.MonthCaption]),
         [UI.MonthsDropdown]: cn(classNames?.[UI.MonthsDropdown]),
         [UI.Month]: cn('flex flex-col gap-4', classNames?.[UI.Month]),
-        [UI.Months]: cn('relative inline-flex flex-wrap gap-4', classNames?.[UI.Months]),
+        [UI.Months]: cn('relative flex gap-4', classNames?.[UI.Months]),
         [UI.Nav]: cn('absolute end-0 flex gap-2', classNames?.[UI.Nav]),
         [UI.NextMonthButton]: buttonVariants({
           variant: 'ghost',

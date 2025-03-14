@@ -13,6 +13,7 @@ function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Roo
     <LabelPrimitive.Root
       className={cn(
         'peer-data-disabled:opacity-50 group-data-disabled:opacity-50 inline-block text-sm font-medium leading-none peer-disabled:opacity-50',
+        'data-invalid:text-destructive',
         className,
       )}
       data-slot="label"

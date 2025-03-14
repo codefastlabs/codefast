@@ -101,7 +101,7 @@ function DropdownMenuSubContent({
 
 function DropdownMenuContent({
   className,
-  sideOffset = 8,
+  sideOffset = 4,
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Content>): JSX.Element {
   return (
