@@ -14,45 +14,37 @@ export function AccordionDemo(): JSX.Element {
               Is it accessible?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-2">
             <AccordionTrigger>
               Is it styled?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Yes. It comes with default styles that matches the other components&apos; aesthetic.
             </AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-3">
             <AccordionTrigger>
               Is it animated?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Yes. It&apos;s animated by default, but you can disable it if you prefer.
             </AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-4">
             <AccordionTrigger disabled>
               Is it responsive?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Yes. It&apos;s responsive by default, but you can disable it if you prefer.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-
       <div className="">
         <Accordion className="w-full" type="multiple">
           <AccordionItem value="item-1">
@@ -60,45 +52,37 @@ export function AccordionDemo(): JSX.Element {
               Is it accessible?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>Yes. It adheres to the WAI-ARIA design pattern.</AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-2">
             <AccordionTrigger>
               Is it styled?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Yes. It comes with default styles that matches the other components&apos; aesthetic.
             </AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-3">
             <AccordionTrigger>
               Is it animated?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Yes. It&apos;s animated by default, but you can disable it if you prefer.
             </AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-4">
             <AccordionTrigger disabled>
               Is it responsive?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Yes. It&apos;s responsive by default, but you can disable it if you prefer.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-
       <div className="">
         <Accordion collapsible className="w-full" type="single">
           <AccordionItem value="item-1">
@@ -106,7 +90,6 @@ export function AccordionDemo(): JSX.Element {
               What are the key considerations when implementing a comprehensive enterprise-level authentication system?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Implementing a robust enterprise authentication system requires careful consideration of multiple factors.
               This includes secure password hashing and storage, multi-factor authentication (MFA) implementation,
@@ -116,14 +99,12 @@ export function AccordionDemo(): JSX.Element {
               HIPAA.
             </AccordionContent>
           </AccordionItem>
-
           <AccordionItem value="item-2">
             <AccordionTrigger>
               How does modern distributed system architecture handle eventual consistency and data synchronization
               across multiple regions?
               <AccordionIcon />
             </AccordionTrigger>
-
             <AccordionContent>
               Modern distributed systems employ various strategies to maintain data consistency across regions. This
               often involves using techniques like CRDT (Conflict-Free Replicated Data Types), vector clocks, and gossip
