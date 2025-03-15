@@ -49,11 +49,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-blue-400) 35%, transparent)',
 
       '--primary': 'var(--color-blue-600)',
-      '--primary-hover': 'var(--color-blue-800)',
       '--primary-foreground': 'var(--color-blue-50)',
 
       '--secondary': 'var(--color-blue-100)',
-      '--secondary-hover': 'var(--color-blue-200)',
       '--secondary-foreground': 'var(--color-blue-900)',
 
       '--accent': 'var(--color-blue-100)',
@@ -66,11 +64,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-blue-600) 35%, transparent)',
 
       '--primary': 'var(--color-blue-400)',
-      '--primary-hover': 'var(--color-blue-200)',
       '--primary-foreground': 'var(--color-blue-950)',
 
       '--secondary': 'var(--color-blue-950)',
-      '--secondary-hover': 'var(--color-blue-800)',
       '--secondary-foreground': 'var(--color-blue-100)',
 
       '--accent': 'var(--color-blue-900)',
@@ -85,11 +81,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-cyan-400) 35%, transparent)',
 
       '--primary': 'var(--color-cyan-600)',
-      '--primary-hover': 'var(--color-cyan-800)',
       '--primary-foreground': 'var(--color-cyan-50)',
 
       '--secondary': 'var(--color-cyan-100)',
-      '--secondary-hover': 'var(--color-cyan-200)',
       '--secondary-foreground': 'var(--color-cyan-900)',
 
       '--accent': 'var(--color-cyan-100)',
@@ -102,11 +96,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-cyan-600) 35%, transparent)',
 
       '--primary': 'var(--color-cyan-400)',
-      '--primary-hover': 'var(--color-cyan-200)',
       '--primary-foreground': 'var(--color-cyan-950)',
 
       '--secondary': 'var(--color-cyan-950)',
-      '--secondary-hover': 'var(--color-cyan-800)',
       '--secondary-foreground': 'var(--color-cyan-100)',
 
       '--accent': 'var(--color-cyan-900)',
@@ -121,11 +113,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-lime-400) 35%, transparent)',
 
       '--primary': 'var(--color-lime-600)',
-      '--primary-hover': 'var(--color-lime-800)',
       '--primary-foreground': 'var(--color-lime-50)',
 
       '--secondary': 'var(--color-lime-100)',
-      '--secondary-hover': 'var(--color-lime-200)',
       '--secondary-foreground': 'var(--color-lime-900)',
 
       '--accent': 'var(--color-lime-100)',
@@ -138,11 +128,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-lime-600) 35%, transparent)',
 
       '--primary': 'var(--color-lime-400)',
-      '--primary-hover': 'var(--color-lime-200)',
       '--primary-foreground': 'var(--color-lime-950)',
 
       '--secondary': 'var(--color-lime-950)',
-      '--secondary-hover': 'var(--color-lime-800)',
       '--secondary-foreground': 'var(--color-lime-100)',
 
       '--accent': 'var(--color-lime-900)',
@@ -157,11 +145,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-neutral-400) 35%, transparent)',
 
       '--primary': 'var(--color-neutral-600)',
-      '--primary-hover': 'var(--color-neutral-800)',
       '--primary-foreground': 'var(--color-neutral-50)',
 
       '--secondary': 'var(--color-neutral-100)',
-      '--secondary-hover': 'var(--color-neutral-200)',
       '--secondary-foreground': 'var(--color-neutral-900)',
 
       '--accent': 'var(--color-neutral-100)',
@@ -174,11 +160,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-neutral-600) 35%, transparent)',
 
       '--primary': 'var(--color-neutral-400)',
-      '--primary-hover': 'var(--color-neutral-200)',
       '--primary-foreground': 'var(--color-neutral-950)',
 
       '--secondary': 'var(--color-neutral-950)',
-      '--secondary-hover': 'var(--color-neutral-800)',
       '--secondary-foreground': 'var(--color-neutral-100)',
 
       '--accent': 'var(--color-neutral-900)',
@@ -193,11 +177,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-rose-400) 35%, transparent)',
 
       '--primary': 'var(--color-rose-600)',
-      '--primary-hover': 'var(--color-rose-800)',
       '--primary-foreground': 'var(--color-rose-50)',
 
       '--secondary': 'var(--color-rose-100)',
-      '--secondary-hover': 'var(--color-rose-200)',
       '--secondary-foreground': 'var(--color-rose-900)',
 
       '--accent': 'var(--color-rose-100)',
@@ -210,11 +192,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-rose-600) 35%, transparent)',
 
       '--primary': 'var(--color-rose-400)',
-      '--primary-hover': 'var(--color-rose-200)',
       '--primary-foreground': 'var(--color-rose-950)',
 
       '--secondary': 'var(--color-rose-950)',
-      '--secondary-hover': 'var(--color-rose-800)',
       '--secondary-foreground': 'var(--color-rose-100)',
 
       '--accent': 'var(--color-rose-900)',
@@ -229,11 +209,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-sky-400) 35%, transparent)',
 
       '--primary': 'var(--color-sky-600)',
-      '--primary-hover': 'var(--color-sky-800)',
       '--primary-foreground': 'var(--color-sky-50)',
 
       '--secondary': 'var(--color-sky-100)',
-      '--secondary-hover': 'var(--color-sky-200)',
       '--secondary-foreground': 'var(--color-sky-900)',
 
       '--accent': 'var(--color-sky-100)',
@@ -246,11 +224,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-sky-600) 35%, transparent)',
 
       '--primary': 'var(--color-sky-400)',
-      '--primary-hover': 'var(--color-sky-200)',
       '--primary-foreground': 'var(--color-sky-950)',
 
       '--secondary': 'var(--color-sky-950)',
-      '--secondary-hover': 'var(--color-sky-800)',
       '--secondary-foreground': 'var(--color-sky-100)',
 
       '--accent': 'var(--color-sky-900)',
@@ -265,11 +241,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-stone-400) 35%, transparent)',
 
       '--primary': 'var(--color-stone-600)',
-      '--primary-hover': 'var(--color-stone-800)',
       '--primary-foreground': 'var(--color-stone-50)',
 
       '--secondary': 'var(--color-stone-100)',
-      '--secondary-hover': 'var(--color-stone-200)',
       '--secondary-foreground': 'var(--color-stone-900)',
 
       '--accent': 'var(--color-stone-100)',
@@ -282,11 +256,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-stone-600) 35%, transparent)',
 
       '--primary': 'var(--color-stone-400)',
-      '--primary-hover': 'var(--color-stone-200)',
       '--primary-foreground': 'var(--color-stone-950)',
 
       '--secondary': 'var(--color-stone-950)',
-      '--secondary-hover': 'var(--color-stone-800)',
       '--secondary-foreground': 'var(--color-stone-100)',
 
       '--accent': 'var(--color-stone-900)',
@@ -301,11 +273,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-yellow-400) 35%, transparent)',
 
       '--primary': 'var(--color-yellow-600)',
-      '--primary-hover': 'var(--color-yellow-800)',
       '--primary-foreground': 'var(--color-yellow-50)',
 
       '--secondary': 'var(--color-yellow-100)',
-      '--secondary-hover': 'var(--color-yellow-200)',
       '--secondary-foreground': 'var(--color-yellow-900)',
 
       '--accent': 'var(--color-yellow-100)',
@@ -318,11 +288,9 @@ const themes = {
       '--ring': 'color-mix(in oklab, var(--color-yellow-600) 35%, transparent)',
 
       '--primary': 'var(--color-yellow-400)',
-      '--primary-hover': 'var(--color-yellow-200)',
       '--primary-foreground': 'var(--color-yellow-950)',
 
       '--secondary': 'var(--color-yellow-950)',
-      '--secondary-hover': 'var(--color-yellow-800)',
       '--secondary-foreground': 'var(--color-yellow-100)',
 
       '--accent': 'var(--color-yellow-900)',

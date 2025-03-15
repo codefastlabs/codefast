@@ -256,7 +256,7 @@ function MenubarLabel({
 function MenubarSeparator({ className, ...props }: ComponentProps<typeof MenubarPrimitive.Separator>): JSX.Element {
   return (
     <MenubarPrimitive.Separator
-      className={cn('bg-muted mx-2 my-1 h-px', className)}
+      className={cn('bg-border mx-2 my-1 h-px', className)}
       data-slot="menubar-separator"
       {...props}
     />
