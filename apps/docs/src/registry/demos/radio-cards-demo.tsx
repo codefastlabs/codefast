@@ -5,7 +5,7 @@ import { cn, RadioCards, RadioCardsItem } from '@codefast/ui';
 export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div className={cn('', className)} {...props}>
-      <RadioCards className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" defaultValue="1">
+      <RadioCards className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <RadioCardsItem value="1">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Starter Plan</div>

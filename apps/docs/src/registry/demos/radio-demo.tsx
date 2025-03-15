@@ -6,7 +6,7 @@ export function RadioDemo({ className, ...props }: ComponentProps<'div'>): JSX.E
   return (
     <div className={cn('grid gap-2', className)} {...props}>
       <div className="flex items-center gap-3">
-        <Radio defaultChecked id="radio-1" name="example" value="1" />
+        <Radio id="radio-1" name="example" value="1" />
         <Label htmlFor="radio-1">Default</Label>
       </div>
       <div className="flex items-center gap-3">
