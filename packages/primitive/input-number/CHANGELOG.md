@@ -1,5 +1,20 @@
 # @codefast-ui/number-input
 
+## 0.2.28
+
+### Patch Changes
+
+- [`6d53482`](https://github.com/codefastlabs/codefast/commit/6d5348215986b4a9850e8e8078d3bcfd2d754a6e) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enable client-side rendering for Sonner component
+
+- [`f2de4a6`](https://github.com/codefastlabs/codefast/commit/f2de4a6711d83ba47e37c2f7103c8ec3e481ce85) Thanks [@thevuong](https://github.com/thevuong)! - feat: restructure apps and upgrade UI to TailwindCSS v4
+
+- [`288ce7f`](https://github.com/codefastlabs/codefast/commit/288ce7fa35c1e591b1f36484cc041111edaaceae) Thanks [@thevuong](https://github.com/thevuong)! - feat: add `data-slot` attributes to components for targeting
+
+- [`158e0e0`](https://github.com/codefastlabs/codefast/commit/158e0e07e4e3885c784c7d0435d2051558e9a45a) Thanks [@thevuong](https://github.com/thevuong)! - feat(hooks): add useIsMobile hook
+
+- Updated dependencies [[`6d53482`](https://github.com/codefastlabs/codefast/commit/6d5348215986b4a9850e8e8078d3bcfd2d754a6e), [`f2de4a6`](https://github.com/codefastlabs/codefast/commit/f2de4a6711d83ba47e37c2f7103c8ec3e481ce85), [`288ce7f`](https://github.com/codefastlabs/codefast/commit/288ce7fa35c1e591b1f36484cc041111edaaceae), [`158e0e0`](https://github.com/codefastlabs/codefast/commit/158e0e07e4e3885c784c7d0435d2051558e9a45a)]:
+  - @codefast-ui/input@0.2.28
+
 ## 0.2.27
 
 ### Patch Changes
