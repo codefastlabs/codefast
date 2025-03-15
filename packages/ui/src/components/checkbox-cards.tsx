@@ -36,7 +36,7 @@ function CheckboxCardsItem({
     >
       <CheckboxGroupPrimitive.Item
         className={cn(
-          'border-input text-primary-foreground group-hover/checkbox-card:not-disabled:not-aria-checked:border-ring/60 aria-checked:border-primary aria-checked:bg-primary outline-hidden aria-checked:focus-visible:ring-primary/20 focus-visible:border-ring focus-visible:ring-ring/20 focus-visible:ring-3 peer flex size-4 shrink-0 rounded-sm border transition',
+          'border-input text-primary-foreground group-hover/checkbox-card:not-disabled:not-aria-checked:border-ring/60 aria-checked:border-primary aria-checked:bg-primary outline-hidden aria-checked:focus-visible:ring-primary/20 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 peer flex size-4 shrink-0 rounded-sm border transition',
           checkboxClassName,
         )}
         data-slot="checkbox-card-item"
