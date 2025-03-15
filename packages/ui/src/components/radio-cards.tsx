@@ -29,7 +29,7 @@ function RadioCardsItem({
     >
       <RadioGroupPrimitive.Item
         className={cn(
-          'border-input aria-checked:focus-visible:ring-3 aria-checked:focus-visible:ring-primary/20 text-primary-foreground group-hover/radio-card:not-disabled:not-aria-checked:border-ring/60 aria-checked:border-primary aria-checked:bg-primary outline-hidden peer flex size-4 shrink-0 items-center justify-center rounded-full border transition',
+          'border-input text-primary-foreground group-hover/radio-card:not-disabled:not-aria-checked:border-ring/60 aria-checked:border-primary aria-checked:bg-primary outline-hidden shadow-xs focus-visible:ring-3 focus-visible:aria-checked:ring-primary/20 focus-visible:ring-ring/50 focus-visible:not-aria-checked:border-ring peer flex size-4 shrink-0 items-center justify-center rounded-full border transition',
           className,
         )}
         data-slot="radio-card-item"
