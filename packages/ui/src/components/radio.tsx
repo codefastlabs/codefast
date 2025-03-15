@@ -21,7 +21,8 @@ function Radio({
   return (
     <input
       className={cn(
-        'border-input checked:border-primary checked:bg-primary after:bg-background focus-visible:ring-primary/20 focus-visible:ring-3 shadow-xs outline-hidden hover:not-disabled:not-checked:border-ring/60 hover:not-disabled:not-checked:aria-invalid:border-destructive/60 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border transition after:size-full after:rounded-full checked:after:size-1 disabled:opacity-50',
+        'border-input shadow-xs outline-hidden hover:not-disabled:not-checked:border-ring/60 hover:not-disabled:not-checked:aria-invalid:border-destructive/60 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive checked:border-primary checked:bg-primary peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border disabled:opacity-50',
+        'after:bg-background focus-visible:ring-3 focus-visible:checked:ring-primary/20 focus-visible:ring-ring/50 focus-visible:not-checked:border-ring after:size-full after:rounded-full after:transition-[width,height] checked:after:size-1',
         className,
       )}
       data-slot="radio"
