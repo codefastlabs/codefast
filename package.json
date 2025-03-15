@@ -20,6 +20,7 @@
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:fix": "prettier --write --ignore-unknown .",
     "start": "turbo run start",
+    "start:docs": "turbo run start --filter=@app/docs...",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:watch": "turbo run test:watch"
