@@ -31,12 +31,9 @@ export function CarouselDemo(): JSX.Element {
             </CarouselItem>
           ))}
         </CarouselContent>
-
         <CarouselPrevious />
-
         <CarouselNext />
       </Carousel>
-
       <Carousel
         className="*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
         opts={{ loop: true }}
@@ -55,12 +52,9 @@ export function CarouselDemo(): JSX.Element {
             </CarouselItem>
           ))}
         </CarouselContent>
-
         <CarouselPrevious />
-
         <CarouselNext />
       </Carousel>
-
       <Carousel
         className="*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
         opts={{
@@ -82,9 +76,7 @@ export function CarouselDemo(): JSX.Element {
             </CarouselItem>
           ))}
         </CarouselContent>
-
         <CarouselPrevious />
-
         <CarouselNext />
       </Carousel>
     </div>

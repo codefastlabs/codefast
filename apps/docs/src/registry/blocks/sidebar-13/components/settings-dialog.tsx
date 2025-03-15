@@ -66,12 +66,9 @@ export function SettingsDialog(): JSX.Element {
       <DialogTrigger asChild>
         <Button size="sm">Open Dialog</Button>
       </DialogTrigger>
-
       <DialogContent className="overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[800px]">
         <DialogTitle className="sr-only">Settings</DialogTitle>
-
         <DialogDescription className="sr-only">Customize your settings here.</DialogDescription>
-
         <SidebarProvider className="items-start">
           <Sidebar className="hidden md:flex" collapsible="none">
             <SidebarContent>
@@ -83,7 +80,6 @@ export function SettingsDialog(): JSX.Element {
                         <SidebarMenuButton asChild isActive={item.name === 'Messages & media'}>
                           <Link href="#">
                             <item.icon />
-
                             <span>{item.name}</span>
                           </Link>
                         </SidebarMenuButton>
@@ -94,7 +90,6 @@ export function SettingsDialog(): JSX.Element {
               </SidebarGroup>
             </SidebarContent>
           </Sidebar>
-
           <main className="flex h-[480px] flex-1 flex-col overflow-hidden">
             <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
               <div className="flex items-center gap-2 px-4">
@@ -103,9 +98,7 @@ export function SettingsDialog(): JSX.Element {
                     <BreadcrumbItem className="hidden md:block">
                       <BreadcrumbLink href="#">Settings</BreadcrumbLink>
                     </BreadcrumbItem>
-
                     <BreadcrumbSeparator className="hidden md:block" />
-
                     <BreadcrumbItem>
                       <BreadcrumbPage>Messages & media</BreadcrumbPage>
                     </BreadcrumbItem>
@@ -113,7 +106,6 @@ export function SettingsDialog(): JSX.Element {
                 </Breadcrumb>
               </div>
             </header>
-
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
               {Array.from({ length: 10 }).map((_, i) => (
                 // eslint-disable-next-line react/no-array-index-key -- we need index
