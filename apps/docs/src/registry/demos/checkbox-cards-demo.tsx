@@ -5,7 +5,7 @@ import { CheckboxCards, CheckboxCardsItem, cn } from '@codefast/ui';
 export function CheckboxCardsDemo({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
     <div className={cn('', className)} {...props}>
-      <CheckboxCards className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" defaultValue={['1']}>
+      <CheckboxCards className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <CheckboxCardsItem value="1">
           <div className="grid gap-1.5 font-normal">
             <p className="text-sm font-medium leading-none">Enable notifications</p>

@@ -46,7 +46,7 @@ export function RadioGroupDemo(): JSX.Element {
   return (
     <GridWrapper className="*:grid *:place-items-center">
       <div>
-        <RadioGroup defaultValue="comfortable">
+        <RadioGroup>
           <div className="flex items-center gap-3">
             <RadioGroupItem id="radio-group-1" value="default" />
             <Label htmlFor="radio-group-1">Default</Label>
@@ -66,14 +66,14 @@ export function RadioGroupDemo(): JSX.Element {
         </RadioGroup>
       </div>
       <div>
-        <RadioGroup className="max-w-sm" defaultValue="starter">
+        <RadioGroup className="max-w-sm">
           {plans.map((plan) => (
             <Label
               key={plan.id}
               className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
             >
               <RadioGroupItem
-                className="shadow-none disabled:opacity-100"
+                className="disabled:opacity-100"
                 disabled={plan.disabled}
                 id={plan.name}
                 value={plan.id}
