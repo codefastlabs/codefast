@@ -68,7 +68,6 @@ function InputNumber({
         spellCheck="false"
         {...props}
       />
-
       <div
         className={cn(
           'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 group-focus-within:border-l-ring group-focus-within:divide-ring order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
@@ -86,7 +85,6 @@ function InputNumber({
         >
           <ChevronUpIcon />
         </InputNumberPrimitive.IncrementButton>
-
         <InputNumberPrimitive.DecrementButton
           aria-label="Decrement"
           className={buttonVariants({
