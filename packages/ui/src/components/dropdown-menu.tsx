@@ -235,7 +235,7 @@ function DropdownMenuSeparator({
 }: ComponentProps<typeof DropdownMenuPrimitive.Separator>): JSX.Element {
   return (
     <DropdownMenuPrimitive.Separator
-      className={cn('bg-muted mx-2 my-1 h-px', className)}
+      className={cn('bg-border mx-2 my-1 h-px', className)}
       data-slot="dropdown-menu-separator"
       {...props}
     />

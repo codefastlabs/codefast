@@ -30,7 +30,7 @@ export function ContextMenuDemo(): JSX.Element {
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">
+      <ContextMenuTrigger className="mx-auto flex h-[150px] w-[300px] select-none items-center justify-center rounded-md border border-dashed text-sm">
         Right click here
       </ContextMenuTrigger>
 

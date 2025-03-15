@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 function Progress({ className, value, ...props }: ComponentProps<typeof ProgressPrimitive.Root>): JSX.Element {
   return (
     <ProgressPrimitive.Root
-      className={cn('bg-muted relative h-2 w-full overflow-hidden rounded-full', className)}
+      className={cn('bg-primary/20 relative h-2 w-full overflow-hidden rounded-full', className)}
       data-slot="progress"
       {...props}
     >
