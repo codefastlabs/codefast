@@ -23,7 +23,7 @@ const buttonVariants = tv({
       secondary: 'bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary/80',
       destructive: 'bg-destructive focus-visible:ring-destructive/20 hover:not-disabled:bg-destructive/90 text-white',
       outline:
-        'border-input not-disabled:shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-ring aria-invalid:border-destructive hover:not-disabled:aria-invalid:border-destructive/60 focus-within:aria-invalid:ring-destructive/20 border',
+        'border-input shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:border-ring aria-invalid:border-destructive hover:not-disabled:aria-invalid:border-destructive/60 focus-within:aria-invalid:ring-destructive/20 border',
       ghost: 'hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground',
       link: 'text-primary hover:not-disabled:underline underline-offset-4',
     },

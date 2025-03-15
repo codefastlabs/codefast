@@ -77,7 +77,7 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<'div'>
               className="hover:not-has-disabled:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-border-focus has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition"
             >
               <CheckboxGroupItem
-                className="not-disabled:shadow-none disabled:opacity-100"
+                className="shadow-none disabled:opacity-100"
                 disabled={plan.disabled}
                 id={plan.name}
                 value={plan.id}
