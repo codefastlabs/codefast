@@ -47,11 +47,7 @@ export function CheckboxDemo(): JSX.Element {
 
       <div className="lg:col-span-2">
         <Label className="hover:not-has-disabled:bg-secondary has-aria-[checked=true]:border-primary has-aria-[checked=true]:bg-primary/10 flex items-start gap-3 rounded-lg border p-3">
-          <Checkbox
-            defaultChecked
-            className="data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-white"
-            id="toggle-2"
-          />
+          <Checkbox defaultChecked id="toggle-2" />
 
           <div className="grid gap-1.5 font-normal">
             <p className="text-sm font-medium leading-none">Enable notifications</p>
