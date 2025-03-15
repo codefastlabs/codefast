@@ -222,7 +222,7 @@ function CarouselPrevious({
     <Button
       aria-label="Previous slide"
       className={cn(
-        'not-disabled:shadow-none absolute size-8',
+        'absolute size-8 shadow-none',
         orientation === 'horizontal'
           ? '-left-12 top-1/2 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -260,7 +260,7 @@ function CarouselNext({
     <Button
       aria-label="Next slide"
       className={cn(
-        'not-disabled:shadow-none absolute size-8',
+        'absolute size-8 shadow-none',
         orientation === 'horizontal'
           ? '-right-12 top-1/2 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
