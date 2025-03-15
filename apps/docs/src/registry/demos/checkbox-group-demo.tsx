@@ -70,7 +70,7 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<'div'>
           {plans.map((plan) => (
             <Label
               key={plan.id}
-              className="hover:not-has-disabled:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-border-focus has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition"
+              className="hover:not-has-disabled:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition"
             >
               <CheckboxGroupItem
                 className="shadow-none disabled:opacity-100"
