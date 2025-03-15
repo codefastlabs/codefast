@@ -46,7 +46,7 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<'div'>
   return (
     <GridWrapper className={cn('*:grid *:place-items-center', className)} {...props}>
       <div className="">
-        <CheckboxGroup defaultValue={['comfortable']}>
+        <CheckboxGroup>
           <div className="flex items-center gap-3">
             <CheckboxGroupItem id="checkbox-group-1" value="standard" />
             <Label htmlFor="checkbox-group-1">Standard</Label>
@@ -66,14 +66,14 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<'div'>
         </CheckboxGroup>
       </div>
       <div>
-        <CheckboxGroup className="max-w-sm" defaultValue={['starter']}>
+        <CheckboxGroup className="max-w-sm">
           {plans.map((plan) => (
             <Label
               key={plan.id}
-              className="hover:not-has-disabled:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition"
+              className="hover:not-has-disabled:bg-secondary hover:has-aria-checked:bg-primary/5 has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition"
             >
               <CheckboxGroupItem
-                className="shadow-none disabled:opacity-100"
+                className="disabled:opacity-100"
                 disabled={plan.disabled}
                 id={plan.name}
                 value={plan.id}
