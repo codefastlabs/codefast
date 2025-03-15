@@ -13,6 +13,10 @@ export function ButtonDemo(): JSX.Element {
           Outline
         </Button>
 
+        <Button aria-invalid size="sm" variant="outline">
+          Outline
+        </Button>
+
         <Button size="sm" variant="ghost">
           Ghost
         </Button>
@@ -47,6 +51,10 @@ export function ButtonDemo(): JSX.Element {
 
         <Button variant="outline">Outline</Button>
 
+        <Button aria-invalid variant="outline">
+          Outline
+        </Button>
+
         <Button variant="ghost">Ghost</Button>
 
         <Button variant="destructive">Destructive</Button>
@@ -72,6 +80,10 @@ export function ButtonDemo(): JSX.Element {
         <Button size="lg">Large</Button>
 
         <Button size="lg" variant="outline">
+          Outline
+        </Button>
+
+        <Button aria-invalid size="lg" variant="outline">
           Outline
         </Button>
 
