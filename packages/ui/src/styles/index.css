@@ -8,6 +8,7 @@
 @theme inline {
   --color-input: var(--input);
   --color-border: var(--border);
+
   --color-ring: var(--ring);
 
   --color-background: var(--background);
@@ -66,6 +67,7 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-border);
+    outline-color: color-mix(in oklab, var(--ring) 20%, transparent);
   }
 
   ::selection {
