@@ -80,7 +80,6 @@ function DataTablePagination<TData>({
       <div className="text-muted-foreground min-w-max flex-1 text-sm">
         {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
-
       <div className="flex grow flex-wrap items-center justify-between gap-4 md:justify-end md:gap-x-6 lg:gap-x-8">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-4">
           <p className="text-sm font-medium">Rows per page</p>
@@ -187,7 +186,6 @@ function DataTableColumnHeader<TData, TValue>({
           {title}
         </Button>
       </DropdownMenuTrigger>
-
       <DropdownMenuContent align="start">
         <DropdownMenuItem
           onClick={() => {
