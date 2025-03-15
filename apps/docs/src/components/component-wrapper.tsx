@@ -30,7 +30,6 @@ export function ComponentWrapper({
       <div className={cn('bg-muted/20 rounded-t-lg border-b px-4 py-3', classNames?.header)}>
         <div className="text-sm font-medium">{getComponentName(name)}</div>
       </div>
-
       <div className={cn('flex flex-1 items-center gap-2 p-4', classNames?.body)}>{children}</div>
     </div>
   );

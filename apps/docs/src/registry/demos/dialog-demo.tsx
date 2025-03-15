@@ -23,11 +23,9 @@ export function DialogDemo(): JSX.Element {
       <div className="">
         <DialogWithForm />
       </div>
-
       <div className="">
         <DialogScrollableContent />
       </div>
-
       <div className="">
         <DialogWithStickyFooter />
       </div>
@@ -42,33 +40,25 @@ function DialogWithForm(): JSX.Element {
         <DialogTrigger asChild>
           <Button variant="outline">Edit Profile</Button>
         </DialogTrigger>
-
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
-
             <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
           </DialogHeader>
-
           <DialogBody className="grid gap-4">
             <div className="grid gap-3">
               <Label htmlFor="name-1">Name</Label>
-
               <Input defaultValue="Pedro Duarte" id="name-1" name="name" />
             </div>
-
             <div className="grid gap-3">
               <Label htmlFor="username-1">Username</Label>
-
               <Input defaultValue="@peduarte" id="username-1" name="username" />
             </div>
           </DialogBody>
-
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-
             <Button type="submit">Save changes</Button>
           </DialogFooter>
         </DialogContent>
@@ -83,14 +73,11 @@ function DialogScrollableContent(): JSX.Element {
       <DialogTrigger asChild>
         <Button variant="outline">Scrollable Content</Button>
       </DialogTrigger>
-
       <DialogContent className="overflow-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Scrollable Content</DialogTitle>
-
           <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
         </DialogHeader>
-
         <DialogBody className="max-h-125 border-t text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
@@ -115,14 +102,11 @@ function DialogWithStickyFooter(): JSX.Element {
       <DialogTrigger asChild>
         <Button variant="outline">Sticky Footer</Button>
       </DialogTrigger>
-
       <DialogContent className="overflow-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Scrollable Content</DialogTitle>
-
           <DialogDescription>This is a dialog with scrollable content.</DialogDescription>
         </DialogHeader>
-
         <DialogBody className="max-h-125 border-y text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
@@ -136,7 +120,6 @@ function DialogWithStickyFooter(): JSX.Element {
             </p>
           ))}
         </DialogBody>
-
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Close</Button>

@@ -16,13 +16,11 @@ export function TooltipDemo(): JSX.Element {
             <TooltipTrigger asChild>
               <Button variant="outline">Hover</Button>
             </TooltipTrigger>
-
             <TooltipContent>
               <p>Add to library</p>
             </TooltipContent>
           </Tooltip>
         </div>
-
         <div>
           <div className="grid grid-cols-3 gap-1">
             {SIDES.map((side) => (
@@ -45,7 +43,6 @@ export function TooltipDemo(): JSX.Element {
                       {side === 'right' && <ChevronUpIcon className="rotate-90" />}
                     </Button>
                   </TooltipTrigger>
-
                   <TooltipContent side={side}>
                     <p>Add to library</p>
                   </TooltipContent>
@@ -57,17 +54,14 @@ export function TooltipDemo(): JSX.Element {
             </div>
           </div>
         </div>
-
         <div>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button size="icon" variant="ghost">
                 <InfoIcon />
-
                 <span className="sr-only">Info</span>
               </Button>
             </TooltipTrigger>
-
             <TooltipContent>
               To learn more about how this works, check out the docs. If you have any questions, please reach out to us.
             </TooltipContent>

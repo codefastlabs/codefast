@@ -86,15 +86,12 @@ export function ComboboxDemo(): JSX.Element {
       <div className="">
         <FrameworkCombobox frameworks={[...frameworkOptions]} />
       </div>
-
       <div className="">
         <UserCombobox selectedUserId={usersOptions[0].id} users={[...usersOptions]} />
       </div>
-
       <div className="">
         <TimezoneCombobox selectedTimezone={timezonesOptions[0].timezones[0]} timezones={[...timezonesOptions]} />
       </div>
-
       <div className="">
         <ComboboxWithCheckbox frameworks={[...frameworkOptions]} />
       </div>
@@ -119,14 +116,11 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
           {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
         </Button>
       </PopoverTrigger>
-
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
           <CommandInput placeholder="Search framework..." />
-
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
-
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
@@ -170,7 +164,6 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
             <div className="flex items-center gap-2">
               <Avatar className="size-5">
                 <AvatarImage src={`https://github.com/${selectedUser.username}.png`} />
-
                 <AvatarFallback>{selectedUser.username[0]}</AvatarFallback>
               </Avatar>
               {selectedUser.username}
@@ -180,14 +173,11 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
           )}
         </Button>
       </PopoverTrigger>
-
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
           <CommandInput placeholder="Search user..." />
-
           <CommandList>
             <CommandEmpty>No user found.</CommandEmpty>
-
             <CommandGroup>
               {users.map((user) => (
                 <CommandItem
@@ -200,7 +190,6 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
                 >
                   <Avatar className="size-5">
                     <AvatarImage src={`https://github.com/${user.username}.png`} />
-
                     <AvatarFallback>{user.username[0]}</AvatarFallback>
                   </Avatar>
                   {user.username}
@@ -209,9 +198,7 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
                 </CommandItem>
               ))}
             </CommandGroup>
-
             <CommandSeparator />
-
             <CommandGroup>
               <CommandItem>
                 <PlusCircleIcon />
@@ -256,7 +243,6 @@ function TimezoneCombobox({
           {selectedTimezone ? (
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-muted-foreground text-xs font-normal">{selectedGroup?.label}</span>
-
               <span>{selectedTimezoneLabel}</span>
             </div>
           ) : (
@@ -264,11 +250,9 @@ function TimezoneCombobox({
           )}
         </Button>
       </PopoverTrigger>
-
       <PopoverContent align="start" className="p-0">
         <Command>
           <CommandInput placeholder="Search timezone..." />
-
           <CommandList className="scroll-pb-12">
             <CommandEmpty>No timezone found.</CommandEmpty>
             {timezones.map((region) => (
@@ -294,7 +278,6 @@ function TimezoneCombobox({
             ))}
 
             <CommandSeparator className="sticky bottom-10" />
-
             <CommandGroup className="bg-popover sticky bottom-0">
               <CommandItem>
                 <PlusCircleIcon />
@@ -329,14 +312,11 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
           </span>
         </Button>
       </PopoverTrigger>
-
       <PopoverContent align="start" className="w-[300px] p-0">
         <Command>
           <CommandInput placeholder="Search framework..." />
-
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
-
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem

@@ -12,15 +12,12 @@ export function ChartDemo(): JSX.Element {
       <div className="">
         <ChartAreaDefault />
       </div>
-
       <div className="">
         <ChartBarMultiple />
       </div>
-
       <div className="">
         <ChartBarMixed />
       </div>
-
       <div className="">
         <ChartLineMultiple />
       </div>

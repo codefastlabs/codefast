@@ -49,30 +49,22 @@ export function RadioGroupDemo(): JSX.Element {
         <RadioGroup defaultValue="comfortable">
           <div className="flex items-center gap-3">
             <RadioGroupItem id="radio-group-1" value="default" />
-
             <Label htmlFor="radio-group-1">Default</Label>
           </div>
-
           <div className="flex items-center gap-3">
             <RadioGroupItem id="radio-group-2" value="comfortable" />
-
             <Label htmlFor="radio-group-2">Comfortable</Label>
           </div>
-
           <div className="flex items-center gap-3">
             <RadioGroupItem id="radio-group-3" value="compact" />
-
             <Label htmlFor="radio-group-3">Compact</Label>
           </div>
-
           <div className="flex items-center gap-3">
             <RadioGroupItem disabled id="radio-group-4" value="disabled" />
-
             <Label htmlFor="radio-group-4">Disabled</Label>
           </div>
         </RadioGroup>
       </div>
-
       <div>
         <RadioGroup className="max-w-sm" defaultValue="starter">
           {plans.map((plan) => (
@@ -86,10 +78,8 @@ export function RadioGroupDemo(): JSX.Element {
                 id={plan.name}
                 value={plan.id}
               />
-
               <div className="grid gap-1 font-normal">
                 <div className="font-medium">{plan.name}</div>
-
                 <div className="text-muted-foreground leading-snug">{plan.description}</div>
               </div>
             </Label>

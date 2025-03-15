@@ -13,33 +13,25 @@ export function SelectDemo(): JSX.Element {
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select a fruit" />
           </SelectTrigger>
-
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Fruits</SelectLabel>
-
               <SelectItem value="apple">Apple</SelectItem>
-
               <SelectItem value="banana">Banana</SelectItem>
-
               <SelectItem value="blueberry">Blueberry</SelectItem>
-
               <SelectItem disabled value="grapes">
                 Grapes
               </SelectItem>
-
               <SelectItem value="pineapple">Pineapple</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
-
       <div className="">
         <Select>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Large List" />
           </SelectTrigger>
-
           <SelectContent>
             {Array.from({ length: 100 }).map((_, i) => (
               // eslint-disable-next-line react/no-array-index-key -- keep
@@ -50,29 +42,22 @@ export function SelectDemo(): JSX.Element {
           </SelectContent>
         </Select>
       </div>
-
       <div className="">
         <Select disabled>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Disabled" />
           </SelectTrigger>
-
           <SelectContent>
             <SelectItem value="apple">Apple</SelectItem>
-
             <SelectItem value="banana">Banana</SelectItem>
-
             <SelectItem value="blueberry">Blueberry</SelectItem>
-
             <SelectItem disabled value="grapes">
               Grapes
             </SelectItem>
-
             <SelectItem value="pineapple">Pineapple</SelectItem>
           </SelectContent>
         </Select>
       </div>
-
       <div className="">
         <Select>
           <SelectTrigger className="w-[180px]">
@@ -85,18 +70,15 @@ export function SelectDemo(): JSX.Element {
               }
             />
           </SelectTrigger>
-
           <SelectContent>
             <SelectItem value="line">
               <ChartLineIcon />
               Line
             </SelectItem>
-
             <SelectItem value="bar">
               <ChartBarIcon />
               Bar
             </SelectItem>
-
             <SelectItem value="pie">
               <ChartPieIcon />
               Pie

@@ -43,11 +43,9 @@ export function DrawerDemo(): JSX.Element {
       <div className="">
         <DrawerBottom />
       </div>
-
       <div className="">
         <DrawerScrollableContent />
       </div>
-
       <div className="">
         <DrawerDirections />
       </div>
@@ -67,15 +65,12 @@ function DrawerBottom(): JSX.Element {
       <DrawerTrigger asChild>
         <Button variant="outline">Open Drawer</Button>
       </DrawerTrigger>
-
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>Move Goal</DrawerTitle>
-
             <DrawerDescription>Set your daily activity goal.</DrawerDescription>
           </DrawerHeader>
-
           <DrawerBody className="text-sm">
             <div className="flex items-center justify-center space-x-2">
               <Button
@@ -88,16 +83,12 @@ function DrawerBottom(): JSX.Element {
                 }}
               >
                 <Minus />
-
                 <span className="sr-only">Decrease</span>
               </Button>
-
               <div className="flex-1 text-center">
                 <div className="text-7xl font-bold tracking-tighter">{goal}</div>
-
                 <div className="text-muted-foreground text-[0.70rem] uppercase">Calories/day</div>
               </div>
-
               <Button
                 className="size-8 shrink-0 rounded-full"
                 disabled={goal >= 400}
@@ -108,11 +99,9 @@ function DrawerBottom(): JSX.Element {
                 }}
               >
                 <Plus />
-
                 <span className="sr-only">Increase</span>
               </Button>
             </div>
-
             <div className="mt-3 h-[120px]">
               <ResponsiveContainer height="100%" width="100%">
                 <BarChart data={data}>
@@ -129,10 +118,8 @@ function DrawerBottom(): JSX.Element {
               </ResponsiveContainer>
             </div>
           </DrawerBody>
-
           <DrawerFooter>
             <Button>Submit</Button>
-
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
             </DrawerClose>
@@ -149,14 +136,11 @@ function DrawerScrollableContent(): JSX.Element {
       <DrawerTrigger asChild>
         <Button variant="outline">Scrollable Content</Button>
       </DrawerTrigger>
-
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Move Goal</DrawerTitle>
-
           <DrawerDescription>Set your daily activity goal.</DrawerDescription>
         </DrawerHeader>
-
         <DrawerBody className="border-y text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
@@ -170,10 +154,8 @@ function DrawerScrollableContent(): JSX.Element {
             </p>
           ))}
         </DrawerBody>
-
         <DrawerFooter>
           <Button>Submit</Button>
-
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerClose>
@@ -208,14 +190,11 @@ function DrawerDirections(): JSX.Element {
                 {direction === 'right' && <ChevronUpIcon className="rotate-90" />}
               </Button>
             </DrawerTrigger>
-
             <DrawerContent>
               <DrawerHeader>
                 <DrawerTitle>Move Goal</DrawerTitle>
-
                 <DrawerDescription>Set your daily activity goal.</DrawerDescription>
               </DrawerHeader>
-
               <DrawerBody className="border-y text-sm">
                 {Array.from({ length: 10 }).map((_, index) => (
                   // eslint-disable-next-line react/no-array-index-key -- keep
@@ -228,10 +207,8 @@ function DrawerDirections(): JSX.Element {
                   </p>
                 ))}
               </DrawerBody>
-
               <DrawerFooter>
                 <Button>Submit</Button>
-
                 <DrawerClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DrawerClose>
