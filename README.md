@@ -24,7 +24,8 @@ scalability, and ease of customization for real-world projects.
 
 ---
 
-| Badge                                                                                                | Description                                                                                                                                      |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| ![Release](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)         | Indicates the status of the release workflow in the GitHub Actions pipeline. Displays the current status such as passed, failed, or in progress. |
-| ![Auto Assign](https://github.com/codefastlabs/codefast/actions/workflows/auto-assign.yml/badge.svg) | Represents the status of the auto-assign workflow in GitHub Actions. Used for automatically assigning team members to issues or pull requests.   |
+| Badge                                                                                                                                                             | Description                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Release](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)                                                                      | Status of the automated release process (CI/CD) for the project, powered by GitHub Actions.    |
+| ![Auto Assign](https://github.com/codefastlabs/codefast/actions/workflows/auto-assign.yml/badge.svg)                                                              | Status of the workflow for automatically assigning issues or pull requests via GitHub Actions. |
+| [![Netlify Status](https://api.netlify.com/api/v1/badges/8ec0bbc7-ba24-44d4-b0c3-8c9cb3a6f3d2/deploy-status)](https://app.netlify.com/sites/codefastlabs/deploys) | Deployment status of the application on Netlify, linked to detailed deployment history.        |
