@@ -70,7 +70,7 @@ export function RadioGroupDemo(): JSX.Element {
           {plans.map((plan) => (
             <Label
               key={plan.id}
-              className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-border-focus has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
+              className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
             >
               <RadioGroupItem
                 className="shadow-none disabled:opacity-100"
