@@ -11,23 +11,18 @@ export function InputNumberDemo(): JSX.Element {
       <div className="">
         <InputNumber placeholder="Enter a number" />
       </div>
-
       <div className="">
         <InputNumber aria-invalid="true" placeholder="Invalid number" />
       </div>
-
       <div className="">
         <InputNumber loading placeholder="Loading..." />
       </div>
-
       <div className="">
         <InputNumber disabled placeholder="Disabled" />
       </div>
-
       <div className="">
         <InputNumber readOnly defaultValue={100} placeholder="Read only" />
       </div>
-
       <div className="">
         <InputNumber
           formatOptions={{
@@ -40,7 +35,6 @@ export function InputNumberDemo(): JSX.Element {
           prefix={<DollarSignIcon />}
         />
       </div>
-
       <div className="">
         <InputNumber
           formatOptions={{

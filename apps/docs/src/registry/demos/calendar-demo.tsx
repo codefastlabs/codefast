@@ -27,7 +27,6 @@ export function CalendarDemo(): JSX.Element {
       <div className="">
         <Calendar className="rounded-md border shadow-sm" mode="single" selected={date} onSelect={setDate} />
       </div>
-
       <div className="">
         <Calendar
           className="rounded-md border shadow-sm"
@@ -39,7 +38,6 @@ export function CalendarDemo(): JSX.Element {
           onSelect={setDateRange}
         />
       </div>
-
       <div className="">
         <Calendar
           showWeekNumber
@@ -52,7 +50,6 @@ export function CalendarDemo(): JSX.Element {
           onSelect={setDateRange2}
         />
       </div>
-
       <div className="">
         <Calendar
           className="rounded-md border shadow-sm"

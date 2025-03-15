@@ -122,108 +122,85 @@ export function FormDemo(): JSX.Element {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
-
               <FormControl>
                 <Input placeholder="@codefast/ui" {...field} />
               </FormControl>
-
               <FormDescription>This is your public display name.</FormDescription>
-
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
-
               <Select defaultValue={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a verified email to display" />
                   </SelectTrigger>
                 </FormControl>
-
                 <SelectContent>
                   <SelectItem value="m1@example.com">m@example.com</SelectItem>
-
                   <SelectItem value="m2@google.com">m@google.com</SelectItem>
-
                   <SelectItem value="m3@support.com">m@support.com</SelectItem>
                 </SelectContent>
               </Select>
-
               <FormDescription>You can manage email addresses in your email settings.</FormDescription>
-
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="bio"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Bio</FormLabel>
-
               <FormControl>
                 <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
               </FormControl>
-
               <FormDescription>
                 You can <span>@mention</span> other users and organizations.
               </FormDescription>
-
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="type"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-3">
               <FormLabel>Notify me about...</FormLabel>
-
               <FormControl>
                 <RadioGroup className="flex flex-col gap-3" defaultValue={field.value} onValueChange={field.onChange}>
                   <FormItem className="flex items-center gap-3">
                     <FormControl>
                       <RadioGroupItem value="all" />
                     </FormControl>
-
                     <FormLabel className="font-normal">All new messages</FormLabel>
                   </FormItem>
-
                   <FormItem className="flex items-center gap-3">
                     <FormControl>
                       <RadioGroupItem value="mentions" />
                     </FormControl>
-
                     <FormLabel className="font-normal">Direct messages and mentions</FormLabel>
                   </FormItem>
-
                   <FormItem className="flex items-center gap-3">
                     <FormControl>
                       <RadioGroupItem value="none" />
                     </FormControl>
-
                     <FormLabel className="font-normal">Nothing</FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="mobile"
@@ -232,10 +209,8 @@ export function FormDemo(): JSX.Element {
               <FormControl className="translate-y-0.25">
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
-
               <div className="flex flex-col gap-1">
                 <FormLabel className="leading-snug">Use different settings for my mobile devices</FormLabel>
-
                 <FormDescription className="leading-snug">
                   You can manage your mobile notifications in the mobile settings page.
                 </FormDescription>
@@ -243,7 +218,6 @@ export function FormDemo(): JSX.Element {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="items"
@@ -251,10 +225,8 @@ export function FormDemo(): JSX.Element {
             <FormItem className="flex flex-col gap-4">
               <div>
                 <FormLabel className="text-base">Sidebar</FormLabel>
-
                 <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
               </div>
-
               <div className="flex flex-col gap-2">
                 {items.map((item) => (
                   <FormField
@@ -276,7 +248,6 @@ export function FormDemo(): JSX.Element {
                               }}
                             />
                           </FormControl>
-
                           <FormLabel className="text-sm font-normal leading-tight">{item.label}</FormLabel>
                         </FormItem>
                       );
@@ -284,19 +255,16 @@ export function FormDemo(): JSX.Element {
                   />
                 ))}
               </div>
-
               <FormMessage />
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="dob"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Date of birth</FormLabel>
-
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -308,12 +276,10 @@ export function FormDemo(): JSX.Element {
                       variant="outline"
                     >
                       <CalendarLabel date={field.value} />
-
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-
                 <PopoverContent align="start" className="w-auto p-0">
                   <Calendar
                     disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
@@ -323,17 +289,13 @@ export function FormDemo(): JSX.Element {
                   />
                 </PopoverContent>
               </Popover>
-
               <FormDescription>Your date of birth is used to calculate your age.</FormDescription>
-
               <FormMessage />
             </FormItem>
           )}
         />
-
         <div>
           <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
-
           <div className="flex flex-col gap-4">
             <FormField
               control={form.control}
@@ -342,19 +304,16 @@ export function FormDemo(): JSX.Element {
                 <FormItem className="shadow-xs flex flex-row items-start justify-between rounded-lg border p-3">
                   <div className="flex flex-col gap-0.5">
                     <FormLabel className="leading-normal">Marketing emails</FormLabel>
-
                     <FormDescription className="leading-snug">
                       Receive emails about new products, features, and more.
                     </FormDescription>
                   </div>
-
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="security_emails"
@@ -362,12 +321,10 @@ export function FormDemo(): JSX.Element {
                 <FormItem className="shadow-xs flex flex-row items-start justify-between rounded-lg border p-3">
                   <div className="flex flex-col gap-0.5 opacity-60">
                     <FormLabel className="leading-normal">Security emails</FormLabel>
-
                     <FormDescription className="leading-snug">
                       Receive emails about your account security.
                     </FormDescription>
                   </div>
-
                   <FormControl>
                     <Switch aria-readonly disabled checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
@@ -376,7 +333,6 @@ export function FormDemo(): JSX.Element {
             />
           </div>
         </div>
-
         <Button type="submit">Submit</Button>
       </form>
     </Form>

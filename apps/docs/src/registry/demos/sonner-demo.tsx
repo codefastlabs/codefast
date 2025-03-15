@@ -90,7 +90,6 @@ export function SonnerDemo(): JSX.Element {
           Give me a toast
         </Button>
       </div>
-
       <div>
         <Button
           variant="outline"

@@ -81,7 +81,6 @@ export default function RootLayout({
           }}
         />
       </head>
-
       <body>
         <ThemeProvider disableTransitionOnChange enableSystem attribute="class" defaultTheme="system">
           {children}

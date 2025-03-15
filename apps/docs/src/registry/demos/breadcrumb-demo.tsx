@@ -24,43 +24,33 @@ export function BreadcrumbDemo(): JSX.Element {
             <Link href="/apps/docs/public#breadcrumb">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-
         <BreadcrumbSeparator />
-
         <BreadcrumbItem>
           <DropdownMenu>
             <DropdownMenuTrigger className="px-1">
               <BreadcrumbEllipsis className="size-4" />
-
               <span className="sr-only">Toggle menu</span>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent align="start">
               <DropdownMenuItem asChild>
                 <Link href="/apps/docs/public#breadcrumb">Documentation</Link>
               </DropdownMenuItem>
-
               <DropdownMenuItem asChild>
                 <Link href="/apps/docs/public#breadcrumb">Themes</Link>
               </DropdownMenuItem>
-
               <DropdownMenuItem asChild>
                 <Link href="/apps/docs/public#breadcrumb">GitHub</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </BreadcrumbItem>
-
         <BreadcrumbSeparator />
-
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
             <Link href="/apps/docs/public#breadcrumb">Components</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
-
         <BreadcrumbSeparator />
-
         <BreadcrumbItem>
           <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>

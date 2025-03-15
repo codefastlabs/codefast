@@ -50,13 +50,9 @@ export function ProductsTable({
         <Tabs defaultValue="all">
           <TabsList>
             <TabsTrigger value="all">All Products</TabsTrigger>
-
             <TabsTrigger value="in-stock">In Stock</TabsTrigger>
-
             <TabsTrigger value="low-stock">Low Stock</TabsTrigger>
-
             <TabsTrigger value="archived">Archived</TabsTrigger>
-
             <TabsTrigger asChild value="add-product">
               <button type="button">
                 <PlusIcon />
@@ -64,72 +60,51 @@ export function ProductsTable({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-
         <div className="flex items-center gap-2">
           <Select defaultValue="all">
             <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Category:</span>
-
               <SelectValue placeholder="Select a product" />
             </SelectTrigger>
-
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
-
               <SelectItem value="in-stock">In Stock</SelectItem>
-
               <SelectItem value="low-stock">Low Stock</SelectItem>
-
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-
           <Select defaultValue="all">
             <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Price:</span>
-
               <SelectValue placeholder="Select a product" />
             </SelectTrigger>
-
             <SelectContent>
               <SelectItem value="all">$100-$200</SelectItem>
-
               <SelectItem value="in-stock">$200-$300</SelectItem>
-
               <SelectItem value="low-stock">$300-$400</SelectItem>
-
               <SelectItem value="archived">$400-$500</SelectItem>
             </SelectContent>
           </Select>
-
           <Select defaultValue="all">
             <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Status:</span>
-
               <SelectValue placeholder="Select a product" />
             </SelectTrigger>
-
             <SelectContent>
               <SelectItem value="all">In Stock</SelectItem>
-
               <SelectItem value="in-stock">Low Stock</SelectItem>
-
               <SelectItem value="low-stock">Archived</SelectItem>
-
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-
           <Button className="size-8" size="icon" variant="outline">
             <ListFilterIcon />
           </Button>
-
           <Button className="size-8" size="icon" variant="outline">
             <ArrowUpDownIcon />
           </Button>
         </div>
       </div>
-
       <div>
         <Table>
           <TableHeader>
@@ -137,34 +112,23 @@ export function ProductsTable({
               <TableHead className="w-12 px-4">
                 <Checkbox />
               </TableHead>
-
               <TableHead>Product</TableHead>
-
               <TableHead className="text-right">Price</TableHead>
-
               <TableHead className="text-right">Stock</TableHead>
-
               <TableHead>Status</TableHead>
-
               <TableHead>Date Added</TableHead>
-
               <TableHead className="text-right" />
             </TableRow>
           </TableHeader>
-
           <TableBody className="**:data-[slot=table-cell]:py-2.5">
             {products.map((product) => (
               <TableRow key={product.id}>
                 <TableCell className="px-4">
                   <Checkbox />
                 </TableCell>
-
                 <TableCell className="font-medium">{product.name}</TableCell>
-
                 <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
-
                 <TableCell className="text-right">{product.stock}</TableCell>
-
                 <TableCell>
                   <Badge
                     className={
@@ -177,7 +141,6 @@ export function ProductsTable({
                     {product.status}
                   </Badge>
                 </TableCell>
-
                 <TableCell>
                   {new Date(product.dateAdded).toLocaleDateString('en-US', {
                     month: 'long',
@@ -185,7 +148,6 @@ export function ProductsTable({
                     year: 'numeric',
                   })}
                 </TableCell>
-
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -193,10 +155,8 @@ export function ProductsTable({
                         <EllipsisVerticalIcon />
                       </Button>
                     </DropdownMenuTrigger>
-
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem>Edit</DropdownMenuItem>
-
                       <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -206,32 +166,26 @@ export function ProductsTable({
           </TableBody>
         </Table>
       </div>
-
       <div className="flex justify-end">
         <Pagination>
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious href="#" />
             </PaginationItem>
-
             <PaginationItem>
               <PaginationLink href="#">1</PaginationLink>
             </PaginationItem>
-
             <PaginationItem>
               <PaginationLink isActive href="#">
                 2
               </PaginationLink>
             </PaginationItem>
-
             <PaginationItem>
               <PaginationLink href="#">3</PaginationLink>
             </PaginationItem>
-
             <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
-
             <PaginationItem>
               <PaginationNext href="#" />
             </PaginationItem>

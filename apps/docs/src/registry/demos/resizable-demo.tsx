@@ -14,9 +14,7 @@ export function ResizableDemo(): JSX.Element {
               <span className="font-semibold">One</span>
             </div>
           </ResizablePanel>
-
           <ResizableHandle />
-
           <ResizablePanel defaultSize={50}>
             <ResizablePanelGroup direction="vertical">
               <ResizablePanel defaultSize={25}>
@@ -24,9 +22,7 @@ export function ResizableDemo(): JSX.Element {
                   <span className="font-semibold">Two</span>
                 </div>
               </ResizablePanel>
-
               <ResizableHandle />
-
               <ResizablePanel defaultSize={75}>
                 <div className="flex h-full items-center justify-center p-6">
                   <span className="font-semibold">Three</span>
@@ -36,7 +32,6 @@ export function ResizableDemo(): JSX.Element {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-
       <div className="">
         <ResizablePanelGroup className="min-h-[200px] max-w-md rounded-lg border" direction="horizontal">
           <ResizablePanel defaultSize={25}>
@@ -44,9 +39,7 @@ export function ResizableDemo(): JSX.Element {
               <span className="font-semibold">Sidebar</span>
             </div>
           </ResizablePanel>
-
           <ResizableHandle withHandle />
-
           <ResizablePanel defaultSize={75}>
             <div className="flex h-full items-center justify-center p-6">
               <span className="font-semibold">Content</span>
@@ -54,7 +47,6 @@ export function ResizableDemo(): JSX.Element {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-
       <div className="">
         <ResizablePanelGroup className="min-h-[200px] max-w-md rounded-lg border" direction="vertical">
           <ResizablePanel defaultSize={25}>
@@ -62,9 +54,7 @@ export function ResizableDemo(): JSX.Element {
               <span className="font-semibold">Header</span>
             </div>
           </ResizablePanel>
-
           <ResizableHandle />
-
           <ResizablePanel defaultSize={75}>
             <div className="flex h-full items-center justify-center p-6">
               <span className="font-semibold">Content</span>

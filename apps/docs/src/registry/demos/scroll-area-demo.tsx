@@ -12,7 +12,6 @@ export function ScrollAreaDemo(): JSX.Element {
       <div className="">
         <ScrollAreaVertical />
       </div>
-
       <div className="lg:col-span-2">
         <ScrollAreaHorizontalDemo />
       </div>
@@ -31,7 +30,6 @@ function ScrollAreaVertical(): JSX.Element {
           {tags.map((tag) => (
             <Fragment key={tag}>
               <div className="text-sm">{tag}</div>
-
               <Separator className="my-2" />
             </Fragment>
           ))}
@@ -71,7 +69,6 @@ function ScrollAreaHorizontalDemo(): JSX.Element {
                 width={300}
               />
             </div>
-
             <figcaption className="text-muted-foreground pt-2 text-xs">
               Photo by
               <span className="text-foreground font-semibold">{artwork.artist}</span>

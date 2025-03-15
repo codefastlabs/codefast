@@ -9,13 +9,11 @@ export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): 
         <RadioCardsItem value="1">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Starter Plan</div>
-
             <div className="text-muted-foreground leading-snug">
               Perfect for small businesses getting started with our platform
             </div>
           </div>
         </RadioCardsItem>
-
         <RadioCardsItem value="2">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Professional Plan</div>
@@ -24,7 +22,6 @@ export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): 
             </div>
           </div>
         </RadioCardsItem>
-
         <RadioCardsItem value="3">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Enterprise Plan</div>
@@ -33,7 +30,6 @@ export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): 
             </div>
           </div>
         </RadioCardsItem>
-
         <RadioCardsItem disabled value="4">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Team Plan</div>
@@ -42,7 +38,6 @@ export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): 
             </div>
           </div>
         </RadioCardsItem>
-
         <RadioCardsItem value="5">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Growth Plan</div>
@@ -51,7 +46,6 @@ export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): 
             </div>
           </div>
         </RadioCardsItem>
-
         <RadioCardsItem value="6">
           <div className="grid gap-1 font-normal">
             <div className="font-medium">Premium Plan</div>

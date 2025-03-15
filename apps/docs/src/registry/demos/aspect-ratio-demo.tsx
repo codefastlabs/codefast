@@ -18,7 +18,6 @@ export function AspectRatioDemo(): JSX.Element {
           />
         </AspectRatio>
       </div>
-
       <div className="">
         <AspectRatio className="bg-muted rounded-lg" ratio={4 / 3}>
           <Image
@@ -29,7 +28,6 @@ export function AspectRatioDemo(): JSX.Element {
           />
         </AspectRatio>
       </div>
-
       <div className="">
         <AspectRatio className="bg-muted rounded-lg" ratio={1}>
           <Image

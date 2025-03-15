@@ -26,7 +26,6 @@ export function DatePickerDemo(): JSX.Element {
       <div className="">
         <DatePickerSimple />
       </div>
-
       <div className="">
         <DatePickerWithRange />
       </div>
@@ -45,11 +44,9 @@ function DatePickerSimple(): JSX.Element {
           variant="outline"
         >
           <CalendarIcon className="text-muted-foreground" />
-
           <CalendarLabel date={date} />
         </Button>
       </PopoverTrigger>
-
       <PopoverContent align="start" className="w-auto p-0">
         <Calendar mode="single" selected={date} onSelect={setDate} />
       </PopoverContent>
@@ -73,11 +70,9 @@ function DatePickerWithRange(): JSX.Element {
           variant="outline"
         >
           <CalendarIcon className="text-muted-foreground" />
-
           <CalendarRangeLabel date={date} />
         </Button>
       </PopoverTrigger>
-
       <PopoverContent align="start" className="w-auto p-0">
         <Calendar
           defaultMonth={date?.from}

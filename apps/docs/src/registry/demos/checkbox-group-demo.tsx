@@ -51,24 +51,20 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<'div'>
             <CheckboxGroupItem id="checkbox-group-1" value="standard" />
             <Label htmlFor="checkbox-group-1">Standard</Label>
           </div>
-
           <div className="flex items-center gap-3">
             <CheckboxGroupItem id="checkbox-group-2" value="enhanced" />
             <Label htmlFor="checkbox-group-2">Enhanced</Label>
           </div>
-
           <div className="flex items-center gap-3">
             <CheckboxGroupItem id="checkbox-group-3" value="optimized" />
             <Label htmlFor="checkbox-group-3">Optimized</Label>
           </div>
-
           <div className="flex items-center gap-3">
             <CheckboxGroupItem disabled id="checkbox-group-4" value="inactive" />
             <Label htmlFor="checkbox-group-4">Inactive</Label>
           </div>
         </CheckboxGroup>
       </div>
-
       <div>
         <CheckboxGroup className="max-w-sm" defaultValue={['starter']}>
           {plans.map((plan) => (
@@ -82,10 +78,8 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<'div'>
                 id={plan.name}
                 value={plan.id}
               />
-
               <div className="grid gap-1 font-normal">
                 <div className="font-medium">{plan.name}</div>
-
                 <div className="text-muted-foreground leading-snug">{plan.description}</div>
               </div>
             </Label>

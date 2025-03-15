@@ -54,7 +54,6 @@ export function NavigationMenuDemo(): JSX.Element {
         <NavigationMenuList>
           <NavigationMenuItem value="getting-started">
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-
             <NavigationMenuContent>
               <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 <li className="row-span-3">
@@ -64,32 +63,26 @@ export function NavigationMenuDemo(): JSX.Element {
                       href="/apps/docs/public#"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
-
                       <p className="text-muted-foreground text-sm leading-tight">
                         Beautifully designed components built with Tailwind CSS.
                       </p>
                     </Link>
                   </NavigationMenuLink>
                 </li>
-
                 <ListItem href="/#docs" title="Introduction">
                   Re-usable components built using Radix UI and Tailwind CSS.
                 </ListItem>
-
                 <ListItem href="/#docs" title="Installation">
                   How to install dependencies and structure your app.
                 </ListItem>
-
                 <ListItem href="/#docs" title="Typography">
                   Styles for headings, paragraphs, lists...etc
                 </ListItem>
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-
           <NavigationMenuItem value="components">
             <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                 {components.map((component) => (
@@ -100,7 +93,6 @@ export function NavigationMenuDemo(): JSX.Element {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-
           <NavigationMenuItem value="forms">
             <NavigationMenuLink asChild className={buttonVariants({ variant: 'ghost' })}>
               <Link href="/apps/docs/public#docs">Documentation</Link>
@@ -108,7 +100,6 @@ export function NavigationMenuDemo(): JSX.Element {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-
       <NavigationMenu viewport={false}>
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -116,33 +107,26 @@ export function NavigationMenuDemo(): JSX.Element {
               <Link href="/apps/docs/public#docs">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
-
           <NavigationMenuItem value="list">
             <NavigationMenuTrigger>List</NavigationMenuTrigger>
-
             <NavigationMenuContent>
               <ul className="grid w-[300px] gap-4">
                 <li>
                   <NavigationMenuLink asChild>
                     <Link href="#">
                       <div className="font-medium">Components</div>
-
                       <div className="text-muted-foreground">Browse all components in the library.</div>
                     </Link>
                   </NavigationMenuLink>
-
                   <NavigationMenuLink asChild>
                     <Link href="#">
                       <div className="font-medium">Documentation</div>
-
                       <div className="text-muted-foreground">Learn how to use the library.</div>
                     </Link>
                   </NavigationMenuLink>
-
                   <NavigationMenuLink asChild>
                     <Link href="#">
                       <div className="font-medium">Blog</div>
-
                       <div className="text-muted-foreground">Read our latest blog posts.</div>
                     </Link>
                   </NavigationMenuLink>
@@ -150,21 +134,17 @@ export function NavigationMenuDemo(): JSX.Element {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-
           <NavigationMenuItem value="simple-list">
             <NavigationMenuTrigger>Simple List</NavigationMenuTrigger>
-
             <NavigationMenuContent>
               <ul className="grid w-[200px] gap-4">
                 <li>
                   <NavigationMenuLink asChild>
                     <Link href="#">Components</Link>
                   </NavigationMenuLink>
-
                   <NavigationMenuLink asChild>
                     <Link href="#">Documentation</Link>
                   </NavigationMenuLink>
-
                   <NavigationMenuLink asChild>
                     <Link href="#">Blocks</Link>
                   </NavigationMenuLink>
@@ -172,10 +152,8 @@ export function NavigationMenuDemo(): JSX.Element {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-
           <NavigationMenuItem value="with-icon">
             <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
-
             <NavigationMenuContent>
               <ul className="grid w-[200px] gap-4">
                 <li>
@@ -185,14 +163,12 @@ export function NavigationMenuDemo(): JSX.Element {
                       Backlog
                     </Link>
                   </NavigationMenuLink>
-
                   <NavigationMenuLink asChild>
                     <Link className="flex-row items-center gap-2" href="#">
                       <CircleIcon />
                       To Do
                     </Link>
                   </NavigationMenuLink>
-
                   <NavigationMenuLink asChild>
                     <Link className="flex-row items-center gap-2" href="#">
                       <CircleCheckIcon />
@@ -215,7 +191,6 @@ function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<
       <NavigationMenuLink asChild>
         <Link href={href}>
           <div className="text-sm font-medium leading-none">{title}</div>
-
           <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
         </Link>
       </NavigationMenuLink>

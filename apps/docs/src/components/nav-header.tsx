@@ -17,13 +17,11 @@ export function NavHeader(): JSX.Element {
             <Link href="/">Home</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
-
         <NavigationMenuItem>
           <NavigationMenuLink asChild data-active={pathname === '/charts'}>
             <Link href="/charts">Charts</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
-
         <NavigationMenuItem>
           <NavigationMenuLink asChild data-active={pathname === '/forms'}>
             <Link href="/forms">Forms</Link>

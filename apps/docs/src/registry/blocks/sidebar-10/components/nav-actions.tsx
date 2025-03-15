@@ -68,18 +68,15 @@ export function NavActions(): JSX.Element {
   return (
     <div className="flex items-center gap-2 text-sm">
       <div className="text-muted-foreground hidden font-medium md:inline-block">Edit Oct 08</div>
-
       <Button className="size-7" size="icon" variant="ghost">
         <Star />
       </Button>
-
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button className="data-[state=open]:bg-accent size-7" size="icon" variant="ghost">
             <MoreHorizontal />
           </Button>
         </PopoverTrigger>
-
         <PopoverContent align="end" className="w-56 overflow-hidden rounded-lg p-0">
           <Sidebar className="bg-transparent" collapsible="none">
             <SidebarContent>
