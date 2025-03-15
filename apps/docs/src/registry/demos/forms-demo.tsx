@@ -43,10 +43,7 @@ const plans = [
 const themes = {
   blue: {
     light: {
-      '--border-hover': 'var(--color-blue-400)',
-      '--border-focus': 'var(--color-blue-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-blue-400) 35%, transparent)',
+      '--ring': 'var(--color-blue-400)',
 
       '--primary': 'var(--color-blue-600)',
       '--primary-foreground': 'var(--color-blue-50)',
@@ -58,10 +55,7 @@ const themes = {
       '--accent-foreground': 'var(--color-blue-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-blue-500)',
-      '--border-focus': 'var(--color-blue-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-blue-600) 35%, transparent)',
+      '--ring': 'var(--color-blue-600)',
 
       '--primary': 'var(--color-blue-400)',
       '--primary-foreground': 'var(--color-blue-950)',
@@ -75,10 +69,7 @@ const themes = {
   },
   cyan: {
     light: {
-      '--border-hover': 'var(--color-cyan-400)',
-      '--border-focus': 'var(--color-cyan-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-cyan-400) 35%, transparent)',
+      '--ring': 'var(--color-cyan-400)',
 
       '--primary': 'var(--color-cyan-600)',
       '--primary-foreground': 'var(--color-cyan-50)',
@@ -90,10 +81,7 @@ const themes = {
       '--accent-foreground': 'var(--color-cyan-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-cyan-500)',
-      '--border-focus': 'var(--color-cyan-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-cyan-600) 35%, transparent)',
+      '--ring': 'var(--color-cyan-600)',
 
       '--primary': 'var(--color-cyan-400)',
       '--primary-foreground': 'var(--color-cyan-950)',
@@ -107,10 +95,7 @@ const themes = {
   },
   lime: {
     light: {
-      '--border-hover': 'var(--color-lime-400)',
-      '--border-focus': 'var(--color-lime-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-lime-400) 35%, transparent)',
+      '--ring': 'var(--color-lime-400)',
 
       '--primary': 'var(--color-lime-600)',
       '--primary-foreground': 'var(--color-lime-50)',
@@ -122,10 +107,7 @@ const themes = {
       '--accent-foreground': 'var(--color-lime-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-lime-500)',
-      '--border-focus': 'var(--color-lime-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-lime-600) 35%, transparent)',
+      '--ring': 'var(--color-lime-600)',
 
       '--primary': 'var(--color-lime-400)',
       '--primary-foreground': 'var(--color-lime-950)',
@@ -139,10 +121,7 @@ const themes = {
   },
   neutral: {
     light: {
-      '--border-hover': 'var(--color-neutral-400)',
-      '--border-focus': 'var(--color-neutral-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-neutral-400) 35%, transparent)',
+      '--ring': 'var(--color-neutral-400)',
 
       '--primary': 'var(--color-neutral-600)',
       '--primary-foreground': 'var(--color-neutral-50)',
@@ -154,10 +133,7 @@ const themes = {
       '--accent-foreground': 'var(--color-neutral-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-neutral-500)',
-      '--border-focus': 'var(--color-neutral-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-neutral-600) 35%, transparent)',
+      '--ring': 'var(--color-neutral-600)',
 
       '--primary': 'var(--color-neutral-400)',
       '--primary-foreground': 'var(--color-neutral-950)',
@@ -171,10 +147,7 @@ const themes = {
   },
   rose: {
     light: {
-      '--border-hover': 'var(--color-rose-400)',
-      '--border-focus': 'var(--color-rose-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-rose-400) 35%, transparent)',
+      '--ring': 'var(--color-rose-400)',
 
       '--primary': 'var(--color-rose-600)',
       '--primary-foreground': 'var(--color-rose-50)',
@@ -186,10 +159,7 @@ const themes = {
       '--accent-foreground': 'var(--color-rose-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-rose-500)',
-      '--border-focus': 'var(--color-rose-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-rose-600) 35%, transparent)',
+      '--ring': 'var(--color-rose-600)',
 
       '--primary': 'var(--color-rose-400)',
       '--primary-foreground': 'var(--color-rose-950)',
@@ -203,10 +173,7 @@ const themes = {
   },
   sky: {
     light: {
-      '--border-hover': 'var(--color-sky-400)',
-      '--border-focus': 'var(--color-sky-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-sky-400) 35%, transparent)',
+      '--ring': 'var(--color-sky-400)',
 
       '--primary': 'var(--color-sky-600)',
       '--primary-foreground': 'var(--color-sky-50)',
@@ -218,10 +185,7 @@ const themes = {
       '--accent-foreground': 'var(--color-sky-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-sky-500)',
-      '--border-focus': 'var(--color-sky-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-sky-600) 35%, transparent)',
+      '--ring': 'var(--color-sky-600)',
 
       '--primary': 'var(--color-sky-400)',
       '--primary-foreground': 'var(--color-sky-950)',
@@ -235,10 +199,7 @@ const themes = {
   },
   stone: {
     light: {
-      '--border-hover': 'var(--color-stone-400)',
-      '--border-focus': 'var(--color-stone-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-stone-400) 35%, transparent)',
+      '--ring': 'var(--color-stone-400)',
 
       '--primary': 'var(--color-stone-600)',
       '--primary-foreground': 'var(--color-stone-50)',
@@ -250,10 +211,7 @@ const themes = {
       '--accent-foreground': 'var(--color-stone-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-stone-500)',
-      '--border-focus': 'var(--color-stone-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-stone-600) 35%, transparent)',
+      '--ring': 'var(--color-stone-600)',
 
       '--primary': 'var(--color-stone-400)',
       '--primary-foreground': 'var(--color-stone-950)',
@@ -267,10 +225,7 @@ const themes = {
   },
   yellow: {
     light: {
-      '--border-hover': 'var(--color-yellow-400)',
-      '--border-focus': 'var(--color-yellow-500)',
-
-      '--ring': 'color-mix(in oklab, var(--color-yellow-400) 35%, transparent)',
+      '--ring': 'var(--color-yellow-400)',
 
       '--primary': 'var(--color-yellow-600)',
       '--primary-foreground': 'var(--color-yellow-50)',
@@ -282,10 +237,7 @@ const themes = {
       '--accent-foreground': 'var(--color-yellow-900)',
     },
     dark: {
-      '--border-hover': 'var(--color-yellow-500)',
-      '--border-focus': 'var(--color-yellow-600)',
-
-      '--ring': 'color-mix(in oklab, var(--color-yellow-600) 35%, transparent)',
+      '--ring': 'var(--color-yellow-600)',
 
       '--primary': 'var(--color-yellow-400)',
       '--primary-foreground': 'var(--color-yellow-950)',
