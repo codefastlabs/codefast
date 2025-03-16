@@ -73,7 +73,7 @@ export function RadioGroupDemo(): JSX.Element {
               className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/radio-card flex items-start gap-3 rounded-lg border p-3 transition"
             >
               <RadioGroupItem
-                className="disabled:opacity-100"
+                className="hover:not-disabled:not-aria-checked:border-input hover:not-disabled:not-aria-checked:aria-invalid:border-destructive disabled:opacity-100"
                 disabled={plan.disabled}
                 id={plan.name}
                 value={plan.id}
