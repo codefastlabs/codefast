@@ -29,7 +29,7 @@ function CheckboxCardsItem({
   return (
     <Label
       className={cn(
-        'hover:not-has-disabled:bg-secondary hover:has-aria-checked:bg-primary/5 has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition',
+        'hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition',
         className,
       )}
       data-slot="checkbox-card"
