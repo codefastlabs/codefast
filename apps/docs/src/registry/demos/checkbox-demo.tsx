@@ -38,7 +38,10 @@ export function CheckboxDemo(): JSX.Element {
       </div>
       <div className="lg:col-span-2">
         <Label className="hover:not-has-disabled:not-has-aria-[checked=true]:bg-secondary has-aria-[checked=true]:border-primary has-aria-[checked=true]:bg-primary/10 flex items-start gap-3 rounded-lg border p-3">
-          <Checkbox id="toggle-2" />
+          <Checkbox
+            className="hover:not-disabled:not-aria-checked:border-input hover:not-disabled:not-aria-checked:aria-invalid:border-destructive"
+            id="toggle-2"
+          />
           <div className="grid gap-1.5 font-normal">
             <p className="text-sm font-medium leading-none">Enable notifications</p>
             <p className="text-muted-foreground text-sm">You can enable or disable notifications at any time.</p>
