@@ -29,14 +29,21 @@ function CheckboxCardsItem({
   return (
     <Label
       className={cn(
-        'hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input group/checkbox-card flex items-start gap-3 rounded-lg border p-3 transition',
+        'border-input flex items-start gap-3 rounded-lg border p-3 transition',
+        'hover:not-has-disabled:not-has-aria-checked:bg-secondary',
+        'has-aria-checked:bg-primary/10 has-aria-checked:border-primary',
+        'has-focus-visible:border-ring',
+        'has-disabled:opacity-50',
         className,
       )}
       data-slot="checkbox-card"
     >
       <CheckboxGroupPrimitive.Item
         className={cn(
-          'border-input text-primary-foreground aria-checked:border-primary aria-checked:bg-primary shadow-xs outline-hidden aria-checked:focus-visible:ring-primary/20 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 group-hover/checkbox-card:not-disabled:not-aria-checked:border-ring/60 peer flex size-4 shrink-0 rounded-sm border transition',
+          'border-input text-primary-foreground shadow-xs outline-hidden peer flex size-4 shrink-0 rounded-sm border transition',
+          'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3',
+          'aria-checked:focus-visible:ring-primary/20',
+          'aria-checked:border-primary aria-checked:bg-primary aria-checked:shadow-primary/50',
           checkboxClassName,
         )}
         data-slot="checkbox-card-item"
