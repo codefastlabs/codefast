@@ -1,5 +1,43 @@
 # @codefast/hooks
 
+## 0.2.29
+
+### Patch Changes
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`5942bcd`](https://github.com/codefastlabs/codefast/commit/5942bcd2d85824a9bfba0bc5b2710fe7e9dda72a) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): adjust focus-visible background color in resizable handle
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`3d5c245`](https://github.com/codefastlabs/codefast/commit/3d5c245a11eb11d771ce5ba231775758a548cea1) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update focus-visible ring opacity for components
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`47d6e14`](https://github.com/codefastlabs/codefast/commit/47d6e14e42aa1cbcdb9e02b1531ee07c3c50f845) Thanks [@thevuong](https://github.com/thevuong)! - feat(components): add customizable classNames to overlays and content
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`805769d`](https://github.com/codefastlabs/codefast/commit/805769d83a1873ececa375f9643dbae9e8da01ae) Thanks [@thevuong](https://github.com/thevuong)! - feat(theme): update color palette for enhanced consistency
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`91e52eb`](https://github.com/codefastlabs/codefast/commit/91e52eb90430c18bd49d39d1bbdadbc6be602fde) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): improve className readability in form components
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`c6c6fa8`](https://github.com/codefastlabs/codefast/commit/c6c6fa86ad9f36c5ae367571aaa50a54f9b21be9) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): remove redundant "not-disabled:shadow-xs" classes
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`5ee3cc2`](https://github.com/codefastlabs/codefast/commit/5ee3cc2eb765e3a25fe90c06325d56326b8b0da3) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): improve dark mode focus ring visibility
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`83731d4`](https://github.com/codefastlabs/codefast/commit/83731d40e5fa714083fcf0f8f775ae04e019e0f6) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance button focus styles with a visible ring
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`8a0a221`](https://github.com/codefastlabs/codefast/commit/8a0a221199a78bac46ab1179199f9fa05621258f) Thanks [@thevuong](https://github.com/thevuong)! - feat(toggle): update styles for active and hover states
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`fe72a8d`](https://github.com/codefastlabs/codefast/commit/fe72a8d647951e8c6ba5a65dccd4338ec24825ee) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update component styles and icons for consistency
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`837a2b5`](https://github.com/codefastlabs/codefast/commit/837a2b5bffa9f92221e1eacd75c310de4b6ba143) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): improve focus and hover styles for form controls
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`e7d9d82`](https://github.com/codefastlabs/codefast/commit/e7d9d8299e60619093d918b05bb2117dfc66a1c9) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): ensure invalid inputs display the correct background
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`ca1e5f6`](https://github.com/codefastlabs/codefast/commit/ca1e5f6fcce84fc9a15b00e13435c2685f1e76e2) Thanks [@thevuong](https://github.com/thevuong)! - feat(input-number): add keyboard support for increment/decrement
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`bd07d4a`](https://github.com/codefastlabs/codefast/commit/bd07d4a73bd94e53eb9f1187b8ea45548c39a587) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance focus-visible styles for input components
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`a790369`](https://github.com/codefastlabs/codefast/commit/a79036955e4092751500c7140fcc559ee683b64a) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): improve dark mode support for components
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`fb8a679`](https://github.com/codefastlabs/codefast/commit/fb8a679367251edaf218f29175c2ba4ba7c20982) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): add dark mode support for error states
+
+- [#78](https://github.com/codefastlabs/codefast/pull/78) [`8d5c21d`](https://github.com/codefastlabs/codefast/commit/8d5c21d1ba73e3dc9bf40117885a48bdc921c0bc) Thanks [@thevuong](https://github.com/thevuong)! - fix(checkbox): update hover styles for unchecked state
+
 ## 0.2.28
 
 ### Patch Changes
