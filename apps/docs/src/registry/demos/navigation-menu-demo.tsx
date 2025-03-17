@@ -59,7 +59,7 @@ export function NavigationMenuDemo(): JSX.Element {
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <Link
-                      className="from-muted/50 to-muted bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
+                      className="from-muted/50 to-muted dark:from-accent/50 dark:to-accent bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
                       href="/#"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
