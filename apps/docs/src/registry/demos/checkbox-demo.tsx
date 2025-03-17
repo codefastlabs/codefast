@@ -32,8 +32,8 @@ export function CheckboxDemo(): JSX.Element {
       </div>
       <div className="">
         <div className="flex items-start gap-3">
-          <Checkbox disabled id="toggle" />
-          <Label htmlFor="toggle">Enable notifications</Label>
+          <Checkbox disabled id="notification" />
+          <Label htmlFor="notification">Enable notifications</Label>
         </div>
       </div>
       <div className="lg:col-span-2">
