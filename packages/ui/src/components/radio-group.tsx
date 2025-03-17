@@ -20,14 +20,7 @@ function RadioGroupItem({ className, ...props }: ComponentProps<typeof RadioGrou
   return (
     <RadioGroupPrimitive.Item
       className={cn(
-        'border-input shadow-xs outline-hidden peer inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition',
-        'hover:not-disabled:not-aria-checked:border-ring/60',
-        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3',
-        'focus-visible:aria-checked:ring-primary/20 dark:focus-visible:aria-checked:ring-primary/40',
-        'aria-checked:border-primary aria-checked:bg-primary aria-checked:shadow-primary/50',
-        'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-        'hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60',
-        'disabled:opacity-50',
+        'border-input shadow-xs outline-hidden hover:not-disabled:not-aria-checked:border-ring/60 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 focus-visible:aria-checked:ring-primary/20 dark:focus-visible:aria-checked:ring-primary/40 aria-checked:border-primary aria-checked:bg-primary aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 hover:not-disabled:not-aria-checked:aria-invalid:border-destructive/60 dark:bg-input/30 peer inline-flex size-4 shrink-0 items-center justify-center rounded-full border transition disabled:opacity-50',
         className,
       )}
       data-slot="radio-group-item"
