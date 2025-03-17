@@ -68,7 +68,7 @@ function InputSearch({
       {value ? (
         <Button
           aria-label="Clear search"
-          className="size-7 rounded-full"
+          className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
           data-slot="input-search-clear"
           disabled={disabled || readOnly}
           size="icon"
