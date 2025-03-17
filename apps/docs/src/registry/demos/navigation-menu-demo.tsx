@@ -1,13 +1,13 @@
 import type { ComponentPropsWithoutRef, JSX } from 'react';
 
 import {
-  buttonVariants,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from '@codefast/ui';
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -94,7 +94,7 @@ export function NavigationMenuDemo(): JSX.Element {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem value="forms">
-            <NavigationMenuLink asChild className={buttonVariants({ variant: 'ghost' })}>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
               <Link href="/apps/docs/public#docs">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -103,7 +103,7 @@ export function NavigationMenuDemo(): JSX.Element {
       <NavigationMenu viewport={false}>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={buttonVariants({ variant: 'ghost' })}>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
               <Link href="/apps/docs/public#docs">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
