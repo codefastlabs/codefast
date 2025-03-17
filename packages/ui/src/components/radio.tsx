@@ -21,7 +21,7 @@ function Radio({
   return (
     <input
       className={cn(
-        'border-input shadow-xs outline-hidden hover:not-disabled:not-checked:border-ring/60 focus-visible:not-checked:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 focus-visible:checked:ring-primary/20 dark:focus-visible:checked:ring-primary/40 checked:border-primary checked:bg-primary aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 hover:not-disabled:not-checked:aria-invalid:border-destructive/60 after:bg-background dark:not-checked:after:bg-input/30 peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border after:size-full after:rounded-full after:transition-[width,height] checked:after:size-1 disabled:opacity-50',
+        'border-input shadow-xs outline-hidden hover:not-disabled:not-checked:border-ring/60 focus-visible:not-checked:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 focus-visible:checked:ring-primary/20 dark:focus-visible:checked:ring-primary/40 checked:border-primary checked:bg-primary checked:aria-invalid:bg-destructive aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 hover:not-disabled:not-checked:aria-invalid:border-destructive/60 after:bg-background dark:not-checked:after:bg-input/30 peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border after:size-full after:rounded-full after:transition-[width,height] checked:after:size-1 disabled:opacity-50',
         className,
       )}
       data-slot="radio"
