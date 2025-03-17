@@ -61,7 +61,7 @@ function InputPassword({
       />
       <Button
         aria-label={type === 'password' ? 'Show password' : 'Hide password'}
-        className="size-7 rounded-full"
+        className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
         data-slot="input-password-toggle"
         disabled={disabled}
         prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
