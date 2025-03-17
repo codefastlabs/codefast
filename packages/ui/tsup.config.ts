@@ -27,5 +27,6 @@ export default defineConfig((options) => ({
   plugins: [addUseClientDirective(clientLibs)],
   sourcemap: true,
   splitting: true,
+  silent: true,
   ...options,
 }));
