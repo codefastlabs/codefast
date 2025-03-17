@@ -9,7 +9,7 @@ import { tv } from 'tailwind-variants';
  * -------------------------------------------------------------------------- */
 
 const toggleVariants = tv({
-  base: "focus-visible:ring-ring/50 focus-visible:ring-3 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground outline-hidden hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
+  base: "focus-visible:ring-ring/50 focus-visible:ring-3 outline-hidden hover:not-disabled:not-data-[state=on]:bg-secondary data-[state=on]:bg-secondary data-[state=on]:text-secondary-foreground inline-flex shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0",
   variants: {
     size: {
       sm: 'h-8 min-w-8 px-1.5', // 32px
@@ -17,8 +17,9 @@ const toggleVariants = tv({
       lg: 'h-10 min-w-10 px-2.5', // 40px
     },
     variant: {
-      default: 'bg-transparent',
-      outline: 'border-input shadow-xs focus-visible:border-ring border',
+      default: 'hover:not-disabled:not-data-[state=on]:text-muted-foreground bg-transparent',
+      outline:
+        'border-input shadow-xs focus-visible:border-ring hover:not-disabled:not-data-[state=on]:text-secondary-foreground border',
     },
   },
   defaultVariants: {
