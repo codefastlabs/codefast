@@ -42,7 +42,7 @@ function CheckboxCardsItem({
         className={cn(
           'border-input text-primary-foreground shadow-xs outline-hidden peer flex size-4 shrink-0 rounded-sm border transition',
           'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3',
-          'aria-checked:focus-visible:ring-primary/20',
+          'focus-visible:aria-checked:ring-primary/20',
           'aria-checked:border-primary aria-checked:bg-primary aria-checked:shadow-primary/50',
           checkboxClassName,
         )}
