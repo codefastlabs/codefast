@@ -70,8 +70,8 @@ function InputNumber({
       />
       <div
         className={cn(
-          'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 group-focus-within:border-l-ring group-focus-within:divide-ring order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
-          'group-has-aria-invalid:border-l-destructive group-has-aria-invalid:divide-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60',
+          'divide-input border-l-input group-hover:not-group-focus-within:not-has-disabled:border-l-border-ring/60 group-hover:not-group-focus-within:not-has-disabled:divide-border-ring/60 group-focus-within:border-l-ring group-focus-within:divide-ring group-has-aria-invalid:border-l-destructive group-has-aria-invalid:divide-destructive group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:border-l-destructive/60 group-hover:group-has-aria-invalid:not-group-focus-within:not-has-disabled:divide-destructive/60 order-last ml-auto grid h-full shrink-0 divide-y border-l transition',
+          '*:[button]:focus-visible:ring-0 *:[button]:focus-visible:bg-ring/50 group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/20 dark:group-has-aria-invalid:*:[button]:focus-visible:bg-destructive/40',
         )}
         data-slot="input-number-buttons"
       >
