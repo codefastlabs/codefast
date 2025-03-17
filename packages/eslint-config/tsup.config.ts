@@ -9,5 +9,6 @@ export default defineConfig((options) => ({
   sourcemap: true,
   splitting: true,
   treeshake: true,
+  silent: true,
   ...options,
 }));

@@ -1,9 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  experimental: {
-    optimizePackageImports: ['@codefast/ui'],
-  },
+  experimental: {},
   images: {
     remotePatterns: [
       {

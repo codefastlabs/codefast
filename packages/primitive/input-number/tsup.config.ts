@@ -8,5 +8,6 @@ export default defineConfig((options) => ({
   minify: !options.watch,
   sourcemap: true,
   splitting: true,
+  silent: true,
   ...options,
 }));
