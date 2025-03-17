@@ -60,7 +60,7 @@ export function NavigationMenuDemo(): JSX.Element {
                   <NavigationMenuLink asChild>
                     <Link
                       className="from-muted/50 to-muted bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
-                      href="/apps/docs/public#"
+                      href="/#"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
                       <p className="text-muted-foreground text-sm leading-tight">
@@ -69,13 +69,13 @@ export function NavigationMenuDemo(): JSX.Element {
                     </Link>
                   </NavigationMenuLink>
                 </li>
-                <ListItem href="/#docs" title="Introduction">
+                <ListItem href="/#" title="Introduction">
                   Re-usable components built using Radix UI and Tailwind CSS.
                 </ListItem>
-                <ListItem href="/#docs" title="Installation">
+                <ListItem href="/#" title="Installation">
                   How to install dependencies and structure your app.
                 </ListItem>
-                <ListItem href="/#docs" title="Typography">
+                <ListItem href="/#" title="Typography">
                   Styles for headings, paragraphs, lists...etc
                 </ListItem>
               </ul>
@@ -95,7 +95,7 @@ export function NavigationMenuDemo(): JSX.Element {
           </NavigationMenuItem>
           <NavigationMenuItem value="forms">
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/apps/docs/public#docs">Documentation</Link>
+              <Link href="/#">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -104,7 +104,7 @@ export function NavigationMenuDemo(): JSX.Element {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/apps/docs/public#docs">Documentation</Link>
+              <Link href="/#">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem value="list">

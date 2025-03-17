@@ -71,7 +71,7 @@ export default function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      className={cn(geistSans.variable, geistMono.variable, 'dark:scheme-dark antialiased')}
+      className={cn(geistSans.variable, geistMono.variable, 'dark:scheme-dark scroll-smooth antialiased')}
       lang="en"
     >
       <head>
