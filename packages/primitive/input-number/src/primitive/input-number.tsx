@@ -485,6 +485,19 @@ function NumberStepperButton({
     event.preventDefault();
   }, []);
 
+  const handleKeyDown = useCallback<KeyboardEventHandler<HTMLButtonElement>>(
+    (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+
+        const action = operation === 'increment' ? onIncrement : onDecrement;
+
+        action();
+      }
+    },
+    [onDecrement, onIncrement, operation],
+  );
+
   return (
     <button
       aria-controls={id}
@@ -493,6 +506,7 @@ function NumberStepperButton({
       disabled={disabled}
       type="button"
       onContextMenu={handleContextMenu}
+      onKeyDown={handleKeyDown}
       onPointerCancel={clearActionInterval}
       onPointerDown={handlePointerDown}
       onPointerLeave={clearActionInterval}
