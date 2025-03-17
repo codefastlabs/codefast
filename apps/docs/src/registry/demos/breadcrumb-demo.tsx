@@ -21,7 +21,7 @@ export function BreadcrumbDemo(): JSX.Element {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/apps/docs/public#breadcrumb">Home</Link>
+            <Link href="/#breadcrumb">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
@@ -33,13 +33,13 @@ export function BreadcrumbDemo(): JSX.Element {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuItem asChild>
-                <Link href="/apps/docs/public#breadcrumb">Documentation</Link>
+                <Link href="/#breadcrumb">Documentation</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/apps/docs/public#breadcrumb">Themes</Link>
+                <Link href="/#breadcrumb">Themes</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/apps/docs/public#breadcrumb">GitHub</Link>
+                <Link href="/#breadcrumb">GitHub</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -47,7 +47,7 @@ export function BreadcrumbDemo(): JSX.Element {
         <BreadcrumbSeparator />
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/apps/docs/public#breadcrumb">Components</Link>
+            <Link href="/#breadcrumb">Components</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
