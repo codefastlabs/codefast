@@ -107,7 +107,7 @@ export function SheetDemo(): JSX.Element {
           ))}
 
           <div className="col-start-2 row-start-2 flex items-center justify-center">
-            <CircleIcon className="text-muted-foreground size-4" />
+            <CircleIcon className="text-muted-foreground/50 size-4" />
           </div>
         </div>
       </div>
