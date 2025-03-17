@@ -55,7 +55,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
     --popover: var(--color-white);
     --popover-foreground: var(--color-neutral-950);
-    --popover-overlay: --alpha(var(--color-neutral-900) / 35%);
+    --popover-overlay: --alpha(var(--color-neutral-900) / 20%);
 
     --card: var(--color-white);
     --card-foreground: var(--color-neutral-950);
@@ -104,7 +104,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
     --popover: var(--color-neutral-800);
     --popover-foreground: var(--color-neutral-50);
-    --popover-overlay: --alpha(var(--color-neutral-900) / 35%);
+    --popover-overlay: --alpha(var(--color-neutral-900) / 80%);
 
     --card: var(--color-neutral-900);
     --card-foreground: var(--color-neutral-50);
