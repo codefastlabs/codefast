@@ -27,21 +27,40 @@ function DialogTrigger({ ...props }: ComponentProps<typeof DialogPrimitive.Trigg
  * Component: DialogContent
  * -------------------------------------------------------------------------- */
 
-function DialogContent({ children, className, ...props }: ComponentProps<typeof DialogPrimitive.Content>): JSX.Element {
+function DialogContent({
+  children,
+  className,
+  classNames,
+  ...props
+}: ComponentProps<typeof DialogPrimitive.Content> & {
+  classNames?: {
+    close?: string;
+    content?: string;
+    overlay?: string;
+    wrapper?: string;
+  };
+}): JSX.Element {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
-        className="bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50"
+        className={cn(
+          'bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 backdrop-blur-sm',
+          classNames?.overlay,
+        )}
         data-slot="dialog-overlay"
       />
       <DialogPrimitive.Content
-        className="data-[state=open]:animate-in max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom-full sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95 data-[state=closed]:animate-out max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom-full sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4"
+        className={cn(
+          'data-[state=open]:animate-in max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom-full sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95 data-[state=closed]:animate-out max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom-full sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4',
+          classNames?.wrapper,
+        )}
         data-slot="dialog-content-wrapper"
         {...props}
       >
         <div
           className={cn(
             'bg-popover text-popover-foreground relative row-start-2 flex w-full flex-col rounded-t-2xl border shadow-lg sm:max-w-lg sm:rounded-2xl',
+            classNames?.content,
             className,
           )}
           data-slot="dialog-content"
@@ -49,7 +68,7 @@ function DialogContent({ children, className, ...props }: ComponentProps<typeof 
           {children}
           <DialogPrimitive.Close
             className={buttonVariants({
-              className: 'absolute right-2.5 top-2.5 size-7',
+              className: ['absolute right-2.5 top-2.5 size-7', classNames?.close],
               size: 'icon',
               variant: 'ghost',
             })}

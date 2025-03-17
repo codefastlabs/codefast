@@ -29,26 +29,38 @@ function AlertDialogTrigger({ ...props }: ComponentProps<typeof AlertDialogPrimi
 function AlertDialogContent({
   children,
   className,
+  classNames,
   ...props
-}: ComponentProps<typeof AlertDialogPrimitive.Content>): JSX.Element {
+}: ComponentProps<typeof AlertDialogPrimitive.Content> & {
+  classNames?: {
+    content?: string;
+    overlay?: string;
+    wrapper?: string;
+  };
+}): JSX.Element {
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         className={cn(
-          'bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50',
+          'bg-popover-overlay data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out fixed inset-0 z-50 backdrop-blur-sm',
+          classNames?.overlay,
         )}
         data-slot="alert-dialog-overlay"
       />
       <AlertDialogPrimitive.Content
         className={cn(
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4',
-          className,
+          classNames?.wrapper,
         )}
         data-slot="alert-dialog-content-wrapper"
         {...props}
       >
         <div
-          className="bg-popover text-popover-foreground relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border shadow-lg"
+          className={cn(
+            'bg-popover text-popover-foreground relative row-start-2 flex w-full max-w-lg flex-col rounded-2xl border shadow-lg',
+            classNames?.content,
+            className,
+          )}
           data-slot="alert-dialog-content"
         >
           {children}

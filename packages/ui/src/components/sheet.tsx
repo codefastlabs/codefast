@@ -56,23 +56,38 @@ function SheetTrigger({ ...props }: ComponentProps<typeof SheetPrimitive.Trigger
 function SheetContent({
   children,
   className,
+  classNames,
   side = 'right',
   ...props
-}: ComponentProps<typeof SheetPrimitive.Content> & VariantProps<typeof sheetContentVariants>): JSX.Element {
+}: ComponentProps<typeof SheetPrimitive.Content> &
+  VariantProps<typeof sheetContentVariants> & {
+    classNames?: {
+      close?: string;
+      content?: string;
+      overlay?: string;
+    };
+  }): JSX.Element {
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
-        className="bg-popover-overlay data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500 fixed inset-0 z-50"
+        className={cn(
+          'bg-popover-overlay data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500 fixed inset-0 z-50 backdrop-blur-sm',
+          classNames?.overlay,
+        )}
         data-slot="sheet-overlay"
       />
       <SheetPrimitive.Content
-        className={sheetContentVariants({ className, side })}
+        className={sheetContentVariants({ className: [classNames?.content, className], side })}
         data-slot="sheet-content"
         {...props}
       >
         {children}
         <SheetPrimitive.Close
-          className={buttonVariants({ className: 'absolute right-4 top-4 size-7', size: 'icon', variant: 'ghost' })}
+          className={buttonVariants({
+            className: ['absolute right-4 top-4 size-7', classNames?.close],
+            size: 'icon',
+            variant: 'ghost',
+          })}
           data-slot="sheet-close"
         >
           <XIcon className="size-4" />
