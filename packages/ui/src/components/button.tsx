@@ -19,7 +19,8 @@ const buttonVariants = tv({
       icon: 'size-9',
     },
     variant: {
-      default: 'bg-primary text-primary-foreground focus-visible:ring-primary/20 hover:not-disabled:bg-primary/80',
+      default:
+        'bg-primary text-primary-foreground focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 hover:not-disabled:bg-primary/80',
       secondary: 'bg-secondary text-secondary-foreground hover:not-disabled:bg-secondary/80 focus-visible:ring-ring/50',
       destructive:
         'bg-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 hover:not-disabled:bg-destructive/90 text-white',

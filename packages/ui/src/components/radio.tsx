@@ -24,7 +24,7 @@ function Radio({
         'border-input shadow-xs outline-hidden peer inline-flex size-4 shrink-0 appearance-none items-center justify-center rounded-full border',
         'hover:not-disabled:not-checked:border-ring/60',
         'focus-visible:not-checked:border-ring focus-visible:ring-ring/50 focus-visible:ring-3',
-        'focus-visible:checked:ring-primary/20',
+        'focus-visible:checked:ring-primary/20 dark:focus-visible:checked:ring-primary/40',
         'checked:border-primary checked:bg-primary checked:shadow-primary/50',
         'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
         'hover:not-disabled:not-checked:aria-invalid:border-destructive/60',

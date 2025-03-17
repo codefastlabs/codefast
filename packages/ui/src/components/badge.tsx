@@ -13,7 +13,7 @@ const badgeVariants = tv({
   variants: {
     variant: {
       default:
-        'bg-primary [a&]:hover:bg-primary/80 text-primary-foreground focus-visible:ring-primary/20 border-transparent',
+        'bg-primary [a&]:hover:bg-primary/80 text-primary-foreground focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 border-transparent',
       secondary: 'bg-secondary [a&]:hover:bg-secondary/80 text-secondary-foreground border-transparent',
       destructive:
         'bg-destructive [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 border-transparent text-white',
