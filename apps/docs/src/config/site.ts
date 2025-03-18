@@ -16,6 +16,6 @@ export const siteConfig: SiteConfig = {
     twitter: 'https://twitter.com/thevuong',
   },
   name: 'CodeFast UI',
-  ogImage: 'https://codefast.onrender.com/og.jpg',
-  url: 'https://codefast.onrender.com',
+  ogImage: 'https://codefast.fly.dev/og.jpg',
+  url: 'https://codefast.fly.dev',
 };
