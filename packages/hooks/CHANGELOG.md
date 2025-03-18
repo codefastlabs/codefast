@@ -1,5 +1,15 @@
 # @codefast/hooks
 
+## 0.2.30
+
+### Patch Changes
+
+- [`3d7ac8e`](https://github.com/codefastlabs/codefast/commit/3d7ac8ec9e61c448a267ca8c3ed34cf2aa261eb7) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): update TypeScript file matching patterns
+
+- [`c56316e`](https://github.com/codefastlabs/codefast/commit/c56316e96bda456cffc1e398b9546f81555917f3) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): update TypeScript config file handling
+
+- [`6a6afab`](https://github.com/codefastlabs/codefast/commit/6a6afab009192a0e8818fb16e9e51c30a9051a86) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update dependencies across the project
+
 ## 0.2.29
 
 ### Patch Changes
