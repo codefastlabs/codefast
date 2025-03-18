@@ -14,7 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@codefast/ui';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDownIcon, PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export function TeamSwitcher({
@@ -42,7 +42,7 @@ export function TeamSwitcher({
                 <activeTeam.logo className="size-3" />
               </div>
               <span className="truncate font-medium">{activeTeam.name}</span>
-              <ChevronDown className="opacity-50" />
+              <ChevronDownIcon className="opacity-50" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-64 rounded-lg" side="bottom" sideOffset={4}>
@@ -65,7 +65,7 @@ export function TeamSwitcher({
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2 p-2">
               <div className="bg-background flex size-6 items-center justify-center rounded-md border">
-                <Plus className="size-4" />
+                <PlusIcon className="size-4" />
               </div>
               <div className="text-muted-foreground font-medium">Add team</div>
             </DropdownMenuItem>

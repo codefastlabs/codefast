@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@codefast/ui';
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export function VersionSwitcher({
@@ -33,13 +33,13 @@ export function VersionSwitcher({
               size="lg"
             >
               <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <GalleryVerticalEnd className="size-4" />
+                <GalleryVerticalEndIcon className="size-4" />
               </div>
               <div className="flex flex-col gap-0.5 leading-none">
                 <span className="font-medium">Documentation</span>
                 <span className="">v{selectedVersion}</span>
               </div>
-              <ChevronsUpDown className="ml-auto" />
+              <ChevronsUpDownIcon className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-(--radix-dropdown-menu-trigger-width)">
@@ -50,7 +50,7 @@ export function VersionSwitcher({
                   setSelectedVersion(version);
                 }}
               >
-                v{version} {version === selectedVersion && <Check className="ml-auto" />}
+                v{version} {version === selectedVersion && <CheckIcon className="ml-auto" />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

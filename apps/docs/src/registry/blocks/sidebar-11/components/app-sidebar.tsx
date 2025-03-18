@@ -16,7 +16,7 @@ import {
   SidebarMenuSub,
   SidebarRail,
 } from '@codefast/ui';
-import { ChevronRight, File, Folder } from 'lucide-react';
+import { ChevronRightIcon, FileIcon, FolderIcon } from 'lucide-react';
 
 export interface Change {
   file: string;
@@ -66,7 +66,7 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
   if (items.length === 0) {
     return (
       <SidebarMenuButton className="data-[active=true]:bg-transparent" isActive={name === 'button.tsx'}>
-        <File />
+        <FileIcon />
         {name}
       </SidebarMenuButton>
     );
@@ -80,8 +80,8 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
       >
         <CollapsibleTrigger asChild>
           <SidebarMenuButton>
-            <ChevronRight className="transition-transform" />
-            <Folder />
+            <ChevronRightIcon className="transition-transform" />
+            <FolderIcon />
             {name}
           </SidebarMenuButton>
         </CollapsibleTrigger>
@@ -110,7 +110,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                 // eslint-disable-next-line react/no-array-index-key -- we need index
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton>
-                    <File />
+                    <FileIcon />
                     {item.file}
                   </SidebarMenuButton>
                   <SidebarMenuBadge>{item.state}</SidebarMenuBadge>

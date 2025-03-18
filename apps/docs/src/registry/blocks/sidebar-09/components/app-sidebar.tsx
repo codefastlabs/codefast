@@ -17,7 +17,7 @@ import {
   Switch,
   useSidebar,
 } from '@codefast/ui';
-import { ArchiveX, Command, File, Inbox, Send, Trash2 } from 'lucide-react';
+import { ArchiveXIcon, CommandIcon, FileIcon, InboxIcon, SendIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -27,11 +27,11 @@ import { NavUser } from '@/registry/blocks/sidebar-09/components/nav-user';
 const data = {
   user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   navMain: [
-    { title: 'Inbox', url: '#', icon: Inbox, isActive: true },
-    { title: 'Drafts', url: '#', icon: File, isActive: false },
-    { title: 'Sent', url: '#', icon: Send, isActive: false },
-    { title: 'Junk', url: '#', icon: ArchiveX, isActive: false },
-    { title: 'Trash', url: '#', icon: Trash2, isActive: false },
+    { title: 'Inbox', url: '#', icon: InboxIcon, isActive: true },
+    { title: 'Drafts', url: '#', icon: FileIcon, isActive: false },
+    { title: 'Sent', url: '#', icon: SendIcon, isActive: false },
+    { title: 'Junk', url: '#', icon: ArchiveXIcon, isActive: false },
+    { title: 'Trash', url: '#', icon: Trash2Icon, isActive: false },
   ],
   mails: [
     {
@@ -136,7 +136,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
               <SidebarMenuButton asChild className="md:h-8 md:p-0" size="lg">
                 <Link href="#">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                    <Command className="size-4" />
+                    <CommandIcon className="size-4" />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">Acme Inc</span>

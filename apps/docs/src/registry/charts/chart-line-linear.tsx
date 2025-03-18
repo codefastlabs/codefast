@@ -14,7 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUpIcon } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
 const chartData = [
@@ -65,7 +65,7 @@ export function ChartLineLinear(): JSX.Element {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
       </CardFooter>

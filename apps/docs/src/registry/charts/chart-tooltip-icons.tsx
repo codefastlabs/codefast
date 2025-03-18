@@ -13,7 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
-import { Footprints, Waves } from 'lucide-react';
+import { FootprintsIcon, WavesIcon } from 'lucide-react';
 import { Bar, BarChart, XAxis } from 'recharts';
 
 const chartData = [
@@ -29,12 +29,12 @@ const chartConfig = {
   running: {
     label: 'Running',
     color: 'var(--chart-1)',
-    icon: Footprints,
+    icon: FootprintsIcon,
   },
   swimming: {
     label: 'Swimming',
     color: 'var(--chart-2)',
-    icon: Waves,
+    icon: WavesIcon,
   },
 } satisfies ChartConfig;
 

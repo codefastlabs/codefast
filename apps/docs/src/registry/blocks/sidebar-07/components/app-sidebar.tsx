@@ -4,16 +4,16 @@ import type { ComponentProps, JSX } from 'react';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@codefast/ui';
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
+  AudioWaveformIcon,
+  BookOpenIcon,
+  BotIcon,
+  CommandIcon,
+  FrameIcon,
+  GalleryVerticalEndIcon,
+  MapIcon,
+  PieChartIcon,
+  Settings2Icon,
+  SquareTerminalIcon,
 } from 'lucide-react';
 
 import type { NavItem, Project, Team, User } from '@/types';
@@ -32,15 +32,15 @@ const data: {
 } = {
   user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   teams: [
-    { name: 'Acme Inc', logo: GalleryVerticalEnd, plan: 'Enterprise' },
-    { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
-    { name: 'Evil Corp.', logo: Command, plan: 'Free' },
+    { name: 'Acme Inc', logo: GalleryVerticalEndIcon, plan: 'Enterprise' },
+    { name: 'Acme Corp.', logo: AudioWaveformIcon, plan: 'Startup' },
+    { name: 'Evil Corp.', logo: CommandIcon, plan: 'Free' },
   ],
   navMain: [
     {
       title: 'Playground',
       url: '#',
-      icon: SquareTerminal,
+      icon: SquareTerminalIcon,
       isActive: true,
       items: [
         { title: 'History', url: '#' },
@@ -51,7 +51,7 @@ const data: {
     {
       title: 'Models',
       url: '#',
-      icon: Bot,
+      icon: BotIcon,
       items: [
         { title: 'Genesis', url: '#' },
         { title: 'Explorer', url: '#' },
@@ -61,7 +61,7 @@ const data: {
     {
       title: 'Documentation',
       url: '#',
-      icon: BookOpen,
+      icon: BookOpenIcon,
       items: [
         { title: 'Introduction', url: '#' },
         { title: 'Get Started', url: '#' },
@@ -72,7 +72,7 @@ const data: {
     {
       title: 'Settings',
       url: '#',
-      icon: Settings2,
+      icon: Settings2Icon,
       items: [
         { title: 'General', url: '#' },
         { title: 'Team', url: '#' },
@@ -82,9 +82,9 @@ const data: {
     },
   ],
   projects: [
-    { name: 'Design Engineering', url: '#', icon: Frame },
-    { name: 'Sales & Marketing', url: '#', icon: PieChart },
-    { name: 'Travel', url: '#', icon: Map },
+    { name: 'Design Engineering', url: '#', icon: FrameIcon },
+    { name: 'Sales & Marketing', url: '#', icon: PieChartIcon },
+    { name: 'Travel', url: '#', icon: MapIcon },
   ],
 };
 

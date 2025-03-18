@@ -11,7 +11,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@codefast/ui';
-import { BookOpen, Bot, Command, Frame, LifeBuoy, Map, PieChart, Send, Settings2, SquareTerminal } from 'lucide-react';
+import {
+  BookOpenIcon,
+  BotIcon,
+  CommandIcon,
+  FrameIcon,
+  LifeBuoyIcon,
+  MapIcon,
+  PieChartIcon,
+  SendIcon,
+  Settings2Icon,
+  SquareTerminalIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import { NavMain } from '@/registry/blocks/sidebar-08/components/nav-main';
@@ -28,7 +39,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             <SidebarMenuButton asChild size="lg">
               <Link href="#">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
+                  <CommandIcon className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Acme Inc</span>
@@ -57,7 +68,7 @@ const data = {
     {
       title: 'Playground',
       url: '#',
-      icon: SquareTerminal,
+      icon: SquareTerminalIcon,
       isActive: true,
       items: [
         { title: 'History', url: '#' },
@@ -68,7 +79,7 @@ const data = {
     {
       title: 'Models',
       url: '#',
-      icon: Bot,
+      icon: BotIcon,
       items: [
         { title: 'Genesis', url: '#' },
         { title: 'Explorer', url: '#' },
@@ -78,7 +89,7 @@ const data = {
     {
       title: 'Documentation',
       url: '#',
-      icon: BookOpen,
+      icon: BookOpenIcon,
       items: [
         { title: 'Introduction', url: '#' },
         { title: 'Get Started', url: '#' },
@@ -89,7 +100,7 @@ const data = {
     {
       title: 'Settings',
       url: '#',
-      icon: Settings2,
+      icon: Settings2Icon,
       items: [
         { title: 'General', url: '#' },
         { title: 'Team', url: '#' },
@@ -99,12 +110,12 @@ const data = {
     },
   ],
   navSecondary: [
-    { title: 'Support', url: '#', icon: LifeBuoy },
-    { title: 'Feedback', url: '#', icon: Send },
+    { title: 'Support', url: '#', icon: LifeBuoyIcon },
+    { title: 'Feedback', url: '#', icon: SendIcon },
   ],
   projects: [
-    { name: 'Design Engineering', url: '#', icon: Frame },
-    { name: 'Sales & Marketing', url: '#', icon: PieChart },
-    { name: 'Travel', url: '#', icon: Map },
+    { name: 'Design Engineering', url: '#', icon: FrameIcon },
+    { name: 'Sales & Marketing', url: '#', icon: PieChartIcon },
+    { name: 'Travel', url: '#', icon: MapIcon },
   ],
 };

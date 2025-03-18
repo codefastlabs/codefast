@@ -14,7 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUpIcon } from 'lucide-react';
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts';
 
 const chartData = [
@@ -60,7 +60,7 @@ export function ChartRadarGridCircle(): JSX.Element {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
       </CardFooter>

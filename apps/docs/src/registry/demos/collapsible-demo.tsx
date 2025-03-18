@@ -3,7 +3,7 @@
 import type { JSX } from 'react';
 
 import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronsUpDownIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export function CollapsibleDemo(): JSX.Element {
@@ -15,7 +15,7 @@ export function CollapsibleDemo(): JSX.Element {
         <h4 className="line-clamp-1 text-sm font-semibold">@peduarte starred 3 repositories</h4>
         <CollapsibleTrigger asChild>
           <Button size="icon" variant="ghost">
-            <ChevronsUpDown />
+            <ChevronsUpDownIcon />
             <span className="sr-only">Toggle</span>
           </Button>
         </CollapsibleTrigger>

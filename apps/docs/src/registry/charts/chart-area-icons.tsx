@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@codefast/ui';
-import { TrendingDown, TrendingUp } from 'lucide-react';
+import { TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 const chartData = [
@@ -32,12 +32,12 @@ const chartConfig = {
   desktop: {
     label: 'Desktop',
     color: 'var(--chart-1)',
-    icon: TrendingDown,
+    icon: TrendingDownIcon,
   },
   mobile: {
     label: 'Mobile',
     color: 'var(--chart-2)',
-    icon: TrendingUp,
+    icon: TrendingUpIcon,
   },
 } satisfies ChartConfig;
 
@@ -91,7 +91,7 @@ export function ChartAreaIcons(): JSX.Element {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+              Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
             </div>
             <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
           </div>

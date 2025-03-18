@@ -15,7 +15,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@codefast/ui';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavItem } from '@/types';
@@ -32,7 +32,7 @@ export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
                 <SidebarMenuButton tooltip={item.title}>
                   {item.icon ? <item.icon /> : null}
                   <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>

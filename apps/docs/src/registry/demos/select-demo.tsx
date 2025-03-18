@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@codefast/ui';
-import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashed } from 'lucide-react';
+import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from 'lucide-react';
 
 import { GridWrapper } from '@/components/grid-wrapper';
 
@@ -64,7 +64,7 @@ export function SelectDemo(): JSX.Element {
             <SelectValue
               placeholder={
                 <>
-                  <CircleDashed className="text-muted-foreground" />
+                  <CircleDashedIcon className="text-muted-foreground" />
                   With Icon
                 </>
               }

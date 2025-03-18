@@ -27,7 +27,6 @@ import {
   BellIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
-  LogOut,
   LogOutIcon,
   MoreHorizontalIcon,
   PencilIcon,
@@ -247,7 +246,7 @@ function DropdownMenuWithAvatar(): JSX.Element {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <LogOut />
+          <LogOutIcon />
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -303,7 +302,7 @@ function DropdownMenuAvatarOnly(): JSX.Element {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <LogOut />
+          <LogOutIcon />
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>

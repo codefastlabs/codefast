@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@codefast/ui';
-import { Plus } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 
 import { Calendars } from '@/registry/blocks/sidebar-15/components/calendars';
 import { DatePicker } from '@/registry/blocks/sidebar-15/components/date-picker';
@@ -54,7 +54,7 @@ export function SidebarRight({ ...props }: ComponentProps<typeof Sidebar>): JSX.
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <Plus />
+              <PlusIcon />
               <span>New Calendar</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
