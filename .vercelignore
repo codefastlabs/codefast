@@ -1,0 +1,7 @@
+# Always ignore node_modules in any folder
+**/node_modules
+
+# Ignore build artifacts
+**/.turbo
+**/.next/cache
+**/dist
