@@ -80,7 +80,7 @@
     "@radix-ui/react-visually-hidden": "^1.1.2",
     "chalk": "^5.4.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1.0.4",
+    "cmdk": "^1.1.1",
     "embla-carousel-react": "^8.5.2",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.482.0",
