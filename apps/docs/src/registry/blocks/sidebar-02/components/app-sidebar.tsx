@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@codefast/ui';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavItem } from '@/types';
@@ -101,7 +101,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
               >
                 <CollapsibleTrigger>
                   {item.title}{' '}
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                  <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>

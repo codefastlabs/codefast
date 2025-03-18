@@ -11,7 +11,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from '@codefast/ui';
-import { Plus } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 
 import { Calendars } from '@/registry/blocks/sidebar-12/components/calendars';
 import { DatePicker } from '@/registry/blocks/sidebar-12/components/date-picker';
@@ -55,7 +55,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <Plus />
+              <PlusIcon />
               <span>New Calendar</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

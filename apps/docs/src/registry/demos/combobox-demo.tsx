@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@codefast/ui';
-import { CheckIcon, ChevronDownIcon, ChevronsUpDown, PlusCircleIcon } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { GridWrapper } from '@/components/grid-wrapper';
@@ -110,7 +110,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
           aria-expanded={open}
           className="w-full justify-between md:max-w-[200px]"
           role="combobox"
-          suffix={<ChevronsUpDown className="text-muted-foreground" />}
+          suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
           {value ? frameworks.find((framework) => framework.value === value)?.label : 'Select framework...'}
@@ -157,7 +157,7 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
           aria-expanded={open}
           className="w-full justify-between px-3 md:max-w-[200px]"
           role="combobox"
-          suffix={<ChevronsUpDown className="text-muted-foreground" />}
+          suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
           {selectedUser ? (
@@ -302,7 +302,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
           aria-expanded={open}
           className="w-fit max-w-full justify-between"
           role="combobox"
-          suffix={<ChevronsUpDown className="text-muted-foreground" />}
+          suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
           <span className="truncate">

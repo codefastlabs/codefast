@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from '@codefast/ui';
-import { Check, ChevronRight } from 'lucide-react';
+import { CheckIcon, ChevronRightIcon } from 'lucide-react';
 import { Fragment } from 'react';
 
 export function Calendars({
@@ -35,7 +35,7 @@ export function Calendars({
               >
                 <CollapsibleTrigger>
                   {calendar.name}{' '}
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                  <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
@@ -48,7 +48,7 @@ export function Calendars({
                             className="group/calendar-item border-sidebar-border text-sidebar-primary-foreground data-[active=true]:border-sidebar-primary data-[active=true]:bg-sidebar-primary rounded-xs flex aspect-square size-4 shrink-0 items-center justify-center border"
                             data-active={itemIndex < 2}
                           >
-                            <Check className="hidden size-3 group-data-[active=true]/calendar-item:block" />
+                            <CheckIcon className="hidden size-3 group-data-[active=true]/calendar-item:block" />
                           </div>
                           {item}
                         </SidebarMenuButton>

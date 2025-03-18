@@ -4,17 +4,17 @@ import type { ComponentProps, JSX } from 'react';
 
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@codefast/ui';
 import {
-  AudioWaveform,
-  Blocks,
-  Calendar,
-  Command,
-  Home,
-  Inbox,
-  MessageCircleQuestion,
-  Search,
-  Settings2,
-  Sparkles,
-  Trash2,
+  AudioWaveformIcon,
+  BlocksIcon,
+  CalendarIcon,
+  CommandIcon,
+  HomeIcon,
+  InboxIcon,
+  MessageCircleQuestionIcon,
+  SearchIcon,
+  Settings2Icon,
+  SparklesIcon,
+  Trash2Icon,
 } from 'lucide-react';
 
 import { NavFavorites } from '@/registry/blocks/sidebar-10/components/nav-favorites';
@@ -26,22 +26,22 @@ import { TeamSwitcher } from '@/registry/blocks/sidebar-10/components/team-switc
 // This is sample data.
 const data = {
   teams: [
-    { name: 'Acme Inc', logo: Command, plan: 'Enterprise' },
-    { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
-    { name: 'Evil Corp.', logo: Command, plan: 'Free' },
+    { name: 'Acme Inc', logo: CommandIcon, plan: 'Enterprise' },
+    { name: 'Acme Corp.', logo: AudioWaveformIcon, plan: 'Startup' },
+    { name: 'Evil Corp.', logo: CommandIcon, plan: 'Free' },
   ],
   navMain: [
-    { title: 'Search', url: '#', icon: Search },
-    { title: 'Ask AI', url: '#', icon: Sparkles },
-    { title: 'Home', url: '#', icon: Home, isActive: true },
-    { title: 'Inbox', url: '#', icon: Inbox, badge: '10' },
+    { title: 'Search', url: '#', icon: SearchIcon },
+    { title: 'Ask AI', url: '#', icon: SparklesIcon },
+    { title: 'Home', url: '#', icon: HomeIcon, isActive: true },
+    { title: 'Inbox', url: '#', icon: InboxIcon, badge: '10' },
   ],
   navSecondary: [
-    { title: 'Calendar', url: '#', icon: Calendar },
-    { title: 'Settings', url: '#', icon: Settings2 },
-    { title: 'Templates', url: '#', icon: Blocks },
-    { title: 'Trash', url: '#', icon: Trash2 },
-    { title: 'Help', url: '#', icon: MessageCircleQuestion },
+    { title: 'Calendar', url: '#', icon: CalendarIcon },
+    { title: 'Settings', url: '#', icon: Settings2Icon },
+    { title: 'Templates', url: '#', icon: BlocksIcon },
+    { title: 'Trash', url: '#', icon: Trash2Icon },
+    { title: 'Help', url: '#', icon: MessageCircleQuestionIcon },
   ],
   favorites: [
     { name: 'Project Management & Task Tracking', url: '#', emoji: '📊' },

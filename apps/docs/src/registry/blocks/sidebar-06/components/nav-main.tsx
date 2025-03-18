@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontalIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavItem } from '@/types';
@@ -29,7 +29,7 @@ export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
             <SidebarMenuItem>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-                  {item.title} <MoreHorizontal className="ml-auto" />
+                  {item.title} <MoreHorizontalIcon className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               {item.items.length > 0 ? (
