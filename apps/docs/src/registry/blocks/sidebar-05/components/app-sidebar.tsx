@@ -16,7 +16,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@codefast/ui';
-import { GalleryVerticalEnd, Minus, Plus } from 'lucide-react';
+import { GalleryVerticalEndIcon, MinusIcon, PlusIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavItem } from '@/types';
@@ -90,7 +90,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             <SidebarMenuButton asChild size="lg">
               <Link href="#">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEnd className="size-4" />
+                  <GalleryVerticalEndIcon className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-medium">Documentation</span>
@@ -110,8 +110,8 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {item.title} <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                      {item.title} <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                      <MinusIcon className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {item.items.length > 0 ? (

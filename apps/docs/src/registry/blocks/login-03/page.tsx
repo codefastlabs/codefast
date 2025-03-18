@@ -1,6 +1,6 @@
 import type { JSX } from 'react';
 
-import { GalleryVerticalEnd } from 'lucide-react';
+import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { LoginForm } from '@/registry/blocks/login-03/components/login-form';
@@ -11,7 +11,7 @@ export default function LoginPage(): JSX.Element {
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link className="flex items-center gap-2 self-center font-medium" href="#">
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <GalleryVerticalEnd className="size-4" />
+            <GalleryVerticalEndIcon className="size-4" />
           </div>
           Acme Inc.
         </Link>

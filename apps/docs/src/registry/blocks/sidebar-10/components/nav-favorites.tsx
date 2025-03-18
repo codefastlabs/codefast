@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { ArrowUpRight, LinkIcon, MoreHorizontal, StarOff, Trash2 } from 'lucide-react';
+import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 
 export function NavFavorites({
@@ -45,7 +45,7 @@ export function NavFavorites({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
+                  <MoreHorizontalIcon />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
@@ -55,7 +55,7 @@ export function NavFavorites({
                 side={isMobile ? 'bottom' : 'right'}
               >
                 <DropdownMenuItem>
-                  <StarOff className="text-muted-foreground" />
+                  <StarOffIcon className="text-muted-foreground" />
                   <span>Remove from Favorites</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -64,12 +64,12 @@ export function NavFavorites({
                   <span>Copy Link</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <ArrowUpRight className="text-muted-foreground" />
+                  <ArrowUpRightIcon className="text-muted-foreground" />
                   <span>Open in New Tab</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
+                  <Trash2Icon className="text-muted-foreground" />
                   <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -78,7 +78,7 @@ export function NavFavorites({
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal />
+            <MoreHorizontalIcon />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

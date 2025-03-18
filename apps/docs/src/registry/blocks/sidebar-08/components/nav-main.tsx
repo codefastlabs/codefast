@@ -16,7 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@codefast/ui';
-import { type LucideIcon, ChevronRight } from 'lucide-react';
+import { type LucideIcon, ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export function NavMain({
@@ -47,7 +47,7 @@ export function NavMain({
                 <>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuAction className="data-[state=open]:rotate-90">
-                      <ChevronRight />
+                      <ChevronRightIcon />
                       <span className="sr-only">Toggle</span>
                     </SidebarMenuAction>
                   </CollapsibleTrigger>

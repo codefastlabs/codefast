@@ -15,7 +15,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@codefast/ui';
-import { ChevronUpIcon, CircleIcon, Minus, Plus } from 'lucide-react';
+import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Bar, BarChart, ResponsiveContainer } from 'recharts';
 
@@ -82,7 +82,7 @@ function DrawerBottom(): JSX.Element {
                   onClick(-10);
                 }}
               >
-                <Minus />
+                <MinusIcon />
                 <span className="sr-only">Decrease</span>
               </Button>
               <div className="flex-1 text-center">
@@ -98,7 +98,7 @@ function DrawerBottom(): JSX.Element {
                   onClick(10);
                 }}
               >
-                <Plus />
+                <PlusIcon />
                 <span className="sr-only">Increase</span>
               </Button>
             </div>

@@ -24,15 +24,15 @@ import {
   SidebarRail,
 } from '@codefast/ui';
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
+  AudioWaveformIcon,
+  BookOpenIcon,
+  BotIcon,
   ChevronRightIcon,
-  Command,
-  GalleryVerticalEnd,
-  Search,
-  Settings2,
-  SquareTerminal,
+  CommandIcon,
+  GalleryVerticalEndIcon,
+  SearchIcon,
+  Settings2Icon,
+  SquareTerminalIcon,
 } from 'lucide-react';
 
 import type { Component, NavItem, Team, User } from '@/types';
@@ -51,15 +51,15 @@ const data: {
 } = {
   user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   teams: [
-    { name: 'Acme Inc', logo: GalleryVerticalEnd, plan: 'Enterprise' },
-    { name: 'Acme Corp.', logo: AudioWaveform, plan: 'Startup' },
-    { name: 'Evil Corp.', logo: Command, plan: 'Free' },
+    { name: 'Acme Inc', logo: GalleryVerticalEndIcon, plan: 'Enterprise' },
+    { name: 'Acme Corp.', logo: AudioWaveformIcon, plan: 'Startup' },
+    { name: 'Evil Corp.', logo: CommandIcon, plan: 'Free' },
   ],
   navMain: [
     {
       title: 'Playground',
       url: '#',
-      icon: SquareTerminal,
+      icon: SquareTerminalIcon,
       isActive: true,
       items: [
         { title: 'History', url: '#' },
@@ -70,7 +70,7 @@ const data: {
     {
       title: 'Models',
       url: '#',
-      icon: Bot,
+      icon: BotIcon,
       items: [
         { title: 'Genesis', url: '#' },
         { title: 'Explorer', url: '#' },
@@ -80,7 +80,7 @@ const data: {
     {
       title: 'Documentation',
       url: '#',
-      icon: BookOpen,
+      icon: BookOpenIcon,
       items: [
         { title: 'Introduction', url: '#' },
         { title: 'Get Started', url: '#' },
@@ -91,7 +91,7 @@ const data: {
     {
       title: 'Settings',
       url: '#',
-      icon: Settings2,
+      icon: Settings2Icon,
       items: [
         { title: 'General', url: '#' },
         { title: 'Team', url: '#' },
@@ -115,7 +115,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                 Search
               </Label>
               <SidebarInput className="pl-8" id="search" placeholder="Search the docs..." />
-              <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+              <SearchIcon className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
             </form>
           </SidebarGroupContent>
         </SidebarGroup>

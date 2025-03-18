@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
 
 import { Button, cn, Input, Label } from '@codefast/ui';
-import { GalleryVerticalEnd } from 'lucide-react';
+import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.Element {
@@ -12,7 +12,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
           <div className="flex flex-col items-center gap-2">
             <Link className="flex flex-col items-center gap-2 font-medium" href="#">
               <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-6" />
+                <GalleryVerticalEndIcon className="size-6" />
               </div>
               <span className="sr-only">Acme Inc.</span>
             </Link>

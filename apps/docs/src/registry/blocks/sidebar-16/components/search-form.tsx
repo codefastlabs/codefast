@@ -1,7 +1,7 @@
 import type { ComponentProps, JSX } from 'react';
 
 import { Label, SidebarInput } from '@codefast/ui';
-import { Search } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 
 export function SearchForm({ ...props }: ComponentProps<'form'>): JSX.Element {
   return (
@@ -11,7 +11,7 @@ export function SearchForm({ ...props }: ComponentProps<'form'>): JSX.Element {
           Search
         </Label>
         <SidebarInput className="h-8 pl-7" id="search" placeholder="Type to search..." />
-        <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
+        <SearchIcon className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
       </div>
     </form>
   );

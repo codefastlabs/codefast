@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { type LucideIcon, Folder, MoreHorizontal, Share, Trash2 } from 'lucide-react';
+import { type LucideIcon, FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 
 export function NavProjects({
@@ -45,7 +45,7 @@ export function NavProjects({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
+                  <MoreHorizontalIcon />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
@@ -55,16 +55,16 @@ export function NavProjects({
                 side={isMobile ? 'bottom' : 'right'}
               >
                 <DropdownMenuItem>
-                  <Folder className="text-muted-foreground" />
+                  <FolderIcon className="text-muted-foreground" />
                   <span>View Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Share className="text-muted-foreground" />
+                  <ShareIcon className="text-muted-foreground" />
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Trash2 className="text-muted-foreground" />
+                  <Trash2Icon className="text-muted-foreground" />
                   <span>Delete Project</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -73,7 +73,7 @@ export function NavProjects({
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <MoreHorizontal />
+            <MoreHorizontalIcon />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
