@@ -14,12 +14,19 @@ export const typescriptConfig: Linter.Config[] = [
   ...tsConfig.strictTypeChecked.map((config) =>
     config.name === 'typescript-eslint/strict-type-checked'
       ? {
+          files: ['**/*.{ts,tsx,mts,cts}'],
           ...config,
-          files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
         }
       : config,
   ),
-  ...tsConfig.stylisticTypeChecked,
+  ...tsConfig.stylisticTypeChecked.map((config) =>
+    config.name === 'typescript-eslint/stylistic-type-checked'
+      ? {
+          files: ['**/*.{ts,tsx,mts,cts}'],
+          ...config,
+        }
+      : config,
+  ),
   {
     languageOptions: {
       parserOptions: {
