@@ -11,7 +11,14 @@ import { typescriptExtensionRules } from '@/rules/typescript/extension';
 import { typescriptImportRules } from '@/rules/typescript/import';
 
 export const typescriptConfig: Linter.Config[] = [
-  ...tsConfig.strictTypeChecked,
+  ...tsConfig.strictTypeChecked.map((config) =>
+    config.name === 'typescript-eslint/strict-type-checked'
+      ? {
+          ...config,
+          files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+        }
+      : config,
+  ),
   ...tsConfig.stylisticTypeChecked,
   {
     languageOptions: {
