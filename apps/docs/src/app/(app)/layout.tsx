@@ -1,15 +1,16 @@
 import type { JSX, ReactNode } from 'react';
 
-import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui';
+import { Separator, SIDEBAR_COOKIE_NAME, SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui';
 import { cookies } from 'next/headers';
 
 import { AppSidebar } from '@/components/app-sidebar';
 import { ModeSwitcher } from '@/components/mode-switcher';
 import { NavHeader } from '@/components/nav-header';
+import { ThemeSelector } from '@/components/theme-selector';
 
 export default async function AppLayout({ children }: Readonly<{ children: ReactNode }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
+  const defaultOpen = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === 'true';
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
@@ -21,11 +22,11 @@ export default async function AppLayout({ children }: Readonly<{ children: React
             <Separator className="mr-2 data-[orientation=vertical]:h-4" orientation="vertical" />
             <NavHeader />
             <div className="ml-auto flex items-center gap-2">
+              <ThemeSelector />
               <ModeSwitcher />
             </div>
           </div>
         </header>
-
         {children}
       </SidebarInset>
     </SidebarProvider>

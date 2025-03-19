@@ -2,16 +2,13 @@ import type { Metadata, Viewport } from 'next';
 import type { JSX } from 'react';
 
 import { cn, Toaster } from '@codefast/ui';
+import { cookies } from 'next/headers';
 
+import { ActiveThemeProvider, THEME_COOKIE_NAME } from '@/components/active-theme';
 import { ThemeProvider } from '@/components/theme-provider';
-import { siteConfig } from '@/config/site';
-import { geistMono, geistSans } from '@/lib/fonts';
+import { fontVariables } from '@/lib/fonts';
+import { META_THEME_COLORS, siteConfig } from '@/lib/site';
 import '@/app/globals.css';
-
-const META_THEME_COLORS = {
-  light: '#ffffff',
-  dark: '#09090b',
-};
 
 export const metadata: Metadata = {
   title: {
@@ -63,15 +60,18 @@ export const viewport: Viewport = {
   themeColor: META_THEME_COLORS.light,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>): JSX.Element {
+}>): Promise<JSX.Element> {
+  const cookieStore = await cookies();
+  const activeThemeValue = cookieStore.get(THEME_COOKIE_NAME)?.value;
+
   return (
     <html
       suppressHydrationWarning
-      className={cn(geistSans.variable, geistMono.variable, 'dark:scheme-dark scroll-smooth antialiased')}
+      className={cn(fontVariables, 'scroll-smooth antialiased', activeThemeValue ? `theme-${activeThemeValue}` : '')}
       lang="en"
     >
       <head>
@@ -82,9 +82,8 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ThemeProvider disableTransitionOnChange enableSystem attribute="class" defaultTheme="system">
-          {children}
-
+        <ThemeProvider disableTransitionOnChange enableColorScheme enableSystem attribute="class" defaultTheme="system">
+          <ActiveThemeProvider initialTheme={activeThemeValue}>{children}</ActiveThemeProvider>
           <Toaster />
         </ThemeProvider>
       </body>
