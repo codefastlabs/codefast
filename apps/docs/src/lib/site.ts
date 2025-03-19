@@ -16,8 +16,8 @@ export const siteConfig: SiteConfig = {
     twitter: 'https://twitter.com/thevuong',
   },
   name: 'CodeFast UI',
-  ogImage: 'https://codefast.fly.dev/og.jpg',
-  url: 'https://codefast.fly.dev',
+  ogImage: 'https://codefast-ui.vercel.app/og.jpg',
+  url: 'https://codefast-ui.vercel.app',
 };
 
 export const META_THEME_COLORS: { dark: string; light: string } = {
