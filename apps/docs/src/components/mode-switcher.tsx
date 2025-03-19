@@ -7,7 +7,8 @@ import { MoonIcon, SunIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useCallback } from 'react';
 
-import { META_THEME_COLORS, useMetaColor } from '@/hooks/use-meta-color';
+import { useMetaColor } from '@/hooks/use-meta-color';
+import { META_THEME_COLORS } from '@/lib/site';
 
 export function ModeSwitcher(): JSX.Element {
   const { setTheme, resolvedTheme } = useTheme();
@@ -19,7 +20,7 @@ export function ModeSwitcher(): JSX.Element {
   }, [resolvedTheme, setTheme, setMetaColor]);
 
   return (
-    <Button className="group/toggle h-8 w-8 px-0" variant="ghost" onClick={toggleTheme}>
+    <Button className="group/toggle h-8 w-8 px-0" variant="outline" onClick={toggleTheme}>
       <SunIcon className="hidden [html.dark_&]:block" />
       <MoonIcon className="hidden [html.light_&]:block" />
       <span className="sr-only">Toggle theme</span>
