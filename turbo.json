@@ -21,8 +21,7 @@
       "dependsOn": ["^lint"]
     },
     "start": {
-      "cache": false,
-      "dependsOn": ["build"]
+      "cache": false
     },
     "test": {},
     "test:coverage": {},
