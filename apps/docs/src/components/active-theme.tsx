@@ -5,7 +5,7 @@ import type { JSX, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-export const THEME_COOKIE_NAME = 'active_theme';
+const THEME_COOKIE_NAME = 'active_theme';
 const DEFAULT_THEME = 'default';
 
 function setThemeCookie(theme: string): void {
