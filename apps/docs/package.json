@@ -8,7 +8,6 @@
     "build:registry": "tsx ./scripts/build-registry.ts && prettier --log-level silent --write \"src/__registry__/**/*.{ts,tsx,json,mdx}\" --cache",
     "clean": "rm -rf node_modules .next",
     "dev": "next dev --turbopack",
-    "dev:docs": "next dev --turbopack",
     "lint": "TIMING=1 next lint",
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "start": "next start"
