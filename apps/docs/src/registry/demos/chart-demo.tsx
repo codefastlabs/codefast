@@ -8,7 +8,7 @@ import { ChartLineMultiple } from '@/registry/charts/chart-line-multiple';
 
 export function ChartDemo(): JSX.Element {
   return (
-    <GridWrapper>
+    <GridWrapper className="lg:grid-cols-2">
       <div className="">
         <ChartAreaDefault />
       </div>

@@ -19,3 +19,8 @@ export const siteConfig: SiteConfig = {
   ogImage: 'https://codefast.fly.dev/og.jpg',
   url: 'https://codefast.fly.dev',
 };
+
+export const META_THEME_COLORS: { dark: string; light: string } = {
+  light: '#ffffff',
+  dark: '#09090b',
+};

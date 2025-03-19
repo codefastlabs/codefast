@@ -1,6 +1,6 @@
 @import 'tailwindcss';
-
 @import '@codefast/ui/styles.css';
+@import './themes.css';
 
 @source '../../node_modules/@codefast/ui/dist';
 
@@ -94,7 +94,7 @@
     --sidebar: var(--color-neutral-900);
     --sidebar-foreground: var(--color-neutral-50);
 
-    --sidebar-primary: var(--color-blue-700);
+    --sidebar-primary: var(--color-neutral-700);
     --sidebar-primary-foreground: var(--color-neutral-50);
 
     --sidebar-accent: var(--color-neutral-800);

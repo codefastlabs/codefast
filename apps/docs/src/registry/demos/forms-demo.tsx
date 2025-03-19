@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties, JSX } from 'react';
+import type { JSX } from 'react';
 
 import {
   Button,
@@ -15,15 +15,8 @@ import {
   Label,
   RadioCards,
   RadioCardsItem,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Textarea,
 } from '@codefast/ui';
-import { useTheme } from 'next-themes';
-import { useMemo, useState } from 'react';
 
 const plans = [
   {
@@ -40,232 +33,10 @@ const plans = [
   },
 ] as const;
 
-const themes = {
-  blue: {
-    light: {
-      '--ring': 'var(--color-blue-400)',
-
-      '--primary': 'var(--color-blue-600)',
-      '--primary-foreground': 'var(--color-blue-50)',
-
-      '--secondary': 'var(--color-blue-100)',
-      '--secondary-foreground': 'var(--color-blue-900)',
-
-      '--accent': 'var(--color-blue-100)',
-      '--accent-foreground': 'var(--color-blue-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-blue-600)',
-
-      '--primary': 'var(--color-blue-400)',
-      '--primary-foreground': 'var(--color-blue-950)',
-
-      '--secondary': 'var(--color-blue-950)',
-      '--secondary-foreground': 'var(--color-blue-100)',
-
-      '--accent': 'var(--color-blue-900)',
-      '--accent-foreground': 'var(--color-blue-100)',
-    },
-  },
-  cyan: {
-    light: {
-      '--ring': 'var(--color-cyan-400)',
-
-      '--primary': 'var(--color-cyan-600)',
-      '--primary-foreground': 'var(--color-cyan-50)',
-
-      '--secondary': 'var(--color-cyan-100)',
-      '--secondary-foreground': 'var(--color-cyan-900)',
-
-      '--accent': 'var(--color-cyan-100)',
-      '--accent-foreground': 'var(--color-cyan-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-cyan-600)',
-
-      '--primary': 'var(--color-cyan-400)',
-      '--primary-foreground': 'var(--color-cyan-950)',
-
-      '--secondary': 'var(--color-cyan-950)',
-      '--secondary-foreground': 'var(--color-cyan-100)',
-
-      '--accent': 'var(--color-cyan-900)',
-      '--accent-foreground': 'var(--color-cyan-100)',
-    },
-  },
-  lime: {
-    light: {
-      '--ring': 'var(--color-lime-400)',
-
-      '--primary': 'var(--color-lime-600)',
-      '--primary-foreground': 'var(--color-lime-50)',
-
-      '--secondary': 'var(--color-lime-100)',
-      '--secondary-foreground': 'var(--color-lime-900)',
-
-      '--accent': 'var(--color-lime-100)',
-      '--accent-foreground': 'var(--color-lime-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-lime-600)',
-
-      '--primary': 'var(--color-lime-400)',
-      '--primary-foreground': 'var(--color-lime-950)',
-
-      '--secondary': 'var(--color-lime-950)',
-      '--secondary-foreground': 'var(--color-lime-100)',
-
-      '--accent': 'var(--color-lime-900)',
-      '--accent-foreground': 'var(--color-lime-100)',
-    },
-  },
-  neutral: {
-    light: {
-      '--ring': 'var(--color-neutral-400)',
-
-      '--primary': 'var(--color-neutral-600)',
-      '--primary-foreground': 'var(--color-neutral-50)',
-
-      '--secondary': 'var(--color-neutral-100)',
-      '--secondary-foreground': 'var(--color-neutral-900)',
-
-      '--accent': 'var(--color-neutral-100)',
-      '--accent-foreground': 'var(--color-neutral-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-neutral-600)',
-
-      '--primary': 'var(--color-neutral-400)',
-      '--primary-foreground': 'var(--color-neutral-950)',
-
-      '--secondary': 'var(--color-neutral-950)',
-      '--secondary-foreground': 'var(--color-neutral-100)',
-
-      '--accent': 'var(--color-neutral-900)',
-      '--accent-foreground': 'var(--color-neutral-100)',
-    },
-  },
-  rose: {
-    light: {
-      '--ring': 'var(--color-rose-400)',
-
-      '--primary': 'var(--color-rose-600)',
-      '--primary-foreground': 'var(--color-rose-50)',
-
-      '--secondary': 'var(--color-rose-100)',
-      '--secondary-foreground': 'var(--color-rose-900)',
-
-      '--accent': 'var(--color-rose-100)',
-      '--accent-foreground': 'var(--color-rose-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-rose-600)',
-
-      '--primary': 'var(--color-rose-400)',
-      '--primary-foreground': 'var(--color-rose-950)',
-
-      '--secondary': 'var(--color-rose-950)',
-      '--secondary-foreground': 'var(--color-rose-100)',
-
-      '--accent': 'var(--color-rose-900)',
-      '--accent-foreground': 'var(--color-rose-100)',
-    },
-  },
-  sky: {
-    light: {
-      '--ring': 'var(--color-sky-400)',
-
-      '--primary': 'var(--color-sky-600)',
-      '--primary-foreground': 'var(--color-sky-50)',
-
-      '--secondary': 'var(--color-sky-100)',
-      '--secondary-foreground': 'var(--color-sky-900)',
-
-      '--accent': 'var(--color-sky-100)',
-      '--accent-foreground': 'var(--color-sky-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-sky-600)',
-
-      '--primary': 'var(--color-sky-400)',
-      '--primary-foreground': 'var(--color-sky-950)',
-
-      '--secondary': 'var(--color-sky-950)',
-      '--secondary-foreground': 'var(--color-sky-100)',
-
-      '--accent': 'var(--color-sky-900)',
-      '--accent-foreground': 'var(--color-sky-100)',
-    },
-  },
-  stone: {
-    light: {
-      '--ring': 'var(--color-stone-400)',
-
-      '--primary': 'var(--color-stone-600)',
-      '--primary-foreground': 'var(--color-stone-50)',
-
-      '--secondary': 'var(--color-stone-100)',
-      '--secondary-foreground': 'var(--color-stone-900)',
-
-      '--accent': 'var(--color-stone-100)',
-      '--accent-foreground': 'var(--color-stone-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-stone-600)',
-
-      '--primary': 'var(--color-stone-400)',
-      '--primary-foreground': 'var(--color-stone-950)',
-
-      '--secondary': 'var(--color-stone-950)',
-      '--secondary-foreground': 'var(--color-stone-100)',
-
-      '--accent': 'var(--color-stone-900)',
-      '--accent-foreground': 'var(--color-stone-100)',
-    },
-  },
-  yellow: {
-    light: {
-      '--ring': 'var(--color-yellow-400)',
-
-      '--primary': 'var(--color-yellow-600)',
-      '--primary-foreground': 'var(--color-yellow-50)',
-
-      '--secondary': 'var(--color-yellow-100)',
-      '--secondary-foreground': 'var(--color-yellow-900)',
-
-      '--accent': 'var(--color-yellow-100)',
-      '--accent-foreground': 'var(--color-yellow-900)',
-    },
-    dark: {
-      '--ring': 'var(--color-yellow-600)',
-
-      '--primary': 'var(--color-yellow-400)',
-      '--primary-foreground': 'var(--color-yellow-950)',
-
-      '--secondary': 'var(--color-yellow-950)',
-      '--secondary-foreground': 'var(--color-yellow-100)',
-
-      '--accent': 'var(--color-yellow-900)',
-      '--accent-foreground': 'var(--color-yellow-100)',
-    },
-  },
-} as const;
-
 export function FormsDemo(): JSX.Element {
-  const { theme: mode = 'light' } = useTheme();
-  const [theme, setTheme] = useState<keyof typeof themes | undefined>();
-
-  const themeStyles = useMemo(() => {
-    if (!theme) {
-      return;
-    }
-
-    return themes[theme][mode as keyof (typeof themes)[typeof theme]];
-  }, [theme, mode]);
-
   return (
     <div className="flex max-w-md flex-col gap-4">
-      <Card style={themeStyles as CSSProperties}>
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg">Upgrade your subscription</CardTitle>
           <CardDescription>
@@ -291,31 +62,6 @@ export function FormsDemo(): JSX.Element {
                 <Input id="card-number-expiry" placeholder="MM/YY" />
                 <Input id="card-number-cvc" placeholder="CVC" />
               </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="color">Color</Label>
-              <Select
-                onValueChange={(value) => {
-                  setTheme(value as keyof typeof themes);
-                }}
-              >
-                <SelectTrigger className="w-full" id="color">
-                  <SelectValue placeholder="Select a color" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(themes).map((themeName) => (
-                    <SelectItem key={themeName} value={themeName}>
-                      <div
-                        className="size-3.5 rounded-full"
-                        style={{
-                          backgroundColor: themes[themeName as keyof typeof themes].light['--primary'],
-                        }}
-                      />
-                      {themeName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
             <fieldset className="flex flex-col gap-3">
               <legend className="text-sm font-medium">Plan</legend>

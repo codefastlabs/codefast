@@ -178,7 +178,6 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <NavUser user={data.user} />
         </SidebarFooter>
       </Sidebar>
-
       {/* This is the second sidebar */}
       {/* We disable collapsible and let it fill the remaining space */}
       <Sidebar className="hidden flex-1 md:flex" collapsible="none">
