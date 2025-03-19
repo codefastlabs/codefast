@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { cn, Toaster } from '@codefast/ui';
 import { cookies } from 'next/headers';
 
-import { ActiveThemeProvider, THEME_COOKIE_NAME } from '@/components/active-theme';
+import { ActiveThemeProvider } from '@/components/active-theme';
 import { ThemeProvider } from '@/components/theme-provider';
 import { fontVariables } from '@/lib/fonts';
 import { META_THEME_COLORS, siteConfig } from '@/lib/site';
@@ -66,12 +66,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get(THEME_COOKIE_NAME)?.value;
+  const activeThemeValue = cookieStore.get('active_theme')?.value;
 
   return (
     <html
       suppressHydrationWarning
-      className={cn(fontVariables, 'scroll-smooth antialiased', activeThemeValue ? `theme-${activeThemeValue}` : '')}
+      className={cn(fontVariables, 'scroll-smooth antialiased', activeThemeValue && `theme-${activeThemeValue}`)}
       lang="en"
     >
       <head>

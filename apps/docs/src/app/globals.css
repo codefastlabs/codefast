@@ -61,7 +61,7 @@
     --chart-5: var(--color-amber-500);
   }
 
-  .dark {
+  @variant dark {
     --input: --alpha(var(--color-white) / 15%);
     --border: --alpha(var(--color-white) / 10%);
 

@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from 'react';
 
-import { Separator, SIDEBAR_COOKIE_NAME, SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui';
+import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui';
 import { cookies } from 'next/headers';
 
 import { AppSidebar } from '@/components/app-sidebar';
@@ -10,7 +10,7 @@ import { ThemeSelector } from '@/components/theme-selector';
 
 export default async function AppLayout({ children }: Readonly<{ children: ReactNode }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get(SIDEBAR_COOKIE_NAME)?.value === 'true';
+  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
