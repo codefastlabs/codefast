@@ -3,6 +3,7 @@ import type { JSX } from 'react';
 
 import { cn, Toaster } from '@codefast/ui';
 import { cookies } from 'next/headers';
+import Script from 'next/script';
 
 import { ActiveThemeProvider } from '@/components/active-theme';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -11,20 +12,15 @@ import { META_THEME_COLORS, siteConfig } from '@/lib/site';
 import '@/app/globals.css';
 
 export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
   description: siteConfig.description,
-  metadataBase: new URL(siteConfig.url),
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
+  },
   keywords: ['Next.js', 'React', 'Tailwind CSS', 'Server Components', 'Radix UI'],
-  authors: [
-    {
-      name: 'codefastlabs',
-      url: siteConfig.links.github,
-    },
-  ],
-  creator: 'vuongphan',
+  manifest: `${siteConfig.url}/site.webmanifest`,
+  metadataBase: new URL(siteConfig.url),
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -41,19 +37,10 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: siteConfig.name,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-    creator: '@vuongphan',
+  title: {
+    default: siteConfig.name,
+    template: `%s - ${siteConfig.name}`,
   },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
-  },
-  manifest: `${siteConfig.url}/site.webmanifest`,
 };
 
 export const viewport: Viewport = {
@@ -74,18 +61,18 @@ export default async function RootLayout({
       className={cn(fontVariables, 'scroll-smooth antialiased', activeThemeValue && `theme-${activeThemeValue}`)}
       lang="en"
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{"dark"!==localStorage.theme&&("theme"in localStorage&&"system"!==localStorage.theme||!window.matchMedia("(prefers-color-scheme: dark)").matches)||document.querySelector('meta[name="theme-color"]').setAttribute("content","${META_THEME_COLORS.dark}")}catch(e){}`,
-          }}
-        />
-      </head>
       <body>
         <ThemeProvider disableTransitionOnChange enableColorScheme enableSystem attribute="class" defaultTheme="system">
           <ActiveThemeProvider initialTheme={activeThemeValue}>{children}</ActiveThemeProvider>
           <Toaster />
         </ThemeProvider>
+        <Script
+          dangerouslySetInnerHTML={{
+            __html: `try{"dark"!==localStorage.theme&&("theme"in localStorage&&"system"!==localStorage.theme||!window.matchMedia("(prefers-color-scheme: dark)").matches)||document.querySelector('meta[name="theme-color"]').setAttribute("content","${META_THEME_COLORS.dark}")}catch(e){}`,
+          }}
+          id="theme-script"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
