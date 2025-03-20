@@ -28,6 +28,7 @@ import {
   IconSettings,
   IconUsers,
 } from '@tabler/icons-react';
+import Link from 'next/link';
 
 import { NavDocuments } from '@/registry/blocks/dashboard-01/components/nav-documents';
 import { NavMain } from '@/registry/blocks/dashboard-01/components/nav-main';
@@ -92,10 +93,10 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
+              <Link href="/view/dashboard-01">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

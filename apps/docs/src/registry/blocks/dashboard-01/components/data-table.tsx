@@ -333,7 +333,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
   const sortableId = useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
-  const dataIds = useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id) || [], [data]);
+  const dataIds = useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id), [data]);
 
   const table = useReactTable({
     data,
@@ -363,12 +363,12 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
   function handleDragEnd(event: DragEndEvent): void {
     const { active, over } = event;
 
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
+    if (over && active.id !== over.id) {
+      setData((items) => {
         const oldIndex = dataIds.indexOf(active.id);
         const newIndex = dataIds.indexOf(over.id);
 
-        return arrayMove(data, oldIndex, newIndex);
+        return arrayMove(items, oldIndex, newIndex);
       });
     }
   }
