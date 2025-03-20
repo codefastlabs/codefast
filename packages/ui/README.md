@@ -81,7 +81,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
   @variant dark {
     --input: var(--color-neutral-700);
-    --border: var(--color-neutral-800);
+    --border: --alpha(var(--color-neutral-700) / 50%);
 
     --ring: var(--color-neutral-500);
 
