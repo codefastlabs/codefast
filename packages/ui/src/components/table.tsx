@@ -21,7 +21,7 @@ function Table({ className, ...props }: ComponentProps<'table'>): JSX.Element {
 function TableHeader({ className, ...props }: ComponentProps<'thead'>): JSX.Element {
   return (
     <thead
-      className={cn('[&>tr]:has-aria-expanded:bg-transparent [&>tr]:border-b [&>tr]:hover:bg-transparent', className)}
+      className={cn('*:has-aria-expanded:bg-transparent *:border-b', className)}
       data-slot="table-header"
       {...props}
     />
@@ -33,7 +33,7 @@ function TableHeader({ className, ...props }: ComponentProps<'thead'>): JSX.Elem
  * -------------------------------------------------------------------------- */
 
 function TableBody({ className, ...props }: ComponentProps<'tbody'>): JSX.Element {
-  return <tbody className={cn('[&>tr:last-child]:border-0', className)} data-slot="table-body" {...props} />;
+  return <tbody className={cn('*:last-child:border-0', className)} data-slot="table-body" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -43,10 +43,7 @@ function TableBody({ className, ...props }: ComponentProps<'tbody'>): JSX.Elemen
 function TableFooter({ className, ...props }: ComponentProps<'tfoot'>): JSX.Element {
   return (
     <tfoot
-      className={cn(
-        '[&>tr]:has-aria-expanded:bg-transparent [&>tr]:border-b-0 [&>tr]:border-t [&>tr]:hover:bg-transparent',
-        className,
-      )}
+      className={cn('bg-muted/50 *:has-aria-expanded:bg-transparent font-medium *:border-b-0 *:border-t', className)}
       data-slot="table-footer"
       {...props}
     />
@@ -75,13 +72,7 @@ function TableRow({ className, ...props }: ComponentProps<'tr'>): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 function TableHead({ className, ...props }: ComponentProps<'th'>): JSX.Element {
-  return (
-    <th
-      className={cn('text-muted-foreground p-2 text-left align-middle font-medium', className)}
-      data-slot="table-head"
-      {...props}
-    />
-  );
+  return <th className={cn('p-2 text-left align-middle font-medium', className)} data-slot="table-head" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
