@@ -21,7 +21,16 @@ function Card({ className, ...props }: ComponentProps<'div'>): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 function CardHeader({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return <div className={cn('flex flex-col gap-1.5 px-6', className)} data-slot="card-header" {...props} />;
+  return (
+    <div
+      className={cn(
+        '@container/card-header [.border-b]:pb-6 grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-[data-slot=card-action]:grid-cols-[1fr_auto]',
+        className,
+      )}
+      data-slot="card-header"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -57,11 +66,26 @@ function CardContent({ className, ...props }: ComponentProps<'div'>): JSX.Elemen
  * -------------------------------------------------------------------------- */
 
 function CardFooter({ className, ...props }: ComponentProps<'div'>): JSX.Element {
-  return <div className={cn('flex items-center px-6', className)} data-slot="card-footer" {...props} />;
+  return (
+    <div className={cn('[.border-t]:pt-6 flex items-center px-6', className)} data-slot="card-footer" {...props} />
+  );
 }
 
+/* -----------------------------------------------------------------------------
+ * Component: CardAction
+ * -------------------------------------------------------------------------- */
+
+function CardAction({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+  return (
+    <div
+      className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)}
+      data-slot="card-action"
+      {...props}
+    />
+  );
+}
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
+export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
