@@ -39,7 +39,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --background: var(--color-white);
     --foreground: var(--color-neutral-950);
 
-    --primary: var(--color-neutral-900);
+    --primary: var(--color-sky-500);
     --primary-foreground: var(--color-neutral-50);
 
     --secondary: var(--color-neutral-100);
@@ -63,7 +63,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --sidebar: var(--color-neutral-50);
     --sidebar-foreground: var(--color-neutral-950);
 
-    --sidebar-primary: var(--color-neutral-900);
+    --sidebar-primary: var(--color-sky-500);
     --sidebar-primary-foreground: var(--color-neutral-50);
 
     --sidebar-accent: var(--color-neutral-100);
@@ -79,17 +79,17 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --chart-5: var(--color-amber-500);
   }
 
-  .dark {
-    --input: --alpha(var(--color-white) / 15%);
-    --border: --alpha(var(--color-white) / 10%);
+  @variant dark {
+    --input: var(--color-neutral-700);
+    --border: var(--color-neutral-800);
 
     --ring: var(--color-neutral-500);
 
     --background: var(--color-neutral-950);
     --foreground: var(--color-neutral-50);
 
-    --primary: var(--color-neutral-200);
-    --primary-foreground: var(--color-neutral-900);
+    --primary: var(--color-sky-700);
+    --primary-foreground: var(--color-neutral-50);
 
     --secondary: var(--color-neutral-800);
     --secondary-foreground: var(--color-neutral-50);
@@ -112,13 +112,13 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --sidebar: var(--color-neutral-900);
     --sidebar-foreground: var(--color-neutral-50);
 
-    --sidebar-primary: var(--color-blue-700);
+    --sidebar-primary: var(--color-sky-700);
     --sidebar-primary-foreground: var(--color-neutral-50);
 
     --sidebar-accent: var(--color-neutral-800);
     --sidebar-accent-foreground: var(--color-neutral-50);
 
-    --sidebar-border: --alpha(var(--color-white) / 10%);
+    --sidebar-border: var(--color-neutral-800);
     --sidebar-ring: var(--color-neutral-600);
 
     --chart-1: var(--color-blue-700);
