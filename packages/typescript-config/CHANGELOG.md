@@ -1,5 +1,15 @@
 # @codefast/typescript-config
 
+## 0.2.31
+
+### Patch Changes
+
+- [`18939be`](https://github.com/codefastlabs/codefast/commit/18939bec39e9c1b0dcdd4016a1651cfb62f6039f) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): refine animation utilities and components
+
+- [`1138a2a`](https://github.com/codefastlabs/codefast/commit/1138a2a6346e3032ae20e15d251849266f1f5275) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): adjust sidebar icon width for better alignment
+
+- [`1204505`](https://github.com/codefastlabs/codefast/commit/1204505b6c4659fe10dc27dd08f681137526834b) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): simplify class names for table and tabs
+
 ## 0.2.30
 
 ### Patch Changes
