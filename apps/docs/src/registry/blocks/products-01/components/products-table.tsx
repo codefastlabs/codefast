@@ -107,8 +107,8 @@ export function ProductsTable({
       </div>
       <div>
         <Table>
-          <TableHeader>
-            <TableRow>
+          <TableHeader className="bg-muted/50 [&>tr]:border-b-background">
+            <TableRow className="*:first:rounded-l-lg *:last:rounded-r-lg">
               <TableHead className="w-12 px-4">
                 <Checkbox />
               </TableHead>
