@@ -70,8 +70,8 @@
     --background: var(--color-neutral-950);
     --foreground: var(--color-neutral-50);
 
-    --primary: var(--color-sky-500);
-    --primary-foreground: var(--color-neutral-900);
+    --primary: var(--color-sky-700);
+    --primary-foreground: var(--color-neutral-50);
 
     --secondary: var(--color-neutral-800);
     --secondary-foreground: var(--color-neutral-50);
@@ -94,8 +94,8 @@
     --sidebar: var(--color-neutral-900);
     --sidebar-foreground: var(--color-neutral-50);
 
-    --sidebar-primary: var(--color-sky-500);
-    --sidebar-primary-foreground: var(--color-neutral-900);
+    --sidebar-primary: var(--color-sky-700);
+    --sidebar-primary-foreground: var(--color-neutral-50);
 
     --sidebar-accent: var(--color-neutral-800);
     --sidebar-accent-foreground: var(--color-neutral-50);
