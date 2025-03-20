@@ -51,7 +51,7 @@ function DialogContent({
       />
       <DialogPrimitive.Content
         className={cn(
-          'data-[state=open]:animate-in max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom-full sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95 data-[state=closed]:animate-out max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom-full sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4',
+          'data-[state=open]:animate-in max-sm:data-[state=open]:animation-duration-500 max-sm:data-[state=open]:slide-in-from-bottom sm:data-[state=open]:fade-in-0 sm:data-[state=open]:zoom-in-95 data-[state=closed]:animate-out max-sm:data-[state=closed]:animation-duration-500 max-sm:data-[state=closed]:slide-out-to-bottom sm:data-[state=closed]:fade-out-0 sm:data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto] justify-items-center overflow-auto sm:grid-rows-[1fr_auto_3fr] sm:p-4',
           classNames?.wrapper,
         )}
         data-slot="dialog-content-wrapper"

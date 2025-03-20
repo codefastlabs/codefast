@@ -184,10 +184,10 @@ function DrawerDirections(): JSX.Element {
           <Drawer direction={direction}>
             <DrawerTrigger asChild>
               <Button className="capitalize" size="icon" variant="outline">
-                {direction === 'top' && <ChevronUpIcon />}
-                {direction === 'bottom' && <ChevronUpIcon className="rotate-180" />}
-                {direction === 'left' && <ChevronUpIcon className="rotate-270" />}
-                {direction === 'right' && <ChevronUpIcon className="rotate-90" />}
+                {direction === 'top' && <ChevronUpIcon className="rotate-180" />}
+                {direction === 'right' && <ChevronUpIcon className="rotate-270" />}
+                {direction === 'bottom' && <ChevronUpIcon />}
+                {direction === 'left' && <ChevronUpIcon className="rotate-90" />}
               </Button>
             </DrawerTrigger>
             <DrawerContent>
