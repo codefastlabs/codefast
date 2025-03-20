@@ -34,6 +34,7 @@ import {
   Settings2Icon,
   SquareTerminalIcon,
 } from 'lucide-react';
+import Link from 'next/link';
 
 import type { Component, NavItem, Team, User } from '@/types';
 
@@ -159,7 +160,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
-                  <a href={`/#${item.name}`}>{getComponentName(item.name)}</a>
+                  <Link href={`/components/${item.name}`}>{getComponentName(item.name)}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

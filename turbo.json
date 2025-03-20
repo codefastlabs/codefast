@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "storybook-static/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "clean": {
       "cache": false
@@ -16,15 +16,12 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
-    "start": {
-      "cache": false
-    },
+    "start": {},
     "test": {},
     "test:coverage": {},
     "test:watch": {
       "cache": false,
       "persistent": true
     }
-  },
-  "ui": "tui"
+  }
 }
