@@ -35,7 +35,7 @@ import { NavSecondary } from '@/registry/blocks/dashboard-01/components/nav-seco
 import { NavUser } from '@/registry/blocks/dashboard-01/components/nav-user';
 
 const data = {
-  user: { name: 'shadcn', email: 'm@example.com', avatar: '/avatars/shadcn.jpg' },
+  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   navMain: [
     { title: 'Dashboard', url: '#', icon: IconDashboard },
     { title: 'Lifecycle', url: '#', icon: IconListDetails },
