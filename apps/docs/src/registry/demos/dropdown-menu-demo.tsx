@@ -260,7 +260,7 @@ function DropdownMenuAvatarOnly(): JSX.Element {
       <DropdownMenuTrigger asChild>
         <Button className="size-8 rounded-full border-none p-0" variant="outline">
           <Avatar>
-            <AvatarImage alt="leerob" src="https://github.com/leerob.png" />
+            <AvatarImage alt="leerob" src="/avatars/leerob.png" />
             <AvatarFallback className="rounded-lg">LR</AvatarFallback>
           </Avatar>
         </Button>
@@ -269,7 +269,7 @@ function DropdownMenuAvatarOnly(): JSX.Element {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
-              <AvatarImage alt="leerob" src="https://github.com/leerob.png" />
+              <AvatarImage alt="leerob" src="/avatars/leerob.png" />
               <AvatarFallback className="rounded-lg">LR</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">

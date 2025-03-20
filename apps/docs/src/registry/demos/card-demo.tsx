@@ -88,11 +88,11 @@ export function CardDemo(): JSX.Element {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <Avatar>
-                <AvatarImage alt="@leerob" src="https://github.com/leerob.png" />
+                <AvatarImage alt="@leerob" src="/avatars/leerob.png" />
                 <AvatarFallback>LR</AvatarFallback>
               </Avatar>
               <Avatar>
-                <AvatarImage alt="@evilrabbit" src="https://github.com/evilrabbit.png" />
+                <AvatarImage alt="@evilrabbit" src="/avatars/evilrabbit.png" />
                 <AvatarFallback>ER</AvatarFallback>
               </Avatar>
             </div>
