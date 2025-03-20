@@ -69,10 +69,10 @@ export function SheetDemo(): JSX.Element {
               <Sheet>
                 <SheetTrigger asChild>
                   <Button className="capitalize" size="icon" variant="outline">
-                    {side === 'top' && <ChevronUpIcon />}
-                    {side === 'bottom' && <ChevronUpIcon className="rotate-180" />}
-                    {side === 'left' && <ChevronUpIcon className="rotate-270" />}
-                    {side === 'right' && <ChevronUpIcon className="rotate-90" />}
+                    {side === 'top' && <ChevronUpIcon className="rotate-180" />}
+                    {side === 'right' && <ChevronUpIcon className="rotate-270" />}
+                    {side === 'bottom' && <ChevronUpIcon />}
+                    {side === 'left' && <ChevronUpIcon className="rotate-90" />}
                   </Button>
                 </SheetTrigger>
                 <SheetContent side={side}>
