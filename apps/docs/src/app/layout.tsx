@@ -58,7 +58,7 @@ export default async function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      className={cn(fontVariables, 'scroll-smooth antialiased', activeThemeValue && `theme-${activeThemeValue}`)}
+      className={cn(fontVariables, 'antialiased', activeThemeValue && `theme-${activeThemeValue}`)}
       lang="en"
     >
       <body>
