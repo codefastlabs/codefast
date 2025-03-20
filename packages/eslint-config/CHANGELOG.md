@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.32
+
+### Patch Changes
+
+- [`a954a20`](https://github.com/codefastlabs/codefast/commit/a954a2062ca7b1c96dd92bd9d194c1b3cb5e1c53) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance Card component layout and add CardAction
+
+- Updated dependencies [[`a954a20`](https://github.com/codefastlabs/codefast/commit/a954a2062ca7b1c96dd92bd9d194c1b3cb5e1c53)]:
+  - @codefast/style-guide@0.2.32
+
 ## 0.2.31
 
 ### Patch Changes
