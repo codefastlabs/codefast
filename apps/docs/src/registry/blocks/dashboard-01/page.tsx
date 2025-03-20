@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { CSSProperties, JSX } from 'react';
 
 import { SidebarInset, SidebarProvider } from '@codefast/ui';
 
@@ -16,7 +16,7 @@ export default function Page(): JSX.Element {
         {
           '--sidebar-width': 'calc(var(--spacing) * 72)',
           '--header-height': 'calc(var(--spacing) * 12)',
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <AppSidebar variant="inset" />
