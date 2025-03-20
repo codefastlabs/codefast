@@ -35,9 +35,9 @@ const frameworkOptions = [
 type Framework = (typeof frameworkOptions)[number];
 
 const usersOptions = [
-  { id: '1', username: 'codefastlabs' },
-  { id: '2', username: 'leerob' },
-  { id: '3', username: 'evilrabbit' },
+  { id: '1', username: 'codefastlabs', avatar: '/avatars/codefast-ui.webp' },
+  { id: '2', username: 'leerob', avatar: '/avatars/leerob.png' },
+  { id: '3', username: 'evilrabbit', avatar: '/avatars/evilrabbit.png' },
 ] as const;
 
 type User = (typeof usersOptions)[number];
@@ -163,7 +163,7 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
           {selectedUser ? (
             <div className="flex items-center gap-2">
               <Avatar className="size-5">
-                <AvatarImage src={`https://github.com/${selectedUser.username}.png`} />
+                <AvatarImage src={selectedUser.avatar} />
                 <AvatarFallback>{selectedUser.username[0]}</AvatarFallback>
               </Avatar>
               {selectedUser.username}
@@ -189,7 +189,7 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
                   }}
                 >
                   <Avatar className="size-5">
-                    <AvatarImage src={`https://github.com/${user.username}.png`} />
+                    <AvatarImage src={user.avatar} />
                     <AvatarFallback>{user.username[0]}</AvatarFallback>
                   </Avatar>
                   {user.username}
