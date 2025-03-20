@@ -129,7 +129,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
       {/* This is the first sidebar */}
       {/* We disable collapsible and adjust width to icon. */}
       {/* This will make the sidebar appear as icons. */}
-      <Sidebar className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r" collapsible="none">
+      <Sidebar className="w-(--sidebar-width-icon) border-r" collapsible="none">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -204,7 +204,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                     <span>{mail.name}</span> <span className="ml-auto text-xs">{mail.date}</span>
                   </div>
                   <span className="font-medium">{mail.subject}</span>
-                  <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">{mail.teaser}</span>
+                  <span className="line-clamp-2 whitespace-break-spaces text-xs">{mail.teaser}</span>
                 </Link>
               ))}
             </SidebarGroupContent>
