@@ -45,8 +45,8 @@ export function ProductsTable({
   }[];
 }): JSX.Element {
   return (
-    <div className="flex w-full flex-col gap-4">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex w-full flex-col gap-4 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <Tabs defaultValue="all">
           <TabsList>
             <TabsTrigger value="all">All Products</TabsTrigger>
@@ -60,7 +60,7 @@ export function ProductsTable({
             </TabsTrigger>
           </TabsList>
         </Tabs>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Select defaultValue="all">
             <SelectTrigger size="sm">
               <span className="text-muted-foreground text-sm">Category:</span>
