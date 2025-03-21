@@ -7,6 +7,7 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { ModeSwitcher } from '@/components/mode-switcher';
 import { NavHeader } from '@/components/nav-header';
 import { ThemeSelector } from '@/components/theme-selector';
+import '@/app/(app)/themes.css';
 
 export default async function AppLayout({ children }: Readonly<{ children: ReactNode }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
