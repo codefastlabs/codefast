@@ -66,7 +66,7 @@
   --chart-4: var(--color-amber-600);
   --chart-5: var(--color-amber-500);
 
-  @variant dark {
+  &.dark {
     --input: var(--color-slate-700);
     --border: --alpha(var(--color-slate-700) / 50%);
 
@@ -164,7 +164,7 @@
   --chart-4: var(--color-amber-600);
   --chart-5: var(--color-amber-500);
 
-  @variant dark {
+  &.dark {
     --input: var(--color-gray-700);
     --border: --alpha(var(--color-gray-700) / 50%);
 
@@ -262,7 +262,7 @@
   --chart-4: var(--color-amber-600);
   --chart-5: var(--color-amber-500);
 
-  @variant dark {
+  &.dark {
     --input: var(--color-zinc-700);
     --border: --alpha(var(--color-zinc-700) / 50%);
 
@@ -360,7 +360,7 @@
   --chart-4: var(--color-amber-600);
   --chart-5: var(--color-amber-500);
 
-  @variant dark {
+  &.dark {
     --input: var(--color-stone-700);
     --border: --alpha(var(--color-stone-700) / 50%);
 
