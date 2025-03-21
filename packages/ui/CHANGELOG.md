@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.2.35
+
+### Patch Changes
+
+- [`92e71e9`](https://github.com/codefastlabs/codefast/commit/92e71e9a6a6651c2f77487710d7edffe1c260051) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): remove invalid class from CommandShortcut component
+
+- Updated dependencies [[`92e71e9`](https://github.com/codefastlabs/codefast/commit/92e71e9a6a6651c2f77487710d7edffe1c260051)]:
+  - @codefast/hooks@0.2.35
+  - @codefast-ui/checkbox-group@0.2.35
+  - @codefast-ui/input@0.2.35
+  - @codefast-ui/input-number@0.2.35
+
 ## 0.2.34
 
 ### Patch Changes
