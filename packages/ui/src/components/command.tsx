@@ -163,10 +163,7 @@ function CommandLoading({ className, ...props }: ComponentProps<typeof CommandPr
 function CommandShortcut({ className, ...props }: ComponentProps<'span'>): JSX.Element {
   return (
     <span
-      className={cn(
-        'text-muted-foreground ml-auto text-xs tracking-widest group-aria-selected/command-item:text-current',
-        className,
-      )}
+      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
       data-slot="command-shortcut"
       {...props}
     />
