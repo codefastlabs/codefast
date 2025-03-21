@@ -19,7 +19,7 @@ import {
 import { GalleryVerticalEndIcon, MinusIcon, PlusIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types';
+import type { NavItem } from '@/types/sidebar';
 
 import { SearchForm } from '@/registry/blocks/sidebar-05/components/search-form';
 

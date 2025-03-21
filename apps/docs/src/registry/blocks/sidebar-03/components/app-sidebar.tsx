@@ -16,7 +16,7 @@ import {
 import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types';
+import type { NavItem } from '@/types/sidebar';
 
 // This is sample data.
 const data: {

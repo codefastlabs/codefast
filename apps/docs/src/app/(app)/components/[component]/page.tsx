@@ -2,12 +2,12 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { type JSX, cache } from 'react';
 
-import type { Registry } from '@/app/(app)/components/[component]/registries';
+import type { Registry } from '@/types/registry';
 
-import { registries } from '@/app/(app)/components/[component]/registries';
+import { registryComponents } from '@/app/(app)/components/registry-components';
 import { ComponentWrapper } from '@/components/component-wrapper';
 
-const getCacheRegistry = cache((component: string): null | Registry => registries[component]);
+const getCacheRegistry = cache((component: string): null | Registry => registryComponents[component]);
 
 export const dynamicParams = false;
 
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ component
 }
 
 export function generateStaticParams(): { component: string }[] {
-  return Object.keys(registries).map((component) => ({
+  return Object.keys(registryComponents).map((component) => ({
     component,
   }));
 }
