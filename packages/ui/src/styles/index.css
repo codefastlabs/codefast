@@ -1,4 +1,49 @@
 /**
+ * Base Styles
+ * -----------------------------------------------------------------------------
+ * Apply general settings for the entire interface, including background color,
+ * text color, default border color, and customizations for input.
+ */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border);
+    outline-color: color-mix(in oklab, var(--ring) 20%, transparent);
+  }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+  }
+
+  html,
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  input {
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      appearance: none;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type='number'] {
+      -moz-appearance: textfield;
+    }
+  }
+}
+
+/**
  * Named Color Theme Definitions
  * -----------------------------------------------------------------------------
  * Defines color variables used throughout the application to ensure interface
@@ -52,51 +97,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-}
-
-/**
- * Base Styles
- * -----------------------------------------------------------------------------
- * Apply general settings for the entire interface, including background color,
- * text color, default border color, and customizations for input.
- */
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-border);
-    outline-color: color-mix(in oklab, var(--ring) 20%, transparent);
-  }
-
-  ::selection {
-    background-color: var(--color-primary);
-    color: var(--color-background);
-  }
-
-  html,
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-  }
-
-  input {
-    &::-webkit-search-cancel-button,
-    &::-webkit-search-decoration {
-      appearance: none;
-    }
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    &[type='number'] {
-      -moz-appearance: textfield;
-    }
-  }
 }
 
 /**
