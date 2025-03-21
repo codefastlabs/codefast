@@ -1,591 +1,144 @@
+import dynamic from 'next/dynamic';
+
 import type { Registry } from '@/types/registry';
 
-export const blocks: Registry['items'] = [
-  {
-    name: 'sidebar-01',
-    type: 'registry:block',
+export const registryBlocks: Record<string, Registry> = {
+  'sidebar-01': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-01/page')),
     description: 'A simple sidebar with navigation grouped by section.',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-01/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-01/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-01/components/search-form.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-01/components/version-switcher.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-01',
+    title: 'Sidebar 01',
   },
-  {
-    name: 'sidebar-02',
+  'sidebar-02': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-02/page')),
     description: 'A sidebar with collapsible sections.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-02/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-02/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-02/components/search-form.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-02/components/version-switcher.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-02',
+    title: 'Sidebar 02',
   },
-  {
-    name: 'sidebar-03',
+  'sidebar-03': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-03/page')),
     description: 'A sidebar with submenus.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-03/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-03/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-03',
+    title: 'Sidebar 03',
   },
-  {
-    name: 'sidebar-04',
+  'sidebar-04': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-04/page')),
     description: 'A floating sidebar with submenus.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-04/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-04/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-04',
+    title: 'Sidebar 04',
   },
-  {
-    name: 'sidebar-05',
+  'sidebar-05': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-05/page')),
     description: 'A sidebar with collapsible submenus.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-05/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-05/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-05/components/search-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-05',
+    title: 'Sidebar 05',
   },
-  {
-    name: 'sidebar-06',
+  'sidebar-06': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-06/page')),
     description: 'A sidebar with submenus as dropdowns.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-06/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-06/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-06/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-06/components/sidebar-opt-in-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-06',
+    title: 'Sidebar 06',
   },
-  {
-    name: 'sidebar-07',
-    type: 'registry:block',
+  'sidebar-07': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-07/page')),
     description: 'A sidebar that collapses to icons.',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-07/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-07/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-07/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-07/components/nav-projects.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-07/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-07/components/team-switcher.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-07',
+    title: 'Sidebar 07',
   },
-  {
-    name: 'sidebar-08',
+  'sidebar-08': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-08/page')),
     description: 'An inset sidebar with secondary navigation.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-08/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-08/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-08/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-08/components/nav-projects.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-08/components/nav-secondary.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-08/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-08',
+    title: 'Sidebar 08',
   },
-  {
-    name: 'sidebar-09',
+  'sidebar-09': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-09/page')),
     description: 'Collapsible nested sidebars.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-09/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-09/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-09/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-09',
+    title: 'Sidebar 09',
   },
-  {
-    name: 'sidebar-10',
+  'sidebar-10': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-10/page')),
     description: 'A sidebar in a popover.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-10/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/nav-actions.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/nav-favorites.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/nav-secondary.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/nav-workspaces.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-10/components/team-switcher.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-10',
+    title: 'Sidebar 10',
   },
-  {
-    name: 'sidebar-11',
+  'sidebar-11': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-11/page')),
     description: 'A sidebar with a collapsible file tree.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-11/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-11/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-11',
+    title: 'Sidebar 11',
   },
-  {
-    name: 'sidebar-12',
+  'sidebar-12': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-12/page')),
     description: 'A sidebar with a calendar.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-12/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-12/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-12/components/calendars.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-12/components/date-picker.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-12/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-12',
+    title: 'Sidebar 12',
   },
-  {
-    name: 'sidebar-13',
+  'sidebar-13': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-13/page')),
     description: 'A sidebar in a dialog.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-13/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-13/components/settings-dialog.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-13',
+    title: 'Sidebar 13',
   },
-  {
-    name: 'sidebar-14',
+  'sidebar-14': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-14/page')),
     description: 'A sidebar on the right.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-14/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-14/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-14',
+    title: 'Sidebar 14',
   },
-  {
-    name: 'sidebar-15',
+  'sidebar-15': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-15/page')),
     description: 'A left and right sidebar.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-15/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/calendars.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/date-picker.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/nav-favorites.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/nav-secondary.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/nav-workspaces.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/sidebar-left.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/sidebar-right.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-15/components/team-switcher.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-15',
+    title: 'Sidebar 15',
   },
-  {
-    name: 'sidebar-16',
+  'sidebar-16': {
+    component: dynamic(() => import('@/registry/blocks/sidebar-16/page')),
     description: 'A sidebar with a sticky site header.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/sidebar-16/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/nav-projects.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/nav-secondary.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/search-form.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/sidebar-16/components/site-header.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['sidebar', 'dashboard'],
+    name: 'sidebar-16',
+    title: 'Sidebar 16',
   },
-  {
-    name: 'login-01',
+  'login-01': {
+    component: dynamic(() => import('@/registry/blocks/login-01/page')),
     description: 'A simple login form.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/login-01/page.tsx',
-        target: 'app/login/page.tsx',
-        type: 'registry:page',
-      },
-      {
-        path: '@/registry/blocks/login-01/components/login-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['authentication', 'login'],
+    name: 'login-01',
+    title: 'Login 01',
   },
-  {
-    name: 'login-02',
+  'login-02': {
+    component: dynamic(() => import('@/registry/blocks/login-02/page')),
     description: 'A two column login page with a cover image.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/login-02/page.tsx',
-        target: 'app/login/page.tsx',
-        type: 'registry:page',
-      },
-      {
-        path: '@/registry/blocks/login-02/components/login-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['authentication', 'login'],
+    name: 'login-02',
+    title: 'Login 02',
   },
-  {
-    name: 'login-03',
+  'login-03': {
+    component: dynamic(() => import('@/registry/blocks/login-03/page')),
     description: 'A login page with a muted background color.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/login-03/page.tsx',
-        target: 'app/login/page.tsx',
-        type: 'registry:page',
-      },
-      {
-        path: '@/registry/blocks/login-03/components/login-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['authentication', 'login'],
+    name: 'login-03',
+    title: 'Login 03',
   },
-  {
-    name: 'login-04',
+  'login-04': {
+    component: dynamic(() => import('@/registry/blocks/login-04/page')),
     description: 'A login page with form and image.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/login-04/page.tsx',
-        target: 'app/login/page.tsx',
-        type: 'registry:page',
-      },
-      {
-        path: '@/registry/blocks/login-04/components/login-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['authentication', 'login'],
+    name: 'login-04',
+    title: 'Login 04',
   },
-  {
-    name: 'login-05',
+  'login-05': {
+    component: dynamic(() => import('@/registry/blocks/login-05/page')),
     description: 'A simple email-only login page.',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/login-05/page.tsx',
-        target: 'app/login/page.tsx',
-        type: 'registry:page',
-      },
-      {
-        path: '@/registry/blocks/login-05/components/login-form.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['authentication', 'login'],
+    name: 'login-05',
+    title: 'Login 05',
   },
-  {
-    name: 'products-01',
+  'products-01': {
+    component: dynamic(() => import('@/registry/blocks/products-01/page')),
     description: 'A table of products',
-    type: 'registry:block',
-    files: [
-      {
-        path: '@/registry/blocks/products-01/page.tsx',
-        type: 'registry:page',
-        target: 'app/products/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/products-01/components/products-table.tsx',
-        type: 'registry:component',
-      },
-    ],
+    name: 'products-01',
+    title: 'Products 01',
   },
-  {
-    name: 'dashboard-01',
-    type: 'registry:block',
+  'dashboard-01': {
+    component: dynamic(() => import('@/registry/blocks/dashboard-01/page')),
     description: 'A dashboard with sidebar, charts and data table.',
-    files: [
-      {
-        path: '@/registry/blocks/dashboard-01/page.tsx',
-        type: 'registry:page',
-        target: 'app/dashboard/page.tsx',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/data.json',
-        type: 'registry:file',
-        target: 'app/dashboard/data.json',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/app-sidebar.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/chart-area-interactive.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/data-table.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/nav-documents.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/nav-main.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/nav-secondary.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/nav-user.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/section-cards.tsx',
-        type: 'registry:component',
-      },
-      {
-        path: '@/registry/blocks/dashboard-01/components/site-header.tsx',
-        type: 'registry:component',
-      },
-    ],
-    categories: ['dashboard'],
+    name: 'dashboard-01',
+    title: 'Dashboard 01',
   },
-];
+};
