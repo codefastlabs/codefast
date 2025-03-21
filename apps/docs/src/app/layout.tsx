@@ -57,17 +57,15 @@ export default async function RootLayout({
   const isScaled = activeThemeValue?.endsWith('-scaled');
 
   return (
-    <html
-      suppressHydrationWarning
-      className={cn(
-        'overscroll-none antialiased',
-        activeThemeValue && `theme-${activeThemeValue}`,
-        isScaled && 'theme-scaled',
-        fontVariables,
-      )}
-      lang="en"
-    >
-      <body>
+    <html suppressHydrationWarning lang="en">
+      <body
+        className={cn(
+          'overscroll-none antialiased',
+          activeThemeValue && `theme-${activeThemeValue}`,
+          isScaled && 'theme-scaled',
+          fontVariables,
+        )}
+      >
         <ThemeProvider disableTransitionOnChange enableColorScheme enableSystem attribute="class" defaultTheme="system">
           <ActiveThemeProvider initialTheme={activeThemeValue}>{children}</ActiveThemeProvider>
           <Toaster />
