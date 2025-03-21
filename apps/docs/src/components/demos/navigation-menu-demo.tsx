@@ -15,33 +15,33 @@ import Link from 'next/link';
 const components: { description: string; href: string; title: string }[] = [
   {
     title: 'Alert Dialog',
-    href: '/docs/primitives/alert-dialog',
+    href: '/components/alert-dialog',
     description: 'A modal dialog that interrupts the user with important content and expects a response.',
   },
   {
     title: 'Hover Card',
-    href: '/docs/primitives/hover-card',
+    href: '/components/hover-card',
     description: 'For sighted users to preview content available behind a link.',
   },
   {
     title: 'Progress',
-    href: '/docs/primitives/progress',
+    href: '/components/progress',
     description:
       'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
   },
   {
     title: 'Scroll-area',
-    href: '/docs/primitives/scroll-area',
+    href: '/components/scroll-area',
     description: 'Visually or semantically separates content.',
   },
   {
     title: 'Tabs',
-    href: '/docs/primitives/tabs',
+    href: '/components/tabs',
     description: 'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
   },
   {
     title: 'Tooltip',
-    href: '/docs/primitives/tooltip',
+    href: '/components/tooltip',
     description:
       'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
   },
@@ -60,7 +60,7 @@ export function NavigationMenuDemo(): JSX.Element {
                   <NavigationMenuLink asChild>
                     <Link
                       className="from-muted/50 to-muted dark:from-accent/50 dark:to-accent bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus:shadow-md"
-                      href="/apps/docs/public#"
+                      href="/"
                     >
                       <div className="mb-2 mt-4 text-lg font-medium">@codefast/ui</div>
                       <p className="text-muted-foreground text-sm leading-tight">
@@ -95,7 +95,7 @@ export function NavigationMenuDemo(): JSX.Element {
           </NavigationMenuItem>
           <NavigationMenuItem value="forms">
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/apps/docs/public#">Documentation</Link>
+              <Link href="/">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
@@ -104,7 +104,7 @@ export function NavigationMenuDemo(): JSX.Element {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/apps/docs/public#">Documentation</Link>
+              <Link href="/">Documentation</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem value="list">
