@@ -1,5 +1,17 @@
 # @codefast/ui
 
+## 0.2.34
+
+### Patch Changes
+
+- [`b537b37`](https://github.com/codefastlabs/codefast/commit/b537b37ddffd3e586caae087534530f252957327) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update drawer corner radius for top/bottom directions
+
+- Updated dependencies [[`b537b37`](https://github.com/codefastlabs/codefast/commit/b537b37ddffd3e586caae087534530f252957327)]:
+  - @codefast/hooks@0.2.34
+  - @codefast-ui/checkbox-group@0.2.34
+  - @codefast-ui/input@0.2.34
+  - @codefast-ui/input-number@0.2.34
+
 ## 0.2.33
 
 ### Patch Changes
