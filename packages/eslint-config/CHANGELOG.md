@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.2.34
+
+### Patch Changes
+
+- [`b537b37`](https://github.com/codefastlabs/codefast/commit/b537b37ddffd3e586caae087534530f252957327) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update drawer corner radius for top/bottom directions
+
+- Updated dependencies [[`b537b37`](https://github.com/codefastlabs/codefast/commit/b537b37ddffd3e586caae087534530f252957327)]:
+  - @codefast/style-guide@0.2.34
+
 ## 0.2.33
 
 ### Patch Changes
