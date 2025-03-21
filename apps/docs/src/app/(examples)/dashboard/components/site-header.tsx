@@ -19,7 +19,7 @@ export function SiteHeader(): JSX.Element {
               size: 'sm',
               variant: 'ghost',
             })}
-            href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
+            href="https://github.com/codefastlabs/codefast/tree/main/apps/docs/src/app/(examples)/dashboard"
             rel="noopener noreferrer"
             target="_blank"
           >
