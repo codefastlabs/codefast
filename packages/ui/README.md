@@ -27,6 +27,8 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
 @source '../../node_modules/@codefast/ui/dist';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --input: oklch(0.922 0 0);
@@ -77,7 +79,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
     --chart-5: oklch(0.769 0.188 70.08);
   }
 
-  .dark {
+  @variant dark {
     --input: oklch(0.371 0 0);
     --border: oklch(0.371 0 0 / 50%);
 
