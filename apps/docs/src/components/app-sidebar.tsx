@@ -7,6 +7,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Label,
+  logger,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -35,6 +36,8 @@ import {
   SquareTerminalIcon,
 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 import type { Registry } from '@/types/registry';
 import type { NavItem, Team, User } from '@/types/sidebar';
@@ -105,6 +108,8 @@ const data: {
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+  const pathname = usePathname();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -158,13 +163,13 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarGroupLabel>Components</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild isActive={pathname === '/components'}>
                 <Link href="/components">All Components</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild isActive={pathname === `/components/${item.name}`}>
                   <Link href={`/components/${item.name}`}>{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
