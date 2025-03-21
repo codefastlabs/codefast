@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithoutRef, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import { cn } from '@codefast/ui';
 
@@ -12,7 +12,7 @@ export function ComponentWrapper({
   children,
   classNames,
   ...props
-}: ComponentPropsWithoutRef<'div'> & {
+}: ComponentProps<'div'> & {
   name: string;
   classNames?: {
     body?: string;

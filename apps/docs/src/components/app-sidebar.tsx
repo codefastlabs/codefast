@@ -7,7 +7,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Label,
-  logger,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -37,7 +36,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
 
 import type { Registry } from '@/types/registry';
 import type { NavItem, Team, User } from '@/types/sidebar';

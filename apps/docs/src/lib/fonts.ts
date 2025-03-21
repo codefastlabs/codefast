@@ -1,14 +1,48 @@
 import { cn } from '@codefast/ui';
-import { Geist, Geist_Mono as GeistMono } from 'next/font/google';
+import {
+  Geist,
+  Geist_Mono as GeistMono,
+  Instrument_Sans as InstrumentSans,
+  Inter,
+  Mulish,
+  Noto_Sans_Mono as NotoSansMono,
+} from 'next/font/google';
 
-export const geistSans = Geist({
+const fontGeistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 });
 
-export const geistMono = GeistMono({
+const fontGeistMono = GeistMono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 });
 
-export const fontVariables = cn(geistSans.variable, geistMono.variable);
+const fontInstrument = InstrumentSans({
+  variable: '--font-instrument',
+  subsets: ['latin'],
+});
+
+const fontNotoMono = NotoSansMono({
+  variable: '--font-noto-mono',
+  subsets: ['latin'],
+});
+
+const fontMullish = Mulish({
+  variable: '--font-mullish',
+  subsets: ['latin'],
+});
+
+const fontInter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+});
+
+export const fontVariables = cn(
+  fontGeistSans.variable,
+  fontGeistMono.variable,
+  fontInstrument.variable,
+  fontNotoMono.variable,
+  fontMullish.variable,
+  fontInter.variable,
+);

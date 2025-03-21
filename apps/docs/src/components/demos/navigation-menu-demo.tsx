@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, JSX } from 'react';
+import type { ComponentProps, JSX } from 'react';
 
 import {
   NavigationMenu,
@@ -185,7 +185,7 @@ export function NavigationMenuDemo(): JSX.Element {
   );
 }
 
-function ListItem({ title, children, href, ...props }: ComponentPropsWithoutRef<'li'> & { href: string }): JSX.Element {
+function ListItem({ title, children, href, ...props }: ComponentProps<'li'> & { href: string }): JSX.Element {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

@@ -47,6 +47,10 @@ export function ActiveThemeProvider({
     }
 
     html.classList.add(`theme-${activeTheme}`);
+
+    if (activeTheme.endsWith('-scaled')) {
+      html.classList.add('theme-scaled');
+    }
   }, [activeTheme]);
 
   return <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>{children}</ThemeContext.Provider>;
