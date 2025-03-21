@@ -27,7 +27,7 @@
   --primary: var(--color-neutral-600);
   --primary-foreground: var(--color-neutral-50);
 
-  @variant dark {
+  &.dark {
     --primary: var(--color-neutral-500);
     --primary-foreground: var(--color-neutral-50);
   }
@@ -38,7 +38,7 @@
   --primary: var(--color-blue-600);
   --primary-foreground: var(--color-blue-50);
 
-  @variant dark {
+  &.dark {
     --primary: var(--color-blue-500);
     --primary-foreground: var(--color-blue-50);
   }
@@ -49,7 +49,7 @@
   --primary: var(--color-green-600);
   --primary-foreground: var(--color-green-50);
 
-  @variant dark {
+  &.dark {
     --primary: var(--color-green-600);
     --primary-foreground: var(--color-green-50);
   }
@@ -60,7 +60,7 @@
   --primary: var(--color-amber-600);
   --primary-foreground: var(--color-amber-50);
 
-  @variant dark {
+  &.dark {
     --primary: var(--color-amber-500);
     --primary-foreground: var(--color-amber-50);
   }
@@ -73,7 +73,7 @@
   --primary: var(--color-neutral-600);
   --primary-foreground: var(--color-neutral-50);
 
-  @variant dark {
+  &.dark {
     --primary: var(--color-neutral-500);
     --primary-foreground: var(--color-neutral-50);
   }
