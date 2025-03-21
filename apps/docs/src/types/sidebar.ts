@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { ComponentType } from 'react';
 
 export interface User {
   avatar: string;
@@ -7,7 +8,7 @@ export interface User {
 }
 
 export interface Team {
-  logo: React.ComponentType;
+  logo: ComponentType;
   name: string;
   plan: 'Enterprise' | 'Free' | 'Startup';
 }

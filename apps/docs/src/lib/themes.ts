@@ -9,4 +9,5 @@ export const THEMES: Theme[] = [
   { name: 'Gray', value: 'gray' },
   { name: 'Zinc', value: 'zinc' },
   { name: 'Stone', value: 'stone' },
+  { name: 'Scaled', value: 'scaled' },
 ];
