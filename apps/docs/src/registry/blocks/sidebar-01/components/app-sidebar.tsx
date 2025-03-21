@@ -14,7 +14,7 @@ import {
 } from '@codefast/ui';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types';
+import type { NavItem } from '@/types/sidebar';
 
 import { SearchForm } from '@/registry/blocks/sidebar-01/components/search-form';
 import { VersionSwitcher } from '@/registry/blocks/sidebar-01/components/version-switcher';

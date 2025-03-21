@@ -1,21 +1,21 @@
 import { type Metadata } from 'next';
 import { type JSX } from 'react';
 
-import { registries } from '@/app/(app)/components/[component]/registries';
+import { registryComponents } from '@/app/(app)/components/registry-components';
 import { ComponentWrapper } from '@/components/component-wrapper';
+
+const sortedComponents = Object.entries(registryComponents).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 
 export const metadata: Metadata = {
   title: 'Components',
 };
 
 export default function ComponentsPage(): JSX.Element {
-  const sortedComponents = Object.entries(registries).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
-
   return (
     <div className="@container grid gap-4 p-4 2xl:container 2xl:mx-auto">
-      {sortedComponents.map(([key, registry]) => (
-        <ComponentWrapper key={key} name={registry.title}>
-          <registry.component />
+      {sortedComponents.map(([key, { title, component: Component }]) => (
+        <ComponentWrapper key={key} name={title}>
+          <Component />
         </ComponentWrapper>
       ))}
     </div>

@@ -36,16 +36,16 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import type { Component, NavItem, Team, User } from '@/types';
+import type { Registry } from '@/types/registry';
+import type { NavItem, Team, User } from '@/types/sidebar';
 
-import { getComponentName } from '@/lib/utils';
+import { registryComponents } from '@/app/(app)/components/registry-components';
 import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
 import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
-import { ui } from '@/registry/registry-demo';
 
 // This is sample data.
 const data: {
-  components: Component[];
+  components: Registry[];
   navMain: NavItem[];
   teams: Team[];
   user: User;
@@ -101,7 +101,7 @@ const data: {
       ],
     },
   ],
-  components: ui.sort((a, b) => a.name.localeCompare(b.name)),
+  components: Object.values(registryComponents),
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
@@ -157,10 +157,15 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
         <SidebarGroup className="group-data-[collapsible=icon]:hidden">
           <SidebarGroupLabel>Components</SidebarGroupLabel>
           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/components">All Components</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             {data.components.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
-                  <Link href={`/components/${item.name}`}>{getComponentName(item.name)}</Link>
+                  <Link href={`/components/${item.name}`}>{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

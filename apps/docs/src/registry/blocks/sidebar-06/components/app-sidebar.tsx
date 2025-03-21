@@ -13,7 +13,7 @@ import {
 import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types';
+import type { NavItem } from '@/types/sidebar';
 
 import { NavMain } from '@/registry/blocks/sidebar-06/components/nav-main';
 import { SidebarOptInForm } from '@/registry/blocks/sidebar-06/components/sidebar-opt-in-form';
