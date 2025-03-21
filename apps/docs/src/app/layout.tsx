@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 import { cn, Toaster } from '@codefast/ui';
 import { cookies } from 'next/headers';
@@ -50,15 +50,21 @@ export const viewport: Viewport = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
   const activeThemeValue = cookieStore.get('active_theme')?.value;
+  const isScaled = activeThemeValue?.endsWith('-scaled');
 
   return (
     <html
       suppressHydrationWarning
-      className={cn(fontVariables, 'antialiased', activeThemeValue && `theme-${activeThemeValue}`)}
+      className={cn(
+        'overscroll-none antialiased',
+        activeThemeValue && `theme-${activeThemeValue}`,
+        isScaled && 'theme-scaled',
+        fontVariables,
+      )}
       lang="en"
     >
       <body>
