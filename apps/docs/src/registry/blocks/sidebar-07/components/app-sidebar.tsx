@@ -16,7 +16,7 @@ import {
   SquareTerminalIcon,
 } from 'lucide-react';
 
-import type { NavItem, Project, Team, User } from '@/types';
+import type { NavItem, Project, Team, User } from '@/types/sidebar';
 
 import { NavMain } from '@/registry/blocks/sidebar-07/components/nav-main';
 import { NavProjects } from '@/registry/blocks/sidebar-07/components/nav-projects';

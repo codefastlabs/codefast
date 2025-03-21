@@ -16,7 +16,7 @@ import {
 import { MoreHorizontalIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types';
+import type { NavItem } from '@/types/sidebar';
 
 export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
   const { isMobile } = useSidebar();

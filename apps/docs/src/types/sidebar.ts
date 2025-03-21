@@ -26,11 +26,6 @@ export interface NavItem {
   isActive?: boolean;
 }
 
-export interface Component {
-  name: string;
-  type?: string;
-}
-
 export interface Project {
   icon: LucideIcon;
   name: string;

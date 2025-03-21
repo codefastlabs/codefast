@@ -19,7 +19,7 @@ import {
 import { FolderIcon, ForwardIcon, MoreHorizontalIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { Project } from '@/types';
+import type { Project } from '@/types/sidebar';
 
 export function NavProjects({ projects }: { projects: Project[] }): JSX.Element {
   const { isMobile } = useSidebar();
