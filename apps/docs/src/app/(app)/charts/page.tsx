@@ -12,16 +12,19 @@ export const metadata: Metadata = {
 
 export default function ChartsPage(): JSX.Element {
   return (
-    <div className="grid flex-1 items-start gap-4 p-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-      {sortedCharts.map(([key, { component: Component }]) => (
-        <ComponentWrapper
-          key={key}
-          className="**:data-[slot=card]:w-full w-auto lg:data-[name=chartareainteractive]:col-span-2 lg:data-[name=chartbarinteractive]:col-span-2 lg:data-[name=chartlineinteractive]:col-span-2 xl:data-[name=chartareainteractive]:col-span-3 xl:data-[name=chartbarinteractive]:col-span-3 xl:data-[name=chartlineinteractive]:col-span-3"
-          name={key}
-        >
-          <Component />
-        </ComponentWrapper>
-      ))}
+    <div className="container mx-auto p-4">
+      <div className="grid flex-1 items-start gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {sortedCharts.map(([key, { component: Component }]) => (
+          <ComponentWrapper
+            key={key}
+            className="**:data-[slot=card]:w-full w-auto lg:data-[name$=-interactive]:col-span-2 xl:data-[name$=-interactive]:col-span-3 2xl:data-[name$=-interactive]:col-span-4"
+            classNames={{ body: 'overflow-auto' }}
+            name={key}
+          >
+            <Component />
+          </ComponentWrapper>
+        ))}
+      </div>
     </div>
   );
 }
