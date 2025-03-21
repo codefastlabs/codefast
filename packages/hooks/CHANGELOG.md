@@ -1,5 +1,11 @@
 # @codefast/hooks
 
+## 0.2.33
+
+### Patch Changes
+
+- [#86](https://github.com/codefastlabs/codefast/pull/86) [`4802dda`](https://github.com/codefastlabs/codefast/commit/4802dda3244102148149b64015f59f0656b97626) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove backdrop blur from overlay components
+
 ## 0.2.32
 
 ### Patch Changes
