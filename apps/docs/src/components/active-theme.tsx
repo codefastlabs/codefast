@@ -40,16 +40,16 @@ export function ActiveThemeProvider({
   useEffect(() => {
     setThemeCookie(activeTheme);
 
-    const html = document.documentElement;
+    const body = document.body;
 
-    for (const className of [...html.classList].filter((currentClass) => currentClass.startsWith('theme-'))) {
-      html.classList.remove(className);
+    for (const className of [...body.classList].filter((currentClass) => currentClass.startsWith('theme-'))) {
+      body.classList.remove(className);
     }
 
-    html.classList.add(`theme-${activeTheme}`);
+    body.classList.add(`theme-${activeTheme}`);
 
     if (activeTheme.endsWith('-scaled')) {
-      html.classList.add('theme-scaled');
+      body.classList.add('theme-scaled');
     }
   }, [activeTheme]);
 
