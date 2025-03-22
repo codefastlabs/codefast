@@ -1,6 +1,18 @@
 import type { ComponentProps, JSX } from 'react';
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, cn, Input, Label } from '@codefast/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  cn,
+  Input,
+  Label,
+  Separator,
+  SeparatorItem,
+} from '@codefast/ui';
 import Link from 'next/link';
 
 export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.Element {
@@ -34,9 +46,9 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
                   Login with Google
                 </Button>
               </div>
-              <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                <span className="bg-background text-muted-foreground relative z-10 px-2">Or continue with</span>
-              </div>
+              <Separator>
+                <SeparatorItem className="bg-card">Or continue with</SeparatorItem>
+              </Separator>
               <div className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
