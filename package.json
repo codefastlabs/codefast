@@ -16,7 +16,7 @@
     "lint:fix": "turbo run lint -- --fix",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm clean && pnpm install && pnpm build",
-    "package:update": "pnpm update --latest --recursive",
+    "package:update": "pnpm update --latest --recursive --interactive",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:fix": "prettier --write --ignore-unknown .",
     "start": "turbo run start",
@@ -44,7 +44,7 @@
     "tsx": "^4.19.3",
     "turbo": "^2.4.4"
   },
-  "packageManager": "pnpm@10.6.4",
+  "packageManager": "pnpm@10.6.5",
   "engines": {
     "node": "^22"
   }
