@@ -1,6 +1,6 @@
 import type { ComponentProps, JSX } from 'react';
 
-import { Button, Card, CardContent, cn, Input, Label } from '@codefast/ui';
+import { Button, Card, CardContent, cn, Input, Label, Separator, SeparatorItem } from '@codefast/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -31,9 +31,9 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
               <Button className="w-full" type="submit">
                 Login
               </Button>
-              <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                <span className="bg-background text-muted-foreground relative z-10 px-2">Or continue with</span>
-              </div>
+              <Separator>
+                <SeparatorItem className="bg-card">Or continue with</SeparatorItem>
+              </Separator>
               <div className="grid grid-cols-3 gap-4">
                 <Button className="w-full" type="button" variant="outline">
                   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -73,6 +73,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
           </form>
           <div className="bg-muted relative hidden md:block">
             <Image
+              fill
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
               src="/placeholder.svg"
