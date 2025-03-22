@@ -166,7 +166,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                       }}
                     >
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span className="sr-only">{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
