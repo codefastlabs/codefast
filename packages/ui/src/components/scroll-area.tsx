@@ -74,11 +74,11 @@ const SCROLL_AREA_NAME = 'ScrollArea';
 
 type ScopedProps<P> = P & { __scopeScrollArea?: Scope };
 
-const [createCarouselContext] = createContextScope(SCROLL_AREA_NAME);
+const [createScrollAreaContext] = createContextScope(SCROLL_AREA_NAME);
 
 type ScrollAreaContextValue = Pick<VariantProps<typeof scrollAreaScrollbarVariants>, 'size'>;
 
-const [CarouselProvider, useCarouselContext] = createCarouselContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
+const [ScrollAreaProvider, useScrollAreaContext] = createScrollAreaContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
@@ -92,10 +92,10 @@ function ScrollArea({
   ...props
 }: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>): JSX.Element {
   return (
-    <CarouselProvider scope={__scopeScrollArea} size={size}>
+    <ScrollAreaProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root className={cn('relative', className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
-          className="outline-ring ring-ring/50 size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4 [&>*]:h-full"
+          className="outline-ring ring-ring/50 *:block! size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4"
           data-slot="scroll-area-viewport"
         >
           {children}
@@ -104,7 +104,7 @@ function ScrollArea({
         <ScrollAreaScrollbar orientation="horizontal" />
         <ScrollAreaPrimitive.Corner />
       </ScrollAreaPrimitive.Root>
-    </CarouselProvider>
+    </ScrollAreaProvider>
   );
 }
 
@@ -118,7 +118,7 @@ function ScrollAreaScrollbar({
   orientation,
   ...props
 }: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>>): JSX.Element {
-  const { size } = useCarouselContext(SCROLL_AREA_NAME, __scopeScrollArea);
+  const { size } = useScrollAreaContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
   return (
     <ScrollAreaPrimitive.Scrollbar
