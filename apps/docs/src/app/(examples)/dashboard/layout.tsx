@@ -3,8 +3,8 @@ import type { CSSProperties, JSX, ReactNode } from 'react';
 import { SidebarInset, SidebarProvider } from '@codefast/ui';
 import { cookies } from 'next/headers';
 
-import { AppSidebar } from '@/app/(examples)/dashboard/components/app-sidebar';
-import { SiteHeader } from '@/app/(examples)/dashboard/components/site-header';
+import { AppSidebar } from '@/app/(examples)/dashboard/_components/app-sidebar';
+import { SiteHeader } from '@/app/(examples)/dashboard/_components/site-header';
 import '@/app/(examples)/dashboard/theme.css';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {

@@ -30,10 +30,10 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 
-import { NavDocuments } from '@/app/(examples)/dashboard/components/nav-documents';
-import { NavMain } from '@/app/(examples)/dashboard/components/nav-main';
-import { NavSecondary } from '@/app/(examples)/dashboard/components/nav-secondary';
-import { NavUser } from '@/app/(examples)/dashboard/components/nav-user';
+import { NavDocuments } from '@/app/(examples)/dashboard/_components/nav-documents';
+import { NavMain } from '@/app/(examples)/dashboard/_components/nav-main';
+import { NavSecondary } from '@/app/(examples)/dashboard/_components/nav-secondary';
+import { NavUser } from '@/app/(examples)/dashboard/_components/nav-user';
 
 const data = {
   user: {
