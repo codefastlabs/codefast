@@ -46,7 +46,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
   const Component = registry.component;
 
   return (
-    <div className="@container grid gap-4 p-4">
+    <div className="@container grid gap-6 p-6">
       <ComponentWrapper name={registry.title}>
         <Component />
       </ComponentWrapper>

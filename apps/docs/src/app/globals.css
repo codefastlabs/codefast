@@ -6,6 +6,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --breakpoint-3xl: 112rem;
+}
+
 @layer base {
   :root {
     --font-sans: var(--font-geist-sans);
