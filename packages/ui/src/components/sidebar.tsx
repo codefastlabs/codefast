@@ -11,7 +11,6 @@ import { tv } from 'tailwind-variants';
 
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
-import { ScrollArea } from '@/components/scroll-area';
 import { Separator } from '@/components/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/sheet';
 import { Skeleton } from '@/components/skeleton';
@@ -384,17 +383,15 @@ function SidebarSeparator({ className, ...props }: ComponentProps<typeof Separat
 
 function SidebarContent({ className, ...props }: ComponentProps<'div'>): JSX.Element {
   return (
-    <ScrollArea className="grow overflow-auto">
-      <div
-        className={cn(
-          'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
-          className,
-        )}
-        data-sidebar="content"
-        data-slot="sidebar-content"
-        {...props}
-      />
-    </ScrollArea>
+    <div
+      className={cn(
+        'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+        className,
+      )}
+      data-sidebar="content"
+      data-slot="sidebar-content"
+      {...props}
+    />
   );
 }
 
