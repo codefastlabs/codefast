@@ -1,8 +1,8 @@
 import type { JSX } from 'react';
 
-import { ChartAreaInteractive } from '@/app/(examples)/dashboard/components/chart-area-interactive';
-import { DataTable } from '@/app/(examples)/dashboard/components/data-table';
-import { SectionCards } from '@/app/(examples)/dashboard/components/section-cards';
+import { ChartAreaInteractive } from '@/app/(examples)/dashboard/_components/chart-area-interactive';
+import { DataTable } from '@/app/(examples)/dashboard/_components/data-table';
+import { SectionCards } from '@/app/(examples)/dashboard/_components/section-cards';
 import data from '@/app/(examples)/dashboard/data.json';
 
 export default function Page(): JSX.Element {

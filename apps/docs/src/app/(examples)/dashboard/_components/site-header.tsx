@@ -2,8 +2,8 @@ import type { JSX } from 'react';
 
 import { buttonVariants, Separator, SidebarTrigger } from '@codefast/ui';
 
-import { ModeToggle } from '@/app/(examples)/dashboard/components/mode-toggle';
-import { ThemeSelector } from '@/app/(examples)/dashboard/components/theme-selector';
+import { ModeToggle } from '@/app/(examples)/dashboard/_components/mode-toggle';
+import { ThemeSelector } from '@/app/(examples)/dashboard/_components/theme-selector';
 
 export function SiteHeader(): JSX.Element {
   return (
