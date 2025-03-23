@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 export default function ChartsPage(): JSX.Element {
   return (
-    <div className="container mx-auto p-4">
-      <div className="grid flex-1 items-start gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    <div className="container mx-auto">
+      <div className="grid flex-1 items-start gap-6 p-6 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {sortedCharts.map(([key, { component: Component }]) => (
           <ComponentWrapper
             key={key}

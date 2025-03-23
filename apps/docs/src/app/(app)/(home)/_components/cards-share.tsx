@@ -1,0 +1,112 @@
+import type { JSX } from 'react';
+
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Separator,
+} from '@codefast/ui';
+
+type UserPermission = 'edit' | 'view';
+
+interface User {
+  avatar: string;
+  email: string;
+  initials: string;
+  name: string;
+  permission: UserPermission;
+}
+
+function UserAccessRow({ user }: { user: User }): JSX.Element {
+  return (
+    <div className="flex items-center justify-between space-x-4">
+      <div className="flex items-center space-x-4">
+        <Avatar>
+          <AvatarImage alt={`${user.name}'s avatar`} src={user.avatar} />
+          <AvatarFallback>{user.initials}</AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="text-sm font-medium leading-none">{user.name}</p>
+          <p className="text-muted-foreground text-sm">{user.email}</p>
+        </div>
+      </div>
+      <Select defaultValue={user.permission}>
+        <SelectTrigger aria-label="Edit permission" className="ml-auto w-[110px]">
+          <SelectValue placeholder="Select" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="edit">Can edit</SelectItem>
+          <SelectItem value="view">Can view</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export function CardsShare(): JSX.Element {
+  const documentLink = 'https://example.com/link/to/document';
+
+  const usersWithAccess: User[] = [
+    {
+      name: 'Olivia Martin',
+      email: 'm@example.com',
+      avatar: '/avatars/03.png',
+      initials: 'OM',
+      permission: 'edit',
+    },
+    {
+      name: 'Isabella Nguyen',
+      email: 'b@example.com',
+      avatar: '/avatars/05.png',
+      initials: 'IN',
+      permission: 'view',
+    },
+    {
+      name: 'Sofia Davis',
+      email: 'p@example.com',
+      avatar: '/avatars/01.png',
+      initials: 'SD',
+      permission: 'view',
+    },
+  ];
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle>Share this document</CardTitle>
+        <CardDescription>Anyone with the link can view this document.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex space-x-2">
+          <Label className="sr-only" htmlFor="link">
+            Link
+          </Label>
+          <Input readOnly id="link" value={documentLink} />
+          <Button className="shrink-0">Copy Link</Button>
+        </div>
+        <Separator className="my-4" />
+        <div className="space-y-4">
+          <div className="text-sm font-medium">People with access</div>
+          <div className="grid gap-6">
+            {usersWithAccess.map((user) => (
+              <UserAccessRow key={user.email} user={user} />
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
