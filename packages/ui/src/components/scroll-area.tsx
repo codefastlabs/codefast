@@ -95,7 +95,7 @@ function ScrollArea({
     <ScrollAreaProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root className={cn('relative', className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
-          className="outline-ring ring-ring/50 *:block! size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4"
+          className="outline-ring ring-ring/50 size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4"
           data-slot="scroll-area-viewport"
         >
           {children}
