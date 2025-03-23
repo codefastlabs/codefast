@@ -3,182 +3,77 @@
 import type { ComponentProps, JSX } from 'react';
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-  Label,
+  ScrollArea,
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarRail,
 } from '@codefast/ui';
-import {
-  AudioWaveformIcon,
-  BookOpenIcon,
-  BotIcon,
-  ChevronRightIcon,
-  CommandIcon,
-  GalleryVerticalEndIcon,
-  SearchIcon,
-  Settings2Icon,
-  SquareTerminalIcon,
-} from 'lucide-react';
+import { CommandIcon } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
-import type { Registry } from '@/types/registry';
-import type { NavItem, Team, User } from '@/types/sidebar';
+import type { NavItemProps } from '@/components/nav-main';
 
-import { registryComponents } from '@/app/(app)/components/registry-components';
-import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
-import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
+import { registryComponentGroups } from '@/app/(app)/components/registry-components';
+import { NavMain } from '@/components/nav-main';
+import { registryBlockGroups } from '@/registry/registry-blocks';
 
-// This is sample data.
 const data: {
-  components: Registry[];
-  navMain: NavItem[];
-  teams: Team[];
-  user: User;
+  navMain: NavItemProps[];
 } = {
-  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
-  teams: [
-    { name: 'Acme Inc', logo: GalleryVerticalEndIcon, plan: 'Enterprise' },
-    { name: 'Acme Corp.', logo: AudioWaveformIcon, plan: 'Startup' },
-    { name: 'Evil Corp.', logo: CommandIcon, plan: 'Free' },
-  ],
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
-      icon: SquareTerminalIcon,
-      isActive: true,
-      items: [
-        { title: 'History', url: '#' },
-        { title: 'Starred', url: '#' },
-        { title: 'Settings', url: '#' },
-      ],
+      title: 'Components',
+      path: '/components',
+      groups: registryComponentGroups.map((group) => ({
+        ...group,
+        components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
+      })),
     },
     {
-      title: 'Models',
-      url: '#',
-      icon: BotIcon,
-      items: [
-        { title: 'Genesis', url: '#' },
-        { title: 'Explorer', url: '#' },
-        { title: 'Quantum', url: '#' },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpenIcon,
-      items: [
-        { title: 'Introduction', url: '#' },
-        { title: 'Get Started', url: '#' },
-        { title: 'Tutorials', url: '#' },
-        { title: 'Changelog', url: '#' },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2Icon,
-      items: [
-        { title: 'General', url: '#' },
-        { title: 'Team', url: '#' },
-        { title: 'Billing', url: '#' },
-        { title: 'Limits', url: '#' },
-      ],
+      title: 'Blocks',
+      path: '/blocks',
+      groups: registryBlockGroups.map((group) => ({
+        ...group,
+        components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
+      })),
     },
   ],
-  components: Object.values(registryComponents),
 };
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
-  const pathname = usePathname();
-
+function LogoButton(): JSX.Element {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <SidebarMenuButton asChild size="lg">
+      <Link href="#">
+        <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+          <CommandIcon className="size-4" />
+        </div>
+        <div className="grid flex-1 text-left text-sm leading-tight">
+          <span className="truncate font-medium">@codefast/ui</span>
+          <span className="truncate text-xs">CodeFast Labs</span>
+        </div>
+      </Link>
+    </SidebarMenuButton>
+  );
+}
+
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+  return (
+    <Sidebar {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-        <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
-          <SidebarGroupContent>
-            <form className="relative">
-              <Label className="sr-only" htmlFor="search">
-                Search
-              </Label>
-              <SidebarInput className="pl-8" id="search" placeholder="Search the docs..." />
-              <SearchIcon className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
-            </form>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <LogoButton />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
-          <SidebarMenu>
-            {data.navMain.map((item) => (
-              <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
-                      {item.icon ? <item.icon /> : null}
-
-                      <span>{item.title}</span>
-                      <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
-                              <span>{subItem.title}</span>
-                            </a>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupLabel>Components</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/components'}>
-                <Link href="/components">All Components</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            {data.components.map((item) => (
-              <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton asChild isActive={pathname === `/components/${item.name}`}>
-                  <Link href={`/components/${item.name}`}>{item.title}</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        <ScrollArea className="*:*:block! h-full">
+          <NavMain items={data.navMain} />
+        </ScrollArea>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

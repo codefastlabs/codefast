@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ComponentsPage(): JSX.Element {
   return (
-    <div className="@container grid gap-4 p-4 2xl:container 2xl:mx-auto">
+    <div className="@container grid gap-4 p-4">
       {sortedComponents.map(([key, { title, component: Component }]) => (
         <ComponentWrapper key={key} name={title}>
           <Component />

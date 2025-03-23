@@ -11,9 +11,9 @@ const getCacheRegistry = cache((component: string): null | Registry => registryC
 
 export const dynamicParams = false;
 
-export async function generateMetadata({ params }: { params: Promise<{ component: string }> }): Promise<Metadata> {
-  const { component } = await params;
-  const registry = getCacheRegistry(component);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const registry = getCacheRegistry(slug);
 
   if (!registry) {
     return {};
@@ -28,20 +28,16 @@ export async function generateMetadata({ params }: { params: Promise<{ component
   };
 }
 
-export function generateStaticParams(): { component: string }[] {
+export function generateStaticParams(): { slug: string }[] {
   return Object.keys(registryComponents).map((component) => ({
-    component,
+    slug: component,
   }));
 }
 
-export default async function ComponentPage({
-  params,
-}: {
-  params: Promise<{ component: string }>;
-}): Promise<JSX.Element> {
-  const { component } = await params;
+export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
+  const { slug } = await params;
 
-  const registry = getCacheRegistry(component);
+  const registry = getCacheRegistry(slug);
 
   if (!registry) {
     notFound();
@@ -50,7 +46,7 @@ export default async function ComponentPage({
   const Component = registry.component;
 
   return (
-    <div className="@container grid gap-4 p-4 2xl:container 2xl:mx-auto">
+    <div className="@container grid gap-4 p-4">
       <ComponentWrapper name={registry.title}>
         <Component />
       </ComponentWrapper>
