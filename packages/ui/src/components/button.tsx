@@ -25,7 +25,7 @@ const buttonVariants = tv({
       destructive:
         'bg-destructive dark:bg-destructive/60 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 hover:not-disabled:bg-destructive/90 text-white',
       outline:
-        'border-input shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-invalid:border-destructive dark:aria-invalid:border-destructive/70 hover:not-disabled:aria-invalid:border-destructive/60 focus-within:aria-invalid:ring-destructive/20 dark:focus-within:aria-invalid:ring-destructive/40 dark:bg-input/30 dark:hover:not-disabled:bg-input/50 border',
+        'border-input shadow-xs hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:ring-ring/50 focus-visible:border-ring aria-invalid:border-destructive dark:aria-invalid:border-destructive/70 hover:not-disabled:aria-invalid:border-destructive/60 focus-within:aria-invalid:ring-destructive/20 dark:focus-within:aria-invalid:ring-destructive/40 dark:bg-input/30 dark:hover:not-disabled:bg-input/50 hover:not-disabled:border-ring/60 border',
       ghost:
         'hover:not-disabled:bg-secondary hover:not-disabled:text-secondary-foreground focus-visible:ring-ring/50 dark:hover:not-disabled:bg-secondary/50',
       link: 'text-primary hover:not-disabled:underline focus-visible:ring-ring/50 underline-offset-4',
