@@ -16,10 +16,10 @@ import {
 } from '@codefast/ui';
 import { DownloadIcon, FilterIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
 
-import { AnalyticsDatePicker } from '@/app/(examples)/dashboard-03/components/analytics-date-picker';
-import { ChartRevenue } from '@/app/(examples)/dashboard-03/components/chart-revenue';
-import { ChartVisitors } from '@/app/(examples)/dashboard-03/components/chart-visitors';
-import { ProductsTable } from '@/app/(examples)/dashboard-03/components/products-table';
+import { AnalyticsDatePicker } from '@/app/(examples)/dashboard-03/_components/analytics-date-picker';
+import { ChartRevenue } from '@/app/(examples)/dashboard-03/_components/chart-revenue';
+import { ChartVisitors } from '@/app/(examples)/dashboard-03/_components/chart-visitors';
+import { ProductsTable } from '@/app/(examples)/dashboard-03/_components/products-table';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
