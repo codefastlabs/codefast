@@ -22,7 +22,11 @@ export function ComponentWrapper({
 }): JSX.Element {
   return (
     <div
-      className={cn('scroll-mt-18.25 flex w-full min-w-0 flex-col rounded-lg border', classNames?.container, className)}
+      className={cn(
+        'scroll-mt-18.25 shadow-xs flex w-full min-w-0 flex-col rounded-lg border',
+        classNames?.container,
+        className,
+      )}
       data-name={name.toLowerCase()}
       id={name}
       {...props}

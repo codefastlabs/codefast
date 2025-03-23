@@ -3,6 +3,7 @@
 import type { ComponentProps, JSX } from 'react';
 
 import {
+  cn,
   ScrollArea,
   Sidebar,
   SidebarContent,
@@ -59,9 +60,9 @@ function LogoButton(): JSX.Element {
   );
 }
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+export function AppSidebar({ className, ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
   return (
-    <Sidebar {...props}>
+    <Sidebar className={cn('z-30', className)} {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
