@@ -3,8 +3,8 @@ import type { JSX, ReactNode } from 'react';
 import { SidebarInset, SidebarProvider } from '@codefast/ui';
 import { cookies } from 'next/headers';
 
-import { AppSidebar } from '@/app/(examples)/dashboard-03/_components/app-sidebar';
-import { SiteHeader } from '@/app/(examples)/dashboard-03/_components/site-header';
+import { AppSidebar } from '@/app/(examples)/examples/dashboard-03/_components/app-sidebar';
+import { SiteHeader } from '@/app/(examples)/examples/dashboard-03/_components/site-header';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
   const cookieStore = await cookies();

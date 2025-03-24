@@ -15,8 +15,8 @@ import {
   UserIcon,
 } from 'lucide-react';
 
-import { NavMain } from '@/app/(examples)/dashboard-03/_components/nav-main';
-import { NavSecondary } from '@/app/(examples)/dashboard-03/_components/nav-secondary';
+import { NavMain } from '@/app/(examples)/examples/dashboard-03/_components/nav-main';
+import { NavSecondary } from '@/app/(examples)/examples/dashboard-03/_components/nav-secondary';
 
 const data = {
   navMain: [

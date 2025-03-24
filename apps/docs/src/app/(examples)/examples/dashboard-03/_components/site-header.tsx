@@ -17,9 +17,9 @@ import { SidebarIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { Fragment, useMemo } from 'react';
 
-import { ModeToggle } from '@/app/(examples)/dashboard-03/_components/mode-toggle';
-import { NavUser } from '@/app/(examples)/dashboard-03/_components/nav-user';
-import { SearchForm } from '@/app/(examples)/dashboard-03/_components/search-form';
+import { ModeToggle } from '@/app/(examples)/examples/dashboard-03/_components/mode-toggle';
+import { NavUser } from '@/app/(examples)/examples/dashboard-03/_components/nav-user';
+import { SearchForm } from '@/app/(examples)/examples/dashboard-03/_components/search-form';
 import { ThemeSelector } from '@/components/theme-selector';
 
 export function SiteHeader(): JSX.Element {
@@ -48,7 +48,7 @@ export function SiteHeader(): JSX.Element {
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink className="capitalize" href="/">
+              <BreadcrumbLink className="capitalize" href="/apps/docs/public">
                 Home
               </BreadcrumbLink>
             </BreadcrumbItem>
