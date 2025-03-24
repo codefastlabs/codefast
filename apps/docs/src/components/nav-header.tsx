@@ -18,7 +18,6 @@ export function NavHeader(props: ComponentProps<typeof NavigationMenu>): JSX.Ele
     { href: '/', label: 'Home' },
     { href: '/components', label: 'Components' },
     { href: '/charts', label: 'Charts' },
-    { href: '/forms', label: 'Forms' },
   ];
 
   return (
