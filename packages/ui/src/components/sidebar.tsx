@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentProps, CSSProperties, JSX } from 'react';
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 
 import { useIsMobile } from '@codefast/hooks';
@@ -29,7 +29,7 @@ interface SidebarContextProps {
   open: boolean;
   openMobile: boolean;
   setOpen: (open: boolean) => void;
-  setOpenMobile: (open: boolean) => void;
+  setOpenMobile: Dispatch<SetStateAction<boolean>>;
   state: 'collapsed' | 'expanded';
   toggleSidebar: () => void;
 }
