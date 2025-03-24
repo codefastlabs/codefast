@@ -65,9 +65,7 @@ export function CardsStats({ className }: { className?: string }): JSX.Element {
           <ChartContainer className="h-[80px] w-full" config={chartConfig}>
             <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
               <Line
-                activeDot={{
-                  r: 6,
-                }}
+                activeDot={{ r: 6 }}
                 dataKey="revenue"
                 stroke="var(--color-revenue)"
                 strokeWidth={2}

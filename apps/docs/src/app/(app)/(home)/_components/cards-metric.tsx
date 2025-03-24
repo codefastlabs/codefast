@@ -45,20 +45,10 @@ export function CardsMetric(): JSX.Element {
       </CardHeader>
       <CardContent className="pb-4">
         <ChartContainer className="w-full md:h-[200px]" config={chartConfig}>
-          <LineChart
-            data={data}
-            margin={{
-              top: 5,
-              right: 10,
-              left: 10,
-              bottom: 0,
-            }}
-          >
+          <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+            <ChartTooltip content={<ChartTooltipContent />} />
             <Line
-              activeDot={{
-                r: 6,
-                fill: 'var(--color-average)',
-              }}
+              activeDot={{ r: 6, fill: 'var(--color-average)' }}
               dataKey="average"
               stroke="var(--color-average)"
               strokeOpacity={0.5}
@@ -66,16 +56,12 @@ export function CardsMetric(): JSX.Element {
               type="monotone"
             />
             <Line
-              activeDot={{
-                r: 8,
-                style: { fill: 'var(--color-today)' },
-              }}
+              activeDot={{ r: 8, style: { fill: 'var(--color-today)' } }}
               dataKey="today"
               stroke="var(--color-today)"
               strokeWidth={2}
               type="monotone"
             />
-            <ChartTooltip content={<ChartTooltipContent />} />
           </LineChart>
         </ChartContainer>
       </CardContent>
