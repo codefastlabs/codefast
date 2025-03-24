@@ -3,10 +3,12 @@ import type { JSX } from 'react';
 import { Button } from '@codefast/ui';
 import { ArrowRightIcon, SendIcon } from 'lucide-react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function ButtonDemo(): JSX.Element {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
+    <GridWrapper>
+      <div className="grid place-items-center gap-6">
         <Button size="sm">Small</Button>
         <Button size="sm" variant="outline">
           Outline
@@ -36,7 +38,7 @@ export function ButtonDemo(): JSX.Element {
           Please wait
         </Button>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
+      <div className="grid place-items-center gap-6">
         <Button>Medium</Button>
         <Button variant="outline">Outline</Button>
         <Button aria-invalid variant="outline">
@@ -56,7 +58,7 @@ export function ButtonDemo(): JSX.Element {
           Please wait
         </Button>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-2 md:flex-row">
+      <div className="grid place-items-center gap-6">
         <Button size="lg">Large</Button>
         <Button size="lg" variant="outline">
           Outline
@@ -86,6 +88,6 @@ export function ButtonDemo(): JSX.Element {
           Please wait
         </Button>
       </div>
-    </div>
+    </GridWrapper>
   );
 }

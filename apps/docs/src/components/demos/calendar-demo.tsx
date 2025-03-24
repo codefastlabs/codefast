@@ -7,6 +7,8 @@ import { Calendar } from '@codefast/ui';
 import { addDays } from 'date-fns';
 import { useState } from 'react';
 
+import { GridWrapper } from '@/components/grid-wrapper';
+
 export function CalendarDemo(): JSX.Element {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -23,11 +25,17 @@ export function CalendarDemo(): JSX.Element {
   });
 
   return (
-    <div className="@md:flex-row flex flex-col flex-wrap items-start gap-2">
+    <GridWrapper className="@5xl:grid-cols-2 *:grid *:place-items-center">
+      <div className="">
+        <Calendar className="rounded-md border shadow-sm" />
+      </div>
+      <div className="">
+        <Calendar showWeekNumber className="rounded-md border shadow-sm" />
+      </div>
       <div className="">
         <Calendar className="rounded-md border shadow-sm" mode="single" selected={date} onSelect={setDate} />
       </div>
-      <div className="">
+      <div className="col-span-full">
         <Calendar
           className="rounded-md border shadow-sm"
           defaultMonth={dateRange?.from}
@@ -50,7 +58,7 @@ export function CalendarDemo(): JSX.Element {
           onSelect={setDateRange2}
         />
       </div>
-      <div className="">
+      <div className="col-span-full">
         <Calendar
           className="rounded-md border shadow-sm"
           defaultMonth={range?.from}
@@ -60,6 +68,6 @@ export function CalendarDemo(): JSX.Element {
           onSelect={setRange}
         />
       </div>
-    </div>
+    </GridWrapper>
   );
 }
