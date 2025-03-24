@@ -9,7 +9,7 @@ import { GridWrapper } from '@/components/grid-wrapper';
 
 export function InputOTPDemo(): JSX.Element {
   return (
-    <GridWrapper>
+    <GridWrapper className="*:place-items-center">
       <div className="col-span-full lg:col-span-2">
         <InputOTPSimple />
       </div>
