@@ -60,7 +60,7 @@ export default async function RootLayout({
     <html
       suppressHydrationWarning
       className={cn(
-        'overscroll-none antialiased',
+        'antialiased',
         activeThemeValue && `theme-${activeThemeValue}`,
         isScaled && 'theme-scaled',
         fontVariables,
