@@ -45,6 +45,7 @@
     "@codefast-ui/checkbox-group": "workspace:*",
     "@codefast-ui/input": "workspace:*",
     "@codefast-ui/input-number": "workspace:*",
+    "@codefast-ui/progress-circle": "workspace:*",
     "@codefast/hooks": "workspace:*",
     "@radix-ui/primitive": "^1.1.1",
     "@radix-ui/react-accordion": "^1.2.3",
