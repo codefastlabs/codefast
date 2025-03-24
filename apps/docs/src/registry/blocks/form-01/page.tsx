@@ -4,7 +4,7 @@ import { PaymentPlanForm } from '@/registry/blocks/form-01/_components/payment-p
 
 export default function Page(): JSX.Element {
   return (
-    <div className="grid h-dvh place-content-center p-6">
+    <div className="grid min-h-dvh place-content-center p-6">
       <PaymentPlanForm />
     </div>
   );
