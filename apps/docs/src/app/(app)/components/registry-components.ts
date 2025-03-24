@@ -237,6 +237,12 @@ export const registryComponents: Record<string, Registry> = {
     slug: 'progress',
     title: 'Progress',
   },
+  'progress-circle': {
+    component: dynamic(() => import('@/components/demos/progress-circle-demo').then((mod) => mod.ProgressCircleDemo)),
+    description: 'Progress Circle',
+    slug: 'progress-circle',
+    title: 'Progress Circle',
+  },
   'radio-cards': {
     component: dynamic(() => import('@/components/demos/radio-cards-demo').then((mod) => mod.RadioCardsDemo)),
     description: 'Radio Cards',
@@ -430,6 +436,7 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.avatar,
       registryComponents.badge,
       registryComponents.progress,
+      registryComponents['progress-circle'],
       registryComponents.sonner,
       registryComponents.chart,
       registryComponents.table,

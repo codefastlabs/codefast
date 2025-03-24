@@ -47,6 +47,7 @@ export * from '@/components/pagination';
 export * from '@/components/popover';
 export * from '@/components/pre';
 export * from '@/components/progress';
+export * from '@/components/progress-circle';
 export * from '@/components/quote';
 export * from '@/components/radio';
 export * from '@/components/radio-cards';
