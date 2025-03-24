@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function OrdersPage(): JSX.Element {
-  return <div className="">Orders Page</div>;
+  return <div className="p-6">Orders Page</div>;
 }
