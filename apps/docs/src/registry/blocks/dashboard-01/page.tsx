@@ -2,11 +2,11 @@ import type { CSSProperties, JSX } from 'react';
 
 import { SidebarInset, SidebarProvider } from '@codefast/ui';
 
-import { AppSidebar } from '@/registry/blocks/dashboard-01/components/app-sidebar';
-import { ChartAreaInteractive } from '@/registry/blocks/dashboard-01/components/chart-area-interactive';
-import { DataTable } from '@/registry/blocks/dashboard-01/components/data-table';
-import { SectionCards } from '@/registry/blocks/dashboard-01/components/section-cards';
-import { SiteHeader } from '@/registry/blocks/dashboard-01/components/site-header';
+import { AppSidebar } from '@/registry/blocks/dashboard-01/_components/app-sidebar';
+import { ChartAreaInteractive } from '@/registry/blocks/dashboard-01/_components/chart-area-interactive';
+import { DataTable } from '@/registry/blocks/dashboard-01/_components/data-table';
+import { SectionCards } from '@/registry/blocks/dashboard-01/_components/section-cards';
+import { SiteHeader } from '@/registry/blocks/dashboard-01/_components/site-header';
 import data from '@/registry/blocks/dashboard-01/data.json';
 
 export default function Page(): JSX.Element {

@@ -25,10 +25,42 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-import { NavMain } from '@/registry/blocks/sidebar-16/components/nav-main';
-import { NavProjects } from '@/registry/blocks/sidebar-16/components/nav-projects';
-import { NavSecondary } from '@/registry/blocks/sidebar-16/components/nav-secondary';
-import { NavUser } from '@/registry/blocks/sidebar-16/components/nav-user';
+import { NavMain } from '@/registry/blocks/sidebar-08/_components/nav-main';
+import { NavProjects } from '@/registry/blocks/sidebar-08/_components/nav-projects';
+import { NavSecondary } from '@/registry/blocks/sidebar-08/_components/nav-secondary';
+import { NavUser } from '@/registry/blocks/sidebar-08/_components/nav-user';
+
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+  return (
+    <Sidebar variant="inset" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild size="lg">
+              <Link href="#">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <CommandIcon className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">Acme Inc</span>
+                  <span className="truncate text-xs">Enterprise</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+        <NavProjects projects={data.projects} />
+        <NavSecondary className="mt-auto" items={data.navSecondary} />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
 
 const data = {
   user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
@@ -87,35 +119,3 @@ const data = {
     { name: 'Travel', url: '#', icon: MapIcon },
   ],
 };
-
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
-  return (
-    <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
-              <Link href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <CommandIcon className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary className="mt-auto" items={data.navSecondary} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
-  );
-}
