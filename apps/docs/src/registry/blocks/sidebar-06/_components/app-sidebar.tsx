@@ -1,27 +1,22 @@
 import type { ComponentProps, JSX } from 'react';
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   Sidebar,
   SidebarContent,
-  SidebarGroup,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from '@codefast/ui';
-import { GalleryVerticalEndIcon, MinusIcon, PlusIcon } from 'lucide-react';
+import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavItem } from '@/types/sidebar';
 
-import { SearchForm } from '@/registry/blocks/sidebar-05/components/search-form';
+import { NavMain } from '@/registry/blocks/sidebar-06/_components/nav-main';
+import { SidebarOptInForm } from '@/registry/blocks/sidebar-06/_components/sidebar-opt-in-form';
 
 // This is sample data.
 const data: {
@@ -77,7 +72,6 @@ const data: {
         { title: 'Turbopack', url: '#' },
       ],
     },
-    { title: 'Community', url: '#', items: [{ title: 'Contribution Guide', url: '#' }] },
   ],
 };
 
@@ -100,39 +94,15 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <SearchForm />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {data.navMain.map((item, index) => (
-              <Collapsible key={item.title} className="group/collapsible" defaultOpen={index === 1}>
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton>
-                      {item.title} <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                      <MinusIcon className="ml-auto group-data-[state=closed]/collapsible:hidden" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  {item.items.length > 0 ? (
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items.map((navItem) => (
-                          <SidebarMenuSubItem key={navItem.title}>
-                            <SidebarMenuSubButton asChild isActive={navItem.isActive}>
-                              <Link href={navItem.url}>{navItem.title}</Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  ) : null}
-                </SidebarMenuItem>
-              </Collapsible>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        <NavMain items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <div className="p-1">
+          <SidebarOptInForm />
+        </div>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

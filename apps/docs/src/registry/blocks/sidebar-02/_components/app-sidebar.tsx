@@ -1,6 +1,9 @@
 import type { ComponentProps, JSX } from 'react';
 
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -12,12 +15,13 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@codefast/ui';
+import { ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import type { NavItem } from '@/types/sidebar';
 
-import { SearchForm } from '@/registry/blocks/sidebar-01/components/search-form';
-import { VersionSwitcher } from '@/registry/blocks/sidebar-01/components/version-switcher';
+import { SearchForm } from '@/registry/blocks/sidebar-02/_components/search-form';
+import { VersionSwitcher } from '@/registry/blocks/sidebar-02/_components/version-switcher';
 
 // This is sample data.
 const data: {
@@ -75,6 +79,7 @@ const data: {
         { title: 'Turbopack', url: '#' },
       ],
     },
+    { title: 'Community', url: '#', items: [{ title: 'Contribution Guide', url: '#' }] },
   ],
 };
 
@@ -85,23 +90,35 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
         <VersionSwitcher defaultVersion={data.versions[0]} versions={data.versions} />
         <SearchForm />
       </SidebarHeader>
-      <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
+      <SidebarContent className="gap-0">
+        {/* We create a collapsible SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((navItem) => (
-                  <SidebarMenuItem key={navItem.title}>
-                    <SidebarMenuButton asChild isActive={navItem.isActive}>
-                      <Link href={navItem.url}>{navItem.title}</Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <Collapsible key={item.title} defaultOpen className="group/collapsible" title={item.title}>
+            <SidebarGroup>
+              <SidebarGroupLabel
+                asChild
+                className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+              >
+                <CollapsibleTrigger>
+                  {item.title}{' '}
+                  <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {item.items.map((navItem) => (
+                      <SidebarMenuItem key={navItem.title}>
+                        <SidebarMenuButton asChild isActive={navItem.isActive}>
+                          <Link href={navItem.url}>{navItem.title}</Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
         ))}
       </SidebarContent>
       <SidebarRail />

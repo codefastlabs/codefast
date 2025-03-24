@@ -21,7 +21,7 @@ import { ArchiveXIcon, CommandIcon, FileIcon, InboxIcon, SendIcon, Trash2Icon } 
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { NavUser } from '@/registry/blocks/sidebar-09/components/nav-user';
+import { NavUser } from '@/registry/blocks/sidebar-09/_components/nav-user';
 
 // This is sample data
 const data = {

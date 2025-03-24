@@ -17,11 +17,11 @@ import {
   Trash2Icon,
 } from 'lucide-react';
 
-import { NavFavorites } from '@/registry/blocks/sidebar-10/components/nav-favorites';
-import { NavMain } from '@/registry/blocks/sidebar-10/components/nav-main';
-import { NavSecondary } from '@/registry/blocks/sidebar-10/components/nav-secondary';
-import { NavWorkspaces } from '@/registry/blocks/sidebar-10/components/nav-workspaces';
-import { TeamSwitcher } from '@/registry/blocks/sidebar-10/components/team-switcher';
+import { NavFavorites } from '@/registry/blocks/sidebar-15/_components/nav-favorites';
+import { NavMain } from '@/registry/blocks/sidebar-15/_components/nav-main';
+import { NavSecondary } from '@/registry/blocks/sidebar-15/_components/nav-secondary';
+import { NavWorkspaces } from '@/registry/blocks/sidebar-15/_components/nav-workspaces';
+import { TeamSwitcher } from '@/registry/blocks/sidebar-15/_components/team-switcher';
 
 // This is sample data.
 const data = {
@@ -104,7 +104,7 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>

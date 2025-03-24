@@ -8,17 +8,22 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
   SidebarSeparator,
 } from '@codefast/ui';
 import { PlusIcon } from 'lucide-react';
 
-import { Calendars } from '@/registry/blocks/sidebar-15/components/calendars';
-import { DatePicker } from '@/registry/blocks/sidebar-15/components/date-picker';
-import { NavUser } from '@/registry/blocks/sidebar-15/components/nav-user';
+import { Calendars } from '@/registry/blocks/sidebar-12/_components/calendars';
+import { DatePicker } from '@/registry/blocks/sidebar-12/_components/date-picker';
+import { NavUser } from '@/registry/blocks/sidebar-12/_components/nav-user';
 
 // This is sample data.
 const data = {
-  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
+  user: {
+    name: '@codefast/ui',
+    email: 'm@example.com',
+    avatar: '/avatars/codefast-ui.webp',
+  },
   calendars: [
     {
       name: 'My Calendars',
@@ -35,9 +40,9 @@ const data = {
   ],
 };
 
-export function SidebarRight({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
   return (
-    <Sidebar className="sticky top-0 hidden h-svh border-l lg:flex" collapsible="none" {...props}>
+    <Sidebar {...props}>
       <SidebarHeader className="border-sidebar-border h-16 border-b">
         <NavUser user={data.user} />
       </SidebarHeader>
@@ -56,6 +61,7 @@ export function SidebarRight({ ...props }: ComponentProps<typeof Sidebar>): JSX.
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

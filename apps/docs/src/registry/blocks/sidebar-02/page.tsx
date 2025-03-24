@@ -13,7 +13,7 @@ import {
   SidebarTrigger,
 } from '@codefast/ui';
 
-import { AppSidebar } from '@/registry/blocks/sidebar-02/components/app-sidebar';
+import { AppSidebar } from '@/registry/blocks/sidebar-02/_components/app-sidebar';
 
 export default function Page(): JSX.Element {
   return (

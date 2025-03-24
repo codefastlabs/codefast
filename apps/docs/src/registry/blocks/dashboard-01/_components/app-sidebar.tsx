@@ -30,10 +30,10 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 
-import { NavDocuments } from '@/registry/blocks/dashboard-01/components/nav-documents';
-import { NavMain } from '@/registry/blocks/dashboard-01/components/nav-main';
-import { NavSecondary } from '@/registry/blocks/dashboard-01/components/nav-secondary';
-import { NavUser } from '@/registry/blocks/dashboard-01/components/nav-user';
+import { NavDocuments } from '@/registry/blocks/dashboard-01/_components/nav-documents';
+import { NavMain } from '@/registry/blocks/dashboard-01/_components/nav-main';
+import { NavSecondary } from '@/registry/blocks/dashboard-01/_components/nav-secondary';
+import { NavUser } from '@/registry/blocks/dashboard-01/_components/nav-user';
 
 const data = {
   user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },

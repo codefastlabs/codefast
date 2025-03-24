@@ -15,7 +15,7 @@ import {
 } from '@codefast/ui';
 import { SidebarIcon } from 'lucide-react';
 
-import { SearchForm } from '@/registry/blocks/sidebar-16/components/search-form';
+import { SearchForm } from '@/registry/blocks/sidebar-16/_components/search-form';
 
 export function SiteHeader(): JSX.Element {
   const { toggleSidebar } = useSidebar();
