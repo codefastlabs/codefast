@@ -11,8 +11,8 @@ import {
   SidebarTrigger,
 } from '@codefast/ui';
 
-import { AppSidebar } from '@/registry/blocks/sidebar-10/components/app-sidebar';
-import { NavActions } from '@/registry/blocks/sidebar-10/components/nav-actions';
+import { AppSidebar } from '@/registry/blocks/sidebar-10/_components/app-sidebar';
+import { NavActions } from '@/registry/blocks/sidebar-10/_components/nav-actions';
 
 export default function Page(): JSX.Element {
   return (

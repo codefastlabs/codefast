@@ -18,10 +18,10 @@ import {
 
 import type { NavItem, Project, Team, User } from '@/types/sidebar';
 
-import { NavMain } from '@/registry/blocks/sidebar-07/components/nav-main';
-import { NavProjects } from '@/registry/blocks/sidebar-07/components/nav-projects';
-import { NavUser } from '@/registry/blocks/sidebar-07/components/nav-user';
-import { TeamSwitcher } from '@/registry/blocks/sidebar-07/components/team-switcher';
+import { NavMain } from '@/registry/blocks/sidebar-07/_components/nav-main';
+import { NavProjects } from '@/registry/blocks/sidebar-07/_components/nav-projects';
+import { NavUser } from '@/registry/blocks/sidebar-07/_components/nav-user';
+import { TeamSwitcher } from '@/registry/blocks/sidebar-07/_components/team-switcher';
 
 // This is sample data.
 const data: {
