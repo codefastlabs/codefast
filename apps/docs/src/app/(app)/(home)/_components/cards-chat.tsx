@@ -129,6 +129,7 @@ export function CardsChat(): JSX.Element {
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
+                // eslint-disable-next-line react/no-array-index-key -- we need index
                 key={index}
                 className={cn(
                   'flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm',
