@@ -32,7 +32,7 @@ export function SiteHeader(): JSX.Element {
       .split('/')
       .filter((path) => path !== '')
       .map((path, index, array) => ({
-        label: path,
+        label: path.replaceAll('-', ' '),
         href: `/${array.slice(0, index + 1).join('/')}`,
       }));
   }, [pathname]);
@@ -48,7 +48,7 @@ export function SiteHeader(): JSX.Element {
         <Breadcrumb className="hidden sm:block">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink className="capitalize" href="/apps/docs/public">
+              <BreadcrumbLink className="capitalize" href="/">
                 Home
               </BreadcrumbLink>
             </BreadcrumbItem>
