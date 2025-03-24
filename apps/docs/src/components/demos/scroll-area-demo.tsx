@@ -12,7 +12,7 @@ export function ScrollAreaDemo(): JSX.Element {
       <div className="">
         <ScrollAreaVertical />
       </div>
-      <div className="lg:col-span-2">
+      <div className="@7xl:col-span-2">
         <ScrollAreaHorizontalDemo />
       </div>
     </GridWrapper>

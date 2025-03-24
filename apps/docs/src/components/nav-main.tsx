@@ -49,7 +49,7 @@ function ComponentList({
   currentPath: string;
 }): JSX.Element {
   return (
-    <SidebarMenuSub>
+    <SidebarMenuSub className="ml-2.5 mr-0">
       {components?.map((component) => {
         const href = createHref(basePath, component.slug);
         const isActive = currentPath === href;
@@ -111,7 +111,7 @@ export function NavMain({ items }: NavMainProps): JSX.Element {
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent asChild>
-                <SidebarMenuSub>
+                <SidebarMenuSub className="ml-2.5 mr-0">
                   {item.groups.map((group) => (
                     <NavGroup key={group.name} group={group} itemPath={item.path} pathname={pathname} />
                   ))}
