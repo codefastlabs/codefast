@@ -22,8 +22,8 @@ import { GridWrapper } from '@/components/grid-wrapper';
 export function TabsDemo(): JSX.Element {
   return (
     <GridWrapper className="*:grid *:place-content-center">
-      <div>
-        <Tabs className="max-w-[400px]" defaultValue="account">
+      <div className="">
+        <Tabs className="w-xs max-w-full" defaultValue="account">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="password">Password</TabsTrigger>
