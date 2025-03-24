@@ -4,7 +4,7 @@ import { type JSX, cache } from 'react';
 
 import type { Registry } from '@/types/registry';
 
-import { ComponentWrapper } from '@/components/component-wrapper';
+import { BlockPreview } from '@/app/(app)/blocks/[slug]/_components/block-preview';
 import { registryBlocks } from '@/registry/registry-blocks';
 
 const getCacheRegistry = cache((component: string): null | Registry => registryBlocks[component]);
@@ -45,9 +45,7 @@ export default async function BlockPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="flex grow flex-col p-6">
-      <ComponentWrapper className="grow overflow-hidden" classNames={{ body: 'p-0' }} name={registry.title}>
-        <iframe className="w-full grow" src={`/view/${slug}`} title={registry.title} />
-      </ComponentWrapper>
+      <BlockPreview slug={slug} title={registry.title} />
     </div>
   );
 }
