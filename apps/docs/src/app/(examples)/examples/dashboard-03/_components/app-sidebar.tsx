@@ -22,37 +22,37 @@ const data = {
   navMain: [
     {
       title: 'Dashboard',
-      url: '/dashboard-03',
+      url: '/examples/dashboard-03',
       icon: HomeIcon,
     },
     {
       title: 'Analytics',
-      url: '/dashboard-03/analytics',
+      url: '/examples/dashboard-03/analytics',
       icon: ChartLineIcon,
     },
     {
       title: 'Orders',
-      url: '/dashboard-03/orders',
+      url: '/examples/dashboard-03/orders',
       icon: ShoppingBagIcon,
     },
     {
       title: 'Products',
-      url: '/dashboard-03/products',
+      url: '/examples/dashboard-03/products',
       icon: ShoppingCartIcon,
     },
     {
       title: 'Invoices',
-      url: '/dashboard-03/invoices',
+      url: '/examples/dashboard-03/invoices',
       icon: FileIcon,
     },
     {
       title: 'Customers',
-      url: '/dashboard-03/customers',
+      url: '/examples/dashboard-03/customers',
       icon: UserIcon,
     },
     {
       title: 'Settings',
-      url: '/dashboard-03/settings',
+      url: '/examples/dashboard-03/settings',
       icon: Settings2Icon,
     },
   ],
