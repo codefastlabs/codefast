@@ -33,7 +33,7 @@ const plans = [
   },
 ] as const;
 
-export function FormsDemo(): JSX.Element {
+export function PaymentPlanForm(): JSX.Element {
   return (
     <div className="flex max-w-md flex-col gap-4">
       <Card>

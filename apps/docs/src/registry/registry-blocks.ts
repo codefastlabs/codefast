@@ -141,6 +141,12 @@ export const registryBlocks: Record<string, Registry> = {
     slug: 'dashboard-01',
     title: 'Dashboard 01',
   },
+  'form-01': {
+    component: dynamic(() => import('@/registry/blocks/form-01/page')),
+    description: 'Service upgrade form with payment information and package options.',
+    slug: 'form-01',
+    title: 'Form 01',
+  },
 };
 
 export const registryBlockGroups: RegistryGroup[] = [
@@ -159,6 +165,11 @@ export const registryBlockGroups: RegistryGroup[] = [
     name: 'Products',
     description: 'Product list display and management interface',
     components: [registryBlocks['products-01']],
+  },
+  {
+    name: 'Forms',
+    description: 'Collection of multipurpose form templates with various input fields',
+    components: [registryBlocks['form-01']],
   },
   {
     name: 'Dashboard',
