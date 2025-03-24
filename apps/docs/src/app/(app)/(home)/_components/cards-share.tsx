@@ -1,3 +1,5 @@
+'use client';
+
 import type { JSX } from 'react';
 
 import {
@@ -12,12 +14,14 @@ import {
   CardTitle,
   Input,
   Label,
+  logger,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Separator,
+  toast,
 } from '@codefast/ui';
 
 type UserPermission = 'edit' | 'view';
@@ -83,6 +87,18 @@ export function CardsShare(): JSX.Element {
     },
   ];
 
+  const handleCopyLink = (): void => {
+    navigator.clipboard
+      .writeText(documentLink)
+      .then(() => {
+        toast.success('Link copied to clipboard');
+      })
+      .catch((error: unknown) => {
+        toast.error('Failed to copy link');
+        logger.error('Copy error:', error);
+      });
+  };
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -95,7 +111,9 @@ export function CardsShare(): JSX.Element {
             Link
           </Label>
           <Input readOnly id="link" value={documentLink} />
-          <Button className="shrink-0">Copy Link</Button>
+          <Button className="shrink-0" onClick={handleCopyLink}>
+            Copy Link
+          </Button>
         </div>
         <Separator className="my-4" />
         <div className="space-y-4">

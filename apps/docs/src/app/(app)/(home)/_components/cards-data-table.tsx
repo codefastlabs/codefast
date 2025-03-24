@@ -247,7 +247,7 @@ export function CardsDataTable(): JSX.Element {
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="[&:has([role=checkbox])]:pl-3">
+                      <TableCell key={cell.id} className="last:text-right [&:has([role=checkbox])]:pl-3">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
