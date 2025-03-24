@@ -54,7 +54,7 @@ const chartConfig = {
 
 export function CardsStats({ className }: { className?: string }): JSX.Element {
   return (
-    <div className={cn('grid gap-4 sm:grid-cols-2 xl:grid-cols-2', className)}>
+    <div className={cn('grid gap-6 sm:grid-cols-2 xl:grid-cols-2', className)}>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-normal">Total Revenue</CardTitle>
