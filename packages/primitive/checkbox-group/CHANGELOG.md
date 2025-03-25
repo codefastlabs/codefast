@@ -1,5 +1,25 @@
 # @codefast-ui/checkbox-group
 
+## 0.2.35
+
+### Patch Changes
+
+- [`38059a0`](https://github.com/codefastlabs/codefast/commit/38059a0c612bd20d24a8b5d62ec554f766f081f8) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): add overflow-auto to Card component
+
+- [`31f2eff`](https://github.com/codefastlabs/codefast/commit/31f2effff5297e3b61ca1dfa90aa4f3c24ed8933) Thanks [@thevuong](https://github.com/thevuong)! - fix(styles): adjust focus and hover states for components
+
+- [`5461ba3`](https://github.com/codefastlabs/codefast/commit/5461ba3f9e186d6dc0c15c38f6cc74c555d368ce) Thanks [@thevuong](https://github.com/thevuong)! - feat(sidebar): add ScrollArea for enhanced scrolling support
+
+- [`a8ab854`](https://github.com/codefastlabs/codefast/commit/a8ab854a75318f79c0dd1c3a18a1002c3a001d56) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): add ProgressCircle component
+
+- [`0c5137b`](https://github.com/codefastlabs/codefast/commit/0c5137bd5d0ee346cf5db9862f63df0832a18a7d) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): remove ScrollArea from SidebarContent
+
+- [`7216a02`](https://github.com/codefastlabs/codefast/commit/7216a02b138d17d070132743a17ab43a39881bb6) Thanks [@thevuong](https://github.com/thevuong)! - fix(tabs): update text color and hover behavior
+
+- [`92e71e9`](https://github.com/codefastlabs/codefast/commit/92e71e9a6a6651c2f77487710d7edffe1c260051) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): remove invalid class from CommandShortcut component
+
+- [`26b2004`](https://github.com/codefastlabs/codefast/commit/26b2004021d5c0bac904d6e4daeafd23276dc3d3) Thanks [@thevuong](https://github.com/thevuong)! - feat(sidebar): update state management for setOpenMobile
+
 ## 0.2.34
 
 ### Patch Changes
