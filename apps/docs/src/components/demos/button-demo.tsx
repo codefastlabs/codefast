@@ -7,8 +7,8 @@ import { GridWrapper } from '@/components/grid-wrapper';
 
 export function ButtonDemo(): JSX.Element {
   return (
-    <GridWrapper>
-      <div className="grid place-items-center gap-6">
+    <GridWrapper className="*:grid *:place-items-center *:gap-6">
+      <div>
         <Button size="sm">Small</Button>
         <Button size="sm" variant="outline">
           Outline
@@ -38,7 +38,7 @@ export function ButtonDemo(): JSX.Element {
           Please wait
         </Button>
       </div>
-      <div className="grid place-items-center gap-6">
+      <div>
         <Button>Medium</Button>
         <Button variant="outline">Outline</Button>
         <Button aria-invalid variant="outline">
@@ -58,7 +58,7 @@ export function ButtonDemo(): JSX.Element {
           Please wait
         </Button>
       </div>
-      <div className="grid place-items-center gap-6">
+      <div>
         <Button size="lg">Large</Button>
         <Button size="lg" variant="outline">
           Outline
