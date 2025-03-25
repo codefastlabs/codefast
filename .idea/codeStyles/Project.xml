@@ -1,6 +1,6 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
-    <option name="SOFT_MARGINS" value="80" />
+    <option name="SOFT_MARGINS" value="120" />
     <CssCodeStyleSettings>
       <option name="HEX_COLOR_LOWER_CASE" value="true" />
       <option name="HEX_COLOR_LONG_FORMAT" value="true" />
