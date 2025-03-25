@@ -187,7 +187,7 @@ function ProgressCircleProvider({
   const uniqueId = useId();
   const id = propId || uniqueId;
 
-  // Group 1: Values that change infrequently - basic configuration
+  // Values that change infrequently - basic configuration
   const baseConfig = useMemo(() => {
     const validSize = Math.max(0, size);
     const validStrokeWidth = Math.max(0, strokeWidth);
@@ -210,17 +210,17 @@ function ProgressCircleProvider({
     };
   }, [size, strokeWidth, startAngle, minValue, maxValue]);
 
-  // Group 2: Handling thresholds - rarely changed
+  // Handling thresholds - rarely changed
   const sortedThresholds = useMemo(() => {
     return thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : [];
   }, [thresholds]);
 
-  // Group 3: Safe formatter - rarely changes
+  // Safe formatter - rarely changes
   const safeValueFormatter = useMemo(() => {
     return valueFormatter || ((val: number) => `${Math.round(val)}%`);
   }, [valueFormatter]);
 
-  // Group 4: Calculations dependent on values – frequently changing
+  // Calculations dependent on values – frequently changing
   const valueCalculations = useMemo(() => {
     // Standardize value
     const normalizedValue = clamp(baseConfig.validMinValue, baseConfig.validMaxValue, value);
@@ -234,7 +234,7 @@ function ProgressCircleProvider({
     };
   }, [baseConfig.validMinValue, baseConfig.validMaxValue, value]);
 
-  // Group 5: Threshold processing based on normalized value
+  // Threshold processing based on normalized value
   const threshold = useMemo<Threshold | undefined>(() => {
     if (sortedThresholds.length === 0) {
       return;
@@ -258,7 +258,7 @@ function ProgressCircleProvider({
     return thresholdColor;
   }, [sortedThresholds, valueCalculations.normalizedValue]);
 
-  // Group 6: Geometric properties of a circle - dependent on size, stroke and percentage
+  // Geometric properties of a circle - dependent on size, stroke and percentage
   const circleGeometry = useMemo(() => {
     const center = baseConfig.validSize / 2;
     const radius = Math.max(0, center - baseConfig.validStrokeWidth / 2);
@@ -275,7 +275,7 @@ function ProgressCircleProvider({
     };
   }, [baseConfig.validSize, baseConfig.validStartAngle, baseConfig.validStrokeWidth, valueCalculations.percentage]);
 
-  // Group 7: Format value for display - depends on the normalized value and formatter
+  // Format value for display - depends on the normalized value and formatter
   const valueText = useMemo(() => {
     return safeValueFormatter(valueCalculations.normalizedValue);
   }, [safeValueFormatter, valueCalculations.normalizedValue]);
