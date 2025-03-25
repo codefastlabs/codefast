@@ -1,3 +1,3 @@
 'use client';
 
-export * from '@/primitive/input-number';
+export * from '@/input-number';
