@@ -29,7 +29,7 @@ export function NavUser({
     name: string;
   };
 }): JSX.Element {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebar('NavUser');
 
   return (
     <SidebarMenu>

@@ -22,7 +22,7 @@ import Link from 'next/link';
 import type { Project } from '@/types/sidebar';
 
 export function NavProjects({ projects }: { projects: Project[] }): JSX.Element {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebar('NavProjects');
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
