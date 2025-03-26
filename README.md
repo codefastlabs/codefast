@@ -6,75 +6,31 @@
 
 <!-- Build & Deploy -->
 
-<a href="https://github.com/codefastlabs/codefast/actions/workflows/release.yml" style="text-decoration: none;">
-  <img src="https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main" alt="Release" />
-</a>
-<a href="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml" style="text-decoration: none;">
-  <img src="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml/badge.svg" alt="Vercel" />
-</a>
-<a href="https://codecov.io/gh/codefastlabs/codefast" style="text-decoration: none;">
-  <img src="https://img.shields.io/codecov/c/github/codefastlabs/codefast" alt="Test Coverage" />
-</a>
-
-<br />
-<br />
+[![Release](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
+[![Vercel](https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml)
+[![Test Coverage](https://img.shields.io/codecov/c/github/codefastlabs/codefast)](https://codecov.io/gh/codefastlabs/codefast)
 
 <!-- Package -->
 
-<a href="https://www.npmjs.com/package/@codefast/ui" target="_blank" style="text-decoration: none;">
-<img src="https://img.shields.io/npm/v/@codefast/ui" alt="NPM Version" />
-</a>
-<a href="https://bundlephobia.com/package/@codefast/ui" target="_blank" style="text-decoration: none;">
-<img src="https://img.shields.io/bundlephobia/minzip/@codefast/ui" alt="Bundle Size" />
-</a>
-<a href="https://www.npmjs.com/package/@codefast/ui" target="_blank" style="text-decoration: none;">
-<img src="https://img.shields.io/npm/dm/@codefast/ui" alt="NPM Downloads" />
-</a>
-<a href="https://github.com/codefastlabs/codefast/tags" target="_blank" style="text-decoration: none;">
-<img src="https://img.shields.io/github/v/tag/codefastlabs/codefast" alt="GitHub tag" />
-</a>
-
-<br />
-<br />
+[![NPM Version](https://img.shields.io/npm/v/@codefast/ui)](https://www.npmjs.com/package/@codefast/ui)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@codefast/ui)](https://bundlephobia.com/package/@codefast/ui)
+[![NPM Downloads](https://img.shields.io/npm/dm/@codefast/ui)](https://www.npmjs.com/package/@codefast/ui)
+[![GitHub tag](https://img.shields.io/github/v/tag/codefastlabs/codefast)](https://github.com/codefastlabs/codefast/tags)
 
 <!-- Tech Stack -->
 
-<a href="https://react.dev/" target="_blank" style="text-decoration: none;">
-  <img src="https://img.shields.io/badge/React-19-blue" alt="React" />
-</a>
-<a href="https://www.typescriptlang.org/" target="_blank" style="text-decoration: none;">
-  <img src="https://img.shields.io/badge/TypeScript-5.8.2-blue" alt="TypeScript" />
-</a>
-<a href="https://tailwindcss.com" target="_blank" style="text-decoration: none;">
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4.0.16-38B2AC?logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
-</a>
-<a href="https://www.radix-ui.com/" target="_blank" style="text-decoration: none;">
-  <img src="https://img.shields.io/badge/Radix_UI-1.1.6-blue" alt="Radix UI" />
-</a>
-<a href="https://nextjs.org/" target="_blank" style="text-decoration: none;">
-  <img src="https://img.shields.io/badge/Next.js-15.2.4-black?logo=next.js&logoColor=white" alt="Next.js" />
-</a>
-<a href="https://zod.dev/" target="_blank" style="text-decoration: none;">
-  <img src="https://img.shields.io/badge/Zod-3.24.2-blue" alt="Zod" />
-</a>
-
-<br />
-<br />
+[![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.2-blue)](https://www.typescriptlang.org/)
+[![Radix UI](https://img.shields.io/badge/Radix_UI-1.1.6-blue)](https://www.radix-ui.com/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0.16-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
 <!-- Community -->
 
-<a href="https://github.com/codefastlabs/codefast/blob/main/LICENSE" style="text-decoration: none;">
-  <img src="https://img.shields.io/github/license/codefastlabs/codefast" alt="License" />
-</a>
-<a href="https://github.com/codefastlabs/codefast/graphs/contributors" style="text-decoration: none;">
-  <img src="https://img.shields.io/github/contributors/codefastlabs/codefast" alt="Contributors" />
-</a>
-<a href="https://github.com/codefastlabs/codefast/issues" style="text-decoration: none;">
-  <img src="https://img.shields.io/github/issues-raw/codefastlabs/codefast" alt="Open Issues" />
-</a>
-<a href="https://github.com/codefastlabs/codefast/stargazers" style="text-decoration: none;">
-  <img src="https://img.shields.io/github/stars/codefastlabs/codefast" alt="GitHub Stars" />
-</a>
+[![License](https://img.shields.io/github/license/codefastlabs/codefast)](https://github.com/codefastlabs/codefast/blob/main/LICENSE)
+[![Contributors](https://img.shields.io/github/contributors/codefastlabs/codefast)](https://github.com/codefastlabs/codefast/graphs/contributors)
+[![Open Issues](https://img.shields.io/github/issues-raw/codefastlabs/codefast)](https://github.com/codefastlabs/codefast/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/codefastlabs/codefast)](https://github.com/codefastlabs/codefast/stargazers)
 
 </div>
 
