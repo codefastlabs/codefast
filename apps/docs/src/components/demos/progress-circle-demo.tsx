@@ -13,11 +13,11 @@ export function ProgressCircleDemo(): JSX.Element {
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 60) {
+        if (prev >= 80) {
           clearInterval(interval);
         }
 
-        return prev <= 100 ? prev + 20 : 0;
+        return prev < 100 ? prev + 20 : 0;
       });
     }, 1000);
 
