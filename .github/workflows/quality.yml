@@ -2,8 +2,18 @@ name: Quality
 
 on:
   pull_request:
+    branches: [main, develop]
     paths:
       - 'packages/**'
+      - 'apps/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/quality.yml'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/**'
+      - 'apps/**'
+      - 'pnpm-lock.yaml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,25 +21,38 @@ concurrency:
 
 env:
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+  NODE_ENV: test
 
 jobs:
   quality:
-    name: Quality Checks
+    name: Code Quality
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0  # Take the entire history to analyze the changes.
 
       - name: Setup Build Environment
-        uses: ./.github/setup
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: '22'
+          install-dependencies: 'true'
 
-      - name: Install Packages
+      - name: Type Check
+        run: pnpm run typecheck --filter="./packages/**"
+
+      - name: Build Packages
         run: pnpm run build --filter="./packages/**"
 
       - name: Lint Packages
         run: pnpm run lint --filter="./packages/**"
 
       - name: Test Packages
-        run: pnpm run test --filter="./packages/**" -- --ci
+        run: pnpm run test --filter="./packages/**" -- --ci --coverage
+
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
