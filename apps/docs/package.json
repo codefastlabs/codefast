@@ -9,7 +9,8 @@
     "dev": "rm -rf .next && next dev --turbopack",
     "lint": "TIMING=1 next lint",
     "lint:inspect": "npx @eslint/config-inspector@latest",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",

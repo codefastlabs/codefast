@@ -23,7 +23,8 @@
     "start:docs": "turbo run start --filter=@app/docs...",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
-    "test:watch": "turbo run test:watch"
+    "test:watch": "turbo run test:watch",
+    "typecheck": "turbo typecheck"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged",
