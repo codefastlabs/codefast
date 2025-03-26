@@ -27,7 +27,7 @@ export function NavDocuments({
     url: string;
   }[];
 }): JSX.Element {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebar('NavDocuments');
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">

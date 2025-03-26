@@ -23,7 +23,7 @@ import { SearchForm } from '@/app/(examples)/examples/dashboard-03/_components/s
 import { ThemeSelector } from '@/components/theme-selector';
 
 export function SiteHeader(): JSX.Element {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar('SiteHeader');
   const pathname = usePathname();
 
   // Faux breadcrumbs for demo.
