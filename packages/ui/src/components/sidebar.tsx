@@ -4,9 +4,10 @@ import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } fro
 import type { VariantProps } from 'tailwind-variants';
 
 import { useIsMobile } from '@codefast/hooks';
+import { createContext } from '@radix-ui/react-context';
 import { Slot } from '@radix-ui/react-slot';
 import { PanelLeftIcon } from 'lucide-react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { tv } from 'tailwind-variants';
 
 import { Button } from '@/components/button';
@@ -38,17 +39,9 @@ interface SidebarContextProps {
  * Context: SidebarProvider
  * -------------------------------------------------------------------------- */
 
-const SidebarContext = createContext<null | SidebarContextProps>(null);
+const SIDEBAR_PROVIDER_NAME = 'SidebarProvider';
 
-function useSidebar(): SidebarContextProps {
-  const context = useContext(SidebarContext);
-
-  if (!context) {
-    throw new Error('useSidebar must be used within a SidebarProvider.');
-  }
-
-  return context;
-}
+const [SidebarProviderProvider, useSidebar] = createContext<SidebarContextProps>(SIDEBAR_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
@@ -119,21 +112,16 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? 'expanded' : 'collapsed';
 
-  const contextValue = useMemo<SidebarContextProps>(
-    () => ({
-      state,
-      open,
-      setOpen,
-      isMobile,
-      openMobile,
-      setOpenMobile,
-      toggleSidebar,
-    }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
-  );
-
   return (
-    <SidebarContext.Provider value={contextValue}>
+    <SidebarProviderProvider
+      isMobile={isMobile}
+      open={open}
+      openMobile={openMobile}
+      setOpen={setOpen}
+      setOpenMobile={setOpenMobile}
+      state={state}
+      toggleSidebar={toggleSidebar}
+    >
       <TooltipProvider delayDuration={0}>
         <div
           className={cn('group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full', className)}
@@ -150,13 +138,15 @@ function SidebarProvider({
           {children}
         </div>
       </TooltipProvider>
-    </SidebarContext.Provider>
+    </SidebarProviderProvider>
   );
 }
 
 /* -----------------------------------------------------------------------------
  * Component: Sidebar
  * -------------------------------------------------------------------------- */
+
+const SIDEBAR_NAME = 'Sidebar';
 
 function Sidebar({
   side = 'left',
@@ -170,7 +160,7 @@ function Sidebar({
   side?: 'left' | 'right';
   variant?: 'floating' | 'inset' | 'sidebar';
 }): JSX.Element {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { isMobile, state, openMobile, setOpenMobile } = useSidebar(SIDEBAR_NAME);
 
   if (collapsible === 'none') {
     return (
@@ -259,8 +249,10 @@ function Sidebar({
  * Component: SidebarTrigger
  * -------------------------------------------------------------------------- */
 
+const SIDEBAR_TRIGGER_NAME = 'SidebarTrigger';
+
 function SidebarTrigger({ className, onClick, ...props }: ComponentProps<typeof Button>): JSX.Element {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar(SIDEBAR_TRIGGER_NAME);
 
   return (
     <Button
@@ -285,8 +277,10 @@ function SidebarTrigger({ className, onClick, ...props }: ComponentProps<typeof 
  * Component: SidebarRail
  * -------------------------------------------------------------------------- */
 
+const SIDEBAR_RAIL_NAME = 'SidebarRail';
+
 function SidebarRail({ className, ...props }: ComponentProps<'button'>): JSX.Element {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar } = useSidebar(SIDEBAR_RAIL_NAME);
 
   return (
     <button
@@ -539,6 +533,8 @@ const sidebarMenuButtonVariants = tv({
  * Component: SidebarMenuButton
  * -------------------------------------------------------------------------- */
 
+const SIDEBAR_MENU_BUTTON_NAME = 'SidebarMenuButton';
+
 function SidebarMenuButton({
   asChild = false,
   isActive = false,
@@ -554,7 +550,7 @@ function SidebarMenuButton({
     tooltip?: ComponentProps<typeof TooltipContent> | string;
   }): JSX.Element {
   const Component = asChild ? Slot : 'button';
-  const { isMobile, state } = useSidebar();
+  const { isMobile, state } = useSidebar(SIDEBAR_MENU_BUTTON_NAME);
 
   const button = (
     <Component

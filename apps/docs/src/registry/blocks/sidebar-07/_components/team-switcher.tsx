@@ -27,7 +27,7 @@ export function TeamSwitcher({
     plan: string;
   }[];
 }): JSX.Element | null {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebar('TeamSwitcher');
   const [activeTeam, setActiveTeam] = useState(teams.at(0));
 
   if (!activeTeam) {

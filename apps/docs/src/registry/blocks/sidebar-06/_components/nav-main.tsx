@@ -19,7 +19,7 @@ import Link from 'next/link';
 import type { NavItem } from '@/types/sidebar';
 
 export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
-  const { isMobile } = useSidebar();
+  const { isMobile } = useSidebar('NavMain');
 
   return (
     <SidebarGroup>

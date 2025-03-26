@@ -122,7 +122,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
   // IRL you should use the url/router.
   const [activeItem, setActiveItem] = useState(data.navMain[0]);
   const [mails, setMails] = useState(data.mails);
-  const { setOpen } = useSidebar();
+  const { setOpen } = useSidebar('AppSidebar');
 
   return (
     <Sidebar className="overflow-hidden *:data-[sidebar=sidebar]:flex-row" collapsible="icon" {...props}>
