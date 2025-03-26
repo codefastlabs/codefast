@@ -34,6 +34,10 @@ interface SidebarContextProps {
   toggleSidebar: () => void;
 }
 
+/* -----------------------------------------------------------------------------
+ * Context: SidebarProvider
+ * -------------------------------------------------------------------------- */
+
 const SidebarContext = createContext<null | SidebarContextProps>(null);
 
 function useSidebar(): SidebarContextProps {

@@ -21,12 +21,12 @@ function setThemeCookie(theme: string): void {
   });
 }
 
-interface ThemeContextType {
+interface ThemeContextValue {
   activeTheme: string;
   setActiveTheme: (theme: string) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ActiveThemeProvider({
   children,
@@ -56,10 +56,10 @@ export function ActiveThemeProvider({
   return <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>{children}</ThemeContext.Provider>;
 }
 
-export function useThemeConfig(): ThemeContextType {
+export function useThemeConfig(): ThemeContextValue {
   const context = useContext(ThemeContext);
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useThemeConfig must be used within an ActiveThemeProvider');
   }
 
