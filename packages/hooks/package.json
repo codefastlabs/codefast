@@ -41,7 +41,8 @@
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
