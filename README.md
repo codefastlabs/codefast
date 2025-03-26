@@ -2,66 +2,34 @@
 
 <!-- Build & Deploy -->
 <p align="center">
-  <a href="https://github.com/codefastlabs/codefast/actions/workflows/release.yml">
-    <img src="https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main" alt="Release">
-  </a>
-  <a href="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml">
-    <img src="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml/badge.svg" alt="Vercel">
-  </a>
-  <a href="https://codecov.io/gh/codefastlabs/codefast">
-    <img src="https://img.shields.io/codecov/c/github/codefastlabs/codefast" alt="Test Coverage">
-  </a>
+  <a href="https://github.com/codefastlabs/codefast/actions/workflows/release.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main" alt="Release"></a>
+  <a href="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml/badge.svg" alt="Vercel"></a>
+  <a href="https://codecov.io/gh/codefastlabs/codefast"><img src="https://img.shields.io/codecov/c/github/codefastlabs/codefast" alt="Test Coverage"></a>
 </p>
 
 <!-- Package -->
 <p align="center">
-  <a href="https://www.npmjs.com/package/@codefast/ui">
-    <img src="https://img.shields.io/npm/v/@codefast/ui" alt="NPM Version">
-  </a>
-  <a href="https://bundlephobia.com/package/@codefast/ui">
-    <img src="https://img.shields.io/bundlephobia/minzip/@codefast/ui" alt="Bundle Size">
-  </a>
-  <a href="https://www.npmjs.com/package/@codefast/ui">
-    <img src="https://img.shields.io/npm/dm/@codefast/ui" alt="NPM Downloads">
-  </a>
-  <a href="https://github.com/codefastlabs/codefast/tags">
-    <img src="https://img.shields.io/github/v/tag/codefastlabs/codefast" alt="GitHub tag">
-  </a>
+  <a href="https://www.npmjs.com/package/@codefast/ui"><img src="https://img.shields.io/npm/v/@codefast/ui" alt="NPM Version"></a>
+  <a href="https://bundlephobia.com/package/@codefast/ui"><img src="https://img.shields.io/bundlephobia/minzip/@codefast/ui" alt="Bundle Size"></a>
+  <a href="https://www.npmjs.com/package/@codefast/ui"><img src="https://img.shields.io/npm/dm/@codefast/ui" alt="NPM Downloads"></a>
+  <a href="https://github.com/codefastlabs/codefast/tags"><img src="https://img.shields.io/github/v/tag/codefastlabs/codefast" alt="GitHub tag"></a>
 </p>
 
 <!-- Tech Stack -->
 <p align="center">
-  <a href="https://nextjs.org/">
-    <img src="https://img.shields.io/badge/Next.js-15.2.4-black?logo=next.js&logoColor=white" alt="Next.js">
-  </a>
-  <a href="https://react.dev/">
-    <img src="https://img.shields.io/badge/React-19-blue" alt="React">
-  </a>
-  <a href="https://www.typescriptlang.org/">
-    <img src="https://img.shields.io/badge/TypeScript-5.8.2-blue" alt="TypeScript">
-  </a>
-  <a href="https://www.radix-ui.com/">
-    <img src="https://img.shields.io/badge/Radix_UI-1.1.6-blue" alt="Radix UI">
-  </a>
-  <a href="https://tailwindcss.com">
-    <img src="https://img.shields.io/badge/Tailwind_CSS-4.0.16-38B2AC?logo=tailwind-css&logoColor=white" alt="TailwindCSS">
-  </a>
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-15.2.4-black?logo=next.js&logoColor=white" alt="Next.js"></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-blue" alt="React"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.8.2-blue" alt="TypeScript"></a>
+  <a href="https://www.radix-ui.com/"><img src="https://img.shields.io/badge/Radix_UI-1.1.6-blue" alt="Radix UI"></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-4.0.16-38B2AC?logo=tailwind-css&logoColor=white" alt="TailwindCSS"></a>
 </p>
 
 <!-- Community -->
 <p align="center">
-  <a href="https://github.com/codefastlabs/codefast/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/codefastlabs/codefast" alt="License">
-  </a>
-  <a href="https://github.com/codefastlabs/codefast/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/codefastlabs/codefast" alt="Contributors">
-  </a>
-  <a href="https://github.com/codefastlabs/codefast/issues">
-    <img src="https://img.shields.io/github/issues-raw/codefastlabs/codefast" alt="Open Issues">
-  </a>
-  <a href="https://github.com/codefastlabs/codefast/stargazers">
-    <img src="https://img.shields.io/github/stars/codefastlabs/codefast" alt="GitHub Stars">
-  </a>
+  <a href="https://github.com/codefastlabs/codefast/blob/main/LICENSE"><img src="https://img.shields.io/github/license/codefastlabs/codefast" alt="License"></a>
+  <a href="https://github.com/codefastlabs/codefast/graphs/contributors"><img src="https://img.shields.io/github/contributors/codefastlabs/codefast" alt="Contributors"></a>
+  <a href="https://github.com/codefastlabs/codefast/issues"><img src="https://img.shields.io/github/issues-raw/codefastlabs/codefast" alt="Open Issues"></a>
+  <a href="https://github.com/codefastlabs/codefast/stargazers"><img src="https://img.shields.io/github/stars/codefastlabs/codefast" alt="GitHub Stars"></a>
 </p>
 
 ---
