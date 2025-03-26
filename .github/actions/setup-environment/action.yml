@@ -1,0 +1,57 @@
+name: 'Setup Build Environment'
+description: 'Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds'
+author: 'thevuong'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    default: '22'
+    required: false
+  package-manager-version:
+    description: 'Version of pnpm to install'
+    default: 'latest'
+    required: false
+  install-dependencies:
+    description: 'Whether to install dependencies'
+    default: 'true'
+    required: false
+  install-options:
+    description: 'Additional options for pnpm install'
+    default: '--prefer-offline'
+    required: false
+
+outputs:
+  cache-hit:
+    description: 'Whether cache was hit for dependencies'
+    value: ${{ steps.pnpm-cache.outputs.cache-hit }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Turbo Build Cache
+      id: turbo-cache
+      uses: actions/cache@v4
+      with:
+        path: .turbo
+        key: ${{ runner.os }}-turbo-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-turbo-
+
+    - name: Setup PNPM Package Manager
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.package-manager-version }}
+        run_install: false
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Install Project Dependencies
+      id: pnpm-install
+      if: ${{ inputs.install-dependencies == 'true' }}
+      shell: bash
+      run: pnpm install ${{ inputs.install-options }}
