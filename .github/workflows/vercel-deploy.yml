@@ -1,0 +1,75 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'fix/**', 'release/**']
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/vercel-deploy.yml'
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Build Environment
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: '22'
+          install-dependencies: 'true'
+
+      # Build dự án
+      - name: Build
+        run: pnpm build
+
+      # Cài đặt Vercel CLI
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      # Deploy lên Vercel (Production - chỉ khi branch là main)
+      - name: Deploy to Vercel (Production)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
+
+      # Deploy lên Vercel (Preview - cho các branch khác main)
+      - name: Deploy to Vercel (Preview)
+        if: github.ref != 'refs/heads/main'
+        run: |
+          DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --yes)
+          echo "Preview URL: $DEPLOY_URL"
+          echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
+
+      # Comment về Preview URL trong PR
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo } } = context;
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `✅ Preview deployment is ready! \n\n🔍 Preview URL: ${process.env.PREVIEW_URL}`
+            });
