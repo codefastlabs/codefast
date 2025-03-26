@@ -1,74 +1,107 @@
 'use client';
 
+import type { Scope } from '@radix-ui/react-context';
 import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from 'react';
 import type { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
-import { createContext, useContext, useId, useMemo } from 'react';
+import { createContextScope } from '@radix-ui/react-context';
+import { useId, useMemo } from 'react';
 import * as RechartsPrimitive from 'recharts';
 
 import { cn } from '@/lib/utils';
 
-const THEMES = {
+/* -----------------------------------------------------------------------------
+ * Context: ChartProvider
+ * ---------------------------------------------------------------------------*/
+
+const CHART_PROVIDER_NAME = 'ChartProvider';
+
+type ScopedProps<P> = P & { __scopeChart?: Scope };
+
+/**
+ * Supported themes in the application
+ */
+type Theme = 'dark' | 'light';
+
+/**
+ * Mapping between themes and their corresponding CSS classes
+ */
+const THEMES: Record<Theme, string> = {
   dark: '.dark',
   light: '',
-} as const;
+};
 
-type Theme = keyof typeof THEMES;
-
+/**
+ * Configuration for icon and label display in charts
+ */
 interface IconLabelConfig {
+  /** Icon to display with data */
   icon?: ComponentType;
+  /** Label to display with data */
   label?: ReactNode;
 }
 
-interface ColorConfig {
+/**
+ * Single color configuration for chart elements
+ */
+type ColorConfig = {
+  /** Valid CSS color (hex, rgba, etc.) */
   color?: string;
-  theme?: never;
-}
+} & { theme?: never };
 
-interface ThemeConfig {
+/**
+ * Theme-based color configuration for chart elements
+ */
+type ThemeConfig = {
+  /** Map of colors for each theme mode */
   theme: Record<Theme, string>;
-  color?: never;
-}
+} & { color?: never };
 
+/**
+ * Complete configuration for a chart element
+ */
 type ChartConfigItem = (ColorConfig | ThemeConfig) & IconLabelConfig;
 
+/**
+ * Configuration for the entire chart organized by series/data keys
+ * Where keys are the names of data in the chart
+ */
 type ChartConfig = Record<string, ChartConfigItem | undefined>;
 
-interface ChartContextProps {
+/**
+ * Value provided by Chart Context
+ */
+interface ChartContextValue {
+  /** Display configuration for the chart */
   config: ChartConfig;
 }
 
-const ChartContext = createContext<ChartContextProps | null>(null);
+const [createChartContext, createChartScope] = createContextScope(CHART_PROVIDER_NAME);
 
-function useChart(): ChartContextProps {
-  const context = useContext(ChartContext);
-
-  if (!context) {
-    throw new Error('useChart must be used within a <ChartContainer />');
-  }
-
-  return context;
-}
+const [ChartContextProvider, useChartContext] = createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Chart
  * -------------------------------------------------------------------------- */
 
 function ChartContainer({
+  __scopeChart,
   id,
   children,
   className,
   config,
   ...props
-}: ComponentProps<'div'> & {
-  children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
-  config: ChartConfig;
-}): JSX.Element {
+}: ScopedProps<
+  ComponentProps<'div'> & {
+    children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
+    config: ChartConfig;
+  }
+>): JSX.Element {
   const uniqueId = useId();
   const chartId = `chart-${id || uniqueId}`;
 
   return (
-    <ChartContext.Provider value={{ config }}>
+    <ChartContextProvider config={config} scope={__scopeChart}>
       <div
         className={cn(
           "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden flex aspect-video justify-center text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-sector[stroke='#fff']]:stroke-transparent",
@@ -81,7 +114,7 @@ function ChartContainer({
         <ChartStyle config={config} id={chartId} />
         <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
       </div>
-    </ChartContext.Provider>
+    </ChartContextProvider>
   );
 }
 
@@ -105,7 +138,10 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
  * Component: ChartTooltipContent
  * -------------------------------------------------------------------------- */
 
+const CHART_TOOLTIP_CONTENT_NAME = 'ChartTooltipContent';
+
 function ChartTooltipContent({
+  __scopeChart,
   active,
   className,
   color,
@@ -119,15 +155,17 @@ function ChartTooltipContent({
   labelKey,
   nameKey,
   payload,
-}: ComponentProps<typeof RechartsPrimitive.Tooltip> &
-  Omit<ComponentProps<'div'>, 'content'> & {
-    hideIndicator?: boolean;
-    hideLabel?: boolean;
-    indicator?: 'dashed' | 'dot' | 'line';
-    labelKey?: string;
-    nameKey?: string;
-  }): ReactNode {
-  const { config } = useChart();
+}: ScopedProps<
+  ComponentProps<typeof RechartsPrimitive.Tooltip> &
+    Omit<ComponentProps<'div'>, 'content'> & {
+      hideIndicator?: boolean;
+      hideLabel?: boolean;
+      indicator?: 'dashed' | 'dot' | 'line';
+      labelKey?: string;
+      nameKey?: string;
+    }
+>): ReactNode {
+  const { config } = useChartContext(CHART_TOOLTIP_CONTENT_NAME, __scopeChart);
 
   const tooltipLabel = useMemo(() => {
     if (hideLabel || !payload?.length) {
@@ -236,18 +274,23 @@ const ChartLegend = RechartsPrimitive.Legend;
  * Component: ChartLegendContent
  * -------------------------------------------------------------------------- */
 
+const CHART_LEGEND_CONTENT_NAME = 'ChartLegendContent';
+
 function ChartLegendContent({
+  __scopeChart,
   className,
   hideIcon = false,
   nameKey,
   payload,
   verticalAlign = 'bottom',
-}: ComponentProps<'div'> &
-  Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
-    hideIcon?: boolean;
-    nameKey?: string;
-  }): ReactNode {
-  const { config } = useChart();
+}: ScopedProps<
+  ComponentProps<'div'> &
+    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
+      hideIcon?: boolean;
+      nameKey?: string;
+    }
+>): ReactNode {
+  const { config } = useChartContext(CHART_LEGEND_CONTENT_NAME, __scopeChart);
 
   if (!payload?.length) {
     return null;
@@ -415,4 +458,12 @@ function generateCSS(id: string, config: ChartConfig): string {
  * -------------------------------------------------------------------------- */
 
 export type { ChartConfig };
-export { ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent };
+export {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartStyle,
+  ChartTooltip,
+  ChartTooltipContent,
+  createChartScope,
+};
