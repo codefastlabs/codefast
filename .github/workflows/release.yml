@@ -32,8 +32,17 @@ jobs:
       - name: Build Packages
         run: pnpm run build --filter="./packages/**"
 
+      - name: Lint Packages
+        run: pnpm run lint --filter="./packages/**"
+
       - name: Test Packages
-        run: pnpm run test --filter="./packages/**" -- --ci
+        run: pnpm run test --filter="./packages/**" -- --ci --coverage
+
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
 
   release:
     name: Release Packages
@@ -49,9 +58,6 @@ jobs:
 
       - name: Setup Build Environment
         uses: ./.github/actions/setup-environment
-        with:
-          node-version: '22'
-          install-dependencies: 'true'
 
       - name: Build Packages
         run: pnpm run build --filter="./packages/**"

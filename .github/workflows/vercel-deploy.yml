@@ -33,9 +33,6 @@ jobs:
 
       - name: Setup Build Environment
         uses: ./.github/actions/setup-environment
-        with:
-          node-version: '22'
-          install-dependencies: 'true'
 
       # Vercel CLI installation
       - name: Install Vercel CLI
