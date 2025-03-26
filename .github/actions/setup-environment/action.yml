@@ -7,13 +7,16 @@ inputs:
     description: 'Node.js version to use'
     default: '22'
     required: false
+
   package-manager-version:
     description: 'Version of pnpm to install'
     required: false
+
   install-dependencies:
     description: 'Whether to install dependencies'
     default: 'true'
     required: false
+
   install-options:
     description: 'Additional options for pnpm install'
     default: '--prefer-offline'
