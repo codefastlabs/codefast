@@ -9,7 +9,6 @@ inputs:
     required: false
   package-manager-version:
     description: 'Version of pnpm to install'
-    default: 'latest'
     required: false
   install-dependencies:
     description: 'Whether to install dependencies'
