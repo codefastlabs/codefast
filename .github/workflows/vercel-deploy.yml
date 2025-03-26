@@ -37,21 +37,17 @@ jobs:
           node-version: '22'
           install-dependencies: 'true'
 
-      # Build dự án
-      - name: Build
-        run: pnpm build
-
-      # Cài đặt Vercel CLI
+      # Vercel CLI installation
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
 
-      # Deploy lên Vercel (Production - chỉ khi branch là main)
+      # Deploy to Vercel (Production - only when the branch is main)
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         run: |
           vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
 
-      # Deploy lên Vercel (Preview - cho các branch khác main)
+      # Deploy to Vercel (Preview - for branches other than main)
       - name: Deploy to Vercel (Preview)
         if: github.ref != 'refs/heads/main'
         run: |
@@ -59,7 +55,7 @@ jobs:
           echo "Preview URL: $DEPLOY_URL"
           echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
 
-      # Comment về Preview URL trong PR
+      # Comment on the Preview URL in the PR
       - name: Comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
