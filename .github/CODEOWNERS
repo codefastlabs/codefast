@@ -1,2 +1,10 @@
 # Global owners
 * @thevuong
+
+# GitHub Actions và cấu hình CI/CD
+/.github/workflows/ @thevuong
+/.github/actions/ @thevuong
+
+# Package Manager
+/package.json @thevuong
+/pnpm-lock.yaml @thevuong
