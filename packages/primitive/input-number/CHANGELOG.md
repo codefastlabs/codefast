@@ -1,5 +1,20 @@
 # @codefast-ui/number-input
 
+## 0.2.36
+
+### Patch Changes
+
+- [`eda67fa`](https://github.com/codefastlabs/codefast/commit/eda67fa85bd40b0972f97c7e9951d045282f9cd8) Thanks [@thevuong](https://github.com/thevuong)! - refactor(context): improve naming consistency and update types
+
+- [`0195abd`](https://github.com/codefastlabs/codefast/commit/0195abdc354c5239917a4ec300bad6a40c0f03c2) Thanks [@thevuong](https://github.com/thevuong)! - fix: correct usage of OTPInputContext and update demo layout
+
+- [`1a41b21`](https://github.com/codefastlabs/codefast/commit/1a41b213802212fa4172c8ae58b1700f0bf7c851) Thanks [@thevuong](https://github.com/thevuong)! - feat(chart): integrate Radix context for scoping support
+
+- [`79f3ff6`](https://github.com/codefastlabs/codefast/commit/79f3ff65d20740058a93ee2612cc4629f2a9b17e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(sidebar): introduce named context for useSidebar
+
+- Updated dependencies [[`eda67fa`](https://github.com/codefastlabs/codefast/commit/eda67fa85bd40b0972f97c7e9951d045282f9cd8), [`0195abd`](https://github.com/codefastlabs/codefast/commit/0195abdc354c5239917a4ec300bad6a40c0f03c2), [`1a41b21`](https://github.com/codefastlabs/codefast/commit/1a41b213802212fa4172c8ae58b1700f0bf7c851), [`79f3ff6`](https://github.com/codefastlabs/codefast/commit/79f3ff65d20740058a93ee2612cc4629f2a9b17e)]:
+  - @codefast-ui/input@0.2.36
+
 ## 0.2.35
 
 ### Patch Changes
