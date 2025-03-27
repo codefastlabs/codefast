@@ -54,7 +54,7 @@ jobs:
         with:
           fetch-depth: 0
           # It is necessary to specify a token with the permission to push commits when a changeset is created.
-          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Build Environment
         uses: ./.github/actions/setup-environment
@@ -72,5 +72,5 @@ jobs:
           commit: 'chore(release): version packages'
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
