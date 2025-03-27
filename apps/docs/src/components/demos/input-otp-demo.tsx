@@ -10,16 +10,16 @@ import { GridWrapper } from '@/components/grid-wrapper';
 export function InputOTPDemo(): JSX.Element {
   return (
     <GridWrapper className="*:grid *:place-items-center">
-      <div className="col-span-full lg:col-span-2">
+      <div className="">
         <InputOTPSimple />
       </div>
-      <div className="max-lg:col-span-full">
+      <div className="">
         <InputOTPPattern />
       </div>
-      <div className="col-span-full lg:col-span-2">
+      <div className="">
         <InputOTPWithSeparator />
       </div>
-      <div className="max-lg:col-span-full">
+      <div className="">
         <InputOTPWithSpacing />
       </div>
     </GridWrapper>
