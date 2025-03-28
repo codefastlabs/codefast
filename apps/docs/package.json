@@ -36,17 +36,17 @@
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.0.16",
+    "@tailwindcss/postcss": "^4.0.17",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.13.13",
+    "@types/node": "^22.13.14",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.4",
     "postcss": "^8.5.3",
     "rimraf": "^6.0.1",
-    "tailwindcss": "^4.0.16",
+    "tailwindcss": "^4.0.17",
     "typescript": "^5.8.2"
   }
 }
