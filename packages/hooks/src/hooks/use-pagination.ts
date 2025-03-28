@@ -3,13 +3,10 @@ import { useMemo } from 'react';
 export interface UsePaginationProps {
   /** The current active page number */
   currentPage: number;
-
   /** The number of results to display per page */
   resultsPerPage: number;
-
   /** The total number of results across all pages */
   totalResults: number;
-
   /**
    * The number of sibling pages to display on either side of the current page.
    * Defaults to 1.
@@ -43,7 +40,7 @@ const createRange = (start: number, end: number): number[] => {
  *   numbers and ellipsis indicators
  *
  * @example
- * ```typescript
+ * ```tsx
  * const paginationRange = usePagination({
  *   currentPage: 3,
  *   resultsPerPage: 10,
@@ -59,8 +56,9 @@ export function usePagination({
   totalResults,
 }: UsePaginationProps): (number | string)[] {
   return useMemo<(number | string)[]>(() => {
-    // Calculate the total number of pages based on total results and results
-    // per page
+    /**
+     * The total number of pages calculated from total results divided by results per page
+     */
     const totalPages = Math.ceil(totalResults / Math.floor(resultsPerPage));
 
     // Return an empty array if there are no pages to display
@@ -68,8 +66,10 @@ export function usePagination({
       return [];
     }
 
-    // The total number of pagination items to show, including first, last,
-    // current, and sibling pages
+    /**
+     * The total number of pagination items to show, including first, last,
+     * current, and sibling pages (calculated as siblings on both sides + current page + first + last + 2 dots)
+     */
     const visiblePageNumbers = siblingPagesCount + 5;
 
     /**
@@ -80,17 +80,30 @@ export function usePagination({
       return createRange(1, totalPages);
     }
 
-    // Determine the left and right sibling page indexes, ensuring they stay
-    // within valid bounds
+    /**
+     * The leftmost sibling page index, ensuring it's not less than the first page
+     */
     const leftSiblingIndex = Math.max(currentPage - siblingPagesCount, 1);
+
+    /**
+     * The rightmost sibling page index, ensuring it's not greater than the last page
+     */
     const rightSiblingIndex = Math.min(currentPage + siblingPagesCount, totalPages);
 
-    // Determine whether to show ellipsis on the left or right of the pagination
+    /**
+     * Flag indicating whether to show ellipsis on the left side of the pagination
+     */
     const shouldShowLeftEllipsis = leftSiblingIndex > 2;
+
+    /**
+     * Flag indicating whether to show ellipsis on the right side of the pagination
+     */
     const shouldShowRightEllipsis = rightSiblingIndex < totalPages - 2;
 
-    // Define the first and last pages in the pagination structure
+    /** The first page number, always 1 */
     const firstPage = 1;
+
+    /** The last page number, equal to the total pages calculated */
     const lastPage = totalPages;
 
     /**
@@ -99,6 +112,9 @@ export function usePagination({
      * pagination range.
      */
     if (!shouldShowLeftEllipsis && shouldShowRightEllipsis) {
+      /**
+       * Range of page numbers to display from the start, including the current page and siblings
+       */
       const leftRange = createRange(1, 3 + 2 * siblingPagesCount);
 
       return [...leftRange, ELLIPSIS, lastPage];
@@ -110,6 +126,9 @@ export function usePagination({
      * range.
      */
     if (shouldShowLeftEllipsis && !shouldShowRightEllipsis) {
+      /**
+       * Range of page numbers to display at the end, including the current page and siblings
+       */
       const rightRange = createRange(totalPages - (3 + 2 * siblingPagesCount) + 1, totalPages);
 
       return [firstPage, ELLIPSIS, ...rightRange];
@@ -121,6 +140,9 @@ export function usePagination({
      * end of the pagination range.
      */
     if (shouldShowLeftEllipsis && shouldShowRightEllipsis) {
+      /**
+       * Range of page numbers to display in the middle, including the current page and siblings
+       */
       const middleRange = createRange(leftSiblingIndex, rightSiblingIndex);
 
       return [firstPage, ELLIPSIS, ...middleRange, ELLIPSIS, lastPage];
