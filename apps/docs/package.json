@@ -10,7 +10,7 @@
     "lint": "TIMING=1 next lint",
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",

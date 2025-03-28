@@ -68,7 +68,7 @@
     "clean": "rm -rf node_modules dist",
     "lint": "TIMING=1 eslint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
-    "typecheck": "tsc --noEmit"
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/style-guide": "workspace:*",
