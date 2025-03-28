@@ -16,7 +16,15 @@ import { useCallback } from 'react';
 
 const CHECKBOX_GROUP_NAME = 'CheckboxGroup';
 
-type ScopedProps<P> = P & { __scopeCheckboxGroup?: Scope };
+/**
+ * Type for components that can be scoped within the CheckboxGroup context
+ */
+type ScopedProps<P> = P & {
+  /**
+   * Optional scope for the CheckboxGroup component
+   */
+  __scopeCheckboxGroup?: Scope;
+};
 
 const [createCheckboxGroupContext, createCheckboxGroupScope] = createContextScope(CHECKBOX_GROUP_NAME, [
   createRovingFocusGroupScope,
@@ -26,12 +34,40 @@ const [createCheckboxGroupContext, createCheckboxGroupScope] = createContextScop
 const useRovingFocusGroupScope = createRovingFocusGroupScope();
 const useCheckboxScope = createCheckboxScope();
 
+/**
+ * Context values shared between CheckboxGroup components
+ */
 interface CheckboxGroupContextValue {
+  /**
+   * Whether all checkbox items are disabled
+   */
   disabled: boolean;
+
+  /**
+   * Function called when a checkbox item is checked
+   * @param value - The value of the checked item
+   */
   onItemCheck: (value: string) => void;
+
+  /**
+   * Function called when a checkbox item is unchecked
+   * @param value - The value of the unchecked item
+   */
   onItemUncheck: (value: string) => void;
+
+  /**
+   * Whether checkbox selection is required
+   */
   required: boolean;
+
+  /**
+   * Optional name attribute for the checkbox group form field
+   */
   name?: string;
+
+  /**
+   * Array of currently selected checkbox values
+   */
   value?: string[];
 }
 
@@ -42,6 +78,65 @@ const [CheckboxGroupProvider, useCheckboxGroupContext] =
  * Component: CheckboxGroup
  * ---------------------------------------------------------------------------*/
 
+/**
+ * Base props for the CheckboxGroup component
+ */
+interface CheckboxGroupBaseProps {
+  /**
+   * Default values for the checkbox group when uncontrolled
+   */
+  defaultValue?: string[];
+
+  /**
+   * Direction for roving focus navigation
+   */
+  dir?: RovingFocusGroup.RovingFocusGroupProps['dir'];
+
+  /**
+   * Whether the entire checkbox group is disabled
+   */
+  disabled?: boolean;
+
+  /**
+   * Whether focus should loop to the start/end when reaching the boundaries
+   */
+  loop?: RovingFocusGroup.RovingFocusGroupProps['loop'];
+
+  /**
+   * Name attribute for the checkbox group form field
+   */
+  name?: CheckboxGroupContextValue['name'];
+
+  /**
+   * Callback fired when the selected values change
+   * @param value - The new array of selected values
+   */
+  onValueChange?: (value: string[]) => void;
+
+  /**
+   * Orientation of the checkbox group (horizontal or vertical)
+   */
+  orientation?: RovingFocusGroup.RovingFocusGroupProps['orientation'];
+
+  /**
+   * Whether at least one checkbox must be selected
+   */
+  required?: boolean;
+
+  /**
+   * Controlled values for the checkbox group
+   */
+  value?: CheckboxGroupContextValue['value'];
+}
+
+/**
+ * Props for the CheckboxGroup component
+ */
+type CheckboxGroupProps = CheckboxGroupBaseProps & ComponentProps<'div'>;
+
+/**
+ * CheckboxGroup component that manages a group of checkboxes with roving focus
+ */
 function CheckboxGroup({
   __scopeCheckboxGroup,
   defaultValue,
@@ -54,27 +149,30 @@ function CheckboxGroup({
   required = false,
   value: valueProp,
   ...props
-}: ScopedProps<
-  ComponentProps<'div'> & {
-    defaultValue?: string[];
-    dir?: RovingFocusGroup.RovingFocusGroupProps['dir'];
-    disabled?: boolean;
-    loop?: RovingFocusGroup.RovingFocusGroupProps['loop'];
-    name?: CheckboxGroupContextValue['name'];
-    onValueChange?: (value: string[]) => void;
-    orientation?: RovingFocusGroup.RovingFocusGroupProps['orientation'];
-    required?: boolean;
-    value?: CheckboxGroupContextValue['value'];
-  }
->): JSX.Element {
+}: ScopedProps<CheckboxGroupProps>): JSX.Element {
+  /**
+   * Scope for the RovingFocusGroup component
+   */
   const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
+
+  /**
+   * Direction for layout and navigation
+   */
   const direction = useDirection(dir);
+
+  /**
+   * State for managing selected checkbox values
+   */
   const [value = [], setValue] = useControllableState<string[]>({
     defaultProp: defaultValue,
     onChange: onValueChange,
     prop: valueProp,
   });
 
+  /**
+   * Handles checking a checkbox item
+   * @param itemValue - Value of the checkbox being checked
+   */
   const handleItemCheck = useCallback(
     (itemValue: string) => {
       setValue((prevValue = []) => [...prevValue, itemValue]);
@@ -82,6 +180,10 @@ function CheckboxGroup({
     [setValue],
   );
 
+  /**
+   * Handles unchecking a checkbox item
+   * @param itemValue - Value of the checkbox being unchecked
+   */
   const handleItemUncheck = useCallback(
     (itemValue: string) => {
       setValue((prevValue = []) => prevValue.filter((val) => val !== itemValue));
@@ -109,22 +211,58 @@ function CheckboxGroup({
 /* -----------------------------------------------------------------------------
  * Component: CheckboxGroupItem
  * ---------------------------------------------------------------------------*/
-
 const ITEM_NAME = 'CheckboxGroupItem';
 
+/**
+ * Props for the CheckboxGroupItem component
+ */
+interface CheckboxGroupItemProps
+  extends Omit<
+    ComponentProps<typeof CheckboxPrimitive.Root>,
+    'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'
+  > {
+  /**
+   * Value of the checkbox item, used to identify the item within the group
+   */
+  value: string;
+
+  /**
+   * Whether this specific checkbox item is disabled
+   */
+  disabled?: boolean;
+}
+
+/**
+ * Individual checkbox item within a CheckboxGroup
+ */
 function CheckboxGroupItem({
   __scopeCheckboxGroup,
   disabled,
   ...props
-}: ScopedProps<
-  Omit<ComponentProps<typeof CheckboxPrimitive.Root>, 'checked' | 'defaultChecked' | 'name' | 'onCheckedChange'> & {
-    value: string;
-  }
->): JSX.Element {
+}: ScopedProps<CheckboxGroupItemProps>): JSX.Element {
+  /**
+   * Context values from the parent CheckboxGroup
+   */
   const context = useCheckboxGroupContext(ITEM_NAME, __scopeCheckboxGroup);
+
+  /**
+   * Combined disabled state from both context and props
+   */
   const isDisabled = context.disabled || disabled;
+
+  /**
+   * Scope for the RovingFocusGroup component
+   */
   const rovingFocusGroupScope = useRovingFocusGroupScope(__scopeCheckboxGroup);
+
+  /**
+   * Scope for the Checkbox component
+   */
   const checkboxScope = useCheckboxScope(__scopeCheckboxGroup);
+
+  /**
+   * Whether this checkbox is currently checked
+   */
   const checked = context.value?.includes(props.value);
 
   return (
@@ -152,10 +290,21 @@ function CheckboxGroupItem({
  * Component: CheckboxGroupIndicator
  * ---------------------------------------------------------------------------*/
 
+/**
+ * Props for the CheckboxGroupIndicator component
+ */
+type CheckboxGroupIndicatorProps = ComponentProps<typeof CheckboxPrimitive.Indicator>;
+
+/**
+ * Visual indicator component for a CheckboxGroupItem
+ */
 function CheckboxGroupIndicator({
   __scopeCheckboxGroup,
   ...props
-}: ScopedProps<ComponentProps<typeof CheckboxPrimitive.Indicator>>): JSX.Element {
+}: ScopedProps<CheckboxGroupIndicatorProps>): JSX.Element {
+  /**
+   * Scope for the Checkbox component
+   */
   const checkboxScope = useCheckboxScope(__scopeCheckboxGroup);
 
   return <CheckboxPrimitive.Indicator {...checkboxScope} {...props} />;
@@ -164,7 +313,6 @@ function CheckboxGroupIndicator({
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
-
 export {
   CheckboxGroup,
   CheckboxGroupIndicator,
