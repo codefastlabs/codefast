@@ -42,7 +42,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "typecheck": "tsc --noEmit"
+    "type:check": "tsc --noEmit"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",

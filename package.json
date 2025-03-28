@@ -24,7 +24,7 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:watch": "turbo run test:watch",
-    "typecheck": "turbo typecheck"
+    "type:check": "turbo type:check"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged",

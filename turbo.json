@@ -23,8 +23,8 @@
       "cache": false,
       "persistent": true
     },
-    "typecheck": {
-      "dependsOn": ["^typecheck"],
+    "type:check": {
+      "dependsOn": ["^type:check"],
       "outputs": []
     }
   }
