@@ -21,30 +21,78 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
  * Context: InputNumber
  * -------------------------------------------------------------------------- */
 
+/**
+ * The name of the InputNumber component constant.
+ */
 const NUMBER_INPUT_NAME = 'InputNumber';
 
-type ScopedProps<P> = P & { __scopeInputNumber?: Scope };
+/**
+ * Props that include an optional scope for the InputNumber component.
+ */
+type ScopedProps<P> = P & {
+  /** Optional scope for the InputNumber component context */
+  __scopeInputNumber?: Scope;
+};
+
 const [createInputNumberContext, createInputNumberScope] = createContextScope(NUMBER_INPUT_NAME, [createInputScope]);
 const useInputScope = createInputScope();
 
+/**
+ * Context value for the InputNumber component.
+ */
 interface InputNumberContextValue {
+  /** Formatting options for displaying the number value */
   formatOptions: Intl.NumberFormatOptions;
+
+  /** Function to format a number value as a string */
   formatValue: (value?: number) => string;
+
+  /** Reference to the input element */
   inputRef: RefObject<HTMLInputElement | null>;
+
+  /** Handler for when the value changes */
   onChange: (value?: number) => void;
+
+  /** Handler to decrement the value */
   onDecrement: () => void;
+
+  /** Handler to decrement the value to the minimum allowed */
   onDecrementToMin: () => void;
+
+  /** Handler to increment the value */
   onIncrement: () => void;
+
+  /** Handler to increment the value to the maximum allowed */
   onIncrementToMax: () => void;
+
+  /** Function to parse a value into a number */
   parseValue: (value: number | readonly string[] | string | undefined) => number;
+
+  /** Accessible label for the decrement button */
   ariaDecrementLabel?: string;
+
+  /** Accessible label for the increment button */
   ariaIncrementLabel?: string;
+
+  /** Whether the input is disabled */
   disabled?: boolean;
+
+  /** Unique identifier for the input */
   id?: string;
+
+  /** Maximum allowed value */
   max?: number;
+
+  /** Minimum allowed value */
   min?: number;
+
+  /** Whether the input is read-only */
   readOnly?: boolean;
+
+  /** Step value for increments/decrements */
   step?: number;
+
+  /** Current value of the input */
   value?: number;
 }
 
@@ -55,23 +103,45 @@ const [InputNumberProvider, useInputNumberContext] =
  * Component: InputNumber
  * -------------------------------------------------------------------------- */
 
-function InputNumber(
-  numberInputProps: ScopedProps<
-    ComponentProps<typeof InputPrimitive.Root> & {
-      ariaDecrementLabel?: string;
-      ariaIncrementLabel?: string;
-      defaultValue?: number;
-      formatOptions?: Intl.NumberFormatOptions;
-      id?: string;
-      locale?: string;
-      max?: number;
-      min?: number;
-      onChange?: (value: number) => void;
-      step?: number;
-      value?: number;
-    }
-  >,
-): JSX.Element {
+/**
+ * Props for the main InputNumber component.
+ */
+interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
+  /** Accessible label for the decrement button */
+  ariaDecrementLabel?: string;
+
+  /** Accessible label for the increment button */
+  ariaIncrementLabel?: string;
+
+  /** Initial value when uncontrolled */
+  defaultValue?: number;
+
+  /** Options for number formatting */
+  formatOptions?: Intl.NumberFormatOptions;
+
+  /** Unique identifier for the input */
+  id?: string;
+
+  /** Locale used for number formatting */
+  locale?: string;
+
+  /** Maximum allowed value */
+  max?: number;
+
+  /** Minimum allowed value */
+  min?: number;
+
+  /** Handler called when the value changes */
+  onChange?: (value: number) => void;
+
+  /** Step value for increments/decrements */
+  step?: number;
+
+  /** Current value when controlled */
+  value?: number;
+}
+
+function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Element {
   const {
     __scopeInputNumber,
     id,
@@ -87,17 +157,28 @@ function InputNumber(
     value: valueProp,
     ...props
   } = numberInputProps;
+
+  /** Scope for the input component */
   const inputScope = useInputScope(__scopeInputNumber);
+
+  /** Reference to the input element */
   const inputRef = useRef<HTMLInputElement>(null);
 
+  /** Controlled or uncontrolled value state */
   const [value, setValue] = useControllableState({
     defaultProp: defaultValue,
     onChange,
     prop: valueProp,
   });
 
+  /** Separators used for number formatting based on locale */
   const { decimalSeparator, thousandSeparator } = useMemo(() => getNumberFormatSeparators(locale), [locale]);
 
+  /**
+   * Formats a number value into a string representation
+   * @param inputValue - The number to format
+   * @returns A formatted string representation of the number
+   */
   const formatValue = useCallback(
     (inputValue?: number): string => {
       if (inputValue === undefined || Number.isNaN(inputValue)) {
@@ -109,6 +190,11 @@ function InputNumber(
     [formatOptions, locale],
   );
 
+  /**
+   * Parses a string or number input into a normalized number value
+   * @param inputValue - The value to parse
+   * @returns The parsed number value, clamped between min and max
+   */
   const parseValue = useCallback(
     (inputValue: number | readonly string[] | string | undefined): number => {
       if (typeof inputValue === 'number') {
@@ -137,6 +223,10 @@ function InputNumber(
     [decimalSeparator, formatOptions.style, max, min, thousandSeparator],
   );
 
+  /**
+   * Changes the current value based on a provided operation
+   * @param operation - Function that takes the current value and returns a new value
+   */
   const changeNumberValue = useCallback(
     (operation: (number: number) => number) => {
       const inputElement = inputRef.current;
@@ -154,18 +244,30 @@ function InputNumber(
     [props.disabled, formatValue, max, min, parseValue, props.readOnly, setValue],
   );
 
+  /**
+   * Increments the current value by the step amount
+   */
   const handleIncrement = useCallback(() => {
     changeNumberValue((number) => number + step);
   }, [changeNumberValue, step]);
 
+  /**
+   * Decrements the current value by the step amount
+   */
   const handleDecrement = useCallback(() => {
     changeNumberValue((number) => number - step);
   }, [changeNumberValue, step]);
 
+  /**
+   * Sets the value to the maximum allowed
+   */
   const handleIncrementToMax = useCallback(() => {
     changeNumberValue((number) => max ?? number + step);
   }, [changeNumberValue, max, step]);
 
+  /**
+   * Sets the value to the minimum allowed
+   */
   const handleDecrementToMin = useCallback(() => {
     changeNumberValue((number) => min ?? number - step);
   }, [changeNumberValue, min, step]);
@@ -200,19 +302,26 @@ function InputNumber(
  * Component: InputNumberItem
  * -------------------------------------------------------------------------- */
 
+/**
+ * The name of the InputNumberItem component constant.
+ */
 const NUMBER_INPUT_ITEM_NAME = 'InputNumberItem';
+
+/**
+ * Defines the props for the `InputNumberItem` component.
+ */
+type InputNumberItemProps = Omit<
+  ComponentProps<typeof InputPrimitive.Item>,
+  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
+>;
 
 function InputNumberItem({
   __scopeInputNumber,
   onBlur,
   onKeyDown,
   ...props
-}: ScopedProps<
-  Omit<
-    ComponentProps<typeof InputPrimitive.Item>,
-    'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
-  >
->): JSX.Element {
+}: ScopedProps<InputNumberItemProps>): JSX.Element {
+  // Retrieve input number context and input scope
   const inputScope = useInputScope(__scopeInputNumber);
   const {
     id,
@@ -232,7 +341,11 @@ function InputNumberItem({
     value,
   } = useInputNumberContext(NUMBER_INPUT_ITEM_NAME, __scopeInputNumber);
 
-  // Handle blur event to format the value
+  /**
+   * Handles the blur event to format the value of the input.
+   *
+   * @param event - The blur event triggered when the input loses focus.
+   */
   const handleBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
     (event) => {
       const numericValue = parseValue(event.target.value);
@@ -247,7 +360,11 @@ function InputNumberItem({
     [formatValue, onChange, parseValue],
   );
 
-  // Handle keyboard events to increment/decrement the value
+  /**
+   * Handles keydown events to increment, decrement, or perform other actions.
+   *
+   * @param event - The keyboard event triggered by key presses.
+   */
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       switch (event.key) {
@@ -283,7 +400,11 @@ function InputNumberItem({
     [onIncrement, onIncrementToMax, onDecrement, onDecrementToMin],
   );
 
-  // Prevent non-numeric input
+  /**
+   * Prevents invalid keyboard input for the numeric input field.
+   *
+   * @param event - The keyboard event to handle.
+   */
   const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
     switch (event.key) {
       case 'ArrowUp':
@@ -332,7 +453,11 @@ function InputNumberItem({
     }
   }, []);
 
-  // Handle the Enter key to format the value
+  /**
+   * Handles the Enter key to format the value of the input.
+   *
+   * @param event - The keyboard event triggered by pressing Enter.
+   */
   const handleKeyDownEnter = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       const inputElement = inputRef.current;
@@ -353,7 +478,9 @@ function InputNumberItem({
     [formatValue, inputRef, onChange, parseValue],
   );
 
-  // Handle wheel event to increment/decrement the value
+  /**
+   * Adds a listener to handle wheel events for incrementing or decrementing the value.
+   */
   useEffect(() => {
     const handleWheel = (event: WheelEvent): void => {
       const inputElement = inputRef.current;
@@ -380,7 +507,9 @@ function InputNumberItem({
     };
   }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
-  // Format the value when the value changes
+  /**
+   * Updates the input field's value when it changes in the context.
+   */
   useEffect(() => {
     const inputElement = inputRef.current;
 
@@ -389,7 +518,9 @@ function InputNumberItem({
     }
   }, [formatValue, inputRef, value]);
 
-  // Handle form reset
+  /**
+   * Adds a listener to handle form reset events by clearing the input value.
+   */
   useEffect(() => {
     const inputElement = inputRef.current;
 
@@ -439,26 +570,50 @@ function InputNumberItem({
  * Component: NumberStepperButton
  * -------------------------------------------------------------------------- */
 
+/**
+ * The name of the NumberStepperButton component constant.
+ */
 const NUMBER_STEPPER_BUTTON_NAME = 'NumberStepperButton';
+
+/**
+ * Props for the NumberStepperButton component.
+ */
+interface NumberStepperButtonProps extends ComponentProps<'button'> {
+  /**
+   * The operation to perform when the button is pressed.
+   * - `'increment'`: Increases the value.
+   * - `'decrement'`: Decreases the value.
+   */
+  operation: 'decrement' | 'increment';
+}
 
 function NumberStepperButton({
   __scopeInputNumber,
   operation,
   ...props
-}: ScopedProps<
-  ComponentProps<'button'> & {
-    operation: 'decrement' | 'increment';
-  }
->): JSX.Element {
+}: ScopedProps<NumberStepperButtonProps>): JSX.Element {
+  // Destructures relevant context values for the button functionality.
   const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement } = useInputNumberContext(
     NUMBER_STEPPER_BUTTON_NAME,
     __scopeInputNumber,
   );
+
+  /**
+   * Ref to store a timeout ID for managing repeated button actions.
+   */
   const timeoutIdRef = useRef<null | number>(null);
 
+  /**
+   * Starts a repeated action at a regular interval. The action begins immediately,
+   * and then continues with a delay.
+   *
+   * @param callback - The callback function to execute repeatedly.
+   */
   const startActionInterval = useCallback((callback: () => void) => {
+    // Time between repeated actions (in milliseconds).
     const interval = 100;
 
+    // Function to perform the action and set the next interval.
     const repeatAction = (): void => {
       callback();
       timeoutIdRef.current = setTimeout(repeatAction, interval);
@@ -468,6 +623,9 @@ function NumberStepperButton({
     timeoutIdRef.current = setTimeout(repeatAction, interval * 2);
   }, []);
 
+  /**
+   * Clears any ongoing action intervals.
+   */
   const clearActionInterval = useCallback(() => {
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current);
@@ -475,16 +633,31 @@ function NumberStepperButton({
     }
   }, []);
 
+  /**
+   * Handles pointer down events and triggers the appropriate action
+   * (`increment` or `decrement`).
+   */
   const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(() => {
     const action = operation === 'increment' ? onIncrement : onDecrement;
 
     startActionInterval(action);
   }, [onDecrement, onIncrement, operation, startActionInterval]);
 
+  /**
+   * Prevents the context menu from displaying when the button is right-clicked.
+   *
+   * @param event - The mouse event triggered by the right-click.
+   */
   const handleContextMenu = useCallback<MouseEventHandler<HTMLButtonElement>>((event) => {
     event.preventDefault();
   }, []);
 
+  /**
+   * Handles keyboard events to support activation of the button using
+   * keyboard navigation (Enter or Space).
+   *
+   * @param event - The keyboard event with the triggered key.
+   */
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLButtonElement>>(
     (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -520,14 +693,9 @@ function NumberStepperButton({
  * Component: InputNumberIncrementButton
  * -------------------------------------------------------------------------- */
 
-function InputNumberIncrementButton(
-  props: Omit<
-    ComponentProps<'button'> & {
-      operation: 'decrement' | 'increment';
-    },
-    'operation'
-  >,
-): JSX.Element {
+type InputNumberIncrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, 'operation'>;
+
+function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="increment" {...props} />;
 }
 
@@ -535,14 +703,9 @@ function InputNumberIncrementButton(
  * Component: InputNumberDecrementButton
  * -------------------------------------------------------------------------- */
 
-function InputNumberDecrementButton(
-  props: Omit<
-    ComponentProps<'button'> & {
-      operation: 'decrement' | 'increment';
-    },
-    'operation'
-  >,
-): JSX.Element {
+type InputNumberDecrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, 'operation'>;
+
+function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="decrement" {...props} />;
 }
 
@@ -550,6 +713,12 @@ function InputNumberDecrementButton(
  * Utility Functions
  * -------------------------------------------------------------------------- */
 
+/**
+ * Chains multiple callbacks into a single function
+ *
+ * @param callbacks - Array of callback functions that will be executed in order
+ * @returns A single function that executes all callbacks
+ */
 function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (...args: T) => void {
   return (...args: T) => {
     for (const callback of callbacks) {
@@ -558,13 +727,25 @@ function chain<T extends unknown[]>(...callbacks: ((...args: T) => void)[]): (..
   };
 }
 
-function getNumberFormatSeparators(locale?: string): {
+/**
+ * Interface for number formatting separators
+ */
+interface NumberFormatSeparators {
+  /** The character used to separate decimal part (e.g., "." or ",") */
   decimalSeparator: string;
+  /** The character used to separate thousands (e.g., "," or ".") */
   thousandSeparator: string;
-} {
+}
+
+/**
+ * Extracts decimal and a thousand separators from a given locale's number format
+ *
+ * @param locale - The locale string to use for number formatting (e.g., 'en-US', 'de-DE')
+ * @returns Object containing decimal and a thousand separators
+ */
+function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
   const numberFormat = new Intl.NumberFormat(locale);
   const parts = numberFormat.formatToParts(12_345.6);
-
   let thousandSeparator = '';
   let decimalSeparator = '';
 
@@ -586,6 +767,14 @@ function getNumberFormatSeparators(locale?: string): {
   return { decimalSeparator, thousandSeparator };
 }
 
+/**
+ * Normalizes an input value by removing formatting characters
+ *
+ * @param value - The input string to normalize
+ * @param thousandSeparator - The thousand separator character to remove
+ * @param decimalSeparator - The decimal separator to convert to standard dot notation
+ * @returns Normalized string value ready for numeric conversion
+ */
 function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
     .replaceAll(new RegExp(`\\${thousandSeparator}`, 'g'), '')
@@ -593,18 +782,44 @@ function normalizeInputValue(value: string, thousandSeparator: string, decimalSe
     .replaceAll(/[()]/g, '-');
 }
 
+/**
+ * Checks if a keyboard event includes modifier keys (Ctrl, Alt, Meta, Shift)
+ *
+ * @param event - The keyboard event to check
+ * @returns True if any modifier key is pressed
+ */
 function isModifierKey(event: KeyboardEvent<HTMLInputElement>): boolean {
   return event.ctrlKey || event.altKey || event.metaKey || event.shiftKey;
 }
 
+/**
+ * Determines if a key is a function key (F1-F12)
+ *
+ * @param key - The key name to check
+ * @returns True if the key is a function key
+ */
 function isFunctionKey(key: string): boolean {
   return key.startsWith('F') && key.length > 1;
 }
 
+/**
+ * Checks if a key represents a number (0-9)
+ *
+ * @param key - The key name to check
+ * @returns True if the key represents a number
+ */
 function isNumberKey(key: string): boolean {
   return !Number.isNaN(Number(key));
 }
 
+/**
+ * Clamps a numeric value between a minimum and maximum
+ *
+ * @param value - The value to clamp
+ * @param min - The minimum allowed value (defaults to -Infinity)
+ * @param max - The maximum allowed value (defaults to Infinity)
+ * @returns The clamped value
+ */
 function clamp(value: number, min = -Infinity, max = Infinity): number {
   return Math.min(Math.max(value, min), max);
 }

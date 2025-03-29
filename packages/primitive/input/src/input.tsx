@@ -11,31 +11,96 @@ import { useRef } from 'react';
 
 const INPUT_NAME = 'Input';
 
-type ScopedProps<P> = P & { __scopeInput?: Scope };
+/**
+ * Type for adding scope to component props
+ */
+type ScopedProps<P> = P & {
+  /**
+   * Scope for the Input component context
+   */
+  __scopeInput?: Scope;
+};
+
 const [createInputContext, createInputScope] = createContextScope(INPUT_NAME);
 
+/**
+ * Context value for the Input component
+ */
 interface InputContextValue {
+  /**
+   * Reference to the input element
+   */
   inputRef: RefObject<HTMLInputElement | null>;
+
+  /**
+   * Whether the input is disabled
+   */
   disabled?: boolean;
+
+  /**
+   * Whether the input is in read-only mode
+   */
   readOnly?: boolean;
 }
 
 const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
-function Input(
-  inputProps: ScopedProps<
-    PropsWithChildren<{
-      className?: string;
-      disabled?: boolean;
-      loaderPosition?: 'prefix' | 'suffix';
-      loading?: boolean;
-      prefix?: ReactNode;
-      readOnly?: boolean;
-      spinner?: ReactNode;
-      suffix?: ReactNode;
-    }>
-  >,
-): JSX.Element {
+/**
+ * Props for styling and appearance of the Input component
+ */
+interface InputVisualProps {
+  /**
+   * CSS class name for the input container
+   */
+  className?: string;
+
+  /**
+   * Element to display before the input
+   */
+  prefix?: ReactNode;
+
+  /**
+   * Custom spinner element for loading state
+   */
+  spinner?: ReactNode;
+
+  /**
+   * Element to display after the input
+   */
+  suffix?: ReactNode;
+}
+
+/**
+ * Props for behavior and state of the Input component
+ */
+interface InputBehaviorProps {
+  /**
+   * Whether the input is disabled
+   */
+  disabled?: boolean;
+
+  /**
+   * Position of the loading spinner - either before or after the input
+   */
+  loaderPosition?: 'prefix' | 'suffix';
+
+  /**
+   * Whether the input is in loading state
+   */
+  loading?: boolean;
+
+  /**
+   * Whether the input is in read-only mode
+   */
+  readOnly?: boolean;
+}
+
+/**
+ * Combined props for the Input component
+ */
+type InputProps = PropsWithChildren<InputBehaviorProps & InputVisualProps>;
+
+function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   const {
     __scopeInput,
     children,
@@ -48,8 +113,18 @@ function Input(
     suffix,
     ...props
   } = inputProps;
+
+  /**
+   * Reference to the input element
+   */
   const inputRef = useRef<HTMLInputElement>(null);
 
+  /**
+   * Handles pointer down events on the input container
+   * Focuses the input element when clicking on the container
+   *
+   * @param event - The pointer event object
+   */
   const handlePointerDown: PointerEventHandler<HTMLDivElement> = (event) => {
     const target = event.target as HTMLElement;
 
@@ -98,8 +173,20 @@ function Input(
 
 const INPUT_ITEM_NAME = 'InputItem';
 
-function InputItem({ __scopeInput, ...props }: ScopedProps<ComponentProps<'input'>>): JSX.Element {
+/**
+ * Props for the InputItem component
+ */
+type InputItemProps = ComponentProps<'input'>;
+
+function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX.Element {
+  /**
+   * Context values from parent Input component
+   */
   const { disabled, inputRef, readOnly } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
+
+  /**
+   * Combined ref that syncs with the parent's inputRef
+   */
   const composedInputRef = useComposedRefs(inputRef);
 
   return <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />;
