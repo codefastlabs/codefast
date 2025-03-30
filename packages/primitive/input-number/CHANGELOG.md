@@ -1,5 +1,20 @@
 # @codefast-ui/number-input
 
+## 0.2.38
+
+### Patch Changes
+
+- [`f831e9b`](https://github.com/codefastlabs/codefast/commit/f831e9b915489606595a683acba01fc6dc9f1b6d) Thanks [@thevuong](https://github.com/thevuong)! - feat(checkbox-group): prevent unchecking last item if required
+
+- [`2f367ff`](https://github.com/codefastlabs/codefast/commit/2f367ff7584f1c3d37268d6915b28d30bff79d43) Thanks [@thevuong](https://github.com/thevuong)! - feat(input-number): enhance keyboard and button interaction
+
+- [`cc8c44c`](https://github.com/codefastlabs/codefast/commit/cc8c44c992f799131384b2c8a398a55d2d4bc300) Thanks [@thevuong](https://github.com/thevuong)! - refactor(progress-circle): simplify props and improve typings
+
+- [`b3fb8b0`](https://github.com/codefastlabs/codefast/commit/b3fb8b0788dcabc26eb7e1464a6d8a1da7b7cb9f) Thanks [@thevuong](https://github.com/thevuong)! - fix(input): prevent focus flicker and improve click handling
+
+- Updated dependencies [[`f831e9b`](https://github.com/codefastlabs/codefast/commit/f831e9b915489606595a683acba01fc6dc9f1b6d), [`2f367ff`](https://github.com/codefastlabs/codefast/commit/2f367ff7584f1c3d37268d6915b28d30bff79d43), [`cc8c44c`](https://github.com/codefastlabs/codefast/commit/cc8c44c992f799131384b2c8a398a55d2d4bc300), [`b3fb8b0`](https://github.com/codefastlabs/codefast/commit/b3fb8b0788dcabc26eb7e1464a6d8a1da7b7cb9f)]:
+  - @codefast-ui/input@0.2.38
+
 ## 0.2.37
 
 ### Patch Changes
