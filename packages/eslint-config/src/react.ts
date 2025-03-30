@@ -17,15 +17,23 @@ export const config: Linter.Config[] = [
   ...reactConfig,
   {
     ...jestConfig,
-    ...jestTypescriptConfig,
-    ...testingLibraryConfig,
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
     languageOptions: {
       globals: {
         ...globals.jest,
       },
     },
-    name: '@codefast/eslint-config/react/jest',
+    name: '@codefast/eslint-config/library/jest',
+  },
+  {
+    ...jestTypescriptConfig,
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    name: '@codefast/eslint-config/library/jest/typescript',
+  },
+  {
+    ...testingLibraryConfig,
+    files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
+    name: '@codefast/eslint-config/library/testing-library',
   },
   {
     files: ['**/?(*.)+(test|spec).[jt]s?(x)'],
