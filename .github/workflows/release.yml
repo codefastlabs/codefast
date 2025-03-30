@@ -63,7 +63,6 @@ jobs:
       - name: Configure npm Authentication
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
