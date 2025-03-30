@@ -57,14 +57,6 @@ runs:
         cache: 'pnpm'
         registry-url: ${{ inputs.registry-url }}
 
-    - name: Configure npm Authentication
-      if: ${{ inputs.registry-url == 'https://registry.npmjs.org' }}
-      shell: bash
-      run: |
-        echo "//${{ inputs.registry-url }}/:_authToken=${{ env.NPM_TOKEN }}" > .npmrc
-      env:
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
     - name: Install Project Dependencies
       id: pnpm-install
       if: ${{ inputs.install-dependencies == 'true' }}
