@@ -8,15 +8,11 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/vercel-deploy.yml'
-    paths-ignore:
-      - '**/*.{test,spec,e2e}.{ts,tsx,js,jsx}'
-      - '**/{__tests__,tests,e2e,__mocks__}/**'
+      - '!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}'
+      - '!**/{__tests__,tests,e2e,__mocks__}/**'
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened]
-    paths-ignore:
-      - '**/*.{test,spec,e2e}.{ts,tsx,js,jsx}'
-      - '**/{__tests__,tests,e2e,__mocks__}/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
