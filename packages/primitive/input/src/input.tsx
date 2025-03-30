@@ -71,7 +71,7 @@ interface InputVisualProps {
 }
 
 /**
- * Props for behavior and state of the Input component
+ * Props for the behavior and state of the Input component
  */
 interface InputBehaviorProps {
   /**
@@ -85,7 +85,7 @@ interface InputBehaviorProps {
   loaderPosition?: 'prefix' | 'suffix';
 
   /**
-   * Whether the input is in loading state
+   * Whether the input is in the loading state
    */
   loading?: boolean;
 
@@ -128,7 +128,11 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   const handlePointerDown: PointerEventHandler<HTMLDivElement> = (event) => {
     const target = event.target as HTMLElement;
 
-    if (target.closest('input, a')) {
+    // Skip handling when clicking directly on input or links
+    // This prevents interference with native input/link behavior
+    if (target.tagName.toLowerCase() === 'input' || target.closest('input, a')) {
+      event.stopPropagation();
+
       return;
     }
 
@@ -138,15 +142,29 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
       return;
     }
 
+    // Key solution: If input already has focus, only prevent default behavior
+    // This prevents the focus from being lost when clicking on the container padding
+    // and eliminates the flickering effect
+    if (document.activeElement === inputElement) {
+      event.preventDefault();
+
+      return;
+    }
+
+    // Only attempt to focus the input if it's not already focused
     requestAnimationFrame(() => {
-      // if the input is a file input, we need to trigger a click event
+      // Special handling for file inputs - trigger the file selection dialog
       if (inputElement.type === 'file') {
         inputElement.click();
 
         return;
       }
 
-      inputElement.focus();
+      // Only focus the input if it doesn't already have focus
+      // This avoids unnecessary re-focusing which can cause UI flickers
+      if (document.activeElement !== inputElement) {
+        inputElement.focus();
+      }
     });
   };
 
