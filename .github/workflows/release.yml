@@ -52,9 +52,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          # It is necessary to specify a token with the permission to push commits when a changeset is created.
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
 
       - name: Setup Build Environment
         uses: ./.github/actions/setup-environment
