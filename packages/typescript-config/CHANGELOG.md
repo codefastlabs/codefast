@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.2.37
+
+### Patch Changes
+
+- [`aabe705`](https://github.com/codefastlabs/codefast/commit/aabe70572669ed17aa5a4c4ecd701c549456d13a) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): restructure Jest and testing configs
+
 ## 0.2.36
 
 ### Patch Changes
