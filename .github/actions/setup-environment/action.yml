@@ -40,7 +40,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: .turbo
-        key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml') }}
+        key: ${{ runner.os }}-turbo-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-turbo-
 
@@ -62,8 +62,3 @@ runs:
       if: ${{ inputs.install-dependencies == 'true' }}
       shell: bash
       run: pnpm install ${{ inputs.install-options }}
-
-    - name: Output Cache Status
-      id: pnpm-cache
-      shell: bash
-      run: echo "cache-hit=${{ steps.node-setup.outputs.cache-hit }}" >> $GITHUB_OUTPUT
