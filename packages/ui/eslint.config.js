@@ -4,7 +4,7 @@ import { config } from '@codefast/eslint-config/react';
 export default [
   ...config,
   {
-    files: ['src/lib/logger.ts'],
+    files: ['src/lib/logger.ts', 'src/lib/logger.test.ts'],
     rules: {
       'no-console': 'off',
     },
