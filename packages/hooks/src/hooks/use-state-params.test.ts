@@ -29,7 +29,7 @@ describe('useStateParams Hook', () => {
     });
   });
 
-  describe('basic functionality', () => {
+  describe('Basic functionality', () => {
     test('should return push and replace methods', () => {
       const { result } = renderHook(() => useStateParams());
       const { push, replace } = result.current;
@@ -126,7 +126,7 @@ describe('useStateParams Hook', () => {
     });
   });
 
-  describe('security tests', () => {
+  describe('Security tests', () => {
     test('should sanitize input to prevent injection attacks', () => {
       const { result } = renderHook(() => useStateParams());
       const { push } = result.current;
@@ -159,7 +159,7 @@ describe('useStateParams Hook', () => {
     });
   });
 
-  describe('edge cases', () => {
+  describe('Edge cases', () => {
     test('should preserve original URL when no parameters are passed', () => {
       const { result } = renderHook(() => useStateParams());
       const { replace } = result.current;
