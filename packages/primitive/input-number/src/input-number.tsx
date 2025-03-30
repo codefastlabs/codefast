@@ -479,6 +479,22 @@ function InputNumberItem({
   );
 
   /**
+   * Creates a combined keydown event handler that processes keyboard events in sequence.
+   *
+   * The handler chain executes in the following order:
+   * 1. User-provided onKeyDown handler (if any)
+   * 2. handleKeyDownPrevent - Prevents non-numeric input
+   * 3. handleKeyDown - Handles arrow keys and page up/down for value adjustments
+   * 4. handleKeyDownEnter - Handles Enter key press to format and update the value
+   *
+   * @returns A composed event handler function for the onKeyDown event
+   */
+  const combinedKeyDownHandler = useCallback(
+    () => composeEventHandlers(onKeyDown, chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter)),
+    [onKeyDown, handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
+  );
+
+  /**
    * Adds a listener to handle wheel events for incrementing or decrementing the value.
    */
   useEffect(() => {
@@ -553,13 +569,7 @@ function InputNumberItem({
       readOnly={readOnly}
       step={step}
       onBlur={composeEventHandlers(onBlur, handleBlur)}
-      onKeyDown={composeEventHandlers(
-        onKeyDown,
-        useMemo(
-          () => chain(handleKeyDownPrevent, handleKeyDown, handleKeyDownEnter),
-          [handleKeyDown, handleKeyDownEnter, handleKeyDownPrevent],
-        ),
-      )}
+      onKeyDown={combinedKeyDownHandler()}
       {...inputScope}
       {...props}
     />
@@ -593,19 +603,24 @@ function NumberStepperButton({
   ...props
 }: ScopedProps<NumberStepperButtonProps>): JSX.Element {
   // Destructures relevant context values for the button functionality.
-  const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement } = useInputNumberContext(
-    NUMBER_STEPPER_BUTTON_NAME,
-    __scopeInputNumber,
-  );
+  const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, min, max, value } =
+    useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
+
+  const isDisabled = useMemo(() => {
+    const atMin = min !== undefined && value !== undefined && value <= min;
+    const atMax = max !== undefined && value !== undefined && value >= max;
+
+    return disabled || atMin || atMax;
+  }, [min, max, value, disabled]);
 
   /**
    * Ref to store a timeout ID for managing repeated button actions.
    */
-  const timeoutIdRef = useRef<null | number>(null);
+  const timeoutIdRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   /**
-   * Starts a repeated action at a regular interval. The action begins immediately,
-   * and then continues with a delay.
+   * Starts a repeated action at a regular interval.
+   * The action begins immediately and then continues with a delay.
    *
    * @param callback - The callback function to execute repeatedly.
    */
@@ -676,7 +691,7 @@ function NumberStepperButton({
       aria-controls={id}
       aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
       aria-live="polite"
-      disabled={disabled}
+      disabled={isDisabled}
       type="button"
       onContextMenu={handleContextMenu}
       onKeyDown={handleKeyDown}
@@ -816,7 +831,7 @@ function isNumberKey(key: string): boolean {
  * Clamps a numeric value between a minimum and maximum
  *
  * @param value - The value to clamp
- * @param min - The minimum allowed value (defaults to -Infinity)
+ * @param min - The minimum allowed value (defaults to \-Infinity)
  * @param max - The maximum allowed value (defaults to Infinity)
  * @returns The clamped value
  */
