@@ -60,6 +60,17 @@ jobs:
       - name: Build Packages
         run: pnpm run build --filter="./packages/**"
 
+      - name: Verify Build Artifacts
+        run: ls -la packages/*/dist
+
+      - name: Verify npm Configuration
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          npm config ls -l
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Version or Publish Changed Packages
         id: changesets
         uses: changesets/action@v1
