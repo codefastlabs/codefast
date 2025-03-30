@@ -186,9 +186,17 @@ function CheckboxGroup({
    */
   const handleItemUncheck = useCallback(
     (itemValue: string) => {
-      setValue((prevValue = []) => prevValue.filter((val) => val !== itemValue));
+      setValue((prevValue = []) => {
+        // If this is the last selected item and required=true, prevent unchecking
+        if (required && prevValue.length === 1 && prevValue[0] === itemValue) {
+          return prevValue; // Keep the current state
+        }
+
+        // Otherwise, proceed with unchecking
+        return prevValue.filter((val) => val !== itemValue);
+      });
     },
-    [setValue],
+    [setValue, required],
   );
 
   return (
@@ -268,6 +276,7 @@ function CheckboxGroupItem({
   return (
     <RovingFocusGroup.Item asChild {...rovingFocusGroupScope} active={checked} focusable={!isDisabled}>
       <CheckboxPrimitive.Root
+        aria-label={props.value}
         checked={checked}
         disabled={isDisabled}
         name={context.name}
