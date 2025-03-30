@@ -19,7 +19,12 @@ inputs:
 
   install-options:
     description: 'Additional options for pnpm install'
-    default: '--prefer-offline'
+    default: '--prefer-offline --frozen-lockfile'
+    required: false
+
+  registry-url:
+    description: 'npm registry URL to use'
+    default: 'https://registry.npmjs.org'
     required: false
 
 outputs:
@@ -35,7 +40,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: .turbo
-        key: ${{ runner.os }}-turbo-${{ github.sha }}
+        key: ${{ runner.os }}-turbo-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-turbo-
 
@@ -50,10 +55,23 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'pnpm'
-        registry-url: 'https://registry.npmjs.org'
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Configure npm Authentication
+      if: ${{ inputs.registry-url == 'https://registry.npmjs.org' }}
+      shell: bash
+      run: |
+        echo "//${{ inputs.registry-url }}/:_authToken=${{ env.NPM_TOKEN }}" > .npmrc
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Install Project Dependencies
       id: pnpm-install
       if: ${{ inputs.install-dependencies == 'true' }}
       shell: bash
       run: pnpm install ${{ inputs.install-options }}
+
+    - name: Output Cache Status
+      id: pnpm-cache
+      shell: bash
+      run: echo "cache-hit=${{ steps.node-setup.outputs.cache-hit }}" >> $GITHUB_OUTPUT

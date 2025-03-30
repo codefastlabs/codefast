@@ -60,13 +60,6 @@ jobs:
       - name: Build Packages
         run: pnpm run build --filter="./packages/**"
 
-      - name: Configure npm Authentication
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          npm whoami
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Version or Publish Changed Packages
         id: changesets
         uses: changesets/action@v1
