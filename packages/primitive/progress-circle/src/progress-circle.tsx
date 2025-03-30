@@ -1,7 +1,7 @@
 'use client';
 
 import type { Scope } from '@radix-ui/react-context';
-import type { ComponentProps, JSX, PropsWithChildren } from 'react';
+import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 
 import { createContextScope } from '@radix-ui/react-context';
 import { useId, useMemo } from 'react';
@@ -60,13 +60,13 @@ interface ProgressCircleContextValue {
    * Maximum possible value for the progress
    * Used to calculate the normalized value
    */
-  maxValue: number;
+  max: number;
 
   /**
    * Minimum possible value for the progress
    * Used to calculate the normalized value
    */
-  minValue: number;
+  min: number;
 
   /**
    * Value normalized between 0 and 1
@@ -142,8 +142,8 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
  * ```tsx
  * <ProgressCircleProvider
  *   value={75}
- *   minValue={0}
- *   maxValue={100}
+ *   min={0}
+ *   max={100}
  *   size={64}
  *   thresholds={[
  *     { value: 30, color: 'red', background: 'pink' },
@@ -162,8 +162,8 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
 function ProgressCircleProvider({
   __scopeProgressCircle,
   value = 0,
-  minValue = 0,
-  maxValue = 100,
+  min = 0,
+  max = 100,
   thresholds,
   strokeWidth = 4,
   size = 48,
@@ -174,8 +174,8 @@ function ProgressCircleProvider({
 }: ScopedProps<
   PropsWithChildren<{
     id?: string;
-    maxValue?: number;
-    minValue?: number;
+    max?: number;
+    min?: number;
     size?: number;
     startAngle?: number;
     strokeWidth?: number;
@@ -183,117 +183,62 @@ function ProgressCircleProvider({
     value?: number;
     valueFormatter?: (value: number) => string;
   }>
->): JSX.Element {
+>): ReactNode {
   const uniqueId = useId();
   const id = propId || uniqueId;
 
-  // Values that change infrequently - basic configuration
-  const baseConfig = useMemo(() => {
-    const validSize = Math.max(0, size);
-    const validStrokeWidth = Math.max(0, strokeWidth);
-    const validStartAngle = startAngle % 360;
+  const validSize = Math.max(0, size);
+  const validStrokeWidth = Math.max(0, strokeWidth);
+  const validStartAngle = startAngle % 360;
 
-    // Validate min/max
-    let validMin = minValue;
-    let validMax = maxValue;
+  let validMin = min;
+  let validMax = max;
 
-    if (validMin > validMax) {
-      [validMin, validMax] = [validMax, validMin];
-    }
+  if (validMin > validMax) {
+    [validMin, validMax] = [validMax, validMin];
+  }
 
-    return {
-      validMinValue: validMin,
-      validMaxValue: validMax,
-      validSize,
-      validStartAngle,
-      validStrokeWidth,
-    };
-  }, [size, strokeWidth, startAngle, minValue, maxValue]);
+  const normalizedValue = clamp(validMin, validMax, value);
+  const range = validMax - validMin;
+  const percentage = range > 0 ? Math.round(((normalizedValue - validMin) / range) * 100 * 1000) / 1000 : 0;
 
-  // Handling thresholds - rarely changed
-  const sortedThresholds = useMemo(() => {
-    return thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : [];
-  }, [thresholds]);
+  const sortedThresholds = useMemo(
+    () => (thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : []),
+    [thresholds],
+  );
 
-  // Safe formatter - rarely changes
-  const safeValueFormatter = useMemo(() => {
-    return valueFormatter || ((val: number) => `${Math.round(val)}%`);
-  }, [valueFormatter]);
-
-  // Calculations dependent on values – frequently changing
-  const valueCalculations = useMemo(() => {
-    // Standardize value
-    const normalizedValue = clamp(baseConfig.validMinValue, baseConfig.validMaxValue, value);
-    const range = baseConfig.validMaxValue - baseConfig.validMinValue;
-    const percentage =
-      range > 0 ? Math.round(((normalizedValue - baseConfig.validMinValue) / range) * 100 * 1000) / 1000 : 0;
-
-    return {
-      normalizedValue,
-      percentage,
-    };
-  }, [baseConfig.validMinValue, baseConfig.validMaxValue, value]);
-
-  // Threshold processing based on normalized value
-  const threshold = useMemo<Threshold | undefined>(() => {
-    if (sortedThresholds.length === 0) {
-      return;
-    }
-
-    // Find the matching color based on the normalized value
-    let thresholdColor: Threshold | undefined;
-
+  const threshold = useMemo(() => {
     for (const sortedThreshold of sortedThresholds) {
-      if (valueCalculations.normalizedValue <= sortedThreshold.value) {
-        thresholdColor = sortedThreshold;
-        break;
+      if (normalizedValue <= sortedThreshold.value) {
+        return sortedThreshold;
       }
     }
 
-    // If the value is greater than all thresholds, use the last threshold
-    if (!thresholdColor && sortedThresholds.length > 0) {
-      thresholdColor = sortedThresholds.at(-1);
-    }
+    return sortedThresholds.at(-1);
+  }, [sortedThresholds, normalizedValue]);
 
-    return thresholdColor;
-  }, [sortedThresholds, valueCalculations.normalizedValue]);
+  const center = validSize / 2;
+  const radius = Math.max(0, center - validStrokeWidth / 2);
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const rotationTransform = `rotate(${validStartAngle}, 0, 0)`;
 
-  // Geometric properties of a circle - dependent on size, stroke and percentage
-  const circleGeometry = useMemo(() => {
-    const center = baseConfig.validSize / 2;
-    const radius = Math.max(0, center - baseConfig.validStrokeWidth / 2);
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (valueCalculations.percentage / 100) * circumference;
-    const rotationTransform = `rotate(${baseConfig.validStartAngle}, 0, 0)`;
-
-    return {
-      center,
-      radius,
-      circumference,
-      strokeDashoffset,
-      rotationTransform,
-    };
-  }, [baseConfig.validSize, baseConfig.validStartAngle, baseConfig.validStrokeWidth, valueCalculations.percentage]);
-
-  // Format value for display - depends on the normalized value and formatter
-  const valueText = useMemo(() => {
-    return safeValueFormatter(valueCalculations.normalizedValue);
-  }, [safeValueFormatter, valueCalculations.normalizedValue]);
+  const valueText = (valueFormatter || ((val: number) => `${Math.round(val)}%`))(percentage);
 
   return (
     <ProgressCircleContextProvider
-      center={circleGeometry.center}
-      circumference={circleGeometry.circumference}
+      center={center}
+      circumference={circumference}
       id={id}
-      maxValue={baseConfig.validMaxValue}
-      minValue={baseConfig.validMinValue}
-      normalizedValue={valueCalculations.normalizedValue}
-      radius={circleGeometry.radius}
-      rotationTransform={circleGeometry.rotationTransform}
+      max={validMax}
+      min={validMin}
+      normalizedValue={normalizedValue}
+      radius={radius}
+      rotationTransform={rotationTransform}
       scope={__scopeProgressCircle}
-      size={baseConfig.validSize}
-      strokeDashoffset={circleGeometry.strokeDashoffset}
-      strokeWidth={baseConfig.validStrokeWidth}
+      size={validSize}
+      strokeDashoffset={strokeDashoffset}
+      strokeWidth={validStrokeWidth}
       threshold={threshold}
       value={value}
       valueText={valueText}
@@ -307,7 +252,7 @@ function ProgressCircleProvider({
  * Component: ProgressCircle
  * -----------------------------------------------------------------------------------------------*/
 
-function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'div'>>): JSX.Element {
+function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'div'>>): ReactNode {
   return <div {...props} />;
 }
 
@@ -317,17 +262,17 @@ function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<Compone
 
 const PROGRESS_CIRCLE_SVG_NAME = 'ProgressCircleSVG';
 
-function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'svg'>>): JSX.Element {
-  const { size, id, valueText, maxValue, minValue, normalizedValue } = useProgressCircleContext(
+function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'svg'>>): ReactNode {
+  const { size, id, valueText, max, min, normalizedValue, value } = useProgressCircleContext(
     PROGRESS_CIRCLE_SVG_NAME,
     __scopeProgressCircle,
   );
 
   return (
     <svg
-      aria-valuemax={maxValue}
-      aria-valuemin={minValue}
-      aria-valuenow={normalizedValue}
+      aria-valuemax={max}
+      aria-valuemin={min}
+      aria-valuenow={normalizedValue || value ? 0 : undefined}
       aria-valuetext={valueText}
       height={size}
       id={id}
@@ -345,7 +290,7 @@ function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<Comp
 
 const PROGRESS_CIRCLE_TRACK_NAME = 'ProgressCircleTrack';
 
-function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'circle'>>): JSX.Element {
+function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'circle'>>): ReactNode {
   const { radius, strokeWidth, threshold, center } = useProgressCircleContext(
     PROGRESS_CIRCLE_TRACK_NAME,
     __scopeProgressCircle,
@@ -373,7 +318,7 @@ const PROGRESS_CIRCLE_INDICATOR_NAME = 'ProgressCircleIndicator';
 function ProgressCircleIndicator({
   __scopeProgressCircle,
   ...props
-}: ScopedProps<ComponentProps<'circle'>>): JSX.Element {
+}: ScopedProps<ComponentProps<'circle'>>): ReactNode {
   const { radius, circumference, strokeDashoffset, rotationTransform, strokeWidth, threshold, center } =
     useProgressCircleContext(PROGRESS_CIRCLE_INDICATOR_NAME, __scopeProgressCircle);
 
@@ -404,8 +349,14 @@ function ProgressCircleValue({
   __scopeProgressCircle,
   children,
   ...props
-}: ScopedProps<ComponentProps<'div'>>): JSX.Element {
-  const { valueText } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
+}: Omit<ScopedProps<ComponentProps<'div'>>, 'children'> & {
+  children?: ((context: { value: number; valueText: string }) => ReactNode) | ReactNode;
+}): ReactNode {
+  const { valueText, value } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
+
+  if (typeof children === 'function') {
+    return children({ valueText, value });
+  }
 
   return <div {...props}>{children || valueText}</div>;
 }
