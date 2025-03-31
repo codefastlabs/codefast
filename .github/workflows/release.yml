@@ -8,11 +8,11 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/release.yml'
-  workflow_dispatch:  # Allow manual activation
+  workflow_dispatch: # Allow manual activation
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false  # Do not cancel running jobs because this is a release.
+  cancel-in-progress: false # Do not cancel running jobs because this is a release.
 
 env:
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
