@@ -2,7 +2,7 @@ name: Mark Stale Issues and PRs
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Run at 8 AM every day
+    - cron: '0 8 * * *' # Run at 8 AM every day
 
 permissions:
   issues: write

@@ -26,4 +26,4 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           assignees: thevuong
           numOfAssignee: 1
-          allowSelfAssign: true  # Allow the PR creator to self-assign.
+          allowSelfAssign: true # Allow the PR creator to self-assign.
