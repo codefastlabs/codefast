@@ -60,11 +60,22 @@ jobs:
       - name: Build Packages
         run: pnpm run build --filter="./packages/**"
 
+      - name: Check for changeset markdown files
+        id: check_changesets
+        run: |
+          if [ $(find .changeset -name "*.md" | wc -l) -eq 1 ]; then
+            echo "has_changesets=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changesets=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Configure npm Authentication
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+        if: steps.check_changesets.outputs.has_changesets == 'false'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 
       - name: Version or Publish Changed Packages
         id: changesets
