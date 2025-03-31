@@ -1,5 +1,25 @@
 # @codefast/typescript-config
 
+## 0.2.39
+
+### Patch Changes
+
+- [`0911a4c`](https://github.com/codefastlabs/codefast/commit/0911a4c9cc58d394206df6b18ecefc201ad83cd1) Thanks [@thevuong](https://github.com/thevuong)! - feat(hooks): add null handling to useAnimatedValue targetValue
+
+- [`8e9cdc2`](https://github.com/codefastlabs/codefast/commit/8e9cdc2db1572b18570084ec4a76f17f3c9aab55) Thanks [@thevuong](https://github.com/thevuong)! - feat(progress-circle): add indeterminate state and threshold styles
+
+- [`58daa32`](https://github.com/codefastlabs/codefast/commit/58daa321e51c725624a19e59a5bda41834d7b463) Thanks [@thevuong](https://github.com/thevuong)! - feat(progress-circle): enhance typing and props structure
+
+- [`3d6470f`](https://github.com/codefastlabs/codefast/commit/3d6470fec3a3acd96d7795e89069ca94ba2b4a81) Thanks [@thevuong](https://github.com/thevuong)! - feat: add tests for CheckboxGroup, cn utility, ProgressCircle, and InputNumber
+
+- [`5920b4c`](https://github.com/codefastlabs/codefast/commit/5920b4c85ff219ea9d3924e5da319b06b7106729) Thanks [@thevuong](https://github.com/thevuong)! - feat(input-number): add uncontrolled mode with defaultValue support
+
+- [`1bf8d9c`](https://github.com/codefastlabs/codefast/commit/1bf8d9c0b4b5ef2d30bb26ab71c339c634da7164) Thanks [@thevuong](https://github.com/thevuong)! - feat(logger): add new log levels and enhance structure
+
+- [`c516d79`](https://github.com/codefastlabs/codefast/commit/c516d793780691a85250d2f4d42ff8cf28116148) Thanks [@thevuong](https://github.com/thevuong)! - feat: rename InputItem to InputField for consistency
+
+- [`a3742f9`](https://github.com/codefastlabs/codefast/commit/a3742f97062a1f1b3b884287ce6695ebd91f731c) Thanks [@thevuong](https://github.com/thevuong)! - feat(testing): add Jest setup and config to primitives
+
 ## 0.2.38
 
 ### Patch Changes
