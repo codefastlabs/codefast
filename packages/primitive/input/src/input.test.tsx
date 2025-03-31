@@ -1,11 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
 import { Input, InputItem } from '@/input';
 
 describe('input', () => {
-  // Render tests
   describe('Rendering', () => {
     it('should render Input with InputItem correctly', () => {
       render(
@@ -55,9 +54,10 @@ describe('input', () => {
     });
   });
 
-  // Behavior tests
   describe('Behavior', () => {
     it('should focus input when clicking on container', async () => {
+      const user = userEvent.setup();
+
       render(
         <Input>
           <InputItem data-testid="input" />
@@ -67,10 +67,8 @@ describe('input', () => {
       const container = screen.getByRole('presentation');
       const input = screen.getByTestId('input');
 
-      // Simulate clicking on the container, not the input
-      fireEvent.pointerDown(container);
+      await user.click(container);
 
-      // Wait for requestAnimationFrame
       await new Promise((resolve) => {
         requestAnimationFrame(resolve);
       });
@@ -78,9 +76,10 @@ describe('input', () => {
       expect(input).toHaveFocus();
     });
 
-    it('should not stop propagation when clicking directly on input', () => {
+    it('should not stop propagation when clicking directly on input', async () => {
       const containerClickHandler = jest.fn();
       const inputClickHandler = jest.fn();
+      const user = userEvent.setup();
 
       render(
         // @ts-ignore
@@ -91,13 +90,15 @@ describe('input', () => {
 
       const input = screen.getByTestId('input');
 
-      fireEvent.click(input);
+      await user.click(input);
 
       expect(inputClickHandler).toHaveBeenCalled();
       expect(containerClickHandler).toHaveBeenCalled();
     });
 
     it('should trigger click on file input when container is clicked', async () => {
+      const user = userEvent.setup();
+
       render(
         <Input>
           <InputItem data-testid="file-input" type="file" />
@@ -108,24 +109,20 @@ describe('input', () => {
       const fileInput = screen.getByTestId('file-input');
       const clickSpy = jest.spyOn(fileInput, 'click');
 
-      // Mock requestAnimationFrame với type assertion
       const rafSpy = jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => setTimeout(cb, 0));
 
-      fireEvent.pointerDown(container);
+      await user.click(container);
 
-      // Wait for our mocked requestAnimationFrame
       await new Promise((resolve) => {
         requestAnimationFrame(resolve);
       });
 
       expect(clickSpy).toHaveBeenCalled();
 
-      // Clean up mock
       rafSpy.mockRestore();
     });
 
-    it('should prevent focus re-triggering when container is clicked while input is already focused', async () => {
-      // Arrange: Render the component and get references to DOM elements
+    it('should prevent default behavior when container is clicked while input already has focus', async () => {
       render(
         <Input>
           <InputItem data-testid="input" />
@@ -135,47 +132,35 @@ describe('input', () => {
       const container = screen.getByRole('presentation');
       const input = screen.getByTestId('input');
 
-      // Set the initial focus state
       input.focus();
       expect(input).toHaveFocus();
 
-      // Create a spy on the input's focus method to verify it's not called again
       const focusSpy = jest.spyOn(input, 'focus');
 
-      // Create a custom pointer event with a spy on preventDefault
-      // This allows us to verify the default behavior is prevented when input is already focused
       const mockPreventDefault = jest.fn();
       const pointerEvent = new Event('pointerdown', {
         bubbles: true,
         cancelable: true,
       });
 
-      // Override the preventDefault method with our spy
       Object.defineProperty(pointerEvent, 'preventDefault', {
         value: mockPreventDefault,
       });
 
-      // Act: Dispatch the pointer event on the container
       container.dispatchEvent(pointerEvent);
 
-      // Wait for any requestAnimationFrame callbacks to execute
       await new Promise((resolve) => {
         requestAnimationFrame(resolve);
       });
 
-      // Assert: Verify the expected behavior
-      // 1. preventDefault should be called to prevent focus flickering
       expect(mockPreventDefault).toHaveBeenCalled();
 
-      // 2. The focus method should not be called again as input is already focused
       expect(focusSpy).not.toHaveBeenCalled();
 
-      // 3. Input should maintain its focus state
       expect(input).toHaveFocus();
     });
   });
 
-  // Attribute tests
   describe('Attributes', () => {
     it('should apply disabled attribute correctly', () => {
       render(
@@ -230,7 +215,6 @@ describe('input', () => {
     });
   });
 
-  // User interaction tests
   describe('User interactions', () => {
     it('should update value when typing', async () => {
       const user = userEvent.setup();
@@ -261,7 +245,7 @@ describe('input', () => {
 
       await user.type(input, 'Hello world');
 
-      expect(input).toHaveValue(''); // Value should not change
+      expect(input).toHaveValue('');
     });
 
     it('should not allow typing when readOnly', async () => {
@@ -277,11 +261,10 @@ describe('input', () => {
 
       await user.type(input, 'New value');
 
-      expect(input).toHaveValue('Initial value'); // Value should not change
+      expect(input).toHaveValue('Initial value');
     });
   });
 
-  // Accessibility tests
   describe('Accessibility', () => {
     it('should not have accessibility violations', async () => {
       const { container } = render(
@@ -316,23 +299,20 @@ describe('input', () => {
       const input = screen.getByTestId('input');
       const afterButton = screen.getByTestId('after');
 
-      // Focus first button
       beforeButton.focus();
       expect(beforeButton).toHaveFocus();
 
-      // Tab to input
       await user.tab();
       expect(input).toHaveFocus();
 
-      // Tab to the next button
       await user.tab();
       expect(afterButton).toHaveFocus();
     });
   });
 
-  // Edge cases
   describe('Edge cases', () => {
-    it('should handle nested clickable elements correctly', () => {
+    it('should handle nested clickable elements correctly', async () => {
+      const user = userEvent.setup();
       const linkClickHandler = jest.fn();
 
       render(
@@ -350,11 +330,9 @@ describe('input', () => {
       const link = screen.getByTestId('link');
       const input = screen.getByTestId('input');
 
-      // Click on the link
-      fireEvent.pointerDown(link);
+      await user.click(link);
 
-      // The handler should be called and the event should not be stopped
-      expect(linkClickHandler).not.toHaveBeenCalled(); // pointerDown doesn't trigger onClick
+      expect(linkClickHandler).toHaveBeenCalled();
       expect(input).not.toHaveFocus();
     });
 
@@ -379,6 +357,22 @@ describe('input', () => {
 
       expect(screen.getByTestId('input1')).toBeInTheDocument();
       expect(screen.getByTestId('input2')).toBeInTheDocument();
+    });
+
+    it('should do nothing when container is clicked but there is no InputItem inside', async () => {
+      const user = userEvent.setup();
+
+      render(<Input>{/* No InputItem inside */}</Input>);
+
+      const container = screen.getByRole('presentation');
+
+      const rafSpy = jest.spyOn(window, 'requestAnimationFrame');
+
+      await user.click(container);
+
+      expect(rafSpy).not.toHaveBeenCalled();
+
+      rafSpy.mockRestore();
     });
   });
 });
