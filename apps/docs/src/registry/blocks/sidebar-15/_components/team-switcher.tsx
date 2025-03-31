@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementType, JSX } from 'react';
+import type { ElementType, ReactNode } from 'react';
 
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ export function TeamSwitcher({
     name: string;
     plan: string;
   }[];
-}): JSX.Element | null {
+}): ReactNode {
   const [activeTeam, setActiveTeam] = useState(teams.at(0));
 
   if (!activeTeam) {

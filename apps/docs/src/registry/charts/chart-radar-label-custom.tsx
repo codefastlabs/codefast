@@ -1,7 +1,7 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 
 import {
   Card,
@@ -80,13 +80,7 @@ interface PolarAngleAxisTickProps {
   y?: number;
 }
 
-export function PolarAngleAxisTick({
-  index,
-  textAnchor,
-  x = 0,
-  y = 0,
-  ...props
-}: PolarAngleAxisTickProps): JSX.Element | null {
+export function PolarAngleAxisTick({ index, textAnchor, x = 0, y = 0, ...props }: PolarAngleAxisTickProps): ReactNode {
   const data = index ? chartData[index] : null;
 
   if (!data) {
