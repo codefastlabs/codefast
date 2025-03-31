@@ -1,13 +1,11 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
 import { InputNumber, InputNumberDecrementButton, InputNumberIncrementButton, InputNumberItem } from '@/input-number';
 
 describe('input-number', () => {
-  // Main InputNumber component tests
   describe('InputNumber', () => {
-    // Test basic structure
     test('renders correct structure', () => {
       render(
         <InputNumber data-testid="input-number">
@@ -23,8 +21,9 @@ describe('input-number', () => {
       expect(screen.getByTestId('increment-btn')).toBeInTheDocument();
     });
 
-    // Test uncontrolled state with defaultValue
     test('works in uncontrolled mode with defaultValue', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber data-testid="input-number" defaultValue={10}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
@@ -37,16 +36,16 @@ describe('input-number', () => {
 
       expect(input).toHaveValue('10');
 
-      await userEvent.click(screen.getByTestId('increment-btn'));
+      await user.click(screen.getByTestId('increment-btn'));
       expect(input).toHaveValue('11');
 
-      await userEvent.click(screen.getByTestId('decrement-btn'));
+      await user.click(screen.getByTestId('decrement-btn'));
       expect(input).toHaveValue('10');
     });
 
-    // Test controlled state
     test('works in controlled mode', async () => {
       const handleChange = jest.fn();
+      const user = userEvent.setup();
 
       const { rerender } = render(
         <InputNumber data-testid="input-number" value={10} onChange={handleChange}>
@@ -60,17 +59,12 @@ describe('input-number', () => {
 
       expect(input).toHaveValue('10');
 
-      await userEvent.click(screen.getByTestId('increment-btn'));
+      await user.click(screen.getByTestId('increment-btn'));
 
-      // Check that onChange is called with the new value
       expect(handleChange).toHaveBeenCalledWith(11);
 
-      // Since InputNumber uses useControllableState internally,
-      // it updates the UI immediately while still calling onChange
       expect(input).toHaveValue('11');
 
-      // Even though the component updates the UI, we should still
-      // test that it responds to external value changes
       rerender(
         <InputNumber data-testid="input-number" value={12} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
@@ -79,12 +73,12 @@ describe('input-number', () => {
         </InputNumber>,
       );
 
-      // Input value is updated according to the new external value prop
       expect(input).toHaveValue('12');
     });
 
-    // Test min/max constraints
     test('respects min/max constraints', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber data-testid="input-number" defaultValue={5} max={10} min={0}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
@@ -97,27 +91,570 @@ describe('input-number', () => {
       const incrementBtn = screen.getByTestId('increment-btn');
       const decrementBtn = screen.getByTestId('decrement-btn');
 
-      // Increment to max
       for (let i = 0; i < 10; i++) {
-        await userEvent.click(incrementBtn);
+        await user.click(incrementBtn);
       }
 
       expect(input).toHaveValue('10');
-      await userEvent.click(incrementBtn);
-      expect(input).toHaveValue('10'); // Still 10 because we reached max
+      await user.click(incrementBtn);
+      expect(input).toHaveValue('10');
 
-      // Decrement to min
       for (let i = 0; i < 15; i++) {
-        await userEvent.click(decrementBtn);
+        await user.click(decrementBtn);
       }
 
       expect(input).toHaveValue('0');
-      await userEvent.click(decrementBtn);
-      expect(input).toHaveValue('0'); // Still 0 because we reached min
+      await user.click(decrementBtn);
+      expect(input).toHaveValue('0');
     });
 
-    // Test step size
+    test('formats value according to formatOptions', () => {
+      render(
+        <InputNumber
+          data-testid="input-number"
+          defaultValue={1000.5}
+          formatOptions={{ style: 'currency', currency: 'USD' }}
+        >
+          <InputNumberItem data-testid="input-item" />
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      expect(input).toHaveValue('$1,000.50');
+    });
+
+    test('parses input value correctly', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={10}>
+          <InputNumberItem data-testid="input-item" />
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.clear(input);
+      await user.type(input, '25.5');
+      await user.tab();
+
+      expect(input).toHaveValue('25.5');
+    });
+
+    test('handles keyboard navigation correctly', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={10} max={100} min={0} step={5}>
+          <InputNumberItem data-testid="input-item" />
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      input.focus();
+
+      await user.keyboard('{ArrowUp}');
+      expect(input).toHaveValue('15');
+
+      await user.keyboard('{ArrowDown}');
+      expect(input).toHaveValue('10');
+
+      await user.keyboard('{PageDown}');
+      expect(input).toHaveValue('0');
+
+      await user.keyboard('{PageUp}');
+      expect(input).toHaveValue('100');
+    });
+
+    test('should handle Enter key press to confirm entered value', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.clear(input);
+      await user.type(input, '42');
+
+      await user.keyboard('{Enter}');
+
+      expect(input).toHaveValue('42');
+
+      expect(handleChange).toHaveBeenCalledWith(42);
+    });
+
+    test('should handle Enter key press with percentage values', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber
+          data-testid="input-number"
+          defaultValue={0.5}
+          formatOptions={{ style: 'percent' }}
+          onChange={handleChange}
+        >
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      expect(input).toHaveValue('50%');
+
+      await user.clear(input);
+      await user.type(input, '75');
+
+      await user.keyboard('{Enter}');
+
+      expect(input).toHaveValue('75%');
+
+      expect(handleChange).toHaveBeenCalledWith(0.75);
+    });
+
+    test('should respect min/max constraints when pressing Enter', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} max={10} min={0} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.clear(input);
+      await user.type(input, '15');
+      await user.keyboard('{Enter}');
+
+      expect(input).toHaveValue('10');
+      expect(handleChange).toHaveBeenLastCalledWith(10);
+
+      await user.clear(input);
+      await user.type(input, '-5');
+      await user.keyboard('{Enter}');
+
+      expect(input).toHaveValue('0');
+      expect(handleChange).toHaveBeenLastCalledWith(0);
+    });
+
+    test('should handle Enter correctly with invalid values', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.clear(input);
+      await user.type(input, 'abc');
+      await user.keyboard('{Enter}');
+
+      expect(input).toHaveValue('');
+      expect(handleChange).toHaveBeenLastCalledWith(Number.NaN);
+
+      await user.clear(input);
+      await user.keyboard('{Enter}');
+
+      expect(input).toHaveValue('');
+
+      expect(handleChange).toHaveBeenLastCalledWith(Number.NaN);
+    });
+
+    test('handles special input cases correctly', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" max={100} min={0}>
+          <InputNumberItem data-testid="input-item" />
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.clear(input);
+      await user.tab();
+      expect(input).toHaveValue('');
+
+      await user.clear(input);
+      await user.type(input, 'abc');
+      await user.tab();
+      expect(input).toHaveValue('');
+
+      await user.clear(input);
+      await user.type(input, '150');
+      await user.tab();
+      expect(input).toHaveValue('100');
+
+      await user.clear(input);
+      await user.type(input, '-10');
+      await user.tab();
+      expect(input).toHaveValue('0');
+    });
+
+    test('respects disabled state', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber disabled data-testid="input-number" defaultValue={10}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      expect(screen.getByTestId('input-item')).toBeDisabled();
+      expect(screen.getByTestId('decrement-btn')).toBeDisabled();
+      expect(screen.getByTestId('increment-btn')).toBeDisabled();
+
+      await user.click(screen.getByTestId('increment-btn'));
+      expect(screen.getByTestId('input-item')).toHaveValue('10');
+    });
+
+    test('should decrement value on wheel up event when input is focused', async () => {
+      const user = userEvent.setup();
+      const handleChange = jest.fn();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.click(input);
+
+      fireEvent.wheel(input, { deltaY: -100 });
+
+      expect(input).toHaveValue('4');
+      expect(handleChange).toHaveBeenCalledWith(4);
+    });
+
+    test('should increment value on wheel down event when input is focused', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.click(input);
+
+      fireEvent.wheel(input, { deltaY: 100 });
+
+      expect(input).toHaveValue('6');
+      expect(handleChange).toHaveBeenCalledWith(6);
+    });
+
+    test('should respect min/max constraints on wheel events', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={9} max={10} min={0} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.click(input);
+
+      fireEvent.wheel(input, { deltaY: 100 });
+      expect(input).toHaveValue('10');
+
+      fireEvent.wheel(input, { deltaY: 100 });
+      expect(input).toHaveValue('10');
+
+      fireEvent.wheel(input, { deltaY: -100 });
+      expect(input).toHaveValue('9');
+
+      render(
+        <InputNumber data-testid="input-number-min" defaultValue={1} max={10} min={0} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn-min">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item-min" />
+          <InputNumberIncrementButton data-testid="increment-btn-min">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const minInput = screen.getByTestId('input-item-min');
+
+      await user.click(minInput);
+
+      fireEvent.wheel(minInput, { deltaY: -100 });
+      expect(minInput).toHaveValue('0');
+
+      fireEvent.wheel(minInput, { deltaY: -100 });
+      expect(minInput).toHaveValue('0');
+    });
+
+    test('should honor step value when using wheel events', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} step={0.5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.click(input);
+
+      fireEvent.wheel(input, { deltaY: 100 });
+      expect(input).toHaveValue('5.5');
+      expect(handleChange).toHaveBeenCalledWith(5.5);
+
+      fireEvent.wheel(input, { deltaY: -100 });
+      expect(input).toHaveValue('5');
+      expect(handleChange).toHaveBeenCalledWith(5);
+    });
+
+    test('should not respond to wheel events when disabled', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber disabled data-testid="input-number" defaultValue={5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.click(input);
+
+      fireEvent.wheel(input, { deltaY: -100 });
+      fireEvent.wheel(input, { deltaY: 100 });
+
+      expect(input).toHaveValue('5');
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+
+    test('should not respond to wheel events when not focused', () => {
+      const handleChange = jest.fn();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      fireEvent.wheel(input, { deltaY: -100 });
+
+      expect(input).toHaveValue('5');
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+
+    test('right-clicking on increment/decrement buttons should affect the value like left clicking', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={10} onChange={handleChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+      const incrementBtn = screen.getByTestId('increment-btn');
+      const decrementBtn = screen.getByTestId('decrement-btn');
+
+      expect(input).toHaveValue('10');
+
+      await user.pointer({
+        target: incrementBtn,
+        keys: '[MouseRight]',
+      });
+
+      expect(input).toHaveValue('11');
+      expect(handleChange).toHaveBeenCalledWith(11);
+
+      await user.pointer({
+        target: decrementBtn,
+        keys: '[MouseRight]',
+      });
+
+      expect(input).toHaveValue('10');
+      expect(handleChange).toHaveBeenCalledWith(10);
+
+      await user.click(incrementBtn);
+      expect(input).toHaveValue('11');
+      expect(handleChange).toHaveBeenCalledWith(11);
+    });
+
+    test('should increment continuously when increment button is pressed and held', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
+      jest.useFakeTimers();
+
+      const onChange = jest.fn();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5} onChange={onChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+      const incrementBtn = screen.getByTestId('increment-btn');
+
+      expect(input).toHaveValue('5');
+
+      await user.pointer({ keys: '[MouseLeft>]', target: incrementBtn });
+
+      expect(input).toHaveValue('6');
+
+      act(() => {
+        jest.advanceTimersByTime(200);
+      });
+      expect(input).toHaveValue('7');
+
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+      expect(input).toHaveValue('8');
+
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+      expect(input).toHaveValue('9');
+
+      await user.pointer({ keys: '[/MouseLeft]' });
+
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      expect(input).toHaveValue('9');
+
+      jest.useRealTimers();
+    });
+
+    test('should decrement continuously when decrement button is pressed and held', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
+      jest.useFakeTimers();
+
+      const onChange = jest.fn();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={10} onChange={onChange}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+      const decrementBtn = screen.getByTestId('decrement-btn');
+
+      expect(input).toHaveValue('10');
+
+      await user.pointer({ keys: '[MouseLeft>]', target: decrementBtn });
+
+      expect(input).toHaveValue('9');
+
+      act(() => {
+        jest.advanceTimersByTime(200);
+      });
+      expect(input).toHaveValue('8');
+
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+      expect(input).toHaveValue('7');
+
+      await user.pointer({ keys: '[/MouseLeft]' });
+
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      expect(input).toHaveValue('7');
+
+      jest.useRealTimers();
+    });
+
+    test('should stop incrementing when pointer leaves the button', async () => {
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
+      jest.useFakeTimers();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+      const incrementBtn = screen.getByTestId('increment-btn');
+
+      await user.pointer({ keys: '[MouseLeft>]', target: incrementBtn });
+      expect(input).toHaveValue('6');
+
+      act(() => {
+        jest.advanceTimersByTime(200);
+      });
+      expect(input).toHaveValue('7');
+
+      await user.pointer({ target: document.body });
+
+      act(() => {
+        jest.advanceTimersByTime(300);
+      });
+      expect(input).toHaveValue('7');
+
+      jest.useRealTimers();
+    });
+
     test('applies step size correctly', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber data-testid="input-number" defaultValue={5} step={2.5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
@@ -128,14 +665,13 @@ describe('input-number', () => {
 
       const input = screen.getByTestId('input-item');
 
-      await userEvent.click(screen.getByTestId('increment-btn'));
+      await user.click(screen.getByTestId('increment-btn'));
       expect(input).toHaveValue('7.5');
 
-      await userEvent.click(screen.getByTestId('decrement-btn'));
+      await user.click(screen.getByTestId('decrement-btn'));
       expect(input).toHaveValue('5');
     });
 
-    // Test format options
     test('formats numbers according to formatOptions', () => {
       render(
         <InputNumber
@@ -152,8 +688,9 @@ describe('input-number', () => {
       expect(input).toHaveValue('$1,234.50');
     });
 
-    // Test disabled state
     test('disables all interactions when disabled', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber disabled data-testid="input-number" defaultValue={5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
@@ -172,11 +709,10 @@ describe('input-number', () => {
       expect(incrementBtn).toBeDisabled();
       expect(decrementBtn).toBeDisabled();
 
-      await userEvent.click(incrementBtn);
-      expect(input).toHaveValue('5'); // No change because disabled
+      await user.click(incrementBtn);
+      expect(input).toHaveValue('5');
     });
 
-    // Accessibility testing
     test('has no accessibility violations', async () => {
       const { container } = render(
         <div>
@@ -194,7 +730,6 @@ describe('input-number', () => {
       expect(results).toHaveNoViolations();
     });
 
-    // Test prop forwarding
     test('passes id to InputNumberItem', () => {
       render(
         <InputNumber data-testid="input-number" id="test-id">
@@ -208,12 +743,119 @@ describe('input-number', () => {
 
       expect(input).toHaveAttribute('id', 'test-id');
     });
+
+    test('supports keyboard operations (Enter and Space) on buttons', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      expect(input).toHaveValue('5');
+
+      await user.tab();
+      await user.tab();
+      await user.tab();
+      await user.keyboard('{Enter}');
+      expect(input).toHaveValue('6');
+
+      await user.keyboard(' ');
+      expect(input).toHaveValue('7');
+
+      await user.tab({ shift: true });
+      await user.tab({ shift: true });
+      await user.keyboard('{Enter}');
+      expect(input).toHaveValue('6');
+
+      await user.keyboard(' ');
+      expect(input).toHaveValue('5');
+    });
+
+    test('allows function keys (F1-F12) in input', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <InputNumber data-testid="input-number" defaultValue={5}>
+          <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+          <InputNumberItem data-testid="input-item" />
+          <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+        </InputNumber>,
+      );
+
+      const input = screen.getByTestId('input-item');
+
+      await user.click(input);
+
+      const preventDefaultMock = jest.fn();
+
+      const functionKeys = ['F1', 'F5', 'F12'];
+
+      for (const key of functionKeys) {
+        const keyboardEvent = new KeyboardEvent('keydown', {
+          key,
+          bubbles: true,
+          cancelable: true,
+        });
+
+        Object.defineProperty(keyboardEvent, 'preventDefault', {
+          value: preventDefaultMock,
+        });
+
+        input.dispatchEvent(keyboardEvent);
+      }
+
+      expect(preventDefaultMock).not.toHaveBeenCalled();
+    });
+
+    test('inputNumber resets when form is reset', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <form data-testid="test-form">
+          <InputNumber data-testid="input-number" defaultValue={5}>
+            <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+            <InputNumberItem data-testid="input-item" />
+            <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+          </InputNumber>
+          <button data-testid="reset-button" type="reset">
+            Reset
+          </button>
+        </form>,
+      );
+
+      const input = screen.getByTestId('input-item');
+      const incrementBtn = screen.getByTestId('increment-btn');
+      const resetBtn = screen.getByTestId('reset-button');
+
+      expect(input).toHaveValue('5');
+
+      await user.click(incrementBtn);
+      await user.click(incrementBtn);
+      expect(input).toHaveValue('7');
+
+      await user.click(resetBtn);
+
+      expect(input).toHaveValue('5');
+
+      await user.clear(input);
+      await user.type(input, '42');
+      expect(input).toHaveValue('42');
+
+      await user.click(resetBtn);
+
+      expect(input).toHaveValue('5');
+    });
   });
 
-  // InputNumberItem component tests
   describe('InputNumberItem', () => {
-    // Test direct user input handling
     test('handles direct user input', async () => {
+      const user = userEvent.setup();
       const handleChange = jest.fn();
 
       render(
@@ -224,20 +866,19 @@ describe('input-number', () => {
 
       const input = screen.getByTestId('input-item');
 
-      // Clear current value
-      await userEvent.clear(input);
-      // Type a new value
-      await userEvent.type(input, '42');
-      // Trigger blur event to validate and commit the input value
-      // This is required as the onChange callback may only be invoked after the input loses focus, not on every keystroke
-      fireEvent.blur(input);
+      await user.clear(input);
+
+      await user.type(input, '42');
+
+      await user.tab();
 
       expect(input).toHaveValue('42');
       expect(handleChange).toHaveBeenCalledWith(42);
     });
 
-    // Test validation and formatting on blur event
     test('validates and formats on blur', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber defaultValue={5} max={100} min={0}>
           <InputNumberItem data-testid="input-item" />
@@ -246,55 +887,61 @@ describe('input-number', () => {
 
       const input = screen.getByTestId('input-item');
 
-      // Simulate entering value above max
-      await userEvent.clear(input);
-      await userEvent.type(input, '200');
-      fireEvent.blur(input);
+      await user.clear(input);
+      await user.type(input, '200');
+      await user.tab();
 
-      // Check if the value is adjusted to max
       expect(input).toHaveValue('100');
 
-      // Simulate entering value below min
-      await userEvent.clear(input);
-      await userEvent.type(input, '-10');
-      fireEvent.blur(input);
+      await user.clear(input);
+      await user.type(input, '-10');
+      await user.tab();
 
-      // Check if the value is adjusted to min
       expect(input).toHaveValue('0');
     });
 
-    // Test keyboard navigation
-    test('handles keyboard navigation', () => {
+    test('handles keyboard navigation', async () => {
       const handleChange = jest.fn();
+      const user = userEvent.setup();
 
       render(
-        <InputNumber defaultValue={10} onChange={handleChange}>
+        <InputNumber defaultValue={10} max={100} min={0} onChange={handleChange}>
           <InputNumberItem data-testid="input-item" />
         </InputNumber>,
       );
 
       const input = screen.getByTestId('input-item');
 
-      // Press arrow up to increment
-      fireEvent.keyDown(input, { key: 'ArrowUp' });
+      await user.click(input);
+
+      await user.keyboard('{ArrowUp}');
       expect(handleChange).toHaveBeenCalledWith(11);
+      expect(input).toHaveValue('11');
 
-      // Press arrow down to decrement
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      handleChange.mockClear();
+
+      await user.keyboard('{ArrowDown}');
       expect(handleChange).toHaveBeenCalledWith(10);
+      expect(input).toHaveValue('10');
 
-      // Home key should set to min (assuming no min is specified)
-      fireEvent.keyDown(input, { key: 'Home' });
+      handleChange.mockClear();
 
-      // End key should set to max (assuming no max is specified)
-      fireEvent.keyDown(input, { key: 'End' });
+      await user.keyboard('{PageUp}');
+      expect(handleChange).toHaveBeenCalledWith(100);
+      expect(input).toHaveValue('100');
+
+      handleChange.mockClear();
+
+      await user.keyboard('{PageDown}');
+      expect(handleChange).toHaveBeenCalledWith(0);
+      expect(input).toHaveValue('0');
     });
   });
 
-  // InputNumberDecrementButton component tests
   describe('InputNumberDecrementButton', () => {
-    // Test basic decrement functionality
     test('decreases value when clicked', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber defaultValue={10}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
@@ -305,14 +952,13 @@ describe('input-number', () => {
       const button = screen.getByTestId('decrement-btn');
       const input = screen.getByTestId('input-item');
 
-      await userEvent.click(button);
+      await user.click(button);
       expect(input).toHaveValue('9');
 
-      await userEvent.click(button);
+      await user.click(button);
       expect(input).toHaveValue('8');
     });
 
-    // Test disabled state at minimum value
     test('becomes disabled at minimum value', () => {
       render(
         <InputNumber defaultValue={1} min={1}>
@@ -326,7 +972,6 @@ describe('input-number', () => {
       expect(button).toBeDisabled();
     });
 
-    // Test custom rendering
     test('supports custom rendering', () => {
       render(
         <InputNumber defaultValue={10}>
@@ -341,10 +986,10 @@ describe('input-number', () => {
     });
   });
 
-  // InputNumberIncrementButton component tests
   describe('InputNumberIncrementButton', () => {
-    // Test basic increment functionality
     test('increases value when clicked', async () => {
+      const user = userEvent.setup();
+
       render(
         <InputNumber defaultValue={10}>
           <InputNumberItem data-testid="input-item" />
@@ -355,14 +1000,13 @@ describe('input-number', () => {
       const button = screen.getByTestId('increment-btn');
       const input = screen.getByTestId('input-item');
 
-      await userEvent.click(button);
+      await user.click(button);
       expect(input).toHaveValue('11');
 
-      await userEvent.click(button);
+      await user.click(button);
       expect(input).toHaveValue('12');
     });
 
-    // Test disabled state at maximum value
     test('becomes disabled at maximum value', () => {
       render(
         <InputNumber defaultValue={100} max={100}>
@@ -376,7 +1020,6 @@ describe('input-number', () => {
       expect(button).toBeDisabled();
     });
 
-    // Test custom rendering
     test('supports custom rendering', () => {
       render(
         <InputNumber defaultValue={10}>
@@ -391,11 +1034,10 @@ describe('input-number', () => {
     });
   });
 
-  // Integration tests for the whole component
   describe('InputNumber Integration Tests', () => {
-    // Test all components working together
     test('works together as a complete component', async () => {
       const handleChange = jest.fn();
+      const user = userEvent.setup();
 
       render(
         <InputNumber data-testid="number-input" defaultValue={50} max={100} min={0} step={5} onChange={handleChange}>
@@ -409,38 +1051,31 @@ describe('input-number', () => {
       const decrementBtn = screen.getByTestId('decrement');
       const incrementBtn = screen.getByTestId('increment');
 
-      // Check the initial value
       expect(input).toHaveValue('50');
 
-      // Increase value with a button
-      await userEvent.click(incrementBtn);
+      await user.click(incrementBtn);
       expect(input).toHaveValue('55');
       expect(handleChange).toHaveBeenCalledWith(55);
 
-      // Decrease value with a button
-      await userEvent.click(decrementBtn);
+      await user.click(decrementBtn);
       expect(input).toHaveValue('50');
       expect(handleChange).toHaveBeenCalledWith(50);
 
-      // Direct input
-      await userEvent.clear(input);
-      await userEvent.type(input, '75');
-      fireEvent.blur(input);
+      await user.clear(input);
+      await user.type(input, '75');
+      await user.tab();
       expect(handleChange).toHaveBeenCalledWith(75);
       expect(input).toHaveValue('75');
 
-      // Exceed max limit
-      await userEvent.clear(input);
-      await userEvent.type(input, '150');
-      expect(input).toHaveValue('150'); // Value not yet validated
+      await user.clear(input);
+      await user.type(input, '150');
+      expect(input).toHaveValue('150');
 
-      // Below min when blur
-      await userEvent.clear(input);
-      await userEvent.type(input, '-20');
-      expect(input).toHaveValue('-20'); // Value not yet validated before blur
+      await user.clear(input);
+      await user.type(input, '-20');
+      expect(input).toHaveValue('-20');
     });
 
-    // Test format options and locale together
     test('properly applies formatting and locale', () => {
       render(
         <InputNumber
@@ -457,14 +1092,12 @@ describe('input-number', () => {
 
       const input = screen.getByTestId('input');
 
-      // Check if formatting is applied
-      // In German locale, it should use comma as a decimal separator and show Euro symbol
       expect(input).toHaveValue('1.234,56\u00A0€');
     });
 
-    // Test handling of invalid user input
     test('handles invalid user input gracefully', async () => {
       const handleChange = jest.fn();
+      const user = userEvent.setup();
 
       render(
         <InputNumber data-testid="number-input" defaultValue={50} onChange={handleChange}>
@@ -474,14 +1107,11 @@ describe('input-number', () => {
 
       const input = screen.getByTestId('input');
 
-      // Test entering non-numeric text
-      await userEvent.type(input, 'abc');
+      await user.type(input, 'abc');
 
-      // Should not call onChange for invalid input
       expect(handleChange).not.toHaveBeenCalledWith(Number.NaN);
 
-      // On blur, should restore to the previous valid value
-      fireEvent.blur(input);
+      await user.tab();
       expect(input).toHaveValue('50');
     });
   });
