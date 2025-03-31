@@ -15,7 +15,7 @@ const PROGRESS_CIRCLE_PROVIDER_NAME = 'ProgressCircleProvider';
 type ScopedProps<P> = P & { __scopeProgressCircle?: Scope };
 
 /**
- * Threshold - Defines color thresholds based on progress values
+ * Defines color thresholds based on progress values
  */
 interface Threshold {
   /**
@@ -35,90 +35,76 @@ interface Threshold {
 }
 
 /**
- * Props for the ProgressCircleProvider component
+ * Props for the ProgressCircleProvider context
  */
 interface ProgressCircleContextValue {
   /**
-   * Center coordinate of the circle
-   * Calculated as half of the size
+   * Center coordinate of the circle (half of size)
    */
   center: number;
 
   /**
-   * Total circumference of the circle
-   * Used for calculating stroke dash array and offset
+   * Total circumference of the circle for stroke calculations
    */
   circumference: number;
 
   /**
+   * Clamped progress value, undefined for indeterminate state
+   */
+  clampedValue: number | undefined;
+
+  /**
    * Unique identifier for the progress circle
-   * Used for SVG clip paths and other DOM-related identifiers
    */
   id: string;
 
   /**
-   * Maximum possible value for the progress
-   * Used to calculate the normalized value
+   * Maximum progress value
    */
   max: number;
 
   /**
-   * Minimum possible value for the progress
-   * Used to calculate the normalized value
+   * Minimum progress value
    */
   min: number;
 
   /**
-   * Value normalized between 0 and 1
-   * Calculated based on the current value and min/max values
-   */
-  normalizedValue: number;
-
-  /**
-   * Radius of the circle
-   * Used for SVG circle calculations
+   * Radius of the circle for SVG rendering
    */
   radius: number;
 
   /**
-   * CSS transform value for rotation
-   * Used to position the progress indicator at the correct angle
+   * CSS transform for rotating the progress indicator
    */
   rotationTransform: string;
 
   /**
-   * The size of the progress circle in pixels
-   * Determines the width and height of the SVG
+   * Size of the progress circle in pixels
    */
   size: number;
 
   /**
-   * Stroke dash offset value
-   * Used to determine how much of the circle should be filled
+   * Stroke dash offset for progress visualization
    */
   strokeDashoffset: number;
 
   /**
-   * Width of the stroke for the progress indicator
-   * Determines the thickness of the circle
+   * Width of the stroke for the progress circle
    */
   strokeWidth: number;
 
   /**
-   * Threshold configuration for the progress circle
-   * Used for color changes at specific value points
+   * Threshold configuration for color changes
    */
   threshold: Threshold | undefined;
 
   /**
-   * Current value of the progress circle
-   * Raw value before normalization
+   * Raw progress value (can be null/undefined for indeterminate)
    */
-  value: number;
+  value: null | number | undefined;
 
   /**
-   * Text representation of the current value
-   * Used for accessibility and display purposes
+   * Text representation of the current value for accessibility
    */
   valueText: string;
 }
@@ -133,10 +119,10 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
  * ---------------------------------------------------------------------------*/
 
 /**
- * ProgressCircleProvider - Context provider for the Progress Circle component
+ * Provides context for the ProgressCircle component
  *
- * Manages and calculates all the values needed for rendering a circular progress indicator.
- * Handles value normalization, sizing calculations, and threshold management.
+ * Manages calculations for rendering the circular progress indicator,
+ * including value clamping, sizing, thresholds, and indeterminate state.
  *
  * @example
  * ```tsx
@@ -155,24 +141,25 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
  *     <ProgressCircleIndicator />
  *     <ProgressCircleTrack />
  *   </ProgressCircleSVG>
- *   <ProgressCircleLabel />
+ *   <ProgressCircleValue />
  * </ProgressCircleProvider>
  * ```
  */
 function ProgressCircleProvider({
   __scopeProgressCircle,
-  value = 0,
+  value,
   min = 0,
   max = 100,
   thresholds,
   strokeWidth = 4,
   size = 48,
-  valueFormatter,
+  getValueText,
   id: propId,
   startAngle = -90,
   children,
 }: ScopedProps<
   PropsWithChildren<{
+    getValueText?: (value: number) => string; // Custom value text
     id?: string;
     max?: number;
     min?: number;
@@ -180,17 +167,18 @@ function ProgressCircleProvider({
     startAngle?: number;
     strokeWidth?: number;
     thresholds?: Threshold[];
-    value?: number;
-    valueFormatter?: (value: number) => string;
+    value?: null | number; // Null for indeterminate state
   }>
 >): ReactNode {
   const uniqueId = useId();
   const id = propId || uniqueId;
 
+  // Ensure size and stroke width are non-negative
   const validSize = Math.max(0, size);
   const validStrokeWidth = Math.max(0, strokeWidth);
   const validStartAngle = startAngle % 360;
 
+  // Validate min and max, swap if min > max
   let validMin = min;
   let validMax = max;
 
@@ -198,41 +186,50 @@ function ProgressCircleProvider({
     [validMin, validMax] = [validMax, validMin];
   }
 
-  const normalizedValue = clamp(validMin, validMax, value);
+  // Handle indeterminate state
+  const isIndeterminate = value === null || value === undefined;
+  const clampedValue = isIndeterminate ? undefined : clamp(validMin, validMax, value);
   const range = validMax - validMin;
-  const percentage = range > 0 ? Math.round(((normalizedValue - validMin) / range) * 100 * 1000) / 1000 : 0;
+  const percentage = clampedValue !== undefined && range > 0 ? ((clampedValue - validMin) / range) * 100 : 0;
+  const valueText =
+    clampedValue !== undefined && getValueText ? getValueText(clampedValue) : `${Math.round(percentage)}%`;
 
+  // Sort thresholds by value
   const sortedThresholds = useMemo(
     () => (thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : []),
     [thresholds],
   );
 
+  // Determine an active threshold based on a clamped value
   const threshold = useMemo(() => {
+    if (clampedValue === undefined) {
+      return;
+    }
+
     for (const sortedThreshold of sortedThresholds) {
-      if (normalizedValue <= sortedThreshold.value) {
+      if (clampedValue <= sortedThreshold.value) {
         return sortedThreshold;
       }
     }
 
     return sortedThresholds.at(-1);
-  }, [sortedThresholds, normalizedValue]);
+  }, [sortedThresholds, clampedValue]);
 
+  // Calculate circle properties
   const center = validSize / 2;
   const radius = Math.max(0, center - validStrokeWidth / 2);
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
   const rotationTransform = `rotate(${validStartAngle}, 0, 0)`;
 
-  const valueText = (valueFormatter || ((val: number) => `${Math.round(val)}%`))(percentage);
-
   return (
     <ProgressCircleContextProvider
       center={center}
       circumference={circumference}
+      clampedValue={clampedValue} // Undefined for indeterminate
       id={id}
       max={validMax}
       min={validMin}
-      normalizedValue={normalizedValue}
       radius={radius}
       rotationTransform={rotationTransform}
       scope={__scopeProgressCircle}
@@ -240,7 +237,7 @@ function ProgressCircleProvider({
       strokeDashoffset={strokeDashoffset}
       strokeWidth={validStrokeWidth}
       threshold={threshold}
-      value={value}
+      value={value ?? 0}
       valueText={valueText}
     >
       {children}
@@ -248,35 +245,47 @@ function ProgressCircleProvider({
   );
 }
 
-/* -------------------------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  * Component: ProgressCircle
- * -----------------------------------------------------------------------------------------------*/
+ * ---------------------------------------------------------------------------*/
 
+/**
+ * Root component for the progress circle
+ *
+ * Serves as a wrapper for other progress circle components.
+ */
 function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'div'>>): ReactNode {
   return <div {...props} />;
 }
 
-/* -------------------------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  * Component: ProgressCircleSVG
- * -----------------------------------------------------------------------------------------------*/
+ * ---------------------------------------------------------------------------*/
 
 const PROGRESS_CIRCLE_SVG_NAME = 'ProgressCircleSVG';
 
+/**
+ * SVG container for the progress circle
+ *
+ * Renders the SVG with accessibility attributes and supports indeterminate state.
+ */
 function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'svg'>>): ReactNode {
-  const { size, id, valueText, max, min, normalizedValue, value } = useProgressCircleContext(
+  const { size, id, valueText, max, min, clampedValue } = useProgressCircleContext(
     PROGRESS_CIRCLE_SVG_NAME,
     __scopeProgressCircle,
   );
 
   return (
     <svg
+      aria-label="Progress"
       aria-valuemax={max}
       aria-valuemin={min}
-      aria-valuenow={normalizedValue || value ? 0 : undefined}
-      aria-valuetext={valueText}
+      aria-valuenow={clampedValue} // Undefined for indeterminate state
+      aria-valuetext={clampedValue === undefined ? undefined : valueText}
       height={size}
       id={id}
       role="progressbar"
+      tabIndex={0}
       viewBox={`0 0 ${size} ${size}`}
       width={size}
       {...props}
@@ -284,12 +293,17 @@ function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<Comp
   );
 }
 
-/* -------------------------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  * Component: ProgressCircleTrack
- * -----------------------------------------------------------------------------------------------*/
+ * ---------------------------------------------------------------------------*/
 
 const PROGRESS_CIRCLE_TRACK_NAME = 'ProgressCircleTrack';
 
+/**
+ * Background circle for the progress indicator
+ *
+ * Renders the static track of the progress circle.
+ */
 function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'circle'>>): ReactNode {
   const { radius, strokeWidth, threshold, center } = useProgressCircleContext(
     PROGRESS_CIRCLE_TRACK_NAME,
@@ -298,6 +312,7 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Co
 
   return (
     <circle
+      aria-hidden="true"
       cx={center}
       cy={center}
       fill="transparent"
@@ -309,12 +324,17 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Co
   );
 }
 
-/* -------------------------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  * Component: ProgressCircleIndicator
- * -----------------------------------------------------------------------------------------------*/
+ * ---------------------------------------------------------------------------*/
 
 const PROGRESS_CIRCLE_INDICATOR_NAME = 'ProgressCircleIndicator';
 
+/**
+ * Foreground circle showing progress
+ *
+ * Renders the dynamic progress indicator with stroke dash properties.
+ */
 function ProgressCircleIndicator({
   __scopeProgressCircle,
   ...props
@@ -324,6 +344,7 @@ function ProgressCircleIndicator({
 
   return (
     <circle
+      aria-hidden="true"
       cx={center}
       cy={center}
       fill="transparent"
@@ -339,23 +360,28 @@ function ProgressCircleIndicator({
   );
 }
 
-/* -------------------------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  * Component: ProgressCircleValue
- * -----------------------------------------------------------------------------------------------*/
+ * ---------------------------------------------------------------------------*/
 
 const PROGRESS_CIRCLE_VALUE_NAME = 'ProgressCircleValue';
 
+/**
+ * Displays the current progress value
+ *
+ * Supports custom content or default value text rendering.
+ */
 function ProgressCircleValue({
   __scopeProgressCircle,
   children,
   ...props
 }: Omit<ScopedProps<ComponentProps<'div'>>, 'children'> & {
-  children?: ((context: { value: number; valueText: string }) => ReactNode) | ReactNode;
+  children?: ((context: { value: number | undefined; valueText: string }) => ReactNode) | ReactNode;
 }): ReactNode {
-  const { valueText, value } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
+  const { valueText, clampedValue } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
 
   if (typeof children === 'function') {
-    return children({ valueText, value });
+    return children({ value: clampedValue, valueText });
   }
 
   return <div {...props}>{children || valueText}</div>;
@@ -366,18 +392,12 @@ function ProgressCircleValue({
  * -------------------------------------------------------------------------- */
 
 /**
- * Restricts a numerical value to be within the inclusive range defined by a minimum and maximum value.
+ * Clamps a value within a specified min/max range
  *
- * This function ensures that the `value` does not fall below the `min` or exceed the `max`.
- * If `value` is less than `min`, it returns `min`.
- * If `value` is greater than `max`, it returns `max`.
- * Otherwise, it returns the `value` itself.
- * The result is rounded to the nearest integer.
- *
- * @param min - The lower boundary of the range.
- * @param max - The upper boundary of the range.
- * @param value - The number to be clamped within the range.
- * @returns The clamped and rounded value within the specified range.
+ * @param min - Minimum value
+ * @param max - Maximum value
+ * @param value - Value to clamp
+ * @returns Clamped value
  */
 function clamp(min: number, max: number, value: number): number {
   return Math.min(max, Math.max(min, value));

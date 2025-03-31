@@ -11,7 +11,6 @@ import {
 } from '@/progress-circle';
 
 describe('ProgressCircle', () => {
-  // Test rendering with default props
   it('renders correctly with default props', () => {
     render(
       <ProgressCircleProvider max={100} value={50}>
@@ -29,7 +28,6 @@ describe('ProgressCircle', () => {
     expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
-  // Test accessibility
   it('passes accessibility tests', async () => {
     const { container } = render(
       <ProgressCircleProvider max={100} value={50}>
@@ -48,7 +46,6 @@ describe('ProgressCircle', () => {
     expect(results).toHaveNoViolations();
   });
 
-  // Test with different values
   it('updates when value changes', () => {
     const { rerender } = render(
       <ProgressCircleProvider max={100} value={25}>
@@ -79,7 +76,6 @@ describe('ProgressCircle', () => {
     expect(screen.getByText('75%')).toBeInTheDocument();
   });
 
-  // Test with custom max value
   it('calculates percentage correctly with custom max value', () => {
     render(
       <ProgressCircleProvider max={10} value={5}>
@@ -96,7 +92,6 @@ describe('ProgressCircle', () => {
     expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
-  // Test with custom formatting
   it('supports custom value formatting', () => {
     render(
       <ProgressCircleProvider max={100} value={42}>
@@ -113,7 +108,6 @@ describe('ProgressCircle', () => {
     expect(screen.getByText('Hoàn thành: 42%')).toBeInTheDocument();
   });
 
-  // Test with custom size
   it('renders with custom size', () => {
     render(
       <ProgressCircleProvider max={100} size={200} value={50}>
@@ -133,7 +127,6 @@ describe('ProgressCircle', () => {
     expect(progressCircle).toHaveAttribute('height', '200');
   });
 
-  // Test with indeterminate state
   it('handles indeterminate state', () => {
     render(
       // @ts-ignore
@@ -154,7 +147,6 @@ describe('ProgressCircle', () => {
     expect(progressbar).not.toHaveAttribute('aria-valuenow');
   });
 
-  // Test with zero value
   it('renders correctly with zero value', () => {
     render(
       <ProgressCircleProvider max={100} value={0}>
@@ -171,7 +163,6 @@ describe('ProgressCircle', () => {
     expect(screen.getByText('0%')).toBeInTheDocument();
   });
 
-  // Test with max value reached
   it('renders correctly when value equals max', () => {
     render(
       <ProgressCircleProvider max={100} value={100}>
@@ -188,7 +179,6 @@ describe('ProgressCircle', () => {
     expect(screen.getByText('100%')).toBeInTheDocument();
   });
 
-  // Test with custom colors
   it('accepts custom styling', () => {
     render(
       <ProgressCircleProvider max={100} value={50}>
@@ -203,5 +193,66 @@ describe('ProgressCircle', () => {
     );
 
     expect(screen.getByText('50%')).toHaveClass('text-lg', 'font-bold');
+  });
+
+  it('applies correct threshold styles', () => {
+    const thresholds = [
+      { value: 30, color: 'red', background: 'pink' },
+      { value: 70, color: 'yellow', background: 'lightyellow' },
+      { value: 100, color: 'green', background: 'lightgreen' },
+    ];
+
+    render(
+      <ProgressCircleProvider max={100} thresholds={thresholds} value={75}>
+        <ProgressCircle>
+          <ProgressCircleSVG>
+            <ProgressCircleTrack />
+            <ProgressCircleIndicator data-testid="progress-indicator" />
+          </ProgressCircleSVG>
+          <ProgressCircleValue />
+        </ProgressCircle>
+      </ProgressCircleProvider>,
+    );
+
+    const indicator = screen.getByTestId('progress-indicator');
+
+    expect(indicator).toHaveAttribute('stroke', 'green');
+  });
+
+  it('renders with custom stroke width', () => {
+    render(
+      <ProgressCircleProvider max={100} strokeWidth={8} value={50}>
+        <ProgressCircle>
+          <ProgressCircleSVG>
+            <ProgressCircleTrack data-testid="progress-track" />
+            <ProgressCircleIndicator data-testid="progress-indicator" />
+          </ProgressCircleSVG>
+          <ProgressCircleValue />
+        </ProgressCircle>
+      </ProgressCircleProvider>,
+    );
+
+    const track = screen.getByTestId('progress-track');
+    const indicator = screen.getByTestId('progress-indicator');
+
+    expect(track).toHaveAttribute('stroke-width', '8');
+    expect(indicator).toHaveAttribute('stroke-width', '8');
+  });
+
+  it('handles value equal to max properly', () => {
+    render(
+      <ProgressCircleProvider max={100} value={100}>
+        <ProgressCircle>
+          <ProgressCircleSVG>
+            <ProgressCircleTrack />
+            <ProgressCircleIndicator />
+          </ProgressCircleSVG>
+          <ProgressCircleValue />
+        </ProgressCircle>
+      </ProgressCircleProvider>,
+    );
+
+    expect(screen.getByText('100%')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '100');
   });
 });
