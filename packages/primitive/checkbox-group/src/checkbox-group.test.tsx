@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
-import { act, createRef } from 'react';
+import { createRef } from 'react';
 
 import { CheckboxGroup, CheckboxGroupIndicator, CheckboxGroupItem } from '@/checkbox-group';
 
