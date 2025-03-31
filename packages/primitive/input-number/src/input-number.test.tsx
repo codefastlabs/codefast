@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
-import { InputNumber, InputNumberDecrementButton, InputNumberIncrementButton, InputNumberItem } from '@/input-number';
+import { InputNumber, InputNumberDecrementButton, InputNumberField, InputNumberIncrementButton } from '@/input-number';
 
 describe('input-number', () => {
   describe('InputNumber', () => {
@@ -10,7 +10,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number">
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -27,7 +27,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={10}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -50,7 +50,7 @@ describe('input-number', () => {
       const { rerender } = render(
         <InputNumber data-testid="input-number" value={10} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -68,7 +68,7 @@ describe('input-number', () => {
       rerender(
         <InputNumber data-testid="input-number" value={12} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -82,7 +82,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} max={10} min={0}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -115,7 +115,7 @@ describe('input-number', () => {
           defaultValue={1000.5}
           formatOptions={{ style: 'currency', currency: 'USD' }}
         >
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -129,7 +129,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber data-testid="input-number" defaultValue={10}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -147,7 +147,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber data-testid="input-number" defaultValue={10} max={100} min={0} step={5}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -175,7 +175,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -204,7 +204,7 @@ describe('input-number', () => {
           onChange={handleChange}
         >
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -230,7 +230,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} max={10} min={0} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -259,7 +259,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -286,7 +286,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber data-testid="input-number" max={100} min={0}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -318,7 +318,7 @@ describe('input-number', () => {
       render(
         <InputNumber disabled data-testid="input-number" defaultValue={10}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -338,7 +338,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -360,7 +360,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -382,7 +382,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={9} max={10} min={0} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -403,7 +403,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number-min" defaultValue={1} max={10} min={0} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn-min">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item-min" />
+          <InputNumberField data-testid="input-item-min" />
           <InputNumberIncrementButton data-testid="increment-btn-min">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -426,7 +426,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} step={0.5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -451,7 +451,7 @@ describe('input-number', () => {
       render(
         <InputNumber disabled data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -473,7 +473,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -493,7 +493,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={10} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -535,7 +535,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} onChange={onChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -584,7 +584,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={10} onChange={onChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -626,7 +626,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -658,7 +658,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5} step={2.5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -679,7 +679,7 @@ describe('input-number', () => {
           defaultValue={1234.5}
           formatOptions={{ style: 'currency', currency: 'USD' }}
         >
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -694,7 +694,7 @@ describe('input-number', () => {
       render(
         <InputNumber disabled data-testid="input-number" defaultValue={5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -719,7 +719,7 @@ describe('input-number', () => {
           <label htmlFor="number-input">Number Input</label>
           <InputNumber data-testid="input-number" defaultValue={5} id="number-input">
             <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-            <InputNumberItem aria-labelledby="number-label" data-testid="input-item" />
+            <InputNumberField aria-labelledby="number-label" data-testid="input-item" />
             <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
           </InputNumber>
         </div>,
@@ -734,7 +734,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" id="test-id">
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -750,7 +750,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -783,7 +783,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="input-number" defaultValue={5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -820,7 +820,7 @@ describe('input-number', () => {
         <form data-testid="test-form">
           <InputNumber data-testid="input-number" defaultValue={5}>
             <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-            <InputNumberItem data-testid="input-item" />
+            <InputNumberField data-testid="input-item" />
             <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
           </InputNumber>
           <button data-testid="reset-button" type="reset">
@@ -860,7 +860,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber defaultValue={10} onChange={handleChange}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -881,7 +881,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber defaultValue={5} max={100} min={0}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -906,7 +906,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber defaultValue={10} max={100} min={0} onChange={handleChange}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -945,7 +945,7 @@ describe('input-number', () => {
       render(
         <InputNumber defaultValue={10}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -963,7 +963,7 @@ describe('input-number', () => {
       render(
         <InputNumber defaultValue={1} min={1}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
         </InputNumber>,
       );
 
@@ -978,7 +978,7 @@ describe('input-number', () => {
           <InputNumberDecrementButton data-testid="decrement-btn">
             <span>Decrease</span>
           </InputNumberDecrementButton>
-          <InputNumberItem />
+          <InputNumberField />
         </InputNumber>,
       );
 
@@ -992,7 +992,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber defaultValue={10}>
-          <InputNumberItem data-testid="input-item" />
+          <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -1010,7 +1010,7 @@ describe('input-number', () => {
     test('becomes disabled at maximum value', () => {
       render(
         <InputNumber defaultValue={100} max={100}>
-          <InputNumberItem />
+          <InputNumberField />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -1023,7 +1023,7 @@ describe('input-number', () => {
     test('supports custom rendering', () => {
       render(
         <InputNumber defaultValue={10}>
-          <InputNumberItem />
+          <InputNumberField />
           <InputNumberIncrementButton data-testid="increment-btn">
             <span>Increase</span>
           </InputNumberIncrementButton>
@@ -1042,7 +1042,7 @@ describe('input-number', () => {
       render(
         <InputNumber data-testid="number-input" defaultValue={50} max={100} min={0} step={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input" />
+          <InputNumberField data-testid="input" />
           <InputNumberIncrementButton data-testid="increment">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -1085,7 +1085,7 @@ describe('input-number', () => {
           locale="de-DE"
         >
           <InputNumberDecrementButton data-testid="decrement">-</InputNumberDecrementButton>
-          <InputNumberItem data-testid="input" />
+          <InputNumberField data-testid="input" />
           <InputNumberIncrementButton data-testid="increment">+</InputNumberIncrementButton>
         </InputNumber>,
       );
@@ -1101,7 +1101,7 @@ describe('input-number', () => {
 
       render(
         <InputNumber data-testid="number-input" defaultValue={50} onChange={handleChange}>
-          <InputNumberItem data-testid="input" />
+          <InputNumberField data-testid="input" />
         </InputNumber>,
       );
 

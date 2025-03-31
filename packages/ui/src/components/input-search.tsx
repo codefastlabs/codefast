@@ -31,7 +31,7 @@ function InputSearch({
   value: valueProp,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Item>, 'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'> &
+  Omit<ComponentProps<typeof InputPrimitive.Field>, 'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'> &
   VariantProps<typeof inputVariants> & {
     defaultValue?: string;
     onChange?: (value: string) => void;
@@ -55,7 +55,7 @@ function InputSearch({
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
-      <InputPrimitive.Item
+      <InputPrimitive.Field
         className={input()}
         data-slot="input-search-item"
         type="search"

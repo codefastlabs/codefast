@@ -35,7 +35,7 @@ function Input({
   suffix,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> &
+  Omit<ComponentProps<typeof InputPrimitive.Field>, 'prefix' | 'type'> &
   VariantProps<typeof inputVariants> & {
     type?:
       | 'date'
@@ -64,7 +64,7 @@ function Input({
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
-      <InputPrimitive.Item className={input()} data-slot="input-item" {...props} />
+      <InputPrimitive.Field className={input()} data-slot="input-item" {...props} />
     </InputPrimitive.Root>
   );
 }

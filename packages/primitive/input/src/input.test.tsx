@@ -2,14 +2,14 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 
-import { Input, InputItem } from '@/input';
+import { Input, InputField } from '@/input';
 
 describe('input', () => {
   describe('Rendering', () => {
     it('should render Input with InputItem correctly', () => {
       render(
         <Input>
-          <InputItem placeholder="Enter text" />
+          <InputField placeholder="Enter text" />
         </Input>,
       );
 
@@ -19,7 +19,7 @@ describe('input', () => {
     it('should render with prefix and suffix', () => {
       render(
         <Input prefix={<div data-testid="prefix">Prefix</div>} suffix={<div data-testid="suffix">Suffix</div>}>
-          <InputItem />
+          <InputField />
         </Input>,
       );
 
@@ -30,7 +30,7 @@ describe('input', () => {
     it('should render loading spinner in prefix position by default', () => {
       render(
         <Input loading spinner={<div data-testid="spinner">Loading...</div>}>
-          <InputItem />
+          <InputField />
         </Input>,
       );
 
@@ -45,7 +45,7 @@ describe('input', () => {
           prefix={<div data-testid="prefix">Prefix</div>}
           spinner={<div data-testid="spinner">Loading...</div>}
         >
-          <InputItem />
+          <InputField />
         </Input>,
       );
 
@@ -60,7 +60,7 @@ describe('input', () => {
 
       render(
         <Input>
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -84,7 +84,7 @@ describe('input', () => {
       render(
         // @ts-ignore
         <Input onClick={containerClickHandler}>
-          <InputItem data-testid="input" onClick={inputClickHandler} />
+          <InputField data-testid="input" onClick={inputClickHandler} />
         </Input>,
       );
 
@@ -101,7 +101,7 @@ describe('input', () => {
 
       render(
         <Input>
-          <InputItem data-testid="file-input" type="file" />
+          <InputField data-testid="file-input" type="file" />
         </Input>,
       );
 
@@ -125,7 +125,7 @@ describe('input', () => {
     it('should prevent default behavior when container is clicked while input already has focus', async () => {
       render(
         <Input>
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -165,7 +165,7 @@ describe('input', () => {
     it('should apply disabled attribute correctly', () => {
       render(
         <Input disabled>
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -179,7 +179,7 @@ describe('input', () => {
     it('should apply readOnly attribute correctly', () => {
       render(
         <Input readOnly>
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -193,7 +193,7 @@ describe('input', () => {
     it('should pass additional props to container div', () => {
       render(
         <Input aria-label="test input" data-testid="container">
-          <InputItem />
+          <InputField />
         </Input>,
       );
 
@@ -205,7 +205,7 @@ describe('input', () => {
     it('should pass additional props to input element', () => {
       render(
         <Input>
-          <InputItem data-testid="input" maxLength={10} />
+          <InputField data-testid="input" maxLength={10} />
         </Input>,
       );
 
@@ -221,7 +221,7 @@ describe('input', () => {
 
       render(
         <Input>
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -237,7 +237,7 @@ describe('input', () => {
 
       render(
         <Input disabled>
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -253,7 +253,7 @@ describe('input', () => {
 
       render(
         <Input readOnly>
-          <InputItem data-testid="input" defaultValue="Initial value" />
+          <InputField data-testid="input" defaultValue="Initial value" />
         </Input>,
       );
 
@@ -269,7 +269,7 @@ describe('input', () => {
     it('should not have accessibility violations', async () => {
       const { container } = render(
         <Input>
-          <InputItem placeholder="Enter text" />
+          <InputField placeholder="Enter text" />
         </Input>,
       );
 
@@ -287,7 +287,7 @@ describe('input', () => {
             Before
           </button>
           <Input>
-            <InputItem data-testid="input" />
+            <InputField data-testid="input" />
           </Input>
           <button data-testid="after" type="button">
             After
@@ -323,7 +323,7 @@ describe('input', () => {
             </a>
           }
         >
-          <InputItem data-testid="input" />
+          <InputField data-testid="input" />
         </Input>,
       );
 
@@ -350,8 +350,8 @@ describe('input', () => {
     it('should handle multiple InputItems correctly', () => {
       render(
         <Input>
-          <InputItem data-testid="input1" />
-          <InputItem data-testid="input2" />
+          <InputField data-testid="input1" />
+          <InputField data-testid="input2" />
         </Input>,
       );
 

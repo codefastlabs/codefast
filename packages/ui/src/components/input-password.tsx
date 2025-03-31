@@ -32,7 +32,7 @@ function InputPassword({
   suffix,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Item>, 'prefix' | 'type'> &
+  Omit<ComponentProps<typeof InputPrimitive.Field>, 'prefix' | 'type'> &
   VariantProps<typeof inputVariants>): JSX.Element {
   const [type, setType] = useState<'password' | 'text'>('password');
 
@@ -52,7 +52,7 @@ function InputPassword({
       spinner={spinner || <Spinner />}
       suffix={suffix}
     >
-      <InputPrimitive.Item
+      <InputPrimitive.Field
         autoCapitalize="none"
         className={input()}
         data-slot="input-password-item"

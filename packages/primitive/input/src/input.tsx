@@ -186,21 +186,21 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
 }
 
 /* -----------------------------------------------------------------------------
- * Component: InputItem
+ * Component: InputField
  * -------------------------------------------------------------------------- */
 
-const INPUT_ITEM_NAME = 'InputItem';
+const INPUT_FIELD_NAME = 'InputField';
 
 /**
- * Props for the InputItem component
+ * Props for the InputField component
  */
-type InputItemProps = ComponentProps<'input'>;
+type InputFieldProps = ComponentProps<'input'>;
 
-function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX.Element {
+function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): JSX.Element {
   /**
    * Context values from parent Input component
    */
-  const { disabled, inputRef, readOnly } = useInputContext(INPUT_ITEM_NAME, __scopeInput);
+  const { disabled, inputRef, readOnly } = useInputContext(INPUT_FIELD_NAME, __scopeInput);
 
   /**
    * Combined ref that syncs with the parent's inputRef
@@ -214,4 +214,4 @@ function InputItem({ __scopeInput, ...props }: ScopedProps<InputItemProps>): JSX
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { createInputScope, Input, InputItem, InputItem as Item, Input as Root };
+export { createInputScope, InputField as Field, Input, InputField, Input as Root };

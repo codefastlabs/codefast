@@ -303,28 +303,28 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
 }
 
 /* -----------------------------------------------------------------------------
- * Component: InputNumberItem
+ * Component: InputNumberField
  * -------------------------------------------------------------------------- */
 
 /**
- * The name of the InputNumberItem component constant.
+ * The name of the InputNumberField component constant.
  */
-const NUMBER_INPUT_ITEM_NAME = 'InputNumberItem';
+const NUMBER_INPUT_FIELD_NAME = 'InputNumberField';
 
 /**
- * Defines the props for the `InputNumberItem` component.
+ * Defines the props for the `InputNumberField` component.
  */
-type InputNumberItemProps = Omit<
-  ComponentProps<typeof InputPrimitive.Item>,
+type InputNumberFieldProps = Omit<
+  ComponentProps<typeof InputPrimitive.Field>,
   'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
 >;
 
-function InputNumberItem({
+function InputNumberField({
   __scopeInputNumber,
   onBlur,
   onKeyDown,
   ...props
-}: ScopedProps<InputNumberItemProps>): JSX.Element {
+}: ScopedProps<InputNumberFieldProps>): JSX.Element {
   // Retrieve input number context and input scope
   const inputScope = useInputScope(__scopeInputNumber);
   const {
@@ -344,7 +344,7 @@ function InputNumberItem({
     readOnly,
     step,
     value,
-  } = useInputNumberContext(NUMBER_INPUT_ITEM_NAME, __scopeInputNumber);
+  } = useInputNumberContext(NUMBER_INPUT_FIELD_NAME, __scopeInputNumber);
 
   /**
    * Handles the blur event to format the value of the input.
@@ -563,7 +563,7 @@ function InputNumberItem({
   }, [defaultValue, inputRef, onChange, parseValue]);
 
   return (
-    <InputPrimitive.Item
+    <InputPrimitive.Field
       ref={inputRef}
       defaultValue={formatValue(value)}
       disabled={disabled}
@@ -851,11 +851,11 @@ function clamp(value: number, min = -Infinity, max = Infinity): number {
 export {
   createInputNumberScope,
   InputNumberDecrementButton as DecrementButton,
+  InputNumberField as Field,
   InputNumberIncrementButton as IncrementButton,
   InputNumber,
   InputNumberDecrementButton,
+  InputNumberField,
   InputNumberIncrementButton,
-  InputNumberItem,
-  InputNumberItem as Item,
   InputNumber as Root,
 };

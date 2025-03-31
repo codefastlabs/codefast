@@ -35,7 +35,7 @@ function InputNumber({
   suffix,
   value,
   ...props
-}: ComponentProps<typeof InputNumberPrimitive.Item> &
+}: ComponentProps<typeof InputNumberPrimitive.Field> &
   ComponentProps<typeof InputNumberPrimitive.Root> &
   VariantProps<typeof inputVariants>): JSX.Element {
   return (
@@ -60,7 +60,7 @@ function InputNumber({
       value={value}
       onChange={onChange}
     >
-      <InputNumberPrimitive.Item
+      <InputNumberPrimitive.Field
         autoCapitalize="none"
         autoComplete="off"
         autoCorrect="off"
