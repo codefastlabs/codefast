@@ -18,16 +18,19 @@ import { useEffect, useRef, useState } from 'react';
  * return <div>{animatedValue}%</div>;
  * ```
  */
-export function useAnimatedValue(targetValue: number, duration: number, animate?: boolean): number {
+export function useAnimatedValue(targetValue: null | number, duration: number, animate?: boolean): number {
+  // Use the default value of 0 when targetValue is null
+  const actualTargetValue = targetValue ?? 0;
+
   /**
    * The current value being displayed during the animation
    */
-  const [animatedValue, setAnimatedValue] = useState(targetValue);
+  const [animatedValue, setAnimatedValue] = useState(actualTargetValue);
 
   /**
    * Reference to the latest animated value to prevent closure issues in animations
    */
-  const animatedValueRef = useRef(targetValue);
+  const animatedValueRef = useRef(actualTargetValue);
 
   useEffect(() => {
     animatedValueRef.current = animatedValue;
@@ -35,7 +38,7 @@ export function useAnimatedValue(targetValue: number, duration: number, animate?
 
   useEffect(() => {
     if (!animate) {
-      setAnimatedValue(targetValue);
+      setAnimatedValue(actualTargetValue);
 
       return;
     }
@@ -48,7 +51,7 @@ export function useAnimatedValue(targetValue: number, duration: number, animate?
     /**
      * The total change in value that will occur during animation
      */
-    const valueRange = targetValue - currentValue;
+    const valueRange = actualTargetValue - currentValue;
 
     /**
      * Timestamp when the animation started
@@ -56,7 +59,7 @@ export function useAnimatedValue(targetValue: number, duration: number, animate?
     const startTime = performance.now();
 
     if (duration <= 0 || valueRange === 0) {
-      setAnimatedValue(targetValue);
+      setAnimatedValue(actualTargetValue);
 
       return;
     }
@@ -78,7 +81,7 @@ export function useAnimatedValue(targetValue: number, duration: number, animate?
       const elapsedTime = currentTime - startTime;
 
       if (elapsedTime >= duration) {
-        setAnimatedValue(targetValue);
+        setAnimatedValue(actualTargetValue);
       } else {
         /**
          * Linear animation progress from 0 to 1
@@ -105,7 +108,7 @@ export function useAnimatedValue(targetValue: number, duration: number, animate?
     return () => {
       cancelAnimationFrame(animationFrame);
     };
-  }, [targetValue, duration, animate]);
+  }, [actualTargetValue, duration, animate]);
 
   return Math.round(animatedValue);
 }
