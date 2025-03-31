@@ -36,7 +36,7 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const [FormFieldProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
+const [FormFieldContextProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
 
 function useFormItem(
   consumerName: string,
@@ -80,9 +80,9 @@ function FormField<
   const { __scopeFormField, ...props } = formFieldProps;
 
   return (
-    <FormFieldProvider name={props.name} scope={__scopeFormField}>
+    <FormFieldContextProvider name={props.name} scope={__scopeFormField}>
       <Controller {...props} />
-    </FormFieldProvider>
+    </FormFieldContextProvider>
   );
 }
 
@@ -96,7 +96,7 @@ interface FormItemContextValue {
   id: string;
 }
 
-const [FormItemProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
+const [FormItemContextProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: FormItem
@@ -106,9 +106,9 @@ function FormItem({ __scopeFormField, className, ...props }: ScopedProps<Compone
   const id = useId();
 
   return (
-    <FormItemProvider id={id} scope={__scopeFormField}>
+    <FormItemContextProvider id={id} scope={__scopeFormField}>
       <div className={cn('grid gap-2', className)} data-slot="form-item" {...props} />
-    </FormItemProvider>
+    </FormItemContextProvider>
   );
 }
 

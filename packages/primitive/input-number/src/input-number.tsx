@@ -99,7 +99,7 @@ interface InputNumberContextValue {
   value?: number;
 }
 
-const [InputNumberProvider, useInputNumberContext] =
+const [InputNumberContextProvider, useInputNumberContext] =
   createInputNumberContext<InputNumberContextValue>(NUMBER_INPUT_NAME);
 
 /* -----------------------------------------------------------------------------
@@ -276,7 +276,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   }, [changeNumberValue, min, step]);
 
   return (
-    <InputNumberProvider
+    <InputNumberContextProvider
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
       defaultValue={defaultValue}
@@ -298,7 +298,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
       onIncrementToMax={handleIncrementToMax}
     >
       <InputPrimitive.Root {...inputScope} {...props} />
-    </InputNumberProvider>
+    </InputNumberContextProvider>
   );
 }
 

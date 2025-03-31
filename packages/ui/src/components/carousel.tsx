@@ -42,7 +42,7 @@ type CarouselContextValue = BaseCarouselProps & {
   scrollPrev: () => void;
 };
 
-const [CarouselProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
+const [CarouselContextProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel
@@ -122,7 +122,7 @@ function Carousel({
   }, [api, onSelect]);
 
   return (
-    <CarouselProvider
+    <CarouselContextProvider
       api={api}
       canScrollNext={canScrollNext}
       canScrollPrev={canScrollPrev}
@@ -143,7 +143,7 @@ function Carousel({
       >
         {children}
       </div>
-    </CarouselProvider>
+    </CarouselContextProvider>
   );
 }
 

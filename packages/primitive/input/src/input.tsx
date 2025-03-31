@@ -43,7 +43,7 @@ interface InputContextValue {
   readOnly?: boolean;
 }
 
-const [InputProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
+const [InputContextProvider, useInputContext] = createInputContext<InputContextValue>(INPUT_NAME);
 
 /**
  * Props for styling and appearance of the Input component
@@ -169,7 +169,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   };
 
   return (
-    <InputProvider disabled={disabled} inputRef={inputRef} readOnly={readOnly} scope={__scopeInput}>
+    <InputContextProvider disabled={disabled} inputRef={inputRef} readOnly={readOnly} scope={__scopeInput}>
       <div
         data-disabled={disabled}
         data-readonly={readOnly}
@@ -181,7 +181,7 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
         {children}
         {loading && loaderPosition === 'suffix' ? spinner : suffix}
       </div>
-    </InputProvider>
+    </InputContextProvider>
   );
 }
 
