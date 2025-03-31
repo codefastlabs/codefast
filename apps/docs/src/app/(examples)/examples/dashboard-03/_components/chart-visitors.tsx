@@ -1,7 +1,7 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 import type { ContentType } from 'recharts/types/component/Label';
 import type { PieSectorDataItem } from 'recharts/types/polar/Pie';
 import type { ActiveShape } from 'recharts/types/util/types';
@@ -143,7 +143,7 @@ const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props
 );
 
 const content: (activeIndex: number) => ContentType = (activeIndex) =>
-  function Content({ viewBox }): JSX.Element | null {
+  function Content({ viewBox }): ReactNode {
     if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
       return (
         <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>

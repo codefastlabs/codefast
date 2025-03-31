@@ -1,7 +1,7 @@
 'use client';
 
 import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { JSX, ReactNode } from 'react';
 import type { ContentType } from 'recharts/types/component/Label';
 import type { PieSectorDataItem } from 'recharts/types/polar/Pie';
 import type { ActiveShape } from 'recharts/types/util/types';
@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@codefast/ui';
+import { isEmpty } from 'lodash-es';
 import { useMemo, useState } from 'react';
 import { Label, Pie, PieChart, Sector } from 'recharts';
 
@@ -88,8 +89,7 @@ export function ChartPieInteractive(): JSX.Element {
             {months.map((key) => {
               const config = chartConfig[key as keyof typeof chartConfig];
 
-              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- keep
-              if (!config) {
+              if (isEmpty(config)) {
                 return null;
               }
 
@@ -140,7 +140,7 @@ const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props
 );
 
 const content: (activeIndex: number) => ContentType = (activeIndex) =>
-  function Content({ viewBox }): JSX.Element | null {
+  function Content({ viewBox }): ReactNode {
     if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
       return (
         <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
