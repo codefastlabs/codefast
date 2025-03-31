@@ -74,6 +74,9 @@ interface InputNumberContextValue {
   /** Accessible label for the increment button */
   ariaIncrementLabel?: string;
 
+  /** Initial value used when the input is uncontrolled */
+  defaultValue?: number;
+
   /** Whether the input is disabled */
   disabled?: boolean;
 
@@ -276,6 +279,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
     <InputNumberProvider
       ariaDecrementLabel={ariaDecrementLabel}
       ariaIncrementLabel={ariaIncrementLabel}
+      defaultValue={defaultValue}
       disabled={props.disabled}
       formatOptions={formatOptions}
       formatValue={formatValue}
@@ -324,9 +328,10 @@ function InputNumberItem({
   // Retrieve input number context and input scope
   const inputScope = useInputScope(__scopeInputNumber);
   const {
-    id,
+    defaultValue,
     disabled,
     formatValue,
+    id,
     inputRef,
     max,
     min,
@@ -545,7 +550,7 @@ function InputNumberItem({
     }
 
     const handleReset = (): void => {
-      onChange();
+      onChange(parseValue(defaultValue));
     };
 
     const form = inputElement.form;
@@ -555,7 +560,7 @@ function InputNumberItem({
     return () => {
       form?.removeEventListener('reset', handleReset);
     };
-  }, [inputRef, onChange]);
+  }, [defaultValue, inputRef, onChange, parseValue]);
 
   return (
     <InputPrimitive.Item
