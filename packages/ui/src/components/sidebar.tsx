@@ -25,7 +25,7 @@ const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3.0625rem';
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 
-interface SidebarContextProps {
+interface SidebarContextValue {
   isMobile: boolean;
   open: boolean;
   openMobile: boolean;
@@ -41,7 +41,7 @@ interface SidebarContextProps {
 
 const SIDEBAR_PROVIDER_NAME = 'SidebarProvider';
 
-const [SidebarProviderProvider, useSidebar] = createContext<SidebarContextProps>(SIDEBAR_PROVIDER_NAME);
+const [SidebarContextProvider, useSidebar] = createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
@@ -113,7 +113,7 @@ function SidebarProvider({
   const state = open ? 'expanded' : 'collapsed';
 
   return (
-    <SidebarProviderProvider
+    <SidebarContextProvider
       isMobile={isMobile}
       open={open}
       openMobile={openMobile}
@@ -138,7 +138,7 @@ function SidebarProvider({
           {children}
         </div>
       </TooltipProvider>
-    </SidebarProviderProvider>
+    </SidebarContextProvider>
   );
 }
 

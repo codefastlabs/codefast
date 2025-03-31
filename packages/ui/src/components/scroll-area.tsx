@@ -78,7 +78,8 @@ const [createScrollAreaContext] = createContextScope(SCROLL_AREA_NAME);
 
 type ScrollAreaContextValue = Pick<VariantProps<typeof scrollAreaScrollbarVariants>, 'size'>;
 
-const [ScrollAreaProvider, useScrollAreaContext] = createScrollAreaContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
+const [ScrollAreaContextProvider, useScrollAreaContext] =
+  createScrollAreaContext<ScrollAreaContextValue>(SCROLL_AREA_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: ScrollArea
@@ -92,7 +93,7 @@ function ScrollArea({
   ...props
 }: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>): JSX.Element {
   return (
-    <ScrollAreaProvider scope={__scopeScrollArea} size={size}>
+    <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root className={cn('relative', className)} data-slot="scroll-area" {...props}>
         <ScrollAreaPrimitive.Viewport
           className="outline-ring ring-ring/50 size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4"
@@ -104,7 +105,7 @@ function ScrollArea({
         <ScrollAreaScrollbar orientation="horizontal" />
         <ScrollAreaPrimitive.Corner />
       </ScrollAreaPrimitive.Root>
-    </ScrollAreaProvider>
+    </ScrollAreaContextProvider>
   );
 }
 

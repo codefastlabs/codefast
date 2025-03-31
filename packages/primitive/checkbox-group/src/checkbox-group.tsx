@@ -71,7 +71,7 @@ interface CheckboxGroupContextValue {
   value?: string[];
 }
 
-const [CheckboxGroupProvider, useCheckboxGroupContext] =
+const [CheckboxGroupContextProvider, useCheckboxGroupContext] =
   createCheckboxGroupContext<CheckboxGroupContextValue>(CHECKBOX_GROUP_NAME);
 
 /* -----------------------------------------------------------------------------
@@ -200,7 +200,7 @@ function CheckboxGroup({
   );
 
   return (
-    <CheckboxGroupProvider
+    <CheckboxGroupContextProvider
       disabled={disabled}
       name={name}
       required={required}
@@ -212,7 +212,7 @@ function CheckboxGroup({
       <RovingFocusGroup.Root asChild {...rovingFocusGroupScope} dir={direction} loop={loop} orientation={orientation}>
         <div data-disabled={disabled ? '' : undefined} dir={direction} role="group" {...props} />
       </RovingFocusGroup.Root>
-    </CheckboxGroupProvider>
+    </CheckboxGroupContextProvider>
   );
 }
 
