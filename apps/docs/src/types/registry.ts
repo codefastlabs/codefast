@@ -14,10 +14,10 @@ export const registryItemTypeSchema = z.enum([
 ]);
 
 export const registryItemFileSchema = z.object({
-  content: z.string(),
+  content: z.string().optional(),
   highlightedContent: z.string().optional(),
   path: z.string(),
-  target: z.string(),
+  target: z.string().optional(),
   type: registryItemTypeSchema,
 });
 
