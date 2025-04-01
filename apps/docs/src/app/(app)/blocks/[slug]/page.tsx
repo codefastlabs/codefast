@@ -2,12 +2,12 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { type JSX, cache } from 'react';
 
-import type { Registry } from '@/types/registry';
+import type { RegistryItem } from '@/types/registry';
 
 import { BlockPreview } from '@/app/(app)/blocks/[slug]/_components/block-preview';
 import { registryBlocks } from '@/registry/registry-blocks';
 
-const getCacheRegistry = cache((component: string): null | Registry => registryBlocks[component]);
+const getCacheRegistry = cache((component: string): null | RegistryItem => registryBlocks[component]);
 
 export const dynamicParams = false;
 

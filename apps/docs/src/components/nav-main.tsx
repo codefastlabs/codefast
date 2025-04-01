@@ -31,12 +31,12 @@ interface NavMainProps {
   items: NavItemProps[];
 }
 
-const createHref = (basePath: string, slug: string | undefined): string => {
-  if (!slug) {
+const createHref = (basePath: string, name: string | undefined): string => {
+  if (!name) {
     return basePath;
   }
 
-  return `${basePath}/${slug}`;
+  return `${basePath}/${name}`;
 };
 
 function ComponentList({
@@ -80,15 +80,15 @@ function NavGroup({
   const isActive = pathname === groupHref;
 
   return (
-    <SidebarMenuSubItem key={group.name}>
+    <SidebarMenuSubItem key={group.title}>
       {hasComponents ? (
         <>
-          <SidebarGroupLabel className="font-mono text-xs font-semibold uppercase">{group.name}</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-mono text-xs font-semibold uppercase">{group.title}</SidebarGroupLabel>
           <ComponentList basePath={itemPath} components={group.components} currentPath={pathname} />
         </>
       ) : (
         <SidebarMenuSubButton asChild isActive={isActive}>
-          <Link href={groupHref}>{group.name}</Link>
+          <Link href={groupHref}>{group.title}</Link>
         </SidebarMenuSubButton>
       )}
     </SidebarMenuSubItem>
@@ -113,7 +113,7 @@ export function NavMain({ items }: NavMainProps): JSX.Element {
               <CollapsibleContent asChild>
                 <SidebarMenuSub className="ml-2.5 mr-0">
                   {item.groups.map((group) => (
-                    <NavGroup key={group.name} group={group} itemPath={item.path} pathname={pathname} />
+                    <NavGroup key={group.title} group={group} itemPath={item.path} pathname={pathname} />
                   ))}
                 </SidebarMenuSub>
               </CollapsibleContent>
