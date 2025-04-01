@@ -14,7 +14,7 @@ export function BlockPreview({ title, slug }: BlockPreviewProps): JSX.Element {
   const { activeTheme } = useThemeConfig();
 
   return (
-    <ComponentWrapper className="grow overflow-hidden" classNames={{ body: 'p-0' }} name={title}>
+    <ComponentWrapper className="grow overflow-hidden" classNames={{ body: 'p-0' }} name={slug}>
       <iframe className="w-full grow" src={`/view/${slug}?theme=${activeTheme}`} title={title} />
     </ComponentWrapper>
   );

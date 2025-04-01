@@ -4,10 +4,9 @@ import { type JSX, cache } from 'react';
 
 import type { RegistryItem } from '@/types/registry';
 
-import { registryComponents } from '@/app/(app)/components/registry-components';
-import { ComponentWrapper } from '@/components/component-wrapper';
+import { registryBlocks } from '@/registry/registry-blocks';
 
-const getCacheRegistry = cache((component: string): null | RegistryItem => registryComponents[component]);
+const getCacheRegistry = cache((component: string): null | RegistryItem => registryBlocks[component]);
 
 export const dynamicParams = false;
 
@@ -28,13 +27,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export function generateStaticParams(): { slug: string }[] {
-  return Object.keys(registryComponents).map((component) => ({
-    slug: component,
+export function generateStaticParams(): { slug: string | undefined }[] {
+  return Object.keys(registryBlocks).map((slug) => ({
+    slug,
   }));
 }
 
-export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
+export default async function ViewPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
   const { slug } = await params;
 
   const registry = getCacheRegistry(slug);
@@ -45,11 +44,5 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 
   const Component = registry.component;
 
-  return (
-    <div className="@container grid gap-6 p-6">
-      <ComponentWrapper name={registry.slug}>
-        <Component />
-      </ComponentWrapper>
-    </div>
-  );
+  return <Component />;
 }
