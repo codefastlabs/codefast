@@ -1,352 +1,418 @@
 import dynamic from 'next/dynamic';
 
-import type { Registry, RegistryGroup } from '@/types/registry';
+import type { RegistryGroup, RegistryItem } from '@/types/registry';
 
-export const registryComponents: Record<string, Registry> = {
+export const registryComponents: Record<string, RegistryItem> = {
   accordion: {
-    component: dynamic(() => import('@/components/demos/accordion-demo').then((mod) => mod.AccordionDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/accordion-demo').then((mod) => mod.AccordionDemo),
+    ),
     description: 'Accordion',
     slug: 'accordion',
     title: 'Accordion',
   },
   alert: {
-    component: dynamic(() => import('@/components/demos/alert-demo').then((mod) => mod.AlertDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/alert-demo').then((mod) => mod.AlertDemo)),
     description: 'Alert',
     slug: 'alert',
     title: 'Alert',
   },
   'alert-dialog': {
-    component: dynamic(() => import('@/components/demos/alert-dialog-demo').then((mod) => mod.AlertDialogDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/alert-dialog-demo').then((mod) => mod.AlertDialogDemo),
+    ),
     description: 'Alert Dialog',
     slug: 'alert-dialog',
     title: 'Alert Dialog',
   },
   'aspect-ratio': {
-    component: dynamic(() => import('@/components/demos/aspect-ratio-demo').then((mod) => mod.AspectRatioDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/aspect-ratio-demo').then((mod) => mod.AspectRatioDemo),
+    ),
     description: 'Aspect Ratio',
     slug: 'aspect-ratio',
     title: 'Aspect Ratio',
   },
   avatar: {
-    component: dynamic(() => import('@/components/demos/avatar-demo').then((mod) => mod.AvatarDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/avatar-demo').then((mod) => mod.AvatarDemo)),
     description: 'Avatar',
     slug: 'avatar',
     title: 'Avatar',
   },
   badge: {
-    component: dynamic(() => import('@/components/demos/badge-demo').then((mod) => mod.BadgeDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/badge-demo').then((mod) => mod.BadgeDemo)),
     description: 'Badge',
     slug: 'badge',
     title: 'Badge',
   },
   breadcrumb: {
-    component: dynamic(() => import('@/components/demos/breadcrumb-demo').then((mod) => mod.BreadcrumbDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/breadcrumb-demo').then((mod) => mod.BreadcrumbDemo),
+    ),
     description: 'Breadcrumb',
     slug: 'breadcrumb',
     title: 'Breadcrumb',
   },
   button: {
-    component: dynamic(() => import('@/components/demos/button-demo').then((mod) => mod.ButtonDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/button-demo').then((mod) => mod.ButtonDemo)),
     description: 'Button',
     slug: 'button',
     title: 'Button',
   },
   calendar: {
-    component: dynamic(() => import('@/components/demos/calendar-demo').then((mod) => mod.CalendarDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/calendar-demo').then((mod) => mod.CalendarDemo),
+    ),
     description: 'Calendar',
     slug: 'calendar',
     title: 'Calendar',
   },
   card: {
-    component: dynamic(() => import('@/components/demos/card-demo').then((mod) => mod.CardDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/card-demo').then((mod) => mod.CardDemo)),
     description: 'Card',
     slug: 'card',
     title: 'Card',
   },
   carousel: {
-    component: dynamic(() => import('@/components/demos/carousel-demo').then((mod) => mod.CarouselDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/carousel-demo').then((mod) => mod.CarouselDemo),
+    ),
     description: 'Carousel',
     slug: 'carousel',
     title: 'Carousel',
   },
   chart: {
-    component: dynamic(() => import('@/components/demos/chart-demo').then((mod) => mod.ChartDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/chart-demo').then((mod) => mod.ChartDemo)),
     description: 'Chart',
     slug: 'chart',
     title: 'Chart',
   },
   'checkbox-cards': {
-    component: dynamic(() => import('@/components/demos/checkbox-cards-demo').then((mod) => mod.CheckboxCardsDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/checkbox-cards-demo').then((mod) => mod.CheckboxCardsDemo),
+    ),
     description: 'Checkbox Cards',
     slug: 'checkbox-cards',
     title: 'Checkbox Cards',
   },
   checkbox: {
-    component: dynamic(() => import('@/components/demos/checkbox-demo').then((mod) => mod.CheckboxDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/checkbox-demo').then((mod) => mod.CheckboxDemo),
+    ),
     description: 'Checkbox',
     slug: 'checkbox',
     title: 'Checkbox',
   },
   'checkbox-group': {
-    component: dynamic(() => import('@/components/demos/checkbox-group-demo').then((mod) => mod.CheckboxGroupDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/checkbox-group-demo').then((mod) => mod.CheckboxGroupDemo),
+    ),
     description: 'Checkbox Group',
     slug: 'checkbox-group',
     title: 'Checkbox Group',
   },
   collapsible: {
-    component: dynamic(() => import('@/components/demos/collapsible-demo').then((mod) => mod.CollapsibleDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/collapsible-demo').then((mod) => mod.CollapsibleDemo),
+    ),
     description: 'Collapsible',
     slug: 'collapsible',
     title: 'Collapsible',
   },
   combobox: {
-    component: dynamic(() => import('@/components/demos/combobox-demo').then((mod) => mod.ComboboxDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/combobox-demo').then((mod) => mod.ComboboxDemo),
+    ),
     description: 'Combobox',
     slug: 'combobox',
     title: 'Combobox',
   },
   command: {
-    component: dynamic(() => import('@/components/demos/command-demo').then((mod) => mod.CommandDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/command-demo').then((mod) => mod.CommandDemo)),
     description: 'Command',
     slug: 'command',
     title: 'Command',
   },
   'context-menu': {
-    component: dynamic(() => import('@/components/demos/context-menu-demo').then((mod) => mod.ContextMenuDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/context-menu-demo').then((mod) => mod.ContextMenuDemo),
+    ),
     description: 'Context Menu',
     slug: 'context-menu',
     title: 'Context Menu',
   },
   'date-picker': {
-    component: dynamic(() => import('@/components/demos/date-picker-demo').then((mod) => mod.DatePickerDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/date-picker-demo').then((mod) => mod.DatePickerDemo),
+    ),
     description: 'Date Picker',
     slug: 'date-picker',
     title: 'Date Picker',
   },
   dialog: {
-    component: dynamic(() => import('@/components/demos/dialog-demo').then((mod) => mod.DialogDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/dialog-demo').then((mod) => mod.DialogDemo)),
     description: 'Dialog',
     slug: 'dialog',
     title: 'Dialog',
   },
   drawer: {
-    component: dynamic(() => import('@/components/demos/drawer-demo').then((mod) => mod.DrawerDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/drawer-demo').then((mod) => mod.DrawerDemo)),
     description: 'Drawer',
     slug: 'drawer',
     title: 'Drawer',
   },
   'dropdown-menu': {
-    component: dynamic(() => import('@/components/demos/dropdown-menu-demo').then((mod) => mod.DropdownMenuDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/dropdown-menu-demo').then((mod) => mod.DropdownMenuDemo),
+    ),
     description: 'Dropdown Menu',
     slug: 'dropdown-menu',
     title: 'Dropdown Menu',
   },
   form: {
-    component: dynamic(() => import('@/components/demos/form-demo').then((mod) => mod.FormDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/form-demo').then((mod) => mod.FormDemo)),
     description: 'Form',
     slug: 'form',
     title: 'Form',
   },
   'hover-card': {
-    component: dynamic(() => import('@/components/demos/hover-card-demo').then((mod) => mod.HoverCardDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/hover-card-demo').then((mod) => mod.HoverCardDemo),
+    ),
     description: 'Hover Card',
     slug: 'hover-card',
     title: 'Hover Card',
   },
   'input-date': {
-    component: dynamic(() => import('@/components/demos/input-date-demo').then((mod) => mod.InputDateDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/input-date-demo').then((mod) => mod.InputDateDemo),
+    ),
     description: 'Input Date',
     slug: 'input-date',
     title: 'Input Date',
   },
   input: {
-    component: dynamic(() => import('@/components/demos/input-demo').then((mod) => mod.InputDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/input-demo').then((mod) => mod.InputDemo)),
     description: 'Input',
     slug: 'input',
     title: 'Input',
   },
   'input-number': {
-    component: dynamic(() => import('@/components/demos/input-number-demo').then((mod) => mod.InputNumberDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/input-number-demo').then((mod) => mod.InputNumberDemo),
+    ),
     description: 'Input Number',
     slug: 'input-number',
     title: 'Input Number',
   },
   'input-otp': {
-    component: dynamic(() => import('@/components/demos/input-otp-demo').then((mod) => mod.InputOTPDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/input-otp-demo').then((mod) => mod.InputOTPDemo),
+    ),
     description: 'Input OTP',
     slug: 'input-otp',
     title: 'Input OTP',
   },
   'input-password': {
-    component: dynamic(() => import('@/components/demos/input-password-demo').then((mod) => mod.InputPasswordDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/input-password-demo').then((mod) => mod.InputPasswordDemo),
+    ),
     description: 'Input Password',
     slug: 'input-password',
     title: 'Input Password',
   },
   'input-search': {
-    component: dynamic(() => import('@/components/demos/input-search-demo').then((mod) => mod.InputSearchDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/input-search-demo').then((mod) => mod.InputSearchDemo),
+    ),
     description: 'Input Search',
     slug: 'input-search',
     title: 'Input Search',
   },
   'input-time': {
-    component: dynamic(() => import('@/components/demos/input-time-demo').then((mod) => mod.InputTimeDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/input-time-demo').then((mod) => mod.InputTimeDemo),
+    ),
     description: 'Input Time',
     slug: 'input-time',
     title: 'Input Time',
   },
   kbd: {
-    component: dynamic(() => import('@/components/demos/kbd-demo').then((mod) => mod.KbdDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/kbd-demo').then((mod) => mod.KbdDemo)),
     description: 'Kbd',
     slug: 'kbd',
     title: 'Kbd',
   },
   label: {
-    component: dynamic(() => import('@/components/demos/label-demo').then((mod) => mod.LabelDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/label-demo').then((mod) => mod.LabelDemo)),
     description: 'Label',
     slug: 'label',
     title: 'Label',
   },
   menubar: {
-    component: dynamic(() => import('@/components/demos/menubar-demo').then((mod) => mod.MenubarDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/menubar-demo').then((mod) => mod.MenubarDemo)),
     description: 'Menubar',
     slug: 'menubar',
     title: 'Menubar',
   },
   'navigation-menu': {
-    component: dynamic(() => import('@/components/demos/navigation-menu-demo').then((mod) => mod.NavigationMenuDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/navigation-menu-demo').then((mod) => mod.NavigationMenuDemo),
+    ),
     description: 'Navigation Menu',
     slug: 'navigation-menu',
     title: 'Navigation Menu',
   },
   pagination: {
-    component: dynamic(() => import('@/components/demos/pagination-demo').then((mod) => mod.PaginationDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/pagination-demo').then((mod) => mod.PaginationDemo),
+    ),
     description: 'Pagination',
     slug: 'pagination',
     title: 'Pagination',
   },
   popover: {
-    component: dynamic(() => import('@/components/demos/popover-demo').then((mod) => mod.PopoverDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/popover-demo').then((mod) => mod.PopoverDemo)),
     description: 'Popover',
     slug: 'popover',
     title: 'Popover',
   },
   progress: {
-    component: dynamic(() => import('@/components/demos/progress-demo').then((mod) => mod.ProgressDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/progress-demo').then((mod) => mod.ProgressDemo),
+    ),
     description: 'Progress',
     slug: 'progress',
     title: 'Progress',
   },
   'progress-circle': {
-    component: dynamic(() => import('@/components/demos/progress-circle-demo').then((mod) => mod.ProgressCircleDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/progress-circle-demo').then((mod) => mod.ProgressCircleDemo),
+    ),
     description: 'Progress Circle',
     slug: 'progress-circle',
     title: 'Progress Circle',
   },
   'radio-cards': {
-    component: dynamic(() => import('@/components/demos/radio-cards-demo').then((mod) => mod.RadioCardsDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/radio-cards-demo').then((mod) => mod.RadioCardsDemo),
+    ),
     description: 'Radio Cards',
     slug: 'radio-cards',
     title: 'Radio Cards',
   },
   radio: {
-    component: dynamic(() => import('@/components/demos/radio-demo').then((mod) => mod.RadioDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/radio-demo').then((mod) => mod.RadioDemo)),
     description: 'Radio',
     slug: 'radio',
     title: 'Radio',
   },
   'radio-group': {
-    component: dynamic(() => import('@/components/demos/radio-group-demo').then((mod) => mod.RadioGroupDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/radio-group-demo').then((mod) => mod.RadioGroupDemo),
+    ),
     description: 'Radio Group',
     slug: 'radio-group',
     title: 'Radio Group',
   },
   resizable: {
-    component: dynamic(() => import('@/components/demos/resizable-demo').then((mod) => mod.ResizableDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/resizable-demo').then((mod) => mod.ResizableDemo),
+    ),
     description: 'Resizable',
     slug: 'resizable',
     title: 'Resizable',
   },
   'scroll-area': {
-    component: dynamic(() => import('@/components/demos/scroll-area-demo').then((mod) => mod.ScrollAreaDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/scroll-area-demo').then((mod) => mod.ScrollAreaDemo),
+    ),
     description: 'Scroll Area',
     slug: 'scroll-area',
     title: 'Scroll Area',
   },
   select: {
-    component: dynamic(() => import('@/components/demos/select-demo').then((mod) => mod.SelectDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/select-demo').then((mod) => mod.SelectDemo)),
     description: 'Select',
     slug: 'select',
     title: 'Select',
   },
   separator: {
-    component: dynamic(() => import('@/components/demos/separator-demo').then((mod) => mod.SeparatorDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/separator-demo').then((mod) => mod.SeparatorDemo),
+    ),
     description: 'Separator',
     slug: 'separator',
     title: 'Separator',
   },
   sheet: {
-    component: dynamic(() => import('@/components/demos/sheet-demo').then((mod) => mod.SheetDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/sheet-demo').then((mod) => mod.SheetDemo)),
     description: 'Sheet',
     slug: 'sheet',
     title: 'Sheet',
   },
   skeleton: {
-    component: dynamic(() => import('@/components/demos/skeleton-demo').then((mod) => mod.SkeletonDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/skeleton-demo').then((mod) => mod.SkeletonDemo),
+    ),
     description: 'Skeleton',
     slug: 'skeleton',
     title: 'Skeleton',
   },
   slider: {
-    component: dynamic(() => import('@/components/demos/slider-demo').then((mod) => mod.SliderDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/slider-demo').then((mod) => mod.SliderDemo)),
     description: 'Slider',
     slug: 'slider',
     title: 'Slider',
   },
   sonner: {
-    component: dynamic(() => import('@/components/demos/sonner-demo').then((mod) => mod.SonnerDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/sonner-demo').then((mod) => mod.SonnerDemo)),
     description: 'Sonner',
     slug: 'sonner',
     title: 'Sonner',
   },
   switch: {
-    component: dynamic(() => import('@/components/demos/switch-demo').then((mod) => mod.SwitchDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/switch-demo').then((mod) => mod.SwitchDemo)),
     description: 'Switch',
     slug: 'switch',
     title: 'Switch',
   },
   table: {
-    component: dynamic(() => import('@/components/demos/table-demo').then((mod) => mod.TableDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/table-demo').then((mod) => mod.TableDemo)),
     description: 'Table',
     slug: 'table',
     title: 'Table',
   },
   tabs: {
-    component: dynamic(() => import('@/components/demos/tabs-demo').then((mod) => mod.TabsDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/tabs-demo').then((mod) => mod.TabsDemo)),
     description: 'Tabs',
     slug: 'tabs',
     title: 'Tabs',
   },
   textarea: {
-    component: dynamic(() => import('@/components/demos/textarea-demo').then((mod) => mod.TextareaDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/textarea-demo').then((mod) => mod.TextareaDemo),
+    ),
     description: 'Textarea',
     slug: 'textarea',
     title: 'Textarea',
   },
   toggle: {
-    component: dynamic(() => import('@/components/demos/toggle-demo').then((mod) => mod.ToggleDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/toggle-demo').then((mod) => mod.ToggleDemo)),
     description: 'Toggle',
     slug: 'toggle',
     title: 'Toggle',
   },
   'toggle-group': {
-    component: dynamic(() => import('@/components/demos/toggle-group-demo').then((mod) => mod.ToggleGroupDemo)),
+    component: dynamic(() =>
+      import('@/app/(app)/components/_components/toggle-group-demo').then((mod) => mod.ToggleGroupDemo),
+    ),
     description: 'Toggle Group',
     slug: 'toggle-group',
     title: 'Toggle Group',
   },
   tooltip: {
-    component: dynamic(() => import('@/components/demos/tooltip-demo').then((mod) => mod.TooltipDemo)),
+    component: dynamic(() => import('@/app/(app)/components/_components/tooltip-demo').then((mod) => mod.TooltipDemo)),
     description: 'Tooltip',
     slug: 'tooltip',
     title: 'Tooltip',
@@ -355,7 +421,7 @@ export const registryComponents: Record<string, Registry> = {
 
 export const registryComponentGroups: RegistryGroup[] = [
   {
-    name: 'All Components',
+    title: 'All Components',
     slug: '',
   },
   {
@@ -370,8 +436,8 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.separator,
       registryComponents.skeleton,
     ],
-    description: 'Các thành phần Container & Bố cục',
-    name: 'Container & Layout',
+    description: 'Container and Layout components',
+    title: 'Container & Layout',
   },
   {
     components: [
@@ -383,8 +449,8 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents['dropdown-menu'],
       registryComponents.command,
     ],
-    description: 'Các thành phần Điều hướng & Menu',
-    name: 'Navigation & Menu',
+    description: 'Navigation & Menu components',
+    title: 'Navigation & Menu',
   },
   {
     components: [
@@ -396,8 +462,8 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.tooltip,
       registryComponents['hover-card'],
     ],
-    description: 'Các thành phần Overlay, Dialog & Popups',
-    name: 'Overlay & Dialog',
+    description: 'Overlay, Dialog & Popups components',
+    title: 'Overlay & Dialog',
   },
   {
     components: [
@@ -427,8 +493,8 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.label,
       registryComponents.slider,
     ],
-    description: 'Các thành phần Nhập liệu & Form',
-    name: 'Forms & Input',
+    description: 'Input & Form Components',
+    title: 'Forms & Input',
   },
   {
     components: [
@@ -442,12 +508,12 @@ export const registryComponentGroups: RegistryGroup[] = [
       registryComponents.table,
       registryComponents.pagination,
     ],
-    description: 'Các thành phần Phản hồi, Thông báo & Hiển thị Dữ liệu',
-    name: 'Feedback & Data Display',
+    description: 'Response, Notification & Data Display components',
+    title: 'Feedback & Data Display',
   },
   {
     components: [registryComponents.kbd],
-    description: 'Các thành phần Tiện ích & Phụ trợ',
-    name: 'Utilities',
+    description: 'Utilities & Auxiliary Components',
+    title: 'Utilities',
   },
 ];

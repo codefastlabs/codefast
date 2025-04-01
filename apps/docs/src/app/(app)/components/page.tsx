@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 export default function ComponentsPage(): JSX.Element {
   return (
     <div className="@container grid gap-6 p-6">
-      {sortedComponents.map(([key, { title, component: Component }]) => (
-        <ComponentWrapper key={key} name={title}>
+      {sortedComponents.map(([key, { slug, component: Component }]) => (
+        <ComponentWrapper key={key} name={slug}>
           <Component />
         </ComponentWrapper>
       ))}

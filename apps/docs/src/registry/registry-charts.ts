@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
 
-import type { Registry } from '@/types/registry';
+import type { RegistryItem } from '@/types/registry';
 
-export const registryCharts: Record<string, Registry> = {
+export const registryCharts: Record<string, RegistryItem> = {
   'chart-area-axes': {
     component: dynamic(() => import('@/registry/charts/chart-area-axes').then((mod) => mod.ChartAreaAxes)),
     description: 'Chart Area Axes',

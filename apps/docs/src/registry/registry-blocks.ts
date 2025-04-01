@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
 
-import type { Registry, RegistryGroup } from '@/types/registry';
+import type { RegistryGroup, RegistryItem } from '@/types/registry';
 
-export const registryBlocks: Record<string, Registry> = {
+export const registryBlocks: Record<string, RegistryItem> = {
   'sidebar-01': {
     component: dynamic(() => import('@/registry/blocks/sidebar-01/page')),
     description: 'A simple sidebar with navigation grouped by section.',
@@ -151,7 +151,7 @@ export const registryBlocks: Record<string, Registry> = {
 
 export const registryBlockGroups: RegistryGroup[] = [
   {
-    name: 'Login',
+    title: 'Login',
     description: 'Login interface templates with various styles and layouts.',
     components: [
       registryBlocks['login-01'],
@@ -162,22 +162,22 @@ export const registryBlockGroups: RegistryGroup[] = [
     ],
   },
   {
-    name: 'Products',
+    title: 'Products',
     description: 'Product list display and management interface',
     components: [registryBlocks['products-01']],
   },
   {
-    name: 'Forms',
+    title: 'Forms',
     description: 'Collection of multipurpose form templates with various input fields',
     components: [registryBlocks['form-01']],
   },
   {
-    name: 'Dashboard',
+    title: 'Dashboard',
     description: 'The dashboard displays key system data.',
     components: [registryBlocks['dashboard-01']],
   },
   {
-    name: 'Sidebar',
+    title: 'Sidebar',
     description: 'Side navigation bars with various variations and styles',
     components: [
       registryBlocks['sidebar-01'],
