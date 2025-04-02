@@ -5,7 +5,7 @@ import { createContext } from '@radix-ui/react-context';
 import { useRef, useState } from 'react';
 
 import type { FileTree } from '@/lib/registry';
-import type { RegistryItem, RegistryItemFile } from '@/types/registry';
+import type { RegistryItem } from '@/types/registry';
 
 /**
  * Possible viewer display modes
@@ -19,9 +19,6 @@ export type BlockViewMode = 'code' | 'preview';
 export interface BlockViewerContextValue {
   /** Currently active/selected file path or null if none selected */
   activeFile: null | string;
-
-  /** List of files marked for highlighting in the viewer */
-  highlightedFiles: null | RegistryItemFile[];
 
   /** Registry item data without the component implementation */
   item: Omit<RegistryItem, 'component'>;
@@ -46,21 +43,18 @@ const BLOCK_VIEWER_NAME = 'BlockViewerProvider';
 
 const [BlockViewerContextProvider, useBlockViewer] = createContext<BlockViewerContextValue>(BLOCK_VIEWER_NAME);
 
-interface BlockViewerProviderProps extends Pick<BlockViewerContextValue, 'highlightedFiles' | 'item' | 'tree'> {
+interface BlockViewerProviderProps extends Pick<BlockViewerContextValue, 'item' | 'tree'> {
   children: ReactNode;
 }
 
-export function BlockViewerProvider({ item, tree, highlightedFiles, children }: BlockViewerProviderProps): JSX.Element {
+export function BlockViewerProvider({ item, tree, children }: BlockViewerProviderProps): JSX.Element {
   const [view, setView] = useState<BlockViewerContextValue['view']>('preview');
-  const [activeFile, setActiveFile] = useState<BlockViewerContextValue['activeFile']>(
-    highlightedFiles?.[0].target ?? null,
-  );
+  const [activeFile, setActiveFile] = useState<BlockViewerContextValue['activeFile']>(item.files?.[0].target ?? null);
   const resizablePanelRef = useRef<ImperativePanelHandle>(null);
 
   return (
     <BlockViewerContextProvider
       activeFile={activeFile}
-      highlightedFiles={highlightedFiles}
       item={item}
       resizablePanelRef={resizablePanelRef}
       setActiveFile={setActiveFile}

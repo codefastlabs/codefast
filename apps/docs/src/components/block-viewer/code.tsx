@@ -8,11 +8,11 @@ import { BlockViewerFileTree } from '@/components/block-viewer/file-tree';
 import { useBlockViewer } from '@/components/block-viewer/provider';
 
 export function BlockViewerCode(): ReactNode {
-  const { activeFile, highlightedFiles } = useBlockViewer('BlockViewerCode');
+  const { activeFile, item } = useBlockViewer('BlockViewerCode');
 
   const file = useMemo(() => {
-    return highlightedFiles?.find(({ target }) => target === activeFile);
-  }, [highlightedFiles, activeFile]);
+    return item.files?.find(({ target }) => target === activeFile);
+  }, [item.files, activeFile]);
 
   if (!file) {
     return null;

@@ -8,57 +8,57 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A dashboard with sidebar, charts and data table.',
     files: [
       {
-        path: 'blocks/dashboard-01/page.tsx',
+        path: 'src/registry/blocks/dashboard-01/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/dashboard-01/data.json',
+        path: 'src/registry/blocks/dashboard-01/data.json',
         target: 'app/dashboard/data.json',
         type: 'registry:file',
       },
       {
-        path: 'blocks/dashboard-01/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/chart-area-interactive.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/chart-area-interactive.tsx',
         target: 'app/dashboard/_components/chart-area-interactive.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/data-table.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/data-table.tsx',
         target: 'app/dashboard/_components/data-table.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/nav-documents.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/nav-documents.tsx',
         target: 'app/dashboard/_components/nav-documents.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/nav-main.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/nav-secondary.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/nav-secondary.tsx',
         target: 'app/dashboard/_components/nav-secondary.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/nav-user.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/section-cards.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/section-cards.tsx',
         target: 'app/dashboard/_components/section-cards.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/dashboard-01/_components/site-header.tsx',
+        path: 'src/registry/blocks/dashboard-01/_components/site-header.tsx',
         target: 'app/dashboard/_components/site-header.tsx',
         type: 'registry:component',
       },
@@ -71,7 +71,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'Service upgrade form with payment information and package options.',
     files: [
       {
-        path: 'blocks/form-01/_components/payment-plan-form.tsx',
+        path: 'src/registry/blocks/form-01/_components/payment-plan-form.tsx',
         target: 'app/components/payment-plan-form.tsx',
         type: 'registry:component',
       },
@@ -84,12 +84,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A simple login form.',
     files: [
       {
-        path: 'blocks/login-01/page.tsx',
+        path: 'src/registry/blocks/login-01/page.tsx',
         target: 'app/login/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/login-01/_components/login-form.tsx',
+        path: 'src/registry/blocks/login-01/_components/login-form.tsx',
         target: 'app/login/_components/login-form.tsx',
         type: 'registry:component',
       },
@@ -102,12 +102,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A two column login page with a cover image.',
     files: [
       {
-        path: 'blocks/login-02/page.tsx',
+        path: 'src/registry/blocks/login-02/page.tsx',
         target: 'app/login/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/login-02/_components/login-form.tsx',
+        path: 'src/registry/blocks/login-02/_components/login-form.tsx',
         target: 'app/login/_components/login-form.tsx',
         type: 'registry:component',
       },
@@ -120,12 +120,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A login page with a muted background color.',
     files: [
       {
-        path: 'blocks/login-03/page.tsx',
+        path: 'src/registry/blocks/login-03/page.tsx',
         target: 'app/login/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/login-03/_components/login-form.tsx',
+        path: 'src/registry/blocks/login-03/_components/login-form.tsx',
         target: 'app/login/_components/login-form.tsx',
         type: 'registry:component',
       },
@@ -138,12 +138,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A login page with form and image.',
     files: [
       {
-        path: 'blocks/login-04/page.tsx',
+        path: 'src/registry/blocks/login-04/page.tsx',
         target: 'app/login/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/login-04/_components/login-form.tsx',
+        path: 'src/registry/blocks/login-04/_components/login-form.tsx',
         target: 'app/login/_components/login-form.tsx',
         type: 'registry:component',
       },
@@ -156,12 +156,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A simple email-only login page.',
     files: [
       {
-        path: 'blocks/login-05/page.tsx',
+        path: 'src/registry/blocks/login-05/page.tsx',
         target: 'app/login/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/login-05/_components/login-form.tsx',
+        path: 'src/registry/blocks/login-05/_components/login-form.tsx',
         target: 'app/login/_components/login-form.tsx',
         type: 'registry:component',
       },
@@ -180,22 +180,22 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A simple sidebar with navigation grouped by section.',
     files: [
       {
-        path: 'blocks/sidebar-01/page.tsx',
+        path: 'src/registry/blocks/sidebar-01/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-01/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-01/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-01/_components/search-form.tsx',
+        path: 'src/registry/blocks/sidebar-01/_components/search-form.tsx',
         target: 'app/dashboard/_components/search-form.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-01/_components/version-switcher.tsx',
+        path: 'src/registry/blocks/sidebar-01/_components/version-switcher.tsx',
         target: 'app/dashboard/_components/version-switcher.tsx',
         type: 'registry:component',
       },
@@ -208,22 +208,22 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with collapsible sections.',
     files: [
       {
-        path: 'blocks/sidebar-02/page.tsx',
+        path: 'src/registry/blocks/sidebar-02/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-02/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-02/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-02/_components/search-form.tsx',
+        path: 'src/registry/blocks/sidebar-02/_components/search-form.tsx',
         target: 'app/dashboard/_components/search-form.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-02/_components/version-switcher.tsx',
+        path: 'src/registry/blocks/sidebar-02/_components/version-switcher.tsx',
         target: 'app/dashboard/_components/version-switcher.tsx',
         type: 'registry:component',
       },
@@ -236,12 +236,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with submenus.',
     files: [
       {
-        path: 'blocks/sidebar-03/page.tsx',
+        path: 'src/registry/blocks/sidebar-03/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-03/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-03/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
@@ -254,12 +254,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A floating sidebar with submenus.',
     files: [
       {
-        path: 'blocks/sidebar-04/page.tsx',
+        path: 'src/registry/blocks/sidebar-04/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-04/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-04/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
@@ -272,17 +272,17 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with collapsible submenus.',
     files: [
       {
-        path: 'blocks/sidebar-05/page.tsx',
+        path: 'src/registry/blocks/sidebar-05/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-05/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-05/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-05/_components/search-form.tsx',
+        path: 'src/registry/blocks/sidebar-05/_components/search-form.tsx',
         target: 'app/dashboard/_components/search-form.tsx',
         type: 'registry:component',
       },
@@ -295,22 +295,22 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with submenus as dropdowns.',
     files: [
       {
-        path: 'blocks/sidebar-06/page.tsx',
+        path: 'src/registry/blocks/sidebar-06/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-06/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-06/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-06/_components/nav-main.tsx',
+        path: 'src/registry/blocks/sidebar-06/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-06/_components/sidebar-opt-in-form.tsx',
+        path: 'src/registry/blocks/sidebar-06/_components/sidebar-opt-in-form.tsx',
         target: 'app/dashboard/_components/sidebar-opt-in-form.tsx',
         type: 'registry:component',
       },
@@ -323,32 +323,32 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar that collapses to icons.',
     files: [
       {
-        path: 'blocks/sidebar-07/page.tsx',
+        path: 'src/registry/blocks/sidebar-07/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-07/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-07/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-07/_components/nav-main.tsx',
+        path: 'src/registry/blocks/sidebar-07/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-07/_components/nav-projects.tsx',
+        path: 'src/registry/blocks/sidebar-07/_components/nav-projects.tsx',
         target: 'app/dashboard/_components/nav-projects.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-07/_components/nav-user.tsx',
+        path: 'src/registry/blocks/sidebar-07/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-07/_components/team-switcher.tsx',
+        path: 'src/registry/blocks/sidebar-07/_components/team-switcher.tsx',
         target: 'app/dashboard/_components/team-switcher.tsx',
         type: 'registry:component',
       },
@@ -361,32 +361,32 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'An inset sidebar with secondary navigation.',
     files: [
       {
-        path: 'blocks/sidebar-08/page.tsx',
+        path: 'src/registry/blocks/sidebar-08/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-08/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-08/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-08/_components/nav-main.tsx',
+        path: 'src/registry/blocks/sidebar-08/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-08/_components/nav-projects.tsx',
+        path: 'src/registry/blocks/sidebar-08/_components/nav-projects.tsx',
         target: 'app/dashboard/_components/nav-projects.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-08/_components/nav-secondary.tsx',
+        path: 'src/registry/blocks/sidebar-08/_components/nav-secondary.tsx',
         target: 'app/dashboard/_components/nav-secondary.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-08/_components/nav-user.tsx',
+        path: 'src/registry/blocks/sidebar-08/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
@@ -399,17 +399,17 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'Collapsible nested sidebars.',
     files: [
       {
-        path: 'blocks/sidebar-09/page.tsx',
+        path: 'src/registry/blocks/sidebar-09/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-09/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-09/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-09/_components/nav-user.tsx',
+        path: 'src/registry/blocks/sidebar-09/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
@@ -422,42 +422,42 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar in a popover.',
     files: [
       {
-        path: 'blocks/sidebar-10/page.tsx',
+        path: 'src/registry/blocks/sidebar-10/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-10/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-10/_components/nav-actions.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/nav-actions.tsx',
         target: 'app/dashboard/_components/nav-actions.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-10/_components/nav-favorites.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/nav-favorites.tsx',
         target: 'app/dashboard/_components/nav-favorites.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-10/_components/nav-main.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-10/_components/nav-secondary.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/nav-secondary.tsx',
         target: 'app/dashboard/_components/nav-secondary.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-10/_components/nav-workspaces.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/nav-workspaces.tsx',
         target: 'app/dashboard/_components/nav-workspaces.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-10/_components/team-switcher.tsx',
+        path: 'src/registry/blocks/sidebar-10/_components/team-switcher.tsx',
         target: 'app/dashboard/_components/team-switcher.tsx',
         type: 'registry:component',
       },
@@ -470,12 +470,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with a collapsible file tree.',
     files: [
       {
-        path: 'blocks/sidebar-11/page.tsx',
+        path: 'src/registry/blocks/sidebar-11/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-11/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-11/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
@@ -488,27 +488,27 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with a calendar.',
     files: [
       {
-        path: 'blocks/sidebar-12/page.tsx',
+        path: 'src/registry/blocks/sidebar-12/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-12/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-12/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-12/_components/calendars.tsx',
+        path: 'src/registry/blocks/sidebar-12/_components/calendars.tsx',
         target: 'app/dashboard/_components/calendars.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-12/_components/date-picker.tsx',
+        path: 'src/registry/blocks/sidebar-12/_components/date-picker.tsx',
         target: 'app/dashboard/_components/date-picker.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-12/_components/nav-user.tsx',
+        path: 'src/registry/blocks/sidebar-12/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
@@ -521,12 +521,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar in a dialog.',
     files: [
       {
-        path: 'blocks/sidebar-13/page.tsx',
+        path: 'src/registry/blocks/sidebar-13/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-13/_components/settings-dialog.tsx',
+        path: 'src/registry/blocks/sidebar-13/_components/settings-dialog.tsx',
         target: 'app/dashboard/_components/settings-dialog.tsx',
         type: 'registry:component',
       },
@@ -539,12 +539,12 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar on the right.',
     files: [
       {
-        path: 'blocks/sidebar-14/page.tsx',
+        path: 'src/registry/blocks/sidebar-14/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-14/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-14/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
@@ -557,57 +557,57 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A left and right sidebar.',
     files: [
       {
-        path: 'blocks/sidebar-15/page.tsx',
+        path: 'src/registry/blocks/sidebar-15/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-15/_components/calendars.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/calendars.tsx',
         target: 'app/dashboard/_components/calendars.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/date-picker.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/date-picker.tsx',
         target: 'app/dashboard/_components/date-picker.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/nav-favorites.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/nav-favorites.tsx',
         target: 'app/dashboard/_components/nav-favorites.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/nav-main.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/nav-secondary.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/nav-secondary.tsx',
         target: 'app/dashboard/_components/nav-secondary.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/nav-user.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/nav-workspaces.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/nav-workspaces.tsx',
         target: 'app/dashboard/_components/nav-workspaces.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/sidebar-left.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/sidebar-left.tsx',
         target: 'app/dashboard/_components/sidebar-left.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/sidebar-right.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/sidebar-right.tsx',
         target: 'app/dashboard/_components/sidebar-right.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-15/_components/team-switcher.tsx',
+        path: 'src/registry/blocks/sidebar-15/_components/team-switcher.tsx',
         target: 'app/dashboard/_components/team-switcher.tsx',
         type: 'registry:component',
       },
@@ -620,42 +620,42 @@ export const registryBlocks: Record<string, RegistryItem> = {
     description: 'A sidebar with a sticky site header.',
     files: [
       {
-        path: 'blocks/sidebar-16/page.tsx',
+        path: 'src/registry/blocks/sidebar-16/page.tsx',
         target: 'app/dashboard/page.tsx',
         type: 'registry:page',
       },
       {
-        path: 'blocks/sidebar-16/_components/app-sidebar.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/app-sidebar.tsx',
         target: 'app/dashboard/_components/app-sidebar.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-16/_components/nav-main.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/nav-main.tsx',
         target: 'app/dashboard/_components/nav-main.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-16/_components/nav-projects.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/nav-projects.tsx',
         target: 'app/dashboard/_components/nav-projects.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-16/_components/nav-secondary.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/nav-secondary.tsx',
         target: 'app/dashboard/_components/nav-secondary.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-16/_components/nav-user.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/nav-user.tsx',
         target: 'app/dashboard/_components/nav-user.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-16/_components/search-form.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/search-form.tsx',
         target: 'app/dashboard/_components/search-form.tsx',
         type: 'registry:component',
       },
       {
-        path: 'blocks/sidebar-16/_components/site-header.tsx',
+        path: 'src/registry/blocks/sidebar-16/_components/site-header.tsx',
         target: 'app/dashboard/_components/site-header.tsx',
         type: 'registry:component',
       },
