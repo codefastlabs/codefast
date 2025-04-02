@@ -16,6 +16,8 @@ import Link from 'next/link';
 
 import { type BlockViewMode, useBlockViewer } from '@/components/block-viewer/provider';
 
+const hasCli = false;
+
 export function BlockViewerToolbar(): JSX.Element {
   const { setView, view, item, resizablePanelRef } = useBlockViewer('BlockViewerToolbar');
   const { copyToClipboard, isCopied } = useCopyToClipboard();
@@ -76,20 +78,25 @@ export function BlockViewerToolbar(): JSX.Element {
             <FullscreenIcon />
           </Link>
         </div>
-        <Separator className="mx-1 hidden h-4 md:flex" orientation="vertical" />
-        <div className="flex items-center gap-1 rounded-xl border p-1">
-          <Button
-            className="h-7 gap-1"
-            size="sm"
-            variant="ghost"
-            onClick={() => {
-              void copyToClipboard(`npx codefast@latest add ${item.slug}`);
-            }}
-          >
-            {isCopied ? <CheckIcon /> : <TerminalIcon />}
-            <span className="hidden lg:inline">npx codefast add {item.slug}</span>
-          </Button>
-        </div>
+        {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- TODO: We need to build a CLI */}
+        {hasCli && (
+          <>
+            <Separator className="mx-1 hidden h-4 md:flex" orientation="vertical" />
+            <div className="flex items-center gap-1 rounded-xl border p-1">
+              <Button
+                className="h-7 gap-1"
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  void copyToClipboard(`npx codefast@latest add ${item.slug}`);
+                }}
+              >
+                {isCopied ? <CheckIcon /> : <TerminalIcon />}
+                <span className="hidden lg:inline">npx codefast add {item.slug}</span>
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
