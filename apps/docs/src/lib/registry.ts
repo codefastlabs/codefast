@@ -1,5 +1,6 @@
 import type { SourceFile } from 'ts-morph';
 
+import { logger } from '@codefast/ui';
 import { isEmpty } from 'lodash-es';
 import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -26,6 +27,14 @@ enum TargetPrefixes {
 
 const VARIABLES_TO_REMOVE = ['iframeHeight', 'containerClassName', 'description'];
 
+// Pre-compile regex pattern for better performance
+const IMPORT_REGEX = /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](?<importPath>[^"']+)["']/g;
+
+// In-memory cache for processed files
+const fileContentCache = new Map<string, { content: string; highlightedContent: string }>();
+const sourceFileCache = new Map<string, SourceFile>();
+const tempDirs = new Set<string>();
+
 /**
  * Represents a node in the file tree structure.
  */
@@ -49,23 +58,32 @@ export interface FileTree {
  * ```ts
  * const item = await getRegistryItem("button");
  * if (item) {
- *   console.log(item.files);
+ *   logger.log(item.files);
  * }
  * ```
  */
 export async function getRegistryItem(name: string): Promise<null | RegistryItem> {
-  const item = registryBlocks[name];
+  try {
+    const item = registryBlocks[name];
 
-  if (isEmpty(item) || !item.files) {
+    if (isEmpty(item) || !item.files) {
+      return null;
+    }
+
+    const files = await processRegistryItemFiles(item.files);
+
+    return {
+      ...item,
+      files,
+    };
+  } catch (error) {
+    logger.error(`Error retrieving registry item '${name}':`, error);
+
     return null;
+  } finally {
+    // Clean up all temp directories
+    await cleanupTempDirectories();
   }
-
-  const files = await processRegistryItemFiles(item.files);
-
-  return {
-    ...item,
-    files,
-  };
 }
 
 /**
@@ -85,14 +103,52 @@ async function processRegistryItemFiles(itemFiles: RegistryItemFile[]): Promise<
     target: determineFileTarget(file),
   }));
 
-  for (const file of files) {
-    const content = await getFileContent(file, files);
-    const highlightedContent = await highlightCode(content);
+  // Process files in parallel for better performance
+  await Promise.all(
+    files.map(async (file) => {
+      try {
+        const { content, highlightedContent } = await getFileContentWithHighlighting(file, files);
 
-    Object.assign(file, { content, highlightedContent });
-  }
+        Object.assign(file, { content, highlightedContent });
+      } catch (error) {
+        logger.error(`Error processing file '${file.path}':`, error);
+        Object.assign(file, {
+          content: `// Error processing file: ${file.path}`,
+          highlightedContent: `// Error processing file: ${file.path}`,
+        });
+      }
+    }),
+  );
 
   return files;
+}
+
+/**
+ * Gets file content and its highlighted version, utilizing caching
+ *
+ * @param file - The registry item file to process
+ * @param allFiles - Array of all registry item files
+ * @returns Promise resolving to content and highlighted content
+ */
+async function getFileContentWithHighlighting(
+  file: RegistryItemFile,
+  allFiles: RegistryItemFile[],
+): Promise<{ content: string; highlightedContent: string }> {
+  const cacheKey = file.path;
+
+  if (fileContentCache.has(cacheKey)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Value has been verified to exist
+    return fileContentCache.get(cacheKey)!;
+  }
+
+  const content = await getFileContent(file, allFiles);
+  const highlightedContent = await highlightCode(content);
+
+  const result = { content, highlightedContent };
+
+  fileContentCache.set(cacheKey, result);
+
+  return result;
 }
 
 /**
@@ -130,6 +186,11 @@ export function createFileTreeForRegistryItemFiles(files: RegistryItemFile[]): F
 
   for (const file of files) {
     const filePath = file.target ?? file.path;
+
+    if (!filePath) {
+      continue;
+    }
+
     const parts = filePath.split('/');
     let currentLevel = root;
 
@@ -195,11 +256,17 @@ function sortFileTreeByName(fileTree: FileTree[]): FileTree[] {
  * @returns Promise resolving to the processed file content as string
  */
 async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile[]): Promise<string> {
-  const raw = await fs.readFile(file.path, 'utf8');
-  const sourceFile = await createProcessedSourceFile(file.path, raw);
-  const code = sourceFile.getFullText();
+  try {
+    const raw = await fs.readFile(file.path, 'utf8');
+    const sourceFile = await createProcessedSourceFile(file.path, raw);
+    const code = sourceFile.getFullText();
 
-  return fixImports(code, file, allFiles);
+    return fixImports(code, file, allFiles);
+  } catch (error) {
+    logger.error(`Error getting content for file '${file.path}':`, error);
+
+    return `// Error processing file: ${file.path}`;
+  }
 }
 
 /**
@@ -210,6 +277,13 @@ async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile
  * @returns Promise resolving to the processed SourceFile object
  */
 async function createProcessedSourceFile(filePath: string, content: string): Promise<SourceFile> {
+  const cacheKey = `${filePath}:${content.length}`;
+
+  if (sourceFileCache.has(cacheKey)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Value has been verified to exist
+    return sourceFileCache.get(cacheKey)!;
+  }
+
   const project = new Project({ compilerOptions: {} });
   const tempFile = await createTempSourceFile(filePath);
 
@@ -221,6 +295,8 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
   for (const varName of VARIABLES_TO_REMOVE) {
     removeVariable(sourceFile, varName);
   }
+
+  sourceFileCache.set(cacheKey, sourceFile);
 
   return sourceFile;
 }
@@ -234,7 +310,25 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
 async function createTempSourceFile(filename: string): Promise<string> {
   const dir = await fs.mkdtemp(path.join(tmpdir(), 'codefast-ui-'));
 
-  return path.join(dir, filename);
+  tempDirs.add(dir);
+
+  return path.join(dir, path.basename(filename));
+}
+
+/**
+ * Cleans up all temporary directories created during processing
+ */
+async function cleanupTempDirectories(): Promise<void> {
+  const cleanupPromises = [...tempDirs].map(async (dir) => {
+    try {
+      await fs.rm(dir, { recursive: true, force: true });
+      tempDirs.delete(dir);
+    } catch (error) {
+      logger.error(`Error cleaning up temp directory '${dir}':`, error);
+    }
+  });
+
+  await Promise.all(cleanupPromises);
 }
 
 /**
@@ -260,9 +354,7 @@ function fixImports(content: string, file: RegistryItemFile, allFiles: RegistryI
     return content;
   }
 
-  const importRegex = /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](?<importPath>[^"']+)["']/g;
-
-  return content.replaceAll(importRegex, (match: string, importPath: string) => {
+  return content.replaceAll(IMPORT_REGEX, (match: string, importPath: string) => {
     if (!importPath.startsWith('@/') && !importPath.startsWith('./') && !importPath.startsWith('../')) {
       return match;
     }
