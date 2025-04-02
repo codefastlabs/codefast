@@ -43,12 +43,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
     notFound();
   }
 
-  const Component = registry.component;
-
   return (
     <div className="@container grid gap-6 p-6">
       <ComponentWrapper name={registry.slug}>
-        <Component />
+        <registry.component />
       </ComponentWrapper>
     </div>
   );
