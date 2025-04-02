@@ -42,7 +42,5 @@ export default async function ViewPage({ params }: { params: Promise<{ slug: str
     notFound();
   }
 
-  const Component = registry.component;
-
-  return <Component />;
+  return <registry.component />;
 }
