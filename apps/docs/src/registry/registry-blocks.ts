@@ -172,6 +172,23 @@ export const registryBlocks: Record<string, RegistryItem> = {
   'products-01': {
     component: dynamic(() => import('@/registry/blocks/products-01/page')),
     description: 'A table of products',
+    files: [
+      {
+        path: 'src/registry/blocks/products-01/page.tsx',
+        target: 'app/products/page.tsx',
+        type: 'registry:page',
+      },
+      {
+        path: 'src/registry/blocks/products-01/data.json',
+        target: 'app/products/data.json',
+        type: 'registry:file',
+      },
+      {
+        path: 'src/registry/blocks/products-01/_components/products-table.tsx',
+        target: 'app/products/_components/products-table.tsx',
+        type: 'registry:component',
+      },
+    ],
     slug: 'products-01',
     title: 'Products 01',
   },
