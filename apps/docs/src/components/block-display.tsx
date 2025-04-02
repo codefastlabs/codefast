@@ -5,7 +5,6 @@ import { cache } from 'react';
 import type { RegistryItemFile } from '@/types/registry';
 
 import { BlockViewer } from '@/components/block-viewer';
-import { highlightCode } from '@/lib/highlight-code';
 import { createFileTreeForRegistryItemFiles, getRegistryItem } from '@/lib/registry';
 
 const getCachedRegistryItem = cache(async (name: string) => {
@@ -20,15 +19,6 @@ const getCachedFileTree = cache((files?: RegistryItemFile[]) => {
   return createFileTreeForRegistryItemFiles(files);
 });
 
-const getCachedHighlightedFiles = cache(async (files: RegistryItemFile[]) => {
-  return await Promise.all(
-    files.map(async (file) => ({
-      ...file,
-      highlightedContent: await highlightCode(file.content ?? ''),
-    })),
-  );
-});
-
 export async function BlockDisplay({ name }: { name: string }): Promise<ReactNode> {
   const item = await getCachedRegistryItem(name);
 
@@ -36,12 +26,9 @@ export async function BlockDisplay({ name }: { name: string }): Promise<ReactNod
     return null;
   }
 
-  const [tree, highlightedFiles] = await Promise.all([
-    getCachedFileTree(item.files),
-    getCachedHighlightedFiles(item.files),
-  ]);
+  const tree = getCachedFileTree(item.files);
 
   const { component: _, ...rest } = item;
 
-  return <BlockViewer highlightedFiles={highlightedFiles} item={rest} tree={tree} />;
+  return <BlockViewer item={rest} tree={tree} />;
 }
