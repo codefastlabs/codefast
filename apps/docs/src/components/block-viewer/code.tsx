@@ -19,7 +19,7 @@ export function BlockViewerCode(): ReactNode {
   }
 
   return (
-    <div className="md:h-(--height) mr-3.5 flex overflow-hidden rounded-xl bg-zinc-950 text-white group-data-[view=preview]/block-view-wrapper:hidden">
+    <div className="md:h-(--height) flex overflow-hidden rounded-xl bg-zinc-950 text-white group-data-[view=preview]/block-view-wrapper:hidden">
       <div className="w-70">
         <BlockViewerFileTree />
       </div>
