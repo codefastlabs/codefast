@@ -118,42 +118,40 @@
 @layer base {
   [data-rehype-pretty-code-fragment] {
     @apply relative text-white;
-  }
 
-  [data-rehype-pretty-code-fragment] code {
-    @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
-    counter-reset: line;
-    box-decoration-break: clone;
-  }
+    code {
+      @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
+      counter-reset: line;
+      box-decoration-break: clone;
+    }
 
-  [data-rehype-pretty-code-fragment] .line {
-    @apply inline-block min-h-[1rem] w-full px-4 py-0.5;
-  }
+    .line {
+      @apply inline-block min-h-[1rem] w-full px-4 py-0.5;
+    }
 
-  [data-rehype-pretty-code-fragment] [data-line-numbers] .line {
-    @apply px-2;
-  }
+    [data-line-numbers] {
+      .line {
+        @apply px-2;
 
-  [data-rehype-pretty-code-fragment] [data-line-numbers] > .line::before {
-    @apply text-xs text-zinc-50/40;
-    counter-increment: line;
-    content: counter(line);
-    display: inline-block;
-    width: 1.8rem;
-    margin-right: 1.4rem;
-    text-align: right;
-  }
+        &::before {
+          @apply inline-block w-10 text-right text-xs text-zinc-50/40;
+          counter-increment: line;
+          content: counter(line);
+        }
+      }
+    }
 
-  [data-rehype-pretty-code-fragment] .line--highlighted {
-    @apply bg-zinc-700/50;
-  }
+    .line--highlighted {
+      @apply bg-zinc-700/50;
+    }
 
-  [data-rehype-pretty-code-fragment] .line-highlighted span {
-    @apply relative;
-  }
+    .line-highlighted span {
+      @apply relative;
+    }
 
-  [data-rehype-pretty-code-fragment] .word--highlighted {
-    @apply rounded-md border-zinc-700/70 bg-zinc-700/50 p-1;
+    .word--highlighted {
+      @apply rounded-md border-zinc-700/70 bg-zinc-700/50 p-1;
+    }
   }
 
   .dark [data-rehype-pretty-code-fragment] .word--highlighted {
@@ -162,17 +160,9 @@
 
   [data-rehype-pretty-code-title] {
     @apply text-foreground mt-2 px-4 pt-6 text-sm font-medium;
-  }
 
-  [data-rehype-pretty-code-title] + pre {
-    @apply mt-2;
-  }
-
-  .mdx > .steps:first-child > h3:first-child {
-    @apply mt-0;
-  }
-
-  .steps > h3 {
-    @apply mb-4 mt-8 text-base font-semibold;
+    & + pre {
+      @apply mt-2;
+    }
   }
 }

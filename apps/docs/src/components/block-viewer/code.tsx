@@ -24,7 +24,7 @@ export function BlockViewerCode(): ReactNode {
         <BlockViewerFileTree />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex h-12 items-center gap-2 border-b border-zinc-700 bg-zinc-900 px-4 text-sm font-medium">
+        <div className="flex h-12 shrink-0 items-center gap-2 border-b border-zinc-700 bg-zinc-900 px-4 text-sm font-medium">
           <FileIcon className="size-4" />
           {file.target}
           <div className="ml-auto flex items-center gap-2">
@@ -33,7 +33,7 @@ export function BlockViewerCode(): ReactNode {
         </div>
         <div
           key={file.path}
-          className="[&_pre]:h-(--height) relative flex-1 overflow-hidden after:absolute after:inset-y-0 after:left-0 after:w-10 after:bg-zinc-950 [&_.line:before]:sticky [&_.line:before]:left-2 [&_.line:before]:z-10 [&_.line:before]:-translate-y-px [&_.line:before]:pr-1 [&_pre]:overflow-auto [&_pre]:!bg-transparent [&_pre]:py-0.5 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:leading-relaxed"
+          className="scheme-dark relative flex-1 grow overflow-hidden *:relative *:z-10 *:h-[calc(var(--height)-48px)] *:overflow-auto *:!bg-transparent *:py-0.5 *:font-mono *:text-sm *:leading-relaxed after:absolute after:inset-y-0 after:left-0 after:w-10 after:border-r after:border-zinc-800 after:bg-zinc-950 [&_.line:before]:sticky [&_.line:before]:left-2 [&_.line:before]:z-10 [&_.line:before]:-translate-y-px [&_.line:before]:pr-4"
           dangerouslySetInnerHTML={{ __html: file.highlightedContent ?? '' }}
           data-rehype-pretty-code-fragment=""
         />
