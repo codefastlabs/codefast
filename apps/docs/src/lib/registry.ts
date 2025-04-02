@@ -32,11 +32,11 @@ export async function getRegistryItem(name: string): Promise<null | RegistryItem
     files.push({ ...file, target });
   }
 
-  for (let i = 0; i < files.length; i++) {
-    const content = await getFileContent(files[i], files);
+  for (const file of files) {
+    const content = await getFileContent(file, files);
     const highlightedContent = await highlightCode(content);
 
-    files[i] = { ...files[i], content, highlightedContent };
+    Object.assign(file, { content, highlightedContent });
   }
 
   return {
@@ -150,114 +150,45 @@ function removeVariable(sourceFile: SourceFile, name: string): void {
 }
 
 function fixImport(content: string, file?: RegistryItemFile, allFiles?: RegistryItemFile[]): string {
-  if (!file || !allFiles?.length) {
+  if (!file?.target || !allFiles?.length) {
     return content;
   }
 
   const importRegex = /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](?<importPath>[^"']+)["']/g;
 
-  const targetMap = new Map<string, RegistryItemFile>();
-
-  for (const f of allFiles) {
-    if (f.target) {
-      const targetWithoutExt = f.target.replace(/\.(?<extensionGroup>jsx?|tsx?)$/, '');
-
-      targetMap.set(f.path, f);
-      targetMap.set(targetWithoutExt, f);
-    }
-  }
-
   return content.replaceAll(importRegex, (match: string, importPath: string) => {
+    if (!importPath.startsWith('@/') && !importPath.startsWith('./') && !importPath.startsWith('../')) {
+      return match;
+    }
+
     if (importPath.startsWith('@/')) {
-      return processAbsoluteImport(match, importPath, file, allFiles, targetMap);
-    } else if (importPath.startsWith('./') || importPath.startsWith('../')) {
-      return processRelativeImport(match, importPath, file, allFiles, targetMap);
-    } else if (!importPath.startsWith('@') && !importPath.includes('/')) {
+      const importPathWithoutAlias = importPath.replace('@/', '');
+      const importedFile = allFiles.find(
+        (f) => f.path.includes(importPathWithoutAlias) || f.target?.includes(importPathWithoutAlias),
+      );
+
+      if (importedFile?.target) {
+        return match.replace(importPath, `@/${importedFile.target}`);
+      }
+
+      return match;
+    }
+
+    if (importPath.startsWith('./') || importPath.startsWith('../')) {
+      const currentDir = path.dirname(file.path);
+      const absoluteImportPath = path.resolve(currentDir, importPath);
+
+      const importedFile = allFiles.find((f) =>
+        absoluteImportPath.includes(path.basename(f.path, path.extname(f.path))),
+      );
+
+      if (importedFile?.target) {
+        return match.replace(importPath, `@/${importedFile.target}`);
+      }
+
       return match;
     }
 
     return match;
   });
-}
-
-function processAbsoluteImport(
-  originalImport: string,
-  importPath: string,
-  currentFile: RegistryItemFile,
-  allFiles: RegistryItemFile[],
-  _targetMap: Map<string, RegistryItemFile>,
-): string {
-  const importTarget = resolveImportTarget(importPath, allFiles);
-
-  if (importTarget) {
-    return updateImportPathForTarget(originalImport, importPath, currentFile, importTarget);
-  }
-
-  const pathParts = importPath.slice(2).split('/');
-
-  if (pathParts.includes('components') || pathParts.includes('_components')) {
-    const componentName = pathParts.at(-1);
-
-    const newImportPath = `@/components/${componentName}`;
-
-    return originalImport.replace(importPath, newImportPath);
-  }
-
-  return originalImport;
-}
-
-function processRelativeImport(
-  originalImport: string,
-  importPath: string,
-  currentFile: RegistryItemFile,
-  allFiles: RegistryItemFile[],
-  _targetMap: Map<string, RegistryItemFile>,
-): string {
-  const currentDir = path.dirname(currentFile.path);
-  const absolutePath = path.resolve(currentDir, importPath);
-  const normalizedAbsPath = path.normalize(absolutePath);
-
-  const targetFile = allFiles.find((f) => {
-    const normalized = path.normalize(f.path);
-
-    return normalized === normalizedAbsPath || normalized.startsWith(normalizedAbsPath);
-  });
-
-  if (targetFile?.target) {
-    return updateImportPathForTarget(originalImport, importPath, currentFile, targetFile);
-  }
-
-  return originalImport;
-}
-
-function resolveImportTarget(importPath: string, allFiles: RegistryItemFile[]): RegistryItemFile | undefined {
-  const normalizedPath = importPath.replace(/^@\//, '').replace(/\.(?<extensionGroup>jsx?|tsx?)$/, '');
-
-  return allFiles.find((file) => {
-    const filePath = file.path.replace(/\.(?<extensionGroup>jsx?|tsx?)$/, '');
-
-    return filePath === normalizedPath || filePath.endsWith(`/${normalizedPath}`);
-  });
-}
-
-function updateImportPathForTarget(
-  originalImport: string,
-  importPath: string,
-  currentFile: RegistryItemFile,
-  targetFile: RegistryItemFile,
-): string {
-  if (!currentFile.target || !targetFile.target) {
-    return originalImport;
-  }
-
-  const currentTargetDir = path.dirname(currentFile.target);
-  const targetFileTarget = targetFile.target;
-
-  let relativePath = path.relative(currentTargetDir, targetFileTarget);
-
-  if (!relativePath.startsWith('.')) {
-    relativePath = `./${relativePath}`;
-  }
-
-  return originalImport.replace(importPath, relativePath);
 }
