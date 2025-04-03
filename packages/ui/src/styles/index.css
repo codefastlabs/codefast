@@ -14,11 +14,6 @@
     outline-color: color-mix(in oklab, var(--ring) 20%, transparent);
   }
 
-  ::selection {
-    background-color: var(--color-primary);
-    color: var(--color-background);
-  }
-
   html,
   body {
     background-color: var(--color-background);
