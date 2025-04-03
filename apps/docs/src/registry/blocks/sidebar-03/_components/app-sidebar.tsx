@@ -13,14 +13,18 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@codefast/ui';
-import { GalleryVerticalEndIcon } from 'lucide-react';
+import { type LucideIcon, GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
-
-import type { NavItem } from '@/types/sidebar';
 
 // This is sample data.
 const data: {
-  navMain: NavItem[];
+  navMain: {
+    items: { title: string; url: string; isActive?: boolean }[];
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+  }[];
 } = {
   navMain: [
     {

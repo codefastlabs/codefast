@@ -117,52 +117,25 @@
 
 @layer base {
   [data-rehype-pretty-code-fragment] {
-    @apply relative text-white;
+    @apply scheme-dark relative flex-1 grow overflow-auto text-white;
+    @apply after:absolute after:inset-y-0 after:left-0 after:w-10 after:border-r after:border-zinc-800 after:bg-zinc-950;
 
-    code {
-      @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
-      counter-reset: line;
-      box-decoration-break: clone;
+    pre {
+      @apply bg-transparent! relative z-10 max-h-full min-h-full grow overflow-auto py-1 font-mono text-sm leading-relaxed;
     }
 
-    .line {
-      @apply inline-block min-h-[1rem] w-full px-4 py-0.5;
+    code {
+      @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0 [box-decoration-break:clone] [counter-reset:line];
     }
 
     [data-line-numbers] {
       .line {
-        @apply px-2;
+        @apply pl-0;
 
         &::before {
-          @apply inline-block w-10 text-right text-xs text-zinc-50/40;
-          counter-increment: line;
-          content: counter(line);
+          @apply sticky left-0 z-10 mr-2 inline-block w-10 -translate-y-px border-r border-zinc-800 bg-zinc-950 px-2 text-right text-xs/6 text-zinc-50/40 [content:counter(line)] [counter-increment:line];
         }
       }
-    }
-
-    .line--highlighted {
-      @apply bg-zinc-700/50;
-    }
-
-    .line-highlighted span {
-      @apply relative;
-    }
-
-    .word--highlighted {
-      @apply rounded-md border-zinc-700/70 bg-zinc-700/50 p-1;
-    }
-  }
-
-  .dark [data-rehype-pretty-code-fragment] .word--highlighted {
-    @apply bg-zinc-900;
-  }
-
-  [data-rehype-pretty-code-title] {
-    @apply text-foreground mt-2 px-4 pt-6 text-sm font-medium;
-
-    & + pre {
-      @apply mt-2;
     }
   }
 }
