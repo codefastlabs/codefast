@@ -19,6 +19,7 @@
     "package:update": "pnpm update --latest --recursive --interactive",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:fix": "prettier --write --ignore-unknown .",
+    "preview": "turbo preview",
     "start": "turbo run start",
     "start:docs": "turbo run start --filter=@app/docs...",
     "test": "turbo run test",

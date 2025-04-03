@@ -16,6 +16,9 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "preview": {
+      "dependsOn": ["build"]
+    },
     "start": {},
     "test": {},
     "test:coverage": {},
