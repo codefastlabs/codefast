@@ -20,9 +20,15 @@ import {
 } from '@codefast/ui';
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from 'lucide-react';
 
-import type { User } from '@/types/sidebar';
-
-export function NavUser({ user }: { user: User }): JSX.Element {
+export function NavUser({
+  user,
+}: {
+  user: {
+    avatar: string;
+    email: string;
+    name: string;
+  };
+}): JSX.Element {
   const { isMobile } = useSidebar('NavUser');
 
   return (

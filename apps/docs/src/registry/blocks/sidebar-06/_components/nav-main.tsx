@@ -13,12 +13,20 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@codefast/ui';
-import { MoreHorizontalIcon } from 'lucide-react';
+import { type LucideIcon, MoreHorizontalIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types/sidebar';
-
-export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
+export function NavMain({
+  items,
+}: {
+  items: {
+    items: { title: string; url: string; isActive?: boolean }[];
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+  }[];
+}): JSX.Element {
   const { isMobile } = useSidebar('NavMain');
 
   return (

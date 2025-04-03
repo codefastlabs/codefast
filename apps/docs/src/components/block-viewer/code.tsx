@@ -33,7 +33,6 @@ export function BlockViewerCode(): ReactNode {
         </div>
         <div
           key={file.path}
-          className="scheme-dark relative flex-1 grow overflow-hidden *:relative *:z-10 *:h-[calc(var(--height)-48px)] *:overflow-auto *:!bg-transparent *:py-0.5 *:font-mono *:text-sm *:leading-relaxed after:absolute after:inset-y-0 after:left-0 after:w-10 after:border-r after:border-zinc-800 after:bg-zinc-950 [&_.line:before]:sticky [&_.line:before]:left-2 [&_.line:before]:z-10 [&_.line:before]:-translate-y-px [&_.line:before]:pr-4"
           dangerouslySetInnerHTML={{ __html: file.highlightedContent ?? '' }}
           data-rehype-pretty-code-fragment=""
         />

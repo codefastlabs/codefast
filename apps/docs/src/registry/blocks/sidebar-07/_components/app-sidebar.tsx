@@ -1,9 +1,10 @@
 'use client';
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, ComponentType, JSX } from 'react';
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@codefast/ui';
 import {
+  type LucideIcon,
   AudioWaveformIcon,
   BookOpenIcon,
   BotIcon,
@@ -16,8 +17,6 @@ import {
   SquareTerminalIcon,
 } from 'lucide-react';
 
-import type { NavItem, Project, Team, User } from '@/types/sidebar';
-
 import { NavMain } from '@/registry/blocks/sidebar-07/_components/nav-main';
 import { NavProjects } from '@/registry/blocks/sidebar-07/_components/nav-projects';
 import { NavUser } from '@/registry/blocks/sidebar-07/_components/nav-user';
@@ -25,10 +24,28 @@ import { TeamSwitcher } from '@/registry/blocks/sidebar-07/_components/team-swit
 
 // This is sample data.
 const data: {
-  navMain: NavItem[];
-  projects: Project[];
-  teams: Team[];
-  user: User;
+  navMain: {
+    items: { title: string; url: string; isActive?: boolean }[];
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+  }[];
+  projects: {
+    icon: LucideIcon;
+    name: string;
+    url: string;
+  }[];
+  teams: {
+    logo: ComponentType;
+    name: string;
+    plan: 'Enterprise' | 'Free' | 'Startup';
+  }[];
+  user: {
+    avatar: string;
+    email: string;
+    name: string;
+  };
 } = {
   user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
   teams: [
