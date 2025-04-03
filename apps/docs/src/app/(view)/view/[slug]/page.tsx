@@ -1,18 +1,16 @@
-import { type Metadata } from 'next';
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
+
 import { notFound } from 'next/navigation';
-import { type JSX, cache } from 'react';
 
-import type { RegistryItem } from '@/types/registry';
-
+import { getCachedBlockRegistry } from '@/lib/registry-cache';
 import { registryBlocks } from '@/registry/registry-blocks';
-
-const getCacheRegistry = cache((component: string): null | RegistryItem => registryBlocks[component]);
 
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const registry = getCacheRegistry(slug);
+  const registry = getCachedBlockRegistry(slug);
 
   if (!registry) {
     return {};
@@ -36,7 +34,7 @@ export function generateStaticParams(): { slug: string | undefined }[] {
 export default async function ViewPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
   const { slug } = await params;
 
-  const registry = getCacheRegistry(slug);
+  const registry = getCachedBlockRegistry(slug);
 
   if (!registry) {
     notFound();
