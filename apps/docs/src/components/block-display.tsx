@@ -1,22 +1,18 @@
 import type { ReactNode } from 'react';
 
-import { cache } from 'react';
+import { unstable_cache as cache } from 'next/cache';
 
 import type { RegistryItemFile } from '@/types/registry';
 
 import { BlockViewer } from '@/components/block-viewer';
 import { createFileTreeForRegistryItemFiles, getRegistryItem } from '@/lib/registry';
 
-const getCachedRegistryItem = cache(async (name: string) => {
-  return await getRegistryItem(name);
+const getCachedRegistryItem = cache((name: string) => {
+  return getRegistryItem(name);
 });
 
-const getCachedFileTree = cache((files?: RegistryItemFile[]) => {
-  if (!files) {
-    return null;
-  }
-
-  return createFileTreeForRegistryItemFiles(files);
+const getCachedFileTree = cache((files: RegistryItemFile[]) => {
+  return Promise.resolve(createFileTreeForRegistryItemFiles(files));
 });
 
 export async function BlockDisplay({ name }: { name: string }): Promise<ReactNode> {
@@ -26,7 +22,7 @@ export async function BlockDisplay({ name }: { name: string }): Promise<ReactNod
     return null;
   }
 
-  const tree = getCachedFileTree(item.files);
+  const tree = await getCachedFileTree(item.files);
 
   const { component: _, ...rest } = item;
 

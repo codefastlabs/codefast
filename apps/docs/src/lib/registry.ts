@@ -134,19 +134,39 @@ async function getFileContentWithHighlighting(
   file: RegistryItemFile,
   allFiles: RegistryItemFile[],
 ): Promise<{ content: string; highlightedContent: string }> {
+  const startTime = performance.now();
   const cacheKey = file.path;
 
+  logger.debug(`Processing file: ${file.path}`);
+
   if (fileContentCache.has(cacheKey)) {
+    const cacheHitTime = performance.now() - startTime;
+
+    logger.info(`Cache hit for ${file.path} (${cacheHitTime.toFixed(2)}ms)`);
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Value has been verified to exist
     return fileContentCache.get(cacheKey)!;
   }
 
+  const contentStartTime = performance.now();
   const content = await getFileContent(file, allFiles);
+  const contentTime = performance.now() - contentStartTime;
+
+  logger.info(`Content retrieval for ${file.path}: ${contentTime.toFixed(2)}ms`);
+
+  const highlightStartTime = performance.now();
   const highlightedContent = await highlightCode(content);
+  const highlightTime = performance.now() - highlightStartTime;
+
+  logger.info(`Code highlighting for ${file.path}: ${highlightTime.toFixed(2)}ms`);
 
   const result = { content, highlightedContent };
 
   fileContentCache.set(cacheKey, result);
+
+  const totalTime = performance.now() - startTime;
+
+  logger.success(`Total processing time for ${file.path}: ${totalTime.toFixed(2)}ms`);
 
   return result;
 }
