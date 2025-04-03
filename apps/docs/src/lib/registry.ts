@@ -257,6 +257,7 @@ function sortFileTreeByName(fileTree: FileTree[]): FileTree[] {
  */
 async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile[]): Promise<string> {
   try {
+    logger.info(`Processing file '${file.path}'...`);
     const raw = await fs.readFile(file.path, 'utf8');
     const sourceFile = await createProcessedSourceFile(file.path, raw);
     const code = sourceFile.getFullText();
