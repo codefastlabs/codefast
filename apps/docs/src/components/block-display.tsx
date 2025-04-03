@@ -24,5 +24,7 @@ export async function BlockDisplay({ name }: { name: string }): Promise<ReactNod
 
   const tree = await getCachedFileTree(item.files);
 
-  return <BlockViewer item={item} tree={tree} />;
+  const { component: _, ...rest } = item;
+
+  return <BlockViewer item={rest} tree={tree} />;
 }
