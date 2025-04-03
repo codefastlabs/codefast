@@ -10,17 +10,21 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@codefast/ui';
-import { GalleryVerticalEndIcon } from 'lucide-react';
+import { type LucideIcon, GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
-
-import type { NavItem } from '@/types/sidebar';
 
 import { NavMain } from '@/registry/blocks/sidebar-06/_components/nav-main';
 import { SidebarOptInForm } from '@/registry/blocks/sidebar-06/_components/sidebar-opt-in-form';
 
 // This is sample data.
 const data: {
-  navMain: NavItem[];
+  navMain: {
+    items: { title: string; url: string; isActive?: boolean }[];
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+  }[];
 } = {
   navMain: [
     {

@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ComponentProps, JSX } from 'react';
 
 import {
@@ -14,14 +15,24 @@ import {
 } from '@codefast/ui';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types/sidebar';
-
 import { SearchForm } from '@/registry/blocks/sidebar-01/_components/search-form';
 import { VersionSwitcher } from '@/registry/blocks/sidebar-01/_components/version-switcher';
 
+export interface NavSubItem {
+  title: string;
+  url: string;
+  isActive?: boolean;
+}
+
 // This is sample data.
 const data: {
-  navMain: NavItem[];
+  navMain: {
+    items: { title: string; url: string; isActive?: boolean }[];
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+  }[];
   versions: string[];
 } = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],

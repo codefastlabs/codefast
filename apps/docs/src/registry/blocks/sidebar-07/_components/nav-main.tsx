@@ -15,12 +15,20 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@codefast/ui';
-import { ChevronRightIcon } from 'lucide-react';
+import { type LucideIcon, ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 
-import type { NavItem } from '@/types/sidebar';
-
-export function NavMain({ items }: { items: NavItem[] }): JSX.Element {
+export function NavMain({
+  items,
+}: {
+  items: {
+    items: { title: string; url: string; isActive?: boolean }[];
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+  }[];
+}): JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
