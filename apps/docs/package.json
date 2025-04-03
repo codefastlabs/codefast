@@ -9,6 +9,7 @@
     "dev": "rm -rf .next && next dev --turbopack",
     "lint": "TIMING=1 next lint",
     "lint:inspect": "npx @eslint/config-inspector@latest",
+    "preview": "next start",
     "start": "next start",
     "type:check": "tsc --noEmit"
   },
