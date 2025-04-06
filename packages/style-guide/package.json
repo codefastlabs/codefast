@@ -212,7 +212,7 @@
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
-    "@eslint/js": "^9.23.0",
+    "@eslint/js": "^9.24.0",
     "@next/eslint-plugin-next": "^15.2.4",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@vitest/eslint-plugin": "^1.1.39",
@@ -223,21 +223,21 @@
     "eslint-plugin-perfectionist": "^4.11.0",
     "eslint-plugin-playwright": "^2.2.0",
     "eslint-plugin-prettier": "^5.2.6",
-    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-testing-library": "^7.1.1",
     "eslint-plugin-tsdoc": "^0.4.0",
-    "eslint-plugin-turbo": "^2.4.4",
+    "eslint-plugin-turbo": "^2.5.0",
     "eslint-plugin-unicorn": "^58.0.0",
     "typescript-eslint": "^8.29.0"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@types/node": "^22.14.0",
-    "eslint": "^9.23.0",
+    "eslint": "^9.24.0",
     "globals": "^16.0.0",
     "tsup": "^8.4.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "eslint": ">=9",
