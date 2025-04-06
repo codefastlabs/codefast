@@ -13,7 +13,7 @@
 @layer base {
   :root {
     --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
+    --font-mono: var(--font-jetbrains-mono);
   }
 
   :root {
@@ -112,30 +112,5 @@
     --chart-3: var(--color-amber-500);
     --chart-4: var(--color-purple-500);
     --chart-5: var(--color-rose-500);
-  }
-}
-
-@layer base {
-  [data-rehype-pretty-code-fragment] {
-    @apply scheme-dark relative flex-1 grow overflow-auto text-white;
-    @apply after:absolute after:inset-y-0 after:left-0 after:w-10 after:border-r after:border-zinc-800 after:bg-zinc-950;
-
-    pre {
-      @apply bg-transparent! relative z-10 max-h-full min-h-full grow overflow-auto py-1 font-mono text-sm leading-relaxed;
-    }
-
-    code {
-      @apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0 [box-decoration-break:clone] [counter-reset:line];
-    }
-
-    [data-line-numbers] {
-      .line {
-        @apply pl-0;
-
-        &::before {
-          @apply sticky left-0 z-10 mr-2 inline-block w-10 -translate-y-px border-r border-zinc-800 bg-zinc-950 px-2 text-right text-xs/6 text-zinc-50/40 [content:counter(line)] [counter-increment:line];
-        }
-      }
-    }
   }
 }
