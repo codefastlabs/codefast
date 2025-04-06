@@ -1,5 +1,19 @@
 # @codefast/typescript-config
 
+## 0.2.40
+
+### Patch Changes
+
+- [`8ad571f`](https://github.com/codefastlabs/codefast/commit/8ad571f007c45009397091bec72ee646beec28c8) Thanks [@thevuong](https://github.com/thevuong)! - chore: update dependencies to latest versions
+
+- [`2749794`](https://github.com/codefastlabs/codefast/commit/27497942b856df60eaa34b7caeb8c27ac71e006f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(context): rename provider components for clarity
+
+- [`7ee52ce`](https://github.com/codefastlabs/codefast/commit/7ee52ce77bda2e624db3788767cb2712126749b6) Thanks [@thevuong](https://github.com/thevuong)! - fix(sidebar): ensure proper layout by adding min-width
+
+- [`f41df54`](https://github.com/codefastlabs/codefast/commit/f41df5462d91ff25076928c2dd84017a92e3fe55) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): remove custom ::selection styling
+
+- [`5e5516e`](https://github.com/codefastlabs/codefast/commit/5e5516ea3a3d34132e7edbe04fc6dcb7f9655b71) Thanks [@thevuong](https://github.com/thevuong)! - feat(hooks): add `useCopyToClipboard` hook with tests
+
 ## 0.2.39
 
 ### Patch Changes
