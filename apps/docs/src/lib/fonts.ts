@@ -4,38 +4,44 @@ import {
   Geist_Mono as GeistMono,
   Instrument_Sans as InstrumentSans,
   Inter,
+  JetBrains_Mono as JetBrainsMono,
   Mulish,
   Noto_Sans_Mono as NotoSansMono,
 } from 'next/font/google';
 
 const fontGeistSans = Geist({
   variable: '--font-geist-sans',
-  subsets: ['latin'],
+  subsets: ['latin-ext'],
 });
 
 const fontGeistMono = GeistMono({
   variable: '--font-geist-mono',
-  subsets: ['latin'],
+  subsets: ['latin-ext'],
 });
 
 const fontInstrument = InstrumentSans({
   variable: '--font-instrument',
-  subsets: ['latin'],
+  subsets: ['latin-ext'],
 });
 
 const fontNotoMono = NotoSansMono({
   variable: '--font-noto-mono',
-  subsets: ['latin'],
+  subsets: ['vietnamese'],
 });
 
 const fontMullish = Mulish({
   variable: '--font-mullish',
-  subsets: ['latin'],
+  subsets: ['vietnamese'],
 });
 
 const fontInter = Inter({
   variable: '--font-inter',
-  subsets: ['latin'],
+  subsets: ['vietnamese'],
+});
+
+const fontJetBrainsMono = JetBrainsMono({
+  variable: '--font-jetbrains-mono',
+  subsets: ['vietnamese'],
 });
 
 export const fontVariables = cn(
@@ -45,4 +51,5 @@ export const fontVariables = cn(
   fontNotoMono.variable,
   fontMullish.variable,
   fontInter.variable,
+  fontJetBrainsMono.variable,
 );
