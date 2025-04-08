@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.42
+
+### Patch Changes
+
+- [`185692e`](https://github.com/codefastlabs/codefast/commit/185692ef85fa893b09059a62490ae7f990b29916) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update and add dependencies for better functionality
+
+- Updated dependencies [[`185692e`](https://github.com/codefastlabs/codefast/commit/185692ef85fa893b09059a62490ae7f990b29916)]:
+  - @codefast/hooks@0.2.42
+  - @codefast-ui/checkbox-group@0.2.42
+  - @codefast-ui/input@0.2.42
+  - @codefast-ui/input-number@0.2.42
+  - @codefast-ui/progress-circle@0.2.42
+
 ## 0.2.41
 
 ### Patch Changes

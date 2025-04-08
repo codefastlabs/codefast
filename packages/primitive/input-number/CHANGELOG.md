@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.42
+
+### Patch Changes
+
+- [`185692e`](https://github.com/codefastlabs/codefast/commit/185692ef85fa893b09059a62490ae7f990b29916) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): update and add dependencies for better functionality
+
+- Updated dependencies [[`185692e`](https://github.com/codefastlabs/codefast/commit/185692ef85fa893b09059a62490ae7f990b29916)]:
+  - @codefast-ui/input@0.2.42
+
 ## 0.2.41
 
 ### Patch Changes
