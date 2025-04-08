@@ -14,13 +14,15 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["build"]
     },
     "preview": {
       "dependsOn": ["build"]
     },
     "start": {},
-    "test": {},
+    "test": {
+      "dependsOn": ["build"]
+    },
     "test:coverage": {},
     "test:watch": {
       "cache": false,
