@@ -14,23 +14,26 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build", "^lint"]
     },
     "preview": {
-      "dependsOn": ["build"]
+      "dependsOn": ["^build"],
+      "cache": false
     },
     "start": {},
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": ["build", "^test"]
     },
-    "test:coverage": {},
+    "test:coverage": {
+      "dependsOn": ["build", "^test:coverage"],
+      "outputs": ["coverage/**"]
+    },
     "test:watch": {
       "cache": false,
       "persistent": true
     },
     "type:check": {
-      "dependsOn": ["^type:check"],
-      "outputs": []
+      "dependsOn": ["^type:check"]
     }
   }
 }
