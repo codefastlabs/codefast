@@ -51,7 +51,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@swc/core": "^1.11.16",
+    "@swc/core": "^1.11.18",
     "@swc/jest": "^0.2.37",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
