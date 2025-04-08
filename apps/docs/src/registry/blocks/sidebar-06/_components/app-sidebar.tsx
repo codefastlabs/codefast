@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ComponentProps, JSX } from 'react';
 
 import {
@@ -10,7 +11,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@codefast/ui';
-import { type LucideIcon, GalleryVerticalEndIcon } from 'lucide-react';
+import { GalleryVerticalEndIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { NavMain } from '@/registry/blocks/sidebar-06/_components/nav-main';
