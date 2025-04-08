@@ -14,7 +14,7 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["build", "^lint"]
+      "dependsOn": ["^lint"]
     },
     "preview": {
       "dependsOn": ["^build"],
@@ -22,10 +22,10 @@
     },
     "start": {},
     "test": {
-      "dependsOn": ["build", "^test"]
+      "dependsOn": ["^test"]
     },
     "test:coverage": {
-      "dependsOn": ["build", "^test:coverage"],
+      "dependsOn": ["^test:coverage"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {
