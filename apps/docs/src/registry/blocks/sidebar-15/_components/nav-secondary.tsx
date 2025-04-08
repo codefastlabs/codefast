@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ComponentProps, JSX, ReactNode } from 'react';
 
 import {
@@ -8,7 +9,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@codefast/ui';
-import { type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export function NavSecondary({

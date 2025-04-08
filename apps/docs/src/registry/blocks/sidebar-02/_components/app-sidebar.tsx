@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react';
 import type { ComponentProps, JSX } from 'react';
 
 import {
@@ -15,7 +16,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@codefast/ui';
-import { type LucideIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { SearchForm } from '@/registry/blocks/sidebar-02/_components/search-form';
