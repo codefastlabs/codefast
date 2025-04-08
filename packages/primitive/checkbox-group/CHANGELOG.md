@@ -1,5 +1,13 @@
 # @codefast-ui/checkbox-group
 
+## 0.2.41
+
+### Patch Changes
+
+- [`3d6d69d`](https://github.com/codefastlabs/codefast/commit/3d6d69dbd0dab99441b34ab3c5dbcf7b534fbc76) Thanks [@thevuong](https://github.com/thevuong)! - feat(deps): upgrade @swc/core to version 1.11.18
+
+- [`ec3d22e`](https://github.com/codefastlabs/codefast/commit/ec3d22e4369a3e2a693a5b69bd6322bdad65b336) Thanks [@thevuong](https://github.com/thevuong)! - fix(linting): update ignored directories for Next.js config
+
 ## 0.2.40
 
 ### Patch Changes
