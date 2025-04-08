@@ -33,5 +33,5 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { toast } from 'sonner';
+export { toast, useSonner } from 'sonner';
 export { Toaster };
