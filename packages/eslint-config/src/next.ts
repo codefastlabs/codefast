@@ -58,7 +58,7 @@ export const config: Linter.Config[] = [
     },
   },
   {
-    ignores: ['dist/', 'build/', '.next/', 'coverage/'],
+    ignores: ['dist/', 'build/', '.next/', '.contentlayer/', 'coverage/'],
     name: '@codefast/eslint-config/next/ignores',
   },
   {
