@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
-import { type JSX } from 'react';
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
 
 import { CardsActivityGoal } from '@/app/(app)/(home)/_components/cards-activity-goal';
 import { CardsChat } from '@/app/(app)/(home)/_components/cards-chat';

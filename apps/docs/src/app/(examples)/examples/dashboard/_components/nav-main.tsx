@@ -1,5 +1,6 @@
 'use client';
 
+import type { Icon } from '@tabler/icons-react';
 import type { JSX } from 'react';
 
 import {
@@ -10,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@codefast/ui';
-import { type Icon, IconCirclePlusFilled, IconMail } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconMail } from '@tabler/icons-react';
 
 export function NavMain({
   items,

@@ -1,5 +1,5 @@
-import { type Metadata } from 'next';
-import { type JSX } from 'react';
+import type { Metadata } from 'next';
+import type { JSX } from 'react';
 
 import { registryComponents } from '@/app/(app)/components/registry-components';
 import { ComponentWrapper } from '@/components/component-wrapper';
