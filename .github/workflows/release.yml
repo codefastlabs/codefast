@@ -42,7 +42,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: codefastlabs/codefixlabs
+          slug: codefastlabs/codefast
           fail_ci_if_error: false
 
   release:
