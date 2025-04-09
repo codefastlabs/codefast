@@ -1,14 +1,14 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import { useCopyToClipboard } from '@codefast/hooks';
-import { Button } from '@codefast/ui';
-import { CheckIcon, ClipboardIcon } from 'lucide-react';
-import { useMemo } from 'react';
+import { useCopyToClipboard } from "@codefast/hooks";
+import { Button } from "@codefast/ui";
+import { CheckIcon, ClipboardIcon } from "lucide-react";
+import { useMemo } from "react";
 
-import { useBlockViewer } from '@/components/block-viewer/provider';
+import { useBlockViewer } from "@/components/block-viewer/provider";
 
 export function BlockViewerCopyCodeButton(): ReactNode {
-  const { activeFile, item } = useBlockViewer('BlockCopyCodeButton');
+  const { activeFile, item } = useBlockViewer("BlockCopyCodeButton");
   const { copyToClipboard, isCopied } = useCopyToClipboard();
 
   const file = useMemo(() => {

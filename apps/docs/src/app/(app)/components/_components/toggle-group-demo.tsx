@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { buttonVariants, Separator, ToggleGroup, ToggleGroupItem } from '@codefast/ui';
+import { buttonVariants, Separator, ToggleGroup, ToggleGroupItem } from "@codefast/ui";
 import {
   BoldIcon,
   FullscreenIcon,
@@ -9,10 +9,10 @@ import {
   SmartphoneIcon,
   TabletIcon,
   UnderlineIcon,
-} from 'lucide-react';
-import Link from 'next/link';
+} from "lucide-react";
+import Link from "next/link";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function ToggleGroupDemo(): JSX.Element {
   return (
@@ -95,9 +95,9 @@ export function ToggleGroupDemo(): JSX.Element {
             <Separator className="h-4.5" orientation="vertical" />
             <Link
               className={buttonVariants({
-                className: 'size-6 p-0',
-                variant: 'ghost',
-                size: 'icon',
+                className: "size-6 p-0",
+                variant: "ghost",
+                size: "icon",
               })}
               href="#"
               title="Open in New Tab"

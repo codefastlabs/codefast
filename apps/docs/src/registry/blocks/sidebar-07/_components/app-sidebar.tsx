@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { ComponentProps, ComponentType, JSX } from 'react';
+import type { ComponentProps, ComponentType, JSX } from "react";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@codefast/ui';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@codefast/ui";
 import {
   type LucideIcon,
   AudioWaveformIcon,
@@ -15,12 +15,12 @@ import {
   PieChartIcon,
   Settings2Icon,
   SquareTerminalIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { NavMain } from '@/registry/blocks/sidebar-07/_components/nav-main';
-import { NavProjects } from '@/registry/blocks/sidebar-07/_components/nav-projects';
-import { NavUser } from '@/registry/blocks/sidebar-07/_components/nav-user';
-import { TeamSwitcher } from '@/registry/blocks/sidebar-07/_components/team-switcher';
+import { NavMain } from "@/registry/blocks/sidebar-07/_components/nav-main";
+import { NavProjects } from "@/registry/blocks/sidebar-07/_components/nav-projects";
+import { NavUser } from "@/registry/blocks/sidebar-07/_components/nav-user";
+import { TeamSwitcher } from "@/registry/blocks/sidebar-07/_components/team-switcher";
 
 // This is sample data.
 const data: {
@@ -39,7 +39,7 @@ const data: {
   teams: {
     logo: ComponentType;
     name: string;
-    plan: 'Enterprise' | 'Free' | 'Startup';
+    plan: "Enterprise" | "Free" | "Startup";
   }[];
   user: {
     avatar: string;
@@ -47,61 +47,61 @@ const data: {
     name: string;
   };
 } = {
-  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
+  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
   teams: [
-    { name: 'Acme Inc', logo: GalleryVerticalEndIcon, plan: 'Enterprise' },
-    { name: 'Acme Corp.', logo: AudioWaveformIcon, plan: 'Startup' },
-    { name: 'Evil Corp.', logo: CommandIcon, plan: 'Free' },
+    { name: "Acme Inc", logo: GalleryVerticalEndIcon, plan: "Enterprise" },
+    { name: "Acme Corp.", logo: AudioWaveformIcon, plan: "Startup" },
+    { name: "Evil Corp.", logo: CommandIcon, plan: "Free" },
   ],
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
+      title: "Playground",
+      url: "#",
       icon: SquareTerminalIcon,
       isActive: true,
       items: [
-        { title: 'History', url: '#' },
-        { title: 'Starred', url: '#' },
-        { title: 'Settings', url: '#' },
+        { title: "History", url: "#" },
+        { title: "Starred", url: "#" },
+        { title: "Settings", url: "#" },
       ],
     },
     {
-      title: 'Models',
-      url: '#',
+      title: "Models",
+      url: "#",
       icon: BotIcon,
       items: [
-        { title: 'Genesis', url: '#' },
-        { title: 'Explorer', url: '#' },
-        { title: 'Quantum', url: '#' },
+        { title: "Genesis", url: "#" },
+        { title: "Explorer", url: "#" },
+        { title: "Quantum", url: "#" },
       ],
     },
     {
-      title: 'Documentation',
-      url: '#',
+      title: "Documentation",
+      url: "#",
       icon: BookOpenIcon,
       items: [
-        { title: 'Introduction', url: '#' },
-        { title: 'Get Started', url: '#' },
-        { title: 'Tutorials', url: '#' },
-        { title: 'Changelog', url: '#' },
+        { title: "Introduction", url: "#" },
+        { title: "Get Started", url: "#" },
+        { title: "Tutorials", url: "#" },
+        { title: "Changelog", url: "#" },
       ],
     },
     {
-      title: 'Settings',
-      url: '#',
+      title: "Settings",
+      url: "#",
       icon: Settings2Icon,
       items: [
-        { title: 'General', url: '#' },
-        { title: 'Team', url: '#' },
-        { title: 'Billing', url: '#' },
-        { title: 'Limits', url: '#' },
+        { title: "General", url: "#" },
+        { title: "Team", url: "#" },
+        { title: "Billing", url: "#" },
+        { title: "Limits", url: "#" },
       ],
     },
   ],
   projects: [
-    { name: 'Design Engineering', url: '#', icon: FrameIcon },
-    { name: 'Sales & Marketing', url: '#', icon: PieChartIcon },
-    { name: 'Travel', url: '#', icon: MapIcon },
+    { name: "Design Engineering", url: "#", icon: FrameIcon },
+    { name: "Sales & Marketing", url: "#", icon: PieChartIcon },
+    { name: "Travel", url: "#", icon: MapIcon },
   ],
 };
 

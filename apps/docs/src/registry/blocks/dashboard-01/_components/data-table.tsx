@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { DragEndEvent, UniqueIdentifier } from '@dnd-kit/core';
-import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from '@tanstack/react-table';
-import type { JSX } from 'react';
+import type { ChartConfig } from "@codefast/ui";
+import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
+import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
+import type { JSX } from "react";
 
-import { useIsMobile } from '@codefast/hooks';
+import { useIsMobile } from "@codefast/hooks";
 import {
   Badge,
   Button,
@@ -46,7 +46,7 @@ import {
   TabsList,
   TabsTrigger,
   toast,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   closestCenter,
   DndContext,
@@ -55,10 +55,10 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -72,7 +72,7 @@ import {
   IconLoader,
   IconPlus,
   IconTrendingUp,
-} from '@tabler/icons-react';
+} from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -82,10 +82,10 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { useId, useMemo, useState } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
-import { z } from 'zod';
+} from "@tanstack/react-table";
+import { useId, useMemo, useState } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { z } from "zod";
 
 export const schema = z.object({
   id: z.number(),
@@ -119,17 +119,17 @@ function DragHandle({ id }: { id: number }): JSX.Element {
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
-    id: 'drag',
+    id: "drag",
     header: () => null,
     cell: ({ row }) => <DragHandle id={row.original.id} />,
   },
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
           aria-label="Select all"
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
           onCheckedChange={(value) => {
             table.toggleAllPageRowsSelected(Boolean(value));
           }}
@@ -151,16 +151,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'header',
-    header: 'Header',
+    accessorKey: "header",
+    header: "Header",
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />;
     },
     enableHiding: false,
   },
   {
-    accessorKey: 'type',
-    header: 'Section Type',
+    accessorKey: "type",
+    header: "Section Type",
     cell: ({ row }) => (
       <div className="w-32">
         <Badge className="text-muted-foreground px-1.5" variant="outline">
@@ -170,11 +170,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => (
       <Badge className="text-muted-foreground px-1.5" variant="outline">
-        {row.original.status === 'Done' ? (
+        {row.original.status === "Done" ? (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
         ) : (
           <IconLoader />
@@ -184,7 +184,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    accessorKey: 'target',
+    accessorKey: "target",
     header: () => <div className="w-full text-right">Target</div>,
     cell: ({ row }) => (
       <form
@@ -196,8 +196,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             }),
             {
               loading: `Saving ${row.original.header}`,
-              success: 'Done',
-              error: 'Error',
+              success: "Done",
+              error: "Error",
             },
           );
         }}
@@ -214,7 +214,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    accessorKey: 'limit',
+    accessorKey: "limit",
     header: () => <div className="w-full text-right">Limit</div>,
     cell: ({ row }) => (
       <form
@@ -226,8 +226,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             }),
             {
               loading: `Saving ${row.original.header}`,
-              success: 'Done',
-              error: 'Error',
+              success: "Done",
+              error: "Error",
             },
           );
         }}
@@ -244,10 +244,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     ),
   },
   {
-    accessorKey: 'reviewer',
-    header: 'Reviewer',
+    accessorKey: "reviewer",
+    header: "Reviewer",
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== 'Assign reviewer';
+      const isAssigned = row.original.reviewer !== "Assign reviewer";
 
       if (isAssigned) {
         return row.original.reviewer;
@@ -276,7 +276,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: () => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -307,7 +307,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): JSX.Elemen
       ref={setNodeRef}
       className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
       data-dragging={isDragging}
-      data-state={row.getIsSelected() && 'selected'}
+      data-state={row.getIsSelected() && "selected"}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
@@ -572,22 +572,22 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
 }
 
 const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 },
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
 ];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
-    color: 'var(--primary)',
+    label: "Desktop",
+    color: "var(--primary)",
   },
   mobile: {
-    label: 'Mobile',
-    color: 'var(--primary)',
+    label: "Mobile",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
@@ -595,7 +595,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
   const isMobile = useIsMobile();
 
   return (
-    <Drawer direction={isMobile ? 'bottom' : 'right'}>
+    <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button className="text-foreground w-fit px-0 text-left" variant="link">
           {item.header}

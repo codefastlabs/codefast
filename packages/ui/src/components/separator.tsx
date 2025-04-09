@@ -1,31 +1,31 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import * as SeparatorPrimitive from '@radix-ui/react-separator';
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
 
-import type { VariantProps } from '@/lib/utils';
+import type { VariantProps } from "@/lib/utils";
 
-import { cn, tv } from '@/lib/utils';
+import { cn, tv } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Variant: Separator
  * -------------------------------------------------------------------------- */
 
 const separatorVariants = tv({
-  base: 'bg-border relative flex shrink-0 items-center',
+  base: "bg-border relative flex shrink-0 items-center",
   variants: {
     align: {
-      center: 'justify-center',
-      end: 'justify-end',
-      start: 'justify-start',
+      center: "justify-center",
+      end: "justify-end",
+      start: "justify-start",
     },
     orientation: {
-      horizontal: 'h-px w-full',
-      vertical: 'h-full w-px flex-col',
+      horizontal: "h-px w-full",
+      vertical: "h-full w-px flex-col",
     },
   },
   defaultVariants: {
-    align: 'center',
-    orientation: 'horizontal',
+    align: "center",
+    orientation: "horizontal",
   },
 });
 
@@ -40,7 +40,7 @@ function Separator({
   orientation,
   ...props
 }: ComponentProps<typeof SeparatorPrimitive.Root> &
-  Omit<VariantProps<typeof separatorVariants>, 'orientation'>): JSX.Element {
+  Omit<VariantProps<typeof separatorVariants>, "orientation">): JSX.Element {
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}
@@ -56,10 +56,10 @@ function Separator({
  * Component: SeparatorItem
  * -------------------------------------------------------------------------- */
 
-function SeparatorItem({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+function SeparatorItem({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
     <div
-      className={cn('bg-background text-muted-foreground absolute mx-2 px-2 text-sm', className)}
+      className={cn("bg-background text-muted-foreground absolute mx-2 px-2 text-sm", className)}
       data-slot="separator-item"
       {...props}
     />

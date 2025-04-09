@@ -1,6 +1,6 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook } from "@testing-library/react";
 
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 type ChangeHandler = (event: MediaQueryListEvent) => void;
 
@@ -23,7 +23,7 @@ const setupMockMatchMedia = (
   const mockMediaQueryList = {
     addEventListener: mockAddEventListener,
     matches,
-    media: '',
+    media: "",
     onchange: null,
     removeEventListener: mockRemoveEventListener,
   };
@@ -33,29 +33,29 @@ const setupMockMatchMedia = (
   return { mockAddEventListener, mockMediaQueryList, mockRemoveEventListener };
 };
 
-describe('useMediaQuery', () => {
-  test('should return true when media query matches', () => {
+describe("useMediaQuery", () => {
+  test("should return true when media query matches", () => {
     const { mockMediaQueryList } = setupMockMatchMedia(true);
 
-    const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
+    const { result } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
     expect(result.current).toBe(true);
-    expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 600px)');
-    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+    expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
+    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
 
-  test('should return false when media query does not match', () => {
+  test("should return false when media query does not match", () => {
     setupMockMatchMedia(false);
 
-    const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
+    const { result } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
     expect(result.current).toBe(false);
-    expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 600px)');
+    expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
   });
 
-  test('should update when media query changes', () => {
+  test("should update when media query changes", () => {
     const { mockAddEventListener, mockMediaQueryList } = setupMockMatchMedia(false);
-    const { result } = renderHook(() => useMediaQuery('(min-width: 600px)'));
+    const { result } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
     expect(result.current).toBe(false);
 
@@ -71,28 +71,28 @@ describe('useMediaQuery', () => {
     expect(result.current).toBe(true);
   });
 
-  test('should clean up event listener on unmount', () => {
+  test("should clean up event listener on unmount", () => {
     const { mockMediaQueryList, mockRemoveEventListener } = setupMockMatchMedia(true);
 
-    const { unmount } = renderHook(() => useMediaQuery('(min-width: 600px)'));
+    const { unmount } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
     expect(mockMediaQueryList.addEventListener).toHaveBeenCalled();
 
     unmount();
-    expect(mockRemoveEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+    expect(mockRemoveEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
 
-  test('should re-add listener when query changes', () => {
+  test("should re-add listener when query changes", () => {
     const { mockAddEventListener, mockRemoveEventListener } = setupMockMatchMedia(false);
 
     const { rerender } = renderHook((query) => useMediaQuery(query), {
-      initialProps: '(min-width: 600px)',
+      initialProps: "(min-width: 600px)",
     });
 
-    expect(mockAddEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+    expect(mockAddEventListener).toHaveBeenCalledWith("change", expect.any(Function));
 
-    rerender('(min-width: 800px)');
-    expect(mockRemoveEventListener).toHaveBeenCalledWith('change', expect.any(Function));
-    expect(window.matchMedia).toHaveBeenCalledWith('(min-width: 800px)');
+    rerender("(min-width: 800px)");
+    expect(mockRemoveEventListener).toHaveBeenCalledWith("change", expect.any(Function));
+    expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 800px)");
   });
 });

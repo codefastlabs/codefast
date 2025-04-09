@@ -1,1 +1,1 @@
-export { config as default } from '@codefast/eslint-config/library';
+export { config as default } from "@codefast/eslint-config/library";

@@ -1,6 +1,6 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Slot } from '@radix-ui/react-slot';
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Inline
@@ -9,10 +9,10 @@ import { Slot } from '@radix-ui/react-slot';
 function Inline({
   asChild,
   ...props
-}: ComponentProps<'span'> & {
+}: ComponentProps<"span"> & {
   asChild?: boolean;
 }): JSX.Element {
-  const Component = asChild ? Slot : 'span';
+  const Component = asChild ? Slot : "span";
 
   return <Component data-slot="inline" {...props} />;
 }

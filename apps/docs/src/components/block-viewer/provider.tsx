@@ -1,16 +1,16 @@
-import type { CSSProperties, JSX, ReactNode, RefObject } from 'react';
-import type { ImperativePanelHandle } from 'react-resizable-panels';
+import type { CSSProperties, JSX, ReactNode, RefObject } from "react";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 
-import { createContext } from '@radix-ui/react-context';
-import { useRef, useState } from 'react';
+import { createContext } from "@radix-ui/react-context";
+import { useRef, useState } from "react";
 
-import type { FileTree } from '@/lib/registry';
-import type { RegistryItem } from '@/types/registry';
+import type { FileTree } from "@/lib/registry";
+import type { RegistryItem } from "@/types/registry";
 
 /**
  * Possible viewer display modes
  */
-export type BlockViewMode = 'code' | 'preview';
+export type BlockViewMode = "code" | "preview";
 
 /**
  * Context value for the Block Viewer component
@@ -21,7 +21,7 @@ export interface BlockViewerContextValue {
   activeFile: null | string;
 
   /** Registry item data without the component implementation */
-  item: Omit<RegistryItem, 'component'>;
+  item: Omit<RegistryItem, "component">;
 
   /** Reference to the resizable panel for programmatic control */
   resizablePanelRef: RefObject<ImperativePanelHandle | null>;
@@ -39,17 +39,17 @@ export interface BlockViewerContextValue {
   view: BlockViewMode;
 }
 
-const BLOCK_VIEWER_NAME = 'BlockViewerProvider';
+const BLOCK_VIEWER_NAME = "BlockViewerProvider";
 
 const [BlockViewerContextProvider, useBlockViewer] = createContext<BlockViewerContextValue>(BLOCK_VIEWER_NAME);
 
-interface BlockViewerProviderProps extends Pick<BlockViewerContextValue, 'item' | 'tree'> {
+interface BlockViewerProviderProps extends Pick<BlockViewerContextValue, "item" | "tree"> {
   children: ReactNode;
 }
 
 export function BlockViewerProvider({ item, tree, children }: BlockViewerProviderProps): JSX.Element {
-  const [view, setView] = useState<BlockViewerContextValue['view']>('preview');
-  const [activeFile, setActiveFile] = useState<BlockViewerContextValue['activeFile']>(item.files?.[0].target ?? null);
+  const [view, setView] = useState<BlockViewerContextValue["view"]>("preview");
+  const [activeFile, setActiveFile] = useState<BlockViewerContextValue["activeFile"]>(item.files?.[0].target ?? null);
   const resizablePanelRef = useRef<ImperativePanelHandle>(null);
 
   return (
@@ -66,7 +66,7 @@ export function BlockViewerProvider({ item, tree, children }: BlockViewerProvide
         className="group/block-view-wrapper flex min-w-0 flex-col items-stretch gap-4"
         data-view={view}
         id={item.slug}
-        style={{ '--height': '930px' } as CSSProperties}
+        style={{ "--height": "930px" } as CSSProperties}
       >
         {children}
       </div>

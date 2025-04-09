@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -10,7 +10,7 @@ import {
   CardTitle,
   Label,
   Switch,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
 interface CookieOption {
   description: string;
@@ -34,20 +34,20 @@ function CookieSettingItem({ id, title, description, defaultChecked }: CookieOpt
 export function CardsCookieSettings(): JSX.Element {
   const cookieOptions: CookieOption[] = [
     {
-      id: 'necessary',
-      title: 'Strictly Necessary',
-      description: 'These cookies are essential in order to use the website and use its features.',
+      id: "necessary",
+      title: "Strictly Necessary",
+      description: "These cookies are essential in order to use the website and use its features.",
       defaultChecked: true,
     },
     {
-      id: 'functional',
-      title: 'Functional Cookies',
-      description: 'These cookies allow the website to provide personalized functionality.',
+      id: "functional",
+      title: "Functional Cookies",
+      description: "These cookies allow the website to provide personalized functionality.",
     },
     {
-      id: 'performance',
-      title: 'Performance Cookies',
-      description: 'These cookies help to improve the performance of the website.',
+      id: "performance",
+      title: "Performance Cookies",
+      description: "These cookies help to improve the performance of the website.",
     },
   ];
 

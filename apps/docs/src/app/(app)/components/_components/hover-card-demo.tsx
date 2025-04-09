@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -8,8 +8,8 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from '@codefast/ui';
-import { CalendarIcon } from 'lucide-react';
+} from "@codefast/ui";
+import { CalendarIcon } from "lucide-react";
 
 export function HoverCardDemo(): JSX.Element {
   return (
@@ -27,7 +27,7 @@ export function HoverCardDemo(): JSX.Element {
             <h4 className="text-sm font-semibold">@nextjs</h4>
             <p className="text-sm">The React Framework – created and maintained by @vercel.</p>
             <div className="mt-1 flex items-center gap-2">
-              <CalendarIcon className="text-muted-foreground size-4" />{' '}
+              <CalendarIcon className="text-muted-foreground size-4" />{" "}
               <span className="text-muted-foreground text-xs">Joined December 2021</span>
             </div>
           </div>

@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Alert, AlertDescription, AlertTitle, Button } from '@codefast/ui';
+import { Alert, AlertDescription, AlertTitle, Button } from "@codefast/ui";
 import {
   AlertCircleIcon,
   BookmarkCheckIcon,
@@ -8,9 +8,9 @@ import {
   GiftIcon,
   PopcornIcon,
   ShieldAlertIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function AlertDemo(): JSX.Element {
   return (

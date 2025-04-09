@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
-import type { JSX } from 'react';
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table";
+import type { JSX } from "react";
 
 import {
   Button,
@@ -25,7 +25,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   flexRender,
   getCoreRowModel,
@@ -33,34 +33,34 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react';
-import { useState } from 'react';
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 
 const data: Payment[] = [
   {
-    id: 'm5gr84i9',
+    id: "m5gr84i9",
     amount: 316,
-    status: 'success',
-    email: 'ken99@example.com',
+    status: "success",
+    email: "ken99@example.com",
   },
   {
-    id: '3u1reuv4',
+    id: "3u1reuv4",
     amount: 242,
-    status: 'success',
-    email: 'Abe45@example.com',
+    status: "success",
+    email: "Abe45@example.com",
   },
   {
-    id: 'derv1ws0',
+    id: "derv1ws0",
     amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@example.com',
+    status: "processing",
+    email: "Monserrat44@example.com",
   },
   {
-    id: 'bhqecj4p',
+    id: "bhqecj4p",
     amount: 721,
-    status: 'failed',
-    email: 'carmella@example.com',
+    status: "failed",
+    email: "carmella@example.com",
   },
 ];
 
@@ -68,16 +68,16 @@ export interface Payment {
   amount: number;
   email: string;
   id: string;
-  status: 'failed' | 'pending' | 'processing' | 'success';
+  status: "failed" | "pending" | "processing" | "success";
 }
 
 export const columns: ColumnDef<Payment>[] = [
   {
-    id: 'select',
+    id: "select",
     header: ({ table }) => (
       <Checkbox
         aria-label="Select all"
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
@@ -96,18 +96,18 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('status')}</div>,
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
   },
   {
-    accessorKey: 'email',
+    accessorKey: "email",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => {
-            column.toggleSorting(column.getIsSorted() === 'asc');
+            column.toggleSorting(column.getIsSorted() === "asc");
           }}
         >
           Email
@@ -115,25 +115,25 @@ export const columns: ColumnDef<Payment>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: 'amount',
+    accessorKey: "amount",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const amount = Number.parseFloat(row.getValue('amount'));
+      const amount = Number.parseFloat(row.getValue("amount"));
 
       // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original;
@@ -197,8 +197,8 @@ export function CardsDataTable(): JSX.Element {
           <Input
             className="max-w-sm"
             placeholder="Filter emails..."
-            value={(table.getColumn('email')?.getFilterValue() as string) || ''}
-            onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+            value={(table.getColumn("email")?.getFilterValue() as string) || ""}
+            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -245,7 +245,7 @@ export function CardsDataTable(): JSX.Element {
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="last:text-right [&:has([role=checkbox])]:pl-3">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

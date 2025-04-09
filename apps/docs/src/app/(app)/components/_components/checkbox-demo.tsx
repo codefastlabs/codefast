@@ -1,8 +1,8 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Checkbox, Label } from '@codefast/ui';
+import { Checkbox, Label } from "@codefast/ui";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function CheckboxDemo(): JSX.Element {
   return (

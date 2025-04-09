@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -10,9 +10,9 @@ import {
   CardTitle,
   Input,
   Label,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { Icons } from '@/components/icons';
+import { Icons } from "@/components/icons";
 
 export function CardsCreateAccount(): JSX.Element {
   return (

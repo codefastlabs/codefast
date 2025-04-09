@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -21,7 +21,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -35,10 +35,10 @@ import {
   SparklesIcon,
   TrashIcon,
   UserIcon,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "lucide-react";
+import { useState } from "react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DropdownMenuDemo(): JSX.Element {
   return (
@@ -170,7 +170,7 @@ function DropdownMenuCheckboxes(): JSX.Element {
 }
 
 function DropdownMenuRadioGroupDemo(): JSX.Element {
-  const [position, setPosition] = useState('bottom');
+  const [position, setPosition] = useState("bottom");
 
   return (
     <DropdownMenu>
