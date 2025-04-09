@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
 import {
   Sidebar,
@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   BookOpenIcon,
   BotIcon,
@@ -22,69 +22,69 @@ import {
   SendIcon,
   Settings2Icon,
   SquareTerminalIcon,
-} from 'lucide-react';
-import Link from 'next/link';
+} from "lucide-react";
+import Link from "next/link";
 
-import { NavMain } from '@/registry/blocks/sidebar-16/_components/nav-main';
-import { NavProjects } from '@/registry/blocks/sidebar-16/_components/nav-projects';
-import { NavSecondary } from '@/registry/blocks/sidebar-16/_components/nav-secondary';
-import { NavUser } from '@/registry/blocks/sidebar-16/_components/nav-user';
+import { NavMain } from "@/registry/blocks/sidebar-16/_components/nav-main";
+import { NavProjects } from "@/registry/blocks/sidebar-16/_components/nav-projects";
+import { NavSecondary } from "@/registry/blocks/sidebar-16/_components/nav-secondary";
+import { NavUser } from "@/registry/blocks/sidebar-16/_components/nav-user";
 
 const data = {
-  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
+  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
+      title: "Playground",
+      url: "#",
       icon: SquareTerminalIcon,
       isActive: true,
       items: [
-        { title: 'History', url: '#' },
-        { title: 'Starred', url: '#' },
-        { title: 'Settings', url: '#' },
+        { title: "History", url: "#" },
+        { title: "Starred", url: "#" },
+        { title: "Settings", url: "#" },
       ],
     },
     {
-      title: 'Models',
-      url: '#',
+      title: "Models",
+      url: "#",
       icon: BotIcon,
       items: [
-        { title: 'Genesis', url: '#' },
-        { title: 'Explorer', url: '#' },
-        { title: 'Quantum', url: '#' },
+        { title: "Genesis", url: "#" },
+        { title: "Explorer", url: "#" },
+        { title: "Quantum", url: "#" },
       ],
     },
     {
-      title: 'Documentation',
-      url: '#',
+      title: "Documentation",
+      url: "#",
       icon: BookOpenIcon,
       items: [
-        { title: 'Introduction', url: '#' },
-        { title: 'Get Started', url: '#' },
-        { title: 'Tutorials', url: '#' },
-        { title: 'Changelog', url: '#' },
+        { title: "Introduction", url: "#" },
+        { title: "Get Started", url: "#" },
+        { title: "Tutorials", url: "#" },
+        { title: "Changelog", url: "#" },
       ],
     },
     {
-      title: 'Settings',
-      url: '#',
+      title: "Settings",
+      url: "#",
       icon: Settings2Icon,
       items: [
-        { title: 'General', url: '#' },
-        { title: 'Team', url: '#' },
-        { title: 'Billing', url: '#' },
-        { title: 'Limits', url: '#' },
+        { title: "General", url: "#" },
+        { title: "Team", url: "#" },
+        { title: "Billing", url: "#" },
+        { title: "Limits", url: "#" },
       ],
     },
   ],
   navSecondary: [
-    { title: 'Support', url: '#', icon: LifeBuoyIcon },
-    { title: 'Feedback', url: '#', icon: SendIcon },
+    { title: "Support", url: "#", icon: LifeBuoyIcon },
+    { title: "Feedback", url: "#", icon: SendIcon },
   ],
   projects: [
-    { name: 'Design Engineering', url: '#', icon: FrameIcon },
-    { name: 'Sales & Marketing', url: '#', icon: PieChartIcon },
-    { name: 'Travel', url: '#', icon: MapIcon },
+    { name: "Design Engineering", url: "#", icon: FrameIcon },
+    { name: "Sales & Marketing", url: "#", icon: PieChartIcon },
+    { name: "Travel", url: "#", icon: MapIcon },
   ],
 };
 

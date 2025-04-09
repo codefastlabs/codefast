@@ -1,4 +1,4 @@
-import { config } from '@codefast/eslint-config/next';
+import { config } from "@codefast/eslint-config/next";
 
 /**
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
@@ -7,9 +7,9 @@ import { config } from '@codefast/eslint-config/next';
 const nextConfig = [
   ...config,
   {
-    files: ['next.config.ts'],
+    files: ["next.config.ts"],
     rules: {
-      '@typescript-eslint/require-await': 'off',
+      "@typescript-eslint/require-await": "off",
     },
   },
 ];

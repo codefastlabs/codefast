@@ -1,9 +1,9 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import * as SliderPrimitive from '@radix-ui/react-slider';
-import { useMemo } from 'react';
+import * as SliderPrimitive from "@radix-ui/react-slider";
+import { useMemo } from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Slider
@@ -28,7 +28,7 @@ function Slider({
   return (
     <SliderPrimitive.Root
       className={cn(
-        'data-disabled:opacity-50 relative flex w-full touch-none select-none items-center data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col',
+        "data-disabled:opacity-50 relative flex w-full touch-none select-none items-center data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
         className,
       )}
       data-slot="slider"
@@ -52,7 +52,7 @@ function Slider({
           key={index}
           aria-label="Volume"
           className={cn(
-            'border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm after:size-full after:rounded-full after:transition-[width,height] focus-visible:ring-4',
+            "border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm after:size-full after:rounded-full after:transition-[width,height] focus-visible:ring-4",
           )}
           data-slot="slider-thumb"
         />

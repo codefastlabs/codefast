@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Pagination,
@@ -8,7 +8,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
 export function PaginationDemo(): JSX.Element {
   return (

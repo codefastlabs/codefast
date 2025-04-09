@@ -1,14 +1,14 @@
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode } from "react";
 
-import { SidebarInset, SidebarProvider } from '@codefast/ui';
-import { cookies } from 'next/headers';
+import { SidebarInset, SidebarProvider } from "@codefast/ui";
+import { cookies } from "next/headers";
 
-import { AppSidebar } from '@/app/(examples)/examples/dashboard-03/_components/app-sidebar';
-import { SiteHeader } from '@/app/(examples)/examples/dashboard-03/_components/site-header';
+import { AppSidebar } from "@/app/(examples)/examples/dashboard-03/_components/app-sidebar";
+import { SiteHeader } from "@/app/(examples)/examples/dashboard-03/_components/site-header";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
     <main className="[--header-height:calc(theme(spacing.14))]">

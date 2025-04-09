@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import type { Scope } from '@radix-ui/react-context';
-import type { ComponentProps, ReactNode } from 'react';
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, ReactNode } from "react";
 
-import { createContextScope } from '@radix-ui/react-context';
-import { useId, useMemo } from 'react';
+import { createContextScope } from "@radix-ui/react-context";
+import { useId, useMemo } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: ProgressCircleProvider
  * ---------------------------------------------------------------------------*/
 
-const PROGRESS_CIRCLE_PROVIDER_NAME = 'ProgressCircleProvider';
+const PROGRESS_CIRCLE_PROVIDER_NAME = "ProgressCircleProvider";
 
 type ScopedProps<P> = P & { __scopeProgressCircle?: Scope };
 
@@ -274,7 +274,7 @@ function ProgressCircleProvider({
  *
  * Serves as a wrapper for other progress circle components.
  */
-function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<'div'>>): ReactNode {
+function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<"div">>): ReactNode {
   return <div {...props} />;
 }
 
@@ -282,9 +282,9 @@ function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<Compone
  * Component: ProgressCircleSVG
  * ---------------------------------------------------------------------------*/
 
-const PROGRESS_CIRCLE_SVG_NAME = 'ProgressCircleSVG';
+const PROGRESS_CIRCLE_SVG_NAME = "ProgressCircleSVG";
 
-type ProgressCircleSVGProps = ComponentProps<'svg'>;
+type ProgressCircleSVGProps = ComponentProps<"svg">;
 
 /**
  * SVG container for the progress circle
@@ -319,9 +319,9 @@ function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<Prog
  * Component: ProgressCircleTrack
  * ---------------------------------------------------------------------------*/
 
-const PROGRESS_CIRCLE_TRACK_NAME = 'ProgressCircleTrack';
+const PROGRESS_CIRCLE_TRACK_NAME = "ProgressCircleTrack";
 
-type ProgressCircleTrackProps = ComponentProps<'circle'>;
+type ProgressCircleTrackProps = ComponentProps<"circle">;
 
 /**
  * Background circle for the progress indicator
@@ -341,7 +341,7 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Pr
       cy={center}
       fill="transparent"
       r={radius}
-      stroke={threshold?.background || 'currentColor'}
+      stroke={threshold?.background || "currentColor"}
       strokeWidth={strokeWidth}
       {...props}
     />
@@ -352,9 +352,9 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Pr
  * Component: ProgressCircleIndicator
  * ---------------------------------------------------------------------------*/
 
-const PROGRESS_CIRCLE_INDICATOR_NAME = 'ProgressCircleIndicator';
+const PROGRESS_CIRCLE_INDICATOR_NAME = "ProgressCircleIndicator";
 
-type ProgressCircleIndicatorProps = ComponentProps<'circle'>;
+type ProgressCircleIndicatorProps = ComponentProps<"circle">;
 
 /**
  * Foreground circle showing progress
@@ -375,7 +375,7 @@ function ProgressCircleIndicator({
       cy={center}
       fill="transparent"
       r={radius}
-      stroke={threshold?.color || 'currentColor'}
+      stroke={threshold?.color || "currentColor"}
       strokeDasharray={circumference}
       strokeDashoffset={strokeDashoffset}
       strokeLinecap="round"
@@ -390,9 +390,9 @@ function ProgressCircleIndicator({
  * Component: ProgressCircleValue
  * ---------------------------------------------------------------------------*/
 
-const PROGRESS_CIRCLE_VALUE_NAME = 'ProgressCircleValue';
+const PROGRESS_CIRCLE_VALUE_NAME = "ProgressCircleValue";
 
-interface ProgressCircleValueProps extends Omit<ComponentProps<'div'>, 'children'> {
+interface ProgressCircleValueProps extends Omit<ComponentProps<"div">, "children"> {
   children?: ((context: { value: number | undefined; valueText: string }) => ReactNode) | ReactNode;
 }
 
@@ -408,7 +408,7 @@ function ProgressCircleValue({
 }: ScopedProps<ProgressCircleValueProps>): ReactNode {
   const { valueText, clampedValue } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
 
-  if (typeof children === 'function') {
+  if (typeof children === "function") {
     return children({ value: clampedValue, valueText });
   }
 

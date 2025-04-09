@@ -1,16 +1,16 @@
-import type { ComponentType } from 'react';
+import type { ComponentType } from "react";
 
-import { z } from 'zod';
+import { z } from "zod";
 
-export const componentTypeSchema = z.custom<ComponentType>((component) => typeof component === 'function', {
-  message: 'Expected a valid React component',
+export const componentTypeSchema = z.custom<ComponentType>((component) => typeof component === "function", {
+  message: "Expected a valid React component",
 });
 
 export const registryItemTypeSchema = z.enum([
-  'registry:block',
-  'registry:component',
-  'registry:page',
-  'registry:file',
+  "registry:block",
+  "registry:component",
+  "registry:page",
+  "registry:file",
 ]);
 
 export const registryItemFileSchema = z.object({

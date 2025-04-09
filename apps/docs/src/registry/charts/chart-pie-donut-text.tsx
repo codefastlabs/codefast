@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX, ReactNode } from 'react';
-import type { Props } from 'recharts/types/component/Label';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
+import type { Props } from "recharts/types/component/Label";
 
 import {
   Card,
@@ -14,42 +14,42 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { TrendingUpIcon } from 'lucide-react';
-import { useMemo } from 'react';
-import { Label, Pie, PieChart } from 'recharts';
+} from "@codefast/ui";
+import { TrendingUpIcon } from "lucide-react";
+import { useMemo } from "react";
+import { Label, Pie, PieChart } from "recharts";
 
 const chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)' },
-  { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 190, fill: 'var(--color-other)' },
+  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
+  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
+  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+  { browser: "other", visitors: 190, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
   visitors: {
-    label: 'Visitors',
+    label: "Visitors",
   },
   chrome: {
-    label: 'Chrome',
-    color: 'var(--chart-1)',
+    label: "Chrome",
+    color: "var(--chart-1)",
   },
   safari: {
-    label: 'Safari',
-    color: 'var(--chart-2)',
+    label: "Safari",
+    color: "var(--chart-2)",
   },
   firefox: {
-    label: 'Firefox',
-    color: 'var(--chart-3)',
+    label: "Firefox",
+    color: "var(--chart-3)",
   },
   edge: {
-    label: 'Edge',
-    color: 'var(--chart-4)',
+    label: "Edge",
+    color: "var(--chart-4)",
   },
   other: {
-    label: 'Other',
-    color: 'var(--chart-5)',
+    label: "Other",
+    color: "var(--chart-5)",
   },
 } satisfies ChartConfig;
 
@@ -85,7 +85,7 @@ function Content({ viewBox }: Props): ReactNode {
     return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
   }, []);
 
-  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
     return (
       <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
         <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>

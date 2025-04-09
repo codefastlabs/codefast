@@ -1,7 +1,7 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui';
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
 export function SectionCards(): JSX.Element {
   return (

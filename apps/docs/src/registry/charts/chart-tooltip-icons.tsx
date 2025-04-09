@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 import {
   Card,
@@ -12,28 +12,28 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { FootprintsIcon, WavesIcon } from 'lucide-react';
-import { Bar, BarChart, XAxis } from 'recharts';
+} from "@codefast/ui";
+import { FootprintsIcon, WavesIcon } from "lucide-react";
+import { Bar, BarChart, XAxis } from "recharts";
 
 const chartData = [
-  { date: '2024-07-15', running: 450, swimming: 300 },
-  { date: '2024-07-16', running: 380, swimming: 420 },
-  { date: '2024-07-17', running: 520, swimming: 120 },
-  { date: '2024-07-18', running: 140, swimming: 550 },
-  { date: '2024-07-19', running: 600, swimming: 350 },
-  { date: '2024-07-20', running: 480, swimming: 400 },
+  { date: "2024-07-15", running: 450, swimming: 300 },
+  { date: "2024-07-16", running: 380, swimming: 420 },
+  { date: "2024-07-17", running: 520, swimming: 120 },
+  { date: "2024-07-18", running: 140, swimming: 550 },
+  { date: "2024-07-19", running: 600, swimming: 350 },
+  { date: "2024-07-20", running: 480, swimming: 400 },
 ];
 
 const chartConfig = {
   running: {
-    label: 'Running',
-    color: 'var(--chart-1)',
+    label: "Running",
+    color: "var(--chart-1)",
     icon: FootprintsIcon,
   },
   swimming: {
-    label: 'Swimming',
-    color: 'var(--chart-2)',
+    label: "Swimming",
+    color: "var(--chart-2)",
     icon: WavesIcon,
   },
 } satisfies ChartConfig;
@@ -52,8 +52,8 @@ export function ChartTooltipIcons(): JSX.Element {
               axisLine={false}
               dataKey="date"
               tickFormatter={(value: string) => {
-                return new Date(value).toLocaleDateString('en-US', {
-                  weekday: 'short',
+                return new Date(value).toLocaleDateString("en-US", {
+                  weekday: "short",
                 });
               }}
               tickLine={false}

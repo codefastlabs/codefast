@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
 export const metadata: Metadata = {
-  title: 'Products',
+  title: "Products",
 };
 
 export default function ProductsPage(): JSX.Element {
