@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { LucideIcon } from 'lucide-react';
-import type { JSX } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { JSX } from "react";
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@codefast/ui';
-import Link from 'next/link';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@codefast/ui";
+import Link from "next/link";
 
 export function NavMain({
   items,

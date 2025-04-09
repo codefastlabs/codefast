@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Menubar,
@@ -15,8 +15,8 @@ import {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from '@codefast/ui';
-import { HelpCircleIcon, SettingsIcon, Trash2Icon } from 'lucide-react';
+} from "@codefast/ui";
+import { HelpCircleIcon, SettingsIcon, Trash2Icon } from "lucide-react";
 
 export function MenubarDemo(): JSX.Element {
   return (

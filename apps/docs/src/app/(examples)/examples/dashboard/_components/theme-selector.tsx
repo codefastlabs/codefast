@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Label,
@@ -12,44 +12,44 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { useThemeConfig } from '@/components/active-theme';
+import { useThemeConfig } from "@/components/active-theme";
 
 const DEFAULT_THEMES = [
   {
-    name: 'Default',
-    value: 'default',
+    name: "Default",
+    value: "default",
   },
   {
-    name: 'Blue',
-    value: 'blue',
+    name: "Blue",
+    value: "blue",
   },
   {
-    name: 'Green',
-    value: 'green',
+    name: "Green",
+    value: "green",
   },
   {
-    name: 'Amber',
-    value: 'amber',
+    name: "Amber",
+    value: "amber",
   },
 ];
 
 const SCALED_THEMES = [
   {
-    name: 'Default',
-    value: 'default-scaled',
+    name: "Default",
+    value: "default-scaled",
   },
   {
-    name: 'Blue',
-    value: 'blue-scaled',
+    name: "Blue",
+    value: "blue-scaled",
   },
 ];
 
 const MONO_THEMES = [
   {
-    name: 'Mono',
-    value: 'mono-scaled',
+    name: "Mono",
+    value: "mono-scaled",
   },
 ];
 

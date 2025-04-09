@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Collapsible,
@@ -14,12 +14,12 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@codefast/ui';
-import { ChevronRightIcon } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+} from "@codefast/ui";
+import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import type { RegistryGroup } from '@/types/registry';
+import type { RegistryGroup } from "@/types/registry";
 
 export interface NavItemProps {
   groups: RegistryGroup[];
@@ -45,7 +45,7 @@ function ComponentList({
   currentPath,
 }: {
   basePath: string;
-  components: RegistryGroup['components'];
+  components: RegistryGroup["components"];
   currentPath: string;
 }): JSX.Element {
   return (

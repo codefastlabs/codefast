@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import type { ComponentProps, JSX } from 'react';
+import type { Metadata } from "next";
+import type { ComponentProps, JSX } from "react";
 
 import {
   Button,
@@ -32,92 +32,92 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
 export const metadata: Metadata = {
-  title: 'Settings',
-  description: 'Manage your account settings',
+  title: "Settings",
+  description: "Manage your account settings",
 };
 
 const timezones = [
   {
-    label: 'Americas',
+    label: "Americas",
     timezones: [
-      { value: 'America/New_York', label: '(GMT-5) New York' },
-      { value: 'America/Los_Angeles', label: '(GMT-8) Los Angeles' },
-      { value: 'America/Chicago', label: '(GMT-6) Chicago' },
-      { value: 'America/Toronto', label: '(GMT-5) Toronto' },
-      { value: 'America/Vancouver', label: '(GMT-8) Vancouver' },
-      { value: 'America/Sao_Paulo', label: '(GMT-3) São Paulo' },
+      { value: "America/New_York", label: "(GMT-5) New York" },
+      { value: "America/Los_Angeles", label: "(GMT-8) Los Angeles" },
+      { value: "America/Chicago", label: "(GMT-6) Chicago" },
+      { value: "America/Toronto", label: "(GMT-5) Toronto" },
+      { value: "America/Vancouver", label: "(GMT-8) Vancouver" },
+      { value: "America/Sao_Paulo", label: "(GMT-3) São Paulo" },
     ],
   },
   {
-    label: 'Europe',
+    label: "Europe",
     timezones: [
-      { value: 'Europe/London', label: '(GMT+0) London' },
-      { value: 'Europe/Paris', label: '(GMT+1) Paris' },
-      { value: 'Europe/Berlin', label: '(GMT+1) Berlin' },
-      { value: 'Europe/Rome', label: '(GMT+1) Rome' },
-      { value: 'Europe/Madrid', label: '(GMT+1) Madrid' },
-      { value: 'Europe/Amsterdam', label: '(GMT+1) Amsterdam' },
+      { value: "Europe/London", label: "(GMT+0) London" },
+      { value: "Europe/Paris", label: "(GMT+1) Paris" },
+      { value: "Europe/Berlin", label: "(GMT+1) Berlin" },
+      { value: "Europe/Rome", label: "(GMT+1) Rome" },
+      { value: "Europe/Madrid", label: "(GMT+1) Madrid" },
+      { value: "Europe/Amsterdam", label: "(GMT+1) Amsterdam" },
     ],
   },
   {
-    label: 'Asia/Pacific',
+    label: "Asia/Pacific",
     timezones: [
-      { value: 'Asia/Tokyo', label: '(GMT+9) Tokyo' },
-      { value: 'Asia/Shanghai', label: '(GMT+8) Shanghai' },
-      { value: 'Asia/Singapore', label: '(GMT+8) Singapore' },
-      { value: 'Asia/Dubai', label: '(GMT+4) Dubai' },
-      { value: 'Australia/Sydney', label: '(GMT+11) Sydney' },
-      { value: 'Asia/Seoul', label: '(GMT+9) Seoul' },
+      { value: "Asia/Tokyo", label: "(GMT+9) Tokyo" },
+      { value: "Asia/Shanghai", label: "(GMT+8) Shanghai" },
+      { value: "Asia/Singapore", label: "(GMT+8) Singapore" },
+      { value: "Asia/Dubai", label: "(GMT+4) Dubai" },
+      { value: "Australia/Sydney", label: "(GMT+11) Sydney" },
+      { value: "Asia/Seoul", label: "(GMT+9) Seoul" },
     ],
   },
 ] as const;
 
 const loginHistory = [
   {
-    date: '2024-01-01',
-    ip: '192.168.1.1',
-    location: 'New York, USA',
+    date: "2024-01-01",
+    ip: "192.168.1.1",
+    location: "New York, USA",
   },
   {
-    date: '2023-12-29',
-    ip: '172.16.0.100',
-    location: 'London, UK',
+    date: "2023-12-29",
+    ip: "172.16.0.100",
+    location: "London, UK",
   },
   {
-    date: '2023-12-28',
-    ip: '10.0.0.50',
-    location: 'Toronto, Canada',
+    date: "2023-12-28",
+    ip: "10.0.0.50",
+    location: "Toronto, Canada",
   },
   {
-    date: '2023-12-25',
-    ip: '192.168.2.15',
-    location: 'Sydney, Australia',
+    date: "2023-12-25",
+    ip: "192.168.2.15",
+    location: "Sydney, Australia",
   },
 ] as const;
 
 const activeSessions = [
   {
-    device: 'MacBook Pro',
-    browser: 'Chrome',
-    os: 'macOS',
+    device: "MacBook Pro",
+    browser: "Chrome",
+    os: "macOS",
   },
   {
-    device: 'iPhone',
-    browser: 'Safari',
-    os: 'iOS',
+    device: "iPhone",
+    browser: "Safari",
+    os: "iOS",
   },
   {
-    device: 'iPad',
-    browser: 'Safari',
-    os: 'iOS',
+    device: "iPad",
+    browser: "Safari",
+    os: "iOS",
   },
   {
-    device: 'Android Phone',
-    browser: 'Chrome',
-    os: 'Android',
+    device: "Android Phone",
+    browser: "Chrome",
+    os: "Android",
   },
 ] as const;
 
@@ -306,10 +306,10 @@ export default function SettingsPage(): JSX.Element {
                     <TableRow key={login.date}>
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          {new Date(login.date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
+                          {new Date(login.date).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
                           })}
                           <span className="@md/page:hidden flex">{login.ip}</span>
                         </div>
@@ -360,7 +360,7 @@ export default function SettingsPage(): JSX.Element {
   );
 }
 
-function FieldGroup({ children }: ComponentProps<'div'>): JSX.Element {
+function FieldGroup({ children }: ComponentProps<"div">): JSX.Element {
   return (
     <div className="@container/field-group @3xl:gap-6 flex min-w-0 max-w-4xl flex-col gap-8" data-slot="field-group">
       {children}
@@ -368,11 +368,11 @@ function FieldGroup({ children }: ComponentProps<'div'>): JSX.Element {
   );
 }
 
-function Field({ children, className, ...props }: ComponentProps<'div'>): JSX.Element {
+function Field({ children, className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
     <div
       className={cn(
-        '@3xl/field-group:grid-cols-2 @3xl/field-group:gap-6 grid auto-rows-min items-start gap-3 *:data-[slot=label]:col-start-1 *:data-[slot=label]:row-start-1',
+        "@3xl/field-group:grid-cols-2 @3xl/field-group:gap-6 grid auto-rows-min items-start gap-3 *:data-[slot=label]:col-start-1 *:data-[slot=label]:row-start-1",
         className,
       )}
       data-slot="field"
@@ -383,11 +383,11 @@ function Field({ children, className, ...props }: ComponentProps<'div'>): JSX.El
   );
 }
 
-function FieldControl({ children, className, ...props }: ComponentProps<'div'>): JSX.Element {
+function FieldControl({ children, className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
     <div
       className={cn(
-        '@3xl/field-group:col-start-2 @3xl/field-group:row-span-2 @3xl/field-group:row-start-1 @3xl/field-group:self-start',
+        "@3xl/field-group:col-start-2 @3xl/field-group:row-span-2 @3xl/field-group:row-start-1 @3xl/field-group:self-start",
         className,
       )}
       data-slot="field-control"
@@ -398,11 +398,11 @@ function FieldControl({ children, className, ...props }: ComponentProps<'div'>):
   );
 }
 
-function FieldDescription({ children, className, ...props }: ComponentProps<'p'>): JSX.Element {
+function FieldDescription({ children, className, ...props }: ComponentProps<"p">): JSX.Element {
   return (
     <p
       className={cn(
-        'text-muted-foreground @3xl/field-group:col-start-1 @3xl/field-group:row-start-1 @3xl/field-group:translate-y-6 text-sm',
+        "text-muted-foreground @3xl/field-group:col-start-1 @3xl/field-group:row-start-1 @3xl/field-group:translate-y-6 text-sm",
         className,
       )}
       data-slot="field-description"

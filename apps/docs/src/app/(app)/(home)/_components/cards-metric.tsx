@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 import {
   Card,
@@ -12,8 +12,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { Line, LineChart } from 'recharts';
+} from "@codefast/ui";
+import { Line, LineChart } from "recharts";
 
 const data = [
   { average: 400, today: 240 },
@@ -27,12 +27,12 @@ const data = [
 
 const chartConfig = {
   today: {
-    label: 'Today',
-    color: 'var(--primary)',
+    label: "Today",
+    color: "var(--primary)",
   },
   average: {
-    label: 'Average',
-    color: 'var(--primary)',
+    label: "Average",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
@@ -48,7 +48,7 @@ export function CardsMetric(): JSX.Element {
           <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
             <ChartTooltip content={<ChartTooltipContent />} />
             <Line
-              activeDot={{ r: 6, fill: 'var(--color-average)' }}
+              activeDot={{ r: 6, fill: "var(--color-average)" }}
               dataKey="average"
               stroke="var(--color-average)"
               strokeOpacity={0.5}
@@ -56,7 +56,7 @@ export function CardsMetric(): JSX.Element {
               type="monotone"
             />
             <Line
-              activeDot={{ r: 8, style: { fill: 'var(--color-today)' } }}
+              activeDot={{ r: 8, style: { fill: "var(--color-today)" } }}
               dataKey="today"
               stroke="var(--color-today)"
               strokeWidth={2}

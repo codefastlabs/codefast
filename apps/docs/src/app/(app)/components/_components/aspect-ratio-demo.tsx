@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { AspectRatio } from '@codefast/ui';
-import Image from 'next/image';
+import { AspectRatio } from "@codefast/ui";
+import Image from "next/image";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function AspectRatioDemo(): JSX.Element {
   return (

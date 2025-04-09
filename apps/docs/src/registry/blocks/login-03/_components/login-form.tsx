@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
 import {
   Button,
@@ -12,12 +12,12 @@ import {
   Label,
   Separator,
   SeparatorItem,
-} from '@codefast/ui';
-import Link from 'next/link';
+} from "@codefast/ui";
+import Link from "next/link";
 
-export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
@@ -68,7 +68,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{' '}
+                Don&apos;t have an account?{" "}
                 <Link className="underline underline-offset-4" href="#">
                   Sign up
                 </Link>
@@ -78,7 +78,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary *:[a]:underline *:[a]:underline-offset-4 text-balance text-center text-xs">
-        By clicking continue, you agree to our <Link href="#">Terms of Service</Link> and{' '}
+        By clicking continue, you agree to our <Link href="#">Terms of Service</Link> and{" "}
         <Link href="#">Privacy Policy</Link>.
       </div>
     </div>

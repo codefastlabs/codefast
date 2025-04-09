@@ -1,10 +1,10 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn, RadioCards, RadioCardsItem } from '@codefast/ui';
+import { cn, RadioCards, RadioCardsItem } from "@codefast/ui";
 
-export function RadioCardsDemo({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+export function RadioCardsDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
-    <div className={cn('', className)} {...props}>
+    <div className={cn("", className)} {...props}>
       <RadioCards className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <RadioCardsItem value="1">
           <div className="grid gap-1 font-normal">

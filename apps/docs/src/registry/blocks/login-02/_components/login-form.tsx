@@ -1,11 +1,11 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Button, cn, Input, Label, Separator, SeparatorItem } from '@codefast/ui';
-import Link from 'next/link';
+import { Button, cn, Input, Label, Separator, SeparatorItem } from "@codefast/ui";
+import Link from "next/link";
 
-export function LoginForm({ className, ...props }: ComponentProps<'form'>): JSX.Element {
+export function LoginForm({ className, ...props }: ComponentProps<"form">): JSX.Element {
   return (
-    <form className={cn('flex flex-col gap-6', className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-muted-foreground text-balance text-sm">Enter your email below to login to your account</p>
@@ -41,7 +41,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'form'>): JSX.
         </Button>
       </div>
       <div className="text-center text-sm">
-        Don&apos;t have an account?{' '}
+        Don&apos;t have an account?{" "}
         <Link className="underline underline-offset-4" href="#">
           Sign up
         </Link>

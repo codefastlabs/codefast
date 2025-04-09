@@ -6,10 +6,10 @@ on:
       - main # For the official release
       - develop # Choose the prerelease/canary version.
     paths:
-      - '.changeset/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/release.yml'
+      - ".changeset/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/release.yml"
   workflow_dispatch: # Allow manual activation
 
 concurrency:
@@ -85,8 +85,8 @@ jobs:
         with:
           version: pnpm run changeset:version
           publish: pnpm run changeset:publish
-          title: 'chore(release): version packages'
-          commit: 'chore(release): version packages'
+          title: "chore(release): version packages"
+          commit: "chore(release): version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

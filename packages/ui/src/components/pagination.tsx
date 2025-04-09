@@ -1,21 +1,21 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
-import type { VariantProps } from '@/lib/utils';
+import type { VariantProps } from "@/lib/utils";
 
-import { buttonVariants } from '@/components/button';
-import { cn } from '@/lib/utils';
+import { buttonVariants } from "@/components/button";
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
  * -------------------------------------------------------------------------- */
 
-function Pagination({ className, ...props }: ComponentProps<'nav'>): JSX.Element {
+function Pagination({ className, ...props }: ComponentProps<"nav">): JSX.Element {
   return (
     <nav
       aria-label="pagination"
-      className={cn('mx-auto flex w-full justify-center', className)}
+      className={cn("mx-auto flex w-full justify-center", className)}
       data-slot="pagination"
       role="navigation"
       {...props}
@@ -27,15 +27,15 @@ function Pagination({ className, ...props }: ComponentProps<'nav'>): JSX.Element
  * Component: PaginationContent
  * -------------------------------------------------------------------------- */
 
-function PaginationContent({ className, ...props }: ComponentProps<'ul'>): JSX.Element {
-  return <ul className={cn('flex flex-row items-center gap-1', className)} data-slot="pagination-content" {...props} />;
+function PaginationContent({ className, ...props }: ComponentProps<"ul">): JSX.Element {
+  return <ul className={cn("flex flex-row items-center gap-1", className)} data-slot="pagination-content" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
  * Component: PaginationItem
  * -------------------------------------------------------------------------- */
 
-function PaginationItem(props: ComponentProps<'li'>): JSX.Element {
+function PaginationItem(props: ComponentProps<"li">): JSX.Element {
   return <li data-slot="pagination-item" {...props} />;
 }
 
@@ -47,16 +47,16 @@ function PaginationLink({
   children,
   className,
   isActive,
-  size = 'icon',
+  size = "icon",
   ...props
-}: ComponentProps<'a'> &
-  Pick<VariantProps<typeof buttonVariants>, 'size'> & {
+}: ComponentProps<"a"> &
+  Pick<VariantProps<typeof buttonVariants>, "size"> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
     <a
-      aria-current={isActive ? 'page' : undefined}
-      className={buttonVariants({ className, size, variant: isActive ? 'outline' : 'ghost' })}
+      aria-current={isActive ? "page" : undefined}
+      className={buttonVariants({ className, size, variant: isActive ? "outline" : "ghost" })}
       data-slot="pagination-link"
       {...props}
     >
@@ -71,8 +71,8 @@ function PaginationLink({
 
 function PaginationPrevious({
   ...props
-}: ComponentProps<'a'> &
-  Pick<VariantProps<typeof buttonVariants>, 'size'> & {
+}: ComponentProps<"a"> &
+  Pick<VariantProps<typeof buttonVariants>, "size"> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
@@ -89,8 +89,8 @@ function PaginationPrevious({
 
 function PaginationNext({
   ...props
-}: ComponentProps<'a'> &
-  Pick<VariantProps<typeof buttonVariants>, 'size'> & {
+}: ComponentProps<"a"> &
+  Pick<VariantProps<typeof buttonVariants>, "size"> & {
     isActive?: boolean;
   }): JSX.Element {
   return (
@@ -105,11 +105,11 @@ function PaginationNext({
  * Component: PaginationEllipsis
  * -------------------------------------------------------------------------- */
 
-function PaginationEllipsis({ className, ...props }: ComponentProps<'span'>): JSX.Element {
+function PaginationEllipsis({ className, ...props }: ComponentProps<"span">): JSX.Element {
   return (
     <span
       aria-hidden
-      className={cn('flex size-10 items-center justify-center', className)}
+      className={cn("flex size-10 items-center justify-center", className)}
       data-slot="pagination-ellipsis"
       {...props}
     >

@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode } from "react";
 
-import Cookies from 'js-cookie';
-import { createContext, useContext, useEffect, useState } from 'react';
+import Cookies from "js-cookie";
+import { createContext, useContext, useEffect, useState } from "react";
 
-const THEME_COOKIE_NAME = 'active_theme';
-const DEFAULT_THEME = 'default';
+const THEME_COOKIE_NAME = "active_theme";
+const DEFAULT_THEME = "default";
 
 function setThemeCookie(theme: string): void {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
 
   Cookies.set(THEME_COOKIE_NAME, theme, {
-    path: '/',
+    path: "/",
     expires: 365,
-    sameSite: 'Lax',
-    secure: window.location.protocol === 'https:',
+    sameSite: "Lax",
+    secure: window.location.protocol === "https:",
   });
 }
 
@@ -42,14 +42,14 @@ export function ActiveThemeProvider({
 
     const element = document.documentElement;
 
-    for (const className of [...element.classList].filter((currentClass) => currentClass.startsWith('theme-'))) {
+    for (const className of [...element.classList].filter((currentClass) => currentClass.startsWith("theme-"))) {
       element.classList.remove(className);
     }
 
     element.classList.add(`theme-${activeTheme}`);
 
-    if (activeTheme.endsWith('-scaled')) {
-      element.classList.add('theme-scaled');
+    if (activeTheme.endsWith("-scaled")) {
+      element.classList.add("theme-scaled");
     }
   }, [activeTheme]);
 
@@ -60,7 +60,7 @@ export function useThemeConfig(): ThemeContextValue {
   const context = useContext(ThemeContext);
 
   if (!context) {
-    throw new Error('useThemeConfig must be used within an ActiveThemeProvider');
+    throw new Error("useThemeConfig must be used within an ActiveThemeProvider");
   }
 
   return context;

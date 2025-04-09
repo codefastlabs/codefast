@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { Command as CommandPrimitive } from 'cmdk';
-import { SearchIcon } from 'lucide-react';
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Command as CommandPrimitive } from "cmdk";
+import { SearchIcon } from "lucide-react";
 
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/dialog';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/dialog";
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Command
@@ -17,7 +17,7 @@ function Command({ className, ...props }: ComponentProps<typeof CommandPrimitive
   return (
     <CommandPrimitive
       className={cn(
-        'bg-popover text-popover-foreground outline-hidden flex flex-col overflow-hidden rounded-[inherit]',
+        "bg-popover text-popover-foreground outline-hidden flex flex-col overflow-hidden rounded-[inherit]",
         className,
       )}
       data-slot="command"
@@ -56,7 +56,7 @@ function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrim
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(
-          'placeholder:text-muted-foreground outline-hidden flex h-10 w-full text-base disabled:opacity-50 md:text-sm',
+          "placeholder:text-muted-foreground outline-hidden flex h-10 w-full text-base disabled:opacity-50 md:text-sm",
           className,
         )}
         data-slot="command-input"
@@ -73,7 +73,7 @@ function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrim
 function CommandList({ className, ...props }: ComponentProps<typeof CommandPrimitive.List>): JSX.Element {
   return (
     <CommandPrimitive.List
-      className={cn('max-h-75 overflow-y-auto overflow-x-hidden', className)}
+      className={cn("max-h-75 overflow-y-auto overflow-x-hidden", className)}
       data-slot="command-list"
       {...props}
     />
@@ -87,7 +87,7 @@ function CommandList({ className, ...props }: ComponentProps<typeof CommandPrimi
 function CommandEmpty({ className, ...props }: ComponentProps<typeof CommandPrimitive.Empty>): JSX.Element {
   return (
     <CommandPrimitive.Empty
-      className={cn('py-6 text-center text-sm', className)}
+      className={cn("py-6 text-center text-sm", className)}
       data-slot="command-empty"
       {...props}
     />
@@ -102,7 +102,7 @@ function CommandGroup({ className, ...props }: ComponentProps<typeof CommandPrim
   return (
     <CommandPrimitive.Group
       className={cn(
-        'text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium',
+        "text-foreground [&_[cmdk-group-heading]]:text-muted-foreground overflow-hidden p-1 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium",
         className,
       )}
       data-slot="command-group"
@@ -118,7 +118,7 @@ function CommandGroup({ className, ...props }: ComponentProps<typeof CommandPrim
 function CommandSeparator({ className, ...props }: ComponentProps<typeof CommandPrimitive.Separator>): JSX.Element {
   return (
     <CommandPrimitive.Separator
-      className={cn('bg-border -mx-1 h-px', className)}
+      className={cn("bg-border -mx-1 h-px", className)}
       data-slot="command-separator"
       {...props}
     />
@@ -149,7 +149,7 @@ function CommandItem({ className, ...props }: ComponentProps<typeof CommandPrimi
 function CommandLoading({ className, ...props }: ComponentProps<typeof CommandPrimitive.Loading>): JSX.Element {
   return (
     <CommandPrimitive.Loading
-      className={cn('flex justify-center p-2', className)}
+      className={cn("flex justify-center p-2", className)}
       data-slot="command-loading"
       {...props}
     />
@@ -160,10 +160,10 @@ function CommandLoading({ className, ...props }: ComponentProps<typeof CommandPr
  * Component: CommandShortcut
  * -------------------------------------------------------------------------- */
 
-function CommandShortcut({ className, ...props }: ComponentProps<'span'>): JSX.Element {
+function CommandShortcut({ className, ...props }: ComponentProps<"span">): JSX.Element {
   return (
     <span
-      className={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
+      className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
       data-slot="command-shortcut"
       {...props}
     />

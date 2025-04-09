@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 import {
   Card,
@@ -13,22 +13,22 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { TrendingUpIcon } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, Cell, LabelList } from 'recharts';
+} from "@codefast/ui";
+import { TrendingUpIcon } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList } from "recharts";
 
 const chartData = [
-  { month: 'January', visitors: 186 },
-  { month: 'February', visitors: 205 },
-  { month: 'March', visitors: -207 },
-  { month: 'April', visitors: 173 },
-  { month: 'May', visitors: -209 },
-  { month: 'June', visitors: 214 },
+  { month: "January", visitors: 186 },
+  { month: "February", visitors: 205 },
+  { month: "March", visitors: -207 },
+  { month: "April", visitors: 173 },
+  { month: "May", visitors: -209 },
+  { month: "June", visitors: 214 },
 ];
 
 const chartConfig = {
   visitors: {
-    label: 'Visitors',
+    label: "Visitors",
   },
 } satisfies ChartConfig;
 
@@ -47,7 +47,7 @@ export function ChartBarNegative(): JSX.Element {
             <Bar dataKey="visitors">
               <LabelList dataKey="month" fillOpacity={1} position="top" />
               {chartData.map((item) => (
-                <Cell key={item.month} fill={item.visitors > 0 ? 'var(--chart-1)' : 'var(--chart-2)'} />
+                <Cell key={item.month} fill={item.visitors > 0 ? "var(--chart-1)" : "var(--chart-2)"} />
               ))}
             </Bar>
           </BarChart>
