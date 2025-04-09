@@ -2,7 +2,9 @@ name: Release Packages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main # For the official release
+      - develop # Choose the prerelease/canary version.
     paths:
       - '.changeset/**'
       - 'packages/**'
@@ -20,7 +22,7 @@ env:
 
 jobs:
   validate:
-    name: Validate Build
+    name: Validate Build & Quality
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -58,13 +60,14 @@ jobs:
       - name: Setup Build Environment
         uses: ./.github/actions/setup-environment
 
-      - name: Build Packages
+      - name: Build Packages for Release
         run: pnpm run build --filter="./packages/**"
 
       - name: Check for changeset markdown files
         id: check_changesets
         run: |
-          if [ $(find .changeset -name "*.md" | wc -l) -eq 1 ]; then
+          NON_CONFIG_FILES=$(find .changeset -name "*.md" -not -name "README.md" | wc -l)
+          if [ $NON_CONFIG_FILES -le 0 ]; then
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           else
             echo "has_changesets=true" >> $GITHUB_OUTPUT
@@ -78,6 +81,10 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Setup Canary Release Mode
+        if: github.ref == 'refs/heads/develop' && steps.check_changesets.outputs.has_changesets == 'true'
+        run: pnpm run changeset:prerelease
+
       - name: Version or Publish Changed Packages
         id: changesets
         uses: changesets/action@v1
@@ -89,3 +96,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Exit Canary Release Mode
+        if: github.ref == 'refs/heads/develop' && steps.changesets.outputs.published == 'true'
+        run: pnpm run changeset:prerelease:exit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
