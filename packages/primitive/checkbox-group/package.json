@@ -41,6 +41,7 @@
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch",
     "type:check": "tsc --noEmit"
   },
