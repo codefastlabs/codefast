@@ -1,8 +1,10 @@
 import type { ComponentProps, JSX, ReactNode } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as TogglePrimitive from '@radix-ui/react-toggle';
-import { tv } from 'tailwind-variants';
+
+import type { VariantProps } from '@/lib/utils';
+
+import { tv } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Toggle

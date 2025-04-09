@@ -1,12 +1,12 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as SheetPrimitive from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
-import { tv } from 'tailwind-variants';
+
+import type { VariantProps } from '@/lib/utils';
 
 import { buttonVariants } from '@/components/button';
-import { cn } from '@/lib/utils';
+import { cn, tv } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: SheetContent

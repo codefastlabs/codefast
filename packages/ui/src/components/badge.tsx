@@ -1,8 +1,10 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import { Slot } from '@radix-ui/react-slot';
-import { tv } from 'tailwind-variants';
+
+import type { VariantProps } from '@/lib/utils';
+
+import { tv } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Badge

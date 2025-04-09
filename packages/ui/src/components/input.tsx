@@ -1,10 +1,11 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as InputPrimitive from '@codefast-ui/input';
-import { tv } from 'tailwind-variants';
+
+import type { VariantProps } from '@/lib/utils';
 
 import { Spinner } from '@/components/spinner';
+import { tv } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

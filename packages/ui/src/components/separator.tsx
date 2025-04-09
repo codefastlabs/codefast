@@ -1,10 +1,10 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
-import { tv } from 'tailwind-variants';
 
-import { cn } from '@/lib/utils';
+import type { VariantProps } from '@/lib/utils';
+
+import { cn, tv } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Separator

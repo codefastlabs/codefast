@@ -1,11 +1,12 @@
 'use client';
 
 import type { ComponentProps, JSX, MouseEventHandler } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as InputPrimitive from '@codefast-ui/input';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
+
+import type { VariantProps } from '@/lib/utils';
 
 import { Button } from '@/components/button';
 import { inputVariants } from '@/components/input';

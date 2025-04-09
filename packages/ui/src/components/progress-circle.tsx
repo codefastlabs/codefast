@@ -1,12 +1,14 @@
 'use client';
 
 import type { ComponentProps, CSSProperties, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as ProgressCirclePrimitive from '@codefast-ui/progress-circle';
 import { useAnimatedValue } from '@codefast/hooks';
 import { useCallback, useMemo } from 'react';
-import { tv } from 'tailwind-variants';
+
+import type { VariantProps } from '@/lib/utils';
+
+import { tv } from '@/lib/utils';
 
 /* -------------------------------------------------------------------------------------------------
  * Variant: ProgressCircle

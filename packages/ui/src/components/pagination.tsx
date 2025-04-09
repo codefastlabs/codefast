@@ -1,7 +1,8 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from 'lucide-react';
+
+import type { VariantProps } from '@/lib/utils';
 
 import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';

@@ -1,8 +1,9 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from 'lucide-react';
+
+import type { VariantProps } from '@/lib/utils';
 
 import { buttonVariants } from '@/components/button';
 import { cn } from '@/lib/utils';
