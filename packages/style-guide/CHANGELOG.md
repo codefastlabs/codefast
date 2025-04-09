@@ -1,5 +1,13 @@
 # @codefast/style-guide
 
+## 0.2.43
+
+### Patch Changes
+
+- [`b220b42`](https://github.com/codefastlabs/codefast/commit/b220b428ee345791841e278c3782c45e77815222) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): remove DataTable components and dependencies
+
+- [`7f80278`](https://github.com/codefastlabs/codefast/commit/7f802784a1c12b13940d82167a099f9bc8e67c60) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): export useSonner from sonner
+
 ## 0.2.42
 
 ### Patch Changes
