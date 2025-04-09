@@ -32,7 +32,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Validate Packages (Build, Lint, Test)
-        run: turbo run build lint test:coverage:ci --filter="./packages/**" --no-daemon
+        run: npx turbo run build lint test:coverage:ci --filter="./packages/**" --no-daemon
 
       - name: Upload Coverage Reports
         uses: codecov/codecov-action@v5
