@@ -2,8 +2,18 @@ name: Deploy to Vercel
 
 on:
   pull_request:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - ".github/workflows/vercel-deploy.yml"
+      - "!packages/**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
