@@ -1,15 +1,6 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches: [main, develop, "feature/**", "fix/**", "release/**"]
-    paths:
-      - "apps/**"
-      - "packages/**"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/vercel-deploy.yml"
-      - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
-      - "!**/{__tests__,tests,e2e,__mocks__}/**"
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened]
