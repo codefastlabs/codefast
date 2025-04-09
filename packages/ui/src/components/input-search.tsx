@@ -1,11 +1,12 @@
 'use client';
 
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
 import * as InputPrimitive from '@codefast-ui/input';
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import { SearchIcon, XIcon } from 'lucide-react';
+
+import type { VariantProps } from '@/lib/utils';
 
 import { Button } from '@/components/button';
 import { inputVariants } from '@/components/input';

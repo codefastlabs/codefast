@@ -1,9 +1,8 @@
 import type { ComponentProps, JSX } from 'react';
-import type { VariantProps } from 'tailwind-variants';
 
-import { tv } from 'tailwind-variants';
+import type { VariantProps } from '@/lib/utils';
 
-import { cn } from '@/lib/utils';
+import { cn, tv } from '@/lib/utils';
 
 /* -----------------------------------------------------------------------------
  * Variant: Alert
