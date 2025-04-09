@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Button } from '@codefast/ui';
-import { ArrowRightIcon, SendIcon } from 'lucide-react';
+import { Button } from "@codefast/ui";
+import { ArrowRightIcon, SendIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function ButtonDemo(): JSX.Element {
   return (

@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { buttonVariants, Separator, SidebarTrigger } from '@codefast/ui';
+import { buttonVariants, Separator, SidebarTrigger } from "@codefast/ui";
 
 export function SiteHeader(): JSX.Element {
   return (
@@ -12,9 +12,9 @@ export function SiteHeader(): JSX.Element {
         <div className="ml-auto flex items-center gap-2">
           <a
             className={buttonVariants({
-              className: 'dark:text-foreground hidden sm:flex',
-              size: 'sm',
-              variant: 'ghost',
+              className: "dark:text-foreground hidden sm:flex",
+              size: "sm",
+              variant: "ghost",
             })}
             href="https://github.com/codefastlabs/codefast/tree/main/apps/docs/src/registry/blocks/dashboard-01"
             rel="noopener noreferrer"

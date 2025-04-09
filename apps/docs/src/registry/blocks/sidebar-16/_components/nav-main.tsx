@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { LucideIcon } from 'lucide-react';
-import type { JSX } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import {
   Collapsible,
@@ -16,9 +16,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@codefast/ui';
-import { ChevronRightIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
 
 export function NavMain({
   items,

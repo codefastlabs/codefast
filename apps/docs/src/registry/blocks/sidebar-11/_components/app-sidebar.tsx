@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
 import {
   Collapsible,
@@ -15,12 +15,12 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarRail,
-} from '@codefast/ui';
-import { ChevronRightIcon, FileIcon, FolderIcon } from 'lucide-react';
+} from "@codefast/ui";
+import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 
 export interface Change {
   file: string;
-  state: 'A' | 'D' | 'M' | 'U'; // M for Modified, U for Untracked, A for Added, D for Deleted
+  state: "A" | "D" | "M" | "U"; // M for Modified, U for Untracked, A for Added, D for Deleted
 }
 
 export type TreeNode = [string, ...TreeNode[]] | string;
@@ -34,29 +34,29 @@ export interface Data {
 const data: Data = {
   changes: [
     {
-      file: 'README.md',
-      state: 'M',
+      file: "README.md",
+      state: "M",
     },
     {
-      file: 'api/hello/route.ts',
-      state: 'U',
+      file: "api/hello/route.ts",
+      state: "U",
     },
     {
-      file: 'app/layout.tsx',
-      state: 'M',
+      file: "app/layout.tsx",
+      state: "M",
     },
   ],
   tree: [
-    ['app', ['api', ['hello', ['route.ts']], 'page.tsx', 'layout.tsx', ['blog', ['page.tsx']]]],
-    ['components', ['ui', 'button.tsx', 'card.tsx'], 'header.tsx', 'footer.tsx'],
-    ['lib', ['util.ts']],
-    ['public', 'favicon.ico', 'vercel.svg'],
-    '.eslintrc.json',
-    '.gitignore',
-    'next.config.js',
-    'tailwind.config.js',
-    'package.json',
-    'README.md',
+    ["app", ["api", ["hello", ["route.ts"]], "page.tsx", "layout.tsx", ["blog", ["page.tsx"]]]],
+    ["components", ["ui", "button.tsx", "card.tsx"], "header.tsx", "footer.tsx"],
+    ["lib", ["util.ts"]],
+    ["public", "favicon.ico", "vercel.svg"],
+    ".eslintrc.json",
+    ".gitignore",
+    "next.config.js",
+    "tailwind.config.js",
+    "package.json",
+    "README.md",
   ],
 };
 
@@ -65,7 +65,7 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
 
   if (items.length === 0) {
     return (
-      <SidebarMenuButton className="data-[active=true]:bg-transparent" isActive={name === 'button.tsx'}>
+      <SidebarMenuButton className="data-[active=true]:bg-transparent" isActive={name === "button.tsx"}>
         <FileIcon />
         {name}
       </SidebarMenuButton>
@@ -76,7 +76,7 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
     <SidebarMenuItem>
       <Collapsible
         className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-        defaultOpen={name === 'components' || name === 'ui'}
+        defaultOpen={name === "components" || name === "ui"}
       >
         <CollapsibleTrigger asChild>
           <SidebarMenuButton>

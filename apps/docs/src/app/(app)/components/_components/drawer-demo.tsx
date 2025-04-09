@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { CSSProperties, JSX } from 'react';
+import type { CSSProperties, JSX } from "react";
 
 import {
   Button,
@@ -14,12 +14,12 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@codefast/ui';
-import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import { Bar, BarChart, ResponsiveContainer } from 'recharts';
+} from "@codefast/ui";
+import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Bar, BarChart, ResponsiveContainer } from "recharts";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 const data = [
   { goal: 400 },
@@ -109,7 +109,7 @@ function DrawerBottom(): JSX.Element {
                     dataKey="goal"
                     style={
                       {
-                        fill: 'var(--foreground)',
+                        fill: "var(--foreground)",
                         opacity: 0.9,
                       } as CSSProperties
                     }
@@ -165,7 +165,7 @@ function DrawerScrollableContent(): JSX.Element {
   );
 }
 
-const DIRECTIONS = ['top', 'right', 'bottom', 'left'] as const;
+const DIRECTIONS = ["top", "right", "bottom", "left"] as const;
 
 function DrawerDirections(): JSX.Element {
   return (
@@ -174,20 +174,20 @@ function DrawerDirections(): JSX.Element {
         <div
           key={direction}
           className={cn(
-            'flex items-center justify-center',
-            direction === 'top' && 'col-start-2',
-            direction === 'right' && 'col-start-3 row-start-2',
-            direction === 'bottom' && 'col-start-2 row-start-3',
-            direction === 'left' && 'row-start-2',
+            "flex items-center justify-center",
+            direction === "top" && "col-start-2",
+            direction === "right" && "col-start-3 row-start-2",
+            direction === "bottom" && "col-start-2 row-start-3",
+            direction === "left" && "row-start-2",
           )}
         >
           <Drawer direction={direction}>
             <DrawerTrigger asChild>
               <Button className="capitalize" size="icon" variant="outline">
-                {direction === 'top' && <ChevronUpIcon className="rotate-180" />}
-                {direction === 'right' && <ChevronUpIcon className="rotate-270" />}
-                {direction === 'bottom' && <ChevronUpIcon />}
-                {direction === 'left' && <ChevronUpIcon className="rotate-90" />}
+                {direction === "top" && <ChevronUpIcon className="rotate-180" />}
+                {direction === "right" && <ChevronUpIcon className="rotate-270" />}
+                {direction === "bottom" && <ChevronUpIcon />}
+                {direction === "left" && <ChevronUpIcon className="rotate-90" />}
               </Button>
             </DrawerTrigger>
             <DrawerContent>

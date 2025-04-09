@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
 /**
  * Enum representing the methods used to update browser history.
@@ -7,11 +7,11 @@ export enum HistoryMethod {
   /**
    * Creates a new entry in the browser history.
    */
-  Push = 'push',
+  Push = "push",
   /**
    * Replaces the current entry in the browser history.
    */
-  Replace = 'replace',
+  Replace = "replace",
 }
 
 /**
@@ -55,12 +55,12 @@ export interface StateParamsHookResult {
  */
 export function updateBrowserHistory(urlParams: URLSearchParams, method: HistoryMethod): void {
   const queryString = urlParams.toString();
-  const url = queryString ? `?${queryString}` : '';
+  const url = queryString ? `?${queryString}` : "";
 
   if (method === HistoryMethod.Push) {
-    window.history.pushState(null, '', url);
+    window.history.pushState(null, "", url);
   } else {
-    window.history.replaceState(null, '', url);
+    window.history.replaceState(null, "", url);
   }
 }
 
@@ -108,7 +108,7 @@ export function useStateParams(): StateParamsHookResult {
    * @param method - The history method to use (push or replace)
    */
   const updateParams = useCallback((paramInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
-    const newParams = typeof paramInput === 'object' ? paramInput : { [paramInput]: value };
+    const newParams = typeof paramInput === "object" ? paramInput : { [paramInput]: value };
 
     updateUrlParams(newParams, method);
   }, []);

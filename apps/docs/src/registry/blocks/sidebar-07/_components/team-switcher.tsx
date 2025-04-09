@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { ElementType, ReactNode } from 'react';
+import type { ElementType, ReactNode } from "react";
 
 import {
   DropdownMenu,
@@ -14,9 +14,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@codefast/ui';
-import { ChevronsUpDownIcon, PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+} from "@codefast/ui";
+import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { useState } from "react";
 
 export function TeamSwitcher({
   teams,
@@ -27,7 +27,7 @@ export function TeamSwitcher({
     plan: string;
   }[];
 }): ReactNode {
-  const { isMobile } = useSidebar('TeamSwitcher');
+  const { isMobile } = useSidebar("TeamSwitcher");
   const [activeTeam, setActiveTeam] = useState(teams.at(0));
 
   if (!activeTeam) {
@@ -56,7 +56,7 @@ export function TeamSwitcher({
           <DropdownMenuContent
             align="start"
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>

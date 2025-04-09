@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
 import {
   NavigationMenu,
@@ -8,42 +8,42 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from '@codefast/ui';
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
+import Link from "next/link";
 
 const components: { description: string; href: string; title: string }[] = [
   {
-    title: 'Alert Dialog',
-    href: '/components/alert-dialog',
-    description: 'A modal dialog that interrupts the user with important content and expects a response.',
+    title: "Alert Dialog",
+    href: "/components/alert-dialog",
+    description: "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
-    title: 'Hover Card',
-    href: '/components/hover-card',
-    description: 'For sighted users to preview content available behind a link.',
+    title: "Hover Card",
+    href: "/components/hover-card",
+    description: "For sighted users to preview content available behind a link.",
   },
   {
-    title: 'Progress',
-    href: '/components/progress',
+    title: "Progress",
+    href: "/components/progress",
     description:
-      'Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.',
+      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
   },
   {
-    title: 'Scroll-area',
-    href: '/components/scroll-area',
-    description: 'Visually or semantically separates content.',
+    title: "Scroll-area",
+    href: "/components/scroll-area",
+    description: "Visually or semantically separates content.",
   },
   {
-    title: 'Tabs',
-    href: '/components/tabs',
-    description: 'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
+    title: "Tabs",
+    href: "/components/tabs",
+    description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   },
   {
-    title: 'Tooltip',
-    href: '/components/tooltip',
+    title: "Tooltip",
+    href: "/components/tooltip",
     description:
-      'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
+      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ];
 
@@ -185,7 +185,7 @@ export function NavigationMenuDemo(): JSX.Element {
   );
 }
 
-function ListItem({ title, children, href, ...props }: ComponentProps<'li'> & { href: string }): JSX.Element {
+function ListItem({ title, children, href, ...props }: ComponentProps<"li"> & { href: string }): JSX.Element {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

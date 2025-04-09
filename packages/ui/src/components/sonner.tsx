@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import type { CSSProperties, JSX } from 'react';
-import type { ToasterProps } from 'sonner';
+import type { CSSProperties, JSX } from "react";
+import type { ToasterProps } from "sonner";
 
-import { useTheme } from 'next-themes';
-import { Toaster as Sonner } from 'sonner';
+import { useTheme } from "next-themes";
+import { Toaster as Sonner } from "sonner";
 
 /* -----------------------------------------------------------------------------
  * Component: Sonner
  * -------------------------------------------------------------------------- */
 
 function Toaster({ ...props }: ToasterProps): JSX.Element {
-  const { theme = 'system' } = useTheme();
+  const { theme = "system" } = useTheme();
 
   return (
     <Sonner
       className="toaster group"
       style={
         {
-          '--normal-bg': 'var(--popover)',
-          '--normal-text': 'var(--popover-foreground)',
-          '--normal-border': 'var(--border)',
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
         } as CSSProperties
       }
-      theme={theme as ToasterProps['theme']}
+      theme={theme as ToasterProps["theme"]}
       {...props}
     />
   );
@@ -33,5 +33,5 @@ function Toaster({ ...props }: ToasterProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { toast, useSonner } from 'sonner';
+export { toast, useSonner } from "sonner";
 export { Toaster };

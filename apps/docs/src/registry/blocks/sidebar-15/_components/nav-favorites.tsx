@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   DropdownMenu,
@@ -15,9 +15,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@codefast/ui';
-import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
 
 export function NavFavorites({
   favorites,
@@ -28,7 +28,7 @@ export function NavFavorites({
     url: string;
   }[];
 }): JSX.Element {
-  const { isMobile } = useSidebar('NavFavorites');
+  const { isMobile } = useSidebar("NavFavorites");
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -50,9 +50,9 @@ export function NavFavorites({
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                align={isMobile ? 'end' : 'start'}
+                align={isMobile ? "end" : "start"}
                 className="w-56 rounded-lg"
-                side={isMobile ? 'bottom' : 'right'}
+                side={isMobile ? "bottom" : "right"}
               >
                 <DropdownMenuItem>
                   <StarOffIcon className="text-muted-foreground" />

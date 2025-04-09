@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX, ReactNode } from 'react';
-import type { ContentType } from 'recharts/types/component/Label';
-import type { PieSectorDataItem } from 'recharts/types/polar/Pie';
-import type { ActiveShape } from 'recharts/types/util/types';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
+import type { ContentType } from "recharts/types/component/Label";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
+import type { ActiveShape } from "recharts/types/util/types";
 
 import {
   Card,
@@ -22,53 +22,53 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui';
-import { isEmpty } from 'lodash-es';
-import { useMemo, useState } from 'react';
-import { Label, Pie, PieChart, Sector } from 'recharts';
+} from "@codefast/ui";
+import { isEmpty } from "lodash-es";
+import { useMemo, useState } from "react";
+import { Label, Pie, PieChart, Sector } from "recharts";
 
 const desktopData = [
-  { month: 'january', desktop: 186, fill: 'var(--color-january)' },
-  { month: 'february', desktop: 305, fill: 'var(--color-february)' },
-  { month: 'march', desktop: 237, fill: 'var(--color-march)' },
-  { month: 'april', desktop: 173, fill: 'var(--color-april)' },
-  { month: 'may', desktop: 209, fill: 'var(--color-may)' },
+  { month: "january", desktop: 186, fill: "var(--color-january)" },
+  { month: "february", desktop: 305, fill: "var(--color-february)" },
+  { month: "march", desktop: 237, fill: "var(--color-march)" },
+  { month: "april", desktop: 173, fill: "var(--color-april)" },
+  { month: "may", desktop: 209, fill: "var(--color-may)" },
 ];
 
 const chartConfig = {
   visitors: {
-    label: 'Visitors',
+    label: "Visitors",
   },
   desktop: {
-    label: 'Desktop',
+    label: "Desktop",
   },
   mobile: {
-    label: 'Mobile',
+    label: "Mobile",
   },
   january: {
-    label: 'January',
-    color: 'var(--chart-1)',
+    label: "January",
+    color: "var(--chart-1)",
   },
   february: {
-    label: 'February',
-    color: 'var(--chart-2)',
+    label: "February",
+    color: "var(--chart-2)",
   },
   march: {
-    label: 'March',
-    color: 'var(--chart-3)',
+    label: "March",
+    color: "var(--chart-3)",
   },
   april: {
-    label: 'April',
-    color: 'var(--chart-4)',
+    label: "April",
+    color: "var(--chart-4)",
   },
   may: {
-    label: 'May',
-    color: 'var(--chart-5)',
+    label: "May",
+    color: "var(--chart-5)",
   },
 } satisfies ChartConfig;
 
 export function ChartVisitors(): JSX.Element {
-  const id = 'pie-interactive';
+  const id = "pie-interactive";
   const [activeMonth, setActiveMonth] = useState(desktopData[0].month);
 
   const activeIndex = useMemo(() => desktopData.findIndex((item) => item.month === activeMonth), [activeMonth]);
@@ -93,7 +93,7 @@ export function ChartVisitors(): JSX.Element {
                   return null;
                 }
 
-                const color = 'color' in config ? config.color : undefined;
+                const color = "color" in config ? config.color : undefined;
 
                 return (
                   <SelectItem key={key} value={key}>
@@ -144,7 +144,7 @@ const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props
 
 const content: (activeIndex: number) => ContentType = (activeIndex) =>
   function Content({ viewBox }): ReactNode {
-    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
       return (
         <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
           <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>

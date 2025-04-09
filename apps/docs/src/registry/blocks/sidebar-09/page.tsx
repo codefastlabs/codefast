@@ -1,4 +1,4 @@
-import type { CSSProperties, JSX } from 'react';
+import type { CSSProperties, JSX } from "react";
 
 import {
   Breadcrumb,
@@ -11,16 +11,16 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { AppSidebar } from '@/registry/blocks/sidebar-09/_components/app-sidebar';
+import { AppSidebar } from "@/registry/blocks/sidebar-09/_components/app-sidebar";
 
 export default function Page(): JSX.Element {
   return (
     <SidebarProvider
       style={
         {
-          '--sidebar-width': '350px',
+          "--sidebar-width": "350px",
         } as CSSProperties
       }
     >

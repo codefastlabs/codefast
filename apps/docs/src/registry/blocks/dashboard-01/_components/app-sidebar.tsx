@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
 import {
   Sidebar,
@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   IconCamera,
   IconChartBar,
@@ -27,62 +27,62 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
-} from '@tabler/icons-react';
-import Link from 'next/link';
+} from "@tabler/icons-react";
+import Link from "next/link";
 
-import { NavDocuments } from '@/registry/blocks/dashboard-01/_components/nav-documents';
-import { NavMain } from '@/registry/blocks/dashboard-01/_components/nav-main';
-import { NavSecondary } from '@/registry/blocks/dashboard-01/_components/nav-secondary';
-import { NavUser } from '@/registry/blocks/dashboard-01/_components/nav-user';
+import { NavDocuments } from "@/registry/blocks/dashboard-01/_components/nav-documents";
+import { NavMain } from "@/registry/blocks/dashboard-01/_components/nav-main";
+import { NavSecondary } from "@/registry/blocks/dashboard-01/_components/nav-secondary";
+import { NavUser } from "@/registry/blocks/dashboard-01/_components/nav-user";
 
 const data = {
-  user: { name: '@codefast/ui', email: 'm@example.com', avatar: '/avatars/codefast-ui.webp' },
+  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
   navMain: [
-    { title: 'Dashboard', url: '#', icon: IconDashboard },
-    { title: 'Lifecycle', url: '#', icon: IconListDetails },
-    { title: 'Analytics', url: '#', icon: IconChartBar },
-    { title: 'Projects', url: '#', icon: IconFolder },
-    { title: 'Team', url: '#', icon: IconUsers },
+    { title: "Dashboard", url: "#", icon: IconDashboard },
+    { title: "Lifecycle", url: "#", icon: IconListDetails },
+    { title: "Analytics", url: "#", icon: IconChartBar },
+    { title: "Projects", url: "#", icon: IconFolder },
+    { title: "Team", url: "#", icon: IconUsers },
   ],
   navClouds: [
     {
-      title: 'Capture',
+      title: "Capture",
       icon: IconCamera,
       isActive: true,
-      url: '#',
+      url: "#",
       items: [
-        { title: 'Active Proposals', url: '#' },
-        { title: 'Archived', url: '#' },
+        { title: "Active Proposals", url: "#" },
+        { title: "Archived", url: "#" },
       ],
     },
     {
-      title: 'Proposal',
+      title: "Proposal",
       icon: IconFileDescription,
-      url: '#',
+      url: "#",
       items: [
-        { title: 'Active Proposals', url: '#' },
-        { title: 'Archived', url: '#' },
+        { title: "Active Proposals", url: "#" },
+        { title: "Archived", url: "#" },
       ],
     },
     {
-      title: 'Prompts',
+      title: "Prompts",
       icon: IconFileAi,
-      url: '#',
+      url: "#",
       items: [
-        { title: 'Active Proposals', url: '#' },
-        { title: 'Archived', url: '#' },
+        { title: "Active Proposals", url: "#" },
+        { title: "Archived", url: "#" },
       ],
     },
   ],
   navSecondary: [
-    { title: 'Settings', url: '#', icon: IconSettings },
-    { title: 'Get Help', url: '#', icon: IconHelp },
-    { title: 'Search', url: '#', icon: IconSearch },
+    { title: "Settings", url: "#", icon: IconSettings },
+    { title: "Get Help", url: "#", icon: IconHelp },
+    { title: "Search", url: "#", icon: IconSearch },
   ],
   documents: [
-    { name: 'Data Library', url: '#', icon: IconDatabase },
-    { name: 'Reports', url: '#', icon: IconReport },
-    { name: 'Word Assistant', url: '#', icon: IconFileWord },
+    { name: "Data Library", url: "#", icon: IconDatabase },
+    { name: "Reports", url: "#", icon: IconReport },
+    { name: "Word Assistant", url: "#", icon: IconFileWord },
   ],
 };
 

@@ -1,8 +1,8 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Avatar
@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 function Avatar({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Root>): JSX.Element {
   return (
     <AvatarPrimitive.Root
-      className={cn('relative flex size-8 shrink-0 overflow-hidden rounded-full', className)}
+      className={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", className)}
       data-slot="avatar"
       {...props}
     />
@@ -24,7 +24,7 @@ function Avatar({ className, ...props }: ComponentProps<typeof AvatarPrimitive.R
 
 function AvatarImage({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Image>): JSX.Element {
   return (
-    <AvatarPrimitive.Image className={cn('aspect-square size-full', className)} data-slot="avatar-image" {...props} />
+    <AvatarPrimitive.Image className={cn("aspect-square size-full", className)} data-slot="avatar-image" {...props} />
   );
 }
 
@@ -35,7 +35,7 @@ function AvatarImage({ className, ...props }: ComponentProps<typeof AvatarPrimit
 function AvatarFallback({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Fallback>): JSX.Element {
   return (
     <AvatarPrimitive.Fallback
-      className={cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
+      className={cn("bg-muted flex size-full items-center justify-center rounded-full", className)}
       data-slot="avatar-fallback"
       {...props}
     />

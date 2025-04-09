@@ -1,5 +1,5 @@
-import type { LucideIcon } from 'lucide-react';
-import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
 import {
   SidebarGroup,
@@ -8,8 +8,8 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@codefast/ui';
-import Link from 'next/link';
+} from "@codefast/ui";
+import Link from "next/link";
 
 export function NavSecondary({
   items,

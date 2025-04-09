@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 export interface UsePaginationProps {
   /** The current active page number */
@@ -15,7 +15,7 @@ export interface UsePaginationProps {
 }
 
 /** Constant representing the ellipsis ("...") used in pagination */
-export const ELLIPSIS = '•••';
+export const ELLIPSIS = "•••";
 
 /**
  * Generates an array of numbers representing a range between the start and end

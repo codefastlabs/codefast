@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Breadcrumb,
@@ -9,10 +9,10 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { AppSidebar } from '@/registry/blocks/sidebar-10/_components/app-sidebar';
-import { NavActions } from '@/registry/blocks/sidebar-10/_components/nav-actions';
+import { AppSidebar } from "@/registry/blocks/sidebar-10/_components/app-sidebar";
+import { NavActions } from "@/registry/blocks/sidebar-10/_components/nav-actions";
 
 export default function Page(): JSX.Element {
   return (

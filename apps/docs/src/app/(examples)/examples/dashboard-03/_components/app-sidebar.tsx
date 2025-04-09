@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Sidebar, SidebarContent } from '@codefast/ui';
+import { Sidebar, SidebarContent } from "@codefast/ui";
 import {
   ChartLineIcon,
   FileIcon,
@@ -13,58 +13,58 @@ import {
   ShoppingBagIcon,
   ShoppingCartIcon,
   UserIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { NavMain } from '@/app/(examples)/examples/dashboard-03/_components/nav-main';
-import { NavSecondary } from '@/app/(examples)/examples/dashboard-03/_components/nav-secondary';
+import { NavMain } from "@/app/(examples)/examples/dashboard-03/_components/nav-main";
+import { NavSecondary } from "@/app/(examples)/examples/dashboard-03/_components/nav-secondary";
 
 const data = {
   navMain: [
     {
-      title: 'Dashboard',
-      url: '/examples/dashboard-03',
+      title: "Dashboard",
+      url: "/examples/dashboard-03",
       icon: HomeIcon,
     },
     {
-      title: 'Analytics',
-      url: '/examples/dashboard-03/analytics',
+      title: "Analytics",
+      url: "/examples/dashboard-03/analytics",
       icon: ChartLineIcon,
     },
     {
-      title: 'Orders',
-      url: '/examples/dashboard-03/orders',
+      title: "Orders",
+      url: "/examples/dashboard-03/orders",
       icon: ShoppingBagIcon,
     },
     {
-      title: 'Products',
-      url: '/examples/dashboard-03/products',
+      title: "Products",
+      url: "/examples/dashboard-03/products",
       icon: ShoppingCartIcon,
     },
     {
-      title: 'Invoices',
-      url: '/examples/dashboard-03/invoices',
+      title: "Invoices",
+      url: "/examples/dashboard-03/invoices",
       icon: FileIcon,
     },
     {
-      title: 'Customers',
-      url: '/examples/dashboard-03/customers',
+      title: "Customers",
+      url: "/examples/dashboard-03/customers",
       icon: UserIcon,
     },
     {
-      title: 'Settings',
-      url: '/examples/dashboard-03/settings',
+      title: "Settings",
+      url: "/examples/dashboard-03/settings",
       icon: Settings2Icon,
     },
   ],
   navSecondary: [
     {
-      title: 'Support',
-      url: '#',
+      title: "Support",
+      url: "#",
       icon: LifeBuoy,
     },
     {
-      title: 'Feedback',
-      url: '#',
+      title: "Feedback",
+      url: "#",
       icon: Send,
     },
   ],
