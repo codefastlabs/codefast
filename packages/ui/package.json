@@ -38,7 +38,7 @@
     "build": "tsup",
     "clean": "rm -rf node_modules dist",
     "dev": "tsup --watch",
-    "lint": "TIMING=1 eslint --max-warnings 0",
+    "lint": "eslint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "type:check": "tsc --noEmit"
   },
