@@ -40,7 +40,7 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
 
-      # Deploy to Vercel (Production - only when the branch is main)
+      # Deploy to Vercel (Production - only from the main branch)
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
         run: |
