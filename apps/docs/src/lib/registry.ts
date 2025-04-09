@@ -1,31 +1,31 @@
-import type { SourceFile } from 'ts-morph';
+import type { SourceFile } from "ts-morph";
 
-import { logger } from '@codefast/ui';
-import { isEmpty } from 'lodash-es';
-import { promises as fs } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
-import { Project, ScriptKind } from 'ts-morph';
+import { logger } from "@codefast/ui";
+import { isEmpty } from "lodash-es";
+import { promises as fs } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { Project, ScriptKind } from "ts-morph";
 
-import type { RegistryItem, RegistryItemFile } from '@/types/registry';
+import type { RegistryItem, RegistryItemFile } from "@/types/registry";
 
-import { highlightCode } from '@/lib/highlight-code';
-import { registryBlocks } from '@/registry/registry-blocks';
+import { highlightCode } from "@/lib/highlight-code";
+import { registryBlocks } from "@/registry/registry-blocks";
 
 // Constants
 const FILE_TYPES = {
-  BLOCK: 'registry:block',
-  COMPONENT: 'registry:component',
-  FILE: 'registry:file',
-  PAGE: 'registry:page',
+  BLOCK: "registry:block",
+  COMPONENT: "registry:component",
+  FILE: "registry:file",
+  PAGE: "registry:page",
 };
 
 enum TargetPrefixes {
-  APP = 'app/',
-  COMPONENT = 'components/',
+  APP = "app/",
+  COMPONENT = "components/",
 }
 
-const VARIABLES_TO_REMOVE = ['iframeHeight', 'containerClassName', 'description'];
+const VARIABLES_TO_REMOVE = ["iframeHeight", "containerClassName", "description"];
 
 // Pre-compile regex pattern for better performance
 const IMPORT_REGEX = /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](?<importPath>[^"']+)["']/g;
@@ -162,7 +162,7 @@ function determineFileTarget(file: RegistryItemFile): string {
     return file.target;
   }
 
-  const fileName = file.path.split('/').pop() ?? '';
+  const fileName = file.path.split("/").pop() ?? "";
 
   if (file.type === FILE_TYPES.BLOCK || file.type === FILE_TYPES.COMPONENT) {
     return `${TargetPrefixes.COMPONENT}${fileName}`;
@@ -172,7 +172,7 @@ function determineFileTarget(file: RegistryItemFile): string {
     return `${TargetPrefixes.APP}${fileName}`;
   }
 
-  return '';
+  return "";
 }
 
 /**
@@ -191,7 +191,7 @@ export function createFileTreeForRegistryItemFiles(files: RegistryItemFile[]): F
       continue;
     }
 
-    const parts = filePath.split('/');
+    const parts = filePath.split("/");
     let currentLevel = root;
 
     for (let index = 0; index < parts.length; index++) {
@@ -257,7 +257,7 @@ function sortFileTreeByName(fileTree: FileTree[]): FileTree[] {
  */
 async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile[]): Promise<string> {
   try {
-    const raw = await fs.readFile(file.path, 'utf8');
+    const raw = await fs.readFile(file.path, "utf8");
     const sourceFile = await createProcessedSourceFile(file.path, raw);
     const code = sourceFile.getFullText();
 
@@ -308,7 +308,7 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
  * @returns Promise resolving to the path of the created temporary file
  */
 async function createTempSourceFile(filename: string): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(tmpdir(), 'codefast-ui-'));
+  const dir = await fs.mkdtemp(path.join(tmpdir(), "codefast-ui-"));
 
   tempDirs.add(dir);
 
@@ -355,15 +355,15 @@ function fixImports(content: string, file: RegistryItemFile, allFiles: RegistryI
   }
 
   return content.replaceAll(IMPORT_REGEX, (match: string, importPath: string) => {
-    if (!importPath.startsWith('@/') && !importPath.startsWith('./') && !importPath.startsWith('../')) {
+    if (!importPath.startsWith("@/") && !importPath.startsWith("./") && !importPath.startsWith("../")) {
       return match;
     }
 
-    if (importPath.startsWith('@/')) {
+    if (importPath.startsWith("@/")) {
       return processAliasImport(match, importPath, allFiles);
     }
 
-    if (importPath.startsWith('./') || importPath.startsWith('../')) {
+    if (importPath.startsWith("./") || importPath.startsWith("../")) {
       return processRelativeImport(match, importPath, file, allFiles);
     }
 
@@ -380,7 +380,7 @@ function fixImports(content: string, file: RegistryItemFile, allFiles: RegistryI
  * @returns The updated import statement with a corrected path
  */
 function processAliasImport(match: string, importPath: string, allFiles: RegistryItemFile[]): string {
-  const importPathWithoutAlias = importPath.replace('@/', '');
+  const importPathWithoutAlias = importPath.replace("@/", "");
   const importedFile = allFiles.find(
     (f) => f.path.includes(importPathWithoutAlias) || f.target?.includes(importPathWithoutAlias),
   );

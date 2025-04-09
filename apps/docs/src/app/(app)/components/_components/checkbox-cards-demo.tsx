@@ -1,10 +1,10 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { CheckboxCards, CheckboxCardsItem, cn } from '@codefast/ui';
+import { CheckboxCards, CheckboxCardsItem, cn } from "@codefast/ui";
 
-export function CheckboxCardsDemo({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+export function CheckboxCardsDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
-    <div className={cn('', className)} {...props}>
+    <div className={cn("", className)} {...props}>
       <CheckboxCards className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <CheckboxCardsItem value="1">
           <div className="grid gap-1.5 font-normal">

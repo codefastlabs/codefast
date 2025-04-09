@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { InputNumber } from '@codefast/ui';
-import { DollarSignIcon } from 'lucide-react';
+import { InputNumber } from "@codefast/ui";
+import { DollarSignIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function InputNumberDemo(): JSX.Element {
   return (
@@ -26,10 +26,10 @@ export function InputNumberDemo(): JSX.Element {
       <div className="">
         <InputNumber
           formatOptions={{
-            currency: 'USD',
-            currencyDisplay: 'code',
+            currency: "USD",
+            currencyDisplay: "code",
             minimumFractionDigits: 2,
-            style: 'currency',
+            style: "currency",
           }}
           placeholder="Enter the amount"
           prefix={<DollarSignIcon />}
@@ -38,10 +38,10 @@ export function InputNumberDemo(): JSX.Element {
       <div className="">
         <InputNumber
           formatOptions={{
-            currency: 'USD',
-            currencyDisplay: 'code',
+            currency: "USD",
+            currencyDisplay: "code",
             minimumFractionDigits: 2,
-            style: 'currency',
+            style: "currency",
           }}
           placeholder="Enter the amount"
           suffix={<DollarSignIcon />}

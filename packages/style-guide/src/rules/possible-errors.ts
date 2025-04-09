@@ -1,28 +1,28 @@
-import type { Linter } from 'eslint';
+import type { Linter } from "eslint";
 
 export const possibleErrorsRules: Linter.Config = {
-  name: '@codefast/style-guide/rules/possible-errors',
+  name: "@codefast/style-guide/rules/possible-errors",
   rules: {
     /**
      * Disallow the use of console.
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-console
      */
-    'no-console': 'error',
+    "no-console": "error",
 
     /**
      * Disallow expressions where the operation doesn't affect the value.
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-console
      */
-    'no-constant-binary-expression': 'error',
+    "no-constant-binary-expression": "error",
 
     /**
      * Disallow returning values from Promise executor functions.
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-promise-executor-return
      */
-    'no-promise-executor-return': 'error',
+    "no-promise-executor-return": "error",
 
     /**
      * Disallow template literal placeholder syntax in regular strings, as
@@ -30,13 +30,13 @@ export const possibleErrorsRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-template-curly-in-string
      */
-    'no-template-curly-in-string': 'error',
+    "no-template-curly-in-string": "error",
 
     /**
      *  Disallow loops with a body that allows only one iteration.
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-unreachable-loop
      */
-    'no-unreachable-loop': 'error',
+    "no-unreachable-loop": "error",
   },
 };

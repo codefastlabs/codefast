@@ -1,29 +1,29 @@
-import type { Metadata, Viewport } from 'next';
-import type { JSX, ReactNode } from 'react';
+import type { Metadata, Viewport } from "next";
+import type { JSX, ReactNode } from "react";
 
-import { cn, Toaster } from '@codefast/ui';
-import { cookies } from 'next/headers';
-import Script from 'next/script';
+import { cn, Toaster } from "@codefast/ui";
+import { cookies } from "next/headers";
+import Script from "next/script";
 
-import { ActiveThemeProvider } from '@/components/active-theme';
-import { ThemeProvider } from '@/components/theme-provider';
-import { fontVariables } from '@/lib/fonts';
-import { META_THEME_COLORS, siteConfig } from '@/lib/site';
-import '@/app/globals.css';
+import { ActiveThemeProvider } from "@/components/active-theme";
+import { ThemeProvider } from "@/components/theme-provider";
+import { fontVariables } from "@/lib/fonts";
+import { META_THEME_COLORS, siteConfig } from "@/lib/site";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   description: siteConfig.description,
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
   },
-  keywords: ['Next.js', 'React', 'Tailwind CSS', 'Server Components', 'Radix UI'],
+  keywords: ["Next.js", "React", "Tailwind CSS", "Server Components", "Radix UI"],
   manifest: `${siteConfig.url}/site.webmanifest`,
   metadataBase: new URL(siteConfig.url),
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
+    type: "website",
+    locale: "en_US",
     url: siteConfig.url,
     title: siteConfig.name,
     description: siteConfig.description,
@@ -53,16 +53,16 @@ export default async function RootLayout({
   children: ReactNode;
 }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get('active_theme')?.value;
-  const isScaled = activeThemeValue?.endsWith('-scaled');
+  const activeThemeValue = cookieStore.get("active_theme")?.value;
+  const isScaled = activeThemeValue?.endsWith("-scaled");
 
   return (
     <html
       suppressHydrationWarning
       className={cn(
-        'antialiased',
+        "antialiased",
         activeThemeValue && `theme-${activeThemeValue}`,
-        isScaled && 'theme-scaled',
+        isScaled && "theme-scaled",
         fontVariables,
       )}
       lang="en"

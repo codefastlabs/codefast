@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import type { DateRange } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { DateRange } from "@codefast/ui";
+import type { JSX } from "react";
 
-import { useIsMobile } from '@codefast/hooks';
+import { useIsMobile } from "@codefast/hooks";
 import {
   Button,
   Calendar,
@@ -13,12 +13,12 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@codefast/ui';
-import { addDays } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-import { useState } from 'react';
+} from "@codefast/ui";
+import { addDays } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DatePickerDemo(): JSX.Element {
   return (
@@ -40,7 +40,7 @@ function DatePickerSimple(): JSX.Element {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          className={cn('min-w-[200px] justify-start px-3 font-normal', !date && 'text-muted-foreground')}
+          className={cn("min-w-[200px] justify-start px-3 font-normal", !date && "text-muted-foreground")}
           variant="outline"
         >
           <CalendarIcon className="text-muted-foreground" />
@@ -65,7 +65,7 @@ function DatePickerWithRange(): JSX.Element {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          className={cn('w-fit justify-start px-3 font-normal', !date && 'text-muted-foreground')}
+          className={cn("w-fit justify-start px-3 font-normal", !date && "text-muted-foreground")}
           id="date"
           variant="outline"
         >

@@ -1,9 +1,9 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Label, SidebarInput } from '@codefast/ui';
-import { SearchIcon } from 'lucide-react';
+import { Label, SidebarInput } from "@codefast/ui";
+import { SearchIcon } from "lucide-react";
 
-export function SearchForm({ ...props }: ComponentProps<'form'>): JSX.Element {
+export function SearchForm({ ...props }: ComponentProps<"form">): JSX.Element {
   return (
     <form {...props}>
       <div className="relative">

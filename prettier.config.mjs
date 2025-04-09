@@ -3,11 +3,10 @@
  * @type {import('prettier').Config}
  */
 const config = {
-  plugins: ['prettier-plugin-packagejson', 'prettier-plugin-tailwindcss'],
+  plugins: ["prettier-plugin-packagejson", "prettier-plugin-tailwindcss"],
   printWidth: 120,
-  singleQuote: true,
-  tailwindAttributes: ['classNames'],
-  tailwindFunctions: ['tv'],
+  tailwindAttributes: ["classNames"],
+  tailwindFunctions: ["tv"],
 };
 
 export default config;

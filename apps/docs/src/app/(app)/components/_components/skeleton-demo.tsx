@@ -1,8 +1,8 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Card, CardContent, CardHeader, Skeleton } from '@codefast/ui';
+import { Card, CardContent, CardHeader, Skeleton } from "@codefast/ui";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function SkeletonDemo(): JSX.Element {
   return (

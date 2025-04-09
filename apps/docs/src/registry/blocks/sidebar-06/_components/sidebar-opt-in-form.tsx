@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SidebarInput } from '@codefast/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SidebarInput } from "@codefast/ui";
 
 export function SidebarOptInForm(): JSX.Element {
   return (

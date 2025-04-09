@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import type { DateRange } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { DateRange } from "@codefast/ui";
+import type { JSX } from "react";
 
-import { Calendar } from '@codefast/ui';
-import { addDays } from 'date-fns';
-import { useState } from 'react';
+import { Calendar } from "@codefast/ui";
+import { addDays } from "date-fns";
+import { useState } from "react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function CalendarDemo(): JSX.Element {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -39,7 +39,7 @@ export function CalendarDemo(): JSX.Element {
         <Calendar
           className="rounded-md border shadow-sm"
           defaultMonth={dateRange?.from}
-          disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
+          disabled={(dateValue) => dateValue > new Date() || dateValue < new Date("1900-01-01")}
           mode="range"
           numberOfMonths={2}
           selected={dateRange}
@@ -52,7 +52,7 @@ export function CalendarDemo(): JSX.Element {
           captionLayout="dropdown"
           className="rounded-md border shadow-sm"
           defaultMonth={dateRange?.from}
-          disabled={(dateValue) => dateValue > new Date() || dateValue < new Date('1900-01-01')}
+          disabled={(dateValue) => dateValue > new Date() || dateValue < new Date("1900-01-01")}
           mode="range"
           selected={dateRange2}
           onSelect={setDateRange2}

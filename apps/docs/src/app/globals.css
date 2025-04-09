@@ -1,6 +1,6 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import '@codefast/ui/styles.css';
+@import "@codefast/ui/styles.css";
 
 @source '../../node_modules/@codefast/ui/dist';
 

@@ -1,6 +1,6 @@
-import type { ChalkInstance } from 'chalk';
+import type { ChalkInstance } from "chalk";
 
-import chalk from 'chalk';
+import chalk from "chalk";
 
 /**
  * Defines the supported log levels for the logger.
@@ -13,7 +13,7 @@ import chalk from 'chalk';
  * - `trace`: Used for tracing operations or in-depth debugging.
  * - `fatal`: Used for high-priority, critical error messages.
  */
-type LogLevel = 'debug' | 'error' | 'fatal' | 'info' | 'log' | 'success' | 'trace' | 'warn';
+type LogLevel = "debug" | "error" | "fatal" | "info" | "log" | "success" | "trace" | "warn";
 
 /**
  * Type definition for a log method used in a logger.
@@ -80,14 +80,14 @@ interface Logger {
  * styled formatting in logs.
  */
 const levels: Record<LogLevel, ChalkInstance> = {
-  error: chalk.bgHex('#ef4444').hex('#450a0a').bold, // Red background for errors
-  info: chalk.bgHex('#06b6d4').hex('#083344').bold, // Blue background for info
-  log: chalk.bgHex('#ffffff').hex('#020617').bold, // White background for logs
-  success: chalk.bgHex('#22c55e').hex('#052e16').bold, // Green background for success
-  warn: chalk.bgHex('#eab308').hex('#422006').bold, // Yellow background for warnings
-  debug: chalk.bgHex('#a855f7').hex('#38017a').bold, // Purple background for debugging
-  trace: chalk.bgHex('#14b8a6').hex('#064e3b').bold, // Teal background for traces
-  fatal: chalk.bgHex('#b91c1c').hex('#450a0a').bold, // Dark red background for fatal errors
+  error: chalk.bgHex("#ef4444").hex("#450a0a").bold, // Red background for errors
+  info: chalk.bgHex("#06b6d4").hex("#083344").bold, // Blue background for info
+  log: chalk.bgHex("#ffffff").hex("#020617").bold, // White background for logs
+  success: chalk.bgHex("#22c55e").hex("#052e16").bold, // Green background for success
+  warn: chalk.bgHex("#eab308").hex("#422006").bold, // Yellow background for warnings
+  debug: chalk.bgHex("#a855f7").hex("#38017a").bold, // Purple background for debugging
+  trace: chalk.bgHex("#14b8a6").hex("#064e3b").bold, // Teal background for traces
+  fatal: chalk.bgHex("#b91c1c").hex("#450a0a").bold, // Dark red background for fatal errors
 };
 
 /**
@@ -95,14 +95,14 @@ const levels: Record<LogLevel, ChalkInstance> = {
  * message body formatting.
  */
 const messages: Record<LogLevel, ChalkInstance> = {
-  error: chalk.hex('#ef4444'), // Red text
-  info: chalk.hex('#06b6d4'), // Blue text
-  log: chalk.hex('#ffffff'), // White text
-  success: chalk.hex('#22c55e'), // Green text
-  warn: chalk.hex('#eab308'), // Yellow text
-  debug: chalk.hex('#a855f7'), // Purple text
-  trace: chalk.hex('#14b8a6'), // Teal text
-  fatal: chalk.hex('#b91c1c'), // Dark red text
+  error: chalk.hex("#ef4444"), // Red text
+  info: chalk.hex("#06b6d4"), // Blue text
+  log: chalk.hex("#ffffff"), // White text
+  success: chalk.hex("#22c55e"), // Green text
+  warn: chalk.hex("#eab308"), // Yellow text
+  debug: chalk.hex("#a855f7"), // Purple text
+  trace: chalk.hex("#14b8a6"), // Teal text
+  fatal: chalk.hex("#b91c1c"), // Dark red text
 };
 
 /**
@@ -116,13 +116,13 @@ const messages: Record<LogLevel, ChalkInstance> = {
  */
 function safeStringify(obj: unknown): string {
   if (obj instanceof Error) {
-    return [chalk.italic(obj.message), obj.stack || '[No Stack]'].join('\n');
+    return [chalk.italic(obj.message), obj.stack || "[No Stack]"].join("\n");
   }
 
   try {
     return JSON.stringify(obj, null, 2);
   } catch {
-    return '[Circular or Invalid Object]';
+    return "[Circular or Invalid Object]";
   }
 }
 
@@ -145,12 +145,12 @@ function formatLog(level: LogLevel, tag: null | string, ...args: unknown[]): str
   const levelPart = levels[level](` ${level.toUpperCase()} `);
 
   /** Optional tag for contextual identification in the log message. */
-  const tagPart = tag ? chalk.magenta(` ${tag} `) : '';
+  const tagPart = tag ? chalk.magenta(` ${tag} `) : "";
 
   /** Combines all arguments into a single styled message string. */
-  const messagePart = args.map((arg) => messages[level](typeof arg === 'string' ? arg : safeStringify(arg))).join(' ');
+  const messagePart = args.map((arg) => messages[level](typeof arg === "string" ? arg : safeStringify(arg))).join(" ");
 
-  return [levelPart, tagPart, messagePart].filter(Boolean).join(' ');
+  return [levelPart, tagPart, messagePart].filter(Boolean).join(" ");
 }
 
 /**
@@ -165,56 +165,56 @@ function createLogger(tag: null | string = null): Logger {
    * Logs an error message.
    */
   const error = (...args: unknown[]): void => {
-    console.error(formatLog('error', tag, ...args));
+    console.error(formatLog("error", tag, ...args));
   };
 
   /**
    * Logs an informational message.
    */
   const info = (...args: unknown[]): void => {
-    console.info(formatLog('info', tag, ...args));
+    console.info(formatLog("info", tag, ...args));
   };
 
   /**
    * Logs a general log message.
    */
   const log = (...args: unknown[]): void => {
-    console.log(formatLog('log', tag, ...args));
+    console.log(formatLog("log", tag, ...args));
   };
 
   /**
    * Logs a success message.
    */
   const success = (...args: unknown[]): void => {
-    console.log(formatLog('success', tag, ...args));
+    console.log(formatLog("success", tag, ...args));
   };
 
   /**
    * Logs a warning message.
    */
   const warn = (...args: unknown[]): void => {
-    console.warn(formatLog('warn', tag, ...args));
+    console.warn(formatLog("warn", tag, ...args));
   };
 
   /**
    * Logs a debug message.
    */
   const debug = (...args: unknown[]): void => {
-    console.debug(formatLog('debug', tag, ...args));
+    console.debug(formatLog("debug", tag, ...args));
   };
 
   /**
    * Logs a trace message for detailed contextual information.
    */
   const trace = (...args: unknown[]): void => {
-    console.trace(formatLog('trace', tag, ...args));
+    console.trace(formatLog("trace", tag, ...args));
   };
 
   /**
    * Logs a fatal error message, typically for critical errors.
    */
   const fatal = (...args: unknown[]): void => {
-    console.error(formatLog('fatal', tag, ...args));
+    console.error(formatLog("fatal", tag, ...args));
   };
 
   return {

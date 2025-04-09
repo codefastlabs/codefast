@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@codefast/ui';
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui";
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
-type TrendDirection = 'down' | 'up';
+type TrendDirection = "down" | "up";
 
 interface MetricCardProps {
   footer: {
@@ -19,7 +19,7 @@ interface MetricCardProps {
 }
 
 function MetricCard({ title, value, trend, footer }: MetricCardProps): JSX.Element {
-  const TrendIcon = trend.direction === 'up' ? IconTrendingUp : IconTrendingDown;
+  const TrendIcon = trend.direction === "up" ? IconTrendingUp : IconTrendingDown;
 
   return (
     <Card className="@container/card">
@@ -45,39 +45,39 @@ function MetricCard({ title, value, trend, footer }: MetricCardProps): JSX.Eleme
 
 const METRICS_DATA: MetricCardProps[] = [
   {
-    title: 'Total Revenue',
-    value: '$1,250.00',
-    trend: { direction: 'up', percentage: '+12.5%' },
+    title: "Total Revenue",
+    value: "$1,250.00",
+    trend: { direction: "up", percentage: "+12.5%" },
     footer: {
-      description: 'Trending up this month',
-      detail: 'Visitors for the last 6 months',
+      description: "Trending up this month",
+      detail: "Visitors for the last 6 months",
     },
   },
   {
-    title: 'New Customers',
-    value: '1,234',
-    trend: { direction: 'down', percentage: '-20%' },
+    title: "New Customers",
+    value: "1,234",
+    trend: { direction: "down", percentage: "-20%" },
     footer: {
-      description: 'Down 20% this period',
-      detail: 'Acquisition needs attention',
+      description: "Down 20% this period",
+      detail: "Acquisition needs attention",
     },
   },
   {
-    title: 'Active Accounts',
-    value: '45,678',
-    trend: { direction: 'up', percentage: '+12.5%' },
+    title: "Active Accounts",
+    value: "45,678",
+    trend: { direction: "up", percentage: "+12.5%" },
     footer: {
-      description: 'Strong user retention',
-      detail: 'Engagement exceed targets',
+      description: "Strong user retention",
+      detail: "Engagement exceed targets",
     },
   },
   {
-    title: 'Growth Rate',
-    value: '4.5%',
-    trend: { direction: 'up', percentage: '+4.5%' },
+    title: "Growth Rate",
+    value: "4.5%",
+    trend: { direction: "up", percentage: "+4.5%" },
     footer: {
-      description: 'Steady performance increase',
-      detail: 'Meets growth projections',
+      description: "Steady performance increase",
+      detail: "Meets growth projections",
     },
   },
 ];

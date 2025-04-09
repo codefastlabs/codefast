@@ -1,5 +1,5 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
 import {
   Badge,
@@ -13,100 +13,100 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@codefast/ui';
-import { DownloadIcon, FilterIcon, TrendingDownIcon, TrendingUpIcon } from 'lucide-react';
+} from "@codefast/ui";
+import { DownloadIcon, FilterIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 
-import { AnalyticsDatePicker } from '@/app/(examples)/examples/dashboard-03/_components/analytics-date-picker';
-import { ChartRevenue } from '@/app/(examples)/examples/dashboard-03/_components/chart-revenue';
-import { ChartVisitors } from '@/app/(examples)/examples/dashboard-03/_components/chart-visitors';
-import { ProductsTable } from '@/app/(examples)/examples/dashboard-03/_components/products-table';
+import { AnalyticsDatePicker } from "@/app/(examples)/examples/dashboard-03/_components/analytics-date-picker";
+import { ChartRevenue } from "@/app/(examples)/examples/dashboard-03/_components/chart-revenue";
+import { ChartVisitors } from "@/app/(examples)/examples/dashboard-03/_components/chart-visitors";
+import { ProductsTable } from "@/app/(examples)/examples/dashboard-03/_components/products-table";
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
-  description: 'An example dashboard to test the new components.',
+  title: "Dashboard",
+  description: "An example dashboard to test the new components.",
 };
 
 // Load from database.
 const products = [
   {
-    id: '1',
-    name: 'BJÖRKSNÄS Dining Table',
+    id: "1",
+    name: "BJÖRKSNÄS Dining Table",
     price: 599.99,
     stock: 12,
-    dateAdded: '2023-06-15',
-    status: 'In Stock',
+    dateAdded: "2023-06-15",
+    status: "In Stock",
   },
   {
-    id: '2',
-    name: 'POÄNG Armchair',
+    id: "2",
+    name: "POÄNG Armchair",
     price: 249.99,
     stock: 28,
-    dateAdded: '2023-07-22',
-    status: 'In Stock',
+    dateAdded: "2023-07-22",
+    status: "In Stock",
   },
   {
-    id: '3',
-    name: 'MALM Bed Frame',
+    id: "3",
+    name: "MALM Bed Frame",
     price: 399.99,
     stock: 15,
-    dateAdded: '2023-08-05',
-    status: 'In Stock',
+    dateAdded: "2023-08-05",
+    status: "In Stock",
   },
   {
-    id: '4',
-    name: 'KALLAX Shelf Unit',
+    id: "4",
+    name: "KALLAX Shelf Unit",
     price: 179.99,
     stock: 32,
-    dateAdded: '2023-09-12',
-    status: 'In Stock',
+    dateAdded: "2023-09-12",
+    status: "In Stock",
   },
   {
-    id: '5',
-    name: 'STOCKHOLM Rug',
+    id: "5",
+    name: "STOCKHOLM Rug",
     price: 299.99,
     stock: 8,
-    dateAdded: '2023-10-18',
-    status: 'Low Stock',
+    dateAdded: "2023-10-18",
+    status: "Low Stock",
   },
   {
-    id: '6',
-    name: 'KIVIK Sofa',
+    id: "6",
+    name: "KIVIK Sofa",
     price: 899.99,
     stock: 6,
-    dateAdded: '2023-11-02',
-    status: 'Low Stock',
+    dateAdded: "2023-11-02",
+    status: "Low Stock",
   },
   {
-    id: '7',
-    name: 'LISABO Coffee Table',
+    id: "7",
+    name: "LISABO Coffee Table",
     price: 149.99,
     stock: 22,
-    dateAdded: '2023-11-29',
-    status: 'In Stock',
+    dateAdded: "2023-11-29",
+    status: "In Stock",
   },
   {
-    id: '8',
-    name: 'HEMNES Bookcase',
+    id: "8",
+    name: "HEMNES Bookcase",
     price: 249.99,
     stock: 17,
-    dateAdded: '2023-12-10',
-    status: 'In Stock',
+    dateAdded: "2023-12-10",
+    status: "In Stock",
   },
   {
-    id: '9',
-    name: 'EKEDALEN Dining Chairs (Set of 2)',
+    id: "9",
+    name: "EKEDALEN Dining Chairs (Set of 2)",
     price: 199.99,
     stock: 14,
-    dateAdded: '2024-01-05',
-    status: 'In Stock',
+    dateAdded: "2024-01-05",
+    status: "In Stock",
   },
   {
-    id: '10',
-    name: 'FRIHETEN Sleeper Sofa',
+    id: "10",
+    name: "FRIHETEN Sleeper Sofa",
     price: 799.99,
     stock: 9,
-    dateAdded: '2024-01-18',
-    status: 'Low Stock',
+    dateAdded: "2024-01-18",
+    status: "Low Stock",
   },
 ];
 

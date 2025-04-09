@@ -1,8 +1,8 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Tabs
@@ -20,7 +20,7 @@ function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.L
   return (
     <TabsPrimitive.List
       className={cn(
-        'bg-muted text-muted-foreground inline-flex items-center justify-center gap-1 rounded-xl px-1 py-1',
+        "bg-muted text-muted-foreground inline-flex items-center justify-center gap-1 rounded-xl px-1 py-1",
         className,
       )}
       data-slot="tabs-list"
@@ -54,7 +54,7 @@ function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitiv
   return (
     <TabsPrimitive.Content
       className={cn(
-        'outline-ring ring-ring/50 mt-2 rounded-xl focus-visible:outline-1 focus-visible:ring-4',
+        "outline-ring ring-ring/50 mt-2 rounded-xl focus-visible:outline-1 focus-visible:ring-4",
         className,
       )}
       data-slot="tabs-content"

@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
-import { ComponentWrapper } from '@/components/component-wrapper';
-import { registryCharts } from '@/registry/registry-charts';
+import { ComponentWrapper } from "@/components/component-wrapper";
+import { registryCharts } from "@/registry/registry-charts";
 
 const sortedCharts = Object.entries(registryCharts).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 
 export const metadata: Metadata = {
-  title: 'Charts',
+  title: "Charts",
 };
 
 export default function ChartsPage(): JSX.Element {
@@ -18,7 +18,7 @@ export default function ChartsPage(): JSX.Element {
           <ComponentWrapper
             key={key}
             className="**:data-[slot=card]:w-full w-auto lg:data-[name$=-interactive]:col-span-2 xl:data-[name$=-interactive]:col-span-3 2xl:data-[name$=-interactive]:col-span-4"
-            classNames={{ body: 'overflow-auto' }}
+            classNames={{ body: "overflow-auto" }}
             name={slug}
           >
             <Component />

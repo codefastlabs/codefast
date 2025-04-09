@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import type { Scope } from '@radix-ui/react-context';
-import type * as LabelPrimitive from '@radix-ui/react-label';
-import type { ComponentProps, JSX, ReactNode } from 'react';
-import type { ControllerProps, FieldError, FieldPath, FieldValues } from 'react-hook-form';
+import type { Scope } from "@radix-ui/react-context";
+import type * as LabelPrimitive from "@radix-ui/react-label";
+import type { ComponentProps, JSX, ReactNode } from "react";
+import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 
-import { createContextScope } from '@radix-ui/react-context';
-import { Slot } from '@radix-ui/react-slot';
-import { useId } from 'react';
-import { Controller, FormProvider, useFormContext, useFormState } from 'react-hook-form';
+import { createContextScope } from "@radix-ui/react-context";
+import { Slot } from "@radix-ui/react-slot";
+import { useId } from "react";
+import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
-import { Label } from '@/components/label';
-import { cn } from '@/lib/utils';
+import { Label } from "@/components/label";
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Form
@@ -23,7 +23,7 @@ const Form = FormProvider;
  * Context: FormField
  * -------------------------------------------------------------------------- */
 
-const FORM_FIELD_NAME = 'FormField';
+const FORM_FIELD_NAME = "FormField";
 
 type ScopedProps<P> = P & { __scopeFormField?: Scope };
 
@@ -90,7 +90,7 @@ function FormField<
  * Context: FormItem
  * -------------------------------------------------------------------------- */
 
-const FORM_ITEM_NAME = 'FormItem';
+const FORM_ITEM_NAME = "FormItem";
 
 interface FormItemContextValue {
   id: string;
@@ -102,12 +102,12 @@ const [FormItemContextProvider, useFormItemContext] = createFormFieldContext<For
  * Component: FormItem
  * -------------------------------------------------------------------------- */
 
-function FormItem({ __scopeFormField, className, ...props }: ScopedProps<ComponentProps<'div'>>): JSX.Element {
+function FormItem({ __scopeFormField, className, ...props }: ScopedProps<ComponentProps<"div">>): JSX.Element {
   const id = useId();
 
   return (
     <FormItemContextProvider id={id} scope={__scopeFormField}>
-      <div className={cn('grid gap-2', className)} data-slot="form-item" {...props} />
+      <div className={cn("grid gap-2", className)} data-slot="form-item" {...props} />
     </FormItemContextProvider>
   );
 }
@@ -116,7 +116,7 @@ function FormItem({ __scopeFormField, className, ...props }: ScopedProps<Compone
  * Component: FormLabel
  * -------------------------------------------------------------------------- */
 
-const FORM_LABEL_NAME = 'FormLabel';
+const FORM_LABEL_NAME = "FormLabel";
 
 function FormLabel({
   __scopeFormField,
@@ -131,7 +131,7 @@ function FormLabel({
  * Component: FormControl
  * -------------------------------------------------------------------------- */
 
-const FORM_CONTROL_NAME = 'FormControl';
+const FORM_CONTROL_NAME = "FormControl";
 
 function FormControl({ __scopeFormField, ...props }: ScopedProps<ComponentProps<typeof Slot>>): JSX.Element {
   const { formDescriptionId, formItemId, formMessageId, error } = useFormItem(FORM_CONTROL_NAME, __scopeFormField);
@@ -151,12 +151,12 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<ComponentProps<
  * Component: FormDescription
  * -------------------------------------------------------------------------- */
 
-function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<ComponentProps<'p'>>): JSX.Element {
+function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<ComponentProps<"p">>): JSX.Element {
   const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
   return (
     <p
-      className={cn('text-muted-foreground text-xs', className)}
+      className={cn("text-muted-foreground text-xs", className)}
       data-slot="form-description"
       id={formDescriptionId}
       {...props}
@@ -168,9 +168,9 @@ function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<
  * Component: FormMessage
  * -------------------------------------------------------------------------- */
 
-const FORM_MESSAGE_NAME = 'FormMessage';
+const FORM_MESSAGE_NAME = "FormMessage";
 
-function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<ComponentProps<'p'>>): ReactNode {
+function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<ComponentProps<"p">>): ReactNode {
   const { formMessageId, error } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const body = error?.message ? String(error.message) : children;
 
@@ -180,7 +180,7 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
 
   return (
     <p
-      className={cn('text-xs', error?.message ? 'text-destructive font-medium' : 'text-muted-foreground', className)}
+      className={cn("text-xs", error?.message ? "text-destructive font-medium" : "text-muted-foreground", className)}
       data-slot="form-message"
       id={formMessageId}
       {...props}

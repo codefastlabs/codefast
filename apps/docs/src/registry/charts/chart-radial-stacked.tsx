@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX, ReactNode } from 'react';
-import type { Props } from 'recharts/types/component/Label';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
+import type { Props } from "recharts/types/component/Label";
 
 import {
   Card,
@@ -14,20 +14,20 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { TrendingUpIcon } from 'lucide-react';
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from 'recharts';
+} from "@codefast/ui";
+import { TrendingUpIcon } from "lucide-react";
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
-const chartData = [{ month: 'january', desktop: 1260, mobile: 570 }];
+const chartData = [{ month: "january", desktop: 1260, mobile: 570 }];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
-    color: 'var(--chart-1)',
+    label: "Desktop",
+    color: "var(--chart-1)",
   },
   mobile: {
-    label: 'Mobile',
-    color: 'var(--chart-2)',
+    label: "Mobile",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
@@ -75,7 +75,7 @@ export function ChartRadialStacked(): JSX.Element {
 function Content({ viewBox }: Props): ReactNode {
   const totalVisitors = chartData[0].desktop + chartData[0].mobile;
 
-  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
     return (
       <text textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
         <tspan className="fill-foreground text-2xl font-bold" x={viewBox.cx} y={(viewBox.cy ?? 0) - 16}>

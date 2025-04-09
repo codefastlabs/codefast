@@ -1,5 +1,5 @@
-import type { LucideIcon } from 'lucide-react';
-import type { ComponentProps, JSX } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import {
   Sidebar,
@@ -12,11 +12,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '@codefast/ui';
-import Link from 'next/link';
+} from "@codefast/ui";
+import Link from "next/link";
 
-import { SearchForm } from '@/registry/blocks/sidebar-01/_components/search-form';
-import { VersionSwitcher } from '@/registry/blocks/sidebar-01/_components/version-switcher';
+import { SearchForm } from "@/registry/blocks/sidebar-01/_components/search-form";
+import { VersionSwitcher } from "@/registry/blocks/sidebar-01/_components/version-switcher";
 
 export interface NavSubItem {
   title: string;
@@ -35,55 +35,55 @@ const data: {
   }[];
   versions: string[];
 } = {
-  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
+  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
-      title: 'Getting Started',
-      url: '#',
+      title: "Getting Started",
+      url: "#",
       items: [
-        { title: 'Installation', url: '#' },
-        { title: 'Project Structure', url: '#' },
+        { title: "Installation", url: "#" },
+        { title: "Project Structure", url: "#" },
       ],
     },
     {
-      title: 'Building Your Application',
-      url: '#',
+      title: "Building Your Application",
+      url: "#",
       items: [
-        { title: 'Routing', url: '#' },
-        { title: 'Data Fetching', url: '#', isActive: true },
-        { title: 'Rendering', url: '#' },
-        { title: 'Caching', url: '#' },
-        { title: 'Styling', url: '#' },
-        { title: 'Optimizing', url: '#' },
-        { title: 'Configuring', url: '#' },
-        { title: 'Testing', url: '#' },
-        { title: 'Authentication', url: '#' },
-        { title: 'Deploying', url: '#' },
-        { title: 'Upgrading', url: '#' },
-        { title: 'Examples', url: '#' },
+        { title: "Routing", url: "#" },
+        { title: "Data Fetching", url: "#", isActive: true },
+        { title: "Rendering", url: "#" },
+        { title: "Caching", url: "#" },
+        { title: "Styling", url: "#" },
+        { title: "Optimizing", url: "#" },
+        { title: "Configuring", url: "#" },
+        { title: "Testing", url: "#" },
+        { title: "Authentication", url: "#" },
+        { title: "Deploying", url: "#" },
+        { title: "Upgrading", url: "#" },
+        { title: "Examples", url: "#" },
       ],
     },
     {
-      title: 'API Reference',
-      url: '#',
+      title: "API Reference",
+      url: "#",
       items: [
-        { title: 'Components', url: '#' },
-        { title: 'File Conventions', url: '#' },
-        { title: 'Functions', url: '#' },
-        { title: 'next.config.js Options', url: '#' },
-        { title: 'CLI', url: '#' },
-        { title: 'Edge Runtime', url: '#' },
+        { title: "Components", url: "#" },
+        { title: "File Conventions", url: "#" },
+        { title: "Functions", url: "#" },
+        { title: "next.config.js Options", url: "#" },
+        { title: "CLI", url: "#" },
+        { title: "Edge Runtime", url: "#" },
       ],
     },
     {
-      title: 'Architecture',
-      url: '#',
+      title: "Architecture",
+      url: "#",
       items: [
-        { title: 'Accessibility', url: '#' },
-        { title: 'Fast Refresh', url: '#' },
-        { title: 'Next.js Compiler', url: '#' },
-        { title: 'Supported Browsers', url: '#' },
-        { title: 'Turbopack', url: '#' },
+        { title: "Accessibility", url: "#" },
+        { title: "Fast Refresh", url: "#" },
+        { title: "Next.js Compiler", url: "#" },
+        { title: "Supported Browsers", url: "#" },
+        { title: "Turbopack", url: "#" },
       ],
     },
   ],

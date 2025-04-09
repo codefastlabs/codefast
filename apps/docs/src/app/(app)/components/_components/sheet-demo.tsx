@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -14,12 +14,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@codefast/ui';
-import { ChevronUpIcon, CircleIcon } from 'lucide-react';
+} from "@codefast/ui";
+import { ChevronUpIcon, CircleIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
-const SIDES = ['top', 'right', 'bottom', 'left'] as const;
+const SIDES = ["top", "right", "bottom", "left"] as const;
 
 export function SheetDemo(): JSX.Element {
   return (
@@ -59,20 +59,20 @@ export function SheetDemo(): JSX.Element {
             <div
               key={side}
               className={cn(
-                'flex items-center justify-center',
-                side === 'top' && 'col-start-2',
-                side === 'right' && 'col-start-3 row-start-2',
-                side === 'bottom' && 'col-start-2 row-start-3',
-                side === 'left' && 'row-start-2',
+                "flex items-center justify-center",
+                side === "top" && "col-start-2",
+                side === "right" && "col-start-3 row-start-2",
+                side === "bottom" && "col-start-2 row-start-3",
+                side === "left" && "row-start-2",
               )}
             >
               <Sheet>
                 <SheetTrigger asChild>
                   <Button className="capitalize" size="icon" variant="outline">
-                    {side === 'top' && <ChevronUpIcon className="rotate-180" />}
-                    {side === 'right' && <ChevronUpIcon className="rotate-270" />}
-                    {side === 'bottom' && <ChevronUpIcon />}
-                    {side === 'left' && <ChevronUpIcon className="rotate-90" />}
+                    {side === "top" && <ChevronUpIcon className="rotate-180" />}
+                    {side === "right" && <ChevronUpIcon className="rotate-270" />}
+                    {side === "bottom" && <ChevronUpIcon />}
+                    {side === "left" && <ChevronUpIcon className="rotate-90" />}
                   </Button>
                 </SheetTrigger>
                 <SheetContent side={side}>

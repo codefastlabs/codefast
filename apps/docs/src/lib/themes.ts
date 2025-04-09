@@ -4,10 +4,10 @@ export interface Theme {
 }
 
 export const THEMES: Theme[] = [
-  { name: 'Default', value: 'default' },
-  { name: 'Slate', value: 'slate' },
-  { name: 'Gray', value: 'gray' },
-  { name: 'Zinc', value: 'zinc' },
-  { name: 'Stone', value: 'stone' },
-  { name: 'Scaled', value: 'scaled' },
+  { name: "Default", value: "default" },
+  { name: "Slate", value: "slate" },
+  { name: "Gray", value: "gray" },
+  { name: "Zinc", value: "zinc" },
+  { name: "Stone", value: "stone" },
+  { name: "Scaled", value: "scaled" },
 ];

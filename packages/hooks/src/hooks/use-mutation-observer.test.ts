@@ -1,20 +1,20 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook } from "@testing-library/react";
 
-import { useMutationObserver } from '@/hooks/use-mutation-observer';
+import { useMutationObserver } from "@/hooks/use-mutation-observer";
 
-describe('useMutationObserver', () => {
-  test('should attach a MutationObserver and call the callback on mutations', () => {
+describe("useMutationObserver", () => {
+  test("should attach a MutationObserver and call the callback on mutations", () => {
     const callback = jest.fn();
-    const ref = { current: document.createElement('div') };
+    const ref = { current: document.createElement("div") };
 
-    ref.current.innerHTML = '<div></div>';
+    ref.current.innerHTML = "<div></div>";
 
     renderHook(() => {
       useMutationObserver(ref, callback);
     });
 
     // Simulate a DOM mutation
-    const newElement = document.createElement('span');
+    const newElement = document.createElement("span");
 
     ref.current.append(newElement);
 
@@ -25,15 +25,15 @@ describe('useMutationObserver', () => {
     }, 0);
   });
 
-  test('should clean up the MutationObserver on unmount', () => {
+  test("should clean up the MutationObserver on unmount", () => {
     const callback = jest.fn();
-    const ref = { current: document.createElement('div') };
+    const ref = { current: document.createElement("div") };
 
     const { unmount } = renderHook(() => {
       useMutationObserver(ref, callback);
     });
 
-    const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
+    const disconnectSpy = jest.spyOn(MutationObserver.prototype, "disconnect");
 
     unmount();
 

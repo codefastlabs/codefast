@@ -1,17 +1,17 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
-    optimizePackageImports: ['@codefast/ui'],
+    optimizePackageImports: ["@codefast/ui"],
   },
   outputFileTracingIncludes: {
-    '/blocks/*': ['./src/registry/**/*'],
+    "/blocks/*": ["./src/registry/**/*"],
   },
   images: {
     remotePatterns: [
       {
-        hostname: 'images.unsplash.com',
-        protocol: 'https',
+        hostname: "images.unsplash.com",
+        protocol: "https",
       },
     ],
   },

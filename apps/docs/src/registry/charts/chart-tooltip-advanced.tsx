@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { CSSProperties, JSX } from 'react';
-import type { Formatter, NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import type { ChartConfig } from "@codefast/ui";
+import type { CSSProperties, JSX } from "react";
+import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import {
   Card,
@@ -13,8 +13,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { Bar, BarChart, XAxis } from 'recharts';
+} from "@codefast/ui";
+import { Bar, BarChart, XAxis } from "recharts";
 
 interface DataItem {
   date: string;
@@ -23,22 +23,22 @@ interface DataItem {
 }
 
 const chartData = [
-  { date: '2024-07-15', running: 450, swimming: 300 },
-  { date: '2024-07-16', running: 380, swimming: 420 },
-  { date: '2024-07-17', running: 520, swimming: 120 },
-  { date: '2024-07-18', running: 140, swimming: 550 },
-  { date: '2024-07-19', running: 600, swimming: 350 },
-  { date: '2024-07-20', running: 480, swimming: 400 },
+  { date: "2024-07-15", running: 450, swimming: 300 },
+  { date: "2024-07-16", running: 380, swimming: 420 },
+  { date: "2024-07-17", running: 520, swimming: 120 },
+  { date: "2024-07-18", running: 140, swimming: 550 },
+  { date: "2024-07-19", running: 600, swimming: 350 },
+  { date: "2024-07-20", running: 480, swimming: 400 },
 ];
 
 const chartConfig = {
   running: {
-    label: 'Running',
-    color: 'var(--chart-1)',
+    label: "Running",
+    color: "var(--chart-1)",
   },
   swimming: {
-    label: 'Swimming',
-    color: 'var(--chart-2)',
+    label: "Swimming",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
@@ -56,8 +56,8 @@ export function ChartTooltipAdvanced(): JSX.Element {
               axisLine={false}
               dataKey="date"
               tickFormatter={(value: string) => {
-                return new Date(value).toLocaleDateString('en-US', {
-                  weekday: 'short',
+                return new Date(value).toLocaleDateString("en-US", {
+                  weekday: "short",
                 });
               }}
               tickLine={false}
@@ -83,7 +83,7 @@ const formatter: Formatter<ValueType, NameType> = (value, name, item, index) => 
       className="bg-(--color-bg) h-2.5 w-2.5 shrink-0 rounded-[2px]"
       style={
         {
-          '--color-bg': `var(--color-${name})`,
+          "--color-bg": `var(--color-${name})`,
         } as CSSProperties
       }
     />

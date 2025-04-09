@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Breadcrumb,
@@ -23,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   BellIcon,
   CheckIcon,
@@ -37,24 +37,24 @@ import {
   PaintbrushIcon,
   SettingsIcon,
   VideoIcon,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 const data = {
   nav: [
-    { name: 'Notifications', icon: BellIcon },
-    { name: 'Navigation', icon: MenuIcon },
-    { name: 'Home', icon: HomeIcon },
-    { name: 'Appearance', icon: PaintbrushIcon },
-    { name: 'Messages & media', icon: MessageCircleIcon },
-    { name: 'Language & region', icon: GlobeIcon },
-    { name: 'Accessibility', icon: KeyboardIcon },
-    { name: 'Mark as read', icon: CheckIcon },
-    { name: 'Audio & video', icon: VideoIcon },
-    { name: 'Connected accounts', icon: LinkIcon },
-    { name: 'Privacy & visibility', icon: LockIcon },
-    { name: 'Advanced', icon: SettingsIcon },
+    { name: "Notifications", icon: BellIcon },
+    { name: "Navigation", icon: MenuIcon },
+    { name: "Home", icon: HomeIcon },
+    { name: "Appearance", icon: PaintbrushIcon },
+    { name: "Messages & media", icon: MessageCircleIcon },
+    { name: "Language & region", icon: GlobeIcon },
+    { name: "Accessibility", icon: KeyboardIcon },
+    { name: "Mark as read", icon: CheckIcon },
+    { name: "Audio & video", icon: VideoIcon },
+    { name: "Connected accounts", icon: LinkIcon },
+    { name: "Privacy & visibility", icon: LockIcon },
+    { name: "Advanced", icon: SettingsIcon },
   ],
 };
 
@@ -77,7 +77,7 @@ export function SettingsDialog(): JSX.Element {
                   <SidebarMenu>
                     {data.nav.map((item) => (
                       <SidebarMenuItem key={item.name}>
-                        <SidebarMenuButton asChild isActive={item.name === 'Messages & media'}>
+                        <SidebarMenuButton asChild isActive={item.name === "Messages & media"}>
                           <Link href="#">
                             <item.icon />
                             <span>{item.name}</span>

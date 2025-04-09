@@ -1,8 +1,8 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Label, Switch } from '@codefast/ui';
+import { Label, Switch } from "@codefast/ui";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function SwitchDemo(): JSX.Element {
   return (

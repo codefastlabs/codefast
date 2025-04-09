@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { ProgressCircle } from '@codefast/ui';
-import { useEffect, useState } from 'react';
+import { ProgressCircle } from "@codefast/ui";
+import { useEffect, useState } from "react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function ProgressCircleDemo(): JSX.Element {
   const [progress, setProgress] = useState(0);
@@ -120,18 +120,18 @@ export function ProgressCircleDemo(): JSX.Element {
           thresholds={[
             {
               value: 30,
-              color: 'var(--color-red-500)',
-              background: 'color-mix(in oklab, var(--color-red-500) 20%, transparent)',
+              color: "var(--color-red-500)",
+              background: "color-mix(in oklab, var(--color-red-500) 20%, transparent)",
             },
             {
               value: 70,
-              color: 'var(--color-yellow-500)',
-              background: 'color-mix(in oklab, var(--color-yellow-500) 20%, transparent)',
+              color: "var(--color-yellow-500)",
+              background: "color-mix(in oklab, var(--color-yellow-500) 20%, transparent)",
             },
             {
               value: 100,
-              color: 'var(--color-green-500)',
-              background: 'color-mix(in oklab, var(--color-green-500) 20%, transparent)',
+              color: "var(--color-green-500)",
+              background: "color-mix(in oklab, var(--color-green-500) 20%, transparent)",
             },
           ]}
           value={progress}
@@ -144,18 +144,18 @@ export function ProgressCircleDemo(): JSX.Element {
           thresholds={[
             {
               value: 30,
-              color: 'var(--color-red-500)',
-              background: 'color-mix(in oklab, var(--color-red-500) 20%, transparent)',
+              color: "var(--color-red-500)",
+              background: "color-mix(in oklab, var(--color-red-500) 20%, transparent)",
             },
             {
               value: 70,
-              color: 'var(--color-yellow-500)',
-              background: 'color-mix(in oklab, var(--color-yellow-500) 20%, transparent)',
+              color: "var(--color-yellow-500)",
+              background: "color-mix(in oklab, var(--color-yellow-500) 20%, transparent)",
             },
             {
               value: 100,
-              color: 'var(--color-green-500)',
-              background: 'color-mix(in oklab, var(--color-green-500) 20%, transparent)',
+              color: "var(--color-green-500)",
+              background: "color-mix(in oklab, var(--color-green-500) 20%, transparent)",
             },
           ]}
           value={20}
@@ -166,18 +166,18 @@ export function ProgressCircleDemo(): JSX.Element {
           thresholds={[
             {
               value: 30,
-              color: 'var(--color-red-500)',
-              background: 'color-mix(in oklab, var(--color-red-500) 20%, transparent)',
+              color: "var(--color-red-500)",
+              background: "color-mix(in oklab, var(--color-red-500) 20%, transparent)",
             },
             {
               value: 70,
-              color: 'var(--color-yellow-500)',
-              background: 'color-mix(in oklab, var(--color-yellow-500) 20%, transparent)',
+              color: "var(--color-yellow-500)",
+              background: "color-mix(in oklab, var(--color-yellow-500) 20%, transparent)",
             },
             {
               value: 100,
-              color: 'var(--color-green-500)',
-              background: 'color-mix(in oklab, var(--color-green-500) 20%, transparent)',
+              color: "var(--color-green-500)",
+              background: "color-mix(in oklab, var(--color-green-500) 20%, transparent)",
             },
           ]}
           value={60}
@@ -188,25 +188,25 @@ export function ProgressCircleDemo(): JSX.Element {
           thresholds={[
             {
               value: 30,
-              color: 'var(--color-red-500)',
-              background: 'color-mix(in oklab, var(--color-red-500) 20%, transparent)',
+              color: "var(--color-red-500)",
+              background: "color-mix(in oklab, var(--color-red-500) 20%, transparent)",
             },
             {
               value: 70,
-              color: 'var(--color-yellow-500)',
-              background: 'color-mix(in oklab, var(--color-yellow-500) 20%, transparent)',
+              color: "var(--color-yellow-500)",
+              background: "color-mix(in oklab, var(--color-yellow-500) 20%, transparent)",
             },
             {
               value: 100,
-              color: 'var(--color-green-500)',
-              background: 'color-mix(in oklab, var(--color-green-500) 20%, transparent)',
+              color: "var(--color-green-500)",
+              background: "color-mix(in oklab, var(--color-green-500) 20%, transparent)",
             },
           ]}
           value={90}
         />
       </div>
       <div className="">
-        <ProgressCircle showValue classNames={{ label: 'text-2xl font-bold' }} sizeInPixels={150} value={progress} />
+        <ProgressCircle showValue classNames={{ label: "text-2xl font-bold" }} sizeInPixels={150} value={progress} />
       </div>
     </GridWrapper>
   );

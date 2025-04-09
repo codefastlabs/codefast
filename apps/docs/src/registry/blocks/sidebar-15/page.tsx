@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Breadcrumb,
@@ -9,10 +9,10 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { SidebarLeft } from '@/registry/blocks/sidebar-15/_components/sidebar-left';
-import { SidebarRight } from '@/registry/blocks/sidebar-15/_components/sidebar-right';
+import { SidebarLeft } from "@/registry/blocks/sidebar-15/_components/sidebar-left";
+import { SidebarRight } from "@/registry/blocks/sidebar-15/_components/sidebar-right";
 
 export default function Page(): JSX.Element {
   return (

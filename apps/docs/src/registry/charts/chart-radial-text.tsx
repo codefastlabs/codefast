@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX, ReactNode } from 'react';
-import type { Props } from 'recharts/types/component/Label';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
+import type { Props } from "recharts/types/component/Label";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from '@codefast/ui';
-import { TrendingUpIcon } from 'lucide-react';
-import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from 'recharts';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from "@codefast/ui";
+import { TrendingUpIcon } from "lucide-react";
+import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
-const chartData = [{ browser: 'safari', visitors: 200, fill: 'var(--color-safari)' }];
+const chartData = [{ browser: "safari", visitors: 200, fill: "var(--color-safari)" }];
 
 const chartConfig = {
   visitors: {
-    label: 'Visitors',
+    label: "Visitors",
   },
   safari: {
-    label: 'Safari',
-    color: 'var(--chart-2)',
+    label: "Safari",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
@@ -55,7 +55,7 @@ export function ChartRadialText(): JSX.Element {
 }
 
 function Content({ viewBox }: Props): ReactNode {
-  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
     return (
       <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
         <tspan className="fill-foreground text-4xl font-bold" x={viewBox.cx} y={viewBox.cy}>

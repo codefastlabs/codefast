@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Input } from '@codefast/ui';
-import { MailIcon } from 'lucide-react';
+import { Input } from "@codefast/ui";
+import { MailIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function InputDemo(): JSX.Element {
   return (

@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import * as InputPrimitive from '@codefast-ui/input';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { SearchIcon, XIcon } from 'lucide-react';
+import * as InputPrimitive from "@codefast-ui/input";
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { SearchIcon, XIcon } from "lucide-react";
 
-import type { VariantProps } from '@/lib/utils';
+import type { VariantProps } from "@/lib/utils";
 
-import { Button } from '@/components/button';
-import { inputVariants } from '@/components/input';
-import { Spinner } from '@/components/spinner';
+import { Button } from "@/components/button";
+import { inputVariants } from "@/components/input";
+import { Spinner } from "@/components/spinner";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
@@ -32,7 +32,7 @@ function InputSearch({
   value: valueProp,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Field>, 'defaultValue' | 'onChange' | 'prefix' | 'type' | 'value'> &
+  Omit<ComponentProps<typeof InputPrimitive.Field>, "defaultValue" | "onChange" | "prefix" | "type" | "value"> &
   VariantProps<typeof inputVariants> & {
     defaultValue?: string;
     onChange?: (value: string) => void;
@@ -46,7 +46,7 @@ function InputSearch({
 
   return (
     <InputPrimitive.Root
-      className={root({ className: [!suffix && 'pr-1.5', className] })}
+      className={root({ className: [!suffix && "pr-1.5", className] })}
       data-slot="input-search"
       disabled={disabled}
       loaderPosition={loaderPosition}
@@ -60,7 +60,7 @@ function InputSearch({
         className={input()}
         data-slot="input-search-item"
         type="search"
-        value={value ?? ''}
+        value={value ?? ""}
         onChange={(event) => {
           setValue(event.target.value);
         }}
@@ -76,7 +76,7 @@ function InputSearch({
           suffix={<XIcon />}
           variant="ghost"
           onClick={() => {
-            setValue('');
+            setValue("");
           }}
         />
       ) : null}

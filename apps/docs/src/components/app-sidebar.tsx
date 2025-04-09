@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
 import {
   cn,
@@ -11,31 +11,31 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@codefast/ui';
-import { CommandIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { CommandIcon } from "lucide-react";
+import Link from "next/link";
 
-import type { NavItemProps } from '@/components/nav-main';
+import type { NavItemProps } from "@/components/nav-main";
 
-import { registryComponentGroups } from '@/app/(app)/components/registry-components';
-import { NavMain } from '@/components/nav-main';
-import { registryBlockGroups } from '@/registry/registry-blocks';
+import { registryComponentGroups } from "@/app/(app)/components/registry-components";
+import { NavMain } from "@/components/nav-main";
+import { registryBlockGroups } from "@/registry/registry-blocks";
 
 const data: {
   navMain: NavItemProps[];
 } = {
   navMain: [
     {
-      title: 'Components',
-      path: '/components',
+      title: "Components",
+      path: "/components",
       groups: registryComponentGroups.map((group) => ({
         ...group,
         components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
       })),
     },
     {
-      title: 'Blocks',
-      path: '/blocks',
+      title: "Blocks",
+      path: "/blocks",
       groups: registryBlockGroups.map((group) => ({
         ...group,
         components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
@@ -62,7 +62,7 @@ function LogoButton(): JSX.Element {
 
 export function AppSidebar({ className, ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
   return (
-    <Sidebar className={cn('z-30', className)} {...props}>
+    <Sidebar className={cn("z-30", className)} {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

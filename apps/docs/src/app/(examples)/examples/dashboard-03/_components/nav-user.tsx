@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -14,8 +14,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@codefast/ui';
-import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from 'lucide-react';
+} from "@codefast/ui";
+import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react";
 
 export function NavUser({
   user,

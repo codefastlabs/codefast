@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -17,8 +17,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@codefast/ui';
-import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from '@tabler/icons-react';
+} from "@codefast/ui";
+import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from "@tabler/icons-react";
 
 export function NavUser({
   user,
@@ -29,7 +29,7 @@ export function NavUser({
     name: string;
   };
 }): JSX.Element {
-  const { isMobile } = useSidebar('NavUser');
+  const { isMobile } = useSidebar("NavUser");
 
   return (
     <SidebarMenu>
@@ -54,7 +54,7 @@ export function NavUser({
           <DropdownMenuContent
             align="end"
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">

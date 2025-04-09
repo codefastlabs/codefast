@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
-import { notFound } from 'next/navigation';
+import { notFound } from "next/navigation";
 
-import { registryComponents } from '@/app/(app)/components/registry-components';
-import { ComponentWrapper } from '@/components/component-wrapper';
-import { getCachedComponentsRegistry } from '@/lib/registry-cache';
+import { registryComponents } from "@/app/(app)/components/registry-components";
+import { ComponentWrapper } from "@/components/component-wrapper";
+import { getCachedComponentsRegistry } from "@/lib/registry-cache";
 
 export const dynamicParams = false;
 

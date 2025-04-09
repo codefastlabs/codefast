@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { Icon } from '@tabler/icons-react';
-import type { JSX } from 'react';
+import type { Icon } from "@tabler/icons-react";
+import type { JSX } from "react";
 
 import {
   DropdownMenu,
@@ -16,8 +16,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@codefast/ui';
-import { IconDots, IconFolder, IconShare3, IconTrash } from '@tabler/icons-react';
+} from "@codefast/ui";
+import { IconDots, IconFolder, IconShare3, IconTrash } from "@tabler/icons-react";
 
 export function NavDocuments({
   items,
@@ -28,7 +28,7 @@ export function NavDocuments({
     url: string;
   }[];
 }): JSX.Element {
-  const { isMobile } = useSidebar('NavDocuments');
+  const { isMobile } = useSidebar("NavDocuments");
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -50,9 +50,9 @@ export function NavDocuments({
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                align={isMobile ? 'end' : 'start'}
+                align={isMobile ? "end" : "start"}
                 className="w-24 rounded-lg"
-                side={isMobile ? 'bottom' : 'right'}
+                side={isMobile ? "bottom" : "right"}
               >
                 <DropdownMenuItem>
                   <IconFolder />

@@ -1,30 +1,30 @@
-import type { Linter } from 'eslint';
+import type { Linter } from "eslint";
 
 export const variablesRules: Linter.Config = {
-  name: '@codefast/style-guide/rules/variables',
+  name: "@codefast/style-guide/rules/variables",
   rules: {
     /**
      * Disallow labels that share a name with a variable.
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-label-var
      */
-    'no-label-var': 'error',
+    "no-label-var": "error",
 
     /**
      * Disallow initializing variables to `undefined`.
      *
      * 🔧 Fixable - https://eslint.org/docs/rules/no-undef-init
      */
-    'no-undef-init': 'warn',
+    "no-undef-init": "warn",
 
     /**
      * Disallow unused variables.
      *
      * 🚫 Not fixable - https://eslint.org/docs/rules/no-unused-vars
      */
-    'no-unused-vars': [
-      'error',
-      { args: 'after-used', argsIgnorePattern: '^_', ignoreRestSiblings: false, vars: 'all', varsIgnorePattern: '^_' },
+    "no-unused-vars": [
+      "error",
+      { args: "after-used", argsIgnorePattern: "^_", ignoreRestSiblings: false, vars: "all", varsIgnorePattern: "^_" },
     ],
   },
 };

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { LucideIcon } from 'lucide-react';
-import type { JSX } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import {
   DropdownMenu,
@@ -16,9 +16,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@codefast/ui';
-import { FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
 
 export function NavProjects({
   projects,
@@ -29,7 +29,7 @@ export function NavProjects({
     url: string;
   }[];
 }): JSX.Element {
-  const { isMobile } = useSidebar('NavProjects');
+  const { isMobile } = useSidebar("NavProjects");
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -51,9 +51,9 @@ export function NavProjects({
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                align={isMobile ? 'end' : 'start'}
+                align={isMobile ? "end" : "start"}
                 className="w-48"
-                side={isMobile ? 'bottom' : 'right'}
+                side={isMobile ? "bottom" : "right"}
               >
                 <DropdownMenuItem>
                   <FolderIcon className="text-muted-foreground" />

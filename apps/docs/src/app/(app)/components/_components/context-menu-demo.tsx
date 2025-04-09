@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   ContextMenu,
@@ -16,9 +16,9 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from '@codefast/ui';
-import { Code2Icon, PlusIcon, TrashIcon } from 'lucide-react';
-import { useState } from 'react';
+} from "@codefast/ui";
+import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
+import { useState } from "react";
 
 export function ContextMenuDemo(): JSX.Element {
   // State để quản lý checkbox
@@ -26,7 +26,7 @@ export function ContextMenuDemo(): JSX.Element {
   const [showFullUrls, setShowFullUrls] = useState<boolean>(false);
 
   // State để quản lý radio
-  const [selectedPerson, setSelectedPerson] = useState<string>('pedro');
+  const [selectedPerson, setSelectedPerson] = useState<string>("pedro");
 
   return (
     <ContextMenu>

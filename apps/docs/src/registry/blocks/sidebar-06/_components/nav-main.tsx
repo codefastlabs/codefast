@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { LucideIcon } from 'lucide-react';
-import type { JSX } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import {
   DropdownMenu,
@@ -13,9 +13,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@codefast/ui';
-import { MoreHorizontalIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { MoreHorizontalIcon } from "lucide-react";
+import Link from "next/link";
 
 export function NavMain({
   items,
@@ -28,7 +28,7 @@ export function NavMain({
     isActive?: boolean;
   }[];
 }): JSX.Element {
-  const { isMobile } = useSidebar('NavMain');
+  const { isMobile } = useSidebar("NavMain");
 
   return (
     <SidebarGroup>
@@ -43,9 +43,9 @@ export function NavMain({
               </DropdownMenuTrigger>
               {item.items.length > 0 ? (
                 <DropdownMenuContent
-                  align={isMobile ? 'end' : 'start'}
+                  align={isMobile ? "end" : "start"}
                   className="min-w-56 rounded-lg"
-                  side={isMobile ? 'bottom' : 'right'}
+                  side={isMobile ? "bottom" : "right"}
                 >
                   {item.items.map((navItem) => (
                     <DropdownMenuItem key={navItem.title} asChild>

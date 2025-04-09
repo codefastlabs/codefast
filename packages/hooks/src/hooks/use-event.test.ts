@@ -1,18 +1,18 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook } from "@testing-library/react";
 
-import { useEvent } from '@/hooks/use-event';
+import { useEvent } from "@/hooks/use-event";
 
-describe('useEvent', () => {
-  it('should attach an event listener to the provided element', () => {
-    const element = document.createElement('div');
+describe("useEvent", () => {
+  it("should attach an event listener to the provided element", () => {
+    const element = document.createElement("div");
     const handler = jest.fn();
-    const eventName = 'click';
+    const eventName = "click";
 
     renderHook(() => {
       useEvent(eventName, handler, element);
     });
 
-    const event = new MouseEvent('click');
+    const event = new MouseEvent("click");
 
     element.dispatchEvent(event);
 
@@ -20,15 +20,15 @@ describe('useEvent', () => {
     expect(handler).toHaveBeenCalledWith(event);
   });
 
-  it('should use window as default element', () => {
+  it("should use window as default element", () => {
     const handler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
-    const eventName = 'resize';
+    const eventName = "resize";
 
     renderHook(() => {
       useEvent(eventName, handler);
     });
 
-    const event = new Event('resize');
+    const event = new Event("resize");
 
     window.dispatchEvent(event);
 
@@ -36,10 +36,10 @@ describe('useEvent', () => {
     expect(handler).toHaveBeenCalledWith(event);
   });
 
-  it('should clean up event listener on unmount', () => {
-    const element = document.createElement('div');
+  it("should clean up event listener on unmount", () => {
+    const element = document.createElement("div");
     const handler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
-    const eventName = 'click';
+    const eventName = "click";
 
     const { unmount } = renderHook(() => {
       useEvent(eventName, handler, element);
@@ -47,18 +47,18 @@ describe('useEvent', () => {
 
     unmount();
 
-    const event = new MouseEvent('click');
+    const event = new MouseEvent("click");
 
     element.dispatchEvent(event);
 
     expect(handler).not.toHaveBeenCalled();
   });
 
-  it('should update handler when it changes', () => {
-    const element = document.createElement('div');
+  it("should update handler when it changes", () => {
+    const element = document.createElement("div");
     const initialHandler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
     const updatedHandler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
-    const eventName = 'click';
+    const eventName = "click";
 
     const { rerender } = renderHook(
       ({ handler }) => {
@@ -71,7 +71,7 @@ describe('useEvent', () => {
 
     rerender({ handler: updatedHandler });
 
-    const event = new MouseEvent('click');
+    const event = new MouseEvent("click");
 
     element.dispatchEvent(event);
 
@@ -79,11 +79,11 @@ describe('useEvent', () => {
     expect(updatedHandler).toHaveBeenCalledTimes(1);
   });
 
-  it('should update event listener when event name changes', () => {
-    const element = document.createElement('div');
+  it("should update event listener when event name changes", () => {
+    const element = document.createElement("div");
     const handler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
-    const initialEventName = 'click';
-    const updatedEventName = 'mouseover';
+    const initialEventName = "click";
+    const updatedEventName = "mouseover";
 
     const { rerender } = renderHook(
       ({ eventName }) => {
@@ -96,12 +96,12 @@ describe('useEvent', () => {
 
     rerender({ eventName: updatedEventName });
 
-    let event = new MouseEvent('click');
+    let event = new MouseEvent("click");
 
     element.dispatchEvent(event);
     expect(handler).not.toHaveBeenCalled();
 
-    event = new MouseEvent('mouseover');
+    event = new MouseEvent("mouseover");
     element.dispatchEvent(event);
     expect(handler).toHaveBeenCalledTimes(1);
   });

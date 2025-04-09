@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   CommandDialog,
@@ -12,32 +12,32 @@ import {
   CommandSeparator,
   CommandShortcut,
   Kbd,
-} from '@codefast/ui';
-import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+} from "@codefast/ui";
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function CommandDemo(): JSX.Element {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const down = (e: KeyboardEvent): void => {
-      if (e.key === 'j' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((isOpen) => !isOpen);
       }
     };
 
-    document.addEventListener('keydown', down);
+    document.addEventListener("keydown", down);
 
     return () => {
-      document.removeEventListener('keydown', down);
+      document.removeEventListener("keydown", down);
     };
   }, []);
 
   return (
     <>
       <p className="text-muted-foreground text-sm">
-        Press{' '}
+        Press{" "}
         <Kbd>
           <span className="text-sm">⌘</span>J
         </Kbd>

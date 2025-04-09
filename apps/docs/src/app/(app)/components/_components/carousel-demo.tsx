@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Card,
@@ -8,7 +8,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
 export function CarouselDemo(): JSX.Element {
   return (
@@ -58,7 +58,7 @@ export function CarouselDemo(): JSX.Element {
       <Carousel
         className="*:data-[slot=carousel-next]:hidden *:data-[slot=carousel-previous]:hidden *:data-[slot=carousel-next]:md:inline-flex *:data-[slot=carousel-previous]:md:inline-flex"
         opts={{
-          align: 'start',
+          align: "start",
           loop: true,
         }}
       >

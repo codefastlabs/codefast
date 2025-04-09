@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 import {
   Card,
@@ -13,27 +13,27 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@codefast/ui';
-import { TrendingUpIcon } from 'lucide-react';
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
+} from "@codefast/ui";
+import { TrendingUpIcon } from "lucide-react";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 },
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
 ];
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
-    color: 'var(--chart-1)',
+    label: "Desktop",
+    color: "var(--chart-1)",
   },
   mobile: {
-    label: 'Mobile',
-    color: 'var(--chart-2)',
+    label: "Mobile",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
@@ -69,7 +69,7 @@ export function ChartLineDots(): JSX.Element {
               }}
               dataKey="desktop"
               dot={{
-                fill: 'var(--color-desktop)',
+                fill: "var(--color-desktop)",
               }}
               stroke="var(--color-desktop)"
               strokeWidth={2}

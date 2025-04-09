@@ -10,13 +10,13 @@
       --spacing: 0.222222rem;
     }
 
-    [data-slot='card'] {
+    [data-slot="card"] {
       --spacing: 0.16rem;
     }
 
-    [data-slot='card-header'] *,
-    [data-slot='card-content'] *,
-    [data-slot='card-footer'] * {
+    [data-slot="card-header"] *,
+    [data-slot="card-content"] *,
+    [data-slot="card-footer"] * {
       --spacing: 0.222222rem;
     }
   }

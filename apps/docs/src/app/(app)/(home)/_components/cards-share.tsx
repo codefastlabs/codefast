@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -22,9 +22,9 @@ import {
   SelectValue,
   Separator,
   toast,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-type UserPermission = 'edit' | 'view';
+type UserPermission = "edit" | "view";
 
 interface User {
   avatar: string;
@@ -61,29 +61,29 @@ function UserAccessRow({ user }: { user: User }): JSX.Element {
 }
 
 export function CardsShare(): JSX.Element {
-  const documentLink = 'https://example.com/link/to/document';
+  const documentLink = "https://example.com/link/to/document";
 
   const usersWithAccess: User[] = [
     {
-      name: 'Olivia Martin',
-      email: 'm@example.com',
-      avatar: '/avatars/03.png',
-      initials: 'OM',
-      permission: 'edit',
+      name: "Olivia Martin",
+      email: "m@example.com",
+      avatar: "/avatars/03.png",
+      initials: "OM",
+      permission: "edit",
     },
     {
-      name: 'Isabella Nguyen',
-      email: 'b@example.com',
-      avatar: '/avatars/05.png',
-      initials: 'IN',
-      permission: 'view',
+      name: "Isabella Nguyen",
+      email: "b@example.com",
+      avatar: "/avatars/05.png",
+      initials: "IN",
+      permission: "view",
     },
     {
-      name: 'Sofia Davis',
-      email: 'p@example.com',
-      avatar: '/avatars/01.png',
-      initials: 'SD',
-      permission: 'view',
+      name: "Sofia Davis",
+      email: "p@example.com",
+      avatar: "/avatars/01.png",
+      initials: "SD",
+      permission: "view",
     },
   ];
 
@@ -91,11 +91,11 @@ export function CardsShare(): JSX.Element {
     navigator.clipboard
       .writeText(documentLink)
       .then(() => {
-        toast.success('Link copied to clipboard');
+        toast.success("Link copied to clipboard");
       })
       .catch((error: unknown) => {
-        toast.error('Failed to copy link');
-        logger.error('Copy error:', error);
+        toast.error("Failed to copy link");
+        logger.error("Copy error:", error);
       });
   };
 

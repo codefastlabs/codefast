@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { GalleryVerticalEndIcon } from 'lucide-react';
-import Link from 'next/link';
+import { GalleryVerticalEndIcon } from "lucide-react";
+import Link from "next/link";
 
-import { LoginForm } from '@/registry/blocks/login-03/_components/login-form';
+import { LoginForm } from "@/registry/blocks/login-03/_components/login-form";
 
 export default function LoginPage(): JSX.Element {
   return (

@@ -1,4 +1,4 @@
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode } from "react";
 
 import {
   Collapsible,
@@ -14,9 +14,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@codefast/ui';
-import { ChevronRightIcon, MoreHorizontalIcon, PlusIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { ChevronRightIcon, MoreHorizontalIcon, PlusIcon } from "lucide-react";
+import Link from "next/link";
 
 export function NavWorkspaces({
   workspaces,

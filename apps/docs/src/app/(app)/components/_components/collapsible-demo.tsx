@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@codefast/ui';
-import { ChevronsUpDownIcon } from 'lucide-react';
-import { useState } from 'react';
+import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from "@codefast/ui";
+import { ChevronsUpDownIcon } from "lucide-react";
+import { useState } from "react";
 
 export function CollapsibleDemo(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);

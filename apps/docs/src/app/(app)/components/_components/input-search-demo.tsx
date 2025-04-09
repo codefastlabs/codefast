@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { InputSearch } from '@codefast/ui';
-import { UserSearchIcon } from 'lucide-react';
+import { InputSearch } from "@codefast/ui";
+import { UserSearchIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function InputSearchDemo(): JSX.Element {
   return (

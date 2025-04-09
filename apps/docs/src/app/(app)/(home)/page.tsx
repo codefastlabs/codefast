@@ -1,21 +1,21 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
-import { CardsActivityGoal } from '@/app/(app)/(home)/_components/cards-activity-goal';
-import { CardsChat } from '@/app/(app)/(home)/_components/cards-chat';
-import { CardsCookieSettings } from '@/app/(app)/(home)/_components/cards-cookie-settings';
-import { CardsCreateAccount } from '@/app/(app)/(home)/_components/cards-create-account';
-import { CardsDataTable } from '@/app/(app)/(home)/_components/cards-data-table';
-import { CardsMetric } from '@/app/(app)/(home)/_components/cards-metric';
-import { CardsPaymentMethod } from '@/app/(app)/(home)/_components/cards-payment-method';
-import { CardsReportIssue } from '@/app/(app)/(home)/_components/cards-report-issue';
-import { CardsShare } from '@/app/(app)/(home)/_components/cards-share';
-import { CardsStats } from '@/app/(app)/(home)/_components/cards-stats';
-import { CardsTeamMembers } from '@/app/(app)/(home)/_components/cards-team-members';
+import { CardsActivityGoal } from "@/app/(app)/(home)/_components/cards-activity-goal";
+import { CardsChat } from "@/app/(app)/(home)/_components/cards-chat";
+import { CardsCookieSettings } from "@/app/(app)/(home)/_components/cards-cookie-settings";
+import { CardsCreateAccount } from "@/app/(app)/(home)/_components/cards-create-account";
+import { CardsDataTable } from "@/app/(app)/(home)/_components/cards-data-table";
+import { CardsMetric } from "@/app/(app)/(home)/_components/cards-metric";
+import { CardsPaymentMethod } from "@/app/(app)/(home)/_components/cards-payment-method";
+import { CardsReportIssue } from "@/app/(app)/(home)/_components/cards-report-issue";
+import { CardsShare } from "@/app/(app)/(home)/_components/cards-share";
+import { CardsStats } from "@/app/(app)/(home)/_components/cards-stats";
+import { CardsTeamMembers } from "@/app/(app)/(home)/_components/cards-team-members";
 
-const title = 'Building a powerful component library';
+const title = "Building a powerful component library";
 const description =
-  'A suite of elegantly designed, accessible components and a code distribution platform. Works seamlessly with your favorite frameworks. Open Source. Open Code.';
+  "A suite of elegantly designed, accessible components and a code distribution platform. Works seamlessly with your favorite frameworks. Open Source. Open Code.";
 
 export const metadata: Metadata = {
   title,

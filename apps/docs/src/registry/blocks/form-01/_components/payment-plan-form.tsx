@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -16,20 +16,20 @@ import {
   RadioCards,
   RadioCardsItem,
   Textarea,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
 const plans = [
   {
-    id: 'starter',
-    name: 'Starter Plan',
-    description: 'Perfect for small businesses.',
-    price: '$10',
+    id: "starter",
+    name: "Starter Plan",
+    description: "Perfect for small businesses.",
+    price: "$10",
   },
   {
-    id: 'pro',
-    name: 'Pro Plan',
-    description: 'Advanced features with more storage.',
-    price: '$20',
+    id: "pro",
+    name: "Pro Plan",
+    description: "Advanced features with more storage.",
+    price: "$20",
   },
 ] as const;
 

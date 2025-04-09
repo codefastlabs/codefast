@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import type { ComponentProps, CSSProperties, JSX } from 'react';
+import type { ComponentProps, CSSProperties, JSX } from "react";
 
-import * as ProgressCirclePrimitive from '@codefast-ui/progress-circle';
-import { useAnimatedValue } from '@codefast/hooks';
-import { useCallback, useMemo } from 'react';
+import * as ProgressCirclePrimitive from "@codefast-ui/progress-circle";
+import { useAnimatedValue } from "@codefast/hooks";
+import { useCallback, useMemo } from "react";
 
-import type { VariantProps } from '@/lib/utils';
+import type { VariantProps } from "@/lib/utils";
 
-import { tv } from '@/lib/utils';
+import { tv } from "@/lib/utils";
 
 /* -------------------------------------------------------------------------------------------------
  * Variant: ProgressCircle
@@ -16,27 +16,27 @@ import { tv } from '@/lib/utils';
 
 const progressCircleVariants = tv({
   slots: {
-    root: 'relative inline-flex items-center justify-center',
-    svg: 'size-full',
-    track: 'origin-center',
-    indicator: 'origin-center',
-    label: 'absolute inset-0 flex items-center justify-center text-xs font-medium',
+    root: "relative inline-flex items-center justify-center",
+    svg: "size-full",
+    track: "origin-center",
+    indicator: "origin-center",
+    label: "absolute inset-0 flex items-center justify-center text-xs font-medium",
   },
   variants: {
     variant: {
-      default: { indicator: 'text-primary', track: 'text-primary/20' },
-      destructive: { indicator: 'text-destructive', track: 'text-destructive/20' },
+      default: { indicator: "text-primary", track: "text-primary/20" },
+      destructive: { indicator: "text-destructive", track: "text-destructive/20" },
     },
     size: {
-      sm: { label: 'text-[10px]' },
-      md: { label: 'text-xs' },
-      lg: { label: 'text-sm' },
-      xl: { label: 'text-base' },
-      '2xl': { label: 'text-lg' },
+      sm: { label: "text-[10px]" },
+      md: { label: "text-xs" },
+      lg: { label: "text-sm" },
+      xl: { label: "text-base" },
+      "2xl": { label: "text-lg" },
     },
     thickness: { thin: {}, regular: {}, thick: {} },
   },
-  defaultVariants: { variant: 'default', size: 'md', thickness: 'regular' },
+  defaultVariants: { variant: "default", size: "md", thickness: "regular" },
 });
 
 /* -------------------------------------------------------------------------------------------------
@@ -48,16 +48,16 @@ function ProgressCircle({
   classNames,
   customLabel,
   showValue = false,
-  variant = 'default',
+  variant = "default",
   size,
   sizeInPixels,
-  thickness = 'regular',
+  thickness = "regular",
   animate = true,
   animationDuration = 1000,
   className,
   strokeWidth,
   ...props
-}: Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, 'children' | 'size'> &
+}: Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size"> &
   VariantProps<typeof progressCircleVariants> & {
     /**
      * Enables animation effect when value changes
@@ -153,7 +153,7 @@ function ProgressCircle({
             style={
               {
                 transitionDuration: `${animationDuration}ms`,
-                transitionProperty: 'stroke-dashoffset',
+                transitionProperty: "stroke-dashoffset",
               } as CSSProperties
             }
           />
@@ -168,7 +168,7 @@ function ProgressCircle({
   );
 }
 
-ProgressCircle.displayName = 'ProgressCircle';
+ProgressCircle.displayName = "ProgressCircle";
 
 /* -----------------------------------------------------------------------------
  * Helpers
@@ -177,13 +177,13 @@ ProgressCircle.displayName = 'ProgressCircle';
 /**
  * Maps size variants to actual pixel sizes
  */
-const getActualSize = (size?: VariantProps<typeof progressCircleVariants>['size']): number => {
+const getActualSize = (size?: VariantProps<typeof progressCircleVariants>["size"]): number => {
   const sizeMap: Record<NonNullable<typeof size>, number> = {
     sm: 32,
     md: 48,
     lg: 64,
     xl: 96,
-    '2xl': 128,
+    "2xl": 128,
   };
 
   return size ? sizeMap[size] : 48;
@@ -192,7 +192,7 @@ const getActualSize = (size?: VariantProps<typeof progressCircleVariants>['size'
 /**
  * Calculates stroke width based on thickness variant and circle size
  */
-const getStrokeWidth = (thickness: VariantProps<typeof progressCircleVariants>['thickness'], size: number): number => {
+const getStrokeWidth = (thickness: VariantProps<typeof progressCircleVariants>["thickness"], size: number): number => {
   const thicknessMap: Record<NonNullable<typeof thickness>, number> = {
     thin: Math.max(2, size * 0.025),
     regular: Math.max(3, size * 0.05),

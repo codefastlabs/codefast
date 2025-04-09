@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
-import { registryComponents } from '@/app/(app)/components/registry-components';
-import { ComponentWrapper } from '@/components/component-wrapper';
+import { registryComponents } from "@/app/(app)/components/registry-components";
+import { ComponentWrapper } from "@/components/component-wrapper";
 
 const sortedComponents = Object.entries(registryComponents).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
 
 export const metadata: Metadata = {
-  title: 'Components',
+  title: "Components",
 };
 
 export default function ComponentsPage(): JSX.Element {

@@ -1,6 +1,6 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Slot } from '@radix-ui/react-slot';
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Pre
@@ -9,10 +9,10 @@ import { Slot } from '@radix-ui/react-slot';
 function Pre({
   asChild,
   ...props
-}: ComponentProps<'pre'> & {
+}: ComponentProps<"pre"> & {
   asChild?: boolean;
 }): JSX.Element {
-  const Component = asChild ? Slot : 'pre';
+  const Component = asChild ? Slot : "pre";
 
   return <Component data-slot="pre" {...props} />;
 }

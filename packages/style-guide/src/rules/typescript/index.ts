@@ -1,23 +1,23 @@
-import type { Linter } from 'eslint';
+import type { Linter } from "eslint";
 
 export const typescriptRules: Linter.Config = {
-  name: '@codefast/style-guide/rules/typescript',
+  name: "@codefast/style-guide/rules/typescript",
   rules: {
     /**
      * Require consistent usage of type exports.
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/consistent-type-exports/
      */
-    '@typescript-eslint/consistent-type-exports': ['warn', { fixMixedExportsWithInlineTypeSpecifier: false }],
+    "@typescript-eslint/consistent-type-exports": ["warn", { fixMixedExportsWithInlineTypeSpecifier: false }],
 
     /**
      * Require consistent usage of type imports.
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/consistent-type-imports/
      */
-    '@typescript-eslint/consistent-type-imports': [
-      'warn',
-      { disallowTypeAnnotations: true, fixStyle: 'separate-type-imports', prefer: 'type-imports' },
+    "@typescript-eslint/consistent-type-imports": [
+      "warn",
+      { disallowTypeAnnotations: true, fixStyle: "separate-type-imports", prefer: "type-imports" },
     ],
 
     /**
@@ -25,7 +25,7 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/explicit-function-return-type/
      */
-    '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
+    "@typescript-eslint/explicit-function-return-type": ["warn", { allowExpressions: true }],
 
     /**
      * Require using function property types in method signatures.
@@ -34,7 +34,7 @@ export const typescriptRules: Linter.Config = {
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/method-signature-style/
      */
-    '@typescript-eslint/method-signature-style': 'warn',
+    "@typescript-eslint/method-signature-style": "warn",
 
     /**
      * Require consistent naming conventions.
@@ -43,15 +43,15 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/naming-convention/
      */
-    '@typescript-eslint/naming-convention': [
-      'error',
+    "@typescript-eslint/naming-convention": [
+      "error",
       // Anything type-like should be written in PascalCase.
-      { format: ['PascalCase'], selector: ['typeLike', 'enumMember'] },
+      { format: ["PascalCase"], selector: ["typeLike", "enumMember"] },
       // Interfaces cannot be prefixed with `I`, or have restricted names.
       {
-        custom: { match: false, regex: '^I[A-Z]|^(Interface|Props|State)$' },
-        format: ['PascalCase'],
-        selector: 'interface',
+        custom: { match: false, regex: "^I[A-Z]|^(Interface|Props|State)$" },
+        format: ["PascalCase"],
+        selector: "interface",
       },
     ],
 
@@ -60,28 +60,28 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/no-redundant-type-constituents/
      */
-    '@typescript-eslint/no-redundant-type-constituents': 'warn',
+    "@typescript-eslint/no-redundant-type-constituents": "warn",
 
     /**
      * Disallow unnecessary namespace qualifiers.
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/no-unnecessary-qualifier/
      */
-    '@typescript-eslint/no-unnecessary-qualifier': 'warn',
+    "@typescript-eslint/no-unnecessary-qualifier": "warn",
 
     /**
      * Require using `RegExp.exec()` over `String.match()` for consistency.
      *
      * 🔧 Fixable - https://typescript-eslint.io/rules/prefer-regexp-exec/
      */
-    '@typescript-eslint/prefer-regexp-exec': 'warn',
+    "@typescript-eslint/prefer-regexp-exec": "warn",
 
     /**
      * Require Array#sort calls to provide a compare function.
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/require-array-sort-compare/
      */
-    '@typescript-eslint/require-array-sort-compare': ['error', { ignoreStringArrays: true }],
+    "@typescript-eslint/require-array-sort-compare": ["error", { ignoreStringArrays: true }],
 
     /**
      * Require exhaustive checks when using union types in switch statements.
@@ -90,6 +90,6 @@ export const typescriptRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://typescript-eslint.io/rules/switch-exhaustiveness-check/
      */
-    '@typescript-eslint/switch-exhaustiveness-check': ['error', { considerDefaultExhaustiveForUnions: true }],
+    "@typescript-eslint/switch-exhaustiveness-check": ["error", { considerDefaultExhaustiveForUnions: true }],
   },
 };

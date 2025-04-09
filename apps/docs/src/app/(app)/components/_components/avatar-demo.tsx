@@ -1,8 +1,8 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@codefast/ui';
+import { Avatar, AvatarFallback, AvatarImage } from "@codefast/ui";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function AvatarDemo(): JSX.Element {
   return (

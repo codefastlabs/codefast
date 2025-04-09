@@ -1,10 +1,10 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Badge } from '@codefast/ui';
-import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from 'lucide-react';
-import Link from 'next/link';
+import { Badge } from "@codefast/ui";
+import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
+import Link from "next/link";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function BadgeDemo(): JSX.Element {
   return (

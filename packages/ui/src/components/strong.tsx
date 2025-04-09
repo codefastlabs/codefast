@@ -1,6 +1,6 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Slot } from '@radix-ui/react-slot';
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Strong
@@ -9,10 +9,10 @@ import { Slot } from '@radix-ui/react-slot';
 function Strong({
   asChild,
   ...props
-}: ComponentProps<'strong'> & {
+}: ComponentProps<"strong"> & {
   asChild?: boolean;
 }): JSX.Element {
-  const Component = asChild ? Slot : 'strong';
+  const Component = asChild ? Slot : "strong";
 
   return <Component data-slot="strong" {...props} />;
 }

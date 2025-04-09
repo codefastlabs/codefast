@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Badge,
@@ -33,8 +33,8 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from '@codefast/ui';
-import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from 'lucide-react';
+} from "@codefast/ui";
+import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from "lucide-react";
 
 export function ProductsTable({
   products,
@@ -135,9 +135,9 @@ export function ProductsTable({
                 <TableCell>
                   <Badge
                     className={
-                      product.status === 'Low Stock'
-                        ? 'border-orange-700 bg-transparent text-orange-700 dark:border-orange-700 dark:bg-transparent dark:text-orange-700'
-                        : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-100'
+                      product.status === "Low Stock"
+                        ? "border-orange-700 bg-transparent text-orange-700 dark:border-orange-700 dark:bg-transparent dark:text-orange-700"
+                        : "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-100"
                     }
                     variant="secondary"
                   >
@@ -145,10 +145,10 @@ export function ProductsTable({
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {new Date(product.dateAdded).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
+                  {new Date(product.dateAdded).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
                   })}
                 </TableCell>
                 <TableCell>

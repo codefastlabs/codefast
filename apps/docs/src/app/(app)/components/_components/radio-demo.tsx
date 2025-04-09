@@ -1,10 +1,10 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { cn, Label, Radio } from '@codefast/ui';
+import { cn, Label, Radio } from "@codefast/ui";
 
-export function RadioDemo({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+export function RadioDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
-    <div className={cn('grid gap-2', className)} {...props}>
+    <div className={cn("grid gap-2", className)} {...props}>
       <div className="flex items-center gap-3">
         <Radio id="radio-1" name="example" value="1" />
         <Label htmlFor="radio-1">Default</Label>

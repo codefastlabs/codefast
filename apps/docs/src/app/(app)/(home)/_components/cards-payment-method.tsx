@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -17,9 +17,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { Icons } from '@/components/icons';
+import { Icons } from "@/components/icons";
 
 export function CardsPaymentMethod(): JSX.Element {
   return (

@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
-import type { JSX } from 'react';
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
-import { notFound } from 'next/navigation';
+import { notFound } from "next/navigation";
 
-import { BlockDisplay } from '@/components/block-display';
-import { getCachedBlockRegistry } from '@/lib/registry-cache';
-import { registryBlocks } from '@/registry/registry-blocks';
+import { BlockDisplay } from "@/components/block-display";
+import { getCachedBlockRegistry } from "@/lib/registry-cache";
+import { registryBlocks } from "@/registry/registry-blocks";
 
 export const dynamicParams = false;
 

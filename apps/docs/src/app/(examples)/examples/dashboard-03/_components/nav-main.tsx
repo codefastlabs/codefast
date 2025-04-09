@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { LucideIcon } from 'lucide-react';
-import type { JSX } from 'react';
+import type { LucideIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import {
   Collapsible,
@@ -16,10 +16,10 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@codefast/ui';
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+} from "@codefast/ui";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function NavMain({
   items,
@@ -49,7 +49,7 @@ export function NavMain({
                 <Link
                   className="data-[disabled=true]:opacity-50"
                   data-disabled={item.disabled}
-                  href={item.disabled ? '#' : item.url}
+                  href={item.disabled ? "#" : item.url}
                 >
                   <item.icon className="text-muted-foreground" />
                   <span>{item.title}</span>

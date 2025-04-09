@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Breadcrumb,
@@ -12,13 +12,13 @@ import {
   Button,
   Separator,
   useSidebar,
-} from '@codefast/ui';
-import { SidebarIcon } from 'lucide-react';
+} from "@codefast/ui";
+import { SidebarIcon } from "lucide-react";
 
-import { SearchForm } from '@/registry/blocks/sidebar-16/_components/search-form';
+import { SearchForm } from "@/registry/blocks/sidebar-16/_components/search-form";
 
 export function SiteHeader(): JSX.Element {
-  const { toggleSidebar } = useSidebar('SiteHeader');
+  const { toggleSidebar } = useSidebar("SiteHeader");
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">

@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Separator } from '@codefast/ui';
+import { Separator } from "@codefast/ui";
 
 export function SeparatorDemo(): JSX.Element {
   return (

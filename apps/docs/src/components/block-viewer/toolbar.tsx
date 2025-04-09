@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { useCopyToClipboard } from '@codefast/hooks';
+import { useCopyToClipboard } from "@codefast/hooks";
 import {
   Button,
   buttonVariants,
@@ -10,18 +10,18 @@ import {
   TabsTrigger,
   ToggleGroup,
   ToggleGroupItem,
-} from '@codefast/ui';
-import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from 'lucide-react';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from "lucide-react";
+import Link from "next/link";
 
-import type { BlockViewMode } from '@/components/block-viewer/provider';
+import type { BlockViewMode } from "@/components/block-viewer/provider";
 
-import { useBlockViewer } from '@/components/block-viewer/provider';
+import { useBlockViewer } from "@/components/block-viewer/provider";
 
 const hasCli = false;
 
 export function BlockViewerToolbar(): JSX.Element {
-  const { setView, view, item, resizablePanelRef } = useBlockViewer('BlockViewerToolbar');
+  const { setView, view, item, resizablePanelRef } = useBlockViewer("BlockViewerToolbar");
   const { copyToClipboard, isCopied } = useCopyToClipboard();
 
   return (
@@ -54,8 +54,8 @@ export function BlockViewerToolbar(): JSX.Element {
                 resizablePanelRef.current.resize(Number.parseInt(value));
               }
 
-              if (view === 'code') {
-                setView('preview');
+              if (view === "code") {
+                setView("preview");
               }
             }}
           >
@@ -71,7 +71,7 @@ export function BlockViewerToolbar(): JSX.Element {
           </ToggleGroup>
           <Separator className="h-4" orientation="vertical" />
           <Link
-            className={buttonVariants({ size: 'icon', variant: 'ghost', className: 'size-7' })}
+            className={buttonVariants({ size: "icon", variant: "ghost", className: "size-7" })}
             href={`/view/${item.slug}`}
             target="_blank"
             title="Open in New Tab"

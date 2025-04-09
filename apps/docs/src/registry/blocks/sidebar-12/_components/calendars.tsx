@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Collapsible,
@@ -11,9 +11,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-} from '@codefast/ui';
-import { CheckIcon, ChevronRightIcon } from 'lucide-react';
-import { Fragment } from 'react';
+} from "@codefast/ui";
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { Fragment } from "react";
 
 export function Calendars({
   calendars,
@@ -34,7 +34,7 @@ export function Calendars({
                 className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full text-sm"
               >
                 <CollapsibleTrigger>
-                  {calendar.name}{' '}
+                  {calendar.name}{" "}
                   <ChevronRightIcon className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>

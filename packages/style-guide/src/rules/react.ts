@@ -1,4 +1,4 @@
-import type { Linter } from 'eslint';
+import type { Linter } from "eslint";
 
 /**
  * These are enabled by `react/recommended`, but we've made the decision to
@@ -7,14 +7,14 @@ import type { Linter } from 'eslint';
 const disabledRules: Partial<Linter.RulesRecord> = {
   // We recommend using TypeScript over `prop-types`, as `prop-types` can add
   // to a project's build size.
-  'react/prop-types': 'off',
+  "react/prop-types": "off",
 
   // Disable requiring React to be imported, as this is no longer required.
-  'react/react-in-jsx-scope': 'off',
+  "react/react-in-jsx-scope": "off",
 };
 
 export const reactRules: Linter.Config = {
-  name: '@codefast/style-guide/rules/react',
+  name: "@codefast/style-guide/rules/react",
   rules: {
     ...disabledRules,
 
@@ -23,7 +23,7 @@ export const reactRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/button-has-type.md
      */
-    'react/button-has-type': 'warn',
+    "react/button-has-type": "warn",
 
     /**
      * Require consistent function type for function components.
@@ -31,42 +31,42 @@ export const reactRules: Linter.Config = {
      * 🔧 Fixable -
      * https://github.com/jsx-eslint/eslint-plugin-react/blob/HEAD/docs/rules/function-component-definition.md
      */
-    'react/function-component-definition': 'warn',
+    "react/function-component-definition": "warn",
 
     /**
      * Require destructuring and symmetric naming of `useState` hook value and setter variables.
      *
      * 🚫 Not fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/hook-use-state.md
      */
-    'react/hook-use-state': 'warn',
+    "react/hook-use-state": "warn",
 
     /**
      * Require consistent boolean attributes notation in JSX.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-boolean-value.md
      */
-    'react/jsx-boolean-value': 'warn',
+    "react/jsx-boolean-value": "warn",
 
     /**
      * Disallow unnecessary curly braces in JSX props and children.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-curly-brace-presence.md
      */
-    'react/jsx-curly-brace-presence': 'warn',
+    "react/jsx-curly-brace-presence": "warn",
 
     /**
      * Require using shorthand form for React fragments, unless required.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-fragments.md
      */
-    'react/jsx-fragments': 'warn',
+    "react/jsx-fragments": "warn",
 
     /**
      * Prevent problematic leaked values from being rendered.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-leaked-render.md
      */
-    'react/jsx-no-leaked-render': 'warn',
+    "react/jsx-no-leaked-render": "warn",
 
     /**
      * Prevents usage of unsafe `target='_blank'`.
@@ -76,21 +76,21 @@ export const reactRules: Linter.Config = {
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-target-blank.md
      */
-    'react/jsx-no-target-blank': ['error', { allowReferrer: true }],
+    "react/jsx-no-target-blank": ["error", { allowReferrer: true }],
 
     /**
      * Disallow empty React fragments.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-useless-fragment.md
      */
-    'react/jsx-no-useless-fragment': ['warn', { allowExpressions: true }],
+    "react/jsx-no-useless-fragment": ["warn", { allowExpressions: true }],
 
     /**
      * Require the use of PascalCase for user-defined JSX components.
      *
      * 🚫 Not fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-pascal-case.md
      */
-    'react/jsx-pascal-case': ['warn', { allowNamespace: true }],
+    "react/jsx-pascal-case": ["warn", { allowNamespace: true }],
 
     /**
      * Request to sort attributes in JSX.
@@ -99,8 +99,8 @@ export const reactRules: Linter.Config = {
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-sort-props.md
      */
-    'react/jsx-sort-props': [
-      'warn',
+    "react/jsx-sort-props": [
+      "warn",
       { callbacksLast: true, ignoreCase: true, reservedFirst: true, shorthandFirst: true },
     ],
 
@@ -109,7 +109,7 @@ export const reactRules: Linter.Config = {
      *
      * 🚫 Not fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-array-index-key.md
      */
-    'react/no-array-index-key': 'warn',
+    "react/no-array-index-key": "warn",
 
     /**
      * Disallow creating unstable components inside components.
@@ -117,13 +117,13 @@ export const reactRules: Linter.Config = {
      * 🚫 Not fixable -
      * https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/no-unstable-nested-components.md
      */
-    'react/no-unstable-nested-components': 'error',
+    "react/no-unstable-nested-components": "error",
 
     /**
      * Disallow closing tags for components without children.
      *
      * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md
      */
-    'react/self-closing-comp': 'warn',
+    "react/self-closing-comp": "warn",
   },
 };

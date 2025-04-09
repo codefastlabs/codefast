@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@codefast/ui';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@codefast/ui";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface NavItem {
   href: string;
@@ -15,9 +15,9 @@ export function NavHeader(props: ComponentProps<typeof NavigationMenu>): JSX.Ele
   const pathname = usePathname();
 
   const navItems: NavItem[] = [
-    { href: '/', label: 'Home' },
-    { href: '/components', label: 'Components' },
-    { href: '/charts', label: 'Charts' },
+    { href: "/", label: "Home" },
+    { href: "/components", label: "Components" },
+    { href: "/charts", label: "Charts" },
   ];
 
   return (

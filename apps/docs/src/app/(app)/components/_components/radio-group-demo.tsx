@@ -1,8 +1,8 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Label, RadioGroup, RadioGroupItem } from '@codefast/ui';
+import { Label, RadioGroup, RadioGroupItem } from "@codefast/ui";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 interface Plan {
   /** Mô tả ngắn về tính năng của gói dịch vụ */
@@ -21,23 +21,23 @@ interface Plan {
 
 const plans: readonly Plan[] = [
   {
-    id: 'starter',
-    name: 'Starter Plan',
-    description: 'Perfect for small businesses getting started with our platform',
-    price: '$10',
+    id: "starter",
+    name: "Starter Plan",
+    description: "Perfect for small businesses getting started with our platform",
+    price: "$10",
   },
   {
-    id: 'pro',
-    name: 'Pro Plan',
-    description: 'Advanced features for growing businesses with higher demands',
-    price: '$20',
+    id: "pro",
+    name: "Pro Plan",
+    description: "Advanced features for growing businesses with higher demands",
+    price: "$20",
   },
   {
-    id: 'business',
-    value: '3',
-    name: 'Business Plan',
-    description: 'Comprehensive solution for medium-sized businesses',
-    price: '$50',
+    id: "business",
+    value: "3",
+    name: "Business Plan",
+    description: "Comprehensive solution for medium-sized businesses",
+    price: "$50",
     disabled: true,
   },
 ];

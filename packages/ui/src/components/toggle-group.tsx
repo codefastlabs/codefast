@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import type { Scope } from '@radix-ui/react-context';
-import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { createContextScope } from '@radix-ui/react-context';
-import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import { createToggleGroupScope } from '@radix-ui/react-toggle-group';
+import { createContextScope } from "@radix-ui/react-context";
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
+import { createToggleGroupScope } from "@radix-ui/react-toggle-group";
 
-import type { VariantProps } from '@/lib/utils';
+import type { VariantProps } from "@/lib/utils";
 
-import { toggleVariants } from '@/components/toggle';
-import { cn } from '@/lib/utils';
+import { toggleVariants } from "@/components/toggle";
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Context: ToggleGroup
  * -------------------------------------------------------------------------- */
 
-const TOGGLE_GROUP_NAME = 'ToggleGroup';
+const TOGGLE_GROUP_NAME = "ToggleGroup";
 
 type ScopedProps<P> = P & { __scopeToggleGroup?: Scope };
 
@@ -44,7 +44,7 @@ function ToggleGroup({
   return (
     <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
       <ToggleGroupPrimitive.Root
-        className={cn('group/toggle-group flex w-fit items-center -space-x-px rounded-md', className)}
+        className={cn("group/toggle-group flex w-fit items-center -space-x-px rounded-md", className)}
         data-size={size}
         data-slot="toggle-group"
         data-variant={variant}
@@ -61,7 +61,7 @@ function ToggleGroup({
  * Component: ToggleGroupItem
  * -------------------------------------------------------------------------- */
 
-const TOGGLE_GROUP_ITEM_NAME = 'ToggleGroupItem';
+const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 
 function ToggleGroupItem({
   __scopeToggleGroup,
@@ -71,7 +71,7 @@ function ToggleGroupItem({
   suffix,
   ...props
 }: ScopedProps<
-  Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, 'prefix'> & {
+  Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, "prefix"> & {
     prefix?: ReactNode;
     suffix?: ReactNode;
   }
@@ -83,7 +83,7 @@ function ToggleGroupItem({
     <ToggleGroupPrimitive.Item
       className={toggleVariants({
         className: [
-          'min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10',
+          "min-w-0 flex-1 shrink-0 rounded-none shadow-none first:rounded-l-md last:rounded-r-md focus:z-10 focus-visible:z-10",
           className,
         ],
         size,

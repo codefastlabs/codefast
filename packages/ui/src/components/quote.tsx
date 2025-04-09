@@ -1,6 +1,6 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Slot } from '@radix-ui/react-slot';
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Quote
@@ -9,10 +9,10 @@ import { Slot } from '@radix-ui/react-slot';
 function Quote({
   asChild,
   ...props
-}: ComponentProps<'q'> & {
+}: ComponentProps<"q"> & {
   asChild?: boolean;
 }): JSX.Element {
-  const Component = asChild ? Slot : 'q';
+  const Component = asChild ? Slot : "q";
 
   return <Component data-slot="quote" {...props} />;
 }

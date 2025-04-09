@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from '@codefast/ui';
+import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
 
 export function PopoverDemo(): JSX.Element {
   return (

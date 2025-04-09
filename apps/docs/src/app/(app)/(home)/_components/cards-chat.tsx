@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -30,9 +30,9 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@codefast/ui';
-import { Check, Plus, Send } from 'lucide-react';
-import { useState } from 'react';
+} from "@codefast/ui";
+import { Check, Plus, Send } from "lucide-react";
+import { useState } from "react";
 
 interface User {
   avatar: string;
@@ -41,29 +41,29 @@ interface User {
 }
 const users: User[] = [
   {
-    name: 'Olivia Martin',
-    email: 'm@example.com',
-    avatar: '/avatars/01.png',
+    name: "Olivia Martin",
+    email: "m@example.com",
+    avatar: "/avatars/01.png",
   },
   {
-    name: 'Isabella Nguyen',
-    email: 'isabella.nguyen@email.com',
-    avatar: '/avatars/03.png',
+    name: "Isabella Nguyen",
+    email: "isabella.nguyen@email.com",
+    avatar: "/avatars/03.png",
   },
   {
-    name: 'Emma Wilson',
-    email: 'emma@example.com',
-    avatar: '/avatars/05.png',
+    name: "Emma Wilson",
+    email: "emma@example.com",
+    avatar: "/avatars/05.png",
   },
   {
-    name: 'Jackson Lee',
-    email: 'lee@example.com',
-    avatar: '/avatars/02.png',
+    name: "Jackson Lee",
+    email: "lee@example.com",
+    avatar: "/avatars/02.png",
   },
   {
-    name: 'William Kim',
-    email: 'will@email.com',
-    avatar: '/avatars/04.png',
+    name: "William Kim",
+    email: "will@email.com",
+    avatar: "/avatars/04.png",
   },
 ] as const;
 
@@ -73,23 +73,23 @@ export function CardsChat(): JSX.Element {
 
   const [messages, setMessages] = useState([
     {
-      role: 'agent',
-      content: 'Hi, how can I help you today?',
+      role: "agent",
+      content: "Hi, how can I help you today?",
     },
     {
-      role: 'user',
+      role: "user",
       content: "Hey, I'm having trouble with my account.",
     },
     {
-      role: 'agent',
-      content: 'What seems to be the problem?',
+      role: "agent",
+      content: "What seems to be the problem?",
     },
     {
-      role: 'user',
+      role: "user",
       content: "I can't log in.",
     },
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const inputLength = input.trim().length;
 
   return (
@@ -132,8 +132,8 @@ export function CardsChat(): JSX.Element {
                 // eslint-disable-next-line react/no-array-index-key -- we need index
                 key={index}
                 className={cn(
-                  'flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm',
-                  message.role === 'user' ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted',
+                  "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                  message.role === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
                 )}
               >
                 {message.content}
@@ -154,11 +154,11 @@ export function CardsChat(): JSX.Element {
               setMessages([
                 ...messages,
                 {
-                  role: 'user',
+                  role: "user",
                   content: input,
                 },
               ]);
-              setInput('');
+              setInput("");
             }}
           >
             <Input

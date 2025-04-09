@@ -1,17 +1,17 @@
-import type { JSX, ReactNode } from 'react';
+import type { JSX, ReactNode } from "react";
 
-import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from '@codefast/ui';
-import { cookies } from 'next/headers';
+import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui";
+import { cookies } from "next/headers";
 
-import { AppSidebar } from '@/components/app-sidebar';
-import { ModeSwitcher } from '@/components/mode-switcher';
-import { NavHeader } from '@/components/nav-header';
-import { ThemeSelector } from '@/components/theme-selector';
-import '@/app/(app)/themes.css';
+import { AppSidebar } from "@/components/app-sidebar";
+import { ModeSwitcher } from "@/components/mode-switcher";
+import { NavHeader } from "@/components/nav-header";
+import { ThemeSelector } from "@/components/theme-selector";
+import "@/app/(app)/themes.css";
 
 export default async function AppLayout({ children }: Readonly<{ children: ReactNode }>): Promise<JSX.Element> {
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>

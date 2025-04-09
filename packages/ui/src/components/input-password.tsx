@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import type { ComponentProps, JSX, MouseEventHandler } from 'react';
+import type { ComponentProps, JSX, MouseEventHandler } from "react";
 
-import * as InputPrimitive from '@codefast-ui/input';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import * as InputPrimitive from "@codefast-ui/input";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useCallback, useState } from "react";
 
-import type { VariantProps } from '@/lib/utils';
+import type { VariantProps } from "@/lib/utils";
 
-import { Button } from '@/components/button';
-import { inputVariants } from '@/components/input';
-import { Spinner } from '@/components/spinner';
+import { Button } from "@/components/button";
+import { inputVariants } from "@/components/input";
+import { Spinner } from "@/components/spinner";
 
 /* -----------------------------------------------------------------------------
  * Variant: InputPassword
@@ -33,17 +33,17 @@ function InputPassword({
   suffix,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Field>, 'prefix' | 'type'> &
+  Omit<ComponentProps<typeof InputPrimitive.Field>, "prefix" | "type"> &
   VariantProps<typeof inputVariants>): JSX.Element {
-  const [type, setType] = useState<'password' | 'text'>('password');
+  const [type, setType] = useState<"password" | "text">("password");
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    setType((prev) => (prev === 'password' ? 'text' : 'password'));
+    setType((prev) => (prev === "password" ? "text" : "password"));
   }, []);
 
   return (
     <InputPrimitive.Root
-      className={root({ className: [!suffix && 'pr-1.5', className] })}
+      className={root({ className: [!suffix && "pr-1.5", className] })}
       data-slot="input-password"
       disabled={disabled}
       loaderPosition={loaderPosition}
@@ -61,11 +61,11 @@ function InputPassword({
         {...props}
       />
       <Button
-        aria-label={type === 'password' ? 'Show password' : 'Hide password'}
+        aria-label={type === "password" ? "Show password" : "Hide password"}
         className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
         data-slot="input-password-toggle"
         disabled={disabled}
-        prefix={type === 'password' ? <EyeOffIcon /> : <EyeIcon />}
+        prefix={type === "password" ? <EyeOffIcon /> : <EyeIcon />}
         size="icon"
         variant="ghost"
         onClick={togglePasswordVisibility}
