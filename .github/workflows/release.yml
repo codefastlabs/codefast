@@ -31,14 +31,8 @@ jobs:
       - name: Setup Build Environment
         uses: ./.github/actions/setup-environment
 
-      - name: Build Packages
-        run: pnpm run build --filter="./packages/**"
-
-      - name: Lint Packages
-        run: pnpm run lint --filter="./packages/**"
-
-      - name: Test Packages
-        run: pnpm run test --filter="./packages/**" -- --ci --coverage
+      - name: Validate Packages (Build, Lint, Test)
+        run: turbo run build lint test:coverage:ci --filter="./packages/**" --no-daemon
 
       - name: Upload Coverage Reports
         uses: codecov/codecov-action@v5
