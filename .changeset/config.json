@@ -1,9 +1,14 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "codefastlabs/codefast" }],
+  "$schema": "https://unpkg.com/@changesets/config@latest/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "codefastlabs/codefast"
+    }
+  ],
   "baseBranch": "main",
   "commit": false,
-  "fixed": [],
+  "fixed": [["@codefast/*"]],
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
