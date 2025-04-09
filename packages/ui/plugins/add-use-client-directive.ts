@@ -1,6 +1,6 @@
-import type { Options } from 'tsup';
+import type { Options } from "tsup";
 
-import { relative } from 'node:path';
+import { relative } from "node:path";
 
 // Set to track the imports of each code chunk.
 const trackedImports = new Set<string>();
@@ -42,7 +42,7 @@ function buildClientLibsRegex(clientLibs: string[] | undefined): RegExp | undefi
   const escapedLibs = clientLibs.map((lib) => lib.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
 
   // Return a regex pattern that matches any of the provided client libraries.
-  return new RegExp(`(?:${escapedLibs.join('|')})`);
+  return new RegExp(`(?:${escapedLibs.join("|")})`);
 }
 
 /**
@@ -54,11 +54,11 @@ function buildClientLibsRegex(clientLibs: string[] | undefined): RegExp | undefi
  * @returns A plugin object that contains a `renderChunk` method to process and
  *   potentially modify the code chunks.
  */
-export function addUseClientDirective(clientLibs?: string[]): NonNullable<Options['plugins']>[number] {
+export function addUseClientDirective(clientLibs?: string[]): NonNullable<Options["plugins"]>[number] {
   const clientLibsRegex = buildClientLibsRegex(clientLibs);
 
   return {
-    name: 'add-use-client-directive',
+    name: "add-use-client-directive",
     renderChunk: (code, { imports, map, path }) => {
       const relativePath = relative(process.cwd(), path);
 

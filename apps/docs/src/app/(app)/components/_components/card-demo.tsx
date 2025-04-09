@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Avatar,
@@ -14,12 +14,12 @@ import {
   CardTitle,
   Input,
   Label,
-} from '@codefast/ui';
-import { BathIcon, BedIcon, LandPlotIcon } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
+} from "@codefast/ui";
+import { BathIcon, BedIcon, LandPlotIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function CardDemo(): JSX.Element {
   return (
@@ -56,7 +56,7 @@ export function CardDemo(): JSX.Element {
                 Login with Google
               </Button>
               <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{' '}
+                Don&apos;t have an account?{" "}
                 <Link className="underline underline-offset-4" href="#">
                   Sign up
                 </Link>

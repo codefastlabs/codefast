@@ -1,4 +1,4 @@
-import { cn } from '@codefast/ui';
+import { cn } from "@codefast/ui";
 import {
   Geist,
   Geist_Mono as GeistMono,
@@ -7,41 +7,41 @@ import {
   JetBrains_Mono as JetBrainsMono,
   Mulish,
   Noto_Sans_Mono as NotoSansMono,
-} from 'next/font/google';
+} from "next/font/google";
 
 const fontGeistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin-ext'],
+  variable: "--font-geist-sans",
+  subsets: ["latin-ext"],
 });
 
 const fontGeistMono = GeistMono({
-  variable: '--font-geist-mono',
-  subsets: ['latin-ext'],
+  variable: "--font-geist-mono",
+  subsets: ["latin-ext"],
 });
 
 const fontInstrument = InstrumentSans({
-  variable: '--font-instrument',
-  subsets: ['latin-ext'],
+  variable: "--font-instrument",
+  subsets: ["latin-ext"],
 });
 
 const fontNotoMono = NotoSansMono({
-  variable: '--font-noto-mono',
-  subsets: ['vietnamese'],
+  variable: "--font-noto-mono",
+  subsets: ["vietnamese"],
 });
 
 const fontMullish = Mulish({
-  variable: '--font-mullish',
-  subsets: ['vietnamese'],
+  variable: "--font-mullish",
+  subsets: ["vietnamese"],
 });
 
 const fontInter = Inter({
-  variable: '--font-inter',
-  subsets: ['vietnamese'],
+  variable: "--font-inter",
+  subsets: ["vietnamese"],
 });
 
 const fontJetBrainsMono = JetBrainsMono({
-  variable: '--font-jetbrains-mono',
-  subsets: ['vietnamese'],
+  variable: "--font-jetbrains-mono",
+  subsets: ["vietnamese"],
 });
 
 export const fontVariables = cn(

@@ -1,4 +1,4 @@
-import type { Scope } from '@radix-ui/react-context';
+import type { Scope } from "@radix-ui/react-context";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -8,14 +8,14 @@ import type {
   MouseEventHandler,
   PointerEventHandler,
   RefObject,
-} from 'react';
+} from "react";
 
-import * as InputPrimitive from '@codefast-ui/input';
-import { createInputScope } from '@codefast-ui/input';
-import { composeEventHandlers } from '@radix-ui/primitive';
-import { createContextScope } from '@radix-ui/react-context';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import * as InputPrimitive from "@codefast-ui/input";
+import { createInputScope } from "@codefast-ui/input";
+import { composeEventHandlers } from "@radix-ui/primitive";
+import { createContextScope } from "@radix-ui/react-context";
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: InputNumber
@@ -24,7 +24,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 /**
  * The name of the InputNumber component constant.
  */
-const NUMBER_INPUT_NAME = 'InputNumber';
+const NUMBER_INPUT_NAME = "InputNumber";
 
 /**
  * Props that include an optional scope for the InputNumber component.
@@ -151,7 +151,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
     ariaDecrementLabel,
     ariaIncrementLabel,
     defaultValue,
-    formatOptions = { minimumFractionDigits: 0, style: 'decimal' },
+    formatOptions = { minimumFractionDigits: 0, style: "decimal" },
     locale,
     max,
     min,
@@ -185,7 +185,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   const formatValue = useCallback(
     (inputValue?: number): string => {
       if (inputValue === undefined || Number.isNaN(inputValue)) {
-        return '';
+        return "";
       }
 
       return new Intl.NumberFormat(locale, formatOptions).format(inputValue);
@@ -200,24 +200,24 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
    */
   const parseValue = useCallback(
     (inputValue: number | readonly string[] | string | undefined): number => {
-      if (typeof inputValue === 'number') {
+      if (typeof inputValue === "number") {
         return clamp(inputValue, min, max);
       }
 
-      if (typeof inputValue !== 'string') {
+      if (typeof inputValue !== "string") {
         return Number.NaN;
       }
 
-      const cleanedValue = inputValue.trim().replaceAll(/[^\d.,\-()]/g, '');
+      const cleanedValue = inputValue.trim().replaceAll(/[^\d.,\-()]/g, "");
 
-      if (cleanedValue === '') {
+      if (cleanedValue === "") {
         return Number.NaN;
       }
 
       const normalizedValue = normalizeInputValue(cleanedValue, thousandSeparator, decimalSeparator);
       let parsedValue = Number.parseFloat(normalizedValue);
 
-      if (formatOptions.style === 'percent') {
+      if (formatOptions.style === "percent") {
         parsedValue /= 100;
       }
 
@@ -309,14 +309,14 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
 /**
  * The name of the InputNumberField component constant.
  */
-const NUMBER_INPUT_FIELD_NAME = 'InputNumberField';
+const NUMBER_INPUT_FIELD_NAME = "InputNumberField";
 
 /**
  * Defines the props for the `InputNumberField` component.
  */
 type InputNumberFieldProps = Omit<
   ComponentProps<typeof InputPrimitive.Field>,
-  'defaultValue' | 'disabled' | 'id' | 'max' | 'min' | 'onChange' | 'prefix' | 'readOnly' | 'step' | 'value'
+  "defaultValue" | "disabled" | "id" | "max" | "min" | "onChange" | "prefix" | "readOnly" | "step" | "value"
 >;
 
 function InputNumberField({
@@ -373,25 +373,25 @@ function InputNumberField({
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (event) => {
       switch (event.key) {
-        case 'ArrowUp': {
+        case "ArrowUp": {
           onIncrement();
           event.preventDefault();
           break;
         }
 
-        case 'PageUp': {
+        case "PageUp": {
           onIncrementToMax();
           event.preventDefault();
           break;
         }
 
-        case 'ArrowDown': {
+        case "ArrowDown": {
           onDecrement();
           event.preventDefault();
           break;
         }
 
-        case 'PageDown': {
+        case "PageDown": {
           onDecrementToMin();
           event.preventDefault();
           break;
@@ -412,39 +412,39 @@ function InputNumberField({
    */
   const handleKeyDownPrevent = useCallback<KeyboardEventHandler<HTMLInputElement>>((event) => {
     switch (event.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
 
-      case 'ArrowDown':
+      case "ArrowDown":
 
-      case 'ArrowLeft':
+      case "ArrowLeft":
 
-      case 'ArrowRight':
+      case "ArrowRight":
 
-      case 'PageUp':
+      case "PageUp":
 
-      case 'PageDown':
+      case "PageDown":
 
-      case 'Tab':
+      case "Tab":
 
-      case 'Escape':
+      case "Escape":
 
-      case 'Enter':
+      case "Enter":
 
-      case 'Backspace':
+      case "Backspace":
 
-      case 'Delete':
+      case "Delete":
 
-      case 'Home':
+      case "Home":
 
-      case 'End':
+      case "End":
 
-      case '.':
+      case ".":
 
-      case ',':
+      case ",":
 
-      case '-':
+      case "-":
 
-      case '%': {
+      case "%": {
         return;
       }
 
@@ -467,7 +467,7 @@ function InputNumberField({
     (event) => {
       const inputElement = inputRef.current;
 
-      if (event.key !== 'Enter' || !inputElement) {
+      if (event.key !== "Enter" || !inputElement) {
         return;
       }
 
@@ -521,10 +521,10 @@ function InputNumberField({
 
     const inputElement = inputRef.current;
 
-    inputElement?.addEventListener('wheel', handleWheel);
+    inputElement?.addEventListener("wheel", handleWheel);
 
     return () => {
-      inputElement?.removeEventListener('wheel', handleWheel);
+      inputElement?.removeEventListener("wheel", handleWheel);
     };
   }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
 
@@ -555,10 +555,10 @@ function InputNumberField({
 
     const form = inputElement.form;
 
-    form?.addEventListener('reset', handleReset);
+    form?.addEventListener("reset", handleReset);
 
     return () => {
-      form?.removeEventListener('reset', handleReset);
+      form?.removeEventListener("reset", handleReset);
     };
   }, [defaultValue, inputRef, onChange, parseValue]);
 
@@ -588,18 +588,18 @@ function InputNumberField({
 /**
  * The name of the NumberStepperButton component constant.
  */
-const NUMBER_STEPPER_BUTTON_NAME = 'NumberStepperButton';
+const NUMBER_STEPPER_BUTTON_NAME = "NumberStepperButton";
 
 /**
  * Props for the NumberStepperButton component.
  */
-interface NumberStepperButtonProps extends ComponentProps<'button'> {
+interface NumberStepperButtonProps extends ComponentProps<"button"> {
   /**
    * The operation to perform when the button is pressed.
    * - `'increment'`: Increases the value.
    * - `'decrement'`: Decreases the value.
    */
-  operation: 'decrement' | 'increment';
+  operation: "decrement" | "increment";
 }
 
 function NumberStepperButton({
@@ -658,7 +658,7 @@ function NumberStepperButton({
    * (`increment` or `decrement`).
    */
   const handlePointerDown = useCallback<PointerEventHandler<HTMLButtonElement>>(() => {
-    const action = operation === 'increment' ? onIncrement : onDecrement;
+    const action = operation === "increment" ? onIncrement : onDecrement;
 
     startActionInterval(action);
   }, [onDecrement, onIncrement, operation, startActionInterval]);
@@ -680,10 +680,10 @@ function NumberStepperButton({
    */
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLButtonElement>>(
     (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
 
-        const action = operation === 'increment' ? onIncrement : onDecrement;
+        const action = operation === "increment" ? onIncrement : onDecrement;
 
         action();
       }
@@ -694,7 +694,7 @@ function NumberStepperButton({
   return (
     <button
       aria-controls={id}
-      aria-label={operation === 'increment' ? ariaIncrementLabel : ariaDecrementLabel}
+      aria-label={operation === "increment" ? ariaIncrementLabel : ariaDecrementLabel}
       aria-live="polite"
       disabled={isDisabled}
       type="button"
@@ -713,7 +713,7 @@ function NumberStepperButton({
  * Component: InputNumberIncrementButton
  * -------------------------------------------------------------------------- */
 
-type InputNumberIncrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, 'operation'>;
+type InputNumberIncrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, "operation">;
 
 function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="increment" {...props} />;
@@ -723,7 +723,7 @@ function InputNumberIncrementButton(props: InputNumberIncrementButtonProps): JSX
  * Component: InputNumberDecrementButton
  * -------------------------------------------------------------------------- */
 
-type InputNumberDecrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, 'operation'>;
+type InputNumberDecrementButtonProps = Omit<ComponentProps<typeof NumberStepperButton>, "operation">;
 
 function InputNumberDecrementButton(props: InputNumberDecrementButtonProps): JSX.Element {
   return <NumberStepperButton operation="decrement" {...props} />;
@@ -766,15 +766,15 @@ interface NumberFormatSeparators {
 function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
   const numberFormat = new Intl.NumberFormat(locale);
   const parts = numberFormat.formatToParts(12_345.6);
-  let thousandSeparator = '';
-  let decimalSeparator = '';
+  let thousandSeparator = "";
+  let decimalSeparator = "";
 
   for (const part of parts) {
-    if (part.type === 'group') {
+    if (part.type === "group") {
       thousandSeparator = part.value;
     }
 
-    if (part.type === 'decimal') {
+    if (part.type === "decimal") {
       decimalSeparator = part.value;
     }
 
@@ -797,9 +797,9 @@ function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
  */
 function normalizeInputValue(value: string, thousandSeparator: string, decimalSeparator: string): string {
   return value
-    .replaceAll(new RegExp(`\\${thousandSeparator}`, 'g'), '')
-    .replace(new RegExp(`\\${decimalSeparator}`), '.')
-    .replaceAll(/[()]/g, '-');
+    .replaceAll(new RegExp(`\\${thousandSeparator}`, "g"), "")
+    .replace(new RegExp(`\\${decimalSeparator}`), ".")
+    .replaceAll(/[()]/g, "-");
 }
 
 /**
@@ -819,7 +819,7 @@ function isModifierKey(event: KeyboardEvent<HTMLInputElement>): boolean {
  * @returns True if the key is a function key
  */
 function isFunctionKey(key: string): boolean {
-  return key.startsWith('F') && key.length > 1;
+  return key.startsWith("F") && key.length > 1;
 }
 
 /**

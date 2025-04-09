@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * Interface for the parameters of the useMediaQuery hook.
@@ -30,7 +30,7 @@ export function useMediaQuery(query: string): boolean {
    */
   const [matches, setMatches] = useState<boolean>(() => {
     // Ensure initial state matches current media query status
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return window.matchMedia(query).matches;
     }
 
@@ -53,14 +53,14 @@ export function useMediaQuery(query: string): boolean {
       setMatches(event.matches);
     };
 
-    mediaQueryList.addEventListener('change', onChange);
+    mediaQueryList.addEventListener("change", onChange);
 
     /**
      * Cleanup function that removes the event listener when the component unmounts
      * or when the query changes.
      */
     return () => {
-      mediaQueryList.removeEventListener('change', onChange);
+      mediaQueryList.removeEventListener("change", onChange);
     };
   }, [query]);
 

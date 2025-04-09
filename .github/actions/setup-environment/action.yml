@@ -1,39 +1,39 @@
-name: 'Setup Build Environment'
-description: 'Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds'
-author: 'thevuong'
+name: "Setup Build Environment"
+description: "Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds"
+author: "thevuong"
 
 inputs:
   node-version:
-    description: 'Node.js version to use'
-    default: '22'
+    description: "Node.js version to use"
+    default: "22"
     required: false
 
   package-manager-version:
-    description: 'Version of pnpm to install'
+    description: "Version of pnpm to install"
     required: false
 
   install-dependencies:
-    description: 'Whether to install dependencies'
-    default: 'true'
+    description: "Whether to install dependencies"
+    default: "true"
     required: false
 
   install-options:
-    description: 'Additional options for pnpm install'
-    default: '--prefer-offline --frozen-lockfile'
+    description: "Additional options for pnpm install"
+    default: "--prefer-offline --frozen-lockfile"
     required: false
 
   registry-url:
-    description: 'npm registry URL to use'
-    default: 'https://registry.npmjs.org'
+    description: "npm registry URL to use"
+    default: "https://registry.npmjs.org"
     required: false
 
 outputs:
   cache-hit:
-    description: 'Whether cache was hit for dependencies'
+    description: "Whether cache was hit for dependencies"
     value: ${{ steps.pnpm-cache.outputs.cache-hit }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Setup Turbo Build Cache
       id: turbo-cache
@@ -54,7 +54,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: 'pnpm'
+        cache: "pnpm"
         registry-url: ${{ inputs.registry-url }}
 
     - name: Install Project Dependencies

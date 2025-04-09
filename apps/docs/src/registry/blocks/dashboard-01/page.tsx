@@ -1,21 +1,21 @@
-import type { CSSProperties, JSX } from 'react';
+import type { CSSProperties, JSX } from "react";
 
-import { SidebarInset, SidebarProvider } from '@codefast/ui';
+import { SidebarInset, SidebarProvider } from "@codefast/ui";
 
-import { AppSidebar } from '@/registry/blocks/dashboard-01/_components/app-sidebar';
-import { ChartAreaInteractive } from '@/registry/blocks/dashboard-01/_components/chart-area-interactive';
-import { DataTable } from '@/registry/blocks/dashboard-01/_components/data-table';
-import { SectionCards } from '@/registry/blocks/dashboard-01/_components/section-cards';
-import { SiteHeader } from '@/registry/blocks/dashboard-01/_components/site-header';
-import data from '@/registry/blocks/dashboard-01/data.json';
+import { AppSidebar } from "@/registry/blocks/dashboard-01/_components/app-sidebar";
+import { ChartAreaInteractive } from "@/registry/blocks/dashboard-01/_components/chart-area-interactive";
+import { DataTable } from "@/registry/blocks/dashboard-01/_components/data-table";
+import { SectionCards } from "@/registry/blocks/dashboard-01/_components/section-cards";
+import { SiteHeader } from "@/registry/blocks/dashboard-01/_components/site-header";
+import data from "@/registry/blocks/dashboard-01/data.json";
 
 export default function Page(): JSX.Element {
   return (
     <SidebarProvider
       style={
         {
-          '--sidebar-width': 'calc(var(--spacing) * 72)',
-          '--header-height': 'calc(var(--spacing) * 12)',
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
         } as CSSProperties
       }
     >

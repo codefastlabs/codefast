@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { SidebarInset, SidebarProvider } from '@codefast/ui';
+import { SidebarInset, SidebarProvider } from "@codefast/ui";
 
-import { AppSidebar } from '@/registry/blocks/sidebar-16/_components/app-sidebar';
-import { SiteHeader } from '@/registry/blocks/sidebar-16/_components/site-header';
+import { AppSidebar } from "@/registry/blocks/sidebar-16/_components/app-sidebar";
+import { SiteHeader } from "@/registry/blocks/sidebar-16/_components/site-header";
 
 export default function Page(): JSX.Element {
   return (

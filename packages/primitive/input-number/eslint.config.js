@@ -1,1 +1,1 @@
-export { config as default } from '@codefast/eslint-config/react';
+export { config as default } from "@codefast/eslint-config/react";

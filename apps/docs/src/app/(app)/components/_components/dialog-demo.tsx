@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -13,9 +13,9 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from '@codefast/ui';
+} from "@codefast/ui";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DialogDemo(): JSX.Element {
   return (

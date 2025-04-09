@@ -1,9 +1,9 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Toggle } from '@codefast/ui';
-import { BoldIcon, BookmarkIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
+import { Toggle } from "@codefast/ui";
+import { BoldIcon, BookmarkIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
 export function ToggleDemo(): JSX.Element {
   return (

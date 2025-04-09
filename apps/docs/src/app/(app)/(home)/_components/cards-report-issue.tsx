@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -16,8 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-} from '@codefast/ui';
-import { useId } from 'react';
+} from "@codefast/ui";
+import { useId } from "react";
 
 export function CardsReportIssue(): JSX.Element {
   const id = useId();

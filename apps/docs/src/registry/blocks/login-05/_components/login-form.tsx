@@ -1,12 +1,12 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Button, cn, Input, Label } from '@codefast/ui';
-import { GalleryVerticalEndIcon } from 'lucide-react';
-import Link from 'next/link';
+import { Button, cn, Input, Label } from "@codefast/ui";
+import { GalleryVerticalEndIcon } from "lucide-react";
+import Link from "next/link";
 
-export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.Element {
+export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
@@ -18,7 +18,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
             </Link>
             <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
             <div className="text-center text-sm">
-              Don&apos;t have an account?{' '}
+              Don&apos;t have an account?{" "}
               <Link className="underline underline-offset-4" href="#">
                 Sign up
               </Link>
@@ -59,7 +59,7 @@ export function LoginForm({ className, ...props }: ComponentProps<'div'>): JSX.E
         </div>
       </form>
       <div className="text-muted-foreground *:[a]:hover:text-primary *:[a]:underline *:[a]:underline-offset-4 text-balance text-center text-xs">
-        By clicking continue, you agree to our <Link href="#">Terms of Service</Link> and{' '}
+        By clicking continue, you agree to our <Link href="#">Terms of Service</Link> and{" "}
         <Link href="#">Privacy Policy</Link>.
       </div>
     </div>

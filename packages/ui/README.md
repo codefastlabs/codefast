@@ -23,9 +23,9 @@ npm install @codefast/ui
 To enable **@codefast/ui**, import the required styles into your global CSS file (e.g., `/app/globals.css`):
 
 ```css
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import '@codefast/ui/styles.css';
+@import "@codefast/ui/styles.css";
 
 @source '../../node_modules/@codefast/ui/dist';
 
@@ -151,7 +151,7 @@ Below is an example of a complete `next.config.ts` file:
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    optimizePackageImports: ['@codefast/ui'],
+    optimizePackageImports: ["@codefast/ui"],
   },
 };
 

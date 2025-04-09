@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 import {
   Button,
@@ -14,7 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@codefast/ui';
+} from "@codefast/ui";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -31,30 +31,30 @@ import {
   StarIcon,
   Trash2Icon,
   TrashIcon,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 const data = [
   [
-    { label: 'Customize Page', icon: Settings2Icon },
-    { label: 'Turn into wiki', icon: FileTextIcon },
+    { label: "Customize Page", icon: Settings2Icon },
+    { label: "Turn into wiki", icon: FileTextIcon },
   ],
   [
-    { label: 'Copy Link', icon: LinkIcon },
-    { label: 'Duplicate', icon: CopyIcon },
-    { label: 'Move to', icon: CornerUpRightIcon },
-    { label: 'Move to Trash', icon: Trash2Icon },
+    { label: "Copy Link", icon: LinkIcon },
+    { label: "Duplicate", icon: CopyIcon },
+    { label: "Move to", icon: CornerUpRightIcon },
+    { label: "Move to Trash", icon: Trash2Icon },
   ],
   [
-    { label: 'Undo', icon: CornerUpLeftIcon },
-    { label: 'View analytics', icon: LineChartIcon },
-    { label: 'Version History', icon: GalleryVerticalEndIcon },
-    { label: 'Show delete pages', icon: TrashIcon },
-    { label: 'Notifications', icon: BellIcon },
+    { label: "Undo", icon: CornerUpLeftIcon },
+    { label: "View analytics", icon: LineChartIcon },
+    { label: "Version History", icon: GalleryVerticalEndIcon },
+    { label: "Show delete pages", icon: TrashIcon },
+    { label: "Notifications", icon: BellIcon },
   ],
   [
-    { label: 'Import', icon: ArrowUpIcon },
-    { label: 'Export', icon: ArrowDownIcon },
+    { label: "Import", icon: ArrowUpIcon },
+    { label: "Export", icon: ArrowDownIcon },
   ],
 ];
 

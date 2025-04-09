@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Button } from '@codefast/ui';
-import { MoonIcon, SunIcon } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useCallback } from 'react';
+import { Button } from "@codefast/ui";
+import { MoonIcon, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useCallback } from "react";
 
-import { useMetaColor } from '@/hooks/use-meta-color';
-import { META_THEME_COLORS } from '@/lib/site';
+import { useMetaColor } from "@/hooks/use-meta-color";
+import { META_THEME_COLORS } from "@/lib/site";
 
 export function ModeSwitcher(): JSX.Element {
   const { setTheme, resolvedTheme } = useTheme();
   const { setMetaColor } = useMetaColor();
 
   const toggleTheme = useCallback(() => {
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-    setMetaColor(resolvedTheme === 'dark' ? META_THEME_COLORS.light : META_THEME_COLORS.dark);
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    setMetaColor(resolvedTheme === "dark" ? META_THEME_COLORS.light : META_THEME_COLORS.dark);
   }, [resolvedTheme, setTheme, setMetaColor]);
 
   return (

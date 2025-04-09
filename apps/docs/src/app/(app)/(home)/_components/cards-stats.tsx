@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { ChartConfig } from '@codefast/ui';
-import type { JSX } from 'react';
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle, ChartContainer, cn } from '@codefast/ui';
-import { Bar, BarChart, Line, LineChart } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle, ChartContainer, cn } from "@codefast/ui";
+import { Bar, BarChart, Line, LineChart } from "recharts";
 
 const data = [
   {
@@ -43,18 +43,18 @@ const data = [
 
 const chartConfig = {
   revenue: {
-    label: 'Revenue',
-    color: 'var(--primary)',
+    label: "Revenue",
+    color: "var(--primary)",
   },
   subscription: {
-    label: 'Subscriptions',
-    color: 'var(--primary)',
+    label: "Subscriptions",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
 export function CardsStats({ className }: { className?: string }): JSX.Element {
   return (
-    <div className={cn('grid gap-6 sm:grid-cols-2 xl:grid-cols-2', className)}>
+    <div className={cn("grid gap-6 sm:grid-cols-2 xl:grid-cols-2", className)}>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-normal">Total Revenue</CardTitle>

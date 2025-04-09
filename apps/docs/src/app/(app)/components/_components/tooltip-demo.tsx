@@ -1,11 +1,11 @@
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
-import { Button, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@codefast/ui';
-import { ChevronUpIcon, CircleIcon, InfoIcon } from 'lucide-react';
+import { Button, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@codefast/ui";
+import { ChevronUpIcon, CircleIcon, InfoIcon } from "lucide-react";
 
-import { GridWrapper } from '@/components/grid-wrapper';
+import { GridWrapper } from "@/components/grid-wrapper";
 
-const SIDES = ['top', 'right', 'bottom', 'left'] as const;
+const SIDES = ["top", "right", "bottom", "left"] as const;
 
 export function TooltipDemo(): JSX.Element {
   return (
@@ -27,20 +27,20 @@ export function TooltipDemo(): JSX.Element {
               <div
                 key={side}
                 className={cn(
-                  'flex items-center justify-center',
-                  side === 'top' && 'col-start-2',
-                  side === 'right' && 'col-start-3 row-start-2',
-                  side === 'bottom' && 'col-start-2 row-start-3',
-                  side === 'left' && 'row-start-2',
+                  "flex items-center justify-center",
+                  side === "top" && "col-start-2",
+                  side === "right" && "col-start-3 row-start-2",
+                  side === "bottom" && "col-start-2 row-start-3",
+                  side === "left" && "row-start-2",
                 )}
               >
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button className="capitalize" size="icon" variant="outline">
-                      {side === 'top' && <ChevronUpIcon />}
-                      {side === 'right' && <ChevronUpIcon className="rotate-90" />}
-                      {side === 'bottom' && <ChevronUpIcon className="rotate-180" />}
-                      {side === 'left' && <ChevronUpIcon className="rotate-270" />}
+                      {side === "top" && <ChevronUpIcon />}
+                      {side === "right" && <ChevronUpIcon className="rotate-90" />}
+                      {side === "bottom" && <ChevronUpIcon className="rotate-180" />}
+                      {side === "left" && <ChevronUpIcon className="rotate-270" />}
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side={side}>

@@ -1,6 +1,6 @@
-import type { ComponentProps, JSX } from 'react';
+import type { ComponentProps, JSX } from "react";
 
-import { Slot } from '@radix-ui/react-slot';
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Blockquote
@@ -9,10 +9,10 @@ import { Slot } from '@radix-ui/react-slot';
 function Blockquote({
   asChild,
   ...props
-}: ComponentProps<'blockquote'> & {
+}: ComponentProps<"blockquote"> & {
   asChild?: boolean;
 }): JSX.Element {
-  const Component = asChild ? Slot : 'blockquote';
+  const Component = asChild ? Slot : "blockquote";
 
   return <Component data-slot="blockquote" {...props} />;
 }

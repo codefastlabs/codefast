@@ -1,9 +1,9 @@
-import type { ComponentProps, JSX, ReactNode } from 'react';
+import type { ComponentProps, JSX, ReactNode } from "react";
 
-import { Slot } from '@radix-ui/react-slot';
-import { ChevronRightIcon, EllipsisIcon } from 'lucide-react';
+import { Slot } from "@radix-ui/react-slot";
+import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 function Breadcrumb({
   ...props
-}: ComponentProps<'nav'> & {
+}: ComponentProps<"nav"> & {
   separator?: ReactNode;
 }): JSX.Element {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
@@ -21,11 +21,11 @@ function Breadcrumb({
  * Component: BreadcrumbList
  * -------------------------------------------------------------------------- */
 
-function BreadcrumbList({ className, ...props }: ComponentProps<'ol'>): JSX.Element {
+function BreadcrumbList({ className, ...props }: ComponentProps<"ol">): JSX.Element {
   return (
     <ol
       className={cn(
-        'text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2',
+        "text-muted-foreground flex flex-wrap items-center gap-1.5 break-words text-sm sm:gap-2",
         className,
       )}
       data-slot="breadcrumb-list"
@@ -38,8 +38,8 @@ function BreadcrumbList({ className, ...props }: ComponentProps<'ol'>): JSX.Elem
  * Component: BreadcrumbItem
  * -------------------------------------------------------------------------- */
 
-function BreadcrumbItem({ className, ...props }: ComponentProps<'li'>): JSX.Element {
-  return <li className={cn('inline-flex items-center gap-1.5', className)} data-slot="breadcrumb-item" {...props} />;
+function BreadcrumbItem({ className, ...props }: ComponentProps<"li">): JSX.Element {
+  return <li className={cn("inline-flex items-center gap-1.5", className)} data-slot="breadcrumb-item" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------
@@ -50,14 +50,14 @@ function BreadcrumbLink({
   asChild,
   className,
   ...props
-}: ComponentProps<'a'> & {
+}: ComponentProps<"a"> & {
   asChild?: boolean;
 }): JSX.Element {
-  const Component = asChild ? Slot : 'a';
+  const Component = asChild ? Slot : "a";
 
   return (
     <Component
-      className={cn('hover:text-foreground transition-colors', className)}
+      className={cn("hover:text-foreground transition-colors", className)}
       data-slot="breadcrumb-link"
       {...props}
     />
@@ -68,12 +68,12 @@ function BreadcrumbLink({
  * Component: BreadcrumbPage
  * -------------------------------------------------------------------------- */
 
-function BreadcrumbPage({ className, ...props }: ComponentProps<'span'>): JSX.Element {
+function BreadcrumbPage({ className, ...props }: ComponentProps<"span">): JSX.Element {
   return (
     <span
       aria-current="page"
       aria-disabled="true"
-      className={cn('text-foreground font-normal', className)}
+      className={cn("text-foreground font-normal", className)}
       data-slot="breadcrumb-page"
       role="link"
       {...props}
@@ -85,7 +85,7 @@ function BreadcrumbPage({ className, ...props }: ComponentProps<'span'>): JSX.El
  * Component: BreadcrumbSeparator
  * -------------------------------------------------------------------------- */
 
-function BreadcrumbSeparator({ children, ...props }: ComponentProps<'li'>): JSX.Element {
+function BreadcrumbSeparator({ children, ...props }: ComponentProps<"li">): JSX.Element {
   return (
     <li aria-hidden="true" data-slot="breadcrumb-separator" role="presentation" {...props}>
       {children ?? <ChevronRightIcon className="size-3.5" />}
@@ -97,11 +97,11 @@ function BreadcrumbSeparator({ children, ...props }: ComponentProps<'li'>): JSX.
  * Component: BreadcrumbEllipsis
  * -------------------------------------------------------------------------- */
 
-function BreadcrumbEllipsis({ className, ...props }: ComponentProps<'span'>): JSX.Element {
+function BreadcrumbEllipsis({ className, ...props }: ComponentProps<"span">): JSX.Element {
   return (
     <span
       aria-hidden="true"
-      className={cn('flex size-4 items-center justify-center', className)}
+      className={cn("flex size-4 items-center justify-center", className)}
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       {...props}
