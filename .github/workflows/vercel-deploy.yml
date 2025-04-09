@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Vercel Deployment Workflow
 
 on:
   pull_request:
