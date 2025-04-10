@@ -1,8 +1,15 @@
 name: "CI: Security Checks"
 
 on:
+  push:
+    branches:
+      - "**"
+      - "!changeset-release/**"
+    paths:
+      - "**/*.{ts,tsx,js,cjs,mjs,jsx,md,mdx,json,css}"
+      - ".github/workflows/security-scan.yml"
   pull_request:
-    branches: [main, canary]
+    types: [opened, synchronize, reopened]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
