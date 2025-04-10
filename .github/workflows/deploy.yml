@@ -1,4 +1,4 @@
-name: Deploy
+name: "CD: Vercel Deployments"
 
 on:
   push:
@@ -43,33 +43,33 @@ env:
 
 jobs:
   deploy:
-    name: Deploy to Vercel
+    name: "Deploy to Vercel"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Install Vercel CLI
+      - name: "Install and Configure Vercel CLI"
         run: |
           pnpm add -g vercel@latest
           pnpm approve-builds -g
 
-      - name: Deploy to Vercel (Production)
+      - name: "Deploy Production to Vercel"
         if: github.ref == 'refs/heads/main'
         run: |
           vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
 
-      - name: Deploy to Vercel (Preview)
+      - name: "Deploy Preview to Vercel"
         if: github.ref != 'refs/heads/main'
         run: |
           DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --yes)
           echo "Preview URL: $DEPLOY_URL"
           echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
 
-      - name: Comment on PR
+      - name: "Post Deployment Comment on PR"
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:

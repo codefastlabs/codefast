@@ -1,10 +1,10 @@
-name: Release Packages
+name: "CD: Publish Package Releases"
 
 on:
   workflow_dispatch:
   workflow_run:
     workflows:
-      - "Quality Check"
+      - "CI: Code Quality Assurance"
     types:
       - completed
     branches:
@@ -21,20 +21,20 @@ env:
 
 jobs:
   release:
-    name: Release Packages
+    name: "Publish NPM Packages"
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Build Packages for Release
+      - name: "Build Project Packages for Release"
         run: pnpx turbo run build --filter="./packages/**"
 
-      - name: Check for changeset markdown files
+      - name: "Check for Changeset Files"
         id: check_changesets
         run: |
           NON_CONFIG_FILES=$(find .changeset -name "*.md" -not -name "README.md" | wc -l)
@@ -44,7 +44,7 @@ jobs:
             echo "has_changesets=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Configure npm Authentication
+      - name: "Configure npm Authentication"
         if: steps.check_changesets.outputs.has_changesets == 'false'
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
@@ -52,11 +52,11 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Setup Canary Release Mode
+      - name: "Enable Canary Release Mode"
         if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'true'
         run: pnpm run changeset:prerelease
 
-      - name: Version or Publish Changed Packages
+      - name: "Version and Publish Packages"
         id: changesets
         uses: changesets/action@v1
         with:
@@ -68,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Exit Canary Release Mode
+      - name: "Exit Canary Release Mode"
         if: github.ref == 'refs/heads/canary' && steps.changesets.outputs.published == 'true'
         run: pnpm run changeset:prerelease:exit
         env:
