@@ -35,15 +35,15 @@
   ],
   "scripts": {
     "build": "tsup",
-    "clean": "rm -rf node_modules dist",
+    "check-types": "tsc --noEmit",
+    "clean": "rimraf node_modules dist",
     "dev": "tsup --watch",
     "lint": "eslint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch",
-    "type:check": "tsc --noEmit"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@codefast-ui/input": "workspace:*",
