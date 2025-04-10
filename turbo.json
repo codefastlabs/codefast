@@ -6,6 +6,9 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
     "clean": {
       "cache": false
     },
@@ -35,9 +38,6 @@
     "test:watch": {
       "cache": false,
       "persistent": true
-    },
-    "type:check": {
-      "dependsOn": ["^type:check"]
     }
   }
 }

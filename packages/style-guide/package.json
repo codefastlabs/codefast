@@ -205,10 +205,10 @@
   ],
   "scripts": {
     "build": "tsup",
-    "clean": "rm -rf node_modules dist",
+    "check-types": "tsc --noEmit",
+    "clean": "rimraf node_modules dist",
     "lint": "eslint --max-warnings 0",
-    "lint:inspect": "npx @eslint/config-inspector@latest",
-    "type:check": "tsc --noEmit"
+    "lint:inspect": "npx @eslint/config-inspector@latest"
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
