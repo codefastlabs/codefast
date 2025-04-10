@@ -2,11 +2,10 @@ name: "CI: Code Quality Assurance"
 
 on:
   push:
-    branches-ignore:
-      - "changeset-release/**"
-    paths-ignore:
-      - ".github/ISSUE_TEMPLATE/**"
-      - ".github/workflows/security-scan.yml"
+    branches:
+      - "!changeset-release/**"
+    paths:
+      - "**/*.{ts,tsx,js,cjs,mjs,jsx,md,mdx,json,css}"
   pull_request:
     types: [opened, synchronize, reopened]
 
