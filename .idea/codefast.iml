@@ -33,6 +33,12 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/block/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/.vercel" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/coverage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
