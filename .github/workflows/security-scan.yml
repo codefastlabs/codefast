@@ -1,4 +1,4 @@
-name: Security Scan
+name: "CI: Security Checks"
 
 on:
   pull_request:
@@ -10,51 +10,51 @@ concurrency:
 
 jobs:
   dependencies-audit:
-    name: Dependencies Audit
+    name: "Audit Dependencies for Vulnerabilities"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Audit with pnpm
+      - name: "Run Dependency Audit (pnpm)"
         run: pnpm audit --prod
 
   code-scanning:
-    name: Code Scanning
+    name: "CodeQL Static Code Analysis"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Initialize CodeQL
+      - name: "Initialize CodeQL Scanner"
         uses: github/codeql-action/init@v3
         with:
           languages: javascript, typescript
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Build Project
+      - name: "Build Project Packages"
         run: pnpx turbo run build --filter="./packages/**"
 
-      - name: Perform CodeQL Analysis
+      - name: "Run CodeQL Analysis"
         uses: github/codeql-action/analyze@v3
 
   secrets-scanning:
-    name: Secrets Scanning
+    name: "Scan for Exposed Secrets"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: TruffleHog Scan
+      - name: "Run TruffleHog Secrets Scanner"
         uses: trufflesecurity/trufflehog@main
         with:
           extra_args: --debug --only-verified

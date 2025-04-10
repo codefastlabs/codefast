@@ -1,4 +1,4 @@
-# Setup Environment Action
+# "Setup CI Environment" Action
 
 Action này thiết lập môi trường phát triển cho dự án CodeFast, đảm bảo tính nhất quán giữa các workflows.
 
@@ -13,7 +13,7 @@ Action này thiết lập môi trường phát triển cho dự án CodeFast, đ
 
 ```yaml
 steps:
-  - name: Setup Environment
+  - name: "Setup CI Environment"
     uses: ./.github/actions/setup-environment
     with:
       node-version: "22" # Tùy chọn, mặc định là '22'

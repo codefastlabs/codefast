@@ -1,4 +1,4 @@
-name: Quality Check
+name: "CI: Code Quality Assurance"
 
 on:
   push:
@@ -19,69 +19,69 @@ env:
 
 jobs:
   build:
-    name: Build
+    name: "Build Packages"
     runs-on: ubuntu-latest
     outputs:
       status: ${{ job.status }}
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Build Packages
+      - name: "Build All Packages"
         run: pnpx turbo run build --filter="./packages/**"
 
   lint:
-    name: Lint
+    name: "Run Linter"
     needs: [build]
     runs-on: ubuntu-latest
     outputs:
       status: ${{ job.status }}
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Lint Code
+      - name: "Lint All Files"
         run: pnpx turbo run lint --filter="./packages/**"
 
   typecheck:
-    name: Type Check
+    name: "Perform Type-Checking"
     runs-on: ubuntu-latest
     needs: [build]
     outputs:
       status: ${{ job.status }}
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Check Types
+      - name: "Verify TypeScript Types"
         run: pnpx turbo run check-types --filter="./packages/**"
 
   test:
-    name: Test
+    name: "Run Tests with Coverage"
     needs: [build]
     runs-on: ubuntu-latest
     outputs:
       status: ${{ job.status }}
     steps:
-      - name: Checkout Repository
+      - name: "Checkout Repository"
         uses: actions/checkout@v4
 
-      - name: Setup Environment
+      - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
 
-      - name: Run Tests
+      - name: "Execute Unit Tests"
         run: pnpx turbo run test:coverage:ci --filter="./packages/**"
 
-      - name: Upload Coverage Reports
+      - name: "Upload Test Coverage Reports"
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

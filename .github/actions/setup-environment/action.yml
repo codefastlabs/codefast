@@ -1,4 +1,4 @@
-name: "Setup Environment"
+name: "Setup Node.js and pnpm Environment"
 description: "Sets up Node.js, pnpm, and project dependencies with caching for efficient CI/CD builds"
 author: "thevuong"
 
@@ -40,7 +40,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup Turbo Build Cache
+    - name: "Setup Turborepo Cache"
       id: turbo-cache
       uses: actions/cache@v4
       with:
@@ -50,14 +50,14 @@ runs:
           ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml') }}-
           ${{ runner.os }}-turbo-
 
-    - name: Setup PNPM Package Manager
+    - name: "Set Up pnpm Package Manager"
       id: pnpm-setup
       uses: pnpm/action-setup@v4
       with:
         version: ${{ inputs.package-manager-version }}
         run_install: false
 
-    - name: Setup Node.js Environment
+    - name: "Set Up Node.js Environment"
       id: node-setup
       uses: actions/setup-node@v4
       with:
@@ -65,13 +65,13 @@ runs:
         registry-url: ${{ inputs.registry-url }}
         cache: "pnpm"
 
-    - name: Install Project Dependencies
+    - name: "Install Project Dependencies (pnpm)"
       id: pnpm-install
       shell: bash
       if: ${{ inputs.install-dependencies == 'true' }}
       run: pnpm install ${{ inputs.install-options }}
 
-    - name: Verify Turborepo Remote Caching
+    - name: "Verify Turborepo Remote Caching Setup"
       id: turbo-remote-cache
       shell: bash
       if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' && env.TURBO_TEAM != '' }}
