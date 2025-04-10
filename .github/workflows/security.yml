@@ -1,11 +1,16 @@
 name: "CI: Security Checks"
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
     branches:
-      - main
-      - canary
+      - "**"
+      - "!changeset-release/**"
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - ".github/workflows/deploy.yml"
+      - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
+      - "!**/{__tests__,tests,e2e,__mocks__}/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
