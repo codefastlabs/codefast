@@ -77,4 +77,4 @@ runs:
       if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' && env.TURBO_TEAM != '' }}
       run: |
         echo "Turborepo Remote Caching is enabled for team: $TURBO_TEAM"
-        Run pnpx turbo --version
+        Run npx turbo --version

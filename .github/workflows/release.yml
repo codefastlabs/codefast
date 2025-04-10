@@ -26,7 +26,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: "Build, Lint, Check Types, and Test Coverage for Packages"
-        run: pnpx turbo build lint check-types test:coverage:ci --filter="./packages/**"
+        run: npx turbo build lint check-types test:coverage:ci --filter="./packages/**"
 
       - name: "Upload Test Coverage Reports"
         uses: codecov/codecov-action@v5
@@ -47,7 +47,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: "Build Project Packages for Release"
-        run: pnpx turbo build --filter="./packages/**"
+        run: npx turbo build --filter="./packages/**"
 
       - name: "Check for Changeset Files"
         id: check_changesets
