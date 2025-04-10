@@ -16,7 +16,7 @@ env:
 
 jobs:
   validate:
-    name: Validate Build & Quality
+    name: "Validate Build & Quality"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
@@ -26,7 +26,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: "Build, Lint, Check Types, and Test Coverage for Packages"
-        run: pnpx turbo run build lint check-types test:coverage:ci --filter="./packages/**"
+        run: pnpx turbo build lint check-types test:coverage:ci --filter="./packages/**"
 
       - name: "Upload Test Coverage Reports"
         uses: codecov/codecov-action@v5
@@ -47,7 +47,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: "Build Project Packages for Release"
-        run: pnpx turbo run build --filter="./packages/**"
+        run: pnpx turbo build --filter="./packages/**"
 
       - name: "Check for Changeset Files"
         id: check_changesets
@@ -57,13 +57,9 @@ jobs:
           else
             echo "has_changesets=true" >> $GITHUB_OUTPUT
           fi
-          if [ -f ".changeset/pre.json" ]; then
-            echo "has_pre_file=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_pre_file=false" >> $GITHUB_OUTPUT
-          fi
 
       - name: "Configure npm Authentication"
+        if: steps.check_changesets.outputs.has_changesets == 'true'
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
           npm whoami
@@ -71,15 +67,15 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Enable Canary Release Mode"
-        if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'true' && steps.check_changesets.outputs.has_pre_file == 'false'
-        run: pnpm run changeset:prerelease
+        if: github.ref == 'refs/heads/canary'
+        run: pnpx changeset pre enter canary
 
       - name: "Version and Publish Packages"
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm run changeset:version
-          publish: pnpm run changeset:publish
+          version: pnpx changeset version
+          publish: pnpx changeset publish
           title: "chore(release): version packages"
           commit: "chore(release): version packages"
         env:
@@ -88,6 +84,6 @@ jobs:
 
       - name: "Exit Canary Release Mode"
         if: github.ref == 'refs/heads/canary' && steps.changesets.outputs.published == 'true'
-        run: pnpm run changeset:prerelease:exit
+        run: pnpx changeset pre exit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
