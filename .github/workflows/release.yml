@@ -32,10 +32,17 @@ jobs:
         id: check_changesets
         run: |
           NON_CONFIG_FILES=$(find .changeset -name "*.md" -not -name "README.md" | wc -l)
+
           if [ $NON_CONFIG_FILES -le 0 ]; then
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           else
             echo "has_changesets=true" >> $GITHUB_OUTPUT
+          fi
+
+          if [ -f ".changeset/pre.json" ]; then
+            echo "has_pre_file=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_pre_file=false" >> $GITHUB_OUTPUT
           fi
 
       - name: "Configure npm Authentication"
@@ -47,7 +54,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Enable Canary Release Mode"
-        if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'true'
+        if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'true' && steps.check_changesets.outputs.has_pre_file == 'false'
         run: pnpm run changeset:prerelease
 
       - name: "Version and Publish Packages"
