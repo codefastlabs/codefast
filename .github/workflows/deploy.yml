@@ -1,6 +1,16 @@
 name: "CD: Vercel Deployments"
 
 on:
+  push:
+    branches:
+      - main
+      - canary
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - ".github/workflows/deploy.yml"
+      - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
+      - "!**/{__tests__,tests,e2e,__mocks__}/**"
   pull_request:
     branches:
       - main
@@ -12,7 +22,7 @@ on:
     paths:
       - "apps/**"
       - "packages/**"
-      - "deploy.yml"
+      - ".github/workflows/deploy.yml"
       - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
       - "!**/{__tests__,tests,e2e,__mocks__}/**"
 
