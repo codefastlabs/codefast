@@ -68,14 +68,14 @@ jobs:
 
       - name: "Enable Canary Release Mode"
         if: github.ref == 'refs/heads/canary'
-        run: pnpx changeset pre enter canary
+        run: npx changeset pre enter canary
 
       - name: "Version and Publish Packages"
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpx changeset version
-          publish: pnpx changeset publish
+          version: npx changeset version
+          publish: npx changeset publish
           title: "chore(release): version packages"
           commit: "chore(release): version packages"
         env:
@@ -84,6 +84,6 @@ jobs:
 
       - name: "Exit Canary Release Mode"
         if: github.ref == 'refs/heads/canary' && steps.changesets.outputs.published == 'true'
-        run: pnpx changeset pre exit
+        run: npx changeset pre exit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
