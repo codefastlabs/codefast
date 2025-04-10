@@ -28,13 +28,12 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: "Initialize CodeQL Scanner"
         uses: github/codeql-action/init@v3
         with:
           languages: javascript, typescript
+          queries: security-and-quality
 
       - name: "Setup CI Environment"
         uses: ./.github/actions/setup-environment
