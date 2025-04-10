@@ -1,22 +1,6 @@
 name: "CD: Vercel Deployments"
 
 on:
-  push:
-    branches:
-      - main
-      - canary
-      - "feature/**"
-      - "fix/**"
-      - "refactor/**"
-      - "docs/**"
-      - "chore/**"
-      - "perf/**"
-    paths:
-      - "apps/**"
-      - "packages/**"
-      - "deploy.yml"
-      - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
-      - "!**/{__tests__,tests,e2e,__mocks__}/**"
   pull_request:
     branches:
       - main
