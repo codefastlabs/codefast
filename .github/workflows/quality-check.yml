@@ -1,0 +1,88 @@
+name: Quality Check
+
+on:
+  push:
+    branches-ignore:
+      - "changeset-release/**"
+    paths-ignore:
+      - ".github/ISSUE_TEMPLATE/**"
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ job.status }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Build Packages
+        run: pnpx turbo run build --filter="./packages/**" --no-daemon
+
+  lint:
+    name: Lint
+    needs: [build]
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ job.status }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Lint Code
+        run: pnpx turbo run lint --filter="./packages/**" --no-daemon
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    needs: [build]
+    outputs:
+      status: ${{ job.status }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Check Types
+        run: pnpm turbo run check-types --filter="./packages/**" --no-daemon
+
+  test:
+    name: Test
+    needs: [build]
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ job.status }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+
+      - name: Run Tests
+        run: pnpx turbo run test:coverage:ci --filter="./packages/**" --no-daemon
+
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: codefastlabs/codefast
+          fail_ci_if_error: false
