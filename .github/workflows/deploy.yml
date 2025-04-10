@@ -3,18 +3,13 @@ name: "CD: Vercel Deployments"
 on:
   push:
     branches:
-      - "**"
-      - "!changeset-release/**"
+      - main
+      - canary
     paths:
-      - "apps/**"
-      - "packages/**"
+      - "**/*.{ts,tsx,js,jsx,cjs,mjs,json,css}"
       - ".github/workflows/deploy.yml"
       - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
       - "!**/{__tests__,tests,e2e,__mocks__}/**"
-  pull_request:
-    branches:
-      - "**"
-      - "!changeset-release/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
