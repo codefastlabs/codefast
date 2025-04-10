@@ -1,15 +1,8 @@
 name: Security Scan
 
 on:
-  push:
-    branches:
-      - main
-      - canary
   pull_request:
     branches: [main, canary]
-  schedule:
-    # Runs at 2:00 UTC every Monday.
-    - cron: "0 2 * * 1"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -47,7 +40,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Build Project
-        run: pnpm run build
+        run: pnpx turbo run build --filter="./packages/**"
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
