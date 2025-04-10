@@ -3,9 +3,11 @@ name: "CI: Code Quality Assurance"
 on:
   push:
     branches:
+      - "**"
       - "!changeset-release/**"
     paths:
       - "**/*.{ts,tsx,js,cjs,mjs,jsx,md,mdx,json,css}"
+      - ".github/workflows/quality-check.yml"
   pull_request:
     types: [opened, synchronize, reopened]
 
