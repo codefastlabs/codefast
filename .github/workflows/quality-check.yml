@@ -62,7 +62,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Check Types
-        run: pnpm turbo run check-types --filter="./packages/**" --no-daemon
+        run: pnpx turbo run check-types --filter="./packages/**" --no-daemon
 
   test:
     name: Test
