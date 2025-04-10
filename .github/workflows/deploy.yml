@@ -53,7 +53,9 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Install Vercel CLI
-        run: pnpm add -g vercel@latest
+        run: |
+          pnpm add -g vercel@latest
+          pnpm approve-builds -g
 
       - name: Deploy to Vercel (Production)
         if: github.ref == 'refs/heads/main'
