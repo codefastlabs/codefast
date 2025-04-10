@@ -6,6 +6,7 @@ on:
       - "changeset-release/**"
     paths-ignore:
       - ".github/ISSUE_TEMPLATE/**"
+      - ".github/workflows/security-scan.yml"
   pull_request:
     types: [opened, synchronize, reopened]
 
