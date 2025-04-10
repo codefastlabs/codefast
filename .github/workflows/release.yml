@@ -58,13 +58,13 @@ jobs:
             echo "has_changesets=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: "Configure npm Authentication"
-        if: steps.check_changesets.outputs.has_changesets == 'true'
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          npm whoami
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: "Configure npm Authentication"
+      #   if: steps.check_changesets.outputs.has_changesets == 'true'
+      #   run: |
+      #     echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+      #     npm whoami
+      #   env:
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Enable Canary Release Mode"
         if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'false'
