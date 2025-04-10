@@ -7,7 +7,7 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "check-types": {
-      "dependsOn": ["build"]
+      "dependsOn": ["^check-types"]
     },
     "clean": {
       "cache": false
@@ -17,7 +17,7 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["build"]
+      "dependsOn": ["^lint"]
     },
     "preview": {
       "dependsOn": ["^build"],
@@ -25,14 +25,14 @@
     },
     "start": {},
     "test": {
-      "dependsOn": ["build"]
+      "dependsOn": ["^test"]
     },
     "test:coverage": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^test:coverage"],
       "outputs": ["coverage/**"]
     },
     "test:coverage:ci": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^test:coverage:ci"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {
