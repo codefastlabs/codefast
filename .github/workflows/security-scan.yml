@@ -62,5 +62,4 @@ jobs:
         with:
           path: ./
           base: ${{ github.event.repository.default_branch }}
-          head: ${{ github.ref_name }}
           extra_args: --debug --only-verified
