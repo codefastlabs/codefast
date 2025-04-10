@@ -49,7 +49,6 @@ jobs:
       - name: "Install and Configure Vercel CLI"
         run: |
           pnpm add -g vercel@latest
-          pnpm approve-builds -g
 
       - name: "Deploy Production to Vercel"
         if: github.ref == 'refs/heads/main'
