@@ -1,30 +1,15 @@
 name: "CD: Vercel Deployments"
 
 on:
-  push:
-    branches:
-      - main
-      - canary
-    paths:
-      - "apps/**"
-      - "packages/**"
-      - ".github/workflows/deploy.yml"
-      - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
-      - "!**/{__tests__,tests,e2e,__mocks__}/**"
-  pull_request:
-    branches:
-      - main
-      - canary
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "CI: Code Quality Assurance"
     types:
-      - opened
-      - synchronize
-      - reopened
-    paths:
-      - "apps/**"
-      - "packages/**"
-      - ".github/workflows/deploy.yml"
-      - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
-      - "!**/{__tests__,tests,e2e,__mocks__}/**"
+      - completed
+    branches:
+      - main
+      - canary
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,6 +23,7 @@ env:
 jobs:
   deploy:
     name: "Deploy to Vercel"
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
