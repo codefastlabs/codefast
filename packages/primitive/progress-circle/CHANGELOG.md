@@ -1,5 +1,11 @@
 # @codefast-ui/progress-circle
 
+## 0.2.44-canary.0
+
+### Patch Changes
+
+- [#108](https://github.com/codefastlabs/codefast/pull/108) [`488c982`](https://github.com/codefastlabs/codefast/commit/488c9820f5e4baf6aa684158e21d546afb137aaf) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update Shiki and eslint-config-prettier
+
 ## 0.2.43
 
 ### Patch Changes
