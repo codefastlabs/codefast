@@ -1,56 +1,34 @@
 name: Release Packages
 
 on:
-  push:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "Quality Check"
+    types:
+      - completed
     branches:
-      - main # For the official release
-      - develop # Choose the prerelease/canary version.
-    paths:
-      - ".changeset/**"
-      - "packages/**"
-      - ".github/workflows/release.yml"
-  workflow_dispatch: # Allow manual activation
+      - main
+      - canary
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false # Do not cancel running jobs because this is a release.
+  cancel-in-progress: false
 
 env:
   SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
   NODE_ENV: production
 
 jobs:
-  validate:
-    name: Validate Build & Quality
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Build Environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Validate Packages (Build, Lint, Test)
-        run: npx turbo run build lint test:coverage:ci --filter="./packages/**" --no-daemon
-
-      - name: Upload Coverage Reports
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: codefastlabs/codefast
-          fail_ci_if_error: false
-
   release:
     name: Release Packages
-    needs: [validate]
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Setup Build Environment
+      - name: Setup Environment
         uses: ./.github/actions/setup-environment
 
       - name: Build Packages for Release
@@ -75,7 +53,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Setup Canary Release Mode
-        if: github.ref == 'refs/heads/develop' && steps.check_changesets.outputs.has_changesets == 'true'
+        if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'true'
         run: pnpm run changeset:prerelease
 
       - name: Version or Publish Changed Packages
@@ -91,7 +69,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Exit Canary Release Mode
-        if: github.ref == 'refs/heads/develop' && steps.changesets.outputs.published == 'true'
+        if: github.ref == 'refs/heads/canary' && steps.changesets.outputs.published == 'true'
         run: pnpm run changeset:prerelease:exit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
