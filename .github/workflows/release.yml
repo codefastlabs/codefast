@@ -1,12 +1,7 @@
 name: "CD: Publish Package Releases"
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows:
-      - "CI: Code Quality Assurance"
-    types:
-      - completed
+  push:
     branches:
       - main
       - canary
@@ -22,7 +17,6 @@ env:
 jobs:
   release:
     name: "Publish NPM Packages"
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout Repository"
