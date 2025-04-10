@@ -67,8 +67,14 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: "Enable Canary Release Mode"
-        if: github.ref == 'refs/heads/canary'
+        if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'false'
         run: npx changeset pre enter canary
+
+      - name: "Exit Canary Release Mode"
+        if: github.ref == 'refs/heads/main'
+        run: npx changeset pre exit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Version and Publish Packages"
         id: changesets
@@ -81,9 +87,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: "Exit Canary Release Mode"
-        if: github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
-        run: npx changeset pre exit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
