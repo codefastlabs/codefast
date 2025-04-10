@@ -47,7 +47,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Lint Code
-        run: pnpx turbo run build lint --filter="./packages/**"
+        run: pnpx turbo run lint --filter="./packages/**"
 
   typecheck:
     name: Type Check
@@ -63,7 +63,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Check Types
-        run: pnpx turbo run build check-types --filter="./packages/**"
+        run: pnpx turbo run check-types --filter="./packages/**"
 
   test:
     name: Test
@@ -79,7 +79,7 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Run Tests
-        run: pnpx turbo run build test:coverage:ci --filter="./packages/**"
+        run: pnpx turbo run test:coverage:ci --filter="./packages/**"
 
       - name: Upload Coverage Reports
         uses: codecov/codecov-action@v5
