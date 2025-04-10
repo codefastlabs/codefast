@@ -35,6 +35,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -56,10 +58,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: TruffleHog Scan
         uses: trufflesecurity/trufflehog@main
         with:
-          path: ./
-          base: ${{ github.event.repository.default_branch }}
           extra_args: --debug --only-verified
