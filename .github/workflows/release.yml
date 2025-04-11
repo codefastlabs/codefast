@@ -47,8 +47,6 @@ jobs:
 
       - name: Setup CI Environment
         uses: ./.github/actions/setup-environment
-        # env:
-        #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build, Lint, Check Types, and Test Coverage for Packages
         run: npx turbo build --filter="./packages/**"
