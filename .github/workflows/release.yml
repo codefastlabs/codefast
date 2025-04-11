@@ -53,8 +53,29 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Check and Enter Canary Pre-Release Mode
+        if: github.ref == 'refs/heads/canary'
+        run: |
+          if find .changeset -maxdepth 1 -type f -name "*.md" ! -name "README.md" | grep -q .; then
+            if [ -f .changeset/pre.json ]; then
+              echo "pre.json exists, continuing in pre-release mode."
+            else
+              echo "Changesets found, entering canary pre-release mode."
+              npx changeset pre enter canary
+            fi
+          else
+            echo "No changesets found, skipping pre-release mode."
+          fi
+
+      - name: Exit Pre-Release Mode on Main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -f .changeset/pre.json ]; then
+            echo "Exiting pre-release mode."
+            npx changeset pre exit
+          fi
+
       - name: Version and Publish Packages
-        id: changesets
         uses: changesets/action@v1
         with:
           version: npx changeset version
