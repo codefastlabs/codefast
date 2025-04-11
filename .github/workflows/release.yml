@@ -134,6 +134,7 @@ jobs:
           if [ -f .changeset/pre.json ]; then
             echo "Exiting pre-release mode."
             npx changeset pre exit
+            npx changeset version
             git add .
             git commit -m "chore: exit canary pre-release mode" || echo "No changes to commit"
           fi
