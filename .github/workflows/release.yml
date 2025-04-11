@@ -25,7 +25,6 @@ jobs:
         run: npx turbo build lint test:coverage:ci --filter="./packages/**"
         env:
           NODE_ENV: production
-          TURBO_TELEMETRY_DISABLED: ${{ secrets.TELEMETRY_DISABLED }}
 
       - name: Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
@@ -39,6 +38,8 @@ jobs:
           cat << EOF > "$HOME/.npmrc"
             //registry.npmjs.org/:_authToken=$NPM_TOKEN
           EOF
+          # echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "$HOME/.npmrc"
+          npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
