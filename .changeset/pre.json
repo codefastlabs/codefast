@@ -1,0 +1,17 @@
+{
+  "mode": "pre",
+  "tag": "canary",
+  "initialVersions": {
+    "@app/docs": "0.0.1",
+    "@codefast/eslint-config": "0.2.44",
+    "@codefast/hooks": "0.2.44",
+    "@codefast-ui/checkbox-group": "0.2.44",
+    "@codefast-ui/input": "0.2.44",
+    "@codefast-ui/input-number": "0.2.44",
+    "@codefast-ui/progress-circle": "0.2.44",
+    "@codefast/style-guide": "0.2.44",
+    "@codefast/typescript-config": "0.2.44",
+    "@codefast/ui": "0.2.44"
+  },
+  "changesets": []
+}
