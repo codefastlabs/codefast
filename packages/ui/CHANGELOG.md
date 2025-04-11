@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.45-canary.0
+
+### Patch Changes
+
+- [`638f92c`](https://github.com/codefastlabs/codefast/commit/638f92c8f1f3e3987b62272acebcd86b70b66800) Thanks [@thevuong](https://github.com/thevuong)! - chore: bump @swc/core to version ^1.11.20
+
+- Updated dependencies [[`638f92c`](https://github.com/codefastlabs/codefast/commit/638f92c8f1f3e3987b62272acebcd86b70b66800)]:
+  - @codefast-ui/progress-circle@0.2.45-canary.0
+  - @codefast-ui/checkbox-group@0.2.45-canary.0
+  - @codefast-ui/input-number@0.2.45-canary.0
+  - @codefast-ui/input@0.2.45-canary.0
+  - @codefast/hooks@0.2.45-canary.0
+
 ## 0.2.44
 
 ### Patch Changes
