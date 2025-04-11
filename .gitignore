@@ -42,4 +42,5 @@ build-storybook.log
 .eslintcache
 
 # codecov
+codecov
 codecov.*

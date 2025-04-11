@@ -47,9 +47,7 @@ jobs:
 
       - name: Deploy Production to Vercel
         if: github.ref == 'refs/heads/main'
-        run: |
-          DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod)
-          echo "Production URL: $DEPLOY_URL"
+        run: vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod
 
       - name: Deploy Preview to Vercel
         if: github.ref != 'refs/heads/main'
