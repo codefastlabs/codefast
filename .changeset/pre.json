@@ -1,5 +1,5 @@
 {
-  "mode": "pre",
+  "mode": "exit",
   "tag": "canary",
   "initialVersions": {
     "@app/docs": "0.0.1",
@@ -13,7 +13,5 @@
     "@codefast/typescript-config": "0.2.44",
     "@codefast/ui": "0.2.44"
   },
-  "changesets": [
-    "tough-dolls-tan"
-  ]
+  "changesets": ["tough-dolls-tan"]
 }
