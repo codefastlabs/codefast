@@ -1,4 +1,4 @@
-name: "CD: Publish Package Releases"
+name: Publish Package Releases
 
 on:
   push:
@@ -16,19 +16,19 @@ env:
 
 jobs:
   validate:
-    name: "Validate Build & Quality"
+    name: Validate Build & Quality
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout Repository"
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: "Setup CI Environment"
+      - name: Setup CI Environment
         uses: ./.github/actions/setup-environment
 
-      - name: "Build, Lint, Check Types, and Test Coverage for Packages"
+      - name: Build, Lint, Check Types, and Test Coverage for Packages
         run: npx turbo build lint check-types test:coverage:ci --filter="./packages/**"
 
-      - name: "Upload Test Coverage Reports"
+      - name: Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -36,47 +36,28 @@ jobs:
           fail_ci_if_error: false
 
   release:
-    name: "Publish NPM Packages"
+    name: Publish NPM Packages
     needs: [validate]
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout Repository"
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: "Setup CI Environment"
+      - name: Setup CI Environment
         uses: ./.github/actions/setup-environment
 
-      - name: "Build Project Packages for Release"
+      - name: Build Project Packages for Release
         run: npx turbo build --filter="./packages/**"
 
-      - name: "Check for Changeset Files"
-        id: check_changesets
+      - name: Creating .npmrc
         run: |
-          if [ $(find .changeset -name "*.md" -not -name "README.md" | wc -l) -le 0 ]; then
-            echo "has_changesets=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_changesets=true" >> $GITHUB_OUTPUT
-          fi
-
-      # - name: "Configure npm Authentication"
-      #   if: steps.check_changesets.outputs.has_changesets == 'true'
-      #   run: |
-      #     echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-      #     npm whoami
-      #   env:
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: "Enable Canary Release Mode"
-        if: github.ref == 'refs/heads/canary' && steps.check_changesets.outputs.has_changesets == 'false'
-        run: npx changeset pre enter canary
-
-      - name: "Exit Canary Release Mode"
-        if: github.ref == 'refs/heads/main'
-        run: npx changeset pre exit
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: "Version and Publish Packages"
+      - name: Version and Publish Packages
         id: changesets
         uses: changesets/action@v1
         with:
