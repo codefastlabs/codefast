@@ -10,6 +10,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  NODE_ENV: production
+  TURBO_TELEMETRY_DISABLED: ${{ secrets.TELEMETRY_DISABLED }}
+
 jobs:
   release:
     name: Publish NPM Packages
@@ -23,9 +27,6 @@ jobs:
 
       - name: Build, Lint, Check Types, and Test Coverage for Packages
         run: npx turbo build lint test:coverage:ci --filter="./packages/**"
-        env:
-          NODE_ENV: production
-          TURBO_TELEMETRY_DISABLED: 1
 
       - name: Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
