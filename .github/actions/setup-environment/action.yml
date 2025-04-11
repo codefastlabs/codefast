@@ -70,6 +70,8 @@ runs:
       shell: bash
       if: ${{ inputs.install-dependencies == 'true' }}
       run: pnpm install ${{ inputs.install-options }}
+      env:
+        SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
 
     - name: "Verify Turborepo Remote Caching Setup"
       id: turbo-remote-cache

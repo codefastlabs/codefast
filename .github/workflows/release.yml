@@ -10,13 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  SKIP_INSTALL_SIMPLE_GIT_HOOKS: true
-  NODE_ENV: production
-
 jobs:
-  validate:
-    name: Validate Build & Quality
+  release:
+    name: Publish NPM Packages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -27,6 +23,8 @@ jobs:
 
       - name: Build, Lint, Check Types, and Test Coverage for Packages
         run: npx turbo build lint check-types test:coverage:ci --filter="./packages/**"
+        env:
+          NODE_ENV: production
 
       - name: Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
@@ -35,34 +33,20 @@ jobs:
           slug: codefastlabs/codefast
           fail_ci_if_error: false
 
-  release:
-    name: Publish NPM Packages
-    needs: [validate]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup CI Environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Build Project Packages for Release
-        run: npx turbo build --filter="./packages/**"
-
-      - name: Creating .npmrc
-        run: |
-          cat << EOF > "$HOME/.npmrc"
-            //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          EOF
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: Creating .npmrc
+      #   run: |
+      #     cat << EOF > "$HOME/.npmrc"
+      #       //registry.npmjs.org/:_authToken=$NPM_TOKEN
+      #     EOF
+      #   env:
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Version and Publish Packages
         id: changesets
         uses: changesets/action@v1
         with:
-          version: npx changeset version
-          publish: npx changeset publish
+          # version: npx changeset version
+          # publish: npx changeset publish
           title: "chore(release): version packages"
           commit: "chore(release): version packages"
         env:
