@@ -6,8 +6,8 @@ on:
       - main
       - canary
     paths:
-      - "packages/**"
       - ".github/workflows/release.yml"
+      - "packages/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
