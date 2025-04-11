@@ -81,6 +81,8 @@ jobs:
             else
               echo "Changesets found, entering canary pre-release mode."
               npx changeset pre enter canary
+              git add .
+              git commit -m "chore: enter canary pre-release mode" || echo "No changes to commit"
             fi
           else
             echo "No changesets found, skipping pre-release mode."
@@ -132,6 +134,8 @@ jobs:
           if [ -f .changeset/pre.json ]; then
             echo "Exiting pre-release mode."
             npx changeset pre exit
+            git add .
+            git commit -m "chore: exit canary pre-release mode" || echo "No changes to commit"
           fi
 
       - name: Publish Production Releases
@@ -177,7 +181,7 @@ jobs:
             if [ ! -f .changeset/pre.json ]; then
               echo "Restoring canary pre-release mode."
               npx changeset pre enter canary
-              git add .changeset/pre.json
+              git add .
               git commit -m "chore: restore canary pre-release mode" || echo "No changes to commit"
             fi
           fi
