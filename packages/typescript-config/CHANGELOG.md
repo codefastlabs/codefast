@@ -1,5 +1,11 @@
 # @codefast/typescript-config
 
+## 0.2.45-canary.0
+
+### Patch Changes
+
+- [`638f92c`](https://github.com/codefastlabs/codefast/commit/638f92c8f1f3e3987b62272acebcd86b70b66800) Thanks [@thevuong](https://github.com/thevuong)! - chore: bump @swc/core to version ^1.11.20
+
 ## 0.2.44
 
 ### Patch Changes
