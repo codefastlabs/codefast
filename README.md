@@ -17,11 +17,11 @@
 
 <!-- Tech Stack -->
 <p align="center">
-  <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-15.2.4-black?logo=next.js&logoColor=white" alt="Next.js"></a>
+  <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white" alt="Next.js"></a>
   <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-blue" alt="React"></a>
-  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.8.2-blue" alt="TypeScript"></a>
-  <a href="https://www.radix-ui.com/primitives"><img src="https://img.shields.io/badge/Radix_UI-1.1.6-blue" alt="Radix UI"></a>
-  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-4.0.16-38B2AC?logo=tailwind-css&logoColor=white" alt="TailwindCSS"></a>
+  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5-blue" alt="TypeScript"></a>
+  <a href="https://www.radix-ui.com/primitives"><img src="https://img.shields.io/badge/Radix_UI-1-blue" alt="Radix UI"></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwind-css&logoColor=white" alt="TailwindCSS"></a>
 </p>
 
 <!-- Community -->
