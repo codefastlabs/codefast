@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - canary
+    paths:
+      - "packages/**"
+      - ".github/workflows/release.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -52,9 +55,7 @@ jobs:
 
       - name: Configure NPM Authentication
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          echo "HOME: ${HOME}"
-          echo "HOME: ${process.env.HOME}"
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "${HOME}/.npmrc"
           npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -70,3 +71,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          HOME: ${{ HOME }}
