@@ -30,6 +30,11 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
+permissions:
+  contents: read # to check out code
+  issues: write # to create a comment on a PR
+  pull-requests: write # to create a comment on a PR
+
 jobs:
   deploy:
     name: Deploy to Vercel
