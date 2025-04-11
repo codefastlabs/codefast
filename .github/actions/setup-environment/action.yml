@@ -63,6 +63,15 @@ runs:
         registry-url: ${{ inputs.registry-url }}
         cache: "pnpm"
 
+    - name: "Configure NPM auth token"
+      id: npm-auth-config
+      shell: bash
+      if: ${{ env.NPM_TOKEN != '' }}
+      run: |
+        REGISTRY="${{ inputs.registry-url }}"
+        REGISTRY_HOST=$(echo $REGISTRY | sed -E 's#^https?://##')
+        npm config set //$REGISTRY_HOST/:_authToken ${NPM_TOKEN}
+
     - name: "Install Project Dependencies (pnpm)"
       id: pnpm-install
       shell: bash
@@ -77,4 +86,4 @@ runs:
       if: ${{ inputs.enable-remote-cache == 'true' && env.TURBO_TOKEN != '' && env.TURBO_TEAM != '' }}
       run: |
         echo "Turborepo Remote Caching is enabled for team: $TURBO_TEAM"
-        Run npx turbo --version
+        npx turbo --version
