@@ -6,9 +6,9 @@ on:
       - main
       - canary
     paths:
+      - ".github/workflows/deploy.yml"
       - "apps/**"
       - "packages/**"
-      - ".github/workflows/deploy.yml"
   pull_request:
     branches:
       - main
@@ -18,9 +18,9 @@ on:
       - synchronize
       - reopened
     paths:
+      - ".github/workflows/deploy.yml"
       - "apps/**"
       - "packages/**"
-      - ".github/workflows/deploy.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
