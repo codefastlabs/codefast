@@ -22,9 +22,10 @@ jobs:
         uses: ./.github/actions/setup-environment
 
       - name: Build, Lint, Check Types, and Test Coverage for Packages
-        run: npx turbo build lint check-types test:coverage:ci --filter="./packages/**"
+        run: npx turbo build lint test:coverage:ci --filter="./packages/**"
         env:
           NODE_ENV: production
+          TURBO_TELEMETRY_DISABLED: 1
 
       - name: Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
@@ -33,13 +34,13 @@ jobs:
           slug: codefastlabs/codefast
           fail_ci_if_error: false
 
-      # - name: Creating .npmrc
-      #   run: |
-      #     cat << EOF > "$HOME/.npmrc"
-      #       //registry.npmjs.org/:_authToken=$NPM_TOKEN
-      #     EOF
-      #   env:
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Creating .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Version and Publish Packages
         id: changesets
