@@ -13,6 +13,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
 jobs:
   verify-code:
     name: Verify Code Integrity
@@ -28,6 +33,8 @@ jobs:
         run: npx turbo build lint test:coverage:ci --filter="./packages/**"
         env:
           NODE_ENV: production
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
       - name: Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
@@ -48,10 +55,17 @@ jobs:
       - name: Setup CI Environment
         uses: ./.github/actions/setup-environment
 
-      - name: Build, Lint, Check Types, and Test Coverage for Packages
+      - name: Configure Git User
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Build Packages
         run: npx turbo build --filter="./packages/**"
         env:
           NODE_ENV: production
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
       - name: Check and Enter Canary Pre-Release Mode
         if: github.ref == 'refs/heads/canary'
@@ -62,10 +76,24 @@ jobs:
             else
               echo "Changesets found, entering canary pre-release mode."
               npx changeset pre enter canary
+              git add .
+              git commit -m "chore: enter canary pre-release mode" || echo "No changes to commit"
             fi
           else
             echo "No changesets found, skipping pre-release mode."
           fi
+
+      - name: Manage Changesets on Canary
+        if: github.ref == 'refs/heads/canary'
+        uses: changesets/action@v1
+        with:
+          version: npx changeset version
+          publish: npx changeset publish
+          commit: "chore: update versions for canary release"
+          title: "chore: update canary versions"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Exit Pre-Release Mode on Main
         if: github.ref == 'refs/heads/main'
@@ -73,15 +101,41 @@ jobs:
           if [ -f .changeset/pre.json ]; then
             echo "Exiting pre-release mode."
             npx changeset pre exit
+            git add .
+            git commit -m "chore: exit canary pre-release mode" || echo "No changes to commit"
           fi
 
-      - name: Version and Publish Packages
+      - name: Manage Changesets on Main
+        id: changesets
+        if: github.ref == 'refs/heads/main'
         uses: changesets/action@v1
         with:
           version: npx changeset version
           publish: npx changeset publish
-          title: "chore(release): version packages"
-          commit: "chore(release): version packages"
+          commit: "chore: update versions for release"
+          title: "chore: release new version"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Sync Main to Canary
+        if: github.ref == 'refs/heads/main' && steps.changesets.outputs.published == 'true'
+        run: |
+          git checkout -b sync-main-to-canary-${{ github.run_id }}
+          git merge main --no-ff -m "chore: sync main into canary after release"
+          if find .changeset -maxdepth 1 -type f -name "*.md" ! -name "README.md" | grep -q .; then
+            if [ ! -f .changeset/pre.json ]; then
+              echo "Restoring canary pre-release mode."
+              npx changeset pre enter canary
+              git add .
+              git commit -m "chore: restore canary pre-release mode" || echo "No changes to commit"
+            fi
+          fi
+          git push origin sync-main-to-canary-${{ github.run_id }}
+          gh pr create \
+            --base canary \
+            --head sync-main-to-canary-${{ github.run_id }} \
+            --title "chore: sync main into canary after release" \
+            --body "Auto-generated PR to sync main into canary after successful release."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
