@@ -1,4 +1,4 @@
-name: "CD: Vercel Deployments"
+name: Vercel Deployments
 
 on:
   push:
@@ -7,9 +7,20 @@ on:
       - canary
     paths:
       - "**/*.{ts,tsx,js,jsx,cjs,mjs,json,css}"
-      - ".github/workflows/deploy.yml"
       - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
       - "!**/{__tests__,tests,e2e,__mocks__}/**"
+      - ".github/workflows/deploy.yml"
+  pull_request:
+    branches:
+      - main
+      - canary
+    paths:
+      - "**/*.{ts,tsx,js,jsx,cjs,mjs,json,css}"
+      - ".github/workflows/deploy.yml"
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,33 +33,30 @@ env:
 
 jobs:
   deploy:
-    name: "Deploy to Vercel"
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    name: Deploy to Vercel
     runs-on: ubuntu-latest
     steps:
-      - name: "Checkout Repository"
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: "Setup CI Environment"
+      - name: Setup CI Environment
         uses: ./.github/actions/setup-environment
 
-      - name: "Install and Configure Vercel CLI"
-        run: |
-          pnpm add -g vercel@latest
+      - name: Install and Configure Vercel CLI
+        run: pnpm add -g vercel@latest
 
-      - name: "Deploy Production to Vercel"
+      - name: Deploy Production to Vercel
         if: github.ref == 'refs/heads/main'
-        run: |
-          vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
+        run: vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod --yes
 
-      - name: "Deploy Preview to Vercel"
+      - name: Deploy Preview to Vercel
         if: github.ref != 'refs/heads/main'
         run: |
           DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --yes)
           echo "Preview URL: $DEPLOY_URL"
           echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
 
-      - name: "Post Deployment Comment on PR"
+      - name: Post Deployment Comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:

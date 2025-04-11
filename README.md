@@ -3,7 +3,7 @@
 <!-- Build & Deploy -->
 <p align="center">
   <a href="https://github.com/codefastlabs/codefast/actions/workflows/release.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg?branch=main" alt="Release"></a>
-  <a href="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml/badge.svg" alt="Vercel"></a>
+  <a href="https://github.com/codefastlabs/codefast/actions/workflows/vercel-deploy.yml"><img src="https://github.com/codefastlabs/codefast/actions/workflows/deploy.yml/badge.svg" alt="Vercel"></a>
   <a href="https://codecov.io/gh/codefastlabs/codefast"><img src="https://img.shields.io/codecov/c/github/codefastlabs/codefast" alt="Test Coverage"></a>
 </p>
 
