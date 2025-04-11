@@ -22,11 +22,6 @@ inputs:
     default: "--prefer-offline --frozen-lockfile"
     required: false
 
-  registry-url:
-    description: "npm registry URL to use"
-    default: "https://registry.npmjs.org"
-    required: false
-
   enable-remote-cache:
     description: "Whether to enable Turborepo remote caching"
     default: "true"
@@ -60,17 +55,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        registry-url: ${{ inputs.registry-url }}
         cache: "pnpm"
-
-    - name: "Configure NPM auth token"
-      id: npm-auth-config
-      shell: bash
-      if: ${{ env.NPM_TOKEN != '' }}
-      run: |
-        REGISTRY="${{ inputs.registry-url }}"
-        REGISTRY_HOST=$(echo $REGISTRY | sed -E 's#^https?://##')
-        npm config set //$REGISTRY_HOST/:_authToken ${NPM_TOKEN}
 
     - name: "Install Project Dependencies (pnpm)"
       id: pnpm-install
