@@ -1,5 +1,13 @@
 # @codefast-ui/checkbox-group
 
+## 0.2.44
+
+### Patch Changes
+
+- [`29123d5`](https://github.com/codefastlabs/codefast/commit/29123d5a2ac745d4ed4910723352b171dc06ca0d) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update Shiki and eslint-config-prettier
+
+- [`29f4b24`](https://github.com/codefastlabs/codefast/commit/29f4b2483ab10797347d319b6b1bc9b541b972cc) Thanks [@thevuong](https://github.com/thevuong)! - feat: update vitest and related dependencies to v3.1.1
+
 ## 0.2.44-canary.1
 
 ### Patch Changes
