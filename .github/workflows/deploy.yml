@@ -29,7 +29,6 @@ concurrency:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
 jobs:
   deploy:
@@ -47,12 +46,14 @@ jobs:
 
       - name: Deploy Production to Vercel
         if: github.ref == 'refs/heads/main'
-        run: vercel deploy --archive=tgz --prod
+        run: |
+          DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod)
+          echo "Production URL: $DEPLOY_URL"
 
       - name: Deploy Preview to Vercel
         if: github.ref != 'refs/heads/main'
         run: |
-          DEPLOY_URL=$(vercel deploy --archive=tgz)
+          DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $DEPLOY_URL"
           echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
 
