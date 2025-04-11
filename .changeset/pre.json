@@ -13,5 +13,7 @@
     "@codefast/typescript-config": "0.2.44",
     "@codefast/ui": "0.2.44"
   },
-  "changesets": []
+  "changesets": [
+    "tough-dolls-tan"
+  ]
 }
