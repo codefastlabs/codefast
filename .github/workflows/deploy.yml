@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - canary
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - ".github/workflows/deploy.yml"
   pull_request:
     branches:
       - main
@@ -13,6 +17,10 @@ on:
       - opened
       - synchronize
       - reopened
+    paths:
+      - "apps/**"
+      - "packages/**"
+      - ".github/workflows/deploy.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

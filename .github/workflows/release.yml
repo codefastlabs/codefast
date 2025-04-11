@@ -53,8 +53,8 @@ jobs:
       - name: Configure NPM Authentication
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-          echo "${env.HOME}"
-          echo "${process.env.HOME}"
+          echo "HOME: ${HOME}"
+          echo "HOME: ${process.env.HOME}"
           npm whoami
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
