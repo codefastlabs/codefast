@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.2.44-canary.1
+
+### Patch Changes
+
+- [`29f4b24`](https://github.com/codefastlabs/codefast/commit/29f4b2483ab10797347d319b6b1bc9b541b972cc) Thanks [@thevuong](https://github.com/thevuong)! - feat: update vitest and related dependencies to v3.1.1
+
+- Updated dependencies [[`29f4b24`](https://github.com/codefastlabs/codefast/commit/29f4b2483ab10797347d319b6b1bc9b541b972cc)]:
+  - @codefast/hooks@0.2.44-canary.1
+  - @codefast-ui/checkbox-group@0.2.44-canary.1
+  - @codefast-ui/input@0.2.44-canary.1
+  - @codefast-ui/input-number@0.2.44-canary.1
+  - @codefast-ui/progress-circle@0.2.44-canary.1
+
 ## 0.2.44-canary.0
 
 ### Patch Changes

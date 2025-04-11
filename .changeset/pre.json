@@ -13,7 +13,5 @@
     "@codefast/typescript-config": "0.2.43",
     "@codefast/ui": "0.2.43"
   },
-  "changesets": [
-    "afraid-numbers-repair"
-  ]
+  "changesets": ["afraid-numbers-repair", "happy-animals-care"]
 }
