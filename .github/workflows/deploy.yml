@@ -10,6 +10,7 @@ on:
       - "!**/*.{test,spec,e2e}.{ts,tsx,js,jsx}"
       - "!**/{__tests__,tests,e2e,__mocks__}/**"
       - ".github/workflows/deploy.yml"
+      - "!**/*.yml"
   pull_request:
     branches:
       - main
@@ -17,6 +18,7 @@ on:
     paths:
       - "**/*.{ts,tsx,js,jsx,cjs,mjs,json,css}"
       - ".github/workflows/deploy.yml"
+      - "!**/*.yml"
     types:
       - opened
       - synchronize
