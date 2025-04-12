@@ -19,10 +19,6 @@
     "lint": {
       "dependsOn": ["build"]
     },
-    "preview": {
-      "dependsOn": ["build"],
-      "cache": false
-    },
     "start": {},
     "test": {
       "dependsOn": ["build"]
