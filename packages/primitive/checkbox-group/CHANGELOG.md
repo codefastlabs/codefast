@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.2.46-canary.1
+
+### Patch Changes
+
+- [`0f7c81e`](https://github.com/codefastlabs/codefast/commit/0f7c81ea04d285b5a56d3b78059519829cbcfb77) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): add optional dependencies for UI functionality
+
 ## 0.2.46-canary.0
 
 ### Patch Changes
