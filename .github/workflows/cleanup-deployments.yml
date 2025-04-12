@@ -1,0 +1,70 @@
+name: Cleanup Stuck Deployments
+
+on:
+  workflow_dispatch: # Allows manual execution from the GitHub interface
+
+jobs:
+  cleanup:
+    name: Cleanup Pending Deployments
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Pending Deployments
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Get all current deployments
+            const { data: deployments } = await github.rest.repos.listDeployments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              environment: 'preview'  // Specifically 'preview' with lowercase
+            });
+
+            console.log(`Found ${deployments.length} deployments in the 'preview' environment`);
+
+            // Find and delete deployments in "queued" or "in_progress" state
+            for (const deployment of deployments) {
+              // Get deployment statuses
+              const { data: statuses } = await github.rest.repos.listDeploymentStatuses({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                deployment_id: deployment.id
+              });
+
+              console.log(`Deployment ${deployment.id} has ${statuses.length} status entries`);
+
+              // Check if deployment is in queued or in_progress state
+              const isQueued = statuses.length === 0 || !statuses.some(s => ['success', 'failure', 'error', 'inactive'].includes(s.state));
+
+              if (isQueued) {
+                console.log(`Deleting queued deployment ${deployment.id}...`);
+
+                try {
+                  // First, update status to inactive
+                  await github.rest.repos.createDeploymentStatus({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    deployment_id: deployment.id,
+                    state: 'inactive',
+                    description: 'Deployment manually cancelled'
+                  });
+
+                  console.log(`Marked deployment ${deployment.id} as inactive`);
+
+                  // Then delete the deployment
+                  await github.rest.repos.deleteDeployment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    deployment_id: deployment.id
+                  });
+
+                  console.log(`Successfully deleted deployment ${deployment.id}`);
+                } catch (error) {
+                  console.log(`Error handling deployment ${deployment.id}: ${error.message}`);
+                }
+              } else {
+                console.log(`Skipping deployment ${deployment.id} as it is not in queued state`);
+              }
+            }
+
+            console.log('Cleanup completed');
