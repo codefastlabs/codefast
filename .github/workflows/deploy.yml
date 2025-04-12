@@ -26,10 +26,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 permissions:
   contents: read # to check out code
   issues: write # to create a comment on a PR
@@ -52,6 +48,9 @@ jobs:
       - name: Deploy Production to Vercel
         if: github.ref == 'refs/heads/main'
         run: vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --prod
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Deploy Preview to Vercel
         if: github.ref != 'refs/heads/main'
@@ -59,6 +58,9 @@ jobs:
           DEPLOY_URL=$(vercel deploy --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
           echo "Preview URL: $DEPLOY_URL"
           echo "PREVIEW_URL=$DEPLOY_URL" >> $GITHUB_ENV
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Post Deployment Comment on PR
         if: github.event_name == 'pull_request'
