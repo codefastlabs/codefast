@@ -131,6 +131,18 @@
     },
     "@types/react-dom": {
       "optional": true
+    },
+    "date-fns": {
+      "optional": true
+    },
+    "next-themes": {
+      "optional": true
+    },
+    "react-hook-form": {
+      "optional": true
+    },
+    "recharts": {
+      "optional": true
     }
   },
   "publishConfig": {
