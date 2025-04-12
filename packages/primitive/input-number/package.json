@@ -47,10 +47,10 @@
   },
   "dependencies": {
     "@codefast-ui/input": "workspace:*",
-    "@radix-ui/primitive": "^1.1.1",
-    "@radix-ui/react-compose-refs": "^1.1.1",
-    "@radix-ui/react-context": "^1.1.1",
-    "@radix-ui/react-use-controllable-state": "^1.1.0"
+    "@radix-ui/primitive": "^1.1.2",
+    "@radix-ui/react-compose-refs": "^1.1.2",
+    "@radix-ui/react-context": "^1.1.2",
+    "@radix-ui/react-use-controllable-state": "^1.1.1"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
