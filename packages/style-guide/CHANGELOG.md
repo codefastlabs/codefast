@@ -1,5 +1,17 @@
 # @codefast/style-guide
 
+## 0.2.46-canary.0
+
+### Patch Changes
+
+- [`0dd915c`](https://github.com/codefastlabs/codefast/commit/0dd915c34275f93c1eca5aa34fa610e4e35dd87d) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint): allow console usage in logger files
+
+- [`d5f2740`](https://github.com/codefastlabs/codefast/commit/d5f27400b15aa5ca877f9b7bf09445e01a58d476) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): enhance rules and configurations
+
+- [`0c1cb16`](https://github.com/codefastlabs/codefast/commit/0c1cb161437960c5b59c406e66939bd257cda248) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update package dependencies
+
+- [`41af37f`](https://github.com/codefastlabs/codefast/commit/41af37f76001cda4bffd9d2b1a9b073eb98e3657) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): update eslint rules for flexibility
+
 ## 0.2.45
 
 ### Patch Changes
