@@ -6,16 +6,13 @@ export default [
   {
     files: ["src/lib/logger.ts", "src/lib/logger.test.ts"],
     rules: {
+      /**
+       * Allow console statements in logger implementation and tests.
+       * Console usage is expected in logging utilities as part of their core functionality.
+       *
+       * 🚫 Not fixable - https://eslint.org/docs/rules/no-console
+       */
       "no-console": "off",
-    },
-  },
-  {
-    files: ["src/tailwindcss/**/*.ts"],
-    rules: {
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/unbound-method": "off",
-      "import/no-default-export": "off",
     },
   },
 ];
