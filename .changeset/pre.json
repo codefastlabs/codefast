@@ -13,5 +13,10 @@
     "@codefast/typescript-config": "0.2.45",
     "@codefast/ui": "0.2.45"
   },
-  "changesets": []
+  "changesets": [
+    "new-ghosts-occur",
+    "sad-crews-sniff",
+    "twelve-zoos-deny",
+    "weak-chairs-like"
+  ]
 }
