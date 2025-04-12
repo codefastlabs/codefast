@@ -3,6 +3,10 @@ name: Cleanup Stuck Deployments
 on:
   workflow_dispatch: # Allows manual execution from the GitHub interface
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   cleanup:
     name: Cleanup Pending Deployments
