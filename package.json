@@ -6,6 +6,8 @@
     "build:docs": "turbo run build --filter=@app/docs...",
     "build:packages": "turbo run build --filter=\"./packages/**\"",
     "changeset": "changeset",
+    "changeset:pre:enter": "changeset pre enter canary",
+    "changeset:pre:exit": "changeset pre exit",
     "check-types": "turbo check-types",
     "clean": "turbo run clean && rimraf node_modules pnpm-lock.yaml .turbo/cache",
     "dev": "turbo run dev",
