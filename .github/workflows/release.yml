@@ -43,9 +43,8 @@ jobs:
           slug: codefastlabs/codefast
           fail_ci_if_error: false
 
-  canary-release:
-    name: Publish Canary Release
-    if: github.ref == 'refs/heads/canary'
+  release:
+    name: Publish Release
     runs-on: ubuntu-latest
     needs:
       - verify-code
@@ -53,65 +52,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
-
-      - name: Setup CI Environment
-        uses: ./.github/actions/setup-environment
-        with:
-          install-dependencies: "true"
-
-      - name: Build Packages
-        run: npx turbo build --filter="./packages/**"
-        env:
-          NODE_ENV: production
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
-      - name: Configure Git User
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Check and Enter Canary Pre-Release Mode
-        run: |
-          if find .changeset -maxdepth 1 -type f -name "*.md" ! -name "README.md" | grep -q .; then
-            if [ -f .changeset/pre.json ]; then
-              echo "pre.json exists, continuing in pre-release mode."
-            else
-              echo "Changesets found, entering canary pre-release mode."
-              npx changeset pre enter canary
-              git add .
-              git commit -m "chore: enter canary pre-release mode" || echo "No changes to commit"
-            fi
-          else
-            echo "No changesets found, skipping pre-release mode."
-          fi
-
-      - name: Publish Canary Releases
-        uses: changesets/action@v1
-        with:
-          version: npx changeset version
-          publish: npx changeset publish
-          commit: "chore: update versions for canary release"
-          title: "chore: update canary versions"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  production-release:
-    name: Publish Production Release
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs:
-      - verify-code
-    outputs:
-      published: ${{ steps.changesets.outputs.published }}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
           token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Setup CI Environment
@@ -124,38 +64,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: Configure Git User
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Exit Pre-Release Mode
-        id: exit-pre-release
-        run: |
-          if [ -f .changeset/pre.json ] && [ "$(jq -r '.mode' .changeset/pre.json)" = "pre" ]; then
-            echo "pre.json exists with mode 'pre', exiting pre-release mode."
-            npx changeset pre exit
-            git add .changeset/pre.json
-            git checkout -b exit-pre-release-${{ github.run_id }}
-            git commit -m "chore: exit canary pre-release mode" || echo "No changes to commit"
-            git push origin exit-pre-release-${{ github.run_id }}
-            gh pr create \
-              --base main \
-              --head exit-pre-release-${{ github.run_id }} \
-              --title "chore: exit canary pre-release mode" \
-              --body "Auto-generated PR to exit pre-release mode on main."
-            echo "PR created, signaling workflow to stop."
-            echo "pre_release_exit_status=exit" >> $GITHUB_OUTPUT
-          else
-            echo "pre.json does not exist or mode is not 'pre', skipping exit pre-release mode."
-            echo "pre_release_exit_status=pre" >> $GITHUB_OUTPUT
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
-
-      - name: Publish Production Releases
-        id: changesets
-        if: steps.exit-pre-release.outputs.pre_release_exit_status != 'exit'
+      - name: Publish Releases
         uses: changesets/action@v1
         with:
           version: npx changeset version
@@ -165,67 +74,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  sync-branches:
-    name: Sync Main to Canary
-    if: github.ref == 'refs/heads/main' && needs.production-release.outputs.published == 'true'
-    runs-on: ubuntu-latest
-    needs: [production-release]
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
-
-      - name: Setup CI Environment
-        uses: ./.github/actions/setup-environment
-
-      - name: Configure Git User
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Sync Main to Canary
-        continue-on-error: true
-        run: |
-          git fetch origin canary
-          git checkout -b sync-main-to-canary-${{ github.run_id }}-$(date +%s) origin/canary
-          git merge main --no-commit --no-ff
-          if git ls-files -u | grep -q .; then
-            echo "Merge conflict detected between main and canary. Please resolve manually."
-            git merge --abort
-            exit 1
-          else
-            git commit -m "chore: sync main into canary after release"
-          fi
-          if find .changeset -maxdepth 1 -type f -name "*.md" ! -name "README.md" | grep -q .; then
-            if [ ! -f .changeset/pre.json ]; then
-              echo "Restoring canary pre-release mode."
-              npx changeset pre enter canary || { echo "Failed to enter pre-release mode"; exit 1; }
-              git add .changeset/pre.json
-              git commit -m "chore: restore canary pre-release mode" || { echo "No changes committed"; exit 1; }
-              [ -f .changeset/pre.json ] || { echo "pre.json not created"; exit 1; }
-            fi
-          fi
-          for i in {1..3}; do
-            git push origin sync-main-to-canary-${{ github.run_id }}-$(date +%s) && break
-            echo "Push failed, retrying ($i/3)..."
-            sleep 5
-          done || { echo "Failed to push branch after retries"; exit 1; }
-          git fetch origin canary
-          if ! git diff origin/canary..HEAD --quiet; then
-            echo "Canary has changed since fetch. Aborting to avoid overwriting."
-            exit 1
-          fi
-          for i in {1..3}; do
-            gh pr create \
-              --base canary \
-              --head sync-main-to-canary-${{ github.run_id }}-$(date +%s) \
-              --title "chore: sync main into canary after release" \
-              --body "Auto-generated PR to sync main into canary after successful release." && break
-            echo "PR creation failed, retrying ($i/3)..."
-            sleep 5
-          done || { echo "Failed to create PR after retries"; exit 1; }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
