@@ -59,7 +59,7 @@ jobs:
               environment: github.ref == 'refs/heads/main' ? 'production' : 'preview',
               auto_merge: false,
               required_contexts: [],
-              description: '🚀 Preparing amazing deployment to Vercel!'
+              description: 'Preparing deployment to Vercel!'
             });
 
             await github.rest.repos.createDeploymentStatus({
@@ -67,7 +67,7 @@ jobs:
               repo: context.repo.repo,
               deployment_id: deployment.id,
               state: 'in_progress',
-              description: '🔄 Exciting deployment in progress! Building your awesome app...'
+              description: 'Deployment in progress! Building your awesome app...'
             });
 
             return { id: deployment.id };
@@ -107,7 +107,7 @@ jobs:
               state: 'success',
               environment_url: process.env.DEPLOY_URL,
               log_url: process.env.DEPLOY_URL,
-              description: '✅ Woohoo! Deployment completed successfully! Your amazing app is ready to shine!'
+              description: 'Woohoo! Deployment completed successfully! Your app is ready!'
             });
 
       # Update deployment status to failure
@@ -122,7 +122,7 @@ jobs:
               repo: context.repo.repo,
               deployment_id: deploymentId,
               state: 'failure',
-              description: '❗ We hit a small bump! Don\'t worry - let\'s fix this together and try again!'
+              description: 'We hit a small bump! Let\'s fix this together and try again!'
             });
 
       - name: Post Deployment Comment on PR
