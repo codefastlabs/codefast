@@ -1,5 +1,25 @@
 # @codefast-ui/input
 
+## 0.2.46-canary.2
+
+### Patch Changes
+
+- [`b73f85f`](https://github.com/codefastlabs/codefast/commit/b73f85f1ceff68113ded1c69eb2fc176ea95d952) Thanks [@thevuong](https://github.com/thevuong)! - feat(checkbox-group): refine exports for better tree-shaking
+
+- [`bc0de8e`](https://github.com/codefastlabs/codefast/commit/bc0de8e6f29721be28158afda885aac4a5761ce7) Thanks [@thevuong](https://github.com/thevuong)! - chore(build): migrate from `tsup` to `rslib` for build process
+
+- [`e595324`](https://github.com/codefastlabs/codefast/commit/e5953248c3b21cf12b660fe1533f116e1d9fe6c1) Thanks [@thevuong](https://github.com/thevuong)! - feat(input): update exports to include specific modules
+
+- [`06a8156`](https://github.com/codefastlabs/codefast/commit/06a815679948c6e99a463ab960899b5fd7b47d4a) Thanks [@thevuong](https://github.com/thevuong)! - feat(progress-circle): expose specific exports for components
+
+- [`93aef5d`](https://github.com/codefastlabs/codefast/commit/93aef5d835ec43d8aceaa3f1c0fd0e665b11e274) Thanks [@thevuong](https://github.com/thevuong)! - fix: suppress warnings for unresolved CSS custom properties
+
+- [`6a4c564`](https://github.com/codefastlabs/codefast/commit/6a4c564e5179b763a7ec46a4db270ab2392eb3a5) Thanks [@thevuong](https://github.com/thevuong)! - fix: update incorrect import paths for UI package
+
+- [`7016ff1`](https://github.com/codefastlabs/codefast/commit/7016ff1efe1297aa0a443777a08ea04cf502c0bc) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): replace `exclude` with `entry` in configs
+
+- [`f36be82`](https://github.com/codefastlabs/codefast/commit/f36be823ee848bbfc4299bcbed310533a61978d5) Thanks [@thevuong](https://github.com/thevuong)! - feat(input-number): update exports for improved modularity
+
 ## 0.2.46-canary.1
 
 ### Patch Changes
