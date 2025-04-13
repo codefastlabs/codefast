@@ -23,6 +23,7 @@ out/
 build
 dist
 .swc/
+tsconfig.tsbuildinfo
 
 # debug
 npm-debug.log*
