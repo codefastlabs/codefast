@@ -1,3 +1,3 @@
 "use client";
 
-export * from "@/input";
+export { createInputScope, Field, Input, InputField, Root } from "@/input";
