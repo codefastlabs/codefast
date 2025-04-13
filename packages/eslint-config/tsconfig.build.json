@@ -5,9 +5,9 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"],
-      "@codefast/style-guide": ["./dist/*"]
+      "@codefast/eslint-config": ["./dist/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".turbo", "coverage"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo", "coverage", "/**/*.test.*", "**/*.spec.*"]
 }
