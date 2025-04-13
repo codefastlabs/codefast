@@ -32,6 +32,8 @@ export default defineConfig({
   },
   plugins: [pluginReact()],
   source: {
-    exclude: ["./src/**/*.{test,spec}.*"],
+    entry: {
+      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.*"],
+    },
   },
 });
