@@ -14,6 +14,7 @@
     "@codefast/ui": "0.2.45"
   },
   "changesets": [
+    "curly-toys-return",
     "heavy-terms-rhyme",
     "hip-turkeys-grab",
     "long-lizards-ring",
