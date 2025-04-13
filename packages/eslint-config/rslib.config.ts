@@ -29,6 +29,8 @@ export default defineConfig({
     cleanDistPath: isProduction,
   },
   source: {
-    exclude: ["./src/**/*.{test,spec}.*"],
+    entry: {
+      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.*"],
+    },
   },
 });
