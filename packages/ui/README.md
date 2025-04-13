@@ -27,7 +27,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
 @import "@codefast/ui/styles.css";
 
-@source '../../node_modules/@codefast/ui/dist';
+@source '../../node_modules/@codefast/ui';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
