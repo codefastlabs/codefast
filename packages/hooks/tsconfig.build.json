@@ -4,9 +4,9 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@/*": ["./src/*", "./plugins/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".turbo", "coverage"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo", "coverage", "/**/*.test.*", "**/*.spec.*"]
 }

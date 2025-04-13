@@ -8,6 +8,6 @@
       "@codefast/style-guide": ["./dist/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".turbo", "coverage"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", ".turbo", "coverage", "/**/*.test.*", "**/*.spec.*"]
 }
