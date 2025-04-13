@@ -1,3 +1,13 @@
 "use client";
 
-export * from "@/input-number";
+export {
+  createInputNumberScope,
+  DecrementButton,
+  Field,
+  IncrementButton,
+  InputNumber,
+  InputNumberDecrementButton,
+  InputNumberField,
+  InputNumberIncrementButton,
+  Root,
+} from "@/input-number";
