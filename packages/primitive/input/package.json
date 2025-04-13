@@ -16,28 +16,28 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/esm/src/index.d.ts",
+        "default": "./dist/esm/index.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/cjs/src/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
       }
     }
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
   "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/esm/src/index.d.ts",
   "files": [
     "dist",
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "rslib build",
     "check-types": "tsc --noEmit",
     "clean": "rimraf node_modules dist",
-    "dev": "tsup --watch",
+    "dev": "cross-env NODE_ENV=development rslib build --watch",
     "lint": "eslint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "test": "jest",
@@ -52,6 +52,8 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
+    "@rsbuild/plugin-react": "^1.2.0",
+    "@rslib/core": "^0.6.2",
     "@swc/core": "^1.11.20",
     "@swc/jest": "^0.2.37",
     "@testing-library/dom": "^10.4.0",
@@ -65,14 +67,13 @@
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "@types/react": "*",
     "@types/react-dom": "*",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": ">=19",
+    "react-dom": ">=19"
   },
   "peerDependenciesMeta": {
     "@types/react": {
