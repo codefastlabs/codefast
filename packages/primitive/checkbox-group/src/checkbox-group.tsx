@@ -322,6 +322,7 @@ function CheckboxGroupIndicator({
 /* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
+
 export {
   CheckboxGroup,
   CheckboxGroupIndicator,
