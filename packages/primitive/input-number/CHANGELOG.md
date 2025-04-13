@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.46-canary.3
+
+### Patch Changes
+
+- [`09f76d9`](https://github.com/codefastlabs/codefast/commit/09f76d94964cc36e1f19ce0eae69daec664766ae) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance build configuration for TypeScript projects
+
+- Updated dependencies [[`09f76d9`](https://github.com/codefastlabs/codefast/commit/09f76d94964cc36e1f19ce0eae69daec664766ae)]:
+  - @codefast-ui/input@0.2.46-canary.3
+
 ## 0.2.46-canary.2
 
 ### Patch Changes
