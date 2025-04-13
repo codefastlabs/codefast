@@ -17,7 +17,9 @@
     "library.json",
     "nextjs.json",
     "react.json",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,12 +1,12 @@
 import { defineConfig } from "@rslib/core";
 
-const isProduction = process.env.NODE_ENV === "production";
-
 export default defineConfig({
   lib: [
     {
       bundle: false,
-      dts: true,
+      dts: {
+        distPath: "./dist/types",
+      },
       format: "esm",
       output: {
         distPath: {
@@ -16,7 +16,6 @@ export default defineConfig({
     },
     {
       bundle: false,
-      dts: true,
       format: "cjs",
       output: {
         distPath: {
@@ -26,11 +25,12 @@ export default defineConfig({
     },
   ],
   output: {
-    cleanDistPath: isProduction,
+    sourceMap: true,
   },
   source: {
     entry: {
-      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.*"],
+      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.{ts,tsx}"],
     },
+    tsconfigPath: "./tsconfig.build.json",
   },
 });

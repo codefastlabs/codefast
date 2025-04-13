@@ -16,28 +16,29 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/esm/src/index.d.ts",
+        "types": "./dist/types/index.d.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {
-        "types": "./dist/cjs/src/index.d.cts",
+        "types": "./dist/types/index.d.cts",
         "default": "./dist/cjs/index.cjs"
       }
     }
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
-  "source": "./src/index.ts",
-  "types": "./dist/esm/src/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
     "clean": "rimraf node_modules dist",
-    "dev": "cross-env NODE_ENV=development rslib build --watch",
+    "dev": "rslib build --watch",
     "lint": "eslint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
     "test": "jest",
