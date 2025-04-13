@@ -120,6 +120,7 @@
 
   @keyframes collapsible-up {
     from {
+      /*noinspection CssUnresolvedCustomProperty*/
       height: var(--radix-collapsible-content-height);
     }
     to {
@@ -132,6 +133,7 @@
       height: 0;
     }
     to {
+      /*noinspection CssUnresolvedCustomProperty*/
       height: var(--radix-collapsible-content-height);
     }
   }
