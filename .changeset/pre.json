@@ -14,9 +14,17 @@
     "@codefast/ui": "0.2.45"
   },
   "changesets": [
+    "heavy-terms-rhyme",
+    "hip-turkeys-grab",
+    "long-lizards-ring",
+    "many-lamps-march",
+    "neat-geese-report",
     "new-ghosts-occur",
     "sad-crews-sniff",
+    "shaky-suits-serve",
+    "sharp-hands-enter",
     "smooth-snails-exist",
+    "tough-banks-arrive",
     "twelve-zoos-deny",
     "weak-chairs-like"
   ]
