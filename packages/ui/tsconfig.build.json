@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "@/*": ["./src/*", "./plugins/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
