@@ -25,6 +25,7 @@ export default defineConfig({
     },
   ],
   output: {
+    minify: true,
     sourceMap: true,
   },
   source: {
