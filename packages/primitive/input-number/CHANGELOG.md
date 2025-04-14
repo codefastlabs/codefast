@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.2.46-canary.4
+
+### Patch Changes
+
+- [`9d4adfa`](https://github.com/codefastlabs/codefast/commit/9d4adfa3c588522280cb6b2440f2cbbafd9cfcae) Thanks [@thevuong](https://github.com/thevuong)! - feat(build): enable minification and source maps for outputs
+
+- Updated dependencies [[`9d4adfa`](https://github.com/codefastlabs/codefast/commit/9d4adfa3c588522280cb6b2440f2cbbafd9cfcae)]:
+  - @codefast-ui/input@0.2.46-canary.4
+
 ## 0.2.46-canary.3
 
 ### Patch Changes
