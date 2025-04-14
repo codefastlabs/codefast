@@ -12,6 +12,4 @@ export interface ImportPath {
 export interface AnalysisResult {
   // Tất cả các đường dẫn import đã phân tích
   imports: ImportPath[];
-  // Nhóm theo thư mục (components, lib, utils, v.v.)
-  importsByDir: Record<string, ImportPath[]>;
 }
