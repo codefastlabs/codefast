@@ -12,7 +12,9 @@ import { getConfig } from "@/config";
 export async function findAllPackages(config?: ScriptConfig): Promise<string[]> {
   const configObj = config ?? getConfig();
 
-  return await glob(configObj.packagesGlob);
+  return await glob(configObj.packagesGlob, {
+    ignore: ["**/node_modules/**"],
+  });
 }
 
 /**
