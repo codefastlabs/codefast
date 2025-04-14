@@ -4,13 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build --turbopack",
+    "build": "next build",
     "check-types": "tsc --noEmit",
     "clean": "rimraf node_modules .next",
     "dev": "next dev --turbopack",
     "lint": "next lint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
-    "start": "next start --turbopack"
+    "start": "next start"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",
