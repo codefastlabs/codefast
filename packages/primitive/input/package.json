@@ -23,6 +23,16 @@
         "types": "./dist/types/index.d.cts",
         "default": "./dist/cjs/index.cjs"
       }
+    },
+    "./input": {
+      "import": {
+        "types": "./dist/types/input.d.ts",
+        "default": "./dist/esm/input.js"
+      },
+      "require": {
+        "types": "./dist/types/input.d.ts",
+        "default": "./dist/cjs/input.cjs"
+      }
     }
   },
   "main": "./dist/cjs/index.cjs",
