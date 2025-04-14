@@ -13,6 +13,8 @@ export { vitestConfig } from "@/configs/testing/vitest";
 export { commentsConfig } from "@/configs/utils/comments";
 export { importConfig } from "@/configs/utils/import";
 export { jsxA11yConfig } from "@/configs/utils/jsx-a11y";
+export { perfectionistConfig } from "@/configs/utils/perfectionist";
+export { prettierConfig } from "@/configs/utils/prettier";
 export { reactHooksConfig } from "@/configs/utils/react-hooks";
 export { tsdocConfig } from "@/configs/utils/tsdoc";
 export { unicornConfig } from "@/configs/utils/unicorn";
