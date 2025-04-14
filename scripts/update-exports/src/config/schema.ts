@@ -25,21 +25,25 @@ export const packageConfigSchema = z.object({
   // Pattern đường dẫn output chung cho các type definitions.
   // Ví dụ: "dist/types/*.d.ts" để xuất type definitions cho cả CJS và ESM.
   typesOutputPattern: z.string(),
+
+  // Prefix to be removed from the path when exporting.
+  // Example: "components" to remove "components" from the export path
+  exportPathPrefixesToRemove: z.array(z.string()).optional(),
 });
 
 // Định nghĩa schema để validate cấu hình cho script tổng thể
 export const scriptConfigSchema = z.object({
-  // Glob pattern để tìm các package trong dự án.
-  // Ví dụ: "packages/*" để tìm tất cả thư mục package trong thư mục packages.
+  // Glob pattern to find packages in the project.
+  // Example: "packages/*" to find all package folders in the packages folder.
   packagesGlob: z.string(),
 
-  // Cấu hình mặc định áp dụng cho tất cả packages.
-  // Đảm bảo mọi package đều có cấu hình hợp lệ nếu không được tùy chỉnh.
+  // Default configuration applies to all packages.
+  // Ensures all packages have valid configuration if not customized.
   defaultPackageConfig: packageConfigSchema,
 
-  // Record chứa các cấu hình tùy chỉnh cho từng package.
-  // Key là tên package, value là cấu hình partial để ghi đè defaultPackageConfig.
-  // Ví dụ: { "my-package": { cjsOutputPattern: "dist/custom/*.js" } }.
+  // The Record contains custom configurations for each package.
+  // Key is the package name, value is the partial configuration to override defaultPackageConfig.
+  // Example: { "my-package": { cjsOutputPattern: "dist/custom/*.js" } }.
   customPackageConfigs: z.record(z.string(), packageConfigSchema.partial()),
 });
 
