@@ -13,8 +13,7 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "lint": "eslint --max-warnings 0",
-    "lint:inspect": "npx @eslint/config-inspector@latest",
-    "start": "node --loader ts-node/esm src/index.ts"
+    "lint:inspect": "npx @eslint/config-inspector@latest"
   },
   "dependencies": {
     "chalk": "^5.4.1",
