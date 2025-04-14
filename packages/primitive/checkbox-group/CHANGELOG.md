@@ -1,5 +1,13 @@
 # @codefast-ui/checkbox-group
 
+## 0.2.46-canary.5
+
+### Patch Changes
+
+- [`62e3ba5`](https://github.com/codefastlabs/codefast/commit/62e3ba580feb521d335ad1da2c82c7a434f8851b) Thanks [@thevuong](https://github.com/thevuong)! - feat: add new component exports and consolidate paths
+
+- [`aa3fda7`](https://github.com/codefastlabs/codefast/commit/aa3fda7f773d5cfb6b391b16ba903f1efe13bb47) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): move dependencies to peerDependencies
+
 ## 0.2.46-canary.4
 
 ### Patch Changes
