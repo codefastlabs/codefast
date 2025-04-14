@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 
-import { useEvent } from "@/hooks/use-event";
+import { useEvent } from "@/use-event";
 
 describe("useEvent", () => {
   it("should attach an event listener to the provided element", () => {
