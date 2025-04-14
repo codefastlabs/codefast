@@ -1,4 +1,4 @@
-import path from "node:path";
+import * as path from "node:path";
 
 import type { ProcessOptions } from "@/types/config";
 import type { Logger } from "@/utils/logger";
@@ -12,6 +12,7 @@ import {
   findAllPackages,
   readPackageJson,
   saveExportsAnalysis,
+  saveExportsPreview,
   savePackageJson,
 } from "@/utils/file-utils";
 
@@ -83,7 +84,9 @@ export function processPackage(packageJsonPath: string, options: ProcessOptions,
   logger.info(`📊 Exports: ${currentExportsCount} -> ${newExportsCount}`);
 
   if (options.dryRun) {
-    logger.warn(`🔍 Dry run mode: không lưu thay đổi cho ${packageName}`);
+    saveExportsPreview(packageDir, newExports);
+    logger.warn(`🧪 📄 Đã lưu bản preview exports vào .exports-analysis`);
+    logger.warn(`🧪 🚫 Dry run: không lưu thay đổi cho ${packageName}`);
 
     return true;
   }

@@ -1,8 +1,10 @@
 import { glob } from "glob";
-import fs from "node:fs";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-import type { ScriptConfig } from "@/types/config";
+import type { ScriptConfig } from "@/config/schema";
+import type { PackageExports, PackageJson } from "@/types/exports";
+import type { AnalysisResult } from "@/types/imports";
 
 import { getConfig } from "@/config";
 
@@ -27,7 +29,7 @@ export function fileExists(filePath: string): boolean {
 /**
  * Đọc nội dung package.json
  */
-export function readPackageJson(filePath: string): any {
+export function readPackageJson(filePath: string): null | PackageJson {
   try {
     const content = fs.readFileSync(filePath, "utf8");
 
@@ -45,7 +47,16 @@ export function readPackageJson(filePath: string): any {
 export function backupPackageJson(filePath: string): boolean {
   try {
     const content = fs.readFileSync(filePath, "utf8");
-    const backupPath = `${filePath}.backup`;
+    const timestamp = new Date().toISOString().replaceAll(/[:.]/g, "-");
+    const dir = path.dirname(filePath);
+    const backupDir = path.join(dir, ".exports-analysis");
+
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+
+    const baseName = path.basename(filePath);
+    const backupPath = path.join(backupDir, `${baseName}.backup.${timestamp}`);
 
     fs.writeFileSync(backupPath, content, "utf8");
 
@@ -60,7 +71,7 @@ export function backupPackageJson(filePath: string): boolean {
 /**
  * Lưu package.json với nội dung mới
  */
-export function savePackageJson(filePath: string, content: any): boolean {
+export function savePackageJson(filePath: string, content: PackageJson): boolean {
   try {
     fs.writeFileSync(filePath, JSON.stringify(content, null, 2), "utf8");
 
@@ -75,7 +86,7 @@ export function savePackageJson(filePath: string, content: any): boolean {
 /**
  * Lưu cấu trúc exports đã phân tích
  */
-export function saveExportsAnalysis(packageDir: string, analysis: any): void {
+export function saveExportsAnalysis(packageDir: string, analysis: AnalysisResult): void {
   const outputDir = path.join(packageDir, ".exports-analysis");
 
   if (!fs.existsSync(outputDir)) {
@@ -83,4 +94,16 @@ export function saveExportsAnalysis(packageDir: string, analysis: any): void {
   }
 
   fs.writeFileSync(path.join(outputDir, "exports-analysis.json"), JSON.stringify(analysis, null, 2), "utf8");
+}
+
+export function saveExportsPreview(packageDir: string, exports: PackageExports): void {
+  const outputDir = path.join(packageDir, ".exports-analysis");
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  const previewPath = path.join(outputDir, "exports-preview.json");
+
+  fs.writeFileSync(previewPath, JSON.stringify(exports, null, 2), "utf8");
 }
