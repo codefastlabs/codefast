@@ -26,6 +26,8 @@ export default defineConfig({
     },
   ],
   output: {
+    minify: true,
+    sourceMap: true,
     target: "web",
   },
   plugins: [pluginReact()],

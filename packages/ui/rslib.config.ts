@@ -26,8 +26,12 @@ export default defineConfig({
     },
   ],
   output: {
-    target: "web",
     copy: ["./src/styles/index.css"],
+    minify: {
+      css: false,
+    },
+    sourceMap: true,
+    target: "web",
   },
   plugins: [pluginReact()],
   source: {
