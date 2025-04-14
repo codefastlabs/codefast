@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { useCopyToClipboard } from "@/use-copy-to-clipboard";
 
 describe("useCopyToClipboard", () => {
   const originalClipboard = global.navigator.clipboard;
