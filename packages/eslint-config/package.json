@@ -30,7 +30,7 @@
         "default": "./dist/esm/library.js"
       },
       "require": {
-        "types": "./dist/types/library.d.cts",
+        "types": "./dist/types/library.d.ts",
         "default": "./dist/cjs/library.cjs"
       }
     },
@@ -40,7 +40,7 @@
         "default": "./dist/esm/next.js"
       },
       "require": {
-        "types": "./dist/types/next.d.cts",
+        "types": "./dist/types/next.d.ts",
         "default": "./dist/cjs/next.cjs"
       }
     },
@@ -50,7 +50,7 @@
         "default": "./dist/esm/react.js"
       },
       "require": {
-        "types": "./dist/types/react.d.cts",
+        "types": "./dist/types/react.d.ts",
         "default": "./dist/cjs/react.cjs"
       }
     }

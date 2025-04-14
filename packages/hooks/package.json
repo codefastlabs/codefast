@@ -23,6 +23,86 @@
         "types": "./dist/types/index.d.cts",
         "default": "./dist/cjs/index.cjs"
       }
+    },
+    "./use-animated-value": {
+      "import": {
+        "types": "./dist/types/use-animated-value.d.ts",
+        "default": "./dist/esm/use-animated-value.js"
+      },
+      "require": {
+        "types": "./dist/types/use-animated-value.d.ts",
+        "default": "./dist/cjs/use-animated-value.cjs"
+      }
+    },
+    "./use-copy-to-clipboard": {
+      "import": {
+        "types": "./dist/types/use-copy-to-clipboard.d.ts",
+        "default": "./dist/esm/use-copy-to-clipboard.js"
+      },
+      "require": {
+        "types": "./dist/types/use-copy-to-clipboard.d.ts",
+        "default": "./dist/cjs/use-copy-to-clipboard.cjs"
+      }
+    },
+    "./use-event": {
+      "import": {
+        "types": "./dist/types/use-event.d.ts",
+        "default": "./dist/esm/use-event.js"
+      },
+      "require": {
+        "types": "./dist/types/use-event.d.ts",
+        "default": "./dist/cjs/use-event.cjs"
+      }
+    },
+    "./use-is-mobile": {
+      "import": {
+        "types": "./dist/types/use-is-mobile.d.ts",
+        "default": "./dist/esm/use-is-mobile.js"
+      },
+      "require": {
+        "types": "./dist/types/use-is-mobile.d.ts",
+        "default": "./dist/cjs/use-is-mobile.cjs"
+      }
+    },
+    "./use-media-query": {
+      "import": {
+        "types": "./dist/types/use-media-query.d.ts",
+        "default": "./dist/esm/use-media-query.js"
+      },
+      "require": {
+        "types": "./dist/types/use-media-query.d.ts",
+        "default": "./dist/cjs/use-media-query.cjs"
+      }
+    },
+    "./use-mutation-observer": {
+      "import": {
+        "types": "./dist/types/use-mutation-observer.d.ts",
+        "default": "./dist/esm/use-mutation-observer.js"
+      },
+      "require": {
+        "types": "./dist/types/use-mutation-observer.d.ts",
+        "default": "./dist/cjs/use-mutation-observer.cjs"
+      }
+    },
+    "./use-pagination": {
+      "import": {
+        "types": "./dist/types/use-pagination.d.ts",
+        "default": "./dist/esm/use-pagination.js"
+      },
+      "require": {
+        "types": "./dist/types/use-pagination.d.ts",
+        "default": "./dist/cjs/use-pagination.cjs"
+      }
+    },
+    "./use-state-params": {
+      "import": {
+        "types": "./dist/types/use-state-params.d.ts",
+        "default": "./dist/esm/use-state-params.js"
+      },
+      "require": {
+        "types": "./dist/types/use-state-params.d.ts",
+        "default": "./dist/cjs/use-state-params.cjs"
+      }
     }
   },
   "main": "./dist/cjs/index.cjs",

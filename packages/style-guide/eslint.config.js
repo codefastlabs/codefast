@@ -1,5 +1,5 @@
-import { recommendedConfig } from "@codefast/style-guide/configs/core/recommended";
-import { typescriptConfig } from "@codefast/style-guide/configs/core/typescript";
+import { recommendedConfig } from "@codefast/style-guide/core/recommended";
+import { typescriptConfig } from "@codefast/style-guide/core/typescript";
 import globals from "globals";
 
 /** @type {import('eslint').Linter.Config[]} */

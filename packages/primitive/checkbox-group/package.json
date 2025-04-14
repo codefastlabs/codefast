@@ -23,6 +23,16 @@
         "types": "./dist/types/index.d.cts",
         "default": "./dist/cjs/index.cjs"
       }
+    },
+    "./checkbox-group": {
+      "import": {
+        "types": "./dist/types/checkbox-group.d.ts",
+        "default": "./dist/esm/checkbox-group.js"
+      },
+      "require": {
+        "types": "./dist/types/checkbox-group.d.ts",
+        "default": "./dist/cjs/checkbox-group.cjs"
+      }
     }
   },
   "main": "./dist/cjs/index.cjs",

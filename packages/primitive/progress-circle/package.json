@@ -23,6 +23,16 @@
         "types": "./dist/types/index.d.cts",
         "default": "./dist/cjs/index.cjs"
       }
+    },
+    "./progress-circle": {
+      "import": {
+        "types": "./dist/types/progress-circle.d.ts",
+        "default": "./dist/esm/progress-circle.js"
+      },
+      "require": {
+        "types": "./dist/types/progress-circle.d.ts",
+        "default": "./dist/cjs/progress-circle.cjs"
+      }
     }
   },
   "main": "./dist/cjs/index.cjs",
