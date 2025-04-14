@@ -12,33 +12,28 @@ export function toKebabCase(str: string): string {
  * Tạo export path dựa trên đường dẫn import
  */
 export function createExportPath(importPath: string): string {
-  // Bỏ './' prefix
-  const normalizedPath = importPath.startsWith("./") ? importPath.slice(2) : importPath;
+  // Chuẩn hóa @/ thành ./
+  let normalizedPath = importPath;
 
-  // Phân tích đường dẫn
-  const parts = normalizedPath.split("/");
+  if (importPath.startsWith("@/")) {
+    normalizedPath = `./${importPath.slice(2)}`;
+  }
+
+  normalizedPath = normalizedPath.startsWith("./") ? normalizedPath.slice(2) : normalizedPath;
+
+  const parts = normalizedPath.split("/").filter(Boolean);
 
   if (parts.length === 1) {
-    // Trường hợp './SomeModule'
     return `./${toKebabCase(parts[0])}`;
   } else if (parts.length === 2) {
-    // Trường hợp './dir/SomeModule'
     const [dir, name] = parts;
-
-    // Nếu là thư mục components, giữ nguyên thư mục nhưng chuyển tên thành kebab case
-    if (dir === "components") {
-      return `./${toKebabCase(name)}`;
-    }
 
     return `./${dir}/${toKebabCase(name)}`;
   }
 
-  // Trường hợp './dir/subdir/Module'
-  // Giữ nguyên 2 level đầu tiên và chuyển đổi tên cuối cùng
   const lastIndex = parts.length - 1;
-  const lastPart = parts[lastIndex];
 
-  parts[lastIndex] = toKebabCase(lastPart);
+  parts[lastIndex] = toKebabCase(parts[lastIndex]);
 
   return `./${parts.join("/")}`;
 }

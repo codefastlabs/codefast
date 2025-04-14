@@ -1,6 +1,6 @@
 import type { SourceFile } from "ts-morph";
 
-import path from "node:path";
+import * as path from "node:path";
 import { Project } from "ts-morph";
 
 import type { AnalysisResult, ImportPath } from "@/types/imports";
@@ -12,8 +12,6 @@ import { createExportPath } from "@/utils/path-utils";
  */
 export function analyzeImports(indexFilePath: string): AnalysisResult {
   const project = new Project();
-
-  // Thêm file vào project
   let sourceFile: SourceFile;
 
   try {
@@ -24,98 +22,110 @@ export function analyzeImports(indexFilePath: string): AnalysisResult {
     return { imports: [], importsByDir: {} };
   }
 
-  // Lấy tất cả export declarations
-  const exportDeclarations = sourceFile.getExportDeclarations();
-
-  // Mảng lưu trữ các đường dẫn import
   const imports: ImportPath[] = [];
 
-  // Xử lý từng export declaration
-  for (const exportDecl of exportDeclarations) {
-    const moduleSpecifier = exportDecl.getModuleSpecifierValue();
+  for (const exportDecl of sourceFile.getExportDeclarations()) {
+    let moduleSpecifier = exportDecl.getModuleSpecifierValue();
 
-    if (moduleSpecifier) {
-      // Bỏ qua export from 'external-package'
-      if (!moduleSpecifier.startsWith(".")) {
-        continue;
-      }
-
-      // Phân tích đường dẫn
-      const parts = moduleSpecifier.split("/");
-
-      if (parts.length === 1) {
-        // Trường hợp './components'
-        // Cần check file con
-        continue;
-      }
-
-      // Lấy thư mục và tên module
-      const directory = parts[1]; // 'components', 'lib', etc.
-      const name = (parts.length > 2 ? parts.at(-1) : "")!;
-
-      const importPath: ImportPath = {
-        originalPath: moduleSpecifier,
-        directory,
-        name,
-        exportPath: createExportPath(moduleSpecifier),
-      };
-
-      imports.push(importPath);
+    if (!moduleSpecifier) {
+      continue;
     }
+
+    // Chuẩn hóa @/ thành ./
+    if (moduleSpecifier.startsWith("@/")) {
+      moduleSpecifier = `./${moduleSpecifier.slice(2)}`; // Thay @/ bằng ./
+    }
+
+    const isExternal = !moduleSpecifier.startsWith(".");
+
+    if (isExternal) {
+      continue;
+    }
+
+    const parts = moduleSpecifier.split("/").filter(Boolean); // Loại bỏ phần rỗng
+
+    if (parts.length < 2) {
+      continue;
+    } // Bỏ qua ./components
+
+    // Lấy thư mục: nếu chỉ có 1 phần => thư mục gốc ('.'), ngược lại => thư mục đầu tiên
+    const directory = parts.length === 1 ? "." : parts[0];
+
+    const name = parts.at(-1) ?? "";
+
+    const importPath: ImportPath = {
+      originalPath: moduleSpecifier,
+      directory,
+      name,
+      exportPath: createExportPath(moduleSpecifier),
+    };
+
+    imports.push(importPath);
   }
 
-  // Xử lý các trường hợp 'export * from "./components"'
-  for (const exportDecl of exportDeclarations) {
-    const moduleSpecifier = exportDecl.getModuleSpecifierValue();
+  // Xử lý export * from "./components" hoặc "@/components"
+  for (const exportDecl of sourceFile.getExportDeclarations()) {
+    let moduleSpecifier = exportDecl.getModuleSpecifierValue();
 
-    if (moduleSpecifier && moduleSpecifier.split("/").length === 1) {
-      const dirPath = path.join(path.dirname(indexFilePath), moduleSpecifier.replace("./", ""));
-      const dirIndexPath = path.join(dirPath, "index.ts");
+    if (!moduleSpecifier) {
+      continue;
+    }
 
-      // Nếu tồn tại index.ts trong thư mục, phân tích nó
-      try {
-        if (project.getSourceFile(dirIndexPath) || project.addSourceFileAtPathIfExists(dirIndexPath)) {
-          const dirIndexFile = project.getSourceFile(dirIndexPath);
+    // Chuẩn hóa @/ thành ./
+    if (moduleSpecifier.startsWith("@/")) {
+      moduleSpecifier = `./${moduleSpecifier.slice(2)}`;
+    }
 
-          if (dirIndexFile) {
-            const dirExports = dirIndexFile.getExportDeclarations();
+    const parts = moduleSpecifier.split("/").filter(Boolean);
 
-            for (const dirExport of dirExports) {
-              const subModuleSpecifier = dirExport.getModuleSpecifierValue();
+    if (parts.length !== 1) {
+      continue;
+    } // Chỉ xử lý ./components hoặc @/components
 
-              if (subModuleSpecifier?.startsWith(".")) {
-                // Tạo đường dẫn tuyệt đối cho module
-                const dirName = moduleSpecifier.replace("./", "");
-                const subParts = subModuleSpecifier.split("/");
-                const name = subParts.at(-1)!;
+    const dirPath = path.join(path.dirname(indexFilePath), moduleSpecifier.replace("./", ""));
+    const dirIndexPath = path.join(dirPath, "index.ts");
 
-                const importPath: ImportPath = {
-                  originalPath: `${moduleSpecifier}/${subModuleSpecifier.replace("./", "")}`,
-                  directory: dirName,
-                  name,
-                  exportPath: createExportPath(`${moduleSpecifier}/${name}`),
-                };
+    try {
+      if (project.addSourceFileAtPathIfExists(dirIndexPath)) {
+        const dirIndexFile = project.getSourceFile(dirIndexPath);
 
-                imports.push(importPath);
-              }
+        if (dirIndexFile) {
+          for (const dirExport of dirIndexFile.getExportDeclarations()) {
+            let subModuleSpecifier = dirExport.getModuleSpecifierValue();
+
+            if (!subModuleSpecifier?.startsWith(".")) {
+              continue;
             }
+
+            // Chuẩn hóa @/ trong subModuleSpecifier nếu có
+            if (subModuleSpecifier.startsWith("@/")) {
+              subModuleSpecifier = `./${subModuleSpecifier.slice(2)}`;
+            }
+
+            const dirName = moduleSpecifier.replace("./", "");
+            const subParts = subModuleSpecifier.split("/").filter(Boolean);
+            const name = subParts.at(-1) ?? "";
+
+            const importPath: ImportPath = {
+              originalPath: `${moduleSpecifier}/${subModuleSpecifier.replace("./", "")}`,
+              directory: dirName,
+              name,
+              exportPath: createExportPath(`${moduleSpecifier}/${name}`),
+            };
+
+            imports.push(importPath);
           }
         }
-      } catch (error) {
-        console.warn(`Could not analyze ${dirIndexPath}:`, error);
       }
+    } catch (error) {
+      console.warn(`Could not analyze ${dirIndexPath}:`, error);
     }
   }
 
-  // Nhóm imports theo thư mục
   const importsByDir: Record<string, ImportPath[]> = {};
 
   for (const importPath of imports) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- keep
-    if (!importsByDir[importPath.directory]) {
-      importsByDir[importPath.directory] = [];
-    }
-
+    importsByDir[importPath.directory] = importsByDir[importPath.directory] ?? [];
     importsByDir[importPath.directory].push(importPath);
   }
 
