@@ -1,0 +1,35 @@
+{
+  "name": "update-exports",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "update-exports": "dist/index.js"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "eslint --max-warnings 0",
+    "lint:inspect": "npx @eslint/config-inspector@latest",
+    "start": "node --loader ts-node/esm src/index.ts"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "glob": "^11.0.1",
+    "minimist": "^1.2.8",
+    "ts-morph": "^25.0.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@types/minimist": "^1.2.5",
+    "@types/node": "^22.14.1",
+    "eslint": "^9.24.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
