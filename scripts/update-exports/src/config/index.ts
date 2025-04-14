@@ -1,10 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
-import type { PackageConfig, ScriptConfig } from "@/types/config";
+import type { PackageConfig, ScriptConfig } from "@/config/schema";
 
 import { defaultConfig } from "@/config/default-config";
-import { ScriptConfigSchema } from "@/config/schema";
+import { scriptConfigSchema } from "@/config/schema";
 import { mergeDeep } from "@/utils/path-utils";
 
 let cachedConfig: null | ScriptConfig = null;
@@ -30,7 +30,7 @@ function loadConfigFile(configPath?: string): Partial<ScriptConfig> {
     const config = JSON.parse(configContent);
 
     // Validate schema
-    return ScriptConfigSchema.parse(config);
+    return scriptConfigSchema.parse(config);
   } catch (error) {
     console.error("Lỗi khi đọc file cấu hình:", error);
 

@@ -1,8 +1,14 @@
-import type { ScriptConfig } from "@/types/config";
+import type { ScriptConfig } from "@/config/schema";
 import type { PackageExports } from "@/types/exports";
 import type { ImportPath } from "@/types/imports";
 
 import { getPackageConfig } from "@/config";
+
+function formatOutputPath(pattern: string, directory: string, name: string): string {
+  const dirPart = directory === "." ? "" : `${directory}/`;
+
+  return pattern.replace("{dir}/", dirPart).replace("{dir}", directory).replace("{name}", name);
+}
 
 /**
  * Tạo cấu trúc exports cho package.json
@@ -10,7 +16,7 @@ import { getPackageConfig } from "@/config";
 export function generateExports(
   packageName: string,
   imports: ImportPath[],
-  existingExports: any = {},
+  existingExports: PackageExports = {},
   config?: ScriptConfig,
 ): PackageExports {
   const packageConfig = getPackageConfig(packageName, config);
@@ -39,13 +45,10 @@ export function generateExports(
     const { directory, name, exportPath } = importPath;
 
     // Tạo đường dẫn output dựa theo cấu hình package
-    const esmOutput = packageConfig.esmOutputPattern.replace("{dir}", directory).replace("{name}", name);
-
-    const cjsOutput = packageConfig.cjsOutputPattern.replace("{dir}", directory).replace("{name}", name);
-
-    const typesOutput = packageConfig.typesOutputPattern.replace("{dir}", directory).replace("{name}", name);
-
-    const typesCjsOutput = packageConfig.typesOutputCjsPattern.replace("{dir}", directory).replace("{name}", name);
+    const esmOutput = formatOutputPath(packageConfig.esmOutputPattern, directory, name);
+    const cjsOutput = formatOutputPath(packageConfig.cjsOutputPattern, directory, name);
+    const typesOutput = formatOutputPath(packageConfig.typesOutputPattern, directory, name);
+    const typesCjsOutput = formatOutputPath(packageConfig.typesOutputCjsPattern, directory, name);
 
     // Thêm vào exports
     exports[exportPath] = {
