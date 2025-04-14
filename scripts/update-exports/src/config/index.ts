@@ -5,7 +5,7 @@ import type { PackageConfig, ScriptConfig } from "@/config/schema";
 
 import { defaultConfig } from "@/config/default-config";
 import { scriptConfigSchema } from "@/config/schema";
-import { mergeDeep } from "@/utils/path-utils";
+import { mergeDeep } from "@/lib/path-utils";
 
 let cachedConfig: null | ScriptConfig = null;
 
