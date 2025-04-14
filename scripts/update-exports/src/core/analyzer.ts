@@ -5,7 +5,7 @@ import { Project } from "ts-morph";
 import type { PackageConfig } from "@/config/schema";
 import type { AnalysisResult, ImportPath } from "@/types/imports";
 
-import { createExportPath } from "@/utils/path-utils";
+import { createExportPath } from "@/lib/path-utils";
 
 function makeRegexPrefixesToRemove(prefixes: string[]): RegExp {
   // Xây dựng regex để khớp với bất kỳ prefix nào trong danh sách

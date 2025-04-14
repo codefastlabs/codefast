@@ -2,7 +2,7 @@
 import minimist from "minimist";
 
 import { processAllPackages } from "@/core/processor";
-import { Logger } from "@/utils/logger";
+import { Logger } from "@/lib/logger";
 
 async function main(): Promise<void> {
   // Parse command line arguments
