@@ -24,7 +24,8 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
-    "test:watch": "turbo run test:watch"
+    "test:watch": "turbo run test:watch",
+    "update-exports": "tsx --tsconfig scripts/update-exports/tsconfig.json scripts/update-exports/src/index.ts"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged",
