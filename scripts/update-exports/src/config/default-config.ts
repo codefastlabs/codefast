@@ -11,5 +11,12 @@ export const defaultConfig: ScriptConfig = {
     typesOutputCjsPattern: "./dist/types/{dir}/{name}.d.ts",
     typesOutputPattern: "./dist/types/{dir}/{name}.d.ts",
   },
-  customPackageConfigs: {},
+  customPackageConfigs: {
+    "@codefast/ui": {
+      exportPathPrefixesToRemove: ["components", "lib"],
+    },
+    "@codefast/style-guide": {
+      exportPathPrefixesToRemove: ["configs"],
+    },
+  },
 };

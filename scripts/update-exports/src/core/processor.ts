@@ -52,7 +52,7 @@ export function processPackage(packageJsonPath: string, options: ProcessOptions,
 
   // Phân tích imports
   logger.info(`🔍 Phân tích imports từ ${srcIndexPath}...`);
-  const { imports, importsByDir } = analyzeImports(srcIndexPath);
+  const { imports } = analyzeImports(srcIndexPath, packageConfig);
 
   if (imports.length === 0) {
     logger.warn(`Không tìm thấy imports nào để phân tích trong ${packageName}`);
@@ -62,17 +62,8 @@ export function processPackage(packageJsonPath: string, options: ProcessOptions,
 
   logger.success(`Phân tích hoàn tất. Tìm thấy ${imports.length} subpath exports.`);
 
-  // Log chi tiết thư mục nếu verbose mode
-  for (const [dir, dirImports] of Object.entries(importsByDir)) {
-    logger.debug(`📁 ${dir}: ${dirImports.length} modules`);
-
-    for (const imp of dirImports) {
-      logger.debug(`- ${imp.originalPath} -> ${imp.exportPath}`);
-    }
-  }
-
   // Lưu kết quả phân tích
-  saveExportsAnalysis(packageDir, { imports, importsByDir });
+  saveExportsAnalysis(packageDir, { imports });
 
   // Tạo cấu trúc exports mới
   const newExports = generateExports(packageName, imports, packageJson.exports, config);
