@@ -13,7 +13,7 @@ export const defaultConfig: ScriptConfig = {
   },
   customPackageConfigs: {
     "@codefast/ui": {
-      exportPathPrefixesToRemove: ["components", "lib"],
+      exportPathPrefixesToRemove: ["components"],
     },
     "@codefast/style-guide": {
       exportPathPrefixesToRemove: ["configs"],

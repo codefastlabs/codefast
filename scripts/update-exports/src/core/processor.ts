@@ -1,7 +1,7 @@
 import * as path from "node:path";
 
+import type { Logger } from "@/lib/logger";
 import type { ProcessOptions } from "@/types/config";
-import type { Logger } from "@/utils/logger";
 
 import { getConfig, getPackageConfig } from "@/config";
 import { analyzeImports } from "@/core/analyzer";
@@ -14,7 +14,7 @@ import {
   saveExportsAnalysis,
   saveExportsPreview,
   savePackageJson,
-} from "@/utils/file-utils";
+} from "@/lib/file-utils";
 
 /**
  * Xử lý một package đơn lẻ
