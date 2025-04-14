@@ -53,11 +53,13 @@ const config: Config = {
    */
   transformIgnorePatterns: ["/node_modules/"],
 
+  verbose: true,
+
   /**
    * Defines patterns for files that should be ignored during watch mode
    * Prevents unnecessary recompilation of dist directory contents
    */
-  watchPathIgnorePatterns: ["/dist/"],
+  watchPathIgnorePatterns: ["<rootDir>/dist/"],
 };
 
 export default config;
