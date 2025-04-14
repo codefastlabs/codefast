@@ -1,12 +1,6 @@
 import { renderHook } from "@testing-library/react";
 
-import {
-  HistoryMethod,
-  setUrlParams,
-  updateBrowserHistory,
-  updateUrlParams,
-  useStateParams,
-} from "@/hooks/use-state-params";
+import { HistoryMethod, setUrlParams, updateBrowserHistory, updateUrlParams, useStateParams } from "@/use-state-params";
 
 // Mock window.history methods
 const mockPushState = jest.fn();
