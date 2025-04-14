@@ -39,6 +39,15 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/eslint-config/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/hooks/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/checkbox-group/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input-number/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/input/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/primitive/progress-circle/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/style-guide/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ui/.exports-analysis" />
+      <excludeFolder url="file://$MODULE_DIR$/scripts/update-exports/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

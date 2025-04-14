@@ -45,3 +45,6 @@ build-storybook.log
 # codecov
 codecov
 codecov.*
+
+# scripts
+.exports-analysis
