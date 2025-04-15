@@ -2,7 +2,7 @@
   "name": "@codefast/cli",
   "version": "0.0.1-canary.0",
   "private": true,
-  "description": "",
+  "description": "CodeFast CLI - A development toolkit for CodeFast.",
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "type": "module",
