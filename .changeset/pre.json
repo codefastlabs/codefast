@@ -1,5 +1,5 @@
 {
-  "mode": "pre",
+  "mode": "exit",
   "tag": "canary",
   "initialVersions": {
     "@app/docs": "0.0.1",
@@ -12,7 +12,7 @@
     "@codefast/style-guide": "0.2.45",
     "@codefast/typescript-config": "0.2.45",
     "@codefast/ui": "0.2.45",
-    "@codefast/cli": "0.2.46-canary.5"
+    "@codefast/cli": "0.2.45"
   },
   "changesets": [
     "cool-trees-grow",
