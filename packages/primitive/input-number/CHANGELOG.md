@@ -1,5 +1,18 @@
 # @codefast-ui/number-input
 
+## 0.2.46-canary.6
+
+### Patch Changes
+
+- [`a1e6c60`](https://github.com/codefastlabs/codefast/commit/a1e6c60901dfcf0a14e9c7610ffa7f41e48e12b0) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update dependencies across packages
+
+- [`873e3c8`](https://github.com/codefastlabs/codefast/commit/873e3c886fa7a92a3087f6719b1ffa99f3c12cde) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update configs and optimize import handling
+
+- [`32e6d0e`](https://github.com/codefastlabs/codefast/commit/32e6d0e89d87bfa2ebff900cd162f579ff6f4df2) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance configs with build cache and simplified tsconfigs
+
+- Updated dependencies [[`a1e6c60`](https://github.com/codefastlabs/codefast/commit/a1e6c60901dfcf0a14e9c7610ffa7f41e48e12b0), [`873e3c8`](https://github.com/codefastlabs/codefast/commit/873e3c886fa7a92a3087f6719b1ffa99f3c12cde), [`32e6d0e`](https://github.com/codefastlabs/codefast/commit/32e6d0e89d87bfa2ebff900cd162f579ff6f4df2)]:
+  - @codefast-ui/input@0.2.46-canary.6
+
 ## 0.2.46-canary.5
 
 ### Patch Changes
