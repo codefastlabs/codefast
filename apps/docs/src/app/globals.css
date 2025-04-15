@@ -2,7 +2,7 @@
 
 @import "@codefast/ui/styles.css";
 
-@source '../../node_modules/@codefast/ui';
+@source '../../node_modules/@codefast/ui/src';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
