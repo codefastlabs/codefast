@@ -26,9 +26,12 @@ export default defineConfig({
     },
   ],
   output: {
-    minify: true,
     sourceMap: true,
     target: "web",
+  },
+  performance: {
+    buildCache: true,
+    printFileSize: false,
   },
   plugins: [pluginReact()],
   source: {
