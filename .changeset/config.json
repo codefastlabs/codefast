@@ -8,9 +8,9 @@
   ],
   "baseBranch": "main",
   "commit": false,
-  "fixed": [["@codefast/*"]],
+  "fixed": [["@codefast/*", "@codefast/cli"]],
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@app/docs", "@codefast/cli"]
+  "ignore": ["@app/docs"]
 }
