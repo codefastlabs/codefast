@@ -1,6 +1,6 @@
 {
   "name": "@codefast/cli",
-  "version": "0.2.46-canary.6",
+  "version": "0.3.0",
   "description": "CodeFast CLI - A development toolkit for CodeFast.",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"

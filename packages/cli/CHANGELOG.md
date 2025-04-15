@@ -1,5 +1,19 @@
 # update-exports
 
+## 0.3.0
+
+### Minor Changes
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`9aefc24`](https://github.com/codefastlabs/codefast/commit/9aefc24a72281e7028df89a9e20b597a135a0574) Thanks [@thevuong](https://github.com/thevuong)! - chore: bump version to 0.3.0
+
+### Patch Changes
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`2e07342`](https://github.com/codefastlabs/codefast/commit/2e0734209104507779c6f27fd146b5b36da6cc5d) Thanks [@thevuong](https://github.com/thevuong)! - feat: add new component exports and consolidate paths
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`1a4f049`](https://github.com/codefastlabs/codefast/commit/1a4f04901e2cd5acbfd8d449ef3eea87969172d9) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update configs and optimize import handling
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`5c98ebc`](https://github.com/codefastlabs/codefast/commit/5c98ebc15a76822c3975438bcf1ecf6388b4cba8) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance configs with build cache and simplified tsconfigs
+
 ## 0.2.46-canary.6
 
 ### Patch Changes
