@@ -11,8 +11,7 @@
     "@codefast-ui/progress-circle": "0.2.45",
     "@codefast/style-guide": "0.2.45",
     "@codefast/typescript-config": "0.2.45",
-    "@codefast/ui": "0.2.45",
-    "update-exports": "0.0.0"
+    "@codefast/ui": "0.2.45"
   },
   "changesets": [
     "curly-toys-return",

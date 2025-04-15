@@ -1,8 +1,15 @@
 {
   "name": "@codefast/cli",
-  "version": "0.0.1-canary.0",
-  "private": true,
+  "version": "0.2.46-canary.5",
   "description": "CodeFast CLI - A development toolkit for CodeFast.",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/cli"
+  },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "type": "module",
@@ -15,6 +22,7 @@
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
+    "clean": "rimraf node_modules dist",
     "dev": "rslib build --watch",
     "lint": "eslint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest"
