@@ -33,6 +33,10 @@ export default defineConfig({
     sourceMap: true,
     target: "web",
   },
+  performance: {
+    buildCache: true,
+    printFileSize: false,
+  },
   plugins: [pluginReact()],
   source: {
     entry: {
