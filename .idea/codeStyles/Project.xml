@@ -18,7 +18,6 @@
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
       <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
       <option name="REFORMAT_C_STYLE_COMMENTS" value="true" />
-      <option name="USE_DOUBLE_QUOTES" value="false" />
       <option name="FORCE_QUOTE_STYlE" value="true" />
       <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
       <option name="JSX_ATTRIBUTE_VALUE" value="Based on type" />
@@ -35,7 +34,6 @@
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
       <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
       <option name="REFORMAT_C_STYLE_COMMENTS" value="true" />
-      <option name="USE_DOUBLE_QUOTES" value="false" />
       <option name="FORCE_QUOTE_STYlE" value="true" />
       <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
       <option name="JSX_ATTRIBUTE_VALUE" value="Based on type" />
