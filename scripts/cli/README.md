@@ -21,7 +21,7 @@ codefast update-exports [options]
 
 ## Luồng Hoạt Động
 
-```
+```mermaid
 flowchart TD
     A[Bắt đầu update-exports] --> B[processAllPackages]
     B --> C[Tìm kiếm packages với findAllPackages]
