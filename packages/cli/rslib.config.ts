@@ -3,7 +3,7 @@ import { defineConfig } from "@rslib/core";
 export default defineConfig({
   lib: [
     {
-      bundle: true,
+      bundle: false,
       dts: {
         distPath: "./dist/types",
       },
@@ -15,7 +15,7 @@ export default defineConfig({
       },
     },
     {
-      bundle: true,
+      bundle: false,
       format: "cjs",
       output: {
         distPath: {
@@ -25,12 +25,15 @@ export default defineConfig({
     },
   ],
   output: {
-    minify: true,
     sourceMap: true,
+  },
+  performance: {
+    buildCache: true,
+    printFileSize: false,
   },
   source: {
     entry: {
-      index: ["./src/index.ts"],
+      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.{ts,tsx}"],
     },
     tsconfigPath: "./tsconfig.build.json",
   },
