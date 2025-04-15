@@ -4,16 +4,21 @@ import { Command } from "commander";
 
 import { createUpdateExportsCommand } from "@/commands/update-exports";
 
+import packageJson from "../package.json" assert { type: "json" };
+
 function main(): void {
   const program = new Command();
 
-  program.name("codefast").description("CodeFast CLI - Bộ công cụ phát triển cho CodeFast").version("0.0.0");
+  program
+    .name("codefast")
+    .description("CodeFast CLI - A development toolkit for CodeFast.")
+    .version(packageJson.version, "-v, --version", "display CLI version");
 
   createUpdateExportsCommand(program);
 
   program.action(() => {
-    console.log("Sử dụng 'codefast update-exports' để cập nhật exports.");
-    console.log("Chạy 'codefast --help' để xem tất cả các lệnh có sẵn.");
+    console.log('Use "codefast update-exports" to update exports.');
+    console.log('Run "codefast --help" to see all available commands.');
     program.help();
   });
 
