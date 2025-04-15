@@ -1,4 +1,6 @@
-import { type SourceFile, Project } from "ts-morph";
+import type { SourceFile } from "ts-morph";
+
+import { Project } from "ts-morph";
 
 import type { AnalysisResult, ImportPath, PackageConfig } from "@/commands/update-exports/types";
 
