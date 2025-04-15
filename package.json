@@ -10,6 +10,8 @@
     "changeset:pre:exit": "changeset pre exit",
     "check-types": "turbo run check-types",
     "clean": "turbo run clean && rimraf node_modules pnpm-lock.yaml .turbo/cache",
+    "clean:script": "rimraf \"**/.exports-analysis\" --glob",
+    "codefast:update-exports": "codefast update-exports",
     "dev": "turbo run dev",
     "dev:docs": "turbo run dev --filter=@app/docs...",
     "lint": "turbo run lint",
@@ -24,8 +26,7 @@
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
     "test:coverage:ci": "turbo run test:coverage:ci",
-    "test:watch": "turbo run test:watch",
-    "update-exports": "tsx --tsconfig scripts/update-exports/tsconfig.json scripts/update-exports/src/index.ts"
+    "test:watch": "turbo run test:watch"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm exec lint-staged",
@@ -33,7 +34,8 @@
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.28.1",
+    "@changesets/cli": "^2.29.0",
+    "@codefast/cli": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@commitlint/cli": "^19.8.0",
@@ -47,7 +49,7 @@
     "tsx": "^4.19.3",
     "turbo": "^2.5.0"
   },
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.8.1",
   "engines": {
     "node": "^22"
   }
