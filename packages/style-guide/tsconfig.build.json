@@ -1,13 +1,5 @@
 {
-  "extends": "@codefast/typescript-config/library.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@codefast/style-guide": ["./dist/*"]
-    }
-  },
+  "extends": "./tsconfig.json",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage", "/**/*.test.*", "**/*.spec.*"]
 }

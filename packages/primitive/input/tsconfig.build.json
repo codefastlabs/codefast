@@ -1,12 +1,5 @@
 {
-  "extends": "@codefast/typescript-config/react.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
+  "extends": "./tsconfig.json",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage", "/**/*.test.*", "**/*.spec.*"]
 }
