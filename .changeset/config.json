@@ -12,5 +12,5 @@
   "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@app/docs"]
+  "ignore": ["@app/docs", "@codefast/cli"]
 }
