@@ -5,7 +5,7 @@
 "@codefast/typescript-config": patch
 "@codefast-ui/input": patch
 "@codefast/eslint-config": patch
-"update-exports": patch
+"@codefast/cli": patch
 "@codefast/style-guide": patch
 "@codefast/hooks": patch
 "@codefast/ui": patch
