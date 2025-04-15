@@ -11,18 +11,22 @@
     "@codefast-ui/progress-circle": "0.2.45",
     "@codefast/style-guide": "0.2.45",
     "@codefast/typescript-config": "0.2.45",
-    "@codefast/ui": "0.2.45"
+    "@codefast/ui": "0.2.45",
+    "@codefast/cli": "0.2.46-canary.5"
   },
   "changesets": [
+    "cool-trees-grow",
     "curly-toys-return",
     "five-groups-do",
     "five-heads-rescue",
+    "flat-jeans-cover",
     "heavy-terms-rhyme",
     "hip-turkeys-grab",
     "long-lizards-ring",
     "many-lamps-march",
     "neat-geese-report",
     "new-ghosts-occur",
+    "poor-pears-flow",
     "red-buttons-invite",
     "sad-crews-sniff",
     "shaky-suits-serve",
