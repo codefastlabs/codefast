@@ -4,7 +4,7 @@ import { Command } from "commander";
 
 import { createUpdateExportsCommand } from "@/commands/update-exports";
 
-import packageJson from "../package.json" assert { type: "json" };
+import packageJson from "../package.json";
 
 function main(): void {
   const program = new Command();
