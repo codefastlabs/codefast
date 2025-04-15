@@ -1,5 +1,53 @@
 # @codefast/typescript-config
 
+## 0.3.0
+
+### Minor Changes
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`9aefc24`](https://github.com/codefastlabs/codefast/commit/9aefc24a72281e7028df89a9e20b597a135a0574) Thanks [@thevuong](https://github.com/thevuong)! - chore: bump version to 0.3.0
+
+### Patch Changes
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`69bb16b`](https://github.com/codefastlabs/codefast/commit/69bb16bf9e56663245fd4009ee00dbfe94d9a4b6) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update dependencies across packages
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`676fd3a`](https://github.com/codefastlabs/codefast/commit/676fd3a85449ffcfe097b69c243b31d761983ace) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance build configuration for TypeScript projects
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`2e07342`](https://github.com/codefastlabs/codefast/commit/2e0734209104507779c6f27fd146b5b36da6cc5d) Thanks [@thevuong](https://github.com/thevuong)! - feat: add new component exports and consolidate paths
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`6dcbdd5`](https://github.com/codefastlabs/codefast/commit/6dcbdd52e2e62932365b819142ae9c8cc1edc78b) Thanks [@thevuong](https://github.com/thevuong)! - fix(ui): move dependencies to peerDependencies
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`1a4f049`](https://github.com/codefastlabs/codefast/commit/1a4f04901e2cd5acbfd8d449ef3eea87969172d9) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update configs and optimize import handling
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`b340d0e`](https://github.com/codefastlabs/codefast/commit/b340d0ec3311b9466bd8c1a772a8560b06f8a1fc) Thanks [@thevuong](https://github.com/thevuong)! - feat(checkbox-group): refine exports for better tree-shaking
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`aaed162`](https://github.com/codefastlabs/codefast/commit/aaed1620ceb80ec84b48b17c610dbef4cccdfa25) Thanks [@thevuong](https://github.com/thevuong)! - chore(build): migrate from `tsup` to `rslib` for build process
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`97de1de`](https://github.com/codefastlabs/codefast/commit/97de1de7021468ed3c6f1070f7bbedb1ce9b018a) Thanks [@thevuong](https://github.com/thevuong)! - feat(input): update exports to include specific modules
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`7087ebb`](https://github.com/codefastlabs/codefast/commit/7087ebb4440dc33b352e75692c2195559959206b) Thanks [@thevuong](https://github.com/thevuong)! - feat(progress-circle): expose specific exports for components
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`c950c28`](https://github.com/codefastlabs/codefast/commit/c950c28088d734749800827dbf74ad3541623a61) Thanks [@thevuong](https://github.com/thevuong)! - fix: suppress warnings for unresolved CSS custom properties
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`3a317c2`](https://github.com/codefastlabs/codefast/commit/3a317c23d9db89d78dcc1b0375a7639ac8fd9a32) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint): allow console usage in logger files
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`5c98ebc`](https://github.com/codefastlabs/codefast/commit/5c98ebc15a76822c3975438bcf1ecf6388b4cba8) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance configs with build cache and simplified tsconfigs
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`31c0964`](https://github.com/codefastlabs/codefast/commit/31c096414b1e2d4a832107c2e1363a7a12342e30) Thanks [@thevuong](https://github.com/thevuong)! - feat(build): enable minification and source maps for outputs
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`f771687`](https://github.com/codefastlabs/codefast/commit/f771687be38d3096c581d7ee33c3627581be172d) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): enhance rules and configurations
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`3384140`](https://github.com/codefastlabs/codefast/commit/3384140e4db9a0c1fa4c3b273731d09eb39f0879) Thanks [@thevuong](https://github.com/thevuong)! - fix: update incorrect import paths for UI package
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`ffed836`](https://github.com/codefastlabs/codefast/commit/ffed8369ad5d6fd2d809b896e1f083e22fc8f30d) Thanks [@thevuong](https://github.com/thevuong)! - refactor(config): replace `exclude` with `entry` in configs
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`0505e0c`](https://github.com/codefastlabs/codefast/commit/0505e0c1707a061f60935d9a70af6529bcabaf72) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): add optional dependencies for UI functionality
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`6c7c960`](https://github.com/codefastlabs/codefast/commit/6c7c960f3b7d5defe68454c7e9630912db0698b0) Thanks [@thevuong](https://github.com/thevuong)! - feat(input-number): update exports for improved modularity
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`facd478`](https://github.com/codefastlabs/codefast/commit/facd478909c9aef3cdb62e08c0551920cc28338f) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update package dependencies
+
+- [#132](https://github.com/codefastlabs/codefast/pull/132) [`e5f3205`](https://github.com/codefastlabs/codefast/commit/e5f320500292906d9c3e4e1088c4b3776ada8e2a) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): update eslint rules for flexibility
+
 ## 0.2.46-canary.6
 
 ### Patch Changes
