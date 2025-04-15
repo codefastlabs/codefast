@@ -4,9 +4,8 @@ packages:
   - scripts/**
 
 onlyBuiltDependencies:
-  - '@swc/core'
+  - "@swc/core"
   - core-js
   - esbuild
   - sharp
   - simple-git-hooks
-
