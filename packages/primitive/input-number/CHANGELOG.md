@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.3.1-canary.0
+
+### Patch Changes
+
+- [`ab3aef2`](https://github.com/codefastlabs/codefast/commit/ab3aef2b63b72a8f6d37106d9e07ba1c084b9f63) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance ESLint rules with detailed configurations
+
+- Updated dependencies [[`ab3aef2`](https://github.com/codefastlabs/codefast/commit/ab3aef2b63b72a8f6d37106d9e07ba1c084b9f63)]:
+  - @codefast-ui/input@0.3.1-canary.0
+
 ## 0.3.0
 
 ### Minor Changes
