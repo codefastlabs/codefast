@@ -1,7 +1,26 @@
-# Always ignore node_modules in any folder
-**/node_modules
+# Dependencies and lock files
+**/node_modules/
+**/.pnpm-store/
 
-# Ignore build artifacts
-**/.turbo
-**/.next/cache
-**/dist
+# Build artifacts and outputs
+**/.next/
+**/dist/
+**/build/
+
+# Local configurations and logs
+.env*
+.vscode/
+.idea/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+
+# Source control
+.git
+.github
+
+# Cache and temporary resources
+**/.turbo/
+
+# Package management
+.changeset
