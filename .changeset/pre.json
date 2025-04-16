@@ -14,5 +14,7 @@
     "@codefast/typescript-config": "0.3.0",
     "@codefast/ui": "0.3.0"
   },
-  "changesets": []
+  "changesets": [
+    "solid-grapes-watch"
+  ]
 }
