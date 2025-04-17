@@ -1,0 +1,54 @@
+{
+  "name": "codefast",
+  "version": "0.3.1-canary.1",
+  "description": "CodeFast CLI - A development toolkit for CodeFast.",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/codefast"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "type": "module",
+  "bin": "./dist/index.js",
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "check-types": "tsc --noEmit",
+    "clean": "rimraf node_modules dist",
+    "dev": "rslib build --watch",
+    "lint": "eslint --cache --max-warnings 0",
+    "lint:inspect": "npx @eslint/config-inspector@latest"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "glob": "^11.0.1",
+    "lodash-es": "^4.17.21",
+    "ts-morph": "^25.0.1",
+    "zod": "4.0.0-beta.20250414T061543"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@rslib/core": "^0.6.4",
+    "@types/commander": "^2.12.5",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^22.14.1",
+    "eslint": "^9.24.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "node": ">=18.0.0"
+  },
+  "preferUnplugged": true
+}
