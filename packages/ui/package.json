@@ -797,7 +797,7 @@
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@rsbuild/plugin-react": "^1.2.0",
-    "@rslib/core": "^0.6.3",
+    "@rslib/core": "^0.6.4",
     "@swc/core": "^1.11.21",
     "@swc/jest": "^0.2.37",
     "@tailwindcss/postcss": "^4.1.4",
