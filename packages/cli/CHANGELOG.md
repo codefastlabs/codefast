@@ -1,4 +1,4 @@
-# update-exports
+# @codefast/cli
 
 ## 0.3.1-canary.1
 
