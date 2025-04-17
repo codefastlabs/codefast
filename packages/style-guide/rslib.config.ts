@@ -28,7 +28,6 @@ export default defineConfig({
     sourceMap: true,
   },
   performance: {
-    buildCache: true,
     printFileSize: false,
   },
   source: {
