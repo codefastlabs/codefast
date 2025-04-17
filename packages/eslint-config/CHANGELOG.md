@@ -1,5 +1,20 @@
 # @codefast/eslint-config
 
+## 0.3.1-canary.2
+
+### Patch Changes
+
+- [`cbed3bb`](https://github.com/codefastlabs/codefast/commit/cbed3bb9df899faa4dc4291bc1613693d2c58844) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): correct binary path and version retrieval logic
+
+- [`5fa666f`](https://github.com/codefastlabs/codefast/commit/5fa666fb88548b602373bc070d656a116556e6e2) Thanks [@thevuong](https://github.com/thevuong)! - fix(dependencies): update multiple dependencies to latest versions
+
+- [`945bed9`](https://github.com/codefastlabs/codefast/commit/945bed90196b54e414d4f2817cdfeff41a3ef280) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add `codefast` CLI package with initial features
+
+- [`e3a843f`](https://github.com/codefastlabs/codefast/commit/e3a843f4f4d3bc9df8701a645b4dbdfba4f41086) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add files field to package.json for better packaging
+
+- Updated dependencies [[`cbed3bb`](https://github.com/codefastlabs/codefast/commit/cbed3bb9df899faa4dc4291bc1613693d2c58844), [`5fa666f`](https://github.com/codefastlabs/codefast/commit/5fa666fb88548b602373bc070d656a116556e6e2), [`945bed9`](https://github.com/codefastlabs/codefast/commit/945bed90196b54e414d4f2817cdfeff41a3ef280), [`e3a843f`](https://github.com/codefastlabs/codefast/commit/e3a843f4f4d3bc9df8701a645b4dbdfba4f41086)]:
+  - @codefast/style-guide@0.3.1-canary.2
+
 ## 0.3.1-canary.1
 
 ### Patch Changes

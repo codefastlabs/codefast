@@ -12,10 +12,15 @@
     "@codefast-ui/progress-circle": "0.3.0",
     "@codefast/style-guide": "0.3.0",
     "@codefast/typescript-config": "0.3.0",
-    "@codefast/ui": "0.3.0"
+    "@codefast/ui": "0.3.0",
+    "codefast": "0.3.1-canary.1"
   },
   "changesets": [
+    "all-camels-see",
+    "better-taxis-glow",
     "four-paths-show",
-    "solid-grapes-watch"
+    "loud-mammals-obey",
+    "solid-grapes-watch",
+    "tired-paws-cross"
   ]
 }
