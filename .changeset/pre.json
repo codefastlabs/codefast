@@ -15,6 +15,7 @@
     "@codefast/ui": "0.3.0"
   },
   "changesets": [
+    "four-paths-show",
     "solid-grapes-watch"
   ]
 }
