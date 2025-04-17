@@ -24,7 +24,7 @@
     "check-types": "tsc --noEmit",
     "clean": "rimraf node_modules dist",
     "dev": "rslib build --watch",
-    "lint": "eslint --max-warnings 0",
+    "lint": "eslint --cache --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest"
   },
   "dependencies": {
