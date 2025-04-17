@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.1-canary.1
+
+### Patch Changes
+
+- [`7df52f7`](https://github.com/codefastlabs/codefast/commit/7df52f760966692f2699fb979367943003b36ccf) Thanks [@thevuong](https://github.com/thevuong)! - feat: update jsx-a11y rule overrides for accessibility needs
+
 ## 0.3.1-canary.0
 
 ### Patch Changes
