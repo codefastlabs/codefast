@@ -13,12 +13,15 @@
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
   "bin": {
     "codefast": "./dist/esm/index.js"
   },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
