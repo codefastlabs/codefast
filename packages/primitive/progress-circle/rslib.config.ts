@@ -30,7 +30,6 @@ export default defineConfig({
     target: "web",
   },
   performance: {
-    buildCache: true,
     printFileSize: false,
   },
   plugins: [pluginReact()],
