@@ -3,8 +3,7 @@
 import { Command } from "commander";
 
 import { createUpdateExportsCommand } from "@/commands/update-exports";
-
-import packageJson from "../package.json";
+import { getPackageVersion } from "@/lib/package-info";
 
 function main(): void {
   const program = new Command();
@@ -12,7 +11,7 @@ function main(): void {
   program
     .name("codefast")
     .description("CodeFast CLI - A development toolkit for CodeFast.")
-    .version(packageJson.version, "-v, --version", "display CLI version");
+    .version(getPackageVersion(), "-v, --version", "display CLI version");
 
   createUpdateExportsCommand(program);
 

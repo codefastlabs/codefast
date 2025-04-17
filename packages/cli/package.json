@@ -14,7 +14,7 @@
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "type": "module",
   "bin": {
-    "codefast": "./dist/esm/index.js"
+    "codefast": "./dist/index.js"
   },
   "files": [
     "dist",
@@ -48,5 +48,9 @@
     "eslint": "^9.24.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
-  }
+  },
+  "peerDependencies": {
+    "node": ">=18.0.0"
+  },
+  "preferUnplugged": true
 }
