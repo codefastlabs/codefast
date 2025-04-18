@@ -1,5 +1,22 @@
 # @codefast/ui
 
+## 0.3.1-canary.4
+
+### Patch Changes
+
+- [`d9e10c7`](https://github.com/codefastlabs/codefast/commit/d9e10c71202f28a3320431de646dcd51a42e3169) Thanks [@thevuong](https://github.com/thevuong)! - feat: add environment-aware build configurations
+
+- [`f1b3b4d`](https://github.com/codefastlabs/codefast/commit/f1b3b4d864e4e0975c384e4e8e59db9edde2fce9) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance scrollbar styles and optimize dev scripts
+
+- [`9731770`](https://github.com/codefastlabs/codefast/commit/9731770d6b1a1bc713374f1c12b50a4dbb970fcf) Thanks [@thevuong](https://github.com/thevuong)! - fix(styles): correct CSS variable names for outline and scrollbar
+
+- Updated dependencies [[`d9e10c7`](https://github.com/codefastlabs/codefast/commit/d9e10c71202f28a3320431de646dcd51a42e3169), [`f1b3b4d`](https://github.com/codefastlabs/codefast/commit/f1b3b4d864e4e0975c384e4e8e59db9edde2fce9), [`9731770`](https://github.com/codefastlabs/codefast/commit/9731770d6b1a1bc713374f1c12b50a4dbb970fcf)]:
+  - @codefast-ui/progress-circle@0.3.1-canary.4
+  - @codefast-ui/checkbox-group@0.3.1-canary.4
+  - @codefast-ui/input-number@0.3.1-canary.4
+  - @codefast-ui/input@0.3.1-canary.4
+  - @codefast/hooks@0.3.1-canary.4
+
 ## 0.3.1-canary.3
 
 ### Patch Changes
