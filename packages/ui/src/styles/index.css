@@ -11,7 +11,7 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-border);
-    outline-color: color-mix(in oklab, var(--ring) 20%, transparent);
+    outline-color: color-mix(in oklab, var(--color-ring) 20%, transparent);
   }
 
   ::-webkit-scrollbar {
@@ -28,7 +28,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent
+    scrollbar-color: var(--color-border) transparent
   }
 
   html,
