@@ -12,8 +12,7 @@
     "@codefast-ui/progress-circle": "0.3.0",
     "@codefast/style-guide": "0.3.0",
     "@codefast/typescript-config": "0.3.0",
-    "@codefast/ui": "0.3.0",
-    "codefast": "0.3.1-canary.1"
+    "@codefast/ui": "0.3.0"
   },
   "changesets": [
     "all-camels-see",
