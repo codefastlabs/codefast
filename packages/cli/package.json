@@ -26,7 +26,7 @@
     "build": "rslib build",
     "check-types": "tsc --noEmit",
     "clean": "rimraf node_modules dist",
-    "dev": "rslib build --watch",
+    "dev": "cross-env NODE_ENV=development rslib build --watch",
     "lint": "eslint --cache --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest"
   },
