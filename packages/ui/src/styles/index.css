@@ -14,6 +14,23 @@
     outline-color: color-mix(in oklab, var(--ring) 20%, transparent);
   }
 
+  ::-webkit-scrollbar {
+    @apply size-1.25;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent
+  }
+
   html,
   body {
     background-color: var(--color-background);
