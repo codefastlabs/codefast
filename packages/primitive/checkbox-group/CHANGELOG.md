@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.1-canary.3
+
+### Patch Changes
+
+- [`d0f720b`](https://github.com/codefastlabs/codefast/commit/d0f720bff44dfcd6a44b542b9f7a5cc2962b4f81) Thanks [@thevuong](https://github.com/thevuong)! - fix(package.json): update repository URL format and bin path
+
 ## 0.3.1-canary.2
 
 ### Patch Changes
