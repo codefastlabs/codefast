@@ -1,5 +1,7 @@
 import { defineConfig } from "@rslib/core";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export default defineConfig({
   lib: [
     {
@@ -10,6 +12,7 @@ export default defineConfig({
     },
   ],
   output: {
+    cleanDistPath: isProduction,
     sourceMap: true,
   },
   performance: {
