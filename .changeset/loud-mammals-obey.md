@@ -6,7 +6,6 @@
 "@codefast-ui/input": patch
 "@codefast/eslint-config": patch
 "@codefast/style-guide": patch
-"codefast": patch
 "@codefast/hooks": patch
 "@codefast/cli": patch
 "@codefast/ui": patch
