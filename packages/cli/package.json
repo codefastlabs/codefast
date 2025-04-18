@@ -7,14 +7,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/codefastlabs/codefast.git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
     "directory": "packages/cli"
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
   "type": "module",
   "bin": {
-    "codefast": "./dist/index.js"
+    "codefast": "dist/index.js"
   },
   "files": [
     "dist",
@@ -49,8 +49,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
-  "peerDependencies": {
-    "node": ">=18.0.0"
+  "publishConfig": {
+    "access": "public"
   },
   "preferUnplugged": true
 }
