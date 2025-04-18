@@ -1,94 +1,151 @@
 import { z } from "zod";
 
-// Schema for package configuration, defining output patterns and paths
+/**
+ * Represents the schema for package configuration.
+ *
+ * @param cjsOutputPattern - A string specifying the output pattern for the CommonJS format.
+ * @param esmOutputPattern - A string specifying the output pattern for the ESM format.
+ * @param packageJsonPath - A string representing the path to the package.json file.
+ * @param srcIndexPath - A string specifying the path to the source index file.
+ * @param typesOutputCjsPattern - A string defining the output pattern for type declarations in the CommonJS format.
+ * @param typesOutputPattern - A string defining the output pattern for type declarations in general.
+ * @param exportPathPrefixesToRemove - An optional array of strings specifying prefixes to remove from export paths.
+ */
 export const PackageConfigSchema = z.interface({
-  // Output path pattern for CommonJS (CJS) modules
-  // Example: "dist/cjs/*.js" specifies where CJS files are emitted
   cjsOutputPattern: z.string(),
-  // Output path pattern for ES Modules (ESM)
-  // Example: "dist/esm/*.js" specifies where ESM files are emitted
   esmOutputPattern: z.string(),
-  // Path to the package.json file
-  // Used to read or update package metadata (e.g., version, exports)
   packageJsonPath: z.string(),
-  // Path to the src/index.ts file
-  // Main entry point for analyzing exports or building the package
   srcIndexPath: z.string(),
-  // Output path pattern for CJS type definitions
-  // Example: "dist/cjs/*.d.ts" for CJS-compatible type definitions
   typesOutputCjsPattern: z.string(),
-  // General output path pattern for type definitions
-  // Example: "dist/types/*.d.ts" for type definitions used by both CJS and ESM
   typesOutputPattern: z.string(),
-  // Optional prefixes to strip from export paths
-  // Example: ["components"] removes "components" from export paths
   "exportPathPrefixesToRemove?": z.array(z.string()),
 });
 
-// Schema for script configuration, defining package discovery and defaults
+/**
+ * Represents the schema structure for the script configuration.
+ *
+ * This schema outlines the required and optional fields necessary for defining
+ * configurations for custom packages, default package settings, and the pattern
+ * used for finding package files.
+ *
+ * @param customPackageConfigs - A record where keys are strings and values are partials of PackageConfigSchema giving
+ *                                the configurations for custom packages. This allows defining overrides or additional
+ *                                configuration for specific packages.
+ * @param defaultPackageConfig - The default package configuration, uniformly applied unless overridden by customPackageConfigs.
+ * @param packagesGlob - A string indicating the glob pattern used to identify package files.
+ */
 export const ScriptConfigSchema = z.interface({
-  // Custom configurations for specific packages
-  // Key is the package name, value is a partial override of defaultPackageConfig
-  // Example: { "my-package": { cjsOutputPattern: "dist/custom/*.js" } }
   customPackageConfigs: z.record(z.string(), PackageConfigSchema.partial()),
-  // Default configuration applied to all packages
-  // Ensures consistent settings unless overridden
   defaultPackageConfig: PackageConfigSchema,
-  // Glob pattern to locate packages in the project
-  // Example: "packages/*" finds all package folders under packages/
   packagesGlob: z.string(),
 });
 
-// TypeScript type inferred from schemas for type safety
+/**
+ * Represents the configuration settings for a package.
+ *
+ * This type is derived from the `PackageConfigSchema` using the `zod` library.
+ *
+ * @typeParam T - The inferred type of the package configuration schema.
+ *
+ * @returns The inferred type from `PackageConfigSchema` representing the package configuration.
+ */
 export type PackageConfig = z.infer<typeof PackageConfigSchema>;
+/**
+ * Represents the configuration for a script based on the `ScriptConfigSchema`.
+ * This type infers its structure using `z.infer`.
+ *
+ * @typeParam T - The type inferred from the schema definition.
+ *
+ * @returns The inferred type that matches the schema.
+ */
 export type ScriptConfig = z.infer<typeof ScriptConfigSchema>;
 
-// Interface for import path metadata
+/**
+ * Represents an import path for a module or file, including its directory, export path, name, and original path.
+ *
+ * @param directory - The directory containing the import.
+ * @param exportPath - The resolved path of the export from the directory.
+ * @param name - The name of the import.
+ * @param originalPath - The original unresolved path of the import as provided in the source.
+ */
 export interface ImportPath {
-  // Directory containing the module (e.g., 'components')
   directory: string;
-  // Export path for package.json (e.g., './button')
   exportPath: string;
-  // Module name (e.g., 'Button')
   name: string;
-  // Original import path (e.g., './components/Button')
   originalPath: string;
 }
 
-// Interface for import analysis results
+/**
+ * Represents the result of an analysis process, including the identified import paths.
+ *
+ * @typeParam ImportPath - The type representing an individual import path.
+ */
 export interface AnalysisResult {
-  // List of analyzed import paths
   imports: ImportPath[];
 }
 
-// Interface for module export configuration
+/**
+ * Represents the configuration settings for exporting modules in different formats.
+ *
+ * This interface defines the required structure for specifying export configurations
+ * in terms of import and require formats, including default exports and type exports.
+ */
 export interface ExportConfig {
   import: {
-    default: string; // ESM default file (e.g., "./dist/esm/index.js")
-    types: string; // ESM type definitions (e.g., "./dist/types/index.d.ts")
+    default: string;
+    types: string;
   };
   require: {
-    default: string; // CJS default file (e.g., "./dist/cjs/index.cjs")
-    types: string; // CJS type definitions (e.g., "./dist/types/index.d.cts")
+    default: string;
+    types: string;
   };
 }
 
+/**
+ * Represents a target for export, which can either be an `ExportConfig` object
+ * or a string defining the target.
+ *
+ * @typeParam ExportConfig - Defines the configuration type for export when not using a string as a target.
+ */
 export type ExportTarget = ExportConfig | string;
+/**
+ * Represents the structure of package exports, mapping export paths to their targets.
+ *
+ * This type is primarily used to define a dictionary where the keys are export paths
+ * (strings) and the values are the targets to which these paths resolve.
+ *
+ * @typeParam ExportTarget - The type representing the value of each export target.
+ * @returns A record that maps export path strings to their corresponding export targets.
+ */
 export type PackageExports = Record<string, ExportTarget>;
 
-// Interface for package.json structure
+/**
+ * Represents the structure of a `package.json` file in a Node.js project.
+ *
+ * This interface defines the essential fields for describing a package, such as its name, version,
+ * and an optional `exports` field used for specifying module exports.
+ *
+ * @typeParam T - An optional type parameter for customizing the `exports` field (if applicable).
+ * @returns An object adhering to the `PackageJson` structure.
+ */
 export interface PackageJson {
-  [key: string]: unknown;
   name: string;
   version: string;
-
   exports?: PackageExports;
 }
 
-// Options for processing packages
+/**
+ * Represents the configuration options for a process.
+ *
+ * The `ProcessOptions` interface allows the customization of process behavior
+ * through various optional parameters.
+ *
+ * @param dryRun - Indicates if the process should run in a simulation mode without making changes.
+ * @param configPath - Specifies the file path to a configuration file, if provided.
+ * @param packageFilter - Filters packages that should be processed, if specified.
+ */
 export interface ProcessOptions {
   dryRun: boolean;
-  verbose: boolean;
   configPath?: string;
   packageFilter?: string;
 }
