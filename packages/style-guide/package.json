@@ -215,7 +215,7 @@
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
     "@eslint/js": "^9.24.0",
-    "@next/eslint-plugin-next": "^15.3.0",
+    "@next/eslint-plugin-next": "^15.3.1",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@vitest/eslint-plugin": "^1.1.42",
     "eslint-config-prettier": "^10.1.2",
