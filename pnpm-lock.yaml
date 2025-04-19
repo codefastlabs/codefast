@@ -14,9 +14,6 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.2
         version: 2.29.2
-      '@codefast/cli':
-        specifier: workspace:*
-        version: link:packages/cli
       '@codefast/eslint-config':
         specifier: workspace:*
         version: link:packages/eslint-config
