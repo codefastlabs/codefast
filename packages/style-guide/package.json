@@ -213,10 +213,10 @@
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
-    "@eslint/js": "^9.24.0",
+    "@eslint/js": "^9.25.0",
     "@next/eslint-plugin-next": "^15.3.1",
     "@stylistic/eslint-plugin": "^4.2.0",
-    "@vitest/eslint-plugin": "^1.1.42",
+    "@vitest/eslint-plugin": "^1.1.43",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest": "^28.11.0",
@@ -234,9 +234,9 @@
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.6.4",
+    "@rslib/core": "^0.6.5",
     "@types/node": "^22.14.1",
-    "eslint": "^9.24.0",
+    "eslint": "^9.25.0",
     "globals": "^16.0.0",
     "typescript": "^5.8.3"
   },
