@@ -1,26 +1,65 @@
-# Dependencies and lock files
-**/node_modules
-**/.pnpm-store
+#-------------------------------------------------------------------------------
+# Dependencies and package managers
+#-------------------------------------------------------------------------------
 
-# Build artifacts and outputs
-**/.next
-**/dist
-**/build
+# Node dependencies
+node_modules
+.pnpm-store
+.yarn
 
-# Local configurations and logs
+#-------------------------------------------------------------------------------
+# Development and environment
+#-------------------------------------------------------------------------------
+
+# Environment variables (except examples)
 .env*
-.vscode
-.idea
-.DS_Store
+!.env.example
+
+# Build artifacts
+.next
+build
+dist
+.git
+.github
+.turbo
+.changeset
+.eslintcache
+
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 
-# Source control
-.git
-.github
+#-------------------------------------------------------------------------------
+# Testing
+#-------------------------------------------------------------------------------
 
-# Cache and temporary resources
-**/.turbo
+# Test coverage reports and config snapshots
+coverage
+*.test.*
+*.e2e.*
 
-# Package management
-.changeset
+#-------------------------------------------------------------------------------
+# Editor and IDE configuration
+#-------------------------------------------------------------------------------
+
+# IDE project files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+#-------------------------------------------------------------------------------
+# Operating system files
+#-------------------------------------------------------------------------------
+
+# System metadata files
+.DS_Store
+Thumbs.db
+
+#-------------------------------------------------------------------------------
+# Deployment
+#-------------------------------------------------------------------------------
+
+# Vercel deployment configuration
+.vercel
