@@ -35,10 +35,10 @@ function InputSearch({
   Omit<ComponentProps<typeof InputPrimitive.Field>, "defaultValue" | "onChange" | "prefix" | "type" | "value"> &
   VariantProps<typeof inputVariants> & {
     defaultValue?: string;
-    onChange?: (value: string) => void;
+    onChange?: (value?: string) => void;
     value?: string;
   }): JSX.Element {
-  const [value, setValue] = useControllableState({
+  const [value, setValue] = useControllableState<string | undefined>({
     defaultProp: defaultValue,
     onChange,
     prop: valueProp,
