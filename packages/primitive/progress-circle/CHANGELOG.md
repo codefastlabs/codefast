@@ -1,5 +1,19 @@
 # @codefast-ui/progress-circle
 
+## 0.3.1-canary.5
+
+### Patch Changes
+
+- [`f5b9777`](https://github.com/codefastlabs/codefast/commit/f5b977794956920183e2b132633e61cac4be4fdb) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): skip Next.js project creation if package.json exists
+
+- [`77ccc05`](https://github.com/codefastlabs/codefast/commit/77ccc0556a1da4ee934af56fe8aef66eec0e1cf0) Thanks [@thevuong](https://github.com/thevuong)! - feat: support optional values in change handlers
+
+- [`876c1cb`](https://github.com/codefastlabs/codefast/commit/876c1cb7d7ff7691096da7cc19faa44ddcffea70) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): remove logger utility and update logging usage
+
+- [`9e7aa7c`](https://github.com/codefastlabs/codefast/commit/9e7aa7c40e8d68257fbcd62ddb8fc7e2f6fcc895) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update dependencies to latest versions
+
+- [`80bd1ad`](https://github.com/codefastlabs/codefast/commit/80bd1ad5282d489b2da9f84d373adc40a9b24dc2) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add enhanced project creation command
+
 ## 0.3.1-canary.4
 
 ### Patch Changes
