@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 
+import { createProjectCommand } from "@/commands/create-project";
 import { createUpdateExportsCommand } from "@/commands/update-exports";
 import { getPackageVersion } from "@/lib/package-info";
 
@@ -14,8 +15,10 @@ function main(): void {
     .version(getPackageVersion(), "-v, --version", "display CLI version");
 
   createUpdateExportsCommand(program);
+  createProjectCommand(program);
 
   program.action(() => {
+    console.log('Use "codefast create-project" to create a new Next.js project.');
     console.log('Use "codefast update-exports" to update exports.');
     console.log('Run "codefast --help" to see all available commands.');
     program.help();
