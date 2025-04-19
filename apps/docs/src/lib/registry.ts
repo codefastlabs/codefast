@@ -100,6 +100,7 @@ export async function getRegistryItem(name: string): Promise<null | RegistryItem
 async function processRegistryItemFiles(itemFiles: RegistryItemFile[]): Promise<RegistryItemFile[]> {
   const files: RegistryItemFile[] = itemFiles.map((file) => ({
     ...file,
+    path: path.join(process.cwd(), file.path),
     target: determineFileTarget(file),
   }));
 
