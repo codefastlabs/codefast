@@ -537,12 +537,19 @@ export function createProjectCommand(program: Command): void {
 
         console.log(`\n🚀 Starting project creation for ${projectName}...\n`);
 
-        // Create a Next.js project
-        createNextProject(projectName);
+        // Check if package.json exists in the current directory
+        const packageJsonExists = fs.existsSync(path.join(process.cwd(), "package.json"));
 
-        // Navigate to the project folder
-        process.chdir(projectName);
-        console.log(`📂 Moved to ${projectName}`);
+        // Create a Next.js project only if package.json doesn't exist
+        if (packageJsonExists) {
+          console.log(`📦 A package.json file has been detected. Skipping the Next.js project creation step.`);
+        } else {
+          createNextProject(projectName);
+
+          // Navigate to the project folder
+          process.chdir(projectName);
+          console.log(`📂 Moved to ${projectName}`);
+        }
 
         // Edit the postcss.config.mjs file
         updatePostcssConfig(process.cwd());
