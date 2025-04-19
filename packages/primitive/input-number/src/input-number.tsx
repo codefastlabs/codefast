@@ -135,7 +135,7 @@ interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
   min?: number;
 
   /** Handler called when the value changes */
-  onChange?: (value: number) => void;
+  onChange?: (value?: number) => void;
 
   /** Step value for increments/decrements */
   step?: number;
@@ -168,7 +168,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   const inputRef = useRef<HTMLInputElement>(null);
 
   /** Controlled or uncontrolled value state */
-  const [value, setValue] = useControllableState({
+  const [value, setValue] = useControllableState<number | undefined>({
     defaultProp: defaultValue,
     onChange,
     prop: valueProp,

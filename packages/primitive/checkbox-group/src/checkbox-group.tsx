@@ -111,7 +111,7 @@ interface CheckboxGroupBaseProps {
    * Callback fired when the selected values change
    * @param value - The new array of selected values
    */
-  onValueChange?: (value: string[]) => void;
+  onValueChange?: (value?: string[]) => void;
 
   /**
    * Orientation of the checkbox group (horizontal or vertical)
@@ -163,7 +163,7 @@ function CheckboxGroup({
   /**
    * State for managing selected checkbox values
    */
-  const [value = [], setValue] = useControllableState<string[]>({
+  const [value = [], setValue] = useControllableState<string[] | undefined>({
     defaultProp: defaultValue,
     onChange: onValueChange,
     prop: valueProp,
