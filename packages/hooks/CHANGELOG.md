@@ -1,5 +1,17 @@
 # @codefast/hooks
 
+## 0.3.1-canary.9
+
+### Patch Changes
+
+- [`77d43d1`](https://github.com/codefastlabs/codefast/commit/77d43d1dfa36b856125956f9edaf141262914831) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update package versions
+
+- [`b5558d7`](https://github.com/codefastlabs/codefast/commit/b5558d7fc117c3e5314d88fe9aff48f84c7ffc18) Thanks [@thevuong](https://github.com/thevuong)! - feat: update peer dependencies and add unrs-resolver
+
+- [`04a8165`](https://github.com/codefastlabs/codefast/commit/04a8165e6ad8e7c17e715b286d3c9aed0f7dbb02) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): update packages to remove in project creation
+
+- [`9c32c5d`](https://github.com/codefastlabs/codefast/commit/9c32c5d97724d09436de51ed17a9af7af3ed55bd) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): update sorting rules for interfaces and object types
+
 ## 0.3.1-canary.8
 
 ### Patch Changes
