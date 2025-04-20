@@ -112,6 +112,10 @@ export function updatePackageJson(projectDir: string): void {
   const packageJsonPath = path.join(projectDir, "package.json");
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
+  if (packageJson.scripts && packageJson.scripts.lint === "next lint") {
+    packageJson.scripts.lint = "next lint --fix";
+  }
+
   packageJson.scripts = {
     ...packageJson.scripts,
     format: 'prettier --write "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
