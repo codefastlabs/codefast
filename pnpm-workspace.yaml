@@ -9,3 +9,4 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - simple-git-hooks
+  - unrs-resolver

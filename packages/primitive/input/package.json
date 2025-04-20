@@ -81,10 +81,10 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "@types/react": "*",
-    "@types/react-dom": "*",
-    "react": ">=19",
-    "react-dom": ">=19"
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "peerDependenciesMeta": {
     "@types/react": {
