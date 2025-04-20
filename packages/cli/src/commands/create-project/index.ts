@@ -21,6 +21,11 @@ const DEV_DEPENDENCIES = {
 };
 
 /**
+ * Packages that need to be removed from the project
+ */
+const PACKAGES_TO_REMOVE = ["@eslint/eslintrc"];
+
+/**
  * Represents an interface for reading and writing data to the console or other input/output streams.
  *
  * This interface allows interaction with standard input and output streams by reading input and writing output
@@ -55,7 +60,7 @@ function checkEnvironment(): void {
   try {
     execSync("pnpm --version", { stdio: "ignore" });
   } catch {
-    console.error("❌ PNPM chưa được cài đặt. Vui lòng cài đặt PNPM trước.");
+    console.error(`❌ PNPM chưa được cài đặt. Vui lòng cài đặt PNPM trước.`);
     process.exit(1);
   }
 }
@@ -149,7 +154,7 @@ async function getValidProjectName(initialName?: string, attempts = 0, maxAttemp
   }
 
   if (attempts >= maxAttempts - 1) {
-    throw new Error("❌ Exceeded maximum attempts to enter a valid project name.");
+    throw new Error(`❌ Exceeded maximum attempts to enter a valid project name.`);
   }
 
   console.error(`❌ ${validation.error} (${maxAttempts - attempts - 1} attempts remaining)`);
@@ -195,7 +200,7 @@ function updatePostcssConfig(projectDir: string): void {
   const postcssConfigPath = path.join(projectDir, "postcss.config.mjs");
 
   if (!fs.existsSync(postcssConfigPath)) {
-    console.warn("⚠️ postcss.config.mjs not found, skipping update.");
+    console.warn(`⚠️ postcss.config.mjs not found, skipping update.`);
 
     return;
   }
@@ -205,11 +210,11 @@ function updatePostcssConfig(projectDir: string): void {
 
   // Check if the comment already exists to avoid adding duplicates.
   if (content.includes(typeComment)) {
-    console.log("📝 postcss.config.mjs already contains type comment, no changes made.");
+    console.log(`📝 postcss.config.mjs already contains type comment, no changes made.`);
   } else {
     content = content.replace("const config = {", `${typeComment}const config = {`);
     fs.writeFileSync(postcssConfigPath, content);
-    console.log("📝 Updated postcss.config.mjs with type comment.");
+    console.log(`📝 Updated postcss.config.mjs with type comment.`);
   }
 }
 
@@ -309,13 +314,11 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @layer base {
   :root {
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+
     --input: var(--color-neutral-200);
     --border: var(--color-neutral-200);
 
@@ -440,7 +443,7 @@ function updatePackageJson(projectDir: string): void {
   };
 
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-  console.log("📝 Updated package.json");
+  console.log(`📝 Updated package.json`);
 }
 
 /**
@@ -450,7 +453,7 @@ function updatePackageJson(projectDir: string): void {
  * @returns void
  */
 function createNextProject(projectName: string): void {
-  console.log("📦 Creating Next.js project...");
+  console.log(`📦 Creating Next.js project...`);
   const flags = [
     "--ts",
     "--tailwind",
@@ -476,7 +479,7 @@ function createNextProject(projectName: string): void {
  * @returns void - Does not return a value.
  */
 function installDependencies(): void {
-  console.log("📚 Installing dependencies...");
+  console.log(`\n📚 Installing dependencies...`);
 
   // Install main dependencies
   if (MAIN_DEPENDENCIES.length > 0) {
@@ -488,6 +491,20 @@ function installDependencies(): void {
 
   if (allDevDependencies) {
     runCommand(`pnpm add -D ${allDevDependencies}`);
+  }
+}
+
+/**
+ * Removes unnecessary packages that might conflict with the project configuration
+ * or are redundant due to alternative packages being used.
+ *
+ * @returns void - Does not return a value.
+ */
+function cleanupPackages(): void {
+  console.log(`\n🧹 Cleaning up unnecessary packages...`);
+
+  if (PACKAGES_TO_REMOVE.length > 0) {
+    runCommand(`pnpm remove ${PACKAGES_TO_REMOVE.join(" ")}`);
   }
 }
 
@@ -556,6 +573,9 @@ export function createProjectCommand(program: Command): void {
 
         // Install dependencies
         installDependencies();
+
+        // Remove unwanted packages
+        cleanupPackages();
 
         // Create configuration files
         createConfigFiles(process.cwd());
