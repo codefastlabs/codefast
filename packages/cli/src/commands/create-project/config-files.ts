@@ -39,66 +39,6 @@ export function updatePostcssConfig(projectDir: string): void {
 }
 
 /**
- * Updates the scripts and hooks in the package.json file of the specified project directory.
- * Adds formatting, linting, pre-commit, and commit-msg hooks to the package.json configuration.
- *
- * @param projectDir - The path to the project directory containing the package.json file
- * @returns void
- */
-export function updatePackageJson(projectDir: string): void {
-  const packageJsonPath = path.join(projectDir, "package.json");
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-
-  packageJson.scripts = {
-    ...packageJson.scripts,
-    format: 'prettier --write "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
-    "format:check": 'prettier --check "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
-    "lint:check": "next lint --max-warnings 0",
-  };
-
-  packageJson["simple-git-hooks"] = {
-    "pre-commit": "pnpm lint-staged",
-    "commit-msg": "pnpm commitlint --edit",
-  };
-
-  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-  console.log(`📝 Updated package.json`);
-}
-
-/**
- * Creates configuration files in the specified project directory.
- *
- * @param projectDir - The absolute path to the project directory where the configuration files will be created
- *
- * @returns Nothing.
- */
-export function createConfigFiles(projectDir: string): void {
-  console.log(`\n📝 Creating configuration files...`);
-
-  // Iterate through each configuration category (linting, formatting, styles)
-  for (const [category, configs] of Object.entries(configGroups)) {
-    console.log(`\n📂 Setting up ${category} configurations:`);
-
-    for (const { path: filePath, content, description } of configs) {
-      const fullPath = path.join(projectDir, filePath);
-      const dir = path.dirname(fullPath);
-
-      // Create a directory if it doesn't exist
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-
-      // Write the configuration file and log its description
-      writeConfigFile(fullPath, content);
-
-      if (description) {
-        console.log(`  ℹ️ ${filePath}: ${description}`);
-      }
-    }
-  }
-}
-
-/**
  * Updates the layout file in a specified project directory by modifying font imports,
  * HTML tag properties, and body className to conform to the necessary changes for using `fontVariables` and
  * applying proper configurations.
@@ -158,5 +98,65 @@ import "@/app/globals.css";`;
     const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 
     console.warn(`⚠️ Failed to update src/app/layout.tsx: ${errorMessage}`);
+  }
+}
+
+/**
+ * Updates the scripts and hooks in the package.json file of the specified project directory.
+ * Adds formatting, linting, pre-commit, and commit-msg hooks to the package.json configuration.
+ *
+ * @param projectDir - The path to the project directory containing the package.json file
+ * @returns void
+ */
+export function updatePackageJson(projectDir: string): void {
+  const packageJsonPath = path.join(projectDir, "package.json");
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+
+  packageJson.scripts = {
+    ...packageJson.scripts,
+    format: 'prettier --write "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
+    "format:check": 'prettier --check "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
+    "lint:check": "next lint --max-warnings 0",
+  };
+
+  packageJson["simple-git-hooks"] = {
+    "pre-commit": "pnpm lint-staged",
+    "commit-msg": "pnpm commitlint --edit",
+  };
+
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  console.log(`📝 Updated package.json`);
+}
+
+/**
+ * Creates configuration files in the specified project directory.
+ *
+ * @param projectDir - The absolute path to the project directory where the configuration files will be created
+ *
+ * @returns Nothing.
+ */
+export function createConfigFiles(projectDir: string): void {
+  console.log(`\n📝 Creating configuration files...`);
+
+  // Iterate through each configuration category (linting, formatting, styles)
+  for (const [category, configs] of Object.entries(configGroups)) {
+    console.log(`\n📂 Setting up ${category} configurations:`);
+
+    for (const { path: filePath, content, description } of configs) {
+      const fullPath = path.join(projectDir, filePath);
+      const dir = path.dirname(fullPath);
+
+      // Create a directory if it doesn't exist
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      // Write the configuration file and log its description
+      writeConfigFile(fullPath, content);
+
+      if (description) {
+        console.log(`  ℹ️ ${filePath}: ${description}`);
+      }
+    }
   }
 }
