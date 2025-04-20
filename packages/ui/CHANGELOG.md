@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.3.1-canary.7
+
+### Patch Changes
+
+- [`d2bfdc3`](https://github.com/codefastlabs/codefast/commit/d2bfdc328205629d8810756f586e8ff3a2db8f73) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): update lint script to use autofix option
+
+- Updated dependencies [[`d2bfdc3`](https://github.com/codefastlabs/codefast/commit/d2bfdc328205629d8810756f586e8ff3a2db8f73)]:
+  - @codefast-ui/progress-circle@0.3.1-canary.7
+  - @codefast-ui/checkbox-group@0.3.1-canary.7
+  - @codefast-ui/input-number@0.3.1-canary.7
+  - @codefast-ui/input@0.3.1-canary.7
+  - @codefast/hooks@0.3.1-canary.7
+
 ## 0.3.1-canary.6
 
 ### Patch Changes
