@@ -16,7 +16,7 @@ export const DEV_DEPENDENCIES = {
 /**
  * Packages that need to be removed from the project
  */
-export const PACKAGES_TO_REMOVE = ["@eslint/eslintrc"];
+export const PACKAGES_TO_REMOVE = ["@eslint/eslintrc", "eslint-config-next"];
 
 /**
  * Define a schema for a configuration file
