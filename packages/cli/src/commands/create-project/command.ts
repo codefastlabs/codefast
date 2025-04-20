@@ -1,7 +1,12 @@
 import type { Command } from "commander";
 
 import { checkExistingProject } from "@/commands/create-project/check-existing-project";
-import { createConfigFiles, updatePackageJson, updatePostcssConfig } from "@/commands/create-project/config-files";
+import {
+  createConfigFiles,
+  updateLayoutFile,
+  updatePackageJson,
+  updatePostcssConfig,
+} from "@/commands/create-project/config-files";
 import { cleanupPackages, installDependencies } from "@/commands/create-project/dependencies";
 import { checkEnvironment } from "@/commands/create-project/environment";
 import { createNextProject } from "@/commands/create-project/next-project";
@@ -35,6 +40,9 @@ export function createProjectCommand(program: Command): void {
           process.chdir(projectName);
           console.log(`📂 Moved to ${projectName}`);
         }
+
+        // Update layout.tsx to use fontVariables
+        updateLayoutFile(process.cwd());
 
         // Edit the postcss.config.mjs file
         updatePostcssConfig(process.cwd());
