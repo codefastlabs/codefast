@@ -53,7 +53,10 @@ export const perfectionistRules: Linter.Config = {
      *
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-interfaces
      */
-    "perfectionist/sort-interfaces": ["warn", { groups: ["required-member", "optional-member"], type: "natural" }],
+    "perfectionist/sort-interfaces": [
+      "warn",
+      { groups: ["index-signature", "required-member", "optional-member"], type: "natural" },
+    ],
 
     /**
      * Enforce sorted intersection types in TypeScript.
@@ -81,7 +84,10 @@ export const perfectionistRules: Linter.Config = {
      *
      * 🔧 Fixable - https://perfectionist.dev/rules/sort-object-types
      */
-    "perfectionist/sort-object-types": ["warn", { groups: ["required-member", "optional-member"], type: "natural" }],
+    "perfectionist/sort-object-types": [
+      "warn",
+      { groups: ["index-signature", "required-member", "optional-member"], type: "natural" },
+    ],
 
     /**
      * Enforce sorted TypeScript union types.
