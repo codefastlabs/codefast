@@ -33,7 +33,7 @@ export interface ConfigFile {
 /**
  * Define configuration categories
  */
-export type ConfigCategory = "formatting" | "linting" | "styles";
+export type ConfigCategory = "deployment" | "formatting" | "linting" | "styles";
 
 /**
  * Type for the configuration groups
@@ -44,6 +44,125 @@ export type ConfigGroups = Record<ConfigCategory, ConfigFile[]>;
  * Group configurations by tool type
  */
 export const configGroups: ConfigGroups = {
+  deployment: [
+    {
+      path: ".vercelignore",
+      content: `#-------------------------------------------------------------------------------
+# Dependencies and package managers
+#-------------------------------------------------------------------------------
+
+# Node dependencies
+node_modules
+.pnpm-store
+.yarn
+
+#-------------------------------------------------------------------------------
+# Development and environment
+#-------------------------------------------------------------------------------
+
+# Environment variables (except examples)
+.env*
+!.env.example
+
+# Build artifacts
+.next
+build
+dist
+.git
+.github
+.turbo
+.changeset
+.eslintcache
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+
+#-------------------------------------------------------------------------------
+# Testing
+#-------------------------------------------------------------------------------
+
+# Test coverage reports and config snapshots
+coverage
+*.test.*
+*.e2e.*
+
+#-------------------------------------------------------------------------------
+# Editor and IDE configuration
+#-------------------------------------------------------------------------------
+
+# IDE project files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+#-------------------------------------------------------------------------------
+# Operating system files
+#-------------------------------------------------------------------------------
+
+# System metadata files
+.DS_Store
+Thumbs.db
+
+#-------------------------------------------------------------------------------
+# Deployment
+#-------------------------------------------------------------------------------
+
+# Vercel deployment configuration
+.vercel
+`,
+      description: "Ignore files that should not be deployed to Vercel",
+    },
+  ],
+  formatting: [
+    {
+      path: "prettier.config.mjs",
+      content: `/**
+ * @see https://prettier.io/docs/en/configuration.html
+ * @type {import('prettier').Config}
+ */
+const config = {
+  plugins: ["prettier-plugin-packagejson", "prettier-plugin-tailwindcss"],
+  printWidth: 100,
+  tailwindAttributes: ["classNames"],
+  tailwindFunctions: ["tv"],
+};
+
+export default config;
+`,
+      description: "Prettier configuration for source code formatting",
+    },
+    {
+      path: ".editorconfig",
+      content: `# https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+insert_final_newline = true
+
+end_of_line = lf
+indent_style = space
+indent_size = 2
+max_line_length = 120
+
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+
+[{go.mod,go.sum,*.go}]
+indent_style = tab
+
+[*.rs]
+# Keep in sync with rustfmt
+indent_size = 4
+`,
+      description: "Editor configuration for source code formatting",
+    },
+  ],
   linting: [
     {
       path: "commitlint.config.mjs",
@@ -102,25 +221,6 @@ const config = {
 export default config;
 `,
       description: "Configure lint-staged for pre-commit checks",
-    },
-  ],
-  formatting: [
-    {
-      path: "prettier.config.mjs",
-      content: `/**
- * @see https://prettier.io/docs/en/configuration.html
- * @type {import('prettier').Config}
- */
-const config = {
-  plugins: ["prettier-plugin-packagejson", "prettier-plugin-tailwindcss"],
-  printWidth: 100,
-  tailwindAttributes: ["classNames"],
-  tailwindFunctions: ["tv"],
-};
-
-export default config;
-`,
-      description: "Prettier configuration for source code formatting",
     },
   ],
   styles: [
