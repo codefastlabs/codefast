@@ -197,6 +197,7 @@ export default eslintConfig;
     {
       path: "lint-staged.config.mjs",
       content: `import { relative } from "node:path";
+
 /**
  * Builds an ESLint command with the given filenames.
  *
