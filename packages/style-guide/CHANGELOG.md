@@ -1,5 +1,17 @@
 # @codefast/style-guide
 
+## 0.3.1-canary.6
+
+### Patch Changes
+
+- [`ed2ba2c`](https://github.com/codefastlabs/codefast/commit/ed2ba2cd81cfbf5764fe4631b9de9a5dcaa6ddfa) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add cleanup step to remove unnecessary packages
+
+- [`ee7c42f`](https://github.com/codefastlabs/codefast/commit/ee7c42f2ad157288c11e2cfbc2d2dbb52be8a6b5) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): update layout.tsx with fontVariables support
+
+- [`53b416f`](https://github.com/codefastlabs/codefast/commit/53b416f7cb45c7d6d5834aa853c59c38ca1fbba8) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): modularize project creation functionalities
+
+- [`24a767b`](https://github.com/codefastlabs/codefast/commit/24a767b8be3bb0cbe63a3ab3b13ab64130341218) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): improve config file handling in project setup
+
 ## 0.3.1-canary.5
 
 ### Patch Changes
