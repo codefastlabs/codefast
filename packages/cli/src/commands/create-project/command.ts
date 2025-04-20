@@ -1,0 +1,84 @@
+import type { Command } from "commander";
+
+import path from "node:path";
+
+import { checkExistingProject } from "@/commands/create-project/check-existing-project";
+import { createConfigFiles, updatePackageJson, updatePostcssConfig } from "@/commands/create-project/config-files";
+import { cleanupPackages, installDependencies } from "@/commands/create-project/dependencies";
+import { checkEnvironment } from "@/commands/create-project/environment";
+import { createNextProject } from "@/commands/create-project/next-project";
+import { rl, runCommand } from "@/commands/create-project/utils";
+
+/**
+ * Sets up the "create-project" command in the provided CLI program. This command allows users
+ * to create a new Next.js project with a recommended configuration.
+ *
+ * The "create-project" command includes features such as scaffolding a Next.js project, applying
+ * TypeScript, TailwindCSS, ESLint, Prettier, Git hooks, and other tools, ensuring a streamlined
+ * development experience.
+ *
+ * @param program - The CLI program instance in which the command will be registered.
+ */
+export function createProjectCommand(program: Command): void {
+  program
+    .command("create-project [name]")
+    .description("Create a new Next.js project with recommended setup")
+    .action(async (projectNameArg) => {
+      try {
+        // Environment check
+        checkEnvironment();
+
+        // Check if package.json exists and get the project name
+        const { projectName, packageJsonExists } = await checkExistingProject(projectNameArg);
+
+        if (!packageJsonExists) {
+          console.log(`\n🚀 Starting project creation for ${projectName}...\n`);
+          createNextProject(projectName);
+          process.chdir(projectName);
+          console.log(`📂 Moved to ${projectName}`);
+        }
+
+        // Edit the postcss.config.mjs file
+        updatePostcssConfig(process.cwd());
+
+        // Install dependencies
+        installDependencies();
+
+        // Remove unwanted packages
+        cleanupPackages();
+
+        // Create configuration files
+        createConfigFiles(process.cwd());
+
+        // Update package.json
+        updatePackageJson(process.cwd());
+
+        // Enable git hooks
+        console.log(`\n🔄 Activating git hooks...`);
+        runCommand("pnpm simple-git-hooks");
+
+        // Run Prettier to format the file
+        console.log(`\n📝 Formatting files with Prettier...`);
+        runCommand("pnpm format");
+
+        // Completion notice
+        console.log(`\n✅ Project created successfully!`);
+        console.log(`- Project: ${projectName}`);
+        console.log("- Next.js with TypeScript");
+        console.log("- TailwindCSS and @codefast/ui");
+        console.log("- ESLint, Prettier, Commitlint, and Git Hooks");
+        console.log("- Lint-staged for pre-commit checks");
+        console.log(`\n📁 Project directory: ${path.resolve(process.cwd())}`);
+        console.log(`\n🚀 To start development:`);
+        console.log(`cd ${projectName} && pnpm dev`);
+
+        rl.close();
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+        console.error(`\n❌ An error occurred: ${errorMessage}`);
+        rl.close();
+        process.exit(1);
+      }
+    });
+}
