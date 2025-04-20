@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { configFiles } from "@/commands/create-project/constants";
+import { configGroups } from "@/commands/create-project/constants";
 import { writeConfigFile } from "@/commands/create-project/utils";
 
 /**
@@ -75,14 +75,25 @@ export function updatePackageJson(projectDir: string): void {
 export function createConfigFiles(projectDir: string): void {
   console.log(`\n📝 Creating configuration files...`);
 
-  for (const [filePath, content] of Object.entries(configFiles)) {
-    const fullPath = path.join(projectDir, filePath);
-    const dir = path.dirname(fullPath);
+  // Iterate through each configuration category (linting, formatting, styles)
+  for (const [category, configs] of Object.entries(configGroups)) {
+    console.log(`\n📂 Setting up ${category} configurations:`);
 
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    for (const { path: filePath, content, description } of configs) {
+      const fullPath = path.join(projectDir, filePath);
+      const dir = path.dirname(fullPath);
+
+      // Create a directory if it doesn't exist
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      // Write the configuration file and log its description
+      writeConfigFile(fullPath, content);
+
+      if (description) {
+        console.log(`  ℹ️ ${filePath}: ${description}`);
+      }
     }
-
-    writeConfigFile(fullPath, content);
   }
 }
