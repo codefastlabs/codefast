@@ -1,7 +1,5 @@
 import type { Command } from "commander";
 
-import path from "node:path";
-
 import { checkExistingProject } from "@/commands/create-project/check-existing-project";
 import { createConfigFiles, updatePackageJson, updatePostcssConfig } from "@/commands/create-project/config-files";
 import { cleanupPackages, installDependencies } from "@/commands/create-project/dependencies";
@@ -25,7 +23,7 @@ export function createProjectCommand(program: Command): void {
     .description("Create a new Next.js project with recommended setup")
     .action(async (projectNameArg) => {
       try {
-        // Environment check
+        // Check environment (PNPM, write permissions)
         checkEnvironment();
 
         // Check if package.json exists and get the project name
@@ -62,23 +60,23 @@ export function createProjectCommand(program: Command): void {
         runCommand("pnpm format");
 
         // Completion notice
-        console.log(`\n✅ Project created successfully!`);
+        console.log(`\n✅ Project ${packageJsonExists ? "configured" : "created"} successfully!`);
         console.log(`- Project: ${projectName}`);
         console.log("- Next.js with TypeScript");
         console.log("- TailwindCSS and @codefast/ui");
         console.log("- ESLint, Prettier, Commitlint, and Git Hooks");
         console.log("- Lint-staged for pre-commit checks");
-        console.log(`\n📁 Project directory: ${path.resolve(process.cwd())}`);
+        console.log(`\n📁 Project directory: ${process.cwd()}`);
         console.log(`\n🚀 To start development:`);
         console.log(`cd ${projectName} && pnpm dev`);
-
-        rl.close();
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 
         console.error(`\n❌ An error occurred: ${errorMessage}`);
-        rl.close();
         process.exit(1);
+      } finally {
+        // Close readline interface
+        rl.close();
       }
     });
 }
