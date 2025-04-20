@@ -112,15 +112,18 @@ export function updatePackageJson(projectDir: string): void {
   const packageJsonPath = path.join(projectDir, "package.json");
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
-  if (packageJson.scripts && packageJson.scripts.lint === "next lint") {
-    packageJson.scripts.lint = "next lint --fix";
-  }
-
   packageJson.scripts = {
     ...packageJson.scripts,
+    "deploy:preview": "vercel deploy --archive=tgz",
+    "deploy:prod": "vercel deploy --archive=tgz --prod",
     format: 'prettier --write "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
     "format:check": 'prettier --check "**/*.{js,mjs,jsx,ts,tsx,json,css,md,mdx}"',
+    lint: "next lint --fix --max-warnings 0",
     "lint:check": "next lint --max-warnings 0",
+    "package:install": "pnpm install",
+    "package:outdated": "pnpm outdated",
+    "package:upgrade": "pnpm update --latest",
+    preview: "pnpm build && pnpm start",
   };
 
   packageJson["simple-git-hooks"] = {
