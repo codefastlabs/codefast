@@ -218,21 +218,3 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
     },
   ],
 };
-
-/**
- * Retrieve all configuration files from all groups.
- *
- * @returns Array containing all configuration files from all groups
- */
-export function getAllConfigFiles(): ConfigFile[] {
-  return Object.values(configGroups).flat();
-}
-
-/**
- * Convert all configuration files to Record\<string, string\> format for backward compatibility.
- *
- * @returns a Record with file paths as keys and file contents as values
- */
-export const configFiles: Record<string, string> = Object.fromEntries(
-  getAllConfigFiles().map(({ path, content }) => [path, content]),
-);
