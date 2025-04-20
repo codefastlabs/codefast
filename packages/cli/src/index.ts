@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 
-import { createProjectCommand } from "@/commands/create-project";
+import { createProjectCommand } from "@/commands/create-project/command";
 import { createUpdateExportsCommand } from "@/commands/update-exports";
 import { getPackageVersion } from "@/lib/package-info";
 
