@@ -57,6 +57,7 @@ const config = {
     "body-max-line-length": [2, "always", 350],
   },
 };
+
 export default config;
 `,
       description: "Commitlint configuration",
@@ -69,6 +70,7 @@ export default config;
  * @type {import('eslint').Linter.Config[]}
  */
 const eslintConfig = [...config];
+
 export default eslintConfig;
 `,
       description: "ESLint configuration for the project",
@@ -87,6 +89,7 @@ function buildEslintCommand(filenames) {
   return \`next lint --fix --max-warnings 0 --file \${filenames.map((file) => relative(import.meta.dirname, file)).
     join(" --file ")}\`;
 }
+
 /**
  * @see https://www.npmjs.com/package/lint-staged
  * @type {import('lint-staged').Configuration}
@@ -95,6 +98,7 @@ const config = {
   "*.{js,mjs,jsx,ts,tsx}": [buildEslintCommand, "prettier --list-different --write"],
   "*.{json,css,md,mdx}": ["prettier --list-different --write"],
 };
+
 export default config;
 `,
       description: "Configure lint-staged for pre-commit checks",
@@ -113,6 +117,7 @@ const config = {
   tailwindAttributes: ["classNames"],
   tailwindFunctions: ["tv"],
 };
+
 export default config;
 `,
       description: "Prettier configuration for source code formatting",
@@ -123,14 +128,17 @@ export default config;
       path: "src/lib/fonts.ts",
       content: `import { cn } from "@codefast/ui";
 import { Geist, Geist_Mono as GeistMono } from "next/font/google";
+
 const fontGeistSans = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
 });
+
 const fontGeistMono = GeistMono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
 });
+
 export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
 `,
       description: "Font configuration for the application",
@@ -138,9 +146,13 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
     {
       path: "src/app/globals.css",
       content: `@import "tailwindcss";
+
 @import "@codefast/ui/styles.css";
+
 @source '../../node_modules/@codefast/ui';
+
 @custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --font-sans: var(--font-geist-sans);
