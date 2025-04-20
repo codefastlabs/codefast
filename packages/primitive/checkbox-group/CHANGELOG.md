@@ -1,5 +1,11 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.1-canary.8
+
+### Patch Changes
+
+- [`bcf67ce`](https://github.com/codefastlabs/codefast/commit/bcf67ce958af5bbb81a031dd3f17a5b5a3f42595) Thanks [@thevuong](https://github.com/thevuong)! - changeset
+
 ## 0.3.1-canary.7
 
 ### Patch Changes
