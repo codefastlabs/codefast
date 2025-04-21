@@ -1,5 +1,15 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.1-canary.10
+
+### Patch Changes
+
+- [`377ffb7`](https://github.com/codefastlabs/codefast/commit/377ffb7395bee448703d490ecf461c218df90d97) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance project setup with new dependencies and improved formatting scripts
+
+- [`d3f7fd0`](https://github.com/codefastlabs/codefast/commit/d3f7fd09976bbda34903ea376c58c590900aeef0) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): correct dark mode CSS selector in constants
+
+- [`c57b54a`](https://github.com/codefastlabs/codefast/commit/c57b54a234a9a07dfbe800664126b8eb405f44c4) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add lucide-react to default project dependencies
+
 ## 0.3.1-canary.9
 
 ### Patch Changes
