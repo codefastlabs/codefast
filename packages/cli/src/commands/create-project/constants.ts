@@ -170,6 +170,25 @@ indent_size = 4
 `,
       description: "Editor configuration for source code formatting",
     },
+    {
+      path: ".prettierignore",
+      content: `# changesets
+.changeset
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+src/app/globals.css
+`,
+      description: "",
+    },
   ],
   linting: [
     {
