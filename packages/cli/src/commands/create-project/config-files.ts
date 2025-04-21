@@ -66,6 +66,7 @@ export function updateLayoutFile(projectDir: string): void {
 
   // Replace font imports and definitions with fontVariables import
   const newImports = `import type { Metadata } from "next";
+import type { JSX, ReactNode } from "react";
 
 import { cn } from "@codefast/ui";
 
@@ -78,6 +79,12 @@ import "@/app/globals.css";`;
   content = content.replace(
     /import\s+type\s+{[^}]+}\s+from\s+["']next["'];\s*import\s+["']\.\/globals\.css["'];\s*/,
     newImports,
+  );
+
+  // Update React.ReactNode to ReactNode and add the return type to RootLayout
+  content = content.replace(
+    /export default function RootLayout\({\s*children,\s*}\s*:\s*Readonly<{\s*children:\s*React\.ReactNode;\s*}>\)\s*{/,
+    `export default function RootLayout({ children }: Readonly<{ children: ReactNode }>): JSX.Element {`,
   );
 
   // Update the HTML tag to include className and remove className from the BODY
@@ -93,7 +100,9 @@ import "@/app/globals.css";`;
 
   try {
     fs.writeFileSync(layoutPath, content);
-    console.log(`📝 Updated src/app/layout.tsx to use fontVariables in html tag and removed className from body`);
+    console.log(
+      `📝 Updated src/app/layout.tsx to use fontVariables in html tag, removed className from body, modified ReactNode import, and added return type to RootLayout`,
+    );
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 
