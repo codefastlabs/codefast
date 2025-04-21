@@ -185,6 +185,58 @@ export function updateNextConfig(projectDir: string): void {
  *
  * @returns Nothing.
  */
+
+/**
+ * Updates the page.tsx file in a specified project directory by adding JSX.Element return type to the Home component.
+ *
+ * @param projectDir - The root directory of the project where the page.tsx file resides.
+ * @returns void - This function does not return a value.
+ */
+export function updatePageFile(projectDir: string): void {
+  const pagePath = path.join(projectDir, "src/app/page.tsx");
+
+  if (!fs.existsSync(pagePath)) {
+    console.warn(`⚠️ src/app/page.tsx not found, skipping update.`);
+
+    return;
+  }
+
+  let content = fs.readFileSync(pagePath, "utf8");
+
+  // Check if the file already has a JSX.Element return type
+  if (content.includes("): JSX.Element")) {
+    console.log(`📝 src/app/page.tsx already has JSX.Element return type, no changes made.`);
+
+    return;
+  }
+
+  // Add JSX import if not present
+  if (!content.includes("import type { JSX }")) {
+    if (content.includes("import type {")) {
+      // Add JSX to existing type import
+      content = content.replace(/import type {(?<types>[^}]+)} from "react";/, 'import type {$1, JSX } from "react";');
+    } else if (content.includes("import {")) {
+      // Add type import before the first import
+      content = content.replace(/import {/, 'import type { JSX } from "react";\n\nimport {');
+    } else {
+      // Add type import at the beginning of the file
+      content = `import type { JSX } from "react";\n\n${content}`;
+    }
+  }
+
+  // Add JSX.Element return type to the Home component
+  content = content.replace(/export default function Home\(\) {/, "export default function Home(): JSX.Element {");
+
+  try {
+    fs.writeFileSync(pagePath, content);
+    console.log(`📝 Updated src/app/page.tsx to add JSX.Element return type to Home component`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    console.warn(`⚠️ Failed to update src/app/page.tsx: ${errorMessage}`);
+  }
+}
+
 export function createConfigFiles(projectDir: string): void {
   console.log(`\n📝 Creating configuration files...`);
 

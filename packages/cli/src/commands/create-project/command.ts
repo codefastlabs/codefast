@@ -6,6 +6,7 @@ import {
   updateLayoutFile,
   updateNextConfig,
   updatePackageJson,
+  updatePageFile,
   updatePostcssConfig,
 } from "@/commands/create-project/config-files";
 import { cleanupPackages, installDependencies } from "@/commands/create-project/dependencies";
@@ -45,6 +46,9 @@ export function createProjectCommand(program: Command): void {
         // Update layout.tsx to use fontVariables
         updateLayoutFile(process.cwd());
 
+        // Update page.tsx to add JSX.Element return types
+        updatePageFile(process.cwd());
+
         // Edit the postcss.config.mjs file
         updatePostcssConfig(process.cwd());
 
@@ -70,6 +74,10 @@ export function createProjectCommand(program: Command): void {
         // Run Prettier to format the file
         console.log(`\n📝 Formatting files with Prettier...`);
         runCommand("pnpm format");
+
+        // Run ESLint
+        console.log(`\n🔍 Running ESLint to check code style...`);
+        runCommand("pnpm lint");
 
         // Completion notice
         console.log(`\n✅ Project ${packageJsonExists ? "configured" : "created"} successfully!`);
