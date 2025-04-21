@@ -1,5 +1,17 @@
 # @codefast-ui/progress-circle
 
+## 0.3.1-canary.12
+
+### Patch Changes
+
+- [`0841266`](https://github.com/codefastlabs/codefast/commit/0841266536570b017099fd32b6f0b732cc562932) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): remove redundant default action from CLI
+
+- [`5d33972`](https://github.com/codefastlabs/codefast/commit/5d339720048479b37ce3ded253d5182364df6762) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update styles and constants for project creation
+
+- [`109a2a5`](https://github.com/codefastlabs/codefast/commit/109a2a5cf4a205d4c5ceb5c3ac7afa95ca69a51d) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): improve ReactNode handling and RootLayout typings
+
+- [`e873ddc`](https://github.com/codefastlabs/codefast/commit/e873ddcdabb110655e39aa7a69a0850c9050186e) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): centralize file operations and error handling
+
 ## 0.3.1-canary.11
 
 ### Patch Changes
