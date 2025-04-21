@@ -299,7 +299,7 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
     --chart-4: var(--color-amber-600);
     --chart-5: var(--color-amber-500);
   }
-  @variant dark {
+  .dark {
     --input: var(--color-neutral-700);
     --border: --alpha(var(--color-neutral-700) / 50%);
     --ring: var(--color-neutral-500);
