@@ -185,7 +185,6 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
-src/app/globals.css
 `,
       description: "",
     },
@@ -285,6 +284,7 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
   :root {
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
+
     --input: var(--color-neutral-200);
     --border: var(--color-neutral-200);
     --ring: var(--color-neutral-400);
@@ -318,6 +318,7 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
     --chart-4: var(--color-amber-600);
     --chart-5: var(--color-amber-500);
   }
+
   .dark {
     --input: var(--color-neutral-700);
     --border: --alpha(var(--color-neutral-700) / 50%);
