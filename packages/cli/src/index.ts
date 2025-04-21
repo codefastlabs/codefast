@@ -17,13 +17,6 @@ function main(): void {
   createUpdateExportsCommand(program);
   createProjectCommand(program);
 
-  program.action(() => {
-    console.log('Use "codefast create-project" to create a new Next.js project.');
-    console.log('Use "codefast update-exports" to update exports.');
-    console.log('Run "codefast --help" to see all available commands.');
-    program.help();
-  });
-
   program.parse(process.argv);
 }
 
