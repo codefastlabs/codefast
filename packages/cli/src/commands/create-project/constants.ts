@@ -8,6 +8,7 @@ export const MAIN_DEPENDENCIES = [
   "react-hook-form",
   "next-themes",
   "date-fns",
+  "lucide-react",
 ];
 
 /**
