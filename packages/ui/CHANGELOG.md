@@ -1,5 +1,22 @@
 # @codefast/ui
 
+## 0.3.1-canary.11
+
+### Patch Changes
+
+- [`6b32857`](https://github.com/codefastlabs/codefast/commit/6b32857abb5960c780a46a642b114a2f459cbb4c) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add support for optimizePackageImports in Next.js config
+
+- [`b33cd3c`](https://github.com/codefastlabs/codefast/commit/b33cd3c893c16861d70e25476973a2b6973a3736) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance project setup with Prettier ignore support
+
+- [`6acb04b`](https://github.com/codefastlabs/codefast/commit/6acb04b3d8efaeb17a0a4944652f76b21b59ffcb) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): adjust comment formatting in config-files.ts
+
+- Updated dependencies [[`6b32857`](https://github.com/codefastlabs/codefast/commit/6b32857abb5960c780a46a642b114a2f459cbb4c), [`b33cd3c`](https://github.com/codefastlabs/codefast/commit/b33cd3c893c16861d70e25476973a2b6973a3736), [`6acb04b`](https://github.com/codefastlabs/codefast/commit/6acb04b3d8efaeb17a0a4944652f76b21b59ffcb)]:
+  - @codefast-ui/progress-circle@0.3.1-canary.11
+  - @codefast-ui/checkbox-group@0.3.1-canary.11
+  - @codefast-ui/input-number@0.3.1-canary.11
+  - @codefast-ui/input@0.3.1-canary.11
+  - @codefast/hooks@0.3.1-canary.11
+
 ## 0.3.1-canary.10
 
 ### Patch Changes
