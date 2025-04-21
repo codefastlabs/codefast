@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 
 import { DEV_DEPENDENCIES, MAIN_DEPENDENCIES, PACKAGES_TO_REMOVE } from "@/commands/create-project/constants";
-import { runCommand } from "@/commands/create-project/utils";
+import { getErrorMessage, runCommand } from "@/commands/create-project/utils";
 
 /**
  * Installs project dependencies and development tools required for the application.
@@ -51,10 +51,8 @@ export function cleanupPackages(): void {
 
   try {
     packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-
-    console.warn(`⚠️ Error reading package.json: ${errorMessage}, skipping cleanup.`);
+  } catch (error) {
+    console.warn(`⚠️ Error reading package.json: ${getErrorMessage(error)}, skipping cleanup.`);
 
     return;
   }

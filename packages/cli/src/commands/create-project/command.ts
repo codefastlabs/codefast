@@ -12,7 +12,7 @@ import {
 import { cleanupPackages, installDependencies } from "@/commands/create-project/dependencies";
 import { checkEnvironment } from "@/commands/create-project/environment";
 import { createNextProject } from "@/commands/create-project/next-project";
-import { rl, runCommand } from "@/commands/create-project/utils";
+import { getErrorMessage, rl, runCommand } from "@/commands/create-project/utils";
 
 /**
  * Sets up the "create-project" command in the provided CLI program. This command allows users
@@ -89,10 +89,8 @@ export function createProjectCommand(program: Command): void {
         console.log(`\n📁 Project directory: ${process.cwd()}`);
         console.log(`\n🚀 To start development:`);
         console.log(`cd ${projectName} && pnpm dev`);
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-
-        console.error(`\n❌ An error occurred: ${errorMessage}`);
+      } catch (error) {
+        console.error(`\n❌ An error occurred: ${getErrorMessage(error)}`);
         process.exit(1);
       } finally {
         // Close readline interface
