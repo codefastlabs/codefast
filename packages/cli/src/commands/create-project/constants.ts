@@ -210,6 +210,7 @@ export default config;
     {
       path: "eslint.config.mjs",
       content: `import { config } from "@codefast/eslint-config/next";
+
 /**
  * @see https://eslint.org/docs/latest/use/configure/configuration-files
  * @type {import('eslint').Linter.Config[]}
