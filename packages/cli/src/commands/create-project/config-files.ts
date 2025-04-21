@@ -136,7 +136,7 @@ export function updatePackageJson(projectDir: string): void {
 }
 
 /**
- * Updates the Next.js configuration file to add experimental optimizePackageImports for @codefast/ui.
+ * Updates the Next.js configuration file to add experimental optimizePackageImports for `@codefast/ui`.
  *
  * @param projectDir - The root directory of the project where the next.config.ts file is located
  * @returns void
