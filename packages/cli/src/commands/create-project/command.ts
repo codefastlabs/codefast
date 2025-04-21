@@ -4,6 +4,7 @@ import { checkExistingProject } from "@/commands/create-project/check-existing-p
 import {
   createConfigFiles,
   updateLayoutFile,
+  updateNextConfig,
   updatePackageJson,
   updatePostcssConfig,
 } from "@/commands/create-project/config-files";
@@ -55,6 +56,9 @@ export function createProjectCommand(program: Command): void {
 
         // Create configuration files
         createConfigFiles(process.cwd());
+
+        // Update next.config.ts with experimental configuration
+        updateNextConfig(process.cwd());
 
         // Update package.json
         updatePackageJson(process.cwd());
