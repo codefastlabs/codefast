@@ -38,13 +38,68 @@ export function runCommand(command: string): void {
 }
 
 /**
- * Writes configuration content to a specified file.
- *
- * @param filePath - The path of the file where the configuration content should be written.
- * @param content - The configuration content to write into the file.
- * @returns void
+ * File operation and validation utilities for configuration management
  */
-export function writeConfigFile(filePath: string, content: string): void {
-  fs.writeFileSync(filePath, content);
-  console.log(`📝 Created ${filePath}`);
+export const FileUtils = {
+  /**
+   * Checks if a file exists at the specified path
+   */
+  exists(filePath: string): boolean {
+    return fs.existsSync(filePath);
+  },
+
+  /**
+   * Reads a file's content with error handling
+   */
+  readFile(filePath: string): string {
+    try {
+      return fs.readFileSync(filePath, "utf8");
+    } catch (error) {
+      throw new Error(`Failed to read file ${filePath}: ${getErrorMessage(error)}`);
+    }
+  },
+
+  /**
+   * Writes content to a file with error handling
+   */
+  writeFile(filePath: string, content: string): void {
+    try {
+      fs.writeFileSync(filePath, content);
+    } catch (error) {
+      throw new Error(`Failed to write to file ${filePath}: ${getErrorMessage(error)}`);
+    }
+  },
+
+  /**
+   * Writes configuration content to a specified file.
+   *
+   * @param filePath - The path of the file where the configuration content should be written.
+   * @param content - The configuration content to write into the file.
+   * @returns void
+   */
+  writeConfigFile(filePath: string, content: string): void {
+    fs.writeFileSync(filePath, content);
+    console.log(`📝 Created ${filePath}`);
+  },
+
+  /**
+   * Validates a file path and logs appropriate warning if not found
+   * @returns true if a file exists, false otherwise
+   */
+  validatePath(filePath: string, filename: string): boolean {
+    if (!this.exists(filePath)) {
+      console.warn(`⚠️ ${filename} not found, skipping update.`);
+
+      return false;
+    }
+
+    return true;
+  },
+};
+
+/**
+ * Extracts an error message from any error type
+ */
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Unknown error occurred";
 }
