@@ -1,7 +1,14 @@
 /**
  * Main dependencies need to be installed
  */
-export const MAIN_DEPENDENCIES = ["@codefast/ui", "@codefast/hooks"];
+export const MAIN_DEPENDENCIES = [
+  "@codefast/ui",
+  "@codefast/hooks",
+  "recharts",
+  "react-hook-form",
+  "next-themes",
+  "date-fns",
+];
 
 /**
  * Development dependencies are grouped by function.
