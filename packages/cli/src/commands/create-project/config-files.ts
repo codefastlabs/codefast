@@ -136,6 +136,49 @@ export function updatePackageJson(projectDir: string): void {
 }
 
 /**
+ * Updates the Next.js configuration file to add experimental optimizePackageImports for @codefast/ui.
+ *
+ * @param projectDir - The root directory of the project where the next.config.ts file is located
+ * @returns void
+ */
+export function updateNextConfig(projectDir: string): void {
+  const nextConfigPath = path.join(projectDir, "next.config.ts");
+
+  if (!fs.existsSync(nextConfigPath)) {
+    console.warn(`⚠️ next.config.ts not found, skipping update.`);
+
+    return;
+  }
+
+  let content = fs.readFileSync(nextConfigPath, "utf8");
+
+  // Check if the experimental configuration already exists
+  if (content.includes('optimizePackageImports: ["@codefast/ui"]')) {
+    console.log(`📝 next.config.ts already contains optimizePackageImports configuration, no changes made.`);
+
+    return;
+  }
+
+  // Add the experimental configuration
+  const configPattern = /const nextConfig: NextConfig = \{/;
+  const experimentalConfig = `const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: ["@codefast/ui"],
+  },`;
+
+  content = content.replace(configPattern, experimentalConfig);
+
+  try {
+    fs.writeFileSync(nextConfigPath, content);
+    console.log(`📝 Updated next.config.ts with optimizePackageImports configuration.`);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    console.warn(`⚠️ Failed to update next.config.ts: ${errorMessage}`);
+  }
+}
+
+/**
  * Creates configuration files in the specified project directory.
  *
  * @param projectDir - The absolute path to the project directory where the configuration files will be created
