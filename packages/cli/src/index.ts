@@ -3,7 +3,7 @@
 import { Command } from "commander";
 
 import { createProjectCommand } from "@/commands/create-project/command";
-import { createUpdateExportsCommand } from "@/commands/update-exports";
+import { updateExportsCommand } from "@/commands/update-exports/command";
 import { getPackageVersion } from "@/lib/package-info";
 
 function main(): void {
@@ -12,12 +12,10 @@ function main(): void {
   program
     .name("codefast")
     .description("CodeFast CLI - A development toolkit for CodeFast.")
-    .version(getPackageVersion(), "-v, --version", "display CLI version");
-
-  createUpdateExportsCommand(program);
-  createProjectCommand(program);
-
-  program.parse(process.argv);
+    .version(getPackageVersion(), "-v, --version", "display CLI version")
+    .addCommand(updateExportsCommand)
+    .addCommand(createProjectCommand)
+    .parse(process.argv);
 }
 
 main();
