@@ -115,6 +115,7 @@ export function updatePackageJson(projectDir: string): void {
 
     packageJson.scripts = {
       ...packageJson.scripts,
+      "check-types": "tsc --noEmit",
       "deploy:preview": "vercel deploy --archive=tgz",
       "deploy:prod": "vercel deploy --archive=tgz --prod",
       format: "prettier --write --ignore-unknown .",
