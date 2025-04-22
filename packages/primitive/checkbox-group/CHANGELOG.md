@@ -1,5 +1,17 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.1-canary.13
+
+### Patch Changes
+
+- [`cd28e81`](https://github.com/codefastlabs/codefast/commit/cd28e81b34be31b1c73abbdaabe47e27952bd5df) Thanks [@thevuong](https://github.com/thevuong)! - feat: add eslint-import-resolver-typescript dependency and format import rules
+
+- [`1990579`](https://github.com/codefastlabs/codefast/commit/19905793ee89b2223402592c753e35e81ed46182) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update package dependencies
+
+- [`40d05e8`](https://github.com/codefastlabs/codefast/commit/40d05e8b33a0189ce4f7d942e18b6f43daa18756) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): simplify command registration and improve import statements
+
+- [`952e0a3`](https://github.com/codefastlabs/codefast/commit/952e0a349defcda5c62409c39b751ebd30e78c52) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add type-checking script to generated projects
+
 ## 0.3.1-canary.12
 
 ### Patch Changes
