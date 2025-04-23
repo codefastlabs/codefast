@@ -2,7 +2,9 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
