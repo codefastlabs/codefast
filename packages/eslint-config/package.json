@@ -16,42 +16,42 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "default": "./dist/esm/index.js",
+        "types": "./dist/types/index.d.ts"
       },
       "require": {
-        "types": "./dist/types/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/types/index.d.cts"
       }
     },
     "./library": {
       "import": {
-        "types": "./dist/types/library.d.ts",
-        "default": "./dist/esm/library.js"
+        "default": "./dist/esm/library.js",
+        "types": "./dist/types/library.d.ts"
       },
       "require": {
-        "types": "./dist/types/library.d.ts",
-        "default": "./dist/cjs/library.cjs"
+        "default": "./dist/cjs/library.cjs",
+        "types": "./dist/types/library.d.ts"
       }
     },
     "./next": {
       "import": {
-        "types": "./dist/types/next.d.ts",
-        "default": "./dist/esm/next.js"
+        "default": "./dist/esm/next.js",
+        "types": "./dist/types/next.d.ts"
       },
       "require": {
-        "types": "./dist/types/next.d.ts",
-        "default": "./dist/cjs/next.cjs"
+        "default": "./dist/cjs/next.cjs",
+        "types": "./dist/types/next.d.ts"
       }
     },
     "./react": {
       "import": {
-        "types": "./dist/types/react.d.ts",
-        "default": "./dist/esm/react.js"
+        "default": "./dist/esm/react.js",
+        "types": "./dist/types/react.d.ts"
       },
       "require": {
-        "types": "./dist/types/react.d.ts",
-        "default": "./dist/cjs/react.cjs"
+        "default": "./dist/cjs/react.cjs",
+        "types": "./dist/types/react.d.ts"
       }
     }
   },
