@@ -34,7 +34,9 @@
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "glob": "^11.0.1",
+    "inversify": "^7.5.1",
     "lodash-es": "^4.17.21",
+    "reflect-metadata": "^0.2.2",
     "ts-morph": "^25.0.1",
     "zod": "4.0.0-beta.20250414T061543"
   },
