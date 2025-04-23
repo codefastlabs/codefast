@@ -8,7 +8,7 @@ import type { Project } from "@/domain/entities/project";
 import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.repository";
 import type { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
 
-import { PackageJson, PackageJsonSchema } from "@/domain/entities/package-config";
+import { PackageJson, packageJsonSchema } from "@/domain/entities/package-config";
 import { ProjectSchema } from "@/domain/entities/project";
 import { TYPES } from "@/ioc/types";
 
@@ -27,7 +27,11 @@ export class FileSystemProjectRepository implements ProjectRepositoryInterface {
     const packageJsonPath = path.join(fullPath, "package.json");
     const packageJsonExists = this.fileSystemPort.exists(packageJsonPath);
 
-    return { name: projectName, directory: fullPath, packageJsonExists };
+    return {
+      name: projectName,
+      directory: fullPath,
+      packageJsonExists,
+    };
   }
 
   createNextProject(projectName: string): void {
@@ -161,13 +165,7 @@ import "@/app/globals.css";`;
     let packageJson: PackageJson | undefined;
 
     try {
-      const result = PackageJsonSchema.safeParse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
-
-      if (!result.success) {
-        return;
-      }
-
-      packageJson = result.data;
+      packageJson = packageJsonSchema.parse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
     } catch {
       console.warn(`Failed to parse ${packageJsonPath}, skipping update.`);
 
