@@ -2,8 +2,8 @@
 
 import { Command } from "commander";
 
-import { createProjectCommand } from "@/commands/create-project/command";
-import { updateExportsCommand } from "@/commands/update-exports/command";
+import { createProjectCommand } from "@/commands/create-project";
+import { updateExportsCommand } from "@/commands/update-exports";
 import { getPackageVersion } from "@/lib/package-info";
 
 function main(): void {
