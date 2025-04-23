@@ -6,7 +6,7 @@ import type { CommandExecutorPort } from "@/application/ports/command-executor.p
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 import type { DependencyConfigServiceInterface } from "@/domain/interfaces/dependency-config.service";
 
-import { PackageJson, PackageJsonSchema } from "@/domain/entities/package-config";
+import { packageJsonSchema } from "@/domain/entities/package-config";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -54,16 +54,10 @@ export class NodeCommandExecutorAdapter implements CommandExecutorPort {
       return;
     }
 
-    let packageJson: PackageJson | undefined;
+    let packageJson;
 
     try {
-      const result = PackageJsonSchema.safeParse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
-
-      if (!result.success) {
-        return;
-      }
-
-      packageJson = result.data;
+      packageJson = packageJsonSchema.parse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
     } catch (error) {
       console.warn(
         `⚠️ Error reading package.json: ${error instanceof Error ? error.message : "Unknown error"}, skipping cleanup.`,
