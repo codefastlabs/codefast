@@ -16,182 +16,182 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "default": "./dist/esm/index.js",
+        "types": "./dist/types/index.d.ts"
       },
       "require": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/cjs/index.cjs"
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/types/index.d.ts"
       }
     },
     "./core/recommended": {
       "import": {
-        "types": "./dist/types/configs/core/recommended.d.ts",
-        "default": "./dist/esm/configs/core/recommended.js"
+        "default": "./dist/esm/configs/core/recommended.js",
+        "types": "./dist/types/configs/core/recommended.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/core/recommended.d.ts",
-        "default": "./dist/cjs/configs/core/recommended.cjs"
+        "default": "./dist/cjs/configs/core/recommended.cjs",
+        "types": "./dist/types/configs/core/recommended.d.ts"
       }
     },
     "./core/typescript": {
       "import": {
-        "types": "./dist/types/configs/core/typescript.d.ts",
-        "default": "./dist/esm/configs/core/typescript.js"
+        "default": "./dist/esm/configs/core/typescript.js",
+        "types": "./dist/types/configs/core/typescript.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/core/typescript.d.ts",
-        "default": "./dist/cjs/configs/core/typescript.cjs"
+        "default": "./dist/cjs/configs/core/typescript.cjs",
+        "types": "./dist/types/configs/core/typescript.d.ts"
       }
     },
     "./frameworks/next": {
       "import": {
-        "types": "./dist/types/configs/frameworks/next.d.ts",
-        "default": "./dist/esm/configs/frameworks/next.js"
+        "default": "./dist/esm/configs/frameworks/next.js",
+        "types": "./dist/types/configs/frameworks/next.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/frameworks/next.d.ts",
-        "default": "./dist/cjs/configs/frameworks/next.cjs"
+        "default": "./dist/cjs/configs/frameworks/next.cjs",
+        "types": "./dist/types/configs/frameworks/next.d.ts"
       }
     },
     "./frameworks/react": {
       "import": {
-        "types": "./dist/types/configs/frameworks/react.d.ts",
-        "default": "./dist/esm/configs/frameworks/react.js"
+        "default": "./dist/esm/configs/frameworks/react.js",
+        "types": "./dist/types/configs/frameworks/react.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/frameworks/react.d.ts",
-        "default": "./dist/cjs/configs/frameworks/react.cjs"
+        "default": "./dist/cjs/configs/frameworks/react.cjs",
+        "types": "./dist/types/configs/frameworks/react.d.ts"
       }
     },
     "./testing/jest": {
       "import": {
-        "types": "./dist/types/configs/testing/jest.d.ts",
-        "default": "./dist/esm/configs/testing/jest.js"
+        "default": "./dist/esm/configs/testing/jest.js",
+        "types": "./dist/types/configs/testing/jest.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/testing/jest.d.ts",
-        "default": "./dist/cjs/configs/testing/jest.cjs"
+        "default": "./dist/cjs/configs/testing/jest.cjs",
+        "types": "./dist/types/configs/testing/jest.d.ts"
       }
     },
     "./testing/jest-typescript": {
       "import": {
-        "types": "./dist/types/configs/testing/jest-typescript.d.ts",
-        "default": "./dist/esm/configs/testing/jest-typescript.js"
+        "default": "./dist/esm/configs/testing/jest-typescript.js",
+        "types": "./dist/types/configs/testing/jest-typescript.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/testing/jest-typescript.d.ts",
-        "default": "./dist/cjs/configs/testing/jest-typescript.cjs"
+        "default": "./dist/cjs/configs/testing/jest-typescript.cjs",
+        "types": "./dist/types/configs/testing/jest-typescript.d.ts"
       }
     },
     "./testing/playwright-test": {
       "import": {
-        "types": "./dist/types/configs/testing/playwright-test.d.ts",
-        "default": "./dist/esm/configs/testing/playwright-test.js"
+        "default": "./dist/esm/configs/testing/playwright-test.js",
+        "types": "./dist/types/configs/testing/playwright-test.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/testing/playwright-test.d.ts",
-        "default": "./dist/cjs/configs/testing/playwright-test.cjs"
+        "default": "./dist/cjs/configs/testing/playwright-test.cjs",
+        "types": "./dist/types/configs/testing/playwright-test.d.ts"
       }
     },
     "./testing/testing-library": {
       "import": {
-        "types": "./dist/types/configs/testing/testing-library.d.ts",
-        "default": "./dist/esm/configs/testing/testing-library.js"
+        "default": "./dist/esm/configs/testing/testing-library.js",
+        "types": "./dist/types/configs/testing/testing-library.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/testing/testing-library.d.ts",
-        "default": "./dist/cjs/configs/testing/testing-library.cjs"
+        "default": "./dist/cjs/configs/testing/testing-library.cjs",
+        "types": "./dist/types/configs/testing/testing-library.d.ts"
       }
     },
     "./testing/vitest": {
       "import": {
-        "types": "./dist/types/configs/testing/vitest.d.ts",
-        "default": "./dist/esm/configs/testing/vitest.js"
+        "default": "./dist/esm/configs/testing/vitest.js",
+        "types": "./dist/types/configs/testing/vitest.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/testing/vitest.d.ts",
-        "default": "./dist/cjs/configs/testing/vitest.cjs"
+        "default": "./dist/cjs/configs/testing/vitest.cjs",
+        "types": "./dist/types/configs/testing/vitest.d.ts"
       }
     },
     "./utils/comments": {
       "import": {
-        "types": "./dist/types/configs/utils/comments.d.ts",
-        "default": "./dist/esm/configs/utils/comments.js"
+        "default": "./dist/esm/configs/utils/comments.js",
+        "types": "./dist/types/configs/utils/comments.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/comments.d.ts",
-        "default": "./dist/cjs/configs/utils/comments.cjs"
+        "default": "./dist/cjs/configs/utils/comments.cjs",
+        "types": "./dist/types/configs/utils/comments.d.ts"
       }
     },
     "./utils/import": {
       "import": {
-        "types": "./dist/types/configs/utils/import.d.ts",
-        "default": "./dist/esm/configs/utils/import.js"
+        "default": "./dist/esm/configs/utils/import.js",
+        "types": "./dist/types/configs/utils/import.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/import.d.ts",
-        "default": "./dist/cjs/configs/utils/import.cjs"
+        "default": "./dist/cjs/configs/utils/import.cjs",
+        "types": "./dist/types/configs/utils/import.d.ts"
       }
     },
     "./utils/jsx-a11y": {
       "import": {
-        "types": "./dist/types/configs/utils/jsx-a11y.d.ts",
-        "default": "./dist/esm/configs/utils/jsx-a11y.js"
+        "default": "./dist/esm/configs/utils/jsx-a11y.js",
+        "types": "./dist/types/configs/utils/jsx-a11y.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/jsx-a11y.d.ts",
-        "default": "./dist/cjs/configs/utils/jsx-a11y.cjs"
+        "default": "./dist/cjs/configs/utils/jsx-a11y.cjs",
+        "types": "./dist/types/configs/utils/jsx-a11y.d.ts"
       }
     },
     "./utils/perfectionist": {
       "import": {
-        "types": "./dist/types/configs/utils/perfectionist.d.ts",
-        "default": "./dist/esm/configs/utils/perfectionist.js"
+        "default": "./dist/esm/configs/utils/perfectionist.js",
+        "types": "./dist/types/configs/utils/perfectionist.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/perfectionist.d.ts",
-        "default": "./dist/cjs/configs/utils/perfectionist.cjs"
+        "default": "./dist/cjs/configs/utils/perfectionist.cjs",
+        "types": "./dist/types/configs/utils/perfectionist.d.ts"
       }
     },
     "./utils/prettier": {
       "import": {
-        "types": "./dist/types/configs/utils/prettier.d.ts",
-        "default": "./dist/esm/configs/utils/prettier.js"
+        "default": "./dist/esm/configs/utils/prettier.js",
+        "types": "./dist/types/configs/utils/prettier.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/prettier.d.ts",
-        "default": "./dist/cjs/configs/utils/prettier.cjs"
+        "default": "./dist/cjs/configs/utils/prettier.cjs",
+        "types": "./dist/types/configs/utils/prettier.d.ts"
       }
     },
     "./utils/react-hooks": {
       "import": {
-        "types": "./dist/types/configs/utils/react-hooks.d.ts",
-        "default": "./dist/esm/configs/utils/react-hooks.js"
+        "default": "./dist/esm/configs/utils/react-hooks.js",
+        "types": "./dist/types/configs/utils/react-hooks.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/react-hooks.d.ts",
-        "default": "./dist/cjs/configs/utils/react-hooks.cjs"
+        "default": "./dist/cjs/configs/utils/react-hooks.cjs",
+        "types": "./dist/types/configs/utils/react-hooks.d.ts"
       }
     },
     "./utils/tsdoc": {
       "import": {
-        "types": "./dist/types/configs/utils/tsdoc.d.ts",
-        "default": "./dist/esm/configs/utils/tsdoc.js"
+        "default": "./dist/esm/configs/utils/tsdoc.js",
+        "types": "./dist/types/configs/utils/tsdoc.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/tsdoc.d.ts",
-        "default": "./dist/cjs/configs/utils/tsdoc.cjs"
+        "default": "./dist/cjs/configs/utils/tsdoc.cjs",
+        "types": "./dist/types/configs/utils/tsdoc.d.ts"
       }
     },
     "./utils/unicorn": {
       "import": {
-        "types": "./dist/types/configs/utils/unicorn.d.ts",
-        "default": "./dist/esm/configs/utils/unicorn.js"
+        "default": "./dist/esm/configs/utils/unicorn.js",
+        "types": "./dist/types/configs/utils/unicorn.d.ts"
       },
       "require": {
-        "types": "./dist/types/configs/utils/unicorn.d.ts",
-        "default": "./dist/cjs/configs/utils/unicorn.cjs"
+        "default": "./dist/cjs/configs/utils/unicorn.cjs",
+        "types": "./dist/types/configs/utils/unicorn.d.ts"
       }
     }
   },
