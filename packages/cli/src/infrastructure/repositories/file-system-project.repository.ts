@@ -22,10 +22,22 @@ export class FileSystemProjectRepository implements ProjectRepositoryInterface {
   ) {}
 
   async checkExistingProject(projectNameArg?: string): Promise<Project> {
-    const projectName = await this.getValidProjectName(projectNameArg);
-    const fullPath = path.resolve(process.cwd(), projectName);
-    const packageJsonPath = path.join(fullPath, "package.json");
+    let fullPath = process.cwd();
+    let projectName = "";
+    const packageJsonPath = path.join(process.cwd(), "package.json");
     const packageJsonExists = this.fileSystemPort.exists(packageJsonPath);
+
+    if (packageJsonExists) {
+      const result = packageJsonSchema.safeParse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
+
+      if (result.success) {
+        projectName = result.data.name;
+      }
+    } else {
+      projectName = await this.getValidProjectName(projectNameArg);
+
+      fullPath = path.resolve(process.cwd(), projectName);
+    }
 
     return {
       name: projectName,
@@ -125,7 +137,7 @@ import "@/app/globals.css";`;
   }
 
   updatePostcssConfig(projectDir: string): void {
-    const postcssConfigPath = path.join(projectDir, "postcss.config.js");
+    const postcssConfigPath = path.join(projectDir, "postcss.config.mjs");
     const typeComment = `/** @type {import('postcss-load-config').Config} */\n`;
 
     this.fileSystemUtility.updateFileIfNeeded(
@@ -136,7 +148,7 @@ import "@/app/globals.css";`;
   }
 
   updateNextConfig(projectDir: string): void {
-    const nextConfigPath = path.join(projectDir, "next.config.js");
+    const nextConfigPath = path.join(projectDir, "next.config.ts");
     const optimizePackagesConfig = 'optimizePackageImports: ["@codefast/ui"]';
 
     this.fileSystemUtility.updateFileIfNeeded(
