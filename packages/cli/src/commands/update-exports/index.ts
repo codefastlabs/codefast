@@ -1,1 +1,1 @@
-export { createUpdateExportsCommand } from "@/commands/update-exports/command";
+export { updateExportsCommand } from "@/commands/update-exports/command";
