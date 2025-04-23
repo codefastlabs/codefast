@@ -9,7 +9,7 @@ import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.rep
 import type { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
 
 import { PackageJson, packageJsonSchema } from "@/domain/entities/package-config";
-import { ProjectSchema } from "@/domain/entities/project";
+import { projectSchema } from "@/domain/entities/project";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -21,9 +21,9 @@ export class FileSystemProjectRepository implements ProjectRepositoryInterface {
     @inject(TYPES.FileSystemUtility) private fileSystemUtility: FileSystemUtility,
   ) {}
 
-  async checkExistingProject(projectNameArg?: string): Promise<Project> {
+  async checkExistingProject(projectName?: string): Promise<Project> {
     let fullPath = process.cwd();
-    let projectName = "";
+    let name = "";
     const packageJsonPath = path.join(process.cwd(), "package.json");
     const packageJsonExists = this.fileSystemPort.exists(packageJsonPath);
 
@@ -31,16 +31,16 @@ export class FileSystemProjectRepository implements ProjectRepositoryInterface {
       const result = packageJsonSchema.safeParse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
 
       if (result.success) {
-        projectName = result.data.name;
+        name = result.data.name;
       }
     } else {
-      projectName = await this.getValidProjectName(projectNameArg);
+      name = await this.getValidProjectName(projectName);
 
-      fullPath = path.resolve(process.cwd(), projectName);
+      fullPath = path.resolve(process.cwd(), name);
     }
 
     return {
-      name: projectName,
+      name,
       directory: fullPath,
       packageJsonExists,
     };
@@ -210,7 +210,7 @@ import "@/app/globals.css";`;
 
   private async getValidProjectName(initialName?: string, attempts = 0, maxAttempts = 3): Promise<string> {
     const projectName = initialName ?? (await this.promptPort.prompt("Enter project name: "));
-    const result = ProjectSchema.safeParse({ name: projectName, directory: "", packageJsonExists: false });
+    const result = projectSchema.safeParse({ name: projectName, directory: "", packageJsonExists: false });
 
     if (result.success) {
       const fullPath = path.resolve(process.cwd(), projectName);

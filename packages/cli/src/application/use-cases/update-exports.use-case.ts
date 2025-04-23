@@ -21,7 +21,7 @@ export class UpdateExportsUseCase {
   ): Promise<void> {
     try {
       console.info("Searching for packages...");
-      const packageJsonPaths = await this.packageRepository.findAllPackages(config.defaultPackageConfig);
+      const packageJsonPaths = await this.packageRepository.findAllPackages(config);
 
       if (packageJsonPaths.length === 0) {
         console.warn("No packages found.");

@@ -1,7 +1,6 @@
 import { injectable } from "inversify";
 
 import type { ConfigGroups } from "@/domain/entities/config-file";
-import type { ScriptConfig } from "@/domain/entities/package-config";
 import type { ConfigServiceInterface } from "@/domain/interfaces/config.service";
 
 @injectable()
@@ -155,6 +154,7 @@ const config = {
   extends: ["@commitlint/config-conventional"],
   rules: {
     "body-max-line-length": [2, "always", 350],
+    "header-max-length": [2, "always", 150],
   },
 };
 
@@ -316,31 +316,7 @@ export const fontVariables = cn(fontGeistSans.variable, fontGeistMono.variable);
     ],
   };
 
-  private readonly scriptConfig: ScriptConfig = {
-    packagesGlob: "./packages/**/package.json",
-    defaultPackageConfig: {
-      cjsOutputPattern: "./dist/cjs/{dir}/{name}.cjs",
-      esmOutputPattern: "./dist/esm/{dir}/{name}.js",
-      packageJsonPath: "package.json",
-      srcIndexPath: "src/index.ts",
-      typesOutputCjsPattern: "./dist/types/{dir}/{name}.d.ts",
-      typesOutputPattern: "./dist/types/{dir}/{name}.d.ts",
-    },
-    customPackageConfigs: {
-      "@codefast/ui": {
-        exportPathPrefixesToRemove: ["components"],
-      },
-      "@codefast/style-guide": {
-        exportPathPrefixesToRemove: ["configs"],
-      },
-    },
-  };
-
   getConfigGroups(): ConfigGroups {
     return this.configGroups;
-  }
-
-  getScriptConfig(): ScriptConfig {
-    return this.scriptConfig;
   }
 }

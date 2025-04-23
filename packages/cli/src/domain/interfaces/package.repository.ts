@@ -5,7 +5,7 @@ import type { AnalysisResult, PackageConfig, PackageExports, ScriptConfig } from
  */
 export interface PackageRepository {
   analyzeImports: (indexFilePath: string, packageConfig: PackageConfig) => AnalysisResult;
-  findAllPackages: (config: PackageConfig) => Promise<string[]>;
+  findAllPackages: (configPath?: string) => Promise<string[]>;
   generateExports: (
     packageName: string,
     imports: AnalysisResult["imports"],
