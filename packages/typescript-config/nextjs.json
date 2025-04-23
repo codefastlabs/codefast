@@ -3,7 +3,7 @@
   "compilerOptions": {
     "allowJs": true,
     "jsx": "preserve",
-    "module": "esnext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
     "plugins": [
