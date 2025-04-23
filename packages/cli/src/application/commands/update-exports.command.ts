@@ -12,7 +12,7 @@ export class UpdateExportsCommand {
 
   /**
    * Returns a Commander.js command for updating package exports.
-   * @param config Script configuration for package export patterns.
+   * @param config - Script configuration for package export patterns.
    * @returns Configured Commander.js command.
    */
   getCommand(config: ScriptConfig): Command {
