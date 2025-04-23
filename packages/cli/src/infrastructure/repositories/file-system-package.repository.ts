@@ -9,7 +9,7 @@ import type { AnalysisResult, PackageConfig, PackageExports, ScriptConfig } from
 import type { PackageRepository } from "@/domain/interfaces/package.repository";
 import type { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
 
-import { PackageJsonSchema, ScriptConfigSchema } from "@/domain/entities/package-config";
+import { packageJsonSchema, scriptConfigSchema } from "@/domain/entities/package-config";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -57,16 +57,16 @@ export class FileSystemPackageRepository implements PackageRepository {
     },
   ): boolean {
     const packageDir = path.dirname(packageJsonPath);
-    const packageJsonContent = this.fileSystemPort.readFile(packageJsonPath);
-    const packageJsonResult = PackageJsonSchema.safeParse(JSON.parse(packageJsonContent));
+    let packageJson;
 
-    if (!packageJsonResult.success) {
-      console.error(`Failed to parse ${packageJsonPath}: ${packageJsonResult.error.message}`);
+    try {
+      packageJson = packageJsonSchema.parse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
+    } catch (error) {
+      console.error(`Failed to parse ${packageJsonPath}: ${error instanceof Error ? error.message : "Unknown error"}`);
 
       return false;
     }
 
-    const packageJson = packageJsonResult.data;
     const packageName = packageJson.name;
 
     if (options.packageFilter && packageName !== options.packageFilter) {
@@ -207,7 +207,7 @@ export class FileSystemPackageRepository implements PackageRepository {
 
       const configContent = this.fileSystemPort.readFile(fullPath);
 
-      return ScriptConfigSchema.parse(JSON.parse(configContent));
+      return scriptConfigSchema.parse(JSON.parse(configContent));
     } catch (error) {
       console.error(`Error reading configuration file: ${error instanceof Error ? error.message : "Unknown error"}`);
 
