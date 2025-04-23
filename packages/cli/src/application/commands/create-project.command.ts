@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { inject, injectable } from "inversify";
+import process from "node:process";
 
 import type { CreateProjectUseCase } from "@/application/use-cases/create-project.use-case";
 import type { ConfigGroups } from "@/domain/entities/config-file";
@@ -22,6 +23,8 @@ export class CreateProjectCommand {
       .argument("[project-name]", "Name of the project to create")
       .action(async (projectName: string) => {
         await this.createProjectUseCase.execute(projectName, configGroups);
+
+        process.exit(0);
       });
   }
 }
