@@ -16,22 +16,22 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "default": "./dist/esm/index.js",
+        "types": "./dist/types/index.d.ts"
       },
       "require": {
-        "types": "./dist/types/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/types/index.d.cts"
       }
     },
     "./input-number": {
       "import": {
-        "types": "./dist/types/input-number.d.ts",
-        "default": "./dist/esm/input-number.js"
+        "default": "./dist/esm/input-number.js",
+        "types": "./dist/types/input-number.d.ts"
       },
       "require": {
-        "types": "./dist/types/input-number.d.ts",
-        "default": "./dist/cjs/input-number.cjs"
+        "default": "./dist/cjs/input-number.cjs",
+        "types": "./dist/types/input-number.d.ts"
       }
     }
   },
