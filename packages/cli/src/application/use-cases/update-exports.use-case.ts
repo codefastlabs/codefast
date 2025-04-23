@@ -12,8 +12,8 @@ export class UpdateExportsUseCase {
 
   /**
    * Updates exports for all packages based on provided options and configuration.
-   * @param options Options for dry run, config path, and package filter.
-   * @param config Script configuration for package export patterns.
+   * @param options - Options for dry run, config path, and package filter.
+   * @param config - Script configuration for package export patterns.
    */
   async execute(
     options: { dryRun: boolean; configPath?: string; packageFilter?: string },
@@ -36,7 +36,7 @@ export class UpdateExportsUseCase {
       let errorCount = 0;
 
       for (const packageJsonPath of packageJsonPaths) {
-        const result = await this.packageRepository.processPackage(packageJsonPath, options);
+        const result = this.packageRepository.processPackage(packageJsonPath, options);
 
         if (result) {
           successCount++;

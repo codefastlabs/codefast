@@ -12,7 +12,7 @@ export class CreateProjectCommand {
 
   /**
    * Returns a Commander.js command for creating or configuring a project.
-   * @param configGroups Configuration groups for project files.
+   * @param configGroups - Configuration groups for project files.
    * @returns Configured Commander.js command.
    */
   getCommand(configGroups: ConfigGroups): Command {
