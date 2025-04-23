@@ -16,22 +16,22 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "default": "./dist/esm/index.js",
+        "types": "./dist/types/index.d.ts"
       },
       "require": {
-        "types": "./dist/types/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/types/index.d.cts"
       }
     },
     "./progress-circle": {
       "import": {
-        "types": "./dist/types/progress-circle.d.ts",
-        "default": "./dist/esm/progress-circle.js"
+        "default": "./dist/esm/progress-circle.js",
+        "types": "./dist/types/progress-circle.d.ts"
       },
       "require": {
-        "types": "./dist/types/progress-circle.d.ts",
-        "default": "./dist/cjs/progress-circle.cjs"
+        "default": "./dist/cjs/progress-circle.cjs",
+        "types": "./dist/types/progress-circle.d.ts"
       }
     }
   },

@@ -16,22 +16,22 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/esm/index.js"
+        "default": "./dist/esm/index.js",
+        "types": "./dist/types/index.d.ts"
       },
       "require": {
-        "types": "./dist/types/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/types/index.d.cts"
       }
     },
     "./checkbox-group": {
       "import": {
-        "types": "./dist/types/checkbox-group.d.ts",
-        "default": "./dist/esm/checkbox-group.js"
+        "default": "./dist/esm/checkbox-group.js",
+        "types": "./dist/types/checkbox-group.d.ts"
       },
       "require": {
-        "types": "./dist/types/checkbox-group.d.ts",
-        "default": "./dist/cjs/checkbox-group.cjs"
+        "default": "./dist/cjs/checkbox-group.cjs",
+        "types": "./dist/types/checkbox-group.d.ts"
       }
     }
   },
