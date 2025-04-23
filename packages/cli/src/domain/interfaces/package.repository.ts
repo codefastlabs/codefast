@@ -14,6 +14,10 @@ export interface PackageRepository {
   ) => PackageExports;
   processPackage: (
     packageJsonPath: string,
-    options: { dryRun: boolean; configPath?: string; packageFilter?: string },
+    options: {
+      dryRun: boolean;
+      configPath?: string;
+      packageFilter?: string;
+    },
   ) => boolean;
 }

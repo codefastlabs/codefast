@@ -21,8 +21,8 @@ export class CreateProjectUseCase {
 
   /**
    * Executes the project creation or configuration process.
-   * @param projectNameArg Optional project name provided via CLI.
-   * @param configGroups Configuration groups for project files.
+   * @param projectNameArg - Optional project name provided via CLI.
+   * @param configGroups - Configuration groups for project files.
    * @returns The created or configured project.
    */
   async execute(projectNameArg?: string, configGroups: ConfigGroups = {}): Promise<Project> {
@@ -80,6 +80,6 @@ export class CreateProjectUseCase {
     console.log("- Lint-staged for pre-commit checks");
     console.log(`\n📁 Project directory: ${process.cwd()}`);
     console.log(`\n🚀 To start development:`);
-    console.log(`cd ${project.name} && pnpm dev`);
+    console.log(`${project.packageJsonExists ? `cd ${project.name} && ` : ""}pnpm dev`);
   }
 }
