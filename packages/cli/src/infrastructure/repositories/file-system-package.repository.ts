@@ -42,8 +42,8 @@ export class FileSystemPackageRepository implements PackageRepository {
     @inject(TYPES.FileSystemUtility) private fileSystemUtility: FileSystemUtility,
   ) {}
 
-  async findAllPackages(config: PackageConfig): Promise<string[]> {
-    return await glob(config.packageJsonPath, {
+  async findAllPackages(config: ScriptConfig): Promise<string[]> {
+    return await glob(config.packagesGlob, {
       ignore: this.DEFAULT_IGNORE_PATTERN,
     });
   }
@@ -140,12 +140,12 @@ export class FileSystemPackageRepository implements PackageRepository {
     const exports: PackageExports = {
       ".": existingExports["."] ?? {
         import: {
-          types: "./dist/types/index.d.ts",
           default: "./dist/esm/index.js",
+          types: "./dist/types/index.d.ts",
         },
         require: {
-          types: "./dist/types/index.d.cts",
           default: "./dist/cjs/index.cjs",
+          types: "./dist/types/index.d.cts",
         },
       },
     };
@@ -163,12 +163,12 @@ export class FileSystemPackageRepository implements PackageRepository {
 
       exports[exportPath] = {
         import: {
-          types: typesOutput,
           default: esmOutput,
+          types: typesOutput,
         },
         require: {
-          types: typesCjsOutput,
           default: cjsOutput,
+          types: typesCjsOutput,
         },
       };
     }

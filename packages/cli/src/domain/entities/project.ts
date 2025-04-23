@@ -4,7 +4,7 @@ import { z } from "zod";
  * Schema for validating project configuration.
  * Ensures the project name is URL-friendly, not reserved, and the directory is valid.
  */
-export const ProjectSchema = z.object({
+export const projectSchema = z.object({
   name: z
     .string()
     .min(1, "Project name cannot be empty")
@@ -23,4 +23,4 @@ export const ProjectSchema = z.object({
   packageJsonExists: z.boolean().describe("Whether package.json exists in the project directory"),
 });
 
-export type Project = z.infer<typeof ProjectSchema>;
+export type Project = z.infer<typeof projectSchema>;

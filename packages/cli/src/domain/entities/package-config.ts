@@ -45,21 +45,23 @@ export const exportConfigSchema = z.object({
 
 export const PackageExportsSchema = z.record(z.string(), z.union([exportConfigSchema, z.string()]));
 
-export const packageJsonSchema = z.object({
-  dependencies: z
-    .record(z.string(), z.string())
-    .optional()
-    .describe("List of runtime dependencies with their versions"),
-  devDependencies: z
-    .record(z.string(), z.string())
-    .optional()
-    .describe("List of development dependencies with their versions"),
-  exports: PackageExportsSchema.optional().describe("Export mappings for the package"),
-  name: z.string().describe("Name of the package"),
-  scripts: z.record(z.string(), z.string()).describe("Script commands defined for the package"),
-  "simple-git-hooks": z.record(z.string(), z.string()).optional().describe("Git hooks configuration for the package"),
-  version: z.string().optional().describe("Version of the package"),
-});
+export const packageJsonSchema = z
+  .object({
+    dependencies: z
+      .record(z.string(), z.string())
+      .optional()
+      .describe("List of runtime dependencies with their versions"),
+    devDependencies: z
+      .record(z.string(), z.string())
+      .optional()
+      .describe("List of development dependencies with their versions"),
+    exports: PackageExportsSchema.optional().describe("Export mappings for the package"),
+    name: z.string().describe("Name of the package"),
+    scripts: z.record(z.string(), z.string()).describe("Script commands defined for the package"),
+    "simple-git-hooks": z.record(z.string(), z.string()).optional().describe("Git hooks configuration for the package"),
+    version: z.string().optional().describe("Version of the package"),
+  })
+  .catchall(z.unknown());
 
 export type PackageConfig = z.infer<typeof packageConfigSchema>;
 
