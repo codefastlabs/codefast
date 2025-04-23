@@ -3,7 +3,6 @@ import { inject, injectable } from "inversify";
 import process from "node:process";
 
 import type { CreateProjectUseCase } from "@/application/use-cases/create-project.use-case";
-import type { ConfigGroups } from "@/domain/entities/config-file";
 
 import { TYPES } from "@/ioc/types";
 
@@ -13,16 +12,16 @@ export class CreateProjectCommand {
 
   /**
    * Returns a Commander.js command for creating or configuring a project.
-   * @param configGroups - Configuration groups for project files.
+   *
    * @returns Configured Commander.js command.
    */
-  getCommand(configGroups: ConfigGroups): Command {
+  getCommand(): Command {
     return new Command()
       .name("create-project")
       .description("Create a new Next.js project with TypeScript, TailwindCSS, and linting setup")
       .argument("[project-name]", "Name of the project to create")
       .action(async (projectName: string) => {
-        await this.createProjectUseCase.execute(projectName, configGroups);
+        await this.createProjectUseCase.execute(projectName);
 
         process.exit(0);
       });

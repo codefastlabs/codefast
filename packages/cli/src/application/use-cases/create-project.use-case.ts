@@ -8,6 +8,7 @@ import type { Project } from "@/domain/entities/project";
 import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.repository";
 
 import { handleError } from "@/application/utilities/error-handler";
+import { ConfigService } from "@/infrastructure/services/config.service";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -17,18 +18,20 @@ export class CreateProjectUseCase {
     @inject(TYPES.FileSystemPort) private fileSystemPort: FileSystemPort,
     @inject(TYPES.CommandExecutorPort) private commandExecutorPort: CommandExecutorPort,
     @inject(TYPES.PromptPort) private promptPort: PromptPort,
+    @inject(TYPES.ConfigService) private configService: ConfigService,
   ) {}
 
   /**
    * Executes the project creation or configuration process.
-   * @param projectNameArg - Optional project name provided via CLI.
-   * @param configGroups - Configuration groups for project files.
+   * @param projectName - Optional project name provided via CLI.
+   *
    * @returns The created or configured project.
    */
-  async execute(projectNameArg?: string, configGroups: ConfigGroups = {}): Promise<Project> {
+  async execute(projectName?: string): Promise<Project> {
     try {
       this.commandExecutorPort.checkEnvironment();
-      const project = await this.checkExistingProject(projectNameArg);
+      const project = await this.checkExistingProject(projectName);
+      const configGroups = this.configService.getConfigGroups();
 
       this.createOrConfigureProject(project, configGroups);
       this.displaySuccessMessage(project);
