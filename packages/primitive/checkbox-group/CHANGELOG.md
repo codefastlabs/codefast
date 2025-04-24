@@ -1,5 +1,15 @@
 # @codefast-ui/checkbox-group
 
+## 0.3.1-canary.14
+
+### Patch Changes
+
+- [`df6ae17`](https://github.com/codefastlabs/codefast/commit/df6ae17f547a820614fb456c9556e61cbc8abd5e) Thanks [@thevuong](https://github.com/thevuong)! - chore: update package dependencies across multiple packages to ensure compatibility and access new features
+
+- [`5ea0cf3`](https://github.com/codefastlabs/codefast/commit/5ea0cf3347bff9cfc58b66b65cc039d410d3729e) Thanks [@thevuong](https://github.com/thevuong)! - fix: correct types and default exports in package.json for various components
+
+- [`bc6d38e`](https://github.com/codefastlabs/codefast/commit/bc6d38eb8f300426fdfd8a51ea394e25bce4583a) Thanks [@thevuong](https://github.com/thevuong)! - refactor: simplify command parameters and improve configuration handling in project and export commands
+
 ## 0.3.1-canary.13
 
 ### Patch Changes
