@@ -5,11 +5,17 @@ import path from "node:path";
 
 import type { AnalysisPort } from "@/application/ports/analysis.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
-import type { AnalysisResult, PackageConfig, PackageExports, ScriptConfig } from "@/domain/entities/package-config";
+import type {
+  AnalysisResult,
+  PackageConfig,
+  PackageExports,
+  PackageJson,
+  ScriptConfig,
+} from "@/domain/entities/package-config";
 import type { PackageRepository } from "@/domain/interfaces/package.repository";
 import type { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
 
-import { packageJsonSchema, scriptConfigSchema } from "@/domain/entities/package-config";
+import { scriptConfigSchema } from "@/domain/entities/package-config";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -42,7 +48,9 @@ export class FileSystemPackageRepository implements PackageRepository {
     @inject(TYPES.FileSystemUtility) private fileSystemUtility: FileSystemUtility,
   ) {}
 
-  async findAllPackages(config: ScriptConfig): Promise<string[]> {
+  async findAllPackages(configPath?: string): Promise<string[]> {
+    const config = this.getConfig(configPath);
+
     return await glob(config.packagesGlob, {
       ignore: this.DEFAULT_IGNORE_PATTERN,
     });
@@ -60,7 +68,7 @@ export class FileSystemPackageRepository implements PackageRepository {
     let packageJson;
 
     try {
-      packageJson = packageJsonSchema.parse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));
+      packageJson = JSON.parse(this.fileSystemPort.readFile(packageJsonPath)) as PackageJson;
     } catch (error) {
       console.error(`Failed to parse ${packageJsonPath}: ${error instanceof Error ? error.message : "Unknown error"}`);
 
@@ -75,28 +83,28 @@ export class FileSystemPackageRepository implements PackageRepository {
       return false;
     }
 
-    console.info(`Processing package: ${packageName}`);
+    console.info(`♢‒ Processing package: ${packageName}`);
 
     const config = this.getConfig(options.configPath);
     const packageConfig = this.getPackageConfig(packageName, config);
     const srcIndexPath = path.join(packageDir, packageConfig.srcIndexPath);
 
     if (!this.fileSystemPort.exists(srcIndexPath)) {
-      console.error(`Source file not found at ${srcIndexPath}`);
+      console.error(`⎹  ⛔︎ Source file not found at ${srcIndexPath}`);
 
       return false;
     }
 
-    console.info(`Analyzing imports from ${srcIndexPath}...`);
+    console.info(`⎹  Analyzing imports from ${srcIndexPath}...`);
     const analysis = this.analyzeImports(srcIndexPath, packageConfig);
 
     if (analysis.imports.length === 0) {
-      console.warn(`No imports found to analyze in ${packageName}`);
+      console.warn(`⎹  ⛔︎ No imports found to analyze in ${packageName}`);
 
       return false;
     }
 
-    console.log(`Analysis complete. Found ${analysis.imports.length} subpath exports.`);
+    console.log(`⎹  Analysis complete. Found ${analysis.imports.length} subpath exports.`);
 
     this.saveExportsAnalysis(packageDir, analysis);
 
@@ -105,23 +113,23 @@ export class FileSystemPackageRepository implements PackageRepository {
     const currentExportsCount = packageJson.exports ? Object.keys(packageJson.exports).length : 0;
     const newExportsCount = Object.keys(newExports).length;
 
-    console.info(`Exports: ${currentExportsCount} -> ${newExportsCount}`);
+    console.info(`⎹  Exports: ${currentExportsCount} -> ${newExportsCount}`);
 
     if (options.dryRun) {
       this.saveExportsPreview(packageDir, newExports);
-      console.warn(`Saved exports preview to .exports-analysis`);
-      console.warn(`Dry run: no changes saved for ${packageName}`);
+      console.warn(`⎹  Saved exports preview to .exports-analysis`);
+      console.warn(`⎹  Dry run: no changes saved for ${packageName}`);
 
       return true;
     }
 
     this.fileSystemUtility.backupFile(packageJsonPath, ".exports-analysis");
-    console.log(`Backed up ${packageJsonPath}`);
+    console.log(`⎹  Backed up ${packageJsonPath}`);
 
     const updatedPackageJson = { ...packageJson, exports: newExports };
 
-    this.fileSystemPort.writeFile(packageJsonPath, JSON.stringify(updatedPackageJson, null, 2));
-    console.log(`Updated exports for ${packageName}`);
+    this.fileSystemPort.writeFile(packageJsonPath, `${JSON.stringify(updatedPackageJson, null, 2)}\n`);
+    console.log(`⎹  Updated exports for ${packageName}`);
 
     return true;
   }
