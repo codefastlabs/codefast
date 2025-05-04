@@ -1,5 +1,14 @@
 # @codefast-ui/number-input
 
+## 0.3.1-canary.15
+
+### Patch Changes
+
+- [`3567101`](https://github.com/codefastlabs/codefast/commit/35671017419adc327528a7fe3fdf3cfa06328fac) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update eslint and related dependencies to latest versions across packages
+
+- Updated dependencies [[`3567101`](https://github.com/codefastlabs/codefast/commit/35671017419adc327528a7fe3fdf3cfa06328fac)]:
+  - @codefast-ui/input@0.3.1-canary.15
+
 ## 0.3.1-canary.14
 
 ### Patch Changes
