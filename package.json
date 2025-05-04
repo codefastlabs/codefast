@@ -47,8 +47,8 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "rimraf": "^6.0.1",
     "simple-git-hooks": "^2.13.0",
-    "tsx": "^4.19.3",
-    "turbo": "^2.5.1"
+    "tsx": "^4.19.4",
+    "turbo": "^2.5.2"
   },
   "packageManager": "pnpm@10.8.1",
   "engines": {
