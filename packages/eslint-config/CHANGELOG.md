@@ -1,5 +1,98 @@
 # @codefast/eslint-config
 
+## 0.3.1
+
+### Patch Changes
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`9a962dd`](https://github.com/codefastlabs/codefast/commit/9a962ddc9c1bcae30ec79ebde64b321db53d4da9) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): correct binary path and version retrieval logic
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`2335615`](https://github.com/codefastlabs/codefast/commit/233561592edad614f5083fbf552fb2ca0c7f3342) Thanks [@thevuong](https://github.com/thevuong)! - fix(dependencies): update multiple dependencies to latest versions
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`8509d93`](https://github.com/codefastlabs/codefast/commit/8509d93373d7bd33c763f0a0697fc615cfadd207) Thanks [@thevuong](https://github.com/thevuong)! - feat: add eslint-import-resolver-typescript dependency and format import rules
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`8cfbef1`](https://github.com/codefastlabs/codefast/commit/8cfbef1dcb74e5d790c65327fd0bba6746986e54) Thanks [@thevuong](https://github.com/thevuong)! - feat: add environment-aware build configurations
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`11f69ea`](https://github.com/codefastlabs/codefast/commit/11f69ea2b300959572853b4d8554f7a8db59184f) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): enhance scrollbar styles and optimize dev scripts
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`64f8f15`](https://github.com/codefastlabs/codefast/commit/64f8f15fd036ec87ed54022e15c7bae635ee4337) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update package dependencies
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`ac7b430`](https://github.com/codefastlabs/codefast/commit/ac7b4304a8ce1c5e00bda01f8a9acbd0c37827aa) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update package versions
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`2f7758d`](https://github.com/codefastlabs/codefast/commit/2f7758d0bc8e0a989644843c0f7d57227ab98d98) Thanks [@thevuong](https://github.com/thevuong)! - chore: update package dependencies across multiple packages to ensure compatibility and access new features
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`ea44123`](https://github.com/codefastlabs/codefast/commit/ea44123de09904b7b70b57dc5453171a53136423) Thanks [@thevuong](https://github.com/thevuong)! - feat: update peer dependencies and add unrs-resolver
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`1f7120b`](https://github.com/codefastlabs/codefast/commit/1f7120bc15fed4d6355a66490489e6c279c4de29) Thanks [@thevuong](https://github.com/thevuong)! - fix(package.json): update repository URL format and bin path
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`06bc9ba`](https://github.com/codefastlabs/codefast/commit/06bc9ba72a65f0f49c287985147963fe0a0de18b) Thanks [@thevuong](https://github.com/thevuong)! - fix: correct types and default exports in package.json for various components
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`0f29ef5`](https://github.com/codefastlabs/codefast/commit/0f29ef56e23a0b6540f9f7f98c10d5ed6ca96561) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add support for optimizePackageImports in Next.js config
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`3c2a6c9`](https://github.com/codefastlabs/codefast/commit/3c2a6c9cc913d97179508d94b781701178203051) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add cleanup step to remove unnecessary packages
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`72d204b`](https://github.com/codefastlabs/codefast/commit/72d204be70cbee040c00a2a4792fe2aac50933c0) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance project setup with new dependencies and improved formatting scripts
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`fab3c11`](https://github.com/codefastlabs/codefast/commit/fab3c117f06224d03c16f40b24f4a983aa03dae7) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): enhance project setup with Prettier ignore support
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`84a3726`](https://github.com/codefastlabs/codefast/commit/84a3726573c81a324489a88fa06bc6c26605e735) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): update lint script to use autofix option
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`22e3c61`](https://github.com/codefastlabs/codefast/commit/22e3c61008eb90c15bac1c384b8e1e8fd189a6d7) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): skip Next.js project creation if package.json exists
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`999a691`](https://github.com/codefastlabs/codefast/commit/999a691ff212b6bcb5356bbf6cc7698a4924b1db) Thanks [@thevuong](https://github.com/thevuong)! - feat: update jsx-a11y rule overrides for accessibility needs
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`528451f`](https://github.com/codefastlabs/codefast/commit/528451f31c26502bda448c4e9570be26aee90b59) Thanks [@thevuong](https://github.com/thevuong)! - refactor: simplify command parameters and improve configuration handling in project and export commands
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`b3071f0`](https://github.com/codefastlabs/codefast/commit/b3071f07df0687526475d87fe1904698e3e25cbd) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): correct dark mode CSS selector in constants
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`cce2a38`](https://github.com/codefastlabs/codefast/commit/cce2a380cddd2cb92803fc2bb56e4107ee4b53c5) Thanks [@thevuong](https://github.com/thevuong)! - fix(styles): correct CSS variable names for outline and scrollbar
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`9db142c`](https://github.com/codefastlabs/codefast/commit/9db142c2548c36a020aba26dc48532fa7f7a680e) Thanks [@thevuong](https://github.com/thevuong)! - feat: support optional values in change handlers
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`f5d4f8c`](https://github.com/codefastlabs/codefast/commit/f5d4f8c5db6bccc92794450092cc39d038797df3) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): adjust comment formatting in config-files.ts
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`69202e9`](https://github.com/codefastlabs/codefast/commit/69202e9ee023764669f53de3497fbd3b121ca668) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): simplify command registration and improve import statements
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`3eed1b7`](https://github.com/codefastlabs/codefast/commit/3eed1b74e7e8252d13a842592bc3476b1eefeaf4) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add `codefast` CLI package with initial features
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`b4f8ceb`](https://github.com/codefastlabs/codefast/commit/b4f8ceb1df8d9ddc17b9b73e97051a7bdcbe1f8f) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update eslint and related dependencies to latest versions across packages
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`235182c`](https://github.com/codefastlabs/codefast/commit/235182c0e05d3dc4027c9280c21386ae12e8a22e) Thanks [@thevuong](https://github.com/thevuong)! - fix(cli): remove redundant default action from CLI
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`0e13b93`](https://github.com/codefastlabs/codefast/commit/0e13b9327c563b408826554fada5e6ad219dcea6) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): update layout.tsx with fontVariables support
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`f4651b1`](https://github.com/codefastlabs/codefast/commit/f4651b1f372664e0d08a0afe72e2ec2251fdeb6b) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add type-checking script to generated projects
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`45ff1a9`](https://github.com/codefastlabs/codefast/commit/45ff1a937ca27c502c745a49dd32c26d54967bc1) Thanks [@thevuong](https://github.com/thevuong)! - changeset
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`26c326c`](https://github.com/codefastlabs/codefast/commit/26c326c9fa59fb710eebc383a109d53a7a66a54d) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): update styles and constants for project creation
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`1cc10af`](https://github.com/codefastlabs/codefast/commit/1cc10af0c971a5bfb2db67fef041ef82a167479c) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): modularize project creation functionalities
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`1d7e0b4`](https://github.com/codefastlabs/codefast/commit/1d7e0b4f3073cd17e582a5f8cac57364444cd9b0) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): update packages to remove in project creation
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`5861995`](https://github.com/codefastlabs/codefast/commit/5861995d71d5254d4050b353a835f96b192c4c31) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): improve config file handling in project setup
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`b4b5bd8`](https://github.com/codefastlabs/codefast/commit/b4b5bd8303d35996d3a44be89e39f3ac8bb36a66) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add lucide-react to default project dependencies
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`2b06496`](https://github.com/codefastlabs/codefast/commit/2b064962d114400d14a4067e1603c45fb1593c17) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): remove logger utility and update logging usage
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`d260167`](https://github.com/codefastlabs/codefast/commit/d2601677455c76ed66b24c840b92e6a1ddc62a60) Thanks [@thevuong](https://github.com/thevuong)! - feat: enhance ESLint rules with detailed configurations
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`3d98dde`](https://github.com/codefastlabs/codefast/commit/3d98ddecece720d95c50c43f603f539c8595cefb) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update dependencies to latest versions
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`abd1ee9`](https://github.com/codefastlabs/codefast/commit/abd1ee91da009bd1aac98cd9b7896547431fbdcb) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): improve ReactNode handling and RootLayout typings
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`7b7b459`](https://github.com/codefastlabs/codefast/commit/7b7b4596bd30b6e53a7cf5d165ccede98c60d7d2) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add files field to package.json for better packaging
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`d6dbb0b`](https://github.com/codefastlabs/codefast/commit/d6dbb0b3d1358e5ce0bcde9f0ad9a2b6958ba8b8) Thanks [@thevuong](https://github.com/thevuong)! - feat(cli): add enhanced project creation command
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`a943b3d`](https://github.com/codefastlabs/codefast/commit/a943b3dadef73a2100dbf7394815e9b858040d94) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): update sorting rules for interfaces and object types
+
+- [#150](https://github.com/codefastlabs/codefast/pull/150) [`9f45422`](https://github.com/codefastlabs/codefast/commit/9f454223b2b47e3562f808288ae7091e371550f1) Thanks [@thevuong](https://github.com/thevuong)! - refactor(cli): centralize file operations and error handling
+
+- Updated dependencies [[`9a962dd`](https://github.com/codefastlabs/codefast/commit/9a962ddc9c1bcae30ec79ebde64b321db53d4da9), [`2335615`](https://github.com/codefastlabs/codefast/commit/233561592edad614f5083fbf552fb2ca0c7f3342), [`8509d93`](https://github.com/codefastlabs/codefast/commit/8509d93373d7bd33c763f0a0697fc615cfadd207), [`8cfbef1`](https://github.com/codefastlabs/codefast/commit/8cfbef1dcb74e5d790c65327fd0bba6746986e54), [`11f69ea`](https://github.com/codefastlabs/codefast/commit/11f69ea2b300959572853b4d8554f7a8db59184f), [`64f8f15`](https://github.com/codefastlabs/codefast/commit/64f8f15fd036ec87ed54022e15c7bae635ee4337), [`ac7b430`](https://github.com/codefastlabs/codefast/commit/ac7b4304a8ce1c5e00bda01f8a9acbd0c37827aa), [`2f7758d`](https://github.com/codefastlabs/codefast/commit/2f7758d0bc8e0a989644843c0f7d57227ab98d98), [`ea44123`](https://github.com/codefastlabs/codefast/commit/ea44123de09904b7b70b57dc5453171a53136423), [`1f7120b`](https://github.com/codefastlabs/codefast/commit/1f7120bc15fed4d6355a66490489e6c279c4de29), [`06bc9ba`](https://github.com/codefastlabs/codefast/commit/06bc9ba72a65f0f49c287985147963fe0a0de18b), [`0f29ef5`](https://github.com/codefastlabs/codefast/commit/0f29ef56e23a0b6540f9f7f98c10d5ed6ca96561), [`3c2a6c9`](https://github.com/codefastlabs/codefast/commit/3c2a6c9cc913d97179508d94b781701178203051), [`72d204b`](https://github.com/codefastlabs/codefast/commit/72d204be70cbee040c00a2a4792fe2aac50933c0), [`fab3c11`](https://github.com/codefastlabs/codefast/commit/fab3c117f06224d03c16f40b24f4a983aa03dae7), [`84a3726`](https://github.com/codefastlabs/codefast/commit/84a3726573c81a324489a88fa06bc6c26605e735), [`22e3c61`](https://github.com/codefastlabs/codefast/commit/22e3c61008eb90c15bac1c384b8e1e8fd189a6d7), [`999a691`](https://github.com/codefastlabs/codefast/commit/999a691ff212b6bcb5356bbf6cc7698a4924b1db), [`528451f`](https://github.com/codefastlabs/codefast/commit/528451f31c26502bda448c4e9570be26aee90b59), [`b3071f0`](https://github.com/codefastlabs/codefast/commit/b3071f07df0687526475d87fe1904698e3e25cbd), [`cce2a38`](https://github.com/codefastlabs/codefast/commit/cce2a380cddd2cb92803fc2bb56e4107ee4b53c5), [`9db142c`](https://github.com/codefastlabs/codefast/commit/9db142c2548c36a020aba26dc48532fa7f7a680e), [`f5d4f8c`](https://github.com/codefastlabs/codefast/commit/f5d4f8c5db6bccc92794450092cc39d038797df3), [`69202e9`](https://github.com/codefastlabs/codefast/commit/69202e9ee023764669f53de3497fbd3b121ca668), [`3eed1b7`](https://github.com/codefastlabs/codefast/commit/3eed1b74e7e8252d13a842592bc3476b1eefeaf4), [`b4f8ceb`](https://github.com/codefastlabs/codefast/commit/b4f8ceb1df8d9ddc17b9b73e97051a7bdcbe1f8f), [`235182c`](https://github.com/codefastlabs/codefast/commit/235182c0e05d3dc4027c9280c21386ae12e8a22e), [`0e13b93`](https://github.com/codefastlabs/codefast/commit/0e13b9327c563b408826554fada5e6ad219dcea6), [`f4651b1`](https://github.com/codefastlabs/codefast/commit/f4651b1f372664e0d08a0afe72e2ec2251fdeb6b), [`45ff1a9`](https://github.com/codefastlabs/codefast/commit/45ff1a937ca27c502c745a49dd32c26d54967bc1), [`26c326c`](https://github.com/codefastlabs/codefast/commit/26c326c9fa59fb710eebc383a109d53a7a66a54d), [`1cc10af`](https://github.com/codefastlabs/codefast/commit/1cc10af0c971a5bfb2db67fef041ef82a167479c), [`1d7e0b4`](https://github.com/codefastlabs/codefast/commit/1d7e0b4f3073cd17e582a5f8cac57364444cd9b0), [`5861995`](https://github.com/codefastlabs/codefast/commit/5861995d71d5254d4050b353a835f96b192c4c31), [`b4b5bd8`](https://github.com/codefastlabs/codefast/commit/b4b5bd8303d35996d3a44be89e39f3ac8bb36a66), [`2b06496`](https://github.com/codefastlabs/codefast/commit/2b064962d114400d14a4067e1603c45fb1593c17), [`d260167`](https://github.com/codefastlabs/codefast/commit/d2601677455c76ed66b24c840b92e6a1ddc62a60), [`3d98dde`](https://github.com/codefastlabs/codefast/commit/3d98ddecece720d95c50c43f603f539c8595cefb), [`abd1ee9`](https://github.com/codefastlabs/codefast/commit/abd1ee91da009bd1aac98cd9b7896547431fbdcb), [`7b7b459`](https://github.com/codefastlabs/codefast/commit/7b7b4596bd30b6e53a7cf5d165ccede98c60d7d2), [`d6dbb0b`](https://github.com/codefastlabs/codefast/commit/d6dbb0b3d1358e5ce0bcde9f0ad9a2b6958ba8b8), [`a943b3d`](https://github.com/codefastlabs/codefast/commit/a943b3dadef73a2100dbf7394815e9b858040d94), [`9f45422`](https://github.com/codefastlabs/codefast/commit/9f454223b2b47e3562f808288ae7091e371550f1)]:
+  - @codefast/style-guide@0.3.1
+
 ## 0.3.1-canary.15
 
 ### Patch Changes
