@@ -43,11 +43,11 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.6.7",
+    "@rslib/core": "^0.6.8",
     "@types/commander": "^2.12.5",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.14.1",
-    "eslint": "^9.25.1",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.26.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
