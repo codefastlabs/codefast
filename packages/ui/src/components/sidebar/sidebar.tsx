@@ -1,5 +1,15 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
+
+import { useIsMobile } from "@codefast/hooks";
+import { createContext } from "@radix-ui/react-context";
+import { Slot } from "@radix-ui/react-slot";
+import { PanelLeftIcon } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import type { VariantProps } from "@/lib/utils";
+
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
@@ -7,16 +17,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button-variants";
 import { Skeleton } from "@/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
-
-import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-
-import { useIsMobile } from "@codefast/hooks";
-import { createContext } from "@radix-ui/react-context";
-import { Slot } from "@radix-ui/react-slot";
-import { PanelLeftIcon } from "lucide-react";
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
