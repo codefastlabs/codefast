@@ -3,8 +3,8 @@ import type { ComponentProps, JSX } from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { ChevronDownIcon } from "lucide-react";
 
-import { buttonVariants } from "@/components/button";
-import { cn, tv } from "@/lib/utils";
+import { navigationMenuTriggerStyle } from "@/components/navigation-menu/navigation-menu-trigger-style";
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenu
@@ -65,18 +65,6 @@ function NavigationMenuItem({ className, ...props }: ComponentProps<typeof Navig
     />
   );
 }
-
-/* -----------------------------------------------------------------------------
- * Style: NavigationMenuTrigger
- * -------------------------------------------------------------------------- */
-
-const navigationMenuTriggerStyle = tv({
-  base: buttonVariants({
-    className:
-      "data-[state=open]:bg-secondary/50 data-[state=open]:text-secondary-foreground group/navigation-menu-trigger focus-visible:bg-secondary dark:hover:not-disabled:bg-secondary",
-    variant: "ghost",
-  }),
-});
 
 /* -----------------------------------------------------------------------------
  * Component: NavigationMenuTrigger
@@ -194,5 +182,4 @@ export {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 };

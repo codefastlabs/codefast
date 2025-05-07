@@ -1,22 +1,22 @@
 "use client";
 
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
+import { Button } from "@/components/button";
+import { Input } from "@/components/input";
+import { Separator } from "@/components/separator";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet";
+import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button-variants";
+import { Skeleton } from "@/components/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
+
+import type { VariantProps } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 import { useIsMobile } from "@codefast/hooks";
 import { createContext } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 import { PanelLeftIcon } from "lucide-react";
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-import type { VariantProps } from "@/lib/utils";
-
-import { Button } from "@/components/button";
-import { Input } from "@/components/input";
-import { Separator } from "@/components/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet";
-import { Skeleton } from "@/components/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
-import { cn, tv } from "@/lib/utils";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -504,30 +504,6 @@ function SidebarMenuItem({ className, ...props }: ComponentProps<"li">): JSX.Ele
     />
   );
 }
-
-/* -----------------------------------------------------------------------------
- * Variant: SidebarMenuButton
- * -------------------------------------------------------------------------- */
-
-const sidebarMenuButtonVariants = tv({
-  base: "peer/menu-button outline-hidden ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground active:bg-sidebar-accent active:text-sidebar-accent-foreground group-has-data-[sidebar=menu-action]/menu-item:pr-8 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-3 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm transition-[width,height,padding] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
-  variants: {
-    variant: {
-      default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-      outline:
-        "bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
-    },
-    size: {
-      sm: "h-7 text-xs",
-      md: "h-8 text-sm",
-      lg: "group-data-[collapsible=icon]:p-0! h-12 text-sm",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-    size: "md",
-  },
-});
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarMenuButton
