@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";

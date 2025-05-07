@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps, JSX, ReactNode } from "react";
 
 import * as TogglePrimitive from "@radix-ui/react-toggle";

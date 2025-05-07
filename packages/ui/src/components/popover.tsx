@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps, JSX } from "react";
 
 import * as PopoverPrimitive from "@radix-ui/react-popover";
