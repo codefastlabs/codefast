@@ -14,5 +14,7 @@
     "@codefast/typescript-config": "0.3.2",
     "@codefast/ui": "0.3.2"
   },
-  "changesets": []
+  "changesets": [
+    "three-ads-follow"
+  ]
 }
