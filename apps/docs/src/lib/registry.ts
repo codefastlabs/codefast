@@ -1,6 +1,5 @@
 import type { SourceFile } from "ts-morph";
 
-import { logger } from "@codefast/ui";
 import { isEmpty } from "lodash-es";
 import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
@@ -55,10 +54,11 @@ export interface FileTree {
  * @param name - The identifier name of the registry item to retrieve
  * @returns A Promise that resolves to the processed RegistryItem or null if not found
  * @example
- * ```ts
+ * ```tsx
  * const item = await getRegistryItem("button");
  * if (item) {
- *   logger.log(item.files);
+ *   // eslint-disable-next-line no-console -- for debugging purposes
+ *   console.log(item.files);
  * }
  * ```
  */
@@ -77,7 +77,8 @@ export async function getRegistryItem(name: string): Promise<null | RegistryItem
       files,
     };
   } catch (error) {
-    logger.error(`Error retrieving registry item '${name}':`, error);
+    // eslint-disable-next-line no-console -- for debugging purposes
+    console.error(`Error retrieving registry item '${name}':`, error);
 
     return null;
   } finally {
@@ -112,7 +113,8 @@ async function processRegistryItemFiles(itemFiles: RegistryItemFile[]): Promise<
 
         Object.assign(file, { content, highlightedContent });
       } catch (error) {
-        logger.error(`Error processing file '${file.path}':`, error);
+        // eslint-disable-next-line no-console -- for debugging purposes
+        console.error(`Error processing file '${file.path}':`, error);
         Object.assign(file, {
           content: `// Error processing file: ${file.path}`,
           highlightedContent: `// Error processing file: ${file.path}`,
@@ -264,7 +266,8 @@ async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile
 
     return fixImports(code, file, allFiles);
   } catch (error) {
-    logger.error(`Error getting content for file '${file.path}':`, error);
+    // eslint-disable-next-line no-console -- for debugging purposes
+    console.error(`Error getting content for file '${file.path}':`, error);
 
     return `// Error processing file: ${file.path}`;
   }
@@ -325,7 +328,8 @@ async function cleanupTempDirectories(): Promise<void> {
       await fs.rm(dir, { recursive: true, force: true });
       tempDirs.delete(dir);
     } catch (error) {
-      logger.error(`Error cleaning up temp directory '${dir}':`, error);
+      // eslint-disable-next-line no-console -- for debugging purposes
+      console.error(`Error cleaning up temp directory '${dir}':`, error);
     }
   });
 

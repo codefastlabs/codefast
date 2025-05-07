@@ -14,7 +14,6 @@ import {
   CardTitle,
   Input,
   Label,
-  logger,
   Select,
   SelectContent,
   SelectItem,
@@ -95,7 +94,8 @@ export function CardsShare(): JSX.Element {
       })
       .catch((error: unknown) => {
         toast.error("Failed to copy link");
-        logger.error("Copy error:", error);
+        // eslint-disable-next-line no-console -- for debugging purposes
+        console.error("Copy error:", error);
       });
   };
 
