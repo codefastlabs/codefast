@@ -17,47 +17,47 @@
     ".": {
       "import": {
         "default": "./dist/esm/index.js",
-        "types": "./dist/types/index.d.ts"
+        "types": "./dist/esm/index.d.ts"
       },
       "require": {
         "default": "./dist/cjs/index.cjs",
-        "types": "./dist/types/index.d.cts"
+        "types": "./dist/cjs/index.d.cts"
       }
     },
     "./library": {
       "import": {
         "default": "./dist/esm/library.js",
-        "types": "./dist/types/library.d.ts"
+        "types": "./dist/esm/library.d.ts"
       },
       "require": {
         "default": "./dist/cjs/library.cjs",
-        "types": "./dist/types/library.d.ts"
+        "types": "./dist/cjs/library.d.ts"
       }
     },
     "./next": {
       "import": {
         "default": "./dist/esm/next.js",
-        "types": "./dist/types/next.d.ts"
+        "types": "./dist/esm/next.d.ts"
       },
       "require": {
         "default": "./dist/cjs/next.cjs",
-        "types": "./dist/types/next.d.ts"
+        "types": "./dist/cjs/next.d.ts"
       }
     },
     "./react": {
       "import": {
         "default": "./dist/esm/react.js",
-        "types": "./dist/types/react.d.ts"
+        "types": "./dist/esm/react.d.ts"
       },
       "require": {
         "default": "./dist/cjs/react.cjs",
-        "types": "./dist/types/react.d.ts"
+        "types": "./dist/cjs/react.d.ts"
       }
     }
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "dist",
     "CHANGELOG.md",

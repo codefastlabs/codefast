@@ -17,97 +17,97 @@
     ".": {
       "import": {
         "default": "./dist/esm/index.js",
-        "types": "./dist/types/index.d.ts"
+        "types": "./dist/esm/index.d.ts"
       },
       "require": {
         "default": "./dist/cjs/index.cjs",
-        "types": "./dist/types/index.d.cts"
+        "types": "./dist/cjs/index.d.cts"
       }
     },
     "./use-animated-value": {
       "import": {
         "default": "./dist/esm/use-animated-value.js",
-        "types": "./dist/types/use-animated-value.d.ts"
+        "types": "./dist/esm/use-animated-value.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-animated-value.cjs",
-        "types": "./dist/types/use-animated-value.d.ts"
+        "types": "./dist/cjs/use-animated-value.d.ts"
       }
     },
     "./use-copy-to-clipboard": {
       "import": {
         "default": "./dist/esm/use-copy-to-clipboard.js",
-        "types": "./dist/types/use-copy-to-clipboard.d.ts"
+        "types": "./dist/esm/use-copy-to-clipboard.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-copy-to-clipboard.cjs",
-        "types": "./dist/types/use-copy-to-clipboard.d.ts"
+        "types": "./dist/cjs/use-copy-to-clipboard.d.ts"
       }
     },
     "./use-event": {
       "import": {
         "default": "./dist/esm/use-event.js",
-        "types": "./dist/types/use-event.d.ts"
+        "types": "./dist/esm/use-event.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-event.cjs",
-        "types": "./dist/types/use-event.d.ts"
+        "types": "./dist/cjs/use-event.d.ts"
       }
     },
     "./use-is-mobile": {
       "import": {
         "default": "./dist/esm/use-is-mobile.js",
-        "types": "./dist/types/use-is-mobile.d.ts"
+        "types": "./dist/esm/use-is-mobile.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-is-mobile.cjs",
-        "types": "./dist/types/use-is-mobile.d.ts"
+        "types": "./dist/cjs/use-is-mobile.d.ts"
       }
     },
     "./use-media-query": {
       "import": {
         "default": "./dist/esm/use-media-query.js",
-        "types": "./dist/types/use-media-query.d.ts"
+        "types": "./dist/esm/use-media-query.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-media-query.cjs",
-        "types": "./dist/types/use-media-query.d.ts"
+        "types": "./dist/cjs/use-media-query.d.ts"
       }
     },
     "./use-mutation-observer": {
       "import": {
         "default": "./dist/esm/use-mutation-observer.js",
-        "types": "./dist/types/use-mutation-observer.d.ts"
+        "types": "./dist/esm/use-mutation-observer.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-mutation-observer.cjs",
-        "types": "./dist/types/use-mutation-observer.d.ts"
+        "types": "./dist/cjs/use-mutation-observer.d.ts"
       }
     },
     "./use-pagination": {
       "import": {
         "default": "./dist/esm/use-pagination.js",
-        "types": "./dist/types/use-pagination.d.ts"
+        "types": "./dist/esm/use-pagination.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-pagination.cjs",
-        "types": "./dist/types/use-pagination.d.ts"
+        "types": "./dist/cjs/use-pagination.d.ts"
       }
     },
     "./use-state-params": {
       "import": {
         "default": "./dist/esm/use-state-params.js",
-        "types": "./dist/types/use-state-params.d.ts"
+        "types": "./dist/esm/use-state-params.d.ts"
       },
       "require": {
         "default": "./dist/cjs/use-state-params.cjs",
-        "types": "./dist/types/use-state-params.d.ts"
+        "types": "./dist/cjs/use-state-params.d.ts"
       }
     }
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "dist",
     "CHANGELOG.md",

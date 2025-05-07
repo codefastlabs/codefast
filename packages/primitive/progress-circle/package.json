@@ -17,27 +17,27 @@
     ".": {
       "import": {
         "default": "./dist/esm/index.js",
-        "types": "./dist/types/index.d.ts"
+        "types": "./dist/esm/index.d.ts"
       },
       "require": {
         "default": "./dist/cjs/index.cjs",
-        "types": "./dist/types/index.d.cts"
+        "types": "./dist/cjs/index.d.cts"
       }
     },
     "./progress-circle": {
       "import": {
         "default": "./dist/esm/progress-circle.js",
-        "types": "./dist/types/progress-circle.d.ts"
+        "types": "./dist/esm/progress-circle.d.ts"
       },
       "require": {
         "default": "./dist/cjs/progress-circle.cjs",
-        "types": "./dist/types/progress-circle.d.ts"
+        "types": "./dist/cjs/progress-circle.d.ts"
       }
     }
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "dist",
     "CHANGELOG.md",

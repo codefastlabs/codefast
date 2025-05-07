@@ -17,27 +17,27 @@
     ".": {
       "import": {
         "default": "./dist/esm/index.js",
-        "types": "./dist/types/index.d.ts"
+        "types": "./dist/esm/index.d.ts"
       },
       "require": {
         "default": "./dist/cjs/index.cjs",
-        "types": "./dist/types/index.d.cts"
+        "types": "./dist/cjs/index.d.cts"
       }
     },
     "./checkbox-group": {
       "import": {
         "default": "./dist/esm/checkbox-group.js",
-        "types": "./dist/types/checkbox-group.d.ts"
+        "types": "./dist/esm/checkbox-group.d.ts"
       },
       "require": {
         "default": "./dist/cjs/checkbox-group.cjs",
-        "types": "./dist/types/checkbox-group.d.ts"
+        "types": "./dist/cjs/checkbox-group.d.ts"
       }
     }
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "dist",
     "CHANGELOG.md",
