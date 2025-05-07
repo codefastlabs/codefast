@@ -1,15 +1,16 @@
 import { pluginReact } from "@rsbuild/plugin-react";
 import { defineConfig } from "@rslib/core";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const isProduction = process.env.NODE_ENV === "production";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   lib: [
     {
       bundle: false,
-      dts: {
-        distPath: "./dist/types",
-      },
+      dts: true,
       format: "esm",
       output: {
         distPath: {
@@ -19,6 +20,7 @@ export default defineConfig({
     },
     {
       bundle: false,
+      dts: true,
       format: "cjs",
       output: {
         distPath: {
@@ -29,7 +31,12 @@ export default defineConfig({
   ],
   output: {
     cleanDistPath: isProduction,
-    copy: ["./src/styles/index.css"],
+    copy: [
+      {
+        from: path.resolve(__dirname, "src", "styles", "index.css"),
+        to: path.resolve(__dirname, "dist", "styles", "index.css"),
+      },
+    ],
     minify: {
       css: false,
     },

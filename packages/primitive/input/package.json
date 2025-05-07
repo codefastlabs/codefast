@@ -17,27 +17,27 @@
     ".": {
       "import": {
         "default": "./dist/esm/index.js",
-        "types": "./dist/types/index.d.ts"
+        "types": "./dist/esm/index.d.ts"
       },
       "require": {
         "default": "./dist/cjs/index.cjs",
-        "types": "./dist/types/index.d.cts"
+        "types": "./dist/cjs/index.d.cts"
       }
     },
     "./input": {
       "import": {
         "default": "./dist/esm/input.js",
-        "types": "./dist/types/input.d.ts"
+        "types": "./dist/esm/input.d.ts"
       },
       "require": {
         "default": "./dist/cjs/input.cjs",
-        "types": "./dist/types/input.d.ts"
+        "types": "./dist/cjs/input.d.ts"
       }
     }
   },
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/esm/index.d.ts",
   "files": [
     "dist",
     "CHANGELOG.md",
