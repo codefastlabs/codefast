@@ -1,5 +1,19 @@
 # @codefast-ui/progress-circle
 
+## 0.3.2
+
+### Patch Changes
+
+- [`15df6aa`](https://github.com/codefastlabs/codefast/commit/15df6aa576e65bcd8782fcf4529af97a3d75793e) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update dependencies across packages
+
+- [`1263b80`](https://github.com/codefastlabs/codefast/commit/1263b804c64a94bb6baa50e16a27017100b68ae9) Thanks [@thevuong](https://github.com/thevuong)! - chore(sidebar): reorder imports for better readability
+
+- [`24059b5`](https://github.com/codefastlabs/codefast/commit/24059b5d091e8f8af4d0d70b6d5665e5b0ca8224) Thanks [@thevuong](https://github.com/thevuong)! - feat(ui): add "use client" directive to all UI components for client-side rendering
+
+- [`7f54fb1`](https://github.com/codefastlabs/codefast/commit/7f54fb1e1834d547cfd593118ae463c7d6262a35) Thanks [@thevuong](https://github.com/thevuong)! - chore(ui): remove logger utility and related references
+
+- [`02a9fae`](https://github.com/codefastlabs/codefast/commit/02a9fae9ef802c22af58299d57b1df13c336fb44) Thanks [@thevuong](https://github.com/thevuong)! - refactor(ui): extract component variant definitions into separate files
+
 ## 0.3.2-canary.0
 
 ### Patch Changes
