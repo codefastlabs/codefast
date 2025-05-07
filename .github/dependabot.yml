@@ -59,8 +59,7 @@ updates:
     # Only stable version updates are allowed for Zod.
     ignore:
       - dependency-name: "zod"
-        update-types:
-          ["version-update:semver-pre-major", "version-update:semver-pre-minor", "version-update:semver-pre-patch"]
+        update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
 
   # Configure updates for GitHub Actions
   - package-ecosystem: "github-actions"
