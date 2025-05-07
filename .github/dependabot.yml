@@ -13,7 +13,6 @@ updates:
     versioning-strategy: "auto"
     labels:
       - "dependencies"
-    package-manager: "pnpm"
     commit-message:
       prefix: "chore"
       prefix-development: "chore(dev)"
