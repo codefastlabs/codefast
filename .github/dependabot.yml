@@ -45,6 +45,23 @@ updates:
           - "@swc/core"
           - "@jest/*"
 
+  # Configuration for app/docs (using a Zod stable version)
+  - package-ecosystem: "npm"
+    directory: "/app/docs"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docs"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    # Only stable version updates are allowed for Zod.
+    ignore:
+      - dependency-name: "zod"
+        update-types:
+          ["version-update:semver-pre-major", "version-update:semver-pre-minor", "version-update:semver-pre-patch"]
+
   # Configure updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
