@@ -14,5 +14,11 @@
     "@codefast/typescript-config": "0.3.1",
     "@codefast/ui": "0.3.1"
   },
-  "changesets": []
+  "changesets": [
+    "all-chicken-wonder",
+    "brown-poets-enjoy",
+    "lovely-months-find",
+    "wet-otters-say",
+    "young-clocks-slide"
+  ]
 }
