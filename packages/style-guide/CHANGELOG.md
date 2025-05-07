@@ -1,5 +1,11 @@
 # @codefast/style-guide
 
+## 0.3.3-canary.0
+
+### Patch Changes
+
+- [`c9e52b8`](https://github.com/codefastlabs/codefast/commit/c9e52b8c059732c4a94d0679952e7d04cc26ab4e) Thanks [@thevuong](https://github.com/thevuong)! - feat(build): update output type paths and configurations for consistency
+
 ## 0.3.2
 
 ### Patch Changes
