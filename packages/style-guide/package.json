@@ -238,7 +238,7 @@
     "@rslib/core": "^0.6.8",
     "@types/node": "^22.15.14",
     "eslint": "^9.26.0",
-    "globals": "^16.0.0",
+    "globals": "^16.1.0",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
