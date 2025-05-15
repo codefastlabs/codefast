@@ -55,7 +55,7 @@ export const perfectionistRules: Linter.Config = {
      */
     "perfectionist/sort-interfaces": [
       "warn",
-      { groups: ["index-signature", "required-member", "optional-member"], type: "natural" },
+      { groups: ["index-signature", "required-member", "optional-member"], partitionByNewLine: true, type: "natural" },
     ],
 
     /**
