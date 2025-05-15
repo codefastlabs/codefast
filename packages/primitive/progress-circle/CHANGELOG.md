@@ -1,5 +1,13 @@
 # @codefast-ui/progress-circle
 
+## 0.3.4
+
+### Patch Changes
+
+- [`b24a5c2`](https://github.com/codefastlabs/codefast/commit/b24a5c27bfab89a10b8cf190503c1ea92228fd57) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update dependencies and devDependencies to latest compatible versions
+
+- [`c8b6365`](https://github.com/codefastlabs/codefast/commit/c8b6365a46ea00c9c1cdd77606fe9683aec753e6) Thanks [@thevuong](https://github.com/thevuong)! - feat(style-guide): enable partitioning by new line in interface sorting rule
+
 ## 0.3.3
 
 ### Patch Changes
