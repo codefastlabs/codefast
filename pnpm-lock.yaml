@@ -175,8 +175,8 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1
       commander:
-        specifier: ^13.1.0
-        version: 13.1.0
+        specifier: ^14.0.0
+        version: 14.0.0
       glob:
         specifier: ^11.0.2
         version: 11.0.2
@@ -3586,6 +3586,10 @@ packages:
   commander@13.1.0:
     resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
     engines: {node: '>=18'}
+
+  commander@14.0.0:
+    resolution: {integrity: sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA==}
+    engines: {node: '>=20'}
 
   compare-func@2.0.0:
     resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}
@@ -8870,7 +8874,7 @@ snapshots:
 
   '@types/commander@2.12.5':
     dependencies:
-      commander: 13.1.0
+      commander: 14.0.0
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:
@@ -9537,6 +9541,8 @@ snapshots:
   comma-separated-tokens@2.0.3: {}
 
   commander@13.1.0: {}
+
+  commander@14.0.0: {}
 
   compare-func@2.0.0:
     dependencies:
