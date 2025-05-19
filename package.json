@@ -43,7 +43,7 @@
     "cross-env": "^7.0.3",
     "lint-staged": "^16.0.0",
     "prettier": "^3.5.3",
-    "prettier-plugin-packagejson": "^2.5.12",
+    "prettier-plugin-packagejson": "^2.5.13",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "rimraf": "^6.0.1",
     "simple-git-hooks": "^2.13.0",
