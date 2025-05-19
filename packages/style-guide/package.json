@@ -213,7 +213,7 @@
   },
   "dependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
-    "@eslint/js": "^9.26.0",
+    "@eslint/js": "^9.27.0",
     "@next/eslint-plugin-next": "^15.3.2",
     "@stylistic/eslint-plugin": "^4.2.0",
     "@vitest/eslint-plugin": "^1.1.44",
