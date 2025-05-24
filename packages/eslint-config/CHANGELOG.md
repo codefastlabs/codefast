@@ -1,5 +1,14 @@
 # @codefast/eslint-config
 
+## 0.3.5-canary.0
+
+### Patch Changes
+
+- [`8dda4d8`](https://github.com/codefastlabs/codefast/commit/8dda4d823939980b12f75e8768f5ea8d9ec21c65) Thanks [@thevuong](https://github.com/thevuong)! - feat: update dependencies across packages to improve compatibility and performance
+
+- Updated dependencies [[`8dda4d8`](https://github.com/codefastlabs/codefast/commit/8dda4d823939980b12f75e8768f5ea8d9ec21c65)]:
+  - @codefast/style-guide@0.3.5-canary.0
+
 ## 0.3.4
 
 ### Patch Changes
