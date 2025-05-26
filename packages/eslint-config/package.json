@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@codefast/style-guide": "workspace:*",
-    "globals": "^16.1.0"
+    "globals": "^16.2.0"
   },
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
