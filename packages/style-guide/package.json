@@ -218,7 +218,7 @@
     "@stylistic/eslint-plugin": "^4.2.0",
     "@vitest/eslint-plugin": "^1.2.1",
     "eslint-config-prettier": "^10.1.5",
-    "eslint-import-resolver-typescript": "^4.3.5",
+    "eslint-import-resolver-typescript": "^4.4.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
