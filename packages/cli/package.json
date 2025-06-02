@@ -46,7 +46,7 @@
     "@rslib/core": "^0.8.0",
     "@types/commander": "^2.12.5",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.29",
     "eslint": "^9.27.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

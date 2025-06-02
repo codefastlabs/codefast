@@ -78,7 +78,7 @@
   "devDependencies": {
     "@codefast/typescript-config": "workspace:*",
     "@rslib/core": "^0.8.0",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.29",
     "eslint": "^9.27.0",
     "typescript": "^5.8.3"
   },
