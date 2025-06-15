@@ -67,7 +67,7 @@
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf node_modules dist",
+    "clean": "rimraf dist",
     "lint": "eslint --cache --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest"
   },
