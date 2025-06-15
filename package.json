@@ -9,7 +9,7 @@
     "changeset:pre:enter": "changeset pre enter canary",
     "changeset:pre:exit": "changeset pre exit",
     "check-types": "turbo run check-types",
-    "clean": "turbo run clean && rimraf node_modules pnpm-lock.yaml .turbo/cache",
+    "clean": "turbo run clean",
     "clean:script": "rimraf \"**/.exports-analysis\" --glob",
     "codefast:update-exports": "node packages/cli/dist/index.js update-exports",
     "deploy:preview": "vercel deploy --archive=tgz",

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build --turbopack",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf node_modules .next",
+    "clean": "rimraf .next",
     "dev": "next dev --turbopack",
     "lint": "next lint --max-warnings 0",
     "lint:inspect": "npx @eslint/config-inspector@latest",
