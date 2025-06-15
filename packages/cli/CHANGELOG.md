@@ -1,5 +1,13 @@
 # @codefast/cli
 
+## 0.3.5-canary.0
+
+### Patch Changes
+
+- [`86f0961`](https://github.com/codefastlabs/codefast/commit/86f0961c39464f15e16691880431a9e977ccff35) Thanks [@thevuong](https://github.com/thevuong)! - feat(hooks): remove `useStateParams` tests and update dependencies
+
+- [`8dda4d8`](https://github.com/codefastlabs/codefast/commit/8dda4d823939980b12f75e8768f5ea8d9ec21c65) Thanks [@thevuong](https://github.com/thevuong)! - feat: update dependencies across packages to improve compatibility and performance
+
 ## 0.3.4
 
 ### Patch Changes
