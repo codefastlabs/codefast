@@ -41,14 +41,14 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "cross-env": "^7.0.3",
-    "lint-staged": "^16.0.0",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.5.3",
-    "prettier-plugin-packagejson": "^2.5.14",
-    "prettier-plugin-tailwindcss": "^0.6.11",
+    "prettier-plugin-packagejson": "^2.5.15",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "rimraf": "^6.0.1",
     "simple-git-hooks": "^2.13.0",
-    "tsx": "^4.19.4",
-    "turbo": "^2.5.3"
+    "tsx": "^4.20.3",
+    "turbo": "^2.5.4"
   },
   "packageManager": "pnpm@10.11.1",
   "engines": {
