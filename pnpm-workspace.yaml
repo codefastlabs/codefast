@@ -2,9 +2,9 @@ packages:
   - apps/*
   - packages/**
   - scripts/**
-
 onlyBuiltDependencies:
-  - "@swc/core"
+  - '@swc/core'
+  - '@tailwindcss/oxide'
   - core-js
   - esbuild
   - sharp
