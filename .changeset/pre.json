@@ -14,5 +14,8 @@
     "@codefast/typescript-config": "0.3.3",
     "@codefast/ui": "0.3.3"
   },
-  "changesets": []
+  "changesets": [
+    "chatty-carrots-kick",
+    "gold-zebras-knock"
+  ]
 }
