@@ -220,7 +220,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-import-resolver-typescript": "^4.4.3",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jest": "^28.13.5",
+    "eslint-plugin-jest": "^28.14.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-perfectionist": "^4.14.0",
     "eslint-plugin-playwright": "^2.2.0",
