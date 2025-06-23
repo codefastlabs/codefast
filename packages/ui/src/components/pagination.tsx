@@ -1,10 +1,7 @@
-import type { ComponentProps, JSX } from "react";
-
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
-
-import type { VariantProps } from "@/lib/utils";
-
+import type { ComponentProps, JSX } from "react";
 import { buttonVariants } from "@/components/button";
+import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
@@ -17,7 +14,6 @@ function Pagination({ className, ...props }: ComponentProps<"nav">): JSX.Element
       aria-label="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       data-slot="pagination"
-      role="navigation"
       {...props}
     />
   );

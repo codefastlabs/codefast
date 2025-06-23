@@ -1,8 +1,6 @@
 import type { ComponentProps, JSX } from "react";
-
-import type { VariantProps } from "@/lib/utils";
-
 import { alertVariants } from "@/components/alert/alert-variants";
+import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------

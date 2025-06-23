@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Avatar,
   AvatarFallback,
@@ -11,13 +9,13 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  cn,
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
+  cn,
   Dialog,
   DialogBody,
   DialogContent,
@@ -32,7 +30,8 @@ import {
   TooltipTrigger,
 } from "@codefast/ui";
 import { Check, Plus, Send } from "lucide-react";
-import { useState } from "react";
+import type { JSX } from "react";
+import { useId, useState } from "react";
 
 interface User {
   avatar: string;
@@ -91,6 +90,7 @@ export function CardsChat(): JSX.Element {
   ]);
   const [input, setInput] = useState("");
   const inputLength = input.trim().length;
+  const inputId = useId();
 
   return (
     <>
@@ -129,7 +129,7 @@ export function CardsChat(): JSX.Element {
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
-                // eslint-disable-next-line react/no-array-index-key -- we need index
+                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 key={index}
                 className={cn(
                   "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
@@ -164,7 +164,7 @@ export function CardsChat(): JSX.Element {
             <Input
               autoComplete="off"
               className="flex-1"
-              id="message"
+              id={inputId}
               placeholder="Type your message..."
               value={input}
               onChange={(event) => {

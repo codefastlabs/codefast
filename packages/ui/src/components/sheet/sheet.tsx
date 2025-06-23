@@ -1,14 +1,11 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
-
-import type { VariantProps } from "@/lib/utils";
-
+import type { ComponentProps, JSX } from "react";
 import { buttonVariants } from "@/components/button";
 import { sheetContentVariants } from "@/components/sheet/sheet-content-variants";
+import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------

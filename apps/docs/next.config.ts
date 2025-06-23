@@ -4,9 +4,6 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@codefast/ui"],
   },
-  outputFileTracingIncludes: {
-    "/blocks/*": ["./src/registry/**/*"],
-  },
   images: {
     remotePatterns: [
       {
@@ -14,6 +11,9 @@ const nextConfig: NextConfig = {
         protocol: "https",
       },
     ],
+  },
+  outputFileTracingIncludes: {
+    "/blocks/*": ["./src/registry/**/*"],
   },
 };
 

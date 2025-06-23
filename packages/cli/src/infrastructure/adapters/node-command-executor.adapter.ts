@@ -1,12 +1,10 @@
-import { inject, injectable } from "inversify";
 import { execSync } from "node:child_process";
 import path from "node:path";
-
+import { inject, injectable } from "inversify";
 import type { CommandExecutorPort } from "@/application/ports/command-executor.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
+import { type PackageJson, packageJsonSchema } from "@/domain/entities/package-config";
 import type { DependencyConfigServiceInterface } from "@/domain/interfaces/dependency-config.service";
-
-import { packageJsonSchema } from "@/domain/entities/package-config";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -54,7 +52,7 @@ export class NodeCommandExecutorAdapter implements CommandExecutorPort {
       return;
     }
 
-    let packageJson;
+    let packageJson: PackageJson;
 
     try {
       packageJson = packageJsonSchema.parse(JSON.parse(this.fileSystemPort.readFile(packageJsonPath)));

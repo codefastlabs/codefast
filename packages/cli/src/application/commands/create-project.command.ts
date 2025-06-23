@@ -1,6 +1,6 @@
+import process from "node:process";
 import { Command } from "commander";
 import { inject, injectable } from "inversify";
-import process from "node:process";
 
 import type { CreateProjectUseCase } from "@/application/use-cases/create-project.use-case";
 

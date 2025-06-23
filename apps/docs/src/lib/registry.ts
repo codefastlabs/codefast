@@ -1,15 +1,12 @@
-import type { SourceFile } from "ts-morph";
-
-import { isEmpty } from "lodash-es";
 import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { isEmpty } from "lodash-es";
+import type { SourceFile } from "ts-morph";
 import { Project, ScriptKind } from "ts-morph";
-
-import type { RegistryItem, RegistryItemFile } from "@/types/registry";
-
 import { highlightCode } from "@/lib/highlight-code";
 import { registryBlocks } from "@/registry/registry-blocks";
+import type { RegistryItem, RegistryItemFile } from "@/types/registry";
 
 // Constants
 const FILE_TYPES = {
@@ -140,7 +137,7 @@ async function getFileContentWithHighlighting(
   const cacheKey = file.path;
 
   if (fileContentCache.has(cacheKey)) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Value has been verified to exist
+    // biome-ignore lint/style/noNonNullAssertion: Value has been verified to exist
     return fileContentCache.get(cacheKey)!;
   }
 
@@ -284,7 +281,7 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
   const cacheKey = `${filePath}:${content.length}`;
 
   if (sourceFileCache.has(cacheKey)) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- Value has been verified to exist
+    // biome-ignore lint/style/noNonNullAssertion: Value has been verified to exist
     return sourceFileCache.get(cacheKey)!;
   }
 

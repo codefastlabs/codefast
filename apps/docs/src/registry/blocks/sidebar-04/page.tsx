@@ -1,5 +1,3 @@
-import type { CSSProperties, JSX } from "react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,6 +10,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@codefast/ui";
+import type { CSSProperties, JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/sidebar-04/_components/app-sidebar";
 

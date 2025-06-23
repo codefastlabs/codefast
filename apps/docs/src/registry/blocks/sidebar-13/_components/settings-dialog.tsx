@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,6 +37,7 @@ import {
   VideoIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { JSX } from "react";
 import { useState } from "react";
 
 const data = {
@@ -108,7 +107,7 @@ export function SettingsDialog(): JSX.Element {
             </header>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
               {Array.from({ length: 10 }).map((_, i) => (
-                // eslint-disable-next-line react/no-array-index-key -- we need index
+                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <div key={i} className="bg-muted/50 aspect-video max-w-3xl rounded-xl" />
               ))}
             </div>

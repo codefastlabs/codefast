@@ -1,6 +1,5 @@
-import type { JSX } from "react";
-
 import { Label, RadioGroup, RadioGroupItem } from "@codefast/ui";
+import { type JSX, useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -43,25 +42,26 @@ const plans: readonly Plan[] = [
 ];
 
 export function RadioGroupDemo(): JSX.Element {
+  const id = useId();
   return (
     <GridWrapper className="*:grid *:place-items-center">
       <div>
         <RadioGroup>
           <div className="flex items-center gap-3">
-            <RadioGroupItem id="radio-group-1" value="default" />
-            <Label htmlFor="radio-group-1">Default</Label>
+            <RadioGroupItem id={`${id}-radio-group-1`} value="default" />
+            <Label htmlFor={`${id}-radio-group-1`}>Default</Label>
           </div>
           <div className="flex items-center gap-3">
-            <RadioGroupItem id="radio-group-2" value="comfortable" />
-            <Label htmlFor="radio-group-2">Comfortable</Label>
+            <RadioGroupItem id={`${id}-radio-group-2`} value="comfortable" />
+            <Label htmlFor={`${id}-radio-group-2`}>Comfortable</Label>
           </div>
           <div className="flex items-center gap-3">
-            <RadioGroupItem id="radio-group-3" value="compact" />
-            <Label htmlFor="radio-group-3">Compact</Label>
+            <RadioGroupItem id={`${id}-radio-group-3`} value="compact" />
+            <Label htmlFor={`${id}-radio-group-3`}>Compact</Label>
           </div>
           <div className="flex items-center gap-3">
-            <RadioGroupItem disabled id="radio-group-4" value="disabled" />
-            <Label htmlFor="radio-group-4">Disabled</Label>
+            <RadioGroupItem disabled id={`${id}-radio-group-4`} value="disabled" />
+            <Label htmlFor={`${id}-radio-group-4`}>Disabled</Label>
           </div>
         </RadioGroup>
       </div>
@@ -75,7 +75,7 @@ export function RadioGroupDemo(): JSX.Element {
               <RadioGroupItem
                 className="hover:not-disabled:not-aria-checked:border-input hover:not-disabled:not-aria-checked:aria-invalid:border-destructive disabled:opacity-100"
                 disabled={plan.disabled}
-                id={plan.name}
+                id={`${id}-${plan.name}`}
                 value={plan.id}
               />
               <div className="grid gap-1 font-normal">

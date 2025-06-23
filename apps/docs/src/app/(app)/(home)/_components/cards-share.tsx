@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Avatar,
   AvatarFallback,
@@ -22,6 +20,8 @@ import {
   Separator,
   toast,
 } from "@codefast/ui";
+import type { JSX } from "react";
+import { useId } from "react";
 
 type UserPermission = "edit" | "view";
 
@@ -60,6 +60,7 @@ function UserAccessRow({ user }: { user: User }): JSX.Element {
 }
 
 export function CardsShare(): JSX.Element {
+  const id = useId();
   const documentLink = "https://example.com/link/to/document";
 
   const usersWithAccess: User[] = [
@@ -107,10 +108,10 @@ export function CardsShare(): JSX.Element {
       </CardHeader>
       <CardContent>
         <div className="flex space-x-2">
-          <Label className="sr-only" htmlFor="link">
+          <Label className="sr-only" htmlFor={`${id}-link`}>
             Link
           </Label>
-          <Input readOnly id="link" value={documentLink} />
+          <Input readOnly id={`${id}-link`} value={documentLink} />
           <Button className="shrink-0" onClick={handleCopyLink}>
             Copy Link
           </Button>

@@ -1,6 +1,3 @@
-import type { LucideIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -14,8 +11,10 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@codefast/ui";
+import type { LucideIcon } from "lucide-react";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data: {

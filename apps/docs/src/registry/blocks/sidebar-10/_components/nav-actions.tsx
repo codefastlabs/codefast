@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Button,
   Popover,
@@ -32,6 +30,7 @@ import {
   Trash2Icon,
   TrashIcon,
 } from "lucide-react";
+import type { JSX } from "react";
 import { useEffect, useState } from "react";
 
 const data = [
@@ -81,12 +80,12 @@ export function NavActions(): JSX.Element {
           <Sidebar className="bg-transparent" collapsible="none">
             <SidebarContent>
               {data.map((group, index) => (
-                // eslint-disable-next-line react/no-array-index-key -- we need index
+                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <SidebarGroup key={index} className="border-b last:border-none">
                   <SidebarGroupContent className="gap-0">
                     <SidebarMenu>
                       {group.map((item, menuIndex) => (
-                        // eslint-disable-next-line react/no-array-index-key -- we need index
+                        // biome-ignore lint/suspicious/noArrayIndexKey: need
                         <SidebarMenuItem key={menuIndex}>
                           <SidebarMenuButton>
                             <item.icon /> <span>{item.label}</span>

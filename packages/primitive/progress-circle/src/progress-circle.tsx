@@ -1,9 +1,8 @@
 "use client";
 
 import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, ReactNode } from "react";
-
 import { createContextScope } from "@radix-ui/react-context";
+import type { ComponentProps, ReactNode } from "react";
 import { useId, useMemo } from "react";
 
 /* -----------------------------------------------------------------------------
@@ -307,7 +306,6 @@ function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<Prog
       height={size}
       id={id}
       role="progressbar"
-      tabIndex={0}
       viewBox={`0 0 ${size} ${size}`}
       width={size}
       {...props}
@@ -336,7 +334,6 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Pr
 
   return (
     <circle
-      aria-hidden="true"
       cx={center}
       cy={center}
       fill="transparent"
@@ -370,7 +367,6 @@ function ProgressCircleIndicator({
 
   return (
     <circle
-      aria-hidden="true"
       cx={center}
       cy={center}
       fill="transparent"

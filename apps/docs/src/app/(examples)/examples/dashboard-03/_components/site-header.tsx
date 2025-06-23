@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,6 +13,7 @@ import {
 } from "@codefast/ui";
 import { SidebarIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
+import type { JSX } from "react";
 import { Fragment, useMemo } from "react";
 
 import { ModeToggle } from "@/app/(examples)/examples/dashboard-03/_components/mode-toggle";
@@ -55,12 +54,12 @@ export function SiteHeader(): JSX.Element {
             <BreadcrumbSeparator />
             {breadcrumbs.map((breadcrumb, index) =>
               index === breadcrumbs.length - 1 ? (
-                // eslint-disable-next-line react/no-array-index-key -- keep
+                // biome-ignore lint/suspicious/noArrayIndexKey: keep
                 <BreadcrumbItem key={index}>
                   <BreadcrumbPage className="capitalize">{breadcrumb.label}</BreadcrumbPage>
                 </BreadcrumbItem>
               ) : (
-                // eslint-disable-next-line react/no-array-index-key -- keep
+                // biome-ignore lint/suspicious/noArrayIndexKey: keep
                 <Fragment key={index}>
                   <BreadcrumbItem>
                     <BreadcrumbLink className="capitalize" href={breadcrumb.href}>

@@ -1,7 +1,6 @@
-import type { JSX } from "react";
-
 import { InputSearch } from "@codefast/ui";
 import { UserSearchIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 

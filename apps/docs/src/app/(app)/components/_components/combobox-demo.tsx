@@ -1,13 +1,10 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Button,
-  cn,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -15,11 +12,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  cn,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@codefast/ui";
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
+import type { JSX } from "react";
 import { useMemo, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
@@ -109,7 +108,6 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
         <Button
           aria-expanded={open}
           className="w-full justify-between md:max-w-[200px]"
-          role="combobox"
           suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
@@ -156,7 +154,6 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
         <Button
           aria-expanded={open}
           className="w-full justify-between px-3 md:max-w-[200px]"
-          role="combobox"
           suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
@@ -301,7 +298,6 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
         <Button
           aria-expanded={open}
           className="w-fit max-w-full justify-between"
-          role="combobox"
           suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >

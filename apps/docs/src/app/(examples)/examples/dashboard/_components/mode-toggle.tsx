@@ -1,10 +1,9 @@
 "use client";
 
-import type { JSX } from "react";
-
 import { Button } from "@codefast/ui";
 import { IconBrightness } from "@tabler/icons-react";
 import { useTheme } from "next-themes";
+import type { JSX } from "react";
 import { useCallback } from "react";
 
 export function ModeToggle(): JSX.Element {

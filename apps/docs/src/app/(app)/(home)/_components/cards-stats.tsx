@@ -1,9 +1,8 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import { Card, CardContent, CardHeader, CardTitle, ChartContainer, cn } from "@codefast/ui";
+import type { JSX } from "react";
 import { Bar, BarChart, Line, LineChart } from "recharts";
 
 const data = [

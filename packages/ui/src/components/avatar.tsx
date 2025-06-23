@@ -1,8 +1,7 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
 

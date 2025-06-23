@@ -1,6 +1,3 @@
-import type { LucideIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -13,7 +10,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@codefast/ui";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 
 import { SearchForm } from "@/registry/blocks/sidebar-01/_components/search-form";
 import { VersionSwitcher } from "@/registry/blocks/sidebar-01/_components/version-switcher";

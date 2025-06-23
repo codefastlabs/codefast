@@ -1,8 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import {
   Card,
   CardContent,
@@ -15,6 +13,8 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import { useId } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartData = [
@@ -38,6 +38,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartAreaGradient(): JSX.Element {
+  const id = useId();
   return (
     <Card>
       <CardHeader>
@@ -64,18 +65,18 @@ export function ChartAreaGradient(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
             <defs>
-              <linearGradient id="fillDesktop" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`${id}-fillDesktop`} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`${id}-fillMobile`} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <Area
               dataKey="mobile"
-              fill="url(#fillMobile)"
+              fill={`url(#${id}-fillMobile)`}
               fillOpacity={0.4}
               stackId="a"
               stroke="var(--color-mobile)"
@@ -83,7 +84,7 @@ export function ChartAreaGradient(): JSX.Element {
             />
             <Area
               dataKey="desktop"
-              fill="url(#fillDesktop)"
+              fill={`url(#${id}-fillDesktop)`}
               fillOpacity={0.4}
               stackId="a"
               stroke="var(--color-desktop)"

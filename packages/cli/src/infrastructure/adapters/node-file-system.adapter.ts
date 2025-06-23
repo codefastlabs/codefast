@@ -1,6 +1,6 @@
-import { injectable } from "inversify";
 import fs from "node:fs";
 import path from "node:path";
+import { injectable } from "inversify";
 
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 import type { ConfigGroups } from "@/domain/entities/config-file";

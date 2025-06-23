@@ -1,6 +1,5 @@
-import type { JSX } from "react";
-
 import { SidebarInset, SidebarProvider } from "@codefast/ui";
+import type { JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/sidebar-16/_components/app-sidebar";
 import { SiteHeader } from "@/registry/blocks/sidebar-16/_components/site-header";

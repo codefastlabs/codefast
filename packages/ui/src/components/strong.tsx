@@ -1,8 +1,7 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import { Slot } from "@radix-ui/react-slot";
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Strong
