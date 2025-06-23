@@ -19,6 +19,9 @@
     "lint": {
       "dependsOn": ["build"]
     },
+    "lint:ci": {
+      "dependsOn": ["build"]
+    },
     "start": {},
     "test": {
       "dependsOn": ["build"]
