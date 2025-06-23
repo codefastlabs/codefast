@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -18,10 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
+import type { JSX } from "react";
+import { useId } from "react";
 
 import { Icons } from "@/components/icons";
 
 export function CardsPaymentMethod(): JSX.Element {
+  const id = useId();
   return (
     <Card>
       <CardHeader>
@@ -31,10 +32,10 @@ export function CardsPaymentMethod(): JSX.Element {
       <CardContent className="grid gap-6">
         <RadioGroup className="grid grid-cols-3 gap-4" defaultValue="card">
           <div>
-            <RadioGroupItem aria-label="Card" className="peer sr-only" id="card" value="card" />
+            <RadioGroupItem aria-label="Card" className="peer sr-only" id={`${id}-card`} value="card" />
             <Label
               className="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 bg-transparent p-4"
-              htmlFor="card"
+              htmlFor={`${id}-card`}
             >
               <svg
                 className="mb-3 h-6 w-6"
@@ -45,7 +46,10 @@ export function CardsPaymentMethod(): JSX.Element {
                 strokeWidth="2"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="Credit card icon"
               >
+                <title>Credit card</title>
                 <rect height="14" rx="2" width="20" x="2" y="5" />
                 <path d="M2 10h20" />
               </svg>
@@ -53,20 +57,20 @@ export function CardsPaymentMethod(): JSX.Element {
             </Label>
           </div>
           <div>
-            <RadioGroupItem aria-label="Paypal" className="peer sr-only" id="paypal" value="paypal" />
+            <RadioGroupItem aria-label="Paypal" className="peer sr-only" id={`${id}-paypal`} value="paypal" />
             <Label
               className="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 bg-transparent p-4"
-              htmlFor="paypal"
+              htmlFor={`${id}-paypal`}
             >
               <Icons.paypal className="mb-3 h-6 w-6" />
               Paypal
             </Label>
           </div>
           <div>
-            <RadioGroupItem aria-label="Apple" className="peer sr-only" id="apple" value="apple" />
+            <RadioGroupItem aria-label="Apple" className="peer sr-only" id={`${id}-apple`} value="apple" />
             <Label
               className="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 bg-transparent p-4"
-              htmlFor="apple"
+              htmlFor={`${id}-apple`}
             >
               <Icons.apple className="mb-3 h-6 w-6" />
               Apple
@@ -74,22 +78,22 @@ export function CardsPaymentMethod(): JSX.Element {
           </div>
         </RadioGroup>
         <div className="grid gap-2">
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" placeholder="First Last" />
+          <Label htmlFor={`${id}-name`}>Name</Label>
+          <Input id={`${id}-name`} placeholder="First Last" />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="city">City</Label>
-          <Input id="city" placeholder="" />
+          <Label htmlFor={`${id}-city`}>City</Label>
+          <Input id={`${id}-city`} placeholder="" />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="number">Card number</Label>
-          <Input id="number" placeholder="" />
+          <Label htmlFor={`${id}-number`}>Card number</Label>
+          <Input id={`${id}-number`} placeholder="" />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="grid gap-2">
             <Label htmlFor="month">Expires</Label>
             <Select>
-              <SelectTrigger aria-label="Month" className="w-full" id="month">
+              <SelectTrigger aria-label="Month" className="w-full" id={`${id}-month`}>
                 <SelectValue placeholder="Month" />
               </SelectTrigger>
               <SelectContent>
@@ -111,21 +115,22 @@ export function CardsPaymentMethod(): JSX.Element {
           <div className="grid gap-2">
             <Label htmlFor="year">Year</Label>
             <Select>
-              <SelectTrigger aria-label="Year" className="w-full" id="year">
+              <SelectTrigger aria-label="Year" className="w-full" id={`${id}-year`}>
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent>
-                {Array.from({ length: 10 }, (_, i) => (
-                  <SelectItem key={i} value={`${new Date().getFullYear() + i}`}>
-                    {new Date().getFullYear() + i}
+                {Array.from({ length: 10 }, (_, index) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: need
+                  <SelectItem key={index} value={`${new Date().getFullYear() + index}`}>
+                    {new Date().getFullYear() + index}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="cvc">CVC</Label>
-            <Input id="cvc" placeholder="CVC" />
+            <Label htmlFor={`${id}-cvc`}>CVC</Label>
+            <Input id={`${id}-cvc`} placeholder="CVC" />
           </div>
         </div>
       </CardContent>

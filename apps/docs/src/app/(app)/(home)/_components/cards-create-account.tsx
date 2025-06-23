@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -11,10 +9,13 @@ import {
   Input,
   Label,
 } from "@codefast/ui";
+import type { JSX } from "react";
+import { useId } from "react";
 
 import { Icons } from "@/components/icons";
 
 export function CardsCreateAccount(): JSX.Element {
+  const id = useId();
   return (
     <Card>
       <CardHeader className="space-y-1">
@@ -41,12 +42,12 @@ export function CardsCreateAccount(): JSX.Element {
           </div>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" placeholder="m@example.com" type="email" />
+          <Label htmlFor={`${id}-email`}>Email</Label>
+          <Input id={`${id}-email`} placeholder="m@example.com" type="email" />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" />
+          <Label htmlFor={`${id}-password`}>Password</Label>
+          <Input id={`${id}-password`} type="password" />
         </div>
       </CardContent>
       <CardFooter>

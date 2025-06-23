@@ -1,29 +1,30 @@
-import type { JSX } from "react";
-
 import { Checkbox, Label } from "@codefast/ui";
+import type { JSX } from "react";
+import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
 export function CheckboxDemo(): JSX.Element {
+  const id = useId();
   return (
     <GridWrapper>
       <div className="">
         <div className="flex items-center gap-3">
-          <Checkbox id="terms" />
-          <Label htmlFor="terms">Accept terms and conditions</Label>
+          <Checkbox id={`${id}-terms`} />
+          <Label htmlFor={`${id}-terms`}>Accept terms and conditions</Label>
         </div>
       </div>
       <div className="">
         <div className="flex items-center gap-3">
-          <Checkbox aria-invalid="true" id="terms-aria-invalid" />
-          <Label htmlFor="terms-aria-invalid">Accept terms and conditions</Label>
+          <Checkbox aria-invalid="true" id={`${id}-terms-aria-invalid`} />
+          <Label htmlFor={`${id}-terms-aria-invalid`}>Accept terms and conditions</Label>
         </div>
       </div>
       <div className="">
         <div className="flex items-start gap-3">
-          <Checkbox defaultChecked id="terms-2" />
+          <Checkbox defaultChecked id={`${id}-terms-2`} />
           <div className="grid gap-2">
-            <Label htmlFor="terms-2">Accept terms and conditions</Label>
+            <Label htmlFor={`${id}-terms-2`}>Accept terms and conditions</Label>
             <p className="text-muted-foreground text-sm">
               By clicking this checkbox, you agree to the terms and conditions.
             </p>
@@ -32,15 +33,15 @@ export function CheckboxDemo(): JSX.Element {
       </div>
       <div className="">
         <div className="flex items-start gap-3">
-          <Checkbox disabled id="notification" />
-          <Label htmlFor="notification">Enable notifications</Label>
+          <Checkbox disabled id={`${id}-notification`} />
+          <Label htmlFor={`${id}-notification`}>Enable notifications</Label>
         </div>
       </div>
       <div className="lg:col-span-2">
         <Label className="hover:not-has-disabled:not-has-aria-[checked=true]:bg-secondary has-aria-[checked=true]:border-primary has-aria-[checked=true]:bg-primary/10 flex items-start gap-3 rounded-lg border p-3">
           <Checkbox
             className="hover:not-disabled:not-aria-checked:border-input hover:not-disabled:not-aria-checked:aria-invalid:border-destructive"
-            id="toggle-2"
+            id={`${id}-toggle-2`}
           />
           <div className="grid gap-1.5 font-normal">
             <p className="text-sm font-medium leading-none">Enable notifications</p>

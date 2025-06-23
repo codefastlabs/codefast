@@ -1,10 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-import type { BarProps } from "recharts";
-import type { ActiveShape } from "recharts/types/util/types";
-
 import {
   Card,
   CardContent,
@@ -17,7 +13,10 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import type { BarProps } from "recharts";
 import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
+import type { ActiveShape } from "recharts/types/util/types";
 
 interface DataItem {
   browser: string;

@@ -1,8 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import {
   Card,
   CardContent,
@@ -13,6 +11,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
+import type { JSX } from "react";
 import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 

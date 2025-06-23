@@ -1,6 +1,5 @@
-import type { ComponentProps, JSX } from "react";
-
 import { CheckboxGroup, CheckboxGroupItem, cn, Label } from "@codefast/ui";
+import { type ComponentProps, type JSX, useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -43,25 +42,26 @@ const plans: readonly Plan[] = [
 ];
 
 export function CheckboxGroupDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
+  const id = useId();
   return (
     <GridWrapper className={cn("*:grid *:place-items-center", className)} {...props}>
       <div className="">
         <CheckboxGroup>
           <div className="flex items-center gap-3">
-            <CheckboxGroupItem id="checkbox-group-1" value="standard" />
-            <Label htmlFor="checkbox-group-1">Standard</Label>
+            <CheckboxGroupItem id={`${id}-checkbox-1`} value="standard" />
+            <Label htmlFor={`${id}-checkbox-1`}>Standard</Label>
           </div>
           <div className="flex items-center gap-3">
-            <CheckboxGroupItem id="checkbox-group-2" value="enhanced" />
-            <Label htmlFor="checkbox-group-2">Enhanced</Label>
+            <CheckboxGroupItem id={`${id}-checkbox-2`} value="enhanced" />
+            <Label htmlFor={`${id}-checkbox-2`}>Enhanced</Label>
           </div>
           <div className="flex items-center gap-3">
-            <CheckboxGroupItem id="checkbox-group-3" value="optimized" />
-            <Label htmlFor="checkbox-group-3">Optimized</Label>
+            <CheckboxGroupItem id={`${id}-checkbox-3`} value="optimized" />
+            <Label htmlFor={`${id}-checkbox-3`}>Optimized</Label>
           </div>
           <div className="flex items-center gap-3">
-            <CheckboxGroupItem disabled id="checkbox-group-4" value="inactive" />
-            <Label htmlFor="checkbox-group-4">Inactive</Label>
+            <CheckboxGroupItem disabled id={`${id}-checkbox-4`} value="inactive" />
+            <Label htmlFor={`${id}-checkbox-4`}>Inactive</Label>
           </div>
         </CheckboxGroup>
       </div>
@@ -75,7 +75,7 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<"div">
               <CheckboxGroupItem
                 className="hover:not-disabled:not-aria-checked:border-input hover:not-disabled:not-aria-checked:aria-invalid:border-destructive disabled:opacity-100"
                 disabled={plan.disabled}
-                id={plan.name}
+                id={`${id}-plan-${plan.id}`}
                 value={plan.id}
               />
               <div className="grid gap-1 font-normal">

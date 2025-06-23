@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import {
   Label,
   Sidebar,
@@ -19,6 +17,7 @@ import {
 } from "@codefast/ui";
 import { ArchiveXIcon, CommandIcon, FileIcon, InboxIcon, SendIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 import { useState } from "react";
 
 import { NavUser } from "@/registry/blocks/sidebar-09/_components/nav-user";

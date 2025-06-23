@@ -1,19 +1,17 @@
 import { Container } from "inversify";
-
+import { CreateProjectCommand } from "@/application/commands/create-project.command";
+import { UpdateExportsCommand } from "@/application/commands/update-exports.command";
 import type { AnalysisPort } from "@/application/ports/analysis.port";
 import type { CommandExecutorPort } from "@/application/ports/command-executor.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 import type { PromptPort } from "@/application/ports/prompt.port";
-import type { ConfigServiceInterface } from "@/domain/interfaces/config.service";
-import type { DependencyConfigServiceInterface } from "@/domain/interfaces/dependency-config.service";
-import type { PackageInfoServiceInterface } from "@/domain/interfaces/package-info.service";
-import type { PackageRepository } from "@/domain/interfaces/package.repository";
-import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.repository";
-
-import { CreateProjectCommand } from "@/application/commands/create-project.command";
-import { UpdateExportsCommand } from "@/application/commands/update-exports.command";
 import { CreateProjectUseCase } from "@/application/use-cases/create-project.use-case";
 import { UpdateExportsUseCase } from "@/application/use-cases/update-exports.use-case";
+import type { ConfigServiceInterface } from "@/domain/interfaces/config.service";
+import type { DependencyConfigServiceInterface } from "@/domain/interfaces/dependency-config.service";
+import type { PackageRepository } from "@/domain/interfaces/package.repository";
+import type { PackageInfoServiceInterface } from "@/domain/interfaces/package-info.service";
+import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.repository";
 import { CLIAdapter } from "@/infrastructure/adapters/cli.adapter";
 import { NodeCommandExecutorAdapter } from "@/infrastructure/adapters/node-command-executor.adapter";
 import { NodeFileSystemAdapter } from "@/infrastructure/adapters/node-file-system.adapter";

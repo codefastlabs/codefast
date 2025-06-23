@@ -1,12 +1,9 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import { Slot } from "@radix-ui/react-slot";
-
-import type { VariantProps } from "@/lib/utils";
-
+import type { ComponentProps, JSX } from "react";
 import { badgeVariants } from "@/components/badge/badge-variants";
+import type { VariantProps } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Badge

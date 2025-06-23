@@ -1,9 +1,8 @@
-import type { Metadata, Viewport } from "next";
-import type { JSX, ReactNode } from "react";
-
 import { cn, Toaster } from "@codefast/ui";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
+import type { JSX, ReactNode } from "react";
 
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -76,7 +75,6 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `try{"dark"!==localStorage.theme&&("theme"in localStorage&&"system"!==localStorage.theme||!window.matchMedia("(prefers-color-scheme: dark)").matches)||document.querySelector('meta[name="theme-color"]').setAttribute("content","${META_THEME_COLORS.dark}")}catch(e){}`,
           }}
-          id="theme-script"
           strategy="afterInteractive"
         />
       </body>

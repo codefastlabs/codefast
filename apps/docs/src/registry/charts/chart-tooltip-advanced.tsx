@@ -1,9 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { CSSProperties, JSX } from "react";
-import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
-
 import {
   Card,
   CardContent,
@@ -14,7 +11,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
+import type { CSSProperties, JSX } from "react";
 import { Bar, BarChart, XAxis } from "recharts";
+import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 interface DataItem {
   date: string;

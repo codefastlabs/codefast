@@ -1,8 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import {
   Card,
   CardContent,
@@ -20,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
-import { useState } from "react";
+import type { JSX } from "react";
+import { useId, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartData = [
@@ -132,6 +131,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartAreaInteractive(): JSX.Element {
+  const id = useId();
   const [timeRange, setTimeRange] = useState("90d");
 
   const filteredData = chartData.filter((item) => {
@@ -180,11 +180,11 @@ export function ChartAreaInteractive(): JSX.Element {
         <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
           <AreaChart data={filteredData}>
             <defs>
-              <linearGradient id="fillDesktop" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`${id}-fillDesktop`} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`${id}-fillMobile`} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
               </linearGradient>
@@ -219,8 +219,20 @@ export function ChartAreaInteractive(): JSX.Element {
               }
               cursor={false}
             />
-            <Area dataKey="mobile" fill="url(#fillMobile)" stackId="a" stroke="var(--color-mobile)" type="natural" />
-            <Area dataKey="desktop" fill="url(#fillDesktop)" stackId="a" stroke="var(--color-desktop)" type="natural" />
+            <Area
+              dataKey="mobile"
+              fill={`url(#${id}-fillMobile)`}
+              stackId="a"
+              stroke="var(--color-mobile)"
+              type="natural"
+            />
+            <Area
+              dataKey="desktop"
+              fill={`url(#${id}-fillDesktop)`}
+              stackId="a"
+              stroke="var(--color-desktop)"
+              type="natural"
+            />
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>

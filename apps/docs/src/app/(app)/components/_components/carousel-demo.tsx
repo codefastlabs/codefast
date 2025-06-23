@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Card,
   CardContent,
@@ -9,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@codefast/ui";
+import type { JSX } from "react";
 
 export function CarouselDemo(): JSX.Element {
   return (
@@ -19,7 +18,7 @@ export function CarouselDemo(): JSX.Element {
       >
         <CarouselContent>
           {Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- keep
+            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <CarouselItem key={index}>
               <div className="p-1">
                 <Card>
@@ -40,7 +39,7 @@ export function CarouselDemo(): JSX.Element {
       >
         <CarouselContent className="-ml-1">
           {Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- keep
+            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <CarouselItem key={index} className="basis-1/2 pl-1">
               <div className="p-1">
                 <Card>
@@ -64,7 +63,7 @@ export function CarouselDemo(): JSX.Element {
       >
         <CarouselContent>
           {Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- keep
+            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <CarouselItem key={index} className="basis-1/3">
               <div className="p-1">
                 <Card>

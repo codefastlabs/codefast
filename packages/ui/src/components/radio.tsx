@@ -1,8 +1,7 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import { composeEventHandlers } from "@radix-ui/primitive";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
 

@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Avatar,
   AvatarFallback,
@@ -23,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@codefast/ui";
 import { ChevronDown } from "lucide-react";
+import type { JSX } from "react";
 import { useState } from "react";
 
 interface Role {

@@ -1,9 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
-
 import {
   Card,
   CardContent,
@@ -14,7 +11,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
+import type { JSX } from "react";
 import { Bar, BarChart, XAxis } from "recharts";
+import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 const chartData = [
   { date: "2024-07-15", running: 450, swimming: 300 },

@@ -1,16 +1,13 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import * as InputPrimitive from "@codefast-ui/input";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { SearchIcon, XIcon } from "lucide-react";
-
-import type { VariantProps } from "@/lib/utils";
-
+import type { ComponentProps, JSX } from "react";
 import { Button } from "@/components/button";
 import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
+import type { VariantProps } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch

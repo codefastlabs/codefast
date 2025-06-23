@@ -1,5 +1,5 @@
-import { inject, injectable } from "inversify";
 import path from "node:path";
+import { inject, injectable } from "inversify";
 
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 

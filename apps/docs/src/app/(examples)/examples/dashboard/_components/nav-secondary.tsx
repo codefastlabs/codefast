@@ -1,8 +1,5 @@
 "use client";
 
-import type { Icon } from "@tabler/icons-react";
-import type { ComponentProps, JSX } from "react";
-
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -12,9 +9,11 @@ import {
   Skeleton,
   Switch,
 } from "@codefast/ui";
+import type { Icon } from "@tabler/icons-react";
 import { IconBrightness } from "@tabler/icons-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import type { ComponentProps, JSX } from "react";
+import { useEffect, useId, useState } from "react";
 
 export function NavSecondary({
   items,
@@ -26,6 +25,7 @@ export function NavSecondary({
     url: string;
   }[];
 }): JSX.Element {
+  const id = useId();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -49,11 +49,12 @@ export function NavSecondary({
           ))}
           <SidebarMenuItem className="group-data-[collapsible=icon]:hidden">
             <SidebarMenuButton asChild>
-              <label>
+              <label htmlFor={`${id}-dark-mode-switch`}>
                 <IconBrightness />
                 <span>Dark Mode</span>
                 {mounted ? (
                   <Switch
+                    id={`${id}-dark-mode-switch`}
                     checked={resolvedTheme !== "light"}
                     className="ml-auto"
                     onCheckedChange={() => {

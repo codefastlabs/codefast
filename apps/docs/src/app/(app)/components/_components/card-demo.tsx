@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Avatar,
   AvatarFallback,
@@ -18,10 +16,13 @@ import {
 import { BathIcon, BedIcon, LandPlotIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { JSX } from "react";
+import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
 export function CardDemo(): JSX.Element {
+  const id = useId();
   return (
     <GridWrapper>
       <div className="">
@@ -34,17 +35,17 @@ export function CardDemo(): JSX.Element {
             <CardContent>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input required id="email" placeholder="m@example.com" type="email" />
+                  <Label htmlFor={`${id}-email`}>Email</Label>
+                  <Input required id={`${id}-email`} placeholder="m@example.com" type="email" />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor={`${id}-password`}>Password</Label>
                     <Link className="inline-block text-sm underline-offset-4 hover:underline" href="#">
                       Forgot your password?
                     </Link>
                   </div>
-                  <Input required id="password" type="password" />
+                  <Input required id={`${id}-password`} type="password" />
                 </div>
               </div>
             </CardContent>

@@ -1,5 +1,3 @@
-import type { ComponentProps, JSX } from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -12,6 +10,7 @@ import {
   SidebarSeparator,
 } from "@codefast/ui";
 import { PlusIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { Calendars } from "@/registry/blocks/sidebar-12/_components/calendars";
 import { DatePicker } from "@/registry/blocks/sidebar-12/_components/date-picker";

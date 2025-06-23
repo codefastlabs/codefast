@@ -1,8 +1,7 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import * as SliderPrimitive from "@radix-ui/react-slider";
+import type { ComponentProps, JSX } from "react";
 import { useMemo } from "react";
 
 import { cn } from "@/lib/utils";
@@ -51,6 +50,7 @@ function Slider({
       </SliderPrimitive.Track>
       {Array.from({ length: _values.length }, (_, index) => (
         <SliderPrimitive.Thumb
+          // biome-ignore lint/suspicious/noArrayIndexKey: keep
           key={index}
           aria-label="Volume"
           className={cn(

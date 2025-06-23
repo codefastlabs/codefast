@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -11,6 +9,7 @@ import {
   Label,
   Switch,
 } from "@codefast/ui";
+import type { JSX } from "react";
 
 interface CookieOption {
   description: string;

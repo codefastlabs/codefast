@@ -1,11 +1,10 @@
 "use client";
 
 import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, JSX, KeyboardEvent } from "react";
-
 import { createContextScope } from "@radix-ui/react-context";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/button";
@@ -133,14 +132,7 @@ function Carousel({
       scrollNext={scrollNext}
       scrollPrev={scrollPrev}
     >
-      <div
-        aria-roledescription="carousel"
-        className={cn("relative", className)}
-        data-slot="carousel"
-        role="region"
-        onKeyDownCapture={handleKeyDown}
-        {...props}
-      >
+      <div className={cn("relative", className)} data-slot="carousel" onKeyDownCapture={handleKeyDown} {...props}>
         {children}
       </div>
     </CarouselContextProvider>

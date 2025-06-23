@@ -1,8 +1,5 @@
 "use client";
 
-import type { Icon } from "@tabler/icons-react";
-import type { JSX } from "react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +14,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@codefast/ui";
+import type { Icon } from "@tabler/icons-react";
 import { IconDots, IconFolder, IconShare3, IconTrash } from "@tabler/icons-react";
+import type { JSX } from "react";
 
 export function NavDocuments({
   items,

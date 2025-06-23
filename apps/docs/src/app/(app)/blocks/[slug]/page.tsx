@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import type { JSX } from "react";
-
 import { notFound } from "next/navigation";
+import type { JSX } from "react";
 
 import { BlockDisplay } from "@/components/block-display";
 import { getCachedBlockRegistry } from "@/lib/registry-cache";

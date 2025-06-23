@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@codefast/ui";
 import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon } from "lucide-react";
+import type { JSX } from "react";
 import { useState } from "react";
 
 export function VersionSwitcher({

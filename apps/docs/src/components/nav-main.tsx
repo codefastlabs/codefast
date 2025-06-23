@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,6 +16,7 @@ import {
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { JSX } from "react";
 
 import type { RegistryGroup } from "@/types/registry";
 

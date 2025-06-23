@@ -1,8 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -14,6 +12,7 @@ import {
   ChartContainer,
 } from "@codefast/ui";
 import { Minus, Plus } from "lucide-react";
+import type { JSX } from "react";
 import { useState } from "react";
 import { Bar, BarChart } from "recharts";
 

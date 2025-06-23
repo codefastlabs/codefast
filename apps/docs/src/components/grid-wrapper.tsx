@@ -1,6 +1,5 @@
-import type { ComponentProps, JSX } from "react";
-
 import { cn } from "@codefast/ui";
+import type { ComponentProps, JSX } from "react";
 
 export function GridWrapper({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (

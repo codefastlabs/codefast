@@ -1,9 +1,8 @@
 "use client";
 
-import type { ComponentProps, JSX, ReactNode } from "react";
-
 import { Slot } from "@radix-ui/react-slot";
 import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -78,6 +77,7 @@ function BreadcrumbPage({ className, ...props }: ComponentProps<"span">): JSX.El
       className={cn("text-foreground font-normal", className)}
       data-slot="breadcrumb-page"
       role="link"
+      tabIndex={0}
       {...props}
     />
   );

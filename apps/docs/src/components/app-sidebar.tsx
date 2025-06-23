@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import {
   cn,
   ScrollArea,
@@ -14,10 +12,9 @@ import {
 } from "@codefast/ui";
 import { CommandIcon } from "lucide-react";
 import Link from "next/link";
-
-import type { NavItemProps } from "@/components/nav-main";
-
+import type { ComponentProps, JSX } from "react";
 import { registryComponentGroups } from "@/app/(app)/components/registry-components";
+import type { NavItemProps } from "@/components/nav-main";
 import { NavMain } from "@/components/nav-main";
 import { registryBlockGroups } from "@/registry/registry-blocks";
 

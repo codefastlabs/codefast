@@ -1,21 +1,20 @@
 "use client";
 
-import type { ComponentProps, ComponentType, JSX } from "react";
-
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@codefast/ui";
 import {
-  type LucideIcon,
   AudioWaveformIcon,
   BookOpenIcon,
   BotIcon,
   CommandIcon,
   FrameIcon,
   GalleryVerticalEndIcon,
+  type LucideIcon,
   MapIcon,
   PieChartIcon,
   Settings2Icon,
   SquareTerminalIcon,
 } from "lucide-react";
+import type { ComponentProps, ComponentType, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-07/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-07/_components/nav-projects";

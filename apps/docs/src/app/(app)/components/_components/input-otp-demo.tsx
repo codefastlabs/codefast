@@ -1,9 +1,7 @@
 "use client";
 
-import type { JSX } from "react";
-
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Label, REGEXP_ONLY_DIGITS } from "@codefast/ui";
-import { useState } from "react";
+import { type JSX, useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -27,10 +25,12 @@ export function InputOTPDemo(): JSX.Element {
 }
 
 function InputOTPSimple(): JSX.Element {
+  const id = useId();
+
   return (
     <div className="grid gap-2">
-      <Label htmlFor="simple">Simple</Label>
-      <InputOTP id="simple" maxLength={6}>
+      <Label htmlFor={id}>Simple</Label>
+      <InputOTP id={id} maxLength={6}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -48,10 +48,12 @@ function InputOTPSimple(): JSX.Element {
 }
 
 function InputOTPPattern(): JSX.Element {
+  const id = useId();
+
   return (
     <div className="grid gap-2">
-      <Label htmlFor="digits-only">Digits Only</Label>
-      <InputOTP id="digits-only" maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+      <Label htmlFor={id}>Digits Only</Label>
+      <InputOTP id={id} maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -67,11 +69,12 @@ function InputOTPPattern(): JSX.Element {
 
 function InputOTPWithSeparator(): JSX.Element {
   const [value, setValue] = useState("123456");
+  const id = useId();
 
   return (
     <div className="grid gap-2">
-      <Label htmlFor="with-separator">With Separator</Label>
-      <InputOTP id="with-separator" maxLength={6} value={value} onChange={setValue}>
+      <Label htmlFor={id}>With Separator</Label>
+      <InputOTP id={id} maxLength={6} value={value} onChange={setValue}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />
@@ -92,10 +95,12 @@ function InputOTPWithSeparator(): JSX.Element {
 }
 
 function InputOTPWithSpacing(): JSX.Element {
+  const id = useId();
+
   return (
     <div className="grid gap-2">
-      <Label htmlFor="with-spacing">With Spacing</Label>
-      <InputOTP id="with-spacing" maxLength={6}>
+      <Label htmlFor={id}>With Spacing</Label>
+      <InputOTP id={id} maxLength={6}>
         <InputOTPGroup className="gap-2 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border">
           <InputOTPSlot aria-invalid="true" index={0} />
           <InputOTPSlot aria-invalid="true" index={1} />

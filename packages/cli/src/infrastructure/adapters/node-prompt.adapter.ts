@@ -1,5 +1,5 @@
-import { injectable } from "inversify";
 import readline from "node:readline";
+import { injectable } from "inversify";
 
 import type { PromptPort } from "@/application/ports/prompt.port";
 

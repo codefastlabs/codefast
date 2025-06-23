@@ -1,4 +1,9 @@
+import * as InputPrimitive from "@codefast-ui/input";
+import { createInputScope } from "@codefast-ui/input";
+import { composeEventHandlers } from "@radix-ui/primitive";
 import type { Scope } from "@radix-ui/react-context";
+import { createContextScope } from "@radix-ui/react-context";
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -9,12 +14,6 @@ import type {
   PointerEventHandler,
   RefObject,
 } from "react";
-
-import * as InputPrimitive from "@codefast-ui/input";
-import { createInputScope } from "@codefast-ui/input";
-import { composeEventHandlers } from "@radix-ui/primitive";
-import { createContextScope } from "@radix-ui/react-context";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
 /* -----------------------------------------------------------------------------
@@ -840,7 +839,7 @@ function isNumberKey(key: string): boolean {
  * @param max - The maximum allowed value (defaults to Infinity)
  * @returns The clamped value
  */
-function clamp(value: number, min = -Infinity, max = Infinity): number {
+function clamp(value: number, min = Number.NEGATIVE_INFINITY, max = Number.POSITIVE_INFINITY): number {
   return Math.min(Math.max(value, min), max);
 }
 

@@ -1,7 +1,6 @@
-import type { JSX, ReactNode } from "react";
-
 import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui";
 import { cookies } from "next/headers";
+import type { JSX, ReactNode } from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { ModeSwitcher } from "@/components/mode-switcher";

@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +16,7 @@ import {
 } from "@codefast/ui";
 import { ArrowUpRightIcon, LinkIcon, MoreHorizontalIcon, StarOffIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+import type { JSX } from "react";
 
 export function NavFavorites({
   favorites,

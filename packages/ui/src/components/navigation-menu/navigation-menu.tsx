@@ -1,9 +1,8 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { ChevronDownIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { navigationMenuTriggerStyle } from "@/components/navigation-menu/navigation-menu-trigger-style";
 import { cn } from "@/lib/utils";

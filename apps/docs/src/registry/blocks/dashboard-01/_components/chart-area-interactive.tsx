@@ -1,9 +1,7 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import { useIsMobile } from "@codefast/hooks";
+import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardAction,
@@ -22,7 +20,8 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@codefast/ui";
-import { useEffect, useState } from "react";
+import type { JSX } from "react";
+import { useEffect, useId, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 export const description = "An interactive area chart";
@@ -138,6 +137,7 @@ const chartConfig = {
 export function ChartAreaInteractive(): JSX.Element {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = useState("90d");
+  const id = useId();
 
   useEffect(() => {
     if (isMobile) {
@@ -209,11 +209,11 @@ export function ChartAreaInteractive(): JSX.Element {
         <ChartContainer className="aspect-auto h-[250px] w-full" config={chartConfig}>
           <AreaChart data={filteredData}>
             <defs>
-              <linearGradient id="fillDesktop" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`${id}-fillDesktop`} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={1} />
                 <stop offset="95%" stopColor="var(--color-desktop)" stopOpacity={0.1} />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={`${id}-fillMobile`} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-mobile)" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="var(--color-mobile)" stopOpacity={0.1} />
               </linearGradient>
@@ -249,8 +249,20 @@ export function ChartAreaInteractive(): JSX.Element {
               cursor={false}
               defaultIndex={isMobile ? -1 : 10}
             />
-            <Area dataKey="mobile" fill="url(#fillMobile)" stackId="a" stroke="var(--color-mobile)" type="natural" />
-            <Area dataKey="desktop" fill="url(#fillDesktop)" stackId="a" stroke="var(--color-desktop)" type="natural" />
+            <Area
+              dataKey="mobile"
+              fill={`url(#${id}-fillMobile)`}
+              stackId="a"
+              stroke="var(--color-mobile)"
+              type="natural"
+            />
+            <Area
+              dataKey="desktop"
+              fill={`url(#${id}-fillDesktop)`}
+              stackId="a"
+              stroke="var(--color-desktop)"
+              type="natural"
+            />
           </AreaChart>
         </ChartContainer>
       </CardContent>

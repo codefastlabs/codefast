@@ -1,8 +1,5 @@
 "use client";
 
-import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table";
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -26,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@codefast/ui";
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -35,6 +33,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import type { JSX } from "react";
 import { useState } from "react";
 
 const data: Payment[] = [

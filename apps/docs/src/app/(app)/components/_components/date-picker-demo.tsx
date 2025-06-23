@@ -1,9 +1,7 @@
 "use client";
 
-import type { DateRange } from "@codefast/ui";
-import type { JSX } from "react";
-
 import { useIsMobile } from "@codefast/hooks";
+import type { DateRange } from "@codefast/ui";
 import {
   Button,
   Calendar,
@@ -16,7 +14,7 @@ import {
 } from "@codefast/ui";
 import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { type JSX, useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -60,13 +58,14 @@ function DatePickerWithRange(): JSX.Element {
     to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),
   });
   const isMobile = useIsMobile();
+  const id = useId();
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           className={cn("w-fit justify-start px-3 font-normal", !date && "text-muted-foreground")}
-          id="date"
+          id={`${id}-date`}
           variant="outline"
         >
           <CalendarIcon className="text-muted-foreground" />

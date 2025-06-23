@@ -1,6 +1,5 @@
-import type { ComponentProps, JSX } from "react";
-
 import { CheckboxCards, CheckboxCardsItem, cn } from "@codefast/ui";
+import type { ComponentProps, JSX } from "react";
 
 export function CheckboxCardsDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   return (

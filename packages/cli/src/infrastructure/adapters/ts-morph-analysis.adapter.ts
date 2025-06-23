@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Project, SourceFile } from "ts-morph";
+import { Project, type SourceFile } from "ts-morph";
 
 import type { AnalysisPort } from "@/application/ports/analysis.port";
 import type { AnalysisResult, ImportPath, PackageConfig } from "@/domain/entities/package-config";

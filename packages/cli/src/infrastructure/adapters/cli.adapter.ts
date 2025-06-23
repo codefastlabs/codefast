@@ -1,10 +1,8 @@
 import { Command } from "commander";
 import { inject, injectable } from "inversify";
-
+import type { CreateProjectCommand } from "@/application/commands/create-project.command";
+import type { UpdateExportsCommand } from "@/application/commands/update-exports.command";
 import type { PackageInfoServiceInterface } from "@/domain/interfaces/package-info.service";
-
-import { CreateProjectCommand } from "@/application/commands/create-project.command";
-import { UpdateExportsCommand } from "@/application/commands/update-exports.command";
 import { TYPES } from "@/ioc/types";
 
 @injectable()

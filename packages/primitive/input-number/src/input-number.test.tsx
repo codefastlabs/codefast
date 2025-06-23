@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
+import { useId } from "react";
 
 import { InputNumber, InputNumberDecrementButton, InputNumberField, InputNumberIncrementButton } from "@/input-number";
 
@@ -714,16 +715,21 @@ describe("input-number", () => {
     });
 
     test("has no accessibility violations", async () => {
-      const { container } = render(
-        <div>
-          <label htmlFor="number-input">Number Input</label>
-          <InputNumber data-testid="input-number" defaultValue={5} id="number-input">
-            <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
-            <InputNumberField aria-labelledby="number-label" data-testid="input-item" />
-            <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
-          </InputNumber>
-        </div>,
-      );
+      const TestComponent = () => {
+        const id = useId();
+        return (
+          <div>
+            <label htmlFor={`${id}-number-input`}>Number Input</label>
+            <InputNumber data-testid="input-number" defaultValue={5} id={`${id}-number-input`}>
+              <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
+              <InputNumberField aria-labelledby={`${id}-number-label`} data-testid="input-item" />
+              <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
+            </InputNumber>
+          </div>
+        );
+      };
+
+      const { container } = render(<TestComponent />);
 
       const results = await axe(container);
 
@@ -732,6 +738,7 @@ describe("input-number", () => {
 
     test("passes id to InputNumberItem", () => {
       render(
+        // biome-ignore lint/nursery/useUniqueElementIds: keep
         <InputNumber data-testid="input-number" id="test-id">
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />

@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@codefast/ui";
 import {
   AudioWaveformIcon,
@@ -16,6 +14,7 @@ import {
   SparklesIcon,
   Trash2Icon,
 } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { NavFavorites } from "@/registry/blocks/sidebar-10/_components/nav-favorites";
 import { NavMain } from "@/registry/blocks/sidebar-10/_components/nav-main";

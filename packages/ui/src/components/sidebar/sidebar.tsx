@@ -1,15 +1,11 @@
 "use client";
 
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
-
 import { useIsMobile } from "@codefast/hooks";
 import { createContext } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 import { PanelLeftIcon } from "lucide-react";
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-import type { VariantProps } from "@/lib/utils";
-
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
@@ -17,6 +13,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button-variants";
 import { Skeleton } from "@/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
+import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -78,7 +75,7 @@ function SidebarProvider({
         setIsOpen(openState);
       }
 
-      // eslint-disable-next-line unicorn/no-document-cookie -- This sets the cookie to keep the sidebar state.
+      // biome-ignore lint/suspicious/noDocumentCookie: This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
     [setOpenProp, open],
@@ -91,7 +88,7 @@ function SidebarProvider({
     } else {
       setOpen((currentValue) => !currentValue);
     }
-  }, [isMobile, setOpen, setOpenMobile]);
+  }, [isMobile, setOpen]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   useEffect(() => {

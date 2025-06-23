@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +27,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 
 import { NavDocuments } from "@/registry/blocks/dashboard-01/_components/nav-documents";
 import { NavMain } from "@/registry/blocks/dashboard-01/_components/nav-main";

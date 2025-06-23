@@ -318,19 +318,19 @@ describe("input", () => {
       render(
         <Input
           prefix={
-            <a data-testid="link" href="#" onClick={linkClickHandler}>
+            <button type="button" data-testid="button" onClick={linkClickHandler}>
               Click me
-            </a>
+            </button>
           }
         >
           <InputField data-testid="input" />
         </Input>,
       );
 
-      const link = screen.getByTestId("link");
+      const button = screen.getByTestId("button");
       const input = screen.getByTestId("input");
 
-      await user.click(link);
+      await user.click(button);
 
       expect(linkClickHandler).toHaveBeenCalled();
       expect(input).not.toHaveFocus();

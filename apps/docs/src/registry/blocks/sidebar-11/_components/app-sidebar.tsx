@@ -1,5 +1,3 @@
-import type { ComponentProps, JSX } from "react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,6 +15,7 @@ import {
   SidebarRail,
 } from "@codefast/ui";
 import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 export interface Change {
   file: string;
@@ -88,7 +87,7 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
         <CollapsibleContent>
           <SidebarMenuSub>
             {items.map((subItem, index) => (
-              // eslint-disable-next-line react/no-array-index-key -- we need index
+              // biome-ignore lint/suspicious/noArrayIndexKey: need
               <Tree key={index} item={subItem} />
             ))}
           </SidebarMenuSub>
@@ -107,7 +106,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarGroupContent>
             <SidebarMenu>
               {data.changes.map((item, index) => (
-                // eslint-disable-next-line react/no-array-index-key -- we need index
+                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton>
                     <FileIcon />
@@ -124,7 +123,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarGroupContent>
             <SidebarMenu>
               {data.tree.map((item, index) => (
-                // eslint-disable-next-line react/no-array-index-key -- we need index
+                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <Tree key={index} item={item} />
               ))}
             </SidebarMenu>
