@@ -43,7 +43,7 @@
     "@rslib/core": "^0.9.2",
     "@types/commander": "^2.12.5",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
