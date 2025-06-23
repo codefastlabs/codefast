@@ -794,7 +794,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
     "@types/jest-axe": "^3.5.9",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.0.3",
     "jest": "^30.0.0",
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.0.0",
