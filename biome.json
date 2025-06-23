@@ -9,10 +9,7 @@
     "enabled": true
   },
   "files": {
-    "ignoreUnknown": true
-  },
-  "formatter": {
-    "enabled": true,
+    "ignoreUnknown": true,
     "includes": [
       "**",
       "!packages/ui/src/styles/index.css",
@@ -20,8 +17,12 @@
       "!**/dist/**",
       "!**/node_modules/**",
       "!**/.turbo/**",
-      "!**/.vercel/**"
-    ],
+      "!**/.vercel/**",
+      "!**/.next/**"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
     "indentStyle": "space",
     "lineWidth": 120
   },
@@ -35,22 +36,13 @@
   },
   "linter": {
     "enabled": true,
-    "includes": [
-      "**",
-      "!packages/ui/src/styles/index.css",
-      "!**/coverage/**",
-      "!**/dist/**",
-      "!**/node_modules/**",
-      "!**/.turbo/**",
-      "!**/.vercel/**"
-    ],
     "rules": {
       "recommended": true,
-      "suspicious": {
-        "noDuplicateCustomProperties": "off"
-      },
       "security": {
         "noDangerouslySetInnerHtml": "off"
+      },
+      "suspicious": {
+        "noDuplicateCustomProperties": "off"
       }
     }
   },
