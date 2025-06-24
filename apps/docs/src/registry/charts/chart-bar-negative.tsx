@@ -46,7 +46,7 @@ export function ChartBarNegative(): JSX.Element {
             <Bar dataKey="visitors">
               <LabelList dataKey="month" fillOpacity={1} position="top" />
               {chartData.map((item) => (
-                <Cell key={item.month} fill={item.visitors > 0 ? "var(--chart-1)" : "var(--chart-2)"} />
+                <Cell fill={item.visitors > 0 ? "var(--chart-1)" : "var(--chart-2)"} key={item.month} />
               ))}
             </Bar>
           </BarChart>

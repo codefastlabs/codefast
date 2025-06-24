@@ -50,13 +50,13 @@ function InputNumber({
       loading={loading}
       max={max}
       min={min}
+      onChange={onChange}
       prefix={prefix}
       readOnly={readOnly}
       spinner={spinner || <Spinner />}
       step={step}
       suffix={suffix}
       value={value}
-      onChange={onChange}
     >
       <InputNumberPrimitive.Field
         autoCapitalize="none"

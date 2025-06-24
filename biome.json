@@ -1,9 +1,10 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": "on",
+        "useSortedAttributes": "on"
       }
     },
     "enabled": true
@@ -12,7 +13,6 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!packages/ui/src/styles/index.css",
       "!**/coverage/**",
       "!**/dist/**",
       "!**/node_modules/**",
@@ -35,6 +35,10 @@
     }
   },
   "linter": {
+    "domains": {
+      "project": "recommended",
+      "test": "all"
+    },
     "enabled": true,
     "rules": {
       "recommended": true,
@@ -43,6 +47,13 @@
       },
       "suspicious": {
         "noDuplicateCustomProperties": "off"
+      },
+      "nursery": {
+        "noImportCycles": "error"
+      },
+      "style": {
+        "useBlockStatements": "error",
+        "useConsistentCurlyBraces": "error"
       }
     }
   },

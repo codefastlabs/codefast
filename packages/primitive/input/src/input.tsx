@@ -172,8 +172,8 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
       <div
         data-disabled={disabled}
         data-readonly={readOnly}
-        role="presentation"
         onPointerDown={handlePointerDown}
+        role="presentation"
         {...props}
       >
         {loading && loaderPosition === "prefix" ? spinner : prefix}
@@ -206,7 +206,7 @@ function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): J
    */
   const composedInputRef = useComposedRefs(inputRef);
 
-  return <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />;
+  return <input disabled={disabled} readOnly={readOnly} ref={composedInputRef} type="text" {...props} />;
 }
 
 /* -----------------------------------------------------------------------------

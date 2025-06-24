@@ -3,7 +3,8 @@ import path from "node:path";
 import { inject, injectable } from "inversify";
 import type { CommandExecutorPort } from "@/application/ports/command-executor.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
-import { type PackageJson, packageJsonSchema } from "@/domain/entities/package-config";
+import type { PackageJson } from "@/domain/entities/package-config";
+import { packageJsonSchema } from "@/domain/entities/package-config";
 import type { DependencyConfigServiceInterface } from "@/domain/interfaces/dependency-config.service";
 import { TYPES } from "@/ioc/types";
 

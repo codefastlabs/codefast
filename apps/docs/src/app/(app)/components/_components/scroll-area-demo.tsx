@@ -58,7 +58,7 @@ function ScrollAreaHorizontalDemo(): JSX.Element {
     <ScrollArea className="w-full max-w-96 rounded-md border p-4">
       <div className="flex gap-4">
         {works.map((artwork) => (
-          <figure key={artwork.artist} className="shrink-0">
+          <figure className="shrink-0" key={artwork.artist}>
             <div className="overflow-hidden rounded-md">
               <Image
                 alt={`Photo by ${artwork.artist}`}

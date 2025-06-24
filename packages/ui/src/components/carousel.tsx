@@ -2,7 +2,8 @@
 
 import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
-import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
+import type { UseEmblaCarouselType } from "embla-carousel-react";
+import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
@@ -161,7 +162,7 @@ function CarouselContent({
   const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
   return (
-    <div ref={carouselRef} className={cn("overflow-hidden", classNames?.wrapper)} data-slot="carousel-content">
+    <div className={cn("overflow-hidden", classNames?.wrapper)} data-slot="carousel-content" ref={carouselRef}>
       <div
         className={cn(
           "flex",
@@ -222,10 +223,10 @@ function CarouselPrevious({
       )}
       data-slot="carousel-previous"
       disabled={!canScrollPrev}
+      onClick={scrollPrev}
       prefix={<ArrowLeftIcon />}
       size={size}
       variant={variant}
-      onClick={scrollPrev}
       {...props}
     >
       <span className="sr-only">Previous slide</span>
@@ -260,10 +261,10 @@ function CarouselNext({
       )}
       data-slot="carousel-next"
       disabled={!canScrollNext}
+      onClick={scrollNext}
       prefix={<ArrowRightIcon />}
       size={size}
       variant={variant}
-      onClick={scrollNext}
       {...props}
     >
       <span className="sr-only">Next slide</span>

@@ -20,7 +20,7 @@ export function InputPasswordDemo(): JSX.Element {
         <InputPassword disabled placeholder="Disabled" />
       </div>
       <div className="">
-        <InputPassword readOnly defaultValue="password" placeholder="Read only" />
+        <InputPassword defaultValue="password" placeholder="Read only" readOnly />
       </div>
       <div className="">
         <InputPassword placeholder="Enter password" prefix={<LockIcon />} />

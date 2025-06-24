@@ -159,7 +159,7 @@ export function ChartAreaInteractive(): JSX.Element {
           <CardTitle>Area Chart - Interactive</CardTitle>
           <CardDescription>Showing total visitors for the last 3 months</CardDescription>
         </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
+        <Select onValueChange={setTimeRange} value={timeRange}>
           <SelectTrigger aria-label="Select a value" className="w-[160px] rounded-lg sm:ml-auto">
             <SelectValue placeholder="Last 3 months" />
           </SelectTrigger>

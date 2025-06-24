@@ -48,8 +48,8 @@ export function TeamSwitcher({
             <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem
-                key={team.name}
                 className="gap-2 p-2"
+                key={team.name}
                 onClick={() => {
                   setActiveTeam(team);
                 }}

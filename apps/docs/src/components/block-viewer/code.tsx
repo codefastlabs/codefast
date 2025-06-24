@@ -31,9 +31,9 @@ export function BlockViewerCode(): ReactNode {
           </div>
         </div>
         <div
-          key={file.path}
           className="scheme-dark [&_pre]:bg-transparent! relative flex-1 grow overflow-auto text-white after:absolute after:inset-y-0 after:left-0 after:w-10 after:border-r after:border-zinc-800 after:bg-zinc-950 [&_[data-line-numbers]_.line:before]:sticky [&_[data-line-numbers]_.line:before]:left-0 [&_[data-line-numbers]_.line:before]:z-10 [&_[data-line-numbers]_.line:before]:mr-2 [&_[data-line-numbers]_.line:before]:inline-block [&_[data-line-numbers]_.line:before]:w-10 [&_[data-line-numbers]_.line:before]:-translate-y-px [&_[data-line-numbers]_.line:before]:border-r [&_[data-line-numbers]_.line:before]:border-zinc-800 [&_[data-line-numbers]_.line:before]:bg-zinc-950 [&_[data-line-numbers]_.line:before]:px-2 [&_[data-line-numbers]_.line:before]:text-right [&_[data-line-numbers]_.line:before]:text-xs/6 [&_[data-line-numbers]_.line:before]:text-zinc-50/40 [&_[data-line-numbers]_.line:before]:[content:counter(line)] [&_[data-line-numbers]_.line:before]:[counter-increment:line] [&_[data-line-numbers]_.line]:pl-0 [&_code]:grid [&_code]:min-w-full [&_code]:break-words [&_code]:rounded-none [&_code]:border-0 [&_code]:bg-transparent [&_code]:p-0 [&_code]:[box-decoration-break:clone] [&_code]:[counter-reset:line] [&_pre]:relative [&_pre]:z-10 [&_pre]:max-h-full [&_pre]:min-h-full [&_pre]:grow [&_pre]:overflow-auto [&_pre]:py-1 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:leading-relaxed"
           dangerouslySetInnerHTML={{ __html: file.highlightedContent ?? "" }}
+          key={file.path}
         />
       </div>
     </div>

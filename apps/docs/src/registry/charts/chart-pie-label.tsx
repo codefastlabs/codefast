@@ -64,7 +64,7 @@ export function ChartPieLabel(): JSX.Element {
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie label data={chartData} dataKey="visitors" nameKey="browser" />
+            <Pie data={chartData} dataKey="visitors" label nameKey="browser" />
           </PieChart>
         </ChartContainer>
       </CardContent>

@@ -174,7 +174,7 @@ function Sidebar({
 
   if (isMobile) {
     return (
-      <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+      <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
         <SheetContent
           className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           data-mobile="true"
@@ -257,12 +257,12 @@ function SidebarTrigger({ className, onClick, ...props }: ComponentProps<typeof 
       className={cn("size-7", className)}
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      size="icon"
-      variant="ghost"
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
+      size="icon"
+      variant="ghost"
       {...props}
     >
       <PanelLeftIcon />
@@ -288,9 +288,9 @@ function SidebarRail({ className, ...props }: ComponentProps<"button">): JSX.Ele
       )}
       data-sidebar="rail"
       data-slot="sidebar-rail"
+      onClick={toggleSidebar}
       title="Toggle Sidebar"
       type="button"
-      onClick={toggleSidebar}
       {...props}
     />
   );

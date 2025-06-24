@@ -41,7 +41,7 @@ export function CommandDemo(): JSX.Element {
           <span className="text-sm">⌘</span>J
         </Kbd>
       </p>
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog onOpenChange={setOpen} open={open}>
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>

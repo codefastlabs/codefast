@@ -73,7 +73,7 @@ export function PaymentPlanForm(): JSX.Element {
               <p className="text-muted-foreground text-sm">Select the plan that best fits your needs.</p>
               <RadioCards className="grid gap-3 md:grid-cols-2" defaultValue="starter">
                 {plans.map((plan) => (
-                  <RadioCardsItem key={plan.id} id={plan.name} value={plan.id}>
+                  <RadioCardsItem id={plan.name} key={plan.id} value={plan.id}>
                     <div className="grid gap-1 font-normal">
                       <div className="font-medium">{plan.name}</div>
                       <div className="text-muted-foreground text-xs leading-snug">{plan.description}</div>

@@ -57,7 +57,6 @@ export default async function RootLayout({
 
   return (
     <html
-      suppressHydrationWarning
       className={cn(
         "antialiased",
         activeThemeValue && `theme-${activeThemeValue}`,
@@ -65,9 +64,10 @@ export default async function RootLayout({
         fontVariables,
       )}
       lang="en"
+      suppressHydrationWarning
     >
       <body>
-        <ThemeProvider disableTransitionOnChange enableColorScheme enableSystem attribute="class" defaultTheme="system">
+        <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableColorScheme enableSystem>
           <ActiveThemeProvider initialTheme={activeThemeValue}>{children}</ActiveThemeProvider>
           <Toaster />
         </ThemeProvider>

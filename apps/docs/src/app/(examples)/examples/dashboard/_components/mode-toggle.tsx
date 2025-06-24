@@ -14,7 +14,7 @@ export function ModeToggle(): JSX.Element {
   }, [resolvedTheme, setTheme]);
 
   return (
-    <Button className="group/toggle size-8" size="icon" variant="secondary" onClick={toggleTheme}>
+    <Button className="group/toggle size-8" onClick={toggleTheme} size="icon" variant="secondary">
       <IconBrightness />
       <span className="sr-only">Toggle theme</span>
     </Button>

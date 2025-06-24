@@ -36,7 +36,7 @@ export function CardDemo(): JSX.Element {
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor={`${id}-email`}>Email</Label>
-                  <Input required id={`${id}-email`} placeholder="m@example.com" type="email" />
+                  <Input id={`${id}-email`} placeholder="m@example.com" required type="email" />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -45,7 +45,7 @@ export function CardDemo(): JSX.Element {
                       Forgot your password?
                     </Link>
                   </div>
-                  <Input required id={`${id}-password`} type="password" />
+                  <Input id={`${id}-password`} required type="password" />
                 </div>
               </div>
             </CardContent>

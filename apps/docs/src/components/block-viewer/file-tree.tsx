@@ -28,7 +28,7 @@ export function BlockViewerFileTree(): ReactNode {
           <SidebarGroupContent>
             <SidebarMenu className="gap-1.5">
               {tree.map((file) => (
-                <BlockViewerTree key={file.name} index={1} item={file} />
+                <BlockViewerTree index={1} item={file} key={file.name} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

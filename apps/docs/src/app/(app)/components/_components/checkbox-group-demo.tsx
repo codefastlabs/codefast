@@ -1,5 +1,6 @@
 import { CheckboxGroup, CheckboxGroupItem, cn, Label } from "@codefast/ui";
-import { type ComponentProps, type JSX, useId } from "react";
+import type { ComponentProps, JSX } from "react";
+import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -69,8 +70,8 @@ export function CheckboxGroupDemo({ className, ...props }: ComponentProps<"div">
         <CheckboxGroup className="max-w-sm">
           {plans.map((plan) => (
             <Label
-              key={plan.id}
               className="hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 border-input flex items-start gap-3 rounded-lg border p-3 transition"
+              key={plan.id}
             >
               <CheckboxGroupItem
                 className="hover:not-disabled:not-aria-checked:border-input hover:not-disabled:not-aria-checked:aria-invalid:border-destructive disabled:opacity-100"

@@ -229,12 +229,12 @@ export function FormDemo(): JSX.Element {
               <div className="flex flex-col gap-2">
                 {items.map((item) => (
                   <FormField
-                    key={item.id}
                     control={form.control}
+                    key={item.id}
                     name="items"
                     render={({ field }) => {
                       return (
-                        <FormItem key={item.id} className="flex items-start gap-3">
+                        <FormItem className="flex items-start gap-3" key={item.id}>
                           <FormControl>
                             <Checkbox
                               checked={field.value.includes(item.id)}
@@ -283,8 +283,8 @@ export function FormDemo(): JSX.Element {
                   <Calendar
                     disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                     mode="single"
-                    selected={field.value}
                     onSelect={field.onChange}
+                    selected={field.value}
                   />
                 </PopoverContent>
               </Popover>
@@ -325,7 +325,7 @@ export function FormDemo(): JSX.Element {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch aria-readonly disabled checked={field.value} onCheckedChange={field.onChange} />
+                    <Switch aria-readonly checked={field.value} disabled onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}

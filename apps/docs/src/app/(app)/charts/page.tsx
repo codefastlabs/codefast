@@ -16,9 +16,9 @@ export default function ChartsPage(): JSX.Element {
       <div className="grid flex-1 items-start gap-6 p-6 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {sortedCharts.map(([key, { slug, component: Component }]) => (
           <ComponentWrapper
-            key={key}
             className="**:data-[slot=card]:w-full w-auto lg:data-[name$=-interactive]:col-span-2 xl:data-[name$=-interactive]:col-span-3 2xl:data-[name$=-interactive]:col-span-4"
             classNames={{ body: "overflow-auto" }}
+            key={key}
             name={slug}
           >
             <Component />
