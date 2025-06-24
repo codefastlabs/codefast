@@ -1,5 +1,19 @@
 # @codefast-ui/progress-circle
 
+## 0.3.6-canary.0
+
+### Patch Changes
+
+- [`ec7cc53`](https://github.com/codefastlabs/codefast/commit/ec7cc53f90eb466d89ce8327e18185fbbd13420b) Thanks [@thevuong](https://github.com/thevuong)! - feat(turbo): add `lint:ci` task with build dependency
+
+- [`f9c5603`](https://github.com/codefastlabs/codefast/commit/f9c5603dbe8f318251ec6f8c2e54137122dc2cd4) Thanks [@thevuong](https://github.com/thevuong)! - feat(docs): add Chrome DevTools integration and simplify scripts
+
+- [`3c58590`](https://github.com/codefastlabs/codefast/commit/3c58590419ccc95a564c5c9eef79679c1f93f32e) Thanks [@thevuong](https://github.com/thevuong)! - chore(eslint-config): remove all custom ESLint configuration files
+
+- [`a5b2a35`](https://github.com/codefastlabs/codefast/commit/a5b2a35b1a1f69442a0144eab392ef3effcfee66) Thanks [@thevuong](https://github.com/thevuong)! - feat(docs): update web app manifest and improve Biome configuration
+
+- [`3c58590`](https://github.com/codefastlabs/codefast/commit/3c58590419ccc95a564c5c9eef79679c1f93f32e) Thanks [@thevuong](https://github.com/thevuong)! - chore(eslint): remove custom ESLint configurations and related files
+
 ## 0.3.5
 
 ### Patch Changes
