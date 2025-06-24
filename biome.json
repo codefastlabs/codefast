@@ -42,18 +42,22 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "nursery": {
+        "noImportCycles": "error"
+      },
       "security": {
         "noDangerouslySetInnerHtml": "off"
+      },
+      "style": {
+        "useBlockStatements": "error",
+        "useConsistentCurlyBraces": "error",
+        "useFragmentSyntax": "error"
       },
       "suspicious": {
         "noDuplicateCustomProperties": "off"
       },
-      "nursery": {
-        "noImportCycles": "error"
-      },
-      "style": {
-        "useBlockStatements": "error",
-        "useConsistentCurlyBraces": "error"
+      "correctness": {
+        "useJsxKeyInIterable": "error"
       }
     }
   },
