@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Avatar,
   AvatarFallback,
@@ -36,6 +34,7 @@ import {
   TrashIcon,
   UserIcon,
 } from "lucide-react";
+import type { JSX } from "react";
 import { useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";

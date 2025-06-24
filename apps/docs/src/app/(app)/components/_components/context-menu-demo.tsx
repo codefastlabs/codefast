@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -18,6 +16,7 @@ import {
   ContextMenuTrigger,
 } from "@codefast/ui";
 import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
+import type { JSX } from "react";
 import { useState } from "react";
 
 export function ContextMenuDemo(): JSX.Element {

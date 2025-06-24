@@ -1,8 +1,8 @@
-import type { JSX } from "react";
-
 import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
+import { type JSX, useId } from "react";
 
 export function PopoverDemo(): JSX.Element {
+  const id = useId();
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -16,20 +16,20 @@ export function PopoverDemo(): JSX.Element {
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="width">Width</Label>
-              <Input className="col-span-2 h-8" defaultValue="100%" id="width" />
+              <Label htmlFor={`${id}-width`}>Width</Label>
+              <Input className="col-span-2 h-8" defaultValue="100%" id={`${id}-width`} />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxWidth">Max. width</Label>
-              <Input className="col-span-2 h-8" defaultValue="300px" id="maxWidth" />
+              <Label htmlFor={`${id}-maxWidth`}>Max. width</Label>
+              <Input className="col-span-2 h-8" defaultValue="300px" id={`${id}-maxWidth`} />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="height">Height</Label>
-              <Input className="col-span-2 h-8" defaultValue="25px" id="height" />
+              <Label htmlFor={`${id}-height`}>Height</Label>
+              <Input className="col-span-2 h-8" defaultValue="25px" id={`${id}-height`} />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Max. height</Label>
-              <Input className="col-span-2 h-8" defaultValue="none" id="maxHeight" />
+              <Label htmlFor={`${id}-maxHeight`}>Max. height</Label>
+              <Input className="col-span-2 h-8" defaultValue="none" id={`${id}-maxHeight`} />
             </div>
           </div>
         </div>

@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -16,10 +14,13 @@ import {
   TabsTrigger,
 } from "@codefast/ui";
 import { AppWindowIcon, CodeIcon } from "lucide-react";
+import type { JSX } from "react";
+import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
 export function TabsDemo(): JSX.Element {
+  const id = useId();
   return (
     <GridWrapper className="*:grid *:place-content-center">
       <div className="">
@@ -36,12 +37,12 @@ export function TabsDemo(): JSX.Element {
               </CardHeader>
               <CardContent className="grid gap-6">
                 <div className="grid gap-3">
-                  <Label htmlFor="tabs-demo-name">Name</Label>
-                  <Input defaultValue="Pedro Duarte" id="tabs-demo-name" />
+                  <Label htmlFor={`${id}-name`}>Name</Label>
+                  <Input defaultValue="Pedro Duarte" id={`${id}-name`} />
                 </div>
                 <div className="grid gap-3">
-                  <Label htmlFor="tabs-demo-username">Username</Label>
-                  <Input defaultValue="@peduarte" id="tabs-demo-username" />
+                  <Label htmlFor={`${id}-username`}>Username</Label>
+                  <Input defaultValue="@peduarte" id={`${id}-username`} />
                 </div>
               </CardContent>
               <CardFooter>
@@ -57,12 +58,12 @@ export function TabsDemo(): JSX.Element {
               </CardHeader>
               <CardContent className="grid gap-6">
                 <div className="grid gap-3">
-                  <Label htmlFor="tabs-demo-current">Current password</Label>
-                  <Input id="tabs-demo-current" type="password" />
+                  <Label htmlFor={`${id}-current`}>Current password</Label>
+                  <Input id={`${id}-current`} type="password" />
                 </div>
                 <div className="grid gap-3">
-                  <Label htmlFor="tabs-demo-new">New password</Label>
-                  <Input id="tabs-demo-new" type="password" />
+                  <Label htmlFor={`${id}-new`}>New password</Label>
+                  <Input id={`${id}-new`} type="password" />
                 </div>
               </CardContent>
               <CardFooter>

@@ -1,5 +1,4 @@
 import { injectable } from "inversify";
-
 import type { ConfigGroups } from "@/domain/entities/config-file";
 import type { ConfigServiceInterface } from "@/domain/interfaces/config.service";
 
@@ -80,21 +79,63 @@ Thumbs.db
     ],
     formatting: [
       {
-        path: "prettier.config.mjs",
-        content: `/**
- * @see https://prettier.io/docs/en/configuration.html
- * @type {import('prettier').Config}
- */
-const config = {
-  plugins: ["prettier-plugin-packagejson", "prettier-plugin-tailwindcss"],
-  printWidth: 100,
-  tailwindAttributes: ["classNames"],
-  tailwindFunctions: ["tv"],
-};
-
-export default config;
+        path: "biome.json",
+        content: `{
+  "$schema": "https://biomejs.dev/schemas/1.6.3/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "warn",
+        "useShorthandArrayType": "error"
+      },
+      "a11y": {
+        "useKeyWithClickEvents": "error",
+        "useButtonType": "error"
+      }
+    },
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      ".next",
+      "**/*.d.ts"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      ".next"
+    ]
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "trailingComma": "es5",
+      "semicolons": "always"
+    }
+  }
+}
 `,
-        description: "Prettier configuration for source code formatting",
+        description: "Biome configuration for linting and formatting",
       },
       {
         path: ".editorconfig",
@@ -124,24 +165,6 @@ indent_size = 4
 `,
         description: "Editor configuration for source code formatting",
       },
-      {
-        path: ".prettierignore",
-        content: `# changesets
-.changeset
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-`,
-        description: "",
-      },
     ],
     linting: [
       {
@@ -163,42 +186,14 @@ export default config;
         description: "Commitlint configuration",
       },
       {
-        path: "eslint.config.mjs",
-        content: `import { config } from "@codefast/eslint-config/next";
-
-/**
- * @see https://eslint.org/docs/latest/use/configure/configuration-files
- * @type {import('eslint').Linter.Config[]}
- */
-const eslintConfig = [...config];
-
-export default eslintConfig;
-`,
-        description: "ESLint configuration for the project",
-      },
-      {
         path: "lint-staged.config.mjs",
-        content: `import { relative } from "node:path";
-
-/**
- * Builds an ESLint command with the given filenames.
- *
- * @param {string[]} filenames - An array of filenames to be passed to the
- *   ESLint command.
- * @returns {string} - The generated ESLint command.
- */
-function buildEslintCommand(filenames) {
-  return \`next lint --fix --max-warnings 0 --file \${filenames.map((file) => relative(import.meta.dirname, file)).
-    join(" --file ")}\`;
-}
-
-/**
+        content: `/**
  * @see https://www.npmjs.com/package/lint-staged
  * @type {import('lint-staged').Configuration}
  */
 const config = {
-  "*.{js,mjs,jsx,ts,tsx}": [buildEslintCommand, "prettier --list-different --write"],
-  "*.{json,css,md,mdx}": ["prettier --list-different --write"],
+  "*.{js,mjs,jsx,ts,tsx}": ["biome check --write", "biome format --write"],
+  "*.{json,css,md,mdx}": ["biome format --write"],
 };
 
 export default config;

@@ -1,7 +1,5 @@
 "use client";
 
-import type { CSSProperties, JSX } from "react";
-
 import {
   Button,
   cn,
@@ -16,6 +14,7 @@ import {
   DrawerTrigger,
 } from "@codefast/ui";
 import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from "lucide-react";
+import type { CSSProperties, JSX } from "react";
 import { useCallback, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
 
@@ -144,7 +143,7 @@ function DrawerScrollableContent(): JSX.Element {
         <DrawerBody className="border-y text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- keep
+            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <p key={index} className="mb-4 leading-normal">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
@@ -197,7 +196,7 @@ function DrawerDirections(): JSX.Element {
               </DrawerHeader>
               <DrawerBody className="border-y text-sm">
                 {Array.from({ length: 10 }).map((_, index) => (
-                  // eslint-disable-next-line react/no-array-index-key -- keep
+                  // biome-ignore lint/suspicious/noArrayIndexKey: keep
                   <p key={index} className="mb-4 leading-normal">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
                     et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut

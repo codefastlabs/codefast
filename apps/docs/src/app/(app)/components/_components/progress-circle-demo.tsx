@@ -1,8 +1,7 @@
 "use client";
 
-import type { JSX } from "react";
-
 import { ProgressCircle } from "@codefast/ui";
+import type { JSX } from "react";
 import { useEffect, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";

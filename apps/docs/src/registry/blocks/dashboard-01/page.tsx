@@ -1,6 +1,5 @@
-import type { CSSProperties, JSX } from "react";
-
 import { SidebarInset, SidebarProvider } from "@codefast/ui";
+import type { CSSProperties, JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/dashboard-01/_components/app-sidebar";
 import { ChartAreaInteractive } from "@/registry/blocks/dashboard-01/_components/chart-area-interactive";

@@ -7,8 +7,6 @@
     "check-types": "tsc --noEmit",
     "clean": "rimraf .next",
     "dev": "next dev --turbopack",
-    "lint": "next lint --max-warnings 0",
-    "lint:inspect": "npx @eslint/config-inspector@latest",
     "start": "next start --turbopack"
   },
   "dependencies": {
@@ -25,7 +23,7 @@
     "date-fns": "^4.1.0",
     "js-cookie": "^3.0.5",
     "lodash-es": "^4.17.21",
-    "lucide-react": "^0.515.0",
+    "lucide-react": "^0.522.0",
     "next": "^15.3.3",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
@@ -37,18 +35,15 @@
     "zod": "^3.25.64"
   },
   "devDependencies": {
-    "@codefast/eslint-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.10",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.0.3",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "eslint": "^9.29.0",
-    "eslint-config-next": "^15.3.3",
-    "postcss": "^8.5.5",
+    "postcss": "^8.5.6",
     "rimraf": "^6.0.1",
-    "shiki": "^3.6.0",
+    "shiki": "^3.7.0",
     "tailwindcss": "^4.1.10",
     "typescript": "^5.8.3"
   }

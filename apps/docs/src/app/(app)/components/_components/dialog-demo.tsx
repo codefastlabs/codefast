@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Button,
   Dialog,
@@ -14,6 +12,7 @@ import {
   Input,
   Label,
 } from "@codefast/ui";
+import { type JSX, useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -34,6 +33,7 @@ export function DialogDemo(): JSX.Element {
 }
 
 function DialogWithForm(): JSX.Element {
+  const id = useId();
   return (
     <Dialog>
       <form>
@@ -47,12 +47,12 @@ function DialogWithForm(): JSX.Element {
           </DialogHeader>
           <DialogBody className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="name-1">Name</Label>
-              <Input defaultValue="Pedro Duarte" id="name-1" name="name" />
+              <Label htmlFor={`${id}-name`}>Name</Label>
+              <Input defaultValue="Pedro Duarte" id={`${id}-name`} name="name" />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="username-1">Username</Label>
-              <Input defaultValue="@peduarte" id="username-1" name="username" />
+              <Label htmlFor={`${id}-username`}>Username</Label>
+              <Input defaultValue="@peduarte" id={`${id}-username`} name="username" />
             </div>
           </DialogBody>
           <DialogFooter>
@@ -81,7 +81,7 @@ function DialogScrollableContent(): JSX.Element {
         <DialogBody className="max-h-125 border-t text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- keep
+            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <p key={index} className="mb-4 leading-normal">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
@@ -110,7 +110,7 @@ function DialogWithStickyFooter(): JSX.Element {
         <DialogBody className="max-h-125 border-y text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- keep
+            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <p key={index} className="mb-4 leading-normal">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex

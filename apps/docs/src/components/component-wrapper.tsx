@@ -1,8 +1,7 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import { cn } from "@codefast/ui";
+import type { ComponentProps, JSX } from "react";
 
 import { getComponentName } from "@/lib/utils";
 

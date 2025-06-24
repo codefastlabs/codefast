@@ -1,15 +1,13 @@
-import { inject, injectable } from "inversify";
 import path from "node:path";
-
+import { inject, injectable } from "inversify";
 import type { CommandExecutorPort } from "@/application/ports/command-executor.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 import type { PromptPort } from "@/application/ports/prompt.port";
+import { type PackageJson, packageJsonSchema } from "@/domain/entities/package-config";
 import type { Project } from "@/domain/entities/project";
+import { projectSchema } from "@/domain/entities/project";
 import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.repository";
 import type { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
-
-import { PackageJson, packageJsonSchema } from "@/domain/entities/package-config";
-import { projectSchema } from "@/domain/entities/project";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -50,7 +48,6 @@ export class FileSystemProjectRepository implements ProjectRepositoryInterface {
     const flags = [
       "--ts",
       "--tailwind",
-      "--eslint",
       "--app",
       "--turbo",
       "--use-pnpm",
@@ -189,10 +186,10 @@ import "@/app/globals.css";`;
       "check-types": "tsc --noEmit",
       "deploy:preview": "vercel deploy --archive=tgz",
       "deploy:prod": "vercel deploy --archive=tgz --prod",
-      format: "prettier --write --ignore-unknown .",
-      "format:check": "prettier --check --ignore-unknown .",
-      lint: "next lint --fix --max-warnings 0",
-      "lint:check": "next lint --max-warnings 0",
+      format: "biome format --write .",
+      "format:check": "biome format --check .",
+      lint: "biome check --write .",
+      "lint:check": "biome check .",
       "package:install": "pnpm install",
       "package:outdated": "pnpm outdated",
       "package:upgrade": "pnpm update --latest",

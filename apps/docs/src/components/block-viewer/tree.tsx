@@ -1,5 +1,3 @@
-import type { CSSProperties, JSX } from "react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,10 +7,9 @@ import {
   SidebarMenuSub,
 } from "@codefast/ui";
 import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
-
-import type { FileTree } from "@/lib/registry";
-
+import type { CSSProperties, JSX } from "react";
 import { useBlockViewer } from "@/components/block-viewer/provider";
+import type { FileTree } from "@/lib/registry";
 
 interface TreeProps {
   index: number;

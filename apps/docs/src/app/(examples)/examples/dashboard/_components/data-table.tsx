@@ -1,10 +1,7 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
-import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
-import type { JSX } from "react";
-
 import { useIsMobile } from "@codefast/hooks";
+import type { ChartConfig } from "@codefast/ui";
 import {
   Badge,
   Button,
@@ -47,13 +44,13 @@ import {
   toast,
 } from "@codefast/ui";
 import {
-  type DragEndEvent,
-  type UniqueIdentifier,
   closestCenter,
   DndContext,
+  type DragEndEvent,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  type UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -74,6 +71,7 @@ import {
   IconPlus,
   IconTrendingUp,
 } from "@tabler/icons-react";
+import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -84,6 +82,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import type { JSX } from "react";
 import { useId, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { z } from "zod";
@@ -322,6 +321,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): JSX.Elemen
 }
 
 export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }): JSX.Element {
+  const id = useId();
   const [data, setData] = useState(() => initialData);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -377,11 +377,11 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
   return (
     <Tabs className="w-full flex-col justify-start gap-6" defaultValue="outline">
       <div className="flex items-center justify-between px-4 lg:px-6">
-        <Label className="sr-only" htmlFor="view-selector">
+        <Label className="sr-only" htmlFor={`${id}-view-selector`}>
           View
         </Label>
         <Select defaultValue="outline">
-          <SelectTrigger className="@4xl/main:hidden flex w-fit" id="view-selector" size="sm">
+          <SelectTrigger className="@4xl/main:hidden flex w-fit" id={`${id}-view-selector`} size="sm">
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
           <SelectContent>
@@ -496,7 +496,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                   table.setPageSize(Number(value));
                 }}
               >
-                <SelectTrigger className="w-20" id="rows-per-page" size="sm">
+                <SelectTrigger className="w-20" id={`${id}-rows-per-page`} size="sm">
                   <SelectValue placeholder={table.getState().pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent side="top">
@@ -597,6 +597,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Element {
+  const id = useId();
   const isMobile = useIsMobile();
 
   return (
@@ -666,14 +667,14 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="header">Header</Label>
-              <Input defaultValue={item.header} id="header" />
+              <Label htmlFor={`${id}-header`}>Header</Label>
+              <Input defaultValue={item.header} id={`${id}-header`} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Type</Label>
+                <Label htmlFor={`${id}-type`}>Type</Label>
                 <Select defaultValue={item.type}>
-                  <SelectTrigger className="w-full" id="type">
+                  <SelectTrigger className="w-full" id={`${id}-type`}>
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -689,9 +690,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
                 </Select>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
+                <Label htmlFor={`${id}-status`}>Status</Label>
                 <Select defaultValue={item.status}>
-                  <SelectTrigger className="w-full" id="status">
+                  <SelectTrigger className="w-full" id={`${id}-status`}>
                     <SelectValue placeholder="Select a status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -704,18 +705,18 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="target">Target</Label>
-                <Input defaultValue={item.target} id="target" />
+                <Label htmlFor={`${id}-target`}>Target</Label>
+                <Input defaultValue={item.target} id={`${id}-target`} />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="limit">Limit</Label>
-                <Input defaultValue={item.limit} id="limit" />
+                <Label htmlFor={`${id}-limit`}>Limit</Label>
+                <Input defaultValue={item.limit} id={`${id}-limit`} />
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
+              <Label htmlFor={`${id}-reviewer`}>Reviewer</Label>
               <Select defaultValue={item.reviewer}>
-                <SelectTrigger className="w-full" id="reviewer">
+                <SelectTrigger className="w-full" id={`${id}-reviewer`}>
                   <SelectValue placeholder="Select a reviewer" />
                 </SelectTrigger>
                 <SelectContent>

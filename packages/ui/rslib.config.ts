@@ -1,7 +1,7 @@
-import { pluginReact } from "@rsbuild/plugin-react";
-import { defineConfig } from "@rslib/core";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { pluginReact } from "@rsbuild/plugin-react";
+import { defineConfig } from "@rslib/core";
 
 const isProduction = process.env.NODE_ENV === "production";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

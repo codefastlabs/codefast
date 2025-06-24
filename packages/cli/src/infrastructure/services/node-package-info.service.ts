@@ -1,11 +1,10 @@
-import { inject, injectable } from "inversify";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { inject, injectable } from "inversify";
 
 import type { FileSystemPort } from "@/application/ports/file-system.port";
-import type { PackageInfoServiceInterface } from "@/domain/interfaces/package-info.service";
-
 import { packageJsonSchema } from "@/domain/entities/package-config";
+import type { PackageInfoServiceInterface } from "@/domain/interfaces/package-info.service";
 import { TYPES } from "@/ioc/types";
 
 @injectable()

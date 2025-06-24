@@ -17,11 +17,18 @@ export class DependencyConfigService implements DependencyConfigServiceInterface
   private readonly DEV_DEPENDENCIES: Record<string, string[]> = {
     commitLint: ["@commitlint/cli", "@commitlint/config-conventional", "@commitlint/types"],
     gitTools: ["simple-git-hooks"],
-    formatting: ["prettier", "prettier-plugin-packagejson", "prettier-plugin-tailwindcss", "lint-staged"],
-    linting: ["@codefast/eslint-config"],
+    formatting: ["@biomejs/biome", "lint-staged"],
+    linting: [],
   };
 
-  private readonly PACKAGES_TO_REMOVE: string[] = ["@eslint/eslintrc", "eslint-config-next"];
+  private readonly PACKAGES_TO_REMOVE: string[] = [
+    "@eslint/eslintrc",
+    "eslint-config-next",
+    "eslint",
+    "prettier",
+    "prettier-plugin-packagejson",
+    "prettier-plugin-tailwindcss",
+  ];
 
   getMainDependencies(): string[] {
     return this.MAIN_DEPENDENCIES;

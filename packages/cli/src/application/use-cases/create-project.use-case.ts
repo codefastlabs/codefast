@@ -3,12 +3,11 @@ import { inject, injectable } from "inversify";
 import type { CommandExecutorPort } from "@/application/ports/command-executor.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 import type { PromptPort } from "@/application/ports/prompt.port";
+import { handleError } from "@/application/utilities/error-handler";
 import type { ConfigGroups } from "@/domain/entities/config-file";
 import type { Project } from "@/domain/entities/project";
 import type { ProjectRepositoryInterface } from "@/domain/interfaces/project.repository";
-
-import { handleError } from "@/application/utilities/error-handler";
-import { ConfigService } from "@/infrastructure/services/config.service";
+import type { ConfigService } from "@/infrastructure/services/config.service";
 import { TYPES } from "@/ioc/types";
 
 @injectable()

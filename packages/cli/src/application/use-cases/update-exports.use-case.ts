@@ -1,8 +1,6 @@
 import { inject, injectable } from "inversify";
-
-import type { PackageRepository } from "@/domain/interfaces/package.repository";
-
 import { handleError } from "@/application/utilities/error-handler";
+import type { PackageRepository } from "@/domain/interfaces/package.repository";
 import { TYPES } from "@/ioc/types";
 
 @injectable()

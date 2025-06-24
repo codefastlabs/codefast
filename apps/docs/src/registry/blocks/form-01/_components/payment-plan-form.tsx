@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Button,
   Card,
@@ -17,6 +15,8 @@ import {
   RadioCardsItem,
   Textarea,
 } from "@codefast/ui";
+import type { JSX } from "react";
+import { useId } from "react";
 
 const plans = [
   {
@@ -34,6 +34,7 @@ const plans = [
 ] as const;
 
 export function PaymentPlanForm(): JSX.Element {
+  const id = useId();
   return (
     <div className="flex max-w-md flex-col gap-4">
       <Card>
@@ -47,20 +48,24 @@ export function PaymentPlanForm(): JSX.Element {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3 md:flex-row">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Evil Rabbit" />
+                <Label htmlFor={`${id}-name`}>Name</Label>
+                <Input id={`${id}-name`} placeholder="Evil Rabbit" />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" placeholder="example@acme.com" />
+                <Label htmlFor={`${id}-email`}>Email</Label>
+                <Input id={`${id}-email`} placeholder="example@acme.com" />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="card-number">Card Number</Label>
+              <Label htmlFor={`${id}-card-number`}>Card Number</Label>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-[1fr_80px_60px]">
-                <Input className="col-span-2 md:col-span-1" id="card-number" placeholder="1234 1234 1234 1234" />
-                <Input id="card-number-expiry" placeholder="MM/YY" />
-                <Input id="card-number-cvc" placeholder="CVC" />
+                <Input
+                  className="col-span-2 md:col-span-1"
+                  id={`${id}-card-number`}
+                  placeholder="1234 1234 1234 1234"
+                />
+                <Input id={`${id}-card-number-expiry`} placeholder="MM/YY" />
+                <Input id={`${id}-card-number-cvc`} placeholder="CVC" />
               </div>
             </div>
             <fieldset className="flex flex-col gap-3">
@@ -78,19 +83,19 @@ export function PaymentPlanForm(): JSX.Element {
               </RadioCards>
             </fieldset>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea id="notes" placeholder="Enter notes" />
+              <Label htmlFor={`${id}-notes`}>Notes</Label>
+              <Textarea id={`${id}-notes`} placeholder="Enter notes" />
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2">
-                <Checkbox id="terms" />
-                <Label className="font-normal" htmlFor="terms">
+                <Checkbox id={`${id}-terms`} />
+                <Label className="font-normal" htmlFor={`${id}-terms`}>
                   I agree to the terms and conditions
                 </Label>
               </div>
               <div className="flex items-center gap-2">
-                <Checkbox defaultChecked id="newsletter" />
-                <Label className="font-normal" htmlFor="newsletter">
+                <Checkbox defaultChecked id={`${id}-newsletter`} />
+                <Label className="font-normal" htmlFor={`${id}-newsletter`}>
                   Allow us to send you emails
                 </Label>
               </div>

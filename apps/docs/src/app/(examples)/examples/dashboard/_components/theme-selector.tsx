@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   Label,
   Select,
@@ -13,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
+import type { JSX } from "react";
+import { useId } from "react";
 
 import { useThemeConfig } from "@/components/active-theme";
 
@@ -55,6 +55,7 @@ const MONO_THEMES = [
 
 export function ThemeSelector(): JSX.Element {
   const { activeTheme, setActiveTheme } = useThemeConfig();
+  const id = useId();
 
   return (
     <div className="flex items-center gap-2">
@@ -62,7 +63,7 @@ export function ThemeSelector(): JSX.Element {
         Theme
       </Label>
       <Select value={activeTheme} onValueChange={setActiveTheme}>
-        <SelectTrigger className="justify-start *:data-[slot=select-value]:w-12" id="theme-selector" size="sm">
+        <SelectTrigger className="justify-start *:data-[slot=select-value]:w-12" id={`${id}-theme-selector`} size="sm">
           <span className="text-muted-foreground hidden sm:block">Select a theme:</span>
           <span className="text-muted-foreground block sm:hidden">Theme</span>
           <SelectValue placeholder="Select a theme" />

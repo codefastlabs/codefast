@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Button,
   cn,
@@ -16,12 +14,14 @@ import {
   SheetTrigger,
 } from "@codefast/ui";
 import { ChevronUpIcon, CircleIcon } from "lucide-react";
+import { type JSX, useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
 const SIDES = ["top", "right", "bottom", "left"] as const;
 
 export function SheetDemo(): JSX.Element {
+  const id = useId();
   return (
     <GridWrapper className="*:grid *:place-content-center">
       <div>
@@ -36,12 +36,12 @@ export function SheetDemo(): JSX.Element {
             </SheetHeader>
             <SheetBody className="grid flex-1 auto-rows-min gap-6 px-4">
               <div className="grid gap-3">
-                <Label htmlFor="sheet-demo-name">Name</Label>
-                <Input defaultValue="Pedro Duarte" id="sheet-demo-name" />
+                <Label htmlFor={`${id}-sheet-demo-name`}>Name</Label>
+                <Input defaultValue="Pedro Duarte" id={`${id}-sheet-demo-name`} />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="sheet-demo-username">Username</Label>
-                <Input defaultValue="@peduarte" id="sheet-demo-username" />
+                <Label htmlFor={`${id}-sheet-demo-username`}>Username</Label>
+                <Input defaultValue="@peduarte" id={`${id}-sheet-demo-username`} />
               </div>
             </SheetBody>
             <SheetFooter>
@@ -85,7 +85,7 @@ export function SheetDemo(): JSX.Element {
                   <SheetBody className="overflow-y-auto border-y px-4 text-sm">
                     <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
                     {Array.from({ length: 10 }).map((_, index) => (
-                      // eslint-disable-next-line react/no-array-index-key -- keep
+                      // biome-ignore lint/suspicious/noArrayIndexKey: keep
                       <p key={index} className="mb-4 leading-normal">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
                         labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco

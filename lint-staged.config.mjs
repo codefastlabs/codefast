@@ -1,6 +1,6 @@
 const config = {
-  "*.{js,mjs,jsx,ts,tsx}": ["prettier --list-different --write"],
-  "*.{json,css,scss,md}": ["prettier --list-different --write"],
+  "*.{js,mjs,jsx,ts,tsx}": ["biome check --write", "biome format --write"],
+  "*.{json,css,scss,md}": ["biome format --write"],
 };
 
 export default config;

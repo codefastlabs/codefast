@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +8,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@codefast/ui";
+import type { JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/sidebar-10/_components/app-sidebar";
 import { NavActions } from "@/registry/blocks/sidebar-10/_components/nav-actions";

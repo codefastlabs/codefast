@@ -1,5 +1,3 @@
-import type { JSX } from "react";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,6 +10,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@codefast/ui";
+import type { JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/sidebar-02/_components/app-sidebar";
 
@@ -37,7 +36,7 @@ export default function Page(): JSX.Element {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           {Array.from({ length: 24 }).map((_, index) => (
-            // eslint-disable-next-line react/no-array-index-key -- we need index
+            // biome-ignore lint/suspicious/noArrayIndexKey: need
             <div key={index} className="bg-muted/50 aspect-video h-12 w-full rounded-lg" />
           ))}
         </div>

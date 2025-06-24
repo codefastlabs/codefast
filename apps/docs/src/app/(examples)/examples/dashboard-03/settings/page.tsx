@@ -1,6 +1,3 @@
-import type { Metadata } from "next";
-import type { ComponentProps, JSX } from "react";
-
 import {
   Button,
   Card,
@@ -33,6 +30,9 @@ import {
   TabsList,
   TabsTrigger,
 } from "@codefast/ui";
+import type { Metadata } from "next";
+import type { ComponentProps, JSX } from "react";
+import { useId } from "react";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -122,6 +122,7 @@ const activeSessions = [
 ] as const;
 
 export default function SettingsPage(): JSX.Element {
+  const id = useId();
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
       <Tabs className="gap-6" defaultValue="account">
@@ -140,26 +141,26 @@ export default function SettingsPage(): JSX.Element {
               <CardDescription>Make changes to your account here.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="@container" id="form-account">
+              <form className="@container" id={`${id}-form-account`}>
                 <FieldGroup>
                   <Field>
                     <Label htmlFor="name">Name</Label>
                     <FieldControl>
-                      <Input required id="name" placeholder="First and last name" />
+                      <Input required id={`${id}-name`} placeholder="First and last name" />
                     </FieldControl>
                     <FieldDescription>This is your public display name.</FieldDescription>
                   </Field>
                   <Field>
                     <Label htmlFor="email">Email</Label>
                     <FieldControl>
-                      <Input required id="email" placeholder="you@example.com" />
+                      <Input required id={`${id}-email`} placeholder="you@example.com" />
                     </FieldControl>
                   </Field>
                   <Field>
                     <Label htmlFor="timezone">Timezone</Label>
                     <FieldControl>
                       <Select>
-                        <SelectTrigger id="timezone">
+                        <SelectTrigger id={`${id}-timezone`}>
                           <SelectValue placeholder="Select a timezone" />
                         </SelectTrigger>
                         <SelectContent>
@@ -181,7 +182,7 @@ export default function SettingsPage(): JSX.Element {
               </form>
             </CardContent>
             <CardFooter className="border-t">
-              <Button form="form-account" type="submit" variant="secondary">
+              <Button form={`${id}-form-account`} type="submit" variant="secondary">
                 Save changes
               </Button>
             </CardFooter>
@@ -192,22 +193,22 @@ export default function SettingsPage(): JSX.Element {
               <CardDescription>Manage how you receive notifications.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="@container" id="form-notifications">
+              <form className="@container" id={`${id}-form-notifications`}>
                 <FieldGroup>
                   <Field>
                     <Label htmlFor="channels">Notification Channels</Label>
                     <FieldControl className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <Checkbox id="notification-email" />
-                        <Label htmlFor="notification-email">Email</Label>
+                        <Checkbox id={`${id}-notification-email`} />
+                        <Label htmlFor={`${id}-notification-email`}>Email</Label>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Checkbox id="notification-sms" />
-                        <Label htmlFor="notification-sms">SMS</Label>
+                        <Checkbox id={`${id}-notification-sms`} />
+                        <Label htmlFor={`${id}-notification-sms`}>SMS</Label>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Checkbox id="notification-push" />
-                        <Label htmlFor="notification-push">Push</Label>
+                        <Checkbox id={`${id}-notification-push`} />
+                        <Label htmlFor={`${id}-notification-push`}>Push</Label>
                       </div>
                     </FieldControl>
                     <FieldDescription>Choose how you want to receive notifications.</FieldDescription>
@@ -216,16 +217,16 @@ export default function SettingsPage(): JSX.Element {
                     <Label htmlFor="types">Notification Types</Label>
                     <FieldControl className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <Checkbox id="notification-account" />
-                        <Label htmlFor="notification-account">Account Activity</Label>
+                        <Checkbox id={`${id}-notification-account`} />
+                        <Label htmlFor={`${id}-notification-account`}>Account Activity</Label>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Checkbox defaultChecked disabled id="notification-security" />
-                        <Label htmlFor="notification-security">Security Alerts</Label>
+                        <Checkbox defaultChecked disabled id={`${id}-notification-security`} />
+                        <Label htmlFor={`${id}-notification-security`}>Security Alerts</Label>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Checkbox id="notification-marketing" />
-                        <Label htmlFor="notification-marketing">Marketing & Promotions</Label>
+                        <Checkbox id={`${id}-notification-marketing`} />
+                        <Label htmlFor={`${id}-notification-marketing`}>Marketing & Promotions</Label>
                       </div>
                     </FieldControl>
                     <FieldDescription>Choose how you want to receive notifications.</FieldDescription>
@@ -234,7 +235,7 @@ export default function SettingsPage(): JSX.Element {
               </form>
             </CardContent>
             <CardFooter className="border-t">
-              <Button form="form-notifications" type="submit" variant="secondary">
+              <Button form={`${id}-form-notifications`} type="submit" variant="secondary">
                 Save changes
               </Button>
             </CardFooter>
@@ -247,30 +248,30 @@ export default function SettingsPage(): JSX.Element {
               <CardDescription>Make changes to your security settings here.</CardDescription>
             </CardHeader>
             <CardContent className="@container">
-              <form id="form-security">
+              <form id={`${id}-form-security`}>
                 <FieldGroup>
                   <Field>
                     <Label htmlFor="current-password">Current Password</Label>
                     <FieldControl>
-                      <Input required id="current-password" placeholder="Current password" />
+                      <Input required id={`${id}-current-password`} placeholder="Current password" />
                     </FieldControl>
                     <FieldDescription>This is your current password.</FieldDescription>
                   </Field>
                   <Field>
                     <Label htmlFor="new-password">New Password</Label>
                     <FieldControl>
-                      <Input required id="new-password" placeholder="New password" />
+                      <Input required id={`${id}-new-password`} placeholder="New password" />
                     </FieldControl>
                   </Field>
                   <Field>
                     <Label htmlFor="confirm-password">Confirm Password</Label>
                     <FieldControl>
-                      <Input id="confirm-password" placeholder="Confirm password" />
+                      <Input id={`${id}-confirm-password`} placeholder="Confirm password" />
                     </FieldControl>
                   </Field>
                   <Field>
                     <FieldControl>
-                      <Switch className="self-start" id="enable-two-factor-auth" />
+                      <Switch className="self-start" id={`${id}-enable-two-factor-auth`} />
                     </FieldControl>
                     <Label htmlFor="enable-two-factor-auth">Enable two-factor authentication</Label>
                     <FieldDescription>
@@ -282,7 +283,7 @@ export default function SettingsPage(): JSX.Element {
               </form>
             </CardContent>
             <CardFooter className="border-t">
-              <Button form="form-security" type="submit" variant="secondary">
+              <Button form={`${id}-form-security`} type="submit" variant="secondary">
                 Save changes
               </Button>
             </CardFooter>

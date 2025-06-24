@@ -1,7 +1,6 @@
-import type { JSX } from "react";
-
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@codefast/ui";
 import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
@@ -34,7 +33,7 @@ export function SelectDemo(): JSX.Element {
           </SelectTrigger>
           <SelectContent>
             {Array.from({ length: 100 }).map((_, i) => (
-              // eslint-disable-next-line react/no-array-index-key -- keep
+              // biome-ignore lint/suspicious/noArrayIndexKey: keep
               <SelectItem key={i} value={`item-${i}`}>
                 Item {i}
               </SelectItem>

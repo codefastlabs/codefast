@@ -1,7 +1,5 @@
 "use client";
 
-import type { JSX } from "react";
-
 import {
   CommandDialog,
   CommandEmpty,
@@ -14,6 +12,7 @@ import {
   Kbd,
 } from "@codefast/ui";
 import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from "lucide-react";
+import type { JSX } from "react";
 import { useEffect, useState } from "react";
 
 export function CommandDemo(): JSX.Element {

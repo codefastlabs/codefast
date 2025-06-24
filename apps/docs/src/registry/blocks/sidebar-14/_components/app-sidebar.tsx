@@ -1,5 +1,3 @@
-import type { ComponentProps, JSX } from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +13,7 @@ import {
   SidebarRail,
 } from "@codefast/ui";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data = {

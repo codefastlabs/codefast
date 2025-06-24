@@ -1,11 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX, ReactNode } from "react";
-import type { ContentType } from "recharts/types/component/Label";
-import type { PieSectorDataItem } from "recharts/types/polar/Pie";
-import type { ActiveShape } from "recharts/types/util/types";
-
 import {
   Card,
   CardAction,
@@ -24,8 +19,12 @@ import {
   SelectValue,
 } from "@codefast/ui";
 import { isEmpty } from "lodash-es";
+import type { JSX, ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { Label, Pie, PieChart, Sector } from "recharts";
+import type { ContentType } from "recharts/types/component/Label";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
+import type { ActiveShape } from "recharts/types/util/types";
 
 const desktopData = [
   { month: "january", desktop: 186, fill: "var(--color-january)" },

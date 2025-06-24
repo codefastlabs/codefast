@@ -1,8 +1,7 @@
 "use client";
 
-import type { JSX } from "react";
-
 import { Progress } from "@codefast/ui";
+import type { JSX } from "react";
 import { useEffect, useState } from "react";
 
 export function ProgressDemo(): JSX.Element {

@@ -1,8 +1,7 @@
+import path from "node:path";
 import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import { merge } from "lodash-es";
-import path from "node:path";
-
 import type { AnalysisPort } from "@/application/ports/analysis.port";
 import type { FileSystemPort } from "@/application/ports/file-system.port";
 import type {
@@ -12,10 +11,9 @@ import type {
   PackageJson,
   ScriptConfig,
 } from "@/domain/entities/package-config";
+import { scriptConfigSchema } from "@/domain/entities/package-config";
 import type { PackageRepository } from "@/domain/interfaces/package.repository";
 import type { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
-
-import { scriptConfigSchema } from "@/domain/entities/package-config";
 import { TYPES } from "@/ioc/types";
 
 @injectable()
@@ -65,7 +63,7 @@ export class FileSystemPackageRepository implements PackageRepository {
     },
   ): boolean {
     const packageDir = path.dirname(packageJsonPath);
-    let packageJson;
+    let packageJson: PackageJson;
 
     try {
       packageJson = JSON.parse(this.fileSystemPort.readFile(packageJsonPath)) as PackageJson;

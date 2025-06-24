@@ -1,7 +1,5 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -24,6 +22,7 @@ import {
   SquareTerminalIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-16/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-16/_components/nav-projects";

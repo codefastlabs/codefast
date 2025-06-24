@@ -1,8 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-
 import {
   Card,
   CardContent,
@@ -15,6 +13,7 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUp } from "lucide-react";
+import type { JSX } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 const chartData = [

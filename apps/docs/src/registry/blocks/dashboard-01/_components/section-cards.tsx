@@ -1,7 +1,6 @@
-import type { JSX } from "react";
-
 import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
+import type { JSX } from "react";
 
 type TrendDirection = "down" | "up";
 

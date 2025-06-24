@@ -1,10 +1,6 @@
 "use client";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-import type { PieSectorDataItem } from "recharts/types/polar/Pie";
-import type { ActiveShape } from "recharts/types/util/types";
-
 import {
   Card,
   CardContent,
@@ -17,7 +13,10 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
 import { Pie, PieChart, Sector } from "recharts";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
+import type { ActiveShape } from "recharts/types/util/types";
 
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
