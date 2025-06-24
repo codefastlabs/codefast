@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:docs": "turbo run build --filter=@app/docs...",
-    "build:packages": "turbo run build --filter=\"./packages/**\"",
+    "build:packages": "turbo run build --filter=@codefast*/*",
     "changeset": "changeset",
     "changeset:pre:enter": "changeset pre enter canary",
     "changeset:pre:exit": "changeset pre exit",
@@ -18,7 +18,7 @@
     "lint:fix": "biome check --write --unsafe",
     "format": "biome format --write",
     "package:install": "pnpm install",
-    "package:reinstall": "pnpm clean && pnpm install && pnpm build --filter=\"./packages/**\"",
+    "package:reinstall": "pnpm clean && pnpm install && pnpm build:packages",
     "package:update": "pnpm update --latest --recursive",
     "start": "turbo run start",
     "start:docs": "turbo run start --filter=@app/docs...",
