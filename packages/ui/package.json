@@ -728,7 +728,7 @@
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist node_modules",
     "dev": "cross-env NODE_ENV=development rslib build --watch"
   },
   "dependencies": {
@@ -804,14 +804,14 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "date-fns": "^4",
-    "next-themes": "^0",
-    "react": "^19",
-    "react-dom": "^19",
-    "react-hook-form": "^7",
-    "recharts": "^2"
+    "@types/react": "^19.0",
+    "@types/react-dom": "^19.0",
+    "date-fns": "^4.0",
+    "next-themes": "^0.0",
+    "react": "^19.0",
+    "react-dom": "^19.0",
+    "react-hook-form": "^7.0",
+    "recharts": "^2.0"
   },
   "peerDependenciesMeta": {
     "@types/react": {

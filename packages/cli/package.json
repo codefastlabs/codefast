@@ -25,7 +25,7 @@
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist node_modules",
     "dev": "cross-env NODE_ENV=development rslib build --watch"
   },
   "dependencies": {

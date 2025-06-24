@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build --turbopack",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf .next",
+    "clean": "rimraf .next node_modules",
     "dev": "next dev --turbopack",
     "start": "next start --turbopack"
   },
