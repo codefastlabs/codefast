@@ -40,8 +40,8 @@ describe("input", () => {
     it("should render loading spinner in suffix position when specified", () => {
       render(
         <Input
-          loading
           loaderPosition="suffix"
+          loading
           prefix={<div data-testid="prefix">Prefix</div>}
           spinner={<div data-testid="spinner">Loading...</div>}
         >
@@ -318,7 +318,7 @@ describe("input", () => {
       render(
         <Input
           prefix={
-            <button type="button" data-testid="button" onClick={linkClickHandler}>
+            <button data-testid="button" onClick={linkClickHandler} type="button">
               Click me
             </button>
           }

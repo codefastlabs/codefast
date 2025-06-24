@@ -43,7 +43,7 @@ export default function Page(): JSX.Element {
         <div className="flex flex-1 flex-col gap-4 p-4">
           {Array.from({ length: 24 }).map((_, index) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: need
-            <div key={index} className="bg-muted/50 aspect-video h-12 w-full rounded-lg" />
+            <div className="bg-muted/50 aspect-video h-12 w-full rounded-lg" key={index} />
           ))}
         </div>
       </SidebarInset>

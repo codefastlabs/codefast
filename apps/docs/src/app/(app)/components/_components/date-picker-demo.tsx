@@ -14,8 +14,8 @@ import {
 } from "@codefast/ui";
 import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { type JSX, useId, useState } from "react";
-
+import type { JSX } from "react";
+import { useId, useState } from "react";
 import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DatePickerDemo(): JSX.Element {
@@ -46,7 +46,7 @@ function DatePickerSimple(): JSX.Element {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={setDate} />
+        <Calendar mode="single" onSelect={setDate} selected={date} />
       </PopoverContent>
     </Popover>
   );
@@ -77,8 +77,8 @@ function DatePickerWithRange(): JSX.Element {
           defaultMonth={date?.from}
           mode="range"
           numberOfMonths={isMobile ? 1 : 2}
-          selected={date}
           onSelect={setDate}
+          selected={date}
         />
       </PopoverContent>
     </Popover>

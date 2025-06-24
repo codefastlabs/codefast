@@ -82,7 +82,7 @@ function DialogScrollableContent(): JSX.Element {
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: keep
-            <p key={index} className="mb-4 leading-normal">
+            <p className="mb-4 leading-normal" key={index}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
               ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
@@ -111,7 +111,7 @@ function DialogWithStickyFooter(): JSX.Element {
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: keep
-            <p key={index} className="mb-4 leading-normal">
+            <p className="mb-4 leading-normal" key={index}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
               ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu

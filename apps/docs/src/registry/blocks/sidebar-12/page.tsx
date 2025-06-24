@@ -32,7 +32,7 @@ export default function Page(): JSX.Element {
           <div className="grid auto-rows-min gap-4 md:grid-cols-5">
             {Array.from({ length: 20 }).map((_, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: need
-              <div key={i} className="bg-muted/50 aspect-square rounded-xl" />
+              <div className="bg-muted/50 aspect-square rounded-xl" key={i} />
             ))}
           </div>
         </div>

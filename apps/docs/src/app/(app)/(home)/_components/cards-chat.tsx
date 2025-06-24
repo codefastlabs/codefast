@@ -111,11 +111,11 @@ export function CardsChat(): JSX.Element {
               <TooltipTrigger asChild>
                 <Button
                   className="ml-auto rounded-full"
-                  size="icon"
-                  variant="outline"
                   onClick={() => {
                     setOpen(true);
                   }}
+                  size="icon"
+                  variant="outline"
                 >
                   <Plus />
                   <span className="sr-only">New message</span>
@@ -129,12 +129,12 @@ export function CardsChat(): JSX.Element {
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
-                // biome-ignore lint/suspicious/noArrayIndexKey: need
-                key={index}
                 className={cn(
                   "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
                   message.role === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
                 )}
+                // biome-ignore lint/suspicious/noArrayIndexKey: need
+                key={index}
               >
                 {message.content}
               </div>
@@ -165,11 +165,11 @@ export function CardsChat(): JSX.Element {
               autoComplete="off"
               className="flex-1"
               id={inputId}
-              placeholder="Type your message..."
-              value={input}
               onChange={(event) => {
                 setInput(event.target.value);
               }}
+              placeholder="Type your message..."
+              value={input}
             />
             <Button disabled={inputLength === 0} size="icon" type="submit">
               <Send />
@@ -178,7 +178,7 @@ export function CardsChat(): JSX.Element {
           </form>
         </CardFooter>
       </Card>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className="gap-0 p-0 outline-none">
           <DialogHeader>
             <DialogTitle>New message</DialogTitle>
@@ -192,8 +192,8 @@ export function CardsChat(): JSX.Element {
                 <CommandGroup className="p-2">
                   {users.map((user) => (
                     <CommandItem
-                      key={user.email}
                       className="flex items-center px-2"
+                      key={user.email}
                       onSelect={() => {
                         if (selectedUsers.includes(user)) {
                           setSelectedUsers(selectedUsers.filter((selectedUser) => selectedUser !== user));
@@ -223,7 +223,7 @@ export function CardsChat(): JSX.Element {
             {selectedUsers.length > 0 ? (
               <div className="flex -space-x-2 overflow-hidden">
                 {selectedUsers.map((user) => (
-                  <Avatar key={user.email} className="border-background inline-block border-2">
+                  <Avatar className="border-background inline-block border-2" key={user.email}>
                     <AvatarImage src={user.avatar} />
                     <AvatarFallback>{user.name[0]}</AvatarFallback>
                   </Avatar>

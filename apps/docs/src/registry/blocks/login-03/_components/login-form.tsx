@@ -55,7 +55,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
               <div className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor={`${id}-email`}>Email</Label>
-                  <Input required id={`${id}-email`} placeholder="m@example.com" type="email" />
+                  <Input id={`${id}-email`} placeholder="m@example.com" required type="email" />
                 </div>
                 <div className="grid gap-3">
                   <div className="flex items-center">
@@ -64,7 +64,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
                       Forgot your password?
                     </Link>
                   </div>
-                  <Input required id={`${id}-password`} type="password" />
+                  <Input id={`${id}-password`} required type="password" />
                 </div>
                 <Button className="w-full" type="submit">
                   Login

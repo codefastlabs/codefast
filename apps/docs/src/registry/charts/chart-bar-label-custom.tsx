@@ -58,15 +58,15 @@ export function ChartBarLabelCustom(): JSX.Element {
           >
             <CartesianGrid horizontal={false} />
             <YAxis
-              hide
               axisLine={false}
               dataKey="month"
+              hide
               tickFormatter={(value: string) => value.slice(0, 3)}
               tickLine={false}
               tickMargin={10}
               type="category"
             />
-            <XAxis hide dataKey="desktop" type="number" />
+            <XAxis dataKey="desktop" hide type="number" />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
             <Bar dataKey="desktop" fill="var(--color-desktop)" layout="vertical" radius={4}>
               <LabelList

@@ -62,7 +62,7 @@ export function ThemeSelector(): JSX.Element {
       <Label className="sr-only" htmlFor="theme-selector">
         Theme
       </Label>
-      <Select value={activeTheme} onValueChange={setActiveTheme}>
+      <Select onValueChange={setActiveTheme} value={activeTheme}>
         <SelectTrigger className="justify-start *:data-[slot=select-value]:w-12" id={`${id}-theme-selector`} size="sm">
           <span className="text-muted-foreground hidden sm:block">Select a theme:</span>
           <span className="text-muted-foreground block sm:hidden">Theme</span>

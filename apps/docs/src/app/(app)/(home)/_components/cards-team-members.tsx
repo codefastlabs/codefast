@@ -65,7 +65,7 @@ function RoleSelector({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button className="ml-auto" size="sm" variant="outline">
           {role} <ChevronDown className="text-muted-foreground" />
@@ -79,13 +79,13 @@ function RoleSelector({
             <CommandGroup className="p-1.5">
               {roleOptions.map((roleOption) => (
                 <CommandItem
-                  key={roleOption.name}
                   className="flex flex-col items-start gap-y-1 px-4 py-2"
+                  key={roleOption.name}
                   keywords={roleOption.keywords}
-                  value={roleOption.name}
                   onSelect={() => {
                     handleSelectRole(roleOption.name);
                   }}
+                  value={roleOption.name}
                 >
                   <p>{roleOption.name}</p>
                   <p className="text-muted-foreground text-sm">{roleOption.description}</p>

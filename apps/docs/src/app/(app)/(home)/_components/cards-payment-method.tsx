@@ -38,16 +38,16 @@ export function CardsPaymentMethod(): JSX.Element {
               htmlFor={`${id}-card`}
             >
               <svg
+                aria-label="Credit card icon"
                 className="mb-3 h-6 w-6"
                 fill="none"
+                role="img"
                 stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-                role="img"
-                aria-label="Credit card icon"
               >
                 <title>Credit card</title>
                 <rect height="14" rx="2" width="20" x="2" y="5" />

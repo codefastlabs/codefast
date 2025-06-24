@@ -16,7 +16,7 @@ export function SwitchDemo(): JSX.Element {
       </div>
       <div>
         <div className="flex items-center gap-2">
-          <Switch defaultChecked className="data-[state=checked]:bg-primary" id={`${id}-switch-demo-bluetooth`} />
+          <Switch className="data-[state=checked]:bg-primary" defaultChecked id={`${id}-switch-demo-bluetooth`} />
           <Label htmlFor={`${id}-switch-demo-bluetooth`}>Bluetooth</Label>
         </div>
       </div>

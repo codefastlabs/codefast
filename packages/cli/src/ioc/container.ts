@@ -25,34 +25,33 @@ import { NodePackageInfoService } from "@/infrastructure/services/node-package-i
 import { FileSystemUtility } from "@/infrastructure/utilities/file-system-utility";
 import { TYPES } from "@/ioc/types";
 
-const container = new Container();
+const container = new Container({
+  defaultScope: "Singleton",
+});
 
 // Domain bindings
-container.bind<ProjectRepositoryInterface>(TYPES.ProjectRepository).to(FileSystemProjectRepository).inSingletonScope(); // Handles project creation and file updates
-container.bind<PackageRepository>(TYPES.PackageRepository).to(FileSystemPackageRepository).inSingletonScope(); // Manages package.json exports
+container.bind<ProjectRepositoryInterface>(TYPES.ProjectRepository).to(FileSystemProjectRepository);
+container.bind<PackageRepository>(TYPES.PackageRepository).to(FileSystemPackageRepository);
 
-container.bind<PackageInfoServiceInterface>(TYPES.PackageInfoService).to(NodePackageInfoService).inSingletonScope(); // Provides package version
-container
-  .bind<DependencyConfigServiceInterface>(TYPES.DependencyConfigService)
-  .to(DependencyConfigService)
-  .inSingletonScope(); // Provides dependency configuration
-container.bind<ConfigServiceInterface>(TYPES.ConfigService).to(ConfigService).inSingletonScope(); // Provides CLI configuration
+container.bind<PackageInfoServiceInterface>(TYPES.PackageInfoService).to(NodePackageInfoService);
+container.bind<DependencyConfigServiceInterface>(TYPES.DependencyConfigService).to(DependencyConfigService);
+container.bind<ConfigServiceInterface>(TYPES.ConfigService).to(ConfigService);
 
 // Application bindings
-container.bind<FileSystemPort>(TYPES.FileSystemPort).to(NodeFileSystemAdapter).inSingletonScope(); // File system operations
-container.bind<CommandExecutorPort>(TYPES.CommandExecutorPort).to(NodeCommandExecutorAdapter).inSingletonScope(); // Command execution
-container.bind<PromptPort>(TYPES.PromptPort).to(NodePromptAdapter).inSingletonScope(); // User input prompting
-container.bind<AnalysisPort>(TYPES.AnalysisPort).to(TsMorphAnalysisAdapter).inSingletonScope(); // Import analysis
+container.bind<FileSystemPort>(TYPES.FileSystemPort).to(NodeFileSystemAdapter);
+container.bind<CommandExecutorPort>(TYPES.CommandExecutorPort).to(NodeCommandExecutorAdapter);
+container.bind<PromptPort>(TYPES.PromptPort).to(NodePromptAdapter);
+container.bind<AnalysisPort>(TYPES.AnalysisPort).to(TsMorphAnalysisAdapter);
 
-container.bind<CreateProjectUseCase>(TYPES.CreateProjectUseCase).to(CreateProjectUseCase).inSingletonScope(); // Project creation logic
-container.bind<UpdateExportsUseCase>(TYPES.UpdateExportsUseCase).to(UpdateExportsUseCase).inSingletonScope(); // Export update logic
+container.bind<CreateProjectUseCase>(TYPES.CreateProjectUseCase).to(CreateProjectUseCase);
+container.bind<UpdateExportsUseCase>(TYPES.UpdateExportsUseCase).to(UpdateExportsUseCase);
 
-container.bind<CreateProjectCommand>(TYPES.CreateProjectCommand).to(CreateProjectCommand).inSingletonScope(); // CLI command for project creation
-container.bind<UpdateExportsCommand>(TYPES.UpdateExportsCommand).to(UpdateExportsCommand).inSingletonScope(); // CLI command for export updates
+container.bind<CreateProjectCommand>(TYPES.CreateProjectCommand).to(CreateProjectCommand);
+container.bind<UpdateExportsCommand>(TYPES.UpdateExportsCommand).to(UpdateExportsCommand);
 
 // Infrastructure bindings
-container.bind<CLIAdapter>(TYPES.CLIAdapter).to(CLIAdapter).inSingletonScope(); // CLI setup and command registration
+container.bind<CLIAdapter>(TYPES.CLIAdapter).to(CLIAdapter);
 
-container.bind<FileSystemUtility>(TYPES.FileSystemUtility).to(FileSystemUtility).inSingletonScope(); // File system utility functions
+container.bind<FileSystemUtility>(TYPES.FileSystemUtility).to(FileSystemUtility);
 
 export { container };

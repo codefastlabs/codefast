@@ -50,13 +50,13 @@ function Slider({
       </SliderPrimitive.Track>
       {Array.from({ length: _values.length }, (_, index) => (
         <SliderPrimitive.Thumb
-          // biome-ignore lint/suspicious/noArrayIndexKey: keep
-          key={index}
           aria-label="Volume"
           className={cn(
             "border-primary bg-primary after:bg-background active:not-data-disabled:after:size-1 focus-visible:ring-primary/20 dark:focus-visible:ring-primary/40 outline-hidden flex size-4 items-center justify-center rounded-full border-2 shadow-sm after:size-full after:rounded-full after:transition-[width,height] focus-visible:ring-4",
           )}
           data-slot="slider-thumb"
+          // biome-ignore lint/suspicious/noArrayIndexKey: keep
+          key={index}
         />
       ))}
     </SliderPrimitive.Root>

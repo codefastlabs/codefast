@@ -103,7 +103,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
   const [value, setValue] = useState("");
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button
           aria-expanded={open}
@@ -123,11 +123,11 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
               {frameworks.map((framework) => (
                 <CommandItem
                   key={framework.value}
-                  value={framework.value}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
+                  value={framework.value}
                 >
                   {framework.label}
 
@@ -149,7 +149,7 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
   const selectedUser = useMemo(() => users.find((user) => user.id === value), [value, users]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button
           aria-expanded={open}
@@ -179,11 +179,11 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
               {users.map((user) => (
                 <CommandItem
                   key={user.id}
-                  value={user.id}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
+                  value={user.id}
                 >
                   <Avatar className="size-5">
                     <AvatarImage src={user.avatar} />
@@ -230,7 +230,7 @@ function TimezoneCombobox({
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button
           className="h-12 w-full justify-between px-3 md:max-w-[200px]"
@@ -253,15 +253,15 @@ function TimezoneCombobox({
           <CommandList className="scroll-pb-12">
             <CommandEmpty>No timezone found.</CommandEmpty>
             {timezones.map((region) => (
-              <CommandGroup key={region.label} heading={region.label}>
+              <CommandGroup heading={region.label} key={region.label}>
                 {region.timezones.map((timezone) => (
                   <CommandItem
                     key={timezone.value}
-                    value={timezone.value}
                     onSelect={(currentValue) => {
                       setValue(currentValue as Timezone["timezones"][number]["value"]);
                       setOpen(false);
                     }}
+                    value={timezone.value}
                   >
                     {timezone.label}
 
@@ -293,7 +293,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
   const [selectedFrameworks, setSelectedFrameworks] = useState<Framework[]>([]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button
           aria-expanded={open}
@@ -317,7 +317,6 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
               {frameworks.map((framework) => (
                 <CommandItem
                   key={framework.value}
-                  value={framework.value}
                   onSelect={(currentValue) => {
                     setSelectedFrameworks(
                       selectedFrameworks.some((f) => f.value === currentValue)
@@ -325,6 +324,7 @@ function ComboboxWithCheckbox({ frameworks }: { frameworks: Framework[] }): JSX.
                         : [...selectedFrameworks, framework],
                     );
                   }}
+                  value={framework.value}
                 >
                   <div
                     className="border-input data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground *:[svg]:opacity-0 data-[selected=true]:*:[svg]:opacity-100 pointer-events-none size-4 shrink-0 select-none rounded-[4px] border transition-all"

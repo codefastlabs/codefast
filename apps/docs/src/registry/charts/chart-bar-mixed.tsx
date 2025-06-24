@@ -75,7 +75,7 @@ export function ChartBarMixed(): JSX.Element {
               tickMargin={10}
               type="category"
             />
-            <XAxis hide dataKey="visitors" type="number" />
+            <XAxis dataKey="visitors" hide type="number" />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Bar dataKey="visitors" layout="vertical" radius={5} />
           </BarChart>

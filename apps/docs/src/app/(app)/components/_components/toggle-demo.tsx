@@ -18,7 +18,7 @@ export function ToggleDemo(): JSX.Element {
         </Toggle>
       </div>
       <div>
-        <Toggle disabled aria-label="Toggle italic">
+        <Toggle aria-label="Toggle italic" disabled>
           Disabled
         </Toggle>
       </div>
@@ -33,7 +33,7 @@ export function ToggleDemo(): JSX.Element {
         </Toggle>
       </div>
       <div>
-        <Toggle disabled aria-label="Toggle italic" variant="outline">
+        <Toggle aria-label="Toggle italic" disabled variant="outline">
           Disabled
         </Toggle>
       </div>

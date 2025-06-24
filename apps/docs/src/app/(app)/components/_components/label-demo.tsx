@@ -15,7 +15,7 @@ export function LabelDemo(): JSX.Element {
         <Label htmlFor={`${id}-username`}>Username</Label>
         <Input id={`${id}-username`} placeholder="Username" />
       </div>
-      <div data-disabled className="group grid gap-3">
+      <div className="group grid gap-3" data-disabled>
         <Label htmlFor={`${id}-disabled`}>Disabled</Label>
         <Input disabled id={`${id}-disabled`} placeholder="Disabled" />
       </div>

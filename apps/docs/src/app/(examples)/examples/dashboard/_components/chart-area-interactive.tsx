@@ -172,16 +172,16 @@ export function ChartAreaInteractive(): JSX.Element {
         <CardAction>
           <ToggleGroup
             className="@[767px]/card:flex hidden *:data-[slot=toggle-group-item]:!px-4"
+            onValueChange={setTimeRange}
             type="single"
             value={timeRange}
             variant="outline"
-            onValueChange={setTimeRange}
           >
             <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
-          <Select value={timeRange} onValueChange={setTimeRange}>
+          <Select onValueChange={setTimeRange} value={timeRange}>
             <SelectTrigger
               aria-label="Select a value"
               className="**:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden flex w-40"

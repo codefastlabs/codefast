@@ -23,10 +23,10 @@ export function BlockViewerCopyCodeButton(): ReactNode {
   return (
     <Button
       className="h-7 w-7 shrink-0 rounded-lg p-0 hover:bg-zinc-700 hover:text-white focus:bg-zinc-700 focus:text-white focus-visible:bg-zinc-700 focus-visible:text-white active:bg-zinc-700 active:text-white data-[active=true]:bg-zinc-700 data-[active=true]:text-white [&>svg]:size-3"
-      variant="ghost"
       onClick={() => {
         void copyToClipboard(content);
       }}
+      variant="ghost"
     >
       {isCopied ? <CheckIcon /> : <ClipboardIcon />}
     </Button>

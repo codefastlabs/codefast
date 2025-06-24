@@ -54,9 +54,9 @@ export function NavSecondary({
                 <span>Dark Mode</span>
                 {mounted ? (
                   <Switch
-                    id={`${id}-dark-mode-switch`}
                     checked={resolvedTheme !== "light"}
                     className="ml-auto"
+                    id={`${id}-dark-mode-switch`}
                     onCheckedChange={() => {
                       setTheme(resolvedTheme === "dark" ? "light" : "dark");
                     }}

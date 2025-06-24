@@ -150,7 +150,7 @@ function DropdownMenuCheckboxes(): JSX.Element {
           <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             Status Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem disabled checked={showActivityBar} onCheckedChange={setShowActivityBar}>
+          <DropdownMenuCheckboxItem checked={showActivityBar} disabled onCheckedChange={setShowActivityBar}>
             Activity Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
@@ -179,7 +179,7 @@ function DropdownMenuRadioGroupDemo(): JSX.Element {
       <DropdownMenuContent align="start" className="w-56">
         <DropdownMenuLabel inset>Panel Position</DropdownMenuLabel>
         <DropdownMenuGroup>
-          <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+          <DropdownMenuRadioGroup onValueChange={setPosition} value={position}>
             <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
             <DropdownMenuRadioItem disabled value="right">

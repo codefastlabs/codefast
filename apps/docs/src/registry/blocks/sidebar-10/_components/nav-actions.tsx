@@ -70,7 +70,7 @@ export function NavActions(): JSX.Element {
       <Button className="size-7" size="icon" variant="ghost">
         <StarIcon />
       </Button>
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover onOpenChange={setIsOpen} open={isOpen}>
         <PopoverTrigger asChild>
           <Button className="data-[state=open]:bg-accent size-7" size="icon" variant="ghost">
             <MoreHorizontalIcon />
@@ -81,7 +81,7 @@ export function NavActions(): JSX.Element {
             <SidebarContent>
               {data.map((group, index) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: need
-                <SidebarGroup key={index} className="border-b last:border-none">
+                <SidebarGroup className="border-b last:border-none" key={index}>
                   <SidebarGroupContent className="gap-0">
                     <SidebarMenu>
                       {group.map((item, menuIndex) => (

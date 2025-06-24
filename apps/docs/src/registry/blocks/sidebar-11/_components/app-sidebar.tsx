@@ -88,7 +88,7 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
           <SidebarMenuSub>
             {items.map((subItem, index) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: need
-              <Tree key={index} item={subItem} />
+              <Tree item={subItem} key={index} />
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
@@ -124,7 +124,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
             <SidebarMenu>
               {data.tree.map((item, index) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: need
-                <Tree key={index} item={item} />
+                <Tree item={item} key={index} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

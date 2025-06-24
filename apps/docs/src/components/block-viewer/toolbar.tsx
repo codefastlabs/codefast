@@ -27,10 +27,10 @@ export function BlockViewerToolbar(): JSX.Element {
     <div className="flex w-full items-center gap-2 md:pr-3.5">
       <Tabs
         className="hidden lg:flex"
-        value={view}
         onValueChange={(value) => {
           setView(value as BlockViewMode);
         }}
+        value={view}
       >
         <TabsList className="*:py-1">
           <TabsTrigger value="preview">Preview</TabsTrigger>
@@ -46,8 +46,6 @@ export function BlockViewerToolbar(): JSX.Element {
           <ToggleGroup
             className="gap-1"
             defaultValue="100"
-            size="sm"
-            type="single"
             onValueChange={(value) => {
               if (resizablePanelRef.current) {
                 resizablePanelRef.current.resize(Number.parseInt(value));
@@ -57,6 +55,8 @@ export function BlockViewerToolbar(): JSX.Element {
                 setView("preview");
               }
             }}
+            size="sm"
+            type="single"
           >
             <ToggleGroupItem className="size-7 rounded-md first:rounded-md last:rounded-md" title="Desktop" value="100">
               <MonitorIcon />
@@ -86,11 +86,11 @@ export function BlockViewerToolbar(): JSX.Element {
             <div className="flex items-center gap-1 rounded-xl border p-1">
               <Button
                 className="h-7 gap-1"
-                size="sm"
-                variant="ghost"
                 onClick={() => {
                   void copyToClipboard(`npx codefast@latest add ${item.slug}`);
                 }}
+                size="sm"
+                variant="ghost"
               >
                 {isCopied ? <CheckIcon /> : <TerminalIcon />}
                 <span className="hidden lg:inline">npx codefast add {item.slug}</span>

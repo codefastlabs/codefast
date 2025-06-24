@@ -87,13 +87,12 @@ export function SonnerDemo(): JSX.Element {
   return (
     <GridWrapper className="*:grid *:place-items-center">
       <div>
-        <Button variant="outline" onClick={() => toast("My first toast")}>
+        <Button onClick={() => toast("My first toast")} variant="outline">
           Give me a toast
         </Button>
       </div>
       <div>
         <Button
-          variant="outline"
           onClick={() =>
             toast("Event has been created", {
               description: "Sunday, December 03, 2023 at 9:00 AM",
@@ -106,6 +105,7 @@ export function SonnerDemo(): JSX.Element {
               },
             })
           }
+          variant="outline"
         >
           Show Toast
         </Button>
@@ -114,11 +114,11 @@ export function SonnerDemo(): JSX.Element {
         <div key={type.name}>
           <Button
             data-active={activeType.name === type.name}
-            variant="ghost"
             onClick={() => {
               type.action();
               setActiveType(type);
             }}
+            variant="ghost"
           >
             {type.name}
           </Button>

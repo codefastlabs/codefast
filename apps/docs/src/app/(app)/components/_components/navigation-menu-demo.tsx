@@ -85,7 +85,7 @@ export function NavigationMenuDemo(): JSX.Element {
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                 {components.map((component) => (
-                  <ListItem key={component.title} href={component.href} title={component.title}>
+                  <ListItem href={component.href} key={component.title} title={component.title}>
                     {component.description}
                   </ListItem>
                 ))}

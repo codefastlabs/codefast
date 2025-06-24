@@ -80,7 +80,7 @@ export function ChartPieInteractive(): JSX.Element {
           <CardTitle>Pie Chart - Interactive</CardTitle>
           <CardDescription>January - June 2024</CardDescription>
         </div>
-        <Select value={activeMonth} onValueChange={setActiveMonth}>
+        <Select onValueChange={setActiveMonth} value={activeMonth}>
           <SelectTrigger aria-label="Select a value" className="ml-auto h-7 w-[130px] rounded-lg pl-2.5">
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
@@ -93,7 +93,7 @@ export function ChartPieInteractive(): JSX.Element {
               }
 
               return (
-                <SelectItem key={key} className="rounded-lg [&_span]:flex" value={key}>
+                <SelectItem className="rounded-lg [&_span]:flex" key={key} value={key}>
                   <div className="flex items-center gap-2 text-xs">
                     <span
                       className="rounded-xs flex h-3 w-3 shrink-0"
