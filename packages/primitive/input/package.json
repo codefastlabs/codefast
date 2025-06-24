@@ -47,7 +47,7 @@
   "scripts": {
     "build": "rslib build",
     "check-types": "tsc --noEmit",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist node_modules",
     "dev": "cross-env NODE_ENV=development rslib build --watch",
     "test": "jest",
     "test:coverage": "jest --coverage",
@@ -77,10 +77,10 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "react": "^19",
-    "react-dom": "^19"
+    "@types/react": "^19.0",
+    "@types/react-dom": "^19.0",
+    "react": "^19.0",
+    "react-dom": "^19.0"
   },
   "peerDependenciesMeta": {
     "@types/react": {
