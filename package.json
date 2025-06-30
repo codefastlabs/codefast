@@ -32,7 +32,7 @@
     "commit-msg": "pnpm exec commitlint --edit $1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.5",
+    "@biomejs/biome": "^2.0.6",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.5",
     "@codefast/typescript-config": "workspace:*",
