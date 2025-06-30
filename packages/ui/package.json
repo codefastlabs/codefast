@@ -787,7 +787,7 @@
     "@rslib/core": "^0.10.2",
     "@swc/core": "^1.12.6",
     "@swc/jest": "^0.2.38",
-    "@tailwindcss/postcss": "^4.1.10",
+    "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
