@@ -773,7 +773,7 @@
     "cmdk": "^1.1.1",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
-    "lucide-react": "^0.523.0",
+    "lucide-react": "^0.525.0",
     "react-day-picker": "^9.7.0",
     "react-resizable-panels": "^3.0.3",
     "sonner": "^2.0.5",
