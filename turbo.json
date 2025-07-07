@@ -6,9 +6,6 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
-    "check-types": {
-      "dependsOn": ["build"]
-    },
     "clean": {
       "cache": false
     },
@@ -17,26 +14,29 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["build"]
+      "cache": false
     },
-    "lint:ci": {
-      "dependsOn": ["build"]
+    "lint:fix": {
+      "cache": false
     },
-    "start": {},
+    "start": {
+      "cache": false
+    },
     "test": {
-      "dependsOn": ["build"]
+      "cache": false
     },
     "test:coverage": {
-      "dependsOn": ["build"],
       "outputs": ["coverage/**"]
     },
     "test:coverage:ci": {
-      "dependsOn": ["build"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {
       "cache": false,
       "persistent": true
+    },
+    "type-check": {
+      "cache": false
     }
   }
 }
