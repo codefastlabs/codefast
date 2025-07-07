@@ -12,6 +12,7 @@
     "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@codefast/eslint-config": "workspace:*",
     "@codefast/hooks": "workspace:*",
     "@codefast/ui": "workspace:*",
     "@dnd-kit/core": "^6.3.1",

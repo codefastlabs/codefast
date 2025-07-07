@@ -55,6 +55,9 @@ importers:
 
   apps/docs:
     dependencies:
+      "@codefast/eslint-config":
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       "@codefast/hooks":
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -125,9 +128,6 @@ importers:
         specifier: ^3.25.67
         version: 3.25.67
     devDependencies:
-      "@codefast/eslint-config":
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
       "@tailwindcss/postcss":
         specifier: ^4.1.11
         version: 4.1.11
