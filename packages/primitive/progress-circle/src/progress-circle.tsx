@@ -1,9 +1,10 @@
 "use client";
 
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
-import type { ComponentProps, ReactNode } from "react";
 import { useId, useMemo } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, ReactNode } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: ProgressCircleProvider
@@ -185,12 +186,12 @@ function ProgressCircleProvider({
   strokeWidth = 4,
   size = 48,
   formatValue,
-  id: propId,
+  id: propertyId,
   startAngle = -90,
   children,
 }: ScopedProps<ProgressCircleProviderProps>): ReactNode {
   const uniqueId = useId();
-  const id = propId || uniqueId;
+  const id = propertyId ?? uniqueId;
 
   // Ensure size and stroke width are non-negative
   const validSize = Math.max(0, size);

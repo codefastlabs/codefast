@@ -11,7 +11,7 @@ import {
 } from "@/progress-circle";
 
 describe("ProgressCircle", () => {
-  it("renders correctly with default props", () => {
+  test("renders correctly with default props", () => {
     render(
       <ProgressCircleProvider max={100} value={50}>
         <ProgressCircle>
@@ -28,7 +28,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("50%")).toBeInTheDocument();
   });
 
-  it("passes accessibility tests", async () => {
+  test("passes accessibility tests", async () => {
     const { container } = render(
       <ProgressCircleProvider max={100} value={50}>
         <ProgressCircle>
@@ -46,7 +46,7 @@ describe("ProgressCircle", () => {
     expect(results).toHaveNoViolations();
   });
 
-  it("updates when value changes", () => {
+  test("updates when value changes", () => {
     const { rerender } = render(
       <ProgressCircleProvider max={100} value={25}>
         <ProgressCircle>
@@ -76,7 +76,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("75%")).toBeInTheDocument();
   });
 
-  it("calculates percentage correctly with custom max value", () => {
+  test("calculates percentage correctly with custom max value", () => {
     render(
       <ProgressCircleProvider max={10} value={5}>
         <ProgressCircle>
@@ -92,7 +92,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("50%")).toBeInTheDocument();
   });
 
-  it("supports custom value formatting", () => {
+  test("supports custom value formatting", () => {
     render(
       <ProgressCircleProvider max={100} value={42}>
         <ProgressCircle>
@@ -108,7 +108,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("Hoàn thành: 42%")).toBeInTheDocument();
   });
 
-  it("renders with custom size", () => {
+  test("renders with custom size", () => {
     render(
       <ProgressCircleProvider max={100} size={200} value={50}>
         <ProgressCircle>
@@ -127,9 +127,8 @@ describe("ProgressCircle", () => {
     expect(progressCircle).toHaveAttribute("height", "200");
   });
 
-  it("handles indeterminate state", () => {
+  test("handles indeterminate state", () => {
     render(
-      // @ts-ignore
       <ProgressCircleProvider max={100} value={null}>
         <ProgressCircle>
           <ProgressCircleSVG>
@@ -147,7 +146,7 @@ describe("ProgressCircle", () => {
     expect(progressbar).not.toHaveAttribute("aria-valuenow");
   });
 
-  it("renders correctly with zero value", () => {
+  test("renders correctly with zero value", () => {
     render(
       <ProgressCircleProvider max={100} value={0}>
         <ProgressCircle>
@@ -163,7 +162,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("0%")).toBeInTheDocument();
   });
 
-  it("renders correctly when value equals max", () => {
+  test("renders correctly when value equals max", () => {
     render(
       <ProgressCircleProvider max={100} value={100}>
         <ProgressCircle>
@@ -179,7 +178,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("100%")).toBeInTheDocument();
   });
 
-  it("accepts custom styling", () => {
+  test("accepts custom styling", () => {
     render(
       <ProgressCircleProvider max={100} value={50}>
         <ProgressCircle>
@@ -195,7 +194,7 @@ describe("ProgressCircle", () => {
     expect(screen.getByText("50%")).toHaveClass("text-lg", "font-bold");
   });
 
-  it("applies correct threshold styles", () => {
+  test("applies correct threshold styles", () => {
     const thresholds = [
       { value: 30, color: "red", background: "pink" },
       { value: 70, color: "yellow", background: "lightyellow" },
@@ -219,7 +218,7 @@ describe("ProgressCircle", () => {
     expect(indicator).toHaveAttribute("stroke", "green");
   });
 
-  it("renders with custom stroke width", () => {
+  test("renders with custom stroke width", () => {
     render(
       <ProgressCircleProvider max={100} strokeWidth={8} value={50}>
         <ProgressCircle>
@@ -239,7 +238,7 @@ describe("ProgressCircle", () => {
     expect(indicator).toHaveAttribute("stroke-width", "8");
   });
 
-  it("handles value equal to max properly", () => {
+  test("handles value equal to max properly", () => {
     render(
       <ProgressCircleProvider max={100} value={100}>
         <ProgressCircle>
