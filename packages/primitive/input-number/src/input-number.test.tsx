@@ -738,7 +738,6 @@ describe("input-number", () => {
 
     test("passes id to InputNumberItem", () => {
       render(
-        // biome-ignore lint/nursery/useUniqueElementIds: keep
         <InputNumber data-testid="input-number" id="test-id">
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
