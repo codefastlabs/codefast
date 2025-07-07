@@ -1,9 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
 import { pluginReact } from "@rsbuild/plugin-react";
 import { defineConfig } from "@rslib/core";
 
-const isProduction = process.env.NODE_ENV === "production";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
@@ -30,7 +30,6 @@ export default defineConfig({
     },
   ],
   output: {
-    cleanDistPath: isProduction,
     copy: [
       {
         from: path.resolve(__dirname, "src", "styles", "index.css"),
@@ -40,7 +39,6 @@ export default defineConfig({
     minify: {
       css: false,
     },
-    sourceMap: true,
     target: "web",
   },
   performance: {
