@@ -1,9 +1,11 @@
 import * as InputPrimitive from "@codefast-ui/input";
 import { createInputScope } from "@codefast-ui/input";
 import { composeEventHandlers } from "@radix-ui/primitive";
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -14,7 +16,6 @@ import type {
   PointerEventHandler,
   RefObject,
 } from "react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: InputNumber
@@ -156,7 +157,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
     min,
     onChange,
     step = 1,
-    value: valueProp,
+    value: valueProperty,
     ...props
   } = numberInputProps;
 
@@ -170,7 +171,7 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
   const [value, setValue] = useControllableState<number | undefined>({
     defaultProp: defaultValue,
     onChange,
-    prop: valueProp,
+    prop: valueProperty,
   });
 
   /** Separators used for number formatting based on locale */

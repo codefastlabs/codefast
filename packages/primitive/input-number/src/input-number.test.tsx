@@ -89,23 +89,23 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input-item");
-      const incrementBtn = screen.getByTestId("increment-btn");
-      const decrementBtn = screen.getByTestId("decrement-btn");
+      const incrementButton = screen.getByTestId("increment-btn");
+      const decrementButton = screen.getByTestId("decrement-btn");
 
-      for (let i = 0; i < 10; i++) {
-        await user.click(incrementBtn);
+      for (let index = 0; index < 10; index++) {
+        await user.click(incrementButton);
       }
 
       expect(input).toHaveValue("10");
-      await user.click(incrementBtn);
+      await user.click(incrementButton);
       expect(input).toHaveValue("10");
 
-      for (let i = 0; i < 15; i++) {
-        await user.click(decrementBtn);
+      for (let index = 0; index < 15; index++) {
+        await user.click(decrementButton);
       }
 
       expect(input).toHaveValue("0");
-      await user.click(decrementBtn);
+      await user.click(decrementButton);
       expect(input).toHaveValue("0");
     });
 
@@ -500,13 +500,13 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input-item");
-      const incrementBtn = screen.getByTestId("increment-btn");
-      const decrementBtn = screen.getByTestId("decrement-btn");
+      const incrementButton = screen.getByTestId("increment-btn");
+      const decrementButton = screen.getByTestId("decrement-btn");
 
       expect(input).toHaveValue("10");
 
       await user.pointer({
-        target: incrementBtn,
+        target: incrementButton,
         keys: "[MouseRight]",
       });
 
@@ -514,14 +514,14 @@ describe("input-number", () => {
       expect(handleChange).toHaveBeenCalledWith(11);
 
       await user.pointer({
-        target: decrementBtn,
+        target: decrementButton,
         keys: "[MouseRight]",
       });
 
       expect(input).toHaveValue("10");
       expect(handleChange).toHaveBeenCalledWith(10);
 
-      await user.click(incrementBtn);
+      await user.click(incrementButton);
       expect(input).toHaveValue("11");
       expect(handleChange).toHaveBeenCalledWith(11);
     });
@@ -542,11 +542,11 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input-item");
-      const incrementBtn = screen.getByTestId("increment-btn");
+      const incrementButton = screen.getByTestId("increment-btn");
 
       expect(input).toHaveValue("5");
 
-      await user.pointer({ keys: "[MouseLeft>]", target: incrementBtn });
+      await user.pointer({ keys: "[MouseLeft>]", target: incrementButton });
 
       expect(input).toHaveValue("6");
 
@@ -591,11 +591,11 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input-item");
-      const decrementBtn = screen.getByTestId("decrement-btn");
+      const decrementButton = screen.getByTestId("decrement-btn");
 
       expect(input).toHaveValue("10");
 
-      await user.pointer({ keys: "[MouseLeft>]", target: decrementBtn });
+      await user.pointer({ keys: "[MouseLeft>]", target: decrementButton });
 
       expect(input).toHaveValue("9");
 
@@ -633,9 +633,9 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input-item");
-      const incrementBtn = screen.getByTestId("increment-btn");
+      const incrementButton = screen.getByTestId("increment-btn");
 
-      await user.pointer({ keys: "[MouseLeft>]", target: incrementBtn });
+      await user.pointer({ keys: "[MouseLeft>]", target: incrementButton });
       expect(input).toHaveValue("6");
 
       act(() => {
@@ -704,13 +704,13 @@ describe("input-number", () => {
 
       expect(input).toBeDisabled();
 
-      const incrementBtn = screen.getByTestId("increment-btn");
-      const decrementBtn = screen.getByTestId("decrement-btn");
+      const incrementButton = screen.getByTestId("increment-btn");
+      const decrementButton = screen.getByTestId("decrement-btn");
 
-      expect(incrementBtn).toBeDisabled();
-      expect(decrementBtn).toBeDisabled();
+      expect(incrementButton).toBeDisabled();
+      expect(decrementButton).toBeDisabled();
 
-      await user.click(incrementBtn);
+      await user.click(incrementButton);
       expect(input).toHaveValue("5");
     });
 
@@ -837,16 +837,16 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input-item");
-      const incrementBtn = screen.getByTestId("increment-btn");
-      const resetBtn = screen.getByTestId("reset-button");
+      const incrementButton = screen.getByTestId("increment-btn");
+      const resetButton = screen.getByTestId("reset-button");
 
       expect(input).toHaveValue("5");
 
-      await user.click(incrementBtn);
-      await user.click(incrementBtn);
+      await user.click(incrementButton);
+      await user.click(incrementButton);
       expect(input).toHaveValue("7");
 
-      await user.click(resetBtn);
+      await user.click(resetButton);
 
       expect(input).toHaveValue("5");
 
@@ -854,7 +854,7 @@ describe("input-number", () => {
       await user.type(input, "42");
       expect(input).toHaveValue("42");
 
-      await user.click(resetBtn);
+      await user.click(resetButton);
 
       expect(input).toHaveValue("5");
     });
@@ -1055,16 +1055,16 @@ describe("input-number", () => {
       );
 
       const input = screen.getByTestId("input");
-      const decrementBtn = screen.getByTestId("decrement");
-      const incrementBtn = screen.getByTestId("increment");
+      const decrementButton = screen.getByTestId("decrement");
+      const incrementButton = screen.getByTestId("increment");
 
       expect(input).toHaveValue("50");
 
-      await user.click(incrementBtn);
+      await user.click(incrementButton);
       expect(input).toHaveValue("55");
       expect(handleChange).toHaveBeenCalledWith(55);
 
-      await user.click(decrementBtn);
+      await user.click(decrementButton);
       expect(input).toHaveValue("50");
       expect(handleChange).toHaveBeenCalledWith(50);
 
