@@ -5,7 +5,6 @@ import { unicornRules } from "@/core/unicorn";
 import { browserEnvironment } from "@/environments/browser";
 import { jsxA11yRules } from "@/frameworks/jsx-a11y";
 import { reactRules } from "@/frameworks/react";
-import { cssRules } from "@/languages/css";
 import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
 import { jestRules } from "@/testing/jest";
@@ -23,7 +22,6 @@ export const reactAppPreset: Linter.Config[] = composeConfig(
   browserEnvironment,
   jsonRules,
   markdownRules,
-  cssRules,
   reactRules,
   jsxA11yRules,
   jestRules,
