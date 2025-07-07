@@ -3,11 +3,11 @@ import { act, renderHook } from "@testing-library/react";
 import { useCopyToClipboard } from "@/use-copy-to-clipboard";
 
 describe("useCopyToClipboard", () => {
-  const originalClipboard = global.navigator.clipboard;
+  const originalClipboard = globalThis.navigator.clipboard;
   let mockWriteText: jest.Mock;
 
   beforeEach(() => {
-    mockWriteText = jest.fn().mockResolvedValue(() => Promise.resolve());
+    mockWriteText = jest.fn().mockResolvedValue(async () => {});
     Object.defineProperty(navigator, "clipboard", {
       value: {
         writeText: mockWriteText,
@@ -29,13 +29,13 @@ describe("useCopyToClipboard", () => {
     jest.clearAllMocks();
   });
 
-  it("should initialize with isCopied as false", () => {
+  test("should initialize with isCopied as false", () => {
     const { result } = renderHook(() => useCopyToClipboard());
 
     expect(result.current.isCopied).toBe(false);
   });
 
-  it("should copy text to clipboard and set isCopied to true", async () => {
+  test("should copy text to clipboard and set isCopied to true", async () => {
     const { result } = renderHook(() => useCopyToClipboard());
 
     await act(async () => {
@@ -52,7 +52,7 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(false);
   });
 
-  it("should call onCopy callback when copying is successful", async () => {
+  test("should call onCopy callback when copying is successful", async () => {
     const onCopy = jest.fn();
     const { result } = renderHook(() => useCopyToClipboard({ onCopy }));
 
@@ -69,7 +69,7 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(false);
   });
 
-  it("should reset isCopied after the timeout period", async () => {
+  test("should reset isCopied after the timeout period", async () => {
     const { result } = renderHook(() => useCopyToClipboard({ timeout: 1000 }));
 
     await act(async () => {
@@ -85,7 +85,7 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(false);
   });
 
-  it("should not copy if value is empty", async () => {
+  test("should not copy if value is empty", async () => {
     const { result } = renderHook(() => useCopyToClipboard());
 
     await act(async () => {
@@ -96,7 +96,7 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(false);
   });
 
-  it("should handle errors when copying fails", async () => {
+  test("should handle errors when copying fails", async () => {
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
     mockWriteText.mockRejectedValue(new Error("Clipboard error"));
@@ -113,7 +113,7 @@ describe("useCopyToClipboard", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("should use default timeout value if not provided", async () => {
+  test("should use default timeout value if not provided", async () => {
     const { result } = renderHook(() => useCopyToClipboard());
 
     await act(async () => {
@@ -133,7 +133,7 @@ describe("useCopyToClipboard", () => {
     expect(result.current.isCopied).toBe(false);
   });
 
-  it("should handle environment without clipboard API", async () => {
+  test("should handle environment without clipboard API", async () => {
     Object.defineProperty(navigator, "clipboard", {
       value: { writeText: undefined },
       configurable: true,

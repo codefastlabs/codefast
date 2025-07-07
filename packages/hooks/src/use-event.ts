@@ -33,7 +33,7 @@ export interface UseEventParams<T extends Event> {
 export function useEvent<T extends Event>(
   eventName: string,
   handler: (event: T) => void,
-  element: EventTarget = window,
+  element: EventTarget = globalThis,
 ): void {
   /**
    * Ref to store the handler function to avoid unnecessary re-renders

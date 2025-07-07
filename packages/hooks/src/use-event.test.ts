@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { useEvent } from "@/use-event";
 
 describe("useEvent", () => {
-  it("should attach an event listener to the provided element", () => {
+  test("should attach an event listener to the provided element", () => {
     const element = document.createElement("div");
     const handler = jest.fn();
     const eventName = "click";
@@ -20,7 +20,7 @@ describe("useEvent", () => {
     expect(handler).toHaveBeenCalledWith(event);
   });
 
-  it("should use window as default element", () => {
+  test("should use window as default element", () => {
     const handler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
     const eventName = "resize";
 
@@ -30,13 +30,13 @@ describe("useEvent", () => {
 
     const event = new Event("resize");
 
-    window.dispatchEvent(event);
+    globalThis.dispatchEvent(event);
 
     expect(handler).toHaveBeenCalledTimes(1);
     expect(handler).toHaveBeenCalledWith(event);
   });
 
-  it("should clean up event listener on unmount", () => {
+  test("should clean up event listener on unmount", () => {
     const element = document.createElement("div");
     const handler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
     const eventName = "click";
@@ -54,7 +54,7 @@ describe("useEvent", () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
-  it("should update handler when it changes", () => {
+  test("should update handler when it changes", () => {
     const element = document.createElement("div");
     const initialHandler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
     const updatedHandler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
@@ -79,7 +79,7 @@ describe("useEvent", () => {
     expect(updatedHandler).toHaveBeenCalledTimes(1);
   });
 
-  it("should update event listener when event name changes", () => {
+  test("should update event listener when event name changes", () => {
     const element = document.createElement("div");
     const handler = jest.fn(); // Sử dụng jest.fn() thay vì vi.fn()
     const initialEventName = "click";

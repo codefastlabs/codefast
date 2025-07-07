@@ -10,7 +10,7 @@ export function useCopyToClipboard({ timeout = 2000, onCopy }: { onCopy?: () => 
 
   const copyToClipboard = async (value: string): Promise<void> => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- ignore
-    if (typeof window === "undefined" || !navigator.clipboard.writeText) {
+    if (typeof globalThis === "undefined" || !navigator.clipboard.writeText) {
       return;
     }
 
@@ -30,7 +30,6 @@ export function useCopyToClipboard({ timeout = 2000, onCopy }: { onCopy?: () => 
         setIsCopied(false);
       }, timeout);
     } catch (error) {
-      // eslint-disable-next-line no-console -- ignore
       console.error(error);
     }
   };
