@@ -25,6 +25,9 @@ importers:
       "@commitlint/config-conventional":
         specifier: ^19.8.1
         version: 19.8.1
+      "@commitlint/types":
+        specifier: ^19.8.1
+        version: 19.8.1
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -167,9 +170,6 @@ importers:
 
   packages/eslint-config:
     dependencies:
-      "@eslint/css":
-        specifier: ^0.9.0
-        version: 0.9.0
       "@eslint/js":
         specifier: ^9.30.0
         version: 9.30.1
@@ -1617,16 +1617,6 @@ packages:
   "@eslint/core@0.15.1":
     resolution:
       { integrity: sha512-bkOp+iumZCCbt1K1CmWf0R9pM5yKpDv+ZXtvSyQpudrI9kuFLp+bM2WOPXImuD/ceQuaa8f5pj93Y7zyECIGNA== }
-    engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
-
-  "@eslint/css-tree@3.6.1":
-    resolution:
-      { integrity: sha512-5DIsBME23tUQD5zHD+T38lC2DG4jB8x8JRa+yDncLne2TIZA0VuCpcSazOX1EC+sM/q8w24qeevXfmfsIxAeqA== }
-    engines: { node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0 }
-
-  "@eslint/css@0.9.0":
-    resolution:
-      { integrity: sha512-fq8hYnjipdzVDSU/bXqv7qlvdjDA27Nq7DhQXzlPElLlVon3lnKovIM/6HaUrq1bz7EPgRobr+vOhpeM6z0X4w== }
     engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
 
   "@eslint/eslintrc@3.3.1":
@@ -6262,10 +6252,6 @@ packages:
     resolution:
       { integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg== }
 
-  mdn-data@2.21.0:
-    resolution:
-      { integrity: sha512-+ZKPQezM5vYJIkCxaC+4DTnRrVZR1CgsKLu5zsQERQx6Tea8Y+wMx5A24rq8A8NepCeatIQufVAekKNgiBMsGQ== }
-
   meow@12.1.1:
     resolution:
       { integrity: sha512-BhXM0Au22RwUneMPwSCnyhTOizdWoIEPU9sp0Aqa1PnDMR5Wv2FGXYDjuzJEIX+Eo2Rb8xuYe5jrnm5QowQFkw== }
@@ -8749,17 +8735,6 @@ snapshots:
   "@eslint/core@0.15.1":
     dependencies:
       "@types/json-schema": 7.0.15
-
-  "@eslint/css-tree@3.6.1":
-    dependencies:
-      mdn-data: 2.21.0
-      source-map-js: 1.2.1
-
-  "@eslint/css@0.9.0":
-    dependencies:
-      "@eslint/core": 0.14.0
-      "@eslint/css-tree": 3.6.1
-      "@eslint/plugin-kit": 0.3.3
 
   "@eslint/eslintrc@3.3.1":
     dependencies:
@@ -13419,8 +13394,6 @@ snapshots:
   mdast-util-to-string@4.0.0:
     dependencies:
       "@types/mdast": 4.0.4
-
-  mdn-data@2.21.0: {}
 
   meow@12.1.1: {}
 
