@@ -21,7 +21,14 @@ export const typescriptRules: Linter.Config[] = [
       "@typescript-eslint/prefer-optional-chain": "error",
       "@typescript-eslint/await-thenable": "error",
       "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/no-misused-promises": "error",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
       "@typescript-eslint/prefer-readonly": "error",
       "@typescript-eslint/prefer-string-starts-ends-with": "error",
       "@typescript-eslint/prefer-includes": "error",
