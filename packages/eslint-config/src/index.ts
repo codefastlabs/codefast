@@ -7,7 +7,6 @@ export { browserEnvironment } from "@/environments/browser";
 export { testEnvironment } from "@/environments/test";
 export { jsonRules } from "@/languages/json";
 export { markdownRules } from "@/languages/markdown";
-export { cssRules } from "@/languages/css";
 export { reactRules } from "@/frameworks/react";
 export { nextRules } from "@/frameworks/next";
 export { onlyWarnRules } from "@/utils/only-warn";
