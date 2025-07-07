@@ -23,16 +23,6 @@
         "default": "./dist/cjs/index.cjs",
         "types": "./dist/cjs/index.d.cts"
       }
-    },
-    "./progress-circle": {
-      "import": {
-        "default": "./dist/esm/progress-circle.js",
-        "types": "./dist/esm/progress-circle.d.ts"
-      },
-      "require": {
-        "default": "./dist/cjs/progress-circle.cjs",
-        "types": "./dist/cjs/progress-circle.d.ts"
-      }
     }
   },
   "main": "./dist/cjs/index.cjs",
@@ -46,22 +36,26 @@
   ],
   "scripts": {
     "build": "rslib build",
-    "check-types": "tsc --noEmit",
-    "clean": "rimraf dist node_modules",
-    "dev": "cross-env NODE_ENV=development rslib build --watch",
+    "clean": "rm -rf dist",
+    "dev": "rslib build --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-context": "^1.1.2"
   },
   "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
+    "eslint": "^9.30.1",
     "@rsbuild/plugin-react": "^1.3.2",
-    "@rslib/core": "^0.10.2",
-    "@swc/core": "^1.12.6",
+    "@rslib/core": "^0.10.4",
+    "@swc/core": "^1.12.7",
     "@swc/jest": "^0.2.38",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -69,7 +63,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/jest-axe": "^3.5.9",
-    "jest": "^30.0.2",
+    "jest": "^30.0.3",
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.0.2",
     "ts-node": "^10.9.2",
