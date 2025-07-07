@@ -1,13 +1,14 @@
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { createCheckboxScope } from "@radix-ui/react-checkbox";
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
 import { useDirection } from "@radix-ui/react-direction";
 import * as RovingFocusGroup from "@radix-ui/react-roving-focus";
 import { createRovingFocusGroupScope } from "@radix-ui/react-roving-focus";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import type { ComponentProps, JSX } from "react";
 import { useCallback } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: CheckboxGroup
@@ -146,7 +147,7 @@ function CheckboxGroup({
   onValueChange,
   orientation,
   required = false,
-  value: valueProp,
+  value: valueProperty,
   ...props
 }: ScopedProps<CheckboxGroupProps>): JSX.Element {
   /**
@@ -165,7 +166,7 @@ function CheckboxGroup({
   const [value = [], setValue] = useControllableState<string[] | undefined>({
     defaultProp: defaultValue,
     onChange: onValueChange,
-    prop: valueProp,
+    prop: valueProperty,
   });
 
   /**
@@ -174,7 +175,7 @@ function CheckboxGroup({
    */
   const handleItemCheck = useCallback(
     (itemValue: string) => {
-      setValue((prevValue = []) => [...prevValue, itemValue]);
+      setValue((previousValue = []) => [...previousValue, itemValue]);
     },
     [setValue],
   );
@@ -185,14 +186,14 @@ function CheckboxGroup({
    */
   const handleItemUncheck = useCallback(
     (itemValue: string) => {
-      setValue((prevValue = []) => {
+      setValue((previousValue = []) => {
         // If this is the last selected item and required=true, prevent unchecking
-        if (required && prevValue.length === 1 && prevValue[0] === itemValue) {
-          return prevValue; // Keep the current state
+        if (required && previousValue.length === 1 && previousValue[0] === itemValue) {
+          return previousValue; // Keep the current state
         }
 
         // Otherwise, proceed with unchecking
-        return prevValue.filter((val) => val !== itemValue);
+        return previousValue.filter((inputValue) => inputValue !== itemValue);
       });
     },
     [setValue, required],
