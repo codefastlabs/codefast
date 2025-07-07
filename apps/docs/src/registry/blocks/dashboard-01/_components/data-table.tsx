@@ -1,7 +1,6 @@
 "use client";
 
 import { useIsMobile } from "@codefast/hooks";
-import type { ChartConfig } from "@codefast/ui";
 import {
   Badge,
   Button,
@@ -43,7 +42,6 @@ import {
   TabsTrigger,
   toast,
 } from "@codefast/ui";
-import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import {
   closestCenter,
   DndContext,
@@ -70,7 +68,6 @@ import {
   IconPlus,
   IconTrendingUp,
 } from "@tabler/icons-react";
-import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -81,10 +78,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { JSX } from "react";
 import { useId, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { z } from "zod";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
+import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
+import type { JSX } from "react";
 
 export const schema = z.object({
   id: z.number(),

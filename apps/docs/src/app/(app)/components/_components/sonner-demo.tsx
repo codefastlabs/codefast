@@ -1,10 +1,12 @@
 "use client";
 
 import { Button, toast } from "@codefast/ui";
-import type { JSX } from "react";
 import { useState } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 const allTypes = [
   {
@@ -41,7 +43,6 @@ const allTypes = [
         action: {
           label: "Undo",
           onClick: () => {
-            // eslint-disable-next-line no-console -- for debugging purposes
             console.log("Undo");
           },
         },
@@ -54,7 +55,6 @@ const allTypes = [
         cancel: {
           label: "Cancel",
           onClick: () => {
-            // eslint-disable-next-line no-console -- for debugging purposes
             console.log("Cancel");
           },
         },
@@ -64,7 +64,7 @@ const allTypes = [
     name: "Promise",
     action: () =>
       toast.promise<{ name: string }>(
-        () =>
+        async () =>
           new Promise((resolve) => {
             setTimeout(() => {
               resolve({ name: "Sonner" });
@@ -99,7 +99,6 @@ export function SonnerDemo(): JSX.Element {
               action: {
                 label: "Undo",
                 onClick: () => {
-                  // eslint-disable-next-line no-console -- for debugging purposes
                   console.log("Undo");
                 },
               },

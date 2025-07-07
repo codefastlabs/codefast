@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -11,8 +10,10 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { Pie, PieChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },

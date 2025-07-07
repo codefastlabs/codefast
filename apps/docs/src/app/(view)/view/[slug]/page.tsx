@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+import type { Metadata } from "next";
 import type { JSX } from "react";
 
 import { getCachedBlockRegistry } from "@/lib/registry-cache";
 import { registryBlocks } from "@/registry/registry-blocks";
+
 
 export const dynamicParams = false;
 

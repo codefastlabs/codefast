@@ -11,9 +11,10 @@ import {
 } from "@codefast/ui";
 import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from "lucide-react";
 import Link from "next/link";
-import type { JSX } from "react";
+
 
 import type { BlockViewMode } from "@/components/block-viewer/provider";
+import type { JSX } from "react";
 
 import { useBlockViewer } from "@/components/block-viewer/provider";
 

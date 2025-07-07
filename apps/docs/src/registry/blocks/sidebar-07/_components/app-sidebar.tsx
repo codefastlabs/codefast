@@ -14,12 +14,14 @@ import {
   Settings2Icon,
   SquareTerminalIcon,
 } from "lucide-react";
+
 import type { ComponentProps, ComponentType, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-07/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-07/_components/nav-projects";
 import { NavUser } from "@/registry/blocks/sidebar-07/_components/nav-user";
 import { TeamSwitcher } from "@/registry/blocks/sidebar-07/_components/team-switcher";
+
 
 // This is sample data.
 const data: {

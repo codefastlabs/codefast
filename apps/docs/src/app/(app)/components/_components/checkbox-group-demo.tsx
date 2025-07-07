@@ -1,8 +1,10 @@
 import { CheckboxGroup, CheckboxGroupItem, cn, Label } from "@codefast/ui";
-import type { ComponentProps, JSX } from "react";
 import { useId } from "react";
 
+import type { ComponentProps, JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 interface Plan {
   /** Mô tả ngắn về tính năng của gói dịch vụ */

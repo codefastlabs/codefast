@@ -1,8 +1,10 @@
 import { Checkbox, Label } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function CheckboxDemo(): JSX.Element {
   const id = useId();

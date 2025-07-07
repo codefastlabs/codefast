@@ -9,10 +9,12 @@ import {
   Input,
   Label,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { Icons } from "@/components/icons";
+
 
 export function CardsCreateAccount(): JSX.Element {
   const id = useId();

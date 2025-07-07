@@ -16,9 +16,9 @@ import {
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { JSX } from "react";
 
 import type { RegistryGroup } from "@/types/registry";
+import type { JSX } from "react";
 
 export interface NavItemProps {
   groups: RegistryGroup[];

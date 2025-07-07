@@ -6,6 +6,7 @@ import { ChartBarMixed } from "@/registry/charts/chart-bar-mixed";
 import { ChartBarMultiple } from "@/registry/charts/chart-bar-multiple";
 import { ChartLineMultiple } from "@/registry/charts/chart-line-multiple";
 
+
 export function ChartDemo(): JSX.Element {
   return (
     <GridWrapper className="lg:grid-cols-2">

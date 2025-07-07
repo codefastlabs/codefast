@@ -14,6 +14,7 @@ import {
   SparklesIcon,
   Trash2Icon,
 } from "lucide-react";
+
 import type { ComponentProps, JSX } from "react";
 
 import { NavFavorites } from "@/registry/blocks/sidebar-10/_components/nav-favorites";
@@ -21,6 +22,7 @@ import { NavMain } from "@/registry/blocks/sidebar-10/_components/nav-main";
 import { NavSecondary } from "@/registry/blocks/sidebar-10/_components/nav-secondary";
 import { NavWorkspaces } from "@/registry/blocks/sidebar-10/_components/nav-workspaces";
 import { TeamSwitcher } from "@/registry/blocks/sidebar-10/_components/team-switcher";
+
 
 // This is sample data.
 const data = {

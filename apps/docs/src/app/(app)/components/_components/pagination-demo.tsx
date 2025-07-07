@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 export function PaginationDemo(): JSX.Element {

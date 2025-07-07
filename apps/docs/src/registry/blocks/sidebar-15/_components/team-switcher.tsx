@@ -13,8 +13,9 @@ import {
   SidebarMenuItem,
 } from "@codefast/ui";
 import { ChevronDownIcon, PlusIcon } from "lucide-react";
-import type { ElementType, ReactNode } from "react";
 import { useState } from "react";
+
+import type { ElementType, ReactNode } from "react";
 
 export function TeamSwitcher({
   teams,

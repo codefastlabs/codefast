@@ -9,11 +9,12 @@ import {
   Skeleton,
   Switch,
 } from "@codefast/ui";
-import type { Icon } from "@tabler/icons-react";
 import { IconBrightness } from "@tabler/icons-react";
 import { useTheme } from "next-themes";
-import type { ComponentProps, JSX } from "react";
 import { useEffect, useId, useState } from "react";
+
+import type { Icon } from "@tabler/icons-react";
+import type { ComponentProps, JSX } from "react";
 
 export function NavSecondary({
   items,

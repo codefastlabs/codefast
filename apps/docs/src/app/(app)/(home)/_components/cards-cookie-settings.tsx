@@ -9,6 +9,7 @@ import {
   Label,
   Switch,
 } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 interface CookieOption {

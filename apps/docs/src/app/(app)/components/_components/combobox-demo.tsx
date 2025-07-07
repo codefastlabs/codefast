@@ -18,10 +18,12 @@ import {
   PopoverTrigger,
 } from "@codefast/ui";
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
-import type { JSX } from "react";
 import { useMemo, useState } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 const frameworkOptions = [
   { value: "next.js", label: "Next.js" },

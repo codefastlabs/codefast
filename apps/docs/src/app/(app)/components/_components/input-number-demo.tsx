@@ -1,8 +1,10 @@
 import { InputNumber } from "@codefast/ui";
 import { DollarSignIcon } from "lucide-react";
+
 import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function InputNumberDemo(): JSX.Element {
   return (

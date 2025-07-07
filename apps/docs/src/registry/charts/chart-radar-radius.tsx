@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -13,8 +12,10 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
-import type { JSX } from "react";
 import { PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },

@@ -17,10 +17,12 @@ import {
 } from "@codefast/ui";
 import { ArchiveXIcon, CommandIcon, FileIcon, InboxIcon, SendIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
-import type { ComponentProps, JSX } from "react";
 import { useState } from "react";
 
+import type { ComponentProps, JSX } from "react";
+
 import { NavUser } from "@/registry/blocks/sidebar-09/_components/nav-user";
+
 
 // This is sample data
 const data = {

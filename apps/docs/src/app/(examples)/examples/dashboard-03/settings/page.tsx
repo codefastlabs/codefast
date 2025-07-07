@@ -30,9 +30,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@codefast/ui";
+import { useId } from "react";
+
 import type { Metadata } from "next";
 import type { ComponentProps, JSX } from "react";
-import { useId } from "react";
 
 export const metadata: Metadata = {
   title: "Settings",

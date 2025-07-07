@@ -1,10 +1,12 @@
 import { FileIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { useMemo } from "react";
+
+import type { ReactNode } from "react";
 
 import { BlockViewerCopyCodeButton } from "@/components/block-viewer/copy-code-button";
 import { BlockViewerFileTree } from "@/components/block-viewer/file-tree";
 import { useBlockViewer } from "@/components/block-viewer/provider";
+
 
 export function BlockViewerCode(): ReactNode {
   const { activeFile, item } = useBlockViewer("BlockViewerCode");

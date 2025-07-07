@@ -13,6 +13,7 @@ import { CardsShare } from "@/app/(app)/(home)/_components/cards-share";
 import { CardsStats } from "@/app/(app)/(home)/_components/cards-stats";
 import { CardsTeamMembers } from "@/app/(app)/(home)/_components/cards-team-members";
 
+
 const title = "Building a powerful component library";
 const description =
   "A suite of elegantly designed, accessible components and a code distribution platform. Works seamlessly with your favorite frameworks. Open Source. Open Code.";

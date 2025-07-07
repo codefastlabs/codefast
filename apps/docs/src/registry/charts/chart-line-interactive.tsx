@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -11,9 +10,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
@@ -128,8 +129,8 @@ export function ChartLineInteractive(): JSX.Element {
 
   const total = useMemo(
     () => ({
-      desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-      mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
+      desktop: chartData.reduce((accumulator, current) => accumulator + current.desktop, 0),
+      mobile: chartData.reduce((accumulator, current) => accumulator + current.mobile, 0),
     }),
     [],
   );

@@ -11,10 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { useThemeConfig } from "@/components/active-theme";
+
 
 const DEFAULT_THEMES = [
   {

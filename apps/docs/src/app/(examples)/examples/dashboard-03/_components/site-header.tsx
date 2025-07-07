@@ -13,13 +13,15 @@ import {
 } from "@codefast/ui";
 import { SidebarIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
-import type { JSX } from "react";
 import { Fragment, useMemo } from "react";
+
+import type { JSX } from "react";
 
 import { ModeToggle } from "@/app/(examples)/examples/dashboard-03/_components/mode-toggle";
 import { NavUser } from "@/app/(examples)/examples/dashboard-03/_components/nav-user";
 import { SearchForm } from "@/app/(examples)/examples/dashboard-03/_components/search-form";
 import { ThemeSelector } from "@/components/theme-selector";
+
 
 export function SiteHeader(): JSX.Element {
   const { toggleSidebar } = useSidebar("SiteHeader");
@@ -54,12 +56,10 @@ export function SiteHeader(): JSX.Element {
             <BreadcrumbSeparator />
             {breadcrumbs.map((breadcrumb, index) =>
               index === breadcrumbs.length - 1 ? (
-                // biome-ignore lint/suspicious/noArrayIndexKey: keep
                 <BreadcrumbItem key={index}>
                   <BreadcrumbPage className="capitalize">{breadcrumb.label}</BreadcrumbPage>
                 </BreadcrumbItem>
               ) : (
-                // biome-ignore lint/suspicious/noArrayIndexKey: keep
                 <Fragment key={index}>
                   <BreadcrumbItem>
                     <BreadcrumbLink className="capitalize" href={breadcrumb.href}>

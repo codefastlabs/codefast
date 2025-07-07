@@ -4,7 +4,7 @@ import type { RegistryGroup, RegistryItem } from "@/types/registry";
 
 export const registryBlocks: Record<string, RegistryItem> = {
   "dashboard-01": {
-    component: dynamic(() => import("@/registry/blocks/dashboard-01/page")),
+    component: dynamic(async () => import("@/registry/blocks/dashboard-01/page")),
     description: "A dashboard with sidebar, charts and data table.",
     files: [
       {
@@ -67,7 +67,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Dashboard 01",
   },
   "form-01": {
-    component: dynamic(() => import("@/registry/blocks/form-01/page")),
+    component: dynamic(async () => import("@/registry/blocks/form-01/page")),
     description: "Service upgrade form with payment information and package options.",
     files: [
       {
@@ -80,7 +80,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Form 01",
   },
   "login-01": {
-    component: dynamic(() => import("@/registry/blocks/login-01/page")),
+    component: dynamic(async () => import("@/registry/blocks/login-01/page")),
     description: "A simple login form.",
     files: [
       {
@@ -98,7 +98,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Login 01",
   },
   "login-02": {
-    component: dynamic(() => import("@/registry/blocks/login-02/page")),
+    component: dynamic(async () => import("@/registry/blocks/login-02/page")),
     description: "A two column login page with a cover image.",
     files: [
       {
@@ -116,7 +116,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Login 02",
   },
   "login-03": {
-    component: dynamic(() => import("@/registry/blocks/login-03/page")),
+    component: dynamic(async () => import("@/registry/blocks/login-03/page")),
     description: "A login page with a muted background color.",
     files: [
       {
@@ -134,7 +134,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Login 03",
   },
   "login-04": {
-    component: dynamic(() => import("@/registry/blocks/login-04/page")),
+    component: dynamic(async () => import("@/registry/blocks/login-04/page")),
     description: "A login page with form and image.",
     files: [
       {
@@ -152,7 +152,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Login 04",
   },
   "login-05": {
-    component: dynamic(() => import("@/registry/blocks/login-05/page")),
+    component: dynamic(async () => import("@/registry/blocks/login-05/page")),
     description: "A simple email-only login page.",
     files: [
       {
@@ -170,7 +170,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Login 05",
   },
   "products-01": {
-    component: dynamic(() => import("@/registry/blocks/products-01/page")),
+    component: dynamic(async () => import("@/registry/blocks/products-01/page")),
     description: "A table of products",
     files: [
       {
@@ -193,7 +193,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Products 01",
   },
   "sidebar-01": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-01/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-01/page")),
     description: "A simple sidebar with navigation grouped by section.",
     files: [
       {
@@ -221,7 +221,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 01",
   },
   "sidebar-02": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-02/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-02/page")),
     description: "A sidebar with collapsible sections.",
     files: [
       {
@@ -249,7 +249,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 02",
   },
   "sidebar-03": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-03/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-03/page")),
     description: "A sidebar with submenus.",
     files: [
       {
@@ -267,7 +267,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 03",
   },
   "sidebar-04": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-04/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-04/page")),
     description: "A floating sidebar with submenus.",
     files: [
       {
@@ -285,7 +285,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 04",
   },
   "sidebar-05": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-05/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-05/page")),
     description: "A sidebar with collapsible submenus.",
     files: [
       {
@@ -308,7 +308,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 05",
   },
   "sidebar-06": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-06/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-06/page")),
     description: "A sidebar with submenus as dropdowns.",
     files: [
       {
@@ -336,7 +336,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 06",
   },
   "sidebar-07": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-07/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-07/page")),
     description: "A sidebar that collapses to icons.",
     files: [
       {
@@ -374,7 +374,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 07",
   },
   "sidebar-08": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-08/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-08/page")),
     description: "An inset sidebar with secondary navigation.",
     files: [
       {
@@ -412,7 +412,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 08",
   },
   "sidebar-09": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-09/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-09/page")),
     description: "Collapsible nested sidebars.",
     files: [
       {
@@ -435,7 +435,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 09",
   },
   "sidebar-10": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-10/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-10/page")),
     description: "A sidebar in a popover.",
     files: [
       {
@@ -483,7 +483,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 10",
   },
   "sidebar-11": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-11/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-11/page")),
     description: "A sidebar with a collapsible file tree.",
     files: [
       {
@@ -501,7 +501,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 11",
   },
   "sidebar-12": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-12/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-12/page")),
     description: "A sidebar with a calendar.",
     files: [
       {
@@ -534,7 +534,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 12",
   },
   "sidebar-13": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-13/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-13/page")),
     description: "A sidebar in a dialog.",
     files: [
       {
@@ -552,7 +552,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 13",
   },
   "sidebar-14": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-14/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-14/page")),
     description: "A sidebar on the right.",
     files: [
       {
@@ -570,7 +570,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 14",
   },
   "sidebar-15": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-15/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-15/page")),
     description: "A left and right sidebar.",
     files: [
       {
@@ -633,7 +633,7 @@ export const registryBlocks: Record<string, RegistryItem> = {
     title: "Sidebar 15",
   },
   "sidebar-16": {
-    component: dynamic(() => import("@/registry/blocks/sidebar-16/page")),
+    component: dynamic(async () => import("@/registry/blocks/sidebar-16/page")),
     description: "A sidebar with a sticky site header.",
     files: [
       {

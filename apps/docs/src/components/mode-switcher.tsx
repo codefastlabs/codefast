@@ -3,11 +3,13 @@
 import { Button } from "@codefast/ui";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import type { JSX } from "react";
 import { useCallback } from "react";
+
+import type { JSX } from "react";
 
 import { useMetaColor } from "@/hooks/use-meta-color";
 import { META_THEME_COLORS } from "@/lib/site";
+
 
 export function ModeSwitcher(): JSX.Element {
   const { setTheme, resolvedTheme } = useTheme();

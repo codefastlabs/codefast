@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -13,8 +12,10 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
-import type { JSX, ReactNode } from "react";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
 import type { Props } from "recharts/types/component/Label";
 
 const chartData = [{ month: "january", desktop: 1260, mobile: 570 }];

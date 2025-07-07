@@ -21,8 +21,9 @@ import {
   PopoverTrigger,
 } from "@codefast/ui";
 import { ChevronDown } from "lucide-react";
-import type { JSX } from "react";
 import { useState } from "react";
+
+import type { JSX } from "react";
 
 interface Role {
   description: string;
@@ -155,8 +156,8 @@ export function CardsTeamMembers(): JSX.Element {
   ]);
 
   const handleRoleChange = (memberId: string, newRole: string): void => {
-    setTeamMembers((prevMembers) =>
-      prevMembers.map((member) => (member.email === memberId ? { ...member, role: newRole } : member)),
+    setTeamMembers((previousMembers) =>
+      previousMembers.map((member) => (member.email === memberId ? { ...member, role: newRole } : member)),
     );
   };
 

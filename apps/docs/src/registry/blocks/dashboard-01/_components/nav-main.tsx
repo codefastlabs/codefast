@@ -8,8 +8,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@codefast/ui";
-import type { Icon } from "@tabler/icons-react";
 import { IconCirclePlusFilled, IconMail } from "@tabler/icons-react";
+
+import type { Icon } from "@tabler/icons-react";
 import type { JSX } from "react";
 
 export function NavMain({ items }: { items: { title: string; url: string; icon?: Icon }[] }): JSX.Element {

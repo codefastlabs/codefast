@@ -7,9 +7,11 @@ import {
   PopcornIcon,
   ShieldAlertIcon,
 } from "lucide-react";
+
 import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function AlertDemo(): JSX.Element {
   return (

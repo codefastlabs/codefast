@@ -5,6 +5,7 @@ import { DataTable } from "@/app/(examples)/examples/dashboard/_components/data-
 import { SectionCards } from "@/app/(examples)/examples/dashboard/_components/section-cards";
 import data from "@/app/(examples)/examples/dashboard/data.json";
 
+
 export default function Page(): JSX.Element {
   return (
     <div className="@container/main flex flex-1 flex-col gap-2">

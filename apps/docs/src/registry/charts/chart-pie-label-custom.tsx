@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -13,9 +12,11 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
+import { Pie, PieChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
 import type { JSX } from "react";
 import type { PieLabel, PieProps } from "recharts";
-import { Pie, PieChart } from "recharts";
 
 interface DataItem {
   browser: string;

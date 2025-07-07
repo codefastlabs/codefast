@@ -1,8 +1,10 @@
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@codefast/ui";
 import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "lucide-react";
+
 import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function SelectDemo(): JSX.Element {
   return (
@@ -32,10 +34,9 @@ export function SelectDemo(): JSX.Element {
             <SelectValue placeholder="Large List" />
           </SelectTrigger>
           <SelectContent>
-            {Array.from({ length: 100 }).map((_, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: keep
-              <SelectItem key={i} value={`item-${i}`}>
-                Item {i}
+            {Array.from({ length: 100 }).map((_, index) => (
+              <SelectItem key={index} value={`item-${index}`}>
+                Item {index}
               </SelectItem>
             ))}
           </SelectContent>

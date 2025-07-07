@@ -15,6 +15,7 @@ import {
   MenubarTrigger,
 } from "@codefast/ui";
 import { HelpCircleIcon, SettingsIcon, Trash2Icon } from "lucide-react";
+
 import type { JSX } from "react";
 
 export function MenubarDemo(): JSX.Element {

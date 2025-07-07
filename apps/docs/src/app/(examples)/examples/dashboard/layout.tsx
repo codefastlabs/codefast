@@ -1,9 +1,11 @@
 import { SidebarInset, SidebarProvider } from "@codefast/ui";
 import { cookies } from "next/headers";
+
 import type { CSSProperties, JSX, ReactNode } from "react";
 
 import { AppSidebar } from "@/app/(examples)/examples/dashboard/_components/app-sidebar";
 import { SiteHeader } from "@/app/(examples)/examples/dashboard/_components/site-header";
+
 import "@/app/(examples)/examples/dashboard/theme.css";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {

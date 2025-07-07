@@ -30,14 +30,16 @@ import {
   TooltipTrigger,
 } from "@codefast/ui";
 import { Check, Plus, Send } from "lucide-react";
-import type { JSX } from "react";
 import { useId, useState } from "react";
+
+import type { JSX } from "react";
 
 interface User {
   avatar: string;
   email: string;
   name: string;
 }
+
 const users: User[] = [
   {
     name: "Olivia Martin",
@@ -133,7 +135,6 @@ export function CardsChat(): JSX.Element {
                   "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
                   message.role === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
                 )}
-                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 key={index}
               >
                 {message.content}

@@ -22,12 +22,14 @@ import {
   SquareTerminalIcon,
 } from "lucide-react";
 import Link from "next/link";
+
 import type { ComponentProps, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-08/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-08/_components/nav-projects";
 import { NavSecondary } from "@/registry/blocks/sidebar-08/_components/nav-secondary";
 import { NavUser } from "@/registry/blocks/sidebar-08/_components/nav-user";
+
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {
   return (

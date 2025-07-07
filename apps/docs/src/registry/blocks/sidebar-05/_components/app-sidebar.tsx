@@ -14,9 +14,11 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@codefast/ui";
-import type { LucideIcon } from "lucide-react";
 import { GalleryVerticalEndIcon, MinusIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
+
+
+import type { LucideIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
 
 import { SearchForm } from "@/registry/blocks/sidebar-05/_components/search-form";

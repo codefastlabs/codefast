@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -11,8 +10,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { Line, LineChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 const data = [
   { average: 400, today: 240 },

@@ -1,4 +1,5 @@
 import { SidebarInset, SidebarProvider } from "@codefast/ui";
+
 import type { CSSProperties, JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/dashboard-01/_components/app-sidebar";
@@ -7,6 +8,7 @@ import { DataTable } from "@/registry/blocks/dashboard-01/_components/data-table
 import { SectionCards } from "@/registry/blocks/dashboard-01/_components/section-cards";
 import { SiteHeader } from "@/registry/blocks/dashboard-01/_components/site-header";
 import data from "@/registry/blocks/dashboard-01/data.json";
+
 
 export default function Page(): JSX.Element {
   return (

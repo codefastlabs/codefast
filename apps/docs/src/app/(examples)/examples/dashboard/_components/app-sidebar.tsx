@@ -27,12 +27,14 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import Link from "next/link";
+
 import type { ComponentProps, JSX } from "react";
 
 import { NavDocuments } from "@/app/(examples)/examples/dashboard/_components/nav-documents";
 import { NavMain } from "@/app/(examples)/examples/dashboard/_components/nav-main";
 import { NavSecondary } from "@/app/(examples)/examples/dashboard/_components/nav-secondary";
 import { NavUser } from "@/app/(examples)/examples/dashboard/_components/nav-user";
+
 
 const data = {
   user: {

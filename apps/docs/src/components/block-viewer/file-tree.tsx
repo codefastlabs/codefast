@@ -6,10 +6,12 @@ import {
   SidebarMenu,
   SidebarProvider,
 } from "@codefast/ui";
+
 import type { ReactNode } from "react";
 
 import { useBlockViewer } from "@/components/block-viewer/provider";
 import { BlockViewerTree } from "@/components/block-viewer/tree";
+
 
 export function BlockViewerFileTree(): ReactNode {
   const { tree } = useBlockViewer("BlockViewerFileTree");
