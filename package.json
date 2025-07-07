@@ -1,6 +1,7 @@
 {
   "name": "codefast",
   "private": true,
+  "type": "module",
   "scripts": {
     "audit": "pnpm audit",
     "audit:fix": "pnpm audit --fix",
