@@ -28,6 +28,9 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      eslint:
+        specifier: ^9.30.1
+        version: 9.30.1(jiti@2.4.2)
       lint-staged:
         specifier: ^16.1.2
         version: 16.1.2
