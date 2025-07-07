@@ -36,7 +36,7 @@ export interface StateParamsHookResult {
    * @param paramInput - Either an object of key-value pairs or a single parameter name
    * @param value - The value to set when paramInput is a string (parameter name)
    */
-  push: (paramInput: ParamInput, value?: UrlParamValue) => void;
+  push: (parameterInput: ParamInput, value?: UrlParamValue) => void;
 
   /**
    * Replaces the current history entry with updated URL parameters.
@@ -44,7 +44,7 @@ export interface StateParamsHookResult {
    * @param paramInput - Either an object of key-value pairs or a single parameter name
    * @param value - The value to set when paramInput is a string (parameter name)
    */
-  replace: (paramInput: ParamInput, value?: UrlParamValue) => void;
+  replace: (parameterInput: ParamInput, value?: UrlParamValue) => void;
 }
 
 /**
@@ -58,9 +58,9 @@ export function updateBrowserHistory(urlParams: URLSearchParams, method: History
   const url = queryString ? `?${queryString}` : "";
 
   if (method === HistoryMethod.Push) {
-    window.history.pushState(null, "", url);
+    globalThis.history.pushState(null, "", url);
   } else {
-    window.history.replaceState(null, "", url);
+    globalThis.history.replaceState(null, "", url);
   }
 }
 
@@ -88,7 +88,7 @@ export function setUrlParams(params: URLSearchParams, newParams: Record<string, 
  * @param method - The method to use to update the browser history
  */
 export function updateUrlParams(newParams: Record<string, UrlParamValue>, method: HistoryMethod): void {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(globalThis.location.search);
 
   setUrlParams(params, newParams);
   updateBrowserHistory(params, method);
@@ -107,18 +107,18 @@ export function useStateParams(): StateParamsHookResult {
    * @param value - The value to use when paramInput is a string
    * @param method - The history method to use (push or replace)
    */
-  const updateParams = useCallback((paramInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
-    const newParams = typeof paramInput === "object" ? paramInput : { [paramInput]: value };
+  const updateParams = useCallback((parameterInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
+    const newParams = typeof parameterInput === "object" ? parameterInput : { [parameterInput]: value };
 
     updateUrlParams(newParams, method);
   }, []);
 
   return {
-    push: (paramInput, value) => {
-      updateParams(paramInput, value, HistoryMethod.Push);
+    push: (parameterInput, value) => {
+      updateParams(parameterInput, value, HistoryMethod.Push);
     },
-    replace: (paramInput, value) => {
-      updateParams(paramInput, value, HistoryMethod.Replace);
+    replace: (parameterInput, value) => {
+      updateParams(parameterInput, value, HistoryMethod.Replace);
     },
   };
 }

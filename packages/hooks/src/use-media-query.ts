@@ -30,8 +30,8 @@ export function useMediaQuery(query: string): boolean {
    */
   const [matches, setMatches] = useState<boolean>(() => {
     // Ensure initial state matches current media query status
-    if (typeof window !== "undefined") {
-      return window.matchMedia(query).matches;
+    if (typeof globalThis !== "undefined") {
+      return globalThis.matchMedia(query).matches;
     }
 
     return false;
@@ -42,7 +42,7 @@ export function useMediaQuery(query: string): boolean {
      * MediaQueryList object that can be used to determine if the document
      * matches the media query string.
      */
-    const mediaQueryList = window.matchMedia(query);
+    const mediaQueryList = globalThis.matchMedia(query);
 
     /**
      * Updates state when the media query status changes.

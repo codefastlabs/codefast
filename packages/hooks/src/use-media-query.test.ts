@@ -28,7 +28,7 @@ const setupMockMatchMedia = (
     removeEventListener: mockRemoveEventListener,
   };
 
-  window.matchMedia = jest.fn().mockImplementation(() => mockMediaQueryList);
+  jest.spyOn(globalThis, "matchMedia").mockImplementation(() => mockMediaQueryList);
 
   return { mockAddEventListener, mockMediaQueryList, mockRemoveEventListener };
 };
@@ -40,7 +40,7 @@ describe("useMediaQuery", () => {
     const { result } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
     expect(result.current).toBe(true);
-    expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
+    expect(globalThis.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
     expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
   });
 
@@ -50,7 +50,7 @@ describe("useMediaQuery", () => {
     const { result } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
     expect(result.current).toBe(false);
-    expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
+    expect(globalThis.matchMedia).toHaveBeenCalledWith("(min-width: 600px)");
   });
 
   test("should update when media query changes", () => {
@@ -61,7 +61,7 @@ describe("useMediaQuery", () => {
 
     act(() => {
       // Use an explicit type cast to ensure the correctness of the changeHandler type
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access -- keep
+
       const changeHandler = mockAddEventListener.mock.calls[0][1] as ChangeHandler;
 
       mockMediaQueryList.matches = true;
@@ -93,6 +93,6 @@ describe("useMediaQuery", () => {
 
     rerender("(min-width: 800px)");
     expect(mockRemoveEventListener).toHaveBeenCalledWith("change", expect.any(Function));
-    expect(window.matchMedia).toHaveBeenCalledWith("(min-width: 800px)");
+    expect(globalThis.matchMedia).toHaveBeenCalledWith("(min-width: 800px)");
   });
 });
