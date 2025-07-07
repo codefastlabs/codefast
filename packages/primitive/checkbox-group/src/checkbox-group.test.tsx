@@ -534,7 +534,7 @@ describe("checkbox-group", () => {
 
     test("handles null/undefined value gracefully", () => {
       render(
-        // @ts-expect-error
+        // @ts-expect-error - Allowing null value for testing error handling
         <CheckboxGroup value={null}>
           <CheckboxGroupItem data-testid="item1" value="item1" />
         </CheckboxGroup>,
