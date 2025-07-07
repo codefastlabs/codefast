@@ -2,12 +2,14 @@
 
 import * as InputPrimitive from "@codefast-ui/input";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import type { ComponentProps, JSX, MouseEventHandler } from "react";
 import { useCallback, useState } from "react";
+
 import { Button } from "@/components/button";
 import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
+
 import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, JSX, MouseEventHandler } from "react";
 
 /* -----------------------------------------------------------------------------
  * Variant: InputPassword
@@ -35,7 +37,7 @@ function InputPassword({
   const [type, setType] = useState<"password" | "text">("password");
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
-    setType((prev) => (prev === "password" ? "text" : "password"));
+    setType((previous) => (previous === "password" ? "text" : "password"));
   }, []);
 
   return (

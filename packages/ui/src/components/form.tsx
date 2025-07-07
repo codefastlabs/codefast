@@ -1,16 +1,17 @@
 "use client";
 
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
-import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
-import type { ComponentProps, JSX, ReactNode } from "react";
 import { useId } from "react";
-import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
 
 import { Label } from "@/components/label";
 import { cn } from "@/lib/utils";
+
+import type { Scope } from "@radix-ui/react-context";
+import type * as LabelPrimitive from "@radix-ui/react-label";
+import type { ComponentProps, JSX, ReactNode } from "react";
+import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 
 /* -----------------------------------------------------------------------------
  * Component: Form

@@ -1,13 +1,14 @@
 "use client";
 
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
-import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
 import { useId, useMemo } from "react";
 import * as RechartsPrimitive from "recharts";
-import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import { cn } from "@/lib/utils";
+
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 /* -----------------------------------------------------------------------------
  * Context: ChartProvider
@@ -97,7 +98,7 @@ function ChartContainer({
   }
 >): JSX.Element {
   const uniqueId = useId();
-  const chartId = `chart-${id || uniqueId}`;
+  const chartId = `chart-${id ?? uniqueId}`;
 
   return (
     <ChartContextProvider config={config} scope={__scopeChart}>
@@ -173,9 +174,9 @@ function ChartTooltipContent({
 
     const [item] = payload;
 
-    const key = `${labelKey || item.dataKey || item.name || "value"}`;
+    const key = `${labelKey ?? item.dataKey ?? item.name ?? "value"}`;
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
-    const value = !labelKey && typeof label === "string" ? config[label]?.label || label : itemConfig?.label;
+    const value = !labelKey && typeof label === "string" ? (config[label]?.label ?? label) : itemConfig?.label;
 
     if (labelFormatter) {
       return <div className={cn("font-medium", labelClassName)}>{labelFormatter(value, payload)}</div>;
@@ -204,9 +205,9 @@ function ChartTooltipContent({
       {nestLabel ? null : tooltipLabel}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
-          const key = `${nameKey || item.name || item.dataKey || "value"}`;
+          const key = `${nameKey ?? item.name ?? item.dataKey ?? "value"}`;
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
-          const indicatorColor = color || (item.payload as { fill?: string }).fill || item.color;
+          const indicatorColor = color ?? (item.payload as { fill?: string }).fill ?? item.color;
 
           return (
             <div
@@ -245,7 +246,7 @@ function ChartTooltipContent({
                   >
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
-                      <span className="text-muted-foreground">{itemConfig?.label || item.name}</span>
+                      <span className="text-muted-foreground">{itemConfig?.label ?? item.name}</span>
                     </div>
                     {item.value ? (
                       <span className="text-foreground font-mono font-medium tabular-nums">
@@ -363,12 +364,12 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 /**
  * Checks if the provided value is a valid object.
  *
- * @param obj - The value to check.
+ * @param object - The value to check.
  * @returns - Returns true if the value is an object and not null, false
  *   otherwise.
  */
-function isValidObject(obj: unknown): obj is Record<string, unknown> {
-  return typeof obj === "object" && obj !== null;
+function isValidObject(object: unknown): object is Record<string, unknown> {
+  return typeof object === "object" && object !== null;
 }
 
 /**
@@ -417,7 +418,7 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
   rules.push(`${THEMES[theme]} [data-chart=${id}] {`);
 
   for (const [key, itemConfig] of configEntries) {
-    const color = itemConfig?.theme?.[theme] || itemConfig?.color;
+    const color = itemConfig?.theme?.[theme] ?? itemConfig?.color;
 
     if (color) {
       rules.push(`  --color-${key}: ${color};`);
@@ -439,7 +440,7 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
  * @returns A string containing the generated CSS rules.
  */
 function generateCSS(id: string, config: ChartConfig): string {
-  const themeOrColorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig?.theme || itemConfig?.color);
+  const themeOrColorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig?.theme ?? itemConfig?.color);
 
   const allRules: string[] = [];
 

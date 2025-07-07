@@ -2,10 +2,11 @@
 
 import { OTPInput, OTPInputContext } from "input-otp";
 import { MinusIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
 import { use } from "react";
 
 import { cn } from "@/lib/utils";
+
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp

@@ -3,11 +3,13 @@
 import * as InputPrimitive from "@codefast-ui/input";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { SearchIcon, XIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
+
 import { Button } from "@/components/button";
 import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
+
 import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: InputSearch
@@ -26,7 +28,7 @@ function InputSearch({
   readOnly,
   spinner,
   suffix,
-  value: valueProp,
+  value: valueProperty,
   ...props
 }: ComponentProps<typeof InputPrimitive.Root> &
   Omit<ComponentProps<typeof InputPrimitive.Field>, "defaultValue" | "onChange" | "prefix" | "type" | "value"> &
@@ -38,7 +40,7 @@ function InputSearch({
   const [value, setValue] = useControllableState<string | undefined>({
     defaultProp: defaultValue,
     onChange,
-    prop: valueProp,
+    prop: valueProperty,
   });
 
   return (

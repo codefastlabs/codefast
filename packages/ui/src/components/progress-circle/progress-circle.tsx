@@ -1,12 +1,13 @@
 "use client";
 
 import { useAnimatedValue } from "@codefast/hooks";
-
 import * as ProgressCirclePrimitive from "@codefast-ui/progress-circle";
-import type { ComponentProps, CSSProperties, JSX } from "react";
 import { useCallback, useMemo } from "react";
+
 import { progressCircleVariants } from "@/components/progress-circle/progress-circle-variants";
+
 import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, CSSProperties, JSX } from "react";
 
 /* -------------------------------------------------------------------------------------------------
  * Component: ProgressCircle

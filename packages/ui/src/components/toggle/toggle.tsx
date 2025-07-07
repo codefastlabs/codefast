@@ -1,9 +1,11 @@
 "use client";
 
 import * as TogglePrimitive from "@radix-ui/react-toggle";
-import type { ComponentProps, JSX, ReactNode } from "react";
+
 import { toggleVariants } from "@/components/toggle/toggle-variants";
+
 import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Toggle

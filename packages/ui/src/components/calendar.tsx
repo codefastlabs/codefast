@@ -2,12 +2,13 @@
 
 import { format } from "date-fns";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from "lucide-react";
-import type { ComponentProps, JSX, ReactNode } from "react";
-import type { CustomComponents, DateRange } from "react-day-picker";
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
 
 import { buttonVariants } from "@/components/button";
 import { cn } from "@/lib/utils";
+
+import type { ComponentProps, JSX, ReactNode } from "react";
+import type { CustomComponents, DateRange } from "react-day-picker";
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
@@ -125,7 +126,7 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
 
 function CalendarRangeLabel({
   date,
-  formatStr = "LLL dd, y",
+  formatStr: formatString = "LLL dd, y",
   placeholder = "Pick a date",
 }: {
   date: DateRange | undefined;
@@ -136,13 +137,13 @@ function CalendarRangeLabel({
     return <span className="truncate">{placeholder}</span>;
   }
 
-  const formattedFromDate = format(date.from, formatStr);
+  const formattedFromDate = format(date.from, formatString);
 
   if (!date.to) {
     return <span className="truncate">{formattedFromDate}</span>;
   }
 
-  const formattedToDate = format(date.to, formatStr);
+  const formattedToDate = format(date.to, formatString);
 
   return (
     <span className="truncate">
@@ -157,7 +158,7 @@ function CalendarRangeLabel({
 
 function CalendarLabel({
   date,
-  formatStr = "PPP",
+  formatStr: formatString = "PPP",
   placeholder = "Pick a date",
 }: {
   date: Date | undefined;
@@ -168,7 +169,7 @@ function CalendarLabel({
     return <span className="truncate">{placeholder}</span>;
   }
 
-  return <span className="truncate">{format(date, formatStr)}</span>;
+  return <span className="truncate">{format(date, formatString)}</span>;
 }
 
 /* -----------------------------------------------------------------------------

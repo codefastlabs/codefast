@@ -1,15 +1,16 @@
 "use client";
 
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
-import type { UseEmblaCarouselType } from "embla-carousel-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
-import type { ComponentProps, JSX, KeyboardEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/button";
 import { cn } from "@/lib/utils";
+
+import type { Scope } from "@radix-ui/react-context";
+import type { UseEmblaCarouselType } from "embla-carousel-react";
+import type { ComponentProps, JSX, KeyboardEvent } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: Carousel
@@ -66,7 +67,7 @@ function Carousel({
     plugins,
   );
 
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollPrevious, setCanScrollPrevious] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
   const onSelect = useCallback((carouselApi: CarouselApi) => {
@@ -74,11 +75,11 @@ function Carousel({
       return;
     }
 
-    setCanScrollPrev(carouselApi.canScrollPrev());
+    setCanScrollPrevious(carouselApi.canScrollPrev());
     setCanScrollNext(carouselApi.canScrollNext());
   }, []);
 
-  const scrollPrev = useCallback(() => {
+  const scrollPrevious = useCallback(() => {
     api?.scrollPrev();
   }, [api]);
 
@@ -90,13 +91,13 @@ function Carousel({
     (event: KeyboardEvent<HTMLDivElement>) => {
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        scrollPrev();
+        scrollPrevious();
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
         scrollNext();
       }
     },
-    [scrollPrev, scrollNext],
+    [scrollPrevious, scrollNext],
   );
 
   useEffect(() => {
@@ -125,13 +126,13 @@ function Carousel({
     <CarouselContextProvider
       api={api}
       canScrollNext={canScrollNext}
-      canScrollPrev={canScrollPrev}
+      canScrollPrev={canScrollPrevious}
       carouselRef={carouselRef}
       opts={opts}
       orientation={orientation ?? (opts?.axis === "y" ? "vertical" : "horizontal")}
       scope={__scopeCarousel}
       scrollNext={scrollNext}
-      scrollPrev={scrollPrev}
+      scrollPrev={scrollPrevious}
     >
       <div className={cn("relative", className)} data-slot="carousel" onKeyDownCapture={handleKeyDown} {...props}>
         {children}
