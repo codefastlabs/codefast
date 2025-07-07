@@ -13,6 +13,9 @@ importers:
       "@changesets/cli":
         specifier: ^2.29.5
         version: 2.29.5
+      "@codefast/eslint-config":
+        specifier: workspace:*
+        version: link:packages/eslint-config
       "@codefast/typescript-config":
         specifier: workspace:*
         version: link:packages/typescript-config
