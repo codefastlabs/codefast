@@ -2,9 +2,10 @@
 
 import * as MenubarPrimitive from "@radix-ui/react-menubar";
 import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
+
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Menubar

@@ -1,9 +1,10 @@
 "use client";
 
 import { composeEventHandlers } from "@radix-ui/primitive";
-import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
+
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Radio

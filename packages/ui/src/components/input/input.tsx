@@ -1,8 +1,10 @@
 import * as InputPrimitive from "@codefast-ui/input";
-import type { ComponentProps, JSX } from "react";
+
 import { inputVariants } from "@/components/input/input-variants";
 import { Spinner } from "@/components/spinner";
+
 import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Variant: Input

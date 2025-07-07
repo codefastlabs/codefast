@@ -1,9 +1,10 @@
 "use client";
 
 import * as ProgressPrimitive from "@radix-ui/react-progress";
-import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
+
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Progress

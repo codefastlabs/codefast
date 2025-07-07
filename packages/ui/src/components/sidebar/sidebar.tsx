@@ -4,8 +4,8 @@ import { useIsMobile } from "@codefast/hooks";
 import { createContext } from "@radix-ui/react-context";
 import { Slot } from "@radix-ui/react-slot";
 import { PanelLeftIcon } from "lucide-react";
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
@@ -13,8 +13,10 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button-variants";
 import { Skeleton } from "@/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
-import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
+import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -47,8 +49,8 @@ const [SidebarContextProvider, useSidebar] = createContext<SidebarContextValue>(
 
 function SidebarProvider({
   defaultOpen = true,
-  open: openProp,
-  onOpenChange: setOpenProp,
+  open: openProperty,
+  onOpenChange: setOpenProperty,
   className,
   style,
   children,
@@ -64,21 +66,20 @@ function SidebarProvider({
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const open = openProp ?? isOpen;
+  const open = openProperty ?? isOpen;
   const setOpen = useCallback(
     (value: ((value: boolean) => boolean) | boolean) => {
       const openState = typeof value === "function" ? value(open) : value;
 
-      if (setOpenProp) {
-        setOpenProp(openState);
+      if (setOpenProperty) {
+        setOpenProperty(openState);
       } else {
         setIsOpen(openState);
       }
 
-      // biome-ignore lint/suspicious/noDocumentCookie: This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
-    [setOpenProp, open],
+    [setOpenProperty, open],
   );
 
   // Helper to toggle the sidebar.
@@ -99,10 +100,10 @@ function SidebarProvider({
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    globalThis.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      globalThis.removeEventListener("keydown", handleKeyDown);
     };
   }, [toggleSidebar]);
 
@@ -542,7 +543,6 @@ function SidebarMenuButton({
   }
 
   if (typeof tooltip === "string") {
-    // eslint-disable-next-line no-param-reassign -- convert it to an object with default properties
     tooltip = {
       children: tooltip,
     };

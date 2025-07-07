@@ -1,10 +1,12 @@
 "use client";
 
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
-import type { ComponentProps, JSX } from "react";
+
 import { separatorVariants } from "@/components/separator/separator-variants";
-import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
+import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Separator

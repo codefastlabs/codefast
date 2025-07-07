@@ -1,11 +1,12 @@
 "use client";
 
-import type { ComponentProps, JSX } from "react";
-
 import { Drawer as DrawerPrimitive } from "vaul";
+
 import { buttonVariants } from "@/components/button";
-import type { VariantProps } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
+import type { VariantProps } from "@/lib/utils";
+import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Drawer
