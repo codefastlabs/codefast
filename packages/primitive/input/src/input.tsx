@@ -1,8 +1,9 @@
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import type { Scope } from "@radix-ui/react-context";
 import { createContextScope } from "@radix-ui/react-context";
-import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from "react";
 import { useRef } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
+import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Input

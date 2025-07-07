@@ -6,7 +6,7 @@ import { Input, InputField } from "@/input";
 
 describe("input", () => {
   describe("Rendering", () => {
-    it("should render Input with InputItem correctly", () => {
+    test("should render Input with InputItem correctly", () => {
       render(
         <Input>
           <InputField placeholder="Enter text" />
@@ -16,7 +16,7 @@ describe("input", () => {
       expect(screen.getByPlaceholderText("Enter text")).toBeInTheDocument();
     });
 
-    it("should render with prefix and suffix", () => {
+    test("should render with prefix and suffix", () => {
       render(
         <Input prefix={<div data-testid="prefix">Prefix</div>} suffix={<div data-testid="suffix">Suffix</div>}>
           <InputField />
@@ -27,7 +27,7 @@ describe("input", () => {
       expect(screen.getByTestId("suffix")).toBeInTheDocument();
     });
 
-    it("should render loading spinner in prefix position by default", () => {
+    test("should render loading spinner in prefix position by default", () => {
       render(
         <Input loading spinner={<div data-testid="spinner">Loading...</div>}>
           <InputField />
@@ -37,7 +37,7 @@ describe("input", () => {
       expect(screen.getByTestId("spinner")).toBeInTheDocument();
     });
 
-    it("should render loading spinner in suffix position when specified", () => {
+    test("should render loading spinner in suffix position when specified", () => {
       render(
         <Input
           loaderPosition="suffix"
@@ -55,7 +55,7 @@ describe("input", () => {
   });
 
   describe("Behavior", () => {
-    it("should focus input when clicking on container", async () => {
+    test("should focus input when clicking on container", async () => {
       const user = userEvent.setup();
 
       render(
@@ -76,13 +76,13 @@ describe("input", () => {
       expect(input).toHaveFocus();
     });
 
-    it("should not stop propagation when clicking directly on input", async () => {
+    test("should not stop propagation when clicking directly on input", async () => {
       const containerClickHandler = jest.fn();
       const inputClickHandler = jest.fn();
       const user = userEvent.setup();
 
       render(
-        // @ts-ignore
+        // @ts-expect-error - onClick prop is not defined in the Input component props type
         <Input onClick={containerClickHandler}>
           <InputField data-testid="input" onClick={inputClickHandler} />
         </Input>,
@@ -96,7 +96,7 @@ describe("input", () => {
       expect(containerClickHandler).toHaveBeenCalled();
     });
 
-    it("should trigger click on file input when container is clicked", async () => {
+    test("should trigger click on file input when container is clicked", async () => {
       const user = userEvent.setup();
 
       render(
@@ -109,7 +109,9 @@ describe("input", () => {
       const fileInput = screen.getByTestId("file-input");
       const clickSpy = jest.spyOn(fileInput, "click");
 
-      const rafSpy = jest.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => setTimeout(cb, 0));
+      const rafSpy = jest
+        .spyOn(globalThis, "requestAnimationFrame")
+        .mockImplementation((callback) => setTimeout(callback, 0));
 
       await user.click(container);
 
@@ -122,7 +124,7 @@ describe("input", () => {
       rafSpy.mockRestore();
     });
 
-    it("should prevent default behavior when container is clicked while input already has focus", async () => {
+    test("should prevent default behavior when container is clicked while input already has focus", async () => {
       render(
         <Input>
           <InputField data-testid="input" />
@@ -162,7 +164,7 @@ describe("input", () => {
   });
 
   describe("Attributes", () => {
-    it("should apply disabled attribute correctly", () => {
+    test("should apply disabled attribute correctly", () => {
       render(
         <Input disabled>
           <InputField data-testid="input" />
@@ -176,7 +178,7 @@ describe("input", () => {
       expect(input).toBeDisabled();
     });
 
-    it("should apply readOnly attribute correctly", () => {
+    test("should apply readOnly attribute correctly", () => {
       render(
         <Input readOnly>
           <InputField data-testid="input" />
@@ -190,7 +192,7 @@ describe("input", () => {
       expect(input).toHaveAttribute("readonly");
     });
 
-    it("should pass additional props to container div", () => {
+    test("should pass additional props to container div", () => {
       render(
         <Input aria-label="test input" data-testid="container">
           <InputField />
@@ -202,7 +204,7 @@ describe("input", () => {
       expect(container).toHaveAttribute("aria-label", "test input");
     });
 
-    it("should pass additional props to input element", () => {
+    test("should pass additional props to input element", () => {
       render(
         <Input>
           <InputField data-testid="input" maxLength={10} />
@@ -216,7 +218,7 @@ describe("input", () => {
   });
 
   describe("User interactions", () => {
-    it("should update value when typing", async () => {
+    test("should update value when typing", async () => {
       const user = userEvent.setup();
 
       render(
@@ -232,7 +234,7 @@ describe("input", () => {
       expect(input).toHaveValue("Hello world");
     });
 
-    it("should not allow typing when disabled", async () => {
+    test("should not allow typing when disabled", async () => {
       const user = userEvent.setup();
 
       render(
@@ -248,7 +250,7 @@ describe("input", () => {
       expect(input).toHaveValue("");
     });
 
-    it("should not allow typing when readOnly", async () => {
+    test("should not allow typing when readOnly", async () => {
       const user = userEvent.setup();
 
       render(
@@ -266,7 +268,7 @@ describe("input", () => {
   });
 
   describe("Accessibility", () => {
-    it("should not have accessibility violations", async () => {
+    test("should not have accessibility violations", async () => {
       const { container } = render(
         <Input>
           <InputField placeholder="Enter text" />
@@ -278,7 +280,7 @@ describe("input", () => {
       expect(results).toHaveNoViolations();
     });
 
-    it("should handle keyboard navigation correctly", async () => {
+    test("should handle keyboard navigation correctly", async () => {
       const user = userEvent.setup();
 
       render(
@@ -311,7 +313,7 @@ describe("input", () => {
   });
 
   describe("Edge cases", () => {
-    it("should handle nested clickable elements correctly", async () => {
+    test("should handle nested clickable elements correctly", async () => {
       const user = userEvent.setup();
       const linkClickHandler = jest.fn();
 
@@ -336,7 +338,7 @@ describe("input", () => {
       expect(input).not.toHaveFocus();
     });
 
-    it("should work without InputItem", () => {
+    test("should work without InputItem", () => {
       render(
         <Input data-testid="container">
           <div data-testid="custom-content">Custom content</div>
@@ -347,7 +349,7 @@ describe("input", () => {
       expect(screen.getByTestId("custom-content")).toBeInTheDocument();
     });
 
-    it("should handle multiple InputItems correctly", () => {
+    test("should handle multiple InputItems correctly", () => {
       render(
         <Input>
           <InputField data-testid="input1" />
@@ -359,14 +361,14 @@ describe("input", () => {
       expect(screen.getByTestId("input2")).toBeInTheDocument();
     });
 
-    it("should do nothing when container is clicked but there is no InputItem inside", async () => {
+    test("should do nothing when container is clicked but there is no InputItem inside", async () => {
       const user = userEvent.setup();
 
       render(<Input>{/* No InputItem inside */}</Input>);
 
       const container = screen.getByRole("presentation");
 
-      const rafSpy = jest.spyOn(window, "requestAnimationFrame");
+      const rafSpy = jest.spyOn(globalThis, "requestAnimationFrame");
 
       await user.click(container);
 
