@@ -1,6 +1,6 @@
-import type { ComponentType } from "react";
-
 import { z } from "zod";
+
+import type { ComponentType } from "react";
 
 export const componentTypeSchema = z.custom<ComponentType>((component) => typeof component === "function", {
   message: "Expected a valid React component",

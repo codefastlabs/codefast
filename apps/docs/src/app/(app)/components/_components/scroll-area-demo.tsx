@@ -1,9 +1,11 @@
 import { ScrollArea, Separator } from "@codefast/ui";
 import Image from "next/image";
-import type { JSX } from "react";
 import { Fragment } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function ScrollAreaDemo(): JSX.Element {
   return (
@@ -18,7 +20,7 @@ export function ScrollAreaDemo(): JSX.Element {
   );
 }
 
-const tags = Array.from({ length: 50 }).map((_, i, a) => `v1.2.0-beta.${a.length - i}`);
+const tags = Array.from({ length: 50 }).map((_, index, a) => `v1.2.0-beta.${a.length - index}`);
 
 function ScrollAreaVertical(): JSX.Element {
   return (

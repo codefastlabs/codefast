@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from "@codefast/ui";
 import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from "@tabler/icons-react";
+
 import type { JSX } from "react";
 
 export function NavUser({

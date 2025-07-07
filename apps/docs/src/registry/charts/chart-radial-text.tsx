@@ -1,10 +1,11 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
-import type { JSX, ReactNode } from "react";
 import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
 import type { Props } from "recharts/types/component/Label";
 
 const chartData = [{ browser: "safari", visitors: 200, fill: "var(--color-safari)" }];

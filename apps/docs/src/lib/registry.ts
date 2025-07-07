@@ -1,12 +1,16 @@
 import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+
 import { isEmpty } from "lodash-es";
-import type { SourceFile } from "ts-morph";
 import { Project, ScriptKind } from "ts-morph";
+
+import type { RegistryItem, RegistryItemFile } from "@/types/registry";
+import type { SourceFile } from "ts-morph";
+
 import { highlightCode } from "@/lib/highlight-code";
 import { registryBlocks } from "@/registry/registry-blocks";
-import type { RegistryItem, RegistryItemFile } from "@/types/registry";
+
 
 // Constants
 const FILE_TYPES = {
@@ -29,7 +33,7 @@ const IMPORT_REGEX = /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](
 // In-memory cache for processed files
 const fileContentCache = new Map<string, { content: string; highlightedContent: string }>();
 const sourceFileCache = new Map<string, SourceFile>();
-const tempDirs = new Set<string>();
+const tempDirectories = new Set<string>();
 
 /**
  * Represents a node in the file tree structure.
@@ -74,7 +78,6 @@ export async function getRegistryItem(name: string): Promise<null | RegistryItem
       files,
     };
   } catch (error) {
-    // eslint-disable-next-line no-console -- for debugging purposes
     console.error(`Error retrieving registry item '${name}':`, error);
 
     return null;
@@ -110,7 +113,6 @@ async function processRegistryItemFiles(itemFiles: RegistryItemFile[]): Promise<
 
         Object.assign(file, { content, highlightedContent });
       } catch (error) {
-        // eslint-disable-next-line no-console -- for debugging purposes
         console.error(`Error processing file '${file.path}':`, error);
         Object.assign(file, {
           content: `// Error processing file: ${file.path}`,
@@ -137,7 +139,6 @@ async function getFileContentWithHighlighting(
   const cacheKey = file.path;
 
   if (fileContentCache.has(cacheKey)) {
-    // biome-ignore lint/style/noNonNullAssertion: Value has been verified to exist
     return fileContentCache.get(cacheKey)!;
   }
 
@@ -263,7 +264,6 @@ async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile
 
     return fixImports(code, file, allFiles);
   } catch (error) {
-    // eslint-disable-next-line no-console -- for debugging purposes
     console.error(`Error getting content for file '${file.path}':`, error);
 
     return `// Error processing file: ${file.path}`;
@@ -281,7 +281,6 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
   const cacheKey = `${filePath}:${content.length}`;
 
   if (sourceFileCache.has(cacheKey)) {
-    // biome-ignore lint/style/noNonNullAssertion: Value has been verified to exist
     return sourceFileCache.get(cacheKey)!;
   }
 
@@ -293,8 +292,8 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
   });
 
   // Remove unnecessary variables
-  for (const varName of VARIABLES_TO_REMOVE) {
-    removeVariable(sourceFile, varName);
+  for (const variableName of VARIABLES_TO_REMOVE) {
+    removeVariable(sourceFile, variableName);
   }
 
   sourceFileCache.set(cacheKey, sourceFile);
@@ -311,7 +310,7 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
 async function createTempSourceFile(filename: string): Promise<string> {
   const dir = await fs.mkdtemp(path.join(tmpdir(), "codefast-ui-"));
 
-  tempDirs.add(dir);
+  tempDirectories.add(dir);
 
   return path.join(dir, path.basename(filename));
 }
@@ -320,12 +319,11 @@ async function createTempSourceFile(filename: string): Promise<string> {
  * Cleans up all temporary directories created during processing
  */
 async function cleanupTempDirectories(): Promise<void> {
-  const cleanupPromises = [...tempDirs].map(async (dir) => {
+  const cleanupPromises = [...tempDirectories].map(async (dir) => {
     try {
       await fs.rm(dir, { recursive: true, force: true });
-      tempDirs.delete(dir);
+      tempDirectories.delete(dir);
     } catch (error) {
-      // eslint-disable-next-line no-console -- for debugging purposes
       console.error(`Error cleaning up temp directory '${dir}':`, error);
     }
   });

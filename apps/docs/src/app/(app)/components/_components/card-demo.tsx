@@ -16,10 +16,12 @@ import {
 import { BathIcon, BedIcon, LandPlotIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function CardDemo(): JSX.Element {
   const id = useId();

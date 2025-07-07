@@ -1,10 +1,12 @@
 "use client";
 
 import { Label, Slider } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId, useState } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function SliderDemo(): JSX.Element {
   return (

@@ -3,8 +3,9 @@
 import { Button } from "@codefast/ui";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import type { JSX } from "react";
 import { useCallback } from "react";
+
+import type { JSX } from "react";
 
 export function ModeToggle(): JSX.Element {
   const { setTheme, resolvedTheme } = useTheme();

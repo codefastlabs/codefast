@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 const invoices = [

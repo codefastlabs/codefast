@@ -1,7 +1,6 @@
 "use client";
 
 import { useIsMobile } from "@codefast/hooks";
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardAction,
@@ -20,9 +19,11 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useEffect, useId, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 export const description = "An interactive area chart";
 

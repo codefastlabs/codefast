@@ -12,8 +12,9 @@ import {
   Kbd,
 } from "@codefast/ui";
 import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from "lucide-react";
-import type { JSX } from "react";
 import { useEffect, useState } from "react";
+
+import type { JSX } from "react";
 
 export function CommandDemo(): JSX.Element {
   const [open, setOpen] = useState(false);

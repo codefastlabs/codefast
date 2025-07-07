@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -12,8 +11,10 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { FootprintsIcon, WavesIcon } from "lucide-react";
-import type { JSX } from "react";
 import { Bar, BarChart, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 const chartData = [
   { date: "2024-07-15", running: 450, swimming: 300 },

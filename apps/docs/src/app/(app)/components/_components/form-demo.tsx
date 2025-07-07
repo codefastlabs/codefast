@@ -31,9 +31,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isEmpty } from "lodash-es";
 import { CalendarIcon } from "lucide-react";
-import type { JSX } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import type { JSX } from "react";
 
 const items = [
   {

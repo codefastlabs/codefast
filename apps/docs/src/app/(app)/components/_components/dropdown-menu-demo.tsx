@@ -34,10 +34,12 @@ import {
   TrashIcon,
   UserIcon,
 } from "lucide-react";
-import type { JSX } from "react";
 import { useState } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function DropdownMenuDemo(): JSX.Element {
   return (

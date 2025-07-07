@@ -16,10 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { Icons } from "@/components/icons";
+
 
 export function CardsPaymentMethod(): JSX.Element {
   const id = useId();
@@ -120,7 +122,6 @@ export function CardsPaymentMethod(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 10 }, (_, index) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: need
                   <SelectItem key={index} value={`${new Date().getFullYear() + index}`}>
                     {new Date().getFullYear() + index}
                   </SelectItem>

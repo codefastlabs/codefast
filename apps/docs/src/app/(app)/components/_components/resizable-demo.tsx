@@ -1,7 +1,9 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function ResizableDemo(): JSX.Element {
   return (

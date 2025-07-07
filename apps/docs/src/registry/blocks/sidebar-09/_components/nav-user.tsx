@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from "@codefast/ui";
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from "lucide-react";
+
 import type { JSX } from "react";
 
 export function NavUser({

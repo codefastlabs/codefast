@@ -8,9 +8,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 import { AppSidebar } from "@/registry/blocks/sidebar-12/_components/app-sidebar";
+
 
 export default function Page(): JSX.Element {
   return (
@@ -30,9 +32,8 @@ export default function Page(): JSX.Element {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="grid auto-rows-min gap-4 md:grid-cols-5">
-            {Array.from({ length: 20 }).map((_, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: need
-              <div className="bg-muted/50 aspect-square rounded-xl" key={i} />
+            {Array.from({ length: 20 }).map((_, index) => (
+              <div className="bg-muted/50 aspect-square rounded-xl" key={index} />
             ))}
           </div>
         </div>

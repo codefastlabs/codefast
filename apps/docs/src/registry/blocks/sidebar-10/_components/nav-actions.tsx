@@ -30,8 +30,9 @@ import {
   Trash2Icon,
   TrashIcon,
 } from "lucide-react";
-import type { JSX } from "react";
 import { useEffect, useState } from "react";
+
+import type { JSX } from "react";
 
 const data = [
   [
@@ -80,15 +81,14 @@ export function NavActions(): JSX.Element {
           <Sidebar className="bg-transparent" collapsible="none">
             <SidebarContent>
               {data.map((group, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <SidebarGroup className="border-b last:border-none" key={index}>
                   <SidebarGroupContent className="gap-0">
                     <SidebarMenu>
                       {group.map((item, menuIndex) => (
-                        // biome-ignore lint/suspicious/noArrayIndexKey: need
                         <SidebarMenuItem key={menuIndex}>
                           <SidebarMenuButton>
-                            <item.icon /> <span>{item.label}</span>
+                            <item.icon />
+                            <span>{item.label}</span>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       ))}

@@ -37,8 +37,9 @@ import {
   VideoIcon,
 } from "lucide-react";
 import Link from "next/link";
-import type { JSX } from "react";
 import { useState } from "react";
+
+import type { JSX } from "react";
 
 const data = {
   nav: [
@@ -106,9 +107,8 @@ export function SettingsDialog(): JSX.Element {
               </div>
             </header>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
-              {Array.from({ length: 10 }).map((_, i) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: need
-                <div className="bg-muted/50 aspect-video max-w-3xl rounded-xl" key={i} />
+              {Array.from({ length: 10 }).map((_, index) => (
+                <div className="bg-muted/50 aspect-video max-w-3xl rounded-xl" key={index} />
               ))}
             </div>
           </main>

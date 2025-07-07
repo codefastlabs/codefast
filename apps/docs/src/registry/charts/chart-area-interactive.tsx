@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -18,9 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX } from "react";
 
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },

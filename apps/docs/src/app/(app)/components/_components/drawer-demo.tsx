@@ -14,11 +14,13 @@ import {
   DrawerTrigger,
 } from "@codefast/ui";
 import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from "lucide-react";
-import type { CSSProperties, JSX } from "react";
 import { useCallback, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
 
+import type { CSSProperties, JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 const data = [
   { goal: 400 },
@@ -56,7 +58,7 @@ function DrawerBottom(): JSX.Element {
   const [goal, setGoal] = useState(350);
 
   const onClick = useCallback((adjustment: number) => {
-    setGoal((prevGoal) => Math.max(200, Math.min(400, prevGoal + adjustment)));
+    setGoal((previousGoal) => Math.max(200, Math.min(400, previousGoal + adjustment)));
   }, []);
 
   return (
@@ -143,7 +145,6 @@ function DrawerScrollableContent(): JSX.Element {
         <DrawerBody className="border-y text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: keep
             <p className="mb-4 leading-normal" key={index}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
@@ -196,7 +197,6 @@ function DrawerDirections(): JSX.Element {
               </DrawerHeader>
               <DrawerBody className="border-y text-sm">
                 {Array.from({ length: 10 }).map((_, index) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: keep
                   <p className="mb-4 leading-normal" key={index}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
                     et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut

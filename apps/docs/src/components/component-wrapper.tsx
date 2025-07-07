@@ -1,9 +1,11 @@
 "use client";
 
 import { cn } from "@codefast/ui";
+
 import type { ComponentProps, JSX } from "react";
 
 import { getComponentName } from "@/lib/utils";
+
 
 export function ComponentWrapper({
   className,

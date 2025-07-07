@@ -15,6 +15,7 @@ import {
   SidebarRail,
 } from "@codefast/ui";
 import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
+
 import type { ComponentProps, JSX } from "react";
 
 export interface Change {
@@ -87,7 +88,6 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
         <CollapsibleContent>
           <SidebarMenuSub>
             {items.map((subItem, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: need
               <Tree item={subItem} key={index} />
             ))}
           </SidebarMenuSub>
@@ -106,7 +106,6 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarGroupContent>
             <SidebarMenu>
               {data.changes.map((item, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <SidebarMenuItem key={index}>
                   <SidebarMenuButton>
                     <FileIcon />
@@ -123,7 +122,6 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarGroupContent>
             <SidebarMenu>
               {data.tree.map((item, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: need
                 <Tree item={item} key={index} />
               ))}
             </SidebarMenu>

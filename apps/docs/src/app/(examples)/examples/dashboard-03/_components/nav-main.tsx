@@ -14,10 +14,11 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@codefast/ui";
-import type { LucideIcon } from "lucide-react";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import type { LucideIcon } from "lucide-react";
 import type { JSX } from "react";
 
 export function NavMain({

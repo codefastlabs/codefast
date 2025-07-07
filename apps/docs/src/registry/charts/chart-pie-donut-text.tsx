@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -13,9 +12,11 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { TrendingUpIcon } from "lucide-react";
-import type { JSX, ReactNode } from "react";
 import { useMemo } from "react";
 import { Label, Pie, PieChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { JSX, ReactNode } from "react";
 import type { Props } from "recharts/types/component/Label";
 
 const chartData = [
@@ -81,7 +82,7 @@ export function ChartPieDonutText(): JSX.Element {
 
 function Content({ viewBox }: Props): ReactNode {
   const totalVisitors = useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+    return chartData.reduce((accumulator, current) => accumulator + current.visitors, 0);
   }, []);
 
   if (viewBox && "cx" in viewBox && "cy" in viewBox) {

@@ -1,22 +1,24 @@
 "use client";
 
 import { ProgressCircle } from "@codefast/ui";
-import type { JSX } from "react";
 import { useEffect, useState } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function ProgressCircleDemo(): JSX.Element {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 80) {
+      setProgress((previous) => {
+        if (previous >= 80) {
           clearInterval(interval);
         }
 
-        return prev < 100 ? prev + 20 : 0;
+        return previous < 100 ? previous + 20 : 0;
       });
     }, 1000);
 

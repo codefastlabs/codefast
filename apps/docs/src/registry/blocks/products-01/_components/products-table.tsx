@@ -29,6 +29,7 @@ import {
   TabsTrigger,
 } from "@codefast/ui";
 import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from "lucide-react";
+
 import type { JSX } from "react";
 
 export function ProductsTable({

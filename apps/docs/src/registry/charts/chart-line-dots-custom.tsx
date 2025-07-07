@@ -1,6 +1,5 @@
 "use client";
 
-import type { ChartConfig } from "@codefast/ui";
 import {
   Card,
   CardContent,
@@ -13,9 +12,11 @@ import {
   ChartTooltipContent,
 } from "@codefast/ui";
 import { GitCommitVerticalIcon, TrendingUpIcon } from "lucide-react";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
 import type { JSX } from "react";
 import type { DotProps } from "recharts";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import type { LineDot } from "recharts/types/cartesian/Line";
 
 interface DataItem {

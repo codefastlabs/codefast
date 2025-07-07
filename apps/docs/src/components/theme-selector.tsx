@@ -1,10 +1,12 @@
 "use client";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 import { useThemeConfig } from "@/components/active-theme";
 import { THEMES } from "@/lib/themes";
+
 
 export function ThemeSelector(): JSX.Element {
   const { activeTheme, setActiveTheme } = useThemeConfig();

@@ -1,10 +1,10 @@
 import { createContext } from "@radix-ui/react-context";
-import type { CSSProperties, JSX, ReactNode, RefObject } from "react";
 import { useRef, useState } from "react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
 
 import type { FileTree } from "@/lib/registry";
 import type { RegistryItem } from "@/types/registry";
+import type { CSSProperties, JSX, ReactNode, RefObject } from "react";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 
 /**
  * Possible viewer display modes

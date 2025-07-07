@@ -20,8 +20,9 @@ import {
   Separator,
   toast,
 } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId } from "react";
+
+import type { JSX } from "react";
 
 type UserPermission = "edit" | "view";
 
@@ -95,7 +96,7 @@ export function CardsShare(): JSX.Element {
       })
       .catch((error: unknown) => {
         toast.error("Failed to copy link");
-        // eslint-disable-next-line no-console -- for debugging purposes
+
         console.error("Copy error:", error);
       });
   };

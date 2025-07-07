@@ -12,6 +12,7 @@ import {
   TabsTrigger,
 } from "@codefast/ui";
 import { DownloadIcon, FilterIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+
 import type { Metadata } from "next";
 import type { JSX } from "react";
 
@@ -19,6 +20,7 @@ import { AnalyticsDatePicker } from "@/app/(examples)/examples/dashboard-03/_com
 import { ChartRevenue } from "@/app/(examples)/examples/dashboard-03/_components/chart-revenue";
 import { ChartVisitors } from "@/app/(examples)/examples/dashboard-03/_components/chart-visitors";
 import { ProductsTable } from "@/app/(examples)/examples/dashboard-03/_components/products-table";
+
 
 export const metadata: Metadata = {
   title: "Dashboard",

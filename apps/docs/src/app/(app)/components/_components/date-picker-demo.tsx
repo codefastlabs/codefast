@@ -1,7 +1,6 @@
 "use client";
 
 import { useIsMobile } from "@codefast/hooks";
-import type { DateRange } from "@codefast/ui";
 import {
   Button,
   Calendar,
@@ -14,8 +13,12 @@ import {
 } from "@codefast/ui";
 import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import type { JSX } from "react";
 import { useId, useState } from "react";
+
+
+import type { DateRange } from "@codefast/ui";
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DatePickerDemo(): JSX.Element {

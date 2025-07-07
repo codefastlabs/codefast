@@ -14,10 +14,12 @@ import {
   TabsTrigger,
 } from "@codefast/ui";
 import { AppWindowIcon, CodeIcon } from "lucide-react";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function TabsDemo(): JSX.Element {
   const id = useId();

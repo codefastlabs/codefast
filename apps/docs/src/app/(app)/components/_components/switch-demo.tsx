@@ -1,8 +1,10 @@
 import { Label, Switch } from "@codefast/ui";
-import type { JSX } from "react";
 import { useId } from "react";
 
+import type { JSX } from "react";
+
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function SwitchDemo(): JSX.Element {
   const id = useId();

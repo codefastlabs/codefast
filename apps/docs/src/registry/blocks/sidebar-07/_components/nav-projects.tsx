@@ -14,9 +14,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@codefast/ui";
-import type { LucideIcon } from "lucide-react";
 import { FolderIcon, ForwardIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+
+import type { LucideIcon } from "lucide-react";
 import type { JSX } from "react";
 
 export function NavProjects({

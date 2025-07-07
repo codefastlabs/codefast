@@ -9,9 +9,11 @@ import {
   UnderlineIcon,
 } from "lucide-react";
 import Link from "next/link";
+
 import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+
 
 export function ToggleGroupDemo(): JSX.Element {
   return (

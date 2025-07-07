@@ -10,6 +10,7 @@ import {
   AlertDialogTrigger,
   Button,
 } from "@codefast/ui";
+
 import type { JSX } from "react";
 
 export function AlertDialogDemo(): JSX.Element {

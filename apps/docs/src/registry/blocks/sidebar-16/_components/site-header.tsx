@@ -12,9 +12,11 @@ import {
   useSidebar,
 } from "@codefast/ui";
 import { SidebarIcon } from "lucide-react";
+
 import type { JSX } from "react";
 
 import { SearchForm } from "@/registry/blocks/sidebar-16/_components/search-form";
+
 
 export function SiteHeader(): JSX.Element {
   const { toggleSidebar } = useSidebar("SiteHeader");

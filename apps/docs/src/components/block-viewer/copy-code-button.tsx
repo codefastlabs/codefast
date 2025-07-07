@@ -1,10 +1,12 @@
 import { useCopyToClipboard } from "@codefast/hooks";
 import { Button } from "@codefast/ui";
 import { CheckIcon, ClipboardIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { useMemo } from "react";
 
+import type { ReactNode } from "react";
+
 import { useBlockViewer } from "@/components/block-viewer/provider";
+
 
 export function BlockViewerCopyCodeButton(): ReactNode {
   const { activeFile, item } = useBlockViewer("BlockCopyCodeButton");

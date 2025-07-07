@@ -1,14 +1,15 @@
 "use client";
 
 import Cookies from "js-cookie";
-import type { JSX, ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
+
+import type { JSX, ReactNode } from "react";
 
 const THEME_COOKIE_NAME = "active_theme";
 const DEFAULT_THEME = "default";
 
 function setThemeCookie(theme: string): void {
-  if (typeof window === "undefined") {
+  if (typeof globalThis === "undefined") {
     return;
   }
 
@@ -16,7 +17,7 @@ function setThemeCookie(theme: string): void {
     path: "/",
     expires: 365,
     sameSite: "Lax",
-    secure: window.location.protocol === "https:",
+    secure: globalThis.location.protocol === "https:",
   });
 }
 
