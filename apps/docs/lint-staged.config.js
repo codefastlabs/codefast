@@ -1,7 +1,7 @@
 /** @type {import("lint-staged").Configuration} */
 const config = {
-  // JavaScript and TypeScript files: format with Prettier
-  "*.{js,jsx,ts,tsx}": ["prettier --write"],
+  // JavaScript and TypeScript files: format with Prettier and fix ESLint issues
+  "*.{js,jsx,ts,tsx}": ["prettier --write", "eslint --fix"],
 
   // JSON, Markdown, and YAML files: format with Prettier
   "*.{json,md,yml,yaml}": ["prettier --write"],
