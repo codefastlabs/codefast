@@ -136,7 +136,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
 To optimize importing packages, you need to update the `next.config.ts` file in your project. Add the following configuration:
 
-```ts
+```
 experimental: {
   optimizePackageImports: ['@codefast/ui'],
 },
@@ -146,16 +146,17 @@ experimental: {
 
 Below is an example of a complete `next.config.ts` file:
 
-```ts
+```typescript
 // next.config.ts
-const nextConfig = {
-  reactStrictMode: true,
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@codefast/ui"],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
 ```
 
 This configuration improves performance by optimizing the import process of libraries from `@codefast/ui`.
@@ -166,10 +167,10 @@ This configuration improves performance by optimizing the import process of libr
 
 Example usage of the **Button** component:
 
-```ts
-import type { JSX } from 'react';
+```tsx
+import type { JSX } from "react";
 
-import { Button } from '@codefast/ui';
+import { Button } from "@codefast/ui";
 
 export default function Home(): JSX.Element {
   return <Button variant="primary">Get Started</Button>;
