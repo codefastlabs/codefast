@@ -11,6 +11,7 @@ export { reactRules } from "@/frameworks/react";
 export { nextRules } from "@/frameworks/next";
 export { onlyWarnRules } from "@/utils/only-warn";
 export { prettierRules } from "@/utils/prettier";
+export { tsdocRules } from "@/utils/tsdoc";
 export { turboRules } from "@/utils/turbo";
 
 // Preset exports
