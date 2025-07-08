@@ -61,13 +61,20 @@ import type { Linter } from "eslint";
  * ```
  */
 export const basePreset: Linter.Config[] = composeConfig(
+  // 1. Fast rules first - basic syntax
   baseJavaScriptRules,
+
+  // 2. File-type-specific rules (grouped)
   typescriptRules,
-  unicornRules,
-  importRules,
-  nodeEnvironment,
-  testEnvironment,
+  tsdocRules,
   jsonRules,
   markdownRules,
-  tsdocRules,
+
+  // 3. Analysis rules (slower)
+  unicornRules,
+  importRules,
+
+  // 4. Environment rules last
+  nodeEnvironment,
+  testEnvironment,
 );

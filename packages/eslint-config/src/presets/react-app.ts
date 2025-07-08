@@ -3,6 +3,7 @@ import { baseJavaScriptRules } from "@/core/javascript";
 import { typescriptRules } from "@/core/typescript";
 import { unicornRules } from "@/core/unicorn";
 import { browserEnvironment } from "@/environments/browser";
+import { testEnvironment } from "@/environments/test";
 import { jsxA11yRules } from "@/frameworks/jsx-a11y";
 import { reactRules } from "@/frameworks/react";
 import { jsonRules } from "@/languages/json";
@@ -20,6 +21,7 @@ const reactAppPresetCore: Linter.Config[] = composeConfig(
   unicornRules,
   importRules,
   browserEnvironment,
+  testEnvironment,
   jsonRules,
   markdownRules,
   reactRules,
