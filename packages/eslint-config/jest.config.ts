@@ -50,7 +50,7 @@ const config: Config = {
 
   /**
    * Configuration for transforming source files before testing
-   * Uses @swc/jest to quickly transform JavaScript/TypeScript files
+   * Uses \@swc/jest to quickly transform JavaScript/TypeScript files
    */
   transform: {
     "^.+\\.(t|j)sx?$": [
