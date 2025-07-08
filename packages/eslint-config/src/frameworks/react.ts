@@ -14,6 +14,18 @@ export const reactRules: Linter.Config[] = [
     rules: {
       ...pluginReact.configs.recommended.rules,
       ...pluginReactHooks.configs.recommended.rules,
+      "react/jsx-sort-props": [
+        "error",
+        {
+          callbacksLast: true,
+          ignoreCase: true,
+          multiline: "last",
+          noSortAlphabetically: false,
+          reservedFirst: true,
+          shorthandFirst: true,
+          shorthandLast: false,
+        },
+      ],
       "react/no-unknown-property": [
         "error",
         {

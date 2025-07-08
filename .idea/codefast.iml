@@ -48,6 +48,10 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/style-guide/.exports-analysis" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ui/.exports-analysis" />
       <excludeFolder url="file://$MODULE_DIR$/packages/cli/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/checkbox-group/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/input-number/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/input/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/progress-circle/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
