@@ -16,17 +16,26 @@ import type { Linter } from "eslint";
 
 // Internal React app preset without prettier - for composition with other presets
 const reactAppPresetCore: Linter.Config[] = composeConfig(
+  // 1. Fast rules first - basic syntax
   baseJavaScriptRules,
+
+  // 2. File-type-specific rules (grouped)
   typescriptRules,
-  unicornRules,
-  importRules,
-  browserEnvironment,
-  testEnvironment,
   jsonRules,
   markdownRules,
+
+  // 3. Framework-specific rules (medium speed)
   reactRules,
   jsxA11yRules,
   jestRules,
+
+  // 4. Analysis rules (slower)
+  unicornRules,
+  importRules,
+
+  // 5. Environment rules last
+  browserEnvironment,
+  testEnvironment,
 );
 
 // React app preset - configuration for React applications
