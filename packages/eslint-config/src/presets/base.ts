@@ -7,7 +7,6 @@ import { testEnvironment } from "@/environments/test";
 import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
 import { composeConfig } from "@/utils/composer";
-import { prettierRules } from "@/utils/prettier";
 import { tsdocRules } from "@/utils/tsdoc";
 
 import type { Linter } from "eslint";
@@ -71,5 +70,4 @@ export const basePreset: Linter.Config[] = composeConfig(
   jsonRules,
   markdownRules,
   tsdocRules,
-  prettierRules,
 );

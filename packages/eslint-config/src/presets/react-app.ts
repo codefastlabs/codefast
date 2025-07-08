@@ -13,8 +13,8 @@ import { prettierRules } from "@/utils/prettier";
 
 import type { Linter } from "eslint";
 
-// React app preset - configuration for React applications
-export const reactAppPreset: Linter.Config[] = composeConfig(
+// Internal React app preset without prettier - for composition with other presets
+const reactAppPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
   typescriptRules,
   unicornRules,
@@ -25,5 +25,10 @@ export const reactAppPreset: Linter.Config[] = composeConfig(
   reactRules,
   jsxA11yRules,
   jestRules,
-  prettierRules,
 );
+
+// React app preset - configuration for React applications
+export const reactAppPreset: Linter.Config[] = composeConfig(reactAppPresetCore, prettierRules);
+
+// Export the core preset for internal use by other presets
+export { reactAppPresetCore };
