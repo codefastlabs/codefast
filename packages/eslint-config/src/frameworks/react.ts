@@ -12,14 +12,14 @@ export const reactRules: Linter.Config[] = [
       "react-hooks": pluginReactHooks,
     },
     rules: {
-      ...pluginReact.configs.recommended.rules,
+      ...pluginReact.configs.flat.recommended.rules,
       ...pluginReactHooks.configs.recommended.rules,
       "react/jsx-sort-props": [
         "error",
         {
           callbacksLast: true,
           ignoreCase: true,
-          multiline: "last",
+          multiline: "ignore",
           noSortAlphabetically: false,
           reservedFirst: true,
           shorthandFirst: true,
