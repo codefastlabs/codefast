@@ -6,6 +6,7 @@ export { nodeEnvironment } from "@/environments/node";
 export { browserEnvironment } from "@/environments/browser";
 export { testEnvironment } from "@/environments/test";
 export { jsonRules } from "@/languages/json";
+export { cssRules } from "@/languages/css";
 export { markdownRules } from "@/languages/markdown";
 export { reactRules } from "@/frameworks/react";
 export { nextRules } from "@/frameworks/next";
