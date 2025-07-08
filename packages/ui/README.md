@@ -136,7 +136,7 @@ To enable **@codefast/ui**, import the required styles into your global CSS file
 
 To optimize importing packages, you need to update the `next.config.ts` file in your project. Add the following configuration:
 
-```
+```text
 experimental: {
   optimizePackageImports: ['@codefast/ui'],
 },
