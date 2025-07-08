@@ -1,4 +1,4 @@
-name: Vercel Deployments
+name: 🌐 Vercel Deployment Pipeline
 
 on:
   push:
@@ -34,20 +34,20 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to Vercel
+    name: 🚀 Deploy to Vercel Platform
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup CI Environment
+      - name: ⚙️ Setup CI Environment
         uses: ./.github/actions/setup-environment
 
-      - name: Install and Configure Vercel CLI
+      - name: 🔧 Install and Configure Vercel CLI
         run: pnpm add -g vercel@latest
 
       # Create a deployment record for GitHub
-      - name: Create GitHub Deployment
+      - name: 📋 Create GitHub Deployment
         id: deployment
         uses: actions/github-script@v7
         with:
@@ -72,7 +72,7 @@ jobs:
 
             return { id: deployment.id };
 
-      - name: Deploy Production to Vercel
+      - name: 🚀 Deploy Production to Vercel
         if: github.ref == 'refs/heads/main'
         id: deploy-production
         run: |
@@ -82,7 +82,7 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Deploy Preview to Vercel
+      - name: 👀 Deploy Preview to Vercel
         if: github.ref != 'refs/heads/main'
         id: deploy-preview
         run: |
@@ -94,7 +94,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       # Update deployment status to success
-      - name: Update Deployment Status (Success)
+      - name: ✅ Update Deployment Status (Success)
         if: success()
         uses: actions/github-script@v7
         with:
@@ -111,7 +111,7 @@ jobs:
             });
 
       # Update deployment status to failure
-      - name: Update Deployment Status (Failure)
+      - name: ❌ Update Deployment Status (Failure)
         if: failure()
         uses: actions/github-script@v7
         with:
@@ -125,7 +125,7 @@ jobs:
               description: 'We hit a small bump! Let\'s fix this together and try again!'
             });
 
-      - name: Post Deployment Comment on PR
+      - name: 💬 Post Deployment Comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:

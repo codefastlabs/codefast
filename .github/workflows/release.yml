@@ -1,4 +1,4 @@
-name: Publish Package Releases
+name: 🚀 Package Release Pipeline
 
 on:
   push:
@@ -21,26 +21,33 @@ permissions:
 
 jobs:
   verify-code:
-    name: Verify Code Integrity
+    name: 🔍 Code Quality & Testing
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup CI Environment
+      - name: ⚙️ Setup CI Environment
         uses: ./.github/actions/setup-environment
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: Build, Lint, and Run Tests
-        run: npx turbo build lint test:coverage:ci --filter="./packages/**"
+      - name: 🔨 Build Packages
+        run: npx turbo build --filter="./packages/**"
         env:
           NODE_ENV: production
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: Upload Test Coverage Reports
+      - name: 🧪 Lint and Run Tests
+        run: npx turbo lint test:coverage:ci type-check --filter="./packages/**"
+        env:
+          NODE_ENV: production
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+      - name: 📊 Upload Test Coverage Reports
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -48,30 +55,30 @@ jobs:
           fail_ci_if_error: false
 
   release:
-    name: Publish Release
+    name: 📦 Package Publishing
     runs-on: ubuntu-latest
     needs:
       - verify-code
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
-      - name: Setup CI Environment
+      - name: ⚙️ Setup CI Environment
         uses: ./.github/actions/setup-environment
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: Build Packages
+      - name: 🔨 Build Packages
         run: npx turbo build --filter="./packages/**"
         env:
           NODE_ENV: production
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN || secrets.VERCEL_TOKEN }}
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-      - name: Publish Releases
+      - name: 🚀 Publish Releases
         uses: changesets/action@v1
         with:
           version: npx changeset version
