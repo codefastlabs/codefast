@@ -11,29 +11,26 @@ import { markdownRules } from "@/languages/markdown";
 import { jestRules } from "@/testing/jest";
 import { composeConfig } from "@/utils/composer";
 import { prettierRules } from "@/utils/prettier";
+import { tsdocRules } from "@/utils/tsdoc";
 
 import type { Linter } from "eslint";
 
 // Internal React app preset without prettier - for composition with other presets
 const reactAppPresetCore: Linter.Config[] = composeConfig(
-  // 1. Fast rules first - basic syntax
   baseJavaScriptRules,
 
-  // 2. File-type-specific rules (grouped)
   typescriptRules,
+  tsdocRules,
   jsonRules,
   markdownRules,
 
-  // 3. Framework-specific rules (medium speed)
   reactRules,
   jsxA11yRules,
   jestRules,
 
-  // 4. Analysis rules (slower)
   unicornRules,
   importRules,
 
-  // 5. Environment rules last
   browserEnvironment,
   testEnvironment,
 );
