@@ -1,5 +1,6 @@
 import { basePreset } from "@/presets/base";
 import { composeConfig } from "@/utils/composer";
+import { prettierRules } from "@/utils/prettier";
 
 import type { Linter } from "eslint";
 
@@ -61,4 +62,4 @@ const libraryStrictRules: Linter.Config[] = [
  * ];
  * ```
  */
-export const libraryPreset: Linter.Config[] = composeConfig(basePreset, libraryStrictRules);
+export const libraryPreset: Linter.Config[] = composeConfig(basePreset, libraryStrictRules, prettierRules);
