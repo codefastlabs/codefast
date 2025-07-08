@@ -12,6 +12,7 @@ import {
   nextRules,
   onlyWarnRules,
   prettierRules,
+  tsdocRules,
   turboRules,
   basePreset,
   libraryPreset,
@@ -85,6 +86,11 @@ describe("ESLint Config Package Exports", () => {
       expect(prettierRules.length).toBeGreaterThan(0);
     });
 
+    it("should export tsdocRules as an array", () => {
+      expect(Array.isArray(tsdocRules)).toBe(true);
+      expect(tsdocRules.length).toBeGreaterThan(0);
+    });
+
     it("should export turboRules as an array", () => {
       expect(Array.isArray(turboRules)).toBe(true);
       expect(turboRules.length).toBeGreaterThan(0);
@@ -133,6 +139,7 @@ describe("ESLint Config Package Exports", () => {
         nextRules,
         onlyWarnRules,
         prettierRules,
+        tsdocRules,
         turboRules,
       ];
 

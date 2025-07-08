@@ -8,6 +8,7 @@ import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
 import { composeConfig } from "@/utils/composer";
 import { prettierRules } from "@/utils/prettier";
+import { tsdocRules } from "@/utils/tsdoc";
 
 import type { Linter } from "eslint";
 
@@ -19,6 +20,7 @@ import type { Linter } from "eslint";
  *
  * - **Core JavaScript rules**: Modern ES6+ practices and code quality
  * - **TypeScript support**: Full TypeScript linting with type-aware rules
+ * - **TSDoc support**: TypeScript documentation comment validation
  * - **Security rules**: Protection against common security vulnerabilities
  * - **Import/export rules**: Proper module system usage and organization
  * - **Code quality**: Unicorn plugin for additional best practices
@@ -33,7 +35,7 @@ import type { Linter } from "eslint";
  * - npm packages and libraries
  *
  * @example
- * ```ts
+ * ```typescript
  * // eslint.config.js
  * import { basePreset } from '@codefast/eslint-config';
  *
@@ -44,7 +46,7 @@ import type { Linter } from "eslint";
  * ```
  *
  * @example
- * ```ts
+ * ```typescript
  * // For customization, you can compose with additional rules
  * import { basePreset, reactRules } from '@codefast/eslint-config';
  *
@@ -68,5 +70,6 @@ export const basePreset: Linter.Config[] = composeConfig(
   testEnvironment,
   jsonRules,
   markdownRules,
+  tsdocRules,
   prettierRules,
 );
