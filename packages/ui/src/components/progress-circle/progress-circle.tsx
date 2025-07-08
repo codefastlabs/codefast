@@ -94,10 +94,10 @@ function ProgressCircle({
   }): JSX.Element {
   const displayValue = useAnimatedValue(value, animationDuration, animate);
 
-  const actualSize = useMemo(() => sizeInPixels || getActualSize(size), [sizeInPixels, size]);
+  const actualSize = useMemo(() => sizeInPixels ?? getActualSize(size), [sizeInPixels, size]);
 
   const actualThickness = useMemo(
-    () => strokeWidth || getStrokeWidth(thickness, actualSize),
+    () => strokeWidth ?? getStrokeWidth(thickness, actualSize),
     [strokeWidth, thickness, actualSize],
   );
 

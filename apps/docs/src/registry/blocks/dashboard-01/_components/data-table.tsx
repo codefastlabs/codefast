@@ -188,8 +188,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: () => <div className="w-full text-right">Target</div>,
     cell: ({ row }) => (
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={(event) => {
+          event.preventDefault();
           toast.promise(
             new Promise((resolve) => {
               setTimeout(resolve, 1000);
@@ -218,8 +218,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: () => <div className="w-full text-right">Limit</div>,
     cell: ({ row }) => (
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={(event) => {
+          event.preventDefault();
           toast.promise(
             new Promise((resolve) => {
               setTimeout(resolve, 1000);
@@ -632,6 +632,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
                   />
                   <ChartTooltip content={<ChartTooltipContent indicator="dot" />} cursor={false} />
                   <Area
+                    aria-label="Mobile data"
                     dataKey="mobile"
                     fill="var(--color-mobile)"
                     fillOpacity={0.6}
@@ -640,6 +641,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
                     type="natural"
                   />
                   <Area
+                    aria-label="Desktop data"
                     dataKey="desktop"
                     fill="var(--color-desktop)"
                     fillOpacity={0.4}

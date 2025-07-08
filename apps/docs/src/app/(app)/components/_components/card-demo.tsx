@@ -43,7 +43,7 @@ export function CardDemo(): JSX.Element {
                 <div className="grid gap-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <Label htmlFor={`${id}-password`}>Password</Label>
-                    <Link className="inline-block text-sm underline-offset-4 hover:underline" href="#">
+                    <Link className="inline-block text-sm underline-offset-4 hover:underline" href="/">
                       Forgot your password?
                     </Link>
                   </div>
@@ -60,7 +60,7 @@ export function CardDemo(): JSX.Element {
               </Button>
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link className="underline underline-offset-4" href="#">
+                <Link className="underline underline-offset-4" href="/">
                   Sign up
                 </Link>
               </div>

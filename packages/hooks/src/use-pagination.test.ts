@@ -12,7 +12,7 @@ describe("usePagination", () => {
       }),
     );
 
-    expect(result.current).toEqual([]);
+    expect(result.current).toStrictEqual([]);
   });
 
   test("returns all page numbers when pages are less than or equal to visiblePageNumbers", () => {
@@ -25,7 +25,7 @@ describe("usePagination", () => {
       }),
     );
 
-    expect(result.current).toEqual([1, 2, 3]);
+    expect(result.current).toStrictEqual([1, 2, 3]);
   });
 
   test("returns correct pagination structure when right ellipsis is necessary", () => {
@@ -38,7 +38,7 @@ describe("usePagination", () => {
       }),
     );
 
-    expect(result.current).toEqual([1, 2, 3, 4, 5, ELLIPSIS, 10]);
+    expect(result.current).toStrictEqual([1, 2, 3, 4, 5, ELLIPSIS, 10]);
   });
 
   test("returns correct pagination structure when left ellipsis is necessary", () => {
@@ -51,7 +51,7 @@ describe("usePagination", () => {
       }),
     );
 
-    expect(result.current).toEqual([1, ELLIPSIS, 6, 7, 8, 9, 10]);
+    expect(result.current).toStrictEqual([1, ELLIPSIS, 6, 7, 8, 9, 10]);
   });
 
   test("returns correct pagination structure when both ellipses are necessary", () => {
@@ -64,6 +64,6 @@ describe("usePagination", () => {
       }),
     );
 
-    expect(result.current).toEqual([1, ELLIPSIS, 4, 5, 6, ELLIPSIS, 10]);
+    expect(result.current).toStrictEqual([1, ELLIPSIS, 4, 5, 6, ELLIPSIS, 10]);
   });
 });

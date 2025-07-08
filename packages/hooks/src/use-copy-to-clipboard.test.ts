@@ -7,7 +7,9 @@ describe("useCopyToClipboard", () => {
   let mockWriteText: jest.Mock;
 
   beforeEach(() => {
-    mockWriteText = jest.fn().mockResolvedValue(async () => {});
+    mockWriteText = jest.fn().mockResolvedValue(async () => {
+      /* noop */
+    });
     Object.defineProperty(navigator, "clipboard", {
       value: {
         writeText: mockWriteText,
@@ -107,7 +109,7 @@ describe("useCopyToClipboard", () => {
       await result.current.copyToClipboard("test text");
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
     expect(result.current.isCopied).toBe(false);
 
     consoleErrorSpy.mockRestore();

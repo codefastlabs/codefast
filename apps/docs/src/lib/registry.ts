@@ -139,7 +139,10 @@ async function getFileContentWithHighlighting(
   const cacheKey = file.path;
 
   if (fileContentCache.has(cacheKey)) {
-    return fileContentCache.get(cacheKey)!;
+    const cached = fileContentCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
   }
 
   const content = await getFileContent(file, allFiles);
@@ -281,7 +284,10 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
   const cacheKey = `${filePath}:${content.length}`;
 
   if (sourceFileCache.has(cacheKey)) {
-    return sourceFileCache.get(cacheKey)!;
+    const cached = sourceFileCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
   }
 
   const project = new Project({ compilerOptions: {} });
@@ -308,23 +314,23 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
  * @returns Promise resolving to the path of the created temporary file
  */
 async function createTempSourceFile(filename: string): Promise<string> {
-  const dir = await fs.mkdtemp(path.join(tmpdir(), "codefast-ui-"));
+  const directory = await fs.mkdtemp(path.join(tmpdir(), "codefast-ui-"));
 
-  tempDirectories.add(dir);
+  tempDirectories.add(directory);
 
-  return path.join(dir, path.basename(filename));
+  return path.join(directory, path.basename(filename));
 }
 
 /**
  * Cleans up all temporary directories created during processing
  */
 async function cleanupTempDirectories(): Promise<void> {
-  const cleanupPromises = [...tempDirectories].map(async (dir) => {
+  const cleanupPromises = [...tempDirectories].map(async (directory) => {
     try {
-      await fs.rm(dir, { recursive: true, force: true });
-      tempDirectories.delete(dir);
+      await fs.rm(directory, { recursive: true, force: true });
+      tempDirectories.delete(directory);
     } catch (error) {
-      console.error(`Error cleaning up temp directory '${dir}':`, error);
+      console.error(`Error cleaning up temp directory '${directory}':`, error);
     }
   });
 
@@ -407,8 +413,8 @@ function processRelativeImport(
   file: RegistryItemFile,
   allFiles: RegistryItemFile[],
 ): string {
-  const currentDir = path.dirname(file.path);
-  const absoluteImportPath = path.resolve(currentDir, importPath);
+  const currentDirectory = path.dirname(file.path);
+  const absoluteImportPath = path.resolve(currentDirectory, importPath);
   const importedFile = allFiles.find((f) => absoluteImportPath.includes(path.basename(f.path, path.extname(f.path))));
 
   if (importedFile?.target) {

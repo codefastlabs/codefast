@@ -14,8 +14,14 @@ export const reactRules: Linter.Config[] = [
     rules: {
       ...pluginReact.configs.recommended.rules,
       ...pluginReactHooks.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off", // Not needed in modern React
-      "react/prop-types": "off", // TypeScript handles prop validation
+      "react/no-unknown-property": [
+        "error",
+        {
+          ignore: ["cmdk-input-wrapper"],
+        },
+      ],
+      "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
     },
     settings: {
       react: {

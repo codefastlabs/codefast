@@ -92,8 +92,8 @@ describe("input", () => {
 
       await user.click(input);
 
-      expect(inputClickHandler).toHaveBeenCalled();
-      expect(containerClickHandler).toHaveBeenCalled();
+      expect(inputClickHandler).toHaveBeenCalledWith(expect.any(Object));
+      expect(containerClickHandler).toHaveBeenCalledWith(expect.any(Object));
     });
 
     test("should trigger click on file input when container is clicked", async () => {
@@ -119,7 +119,7 @@ describe("input", () => {
         requestAnimationFrame(resolve);
       });
 
-      expect(clickSpy).toHaveBeenCalled();
+      expect(clickSpy).toHaveBeenCalledWith();
 
       rafSpy.mockRestore();
     });
@@ -155,7 +155,7 @@ describe("input", () => {
         requestAnimationFrame(resolve);
       });
 
-      expect(mockPreventDefault).toHaveBeenCalled();
+      expect(mockPreventDefault).toHaveBeenCalledWith();
 
       expect(focusSpy).not.toHaveBeenCalled();
 
@@ -334,7 +334,7 @@ describe("input", () => {
 
       await user.click(button);
 
-      expect(linkClickHandler).toHaveBeenCalled();
+      expect(linkClickHandler).toHaveBeenCalledWith(expect.any(Object));
       expect(input).not.toHaveFocus();
     });
 

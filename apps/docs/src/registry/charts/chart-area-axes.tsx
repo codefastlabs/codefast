@@ -65,6 +65,7 @@ export function ChartAreaAxes(): JSX.Element {
             <YAxis axisLine={false} tickCount={3} tickLine={false} tickMargin={8} />
             <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
             <Area
+              aria-label="Mobile visitors data"
               dataKey="mobile"
               fill="var(--color-mobile)"
               fillOpacity={0.4}
@@ -73,6 +74,7 @@ export function ChartAreaAxes(): JSX.Element {
               type="natural"
             />
             <Area
+              aria-label="Desktop visitors data"
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}

@@ -100,7 +100,7 @@ export function ToggleGroupDemo(): JSX.Element {
                 variant: "ghost",
                 size: "icon",
               })}
-              href="#"
+              href="/"
               title="Open in New Tab"
             >
               <span className="sr-only">Open in New Tab</span>

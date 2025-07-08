@@ -52,7 +52,7 @@ function CommandDialog({ children, ...props }: ComponentProps<typeof Dialog>): J
 
 function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrimitive.Input>): JSX.Element {
   return (
-    <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper="" data-slot="command-input-wrapper">
+    <div className="flex items-center gap-2 border-b px-3" cmdk-input-wrapper data-slot="command-input-wrapper">
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(

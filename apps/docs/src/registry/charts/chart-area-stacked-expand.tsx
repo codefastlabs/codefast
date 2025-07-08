@@ -76,6 +76,7 @@ export function ChartAreaStackedExpand(): JSX.Element {
               stackId="a"
               stroke="var(--color-other)"
               type="natural"
+              aria-label="Other visitors trend line"
             />
             <Area
               dataKey="mobile"
@@ -84,6 +85,7 @@ export function ChartAreaStackedExpand(): JSX.Element {
               stackId="a"
               stroke="var(--color-mobile)"
               type="natural"
+              aria-label="Mobile visitors trend line"
             />
             <Area
               dataKey="desktop"
@@ -92,6 +94,7 @@ export function ChartAreaStackedExpand(): JSX.Element {
               stackId="a"
               stroke="var(--color-desktop)"
               type="natural"
+              aria-label="Desktop visitors trend line"
             />
           </AreaChart>
         </ChartContainer>

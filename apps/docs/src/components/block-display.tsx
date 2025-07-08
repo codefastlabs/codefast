@@ -24,7 +24,8 @@ export async function BlockDisplay({ name }: { name: string }): Promise<ReactNod
 
   const tree = await getCachedFileTree(item.files);
 
-  const { component: _, ...rest } = item;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { component, ...rest } = item;
 
   return <BlockViewer item={rest} tree={tree} />;
 }

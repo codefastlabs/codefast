@@ -65,6 +65,7 @@ export function ChartAreaLinear(): JSX.Element {
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
               type="linear"
+              aria-label="Desktop visitors trend line"
             />
           </AreaChart>
         </ChartContainer>

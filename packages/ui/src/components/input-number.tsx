@@ -55,7 +55,7 @@ function InputNumber({
       onChange={onChange}
       prefix={prefix}
       readOnly={readOnly}
-      spinner={spinner || <Spinner />}
+      spinner={spinner ?? <Spinner />}
       step={step}
       suffix={suffix}
       value={value}

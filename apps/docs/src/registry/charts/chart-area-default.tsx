@@ -60,6 +60,7 @@ export function ChartAreaDefault(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
             <Area
+              aria-label="Desktop visitors data"
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}

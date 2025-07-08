@@ -135,7 +135,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild className="md:h-8 md:p-0" size="lg">
-                <Link href="#">
+                <Link href="/">
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <CommandIcon className="size-4" />
                   </div>
@@ -198,11 +198,12 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
               {mails.map((mail) => (
                 <Link
                   className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0"
-                  href="#"
+                  href="/"
                   key={mail.email}
                 >
                   <div className="flex w-full items-center gap-2">
-                    <span>{mail.name}</span> <span className="ml-auto text-xs">{mail.date}</span>
+                    <span>{mail.name}</span>
+                    <span className="ml-auto text-xs">{mail.date}</span>
                   </div>
                   <span className="font-medium">{mail.subject}</span>
                   <span className="line-clamp-2 whitespace-break-spaces text-xs">{mail.teaser}</span>

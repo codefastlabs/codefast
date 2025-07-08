@@ -66,6 +66,7 @@ export function ChartAreaStep(): JSX.Element {
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
               type="step"
+              aria-label="Desktop visitors trend line"
             />
           </AreaChart>
         </ChartContainer>

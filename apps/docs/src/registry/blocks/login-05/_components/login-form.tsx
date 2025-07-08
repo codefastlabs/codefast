@@ -12,7 +12,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
       <form>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
-            <Link className="flex flex-col items-center gap-2 font-medium" href="#">
+            <Link className="flex flex-col items-center gap-2 font-medium" href="/">
               <div className="flex size-8 items-center justify-center rounded-md">
                 <GalleryVerticalEndIcon className="size-6" />
               </div>
@@ -21,7 +21,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
             <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
             <div className="text-center text-sm">
               Don&apos;t have an account?{" "}
-              <Link className="underline underline-offset-4" href="#">
+              <Link className="underline underline-offset-4" href="/">
                 Sign up
               </Link>
             </div>
@@ -63,8 +63,8 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
         </div>
       </form>
       <div className="text-muted-foreground *:[a]:hover:text-primary *:[a]:underline *:[a]:underline-offset-4 text-balance text-center text-xs">
-        By clicking continue, you agree to our <Link href="#">Terms of Service</Link> and{" "}
-        <Link href="#">Privacy Policy</Link>.
+        By clicking continue, you agree to our <Link href="/">Terms of Service</Link> and{" "}
+        <Link href="/">Privacy Policy</Link>.
       </div>
     </div>
   );

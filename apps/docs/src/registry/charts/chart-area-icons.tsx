@@ -68,6 +68,7 @@ export function ChartAreaIcons(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
             <Area
+              aria-label="Mobile visitors data"
               dataKey="mobile"
               fill="var(--color-mobile)"
               fillOpacity={0.4}
@@ -76,6 +77,7 @@ export function ChartAreaIcons(): JSX.Element {
               type="natural"
             />
             <Area
+              aria-label="Desktop visitors data"
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}

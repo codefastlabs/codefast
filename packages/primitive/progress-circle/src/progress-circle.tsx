@@ -339,7 +339,7 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Pr
       cy={center}
       fill="transparent"
       r={radius}
-      stroke={threshold?.background || "currentColor"}
+      stroke={threshold?.background ?? "currentColor"}
       strokeWidth={strokeWidth}
       {...props}
     />
@@ -372,7 +372,7 @@ function ProgressCircleIndicator({
       cy={center}
       fill="transparent"
       r={radius}
-      stroke={threshold?.color || "currentColor"}
+      stroke={threshold?.color ?? "currentColor"}
       strokeDasharray={circumference}
       strokeDashoffset={strokeDashoffset}
       strokeLinecap="round"
@@ -409,7 +409,7 @@ function ProgressCircleValue({
     return children({ value: clampedValue, valueText });
   }
 
-  return <div {...props}>{children || valueText}</div>;
+  return <div {...props}>{children ?? valueText}</div>;
 }
 
 /* -----------------------------------------------------------------------------

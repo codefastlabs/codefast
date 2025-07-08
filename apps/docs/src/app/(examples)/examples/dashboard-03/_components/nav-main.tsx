@@ -46,14 +46,17 @@ export function NavMain({
           <Collapsible asChild defaultOpen={item.isActive} key={item.title}>
             <SidebarMenuItem>
               <SidebarMenuButton asChild disabled={item.disabled} isActive={pathname === item.url} tooltip={item.title}>
-                <Link
-                  className="data-[disabled=true]:opacity-50"
-                  data-disabled={item.disabled}
-                  href={item.disabled ? "#" : item.url}
-                >
-                  <item.icon className="text-muted-foreground" />
-                  <span>{item.title}</span>
-                </Link>
+                {item.disabled ? (
+                  <span className="data-[disabled=true]:opacity-50" data-disabled={item.disabled}>
+                    <item.icon className="text-muted-foreground" />
+                    <span>{item.title}</span>
+                  </span>
+                ) : (
+                  <Link className="data-[disabled=true]:opacity-50" data-disabled={item.disabled} href={item.url}>
+                    <item.icon className="text-muted-foreground" />
+                    <span>{item.title}</span>
+                  </Link>
+                )}
               </SidebarMenuButton>
               {item.items?.length ? (
                 <>

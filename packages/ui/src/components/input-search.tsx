@@ -50,9 +50,9 @@ function InputSearch({
       disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
-      prefix={prefix || <SearchIcon />}
+      prefix={prefix ?? <SearchIcon />}
       readOnly={readOnly}
-      spinner={spinner || <Spinner />}
+      spinner={spinner ?? <Spinner />}
       suffix={suffix}
     >
       <InputPrimitive.Field
@@ -70,7 +70,7 @@ function InputSearch({
           aria-label="Clear search"
           className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
           data-slot="input-search-clear"
-          disabled={disabled || readOnly}
+          disabled={disabled ?? readOnly}
           onClick={() => {
             setValue("");
           }}
