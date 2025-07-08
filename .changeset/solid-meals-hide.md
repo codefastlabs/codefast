@@ -4,7 +4,6 @@
 "@codefast-ui/input-number": patch
 "@codefast-ui/input": patch
 "@codefast/hooks": patch
-"@codefast/cli": patch
 "@codefast/ui": patch
 "@codefast/typescript-config": patch
 ---
