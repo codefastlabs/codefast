@@ -11,10 +11,9 @@ import {
   SidebarTrigger,
 } from "@codefast/ui";
 
-import type { CSSProperties, JSX } from "react";
-
 import { AppSidebar } from "@/registry/blocks/sidebar-09/_components/app-sidebar";
 
+import type { CSSProperties, JSX } from "react";
 
 export default function Page(): JSX.Element {
   return (

@@ -1,11 +1,10 @@
 import { SidebarInset, SidebarProvider } from "@codefast/ui";
 import { cookies } from "next/headers";
 
-import type { JSX, ReactNode } from "react";
-
 import { AppSidebar } from "@/app/(examples)/examples/dashboard-03/_components/app-sidebar";
 import { SiteHeader } from "@/app/(examples)/examples/dashboard-03/_components/site-header";
 
+import type { JSX, ReactNode } from "react";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
   const cookieStore = await cookies();

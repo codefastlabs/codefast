@@ -3,10 +3,9 @@
 import { Button, toast } from "@codefast/ui";
 import { useState } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 const allTypes = [
   {

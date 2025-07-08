@@ -1,9 +1,8 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@codefast/ui";
 
-import type { JSX } from "react";
-
 import { useBlockViewer } from "@/components/block-viewer/provider";
 
+import type { JSX } from "react";
 
 export function BlockViewerPreview(): JSX.Element {
   const { item, resizablePanelRef } = useBlockViewer("BlockViewerPreview");

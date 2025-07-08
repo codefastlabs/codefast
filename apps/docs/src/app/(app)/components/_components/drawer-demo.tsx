@@ -17,10 +17,9 @@ import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer } from "recharts";
 
-import type { CSSProperties, JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { CSSProperties, JSX } from "react";
 
 const data = [
   { goal: 400 },

@@ -18,10 +18,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useId } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function CardDemo(): JSX.Element {
   const id = useId();

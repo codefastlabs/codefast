@@ -15,11 +15,10 @@ import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useId, useState } from "react";
 
+import { GridWrapper } from "@/components/grid-wrapper";
 
 import type { DateRange } from "@codefast/ui";
 import type { JSX } from "react";
-
-import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DatePickerDemo(): JSX.Element {
   return (

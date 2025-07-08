@@ -10,10 +10,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function ToggleGroupDemo(): JSX.Element {
   return (

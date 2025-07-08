@@ -5,12 +5,11 @@ import path from "node:path";
 import { isEmpty } from "lodash-es";
 import { Project, ScriptKind } from "ts-morph";
 
-import type { RegistryItem, RegistryItemFile } from "@/types/registry";
-import type { SourceFile } from "ts-morph";
-
 import { highlightCode } from "@/lib/highlight-code";
 import { registryBlocks } from "@/registry/registry-blocks";
 
+import type { RegistryItem, RegistryItemFile } from "@/types/registry";
+import type { SourceFile } from "ts-morph";
 
 // Constants
 const FILE_TYPES = {

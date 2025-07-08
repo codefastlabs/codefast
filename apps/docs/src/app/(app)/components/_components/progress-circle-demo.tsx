@@ -3,10 +3,9 @@
 import { ProgressCircle } from "@codefast/ui";
 import { useEffect, useState } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function ProgressCircleDemo(): JSX.Element {
   const [progress, setProgress] = useState(0);

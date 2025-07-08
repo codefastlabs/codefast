@@ -1,10 +1,9 @@
 import { cache } from "react";
 
-import type { RegistryItem } from "@/types/registry";
-
 import { registryComponents } from "@/app/(app)/components/registry-components";
 import { registryBlocks } from "@/registry/registry-blocks";
 
+import type { RegistryItem } from "@/types/registry";
 
 export const getCachedBlockRegistry = cache((component: string): null | RegistryItem => {
   return registryBlocks[component];

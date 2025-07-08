@@ -1,6 +1,3 @@
-import type { Metadata } from "next";
-import type { JSX } from "react";
-
 import { CardsActivityGoal } from "@/app/(app)/(home)/_components/cards-activity-goal";
 import { CardsChat } from "@/app/(app)/(home)/_components/cards-chat";
 import { CardsCookieSettings } from "@/app/(app)/(home)/_components/cards-cookie-settings";
@@ -13,6 +10,8 @@ import { CardsShare } from "@/app/(app)/(home)/_components/cards-share";
 import { CardsStats } from "@/app/(app)/(home)/_components/cards-stats";
 import { CardsTeamMembers } from "@/app/(app)/(home)/_components/cards-team-members";
 
+import type { Metadata } from "next";
+import type { JSX } from "react";
 
 const title = "Building a powerful component library";
 const description =

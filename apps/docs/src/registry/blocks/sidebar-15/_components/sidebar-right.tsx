@@ -10,12 +10,11 @@ import {
 } from "@codefast/ui";
 import { PlusIcon } from "lucide-react";
 
-import type { ComponentProps, JSX } from "react";
-
 import { Calendars } from "@/registry/blocks/sidebar-15/_components/calendars";
 import { DatePicker } from "@/registry/blocks/sidebar-15/_components/date-picker";
 import { NavUser } from "@/registry/blocks/sidebar-15/_components/nav-user";
 
+import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data = {

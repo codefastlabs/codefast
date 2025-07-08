@@ -19,10 +19,9 @@ import { ArchiveXIcon, CommandIcon, FileIcon, InboxIcon, SendIcon, Trash2Icon } 
 import Link from "next/link";
 import { useState } from "react";
 
-import type { ComponentProps, JSX } from "react";
-
 import { NavUser } from "@/registry/blocks/sidebar-09/_components/nav-user";
 
+import type { ComponentProps, JSX } from "react";
 
 // This is sample data
 const data = {

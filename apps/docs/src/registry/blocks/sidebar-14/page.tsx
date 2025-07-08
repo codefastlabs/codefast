@@ -10,10 +10,9 @@ import {
   SidebarTrigger,
 } from "@codefast/ui";
 
-import type { JSX } from "react";
-
 import { AppSidebar } from "@/registry/blocks/sidebar-14/_components/app-sidebar";
 
+import type { JSX } from "react";
 
 export default function Page(): JSX.Element {
   return (
