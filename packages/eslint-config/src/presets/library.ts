@@ -44,6 +44,7 @@ const libraryStrictRules: Linter.Config[] = [
  * - SDK development
  *
  * @example
+ * ```typescript
  * // eslint.config.js for a library project
  * import { libraryPreset } from '@codefast/eslint-config';
  *
@@ -58,5 +59,6 @@ const libraryStrictRules: Linter.Config[] = [
  *     files: ["scripts/**", "*.config.*"]
  *   }
  * ];
+ * ```
  */
 export const libraryPreset: Linter.Config[] = composeConfig(basePreset, libraryStrictRules);
