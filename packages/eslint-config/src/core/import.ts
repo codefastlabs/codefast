@@ -113,7 +113,7 @@ export const importRules: Linter.Config[] = [
       "import/resolver": {
         typescript: {
           alwaysTryTypes: true,
-          project: ["./tsconfig.json", "./packages/*/tsconfig.json"],
+          project: ["./tsconfig.json", "./packages/**/*/tsconfig.json"],
         },
         node: {
           extensions: [".js", ".jsx", ".ts", ".tsx"],

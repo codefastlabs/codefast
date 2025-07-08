@@ -1,9 +1,0 @@
-{
-  "extends": "@codefast/typescript-config/base.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "noEmit": true
-  },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-  "exclude": ["node_modules", "dist", ".turbo", "coverage"]
-}
