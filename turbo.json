@@ -14,10 +14,12 @@
       "persistent": true
     },
     "lint": {
-      "cache": false
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"],
+      "outputs": [".eslintcache", ".next/cache/eslint/**"]
     },
     "lint:fix": {
-      "cache": false
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"],
+      "outputs": [".eslintcache", ".next/cache/eslint/**"]
     },
     "start": {
       "cache": false
