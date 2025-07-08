@@ -11,12 +11,11 @@ import {
 import { GalleryVerticalEndIcon } from "lucide-react";
 import Link from "next/link";
 
-import type { LucideIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
-
 import { NavMain } from "@/registry/blocks/sidebar-06/_components/nav-main";
 import { SidebarOptInForm } from "@/registry/blocks/sidebar-06/_components/sidebar-opt-in-form";
 
+import type { LucideIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data: {

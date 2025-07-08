@@ -15,14 +15,13 @@ import {
   Trash2Icon,
 } from "lucide-react";
 
-import type { ComponentProps, JSX } from "react";
-
 import { NavFavorites } from "@/registry/blocks/sidebar-15/_components/nav-favorites";
 import { NavMain } from "@/registry/blocks/sidebar-15/_components/nav-main";
 import { NavSecondary } from "@/registry/blocks/sidebar-15/_components/nav-secondary";
 import { NavWorkspaces } from "@/registry/blocks/sidebar-15/_components/nav-workspaces";
 import { TeamSwitcher } from "@/registry/blocks/sidebar-15/_components/team-switcher";
 
+import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data = {

@@ -13,10 +13,9 @@ import {
 } from "@codefast/ui";
 import { useId } from "react";
 
-import type { JSX } from "react";
-
 import { useThemeConfig } from "@/components/active-theme";
 
+import type { JSX } from "react";
 
 const DEFAULT_THEMES = [
   {

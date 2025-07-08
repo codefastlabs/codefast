@@ -1,13 +1,12 @@
 import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui";
 import { cookies } from "next/headers";
 
-import type { JSX, ReactNode } from "react";
-
 import { AppSidebar } from "@/components/app-sidebar";
 import { ModeSwitcher } from "@/components/mode-switcher";
 import { NavHeader } from "@/components/nav-header";
 import { ThemeSelector } from "@/components/theme-selector";
 
+import type { JSX, ReactNode } from "react";
 
 import "@/app/(app)/themes.css";
 

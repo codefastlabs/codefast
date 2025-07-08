@@ -3,10 +3,9 @@
 import { Label, Slider } from "@codefast/ui";
 import { useId, useState } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function SliderDemo(): JSX.Element {
   return (

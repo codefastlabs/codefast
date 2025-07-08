@@ -1,7 +1,6 @@
-import type { JSX } from "react";
-
 import { LoginForm } from "@/registry/blocks/login-01/_components/login-form";
 
+import type { JSX } from "react";
 
 export default function Page(): JSX.Element {
   return (

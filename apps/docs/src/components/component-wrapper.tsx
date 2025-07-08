@@ -2,10 +2,9 @@
 
 import { cn } from "@codefast/ui";
 
-import type { ComponentProps, JSX } from "react";
-
 import { getComponentName } from "@/lib/utils";
 
+import type { ComponentProps, JSX } from "react";
 
 export function ComponentWrapper({
   className,

@@ -2,14 +2,13 @@ import { cn, Toaster } from "@codefast/ui";
 import { cookies } from "next/headers";
 import Script from "next/script";
 
-import type { Metadata, Viewport } from "next";
-import type { JSX, ReactNode } from "react";
-
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { ThemeProvider } from "@/components/theme-provider";
 import { fontVariables } from "@/lib/fonts";
 import { META_THEME_COLORS, siteConfig } from "@/lib/site";
 
+import type { Metadata, Viewport } from "next";
+import type { JSX, ReactNode } from "react";
 
 import "@/app/globals.css";
 

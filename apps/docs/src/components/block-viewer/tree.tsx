@@ -8,11 +8,10 @@ import {
 } from "@codefast/ui";
 import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 
+import { useBlockViewer } from "@/components/block-viewer/provider";
 
 import type { FileTree } from "@/lib/registry";
 import type { CSSProperties, JSX } from "react";
-
-import { useBlockViewer } from "@/components/block-viewer/provider";
 
 interface TreeProps {
   index: number;

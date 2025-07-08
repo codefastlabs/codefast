@@ -1,10 +1,9 @@
-import type { JSX } from "react";
-
 import { ChartAreaInteractive } from "@/app/(examples)/examples/dashboard/_components/chart-area-interactive";
 import { DataTable } from "@/app/(examples)/examples/dashboard/_components/data-table";
 import { SectionCards } from "@/app/(examples)/examples/dashboard/_components/section-cards";
 import data from "@/app/(examples)/examples/dashboard/data.json";
 
+import type { JSX } from "react";
 
 export default function Page(): JSX.Element {
   return (

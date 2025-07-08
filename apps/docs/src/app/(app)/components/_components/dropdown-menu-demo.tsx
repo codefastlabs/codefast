@@ -36,10 +36,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function DropdownMenuDemo(): JSX.Element {
   return (

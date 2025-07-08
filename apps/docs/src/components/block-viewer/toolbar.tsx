@@ -12,11 +12,10 @@ import {
 import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from "lucide-react";
 import Link from "next/link";
 
+import { useBlockViewer } from "@/components/block-viewer/provider";
 
 import type { BlockViewMode } from "@/components/block-viewer/provider";
 import type { JSX } from "react";
-
-import { useBlockViewer } from "@/components/block-viewer/provider";
 
 const hasCli = false;
 

@@ -18,10 +18,9 @@ import {
 } from "@codefast/ui";
 import { useId } from "react";
 
-import type { JSX } from "react";
-
 import { Icons } from "@/components/icons";
 
+import type { JSX } from "react";
 
 export function CardsPaymentMethod(): JSX.Element {
   const id = useId();

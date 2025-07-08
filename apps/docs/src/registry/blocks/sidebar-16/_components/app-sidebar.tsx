@@ -23,13 +23,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import type { ComponentProps, JSX } from "react";
-
 import { NavMain } from "@/registry/blocks/sidebar-16/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-16/_components/nav-projects";
 import { NavSecondary } from "@/registry/blocks/sidebar-16/_components/nav-secondary";
 import { NavUser } from "@/registry/blocks/sidebar-16/_components/nav-user";
 
+import type { ComponentProps, JSX } from "react";
 
 const data = {
   user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },

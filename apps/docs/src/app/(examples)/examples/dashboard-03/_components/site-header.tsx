@@ -15,13 +15,12 @@ import { SidebarIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Fragment, useMemo } from "react";
 
-import type { JSX } from "react";
-
 import { ModeToggle } from "@/app/(examples)/examples/dashboard-03/_components/mode-toggle";
 import { NavUser } from "@/app/(examples)/examples/dashboard-03/_components/nav-user";
 import { SearchForm } from "@/app/(examples)/examples/dashboard-03/_components/search-form";
 import { ThemeSelector } from "@/components/theme-selector";
 
+import type { JSX } from "react";
 
 export function SiteHeader(): JSX.Element {
   const { toggleSidebar } = useSidebar("SiteHeader");

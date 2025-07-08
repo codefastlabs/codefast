@@ -2,10 +2,9 @@ import { ScrollArea, Separator } from "@codefast/ui";
 import Image from "next/image";
 import { Fragment } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function ScrollAreaDemo(): JSX.Element {
   return (

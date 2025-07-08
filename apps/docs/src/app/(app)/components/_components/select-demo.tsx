@@ -1,10 +1,9 @@
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@codefast/ui";
 import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "lucide-react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 export function SelectDemo(): JSX.Element {
   return (

@@ -20,10 +20,9 @@ import {
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import type { JSX } from "react";
-
 import { GridWrapper } from "@/components/grid-wrapper";
 
+import type { JSX } from "react";
 
 const frameworkOptions = [
   { value: "next.js", label: "Next.js" },
