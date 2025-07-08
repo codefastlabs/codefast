@@ -1,5 +1,5 @@
 {
-  "name": "@codefast-ui/input",
+  "name": "@codefast-ui/progress-circle",
   "version": "0.3.5",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codefastlabs/codefast.git",
-    "directory": "packages/primitive/input"
+    "directory": "packages/progress-circle"
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
@@ -47,7 +47,6 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@radix-ui/react-compose-refs": "^1.1.2",
     "@radix-ui/react-context": "^1.1.2"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codefastlabs/codefast.git",
-    "directory": "packages/primitive/input-number"
+    "directory": "packages/input-number"
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
