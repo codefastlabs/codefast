@@ -24,7 +24,7 @@ import type { Linter } from "eslint";
  */
 export const baseJavaScriptRules: Linter.Config[] = [
   {
-    ignores: ["**/dist/**", "**/build/**", "**/node_modules/**", "**/coverage/**"],
+    ignores: ["**/dist/**", "**/build/**", "**/.next/**", "**/node_modules/**", "**/coverage/**"],
   },
   {
     files: ["**/*.{js,mjs,cjs}"],
