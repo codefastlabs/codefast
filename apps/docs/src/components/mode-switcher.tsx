@@ -20,7 +20,7 @@ export function ModeSwitcher(): JSX.Element {
   }, [resolvedTheme, setTheme, setMetaColor]);
 
   return (
-    <Button className="group/toggle h-8 w-8 px-0" onClick={toggleTheme} variant="outline">
+    <Button className="group/toggle h-8 w-8 px-0" variant="outline" onClick={toggleTheme}>
       <SunIcon className="hidden [html.dark_&]:block" />
       <MoonIcon className="hidden [html.light_&]:block" />
       <span className="sr-only">Toggle theme</span>

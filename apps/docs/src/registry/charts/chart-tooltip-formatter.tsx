@@ -60,7 +60,7 @@ export function ChartTooltipFormatter(): JSX.Element {
             <Bar dataKey="running" fill="var(--color-running)" radius={[0, 0, 4, 4]} stackId="a" />
             <Bar dataKey="swimming" fill="var(--color-swimming)" radius={[4, 4, 0, 0]} stackId="a" />
             <ChartTooltip
-              content={<ChartTooltipContent formatter={formatter} hideLabel />}
+              content={<ChartTooltipContent hideLabel formatter={formatter} />}
               cursor={false}
               defaultIndex={1}
             />

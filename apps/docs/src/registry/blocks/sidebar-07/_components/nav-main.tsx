@@ -35,7 +35,7 @@ export function NavMain({
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible asChild className="group/collapsible" defaultOpen={item.isActive} key={item.title}>
+          <Collapsible key={item.title} asChild className="group/collapsible" defaultOpen={item.isActive}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>

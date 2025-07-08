@@ -88,7 +88,7 @@ function Tree({ item }: { item: TreeNode }): JSX.Element {
         <CollapsibleContent>
           <SidebarMenuSub>
             {items.map((subItem, index) => (
-              <Tree item={subItem} key={index} />
+              <Tree key={index} item={subItem} />
             ))}
           </SidebarMenuSub>
         </CollapsibleContent>
@@ -122,7 +122,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
           <SidebarGroupContent>
             <SidebarMenu>
               {data.tree.map((item, index) => (
-                <Tree item={item} key={index} />
+                <Tree key={index} item={item} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

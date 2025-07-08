@@ -26,7 +26,7 @@ export function AnalyticsDatePicker(): JSX.Element {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-auto p-0">
-        <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} onSelect={setDate} selected={date} />
+        <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
       </PopoverContent>
     </Popover>
   );

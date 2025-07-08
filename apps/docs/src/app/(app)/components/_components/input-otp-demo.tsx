@@ -74,7 +74,7 @@ function InputOTPWithSeparator(): JSX.Element {
   return (
     <div className="grid gap-2">
       <Label htmlFor={id}>With Separator</Label>
-      <InputOTP id={id} maxLength={6} onChange={setValue} value={value}>
+      <InputOTP id={id} maxLength={6} value={value} onChange={setValue}>
         <InputOTPGroup>
           <InputOTPSlot index={0} />
           <InputOTPSlot index={1} />

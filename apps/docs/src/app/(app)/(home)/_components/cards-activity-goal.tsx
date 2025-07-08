@@ -58,11 +58,11 @@ export function CardsActivityGoal(): JSX.Element {
           <Button
             className="h-8 w-8 shrink-0 rounded-full"
             disabled={goal <= 200}
+            size="icon"
+            variant="outline"
             onClick={() => {
               onClick(-10);
             }}
-            size="icon"
-            variant="outline"
           >
             <Minus />
             <span className="sr-only">Decrease</span>
@@ -74,11 +74,11 @@ export function CardsActivityGoal(): JSX.Element {
           <Button
             className="h-8 w-8 shrink-0 rounded-full"
             disabled={goal >= 400}
+            size="icon"
+            variant="outline"
             onClick={() => {
               onClick(10);
             }}
-            size="icon"
-            variant="outline"
           >
             <Plus />
             <span className="sr-only">Increase</span>

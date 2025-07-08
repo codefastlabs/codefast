@@ -49,7 +49,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       const { rerender } = render(
-        <InputNumber data-testid="input-number" onChange={handleChange} value={10}>
+        <InputNumber data-testid="input-number" value={10} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -67,7 +67,7 @@ describe("input-number", () => {
       expect(input).toHaveValue("11");
 
       rerender(
-        <InputNumber data-testid="input-number" onChange={handleChange} value={12}>
+        <InputNumber data-testid="input-number" value={12} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -317,7 +317,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber data-testid="input-number" defaultValue={10} disabled>
+        <InputNumber disabled data-testid="input-number" defaultValue={10}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -425,7 +425,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber data-testid="input-number" defaultValue={5} onChange={handleChange} step={0.5}>
+        <InputNumber data-testid="input-number" defaultValue={5} step={0.5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -450,7 +450,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber data-testid="input-number" defaultValue={5} disabled onChange={handleChange}>
+        <InputNumber disabled data-testid="input-number" defaultValue={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -693,7 +693,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber data-testid="input-number" defaultValue={5} disabled>
+        <InputNumber disabled data-testid="input-number" defaultValue={5}>
           <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input-item" />
           <InputNumberIncrementButton data-testid="increment-btn">+</InputNumberIncrementButton>
@@ -1047,7 +1047,7 @@ describe("input-number", () => {
       const user = userEvent.setup();
 
       render(
-        <InputNumber data-testid="number-input" defaultValue={50} max={100} min={0} onChange={handleChange} step={5}>
+        <InputNumber data-testid="number-input" defaultValue={50} max={100} min={0} step={5} onChange={handleChange}>
           <InputNumberDecrementButton data-testid="decrement">-</InputNumberDecrementButton>
           <InputNumberField data-testid="input" />
           <InputNumberIncrementButton data-testid="increment">+</InputNumberIncrementButton>

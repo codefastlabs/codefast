@@ -101,7 +101,7 @@ export function NavMain({ items }: NavMainProps): JSX.Element {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible asChild className="group/collapsible" defaultOpen key={item.title}>
+          <Collapsible key={item.title} asChild defaultOpen className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
@@ -112,7 +112,7 @@ export function NavMain({ items }: NavMainProps): JSX.Element {
               <CollapsibleContent asChild>
                 <SidebarMenuSub className="ml-2.5 mr-0">
                   {item.groups.map((group) => (
-                    <NavGroup group={group} itemPath={item.path} key={group.title} pathname={pathname} />
+                    <NavGroup key={group.title} group={group} itemPath={item.path} pathname={pathname} />
                   ))}
                 </SidebarMenuSub>
               </CollapsibleContent>

@@ -211,11 +211,11 @@ function ChartTooltipContent({
 
           return (
             <div
+              key={item.dataKey}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:size-2.5",
                 indicator === "dot" && "items-center",
               )}
-              key={item.dataKey}
             >
               {formatter && item.value !== undefined && item.name ? (
                 formatter(item.value, item.name, item, index, item.payload as Payload<ValueType, NameType>[])
@@ -311,8 +311,8 @@ function ChartLegendContent({
 
         return (
           <div
-            className={cn("[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3")}
             key={String(item.value)}
+            className={cn("[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3")}
           >
             {itemConfig?.icon && !hideIcon ? (
               <itemConfig.icon />

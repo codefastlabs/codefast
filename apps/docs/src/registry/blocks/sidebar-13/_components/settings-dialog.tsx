@@ -62,7 +62,7 @@ export function SettingsDialog(): JSX.Element {
   const [open, setOpen] = useState(true);
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm">Open Dialog</Button>
       </DialogTrigger>
@@ -108,7 +108,7 @@ export function SettingsDialog(): JSX.Element {
             </header>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
               {Array.from({ length: 10 }).map((_, index) => (
-                <div className="bg-muted/50 aspect-video max-w-3xl rounded-xl" key={index} />
+                <div key={index} className="bg-muted/50 aspect-video max-w-3xl rounded-xl" />
               ))}
             </div>
           </main>

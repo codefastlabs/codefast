@@ -76,11 +76,11 @@ function DrawerBottom(): JSX.Element {
               <Button
                 className="size-8 shrink-0 rounded-full"
                 disabled={goal <= 200}
+                size="icon"
+                variant="outline"
                 onClick={() => {
                   onClick(-10);
                 }}
-                size="icon"
-                variant="outline"
               >
                 <MinusIcon />
                 <span className="sr-only">Decrease</span>
@@ -92,11 +92,11 @@ function DrawerBottom(): JSX.Element {
               <Button
                 className="size-8 shrink-0 rounded-full"
                 disabled={goal >= 400}
+                size="icon"
+                variant="outline"
                 onClick={() => {
                   onClick(10);
                 }}
-                size="icon"
-                variant="outline"
               >
                 <PlusIcon />
                 <span className="sr-only">Increase</span>
@@ -144,7 +144,7 @@ function DrawerScrollableContent(): JSX.Element {
         <DrawerBody className="border-y text-sm">
           <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
           {Array.from({ length: 10 }).map((_, index) => (
-            <p className="mb-4 leading-normal" key={index}>
+            <p key={index} className="mb-4 leading-normal">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
               dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
               ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
@@ -171,6 +171,7 @@ function DrawerDirections(): JSX.Element {
     <div className="grid grid-cols-3 gap-1">
       {DIRECTIONS.map((direction) => (
         <div
+          key={direction}
           className={cn(
             "flex items-center justify-center",
             direction === "top" && "col-start-2",
@@ -178,7 +179,6 @@ function DrawerDirections(): JSX.Element {
             direction === "bottom" && "col-start-2 row-start-3",
             direction === "left" && "row-start-2",
           )}
-          key={direction}
         >
           <Drawer direction={direction}>
             <DrawerTrigger asChild>
@@ -196,7 +196,7 @@ function DrawerDirections(): JSX.Element {
               </DrawerHeader>
               <DrawerBody className="border-y text-sm">
                 {Array.from({ length: 10 }).map((_, index) => (
-                  <p className="mb-4 leading-normal" key={index}>
+                  <p key={index} className="mb-4 leading-normal">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
                     et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
                     aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse

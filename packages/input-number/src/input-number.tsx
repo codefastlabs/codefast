@@ -287,15 +287,15 @@ function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Eleme
       inputRef={inputRef}
       max={max}
       min={min}
+      parseValue={parseValue}
+      readOnly={props.readOnly}
+      scope={__scopeInputNumber}
+      value={value}
       onChange={setValue}
       onDecrement={handleDecrement}
       onDecrementToMin={handleDecrementToMin}
       onIncrement={handleIncrement}
       onIncrementToMax={handleIncrementToMax}
-      parseValue={parseValue}
-      readOnly={props.readOnly}
-      scope={__scopeInputNumber}
-      value={value}
     >
       <InputPrimitive.Root {...inputScope} {...props} />
     </InputNumberContextProvider>
@@ -564,17 +564,17 @@ function InputNumberField({
 
   return (
     <InputPrimitive.Field
+      ref={inputRef}
       defaultValue={formatValue(value)}
       disabled={disabled}
       id={id}
       inputMode="decimal"
       max={max}
       min={min}
+      readOnly={readOnly}
+      step={step}
       onBlur={composeEventHandlers(onBlur, handleBlur)}
       onKeyDown={combinedKeyDownHandler()}
-      readOnly={readOnly}
-      ref={inputRef}
-      step={step}
       {...inputScope}
       {...props}
     />
@@ -697,13 +697,13 @@ function NumberStepperButton({
       aria-label={operation === "increment" ? ariaIncrementLabel : ariaDecrementLabel}
       aria-live="polite"
       disabled={isDisabled}
+      type="button"
       onContextMenu={handleContextMenu}
       onKeyDown={handleKeyDown}
       onPointerCancel={clearActionInterval}
       onPointerDown={handlePointerDown}
       onPointerLeave={clearActionInterval}
       onPointerUp={clearActionInterval}
-      type="button"
       {...props}
     />
   );

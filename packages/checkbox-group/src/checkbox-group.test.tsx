@@ -179,7 +179,7 @@ describe("checkbox-group", () => {
         const onValueChange = jest.fn();
 
         const { rerender } = render(
-          <CheckboxGroup onValueChange={onValueChange} required value={["item1"]}>
+          <CheckboxGroup required value={["item1"]} onValueChange={onValueChange}>
             <CheckboxGroupItem value="item1">item1</CheckboxGroupItem>
             <CheckboxGroupItem value="item2">item2</CheckboxGroupItem>
           </CheckboxGroup>,
@@ -196,7 +196,7 @@ describe("checkbox-group", () => {
 
         // Update the value to reflect both items being checked - using rerender
         rerender(
-          <CheckboxGroup onValueChange={onValueChange} required value={["item1", "item2"]}>
+          <CheckboxGroup required value={["item1", "item2"]} onValueChange={onValueChange}>
             <CheckboxGroupItem value="item1">item1</CheckboxGroupItem>
             <CheckboxGroupItem value="item2">item2</CheckboxGroupItem>
           </CheckboxGroup>,
@@ -273,7 +273,7 @@ describe("checkbox-group", () => {
         const onValueChange = jest.fn();
 
         render(
-          <CheckboxGroup onValueChange={onValueChange} value={[]}>
+          <CheckboxGroup value={[]} onValueChange={onValueChange}>
             <CheckboxGroupItem value="item1" />
           </CheckboxGroup>,
         );
@@ -446,7 +446,7 @@ describe("checkbox-group", () => {
       const onValueChange = jest.fn();
 
       render(
-        <CheckboxGroup onValueChange={onValueChange} value={[]}>
+        <CheckboxGroup value={[]} onValueChange={onValueChange}>
           <CheckboxGroupItem data-testid="item1" value="item1" />
         </CheckboxGroup>,
       );
@@ -468,7 +468,7 @@ describe("checkbox-group", () => {
         <CheckboxGroup aria-label="Group options">
           <CheckboxGroupItem aria-label="Option 1" value="item1" />
           <CheckboxGroupItem aria-label="Option 2" value="item2" />
-          <CheckboxGroupItem aria-label="Option 3" disabled value="item3" />
+          <CheckboxGroupItem disabled aria-label="Option 3" value="item3" />
         </CheckboxGroup>,
       );
 
@@ -547,7 +547,7 @@ describe("checkbox-group", () => {
       const onValueChange = jest.fn();
 
       render(
-        <CheckboxGroup onValueChange={onValueChange} value={["item1"]}>
+        <CheckboxGroup value={["item1"]} onValueChange={onValueChange}>
           <CheckboxGroupItem data-testid="item1-first" value="item1" />
           <CheckboxGroupItem data-testid="item1-second" value="item1" />
         </CheckboxGroup>,

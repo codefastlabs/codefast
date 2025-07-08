@@ -50,7 +50,7 @@ export function ChartBarHorizontal(): JSX.Element {
               left: -20,
             }}
           >
-            <XAxis dataKey="desktop" hide type="number" />
+            <XAxis hide dataKey="desktop" type="number" />
             <YAxis
               axisLine={false}
               dataKey="month"

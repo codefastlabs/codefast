@@ -70,31 +70,31 @@ export function ChartAreaStackedExpand(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
             <Area
+              aria-label="Other visitors trend line"
               dataKey="other"
               fill="var(--color-other)"
               fillOpacity={0.1}
               stackId="a"
               stroke="var(--color-other)"
               type="natural"
-              aria-label="Other visitors trend line"
             />
             <Area
+              aria-label="Mobile visitors trend line"
               dataKey="mobile"
               fill="var(--color-mobile)"
               fillOpacity={0.4}
               stackId="a"
               stroke="var(--color-mobile)"
               type="natural"
-              aria-label="Mobile visitors trend line"
             />
             <Area
+              aria-label="Desktop visitors trend line"
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}
               stackId="a"
               stroke="var(--color-desktop)"
               type="natural"
-              aria-label="Desktop visitors trend line"
             />
           </AreaChart>
         </ChartContainer>

@@ -103,5 +103,5 @@ const dot: LineDot = ({
 }: DotProps & {
   payload: DataItem;
 }) => {
-  return <Dot cx={props.cx} cy={props.cy} fill={payload.fill} key={payload.browser} r={5} stroke={payload.fill} />;
+  return <Dot key={payload.browser} cx={props.cx} cy={props.cy} fill={payload.fill} r={5} stroke={payload.fill} />;
 };

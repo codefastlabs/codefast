@@ -71,7 +71,7 @@ export function NavActions(): JSX.Element {
       <Button className="size-7" size="icon" variant="ghost">
         <StarIcon />
       </Button>
-      <Popover onOpenChange={setIsOpen} open={isOpen}>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button className="data-[state=open]:bg-accent size-7" size="icon" variant="ghost">
             <MoreHorizontalIcon />
@@ -81,7 +81,7 @@ export function NavActions(): JSX.Element {
           <Sidebar className="bg-transparent" collapsible="none">
             <SidebarContent>
               {data.map((group, index) => (
-                <SidebarGroup className="border-b last:border-none" key={index}>
+                <SidebarGroup key={index} className="border-b last:border-none">
                   <SidebarGroupContent className="gap-0">
                     <SidebarMenu>
                       {group.map((item, menuIndex) => (

@@ -25,6 +25,7 @@ export function TooltipDemo(): JSX.Element {
           <div className="grid grid-cols-3 gap-1">
             {SIDES.map((side) => (
               <div
+                key={side}
                 className={cn(
                   "flex items-center justify-center",
                   side === "top" && "col-start-2",
@@ -32,7 +33,6 @@ export function TooltipDemo(): JSX.Element {
                   side === "bottom" && "col-start-2 row-start-3",
                   side === "left" && "row-start-2",
                 )}
-                key={side}
               >
                 <Tooltip>
                   <TooltipTrigger asChild>

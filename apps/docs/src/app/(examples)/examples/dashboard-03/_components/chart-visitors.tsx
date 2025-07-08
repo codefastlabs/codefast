@@ -81,7 +81,7 @@ export function ChartVisitors(): JSX.Element {
         <CardDescription>January - June 2024</CardDescription>
         <CardTitle className="text-2xl font-bold">1,234 visitors</CardTitle>
         <CardAction>
-          <Select onValueChange={setActiveMonth} value={activeMonth}>
+          <Select value={activeMonth} onValueChange={setActiveMonth}>
             <SelectTrigger aria-label="Select a value" className="ml-auto h-8 w-[120px]">
               <SelectValue placeholder="Select month" />
             </SelectTrigger>

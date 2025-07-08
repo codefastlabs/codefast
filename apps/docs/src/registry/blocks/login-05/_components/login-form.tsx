@@ -29,7 +29,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
           <div className="flex flex-col gap-6">
             <div className="grid gap-3">
               <Label htmlFor={`${id}-email`}>Email</Label>
-              <Input id={`${id}-email`} placeholder="m@example.com" required type="email" />
+              <Input required id={`${id}-email`} placeholder="m@example.com" type="email" />
             </div>
             <Button className="w-full" type="submit">
               Login

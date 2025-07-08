@@ -304,10 +304,10 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): JSX.Elemen
 
   return (
     <TableRow
+      ref={setNodeRef}
       className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
       data-dragging={isDragging}
       data-state={row.getIsSelected() && "selected"}
-      ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
@@ -419,9 +419,9 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
+                      key={column.id}
                       checked={column.getIsVisible()}
                       className="capitalize"
-                      key={column.id}
                       onCheckedChange={(value) => {
                         column.toggleVisibility(Boolean(value));
                       }}
@@ -444,15 +444,15 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
             collisionDetection={closestCenter}
             id={sortableId}
             modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
             sensors={sensors}
+            onDragEnd={handleDragEnd}
           >
             <Table>
               <TableHeader className="bg-muted sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <TableHead colSpan={header.colSpan} key={header.id}>
+                      <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     ))}
@@ -488,10 +488,10 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 Rows per page
               </Label>
               <Select
+                value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
                 }}
-                value={`${table.getState().pagination.pageSize}`}
               >
                 <SelectTrigger className="w-20" id={`${id}-rows-per-page`} size="sm">
                   <SelectValue placeholder={table.getState().pagination.pageSize} />
@@ -512,10 +512,10 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               <Button
                 className="hidden h-8 w-8 p-0 lg:flex"
                 disabled={!table.getCanPreviousPage()}
+                variant="outline"
                 onClick={() => {
                   table.setPageIndex(0);
                 }}
-                variant="outline"
               >
                 <span className="sr-only">Go to first page</span>
                 <IconChevronsLeft />
@@ -523,11 +523,11 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               <Button
                 className="size-8"
                 disabled={!table.getCanPreviousPage()}
+                size="icon"
+                variant="outline"
                 onClick={() => {
                   table.previousPage();
                 }}
-                size="icon"
-                variant="outline"
               >
                 <span className="sr-only">Go to previous page</span>
                 <IconChevronLeft />
@@ -535,11 +535,11 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               <Button
                 className="size-8"
                 disabled={!table.getCanNextPage()}
+                size="icon"
+                variant="outline"
                 onClick={() => {
                   table.nextPage();
                 }}
-                size="icon"
-                variant="outline"
               >
                 <span className="sr-only">Go to next page</span>
                 <IconChevronRight />
@@ -547,11 +547,11 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               <Button
                 className="hidden size-8 lg:flex"
                 disabled={!table.getCanNextPage()}
+                size="icon"
+                variant="outline"
                 onClick={() => {
                   table.setPageIndex(table.getPageCount() - 1);
                 }}
-                size="icon"
-                variant="outline"
               >
                 <span className="sr-only">Go to last page</span>
                 <IconChevronsRight />
@@ -623,9 +623,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Elemen
                 >
                   <CartesianGrid vertical={false} />
                   <XAxis
+                    hide
                     axisLine={false}
                     dataKey="month"
-                    hide
                     tickFormatter={(value: string) => value.slice(0, 3)}
                     tickLine={false}
                     tickMargin={8}
