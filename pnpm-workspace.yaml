@@ -1,7 +1,8 @@
 packages:
   - apps/*
   - packages/**
-  - scripts/**
+  - benchmarks/**
+
 onlyBuiltDependencies:
   - "@swc/core"
   - "@tailwindcss/oxide"
