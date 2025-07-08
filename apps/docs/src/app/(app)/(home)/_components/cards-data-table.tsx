@@ -105,10 +105,10 @@ export const columns: ColumnDef<Payment>[] = [
     header: ({ column }) => {
       return (
         <Button
+          variant="ghost"
           onClick={() => {
             column.toggleSorting(column.getIsSorted() === "asc");
           }}
-          variant="ghost"
         >
           Email
           <ArrowUpDown />
@@ -196,9 +196,9 @@ export function CardsDataTable(): JSX.Element {
         <div className="mb-4 flex items-center gap-4">
           <Input
             className="max-w-sm"
-            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
             placeholder="Filter emails..."
             value={(table.getColumn("email")?.getFilterValue() as string) || ""}
+            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -213,9 +213,9 @@ export function CardsDataTable(): JSX.Element {
                 .map((column) => {
                   return (
                     <DropdownMenuCheckboxItem
+                      key={column.id}
                       checked={column.getIsVisible()}
                       className="capitalize"
-                      key={column.id}
                       onCheckedChange={(value) => {
                         column.toggleVisibility(Boolean(value));
                       }}
@@ -234,7 +234,7 @@ export function CardsDataTable(): JSX.Element {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead className="[&:has([role=checkbox])]:pl-3" key={header.id}>
+                      <TableHead key={header.id} className="[&:has([role=checkbox])]:pl-3">
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     );
@@ -245,9 +245,9 @@ export function CardsDataTable(): JSX.Element {
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow data-state={row.getIsSelected() && "selected"} key={row.id}>
+                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell className="last:text-right [&:has([role=checkbox])]:pl-3" key={cell.id}>
+                      <TableCell key={cell.id} className="last:text-right [&:has([role=checkbox])]:pl-3">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -271,21 +271,21 @@ export function CardsDataTable(): JSX.Element {
           <div className="space-x-2">
             <Button
               disabled={!table.getCanPreviousPage()}
+              size="sm"
+              variant="outline"
               onClick={() => {
                 table.previousPage();
               }}
-              size="sm"
-              variant="outline"
             >
               Previous
             </Button>
             <Button
               disabled={!table.getCanNextPage()}
+              size="sm"
+              variant="outline"
               onClick={() => {
                 table.nextPage();
               }}
-              size="sm"
-              variant="outline"
             >
               Next
             </Button>

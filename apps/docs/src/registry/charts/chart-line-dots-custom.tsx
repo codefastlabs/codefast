@@ -96,9 +96,9 @@ const dot: LineDot = ({
 
   return (
     <GitCommitVerticalIcon
+      key={payload.month}
       fill="var(--background)"
       height={r}
-      key={payload.month}
       stroke="var(--color-desktop)"
       width={r}
       x={cx - r / 2}

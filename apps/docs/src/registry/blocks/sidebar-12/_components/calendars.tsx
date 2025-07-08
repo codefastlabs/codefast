@@ -27,7 +27,7 @@ export function Calendars({
     <>
       {calendars.map((calendar, index) => (
         <Fragment key={calendar.name}>
-          <SidebarGroup className="py-0" key={calendar.name}>
+          <SidebarGroup key={calendar.name} className="py-0">
             <Collapsible className="group/collapsible" defaultOpen={index === 0}>
               <SidebarGroupLabel
                 asChild

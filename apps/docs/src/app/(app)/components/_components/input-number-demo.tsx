@@ -21,7 +21,7 @@ export function InputNumberDemo(): JSX.Element {
         <InputNumber disabled placeholder="Disabled" />
       </div>
       <div className="">
-        <InputNumber defaultValue={100} placeholder="Read only" readOnly />
+        <InputNumber readOnly defaultValue={100} placeholder="Read only" />
       </div>
       <div className="">
         <InputNumber

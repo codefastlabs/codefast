@@ -39,7 +39,7 @@ export function CarouselDemo(): JSX.Element {
       >
         <CarouselContent className="-ml-1">
           {Array.from({ length: 10 }).map((_, index) => (
-            <CarouselItem className="basis-1/2 pl-1" key={index}>
+            <CarouselItem key={index} className="basis-1/2 pl-1">
               <div className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-6">
@@ -62,7 +62,7 @@ export function CarouselDemo(): JSX.Element {
       >
         <CarouselContent>
           {Array.from({ length: 10 }).map((_, index) => (
-            <CarouselItem className="basis-1/3" key={index}>
+            <CarouselItem key={index} className="basis-1/3">
               <div className="p-1">
                 <Card>
                   <CardContent className="flex aspect-square items-center justify-center p-6">

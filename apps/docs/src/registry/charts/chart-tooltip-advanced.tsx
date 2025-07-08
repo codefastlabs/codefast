@@ -66,7 +66,7 @@ export function ChartTooltipAdvanced(): JSX.Element {
             <Bar dataKey="running" fill="var(--color-running)" radius={[0, 0, 4, 4]} stackId="a" />
             <Bar dataKey="swimming" fill="var(--color-swimming)" radius={[4, 4, 0, 0]} stackId="a" />
             <ChartTooltip
-              content={<ChartTooltipContent className="w-[180px]" formatter={formatter} hideLabel />}
+              content={<ChartTooltipContent hideLabel className="w-[180px]" formatter={formatter} />}
               cursor={false}
               defaultIndex={1}
             />

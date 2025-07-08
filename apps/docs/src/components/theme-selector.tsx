@@ -11,7 +11,7 @@ export function ThemeSelector(): JSX.Element {
   const { activeTheme, setActiveTheme } = useThemeConfig();
 
   return (
-    <Select onValueChange={setActiveTheme} value={activeTheme}>
+    <Select value={activeTheme} onValueChange={setActiveTheme}>
       <SelectTrigger className="w-32" size="sm">
         <SelectValue placeholder="Select a theme" />
       </SelectTrigger>

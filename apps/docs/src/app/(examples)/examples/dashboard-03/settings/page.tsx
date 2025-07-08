@@ -147,14 +147,14 @@ export default function SettingsPage(): JSX.Element {
                   <Field>
                     <Label htmlFor="name">Name</Label>
                     <FieldControl>
-                      <Input id={`${id}-name`} placeholder="First and last name" required />
+                      <Input required id={`${id}-name`} placeholder="First and last name" />
                     </FieldControl>
                     <FieldDescription>This is your public display name.</FieldDescription>
                   </Field>
                   <Field>
                     <Label htmlFor="email">Email</Label>
                     <FieldControl>
-                      <Input id={`${id}-email`} placeholder="you@example.com" required />
+                      <Input required id={`${id}-email`} placeholder="you@example.com" />
                     </FieldControl>
                   </Field>
                   <Field>
@@ -254,14 +254,14 @@ export default function SettingsPage(): JSX.Element {
                   <Field>
                     <Label htmlFor="current-password">Current Password</Label>
                     <FieldControl>
-                      <Input id={`${id}-current-password`} placeholder="Current password" required />
+                      <Input required id={`${id}-current-password`} placeholder="Current password" />
                     </FieldControl>
                     <FieldDescription>This is your current password.</FieldDescription>
                   </Field>
                   <Field>
                     <Label htmlFor="new-password">New Password</Label>
                     <FieldControl>
-                      <Input id={`${id}-new-password`} placeholder="New password" required />
+                      <Input required id={`${id}-new-password`} placeholder="New password" />
                     </FieldControl>
                   </Field>
                   <Field>

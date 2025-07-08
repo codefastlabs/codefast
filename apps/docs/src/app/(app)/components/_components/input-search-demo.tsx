@@ -21,7 +21,7 @@ export function InputSearchDemo(): JSX.Element {
         <InputSearch disabled placeholder="Disabled" />
       </div>
       <div className="">
-        <InputSearch defaultValue="search term" placeholder="Read only" readOnly />
+        <InputSearch readOnly defaultValue="search term" placeholder="Read only" />
       </div>
       <div className="">
         <InputSearch placeholder="Search..." prefix={<UserSearchIcon />} />

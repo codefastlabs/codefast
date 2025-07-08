@@ -10,7 +10,7 @@ export function CollapsibleDemo(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Collapsible className="flex w-full flex-col gap-2 md:w-[350px]" onOpenChange={setIsOpen} open={isOpen}>
+    <Collapsible className="flex w-full flex-col gap-2 md:w-[350px]" open={isOpen} onOpenChange={setIsOpen}>
       <div className="flex items-center justify-between gap-4 px-4">
         <h4 className="line-clamp-1 text-sm font-semibold">@peduarte starred 3 repositories</h4>
         <CollapsibleTrigger asChild>

@@ -61,12 +61,12 @@ export function ChartAreaStep(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Area
+              aria-label="Desktop visitors trend line"
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
               type="step"
-              aria-label="Desktop visitors trend line"
             />
           </AreaChart>
         </ChartContainer>

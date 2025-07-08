@@ -25,8 +25,8 @@ function Radio({
         className,
       )}
       data-slot="radio"
-      onChange={composeEventHandlers(onChange, (event) => onValueChange?.(event.currentTarget.value))}
       type="radio"
+      onChange={composeEventHandlers(onChange, (event) => onValueChange?.(event.currentTarget.value))}
       {...props}
     />
   );

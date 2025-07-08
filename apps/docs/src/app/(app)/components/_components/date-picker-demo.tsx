@@ -48,7 +48,7 @@ function DatePickerSimple(): JSX.Element {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto p-0">
-        <Calendar mode="single" onSelect={setDate} selected={date} />
+        <Calendar mode="single" selected={date} onSelect={setDate} />
       </PopoverContent>
     </Popover>
   );
@@ -79,8 +79,8 @@ function DatePickerWithRange(): JSX.Element {
           defaultMonth={date?.from}
           mode="range"
           numberOfMonths={isMobile ? 1 : 2}
-          onSelect={setDate}
           selected={date}
+          onSelect={setDate}
         />
       </PopoverContent>
     </Popover>

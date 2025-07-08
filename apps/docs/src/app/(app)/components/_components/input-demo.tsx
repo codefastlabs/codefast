@@ -57,7 +57,7 @@ export function InputDemo(): JSX.Element {
         <Input disabled placeholder="Disabled" />
       </div>
       <div className="">
-        <Input defaultValue="Read Only" placeholder="Read Only" readOnly />
+        <Input readOnly defaultValue="Read Only" placeholder="Read Only" />
       </div>
       <div className="">
         <Input placeholder="Email" prefix={<MailIcon />} type="email" />

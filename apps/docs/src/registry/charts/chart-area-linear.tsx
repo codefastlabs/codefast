@@ -60,12 +60,12 @@ export function ChartAreaLinear(): JSX.Element {
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel indicator="dot" />} cursor={false} />
             <Area
+              aria-label="Desktop visitors trend line"
               dataKey="desktop"
               fill="var(--color-desktop)"
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
               type="linear"
-              aria-label="Desktop visitors trend line"
             />
           </AreaChart>
         </ChartContainer>

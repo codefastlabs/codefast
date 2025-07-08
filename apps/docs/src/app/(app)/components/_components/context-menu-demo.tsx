@@ -80,7 +80,7 @@ export function ContextMenuDemo(): JSX.Element {
           Show Full URLs
         </ContextMenuCheckboxItem>
         <ContextMenuSeparator />
-        <ContextMenuRadioGroup onValueChange={setSelectedPerson} value={selectedPerson}>
+        <ContextMenuRadioGroup value={selectedPerson} onValueChange={setSelectedPerson}>
           <ContextMenuLabel inset>People</ContextMenuLabel>
           <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
           <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>

@@ -111,7 +111,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
         <SidebarGroup>
           <SidebarMenu>
             {data.navMain.map((item, index) => (
-              <Collapsible className="group/collapsible" defaultOpen={index === 1} key={item.title}>
+              <Collapsible key={item.title} className="group/collapsible" defaultOpen={index === 1}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>

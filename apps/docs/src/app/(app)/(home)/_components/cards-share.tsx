@@ -112,7 +112,7 @@ export function CardsShare(): JSX.Element {
           <Label className="sr-only" htmlFor={`${id}-link`}>
             Link
           </Label>
-          <Input id={`${id}-link`} readOnly value={documentLink} />
+          <Input readOnly id={`${id}-link`} value={documentLink} />
           <Button className="shrink-0" onClick={handleCopyLink}>
             Copy Link
           </Button>

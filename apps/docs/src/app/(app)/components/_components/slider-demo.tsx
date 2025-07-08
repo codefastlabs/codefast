@@ -40,7 +40,7 @@ function SliderControlled(): JSX.Element {
         <Label htmlFor={`${id}-slider-demo-temperature`}>Temperature</Label>
         <span className="text-muted-foreground text-sm">{value.join(", ")}</span>
       </div>
-      <Slider id={`${id}-slider-demo-temperature`} max={1} min={0} onValueChange={setValue} step={0.1} value={value} />
+      <Slider id={`${id}-slider-demo-temperature`} max={1} min={0} step={0.1} value={value} onValueChange={setValue} />
     </div>
   );
 }

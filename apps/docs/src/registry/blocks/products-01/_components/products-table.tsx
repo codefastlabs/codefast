@@ -176,7 +176,7 @@ export function ProductsTable({
               <PaginationLink href="/">1</PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="/" isActive>
+              <PaginationLink isActive href="/">
                 2
               </PaginationLink>
             </PaginationItem>

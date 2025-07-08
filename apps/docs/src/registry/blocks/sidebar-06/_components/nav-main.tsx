@@ -48,7 +48,7 @@ export function NavMain({
                   side={isMobile ? "bottom" : "right"}
                 >
                   {item.items.map((navItem) => (
-                    <DropdownMenuItem asChild key={navItem.title}>
+                    <DropdownMenuItem key={navItem.title} asChild>
                       <Link href={navItem.url}>{navItem.title}</Link>
                     </DropdownMenuItem>
                   ))}

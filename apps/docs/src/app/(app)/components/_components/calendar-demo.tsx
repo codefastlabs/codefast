@@ -30,10 +30,10 @@ export function CalendarDemo(): JSX.Element {
         <Calendar className="rounded-md border shadow-sm" />
       </div>
       <div className="">
-        <Calendar className="rounded-md border shadow-sm" showWeekNumber />
+        <Calendar showWeekNumber className="rounded-md border shadow-sm" />
       </div>
       <div className="">
-        <Calendar className="rounded-md border shadow-sm" mode="single" onSelect={setDate} selected={date} />
+        <Calendar className="rounded-md border shadow-sm" mode="single" selected={date} onSelect={setDate} />
       </div>
       <div className="col-span-full">
         <Calendar
@@ -42,20 +42,20 @@ export function CalendarDemo(): JSX.Element {
           disabled={(dateValue) => dateValue > new Date() || dateValue < new Date("1900-01-01")}
           mode="range"
           numberOfMonths={2}
-          onSelect={setDateRange}
           selected={dateRange}
+          onSelect={setDateRange}
         />
       </div>
       <div className="">
         <Calendar
+          showWeekNumber
           captionLayout="dropdown"
           className="rounded-md border shadow-sm"
           defaultMonth={dateRange?.from}
           disabled={(dateValue) => dateValue > new Date() || dateValue < new Date("1900-01-01")}
           mode="range"
-          onSelect={setDateRange2}
           selected={dateRange2}
-          showWeekNumber
+          onSelect={setDateRange2}
         />
       </div>
       <div className="col-span-full">
@@ -64,8 +64,8 @@ export function CalendarDemo(): JSX.Element {
           defaultMonth={range?.from}
           mode="range"
           numberOfMonths={3}
-          onSelect={setRange}
           selected={range}
+          onSelect={setRange}
         />
       </div>
     </GridWrapper>

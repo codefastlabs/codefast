@@ -57,6 +57,7 @@ export function SheetDemo(): JSX.Element {
         <div className="grid grid-cols-3 gap-1">
           {SIDES.map((side) => (
             <div
+              key={side}
               className={cn(
                 "flex items-center justify-center",
                 side === "top" && "col-start-2",
@@ -64,7 +65,6 @@ export function SheetDemo(): JSX.Element {
                 side === "bottom" && "col-start-2 row-start-3",
                 side === "left" && "row-start-2",
               )}
-              key={side}
             >
               <Sheet>
                 <SheetTrigger asChild>
@@ -85,7 +85,7 @@ export function SheetDemo(): JSX.Element {
                   <SheetBody className="overflow-y-auto border-y px-4 text-sm">
                     <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
                     {Array.from({ length: 10 }).map((_, index) => (
-                      <p className="mb-4 leading-normal" key={index}>
+                      <p key={index} className="mb-4 leading-normal">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
                         labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
                         laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in

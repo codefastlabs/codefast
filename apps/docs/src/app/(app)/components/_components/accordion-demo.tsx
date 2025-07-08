@@ -8,7 +8,7 @@ export function AccordionDemo(): JSX.Element {
   return (
     <GridWrapper>
       <div className="">
-        <Accordion className="w-full" collapsible type="single">
+        <Accordion collapsible className="w-full" type="single">
           <AccordionItem value="item-1">
             <AccordionTrigger>
               Is it accessible?
@@ -84,7 +84,7 @@ export function AccordionDemo(): JSX.Element {
         </Accordion>
       </div>
       <div className="">
-        <Accordion className="w-full" collapsible type="single">
+        <Accordion collapsible className="w-full" type="single">
           <AccordionItem value="item-1">
             <AccordionTrigger>
               What are the key considerations when implementing a comprehensive enterprise-level authentication system?

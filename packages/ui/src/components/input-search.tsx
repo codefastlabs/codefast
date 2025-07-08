@@ -58,11 +58,11 @@ function InputSearch({
       <InputPrimitive.Field
         className={input()}
         data-slot="input-search-item"
+        type="search"
+        value={value ?? ""}
         onChange={(event) => {
           setValue(event.target.value);
         }}
-        type="search"
-        value={value ?? ""}
         {...props}
       />
       {value ? (
@@ -71,12 +71,12 @@ function InputSearch({
           className="focus-visible:not-disabled:bg-input size-7 rounded-full focus-visible:ring-0"
           data-slot="input-search-clear"
           disabled={disabled ?? readOnly}
-          onClick={() => {
-            setValue("");
-          }}
           size="icon"
           suffix={<XIcon />}
           variant="ghost"
+          onClick={() => {
+            setValue("");
+          }}
         />
       ) : null}
     </InputPrimitive.Root>
