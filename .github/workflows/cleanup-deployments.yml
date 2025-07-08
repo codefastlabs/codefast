@@ -1,4 +1,4 @@
-name: Cleanup Stuck Deployments
+name: 🧹 Deployment Cleanup Utility
 
 on:
   workflow_dispatch: # Allows manual execution from the GitHub interface
@@ -9,10 +9,10 @@ permissions:
 
 jobs:
   cleanup:
-    name: Cleanup Pending Deployments
+    name: 🗑️ Remove Stuck Deployments
     runs-on: ubuntu-latest
     steps:
-      - name: Delete Pending Deployments
+      - name: 🧹 Clean Up Pending Deployments
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
