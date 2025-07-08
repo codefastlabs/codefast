@@ -38,7 +38,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild size="lg">
-              <Link href="#">
+              <Link href="/">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <CommandIcon className="size-4" />
                 </div>

@@ -615,7 +615,7 @@ function NumberStepperButton({
     const atMin = min !== undefined && value !== undefined && value <= min;
     const atMax = max !== undefined && value !== undefined && value >= max;
 
-    return disabled || atMin || atMax;
+    return (disabled ?? atMin) || atMax;
   }, [min, max, value, disabled]);
 
   /**
@@ -791,7 +791,7 @@ function getNumberFormatSeparators(locale?: string): NumberFormatSeparators {
  * Normalizes an input value by removing formatting characters
  *
  * @param value - The input string to normalize
- * @param thousandSeparator - The thousand separator character to remove
+ * @param thousandSeparator - The thousand-separator character to remove
  * @param decimalSeparator - The decimal separator to convert to standard dot notation
  * @returns Normalized string value ready for numeric conversion
  */

@@ -20,7 +20,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">): JSX.
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor={`${id}-password`}>Password</Label>
-            <Link className="ml-auto text-sm underline-offset-4 hover:underline" href="#">
+            <Link className="ml-auto text-sm underline-offset-4 hover:underline" href="/">
               Forgot your password?
             </Link>
           </div>
@@ -45,7 +45,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">): JSX.
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <Link className="underline underline-offset-4" href="#">
+        <Link className="underline underline-offset-4" href="/">
           Sign up
         </Link>
       </div>

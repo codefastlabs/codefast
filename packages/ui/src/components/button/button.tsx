@@ -33,13 +33,13 @@ function Button({
       className={buttonVariants({ className, size, variant })}
       data-slot="button"
       data-variant={variant}
-      disabled={loading || disabled}
+      disabled={loading ?? disabled}
       type="button"
       {...props}
     >
-      {loading && loaderPosition === "prefix" ? spinner || <Spinner /> : prefix}
+      {loading && loaderPosition === "prefix" ? (spinner ?? <Spinner />) : prefix}
       {children}
-      {loading && loaderPosition === "suffix" ? spinner || <Spinner /> : suffix}
+      {loading && loaderPosition === "suffix" ? (spinner ?? <Spinner />) : suffix}
     </button>
   );
 }

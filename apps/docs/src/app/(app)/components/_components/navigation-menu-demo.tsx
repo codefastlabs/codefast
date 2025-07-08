@@ -113,19 +113,19 @@ export function NavigationMenuDemo(): JSX.Element {
               <ul className="grid w-[300px] gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link href="#">
+                    <Link href="/components">
                       <div className="font-medium">Components</div>
                       <div className="text-muted-foreground">Browse all components in the library.</div>
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link href="#">
+                    <Link href="/documentation">
                       <div className="font-medium">Documentation</div>
                       <div className="text-muted-foreground">Learn how to use the library.</div>
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link href="#">
+                    <Link href="/blog">
                       <div className="font-medium">Blog</div>
                       <div className="text-muted-foreground">Read our latest blog posts.</div>
                     </Link>
@@ -140,13 +140,13 @@ export function NavigationMenuDemo(): JSX.Element {
               <ul className="grid w-[200px] gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link href="#">Components</Link>
+                    <Link href="/components">Components</Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link href="#">Documentation</Link>
+                    <Link href="/documentation">Documentation</Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link href="#">Blocks</Link>
+                    <Link href="/blocks">Blocks</Link>
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -158,19 +158,19 @@ export function NavigationMenuDemo(): JSX.Element {
               <ul className="grid w-[200px] gap-4">
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link className="flex-row items-center gap-2" href="#">
+                    <Link className="flex-row items-center gap-2" href="/backlog">
                       <CircleHelpIcon />
                       Backlog
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link className="flex-row items-center gap-2" href="#">
+                    <Link className="flex-row items-center gap-2" href="/todo">
                       <CircleIcon />
                       To Do
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
-                    <Link className="flex-row items-center gap-2" href="#">
+                    <Link className="flex-row items-center gap-2" href="/done">
                       <CircleCheckIcon />
                       Done
                     </Link>

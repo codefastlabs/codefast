@@ -78,7 +78,7 @@ export function SettingsDialog(): JSX.Element {
                     {data.nav.map((item) => (
                       <SidebarMenuItem key={item.name}>
                         <SidebarMenuButton asChild isActive={item.name === "Messages & media"}>
-                          <Link href="#">
+                          <Link href="/">
                             <item.icon />
                             <span>{item.name}</span>
                           </Link>
@@ -96,7 +96,7 @@ export function SettingsDialog(): JSX.Element {
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem className="hidden md:block">
-                      <BreadcrumbLink href="#">Settings</BreadcrumbLink>
+                      <BreadcrumbLink href="/">Settings</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator className="hidden md:block" />
                     <BreadcrumbItem>

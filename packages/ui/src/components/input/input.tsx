@@ -53,7 +53,7 @@ function Input({
       loading={loading}
       prefix={prefix}
       readOnly={readOnly}
-      spinner={spinner || <Spinner />}
+      spinner={spinner ?? <Spinner />}
       suffix={suffix}
     >
       <InputPrimitive.Field className={input()} data-slot="input-item" {...props} />

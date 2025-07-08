@@ -719,6 +719,7 @@ describe("input-number", () => {
         const id = useId();
         return (
           <div>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label htmlFor={`${id}-number-input`}>Number Input</label>
             <InputNumber data-testid="input-number" defaultValue={5} id={`${id}-number-input`}>
               <InputNumberDecrementButton data-testid="decrement-btn">-</InputNumberDecrementButton>

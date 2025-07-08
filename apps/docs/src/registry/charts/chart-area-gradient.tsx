@@ -76,6 +76,7 @@ export function ChartAreaGradient(): JSX.Element {
               </linearGradient>
             </defs>
             <Area
+              aria-label="Mobile visitors data"
               dataKey="mobile"
               fill={`url(#${id}-fillMobile)`}
               fillOpacity={0.4}
@@ -84,6 +85,7 @@ export function ChartAreaGradient(): JSX.Element {
               type="natural"
             />
             <Area
+              aria-label="Desktop visitors data"
               dataKey="desktop"
               fill={`url(#${id}-fillDesktop)`}
               fillOpacity={0.4}

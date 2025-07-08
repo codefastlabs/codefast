@@ -249,6 +249,7 @@ export function ChartAreaInteractive(): JSX.Element {
               defaultIndex={isMobile ? -1 : 10}
             />
             <Area
+              aria-label="Mobile visitors data"
               dataKey="mobile"
               fill={`url(#${id}-fillMobile)`}
               stackId="a"
@@ -256,6 +257,7 @@ export function ChartAreaInteractive(): JSX.Element {
               type="natural"
             />
             <Area
+              aria-label="Desktop visitors data"
               dataKey="desktop"
               fill={`url(#${id}-fillDesktop)`}
               stackId="a"

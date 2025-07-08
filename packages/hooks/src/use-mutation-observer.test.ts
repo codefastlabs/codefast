@@ -21,7 +21,7 @@ describe("useMutationObserver", () => {
     // MutationObserver callbacks are asynchronous
     setTimeout(() => {
       // Assert that the callback was called
-      expect(callback).toHaveBeenCalled();
+      expect(callback).toHaveBeenCalledWith(expect.any(Array), expect.any(MutationObserver));
     }, 0);
   });
 
@@ -38,6 +38,6 @@ describe("useMutationObserver", () => {
     unmount();
 
     // Assert that disconnect was called
-    expect(disconnectSpy).toHaveBeenCalled();
+    expect(disconnectSpy).toHaveBeenCalledWith();
   });
 });

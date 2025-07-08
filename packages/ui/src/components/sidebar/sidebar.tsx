@@ -77,6 +77,7 @@ function SidebarProvider({
         setIsOpen(openState);
       }
 
+       
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
     [setOpenProperty, open],

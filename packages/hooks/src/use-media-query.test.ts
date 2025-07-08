@@ -14,11 +14,17 @@ const setupMockMatchMedia = (
     media: string;
     onchange: null;
     removeEventListener: jest.Mock;
+    addListener: jest.Mock;
+    removeListener: jest.Mock;
+    dispatchEvent: jest.Mock;
   };
   mockRemoveEventListener: jest.Mock;
 } => {
   const mockAddEventListener = jest.fn();
   const mockRemoveEventListener = jest.fn();
+  const mockAddListener = jest.fn();
+  const mockRemoveListener = jest.fn();
+  const mockDispatchEvent = jest.fn();
 
   const mockMediaQueryList = {
     addEventListener: mockAddEventListener,
@@ -26,9 +32,16 @@ const setupMockMatchMedia = (
     media: "",
     onchange: null,
     removeEventListener: mockRemoveEventListener,
+    addListener: mockAddListener,
+    removeListener: mockRemoveListener,
+    dispatchEvent: mockDispatchEvent,
   };
 
-  jest.spyOn(globalThis, "matchMedia").mockImplementation(() => mockMediaQueryList);
+  // Ensure matchMedia exists on globalThis for the test environment
+  Object.defineProperty(globalThis, "matchMedia", {
+    writable: true,
+    value: jest.fn().mockImplementation(() => mockMediaQueryList),
+  });
 
   return { mockAddEventListener, mockMediaQueryList, mockRemoveEventListener };
 };
@@ -76,7 +89,7 @@ describe("useMediaQuery", () => {
 
     const { unmount } = renderHook(() => useMediaQuery("(min-width: 600px)"));
 
-    expect(mockMediaQueryList.addEventListener).toHaveBeenCalled();
+    expect(mockMediaQueryList.addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
 
     unmount();
     expect(mockRemoveEventListener).toHaveBeenCalledWith("change", expect.any(Function));

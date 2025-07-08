@@ -19,11 +19,15 @@ describe("useAnimatedValue", () => {
   const cancelAnimationFrameMock = jest.fn();
 
   // Mock for performance.now
-  let currentTime = 0;
-  const performanceNowMock = jest.fn(() => currentTime);
+  let currentTime: number;
+  let performanceNowMock: jest.Mock;
 
   beforeEach(() => {
     jest.useFakeTimers();
+
+    // Initialize mocks and time
+    currentTime = 0;
+    performanceNowMock = jest.fn(() => currentTime);
 
     // Store original functions
     originalRequestAnimationFrame = globalThis.requestAnimationFrame;
@@ -86,7 +90,7 @@ describe("useAnimatedValue", () => {
     rerender({ targetValue: 100, duration: 1000, animate: true });
 
     // After rerender, requestAnimationFrame should be called
-    expect(requestAnimationFrameMock).toHaveBeenCalled();
+    expect(requestAnimationFrameMock).toHaveBeenCalledWith(expect.any(Function));
 
     // Simulate the first animation frame at time 0
     act(() => {
@@ -137,7 +141,7 @@ describe("useAnimatedValue", () => {
 
     unmount();
 
-    expect(cancelAnimationFrameMock).toHaveBeenCalled();
+    expect(cancelAnimationFrameMock).toHaveBeenCalledWith(1);
   });
 
   test("stops animation when animate changes from true to false", () => {
@@ -167,7 +171,7 @@ describe("useAnimatedValue", () => {
 
     // Value should immediately become the target value
     expect(result.current).toBe(100);
-    expect(cancelAnimationFrameMock).toHaveBeenCalled();
+    expect(cancelAnimationFrameMock).toHaveBeenCalledWith(1);
   });
 
   test("changes the target value during animation", () => {
@@ -194,7 +198,7 @@ describe("useAnimatedValue", () => {
     rerender({ targetValue: 200, duration: 1000, animate: true });
 
     // Check that a new animation has started
-    expect(cancelAnimationFrameMock).toHaveBeenCalled();
+    expect(cancelAnimationFrameMock).toHaveBeenCalledWith(1);
     expect(requestAnimationFrameMock).toHaveBeenCalledTimes(3); // Initial + after each rerender
 
     // Continue the new animation

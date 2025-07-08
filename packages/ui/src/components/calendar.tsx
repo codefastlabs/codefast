@@ -32,6 +32,10 @@ function Chevron({ orientation, className, ...props }: ComponentProps<CustomComp
       return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
     }
 
+    case undefined: {
+      throw new Error("Not implemented yet: undefined case");
+    }
+
     default: {
       return <DotIcon className={cn("size-4", className)} {...props} />;
     }

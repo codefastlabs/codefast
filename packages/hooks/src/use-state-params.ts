@@ -18,13 +18,13 @@ export enum HistoryMethod {
  * Represents possible values for URL parameters.
  * Can be a boolean, null, number, string, or undefined.
  */
-export type UrlParamValue = boolean | null | number | string | undefined;
+export type UrlParameterValue = boolean | null | number | string | undefined;
 
 /**
  * Input format for URL parameters can be either an object of key-value pairs
  * or a single parameter name as a string.
  */
-export type ParamInput = Record<string, UrlParamValue> | string;
+export type ParameterInput = Record<string, UrlParameterValue> | string;
 
 /**
  * Interface representing the return value of the useStateParams hook.
@@ -36,7 +36,7 @@ export interface StateParamsHookResult {
    * @param paramInput - Either an object of key-value pairs or a single parameter name
    * @param value - The value to set when paramInput is a string (parameter name)
    */
-  push: (parameterInput: ParamInput, value?: UrlParamValue) => void;
+  push: (parameterInput: ParameterInput, value?: UrlParameterValue) => void;
 
   /**
    * Replaces the current history entry with updated URL parameters.
@@ -44,7 +44,7 @@ export interface StateParamsHookResult {
    * @param paramInput - Either an object of key-value pairs or a single parameter name
    * @param value - The value to set when paramInput is a string (parameter name)
    */
-  replace: (parameterInput: ParamInput, value?: UrlParamValue) => void;
+  replace: (parameterInput: ParameterInput, value?: UrlParameterValue) => void;
 }
 
 /**
@@ -71,7 +71,7 @@ export function updateBrowserHistory(urlParams: URLSearchParams, method: History
  * @param params - The URLSearchParams object to be updated
  * @param newParams - An object containing key-value pairs to set in the URLSearchParams object
  */
-export function setUrlParams(params: URLSearchParams, newParams: Record<string, UrlParamValue>): void {
+export function setUrlParams(params: URLSearchParams, newParams: Record<string, UrlParameterValue>): void {
   for (const [key, value] of Object.entries(newParams)) {
     if (value) {
       params.set(key, value.toString());
@@ -87,7 +87,7 @@ export function setUrlParams(params: URLSearchParams, newParams: Record<string, 
  * @param newParams - An object where keys are parameter names and values are the corresponding new values to set
  * @param method - The method to use to update the browser history
  */
-export function updateUrlParams(newParams: Record<string, UrlParamValue>, method: HistoryMethod): void {
+export function updateUrlParams(newParams: Record<string, UrlParameterValue>, method: HistoryMethod): void {
   const params = new URLSearchParams(globalThis.location.search);
 
   setUrlParams(params, newParams);
@@ -107,11 +107,14 @@ export function useStateParams(): StateParamsHookResult {
    * @param value - The value to use when paramInput is a string
    * @param method - The history method to use (push or replace)
    */
-  const updateParams = useCallback((parameterInput: ParamInput, value: UrlParamValue, method: HistoryMethod) => {
-    const newParams = typeof parameterInput === "object" ? parameterInput : { [parameterInput]: value };
+  const updateParams = useCallback(
+    (parameterInput: ParameterInput, value: UrlParameterValue, method: HistoryMethod) => {
+      const newParams = typeof parameterInput === "object" ? parameterInput : { [parameterInput]: value };
 
-    updateUrlParams(newParams, method);
-  }, []);
+      updateUrlParams(newParams, method);
+    },
+    [],
+  );
 
   return {
     push: (parameterInput, value) => {

@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { fontVariables } from "@/lib/fonts";
 import { META_THEME_COLORS, siteConfig } from "@/lib/site";
 
+
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -77,6 +78,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `try{"dark"!==localStorage.theme&&("theme"in localStorage&&"system"!==localStorage.theme||!window.matchMedia("(prefers-color-scheme: dark)").matches)||document.querySelector('meta[name="theme-color"]').setAttribute("content","${META_THEME_COLORS.dark}")}catch(e){}`,
           }}
+          id="theme-color-script"
           strategy="afterInteractive"
         />
       </body>

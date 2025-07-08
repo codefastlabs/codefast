@@ -24,7 +24,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor={`${id}-password`}>Password</Label>
-                  <Link className="ml-auto text-sm underline-offset-2 hover:underline" href="#">
+                  <Link className="ml-auto text-sm underline-offset-2 hover:underline" href="/">
                     Forgot your password?
                   </Link>
                 </div>
@@ -70,7 +70,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link className="underline underline-offset-4" href="#">
+                <Link className="underline underline-offset-4" href="/">
                   Sign up
                 </Link>
               </div>
@@ -87,8 +87,8 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary *:[a]:underline *:[a]:underline-offset-4 text-balance text-center text-xs">
-        By clicking continue, you agree to our <Link href="#">Terms of Service</Link> and{" "}
-        <Link href="#">Privacy Policy</Link>.
+        By clicking continue, you agree to our <Link href="/">Terms of Service</Link> and{" "}
+        <Link href="/">Privacy Policy</Link>.
       </div>
     </div>
   );
