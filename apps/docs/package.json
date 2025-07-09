@@ -8,8 +8,8 @@
     "clean": "rm -rf .next",
     "dev": "next dev --turbopack",
     "start": "next start --turbopack",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix"
+    "lint": "TIMING=1 next lint",
+    "lint:fix": "TIMING=1 next lint --fix"
   },
   "dependencies": {
     "@codefast/eslint-config": "workspace:*",
