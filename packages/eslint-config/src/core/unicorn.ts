@@ -43,6 +43,7 @@ export const unicornRules: Linter.Config[] = [
       "unicorn/prevent-abbreviations": [
         "error",
         {
+          checkFilenames: false,
           replacements: {
             props: false,
             ref: false,
@@ -53,9 +54,6 @@ export const unicornRules: Linter.Config[] = [
             prod: false,
             temp: false,
             tmp: false,
-          },
-          allowList: {
-            utils: false,
           },
         },
       ],
