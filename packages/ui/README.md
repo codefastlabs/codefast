@@ -10,12 +10,6 @@ Install **@codefast/ui** via **pnpm**:
 pnpm add @codefast/ui
 ```
 
-Or using **npm**:
-
-```sh
-npm install @codefast/ui
-```
-
 ## Configuration
 
 ### Global CSS configuration

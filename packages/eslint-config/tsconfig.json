@@ -1,5 +1,5 @@
 {
-  "extends": "@codefast/typescript-config/react.json",
+  "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
