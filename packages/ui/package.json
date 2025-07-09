@@ -122,6 +122,7 @@
     "jest-environment-jsdom": "^30.0.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
