@@ -55,6 +55,9 @@ export const unicornRules: Linter.Config[] = [
             temp: false,
             tmp: false,
           },
+          allowList: {
+            utils: false,
+          },
         },
       ],
       "unicorn/throw-new-error": "error",
