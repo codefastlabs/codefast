@@ -10,6 +10,8 @@ import type { Linter } from "eslint";
 export const nextAppPreset: Linter.Config[] = composeConfig(
   reactAppPresetCore,
   nextRules,
+
   nodeEnvironment,
+
   prettierRules,
 );
