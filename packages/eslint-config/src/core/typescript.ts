@@ -3,9 +3,8 @@ import { configs as tseslintConfigs } from "typescript-eslint";
 import type { Linter } from "eslint";
 
 export const typescriptRules: Linter.Config[] = [
-  ...(tseslintConfigs.recommended as Linter.Config[]),
-  ...(tseslintConfigs.stylistic as Linter.Config[]),
-
+  ...(tseslintConfigs.strictTypeChecked as Linter.Config[]),
+  ...(tseslintConfigs.stylisticTypeChecked as Linter.Config[]),
   {
     files: ["**/*.{ts,mts,cts,tsx}"],
     languageOptions: {
@@ -46,12 +45,22 @@ export const typescriptRules: Linter.Config[] = [
   {
     files: ["**/*.{ts,mts,cts,tsx}"],
     rules: {
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
-      "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+        },
+      ],
       "@typescript-eslint/consistent-type-exports": "error",
       "@typescript-eslint/method-signature-style": ["error", "property"],
       "@typescript-eslint/no-confusing-void-expression": "error",
