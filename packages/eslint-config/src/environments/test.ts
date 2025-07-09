@@ -2,7 +2,6 @@ import globals from "globals";
 
 import type { Linter } from "eslint";
 
-// Test environment configuration
 export const testEnvironment: Linter.Config[] = [
   {
     files: [
@@ -16,7 +15,7 @@ export const testEnvironment: Linter.Config[] = [
       globals: {
         ...globals.node,
         ...globals.jest,
-        // Common test globals
+
         describe: "readonly",
         it: "readonly",
         test: "readonly",
@@ -26,11 +25,11 @@ export const testEnvironment: Linter.Config[] = [
         afterAll: "readonly",
         afterEach: "readonly",
         jest: "readonly",
-        // Vitest globals (for compatibility)
+
         vi: "readonly",
-        // Mocha globals (for compatibility)
+
         suite: "readonly",
-        // Jasmine globals (for compatibility)
+
         spyOn: "readonly",
         jasmine: "readonly",
       },

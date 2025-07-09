@@ -2,7 +2,6 @@ import pluginUnicorn from "eslint-plugin-unicorn";
 
 import type { Linter } from "eslint";
 
-// Unicorn rules - promote modern best practices
 export const unicornRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
@@ -11,7 +10,7 @@ export const unicornRules: Linter.Config[] = [
     },
     rules: {
       ...pluginUnicorn.configs.recommended.rules,
-      // Customize some rules for a better developer experience
+
       "unicorn/filename-case": [
         "error",
         {

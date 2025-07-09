@@ -11,7 +11,7 @@ export const baseJavaScriptRules: Linter.Config[] = [
     plugins: { js },
     rules: {
       ...js.configs.recommended.rules,
-      // Modern JavaScript practices
+
       "prefer-const": "error",
       "no-var": "error",
       "prefer-arrow-callback": "error",

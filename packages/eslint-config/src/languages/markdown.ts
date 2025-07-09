@@ -2,7 +2,6 @@ import markdown from "@eslint/markdown";
 
 import type { ESLint, Linter } from "eslint";
 
-// Markdown file configuration
 export const markdownRules: Linter.Config[] = [
   {
     files: ["**/*.md"],

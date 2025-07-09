@@ -30,21 +30,18 @@ describe("baseJavaScriptRules", () => {
 
     const rules = jsConfig?.rules;
 
-    // Modern JavaScript practices
     expect(rules?.["prefer-const"]).toBe("error");
     expect(rules?.["no-var"]).toBe("error");
     expect(rules?.["prefer-arrow-callback"]).toBe("error");
     expect(rules?.["prefer-template"]).toBe("error");
     expect(rules?.["object-shorthand"]).toBe("error");
 
-    // Code quality
     expect(rules?.["no-console"]).toBe("warn");
     expect(rules?.["no-debugger"]).toBe("error");
     expect(rules?.["no-alert"]).toBe("error");
     expect(rules?.["consistent-return"]).toBe("error");
     expect(rules?.["eqeqeq"]).toEqual(["error", "always"]);
 
-    // Best practices
     expect(rules?.["no-duplicate-imports"]).toBe("error");
     expect(rules?.["no-useless-concat"]).toBe("error");
     expect(rules?.["no-useless-return"]).toBe("error");
@@ -83,7 +80,6 @@ describe("baseJavaScriptRules", () => {
     const jsConfig = baseJavaScriptRules.find((config) => config.rules);
     expect(jsConfig?.rules).toBeDefined();
 
-    // These are some common rules from @eslint/js recommended
     const rules = jsConfig?.rules;
     expect(rules).toHaveProperty("no-undef");
     expect(rules).toHaveProperty("no-unused-vars");
@@ -99,7 +95,6 @@ describe("baseJavaScriptRules", () => {
   it("should not have conflicting file patterns", () => {
     const fileConfigs = baseJavaScriptRules.filter((config) => config.files);
 
-    // Should have exactly one file configuration for JS files
     expect(fileConfigs.length).toBe(1);
     expect(fileConfigs[0].files).toEqual(["**/*.{js,mjs,cjs}"]);
   });

@@ -2,7 +2,6 @@ import pluginImport from "eslint-plugin-import";
 
 import type { Linter } from "eslint";
 
-// Import rules - better import management
 export const importRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
@@ -12,7 +11,7 @@ export const importRules: Linter.Config[] = [
     rules: {
       ...pluginImport.configs.recommended.rules,
       ...pluginImport.configs.typescript.rules,
-      // Static analysis
+
       "import/no-unresolved": "error",
       "import/named": "error",
       "import/default": "error",
@@ -28,7 +27,6 @@ export const importRules: Linter.Config[] = [
       "import/no-relative-parent-imports": "off",
       "import/no-relative-packages": "error",
 
-      // Helpful warnings
       "import/export": "error",
       "import/no-named-as-default": "warn",
       "import/no-named-as-default-member": "warn",
@@ -64,14 +62,12 @@ export const importRules: Linter.Config[] = [
       "import/no-mutable-exports": "error",
       "import/no-unused-modules": "off",
 
-      // Module systems
       "import/unambiguous": "off",
       "import/no-commonjs": "off",
       "import/no-amd": "error",
       "import/no-nodejs-modules": "off",
       "import/no-import-module-exports": "error",
 
-      // Style guide
       "import/first": "error",
       "import/exports-last": "off",
       "import/no-duplicates": "error",

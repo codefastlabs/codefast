@@ -2,7 +2,6 @@ import json from "@eslint/json";
 
 import type { Linter } from "eslint";
 
-// JSON file configuration
 export const jsonRules: Linter.Config[] = [
   {
     files: ["**/*.json"],
