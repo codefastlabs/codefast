@@ -2,24 +2,9 @@ import type { Config } from "jest";
 
 const config: Config = {
   /**
-   * Configuration for collecting coverage information
-   */
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.test.ts", "!src/**/*.spec.ts", "!src/**/*.d.ts"],
-
-  /**
    * Indicates which provider should be used to instrument code for coverage
    */
   coverageProvider: "v8",
-
-  /**
-   * Extensions to treat as ESM
-   */
-  extensionsToTreatAsEsm: [".ts"],
-
-  /**
-   * File extensions Jest will process
-   */
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
 
   /**
    * Configuration for module name mapping used in module resolution.
@@ -29,16 +14,6 @@ const config: Config = {
   },
 
   /**
-   * Directories that Jest should scan for tests and modules
-   */
-  roots: ["<rootDir>/src"],
-
-  /**
-   * A list of paths to modules that run some code to configure or set up the testing framework before each test
-   */
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-
-  /**
    * The test environment that will be used for testing
    */
   testEnvironment: "node",
@@ -46,7 +21,12 @@ const config: Config = {
   /**
    * The glob patterns Jest uses to detect test files
    */
-  testMatch: ["**/*.test.[jt]s?(x)", "**/*.spec.[jt]s?(x)"],
+  testMatch: ["**/?(*.)+(test|spec|e2e).[jt]s?(x)"],
+
+  /**
+   * An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
+   */
+  testPathIgnorePatterns: ["/node_modules/", "/dist/", "<rootDir>/src/environments/test.ts"],
 
   /**
    * Configuration for transforming source files before testing
@@ -57,17 +37,11 @@ const config: Config = {
       "@swc/jest",
       {
         jsc: {
+          target: "es2021",
           parser: {
             syntax: "typescript",
             tsx: false,
-            decorators: false,
           },
-          target: "es2022",
-          loose: false,
-          externalHelpers: false,
-        },
-        module: {
-          type: "es6",
         },
       },
     ],
@@ -76,11 +50,8 @@ const config: Config = {
   /**
    * Specifies which files should be ignored during transformation
    * Prevents Jest from transforming files in the node_modules directory
-   * Except for ESM modules that need to be transformed
    */
-  transformIgnorePatterns: [
-    "/node_modules/(?!(@eslint/markdown|mdast-util-from-markdown|micromark|decode-named-character-reference|character-entities|unist-util-stringify-position|mdast-util-to-string|mdast-util-find-and-replace|escape-string-regexp|unist-util-is|unist-util-visit-parents|unist-util-visit)/)",
-  ],
+  transformIgnorePatterns: ["/node_modules/"],
 
   verbose: true,
 
