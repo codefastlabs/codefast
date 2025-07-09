@@ -323,6 +323,9 @@ importers:
       '@swc/jest':
         specifier: ^0.2.39
         version: 0.2.39(@swc/core@1.12.11(@swc/helpers@0.5.17))
+      '@types/node':
+        specifier: ^24.0.12
+        version: 24.0.12
       jest:
         specifier: ^30.0.4
         version: 30.0.4(@types/node@24.0.12)(ts-node@10.9.2(@swc/core@1.12.11(@swc/helpers@0.5.17))(@types/node@24.0.12)(typescript@5.8.3))

@@ -16,5 +16,5 @@ const MOBILE_BREAKPOINT = 768;
  * True if the screen width is less than 768px, false otherwise.
  */
 export function useIsMobile(): boolean {
-  return useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+  return useMediaQuery(`(max-width: ${(MOBILE_BREAKPOINT - 1).toString()}px)`);
 }

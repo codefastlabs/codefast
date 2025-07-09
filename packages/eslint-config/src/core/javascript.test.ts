@@ -40,7 +40,7 @@ describe("baseJavaScriptRules", () => {
     expect(rules?.["no-debugger"]).toBe("error");
     expect(rules?.["no-alert"]).toBe("error");
     expect(rules?.["consistent-return"]).toBe("error");
-    expect(rules?.["eqeqeq"]).toEqual(["error", "always"]);
+    expect(rules?.eqeqeq).toEqual(["error", "always"]);
 
     expect(rules?.["no-duplicate-imports"]).toBe("error");
     expect(rules?.["no-useless-concat"]).toBe("error");

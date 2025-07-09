@@ -78,7 +78,9 @@ function SidebarProvider({
       }
 
       // eslint-disable-next-line unicorn/no-document-cookie
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      document.cookie = `${SIDEBAR_COOKIE_NAME}=${String(openState)}; path=/; max-age=${String(
+        SIDEBAR_COOKIE_MAX_AGE,
+      )}`;
     },
     [setOpenProperty, open],
   );
@@ -618,7 +620,7 @@ function SidebarMenuSkeleton({
 }): JSX.Element {
   // Random width between 50 to 90%.
   const width = useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
+    return `${String(Math.floor(Math.random() * 40) + 50)}%`;
   }, []);
 
   return (

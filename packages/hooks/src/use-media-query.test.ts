@@ -74,8 +74,8 @@ describe("useMediaQuery", () => {
 
     act(() => {
       // Use an explicit type cast to ensure the correctness of the changeHandler type
-
-      const changeHandler = mockAddEventListener.mock.calls[0][1] as ChangeHandler;
+      const calls = mockAddEventListener.mock.calls as [string, ChangeHandler][];
+      const changeHandler = calls[0]?.[1];
 
       mockMediaQueryList.matches = true;
       changeHandler({ matches: true } as MediaQueryListEvent);

@@ -30,7 +30,7 @@ export function BlockViewerTree({ item, index }: TreeProps): JSX.Element {
           isActive={item.path === activeFile}
           style={
             {
-              "--index": `${index}rem`,
+              "--index": `${index.toString()}rem`,
             } as CSSProperties
           }
           onClick={() => {
@@ -55,7 +55,7 @@ export function BlockViewerTree({ item, index }: TreeProps): JSX.Element {
             className="pl-(--index) whitespace-nowrap rounded-none hover:bg-zinc-700 hover:text-white focus-visible:bg-zinc-700 focus-visible:text-white active:bg-zinc-700 active:text-white data-[active=true]:bg-zinc-700 data-[active=true]:text-white data-[state=open]:hover:bg-zinc-700 data-[state=open]:hover:text-white"
             style={
               {
-                "--index": `${index}rem`,
+                "--index": `${index.toString()}rem`,
               } as CSSProperties
             }
           >

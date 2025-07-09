@@ -280,7 +280,7 @@ async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile
  * @returns Promise resolving to the processed SourceFile object
  */
 async function createProcessedSourceFile(filePath: string, content: string): Promise<SourceFile> {
-  const cacheKey = `${filePath}:${content.length}`;
+  const cacheKey = `${filePath}:${content.length.toString()}`;
 
   if (sourceFileCache.has(cacheKey)) {
     const cached = sourceFileCache.get(cacheKey);

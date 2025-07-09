@@ -203,13 +203,13 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           );
         }}
       >
-        <Label className="sr-only" htmlFor={`${row.original.id}-target`}>
+        <Label className="sr-only" htmlFor={`${row.original.id.toString()}-target`}>
           Target
         </Label>
         <Input
           className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
           defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
+          id={`${row.original.id.toString()}-target`}
         />
       </form>
     ),
@@ -233,13 +233,13 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           );
         }}
       >
-        <Label className="sr-only" htmlFor={`${row.original.id}-limit`}>
+        <Label className="sr-only" htmlFor={`${row.original.id.toString()}-limit`}>
           Limit
         </Label>
         <Input
           className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
           defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
+          id={`${row.original.id.toString()}-limit`}
         />
       </form>
     ),
@@ -256,13 +256,13 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 
       return (
         <>
-          <Label className="sr-only" htmlFor={`${row.original.id}-reviewer`}>
+          <Label className="sr-only" htmlFor={`${row.original.id.toString()}-reviewer`}>
             Reviewer
           </Label>
           <Select>
             <SelectTrigger
               className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-              id={`${row.original.id}-reviewer`}
+              id={`${row.original.id.toString()}-reviewer`}
               size="sm"
             >
               <SelectValue placeholder="Assign reviewer" />
@@ -492,7 +492,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 Rows per page
               </Label>
               <Select
-                value={`${table.getState().pagination.pageSize}`}
+                value={table.getState().pagination.pageSize.toString()}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
                 }}
@@ -502,7 +502,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                    <SelectItem key={pageSize} value={pageSize.toString()}>
                       {pageSize}
                     </SelectItem>
                   ))}

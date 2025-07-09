@@ -10,6 +10,7 @@ const getCachedRegistryItem = cache(async (name: string) => {
   return getRegistryItem(name);
 });
 
+// eslint-disable-next-line @typescript-eslint/require-await
 const getCachedFileTree = cache(async (files: RegistryItemFile[]) => {
   return createFileTreeForRegistryItemFiles(files);
 });
