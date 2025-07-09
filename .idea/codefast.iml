@@ -52,6 +52,11 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/input-number/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/input/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/progress-circle/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/checkbox-group/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/input-number/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/input/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/progress-circle/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ui/coverage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
