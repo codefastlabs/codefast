@@ -34,7 +34,7 @@ export function SelectDemo(): JSX.Element {
           </SelectTrigger>
           <SelectContent>
             {Array.from({ length: 100 }).map((_, index) => (
-              <SelectItem key={index} value={`item-${index}`}>
+              <SelectItem key={index} value={`item-${index.toString()}`}>
                 Item {index}
               </SelectItem>
             ))}

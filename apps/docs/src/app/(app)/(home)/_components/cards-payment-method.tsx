@@ -121,7 +121,7 @@ export function CardsPaymentMethod(): JSX.Element {
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 10 }, (_, index) => (
-                  <SelectItem key={index} value={`${new Date().getFullYear() + index}`}>
+                  <SelectItem key={index} value={String(new Date().getFullYear() + index)}>
                     {new Date().getFullYear() + index}
                   </SelectItem>
                 ))}

@@ -110,7 +110,7 @@ function ProgressCircle({
       return customLabel({ value: displayValue });
     }
 
-    return `${displayValue}%`;
+    return `${String(displayValue)}%`;
   }, [customLabel, displayValue]);
 
   return (
@@ -122,7 +122,7 @@ function ProgressCircle({
             className={slots.indicator({ className: classNames?.indicator })}
             style={
               {
-                transitionDuration: `${animationDuration}ms`,
+                transitionDuration: `${String(animationDuration)}ms`,
                 transitionProperty: "stroke-dashoffset",
               } as CSSProperties
             }

@@ -1,81 +1,84 @@
 import { configs as tseslintConfigs } from "typescript-eslint";
 
 import type { Linter } from "eslint";
+import type { ConfigArray } from "typescript-eslint";
+
+/**
+ * TypeScript file patterns
+ */
+const TYPESCRIPT_FILES = ["**/*.{ts,mts,cts,tsx}"];
+
+/**
+ * Helper function to map typescript-eslint configs with default file patterns
+ */
+const mapConfigWithFiles = (config: ConfigArray[number]): Linter.Config =>
+  ({
+    ...(!config.files && config.rules && { files: TYPESCRIPT_FILES }),
+    ...config,
+  }) as Linter.Config;
+
+/**
+ * Custom TypeScript rules configuration
+ */
+const customTypescriptRules: Linter.RulesRecord = {
+  // Promise and async handling
+  "@typescript-eslint/no-misused-promises": [
+    "error",
+    {
+      checksVoidReturn: {
+        attributes: false,
+      },
+    },
+  ],
+  "@typescript-eslint/promise-function-async": "error",
+
+  // Code quality and safety
+  "@typescript-eslint/prefer-readonly": "error",
+  "@typescript-eslint/prefer-ts-expect-error": "error",
+  "@typescript-eslint/require-array-sort-compare": "error",
+  "@typescript-eslint/switch-exhaustiveness-check": "error",
+
+  // Variable and import handling
+  "@typescript-eslint/no-unused-vars": [
+    "warn",
+    {
+      argsIgnorePattern: "^_",
+    },
+  ],
+  "@typescript-eslint/explicit-function-return-type": "off",
+
+  // Type imports and exports
+  "@typescript-eslint/consistent-type-imports": [
+    "error",
+    {
+      prefer: "type-imports",
+    },
+  ],
+  "@typescript-eslint/consistent-type-exports": "error",
+  "@typescript-eslint/no-import-type-side-effects": "error",
+
+  // Code style and cleanup
+  "@typescript-eslint/method-signature-style": ["error", "property"],
+  "@typescript-eslint/no-unnecessary-qualifier": "error",
+  "@typescript-eslint/no-useless-empty-export": "error",
+};
 
 export const typescriptRules: Linter.Config[] = [
-  ...(tseslintConfigs.strictTypeChecked as Linter.Config[]),
-  ...(tseslintConfigs.stylisticTypeChecked as Linter.Config[]),
+  // Apply strict type-checked rules
+  ...tseslintConfigs.strictTypeChecked.map((config) => mapConfigWithFiles(config)),
+
+  // Apply stylistic type-checked rules
+  ...tseslintConfigs.stylisticTypeChecked.map((config) => mapConfigWithFiles(config)),
+
+  // Custom TypeScript configuration
   {
-    files: ["**/*.{ts,mts,cts,tsx}"],
+    files: TYPESCRIPT_FILES,
     languageOptions: {
       parserOptions: {
         projectService: true,
+        tsconfigRootDir: process.cwd(),
       },
     },
-    rules: {
-      "@typescript-eslint/prefer-nullish-coalescing": "error",
-      "@typescript-eslint/prefer-optional-chain": "error",
-      "@typescript-eslint/await-thenable": "error",
-      "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/no-misused-promises": [
-        "error",
-        {
-          checksVoidReturn: {
-            attributes: false,
-          },
-        },
-      ],
-      "@typescript-eslint/prefer-readonly": "error",
-      "@typescript-eslint/prefer-string-starts-ends-with": "error",
-      "@typescript-eslint/prefer-includes": "error",
-      "@typescript-eslint/prefer-for-of": "error",
-      "@typescript-eslint/prefer-function-type": "error",
-      "@typescript-eslint/prefer-literal-enum-member": "error",
-      "@typescript-eslint/prefer-reduce-type-parameter": "error",
-      "@typescript-eslint/prefer-return-this-type": "error",
-      "@typescript-eslint/prefer-ts-expect-error": "error",
-      "@typescript-eslint/promise-function-async": "error",
-      "@typescript-eslint/require-array-sort-compare": "error",
-      "@typescript-eslint/restrict-plus-operands": "error",
-      "@typescript-eslint/restrict-template-expressions": "error",
-      "@typescript-eslint/switch-exhaustiveness-check": "error",
-      "@typescript-eslint/unbound-method": "error",
-    },
-  },
-  {
-    files: ["**/*.{ts,mts,cts,tsx}"],
-    rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-        },
-      ],
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-non-null-assertion": "error",
-      "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        {
-          prefer: "type-imports",
-        },
-      ],
-      "@typescript-eslint/consistent-type-exports": "error",
-      "@typescript-eslint/method-signature-style": ["error", "property"],
-      "@typescript-eslint/no-confusing-void-expression": "error",
-      "@typescript-eslint/no-duplicate-enum-values": "error",
-      "@typescript-eslint/no-import-type-side-effects": "error",
-      "@typescript-eslint/no-meaningless-void-operator": "error",
-      "@typescript-eslint/no-mixed-enums": "error",
-      "@typescript-eslint/no-redundant-type-constituents": "error",
-      "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
-      "@typescript-eslint/no-unnecessary-condition": "error",
-      "@typescript-eslint/no-unnecessary-qualifier": "error",
-      "@typescript-eslint/no-unnecessary-type-arguments": "error",
-      "@typescript-eslint/no-unnecessary-type-assertion": "error",
-      "@typescript-eslint/no-useless-empty-export": "error",
-      "@typescript-eslint/non-nullable-type-assertion-style": "error",
-    },
+    rules: customTypescriptRules,
   },
 ];

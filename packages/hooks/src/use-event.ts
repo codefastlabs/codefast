@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 /**
  * Interface for the parameters of the useEvent hook.
  */
-export interface UseEventParams<T extends Event> {
+export interface UseEventParams {
   /**
    * Name of the event to listen for (e.g., 'click', 'resize').
    */
@@ -13,7 +13,7 @@ export interface UseEventParams<T extends Event> {
    * Handler function to call when the event is triggered.
    * @param event - The event object passed from the listener.
    */
-  handler: (event: T) => void;
+  handler: (event: Event) => void;
 
   /**
    * Element to attach the event listener to.
@@ -30,16 +30,12 @@ export interface UseEventParams<T extends Event> {
  * @param handler - Handler function to call when the event is triggered.
  * @param element - Element to attach the event listener to (defaults to window).
  */
-export function useEvent<T extends Event>(
-  eventName: string,
-  handler: (event: T) => void,
-  element: EventTarget = globalThis,
-): void {
+export function useEvent(eventName: string, handler: (event: Event) => void, element: EventTarget = globalThis): void {
   /**
    * Ref to store the handler function to avoid unnecessary re-renders
    * when the handler function changes reference but not behavior.
    */
-  const savedHandler = useRef<(event: T) => void>(null);
+  const savedHandler = useRef<(event: Event) => void>(null);
 
   /**
    * Update the ref.current value whenever the handler changes.
@@ -60,7 +56,7 @@ export function useEvent<T extends Event>(
      *
      * @param event - The event object from the listener.
      */
-    const eventListener = (event: T): void => {
+    const eventListener = (event: Event): void => {
       if (savedHandler.current) {
         savedHandler.current(event);
       }

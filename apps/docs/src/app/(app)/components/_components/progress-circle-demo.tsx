@@ -105,7 +105,7 @@ export function ProgressCircleDemo(): JSX.Element {
         <ProgressCircle size="lg" thickness="thin" value={progress} variant="destructive" />
       </div>
       <div className="">
-        <ProgressCircle showValue formatValue={(value) => `${value}/100`} size="xl" value={progress} />
+        <ProgressCircle showValue formatValue={(value) => `${value.toString()}/100`} size="xl" value={progress} />
       </div>
       <div className="">
         <ProgressCircle customLabel={CustomProgressLabel} size="xl" value={progress} />
