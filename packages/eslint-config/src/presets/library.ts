@@ -9,11 +9,11 @@ const libraryStrictRules: Linter.Config[] = [
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
     rules: {
       // Stricter rules for libraries
-      "no-console": "warn", // Libraries shouldn't log to the console
-      "@typescript-eslint/explicit-function-return-type": "warn", // Better API documentation
-      "@typescript-eslint/no-explicit-any": "error", // Type safety is crucial for libraries
-      "prefer-const": "error", // Consistent immutability patterns
-      "no-var": "error", // Modern JavaScript practices
+      "no-console": "warn",
+      "@typescript-eslint/explicit-function-return-type": "warn",
+      "@typescript-eslint/no-explicit-any": "error",
+      "prefer-const": "error",
+      "no-var": "error",
     },
   },
 ];

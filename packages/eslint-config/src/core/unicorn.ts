@@ -22,12 +22,12 @@ export const unicornRules: Linter.Config[] = [
           },
         },
       ],
-      "unicorn/no-array-reduce": "off", // Reduce is useful in many cases
-      "unicorn/no-null": "off", // Allow null for compatibility
-      "unicorn/no-process-exit": "off", // Not always appropriate
-      "unicorn/prefer-array-flat-map": "error", // Allow CommonJS when needed
-      "unicorn/prefer-array-some": "error", // Allow process.exit in Node.js apps
-      "unicorn/prefer-date-now": "error", // Use node: protocol for built-ins
+      "unicorn/no-array-reduce": "off",
+      "unicorn/no-null": "off",
+      "unicorn/no-process-exit": "off",
+      "unicorn/prefer-array-flat-map": "error",
+      "unicorn/prefer-array-some": "error",
+      "unicorn/prefer-date-now": "error",
       "unicorn/prefer-default-parameters": "error",
       "unicorn/prefer-includes": "error",
       "unicorn/prefer-math-trunc": "error",
@@ -45,15 +45,15 @@ export const unicornRules: Linter.Config[] = [
         "error",
         {
           replacements: {
-            props: false, // Allow 'props' in React
-            ref: false, // Allow 'ref' in React
-            params: false, // Allow 'params'
-            args: false, // Allow 'args'
-            env: false, // Allow 'env'
-            dev: false, // Allow 'dev'
-            prod: false, // Allow 'prod'
-            temp: false, // Allow 'temp'
-            tmp: false, // Allow 'tmp'
+            props: false,
+            ref: false,
+            params: false,
+            args: false,
+            env: false,
+            dev: false,
+            prod: false,
+            temp: false,
+            tmp: false,
           },
         },
       ],

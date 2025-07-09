@@ -62,7 +62,7 @@ export const importRules: Linter.Config[] = [
         },
       ],
       "import/no-mutable-exports": "error",
-      "import/no-unused-modules": "off", // Can be performance intensive
+      "import/no-unused-modules": "off",
 
       // Module systems
       "import/unambiguous": "off",
