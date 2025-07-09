@@ -15,7 +15,7 @@
     "check:outdated": "pnpm outdated --recursive",
     "clean": "turbo clean",
     "clean:cache": "pnpm store prune && turbo clean",
-    "clean:modules": "pnpm -r exec rm -rf node_modules dist .next && rm -rf node_modules pnpm-lock.yaml",
+    "clean:modules": "pnpm -r exec rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml",
     "deploy:preview": "vercel deploy --archive=tgz",
     "dev": "turbo run dev",
     "dev:docs": "turbo run dev --filter=@app/docs...",
@@ -55,7 +55,7 @@
     "tsx": "^4.20.3",
     "turbo": "^2.5.4"
   },
-  "packageManager": "pnpm@10.12.4",
+  "packageManager": "pnpm@10.13.1",
   "engines": {
     "node": ">=18.0.0"
   }

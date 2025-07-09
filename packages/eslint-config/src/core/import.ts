@@ -12,25 +12,33 @@ export const importRules: Linter.Config[] = [
       ...pluginImport.configs.recommended.rules,
       ...pluginImport.configs.typescript.rules,
 
-      "import/no-unresolved": "error",
-      "import/named": "error",
-      "import/default": "error",
-      "import/namespace": "error",
+      // These rules duplicate TypeScript checking and can be slow
+      "import/no-unresolved": "off",
+      "import/named": "off",
+      "import/default": "off",
+      "import/namespace": "off",
       "import/no-restricted-paths": "off",
       "import/no-absolute-path": "error",
       "import/no-dynamic-require": "warn",
       "import/no-internal-modules": "off",
       "import/no-webpack-loader-syntax": "error",
       "import/no-self-import": "error",
-      "import/no-cycle": ["error", { maxDepth: 10 }],
-      "import/no-useless-path-segments": ["error", { commonjs: true }],
+      // This rule is slow due to additional parsing - consider running only in CI
+      "import/no-cycle": "off",
+      "import/no-useless-path-segments": [
+        "error",
+        {
+          commonjs: true,
+        },
+      ],
       "import/no-relative-parent-imports": "off",
       "import/no-relative-packages": "error",
 
       "import/export": "error",
-      "import/no-named-as-default": "warn",
-      "import/no-named-as-default-member": "warn",
-      "import/no-deprecated": "warn",
+      // These rules are slow due to additional parsing - consider running only in CI
+      "import/no-named-as-default": "off",
+      "import/no-named-as-default-member": "off",
+      "import/no-deprecated": "off",
       "import/no-extraneous-dependencies": [
         "error",
         {
@@ -72,17 +80,8 @@ export const importRules: Linter.Config[] = [
       "import/exports-last": "off",
       "import/no-duplicates": "error",
       "import/no-namespace": "off",
-      "import/extensions": [
-        "error",
-        "ignorePackages",
-        {
-          js: "never",
-          mjs: "never",
-          jsx: "never",
-          ts: "never",
-          tsx: "never",
-        },
-      ],
+      // This rule can be slow due to disk checks - TypeScript handles extension checking
+      "import/extensions": "off",
       "import/order": [
         "error",
         {
@@ -109,7 +108,8 @@ export const importRules: Linter.Config[] = [
       "import/resolver": {
         typescript: {
           alwaysTryTypes: true,
-          project: ["./tsconfig.json", "./packages/*/tsconfig.json"],
+          // Use a single project reference to avoid glob performance issues
+          project: "./tsconfig.json",
         },
         node: {
           extensions: [".js", ".jsx", ".ts", ".tsx"],
