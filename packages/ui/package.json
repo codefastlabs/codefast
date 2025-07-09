@@ -107,7 +107,7 @@
     "@rsbuild/plugin-react": "^1.3.2",
     "@rslib/core": "^0.10.4",
     "@swc/core": "^1.12.11",
-    "@swc/jest": "^0.2.38",
+    "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

@@ -25,7 +25,7 @@
     "lint:fix": "turbo lint:fix",
     "package:install": "pnpm install",
     "package:reinstall": "pnpm clean && pnpm package:install && pnpm build:packages",
-    "package:update": "pnpm update --latest --recursive",
+    "package:update": "pnpm update --latest --interactive --recursive",
     "precommit": "lint-staged",
     "prepare": "simple-git-hooks",
     "reinstall": "pnpm run clean:modules && pnpm install",
@@ -36,7 +36,6 @@
     "test:coverage:ci": "turbo run test:coverage:ci",
     "test:watch": "turbo run test:watch",
     "type-check": "turbo run type-check",
-    "update:deps": "pnpm update --latest --interactive --recursive",
     "workspace:list": "pnpm list --depth=0"
   },
   "devDependencies": {
