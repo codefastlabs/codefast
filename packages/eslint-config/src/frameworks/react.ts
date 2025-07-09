@@ -3,7 +3,6 @@ import * as pluginReactHooks from "eslint-plugin-react-hooks";
 
 import type { Linter } from "eslint";
 
-// React framework configuration
 export const reactRules: Linter.Config[] = [
   {
     files: ["**/*.{jsx,tsx}"],

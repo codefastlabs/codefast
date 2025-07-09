@@ -6,7 +6,6 @@ import { prettierRules } from "@/utils/prettier";
 
 import type { Linter } from "eslint";
 
-// Next.js app preset - configuration for Next.js applications
 export const nextAppPreset: Linter.Config[] = composeConfig(
   reactAppPresetCore,
   nextRules,

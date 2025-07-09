@@ -15,7 +15,6 @@ import { tsdocRules } from "@/utils/tsdoc";
 
 import type { Linter } from "eslint";
 
-// Internal React app preset without prettier - for composition with other presets
 const reactAppPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
 
@@ -35,8 +34,6 @@ const reactAppPresetCore: Linter.Config[] = composeConfig(
   testEnvironment,
 );
 
-// React app preset - configuration for React applications
 export const reactAppPreset: Linter.Config[] = composeConfig(reactAppPresetCore, prettierRules);
 
-// Export the core preset for internal use by other presets
 export { reactAppPresetCore };

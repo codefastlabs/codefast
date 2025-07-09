@@ -2,7 +2,6 @@ import pluginJest from "eslint-plugin-jest";
 
 import type { Linter } from "eslint";
 
-// Jest rules - support testing with Jest
 export const jestRules: Linter.Config[] = [
   {
     files: [
@@ -17,7 +16,7 @@ export const jestRules: Linter.Config[] = [
     },
     rules: {
       ...pluginJest.configs.recommended.rules,
-      // Jest-specific rules for better testing practices
+
       "jest/consistent-test-it": ["error", { fn: "test" }],
       "jest/expect-expect": [
         "error",

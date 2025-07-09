@@ -101,7 +101,6 @@ describe("basePreset", () => {
       }
     }
 
-    // Some overlap might be expected for different rule sets, but let's check for exact duplicates
     expect(duplicates.length).toBeLessThan(basePreset.length);
   });
 
@@ -136,7 +135,6 @@ describe("basePreset", () => {
   });
 
   it("should have reasonable number of configurations", () => {
-    // Should have multiple configurations but not be excessive
     expect(basePreset.length).toBeGreaterThan(5);
     expect(basePreset.length).toBeLessThan(50);
   });

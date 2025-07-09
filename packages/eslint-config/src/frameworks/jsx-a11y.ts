@@ -2,7 +2,6 @@ import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
 import type { Linter } from "eslint";
 
-// JSX A11y rules - ensure accessibility for React
 export const jsxA11yRules: Linter.Config[] = [
   {
     files: ["**/*.{jsx,tsx}"],
@@ -11,7 +10,7 @@ export const jsxA11yRules: Linter.Config[] = [
     },
     rules: {
       ...pluginJsxA11y.configs.recommended.rules,
-      // Additional accessibility rules for better UX
+
       "jsx-a11y/accessible-emoji": "error",
       "jsx-a11y/alt-text": [
         "error",

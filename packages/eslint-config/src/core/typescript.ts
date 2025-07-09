@@ -2,12 +2,10 @@ import { configs as tseslintConfigs } from "typescript-eslint";
 
 import type { Linter } from "eslint";
 
-// TypeScript-specific rules with modern practices
 export const typescriptRules: Linter.Config[] = [
-  // Basic TypeScript rules for all TypeScript files
   ...(tseslintConfigs.recommended as Linter.Config[]),
   ...(tseslintConfigs.stylistic as Linter.Config[]),
-  // Type-checked rules only for TypeScript files with proper parser options
+
   {
     files: ["**/*.{ts,mts,cts,tsx}"],
     languageOptions: {
@@ -16,7 +14,6 @@ export const typescriptRules: Linter.Config[] = [
       },
     },
     rules: {
-      // Type-aware modern rules
       "@typescript-eslint/prefer-nullish-coalescing": "error",
       "@typescript-eslint/prefer-optional-chain": "error",
       "@typescript-eslint/await-thenable": "error",
@@ -49,7 +46,6 @@ export const typescriptRules: Linter.Config[] = [
   {
     files: ["**/*.{ts,mts,cts,tsx}"],
     rules: {
-      // Style and consistency rules
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-explicit-any": "error",

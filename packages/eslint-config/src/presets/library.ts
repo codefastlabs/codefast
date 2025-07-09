@@ -8,7 +8,6 @@ const libraryStrictRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
     rules: {
-      // Stricter rules for libraries
       "no-console": "warn",
       "@typescript-eslint/explicit-function-return-type": "warn",
       "@typescript-eslint/no-explicit-any": "error",
