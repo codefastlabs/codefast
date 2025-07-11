@@ -31,6 +31,12 @@ export const reactRules: Linter.Config[] = [
           ignore: ["cmdk-input-wrapper"],
         },
       ],
+      "react/no-unstable-nested-components": [
+        "error",
+        {
+          allowAsProps: false,
+        },
+      ],
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
     },
