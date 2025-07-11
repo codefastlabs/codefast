@@ -65,30 +65,26 @@ const items = [
 
 const FormSchema = z.object({
   username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    error: "Username must be at least 2 characters.",
   }),
   bio: z
     .string()
     .min(10, {
-      message: "Bio must be at least 10 characters.",
+      error: "Bio must be at least 10 characters.",
     })
     .max(160, {
-      message: "Bio must not be longer than 30 characters.",
+      error: "Bio must not be longer than 30 characters.",
     }),
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
+  email: z.email({ error: "Please select an email to display." }),
   type: z.enum(["all", "mentions", "none"], {
-    required_error: "You need to select a notification type.",
+    error: "You need to select a notification type.",
   }),
   mobile: z.boolean().default(false).optional(),
   items: z.array(z.string()).refine((value) => value.some(Boolean), {
-    message: "You have to select at least one item.",
+    error: "You have to select at least one item.",
   }),
   dob: z.date({
-    required_error: "A date of birth is required.",
+    error: "A date of birth is required.",
   }),
   marketing_emails: z.boolean(),
   security_emails: z.boolean().default(false).optional(),
