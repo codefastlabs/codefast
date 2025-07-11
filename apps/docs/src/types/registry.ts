@@ -25,7 +25,7 @@ export const registryItemSchema = z.object({
   component: componentTypeSchema,
   description: z.string(),
   files: z.array(registryItemFileSchema).optional(),
-  meta: z.record(z.unknown()).optional(),
+  meta: z.record(z.string(), z.unknown()).optional(),
   slug: z.string(),
   title: z.string(),
 });
