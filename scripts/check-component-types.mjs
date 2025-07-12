@@ -1,33 +1,77 @@
 import fs from "fs";
 import path from "path";
 
-const componentsDir = "packages/ui/src/components";
+const packagesDir = "packages";
 
 function checkComponentTypes() {
-  const components = fs.readdirSync(componentsDir);
+  const packages = fs.readdirSync(packagesDir);
   const results = [];
 
-  components.forEach((componentName) => {
-    const componentPath = path.join(componentsDir, componentName);
-    const stats = fs.statSync(componentPath);
+  packages.forEach((packageName) => {
+    const packagePath = path.join(packagesDir, packageName);
+    const stats = fs.statSync(packagePath);
 
-    if (stats.isDirectory()) {
-      // Check for a main component file
-      const possibleFiles = [
-        path.join(componentPath, `${componentName}.tsx`),
-        path.join(componentPath, "index.tsx"),
-        path.join(componentPath, "index.ts"),
-      ];
+    if (stats.isDirectory() && packageName !== ".DS_Store") {
+      // Determine where components are located in this package
+      let componentsToCheck = [];
 
-      let mainFile = null;
-      for (const file of possibleFiles) {
-        if (fs.existsSync(file)) {
-          mainFile = file;
-          break;
+      // For ui package, check components in src/components/
+      if (packageName === "ui") {
+        const uiComponentsDir = path.join(packagePath, "src", "components");
+        if (fs.existsSync(uiComponentsDir)) {
+          const uiComponents = fs.readdirSync(uiComponentsDir);
+          uiComponents.forEach((componentName) => {
+            const componentPath = path.join(uiComponentsDir, componentName);
+            const componentStats = fs.statSync(componentPath);
+            if (componentStats.isDirectory()) {
+              componentsToCheck.push({
+                name: componentName,
+                path: componentPath,
+                packageName: packageName
+              });
+            }
+          });
+        }
+      } else {
+        // For other packages, check if they have components directly in src/
+        const srcDir = path.join(packagePath, "src");
+        if (fs.existsSync(srcDir)) {
+          // Check if this package has component files (tsx files that aren't test files)
+          const srcFiles = fs.readdirSync(srcDir);
+          const hasComponentFiles = srcFiles.some(file =>
+            file.endsWith('.tsx') && !file.includes('.test.') && !file.includes('.spec.')
+          );
+
+          if (hasComponentFiles) {
+            componentsToCheck.push({
+              name: packageName,
+              path: srcDir,
+              packageName: packageName
+            });
+          }
         }
       }
 
-      if (mainFile) {
+      // Process each component found in this package
+      componentsToCheck.forEach((componentInfo) => {
+        const { name: componentName, path: componentPath, packageName: pkgName } = componentInfo;
+
+        // Check for a main component file
+        const possibleFiles = [
+          path.join(componentPath, `${componentName}.tsx`),
+          path.join(componentPath, "index.tsx"),
+          path.join(componentPath, "index.ts"),
+        ];
+
+        let mainFile = null;
+        for (const file of possibleFiles) {
+          if (fs.existsSync(file)) {
+            mainFile = file;
+            break;
+          }
+        }
+
+        if (mainFile) {
         const content = fs.readFileSync(mainFile, "utf8");
 
         // Extract exported components from export { ... } statements
@@ -117,19 +161,21 @@ function checkComponentTypes() {
         });
 
 
-        results.push({
-          component: componentName,
-          file: mainFile,
-          exportedComponents,
-          actualComponents,
-          exportedTypes,
-          componentTypeCorrespondence,
-          missingTypeExports,
-          falsePositiveTypeExports,
-          hasCorrespondenceIssues: missingTypeExports.length > 0 && actualComponents.length > 0,
-          hasFalsePositiveTypes: falsePositiveTypeExports.length > 0,
-        });
-      }
+          results.push({
+            package: pkgName,
+            component: componentName,
+            file: mainFile,
+            exportedComponents,
+            actualComponents,
+            exportedTypes,
+            componentTypeCorrespondence,
+            missingTypeExports,
+            falsePositiveTypeExports,
+            hasCorrespondenceIssues: missingTypeExports.length > 0 && actualComponents.length > 0,
+            hasFalsePositiveTypes: falsePositiveTypeExports.length > 0,
+          });
+        }
+      });
     }
   });
 
@@ -149,7 +195,7 @@ function checkComponentTypes() {
   console.log(`\nComponents with proper type correspondence (${componentsWithProperCorrespondence.length}):`);
   console.log("-----------------------------------------------------------");
   componentsWithProperCorrespondence.forEach((result) => {
-    console.log(`✓ ${result.component}`);
+    console.log(`✓ ${result.package}/${result.component}`);
     if (result.actualComponents.length > 0) {
       console.log(`  Components (filtered): ${result.actualComponents.join(", ")}`);
       console.log(`  Exported types: ${result.exportedTypes.join(", ")}`);
@@ -164,7 +210,7 @@ function checkComponentTypes() {
   console.log(`\nComponents with correspondence issues (${componentsWithCorrespondenceIssues.length}):`);
   console.log("----------------------------------------------------");
   componentsWithCorrespondenceIssues.forEach((result) => {
-    console.log(`✗ ${result.component}: ${result.file}`);
+    console.log(`✗ ${result.package}/${result.component}: ${result.file}`);
     console.log(`  Components (filtered): ${result.actualComponents.join(", ") || "None"}`);
     console.log(`  Exported types: ${result.exportedTypes.join(", ") || "None"}`);
 
@@ -190,7 +236,7 @@ function checkComponentTypes() {
   console.log(`\nComponents with false positive type exports (${componentsWithFalsePositiveTypes.length}):`);
   console.log("-------------------------------------------------------");
   componentsWithFalsePositiveTypes.forEach((result) => {
-    console.log(`⚠ ${result.component}: ${result.file}`);
+    console.log(`⚠ ${result.package}/${result.component}: ${result.file}`);
     console.log(`  Components (filtered): ${result.actualComponents.join(", ") || "None"}`);
     console.log(`  Exported types: ${result.exportedTypes.join(", ") || "None"}`);
 
