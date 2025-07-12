@@ -10,7 +10,7 @@ import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet";
-import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button-variants";
+import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button.variants";
 import { Skeleton } from "@/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
 import { cn } from "@/lib/utils";

@@ -1,4 +1,4 @@
-import { buttonVariants } from "@/components/button/button-variants";
+import { buttonVariants } from "@/components/button/button.variants";
 import { Spinner } from "@/components/spinner";
 
 import type { VariantProps } from "@/lib/utils";

@@ -3,7 +3,7 @@
 import { createContextScope } from "@radix-ui/react-context";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 
-import { scrollAreaScrollbarVariants } from "@/components/scroll-area/scroll-area-scrollbar-variants";
+import { scrollAreaScrollbarVariants } from "@/components/scroll-area/scroll-area-scrollbar.variants";
 import { cn } from "@/lib/utils";
 
 import type { VariantProps } from "@/lib/utils";
