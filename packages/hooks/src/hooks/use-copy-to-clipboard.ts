@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 
 export function useCopyToClipboard({ timeout = 2000, onCopy }: { onCopy?: () => void; timeout?: number } = {}): {

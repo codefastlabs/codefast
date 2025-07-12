@@ -1,17 +1,6 @@
 import { useEffect, useState } from "react";
 
 /**
- * Interface for the parameters of the useMediaQuery hook.
- */
-export interface UseMediaQueryParams {
-  /**
-   * CSS media query string to match against.
-   * Example: '(min-width: 600px)' or '(prefers-color-scheme: dark)'
-   */
-  query: string;
-}
-
-/**
  * Event handler type for media query list change events.
  * @param event - The media query list event containing match status.
  */
