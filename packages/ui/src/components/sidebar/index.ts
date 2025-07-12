@@ -1,2 +1,2 @@
 export * from "@/components/sidebar/sidebar";
-export * from "@/components/sidebar/sidebar-menu-button-variants";
+export * from "@/components/sidebar/sidebar-menu-button.variants";

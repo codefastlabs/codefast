@@ -1,4 +1,4 @@
-import { alertVariants } from "@/components/alert/alert-variants";
+import { alertVariants } from "@/components/alert/alert.variants";
 import { cn } from "@/lib/utils";
 
 import type { VariantProps } from "@/lib/utils";

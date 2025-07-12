@@ -1,2 +1,2 @@
 export * from "@/components/alert/alert";
-export * from "@/components/alert/alert-variants";
+export * from "@/components/alert/alert.variants";
