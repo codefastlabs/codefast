@@ -315,15 +315,34 @@ function processIndexFile(indexFilePath) {
 }
 
 /**
+ * Sort index files by depth (deepest first) to ensure nested index files are processed before parent index files
+ */
+function sortIndexFilesByDepth(indexFiles) {
+  return indexFiles.sort((a, b) => {
+    // Count path segments to determine depth
+    const depthA = a.split(path.sep).length;
+    const depthB = b.split(path.sep).length;
+
+    // Sort by depth descending (deepest first)
+    return depthB - depthA;
+  });
+}
+
+/**
  * Generate individual exports for all index files
  */
 function generateIndividualExports() {
   const indexFiles = findAllIndexFiles();
+
+  // Sort index files by depth (deepest first) to process nested files before parent files
+  const sortedIndexFiles = sortIndexFilesByDepth(indexFiles);
+
   const processedFiles = [];
 
   console.log(`Found ${indexFiles.length} index.ts files to analyze...`);
+  console.log(`Processing files in depth-first order (nested files first)...`);
 
-  for (const indexFile of indexFiles) {
+  for (const indexFile of sortedIndexFiles) {
     const result = processIndexFile(indexFile);
     if (result) {
       processedFiles.push(result);
