@@ -128,15 +128,17 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentPro
  * Component: CalendarRangeLabel
  * -------------------------------------------------------------------------- */
 
+interface CalendarRangeLabelProps {
+  date: DateRange | undefined;
+  formatStr?: string;
+  placeholder?: string;
+}
+
 function CalendarRangeLabel({
   date,
   formatStr: formatString = "LLL dd, y",
   placeholder = "Pick a date",
-}: {
-  date: DateRange | undefined;
-  formatStr?: string;
-  placeholder?: string;
-}): ReactNode {
+}: CalendarRangeLabelProps): ReactNode {
   if (!date?.from) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -160,15 +162,17 @@ function CalendarRangeLabel({
  * Component: CalendarLabel
  * -------------------------------------------------------------------------- */
 
+interface CalendarLabelProps {
+  date: Date | undefined;
+  formatStr?: string;
+  placeholder?: string;
+}
+
 function CalendarLabel({
   date,
   formatStr: formatString = "PPP",
   placeholder = "Pick a date",
-}: {
-  date: Date | undefined;
-  formatStr?: string;
-  placeholder?: string;
-}): ReactNode {
+}: CalendarLabelProps): ReactNode {
   if (!date) {
     return <span className="truncate">{placeholder}</span>;
   }
@@ -180,5 +184,5 @@ function CalendarLabel({
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { DateRange, Matcher } from "react-day-picker";
 export { Calendar, CalendarLabel, CalendarRangeLabel };
+export type { CalendarLabelProps, CalendarRangeLabelProps };

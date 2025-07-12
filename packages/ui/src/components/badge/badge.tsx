@@ -11,15 +11,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Badge
  * -------------------------------------------------------------------------- */
 
-function Badge({
-  className,
-  asChild,
-  variant,
-  ...props
-}: ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & {
-    asChild?: boolean;
-  }): JSX.Element {
+interface BadgeProps extends ComponentProps<"span">, VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
+
+function Badge({ className, asChild, variant, ...props }: BadgeProps): JSX.Element {
   const Component = asChild ? Slot : "span";
 
   return <Component className={badgeVariants({ className, variant })} data-slot="badge" {...props} />;
@@ -30,3 +26,5 @@ function Badge({
  * -------------------------------------------------------------------------- */
 
 export { Badge };
+
+export type { BadgeProps };

@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Box
  * -------------------------------------------------------------------------- */
 
-function Box({
-  asChild,
-  ...props
-}: ComponentProps<"div"> & {
+interface BoxProps extends ComponentProps<"div"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Box({ asChild, ...props }: BoxProps): JSX.Element {
   const Component = asChild ? Slot : "div";
 
   return <Component data-slot="box" {...props} />;
@@ -24,3 +23,4 @@ function Box({
  * -------------------------------------------------------------------------- */
 
 export { Box };
+export type { BoxProps };

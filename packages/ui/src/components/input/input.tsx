@@ -16,6 +16,26 @@ const { input, root } = inputVariants();
  * Component: Input
  * -------------------------------------------------------------------------- */
 
+interface InputProps
+  extends ComponentProps<typeof InputPrimitive.Root>,
+    Omit<ComponentProps<typeof InputPrimitive.Field>, "prefix" | "type">,
+    VariantProps<typeof inputVariants> {
+  type?:
+    | "date"
+    | "datetime-local"
+    | "email"
+    | "file"
+    | "month"
+    | "number"
+    | "password"
+    | "search"
+    | "tel"
+    | "text"
+    | "time"
+    | "url"
+    | "week";
+}
+
 function Input({
   className,
   disabled,
@@ -26,24 +46,7 @@ function Input({
   spinner,
   suffix,
   ...props
-}: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Field>, "prefix" | "type"> &
-  VariantProps<typeof inputVariants> & {
-    type?:
-      | "date"
-      | "datetime-local"
-      | "email"
-      | "file"
-      | "month"
-      | "number"
-      | "password"
-      | "search"
-      | "tel"
-      | "text"
-      | "time"
-      | "url"
-      | "week";
-  }): JSX.Element {
+}: InputProps): JSX.Element {
   return (
     <InputPrimitive.Root
       className={root({ className })}
@@ -77,3 +80,4 @@ const TextInput = Input;
  * -------------------------------------------------------------------------- */
 
 export { Input, TextInput };
+export type { InputProps };

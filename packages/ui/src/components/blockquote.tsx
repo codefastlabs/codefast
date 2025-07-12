@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Blockquote
  * -------------------------------------------------------------------------- */
 
-function Blockquote({
-  asChild,
-  ...props
-}: ComponentProps<"blockquote"> & {
+interface BlockquoteProps extends ComponentProps<"blockquote"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Blockquote({ asChild, ...props }: BlockquoteProps): JSX.Element {
   const Component = asChild ? Slot : "blockquote";
 
   return <Component data-slot="blockquote" {...props} />;
@@ -24,3 +23,4 @@ function Blockquote({
  * -------------------------------------------------------------------------- */
 
 export { Blockquote };
+export type { BlockquoteProps };
