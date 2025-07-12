@@ -269,12 +269,14 @@ function ProgressCircleProvider({
  * Component: ProgressCircle
  * ---------------------------------------------------------------------------*/
 
+type ProgressCircleProps = ComponentProps<"div">;
+
 /**
  * Root component for the progress circle
  *
  * Serves as a wrapper for other progress circle components.
  */
-function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ComponentProps<"div">>): ReactNode {
+function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleProps>): ReactNode {
   return <div {...props} />;
 }
 
@@ -446,4 +448,13 @@ export {
   ProgressCircleSVG as SVG,
   ProgressCircleTrack as Track,
   ProgressCircleValue as Value,
+};
+
+export type {
+  ProgressCircleProps,
+  ProgressCircleIndicatorProps,
+  ProgressCircleProviderProps,
+  ProgressCircleSVGProps,
+  ProgressCircleTrackProps,
+  ProgressCircleValueProps,
 };

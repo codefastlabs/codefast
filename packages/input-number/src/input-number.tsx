@@ -859,3 +859,10 @@ export {
   InputNumberIncrementButton,
   InputNumber as Root,
 };
+
+export type {
+  InputNumberProps,
+  InputNumberDecrementButtonProps,
+  InputNumberFieldProps,
+  InputNumberIncrementButtonProps,
+};
