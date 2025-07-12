@@ -19,64 +19,55 @@ function extractExportsFromFile(filePath) {
     const components = [];
     const types = [];
 
-    // Match export statements with improved regex
-    const lines = content.split("\n");
+    // Remove comments and normalize whitespace for better parsing
+    const cleanContent = content
+      .replace(/\/\*[\s\S]*?\*\//g, "") // Remove block comments
+      .replace(/\/\/.*$/gm, "") // Remove line comments
+      .replace(/\s+/g, " ") // Normalize whitespace
+      .trim();
 
-    for (const line of lines) {
-      const trimmedLine = line.trim();
+    // Match export type { ... } statements (multi-line support)
+    const typeExportRegex = /export\s+type\s*{\s*([^}]+)\s*}/g;
+    let typeMatch;
+    while ((typeMatch = typeExportRegex.exec(cleanContent)) !== null) {
+      const typeExports = typeMatch[1]
+        .split(",")
+        .map((exp) => exp.trim().split(" as ")[0].trim())
+        .filter((exp) => exp && exp.length > 0);
+      types.push(...typeExports);
+    }
 
-      // Skip comments and empty lines
-      if (trimmedLine.startsWith("//") || trimmedLine.startsWith("/*") || !trimmedLine) {
-        continue;
-      }
+    // Match export { ... } statements (multi-line support)
+    const namedExportRegex = /export\s*{\s*([^}]+)\s*}/g;
+    let namedMatch;
+    while ((namedMatch = namedExportRegex.exec(cleanContent)) !== null) {
+      const namedExports = namedMatch[1]
+        .split(",")
+        .map((exp) => exp.trim().split(" as ")[0].trim())
+        .filter((exp) => exp && exp.length > 0);
 
-      // Match export type { ... } statements
-      const typeExportMatch = trimmedLine.match(/export\s+type\s+{\s*([^}]+)\s*}/);
-      if (typeExportMatch) {
-        const typeExports = typeExportMatch[1]
-          .split(",")
-          .map((exp) => exp.trim().split(" as ")[0].trim())
-          .filter((exp) => exp && exp.length > 0);
-        types.push(...typeExports);
-        continue;
-      }
-
-      // Match export { ... } statements (components and non-type exports)
-      const namedExportMatch = trimmedLine.match(/export\s+{\s*([^}]+)\s*}/);
-      if (namedExportMatch) {
-        const namedExports = namedExportMatch[1]
-          .split(",")
-          .map((exp) => exp.trim().split(" as ")[0].trim())
-          .filter((exp) => exp && exp.length > 0);
-
-        // Separate types from components based on naming convention
-        for (const exp of namedExports) {
-          if (exp.endsWith("Props") || exp.endsWith("Config") || exp.endsWith("Api")) {
-            types.push(exp);
-          } else {
-            components.push(exp);
-          }
+      // Separate types from components based on naming convention
+      for (const exp of namedExports) {
+        if (exp.endsWith("Props") || exp.endsWith("Config") || exp.endsWith("Api")) {
+          types.push(exp);
+        } else {
+          components.push(exp);
         }
-        continue;
       }
+    }
 
-      // Match export const/function/class declarations (components)
-      const componentMatch = trimmedLine.match(/export\s+(?:const|function|class)\s+(\w+)/);
-      if (componentMatch) {
-        components.push(componentMatch[1]);
-        continue;
-      }
+    // Match export const/function/class declarations (components)
+    const componentRegex = /export\s+(?:const|function|class)\s+(\w+)/g;
+    let componentMatch;
+    while ((componentMatch = componentRegex.exec(cleanContent)) !== null) {
+      components.push(componentMatch[1]);
+    }
 
-      // Match export interface/type declarations (types)
-      const typeMatch = trimmedLine.match(/export\s+(?:interface|type)\s+(\w+)/);
-      if (typeMatch) {
-        types.push(typeMatch[1]);
-        continue;
-      }
-
-      // Match export default statements (we'll skip these for individual exports)
-      if (trimmedLine.match(/export\s+default/)) {
-      }
+    // Match export interface/type declarations (types)
+    const typeDeclarationRegex = /export\s+(?:interface|type)\s+(\w+)/g;
+    let typeDeclarationMatch;
+    while ((typeDeclarationMatch = typeDeclarationRegex.exec(cleanContent)) !== null) {
+      types.push(typeDeclarationMatch[1]);
     }
 
     return {
@@ -184,7 +175,7 @@ function resolveModulePath(modulePath, indexFilePath) {
     const relativePath = modulePath.replace("@/", "");
     const resolvedPath = path.join(srcDir, relativePath);
 
-    // First try index files in directory (most common case for components)
+    // First, try index files in the directory (the most common case for components)
     const extensions = [".ts", ".tsx", ".js", ".jsx"];
     for (const ext of extensions) {
       const indexPath = path.join(resolvedPath, "index" + ext);
@@ -193,7 +184,7 @@ function resolveModulePath(modulePath, indexFilePath) {
       }
     }
 
-    // Then try direct file with extensions
+    // Then try a direct file with extensions
     for (const ext of extensions) {
       const fullPath = resolvedPath + ext;
       if (fs.existsSync(fullPath)) {
@@ -206,7 +197,7 @@ function resolveModulePath(modulePath, indexFilePath) {
   if (modulePath.startsWith("./") || modulePath.startsWith("../")) {
     const resolvedPath = path.resolve(indexDir, modulePath);
 
-    // First try index files in directory
+    // First, try index files in the directory
     const extensions = [".ts", ".tsx", ".js", ".jsx"];
     for (const ext of extensions) {
       const indexPath = path.join(resolvedPath, "index" + ext);
@@ -215,7 +206,7 @@ function resolveModulePath(modulePath, indexFilePath) {
       }
     }
 
-    // Then try direct file with extensions
+    // Then try a direct file with extensions
     for (const ext of extensions) {
       const fullPath = resolvedPath + ext;
       if (fs.existsSync(fullPath)) {
@@ -225,35 +216,6 @@ function resolveModulePath(modulePath, indexFilePath) {
   }
 
   return null;
-}
-
-/**
- * Analyze a component directory and extract all exports
- */
-function analyzeComponentDirectory(componentPath) {
-  const exports = [];
-  const files = fs.readdirSync(componentPath);
-
-  for (const file of files) {
-    if (file === "index.ts" || file === "index.tsx") continue; // Skip index files
-
-    const filePath = path.join(componentPath, file);
-    const stat = fs.statSync(filePath);
-
-    if (stat.isFile() && (file.endsWith(".ts") || file.endsWith(".tsx"))) {
-      const fileExports = extractExportsFromFile(filePath);
-      if (fileExports.components.length > 0 || fileExports.types.length > 0) {
-        const relativePath = `@/components/${path.basename(componentPath)}/${file.replace(/\.(ts|tsx)$/, "")}`;
-        exports.push({
-          path: relativePath,
-          components: fileExports.components,
-          types: fileExports.types,
-        });
-      }
-    }
-  }
-
-  return exports;
 }
 
 /**
@@ -399,39 +361,71 @@ function main() {
   console.log("🔍 Generating individual exports for all index.ts files...");
 
   try {
-    // Process all index files
-    const processedFiles = generateIndividualExports();
-
-    if (processedFiles.length === 0) {
-      console.log("✅ No index.ts files with export * statements found.");
-      return;
-    }
-
-    console.log(`\n📝 Processing ${processedFiles.length} files with export * statements...`);
-
     let totalReplacements = 0;
+    let totalFilesProcessed = 0;
+    let passNumber = 1;
+    let hasChanges = true;
 
-    // Process each file
-    for (const processedFile of processedFiles) {
-      const relativePath = path.relative(PROJECT_ROOT, processedFile.filePath);
-      console.log(`\n  Processing ${relativePath}...`);
+    // Run multiple passes until no more changes are made
+    while (hasChanges) {
+      console.log(`\n🔄 Pass ${passNumber}: Processing export * statements...`);
 
-      // Generate new content
-      const newContent = generateIndexContent(processedFile);
+      // Process all index files
+      const processedFiles = generateIndividualExports();
 
-      // Write new content
-      fs.writeFileSync(processedFile.filePath, newContent);
-      console.log(`    ✅ Updated with individual exports`);
+      if (processedFiles.length === 0) {
+        if (passNumber === 1) {
+          console.log("✅ No index.ts files with export * statements found.");
+          return;
+        } else {
+          console.log(`✅ No more export * statements to process in pass ${passNumber}.`);
+          hasChanges = false;
+          break;
+        }
+      }
 
-      // Count replacements
-      const replacements = processedFile.originalExports.length;
-      totalReplacements += replacements;
-      console.log(`    🔄 Replaced ${replacements} export * statement(s)`);
+      console.log(`\n📝 Processing ${processedFiles.length} files with export * statements...`);
+
+      let passReplacements = 0;
+
+      // Process each file
+      for (const processedFile of processedFiles) {
+        const relativePath = path.relative(PROJECT_ROOT, processedFile.filePath);
+        console.log(`\n  Processing ${relativePath}...`);
+
+        // Generate new content
+        const newContent = generateIndexContent(processedFile);
+
+        // Write new content
+        fs.writeFileSync(processedFile.filePath, newContent);
+        console.log(`    ✅ Updated with individual exports`);
+
+        // Count replacements
+        const replacements = processedFile.originalExports.length;
+        passReplacements += replacements;
+        console.log(`    🔄 Replaced ${replacements} export * statement(s)`);
+      }
+
+      totalReplacements += passReplacements;
+      totalFilesProcessed += processedFiles.length;
+
+      console.log(`\n📊 Pass ${passNumber} Summary:`);
+      console.log(`   - Files processed: ${processedFiles.length}`);
+      console.log(`   - Export * statements replaced: ${passReplacements}`);
+
+      passNumber++;
+
+      // Safety check to prevent infinite loops
+      if (passNumber > 10) {
+        console.warn("⚠️  Reached maximum number of passes (10). Stopping to prevent infinite loop.");
+        break;
+      }
     }
 
-    // Summary
-    console.log(`\n📊 Summary:`);
-    console.log(`   - Files processed: ${processedFiles.length}`);
+    // Final summary
+    console.log(`\n🎉 Final Summary:`);
+    console.log(`   - Total passes: ${passNumber - 1}`);
+    console.log(`   - Total files processed: ${totalFilesProcessed}`);
     console.log(`   - Total export * statements replaced: ${totalReplacements}`);
 
     console.log(`\n🎉 Successfully updated all index.ts files to use individual exports!`);
