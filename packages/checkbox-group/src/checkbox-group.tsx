@@ -332,3 +332,5 @@ export {
   CheckboxGroupItem as Item,
   CheckboxGroup as Root,
 };
+
+export type { CheckboxGroupProps, CheckboxGroupIndicatorProps, CheckboxGroupItemProps };

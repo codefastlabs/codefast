@@ -215,3 +215,5 @@ function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): J
  * -------------------------------------------------------------------------- */
 
 export { createInputScope, InputField as Field, Input, InputField, Input as Root };
+
+export type { InputProps, InputFieldProps };
