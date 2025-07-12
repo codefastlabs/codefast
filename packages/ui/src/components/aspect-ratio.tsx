@@ -8,7 +8,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: AspectRatio
  * -------------------------------------------------------------------------- */
 
-function AspectRatio({ ...props }: ComponentProps<typeof AspectRatioPrimitive.Root>): JSX.Element {
+type AspectRatioProps = ComponentProps<typeof AspectRatioPrimitive.Root>;
+
+function AspectRatio({ ...props }: AspectRatioProps): JSX.Element {
   return <AspectRatioPrimitive.Root data-slot="aspect-ratio" {...props} />;
 }
 
@@ -17,3 +19,4 @@ function AspectRatio({ ...props }: ComponentProps<typeof AspectRatioPrimitive.Ro
  * -------------------------------------------------------------------------- */
 
 export { AspectRatio };
+export type { AspectRatioProps };

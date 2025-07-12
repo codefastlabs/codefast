@@ -12,7 +12,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: AlertDialog
  * -------------------------------------------------------------------------- */
 
-function AlertDialog({ ...props }: ComponentProps<typeof AlertDialogPrimitive.Root>): JSX.Element {
+type AlertDialogProps = ComponentProps<typeof AlertDialogPrimitive.Root>;
+
+function AlertDialog({ ...props }: AlertDialogProps): JSX.Element {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
 
@@ -20,7 +22,9 @@ function AlertDialog({ ...props }: ComponentProps<typeof AlertDialogPrimitive.Ro
  * Component: AlertDialogTrigger
  * -------------------------------------------------------------------------- */
 
-function AlertDialogTrigger({ ...props }: ComponentProps<typeof AlertDialogPrimitive.Trigger>): JSX.Element {
+type AlertDialogTriggerProps = ComponentProps<typeof AlertDialogPrimitive.Trigger>;
+
+function AlertDialogTrigger({ ...props }: AlertDialogTriggerProps): JSX.Element {
   return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
 
@@ -28,18 +32,15 @@ function AlertDialogTrigger({ ...props }: ComponentProps<typeof AlertDialogPrimi
  * Component: AlertDialogContent
  * -------------------------------------------------------------------------- */
 
-function AlertDialogContent({
-  children,
-  className,
-  classNames,
-  ...props
-}: ComponentProps<typeof AlertDialogPrimitive.Content> & {
+interface AlertDialogContentProps extends ComponentProps<typeof AlertDialogPrimitive.Content> {
   classNames?: {
     content?: string;
     overlay?: string;
     wrapper?: string;
   };
-}): JSX.Element {
+}
+
+function AlertDialogContent({ children, className, classNames, ...props }: AlertDialogContentProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
@@ -76,7 +77,9 @@ function AlertDialogContent({
  * Component: AlertDialogHeader
  * -------------------------------------------------------------------------- */
 
-function AlertDialogHeader({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type AlertDialogHeaderProps = ComponentProps<"div">;
+
+function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX.Element {
   return (
     <div
       className={cn("flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left", className)}
@@ -90,7 +93,9 @@ function AlertDialogHeader({ className, ...props }: ComponentProps<"div">): JSX.
  * Component: DialogBody
  * -------------------------------------------------------------------------- */
 
-function AlertDialogBody({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type AlertDialogBodyProps = ComponentProps<"div">;
+
+function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
   return <main className={cn("overflow-auto px-6 py-2", className)} data-slot="alert-dialog-body" {...props} />;
 }
 
@@ -98,7 +103,9 @@ function AlertDialogBody({ className, ...props }: ComponentProps<"div">): JSX.El
  * Component: AlertDialogFooter
  * -------------------------------------------------------------------------- */
 
-function AlertDialogFooter({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type AlertDialogFooterProps = ComponentProps<"div">;
+
+function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX.Element {
   return (
     <div
       className={cn("flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end", className)}
@@ -112,7 +119,9 @@ function AlertDialogFooter({ className, ...props }: ComponentProps<"div">): JSX.
  * Component: AlertDialogTitle
  * -------------------------------------------------------------------------- */
 
-function AlertDialogTitle({ className, ...props }: ComponentProps<typeof AlertDialogPrimitive.Title>): JSX.Element {
+type AlertDialogTitleProps = ComponentProps<typeof AlertDialogPrimitive.Title>;
+
+function AlertDialogTitle({ className, ...props }: AlertDialogTitleProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Title
       className={cn("text-lg font-semibold leading-none tracking-tight", className)}
@@ -126,10 +135,9 @@ function AlertDialogTitle({ className, ...props }: ComponentProps<typeof AlertDi
  * Component: AlertDialogDescription
  * -------------------------------------------------------------------------- */
 
-function AlertDialogDescription({
-  className,
-  ...props
-}: ComponentProps<typeof AlertDialogPrimitive.Description>): JSX.Element {
+type AlertDialogDescriptionProps = ComponentProps<typeof AlertDialogPrimitive.Description>;
+
+function AlertDialogDescription({ className, ...props }: AlertDialogDescriptionProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Description
       className={cn("text-muted-foreground text-sm", className)}
@@ -143,15 +151,12 @@ function AlertDialogDescription({
  * Component: AlertDialogAction
  * -------------------------------------------------------------------------- */
 
-function AlertDialogAction({
-  className,
-  size,
-  variant,
-  ...props
-}: ComponentProps<typeof AlertDialogPrimitive.Action> & {
+interface AlertDialogActionProps extends ComponentProps<typeof AlertDialogPrimitive.Action> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
-}): JSX.Element {
+}
+
+function AlertDialogAction({ className, size, variant, ...props }: AlertDialogActionProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Action
       className={buttonVariants({ className, size, variant })}
@@ -165,15 +170,12 @@ function AlertDialogAction({
  * Component: AlertDialogCancel
  * -------------------------------------------------------------------------- */
 
-function AlertDialogCancel({
-  className,
-  size,
-  variant = "outline",
-  ...props
-}: ComponentProps<typeof AlertDialogPrimitive.Cancel> & {
+interface AlertDialogCancelProps extends ComponentProps<typeof AlertDialogPrimitive.Cancel> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
-}): JSX.Element {
+}
+
+function AlertDialogCancel({ className, size, variant = "outline", ...props }: AlertDialogCancelProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Cancel
       className={buttonVariants({ className, size, variant })}
@@ -198,4 +200,16 @@ export {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+};
+export type {
+  AlertDialogProps,
+  AlertDialogActionProps,
+  AlertDialogBodyProps,
+  AlertDialogCancelProps,
+  AlertDialogContentProps,
+  AlertDialogDescriptionProps,
+  AlertDialogFooterProps,
+  AlertDialogHeaderProps,
+  AlertDialogTitleProps,
+  AlertDialogTriggerProps,
 };

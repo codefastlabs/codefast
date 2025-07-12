@@ -26,6 +26,7 @@
     "package:install": "pnpm install",
     "package:reinstall": "pnpm clean && pnpm package:install && pnpm build:packages",
     "package:update": "pnpm update --latest --interactive --recursive",
+    "prebuild": "pnpm -r exec rm -rf .next dist",
     "precommit": "lint-staged",
     "prepare": "simple-git-hooks",
     "reinstall": "pnpm run clean:modules && pnpm install",

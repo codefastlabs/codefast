@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Avatar
  * -------------------------------------------------------------------------- */
 
-function Avatar({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Root>): JSX.Element {
+type AvatarProps = ComponentProps<typeof AvatarPrimitive.Root>;
+
+function Avatar({ className, ...props }: AvatarProps): JSX.Element {
   return (
     <AvatarPrimitive.Root
       className={cn("relative flex size-8 shrink-0 overflow-hidden rounded-full", className)}
@@ -24,7 +26,9 @@ function Avatar({ className, ...props }: ComponentProps<typeof AvatarPrimitive.R
  * Component: AvatarImage
  * -------------------------------------------------------------------------- */
 
-function AvatarImage({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Image>): JSX.Element {
+type AvatarImageProps = ComponentProps<typeof AvatarPrimitive.Image>;
+
+function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
   return (
     <AvatarPrimitive.Image className={cn("aspect-square size-full", className)} data-slot="avatar-image" {...props} />
   );
@@ -34,7 +38,9 @@ function AvatarImage({ className, ...props }: ComponentProps<typeof AvatarPrimit
  * Component: AvatarFallback
  * -------------------------------------------------------------------------- */
 
-function AvatarFallback({ className, ...props }: ComponentProps<typeof AvatarPrimitive.Fallback>): JSX.Element {
+type AvatarFallbackProps = ComponentProps<typeof AvatarPrimitive.Fallback>;
+
+function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Element {
   return (
     <AvatarPrimitive.Fallback
       className={cn("bg-muted flex size-full items-center justify-center rounded-full", className)}
@@ -49,3 +55,4 @@ function AvatarFallback({ className, ...props }: ComponentProps<typeof AvatarPri
  * -------------------------------------------------------------------------- */
 
 export { Avatar, AvatarFallback, AvatarImage };
+export type { AvatarProps, AvatarFallbackProps, AvatarImageProps };
