@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Tabs
  * -------------------------------------------------------------------------- */
 
-function Tabs({ ...props }: ComponentProps<typeof TabsPrimitive.Root>): JSX.Element {
+type TabsProps = ComponentProps<typeof TabsPrimitive.Root>;
+
+function Tabs({ ...props }: TabsProps): JSX.Element {
   return <TabsPrimitive.Root data-slot="tabs" {...props} />;
 }
 
@@ -18,7 +20,9 @@ function Tabs({ ...props }: ComponentProps<typeof TabsPrimitive.Root>): JSX.Elem
  * Component: TabsList
  * -------------------------------------------------------------------------- */
 
-function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>): JSX.Element {
+type TabsListProps = ComponentProps<typeof TabsPrimitive.List>;
+
+function TabsList({ className, ...props }: TabsListProps): JSX.Element {
   return (
     <TabsPrimitive.List
       className={cn(
@@ -35,7 +39,9 @@ function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.L
  * Component: TabsTrigger
  * -------------------------------------------------------------------------- */
 
-function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitive.Trigger>): JSX.Element {
+type TabsTriggerProps = ComponentProps<typeof TabsPrimitive.Trigger>;
+
+function TabsTrigger({ className, ...props }: TabsTriggerProps): JSX.Element {
   return (
     <TabsPrimitive.Trigger
       className={cn(
@@ -52,7 +58,9 @@ function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitiv
  * Component: TabsContent
  * -------------------------------------------------------------------------- */
 
-function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>): JSX.Element {
+type TabsContentProps = ComponentProps<typeof TabsPrimitive.Content>;
+
+function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
   return (
     <TabsPrimitive.Content
       className={cn(
@@ -70,3 +78,4 @@ function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitiv
  * -------------------------------------------------------------------------- */
 
 export { Tabs, TabsContent, TabsList, TabsTrigger };
+export type { TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps };

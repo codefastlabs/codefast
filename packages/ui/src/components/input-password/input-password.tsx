@@ -21,6 +21,11 @@ const { input, root } = inputVariants();
  * Component: InputPassword
  * -------------------------------------------------------------------------- */
 
+interface InputPasswordProps
+  extends ComponentProps<typeof InputPrimitive.Root>,
+    Omit<ComponentProps<typeof InputPrimitive.Field>, "prefix" | "type">,
+    VariantProps<typeof inputVariants> {}
+
 function InputPassword({
   className,
   disabled,
@@ -31,9 +36,7 @@ function InputPassword({
   spinner,
   suffix,
   ...props
-}: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Field>, "prefix" | "type"> &
-  VariantProps<typeof inputVariants>): JSX.Element {
+}: InputPasswordProps): JSX.Element {
   const [type, setType] = useState<"password" | "text">("password");
 
   const togglePasswordVisibility = useCallback<MouseEventHandler<HTMLButtonElement>>(() => {
@@ -79,6 +82,13 @@ function InputPassword({
 
 /**
  * @deprecated
+ * This type is an alias of InputPasswordProps.
+ * Please use InputPasswordProps instead to ensure consistency.
+ */
+type PasswordInputProps = InputPasswordProps;
+
+/**
+ * @deprecated
  * This component is an alias of the Input component.
  * Please use the Input component instead to ensure consistency.
  */
@@ -89,3 +99,4 @@ const PasswordInput = InputPassword;
  * -------------------------------------------------------------------------- */
 
 export { InputPassword, PasswordInput };
+export type { InputPasswordProps, PasswordInputProps };

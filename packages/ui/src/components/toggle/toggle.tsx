@@ -11,19 +11,14 @@ import type { ComponentProps, JSX, ReactNode } from "react";
  * Component: Toggle
  * -------------------------------------------------------------------------- */
 
-function Toggle({
-  children,
-  className,
-  prefix,
-  size,
-  suffix,
-  variant,
-  ...props
-}: Omit<ComponentProps<typeof TogglePrimitive.Root>, "prefix"> &
-  VariantProps<typeof toggleVariants> & {
-    prefix?: ReactNode;
-    suffix?: ReactNode;
-  }): JSX.Element {
+interface ToggleProps
+  extends Omit<ComponentProps<typeof TogglePrimitive.Root>, "prefix">,
+    VariantProps<typeof toggleVariants> {
+  prefix?: ReactNode;
+  suffix?: ReactNode;
+}
+
+function Toggle({ children, className, prefix, size, suffix, variant, ...props }: ToggleProps): JSX.Element {
   return (
     <TogglePrimitive.Root className={toggleVariants({ className, size, variant })} data-slot="toggle" {...props}>
       {prefix}
@@ -38,3 +33,4 @@ function Toggle({
  * -------------------------------------------------------------------------- */
 
 export { Toggle };
+export type { ToggleProps };

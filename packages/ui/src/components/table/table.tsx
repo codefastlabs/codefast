@@ -6,7 +6,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Table
  * -------------------------------------------------------------------------- */
 
-function Table({ className, ...props }: ComponentProps<"table">): JSX.Element {
+type TableProps = ComponentProps<"table">;
+
+function Table({ className, ...props }: TableProps): JSX.Element {
   return (
     <div className="relative w-full overflow-auto" data-slot="table-cotainer">
       <table className={cn("w-full caption-bottom text-sm", className)} data-slot="table" {...props} />
@@ -18,7 +20,9 @@ function Table({ className, ...props }: ComponentProps<"table">): JSX.Element {
  * Component: TableHeader
  * -------------------------------------------------------------------------- */
 
-function TableHeader({ className, ...props }: ComponentProps<"thead">): JSX.Element {
+type TableHeaderProps = ComponentProps<"thead">;
+
+function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
   return (
     <thead
       className={cn("*:has-aria-expanded:bg-transparent *:border-b", className)}
@@ -32,7 +36,9 @@ function TableHeader({ className, ...props }: ComponentProps<"thead">): JSX.Elem
  * Component: TableBody
  * -------------------------------------------------------------------------- */
 
-function TableBody({ className, ...props }: ComponentProps<"tbody">): JSX.Element {
+type TableBodyProps = ComponentProps<"tbody">;
+
+function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
   return <tbody className={cn("*:last-child:border-0", className)} data-slot="table-body" {...props} />;
 }
 
@@ -40,7 +46,9 @@ function TableBody({ className, ...props }: ComponentProps<"tbody">): JSX.Elemen
  * Component: TableFooter
  * -------------------------------------------------------------------------- */
 
-function TableFooter({ className, ...props }: ComponentProps<"tfoot">): JSX.Element {
+type TableFooterProps = ComponentProps<"tfoot">;
+
+function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
     <tfoot
       className={cn("bg-muted/50 *:has-aria-expanded:bg-transparent font-medium *:border-b-0 *:border-t", className)}
@@ -54,7 +62,9 @@ function TableFooter({ className, ...props }: ComponentProps<"tfoot">): JSX.Elem
  * Component: TableRow
  * -------------------------------------------------------------------------- */
 
-function TableRow({ className, ...props }: ComponentProps<"tr">): JSX.Element {
+type TableRowProps = ComponentProps<"tr">;
+
+function TableRow({ className, ...props }: TableRowProps): JSX.Element {
   return (
     <tr
       className={cn(
@@ -71,7 +81,9 @@ function TableRow({ className, ...props }: ComponentProps<"tr">): JSX.Element {
  * Component: TableHead
  * -------------------------------------------------------------------------- */
 
-function TableHead({ className, ...props }: ComponentProps<"th">): JSX.Element {
+type TableHeadProps = ComponentProps<"th">;
+
+function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
   return <th className={cn("p-2 text-left align-middle font-medium", className)} data-slot="table-head" {...props} />;
 }
 
@@ -79,7 +91,9 @@ function TableHead({ className, ...props }: ComponentProps<"th">): JSX.Element {
  * Component: TableCell
  * -------------------------------------------------------------------------- */
 
-function TableCell({ className, ...props }: ComponentProps<"td">): JSX.Element {
+type TableCellProps = ComponentProps<"td">;
+
+function TableCell({ className, ...props }: TableCellProps): JSX.Element {
   return <td className={cn("p-2 align-middle", className)} data-slot="table-cell" {...props} />;
 }
 
@@ -87,7 +101,9 @@ function TableCell({ className, ...props }: ComponentProps<"td">): JSX.Element {
  * Component: TableCaption
  * -------------------------------------------------------------------------- */
 
-function TableCaption({ className, ...props }: ComponentProps<"caption">): JSX.Element {
+type TableCaptionProps = ComponentProps<"caption">;
+
+function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
   return (
     <caption className={cn("text-muted-foreground mt-4 text-sm", className)} data-slot="table-caption" {...props} />
   );
@@ -98,3 +114,13 @@ function TableCaption({ className, ...props }: ComponentProps<"caption">): JSX.E
  * -------------------------------------------------------------------------- */
 
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };
+export type {
+  TableProps,
+  TableHeaderProps,
+  TableBodyProps,
+  TableFooterProps,
+  TableRowProps,
+  TableHeadProps,
+  TableCellProps,
+  TableCaptionProps,
+};

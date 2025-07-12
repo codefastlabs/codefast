@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Quote
  * -------------------------------------------------------------------------- */
 
-function Quote({
-  asChild,
-  ...props
-}: ComponentProps<"q"> & {
+interface QuoteProps extends ComponentProps<"q"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Quote({ asChild, ...props }: QuoteProps): JSX.Element {
   const Component = asChild ? Slot : "q";
 
   return <Component data-slot="quote" {...props} />;
@@ -24,3 +23,4 @@ function Quote({
  * -------------------------------------------------------------------------- */
 
 export { Quote };
+export type { QuoteProps };

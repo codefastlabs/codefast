@@ -12,7 +12,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: InputOtp
  * -------------------------------------------------------------------------- */
 
-function InputOTP({ className, containerClassName, ...props }: ComponentProps<typeof OTPInput>): JSX.Element {
+type InputOTPProps = ComponentProps<typeof OTPInput>;
+
+function InputOTP({ className, containerClassName, ...props }: InputOTPProps): JSX.Element {
   return (
     <OTPInput
       aria-label="One-time password"
@@ -28,7 +30,9 @@ function InputOTP({ className, containerClassName, ...props }: ComponentProps<ty
  * Component: InputOTPGroup
  * -------------------------------------------------------------------------- */
 
-function InputOTPGroup({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type InputOTPGroupProps = ComponentProps<"div">;
+
+function InputOTPGroup({ className, ...props }: InputOTPGroupProps): JSX.Element {
   return (
     <div
       className={cn("flex items-center -space-x-px", className)}
@@ -43,13 +47,11 @@ function InputOTPGroup({ className, ...props }: ComponentProps<"div">): JSX.Elem
  * Component: InputOTPSlot
  * -------------------------------------------------------------------------- */
 
-function InputOTPSlot({
-  className,
-  index,
-  ...props
-}: ComponentProps<"div"> & {
+interface InputOTPSlotProps extends ComponentProps<"div"> {
   index: number;
-}): JSX.Element {
+}
+
+function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.Element {
   const inputOTPContext = use(OTPInputContext);
   const { isActive, char, hasFakeCaret } = inputOTPContext.slots[index];
 
@@ -77,7 +79,9 @@ function InputOTPSlot({
  * Component: InputOTPSeparator
  * -------------------------------------------------------------------------- */
 
-function InputOTPSeparator({ ...props }: ComponentProps<"div">): JSX.Element {
+type InputOTPSeparatorProps = ComponentProps<"div">;
+
+function InputOTPSeparator({ ...props }: InputOTPSeparatorProps): JSX.Element {
   return (
     <div data-slot="input-otp-separator" {...props}>
       <MinusIcon />
@@ -91,3 +95,4 @@ function InputOTPSeparator({ ...props }: ComponentProps<"div">): JSX.Element {
 
 export { REGEXP_ONLY_CHARS, REGEXP_ONLY_DIGITS, REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot };
+export type { InputOTPGroupProps, InputOTPProps, InputOTPSeparatorProps, InputOTPSlotProps };

@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Pre
  * -------------------------------------------------------------------------- */
 
-function Pre({
-  asChild,
-  ...props
-}: ComponentProps<"pre"> & {
+interface PreProps extends ComponentProps<"pre"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Pre({ asChild, ...props }: PreProps): JSX.Element {
   const Component = asChild ? Slot : "pre";
 
   return <Component data-slot="pre" {...props} />;
@@ -24,3 +23,4 @@ function Pre({
  * -------------------------------------------------------------------------- */
 
 export { Pre };
+export type { PreProps };

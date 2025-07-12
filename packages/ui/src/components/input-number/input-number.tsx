@@ -15,6 +15,11 @@ const { input, root } = inputVariants();
  * Component: InputNumber
  * -------------------------------------------------------------------------- */
 
+interface InputNumberProps
+  extends ComponentProps<typeof InputNumberPrimitive.Field>,
+    ComponentProps<typeof InputNumberPrimitive.Root>,
+    VariantProps<typeof inputVariants> {}
+
 function InputNumber({
   id,
   ariaDecrementLabel,
@@ -35,9 +40,7 @@ function InputNumber({
   suffix,
   value,
   ...props
-}: ComponentProps<typeof InputNumberPrimitive.Field> &
-  ComponentProps<typeof InputNumberPrimitive.Root> &
-  VariantProps<typeof inputVariants>): JSX.Element {
+}: InputNumberProps): JSX.Element {
   return (
     <InputNumberPrimitive.Root
       ariaDecrementLabel={ariaDecrementLabel}
@@ -106,8 +109,15 @@ function InputNumber({
 
 /**
  * @deprecated
- * This component is an alias of the Input component.
- * Please use the Input component instead to ensure consistency.
+ * This component is an alias of the InputNumber component.
+ * Please use the InputNumber component instead to ensure consistency.
+ */
+type NumberInputProps = InputNumberProps;
+
+/**
+ * @deprecated
+ * This component is an alias of the InputNumber component.
+ * Please use the InputNumber component instead to ensure consistency.
  */
 const NumberInput = InputNumber;
 
@@ -116,3 +126,4 @@ const NumberInput = InputNumber;
  * -------------------------------------------------------------------------- */
 
 export { InputNumber, NumberInput };
+export type { InputNumberProps, NumberInputProps };

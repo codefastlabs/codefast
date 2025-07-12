@@ -11,14 +11,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Slider
  * -------------------------------------------------------------------------- */
 
-function Slider({
-  className,
-  defaultValue,
-  value,
-  min = 0,
-  max = 100,
-  ...props
-}: ComponentProps<typeof SliderPrimitive.Root>): JSX.Element {
+type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
+
+function Slider({ className, defaultValue, value, min = 0, max = 100, ...props }: SliderProps): JSX.Element {
   const _values = useMemo(() => {
     if (Array.isArray(value)) {
       return value;
@@ -68,3 +63,4 @@ function Slider({
  * -------------------------------------------------------------------------- */
 
 export { Slider };
+export type { SliderProps };

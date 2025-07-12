@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Strong
  * -------------------------------------------------------------------------- */
 
-function Strong({
-  asChild,
-  ...props
-}: ComponentProps<"strong"> & {
+interface StrongProps extends ComponentProps<"strong"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Strong({ asChild, ...props }: StrongProps): JSX.Element {
   const Component = asChild ? Slot : "strong";
 
   return <Component data-slot="strong" {...props} />;
@@ -24,3 +23,4 @@ function Strong({
  * -------------------------------------------------------------------------- */
 
 export { Strong };
+export type { StrongProps };

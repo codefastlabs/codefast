@@ -13,6 +13,73 @@ import type { ComponentProps, CSSProperties, JSX } from "react";
  * Component: ProgressCircle
  * -----------------------------------------------------------------------------------------------*/
 
+interface ProgressCircleProps
+  extends Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size">,
+    VariantProps<typeof progressCircleVariants> {
+  /**
+   * Enables animation effect when value changes
+   */
+  animate?: boolean;
+
+  /**
+   * Duration of the animation in milliseconds
+   */
+  animationDuration?: number;
+
+  /**
+   * CSS class to customize the entire component
+   */
+  className?: string;
+
+  /**
+   * CSS classes to customize specific parts of the component
+   */
+  classNames?: {
+    /**
+     * Class for the progress indicator
+     */
+    indicator?: string;
+
+    /**
+     * Class for the label in the center of the circle
+     */
+    label?: string;
+
+    /**
+     * Class for the root element of the component
+     */
+    root?: string;
+
+    /**
+     * Class for the SVG element
+     */
+    svg?: string;
+
+    /**
+     * Class for the circle track
+     */
+    track?: string;
+  };
+
+  /**
+   * Custom function to render content in the center of the circle
+   * @param value - Current value of the component
+   * @returns React element to display in the center of the circle
+   */
+  customLabel?: ({ value }: { value: number }) => JSX.Element;
+
+  /**
+   * Display the numeric value in the center of the circle
+   */
+  showValue?: boolean;
+
+  /**
+   * Custom size in pixels
+   * When provided, this value overrides the size variant option
+   */
+  sizeInPixels?: number;
+}
+
 function ProgressCircle({
   value = 0,
   classNames,
@@ -27,71 +94,7 @@ function ProgressCircle({
   className,
   strokeWidth,
   ...props
-}: Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size"> &
-  VariantProps<typeof progressCircleVariants> & {
-    /**
-     * Enables animation effect when value changes
-     */
-    animate?: boolean;
-
-    /**
-     * Duration of the animation in milliseconds
-     */
-    animationDuration?: number;
-
-    /**
-     * CSS class to customize the entire component
-     */
-    className?: string;
-
-    /**
-     * CSS classes to customize specific parts of the component
-     */
-    classNames?: {
-      /**
-       * Class for the progress indicator
-       */
-      indicator?: string;
-
-      /**
-       * Class for the label in the center of the circle
-       */
-      label?: string;
-
-      /**
-       * Class for the root element of the component
-       */
-      root?: string;
-
-      /**
-       * Class for the SVG element
-       */
-      svg?: string;
-
-      /**
-       * Class for the circle track
-       */
-      track?: string;
-    };
-
-    /**
-     * Custom function to render content in the center of the circle
-     * @param value - Current value of the component
-     * @returns React element to display in the center of the circle
-     */
-    customLabel?: ({ value }: { value: number }) => JSX.Element;
-
-    /**
-     * Display the numeric value in the center of the circle
-     */
-    showValue?: boolean;
-
-    /**
-     * Custom size in pixels
-     * When provided, this value overrides the size variant option
-     */
-    sizeInPixels?: number;
-  }): JSX.Element {
+}: ProgressCircleProps): JSX.Element {
   const displayValue = useAnimatedValue(value, animationDuration, animate);
 
   const actualSize = useMemo(() => sizeInPixels ?? getActualSize(size), [sizeInPixels, size]);
@@ -177,3 +180,4 @@ const getStrokeWidth = (thickness: VariantProps<typeof progressCircleVariants>["
  * -------------------------------------------------------------------------- */
 
 export { ProgressCircle };
+export type { ProgressCircleProps };

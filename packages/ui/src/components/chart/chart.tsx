@@ -137,6 +137,8 @@ function ChartStyle({ id, config }: ChartStyleProps): ReactNode {
  * Component: ChartTooltip
  * -------------------------------------------------------------------------- */
 
+type ChartTooltipProps = ComponentProps<typeof RechartsPrimitive.Tooltip>;
+
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
 /* -----------------------------------------------------------------------------
@@ -273,6 +275,8 @@ function ChartTooltipContent({
 /* -----------------------------------------------------------------------------
  * Component: ChartLegend
  * -------------------------------------------------------------------------- */
+
+type ChartLegendProps = ComponentProps<typeof RechartsPrimitive.Legend>;
 
 const ChartLegend = RechartsPrimitive.Legend;
 
@@ -464,7 +468,15 @@ function generateCSS(id: string, config: ChartConfig): string {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ChartConfig, ChartContainerProps, ChartLegendContentProps, ChartStyleProps, ChartTooltipContentProps };
+export type {
+  ChartConfig,
+  ChartContainerProps,
+  ChartLegendContentProps,
+  ChartLegendProps,
+  ChartStyleProps,
+  ChartTooltipContentProps,
+  ChartTooltipProps,
+};
 
 export {
   ChartContainer,

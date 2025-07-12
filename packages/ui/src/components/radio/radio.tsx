@@ -10,14 +10,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Radio
  * -------------------------------------------------------------------------- */
 
-function Radio({
-  className,
-  onChange,
-  onValueChange,
-  ...props
-}: Omit<ComponentProps<"input">, "type"> & {
+interface RadioProps extends Omit<ComponentProps<"input">, "type"> {
   onValueChange?: (value: string) => void;
-}): JSX.Element {
+}
+
+function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JSX.Element {
   return (
     <input
       className={cn(
@@ -37,3 +34,4 @@ function Radio({
  * -------------------------------------------------------------------------- */
 
 export { Radio };
+export type { RadioProps };

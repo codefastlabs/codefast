@@ -9,7 +9,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: CheckboxGroup
  * -------------------------------------------------------------------------- */
 
-function CheckboxGroup({ className, ...props }: ComponentProps<typeof CheckboxGroupPrimitive.Root>): JSX.Element {
+type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
+
+function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
   return <CheckboxGroupPrimitive.Root className={cn("grid gap-2", className)} data-slot="checkbox-group" {...props} />;
 }
 
@@ -17,7 +19,9 @@ function CheckboxGroup({ className, ...props }: ComponentProps<typeof CheckboxGr
  * Component: CheckboxGroupItem
  * -------------------------------------------------------------------------- */
 
-function CheckboxGroupItem({ className, ...props }: ComponentProps<typeof CheckboxGroupPrimitive.Item>): JSX.Element {
+type CheckboxGroupItemProps = ComponentProps<typeof CheckboxGroupPrimitive.Item>;
+
+function CheckboxGroupItem({ className, ...props }: CheckboxGroupItemProps): JSX.Element {
   return (
     <CheckboxGroupPrimitive.Item
       className={cn(
@@ -42,3 +46,4 @@ function CheckboxGroupItem({ className, ...props }: ComponentProps<typeof Checkb
  * -------------------------------------------------------------------------- */
 
 export { CheckboxGroup, CheckboxGroupItem };
+export type { CheckboxGroupProps, CheckboxGroupItemProps };

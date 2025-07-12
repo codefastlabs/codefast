@@ -6,7 +6,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Textarea
  * -------------------------------------------------------------------------- */
 
-function Textarea({ className, ...props }: ComponentProps<"textarea">): JSX.Element {
+type TextareaProps = ComponentProps<"textarea">;
+
+function Textarea({ className, ...props }: TextareaProps): JSX.Element {
   return (
     <textarea
       className={cn(
@@ -24,3 +26,4 @@ function Textarea({ className, ...props }: ComponentProps<"textarea">): JSX.Elem
  * -------------------------------------------------------------------------- */
 
 export { Textarea };
+export type { TextareaProps };

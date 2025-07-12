@@ -11,7 +11,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Checkbox
  * -------------------------------------------------------------------------- */
 
-function Checkbox({ className, ...props }: ComponentProps<typeof CheckboxPrimitive.Root>): JSX.Element {
+type CheckboxProps = ComponentProps<typeof CheckboxPrimitive.Root>;
+
+function Checkbox({ className, ...props }: CheckboxProps): JSX.Element {
   return (
     <CheckboxPrimitive.Root
       className={cn(
@@ -36,3 +38,4 @@ function Checkbox({ className, ...props }: ComponentProps<typeof CheckboxPrimiti
  * -------------------------------------------------------------------------- */
 
 export { Checkbox };
+export type { CheckboxProps };

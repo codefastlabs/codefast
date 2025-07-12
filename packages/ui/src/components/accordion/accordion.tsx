@@ -12,7 +12,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Accordion
  * -------------------------------------------------------------------------- */
 
-function Accordion({ ...props }: ComponentProps<typeof AccordionPrimitive.Root>): JSX.Element {
+type AccordionProps = ComponentProps<typeof AccordionPrimitive.Root>;
+
+function Accordion({ ...props }: AccordionProps): JSX.Element {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
 }
 
@@ -20,7 +22,9 @@ function Accordion({ ...props }: ComponentProps<typeof AccordionPrimitive.Root>)
  * Component: AccordionItem
  * -------------------------------------------------------------------------- */
 
-function AccordionItem({ className, ...props }: ComponentProps<typeof AccordionPrimitive.Item>): JSX.Element {
+type AccordionItemProps = ComponentProps<typeof AccordionPrimitive.Item>;
+
+function AccordionItem({ className, ...props }: AccordionItemProps): JSX.Element {
   return (
     <AccordionPrimitive.Item
       className={cn("border-b last:border-b-0", className)}
@@ -34,14 +38,12 @@ function AccordionItem({ className, ...props }: ComponentProps<typeof AccordionP
  * Component: AccordionIcon
  * -------------------------------------------------------------------------- */
 
-function AccordionIcon({
-  asChild,
-  className,
-  ...props
-}: ComponentProps<typeof Slot> & {
+interface AccordionIconProps extends ComponentProps<typeof Slot> {
   asChild?: boolean;
   className?: string;
-}): JSX.Element {
+}
+
+function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JSX.Element {
   const Component = (asChild ? Slot : ChevronDownIcon) as typeof Slot;
 
   return (
@@ -61,11 +63,9 @@ function AccordionIcon({
  * Component: AccordionTrigger
  * -------------------------------------------------------------------------- */
 
-function AccordionTrigger({
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof AccordionPrimitive.Trigger>): JSX.Element {
+type AccordionTriggerProps = ComponentProps<typeof AccordionPrimitive.Trigger>;
+
+function AccordionTrigger({ className, children, ...props }: AccordionTriggerProps): JSX.Element {
   return (
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
@@ -86,11 +86,9 @@ function AccordionTrigger({
  * Component: AccordionContent
  * -------------------------------------------------------------------------- */
 
-function AccordionContent({
-  children,
-  className,
-  ...props
-}: ComponentProps<typeof AccordionPrimitive.Content>): JSX.Element {
+type AccordionContentProps = ComponentProps<typeof AccordionPrimitive.Content>;
+
+function AccordionContent({ children, className, ...props }: AccordionContentProps): JSX.Element {
   return (
     <AccordionPrimitive.Content
       className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up overflow-hidden"
@@ -107,3 +105,4 @@ function AccordionContent({
  * -------------------------------------------------------------------------- */
 
 export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger };
+export type { AccordionProps, AccordionItemProps, AccordionIconProps, AccordionTriggerProps, AccordionContentProps };
