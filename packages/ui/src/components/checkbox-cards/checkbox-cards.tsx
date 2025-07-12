@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: CheckboxCards
  * -------------------------------------------------------------------------- */
 
-function CheckboxCards(props: ComponentProps<typeof CheckboxGroupPrimitive.Root>): JSX.Element {
+type CheckboxCardsProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
+
+function CheckboxCards(props: CheckboxCardsProps): JSX.Element {
   return <CheckboxGroupPrimitive.Root data-slot="checkbox-cards" {...props} />;
 }
 
@@ -18,14 +20,11 @@ function CheckboxCards(props: ComponentProps<typeof CheckboxGroupPrimitive.Root>
  * Component: CheckboxCardsItem
  * -------------------------------------------------------------------------- */
 
-function CheckboxCardsItem({
-  checkboxClassName,
-  children,
-  className,
-  ...props
-}: ComponentProps<typeof CheckboxGroupPrimitive.Item> & {
+interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrimitive.Item> {
   checkboxClassName?: string;
-}): JSX.Element {
+}
+
+function CheckboxCardsItem({ checkboxClassName, children, className, ...props }: CheckboxCardsItemProps): JSX.Element {
   return (
     <Label
       className={cn(
@@ -56,3 +55,4 @@ function CheckboxCardsItem({
  * -------------------------------------------------------------------------- */
 
 export { CheckboxCards, CheckboxCardsItem };
+export type { CheckboxCardsProps, CheckboxCardsItemProps };

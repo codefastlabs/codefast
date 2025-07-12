@@ -11,7 +11,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: DropdownMenu
  * -------------------------------------------------------------------------- */
 
-function DropdownMenu({ ...props }: ComponentProps<typeof DropdownMenuPrimitive.Root>): JSX.Element {
+type DropdownMenuProps = ComponentProps<typeof DropdownMenuPrimitive.Root>;
+
+function DropdownMenu({ ...props }: DropdownMenuProps): JSX.Element {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
 
@@ -19,7 +21,9 @@ function DropdownMenu({ ...props }: ComponentProps<typeof DropdownMenuPrimitive.
  * Component: DropdownMenuTrigger
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuTrigger({ ...props }: ComponentProps<typeof DropdownMenuPrimitive.Trigger>): JSX.Element {
+type DropdownMenuTriggerProps = ComponentProps<typeof DropdownMenuPrimitive.Trigger>;
+
+function DropdownMenuTrigger({ ...props }: DropdownMenuTriggerProps): JSX.Element {
   return <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
@@ -27,7 +31,9 @@ function DropdownMenuTrigger({ ...props }: ComponentProps<typeof DropdownMenuPri
  * Component: DropdownMenuGroup
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuGroup({ ...props }: ComponentProps<typeof DropdownMenuPrimitive.Group>): JSX.Element {
+type DropdownMenuGroupProps = ComponentProps<typeof DropdownMenuPrimitive.Group>;
+
+function DropdownMenuGroup({ ...props }: DropdownMenuGroupProps): JSX.Element {
   return <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />;
 }
 
@@ -35,7 +41,9 @@ function DropdownMenuGroup({ ...props }: ComponentProps<typeof DropdownMenuPrimi
  * Component: DropdownMenuSub
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuSub({ ...props }: ComponentProps<typeof DropdownMenuPrimitive.Sub>): JSX.Element {
+type DropdownMenuSubProps = ComponentProps<typeof DropdownMenuPrimitive.Sub>;
+
+function DropdownMenuSub({ ...props }: DropdownMenuSubProps): JSX.Element {
   return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />;
 }
 
@@ -43,7 +51,9 @@ function DropdownMenuSub({ ...props }: ComponentProps<typeof DropdownMenuPrimiti
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuRadioGroup({ ...props }: ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>): JSX.Element {
+type DropdownMenuRadioGroupProps = ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>;
+
+function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.Element {
   return <DropdownMenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
 }
 
@@ -51,14 +61,11 @@ function DropdownMenuRadioGroup({ ...props }: ComponentProps<typeof DropdownMenu
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuSubTrigger({
-  children,
-  className,
-  inset,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> & {
+interface DropdownMenuSubTriggerProps extends ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> {
   inset?: boolean;
-}): JSX.Element {
+}
+
+function DropdownMenuSubTrigger({ children, className, inset, ...props }: DropdownMenuSubTriggerProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
@@ -79,10 +86,9 @@ function DropdownMenuSubTrigger({
  * Component: DropdownMenuSubContent
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuSubContent({
-  className,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.SubContent>): JSX.Element {
+type DropdownMenuSubContentProps = ComponentProps<typeof DropdownMenuPrimitive.SubContent>;
+
+function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.SubContent
@@ -101,11 +107,9 @@ function DropdownMenuSubContent({
  * Component: DropdownMenuContent
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuContent({
-  className,
-  sideOffset = 4,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Content>): JSX.Element {
+type DropdownMenuContentProps = ComponentProps<typeof DropdownMenuPrimitive.Content>;
+
+function DropdownMenuContent({ className, sideOffset = 4, ...props }: DropdownMenuContentProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -125,15 +129,12 @@ function DropdownMenuContent({
  * Component: DropdownMenuItem
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuItem({
-  className,
-  inset,
-  variant,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Item> & {
+interface DropdownMenuItemProps extends ComponentProps<typeof DropdownMenuPrimitive.Item> {
   inset?: boolean;
   variant?: "default" | "destructive";
-}): JSX.Element {
+}
+
+function DropdownMenuItem({ className, inset, variant, ...props }: DropdownMenuItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
@@ -152,12 +153,14 @@ function DropdownMenuItem({
  * Component: DropdownMenuCheckboxItem
  * -------------------------------------------------------------------------- */
 
+type DropdownMenuCheckboxItemProps = ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>;
+
 function DropdownMenuCheckboxItem({
   checked,
   children,
   className,
   ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>): JSX.Element {
+}: DropdownMenuCheckboxItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
@@ -182,11 +185,9 @@ function DropdownMenuCheckboxItem({
  * Component: DropdownMenuRadioItem
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuRadioItem({
-  children,
-  className,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.RadioItem>): JSX.Element {
+type DropdownMenuRadioItemProps = ComponentProps<typeof DropdownMenuPrimitive.RadioItem>;
+
+function DropdownMenuRadioItem({ children, className, ...props }: DropdownMenuRadioItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
@@ -210,13 +211,11 @@ function DropdownMenuRadioItem({
  * Component: DropdownMenuLabel
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuLabel({
-  className,
-  inset,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Label> & {
+interface DropdownMenuLabelProps extends ComponentProps<typeof DropdownMenuPrimitive.Label> {
   inset?: boolean;
-}): JSX.Element {
+}
+
+function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
       className={cn("data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold", className)}
@@ -231,10 +230,9 @@ function DropdownMenuLabel({
  * Component: DropdownMenuSeparator
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuSeparator({
-  className,
-  ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Separator>): JSX.Element {
+type DropdownMenuSeparatorProps = ComponentProps<typeof DropdownMenuPrimitive.Separator>;
+
+function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Separator
       className={cn("bg-border mx-2 my-1 h-px", className)}
@@ -248,7 +246,9 @@ function DropdownMenuSeparator({
  * Component: DropdownMenuShortcut
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuShortcut({ className, ...props }: ComponentProps<"span">): JSX.Element {
+type DropdownMenuShortcutProps = ComponentProps<"span">;
+
+function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps): JSX.Element {
   return (
     <span
       className={cn(
@@ -265,7 +265,9 @@ function DropdownMenuShortcut({ className, ...props }: ComponentProps<"span">): 
  * Component: DropdownMenuArrow
  * -------------------------------------------------------------------------- */
 
-function DropdownMenuArrow({ className, ...props }: ComponentProps<typeof DropdownMenuPrimitive.Arrow>): JSX.Element {
+type DropdownMenuArrowProps = ComponentProps<typeof DropdownMenuPrimitive.Arrow>;
+
+function DropdownMenuArrow({ className, ...props }: DropdownMenuArrowProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Arrow className={cn("fill-popover", className)} data-slot="dropdown-menu-arrow" {...props} />
   );
@@ -291,4 +293,21 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+};
+export type {
+  DropdownMenuProps,
+  DropdownMenuTriggerProps,
+  DropdownMenuGroupProps,
+  DropdownMenuSubProps,
+  DropdownMenuRadioGroupProps,
+  DropdownMenuSubTriggerProps,
+  DropdownMenuSubContentProps,
+  DropdownMenuContentProps,
+  DropdownMenuItemProps,
+  DropdownMenuCheckboxItemProps,
+  DropdownMenuRadioItemProps,
+  DropdownMenuLabelProps,
+  DropdownMenuSeparatorProps,
+  DropdownMenuShortcutProps,
+  DropdownMenuArrowProps,
 };

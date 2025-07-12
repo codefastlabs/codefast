@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Section
  * -------------------------------------------------------------------------- */
 
-function Section({
-  asChild,
-  ...props
-}: ComponentProps<"section"> & {
+interface SectionProps extends ComponentProps<"section"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Section({ asChild, ...props }: SectionProps): JSX.Element {
   const Component = asChild ? Slot : "section";
 
   return <Component data-slot="section" {...props} />;
@@ -24,3 +23,4 @@ function Section({
  * -------------------------------------------------------------------------- */
 
 export { Section };
+export type { SectionProps };

@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Switch
  * -------------------------------------------------------------------------- */
 
-function Switch({ className, ...props }: ComponentProps<typeof SwitchPrimitives.Root>): JSX.Element {
+type SwitchProps = ComponentProps<typeof SwitchPrimitives.Root>;
+
+function Switch({ className, ...props }: SwitchProps): JSX.Element {
   return (
     <SwitchPrimitives.Root
       className={cn(
@@ -33,3 +35,4 @@ function Switch({ className, ...props }: ComponentProps<typeof SwitchPrimitives.
  * -------------------------------------------------------------------------- */
 
 export { Switch };
+export type { SwitchProps };

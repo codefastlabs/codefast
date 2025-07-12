@@ -8,14 +8,12 @@ import type { ComponentProps, JSX } from "react";
  * Component: Heading
  * -------------------------------------------------------------------------- */
 
-function Heading({
-  as: Tag = "h1",
-  asChild,
-  ...props
-}: ComponentProps<"h1" | "h2" | "h3" | "h4" | "h5" | "h6"> & {
+interface HeadingProps extends ComponentProps<"h1" | "h2" | "h3" | "h4" | "h5" | "h6"> {
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Heading({ as: Tag = "h1", asChild, ...props }: HeadingProps): JSX.Element {
   const Component = asChild ? Slot : Tag;
 
   return <Component data-slot="heading" {...props} />;
@@ -26,3 +24,4 @@ function Heading({
  * -------------------------------------------------------------------------- */
 
 export { Heading };
+export type { HeadingProps };

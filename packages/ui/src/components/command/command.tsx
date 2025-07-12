@@ -13,7 +13,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Command
  * -------------------------------------------------------------------------- */
 
-function Command({ className, ...props }: ComponentProps<typeof CommandPrimitive>): JSX.Element {
+type CommandProps = ComponentProps<typeof CommandPrimitive>;
+
+function Command({ className, ...props }: CommandProps): JSX.Element {
   return (
     <CommandPrimitive
       className={cn(
@@ -30,7 +32,9 @@ function Command({ className, ...props }: ComponentProps<typeof CommandPrimitive
  * Component: CommandDialog
  * -------------------------------------------------------------------------- */
 
-function CommandDialog({ children, ...props }: ComponentProps<typeof Dialog>): JSX.Element {
+type CommandDialogProps = ComponentProps<typeof Dialog>;
+
+function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element {
   return (
     <Dialog data-slot="command-dialog" {...props}>
       <DialogContent className="rounded-t-lg sm:rounded-lg" data-slot="command-dialog-content">
@@ -50,7 +54,9 @@ function CommandDialog({ children, ...props }: ComponentProps<typeof Dialog>): J
  * Component: CommandInput
  * -------------------------------------------------------------------------- */
 
-function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrimitive.Input>): JSX.Element {
+type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
+
+function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
     <div cmdk-input-wrapper className="flex items-center gap-2 border-b px-3" data-slot="command-input-wrapper">
       <SearchIcon className="size-4 shrink-0 opacity-50" />
@@ -70,7 +76,9 @@ function CommandInput({ className, ...props }: ComponentProps<typeof CommandPrim
  * Component: CommandList
  * -------------------------------------------------------------------------- */
 
-function CommandList({ className, ...props }: ComponentProps<typeof CommandPrimitive.List>): JSX.Element {
+type CommandListProps = ComponentProps<typeof CommandPrimitive.List>;
+
+function CommandList({ className, ...props }: CommandListProps): JSX.Element {
   return (
     <CommandPrimitive.List
       className={cn("max-h-75 overflow-y-auto overflow-x-hidden", className)}
@@ -84,7 +92,9 @@ function CommandList({ className, ...props }: ComponentProps<typeof CommandPrimi
  * Component: CommandEmpty
  * -------------------------------------------------------------------------- */
 
-function CommandEmpty({ className, ...props }: ComponentProps<typeof CommandPrimitive.Empty>): JSX.Element {
+type CommandEmptyProps = ComponentProps<typeof CommandPrimitive.Empty>;
+
+function CommandEmpty({ className, ...props }: CommandEmptyProps): JSX.Element {
   return (
     <CommandPrimitive.Empty
       className={cn("py-6 text-center text-sm", className)}
@@ -98,7 +108,9 @@ function CommandEmpty({ className, ...props }: ComponentProps<typeof CommandPrim
  * Component: CommandGroup
  * -------------------------------------------------------------------------- */
 
-function CommandGroup({ className, ...props }: ComponentProps<typeof CommandPrimitive.Group>): JSX.Element {
+type CommandGroupProps = ComponentProps<typeof CommandPrimitive.Group>;
+
+function CommandGroup({ className, ...props }: CommandGroupProps): JSX.Element {
   return (
     <CommandPrimitive.Group
       className={cn(
@@ -115,7 +127,9 @@ function CommandGroup({ className, ...props }: ComponentProps<typeof CommandPrim
  * Component: CommandSeparator
  * -------------------------------------------------------------------------- */
 
-function CommandSeparator({ className, ...props }: ComponentProps<typeof CommandPrimitive.Separator>): JSX.Element {
+type CommandSeparatorProps = ComponentProps<typeof CommandPrimitive.Separator>;
+
+function CommandSeparator({ className, ...props }: CommandSeparatorProps): JSX.Element {
   return (
     <CommandPrimitive.Separator
       className={cn("bg-border -mx-1 h-px", className)}
@@ -129,7 +143,9 @@ function CommandSeparator({ className, ...props }: ComponentProps<typeof Command
  * Component: CommandItem
  * -------------------------------------------------------------------------- */
 
-function CommandItem({ className, ...props }: ComponentProps<typeof CommandPrimitive.Item>): JSX.Element {
+type CommandItemProps = ComponentProps<typeof CommandPrimitive.Item>;
+
+function CommandItem({ className, ...props }: CommandItemProps): JSX.Element {
   return (
     <CommandPrimitive.Item
       className={cn(
@@ -146,7 +162,9 @@ function CommandItem({ className, ...props }: ComponentProps<typeof CommandPrimi
  * Component: CommandLoading
  * -------------------------------------------------------------------------- */
 
-function CommandLoading({ className, ...props }: ComponentProps<typeof CommandPrimitive.Loading>): JSX.Element {
+type CommandLoadingProps = ComponentProps<typeof CommandPrimitive.Loading>;
+
+function CommandLoading({ className, ...props }: CommandLoadingProps): JSX.Element {
   return (
     <CommandPrimitive.Loading
       className={cn("flex justify-center p-2", className)}
@@ -160,7 +178,9 @@ function CommandLoading({ className, ...props }: ComponentProps<typeof CommandPr
  * Component: CommandShortcut
  * -------------------------------------------------------------------------- */
 
-function CommandShortcut({ className, ...props }: ComponentProps<"span">): JSX.Element {
+type CommandShortcutProps = ComponentProps<"span">;
+
+function CommandShortcut({ className, ...props }: CommandShortcutProps): JSX.Element {
   return (
     <span
       className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
@@ -185,4 +205,16 @@ export {
   CommandLoading,
   CommandSeparator,
   CommandShortcut,
+};
+export type {
+  CommandProps,
+  CommandDialogProps,
+  CommandInputProps,
+  CommandListProps,
+  CommandEmptyProps,
+  CommandGroupProps,
+  CommandSeparatorProps,
+  CommandItemProps,
+  CommandLoadingProps,
+  CommandShortcutProps,
 };

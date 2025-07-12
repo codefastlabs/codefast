@@ -29,13 +29,9 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
  * Component: ScrollArea
  * -------------------------------------------------------------------------- */
 
-function ScrollArea({
-  __scopeScrollArea,
-  children,
-  className,
-  size,
-  ...props
-}: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>): JSX.Element {
+type ScrollAreaProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>;
+
+function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: ScrollAreaProps): JSX.Element {
   return (
     <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
       <ScrollAreaPrimitive.Root className={cn("relative", className)} data-slot="scroll-area" {...props}>
@@ -57,12 +53,14 @@ function ScrollArea({
  * Component: ScrollAreaScrollbar
  * -------------------------------------------------------------------------- */
 
+type ScrollAreaScrollbarProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>>;
+
 function ScrollAreaScrollbar({
   __scopeScrollArea,
   className,
   orientation,
   ...props
-}: ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Scrollbar>>): JSX.Element {
+}: ScrollAreaScrollbarProps): JSX.Element {
   const { size } = useScrollAreaContext(SCROLL_AREA_NAME, __scopeScrollArea);
 
   return (
@@ -82,3 +80,4 @@ function ScrollAreaScrollbar({
  * -------------------------------------------------------------------------- */
 
 export { ScrollArea, ScrollAreaScrollbar };
+export type { ScrollAreaProps, ScrollAreaScrollbarProps };

@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: HoverCard
  * -------------------------------------------------------------------------- */
 
-function HoverCard({ ...props }: ComponentProps<typeof HoverCardPrimitive.Root>): JSX.Element {
+type HoverCardProps = ComponentProps<typeof HoverCardPrimitive.Root>;
+
+function HoverCard({ ...props }: HoverCardProps): JSX.Element {
   return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />;
 }
 
@@ -18,7 +20,9 @@ function HoverCard({ ...props }: ComponentProps<typeof HoverCardPrimitive.Root>)
  * Component: HoverCardTrigger
  * -------------------------------------------------------------------------- */
 
-function HoverCardTrigger({ ...props }: ComponentProps<typeof HoverCardPrimitive.Trigger>): JSX.Element {
+type HoverCardTriggerProps = ComponentProps<typeof HoverCardPrimitive.Trigger>;
+
+function HoverCardTrigger({ ...props }: HoverCardTriggerProps): JSX.Element {
   return <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />;
 }
 
@@ -26,12 +30,14 @@ function HoverCardTrigger({ ...props }: ComponentProps<typeof HoverCardPrimitive
  * Component: HoverCardContent
  * -------------------------------------------------------------------------- */
 
+type HoverCardContentProps = ComponentProps<typeof HoverCardPrimitive.Content>;
+
 function HoverCardContent({
   align = "center",
   className,
   sideOffset = 4,
   ...props
-}: ComponentProps<typeof HoverCardPrimitive.Content>): JSX.Element {
+}: HoverCardContentProps): JSX.Element {
   return (
     <HoverCardPrimitive.Portal>
       <HoverCardPrimitive.Content
@@ -52,7 +58,9 @@ function HoverCardContent({
  * Component: HoverCardArrow
  * -------------------------------------------------------------------------- */
 
-function HoverCardArrow({ className, ...props }: ComponentProps<typeof HoverCardPrimitive.Arrow>): JSX.Element {
+type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
+
+function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
   return <HoverCardPrimitive.Arrow className={cn("fill-popover", className)} data-slot="hover-card-arrow" {...props} />;
 }
 
@@ -61,3 +69,4 @@ function HoverCardArrow({ className, ...props }: ComponentProps<typeof HoverCard
  * -------------------------------------------------------------------------- */
 
 export { HoverCard, HoverCardArrow, HoverCardContent, HoverCardTrigger };
+export type { HoverCardProps, HoverCardArrowProps, HoverCardContentProps, HoverCardTriggerProps };

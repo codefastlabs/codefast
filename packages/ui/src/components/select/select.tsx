@@ -13,7 +13,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Select
  * -------------------------------------------------------------------------- */
 
-function Select({ ...props }: ComponentProps<typeof SelectPrimitive.Root>): JSX.Element {
+type SelectProps = ComponentProps<typeof SelectPrimitive.Root>;
+
+function Select({ ...props }: SelectProps): JSX.Element {
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
@@ -21,7 +23,9 @@ function Select({ ...props }: ComponentProps<typeof SelectPrimitive.Root>): JSX.
  * Component: SelectGroup
  * -------------------------------------------------------------------------- */
 
-function SelectGroup({ ...props }: ComponentProps<typeof SelectPrimitive.Group>): JSX.Element {
+type SelectGroupProps = ComponentProps<typeof SelectPrimitive.Group>;
+
+function SelectGroup({ ...props }: SelectGroupProps): JSX.Element {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
@@ -29,7 +33,9 @@ function SelectGroup({ ...props }: ComponentProps<typeof SelectPrimitive.Group>)
  * Component: SelectValue
  * -------------------------------------------------------------------------- */
 
-function SelectValue({ ...props }: ComponentProps<typeof SelectPrimitive.Value>): JSX.Element {
+type SelectValueProps = ComponentProps<typeof SelectPrimitive.Value>;
+
+function SelectValue({ ...props }: SelectValueProps): JSX.Element {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
@@ -37,14 +43,11 @@ function SelectValue({ ...props }: ComponentProps<typeof SelectPrimitive.Value>)
  * Component: SelectTrigger
  * -------------------------------------------------------------------------- */
 
-function SelectTrigger({
-  children,
-  className,
-  size,
-  ...props
-}: ComponentProps<typeof SelectPrimitive.Trigger> & {
+interface SelectTriggerProps extends ComponentProps<typeof SelectPrimitive.Trigger> {
   size?: VariantProps<typeof buttonVariants>["size"];
-}): JSX.Element {
+}
+
+function SelectTrigger({ children, className, size, ...props }: SelectTriggerProps): JSX.Element {
   return (
     <SelectPrimitive.Trigger
       className={buttonVariants({
@@ -71,10 +74,9 @@ function SelectTrigger({
  * Component: SelectScrollUpButton
  * -------------------------------------------------------------------------- */
 
-function SelectScrollUpButton({
-  className,
-  ...props
-}: ComponentProps<typeof SelectPrimitive.ScrollUpButton>): JSX.Element {
+type SelectScrollUpButtonProps = ComponentProps<typeof SelectPrimitive.ScrollUpButton>;
+
+function SelectScrollUpButton({ className, ...props }: SelectScrollUpButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollUpButton
       className={cn("text-muted-foreground flex items-center justify-center py-1", className)}
@@ -90,10 +92,9 @@ function SelectScrollUpButton({
  * Component: SelectScrollDownButton
  * -------------------------------------------------------------------------- */
 
-function SelectScrollDownButton({
-  className,
-  ...props
-}: ComponentProps<typeof SelectPrimitive.ScrollDownButton>): JSX.Element {
+type SelectScrollDownButtonProps = ComponentProps<typeof SelectPrimitive.ScrollDownButton>;
+
+function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonProps): JSX.Element {
   return (
     <SelectPrimitive.ScrollDownButton
       className={cn("text-muted-foreground flex items-center justify-center py-1", className)}
@@ -109,12 +110,9 @@ function SelectScrollDownButton({
  * Component: SelectContent
  * -------------------------------------------------------------------------- */
 
-function SelectContent({
-  children,
-  className,
-  position = "popper",
-  ...props
-}: ComponentProps<typeof SelectPrimitive.Content>): JSX.Element {
+type SelectContentProps = ComponentProps<typeof SelectPrimitive.Content>;
+
+function SelectContent({ children, className, position = "popper", ...props }: SelectContentProps): JSX.Element {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -147,7 +145,9 @@ function SelectContent({
  * Component: SelectLabel
  * -------------------------------------------------------------------------- */
 
-function SelectLabel({ className, ...props }: ComponentProps<typeof SelectPrimitive.Label>): JSX.Element {
+type SelectLabelProps = ComponentProps<typeof SelectPrimitive.Label>;
+
+function SelectLabel({ className, ...props }: SelectLabelProps): JSX.Element {
   return (
     <SelectPrimitive.Label
       className={cn("flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold", className)}
@@ -161,7 +161,9 @@ function SelectLabel({ className, ...props }: ComponentProps<typeof SelectPrimit
  * Component: SelectItem
  * -------------------------------------------------------------------------- */
 
-function SelectItem({ children, className, ...props }: ComponentProps<typeof SelectPrimitive.Item>): JSX.Element {
+type SelectItemProps = ComponentProps<typeof SelectPrimitive.Item>;
+
+function SelectItem({ children, className, ...props }: SelectItemProps): JSX.Element {
   return (
     <SelectPrimitive.Item
       className={cn(
@@ -185,7 +187,9 @@ function SelectItem({ children, className, ...props }: ComponentProps<typeof Sel
  * Component: SelectSeparator
  * -------------------------------------------------------------------------- */
 
-function SelectSeparator({ className, ...props }: ComponentProps<typeof SelectPrimitive.Separator>): JSX.Element {
+type SelectSeparatorProps = ComponentProps<typeof SelectPrimitive.Separator>;
+
+function SelectSeparator({ className, ...props }: SelectSeparatorProps): JSX.Element {
   return (
     <SelectPrimitive.Separator
       className={cn("bg-border mx-2 my-1 h-px", className)}
@@ -210,4 +214,17 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+};
+
+export type {
+  SelectProps,
+  SelectContentProps,
+  SelectGroupProps,
+  SelectItemProps,
+  SelectLabelProps,
+  SelectScrollDownButtonProps,
+  SelectScrollUpButtonProps,
+  SelectSeparatorProps,
+  SelectTriggerProps,
+  SelectValueProps,
 };

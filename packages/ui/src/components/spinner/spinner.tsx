@@ -12,14 +12,11 @@ import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 const SPINNER_COUNT = 8;
 
-function Spinner({
-  children,
-  className,
-  loading = true,
-  ...props
-}: ComponentProps<"span"> & {
+interface SpinnerProps extends ComponentProps<"span"> {
   loading?: boolean;
-}): ReactNode {
+}
+
+function Spinner({ children, className, loading = true, ...props }: SpinnerProps): ReactNode {
   if (!loading) {
     return children;
   }
@@ -65,3 +62,4 @@ function Spinner({
  * -------------------------------------------------------------------------- */
 
 export { Spinner };
+export type { SpinnerProps };

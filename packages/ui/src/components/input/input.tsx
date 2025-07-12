@@ -73,6 +73,13 @@ function Input({
  * This component is an alias of the Input component.
  * Please use the Input component instead to ensure consistency.
  */
+type TextInputProps = InputProps;
+
+/**
+ * @deprecated
+ * This component is an alias of the Input component.
+ * Please use the Input component instead to ensure consistency.
+ */
 const TextInput = Input;
 
 /* -----------------------------------------------------------------------------
@@ -80,4 +87,4 @@ const TextInput = Input;
  * -------------------------------------------------------------------------- */
 
 export { Input, TextInput };
-export type { InputProps };
+export type { InputProps, TextInputProps };

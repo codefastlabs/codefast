@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Em
  * -------------------------------------------------------------------------- */
 
-function Em({
-  asChild,
-  ...props
-}: ComponentProps<"em"> & {
+interface EmProps extends ComponentProps<"em"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Em({ asChild, ...props }: EmProps): JSX.Element {
   const Component = asChild ? Slot : "em";
 
   return <Component data-slot="em" {...props} />;
@@ -24,3 +23,4 @@ function Em({
  * -------------------------------------------------------------------------- */
 
 export { Em };
+export type { EmProps };

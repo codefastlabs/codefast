@@ -17,6 +17,15 @@ import type { ComponentProps, JSX } from "react";
 
 const { input, root } = inputVariants();
 
+interface InputSearchProps
+  extends ComponentProps<typeof InputPrimitive.Root>,
+    Omit<ComponentProps<typeof InputPrimitive.Field>, "defaultValue" | "onChange" | "prefix" | "type" | "value">,
+    VariantProps<typeof inputVariants> {
+  defaultValue?: string;
+  onChange?: (value?: string) => void;
+  value?: string;
+}
+
 function InputSearch({
   className,
   defaultValue,
@@ -30,13 +39,7 @@ function InputSearch({
   suffix,
   value: valueProperty,
   ...props
-}: ComponentProps<typeof InputPrimitive.Root> &
-  Omit<ComponentProps<typeof InputPrimitive.Field>, "defaultValue" | "onChange" | "prefix" | "type" | "value"> &
-  VariantProps<typeof inputVariants> & {
-    defaultValue?: string;
-    onChange?: (value?: string) => void;
-    value?: string;
-  }): JSX.Element {
+}: InputSearchProps): JSX.Element {
   const [value, setValue] = useControllableState<string | undefined>({
     defaultProp: defaultValue,
     onChange,
@@ -89,6 +92,13 @@ function InputSearch({
 
 /**
  * @deprecated
+ * This type is an alias of InputSearchProps.
+ * Please use InputSearchProps instead to ensure consistency.
+ */
+type SearchInputProps = InputSearchProps;
+
+/**
+ * @deprecated
  * This component is an alias of the Input component.
  * Please use the Input component instead to ensure consistency.
  */
@@ -99,3 +109,4 @@ const SearchInput = InputSearch;
  * -------------------------------------------------------------------------- */
 
 export { InputSearch, SearchInput };
+export type { InputSearchProps, SearchInputProps };

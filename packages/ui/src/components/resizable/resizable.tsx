@@ -11,10 +11,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: ResizablePanelGroup
  * -------------------------------------------------------------------------- */
 
-function ResizablePanelGroup({
-  className,
-  ...props
-}: ComponentProps<typeof ResizablePrimitive.PanelGroup>): JSX.Element {
+type ResizablePanelGroupProps = ComponentProps<typeof ResizablePrimitive.PanelGroup>;
+
+function ResizablePanelGroup({ className, ...props }: ResizablePanelGroupProps): JSX.Element {
   return (
     <ResizablePrimitive.PanelGroup
       className={cn("flex size-full data-[panel-group-direction=vertical]:flex-col", className)}
@@ -28,7 +27,9 @@ function ResizablePanelGroup({
  * Component: ResizablePanel
  * -------------------------------------------------------------------------- */
 
-function ResizablePanel({ ...props }: ComponentProps<typeof ResizablePrimitive.Panel>): JSX.Element {
+type ResizablePanelProps = ComponentProps<typeof ResizablePrimitive.Panel>;
+
+function ResizablePanel({ ...props }: ResizablePanelProps): JSX.Element {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />;
 }
 
@@ -36,13 +37,11 @@ function ResizablePanel({ ...props }: ComponentProps<typeof ResizablePrimitive.P
  * Component: ResizableHandle
  * -------------------------------------------------------------------------- */
 
-function ResizableHandle({
-  className,
-  withHandle,
-  ...props
-}: ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
+interface ResizableHandleProps extends ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> {
   withHandle?: boolean;
-}): JSX.Element {
+}
+
+function ResizableHandle({ className, withHandle, ...props }: ResizableHandleProps): JSX.Element {
   return (
     <ResizablePrimitive.PanelResizeHandle
       className={cn(
@@ -66,3 +65,4 @@ function ResizableHandle({
  * -------------------------------------------------------------------------- */
 
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup };
+export type { ResizableHandleProps, ResizablePanelProps, ResizablePanelGroupProps };

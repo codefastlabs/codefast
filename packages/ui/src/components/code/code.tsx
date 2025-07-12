@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Code
  * -------------------------------------------------------------------------- */
 
-function Code({
-  asChild,
-  ...props
-}: ComponentProps<"code"> & {
+interface CodeProps extends ComponentProps<"code"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Code({ asChild, ...props }: CodeProps): JSX.Element {
   const Component = asChild ? Slot : "code";
 
   return <Component data-slot="code" {...props} />;
@@ -24,3 +23,4 @@ function Code({
  * -------------------------------------------------------------------------- */
 
 export { Code };
+export type { CodeProps };

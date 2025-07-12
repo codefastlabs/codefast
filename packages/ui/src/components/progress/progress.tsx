@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Progress
  * -------------------------------------------------------------------------- */
 
-function Progress({ className, value, ...props }: ComponentProps<typeof ProgressPrimitive.Root>): JSX.Element {
+type ProgressProps = ComponentProps<typeof ProgressPrimitive.Root>;
+
+function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
   return (
     <ProgressPrimitive.Root
       className={cn("bg-primary/20 relative h-2 w-full overflow-hidden rounded-full", className)}
@@ -33,3 +35,4 @@ function Progress({ className, value, ...props }: ComponentProps<typeof Progress
  * -------------------------------------------------------------------------- */
 
 export { Progress };
+export type { ProgressProps };

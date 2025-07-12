@@ -30,6 +30,8 @@ const [ToggleGroupProvider, useToggleGroupContext] =
  * Component: ToggleGroup
  * -------------------------------------------------------------------------- */
 
+type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants>;
+
 function ToggleGroup({
   __scopeToggleGroup,
   children,
@@ -37,7 +39,7 @@ function ToggleGroup({
   size,
   variant,
   ...props
-}: ScopedProps<ComponentProps<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants>>): JSX.Element {
+}: ScopedProps<ToggleGroupProps>): JSX.Element {
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
@@ -62,6 +64,13 @@ function ToggleGroup({
 
 const TOGGLE_GROUP_ITEM_NAME = "ToggleGroupItem";
 
+type ToggleGroupItemProps = ScopedProps<
+  Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, "prefix"> & {
+    prefix?: ReactNode;
+    suffix?: ReactNode;
+  }
+>;
+
 function ToggleGroupItem({
   __scopeToggleGroup,
   children,
@@ -69,12 +78,7 @@ function ToggleGroupItem({
   prefix,
   suffix,
   ...props
-}: ScopedProps<
-  Omit<ComponentProps<typeof ToggleGroupPrimitive.Item>, "prefix"> & {
-    prefix?: ReactNode;
-    suffix?: ReactNode;
-  }
->): JSX.Element {
+}: ToggleGroupItemProps): JSX.Element {
   const { variant, size } = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
@@ -105,3 +109,4 @@ function ToggleGroupItem({
  * -------------------------------------------------------------------------- */
 
 export { ToggleGroup, ToggleGroupItem };
+export type { ToggleGroupProps, ToggleGroupItemProps };

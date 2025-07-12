@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Text
  * -------------------------------------------------------------------------- */
 
-function Text({
-  asChild,
-  ...props
-}: ComponentProps<"p"> & {
+interface TextProps extends ComponentProps<"p"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Text({ asChild, ...props }: TextProps): JSX.Element {
   const Component = asChild ? Slot : "p";
 
   return <Component data-slot="text" {...props} />;
@@ -24,3 +23,4 @@ function Text({
  * -------------------------------------------------------------------------- */
 
 export { Text };
+export type { TextProps };

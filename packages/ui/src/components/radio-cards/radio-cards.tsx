@@ -11,7 +11,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: RadioCards
  * -------------------------------------------------------------------------- */
 
-function RadioCards(props: ComponentProps<typeof RadioGroupPrimitive.Root>): JSX.Element {
+type RadioCardsProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
+
+function RadioCards(props: RadioCardsProps): JSX.Element {
   return <RadioGroupPrimitive.Root data-slot="radio-cards" {...props} />;
 }
 
@@ -19,11 +21,9 @@ function RadioCards(props: ComponentProps<typeof RadioGroupPrimitive.Root>): JSX
  * Component: RadioCardsItem
  * -------------------------------------------------------------------------- */
 
-function RadioCardsItem({
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
+type RadioCardsItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
+
+function RadioCardsItem({ className, children, ...props }: RadioCardsItemProps): JSX.Element {
   return (
     <Label
       className="border-input hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 flex items-start gap-3 rounded-lg border p-3 transition"
@@ -49,3 +49,4 @@ function RadioCardsItem({
  * -------------------------------------------------------------------------- */
 
 export { RadioCards, RadioCardsItem };
+export type { RadioCardsProps, RadioCardsItemProps };

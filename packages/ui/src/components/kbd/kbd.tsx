@@ -10,13 +10,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Kbd
  * -------------------------------------------------------------------------- */
 
-function Kbd({
-  asChild,
-  className,
-  ...props
-}: ComponentProps<"kbd"> & {
+interface KbdProps extends ComponentProps<"kbd"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Kbd({ asChild, className, ...props }: KbdProps): JSX.Element {
   const Component = asChild ? Slot : "kbd";
 
   return (
@@ -36,3 +34,4 @@ function Kbd({
  * -------------------------------------------------------------------------- */
 
 export { Kbd };
+export type { KbdProps };

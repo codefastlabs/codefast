@@ -12,7 +12,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Drawer
  * -------------------------------------------------------------------------- */
 
-function Drawer({ shouldScaleBackground = true, ...props }: ComponentProps<typeof DrawerPrimitive.Root>): JSX.Element {
+type DrawerProps = ComponentProps<typeof DrawerPrimitive.Root>;
+
+function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.Element {
   return <DrawerPrimitive.Root data-slot="drawer" shouldScaleBackground={shouldScaleBackground} {...props} />;
 }
 
@@ -20,7 +22,9 @@ function Drawer({ shouldScaleBackground = true, ...props }: ComponentProps<typeo
  * Component: DrawerTrigger
  * -------------------------------------------------------------------------- */
 
-function DrawerTrigger({ ...props }: ComponentProps<typeof DrawerPrimitive.Trigger>): JSX.Element {
+type DrawerTriggerProps = ComponentProps<typeof DrawerPrimitive.Trigger>;
+
+function DrawerTrigger({ ...props }: DrawerTriggerProps): JSX.Element {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
 }
 
@@ -28,18 +32,15 @@ function DrawerTrigger({ ...props }: ComponentProps<typeof DrawerPrimitive.Trigg
  * Component: DrawerContent
  * -------------------------------------------------------------------------- */
 
-function DrawerContent({
-  children,
-  className,
-  classNames,
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Content> & {
+interface DrawerContentProps extends ComponentProps<typeof DrawerPrimitive.Content> {
   classNames?: {
     content?: string;
     handle?: string;
     overlay?: string;
   };
-}): JSX.Element {
+}
+
+function DrawerContent({ children, className, classNames, ...props }: DrawerContentProps): JSX.Element {
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Overlay
@@ -71,7 +72,9 @@ function DrawerContent({
  * Component: DrawerHeader
  * -------------------------------------------------------------------------- */
 
-function DrawerHeader({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type DrawerHeaderProps = ComponentProps<"div">;
+
+function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
   return <div className={cn("flex flex-col gap-1.5 p-4", className)} data-slot="drawer-header" {...props} />;
 }
 
@@ -79,7 +82,9 @@ function DrawerHeader({ className, ...props }: ComponentProps<"div">): JSX.Eleme
  * Component: DrawerBody
  * -------------------------------------------------------------------------- */
 
-function DrawerBody({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type DrawerBodyProps = ComponentProps<"div">;
+
+function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
   return <main className={cn("overflow-auto px-4 py-2", className)} data-slot="drawer-body" {...props} />;
 }
 
@@ -87,7 +92,9 @@ function DrawerBody({ className, ...props }: ComponentProps<"div">): JSX.Element
  * Component: DrawerFooter
  * -------------------------------------------------------------------------- */
 
-function DrawerFooter({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type DrawerFooterProps = ComponentProps<"div">;
+
+function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
   return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} data-slot="drawer-footer" {...props} />;
 }
 
@@ -95,7 +102,9 @@ function DrawerFooter({ className, ...props }: ComponentProps<"div">): JSX.Eleme
  * Component: DrawerTitle
  * -------------------------------------------------------------------------- */
 
-function DrawerTitle({ className, ...props }: ComponentProps<typeof DrawerPrimitive.Title>): JSX.Element {
+type DrawerTitleProps = ComponentProps<typeof DrawerPrimitive.Title>;
+
+function DrawerTitle({ className, ...props }: DrawerTitleProps): JSX.Element {
   return (
     <DrawerPrimitive.Title
       className={cn("text-foreground font-semibold", className)}
@@ -109,7 +118,9 @@ function DrawerTitle({ className, ...props }: ComponentProps<typeof DrawerPrimit
  * Component: DrawerDescription
  * -------------------------------------------------------------------------- */
 
-function DrawerDescription({ className, ...props }: ComponentProps<typeof DrawerPrimitive.Description>): JSX.Element {
+type DrawerDescriptionProps = ComponentProps<typeof DrawerPrimitive.Description>;
+
+function DrawerDescription({ className, ...props }: DrawerDescriptionProps): JSX.Element {
   return (
     <DrawerPrimitive.Description
       className={cn("text-muted-foreground text-sm", className)}
@@ -123,15 +134,12 @@ function DrawerDescription({ className, ...props }: ComponentProps<typeof Drawer
  * Component: DrawerClose
  * -------------------------------------------------------------------------- */
 
-function DrawerClose({
-  className,
-  size,
-  variant = "outline",
-  ...props
-}: ComponentProps<typeof DrawerPrimitive.Close> & {
+interface DrawerCloseProps extends ComponentProps<typeof DrawerPrimitive.Close> {
   size?: VariantProps<typeof buttonVariants>["size"];
   variant?: VariantProps<typeof buttonVariants>["variant"];
-}): JSX.Element {
+}
+
+function DrawerClose({ className, size, variant = "outline", ...props }: DrawerCloseProps): JSX.Element {
   return (
     <DrawerPrimitive.Close
       className={buttonVariants({ className, size, variant })}
@@ -155,4 +163,15 @@ export {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+};
+export type {
+  DrawerProps,
+  DrawerBodyProps,
+  DrawerCloseProps,
+  DrawerContentProps,
+  DrawerDescriptionProps,
+  DrawerFooterProps,
+  DrawerHeaderProps,
+  DrawerTitleProps,
+  DrawerTriggerProps,
 };

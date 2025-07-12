@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Popover
  * -------------------------------------------------------------------------- */
 
-function Popover({ ...props }: ComponentProps<typeof PopoverPrimitive.Root>): JSX.Element {
+type PopoverProps = ComponentProps<typeof PopoverPrimitive.Root>;
+
+function Popover({ ...props }: PopoverProps): JSX.Element {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />;
 }
 
@@ -18,7 +20,9 @@ function Popover({ ...props }: ComponentProps<typeof PopoverPrimitive.Root>): JS
  * Component: PopoverTrigger
  * -------------------------------------------------------------------------- */
 
-function PopoverTrigger({ ...props }: ComponentProps<typeof PopoverPrimitive.Trigger>): JSX.Element {
+type PopoverTriggerProps = ComponentProps<typeof PopoverPrimitive.Trigger>;
+
+function PopoverTrigger({ ...props }: PopoverTriggerProps): JSX.Element {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
 }
 
@@ -26,7 +30,9 @@ function PopoverTrigger({ ...props }: ComponentProps<typeof PopoverPrimitive.Tri
  * Component: PopoverAnchor
  * -------------------------------------------------------------------------- */
 
-function PopoverAnchor({ ...props }: ComponentProps<typeof PopoverPrimitive.Anchor>): JSX.Element {
+type PopoverAnchorProps = ComponentProps<typeof PopoverPrimitive.Anchor>;
+
+function PopoverAnchor({ ...props }: PopoverAnchorProps): JSX.Element {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
 }
 
@@ -34,12 +40,9 @@ function PopoverAnchor({ ...props }: ComponentProps<typeof PopoverPrimitive.Anch
  * Component: PopoverContent
  * -------------------------------------------------------------------------- */
 
-function PopoverContent({
-  align = "center",
-  className,
-  sideOffset = 4,
-  ...props
-}: ComponentProps<typeof PopoverPrimitive.Content>): JSX.Element {
+type PopoverContentProps = ComponentProps<typeof PopoverPrimitive.Content>;
+
+function PopoverContent({ align = "center", className, sideOffset = 4, ...props }: PopoverContentProps): JSX.Element {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
@@ -60,7 +63,9 @@ function PopoverContent({
  * Component: PopoverArrow
  * -------------------------------------------------------------------------- */
 
-function PopoverArrow({ className, ...props }: ComponentProps<typeof PopoverPrimitive.Arrow>): JSX.Element {
+type PopoverArrowProps = ComponentProps<typeof PopoverPrimitive.Arrow>;
+
+function PopoverArrow({ className, ...props }: PopoverArrowProps): JSX.Element {
   return <PopoverPrimitive.Arrow className={cn("fill-popover", className)} data-slot="popover-arrow" {...props} />;
 }
 
@@ -69,3 +74,4 @@ function PopoverArrow({ className, ...props }: ComponentProps<typeof PopoverPrim
  * -------------------------------------------------------------------------- */
 
 export { Popover, PopoverAnchor, PopoverArrow, PopoverContent, PopoverTrigger };
+export type { PopoverAnchorProps, PopoverArrowProps, PopoverContentProps, PopoverProps, PopoverTriggerProps };

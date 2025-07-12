@@ -46,7 +46,9 @@ function Chevron({ orientation, className, ...props }: ComponentProps<CustomComp
  * Component: Calendar
  * -------------------------------------------------------------------------- */
 
-function Calendar({ showOutsideDays = true, classNames, ...props }: ComponentProps<typeof DayPicker>): JSX.Element {
+type CalendarProps = ComponentProps<typeof DayPicker>;
+
+function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProps): JSX.Element {
   const isInteractive = props.mode !== undefined || props.onDayClick !== undefined;
 
   return (
@@ -185,4 +187,4 @@ function CalendarLabel({
  * -------------------------------------------------------------------------- */
 
 export { Calendar, CalendarLabel, CalendarRangeLabel };
-export type { CalendarLabelProps, CalendarRangeLabelProps };
+export type { CalendarProps, CalendarLabelProps, CalendarRangeLabelProps };

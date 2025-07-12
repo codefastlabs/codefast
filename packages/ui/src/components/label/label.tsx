@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Label
  * -------------------------------------------------------------------------- */
 
-function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Root>): JSX.Element {
+type LabelProps = ComponentProps<typeof LabelPrimitive.Root>;
+
+function Label({ className, ...props }: LabelProps): JSX.Element {
   return (
     <LabelPrimitive.Root
       className={cn(
@@ -28,3 +30,4 @@ function Label({ className, ...props }: ComponentProps<typeof LabelPrimitive.Roo
  * -------------------------------------------------------------------------- */
 
 export { Label };
+export type { LabelProps };

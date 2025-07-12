@@ -6,7 +6,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Skeleton
  * -------------------------------------------------------------------------- */
 
-function Skeleton({ className, ...props }: ComponentProps<"div">): JSX.Element {
+type SkeletonProps = ComponentProps<"div">;
+
+function Skeleton({ className, ...props }: SkeletonProps): JSX.Element {
   return <div className={cn("bg-muted animate-pulse rounded-lg", className)} data-slot="skeleton" {...props} />;
 }
 
@@ -15,3 +17,4 @@ function Skeleton({ className, ...props }: ComponentProps<"div">): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 export { Skeleton };
+export type { SkeletonProps };

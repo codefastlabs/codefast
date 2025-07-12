@@ -8,7 +8,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: Collapsible
  * -------------------------------------------------------------------------- */
 
-function Collapsible({ ...props }: ComponentProps<typeof CollapsiblePrimitive.Root>): JSX.Element {
+type CollapsibleProps = ComponentProps<typeof CollapsiblePrimitive.Root>;
+
+function Collapsible({ ...props }: CollapsibleProps): JSX.Element {
   return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
 }
 
@@ -16,7 +18,9 @@ function Collapsible({ ...props }: ComponentProps<typeof CollapsiblePrimitive.Ro
  * Component: CollapsibleTrigger
  * -------------------------------------------------------------------------- */
 
-function CollapsibleTrigger({ ...props }: ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>): JSX.Element {
+type CollapsibleTriggerProps = ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>;
+
+function CollapsibleTrigger({ ...props }: CollapsibleTriggerProps): JSX.Element {
   return <CollapsiblePrimitive.CollapsibleTrigger data-slot="collapsible-trigger" {...props} />;
 }
 
@@ -24,7 +28,9 @@ function CollapsibleTrigger({ ...props }: ComponentProps<typeof CollapsiblePrimi
  * Component: CollapsibleContent
  * -------------------------------------------------------------------------- */
 
-function CollapsibleContent({ ...props }: ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>): JSX.Element {
+type CollapsibleContentProps = ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>;
+
+function CollapsibleContent({ ...props }: CollapsibleContentProps): JSX.Element {
   return <CollapsiblePrimitive.CollapsibleContent data-slot="collapsible-content" {...props} />;
 }
 
@@ -33,3 +39,4 @@ function CollapsibleContent({ ...props }: ComponentProps<typeof CollapsiblePrimi
  * -------------------------------------------------------------------------- */
 
 export { Collapsible, CollapsibleContent, CollapsibleTrigger };
+export type { CollapsibleProps, CollapsibleTriggerProps, CollapsibleContentProps };

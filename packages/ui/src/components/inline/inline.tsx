@@ -8,12 +8,11 @@ import type { ComponentProps, JSX } from "react";
  * Component: Inline
  * -------------------------------------------------------------------------- */
 
-function Inline({
-  asChild,
-  ...props
-}: ComponentProps<"span"> & {
+interface InlineProps extends ComponentProps<"span"> {
   asChild?: boolean;
-}): JSX.Element {
+}
+
+function Inline({ asChild, ...props }: InlineProps): JSX.Element {
   const Component = asChild ? Slot : "span";
 
   return <Component data-slot="inline" {...props} />;
@@ -24,3 +23,4 @@ function Inline({
  * -------------------------------------------------------------------------- */
 
 export { Inline };
+export type { InlineProps };

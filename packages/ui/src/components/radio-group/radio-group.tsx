@@ -10,7 +10,9 @@ import type { ComponentProps, JSX } from "react";
  * Component: RadioGroup
  * -------------------------------------------------------------------------- */
 
-function RadioGroup({ className, ...props }: ComponentProps<typeof RadioGroupPrimitive.Root>): JSX.Element {
+type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
+
+function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
   return <RadioGroupPrimitive.Root className={cn("grid gap-2", className)} data-slot="radio-group" {...props} />;
 }
 
@@ -18,7 +20,9 @@ function RadioGroup({ className, ...props }: ComponentProps<typeof RadioGroupPri
  * Component: RadioGroupItem
  * -------------------------------------------------------------------------- */
 
-function RadioGroupItem({ className, ...props }: ComponentProps<typeof RadioGroupPrimitive.Item>): JSX.Element {
+type RadioGroupItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
+
+function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Element {
   return (
     <RadioGroupPrimitive.Item
       className={cn(
@@ -38,3 +42,4 @@ function RadioGroupItem({ className, ...props }: ComponentProps<typeof RadioGrou
  * -------------------------------------------------------------------------- */
 
 export { RadioGroup, RadioGroupItem };
+export type { RadioGroupProps, RadioGroupItemProps };
