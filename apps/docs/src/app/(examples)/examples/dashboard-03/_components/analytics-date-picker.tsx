@@ -5,7 +5,7 @@ import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { type JSX, useId, useState } from "react";
 
-import type { DateRange } from "@codefast/ui";
+import type { DateRange } from "react-day-picker";
 
 export function AnalyticsDatePicker(): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({

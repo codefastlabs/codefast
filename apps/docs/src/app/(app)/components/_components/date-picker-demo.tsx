@@ -17,8 +17,8 @@ import { useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 
-import type { DateRange } from "@codefast/ui";
 import type { JSX } from "react";
+import type { DateRange } from "react-day-picker";
 
 export function DatePickerDemo(): JSX.Element {
   return (
