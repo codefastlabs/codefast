@@ -84,6 +84,11 @@ const [ChartContextProvider, useChartContext] = createChartContext<ChartContextV
  * Component: Chart
  * -------------------------------------------------------------------------- */
 
+interface ChartContainerProps extends ComponentProps<"div"> {
+  children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"];
+  config: ChartConfig;
+}
+
 function ChartContainer({
   __scopeChart,
   id,
@@ -91,12 +96,7 @@ function ChartContainer({
   className,
   config,
   ...props
-}: ScopedProps<
-  ComponentProps<"div"> & {
-    children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"];
-    config: ChartConfig;
-  }
->): JSX.Element {
+}: ScopedProps<ChartContainerProps>): JSX.Element {
   const uniqueId = useId();
   const chartId = `chart-${id ?? uniqueId}`;
 
@@ -122,7 +122,12 @@ function ChartContainer({
  * Component: ChartStyle
  * -------------------------------------------------------------------------- */
 
-function ChartStyle({ id, config }: { config: ChartConfig; id: string }): ReactNode {
+interface ChartStyleProps {
+  config: ChartConfig;
+  id: string;
+}
+
+function ChartStyle({ id, config }: ChartStyleProps): ReactNode {
   const cssString = useMemo(() => generateCSS(id, config), [id, config]);
 
   return <style dangerouslySetInnerHTML={{ __html: cssString }} />;
@@ -140,6 +145,16 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
 
 const CHART_TOOLTIP_CONTENT_NAME = "ChartTooltipContent";
 
+interface ChartTooltipContentProps
+  extends ComponentProps<typeof RechartsPrimitive.Tooltip>,
+    Omit<ComponentProps<"div">, "content"> {
+  hideIndicator?: boolean;
+  hideLabel?: boolean;
+  indicator?: "dashed" | "dot" | "line";
+  labelKey?: string;
+  nameKey?: string;
+}
+
 function ChartTooltipContent({
   __scopeChart,
   active,
@@ -155,16 +170,7 @@ function ChartTooltipContent({
   labelKey,
   nameKey,
   payload,
-}: ScopedProps<
-  ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    Omit<ComponentProps<"div">, "content"> & {
-      hideIndicator?: boolean;
-      hideLabel?: boolean;
-      indicator?: "dashed" | "dot" | "line";
-      labelKey?: string;
-      nameKey?: string;
-    }
->): ReactNode {
+}: ScopedProps<ChartTooltipContentProps>): ReactNode {
   const { config } = useChartContext(CHART_TOOLTIP_CONTENT_NAME, __scopeChart);
 
   const tooltipLabel = useMemo(() => {
@@ -276,6 +282,13 @@ const ChartLegend = RechartsPrimitive.Legend;
 
 const CHART_LEGEND_CONTENT_NAME = "ChartLegendContent";
 
+interface ChartLegendContentProps
+  extends ComponentProps<"div">,
+    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> {
+  hideIcon?: boolean;
+  nameKey?: string;
+}
+
 function ChartLegendContent({
   __scopeChart,
   className,
@@ -283,13 +296,7 @@ function ChartLegendContent({
   nameKey,
   payload,
   verticalAlign = "bottom",
-}: ScopedProps<
-  ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-      hideIcon?: boolean;
-      nameKey?: string;
-    }
->): ReactNode {
+}: ScopedProps<ChartLegendContentProps>): ReactNode {
   const { config } = useChartContext(CHART_LEGEND_CONTENT_NAME, __scopeChart);
 
   if (!payload?.length) {
@@ -457,7 +464,8 @@ function generateCSS(id: string, config: ChartConfig): string {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export type { ChartConfig };
+export type { ChartConfig, ChartContainerProps, ChartLegendContentProps, ChartStyleProps, ChartTooltipContentProps };
+
 export {
   ChartContainer,
   ChartLegend,
