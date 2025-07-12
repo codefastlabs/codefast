@@ -25,6 +25,7 @@ export default defineConfig({
     },
   ],
   output: {
+    cleanDistPath: false,
     target: "web",
   },
   performance: {

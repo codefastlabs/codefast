@@ -30,6 +30,7 @@ export default defineConfig({
     },
   ],
   output: {
+    cleanDistPath: false,
     copy: [
       {
         from: path.resolve(__dirname, "src", "styles", "index.css"),
