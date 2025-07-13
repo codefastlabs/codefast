@@ -1,7 +1,6 @@
 {
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]

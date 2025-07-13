@@ -1,7 +1,6 @@
 {
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
