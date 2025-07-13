@@ -253,7 +253,10 @@ function processIndexFile(indexFilePath) {
     if (!resolvedPath) {
       console.warn(`  Warning: Could not resolve module path "${exportStar.modulePath}"`);
       // Keep the original export * statement if we can't resolve it
-      individualExports.push(exportStar.statement);
+      individualExports.push({
+        modulePath: exportStar.modulePath,
+        statements: [exportStar.statement]
+      });
       continue;
     }
 
@@ -262,18 +265,28 @@ function processIndexFile(indexFilePath) {
     if (fileExports.components.length > 0 || fileExports.types.length > 0) {
       hasChanges = true;
 
+      const statements = [];
+
       // Add individual component exports
       if (fileExports.components.length > 0) {
-        individualExports.push(`export { ${fileExports.components.join(", ")} } from "${exportStar.modulePath}";`);
+        statements.push(`export { ${fileExports.components.join(", ")} } from "${exportStar.modulePath}";`);
       }
 
       // Add individual type exports
       if (fileExports.types.length > 0) {
-        individualExports.push(`export type { ${fileExports.types.join(", ")} } from "${exportStar.modulePath}";`);
+        statements.push(`export type { ${fileExports.types.join(", ")} } from "${exportStar.modulePath}";`);
       }
+
+      individualExports.push({
+        modulePath: exportStar.modulePath,
+        statements: statements
+      });
     } else {
       // Keep the original export * statement if no exports found
-      individualExports.push(exportStar.statement);
+      individualExports.push({
+        modulePath: exportStar.modulePath,
+        statements: [exportStar.statement]
+      });
     }
   }
 
@@ -353,9 +366,19 @@ function generateIndexContent(processedFile) {
 
   // Add the individual exports at the end
   if (processedFile.individualExports.length > 0) {
-    // Add the individual export statements
-    for (const exportStatement of processedFile.individualExports) {
-      newLines.push(exportStatement);
+    // Add the individual export statements with blank lines between different modules
+    for (let i = 0; i < processedFile.individualExports.length; i++) {
+      const exportGroup = processedFile.individualExports[i];
+
+      // Add blank line before each module group (except the first one)
+      if (i > 0) {
+        newLines.push("");
+      }
+
+      // Add all statements for this module
+      for (const statement of exportGroup.statements) {
+        newLines.push(statement);
+      }
     }
   }
 
