@@ -1,6 +1,5 @@
-import pluginJest from "eslint-plugin-jest";
-
 import type { Linter } from "eslint";
+import pluginJest from "eslint-plugin-jest";
 
 export const jestRules: Linter.Config[] = [
   {
@@ -34,20 +33,17 @@ export const jestRules: Linter.Config[] = [
       "jest/no-duplicate-hooks": "error",
       "jest/no-export": "error",
       "jest/no-focused-tests": "error",
-      "jest/no-hooks": "off",
       "jest/no-identical-title": "error",
       "jest/no-interpolation-in-snapshots": "error",
       "jest/no-jasmine-globals": "error",
       "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
       "jest/no-mocks-import": "error",
-      "jest/no-restricted-matchers": "off",
       "jest/no-standalone-expect": "error",
       "jest/no-test-prefixes": "error",
       "jest/no-test-return-statement": "error",
       "jest/prefer-called-with": "error",
       "jest/prefer-comparison-matcher": "error",
       "jest/prefer-equality-matcher": "error",
-      "jest/prefer-expect-assertions": "off",
       "jest/prefer-expect-resolves": "error",
       "jest/prefer-hooks-on-top": "error",
       "jest/prefer-lowercase-title": ["error", { ignore: ["describe"] }],
@@ -66,6 +62,11 @@ export const jestRules: Linter.Config[] = [
       "jest/valid-expect": "error",
       "jest/valid-expect-in-promise": "error",
       "jest/valid-title": "error",
+
+      // Disabled rules
+      "jest/no-hooks": "off",
+      "jest/no-restricted-matchers": "off",
+      "jest/prefer-expect-assertions": "off",
     },
   },
 ];

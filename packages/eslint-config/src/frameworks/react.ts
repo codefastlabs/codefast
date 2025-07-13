@@ -1,7 +1,6 @@
+import type { Linter } from "eslint";
 import pluginReact from "eslint-plugin-react";
 import * as pluginReactHooks from "eslint-plugin-react-hooks";
-
-import type { Linter } from "eslint";
 
 export const reactRules: Linter.Config[] = [
   {
@@ -37,6 +36,8 @@ export const reactRules: Linter.Config[] = [
           allowAsProps: false,
         },
       ],
+
+      // Disabled rules
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
     },

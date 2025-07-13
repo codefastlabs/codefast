@@ -1,6 +1,5 @@
-import { configs as tseslintConfigs } from "typescript-eslint";
-
 import type { Linter } from "eslint";
+import { configs as tseslintConfigs } from "typescript-eslint";
 import type { ConfigArray } from "typescript-eslint";
 
 /**
@@ -45,8 +44,8 @@ const customTypescriptRules: Linter.RulesRecord = {
       argsIgnorePattern: "^_",
     },
   ],
-  "@typescript-eslint/explicit-function-return-type": "off",
 
+  "@typescript-eslint/consistent-type-exports": "error",
   // Type imports and exports
   "@typescript-eslint/consistent-type-imports": [
     "error",
@@ -54,13 +53,15 @@ const customTypescriptRules: Linter.RulesRecord = {
       prefer: "type-imports",
     },
   ],
-  "@typescript-eslint/consistent-type-exports": "error",
   "@typescript-eslint/no-import-type-side-effects": "error",
 
   // Code style and cleanup
   "@typescript-eslint/method-signature-style": ["error", "property"],
   "@typescript-eslint/no-unnecessary-qualifier": "error",
   "@typescript-eslint/no-useless-empty-export": "error",
+
+  // Disabled rules
+  "@typescript-eslint/explicit-function-return-type": "off",
 };
 
 export const typescriptRules: Linter.Config[] = [
