@@ -16,11 +16,6 @@ export const jestRules: Linter.Config[] = [
     rules: {
       ...pluginJest.configs.recommended.rules,
 
-      // Disabled rules
-      "jest/no-hooks": "off",
-      "jest/no-restricted-matchers": "off",
-      "jest/prefer-expect-assertions": "off",
-
       // Warning rules
       "jest/no-commented-out-tests": "warn",
       "jest/no-disabled-tests": "warn",
