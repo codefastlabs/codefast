@@ -1,5 +1,8 @@
 "use client";
 
+import { useId } from "react";
+import type { JSX } from "react";
+
 import {
   Button,
   Card,
@@ -15,21 +18,18 @@ import {
   RadioCardsItem,
   Textarea,
 } from "@codefast/ui";
-import { useId } from "react";
-
-import type { JSX } from "react";
 
 const plans = [
   {
+    description: "Perfect for small businesses.",
     id: "starter",
     name: "Starter Plan",
-    description: "Perfect for small businesses.",
     price: "$10",
   },
   {
+    description: "Advanced features with more storage.",
     id: "pro",
     name: "Pro Plan",
-    description: "Advanced features with more storage.",
     price: "$20",
   },
 ] as const;

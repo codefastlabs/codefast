@@ -1,9 +1,9 @@
 "use client";
 
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Label, REGEXP_ONLY_DIGITS } from "@codefast/ui";
 import { type JSX, useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Label, REGEXP_ONLY_DIGITS } from "@codefast/ui";
 
 export function InputOTPDemo(): JSX.Element {
   return (

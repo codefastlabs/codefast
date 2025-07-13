@@ -1,13 +1,13 @@
-import * as InputNumberPrimitive from "@codefast-ui/input-number";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { buttonVariants } from "@/components/button";
 import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+import * as InputNumberPrimitive from "@codefast-ui/input-number";
 
 const { input, root } = inputVariants();
 
@@ -21,13 +21,13 @@ interface InputNumberProps
     VariantProps<typeof inputVariants> {}
 
 function InputNumber({
-  id,
   ariaDecrementLabel,
   ariaIncrementLabel,
   className,
   defaultValue,
   disabled,
   formatOptions,
+  id,
   loaderPosition,
   loading,
   max,

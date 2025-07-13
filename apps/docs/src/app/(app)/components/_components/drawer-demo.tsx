@@ -1,5 +1,11 @@
 "use client";
 
+import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from "lucide-react";
+import { useCallback, useState } from "react";
+import type { CSSProperties, JSX } from "react";
+import { Bar, BarChart, ResponsiveContainer } from "recharts";
+
+import { GridWrapper } from "@/components/grid-wrapper";
 import {
   Button,
   cn,
@@ -13,13 +19,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@codefast/ui";
-import { ChevronUpIcon, CircleIcon, MinusIcon, PlusIcon } from "lucide-react";
-import { useCallback, useState } from "react";
-import { Bar, BarChart, ResponsiveContainer } from "recharts";
-
-import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { CSSProperties, JSX } from "react";
 
 const data = [
   { goal: 400 },

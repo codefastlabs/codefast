@@ -1,5 +1,11 @@
 "use client";
 
+import { useId, useState } from "react";
+import type { JSX } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -17,11 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
-import { useId, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
@@ -118,16 +119,16 @@ const chartData = [
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--chart-2)",
+    label: "Mobile",
+  },
+  visitors: {
+    label: "Visitors",
   },
 } satisfies ChartConfig;
 
@@ -199,8 +200,8 @@ export function ChartAreaInteractive(): JSX.Element {
                 const date = new Date(value);
 
                 return date.toLocaleDateString("en-US", {
-                  month: "short",
                   day: "numeric",
+                  month: "short",
                 });
               }}
               tickLine={false}
@@ -212,8 +213,8 @@ export function ChartAreaInteractive(): JSX.Element {
                   indicator="dot"
                   labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
                       day: "numeric",
+                      month: "short",
                     });
                   }}
                 />

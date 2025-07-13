@@ -1,6 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
-
 import { useCopyToClipboard } from "@/use-copy-to-clipboard";
+import { act, renderHook } from "@testing-library/react";
 
 describe("useCopyToClipboard", () => {
   const originalClipboard = globalThis.navigator.clipboard;
@@ -11,10 +10,10 @@ describe("useCopyToClipboard", () => {
       /* noop */
     });
     Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
       value: {
         writeText: mockWriteText,
       },
-      configurable: true,
     });
 
     jest.useFakeTimers();
@@ -22,8 +21,8 @@ describe("useCopyToClipboard", () => {
 
   afterEach(() => {
     Object.defineProperty(navigator, "clipboard", {
-      value: originalClipboard,
       configurable: true,
+      value: originalClipboard,
     });
 
     jest.runOnlyPendingTimers();
@@ -137,8 +136,8 @@ describe("useCopyToClipboard", () => {
 
   test("should handle environment without clipboard API", async () => {
     Object.defineProperty(navigator, "clipboard", {
-      value: { writeText: undefined },
       configurable: true,
+      value: { writeText: undefined },
     });
 
     const { result } = renderHook(() => useCopyToClipboard());

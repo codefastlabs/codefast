@@ -16,19 +16,19 @@ export {
   ContextMenuTrigger,
 } from "@/components/context-menu/context-menu";
 export type {
-  ContextMenuProps,
   ContextMenuArrowProps,
   ContextMenuCheckboxItemProps,
   ContextMenuContentProps,
   ContextMenuGroupProps,
   ContextMenuItemProps,
   ContextMenuLabelProps,
+  ContextMenuProps,
   ContextMenuRadioGroupProps,
   ContextMenuRadioItemProps,
   ContextMenuSeparatorProps,
   ContextMenuShortcutProps,
-  ContextMenuSubProps,
   ContextMenuSubContentProps,
+  ContextMenuSubProps,
   ContextMenuSubTriggerProps,
   ContextMenuTriggerProps,
 } from "@/components/context-menu/context-menu";

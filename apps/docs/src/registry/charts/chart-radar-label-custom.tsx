@@ -1,5 +1,11 @@
 "use client";
 
+import { TrendingUpIcon } from "lucide-react";
+import type { JSX, ReactNode } from "react";
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,29 +17,24 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { TrendingUpIcon } from "lucide-react";
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX, ReactNode } from "react";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { desktop: 186, mobile: 80, month: "January" },
+  { desktop: 305, mobile: 200, month: "February" },
+  { desktop: 237, mobile: 120, month: "March" },
+  { desktop: 73, mobile: 190, month: "April" },
+  { desktop: 209, mobile: 130, month: "May" },
+  { desktop: 214, mobile: 140, month: "June" },
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--chart-2)",
+    label: "Mobile",
   },
 } satisfies ChartConfig;
 
@@ -49,10 +50,10 @@ export function ChartRadarLabelCustom(): JSX.Element {
           <RadarChart
             data={chartData}
             margin={{
-              top: 10,
-              right: 10,
               bottom: 10,
               left: 10,
+              right: 10,
+              top: 10,
             }}
           >
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />

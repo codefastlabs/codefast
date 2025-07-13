@@ -1,10 +1,10 @@
 import { unstable_cache as cache } from "next/cache";
+import type { ReactNode } from "react";
+
+import type { RegistryItemFile } from "@/types/registry";
 
 import { BlockViewer } from "@/components/block-viewer";
 import { createFileTreeForRegistryItemFiles, getRegistryItem } from "@/lib/registry";
-
-import type { RegistryItemFile } from "@/types/registry";
-import type { ReactNode } from "react";
 
 const getCachedRegistryItem = cache(async (name: string) => {
   return getRegistryItem(name);

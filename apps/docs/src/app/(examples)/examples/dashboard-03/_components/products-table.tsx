@@ -1,3 +1,6 @@
+import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from "lucide-react";
+import type { JSX } from "react";
+
 import {
   Badge,
   Button,
@@ -32,9 +35,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@codefast/ui";
-import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from "lucide-react";
-
-import type { JSX } from "react";
 
 export function ProductsTable({
   products,
@@ -146,8 +146,8 @@ export function ProductsTable({
                 </TableCell>
                 <TableCell>
                   {new Date(product.dateAdded).toLocaleDateString("en-US", {
-                    month: "long",
                     day: "numeric",
+                    month: "long",
                     year: "numeric",
                   })}
                 </TableCell>

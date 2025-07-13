@@ -1,3 +1,6 @@
+import Link from "next/link";
+import type { JSX } from "react";
+
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -11,9 +14,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@codefast/ui";
-import Link from "next/link";
-
-import type { JSX } from "react";
 
 export function BreadcrumbDemo(): JSX.Element {
   return (

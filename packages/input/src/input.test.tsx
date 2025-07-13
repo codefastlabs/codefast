@@ -1,8 +1,8 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 
 import { Input, InputField } from "@/input";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 describe("input", () => {
   describe("Rendering", () => {

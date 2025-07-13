@@ -1,4 +1,4 @@
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TooltipArrow } from "@/components/tooltip/tooltip";
+export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip/tooltip";
 export type {
   TooltipArrowProps,
   TooltipContentProps,

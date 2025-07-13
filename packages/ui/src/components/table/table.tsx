@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
-
 import type { ComponentProps, JSX } from "react";
+
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Table
@@ -115,12 +115,12 @@ function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
 
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };
 export type {
-  TableProps,
-  TableHeaderProps,
   TableBodyProps,
-  TableFooterProps,
-  TableRowProps,
-  TableHeadProps,
-  TableCellProps,
   TableCaptionProps,
+  TableCellProps,
+  TableFooterProps,
+  TableHeaderProps,
+  TableHeadProps,
+  TableProps,
+  TableRowProps,
 };

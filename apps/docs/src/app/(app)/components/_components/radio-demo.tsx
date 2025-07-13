@@ -1,7 +1,7 @@
-import { cn, Label, Radio } from "@codefast/ui";
 import { useId } from "react";
-
 import type { ComponentProps, JSX } from "react";
+
+import { cn, Label, Radio } from "@codefast/ui";
 
 export function RadioDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();

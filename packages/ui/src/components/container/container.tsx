@@ -1,10 +1,9 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Container

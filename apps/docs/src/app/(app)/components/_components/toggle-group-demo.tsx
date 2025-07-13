@@ -1,4 +1,3 @@
-import { buttonVariants, Separator, ToggleGroup, ToggleGroupItem } from "@codefast/ui";
 import {
   BoldIcon,
   FullscreenIcon,
@@ -9,10 +8,10 @@ import {
   UnderlineIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { JSX } from "react";
+import { buttonVariants, Separator, ToggleGroup, ToggleGroupItem } from "@codefast/ui";
 
 export function ToggleGroupDemo(): JSX.Element {
   return (
@@ -96,8 +95,8 @@ export function ToggleGroupDemo(): JSX.Element {
             <Link
               className={buttonVariants({
                 className: "size-6 p-0",
-                variant: "ghost",
                 size: "icon",
+                variant: "ghost",
               })}
               href="/"
               title="Open in New Tab"

@@ -1,10 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, ChartContainer, cn } from "@codefast/ui";
+import type { JSX } from "react";
 import { Bar, BarChart, Line, LineChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
+
+import { Card, CardContent, CardHeader, CardTitle, ChartContainer, cn } from "@codefast/ui";
 
 const data = [
   {
@@ -43,12 +44,12 @@ const data = [
 
 const chartConfig = {
   revenue: {
-    label: "Revenue",
     color: "var(--primary)",
+    label: "Revenue",
   },
   subscription: {
-    label: "Subscriptions",
     color: "var(--primary)",
+    label: "Subscriptions",
   },
 } satisfies ChartConfig;
 
@@ -63,7 +64,7 @@ export function CardsStats({ className }: { className?: string }): JSX.Element {
           <div className="text-2xl font-bold">$15,231.89</div>
           <p className="text-muted-foreground text-xs">+20.1% from last month</p>
           <ChartContainer className="h-[80px] w-full" config={chartConfig}>
-            <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+            <LineChart data={data} margin={{ bottom: 0, left: 10, right: 10, top: 5 }}>
               <Line
                 activeDot={{ r: 6 }}
                 dataKey="revenue"

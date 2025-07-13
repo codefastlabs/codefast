@@ -2,18 +2,18 @@
 
 export {
   createInputNumberScope,
-  InputNumberDecrementButton,
   DecrementButton,
-  InputNumberField,
   Field,
-  InputNumberIncrementButton,
   IncrementButton,
   InputNumber,
+  InputNumberDecrementButton,
+  InputNumberField,
+  InputNumberIncrementButton,
   Root,
 } from "@/input-number";
 export type {
-  InputNumberProps,
   InputNumberDecrementButtonProps,
   InputNumberFieldProps,
   InputNumberIncrementButtonProps,
+  InputNumberProps,
 } from "@/input-number";

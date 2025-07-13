@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function useCopyToClipboard({ timeout = 2000, onCopy }: { onCopy?: () => void; timeout?: number } = {}): {
+export function useCopyToClipboard({ onCopy, timeout = 2000 }: { onCopy?: () => void; timeout?: number } = {}): {
   copyToClipboard: (value: string) => Promise<void>;
   isCopied: boolean;
 } {
@@ -32,5 +32,5 @@ export function useCopyToClipboard({ timeout = 2000, onCopy }: { onCopy?: () => 
     }
   };
 
-  return { isCopied, copyToClipboard };
+  return { copyToClipboard, isCopied };
 }

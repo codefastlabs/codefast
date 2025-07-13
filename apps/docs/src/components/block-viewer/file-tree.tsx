@@ -1,3 +1,7 @@
+import type { ReactNode } from "react";
+
+import { useBlockViewer } from "@/components/block-viewer/provider";
+import { BlockViewerTree } from "@/components/block-viewer/tree";
 import {
   Sidebar,
   SidebarGroup,
@@ -6,11 +10,6 @@ import {
   SidebarMenu,
   SidebarProvider,
 } from "@codefast/ui";
-
-import { useBlockViewer } from "@/components/block-viewer/provider";
-import { BlockViewerTree } from "@/components/block-viewer/tree";
-
-import type { ReactNode } from "react";
 
 export function BlockViewerFileTree(): ReactNode {
   const { tree } = useBlockViewer("BlockViewerFileTree");

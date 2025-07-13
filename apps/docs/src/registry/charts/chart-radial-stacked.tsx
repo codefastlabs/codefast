@@ -1,5 +1,12 @@
 "use client";
 
+import { TrendingUpIcon } from "lucide-react";
+import type { JSX, ReactNode } from "react";
+import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
+import type { Props } from "recharts/types/component/Label";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,23 +18,17 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { TrendingUpIcon } from "lucide-react";
-import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX, ReactNode } from "react";
-import type { Props } from "recharts/types/component/Label";
-
-const chartData = [{ month: "january", desktop: 1260, mobile: 570 }];
+const chartData = [{ desktop: 1260, mobile: 570, month: "january" }];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--chart-2)",
+    label: "Mobile",
   },
 } satisfies ChartConfig;
 

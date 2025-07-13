@@ -1,5 +1,9 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import type { JSX } from "react";
+
 import {
   Avatar,
   AvatarFallback,
@@ -20,15 +24,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@codefast/ui";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-
-import type { JSX } from "react";
 
 interface Role {
   description: string;
-  name: string;
   keywords?: string[];
+  name: string;
 }
 
 interface TeamMember {
@@ -40,10 +40,10 @@ interface TeamMember {
 }
 
 const roleOptions: Role[] = [
-  { name: "Viewer", description: "Can view and comment.", keywords: ["view", "comment"] },
-  { name: "Developer", description: "Can view, comment and edit.", keywords: ["view", "comment", "edit"] },
-  { name: "Billing", description: "Can view, comment and manage billing.", keywords: ["view", "comment", "billing"] },
-  { name: "Owner", description: "Admin-level access to all resources.", keywords: ["admin"] },
+  { description: "Can view and comment.", keywords: ["view", "comment"], name: "Viewer" },
+  { description: "Can view, comment and edit.", keywords: ["view", "comment", "edit"], name: "Developer" },
+  { description: "Can view, comment and manage billing.", keywords: ["view", "comment", "billing"], name: "Billing" },
+  { description: "Admin-level access to all resources.", keywords: ["admin"], name: "Owner" },
 ];
 
 function RoleSelector({
@@ -133,24 +133,24 @@ function TeamMemberItem({
 export function CardsTeamMembers(): JSX.Element {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     {
-      name: "Sofia Davis",
-      email: "m@example.com",
       avatar: "/avatars/01.png",
+      email: "m@example.com",
       initials: "OM",
+      name: "Sofia Davis",
       role: "Owner",
     },
     {
-      name: "Jackson Lee",
-      email: "p@example.com",
       avatar: "/avatars/02.png",
+      email: "p@example.com",
       initials: "JL",
+      name: "Jackson Lee",
       role: "Viewer",
     },
     {
-      name: "Isabella Nguyen",
-      email: "i@example.com",
       avatar: "/avatars/03.png",
+      email: "i@example.com",
       initials: "IN",
+      name: "Isabella Nguyen",
       role: "Viewer",
     },
   ]);

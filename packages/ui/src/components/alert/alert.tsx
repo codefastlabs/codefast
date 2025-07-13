@@ -1,8 +1,9 @@
-import { alertVariants } from "@/components/alert/alert.variants";
-import { cn } from "@/lib/utils";
+import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+
+import { alertVariants } from "@/components/alert/alert.variants";
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Alert
@@ -56,4 +57,4 @@ function AlertDescription({ className, ...props }: AlertDescriptionProps): JSX.E
  * -------------------------------------------------------------------------- */
 
 export { Alert, AlertDescription, AlertTitle };
-export type { AlertProps, AlertTitleProps, AlertDescriptionProps };
+export type { AlertDescriptionProps, AlertProps, AlertTitleProps };

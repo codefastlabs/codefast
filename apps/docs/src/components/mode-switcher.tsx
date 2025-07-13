@@ -1,17 +1,16 @@
 "use client";
 
-import { Button } from "@codefast/ui";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useCallback } from "react";
+import type { JSX } from "react";
 
 import { useMetaColor } from "@/hooks/use-meta-color";
 import { META_THEME_COLORS } from "@/lib/site";
-
-import type { JSX } from "react";
+import { Button } from "@codefast/ui";
 
 export function ModeSwitcher(): JSX.Element {
-  const { setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const { setMetaColor } = useMetaColor();
 
   const toggleTheme = useCallback(() => {

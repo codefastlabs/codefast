@@ -1,5 +1,11 @@
 "use client";
 
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import type { JSX } from "react";
+
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table";
+
 import {
   Button,
   Card,
@@ -31,36 +37,31 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-import { useState } from "react";
-
-import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table";
-import type { JSX } from "react";
 
 const data: Payment[] = [
   {
-    id: "m5gr84i9",
     amount: 316,
-    status: "success",
     email: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
+    id: "m5gr84i9",
     status: "success",
+  },
+  {
+    amount: 242,
     email: "Abe45@example.com",
+    id: "3u1reuv4",
+    status: "success",
   },
   {
-    id: "derv1ws0",
     amount: 837,
-    status: "processing",
     email: "Monserrat44@example.com",
+    id: "derv1ws0",
+    status: "processing",
   },
   {
-    id: "bhqecj4p",
     amount: 721,
-    status: "failed",
     email: "carmella@example.com",
+    id: "bhqecj4p",
+    status: "failed",
   },
 ];
 
@@ -73,16 +74,6 @@ export interface Payment {
 
 export const columns: ColumnDef<Payment>[] = [
   {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        aria-label="Select all"
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-        onCheckedChange={(value) => {
-          table.toggleAllPageRowsSelected(Boolean(value));
-        }}
-      />
-    ),
     cell: ({ row }) => (
       <Checkbox
         aria-label="Select row"
@@ -92,17 +83,28 @@ export const columns: ColumnDef<Payment>[] = [
         }}
       />
     ),
-    enableSorting: false,
     enableHiding: false,
+    enableSorting: false,
+    header: ({ table }) => (
+      <Checkbox
+        aria-label="Select all"
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+        onCheckedChange={(value) => {
+          table.toggleAllPageRowsSelected(Boolean(value));
+        }}
+      />
+    ),
+    id: "select",
   },
   {
     accessorKey: "status",
-    header: "Status",
     cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
+    header: "Status",
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
+    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    header: ({ column }): JSX.Element => {
       return (
         <Button
           variant="ghost"
@@ -115,27 +117,24 @@ export const columns: ColumnDef<Payment>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
+    cell: ({ row }): JSX.Element => {
       const amount = Number.parseFloat(row.getValue("amount"));
 
       // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
         currency: "USD",
+        style: "currency",
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
+    header: () => <div className="text-right">Amount</div>,
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
+    cell: ({ row }): JSX.Element => {
       const payment = row.original;
 
       return (
@@ -158,6 +157,8 @@ export const columns: ColumnDef<Payment>[] = [
         </DropdownMenu>
       );
     },
+    enableHiding: false,
+    id: "actions",
   },
 ];
 
@@ -168,21 +169,21 @@ export function CardsDataTable(): JSX.Element {
   const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
-    data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    data,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
     state: {
-      sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      sorting,
     },
   });
 

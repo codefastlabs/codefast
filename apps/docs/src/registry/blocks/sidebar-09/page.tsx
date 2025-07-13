@@ -1,3 +1,6 @@
+import type { CSSProperties, JSX } from "react";
+
+import { AppSidebar } from "@/registry/blocks/sidebar-09/_components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,10 +13,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@codefast/ui";
-
-import { AppSidebar } from "@/registry/blocks/sidebar-09/_components/app-sidebar";
-
-import type { CSSProperties, JSX } from "react";
 
 export default function Page(): JSX.Element {
   return (

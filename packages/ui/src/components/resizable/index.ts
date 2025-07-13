@@ -1,6 +1,6 @@
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/resizable/resizable";
 export type {
   ResizableHandleProps,
-  ResizablePanelProps,
   ResizablePanelGroupProps,
+  ResizablePanelProps,
 } from "@/components/resizable/resizable";

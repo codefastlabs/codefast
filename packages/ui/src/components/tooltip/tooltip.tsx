@@ -1,10 +1,9 @@
 "use client";
 
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 /* -----------------------------------------------------------------------------
  * Component: TooltipProvider
@@ -42,7 +41,7 @@ function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
 
 type TooltipContentProps = ComponentProps<typeof TooltipPrimitive.Content>;
 
-function TooltipContent({ className, children, sideOffset = 4, ...props }: TooltipContentProps): JSX.Element {
+function TooltipContent({ children, className, sideOffset = 4, ...props }: TooltipContentProps): JSX.Element {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -77,5 +76,5 @@ function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TooltipArrow };
+export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };
 export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };

@@ -1,5 +1,9 @@
 "use client";
 
+import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon } from "lucide-react";
+import { useState } from "react";
+import type { JSX } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,14 +13,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@codefast/ui";
-import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon } from "lucide-react";
-import { useState } from "react";
-
-import type { JSX } from "react";
 
 export function VersionSwitcher({
-  versions,
   defaultVersion,
+  versions,
 }: {
   defaultVersion: string;
   versions: string[];

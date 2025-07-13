@@ -1,3 +1,10 @@
+import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from "lucide-react";
+import Link from "next/link";
+import type { JSX } from "react";
+
+import type { BlockViewMode } from "@/components/block-viewer/provider";
+
+import { useBlockViewer } from "@/components/block-viewer/provider";
 import { useCopyToClipboard } from "@codefast/hooks";
 import {
   Button,
@@ -9,18 +16,11 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@codefast/ui";
-import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from "lucide-react";
-import Link from "next/link";
-
-import { useBlockViewer } from "@/components/block-viewer/provider";
-
-import type { BlockViewMode } from "@/components/block-viewer/provider";
-import type { JSX } from "react";
 
 const hasCli = false;
 
 export function BlockViewerToolbar(): JSX.Element {
-  const { setView, view, item, resizablePanelRef } = useBlockViewer("BlockViewerToolbar");
+  const { item, resizablePanelRef, setView, view } = useBlockViewer("BlockViewerToolbar");
   const { copyToClipboard, isCopied } = useCopyToClipboard();
 
   return (
@@ -70,7 +70,7 @@ export function BlockViewerToolbar(): JSX.Element {
           </ToggleGroup>
           <Separator className="h-4" orientation="vertical" />
           <Link
-            className={buttonVariants({ size: "icon", variant: "ghost", className: "size-7" })}
+            className={buttonVariants({ className: "size-7", size: "icon", variant: "ghost" })}
             href={`/view/${item.slug}`}
             target="_blank"
             title="Open in New Tab"

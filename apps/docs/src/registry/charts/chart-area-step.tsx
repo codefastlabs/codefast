@@ -1,5 +1,11 @@
 "use client";
 
+import { ActivityIcon, TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,26 +17,21 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { ActivityIcon, TrendingUpIcon } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
+  { desktop: 186, month: "January" },
+  { desktop: 305, month: "February" },
+  { desktop: 237, month: "March" },
+  { desktop: 73, month: "April" },
+  { desktop: 209, month: "May" },
+  { desktop: 214, month: "June" },
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
     icon: ActivityIcon,
+    label: "Desktop",
   },
 } satisfies ChartConfig;
 

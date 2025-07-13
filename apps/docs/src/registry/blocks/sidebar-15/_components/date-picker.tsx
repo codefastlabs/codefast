@@ -1,6 +1,6 @@
-import { Calendar, SidebarGroup, SidebarGroupContent } from "@codefast/ui";
-
 import type { JSX } from "react";
+
+import { Calendar, SidebarGroup, SidebarGroupContent } from "@codefast/ui";
 
 export function DatePicker(): JSX.Element {
   return (

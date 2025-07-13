@@ -1,5 +1,11 @@
 "use client";
 
+import { useTheme } from "next-themes";
+import { useEffect, useId, useState } from "react";
+import type { ComponentProps, JSX } from "react";
+
+import type { Icon } from "@tabler/icons-react";
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -10,11 +16,6 @@ import {
   Switch,
 } from "@codefast/ui";
 import { IconBrightness } from "@tabler/icons-react";
-import { useTheme } from "next-themes";
-import { useEffect, useId, useState } from "react";
-
-import type { Icon } from "@tabler/icons-react";
-import type { ComponentProps, JSX } from "react";
 
 export function NavSecondary({
   items,

@@ -1,11 +1,11 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
-
-import { badgeVariants } from "@/components/badge/badge.variants";
+import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+
+import { badgeVariants } from "@/components/badge/badge.variants";
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Badge
@@ -15,7 +15,7 @@ interface BadgeProps extends ComponentProps<"span">, VariantProps<typeof badgeVa
   asChild?: boolean;
 }
 
-function Badge({ className, asChild, variant, ...props }: BadgeProps): JSX.Element {
+function Badge({ asChild, className, variant, ...props }: BadgeProps): JSX.Element {
   const Component = asChild ? Slot : "span";
 
   return <Component className={badgeVariants({ className, variant })} data-slot="badge" {...props} />;

@@ -1,8 +1,8 @@
 "use client";
 
-import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
-
 import type { ComponentProps, JSX } from "react";
+
+import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 
 /* -----------------------------------------------------------------------------
  * Component: Collapsible
@@ -39,4 +39,4 @@ function CollapsibleContent({ ...props }: CollapsibleContentProps): JSX.Element 
  * -------------------------------------------------------------------------- */
 
 export { Collapsible, CollapsibleContent, CollapsibleTrigger };
-export type { CollapsibleProps, CollapsibleTriggerProps, CollapsibleContentProps };
+export type { CollapsibleContentProps, CollapsibleProps, CollapsibleTriggerProps };

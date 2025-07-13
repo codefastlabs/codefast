@@ -2,7 +2,6 @@
 
 import Cookies from "js-cookie";
 import { createContext, useContext, useEffect, useState } from "react";
-
 import type { JSX, ReactNode } from "react";
 
 const THEME_COOKIE_NAME = "active_theme";
@@ -14,8 +13,8 @@ function setThemeCookie(theme: string): void {
   }
 
   Cookies.set(THEME_COOKIE_NAME, theme, {
-    path: "/",
     expires: 365,
+    path: "/",
     sameSite: "Lax",
     secure: globalThis.location.protocol === "https:",
   });

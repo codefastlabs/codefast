@@ -1,12 +1,11 @@
 "use client";
 
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { Slot } from "@radix-ui/react-slot";
 import { ChevronDownIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Accordion
@@ -65,7 +64,7 @@ function AccordionIcon({ asChild, className, ...props }: AccordionIconProps): JS
 
 type AccordionTriggerProps = ComponentProps<typeof AccordionPrimitive.Trigger>;
 
-function AccordionTrigger({ className, children, ...props }: AccordionTriggerProps): JSX.Element {
+function AccordionTrigger({ children, className, ...props }: AccordionTriggerProps): JSX.Element {
   return (
     <AccordionPrimitive.Header className="flex" data-slot="accordion-trigger-wrapper">
       <AccordionPrimitive.Trigger
@@ -105,4 +104,4 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
  * -------------------------------------------------------------------------- */
 
 export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger };
-export type { AccordionProps, AccordionItemProps, AccordionIconProps, AccordionTriggerProps, AccordionContentProps };
+export type { AccordionContentProps, AccordionIconProps, AccordionItemProps, AccordionProps, AccordionTriggerProps };

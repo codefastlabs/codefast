@@ -1,10 +1,11 @@
 "use client";
 
-import { createContextScope } from "@radix-ui/react-context";
 import { useId, useMemo } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, ReactNode } from "react";
+
+import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
  * Context: ProgressCircleProvider
@@ -179,16 +180,16 @@ interface ProgressCircleProviderProps {
  */
 function ProgressCircleProvider({
   __scopeProgressCircle,
-  value,
-  min = 0,
-  max = 100,
-  thresholds,
-  strokeWidth = 4,
-  size = 48,
+  children,
   formatValue,
   id: propertyId,
+  max = 100,
+  min = 0,
+  size = 48,
   startAngle = -90,
-  children,
+  strokeWidth = 4,
+  thresholds,
+  value,
 }: ScopedProps<ProgressCircleProviderProps>): ReactNode {
   const uniqueId = useId();
   const id = propertyId ?? uniqueId;
@@ -294,7 +295,7 @@ type ProgressCircleSVGProps = ComponentProps<"svg">;
  * Renders the SVG with accessibility attributes and supports indeterminate state.
  */
 function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleSVGProps>): ReactNode {
-  const { size, id, valueText, max, min, clampedValue } = useProgressCircleContext(
+  const { clampedValue, id, max, min, size, valueText } = useProgressCircleContext(
     PROGRESS_CIRCLE_SVG_NAME,
     __scopeProgressCircle,
   );
@@ -330,7 +331,7 @@ type ProgressCircleTrackProps = ComponentProps<"circle">;
  * Renders the static track of the progress circle.
  */
 function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleTrackProps>): ReactNode {
-  const { radius, strokeWidth, threshold, center } = useProgressCircleContext(
+  const { center, radius, strokeWidth, threshold } = useProgressCircleContext(
     PROGRESS_CIRCLE_TRACK_NAME,
     __scopeProgressCircle,
   );
@@ -365,7 +366,7 @@ function ProgressCircleIndicator({
   __scopeProgressCircle,
   ...props
 }: ScopedProps<ProgressCircleIndicatorProps>): ReactNode {
-  const { radius, circumference, strokeDashoffset, rotationTransform, strokeWidth, threshold, center } =
+  const { center, circumference, radius, rotationTransform, strokeDashoffset, strokeWidth, threshold } =
     useProgressCircleContext(PROGRESS_CIRCLE_INDICATOR_NAME, __scopeProgressCircle);
 
   return (
@@ -405,7 +406,7 @@ function ProgressCircleValue({
   children,
   ...props
 }: ScopedProps<ProgressCircleValueProps>): ReactNode {
-  const { valueText, clampedValue } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
+  const { clampedValue, valueText } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
 
   if (typeof children === "function") {
     return children({ value: clampedValue, valueText });
@@ -451,8 +452,8 @@ export {
 };
 
 export type {
-  ProgressCircleProps,
   ProgressCircleIndicatorProps,
+  ProgressCircleProps,
   ProgressCircleProviderProps,
   ProgressCircleSVGProps,
   ProgressCircleTrackProps,

@@ -1,16 +1,15 @@
 "use client";
 
-import { cn } from "@codefast/ui";
-
-import { getComponentName } from "@/lib/utils";
-
 import type { ComponentProps, JSX } from "react";
 
+import { getComponentName } from "@/lib/utils";
+import { cn } from "@codefast/ui";
+
 export function ComponentWrapper({
-  className,
-  name,
   children,
+  className,
   classNames,
+  name,
   ...props
 }: ComponentProps<"div"> & {
   name: string;

@@ -1,5 +1,10 @@
 "use client";
 
+import type { JSX } from "react";
+import { Line, LineChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -10,10 +15,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { Line, LineChart } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const data = [
   { average: 400, today: 240 },
@@ -26,13 +27,13 @@ const data = [
 ];
 
 const chartConfig = {
-  today: {
-    label: "Today",
-    color: "var(--primary)",
-  },
   average: {
-    label: "Average",
     color: "var(--primary)",
+    label: "Average",
+  },
+  today: {
+    color: "var(--primary)",
+    label: "Today",
   },
 } satisfies ChartConfig;
 
@@ -45,10 +46,10 @@ export function CardsMetric(): JSX.Element {
       </CardHeader>
       <CardContent className="pb-4">
         <ChartContainer className="w-full md:h-[200px]" config={chartConfig}>
-          <LineChart data={data} margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+          <LineChart data={data} margin={{ bottom: 0, left: 10, right: 10, top: 5 }}>
             <ChartTooltip content={<ChartTooltipContent />} />
             <Line
-              activeDot={{ r: 6, fill: "var(--color-average)" }}
+              activeDot={{ fill: "var(--color-average)", r: 6 }}
               dataKey="average"
               stroke="var(--color-average)"
               strokeOpacity={0.5}

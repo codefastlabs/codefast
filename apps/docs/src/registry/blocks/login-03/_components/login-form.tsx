@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { useId } from "react";
+import type { ComponentProps, JSX } from "react";
+
 import {
   Button,
   Card,
@@ -11,10 +15,6 @@ import {
   Separator,
   SeparatorItem,
 } from "@codefast/ui";
-import Link from "next/link";
-import { useId } from "react";
-
-import type { ComponentProps, JSX } from "react";
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();

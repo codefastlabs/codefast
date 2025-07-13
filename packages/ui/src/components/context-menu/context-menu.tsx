@@ -1,11 +1,10 @@
 "use client";
 
-import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
 /* -----------------------------------------------------------------------------
  * Component: ContextMenu
@@ -294,19 +293,19 @@ export {
   ContextMenuTrigger,
 };
 export type {
-  ContextMenuProps,
   ContextMenuArrowProps,
   ContextMenuCheckboxItemProps,
   ContextMenuContentProps,
   ContextMenuGroupProps,
   ContextMenuItemProps,
   ContextMenuLabelProps,
+  ContextMenuProps,
   ContextMenuRadioGroupProps,
   ContextMenuRadioItemProps,
   ContextMenuSeparatorProps,
   ContextMenuShortcutProps,
-  ContextMenuSubProps,
   ContextMenuSubContentProps,
+  ContextMenuSubProps,
   ContextMenuSubTriggerProps,
   ContextMenuTriggerProps,
 };

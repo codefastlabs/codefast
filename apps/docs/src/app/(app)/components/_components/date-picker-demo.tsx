@@ -1,5 +1,12 @@
 "use client";
 
+import { addDays } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useId, useState } from "react";
+import type { JSX } from "react";
+import type { DateRange } from "react-day-picker";
+
+import { GridWrapper } from "@/components/grid-wrapper";
 import { useIsMobile } from "@codefast/hooks";
 import {
   Button,
@@ -11,14 +18,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@codefast/ui";
-import { addDays } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { useId, useState } from "react";
-
-import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { JSX } from "react";
-import type { DateRange } from "react-day-picker";
 
 export function DatePickerDemo(): JSX.Element {
   return (

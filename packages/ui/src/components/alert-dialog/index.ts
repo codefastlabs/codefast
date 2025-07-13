@@ -11,7 +11,6 @@ export {
   AlertDialogTrigger,
 } from "@/components/alert-dialog/alert-dialog";
 export type {
-  AlertDialogProps,
   AlertDialogActionProps,
   AlertDialogBodyProps,
   AlertDialogCancelProps,
@@ -19,6 +18,7 @@ export type {
   AlertDialogDescriptionProps,
   AlertDialogFooterProps,
   AlertDialogHeaderProps,
+  AlertDialogProps,
   AlertDialogTitleProps,
   AlertDialogTriggerProps,
 } from "@/components/alert-dialog/alert-dialog";

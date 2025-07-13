@@ -1,3 +1,7 @@
+import { useId } from "react";
+import type { JSX } from "react";
+
+import { Icons } from "@/components/icons";
 import {
   Button,
   Card,
@@ -9,11 +13,6 @@ import {
   Input,
   Label,
 } from "@codefast/ui";
-import { useId } from "react";
-
-import { Icons } from "@/components/icons";
-
-import type { JSX } from "react";
 
 export function CardsCreateAccount(): JSX.Element {
   const id = useId();

@@ -1,5 +1,13 @@
 "use client";
 
+import { GitCommitVerticalIcon, TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import type { DotProps } from "recharts";
+import type { LineDot } from "recharts/types/cartesian/Line";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,13 +19,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { GitCommitVerticalIcon, TrendingUpIcon } from "lucide-react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
-import type { DotProps } from "recharts";
-import type { LineDot } from "recharts/types/cartesian/Line";
 
 interface DataItem {
   desktop: number;
@@ -26,22 +27,22 @@ interface DataItem {
 }
 
 const chartData: DataItem[] = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { desktop: 186, mobile: 80, month: "January" },
+  { desktop: 305, mobile: 200, month: "February" },
+  { desktop: 237, mobile: 120, month: "March" },
+  { desktop: 73, mobile: 190, month: "April" },
+  { desktop: 209, mobile: 130, month: "May" },
+  { desktop: 214, mobile: 140, month: "June" },
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--chart-2)",
+    label: "Mobile",
   },
 } satisfies ChartConfig;
 

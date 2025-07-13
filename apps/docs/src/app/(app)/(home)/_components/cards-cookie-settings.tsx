@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import {
   Button,
   Card,
@@ -10,16 +12,14 @@ import {
   Switch,
 } from "@codefast/ui";
 
-import type { JSX } from "react";
-
 interface CookieOption {
+  defaultChecked?: boolean;
   description: string;
   id: string;
   title: string;
-  defaultChecked?: boolean;
 }
 
-function CookieSettingItem({ id, title, description, defaultChecked }: CookieOption): JSX.Element {
+function CookieSettingItem({ defaultChecked, description, id, title }: CookieOption): JSX.Element {
   return (
     <div className="flex items-center justify-between space-x-4">
       <Label className="flex flex-col space-y-1" htmlFor={id}>
@@ -34,20 +34,20 @@ function CookieSettingItem({ id, title, description, defaultChecked }: CookieOpt
 export function CardsCookieSettings(): JSX.Element {
   const cookieOptions: CookieOption[] = [
     {
+      defaultChecked: true,
+      description: "These cookies are essential in order to use the website and use its features.",
       id: "necessary",
       title: "Strictly Necessary",
-      description: "These cookies are essential in order to use the website and use its features.",
-      defaultChecked: true,
     },
     {
+      description: "These cookies allow the website to provide personalized functionality.",
       id: "functional",
       title: "Functional Cookies",
-      description: "These cookies allow the website to provide personalized functionality.",
     },
     {
+      description: "These cookies help to improve the performance of the website.",
       id: "performance",
       title: "Performance Cookies",
-      description: "These cookies help to improve the performance of the website.",
     },
   ];
 

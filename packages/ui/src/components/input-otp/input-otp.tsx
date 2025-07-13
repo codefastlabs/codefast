@@ -3,10 +3,9 @@
 import { OTPInput, OTPInputContext } from "input-otp";
 import { MinusIcon } from "lucide-react";
 import { use } from "react";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: InputOtp
@@ -53,7 +52,7 @@ interface InputOTPSlotProps extends ComponentProps<"div"> {
 
 function InputOTPSlot({ className, index, ...props }: InputOTPSlotProps): JSX.Element {
   const inputOTPContext = use(OTPInputContext);
-  const { isActive, char, hasFakeCaret } = inputOTPContext.slots[index];
+  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index];
 
   return (
     <div

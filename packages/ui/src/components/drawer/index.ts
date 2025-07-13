@@ -10,13 +10,13 @@ export {
   DrawerTrigger,
 } from "@/components/drawer/drawer";
 export type {
-  DrawerProps,
   DrawerBodyProps,
   DrawerCloseProps,
   DrawerContentProps,
   DrawerDescriptionProps,
   DrawerFooterProps,
   DrawerHeaderProps,
+  DrawerProps,
   DrawerTitleProps,
   DrawerTriggerProps,
 } from "@/components/drawer/drawer";

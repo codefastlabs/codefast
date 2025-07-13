@@ -1,12 +1,12 @@
 "use client";
 
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { buttonVariants } from "@/components/button";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 /* -----------------------------------------------------------------------------
  * Component: AlertDialog
@@ -202,7 +202,6 @@ export {
   AlertDialogTrigger,
 };
 export type {
-  AlertDialogProps,
   AlertDialogActionProps,
   AlertDialogBodyProps,
   AlertDialogCancelProps,
@@ -210,6 +209,7 @@ export type {
   AlertDialogDescriptionProps,
   AlertDialogFooterProps,
   AlertDialogHeaderProps,
+  AlertDialogProps,
   AlertDialogTitleProps,
   AlertDialogTriggerProps,
 };

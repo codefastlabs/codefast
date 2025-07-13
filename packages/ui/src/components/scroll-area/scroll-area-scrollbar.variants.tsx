@@ -38,21 +38,21 @@ const scrollAreaScrollbarVariants = tv({
       size: "lg",
     },
   ],
+  defaultVariants: {
+    size: "md",
+    vertical: "vertical",
+  },
   variants: {
     orientation: {
       horizontal: "w-full flex-col border-t border-t-transparent",
       vertical: "h-full flex-row border-l border-l-transparent",
     },
     size: {
+      lg: "",
+      md: "",
       none: "",
       sm: "",
-      md: "",
-      lg: "",
     },
-  },
-  defaultVariants: {
-    size: "md",
-    vertical: "vertical",
   },
 });
 

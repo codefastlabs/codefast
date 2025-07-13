@@ -1,4 +1,3 @@
-import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 
 import {
@@ -9,6 +8,7 @@ import {
   ProgressCircleTrack,
   ProgressCircleValue,
 } from "@/progress-circle";
+import { render, screen } from "@testing-library/react";
 
 describe("ProgressCircle", () => {
   test("renders correctly with default props", () => {
@@ -196,9 +196,9 @@ describe("ProgressCircle", () => {
 
   test("applies correct threshold styles", () => {
     const thresholds = [
-      { value: 30, color: "red", background: "pink" },
-      { value: 70, color: "yellow", background: "lightyellow" },
-      { value: 100, color: "green", background: "lightgreen" },
+      { background: "pink", color: "red", value: 30 },
+      { background: "lightyellow", color: "yellow", value: 70 },
+      { background: "lightgreen", color: "green", value: 100 },
     ];
 
     render(

@@ -1,15 +1,15 @@
 "use client";
 
-import { createContextScope } from "@radix-ui/react-context";
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import { createToggleGroupScope } from "@radix-ui/react-toggle-group";
-
-import { toggleVariants } from "@/components/toggle";
-import { cn } from "@/lib/utils";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, JSX, ReactNode } from "react";
+
+import { toggleVariants } from "@/components/toggle";
+import { cn } from "@/lib/utils";
+import { createContextScope } from "@radix-ui/react-context";
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
+import { createToggleGroupScope } from "@radix-ui/react-toggle-group";
 
 /* -----------------------------------------------------------------------------
  * Context: ToggleGroup
@@ -79,7 +79,7 @@ function ToggleGroupItem({
   suffix,
   ...props
 }: ToggleGroupItemProps): JSX.Element {
-  const { variant, size } = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
+  const { size, variant } = useToggleGroupContext(TOGGLE_GROUP_ITEM_NAME, __scopeToggleGroup);
   const toggleGroupScope = useToggleGroupScope(__scopeToggleGroup);
 
   return (
@@ -109,4 +109,4 @@ function ToggleGroupItem({
  * -------------------------------------------------------------------------- */
 
 export { ToggleGroup, ToggleGroupItem };
-export type { ToggleGroupProps, ToggleGroupItemProps };
+export type { ToggleGroupItemProps, ToggleGroupProps };

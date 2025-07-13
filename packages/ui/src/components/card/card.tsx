@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
-
 import type { ComponentProps, JSX } from "react";
+
+import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
  * Component: Card
@@ -108,11 +108,11 @@ function CardAction({ className, ...props }: CardActionProps): JSX.Element {
 
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
 export type {
-  CardProps,
   CardActionProps,
   CardContentProps,
   CardDescriptionProps,
   CardFooterProps,
   CardHeaderProps,
+  CardProps,
   CardTitleProps,
 };

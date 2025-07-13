@@ -1,9 +1,10 @@
-import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { createContextScope } from "@radix-ui/react-context";
 import { useRef } from "react";
+import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from "react";
 
 import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from "react";
+
+import { useComposedRefs } from "@radix-ui/react-compose-refs";
+import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
  * Component: Input
@@ -216,4 +217,4 @@ function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): J
 
 export { createInputScope, InputField as Field, Input, InputField, Input as Root };
 
-export type { InputProps, InputFieldProps };
+export type { InputFieldProps, InputProps };

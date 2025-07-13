@@ -1,3 +1,6 @@
+import { useId } from "react";
+import type { JSX } from "react";
+
 import {
   Button,
   Card,
@@ -15,9 +18,6 @@ import {
   SelectValue,
   Textarea,
 } from "@codefast/ui";
-import { useId } from "react";
-
-import type { JSX } from "react";
 
 export function CardsReportIssue(): JSX.Element {
   const id = useId();

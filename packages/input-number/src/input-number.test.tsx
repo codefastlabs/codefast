@@ -1,9 +1,10 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
+import type { ReactNode } from "react";
 import { useId } from "react";
 
 import { InputNumber, InputNumberDecrementButton, InputNumberField, InputNumberIncrementButton } from "@/input-number";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 describe("input-number", () => {
   describe("InputNumber", () => {
@@ -114,7 +115,7 @@ describe("input-number", () => {
         <InputNumber
           data-testid="input-number"
           defaultValue={1000.5}
-          formatOptions={{ style: "currency", currency: "USD" }}
+          formatOptions={{ currency: "USD", style: "currency" }}
         >
           <InputNumberField data-testid="input-item" />
         </InputNumber>,
@@ -506,16 +507,16 @@ describe("input-number", () => {
       expect(input).toHaveValue("10");
 
       await user.pointer({
-        target: incrementButton,
         keys: "[MouseRight]",
+        target: incrementButton,
       });
 
       expect(input).toHaveValue("11");
       expect(handleChange).toHaveBeenCalledWith(11);
 
       await user.pointer({
-        target: decrementButton,
         keys: "[MouseRight]",
+        target: decrementButton,
       });
 
       expect(input).toHaveValue("10");
@@ -678,7 +679,7 @@ describe("input-number", () => {
         <InputNumber
           data-testid="input-number"
           defaultValue={1234.5}
-          formatOptions={{ style: "currency", currency: "USD" }}
+          formatOptions={{ currency: "USD", style: "currency" }}
         >
           <InputNumberField data-testid="input-item" />
         </InputNumber>,
@@ -715,7 +716,7 @@ describe("input-number", () => {
     });
 
     test("has no accessibility violations", async () => {
-      const TestComponent = () => {
+      const TestComponent = (): ReactNode => {
         const id = useId();
         return (
           <div>
@@ -805,9 +806,9 @@ describe("input-number", () => {
 
       for (const key of functionKeys) {
         const keyboardEvent = new KeyboardEvent("keydown", {
-          key,
           bubbles: true,
           cancelable: true,
+          key,
         });
 
         Object.defineProperty(keyboardEvent, "preventDefault", {
@@ -1088,7 +1089,7 @@ describe("input-number", () => {
         <InputNumber
           data-testid="number-input"
           defaultValue={1234.56}
-          formatOptions={{ style: "currency", currency: "EUR" }}
+          formatOptions={{ currency: "EUR", style: "currency" }}
           locale="de-DE"
         >
           <InputNumberDecrementButton data-testid="decrement">-</InputNumberDecrementButton>

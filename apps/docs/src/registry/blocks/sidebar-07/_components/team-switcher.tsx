@@ -1,5 +1,9 @@
 "use client";
 
+import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { useState } from "react";
+import type { ElementType, ReactNode } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,10 +17,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@codefast/ui";
-import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
-
-import type { ElementType, ReactNode } from "react";
 
 export function TeamSwitcher({
   teams,

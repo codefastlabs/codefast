@@ -1,3 +1,7 @@
+import { ChevronUpIcon, CircleIcon } from "lucide-react";
+import { type JSX, useId } from "react";
+
+import { GridWrapper } from "@/components/grid-wrapper";
 import {
   Button,
   cn,
@@ -13,10 +17,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@codefast/ui";
-import { ChevronUpIcon, CircleIcon } from "lucide-react";
-import { type JSX, useId } from "react";
-
-import { GridWrapper } from "@/components/grid-wrapper";
 
 const SIDES = ["top", "right", "bottom", "left"] as const;
 

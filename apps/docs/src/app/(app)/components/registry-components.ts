@@ -99,14 +99,6 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "chart",
     title: "Chart",
   },
-  "checkbox-cards": {
-    component: dynamic(async () =>
-      import("@/app/(app)/components/_components/checkbox-cards-demo").then((module_) => module_.CheckboxCardsDemo),
-    ),
-    description: "Checkbox Cards",
-    slug: "checkbox-cards",
-    title: "Checkbox Cards",
-  },
   checkbox: {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/checkbox-demo").then((module_) => module_.CheckboxDemo),
@@ -114,6 +106,14 @@ export const registryComponents: Record<string, RegistryItem> = {
     description: "Checkbox",
     slug: "checkbox",
     title: "Checkbox",
+  },
+  "checkbox-cards": {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/checkbox-cards-demo").then((module_) => module_.CheckboxCardsDemo),
+    ),
+    description: "Checkbox Cards",
+    slug: "checkbox-cards",
+    title: "Checkbox Cards",
   },
   "checkbox-group": {
     component: dynamic(async () =>
@@ -203,14 +203,6 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "hover-card",
     title: "Hover Card",
   },
-  "input-date": {
-    component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-date-demo").then((module_) => module_.InputDateDemo),
-    ),
-    description: "Input Date",
-    slug: "input-date",
-    title: "Input Date",
-  },
   input: {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/input-demo").then((module_) => module_.InputDemo),
@@ -218,6 +210,14 @@ export const registryComponents: Record<string, RegistryItem> = {
     description: "Input",
     slug: "input",
     title: "Input",
+  },
+  "input-date": {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/input-date-demo").then((module_) => module_.InputDateDemo),
+    ),
+    description: "Input Date",
+    slug: "input-date",
+    title: "Input Date",
   },
   "input-number": {
     component: dynamic(async () =>
@@ -323,14 +323,6 @@ export const registryComponents: Record<string, RegistryItem> = {
     slug: "progress-circle",
     title: "Progress Circle",
   },
-  "radio-cards": {
-    component: dynamic(async () =>
-      import("@/app/(app)/components/_components/radio-cards-demo").then((module_) => module_.RadioCardsDemo),
-    ),
-    description: "Radio Cards",
-    slug: "radio-cards",
-    title: "Radio Cards",
-  },
   radio: {
     component: dynamic(async () =>
       import("@/app/(app)/components/_components/radio-demo").then((module_) => module_.RadioDemo),
@@ -338,6 +330,14 @@ export const registryComponents: Record<string, RegistryItem> = {
     description: "Radio",
     slug: "radio",
     title: "Radio",
+  },
+  "radio-cards": {
+    component: dynamic(async () =>
+      import("@/app/(app)/components/_components/radio-cards-demo").then((module_) => module_.RadioCardsDemo),
+    ),
+    description: "Radio Cards",
+    slug: "radio-cards",
+    title: "Radio Cards",
   },
   "radio-group": {
     component: dynamic(async () =>
@@ -471,8 +471,8 @@ export const registryComponents: Record<string, RegistryItem> = {
 
 export const registryComponentGroups: RegistryGroup[] = [
   {
-    title: "All Components",
     slug: "",
+    title: "All Components",
   },
   {
     components: [

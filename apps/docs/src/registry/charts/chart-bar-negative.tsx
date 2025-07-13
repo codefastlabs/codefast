@@ -1,5 +1,11 @@
 "use client";
 
+import { TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,11 +17,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { TrendingUpIcon } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Cell, LabelList } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const chartData = [
   { month: "January", visitors: 186 },

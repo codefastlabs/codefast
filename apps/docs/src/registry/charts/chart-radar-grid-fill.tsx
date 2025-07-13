@@ -1,5 +1,11 @@
 "use client";
 
+import { TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,25 +17,20 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { TrendingUpIcon } from "lucide-react";
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 285 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 203 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 264 },
+  { desktop: 186, month: "January" },
+  { desktop: 285, month: "February" },
+  { desktop: 237, month: "March" },
+  { desktop: 203, month: "April" },
+  { desktop: 209, month: "May" },
+  { desktop: 264, month: "June" },
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
 } satisfies ChartConfig;
 

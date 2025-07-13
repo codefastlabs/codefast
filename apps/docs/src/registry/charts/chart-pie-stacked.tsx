@@ -1,5 +1,11 @@
 "use client";
 
+import { TrendingUpIcon } from "lucide-react";
+import type { JSX } from "react";
+import { Pie, PieChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,57 +17,52 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { TrendingUpIcon } from "lucide-react";
-import { Pie, PieChart } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
+  { desktop: 186, fill: "var(--color-january)", month: "january" },
+  { desktop: 305, fill: "var(--color-february)", month: "february" },
+  { desktop: 237, fill: "var(--color-march)", month: "march" },
+  { desktop: 173, fill: "var(--color-april)", month: "april" },
+  { desktop: 209, fill: "var(--color-may)", month: "may" },
 ];
 
 const mobileData = [
-  { month: "january", mobile: 80, fill: "var(--color-january)" },
-  { month: "february", mobile: 200, fill: "var(--color-february)" },
-  { month: "march", mobile: 120, fill: "var(--color-march)" },
-  { month: "april", mobile: 190, fill: "var(--color-april)" },
-  { month: "may", mobile: 130, fill: "var(--color-may)" },
+  { fill: "var(--color-january)", mobile: 80, month: "january" },
+  { fill: "var(--color-february)", mobile: 200, month: "february" },
+  { fill: "var(--color-march)", mobile: 120, month: "march" },
+  { fill: "var(--color-april)", mobile: 190, month: "april" },
+  { fill: "var(--color-may)", mobile: 130, month: "may" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  april: {
+    color: "var(--chart-4)",
+    label: "April",
   },
   desktop: {
     label: "Desktop",
   },
+  february: {
+    color: "var(--chart-2)",
+    label: "February",
+  },
+  january: {
+    color: "var(--chart-1)",
+    label: "January",
+  },
+  march: {
+    color: "var(--chart-3)",
+    label: "March",
+  },
+  may: {
+    color: "var(--chart-5)",
+    label: "May",
+  },
   mobile: {
     label: "Mobile",
   },
-  january: {
-    label: "January",
-    color: "var(--chart-1)",
-  },
-  february: {
-    label: "February",
-    color: "var(--chart-2)",
-  },
-  march: {
-    label: "March",
-    color: "var(--chart-3)",
-  },
-  april: {
-    label: "April",
-    color: "var(--chart-4)",
-  },
-  may: {
-    label: "May",
-    color: "var(--chart-5)",
+  visitors: {
+    label: "Visitors",
   },
 } satisfies ChartConfig;
 

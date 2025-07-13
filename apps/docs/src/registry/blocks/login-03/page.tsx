@@ -1,9 +1,8 @@
 import { GalleryVerticalEndIcon } from "lucide-react";
 import Link from "next/link";
+import type { JSX } from "react";
 
 import { LoginForm } from "@/registry/blocks/login-03/_components/login-form";
-
-import type { JSX } from "react";
 
 export default function LoginPage(): JSX.Element {
   return (

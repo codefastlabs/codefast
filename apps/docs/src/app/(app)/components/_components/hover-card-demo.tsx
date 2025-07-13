@@ -1,3 +1,6 @@
+import { CalendarIcon } from "lucide-react";
+import type { JSX } from "react";
+
 import {
   Avatar,
   AvatarFallback,
@@ -7,9 +10,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@codefast/ui";
-import { CalendarIcon } from "lucide-react";
-
-import type { JSX } from "react";
 
 export function HoverCardDemo(): JSX.Element {
   return (

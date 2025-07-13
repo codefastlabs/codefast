@@ -1,6 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
-
 import { useMediaQuery } from "@/use-media-query";
+import { act, renderHook } from "@testing-library/react";
 
 type ChangeHandler = (event: MediaQueryListEvent) => void;
 
@@ -28,19 +27,19 @@ const setupMockMatchMedia = (
 
   const mockMediaQueryList = {
     addEventListener: mockAddEventListener,
+    addListener: mockAddListener,
+    dispatchEvent: mockDispatchEvent,
     matches,
     media: "",
     onchange: null,
     removeEventListener: mockRemoveEventListener,
-    addListener: mockAddListener,
     removeListener: mockRemoveListener,
-    dispatchEvent: mockDispatchEvent,
   };
 
   // Ensure matchMedia exists on globalThis for the test environment
   Object.defineProperty(globalThis, "matchMedia", {
-    writable: true,
     value: jest.fn().mockImplementation(() => mockMediaQueryList),
+    writable: true,
   });
 
   return { mockAddEventListener, mockMediaQueryList, mockRemoveEventListener };

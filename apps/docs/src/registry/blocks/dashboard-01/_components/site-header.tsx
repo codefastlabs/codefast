@@ -1,6 +1,6 @@
-import { buttonVariants, Separator, SidebarTrigger } from "@codefast/ui";
-
 import type { JSX } from "react";
+
+import { buttonVariants, Separator, SidebarTrigger } from "@codefast/ui";
 
 export function SiteHeader(): JSX.Element {
   return (

@@ -1,5 +1,12 @@
 "use client";
 
+import { Minus, Plus } from "lucide-react";
+import { useState } from "react";
+import type { JSX } from "react";
+import { Bar, BarChart } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Button,
   Card,
@@ -10,12 +17,6 @@ import {
   CardTitle,
   ChartContainer,
 } from "@codefast/ui";
-import { Minus, Plus } from "lucide-react";
-import { useState } from "react";
-import { Bar, BarChart } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const data = [
   { goal: 400 },
@@ -35,8 +36,8 @@ const data = [
 
 const chartConfig = {
   goal: {
-    label: "Goal",
     color: "var(--primary)",
+    label: "Goal",
   },
 } satisfies ChartConfig;
 

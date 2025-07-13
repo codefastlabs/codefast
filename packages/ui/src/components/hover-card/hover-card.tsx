@@ -1,10 +1,9 @@
 "use client";
 
-import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
 
 /* -----------------------------------------------------------------------------
  * Component: HoverCard
@@ -69,4 +68,4 @@ function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Eleme
  * -------------------------------------------------------------------------- */
 
 export { HoverCard, HoverCardArrow, HoverCardContent, HoverCardTrigger };
-export type { HoverCardProps, HoverCardArrowProps, HoverCardContentProps, HoverCardTriggerProps };
+export type { HoverCardArrowProps, HoverCardContentProps, HoverCardProps, HoverCardTriggerProps };

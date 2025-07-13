@@ -1,13 +1,13 @@
 "use client";
 
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { buttonVariants } from "@/components/button";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 /* -----------------------------------------------------------------------------
  * Component: Dialog
@@ -195,13 +195,13 @@ export {
   DialogTrigger,
 };
 export type {
-  DialogProps,
-  DialogTriggerProps,
-  DialogContentProps,
-  DialogHeaderProps,
   DialogBodyProps,
-  DialogFooterProps,
-  DialogTitleProps,
-  DialogDescriptionProps,
   DialogCloseProps,
+  DialogContentProps,
+  DialogDescriptionProps,
+  DialogFooterProps,
+  DialogHeaderProps,
+  DialogProps,
+  DialogTitleProps,
+  DialogTriggerProps,
 };

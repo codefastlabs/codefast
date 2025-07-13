@@ -1,5 +1,9 @@
 "use client";
 
+import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { JSX } from "react";
+
 import {
   CommandDialog,
   CommandEmpty,
@@ -11,10 +15,6 @@ import {
   CommandShortcut,
   Kbd,
 } from "@codefast/ui";
-import { CalculatorIcon, CalendarIcon, CreditCardIcon, SettingsIcon, SmileIcon, UserIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-
-import type { JSX } from "react";
 
 export function CommandDemo(): JSX.Element {
   const [open, setOpen] = useState(false);
@@ -29,7 +29,7 @@ export function CommandDemo(): JSX.Element {
 
     document.addEventListener("keydown", down);
 
-    return () => {
+    return (): void => {
       document.removeEventListener("keydown", down);
     };
   }, []);

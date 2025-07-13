@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import {
   Card,
   CardContent,
@@ -7,8 +9,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@codefast/ui";
-
-import type { JSX } from "react";
 
 export function CarouselDemo(): JSX.Element {
   return (

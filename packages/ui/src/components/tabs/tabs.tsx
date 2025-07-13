@@ -1,10 +1,9 @@
 "use client";
 
-import * as TabsPrimitive from "@radix-ui/react-tabs";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 /* -----------------------------------------------------------------------------
  * Component: Tabs
@@ -78,4 +77,4 @@ function TabsContent({ className, ...props }: TabsContentProps): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 export { Tabs, TabsContent, TabsList, TabsTrigger };
-export type { TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps };
+export type { TabsContentProps, TabsListProps, TabsProps, TabsTriggerProps };

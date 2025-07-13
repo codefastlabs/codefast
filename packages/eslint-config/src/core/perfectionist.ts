@@ -28,6 +28,7 @@ export const perfectionistRules: Linter.Config[] = [
             value: {},
           },
           groups: [
+            "side-effect",
             "builtin",
             "external",
             "internal-type",

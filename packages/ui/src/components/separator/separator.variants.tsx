@@ -6,6 +6,10 @@ import { tv } from "@/lib/utils";
 
 const separatorVariants = tv({
   base: "bg-border relative flex shrink-0 items-center",
+  defaultVariants: {
+    align: "center",
+    orientation: "horizontal",
+  },
   variants: {
     align: {
       center: "justify-center",
@@ -16,10 +20,6 @@ const separatorVariants = tv({
       horizontal: "h-px w-full",
       vertical: "h-full w-px flex-col",
     },
-  },
-  defaultVariants: {
-    align: "center",
-    orientation: "horizontal",
   },
 });
 

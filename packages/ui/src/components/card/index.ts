@@ -8,11 +8,11 @@ export {
   CardTitle,
 } from "@/components/card/card";
 export type {
-  CardProps,
   CardActionProps,
   CardContentProps,
   CardDescriptionProps,
   CardFooterProps,
   CardHeaderProps,
+  CardProps,
   CardTitleProps,
 } from "@/components/card/card";

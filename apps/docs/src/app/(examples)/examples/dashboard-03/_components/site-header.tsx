@@ -1,5 +1,14 @@
 "use client";
 
+import { SidebarIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Fragment, useMemo } from "react";
+import type { JSX } from "react";
+
+import { ModeToggle } from "@/app/(examples)/examples/dashboard-03/_components/mode-toggle";
+import { NavUser } from "@/app/(examples)/examples/dashboard-03/_components/nav-user";
+import { SearchForm } from "@/app/(examples)/examples/dashboard-03/_components/search-form";
+import { ThemeSelector } from "@/components/theme-selector";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,16 +20,6 @@ import {
   Separator,
   useSidebar,
 } from "@codefast/ui";
-import { SidebarIcon } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { Fragment, useMemo } from "react";
-
-import { ModeToggle } from "@/app/(examples)/examples/dashboard-03/_components/mode-toggle";
-import { NavUser } from "@/app/(examples)/examples/dashboard-03/_components/nav-user";
-import { SearchForm } from "@/app/(examples)/examples/dashboard-03/_components/search-form";
-import { ThemeSelector } from "@/components/theme-selector";
-
-import type { JSX } from "react";
 
 export function SiteHeader(): JSX.Element {
   const { toggleSidebar } = useSidebar("SiteHeader");
@@ -32,8 +31,8 @@ export function SiteHeader(): JSX.Element {
       .split("/")
       .filter((path) => path !== "")
       .map((path, index, array) => ({
-        label: path.replaceAll("-", " "),
         href: `/${array.slice(0, index + 1).join("/")}`,
+        label: path.replaceAll("-", " "),
       }));
   }, [pathname]);
 
@@ -77,9 +76,9 @@ export function SiteHeader(): JSX.Element {
           <ModeToggle />
           <NavUser
             user={{
-              name: "@codefast/ui",
-              email: "m@example.com",
               avatar: "/avatars/codefast-ui.webp",
+              email: "m@example.com",
+              name: "@codefast/ui",
             }}
           />
         </div>

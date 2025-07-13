@@ -1,17 +1,17 @@
 "use client";
 
-import { createContextScope } from "@radix-ui/react-context";
-import { Slot } from "@radix-ui/react-slot";
 import { useId } from "react";
+import type { ComponentProps, JSX, ReactNode } from "react";
 import { Controller, FormProvider, useFormContext, useFormState } from "react-hook-form";
-
-import { Label } from "@/components/label";
-import { cn } from "@/lib/utils";
+import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
 
 import type { Scope } from "@radix-ui/react-context";
 import type * as LabelPrimitive from "@radix-ui/react-label";
-import type { ComponentProps, JSX, ReactNode } from "react";
-import type { ControllerProps, FieldError, FieldPath, FieldValues } from "react-hook-form";
+
+import { Label } from "@/components/label";
+import { cn } from "@/lib/utils";
+import { createContextScope } from "@radix-ui/react-context";
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Form
@@ -62,11 +62,11 @@ function useFormItem(
   const fieldState = getFieldState(name, formState);
 
   return {
-    id,
-    name,
     formDescriptionId: `form-item-description-${id}`,
     formItemId: `form-item-${id}`,
     formMessageId: `form-item-message-${id}`,
+    id,
+    name,
     ...fieldState,
   };
 }
@@ -130,7 +130,7 @@ const FORM_LABEL_NAME = "FormLabel";
 type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 
 function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
-  const { formItemId, error } = useFormItem(FORM_LABEL_NAME, __scopeFormField);
+  const { error, formItemId } = useFormItem(FORM_LABEL_NAME, __scopeFormField);
 
   return <Label data-invalid={error ? true : undefined} data-slot="form-label" htmlFor={formItemId} {...props} />;
 }
@@ -144,7 +144,7 @@ const FORM_CONTROL_NAME = "FormControl";
 type FormControlProps = ComponentProps<typeof Slot>;
 
 function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
-  const { formDescriptionId, formItemId, formMessageId, error } = useFormItem(FORM_CONTROL_NAME, __scopeFormField);
+  const { error, formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_CONTROL_NAME, __scopeFormField);
 
   return (
     <Slot
@@ -185,7 +185,7 @@ const FORM_MESSAGE_NAME = "FormMessage";
 type FormMessageProps = ComponentProps<"p">;
 
 function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>): ReactNode {
-  const { formMessageId, error } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
+  const { error, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const body = error?.message ? String(error.message) : children;
 
   if (!body) {
@@ -209,12 +209,12 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
  * -------------------------------------------------------------------------- */
 
 export type {
-  FormProps,
   FormControlProps,
   FormDescriptionProps,
   FormFieldProps,
   FormItemProps,
   FormLabelProps,
   FormMessageProps,
+  FormProps,
 };
 export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };

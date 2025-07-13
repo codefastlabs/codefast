@@ -17,7 +17,6 @@ export {
   MenubarTrigger,
 } from "@/components/menubar/menubar";
 export type {
-  MenubarProps,
   MenubarArrowProps,
   MenubarCheckboxItemProps,
   MenubarContentProps,
@@ -25,12 +24,13 @@ export type {
   MenubarItemProps,
   MenubarLabelProps,
   MenubarMenuProps,
+  MenubarProps,
   MenubarRadioGroupProps,
   MenubarRadioItemProps,
   MenubarSeparatorProps,
   MenubarShortcutProps,
-  MenubarSubProps,
   MenubarSubContentProps,
+  MenubarSubProps,
   MenubarSubTriggerProps,
   MenubarTriggerProps,
 } from "@/components/menubar/menubar";

@@ -1,11 +1,10 @@
 "use client";
 
-import * as MenubarPrimitive from "@radix-ui/react-menubar";
 import { CheckIcon, ChevronRightIcon, DotIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as MenubarPrimitive from "@radix-ui/react-menubar";
 
 /* -----------------------------------------------------------------------------
  * Component: Menubar
@@ -322,7 +321,6 @@ export {
   MenubarTrigger,
 };
 export type {
-  MenubarProps,
   MenubarArrowProps,
   MenubarCheckboxItemProps,
   MenubarContentProps,
@@ -330,12 +328,13 @@ export type {
   MenubarItemProps,
   MenubarLabelProps,
   MenubarMenuProps,
+  MenubarProps,
   MenubarRadioGroupProps,
   MenubarRadioItemProps,
   MenubarSeparatorProps,
   MenubarShortcutProps,
-  MenubarSubProps,
   MenubarSubContentProps,
+  MenubarSubProps,
   MenubarSubTriggerProps,
   MenubarTriggerProps,
 };
