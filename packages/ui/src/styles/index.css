@@ -28,7 +28,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-border) transparent
+    scrollbar-color: var(--color-border) transparent;
   }
 
   html,
@@ -49,7 +49,7 @@
       margin: 0;
     }
 
-    &[type='number'] {
+    &[type="number"] {
       -moz-appearance: textfield;
     }
   }

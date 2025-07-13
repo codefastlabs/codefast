@@ -27,7 +27,7 @@ function checkComponentTypes() {
               componentsToCheck.push({
                 name: componentName,
                 path: componentPath,
-                packageName: packageName
+                packageName: packageName,
               });
             }
           });
@@ -38,15 +38,15 @@ function checkComponentTypes() {
         if (fs.existsSync(srcDir)) {
           // Check if this package has component files (tsx files that aren't test files)
           const srcFiles = fs.readdirSync(srcDir);
-          const hasComponentFiles = srcFiles.some(file =>
-            file.endsWith('.tsx') && !file.includes('.test.') && !file.includes('.spec.')
+          const hasComponentFiles = srcFiles.some(
+            (file) => file.endsWith(".tsx") && !file.includes(".test.") && !file.includes(".spec."),
           );
 
           if (hasComponentFiles) {
             componentsToCheck.push({
               name: packageName,
               path: srcDir,
-              packageName: packageName
+              packageName: packageName,
             });
           }
         }
@@ -72,94 +72,93 @@ function checkComponentTypes() {
         }
 
         if (mainFile) {
-        const content = fs.readFileSync(mainFile, "utf8");
+          const content = fs.readFileSync(mainFile, "utf8");
 
-        // Extract exported components from export { ... } statements
-        const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*\}/g) || [];
-        const exportedComponents = [];
-        exportComponentMatches.forEach((match) => {
-          const componentsInExport = match.replace(/export\s*\{\s*/, "").replace(/\s*\}/, "");
-          const components = componentsInExport
-            .split(",")
-            .map((c) => c.trim())
-            .filter((c) => c);
-          exportedComponents.push(...components);
-        });
-
-        // Extract exported types from an export type { ... } statements
-        const exportTypeMatches = content.match(/export\s+type\s*\{\s*([^}]+)\s*\}/g) || [];
-        const exportedTypes = [];
-        exportTypeMatches.forEach((match) => {
-          const typesInExport = match.replace(/export\s+type\s*\{\s*/, "").replace(/\s*\}/, "");
-          const types = typesInExport
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => t);
-          exportedTypes.push(...types);
-        });
-
-        // Filter out non-component exports (hooks, utils, etc.)
-        const isComponent = (exportName) => {
-          // Exclude hooks (functions starting with "use")
-          if (exportName.startsWith("use")) {
-            return false;
-          }
-
-          // Exclude utility functions like createCarouselScope, createFormFieldScope, etc.
-          if (exportName.startsWith("create") && exportName.endsWith("Scope")) {
-            return false;
-          }
-
-          // Exclude constants (all uppercase with underscores)
-          if (exportName.match(/^[A-Z][A-Z_]*$/)) {
-            return false;
-          }
-
-          // Exclude other common utility patterns
-          if (exportName.startsWith("create") && !exportName.match(/^[A-Z]/)) {
-            return false;
-          }
-
-          // Include only capitalized names that look like React components (PascalCase)
-          return exportName.match(/^[A-Z][a-zA-Z0-9]*$/);
-        };
-
-        // Filter exported components to only include actual React components
-        const actualComponents = exportedComponents.filter(isComponent);
-
-        // Check correspondence between exported components and types
-        const componentTypeCorrespondence = [];
-        const missingTypeExports = [];
-        const falsePositiveTypeExports = [];
-
-        actualComponents.forEach((component) => {
-          const expectedTypeName = `${component}Props`;
-          const hasCorrespondingType = exportedTypes.includes(expectedTypeName);
-          componentTypeCorrespondence.push({
-            component,
-            expectedType: expectedTypeName,
-            hasCorrespondingType,
+          // Extract exported components from export { ... } statements
+          const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*\}/g) || [];
+          const exportedComponents = [];
+          exportComponentMatches.forEach((match) => {
+            const componentsInExport = match.replace(/export\s*\{\s*/, "").replace(/\s*\}/, "");
+            const components = componentsInExport
+              .split(",")
+              .map((c) => c.trim())
+              .filter((c) => c);
+            exportedComponents.push(...components);
           });
 
-          if (!hasCorrespondingType) {
-            missingTypeExports.push({ component, expectedType: expectedTypeName });
-          }
-        });
+          // Extract exported types from an export type { ... } statements
+          const exportTypeMatches = content.match(/export\s+type\s*\{\s*([^}]+)\s*\}/g) || [];
+          const exportedTypes = [];
+          exportTypeMatches.forEach((match) => {
+            const typesInExport = match.replace(/export\s+type\s*\{\s*/, "").replace(/\s*\}/, "");
+            const types = typesInExport
+              .split(",")
+              .map((t) => t.trim())
+              .filter((t) => t);
+            exportedTypes.push(...types);
+          });
 
-        // Check for false positive type exports (types exported without corresponding component exports)
-        exportedTypes.forEach((typeName) => {
-          if (typeName.endsWith("Props")) {
-            const expectedComponentName = typeName.replace(/Props$/, "");
-            const hasCorrespondingComponent = actualComponents.includes(expectedComponentName);
-            if (!hasCorrespondingComponent) {
-              falsePositiveTypeExports.push({
-                typeName,
-                expectedComponent: expectedComponentName,
-              });
+          // Filter out non-component exports (hooks, utils, etc.)
+          const isComponent = (exportName) => {
+            // Exclude hooks (functions starting with "use")
+            if (exportName.startsWith("use")) {
+              return false;
             }
-          }
-        });
 
+            // Exclude utility functions like createCarouselScope, createFormFieldScope, etc.
+            if (exportName.startsWith("create") && exportName.endsWith("Scope")) {
+              return false;
+            }
+
+            // Exclude constants (all uppercase with underscores)
+            if (exportName.match(/^[A-Z][A-Z_]*$/)) {
+              return false;
+            }
+
+            // Exclude other common utility patterns
+            if (exportName.startsWith("create") && !exportName.match(/^[A-Z]/)) {
+              return false;
+            }
+
+            // Include only capitalized names that look like React components (PascalCase)
+            return exportName.match(/^[A-Z][a-zA-Z0-9]*$/);
+          };
+
+          // Filter exported components to only include actual React components
+          const actualComponents = exportedComponents.filter(isComponent);
+
+          // Check correspondence between exported components and types
+          const componentTypeCorrespondence = [];
+          const missingTypeExports = [];
+          const falsePositiveTypeExports = [];
+
+          actualComponents.forEach((component) => {
+            const expectedTypeName = `${component}Props`;
+            const hasCorrespondingType = exportedTypes.includes(expectedTypeName);
+            componentTypeCorrespondence.push({
+              component,
+              expectedType: expectedTypeName,
+              hasCorrespondingType,
+            });
+
+            if (!hasCorrespondingType) {
+              missingTypeExports.push({ component, expectedType: expectedTypeName });
+            }
+          });
+
+          // Check for false positive type exports (types exported without corresponding component exports)
+          exportedTypes.forEach((typeName) => {
+            if (typeName.endsWith("Props")) {
+              const expectedComponentName = typeName.replace(/Props$/, "");
+              const hasCorrespondingComponent = actualComponents.includes(expectedComponentName);
+              if (!hasCorrespondingComponent) {
+                falsePositiveTypeExports.push({
+                  typeName,
+                  expectedComponent: expectedComponentName,
+                });
+              }
+            }
+          });
 
           results.push({
             package: pkgName,
