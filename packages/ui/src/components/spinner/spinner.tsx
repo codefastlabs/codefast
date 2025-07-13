@@ -1,10 +1,9 @@
 "use client";
 
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, CSSProperties, ReactNode } from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 /* -----------------------------------------------------------------------------
  * Component: Spinner

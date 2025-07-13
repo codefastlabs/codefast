@@ -1,6 +1,5 @@
-import { renderHook } from "@testing-library/react";
-
 import { ELLIPSIS, usePagination } from "@/use-pagination";
+import { renderHook } from "@testing-library/react";
 
 describe("usePagination", () => {
   test("returns an empty array when totalResults is 0", () => {

@@ -1,5 +1,9 @@
 "use client";
 
+import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
+import { useState } from "react";
+import type { JSX } from "react";
+
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -15,10 +19,6 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@codefast/ui";
-import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
-import { useState } from "react";
-
-import type { JSX } from "react";
 
 export function ContextMenuDemo(): JSX.Element {
   // State để quản lý checkbox

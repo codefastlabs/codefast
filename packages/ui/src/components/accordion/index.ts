@@ -6,9 +6,9 @@ export {
   AccordionTrigger,
 } from "@/components/accordion/accordion";
 export type {
-  AccordionProps,
-  AccordionItemProps,
-  AccordionIconProps,
-  AccordionTriggerProps,
   AccordionContentProps,
+  AccordionIconProps,
+  AccordionItemProps,
+  AccordionProps,
+  AccordionTriggerProps,
 } from "@/components/accordion/accordion";

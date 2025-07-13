@@ -8,11 +8,11 @@ export {
   PaginationPrevious,
 } from "@/components/pagination/pagination";
 export type {
-  PaginationProps,
   PaginationContentProps,
   PaginationEllipsisProps,
   PaginationItemProps,
   PaginationLinkProps,
   PaginationNextProps,
   PaginationPreviousProps,
+  PaginationProps,
 } from "@/components/pagination/pagination";

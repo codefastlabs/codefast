@@ -1,6 +1,5 @@
 "use client";
 
-import { Sidebar, SidebarContent } from "@codefast/ui";
 import {
   ChartLineIcon,
   FileIcon,
@@ -12,60 +11,60 @@ import {
   ShoppingCartIcon,
   UserIcon,
 } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { NavMain } from "@/app/(examples)/examples/dashboard-03/_components/nav-main";
 import { NavSecondary } from "@/app/(examples)/examples/dashboard-03/_components/nav-secondary";
-
-import type { ComponentProps, JSX } from "react";
+import { Sidebar, SidebarContent } from "@codefast/ui";
 
 const data = {
   navMain: [
     {
+      icon: HomeIcon,
       title: "Dashboard",
       url: "/examples/dashboard-03",
-      icon: HomeIcon,
     },
     {
+      icon: ChartLineIcon,
       title: "Analytics",
       url: "/examples/dashboard-03/analytics",
-      icon: ChartLineIcon,
     },
     {
+      icon: ShoppingBagIcon,
       title: "Orders",
       url: "/examples/dashboard-03/orders",
-      icon: ShoppingBagIcon,
     },
     {
+      icon: ShoppingCartIcon,
       title: "Products",
       url: "/examples/dashboard-03/products",
-      icon: ShoppingCartIcon,
     },
     {
+      icon: FileIcon,
       title: "Invoices",
       url: "/examples/dashboard-03/invoices",
-      icon: FileIcon,
     },
     {
+      icon: UserIcon,
       title: "Customers",
       url: "/examples/dashboard-03/customers",
-      icon: UserIcon,
     },
     {
+      icon: Settings2Icon,
       title: "Settings",
       url: "/examples/dashboard-03/settings",
-      icon: Settings2Icon,
     },
   ],
   navSecondary: [
     {
+      icon: LifeBuoy,
       title: "Support",
       url: "#",
-      icon: LifeBuoy,
     },
     {
+      icon: Send,
       title: "Feedback",
       url: "#",
-      icon: Send,
     },
   ],
 };

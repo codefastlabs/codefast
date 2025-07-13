@@ -9,12 +9,12 @@ export {
   TableRow,
 } from "@/components/table/table";
 export type {
-  TableProps,
-  TableHeaderProps,
   TableBodyProps,
-  TableFooterProps,
-  TableRowProps,
-  TableHeadProps,
-  TableCellProps,
   TableCaptionProps,
+  TableCellProps,
+  TableFooterProps,
+  TableHeaderProps,
+  TableHeadProps,
+  TableProps,
+  TableRowProps,
 } from "@/components/table/table";

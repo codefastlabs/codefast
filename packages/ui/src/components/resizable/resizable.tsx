@@ -1,11 +1,10 @@
 "use client";
 
 import { GripVerticalIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 import * as ResizablePrimitive from "react-resizable-panels";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: ResizablePanelGroup
@@ -65,4 +64,4 @@ function ResizableHandle({ className, withHandle, ...props }: ResizableHandlePro
  * -------------------------------------------------------------------------- */
 
 export { ResizableHandle, ResizablePanel, ResizablePanelGroup };
-export type { ResizableHandleProps, ResizablePanelProps, ResizablePanelGroupProps };
+export type { ResizableHandleProps, ResizablePanelGroupProps, ResizablePanelProps };

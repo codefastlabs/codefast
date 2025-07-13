@@ -1,5 +1,15 @@
 "use client";
 
+import { isEmpty } from "lodash-es";
+import { useMemo, useState } from "react";
+import type { JSX, ReactNode } from "react";
+import { Label, Pie, PieChart, Sector } from "recharts";
+import type { ContentType } from "recharts/types/component/Label";
+import type { PieSectorDataItem } from "recharts/types/polar/Pie";
+import type { ActiveShape } from "recharts/types/util/types";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardAction,
@@ -17,53 +27,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@codefast/ui";
-import { isEmpty } from "lodash-es";
-import { useMemo, useState } from "react";
-import { Label, Pie, PieChart, Sector } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX, ReactNode } from "react";
-import type { ContentType } from "recharts/types/component/Label";
-import type { PieSectorDataItem } from "recharts/types/polar/Pie";
-import type { ActiveShape } from "recharts/types/util/types";
 
 const desktopData = [
-  { month: "january", desktop: 186, fill: "var(--color-january)" },
-  { month: "february", desktop: 305, fill: "var(--color-february)" },
-  { month: "march", desktop: 237, fill: "var(--color-march)" },
-  { month: "april", desktop: 173, fill: "var(--color-april)" },
-  { month: "may", desktop: 209, fill: "var(--color-may)" },
+  { desktop: 186, fill: "var(--color-january)", month: "january" },
+  { desktop: 305, fill: "var(--color-february)", month: "february" },
+  { desktop: 237, fill: "var(--color-march)", month: "march" },
+  { desktop: 173, fill: "var(--color-april)", month: "april" },
+  { desktop: 209, fill: "var(--color-may)", month: "may" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  april: {
+    color: "var(--chart-4)",
+    label: "April",
   },
   desktop: {
     label: "Desktop",
   },
+  february: {
+    color: "var(--chart-2)",
+    label: "February",
+  },
+  january: {
+    color: "var(--chart-1)",
+    label: "January",
+  },
+  march: {
+    color: "var(--chart-3)",
+    label: "March",
+  },
+  may: {
+    color: "var(--chart-5)",
+    label: "May",
+  },
   mobile: {
     label: "Mobile",
   },
-  january: {
-    label: "January",
-    color: "var(--chart-1)",
-  },
-  february: {
-    label: "February",
-    color: "var(--chart-2)",
-  },
-  march: {
-    label: "March",
-    color: "var(--chart-3)",
-  },
-  april: {
-    label: "April",
-    color: "var(--chart-4)",
-  },
-  may: {
-    label: "May",
-    color: "var(--chart-5)",
+  visitors: {
+    label: "Visitors",
   },
 } satisfies ChartConfig;
 

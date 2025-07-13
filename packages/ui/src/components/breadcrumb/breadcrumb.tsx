@@ -1,11 +1,10 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
 import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX, ReactNode } from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 /* -----------------------------------------------------------------------------
  * Component: Breadcrumb
@@ -137,11 +136,11 @@ export {
   BreadcrumbSeparator,
 };
 export type {
-  BreadcrumbProps,
   BreadcrumbEllipsisProps,
   BreadcrumbItemProps,
   BreadcrumbLinkProps,
   BreadcrumbListProps,
   BreadcrumbPageProps,
+  BreadcrumbProps,
   BreadcrumbSeparatorProps,
 };

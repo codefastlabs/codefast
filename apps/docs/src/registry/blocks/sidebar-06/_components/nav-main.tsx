@@ -1,5 +1,10 @@
 "use client";
 
+import { MoreHorizontalIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import type { JSX } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,11 +16,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@codefast/ui";
-import { MoreHorizontalIcon } from "lucide-react";
-import Link from "next/link";
-
-import type { LucideIcon } from "lucide-react";
-import type { JSX } from "react";
 
 export function NavMain({
   items,

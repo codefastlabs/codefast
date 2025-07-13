@@ -1,3 +1,9 @@
+import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
+import type { CSSProperties, JSX } from "react";
+
+import type { FileTree } from "@/lib/registry";
+
+import { useBlockViewer } from "@/components/block-viewer/provider";
 import {
   Collapsible,
   CollapsibleContent,
@@ -6,19 +12,13 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
 } from "@codefast/ui";
-import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
-
-import { useBlockViewer } from "@/components/block-viewer/provider";
-
-import type { FileTree } from "@/lib/registry";
-import type { CSSProperties, JSX } from "react";
 
 interface TreeProps {
   index: number;
   item: FileTree;
 }
 
-export function BlockViewerTree({ item, index }: TreeProps): JSX.Element {
+export function BlockViewerTree({ index, item }: TreeProps): JSX.Element {
   const { activeFile, setActiveFile } = useBlockViewer("Tree");
 
   if (!item.children) {

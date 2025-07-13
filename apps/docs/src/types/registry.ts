@@ -1,6 +1,5 @@
-import { z } from "zod";
-
 import type { ComponentType } from "react";
+import { z } from "zod";
 
 export const componentTypeSchema = z.custom<ComponentType>((component) => typeof component === "function", {
   message: "Expected a valid React component",
@@ -31,10 +30,10 @@ export const registryItemSchema = z.object({
 });
 
 export const registryGroupSchema = z.object({
-  title: z.string(),
   components: z.array(registryItemSchema).optional(),
   description: z.string().optional(),
   slug: z.string().optional(),
+  title: z.string(),
 });
 
 export type RegistryItem = z.infer<typeof registryItemSchema>;

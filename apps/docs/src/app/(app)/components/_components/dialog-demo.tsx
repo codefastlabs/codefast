@@ -1,3 +1,6 @@
+import { type JSX, useId } from "react";
+
+import { GridWrapper } from "@/components/grid-wrapper";
 import {
   Button,
   Dialog,
@@ -12,9 +15,6 @@ import {
   Input,
   Label,
 } from "@codefast/ui";
-import { type JSX, useId } from "react";
-
-import { GridWrapper } from "@/components/grid-wrapper";
 
 export function DialogDemo(): JSX.Element {
   return (

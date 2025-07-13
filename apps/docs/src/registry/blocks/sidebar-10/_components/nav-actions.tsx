@@ -1,19 +1,6 @@
 "use client";
 
 import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@codefast/ui";
-import {
   ArrowDownIcon,
   ArrowUpIcon,
   BellIcon,
@@ -31,30 +18,43 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import type { JSX } from "react";
+
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@codefast/ui";
 
 const data = [
   [
-    { label: "Customize Page", icon: Settings2Icon },
-    { label: "Turn into wiki", icon: FileTextIcon },
+    { icon: Settings2Icon, label: "Customize Page" },
+    { icon: FileTextIcon, label: "Turn into wiki" },
   ],
   [
-    { label: "Copy Link", icon: LinkIcon },
-    { label: "Duplicate", icon: CopyIcon },
-    { label: "Move to", icon: CornerUpRightIcon },
-    { label: "Move to Trash", icon: Trash2Icon },
+    { icon: LinkIcon, label: "Copy Link" },
+    { icon: CopyIcon, label: "Duplicate" },
+    { icon: CornerUpRightIcon, label: "Move to" },
+    { icon: Trash2Icon, label: "Move to Trash" },
   ],
   [
-    { label: "Undo", icon: CornerUpLeftIcon },
-    { label: "View analytics", icon: LineChartIcon },
-    { label: "Version History", icon: GalleryVerticalEndIcon },
-    { label: "Show delete pages", icon: TrashIcon },
-    { label: "Notifications", icon: BellIcon },
+    { icon: CornerUpLeftIcon, label: "Undo" },
+    { icon: LineChartIcon, label: "View analytics" },
+    { icon: GalleryVerticalEndIcon, label: "Version History" },
+    { icon: TrashIcon, label: "Show delete pages" },
+    { icon: BellIcon, label: "Notifications" },
   ],
   [
-    { label: "Import", icon: ArrowUpIcon },
-    { label: "Export", icon: ArrowDownIcon },
+    { icon: ArrowUpIcon, label: "Import" },
+    { icon: ArrowDownIcon, label: "Export" },
   ],
 ];
 

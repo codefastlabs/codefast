@@ -1,3 +1,7 @@
+import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
+import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,43 +11,39 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@codefast/ui";
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
-import Link from "next/link";
-
-import type { ComponentProps, JSX } from "react";
 
 const components: { description: string; href: string; title: string }[] = [
   {
-    title: "Alert Dialog",
-    href: "/components/alert-dialog",
     description: "A modal dialog that interrupts the user with important content and expects a response.",
+    href: "/components/alert-dialog",
+    title: "Alert Dialog",
   },
   {
-    title: "Hover Card",
-    href: "/components/hover-card",
     description: "For sighted users to preview content available behind a link.",
+    href: "/components/hover-card",
+    title: "Hover Card",
   },
   {
-    title: "Progress",
-    href: "/components/progress",
     description:
       "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+    href: "/components/progress",
+    title: "Progress",
   },
   {
-    title: "Scroll-area",
-    href: "/components/scroll-area",
     description: "Visually or semantically separates content.",
+    href: "/components/scroll-area",
+    title: "Scroll-area",
   },
   {
-    title: "Tabs",
-    href: "/components/tabs",
     description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    href: "/components/tabs",
+    title: "Tabs",
   },
   {
-    title: "Tooltip",
-    href: "/components/tooltip",
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+    href: "/components/tooltip",
+    title: "Tooltip",
   },
 ];
 
@@ -185,7 +185,7 @@ export function NavigationMenuDemo(): JSX.Element {
   );
 }
 
-function ListItem({ title, children, href, ...props }: ComponentProps<"li"> & { href: string }): JSX.Element {
+function ListItem({ children, href, title, ...props }: ComponentProps<"li"> & { href: string }): JSX.Element {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

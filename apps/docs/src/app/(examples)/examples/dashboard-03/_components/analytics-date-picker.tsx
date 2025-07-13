@@ -1,11 +1,11 @@
 "use client";
 
-import { Button, Calendar, CalendarRangeLabel, cn, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
 import { addDays } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { type JSX, useId, useState } from "react";
-
 import type { DateRange } from "react-day-picker";
+
+import { Button, Calendar, CalendarRangeLabel, cn, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
 
 export function AnalyticsDatePicker(): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({

@@ -1,10 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { buttonVariants } from "@/components/button";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Component: Pagination
@@ -132,11 +132,11 @@ export {
   PaginationPrevious,
 };
 export type {
-  PaginationProps,
   PaginationContentProps,
   PaginationEllipsisProps,
   PaginationItemProps,
   PaginationLinkProps,
   PaginationNextProps,
   PaginationPreviousProps,
+  PaginationProps,
 };

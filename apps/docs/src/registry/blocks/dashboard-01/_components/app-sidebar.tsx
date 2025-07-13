@@ -1,5 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
+
+import { NavDocuments } from "@/registry/blocks/dashboard-01/_components/nav-documents";
+import { NavMain } from "@/registry/blocks/dashboard-01/_components/nav-main";
+import { NavSecondary } from "@/registry/blocks/dashboard-01/_components/nav-secondary";
+import { NavUser } from "@/registry/blocks/dashboard-01/_components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -26,64 +33,56 @@ import {
   IconSettings,
   IconUsers,
 } from "@tabler/icons-react";
-import Link from "next/link";
-
-import { NavDocuments } from "@/registry/blocks/dashboard-01/_components/nav-documents";
-import { NavMain } from "@/registry/blocks/dashboard-01/_components/nav-main";
-import { NavSecondary } from "@/registry/blocks/dashboard-01/_components/nav-secondary";
-import { NavUser } from "@/registry/blocks/dashboard-01/_components/nav-user";
-
-import type { ComponentProps, JSX } from "react";
 
 const data = {
-  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
-  navMain: [
-    { title: "Dashboard", url: "#", icon: IconDashboard },
-    { title: "Lifecycle", url: "#", icon: IconListDetails },
-    { title: "Analytics", url: "#", icon: IconChartBar },
-    { title: "Projects", url: "#", icon: IconFolder },
-    { title: "Team", url: "#", icon: IconUsers },
+  documents: [
+    { icon: IconDatabase, name: "Data Library", url: "#" },
+    { icon: IconReport, name: "Reports", url: "#" },
+    { icon: IconFileWord, name: "Word Assistant", url: "#" },
   ],
   navClouds: [
     {
-      title: "Capture",
       icon: IconCamera,
       isActive: true,
-      url: "#",
       items: [
         { title: "Active Proposals", url: "#" },
         { title: "Archived", url: "#" },
       ],
+      title: "Capture",
+      url: "#",
     },
     {
-      title: "Proposal",
       icon: IconFileDescription,
-      url: "#",
       items: [
         { title: "Active Proposals", url: "#" },
         { title: "Archived", url: "#" },
       ],
+      title: "Proposal",
+      url: "#",
     },
     {
-      title: "Prompts",
       icon: IconFileAi,
-      url: "#",
       items: [
         { title: "Active Proposals", url: "#" },
         { title: "Archived", url: "#" },
       ],
+      title: "Prompts",
+      url: "#",
     },
+  ],
+  navMain: [
+    { icon: IconDashboard, title: "Dashboard", url: "#" },
+    { icon: IconListDetails, title: "Lifecycle", url: "#" },
+    { icon: IconChartBar, title: "Analytics", url: "#" },
+    { icon: IconFolder, title: "Projects", url: "#" },
+    { icon: IconUsers, title: "Team", url: "#" },
   ],
   navSecondary: [
-    { title: "Settings", url: "#", icon: IconSettings },
-    { title: "Get Help", url: "#", icon: IconHelp },
-    { title: "Search", url: "#", icon: IconSearch },
+    { icon: IconSettings, title: "Settings", url: "#" },
+    { icon: IconHelp, title: "Get Help", url: "#" },
+    { icon: IconSearch, title: "Search", url: "#" },
   ],
-  documents: [
-    { name: "Data Library", url: "#", icon: IconDatabase },
-    { name: "Reports", url: "#", icon: IconReport },
-    { name: "Word Assistant", url: "#", icon: IconFileWord },
-  ],
+  user: { avatar: "/avatars/codefast-ui.webp", email: "m@example.com", name: "@codefast/ui" },
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {

@@ -1,11 +1,10 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { JSX } from "react";
 
 import { registryComponents } from "@/app/(app)/components/registry-components";
 import { ComponentWrapper } from "@/components/component-wrapper";
 import { getCachedComponentsRegistry } from "@/lib/registry-cache";
-
-import type { Metadata } from "next";
-import type { JSX } from "react";
 
 export const dynamicParams = false;
 
@@ -21,8 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = registry.description;
 
   return {
-    title,
     description,
+    title,
   };
 }
 

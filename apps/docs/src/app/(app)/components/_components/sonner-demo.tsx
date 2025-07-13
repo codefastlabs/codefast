@@ -1,43 +1,41 @@
 "use client";
 
-import { Button, toast } from "@codefast/ui";
 import { useState } from "react";
+import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { JSX } from "react";
+import { Button, toast } from "@codefast/ui";
 
 const allTypes = [
   {
+    action: (): number | string => toast("Event has been created"),
     name: "Default",
-    action: () => toast("Event has been created"),
   },
   {
-    name: "Description",
-    action: () =>
+    action: (): number | string =>
       toast("Event has been created", {
         description: "Monday, January 3rd at 6:00pm",
       }),
+    name: "Description",
   },
   {
+    action: (): number | string => toast.success("Event has been created"),
     name: "Success",
-    action: () => toast.success("Event has been created"),
   },
   {
+    action: (): number | string => toast.info("Be at the area 10 minutes before the event time"),
     name: "Info",
-    action: () => toast.info("Be at the area 10 minutes before the event time"),
   },
   {
+    action: (): number | string => toast.warning("Event start time cannot be earlier than 8am"),
     name: "Warning",
-    action: () => toast.warning("Event start time cannot be earlier than 8am"),
   },
   {
+    action: (): number | string => toast.error("Event has not been created"),
     name: "Error",
-    action: () => toast.error("Event has not been created"),
   },
   {
-    name: "Action",
-    action: () =>
+    action: (): number | string =>
       toast.message("Event has been created", {
         action: {
           label: "Undo",
@@ -46,10 +44,10 @@ const allTypes = [
           },
         },
       }),
+    name: "Action",
   },
   {
-    name: "Cancel",
-    action: () =>
+    action: (): number | string =>
       toast.message("Event has been created", {
         cancel: {
           label: "Cancel",
@@ -58,10 +56,15 @@ const allTypes = [
           },
         },
       }),
+    name: "Cancel",
   },
   {
-    name: "Promise",
-    action: () =>
+    action: ():
+      | { unwrap: () => Promise<{ name: string }> }
+      | (number & {
+          unwrap: () => Promise<{ name: string }>;
+        })
+      | (string & { unwrap: () => Promise<{ name: string }> }) =>
       toast.promise<{ name: string }>(
         async () =>
           new Promise((resolve) => {
@@ -70,13 +73,14 @@ const allTypes = [
             }, 2000);
           }),
         {
+          error: "Error",
           loading: "Loading...",
           success: (data) => {
             return `${data.name} toast has been added`;
           },
-          error: "Error",
         },
       ),
+    name: "Promise",
   },
 ];
 
@@ -95,13 +99,13 @@ export function SonnerDemo(): JSX.Element {
           variant="outline"
           onClick={() =>
             toast("Event has been created", {
-              description: "Sunday, December 03, 2023 at 9:00 AM",
               action: {
                 label: "Undo",
                 onClick: () => {
                   console.log("Undo");
                 },
               },
+              description: "Sunday, December 03, 2023 at 9:00 AM",
             })
           }
         >

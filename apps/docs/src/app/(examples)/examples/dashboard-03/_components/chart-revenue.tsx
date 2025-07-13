@@ -1,5 +1,11 @@
 "use client";
 
+import { TrendingUp } from "lucide-react";
+import type { JSX } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -11,35 +17,30 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 346, mobile: 140 },
-  { month: "July", desktop: 321, mobile: 275 },
-  { month: "August", desktop: 132, mobile: 95 },
-  { month: "September", desktop: 189, mobile: 225 },
-  { month: "October", desktop: 302, mobile: 248 },
-  { month: "November", desktop: 342, mobile: 285 },
-  { month: "December", desktop: 328, mobile: 290 },
+  { desktop: 186, mobile: 80, month: "January" },
+  { desktop: 305, mobile: 200, month: "February" },
+  { desktop: 237, mobile: 120, month: "March" },
+  { desktop: 73, mobile: 190, month: "April" },
+  { desktop: 209, mobile: 130, month: "May" },
+  { desktop: 346, mobile: 140, month: "June" },
+  { desktop: 321, mobile: 275, month: "July" },
+  { desktop: 132, mobile: 95, month: "August" },
+  { desktop: 189, mobile: 225, month: "September" },
+  { desktop: 302, mobile: 248, month: "October" },
+  { desktop: 342, mobile: 285, month: "November" },
+  { desktop: 328, mobile: 290, month: "December" },
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--chart-2)",
+    label: "Mobile",
   },
 } satisfies ChartConfig;
 

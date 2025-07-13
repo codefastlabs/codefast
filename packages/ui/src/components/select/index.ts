@@ -11,11 +11,11 @@ export {
   SelectValue,
 } from "@/components/select/select";
 export type {
-  SelectProps,
   SelectContentProps,
   SelectGroupProps,
   SelectItemProps,
   SelectLabelProps,
+  SelectProps,
   SelectScrollDownButtonProps,
   SelectScrollUpButtonProps,
   SelectSeparatorProps,

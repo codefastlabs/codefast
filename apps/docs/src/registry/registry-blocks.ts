@@ -684,8 +684,6 @@ export const registryBlocks: Record<string, RegistryItem> = {
 
 export const registryBlockGroups: RegistryGroup[] = [
   {
-    title: "Login",
-    description: "Login interface templates with various styles and layouts.",
     components: [
       registryBlocks["login-01"],
       registryBlocks["login-02"],
@@ -693,25 +691,25 @@ export const registryBlockGroups: RegistryGroup[] = [
       registryBlocks["login-04"],
       registryBlocks["login-05"],
     ],
+    description: "Login interface templates with various styles and layouts.",
+    title: "Login",
   },
   {
-    title: "Products",
-    description: "Product list display and management interface",
     components: [registryBlocks["products-01"]],
+    description: "Product list display and management interface",
+    title: "Products",
   },
   {
-    title: "Forms",
-    description: "Collection of multipurpose form templates with various input fields",
     components: [registryBlocks["form-01"]],
+    description: "Collection of multipurpose form templates with various input fields",
+    title: "Forms",
   },
   {
-    title: "Dashboard",
-    description: "The dashboard displays key system data.",
     components: [registryBlocks["dashboard-01"]],
+    description: "The dashboard displays key system data.",
+    title: "Dashboard",
   },
   {
-    title: "Sidebar",
-    description: "Side navigation bars with various variations and styles",
     components: [
       registryBlocks["sidebar-01"],
       registryBlocks["sidebar-02"],
@@ -730,5 +728,7 @@ export const registryBlockGroups: RegistryGroup[] = [
       registryBlocks["sidebar-15"],
       registryBlocks["sidebar-16"],
     ],
+    description: "Side navigation bars with various variations and styles",
+    title: "Sidebar",
   },
 ];

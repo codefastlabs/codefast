@@ -5,13 +5,13 @@ export interface UsePaginationProps {
   currentPage: number;
   /** The number of results to display per page */
   resultsPerPage: number;
-  /** The total number of results across all pages */
-  totalResults: number;
   /**
    * The number of sibling pages to display on either side of the current page.
    * Defaults to 1.
    */
   siblingPagesCount?: number;
+  /** The total number of results across all pages */
+  totalResults: number;
 }
 
 /** Constant representing the ellipsis ("...") used in pagination */

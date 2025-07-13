@@ -1,8 +1,7 @@
-import { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger } from "@codefast/ui";
+import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { JSX } from "react";
+import { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger } from "@codefast/ui";
 
 export function AccordionDemo(): JSX.Element {
   return (

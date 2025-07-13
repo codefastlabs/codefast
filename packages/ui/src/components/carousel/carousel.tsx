@@ -1,16 +1,16 @@
 "use client";
 
-import { createContextScope } from "@radix-ui/react-context";
 import useEmblaCarousel from "embla-carousel-react";
+import type { UseEmblaCarouselType } from "embla-carousel-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import type { ComponentProps, JSX, KeyboardEvent } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
 
 import { Button } from "@/components/button";
 import { cn } from "@/lib/utils";
-
-import type { Scope } from "@radix-ui/react-context";
-import type { UseEmblaCarouselType } from "embla-carousel-react";
-import type { ComponentProps, JSX, KeyboardEvent } from "react";
+import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
  * Context: Carousel
@@ -119,7 +119,7 @@ function Carousel({
     api.on("reInit", onSelect);
     api.on("select", onSelect);
 
-    return () => {
+    return (): void => {
       api.off("select", onSelect);
     };
   }, [api, onSelect]);
@@ -287,10 +287,10 @@ function CarouselNext({
 
 export type {
   CarouselApi,
-  CarouselProps,
   CarouselContentProps,
   CarouselItemProps,
   CarouselNextProps,
   CarouselPreviousProps,
+  CarouselProps,
 };
 export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };

@@ -1,10 +1,9 @@
 "use client";
 
-import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 /* -----------------------------------------------------------------------------
  * Component: Avatar
@@ -55,4 +54,4 @@ function AvatarFallback({ className, ...props }: AvatarFallbackProps): JSX.Eleme
  * -------------------------------------------------------------------------- */
 
 export { Avatar, AvatarFallback, AvatarImage };
-export type { AvatarProps, AvatarFallbackProps, AvatarImageProps };
+export type { AvatarFallbackProps, AvatarImageProps, AvatarProps };

@@ -2,9 +2,9 @@
 
 export {
   createProgressCircleScope,
-  ProgressCircleIndicator,
   Indicator,
   ProgressCircle,
+  ProgressCircleIndicator,
   ProgressCircleProvider,
   ProgressCircleSVG,
   ProgressCircleTrack,
@@ -16,8 +16,8 @@ export {
   Value,
 } from "@/progress-circle";
 export type {
-  ProgressCircleProps,
   ProgressCircleIndicatorProps,
+  ProgressCircleProps,
   ProgressCircleProviderProps,
   ProgressCircleSVGProps,
   ProgressCircleTrackProps,

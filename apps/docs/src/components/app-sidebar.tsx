@@ -1,5 +1,14 @@
 "use client";
 
+import { CommandIcon } from "lucide-react";
+import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
+
+import type { NavItemProps } from "@/components/nav-main";
+
+import { registryComponentGroups } from "@/app/(app)/components/registry-components";
+import { NavMain } from "@/components/nav-main";
+import { registryBlockGroups } from "@/registry/registry-blocks";
 import {
   cn,
   ScrollArea,
@@ -10,35 +19,26 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@codefast/ui";
-import { CommandIcon } from "lucide-react";
-import Link from "next/link";
-
-import { registryComponentGroups } from "@/app/(app)/components/registry-components";
-import { NavMain } from "@/components/nav-main";
-import { registryBlockGroups } from "@/registry/registry-blocks";
-
-import type { NavItemProps } from "@/components/nav-main";
-import type { ComponentProps, JSX } from "react";
 
 const data: {
   navMain: NavItemProps[];
 } = {
   navMain: [
     {
-      title: "Components",
-      path: "/components",
       groups: registryComponentGroups.map((group) => ({
         ...group,
         components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
       })),
+      path: "/components",
+      title: "Components",
     },
     {
-      title: "Blocks",
-      path: "/blocks",
       groups: registryBlockGroups.map((group) => ({
         ...group,
         components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
       })),
+      path: "/blocks",
+      title: "Blocks",
     },
   ],
 };

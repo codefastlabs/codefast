@@ -2,19 +2,18 @@
 
 import { format } from "date-fns";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from "lucide-react";
+import type { ComponentProps, JSX, ReactNode } from "react";
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
+import type { CustomComponents, DateRange } from "react-day-picker";
 
 import { buttonVariants } from "@/components/button";
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX, ReactNode } from "react";
-import type { CustomComponents, DateRange } from "react-day-picker";
 
 /* -----------------------------------------------------------------------------
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-function Chevron({ orientation, className, ...props }: ComponentProps<CustomComponents["Chevron"]>): JSX.Element {
+function Chevron({ className, orientation, ...props }: ComponentProps<CustomComponents["Chevron"]>): JSX.Element {
   switch (orientation) {
     case "up": {
       return <ChevronUpIcon className={cn("size-4", className)} {...props} />;
@@ -48,13 +47,13 @@ function Chevron({ orientation, className, ...props }: ComponentProps<CustomComp
 
 type CalendarProps = ComponentProps<typeof DayPicker>;
 
-function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProps): JSX.Element {
+function Calendar({ classNames, showOutsideDays = true, ...props }: CalendarProps): JSX.Element {
   const isInteractive = props.mode !== undefined || props.onDayClick !== undefined;
 
   return (
     <DayPicker
       classNames={{
-        [UI.Root]: cn("p-3", classNames?.[UI.Root]),
+        [UI.CaptionLabel]: cn("flex items-center gap-2 [&>svg]:opacity-50", classNames?.[UI.CaptionLabel]),
         [UI.Chevron]: cn(classNames?.[UI.Chevron]),
         [UI.Day]: cn(
           "grid place-items-center text-center text-sm",
@@ -65,29 +64,28 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProp
           "group-[.is-outside]:text-muted-foreground hover:not-disabled:not-group-aria-selected:bg-secondary hover:not-disabled:not-group-aria-selected:text-secondary-foreground group-data-today:not-group-aria-selected:bg-secondary group-data-today:not-group-aria-selected:text-secondary-foreground group-aria-selected:not-group-[.is-range-middle]:bg-primary group-aria-selected:not-group-[.is-range-middle]:text-primary-foreground outline-hidden focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3 group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:ring-primary/20 dark:group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:ring-primary/40 group-[.is-selected]:not-group-[.is-range-middle]:focus-visible:border-primary size-8 rounded-lg border border-transparent disabled:opacity-50",
           classNames?.[UI.DayButton],
         ),
-        [UI.CaptionLabel]: cn("flex items-center gap-2 [&>svg]:opacity-50", classNames?.[UI.CaptionLabel]),
-        [UI.Dropdowns]: cn("flex gap-4", classNames?.[UI.Dropdowns]),
         [UI.Dropdown]: cn("absolute opacity-0", classNames?.[UI.Dropdown]),
         [UI.DropdownRoot]: cn("relative", classNames?.[UI.DropdownRoot]),
+        [UI.Dropdowns]: cn("flex gap-4", classNames?.[UI.Dropdowns]),
         [UI.Footer]: cn(classNames?.[UI.Footer]),
-        [UI.MonthGrid]: cn(classNames?.[UI.MonthGrid]),
-        [UI.MonthCaption]: cn("py-1 text-sm font-medium", classNames?.[UI.MonthCaption]),
-        [UI.MonthsDropdown]: cn(classNames?.[UI.MonthsDropdown]),
         [UI.Month]: cn("flex flex-col gap-4", classNames?.[UI.Month]),
+        [UI.MonthCaption]: cn("py-1 text-sm font-medium", classNames?.[UI.MonthCaption]),
+        [UI.MonthGrid]: cn(classNames?.[UI.MonthGrid]),
         [UI.Months]: cn("relative flex gap-4", classNames?.[UI.Months]),
+        [UI.MonthsDropdown]: cn(classNames?.[UI.MonthsDropdown]),
         [UI.Nav]: cn("absolute end-0 flex gap-2", classNames?.[UI.Nav]),
         [UI.NextMonthButton]: buttonVariants({
-          variant: "ghost",
-          size: "icon",
           className: ["size-7", classNames?.[UI.NextMonthButton]],
+          size: "icon",
+          variant: "ghost",
         }),
         [UI.PreviousMonthButton]: buttonVariants({
-          variant: "ghost",
-          size: "icon",
           className: ["size-7", classNames?.[UI.PreviousMonthButton]],
+          size: "icon",
+          variant: "ghost",
         }),
+        [UI.Root]: cn("p-3", classNames?.[UI.Root]),
         [UI.Week]: cn("mt-2 flex justify-between", classNames?.[UI.Week]),
-        [UI.Weeks]: cn(classNames?.[UI.Weeks]),
         [UI.Weekday]: cn("text-muted-foreground min-w-8.5 text-xs font-medium", classNames?.[UI.Weekday]),
         [UI.Weekdays]: cn("flex w-full justify-between", classNames?.[UI.Weekdays]),
         [UI.WeekNumber]: cn(
@@ -95,6 +93,7 @@ function Calendar({ showOutsideDays = true, classNames, ...props }: CalendarProp
           classNames?.[UI.WeekNumber],
         ),
         [UI.WeekNumberHeader]: cn("min-w-8.5", classNames?.[UI.WeekNumberHeader]),
+        [UI.Weeks]: cn(classNames?.[UI.Weeks]),
         [UI.YearsDropdown]: cn(classNames?.[UI.YearsDropdown]),
 
         [SelectionState.range_end]: cn(
@@ -187,4 +186,4 @@ function CalendarLabel({
  * -------------------------------------------------------------------------- */
 
 export { Calendar, CalendarLabel, CalendarRangeLabel };
-export type { CalendarProps, CalendarLabelProps, CalendarRangeLabelProps };
+export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps };

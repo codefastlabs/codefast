@@ -1,5 +1,11 @@
 "use client";
 
+import type { CSSProperties, JSX } from "react";
+import { Bar, BarChart, XAxis } from "recharts";
+import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -10,11 +16,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { Bar, BarChart, XAxis } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { CSSProperties, JSX } from "react";
-import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 interface DataItem {
   date: string;
@@ -33,12 +34,12 @@ const chartData = [
 
 const chartConfig = {
   running: {
-    label: "Running",
     color: "var(--chart-1)",
+    label: "Running",
   },
   swimming: {
-    label: "Swimming",
     color: "var(--chart-2)",
+    label: "Swimming",
   },
 } satisfies ChartConfig;
 

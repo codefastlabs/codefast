@@ -1,7 +1,7 @@
-import { Label, Textarea } from "@codefast/ui";
 import { type JSX, useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+import { Label, Textarea } from "@codefast/ui";
 
 export function TextareaDemo(): JSX.Element {
   const id = useId();

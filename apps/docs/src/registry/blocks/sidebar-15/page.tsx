@@ -1,3 +1,7 @@
+import type { JSX } from "react";
+
+import { SidebarLeft } from "@/registry/blocks/sidebar-15/_components/sidebar-left";
+import { SidebarRight } from "@/registry/blocks/sidebar-15/_components/sidebar-right";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,11 +12,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@codefast/ui";
-
-import { SidebarLeft } from "@/registry/blocks/sidebar-15/_components/sidebar-left";
-import { SidebarRight } from "@/registry/blocks/sidebar-15/_components/sidebar-right";
-
-import type { JSX } from "react";
 
 export default function Page(): JSX.Element {
   return (

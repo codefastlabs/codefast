@@ -1,5 +1,6 @@
-import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
 import { type JSX, useId } from "react";
+
+import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
 
 export function PopoverDemo(): JSX.Element {
   const id = useId();

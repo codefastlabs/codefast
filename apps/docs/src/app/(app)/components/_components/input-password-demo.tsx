@@ -1,9 +1,8 @@
-import { InputPassword } from "@codefast/ui";
 import { LockIcon } from "lucide-react";
+import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { JSX } from "react";
+import { InputPassword } from "@codefast/ui";
 
 export function InputPasswordDemo(): JSX.Element {
   return (

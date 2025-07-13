@@ -1,8 +1,9 @@
-import { buttonVariants } from "@/components/button/button.variants";
-import { Spinner } from "@/components/spinner";
+import type { ComponentProps, JSX, ReactNode } from "react";
 
 import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX, ReactNode } from "react";
+
+import { buttonVariants } from "@/components/button/button.variants";
+import { Spinner } from "@/components/spinner";
 
 /* -----------------------------------------------------------------------------
  * Component: Button

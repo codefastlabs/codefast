@@ -1,9 +1,9 @@
 "use client";
 
-import { Progress } from "@codefast/ui";
 import { useEffect, useState } from "react";
-
 import type { JSX } from "react";
+
+import { Progress } from "@codefast/ui";
 
 export function ProgressDemo(): JSX.Element {
   const [progress, setProgress] = useState(13);
@@ -13,7 +13,7 @@ export function ProgressDemo(): JSX.Element {
       setProgress(66);
     }, 500);
 
-    return () => {
+    return (): void => {
       clearTimeout(timer);
     };
   }, []);

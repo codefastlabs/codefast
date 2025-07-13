@@ -10,13 +10,13 @@ export {
   DialogTrigger,
 } from "@/components/dialog/dialog";
 export type {
-  DialogProps,
-  DialogTriggerProps,
-  DialogContentProps,
-  DialogHeaderProps,
   DialogBodyProps,
-  DialogFooterProps,
-  DialogTitleProps,
-  DialogDescriptionProps,
   DialogCloseProps,
+  DialogContentProps,
+  DialogDescriptionProps,
+  DialogFooterProps,
+  DialogHeaderProps,
+  DialogProps,
+  DialogTitleProps,
+  DialogTriggerProps,
 } from "@/components/dialog/dialog";

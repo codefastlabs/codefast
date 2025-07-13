@@ -1,13 +1,12 @@
 "use client";
 
-import { Calendar } from "@codefast/ui";
 import { addDays } from "date-fns";
 import { useState } from "react";
-
-import { GridWrapper } from "@/components/grid-wrapper";
-
 import type { JSX } from "react";
 import type { DateRange } from "react-day-picker";
+
+import { GridWrapper } from "@/components/grid-wrapper";
+import { Calendar } from "@codefast/ui";
 
 export function CalendarDemo(): JSX.Element {
   const [date, setDate] = useState<Date | undefined>(new Date());

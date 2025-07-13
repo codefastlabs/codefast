@@ -1,5 +1,11 @@
 "use client";
 
+import { useMemo, useState } from "react";
+import type { JSX } from "react";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+
+import type { ChartConfig } from "@codefast/ui";
+
 import {
   Card,
   CardContent,
@@ -10,11 +16,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@codefast/ui";
-import { useMemo, useState } from "react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { JSX } from "react";
 
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
@@ -111,16 +112,16 @@ const chartData = [
 ];
 
 const chartConfig = {
-  views: {
-    label: "Page Views",
-  },
   desktop: {
-    label: "Desktop",
     color: "var(--chart-1)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--chart-2)",
+    label: "Mobile",
+  },
+  views: {
+    label: "Page Views",
   },
 } satisfies ChartConfig;
 
@@ -184,8 +185,8 @@ export function ChartLineInteractive(): JSX.Element {
                 const date = new Date(value);
 
                 return date.toLocaleDateString("en-US", {
-                  month: "short",
                   day: "numeric",
+                  month: "short",
                 });
               }}
               tickLine={false}
@@ -197,8 +198,8 @@ export function ChartLineInteractive(): JSX.Element {
                   className="w-[150px]"
                   labelFormatter={(value: string) => {
                     return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
                       day: "numeric",
+                      month: "short",
                       year: "numeric",
                     });
                   }}

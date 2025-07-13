@@ -1,5 +1,8 @@
 "use client";
 
+import { useId } from "react";
+import type { JSX } from "react";
+
 import {
   Avatar,
   AvatarFallback,
@@ -20,9 +23,6 @@ import {
   Separator,
   toast,
 } from "@codefast/ui";
-import { useId } from "react";
-
-import type { JSX } from "react";
 
 type UserPermission = "edit" | "view";
 
@@ -66,24 +66,24 @@ export function CardsShare(): JSX.Element {
 
   const usersWithAccess: User[] = [
     {
-      name: "Olivia Martin",
-      email: "m@example.com",
       avatar: "/avatars/03.png",
+      email: "m@example.com",
       initials: "OM",
+      name: "Olivia Martin",
       permission: "edit",
     },
     {
-      name: "Isabella Nguyen",
-      email: "b@example.com",
       avatar: "/avatars/05.png",
+      email: "b@example.com",
       initials: "IN",
+      name: "Isabella Nguyen",
       permission: "view",
     },
     {
-      name: "Sofia Davis",
-      email: "p@example.com",
       avatar: "/avatars/01.png",
+      email: "p@example.com",
       initials: "SD",
+      name: "Sofia Davis",
       permission: "view",
     },
   ];

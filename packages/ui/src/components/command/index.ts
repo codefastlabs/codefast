@@ -11,14 +11,14 @@ export {
   CommandShortcut,
 } from "@/components/command/command";
 export type {
-  CommandProps,
   CommandDialogProps,
-  CommandInputProps,
-  CommandListProps,
   CommandEmptyProps,
   CommandGroupProps,
-  CommandSeparatorProps,
+  CommandInputProps,
   CommandItemProps,
+  CommandListProps,
   CommandLoadingProps,
+  CommandProps,
+  CommandSeparatorProps,
   CommandShortcutProps,
 } from "@/components/command/command";

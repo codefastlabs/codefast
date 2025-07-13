@@ -1,3 +1,10 @@
+import { GalleryVerticalEndIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
+
+import { NavMain } from "@/registry/blocks/sidebar-06/_components/nav-main";
+import { SidebarOptInForm } from "@/registry/blocks/sidebar-06/_components/sidebar-opt-in-form";
 import {
   Sidebar,
   SidebarContent,
@@ -8,14 +15,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@codefast/ui";
-import { GalleryVerticalEndIcon } from "lucide-react";
-import Link from "next/link";
-
-import { NavMain } from "@/registry/blocks/sidebar-06/_components/nav-main";
-import { SidebarOptInForm } from "@/registry/blocks/sidebar-06/_components/sidebar-opt-in-form";
-
-import type { LucideIcon } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data: {
@@ -29,19 +28,17 @@ const data: {
 } = {
   navMain: [
     {
-      title: "Getting Started",
-      url: "#",
       items: [
         { title: "Installation", url: "#" },
         { title: "Project Structure", url: "#" },
       ],
+      title: "Getting Started",
+      url: "#",
     },
     {
-      title: "Building Your Application",
-      url: "#",
       items: [
         { title: "Routing", url: "#" },
-        { title: "Data Fetching", url: "#", isActive: true },
+        { isActive: true, title: "Data Fetching", url: "#" },
         { title: "Rendering", url: "#" },
         { title: "Caching", url: "#" },
         { title: "Styling", url: "#" },
@@ -53,10 +50,10 @@ const data: {
         { title: "Upgrading", url: "#" },
         { title: "Examples", url: "#" },
       ],
+      title: "Building Your Application",
+      url: "#",
     },
     {
-      title: "API Reference",
-      url: "#",
       items: [
         { title: "Components", url: "#" },
         { title: "File Conventions", url: "#" },
@@ -65,10 +62,10 @@ const data: {
         { title: "CLI", url: "#" },
         { title: "Edge Runtime", url: "#" },
       ],
+      title: "API Reference",
+      url: "#",
     },
     {
-      title: "Architecture",
-      url: "#",
       items: [
         { title: "Accessibility", url: "#" },
         { title: "Fast Refresh", url: "#" },
@@ -76,6 +73,8 @@ const data: {
         { title: "Supported Browsers", url: "#" },
         { title: "Turbopack", url: "#" },
       ],
+      title: "Architecture",
+      url: "#",
     },
   ],
 };

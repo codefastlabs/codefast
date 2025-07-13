@@ -1,3 +1,11 @@
+import { DownloadIcon, FilterIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
+import type { Metadata } from "next";
+import type { JSX } from "react";
+
+import { AnalyticsDatePicker } from "@/app/(examples)/examples/dashboard-03/_components/analytics-date-picker";
+import { ChartRevenue } from "@/app/(examples)/examples/dashboard-03/_components/chart-revenue";
+import { ChartVisitors } from "@/app/(examples)/examples/dashboard-03/_components/chart-visitors";
+import { ProductsTable } from "@/app/(examples)/examples/dashboard-03/_components/products-table";
 import {
   Badge,
   Button,
@@ -11,102 +19,93 @@ import {
   TabsList,
   TabsTrigger,
 } from "@codefast/ui";
-import { DownloadIcon, FilterIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
-
-import { AnalyticsDatePicker } from "@/app/(examples)/examples/dashboard-03/_components/analytics-date-picker";
-import { ChartRevenue } from "@/app/(examples)/examples/dashboard-03/_components/chart-revenue";
-import { ChartVisitors } from "@/app/(examples)/examples/dashboard-03/_components/chart-visitors";
-import { ProductsTable } from "@/app/(examples)/examples/dashboard-03/_components/products-table";
-
-import type { Metadata } from "next";
-import type { JSX } from "react";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
   description: "An example dashboard to test the new components.",
+  title: "Dashboard",
 };
 
 // Load from database.
 const products = [
   {
+    dateAdded: "2023-06-15",
     id: "1",
     name: "BJÖRKSNÄS Dining Table",
     price: 599.99,
-    stock: 12,
-    dateAdded: "2023-06-15",
     status: "In Stock",
+    stock: 12,
   },
   {
+    dateAdded: "2023-07-22",
     id: "2",
     name: "POÄNG Armchair",
     price: 249.99,
-    stock: 28,
-    dateAdded: "2023-07-22",
     status: "In Stock",
+    stock: 28,
   },
   {
+    dateAdded: "2023-08-05",
     id: "3",
     name: "MALM Bed Frame",
     price: 399.99,
-    stock: 15,
-    dateAdded: "2023-08-05",
     status: "In Stock",
+    stock: 15,
   },
   {
+    dateAdded: "2023-09-12",
     id: "4",
     name: "KALLAX Shelf Unit",
     price: 179.99,
-    stock: 32,
-    dateAdded: "2023-09-12",
     status: "In Stock",
+    stock: 32,
   },
   {
+    dateAdded: "2023-10-18",
     id: "5",
     name: "STOCKHOLM Rug",
     price: 299.99,
-    stock: 8,
-    dateAdded: "2023-10-18",
     status: "Low Stock",
+    stock: 8,
   },
   {
+    dateAdded: "2023-11-02",
     id: "6",
     name: "KIVIK Sofa",
     price: 899.99,
-    stock: 6,
-    dateAdded: "2023-11-02",
     status: "Low Stock",
+    stock: 6,
   },
   {
+    dateAdded: "2023-11-29",
     id: "7",
     name: "LISABO Coffee Table",
     price: 149.99,
-    stock: 22,
-    dateAdded: "2023-11-29",
     status: "In Stock",
+    stock: 22,
   },
   {
+    dateAdded: "2023-12-10",
     id: "8",
     name: "HEMNES Bookcase",
     price: 249.99,
-    stock: 17,
-    dateAdded: "2023-12-10",
     status: "In Stock",
+    stock: 17,
   },
   {
+    dateAdded: "2024-01-05",
     id: "9",
     name: "EKEDALEN Dining Chairs (Set of 2)",
     price: 199.99,
-    stock: 14,
-    dateAdded: "2024-01-05",
     status: "In Stock",
+    stock: 14,
   },
   {
+    dateAdded: "2024-01-18",
     id: "10",
     name: "FRIHETEN Sleeper Sofa",
     price: 799.99,
-    stock: 9,
-    dateAdded: "2024-01-18",
     status: "Low Stock",
+    stock: 9,
   },
 ];
 

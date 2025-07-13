@@ -4,12 +4,12 @@ import path from "node:path";
 
 import { isEmpty } from "lodash-es";
 import { Project, ScriptKind } from "ts-morph";
+import type { SourceFile } from "ts-morph";
+
+import type { RegistryItem, RegistryItemFile } from "@/types/registry";
 
 import { highlightCode } from "@/lib/highlight-code";
 import { registryBlocks } from "@/registry/registry-blocks";
-
-import type { RegistryItem, RegistryItemFile } from "@/types/registry";
-import type { SourceFile } from "ts-morph";
 
 // Constants
 const FILE_TYPES = {
@@ -226,7 +226,7 @@ function findOrCreateNode(level: FileTree[], nodeName: string, isFile: boolean, 
   let node = level.find(({ name }) => name === nodeName);
 
   if (!node) {
-    node = isFile ? { name: nodeName, path: filePath } : { name: nodeName, children: [] };
+    node = isFile ? { name: nodeName, path: filePath } : { children: [], name: nodeName };
     level.push(node);
   }
 
@@ -326,7 +326,7 @@ async function createTempSourceFile(filename: string): Promise<string> {
 async function cleanupTempDirectories(): Promise<void> {
   const cleanupPromises = [...tempDirectories].map(async (directory) => {
     try {
-      await fs.rm(directory, { recursive: true, force: true });
+      await fs.rm(directory, { force: true, recursive: true });
       tempDirectories.delete(directory);
     } catch (error) {
       console.error(`Error cleaning up temp directory '${directory}':`, error);

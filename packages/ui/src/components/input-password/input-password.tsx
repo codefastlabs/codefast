@@ -1,15 +1,15 @@
 "use client";
 
-import * as InputPrimitive from "@codefast-ui/input";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useCallback, useState } from "react";
+import type { ComponentProps, JSX, MouseEventHandler } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { Button } from "@/components/button";
 import { inputVariants } from "@/components/input";
 import { Spinner } from "@/components/spinner";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX, MouseEventHandler } from "react";
+import * as InputPrimitive from "@codefast-ui/input";
 
 /* -----------------------------------------------------------------------------
  * Variant: InputPassword

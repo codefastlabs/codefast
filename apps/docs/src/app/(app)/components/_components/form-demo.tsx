@@ -1,5 +1,11 @@
 "use client";
 
+import { isEmpty } from "lodash-es";
+import { CalendarIcon } from "lucide-react";
+import type { JSX } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import {
   Button,
   Calendar,
@@ -29,12 +35,6 @@ import {
   toast,
 } from "@codefast/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isEmpty } from "lodash-es";
-import { CalendarIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import type { JSX } from "react";
 
 const items = [
   {
@@ -64,9 +64,6 @@ const items = [
 ] as const;
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    error: "Username must be at least 2 characters.",
-  }),
   bio: z
     .string()
     .min(10, {
@@ -75,28 +72,31 @@ const FormSchema = z.object({
     .max(160, {
       error: "Bio must not be longer than 30 characters.",
     }),
-  email: z.email({ error: "Please select an email to display." }),
-  type: z.enum(["all", "mentions", "none"], {
-    error: "You need to select a notification type.",
-  }),
-  mobile: z.boolean().default(false).optional(),
-  items: z.array(z.string()).refine((value) => value.some(Boolean), {
-    error: "You have to select at least one item.",
-  }),
   dob: z.date({
     error: "A date of birth is required.",
   }),
+  email: z.email({ error: "Please select an email to display." }),
+  items: z.array(z.string()).refine((value) => value.some(Boolean), {
+    error: "You have to select at least one item.",
+  }),
   marketing_emails: z.boolean(),
+  mobile: z.boolean().default(false).optional(),
   security_emails: z.boolean().default(false).optional(),
+  type: z.enum(["all", "mentions", "none"], {
+    error: "You need to select a notification type.",
+  }),
+  username: z.string().min(2, {
+    error: "Username must be at least 2 characters.",
+  }),
 });
 
 export function FormDemo(): JSX.Element {
   const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
       items: ["recents", "home"],
+      username: "",
     },
+    resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>): void {

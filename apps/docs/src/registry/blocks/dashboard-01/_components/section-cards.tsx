@@ -1,7 +1,7 @@
+import type { JSX } from "react";
+
 import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
-
-import type { JSX } from "react";
 
 type TrendDirection = "down" | "up";
 
@@ -18,7 +18,7 @@ interface MetricCardProps {
   value: string;
 }
 
-function MetricCard({ title, value, trend, footer }: MetricCardProps): JSX.Element {
+function MetricCard({ footer, title, trend, value }: MetricCardProps): JSX.Element {
   const TrendIcon = trend.direction === "up" ? IconTrendingUp : IconTrendingDown;
 
   return (
@@ -45,40 +45,40 @@ function MetricCard({ title, value, trend, footer }: MetricCardProps): JSX.Eleme
 
 const METRICS_DATA: MetricCardProps[] = [
   {
-    title: "Total Revenue",
-    value: "$1,250.00",
-    trend: { direction: "up", percentage: "+12.5%" },
     footer: {
       description: "Trending up this month",
       detail: "Visitors for the last 6 months",
     },
+    title: "Total Revenue",
+    trend: { direction: "up", percentage: "+12.5%" },
+    value: "$1,250.00",
   },
   {
-    title: "New Customers",
-    value: "1,234",
-    trend: { direction: "down", percentage: "-20%" },
     footer: {
       description: "Down 20% this period",
       detail: "Acquisition needs attention",
     },
+    title: "New Customers",
+    trend: { direction: "down", percentage: "-20%" },
+    value: "1,234",
   },
   {
-    title: "Active Accounts",
-    value: "45,678",
-    trend: { direction: "up", percentage: "+12.5%" },
     footer: {
       description: "Strong user retention",
       detail: "Engagement exceed targets",
     },
+    title: "Active Accounts",
+    trend: { direction: "up", percentage: "+12.5%" },
+    value: "45,678",
   },
   {
-    title: "Growth Rate",
-    value: "4.5%",
-    trend: { direction: "up", percentage: "+4.5%" },
     footer: {
       description: "Steady performance increase",
       detail: "Meets growth projections",
     },
+    title: "Growth Rate",
+    trend: { direction: "up", percentage: "+4.5%" },
+    value: "4.5%",
   },
 ];
 

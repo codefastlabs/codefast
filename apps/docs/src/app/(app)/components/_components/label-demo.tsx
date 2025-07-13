@@ -1,7 +1,7 @@
-import { Checkbox, Input, Label, Textarea } from "@codefast/ui";
 import { type JSX, useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
+import { Checkbox, Input, Label, Textarea } from "@codefast/ui";
 
 export function LabelDemo(): JSX.Element {
   const id = useId();

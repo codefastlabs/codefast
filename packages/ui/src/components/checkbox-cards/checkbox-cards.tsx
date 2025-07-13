@@ -1,10 +1,9 @@
-import * as CheckboxGroupPrimitive from "@codefast-ui/checkbox-group";
 import { CheckIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
 
 import { Label } from "@/components/label";
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as CheckboxGroupPrimitive from "@codefast-ui/checkbox-group";
 
 /* -----------------------------------------------------------------------------
  * Component: CheckboxCards
@@ -55,4 +54,4 @@ function CheckboxCardsItem({ checkboxClassName, children, className, ...props }:
  * -------------------------------------------------------------------------- */
 
 export { CheckboxCards, CheckboxCardsItem };
-export type { CheckboxCardsProps, CheckboxCardsItemProps };
+export type { CheckboxCardsItemProps, CheckboxCardsProps };

@@ -1,5 +1,10 @@
 "use client";
 
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import type { JSX } from "react";
+
+import { GridWrapper } from "@/components/grid-wrapper";
 import {
   Avatar,
   AvatarFallback,
@@ -17,27 +22,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@codefast/ui";
-import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
-import { useMemo, useState } from "react";
-
-import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { JSX } from "react";
 
 const frameworkOptions = [
-  { value: "next.js", label: "Next.js" },
-  { value: "sveltekit", label: "SvelteKit" },
-  { value: "nuxt.js", label: "Nuxt.js" },
-  { value: "remix", label: "Remix" },
-  { value: "astro", label: "Astro" },
+  { label: "Next.js", value: "next.js" },
+  { label: "SvelteKit", value: "sveltekit" },
+  { label: "Nuxt.js", value: "nuxt.js" },
+  { label: "Remix", value: "remix" },
+  { label: "Astro", value: "astro" },
 ];
 
 type Framework = (typeof frameworkOptions)[number];
 
 const usersOptions = [
-  { id: "1", username: "codefastlabs", avatar: "/avatars/codefast-ui.webp" },
-  { id: "2", username: "leerob", avatar: "/avatars/leerob.png" },
-  { id: "3", username: "evilrabbit", avatar: "/avatars/evilrabbit.png" },
+  { avatar: "/avatars/codefast-ui.webp", id: "1", username: "codefastlabs" },
+  { avatar: "/avatars/leerob.png", id: "2", username: "leerob" },
+  { avatar: "/avatars/evilrabbit.png", id: "3", username: "evilrabbit" },
 ] as const;
 
 type User = (typeof usersOptions)[number];
@@ -46,34 +45,34 @@ const timezonesOptions = [
   {
     label: "Americas",
     timezones: [
-      { value: "America/New_York", label: "(GMT-5) New York" },
-      { value: "America/Los_Angeles", label: "(GMT-8) Los Angeles" },
-      { value: "America/Chicago", label: "(GMT-6) Chicago" },
-      { value: "America/Toronto", label: "(GMT-5) Toronto" },
-      { value: "America/Vancouver", label: "(GMT-8) Vancouver" },
-      { value: "America/Sao_Paulo", label: "(GMT-3) São Paulo" },
+      { label: "(GMT-5) New York", value: "America/New_York" },
+      { label: "(GMT-8) Los Angeles", value: "America/Los_Angeles" },
+      { label: "(GMT-6) Chicago", value: "America/Chicago" },
+      { label: "(GMT-5) Toronto", value: "America/Toronto" },
+      { label: "(GMT-8) Vancouver", value: "America/Vancouver" },
+      { label: "(GMT-3) São Paulo", value: "America/Sao_Paulo" },
     ],
   },
   {
     label: "Europe",
     timezones: [
-      { value: "Europe/London", label: "(GMT+0) London" },
-      { value: "Europe/Paris", label: "(GMT+1) Paris" },
-      { value: "Europe/Berlin", label: "(GMT+1) Berlin" },
-      { value: "Europe/Rome", label: "(GMT+1) Rome" },
-      { value: "Europe/Madrid", label: "(GMT+1) Madrid" },
-      { value: "Europe/Amsterdam", label: "(GMT+1) Amsterdam" },
+      { label: "(GMT+0) London", value: "Europe/London" },
+      { label: "(GMT+1) Paris", value: "Europe/Paris" },
+      { label: "(GMT+1) Berlin", value: "Europe/Berlin" },
+      { label: "(GMT+1) Rome", value: "Europe/Rome" },
+      { label: "(GMT+1) Madrid", value: "Europe/Madrid" },
+      { label: "(GMT+1) Amsterdam", value: "Europe/Amsterdam" },
     ],
   },
   {
     label: "Asia/Pacific",
     timezones: [
-      { value: "Asia/Tokyo", label: "(GMT+9) Tokyo" },
-      { value: "Asia/Shanghai", label: "(GMT+8) Shanghai" },
-      { value: "Asia/Singapore", label: "(GMT+8) Singapore" },
-      { value: "Asia/Dubai", label: "(GMT+4) Dubai" },
-      { value: "Australia/Sydney", label: "(GMT+11) Sydney" },
-      { value: "Asia/Seoul", label: "(GMT+9) Seoul" },
+      { label: "(GMT+9) Tokyo", value: "Asia/Tokyo" },
+      { label: "(GMT+8) Shanghai", value: "Asia/Shanghai" },
+      { label: "(GMT+8) Singapore", value: "Asia/Singapore" },
+      { label: "(GMT+4) Dubai", value: "Asia/Dubai" },
+      { label: "(GMT+11) Sydney", value: "Australia/Sydney" },
+      { label: "(GMT+9) Seoul", value: "Asia/Seoul" },
     ],
   },
 ] as const;
@@ -143,7 +142,7 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
   );
 }
 
-function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users: User[] }): JSX.Element {
+function UserCombobox({ selectedUserId, users }: { selectedUserId: string; users: User[] }): JSX.Element {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(selectedUserId);
 
@@ -211,8 +210,8 @@ function UserCombobox({ users, selectedUserId }: { selectedUserId: string; users
 }
 
 function TimezoneCombobox({
-  timezones,
   selectedTimezone,
+  timezones,
 }: {
   timezones: Timezone[];
   selectedTimezone?: Timezone["timezones"][number];

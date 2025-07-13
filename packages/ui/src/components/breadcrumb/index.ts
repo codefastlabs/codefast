@@ -8,11 +8,11 @@ export {
   BreadcrumbSeparator,
 } from "@/components/breadcrumb/breadcrumb";
 export type {
-  BreadcrumbProps,
   BreadcrumbEllipsisProps,
   BreadcrumbItemProps,
   BreadcrumbLinkProps,
   BreadcrumbListProps,
   BreadcrumbPageProps,
+  BreadcrumbProps,
   BreadcrumbSeparatorProps,
 } from "@/components/breadcrumb/breadcrumb";

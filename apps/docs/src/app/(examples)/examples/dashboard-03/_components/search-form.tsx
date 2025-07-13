@@ -1,8 +1,8 @@
-import { Label, SidebarInput } from "@codefast/ui";
 import { Search } from "lucide-react";
 import { useId } from "react";
-
 import type { ComponentProps, JSX } from "react";
+
+import { Label, SidebarInput } from "@codefast/ui";
 
 export function SearchForm({ ...props }: ComponentProps<"form">): JSX.Element {
   const id = useId();

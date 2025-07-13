@@ -1,42 +1,41 @@
-import { cn, Toaster } from "@codefast/ui";
+import "@/app/globals.css";
+
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
+import type { JSX, ReactNode } from "react";
 
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { ThemeProvider } from "@/components/theme-provider";
 import { fontVariables } from "@/lib/fonts";
 import { META_THEME_COLORS, siteConfig } from "@/lib/site";
-
-import type { Metadata, Viewport } from "next";
-import type { JSX, ReactNode } from "react";
-
-import "@/app/globals.css";
+import { cn, Toaster } from "@codefast/ui";
 
 export const metadata: Metadata = {
   description: siteConfig.description,
   icons: {
+    apple: "/apple-touch-icon.png",
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
   },
   keywords: ["Next.js", "React", "Tailwind CSS", "Server Components", "Radix UI"],
   manifest: `${siteConfig.url}/site.webmanifest`,
   metadataBase: new URL(siteConfig.url),
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteConfig.url,
-    title: siteConfig.name,
     description: siteConfig.description,
-    siteName: siteConfig.name,
     images: [
       {
+        alt: siteConfig.name,
+        height: 630,
         url: siteConfig.ogImage,
         width: 1200,
-        height: 630,
-        alt: siteConfig.name,
       },
     ],
+    locale: "en_US",
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    type: "website",
+    url: siteConfig.url,
   },
   title: {
     default: siteConfig.name,

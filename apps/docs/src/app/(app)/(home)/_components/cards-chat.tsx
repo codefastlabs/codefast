@@ -1,5 +1,9 @@
 "use client";
 
+import { Check, Plus, Send } from "lucide-react";
+import { useId, useState } from "react";
+import type { JSX } from "react";
+
 import {
   Avatar,
   AvatarFallback,
@@ -29,10 +33,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@codefast/ui";
-import { Check, Plus, Send } from "lucide-react";
-import { useId, useState } from "react";
-
-import type { JSX } from "react";
 
 interface User {
   avatar: string;
@@ -42,29 +42,29 @@ interface User {
 
 const users: User[] = [
   {
-    name: "Olivia Martin",
-    email: "m@example.com",
     avatar: "/avatars/01.png",
+    email: "m@example.com",
+    name: "Olivia Martin",
   },
   {
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@email.com",
     avatar: "/avatars/03.png",
+    email: "isabella.nguyen@email.com",
+    name: "Isabella Nguyen",
   },
   {
-    name: "Emma Wilson",
-    email: "emma@example.com",
     avatar: "/avatars/05.png",
+    email: "emma@example.com",
+    name: "Emma Wilson",
   },
   {
-    name: "Jackson Lee",
-    email: "lee@example.com",
     avatar: "/avatars/02.png",
+    email: "lee@example.com",
+    name: "Jackson Lee",
   },
   {
-    name: "William Kim",
-    email: "will@email.com",
     avatar: "/avatars/04.png",
+    email: "will@email.com",
+    name: "William Kim",
   },
 ] as const;
 
@@ -74,20 +74,20 @@ export function CardsChat(): JSX.Element {
 
   const [messages, setMessages] = useState([
     {
-      role: "agent",
       content: "Hi, how can I help you today?",
-    },
-    {
-      role: "user",
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
       role: "agent",
-      content: "What seems to be the problem?",
     },
     {
+      content: "Hey, I'm having trouble with my account.",
       role: "user",
+    },
+    {
+      content: "What seems to be the problem?",
+      role: "agent",
+    },
+    {
       content: "I can't log in.",
+      role: "user",
     },
   ]);
   const [input, setInput] = useState("");
@@ -155,8 +155,8 @@ export function CardsChat(): JSX.Element {
               setMessages([
                 ...messages,
                 {
-                  role: "user",
                   content: input,
+                  role: "user",
                 },
               ]);
               setInput("");

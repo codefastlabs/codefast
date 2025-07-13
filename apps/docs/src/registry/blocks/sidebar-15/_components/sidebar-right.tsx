@@ -1,3 +1,9 @@
+import { PlusIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
+
+import { Calendars } from "@/registry/blocks/sidebar-15/_components/calendars";
+import { DatePicker } from "@/registry/blocks/sidebar-15/_components/date-picker";
+import { NavUser } from "@/registry/blocks/sidebar-15/_components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -8,31 +14,24 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@codefast/ui";
-import { PlusIcon } from "lucide-react";
-
-import { Calendars } from "@/registry/blocks/sidebar-15/_components/calendars";
-import { DatePicker } from "@/registry/blocks/sidebar-15/_components/date-picker";
-import { NavUser } from "@/registry/blocks/sidebar-15/_components/nav-user";
-
-import type { ComponentProps, JSX } from "react";
 
 // This is sample data.
 const data = {
-  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
   calendars: [
     {
-      name: "My Calendars",
       items: ["Personal", "Work", "Family"],
+      name: "My Calendars",
     },
     {
-      name: "Favorites",
       items: ["Holidays", "Birthdays"],
+      name: "Favorites",
     },
     {
-      name: "Other",
       items: ["Travel", "Reminders", "Deadlines"],
+      name: "Other",
     },
   ],
+  user: { avatar: "/avatars/codefast-ui.webp", email: "m@example.com", name: "@codefast/ui" },
 };
 
 export function SidebarRight({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {

@@ -1,9 +1,9 @@
-import { Button, cn, Input, Label } from "@codefast/ui";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
-
 import type { ComponentProps, JSX } from "react";
+
+import { Button, cn, Input, Label } from "@codefast/ui";
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();

@@ -1,5 +1,10 @@
 "use client";
 
+import { FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import type { JSX } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,11 +19,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@codefast/ui";
-import { FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from "lucide-react";
-import Link from "next/link";
-
-import type { LucideIcon } from "lucide-react";
-import type { JSX } from "react";
 
 export function NavProjects({
   projects,

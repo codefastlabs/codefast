@@ -1,9 +1,10 @@
 "use client";
 
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@codefast/ui";
+import type { ComponentProps, JSX } from "react";
 
 import type { Icon } from "@tabler/icons-react";
-import type { ComponentProps, JSX } from "react";
+
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@codefast/ui";
 
 export function NavSecondary({
   items,

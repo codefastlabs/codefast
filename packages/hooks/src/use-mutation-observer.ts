@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 import type { RefObject } from "react";
 
 /**
@@ -57,7 +56,7 @@ export function useMutationObserver(
      * Cleanup function to disconnect the observer when the component unmounts
      * or when dependencies change
      */
-    return () => {
+    return (): void => {
       observer.disconnect();
     };
   }, [ref, callback, options]);

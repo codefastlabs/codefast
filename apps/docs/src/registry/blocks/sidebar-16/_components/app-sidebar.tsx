@@ -1,15 +1,6 @@
 "use client";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@codefast/ui";
-import {
   BookOpenIcon,
   BotIcon,
   CommandIcon,
@@ -22,20 +13,25 @@ import {
   SquareTerminalIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { ComponentProps, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-16/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-16/_components/nav-projects";
 import { NavSecondary } from "@/registry/blocks/sidebar-16/_components/nav-secondary";
 import { NavUser } from "@/registry/blocks/sidebar-16/_components/nav-user";
-
-import type { ComponentProps, JSX } from "react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@codefast/ui";
 
 const data = {
-  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
       icon: SquareTerminalIcon,
       isActive: true,
       items: [
@@ -43,20 +39,20 @@ const data = {
         { title: "Starred", url: "#" },
         { title: "Settings", url: "#" },
       ],
+      title: "Playground",
+      url: "#",
     },
     {
-      title: "Models",
-      url: "#",
       icon: BotIcon,
       items: [
         { title: "Genesis", url: "#" },
         { title: "Explorer", url: "#" },
         { title: "Quantum", url: "#" },
       ],
+      title: "Models",
+      url: "#",
     },
     {
-      title: "Documentation",
-      url: "#",
       icon: BookOpenIcon,
       items: [
         { title: "Introduction", url: "#" },
@@ -64,10 +60,10 @@ const data = {
         { title: "Tutorials", url: "#" },
         { title: "Changelog", url: "#" },
       ],
+      title: "Documentation",
+      url: "#",
     },
     {
-      title: "Settings",
-      url: "#",
       icon: Settings2Icon,
       items: [
         { title: "General", url: "#" },
@@ -75,17 +71,20 @@ const data = {
         { title: "Billing", url: "#" },
         { title: "Limits", url: "#" },
       ],
+      title: "Settings",
+      url: "#",
     },
   ],
   navSecondary: [
-    { title: "Support", url: "#", icon: LifeBuoyIcon },
-    { title: "Feedback", url: "#", icon: SendIcon },
+    { icon: LifeBuoyIcon, title: "Support", url: "#" },
+    { icon: SendIcon, title: "Feedback", url: "#" },
   ],
   projects: [
-    { name: "Design Engineering", url: "#", icon: FrameIcon },
-    { name: "Sales & Marketing", url: "#", icon: PieChartIcon },
-    { name: "Travel", url: "#", icon: MapIcon },
+    { icon: FrameIcon, name: "Design Engineering", url: "#" },
+    { icon: PieChartIcon, name: "Sales & Marketing", url: "#" },
+    { icon: MapIcon, name: "Travel", url: "#" },
   ],
+  user: { avatar: "/avatars/codefast-ui.webp", email: "m@example.com", name: "@codefast/ui" },
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {

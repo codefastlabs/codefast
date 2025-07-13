@@ -1,11 +1,10 @@
 "use client";
 
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
+import type { ComponentProps, JSX } from "react";
 
 import { Label } from "@/components/label";
 import { cn } from "@/lib/utils";
-
-import type { ComponentProps, JSX } from "react";
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 
 /* -----------------------------------------------------------------------------
  * Component: RadioCards
@@ -23,7 +22,7 @@ function RadioCards(props: RadioCardsProps): JSX.Element {
 
 type RadioCardsItemProps = ComponentProps<typeof RadioGroupPrimitive.Item>;
 
-function RadioCardsItem({ className, children, ...props }: RadioCardsItemProps): JSX.Element {
+function RadioCardsItem({ children, className, ...props }: RadioCardsItemProps): JSX.Element {
   return (
     <Label
       className="border-input hover:not-has-disabled:not-has-aria-checked:bg-secondary has-aria-checked:bg-primary/10 has-aria-checked:border-primary has-focus-visible:border-ring has-disabled:opacity-50 flex items-start gap-3 rounded-lg border p-3 transition"
@@ -49,4 +48,4 @@ function RadioCardsItem({ className, children, ...props }: RadioCardsItemProps):
  * -------------------------------------------------------------------------- */
 
 export { RadioCards, RadioCardsItem };
-export type { RadioCardsProps, RadioCardsItemProps };
+export type { RadioCardsItemProps, RadioCardsProps };

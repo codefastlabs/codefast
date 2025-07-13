@@ -1,10 +1,10 @@
 "use client";
 
-import { useIsMobile } from "@codefast/hooks";
-import { createContext } from "@radix-ui/react-context";
-import { Slot } from "@radix-ui/react-slot";
 import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
@@ -14,9 +14,9 @@ import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-but
 import { Skeleton } from "@/components/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
+import { useIsMobile } from "@codefast/hooks";
+import { createContext } from "@radix-ui/react-context";
+import { Slot } from "@radix-ui/react-slot";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -54,12 +54,12 @@ interface SidebarProviderProps extends ComponentProps<"div"> {
 }
 
 function SidebarProvider({
-  defaultOpen = true,
-  open: openProperty,
-  onOpenChange: setOpenProperty,
-  className,
-  style,
   children,
+  className,
+  defaultOpen = true,
+  onOpenChange: setOpenProperty,
+  open: openProperty,
+  style,
   ...props
 }: SidebarProviderProps): JSX.Element {
   const isMobile = useIsMobile();
@@ -107,7 +107,7 @@ function SidebarProvider({
 
     globalThis.addEventListener("keydown", handleKeyDown);
 
-    return () => {
+    return (): void => {
       globalThis.removeEventListener("keydown", handleKeyDown);
     };
   }, [toggleSidebar]);
@@ -159,14 +159,14 @@ interface SidebarProps extends ComponentProps<"div"> {
 }
 
 function Sidebar({
+  children,
+  className,
+  collapsible = "offcanvas",
   side = "left",
   variant = "sidebar",
-  collapsible = "offcanvas",
-  className,
-  children,
   ...props
 }: SidebarProps): JSX.Element {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar(SIDEBAR_NAME);
+  const { isMobile, openMobile, setOpenMobile, state } = useSidebar(SIDEBAR_NAME);
 
   if (collapsible === "none") {
     return (
@@ -440,7 +440,7 @@ interface SidebarGroupLabelProps extends ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function SidebarGroupLabel({ className, asChild = false, ...props }: SidebarGroupLabelProps): JSX.Element {
+function SidebarGroupLabel({ asChild = false, className, ...props }: SidebarGroupLabelProps): JSX.Element {
   const Component = asChild ? Slot : "div";
 
   return (
@@ -464,7 +464,7 @@ interface SidebarGroupActionProps extends ComponentProps<"button"> {
   asChild?: boolean;
 }
 
-function SidebarGroupAction({ className, asChild = false, ...props }: SidebarGroupActionProps): JSX.Element {
+function SidebarGroupAction({ asChild = false, className, ...props }: SidebarGroupActionProps): JSX.Element {
   const Component = asChild ? Slot : "button";
 
   return (
@@ -545,11 +545,11 @@ interface SidebarMenuButtonProps extends ComponentProps<"button">, VariantProps<
 
 function SidebarMenuButton({
   asChild = false,
+  className,
   isActive = false,
-  variant = "default",
   size = "md",
   tooltip,
-  className,
+  variant = "default",
   ...props
 }: SidebarMenuButtonProps): JSX.Element {
   const Component = asChild ? Slot : "button";
@@ -557,7 +557,7 @@ function SidebarMenuButton({
 
   const button = (
     <Component
-      className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+      className={cn(sidebarMenuButtonVariants({ size, variant }), className)}
       data-active={isActive}
       data-sidebar="menu-button"
       data-size={size}
@@ -594,8 +594,8 @@ interface SidebarMenuActionProps extends ComponentProps<"button"> {
 }
 
 function SidebarMenuAction({
-  className,
   asChild = false,
+  className,
   showOnHover = false,
   ...props
 }: SidebarMenuActionProps): JSX.Element {
@@ -720,9 +720,9 @@ interface SidebarMenuSubButtonProps extends ComponentProps<"a"> {
 
 function SidebarMenuSubButton({
   asChild = false,
-  size = "md",
-  isActive = false,
   className,
+  isActive = false,
+  size = "md",
   ...props
 }: SidebarMenuSubButtonProps): JSX.Element {
   const Component = asChild ? Slot : "a";
@@ -776,25 +776,25 @@ export {
   useSidebar,
 };
 export type {
-  SidebarProps,
   SidebarContentProps,
   SidebarFooterProps,
-  SidebarGroupProps,
   SidebarGroupActionProps,
   SidebarGroupContentProps,
   SidebarGroupLabelProps,
+  SidebarGroupProps,
   SidebarHeaderProps,
   SidebarInputProps,
   SidebarInsetProps,
-  SidebarMenuProps,
   SidebarMenuActionProps,
   SidebarMenuBadgeProps,
   SidebarMenuButtonProps,
   SidebarMenuItemProps,
+  SidebarMenuProps,
   SidebarMenuSkeletonProps,
-  SidebarMenuSubProps,
   SidebarMenuSubButtonProps,
   SidebarMenuSubItemProps,
+  SidebarMenuSubProps,
+  SidebarProps,
   SidebarProviderProps,
   SidebarRailProps,
   SidebarSeparatorProps,

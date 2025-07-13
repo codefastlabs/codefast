@@ -1,3 +1,6 @@
+import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -14,9 +17,6 @@ import {
   SidebarMenuSub,
   SidebarRail,
 } from "@codefast/ui";
-import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
-
-import type { ComponentProps, JSX } from "react";
 
 export interface Change {
   file: string;

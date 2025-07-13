@@ -7,11 +7,11 @@ export {
   NavigationMenuTrigger,
 } from "@/components/navigation-menu/navigation-menu";
 export type {
-  NavigationMenuProps,
   NavigationMenuContentProps,
   NavigationMenuItemProps,
   NavigationMenuLinkProps,
   NavigationMenuListProps,
+  NavigationMenuProps,
   NavigationMenuTriggerProps,
 } from "@/components/navigation-menu/navigation-menu";
 

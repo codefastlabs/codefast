@@ -8,9 +8,9 @@ export {
 } from "@/components/carousel/carousel";
 export type {
   CarouselApi,
-  CarouselProps,
   CarouselContentProps,
   CarouselItemProps,
   CarouselNextProps,
   CarouselPreviousProps,
+  CarouselProps,
 } from "@/components/carousel/carousel";

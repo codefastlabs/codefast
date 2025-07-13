@@ -53,7 +53,7 @@ export function useMediaQuery(query: string): boolean {
      * Cleanup function that removes the event listener when the component unmounts
      * or when the query changes.
      */
-    return () => {
+    return (): void => {
       mediaQueryList.removeEventListener("change", onChange);
     };
   }, [query]);

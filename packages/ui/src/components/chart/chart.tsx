@@ -1,14 +1,14 @@
 "use client";
 
-import { createContextScope } from "@radix-ui/react-context";
 import { useId, useMemo } from "react";
+import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
 import * as RechartsPrimitive from "recharts";
-
-import { cn } from "@/lib/utils";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
-import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+
+import { cn } from "@/lib/utils";
+import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
  * Context: ChartProvider
@@ -91,10 +91,10 @@ interface ChartContainerProps extends ComponentProps<"div"> {
 
 function ChartContainer({
   __scopeChart,
-  id,
   children,
   className,
   config,
+  id,
   ...props
 }: ScopedProps<ChartContainerProps>): JSX.Element {
   const uniqueId = useId();
@@ -127,7 +127,7 @@ interface ChartStyleProps {
   id: string;
 }
 
-function ChartStyle({ id, config }: ChartStyleProps): ReactNode {
+function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
   const cssString = useMemo(() => generateCSS(id, config), [id, config]);
 
   return <style dangerouslySetInnerHTML={{ __html: cssString }} />;

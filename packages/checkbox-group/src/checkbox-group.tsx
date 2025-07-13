@@ -1,3 +1,8 @@
+import { useCallback } from "react";
+import type { ComponentProps, JSX } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
+
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { createCheckboxScope } from "@radix-ui/react-checkbox";
 import { createContextScope } from "@radix-ui/react-context";
@@ -5,10 +10,6 @@ import { useDirection } from "@radix-ui/react-direction";
 import * as RovingFocusGroup from "@radix-ui/react-roving-focus";
 import { createRovingFocusGroupScope } from "@radix-ui/react-roving-focus";
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
-import { useCallback } from "react";
-
-import type { Scope } from "@radix-ui/react-context";
-import type { ComponentProps, JSX } from "react";
 
 /* -----------------------------------------------------------------------------
  * Context: CheckboxGroup
@@ -333,4 +334,4 @@ export {
   CheckboxGroup as Root,
 };
 
-export type { CheckboxGroupProps, CheckboxGroupIndicatorProps, CheckboxGroupItemProps };
+export type { CheckboxGroupIndicatorProps, CheckboxGroupItemProps, CheckboxGroupProps };

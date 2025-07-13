@@ -105,7 +105,7 @@ export function useAnimatedValue(targetValue: null | number, duration: number, a
 
     animationFrame = requestAnimationFrame(animateValue);
 
-    return () => {
+    return (): void => {
       cancelAnimationFrame(animationFrame);
     };
   }, [actualTargetValue, duration, animate]);

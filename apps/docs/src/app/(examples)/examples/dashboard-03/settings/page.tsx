@@ -1,3 +1,7 @@
+import type { Metadata } from "next";
+import { useId } from "react";
+import type { ComponentProps, JSX } from "react";
+
 import {
   Button,
   Card,
@@ -30,48 +34,44 @@ import {
   TabsList,
   TabsTrigger,
 } from "@codefast/ui";
-import { useId } from "react";
-
-import type { Metadata } from "next";
-import type { ComponentProps, JSX } from "react";
 
 export const metadata: Metadata = {
-  title: "Settings",
   description: "Manage your account settings",
+  title: "Settings",
 };
 
 const timezones = [
   {
     label: "Americas",
     timezones: [
-      { value: "America/New_York", label: "(GMT-5) New York" },
-      { value: "America/Los_Angeles", label: "(GMT-8) Los Angeles" },
-      { value: "America/Chicago", label: "(GMT-6) Chicago" },
-      { value: "America/Toronto", label: "(GMT-5) Toronto" },
-      { value: "America/Vancouver", label: "(GMT-8) Vancouver" },
-      { value: "America/Sao_Paulo", label: "(GMT-3) São Paulo" },
+      { label: "(GMT-5) New York", value: "America/New_York" },
+      { label: "(GMT-8) Los Angeles", value: "America/Los_Angeles" },
+      { label: "(GMT-6) Chicago", value: "America/Chicago" },
+      { label: "(GMT-5) Toronto", value: "America/Toronto" },
+      { label: "(GMT-8) Vancouver", value: "America/Vancouver" },
+      { label: "(GMT-3) São Paulo", value: "America/Sao_Paulo" },
     ],
   },
   {
     label: "Europe",
     timezones: [
-      { value: "Europe/London", label: "(GMT+0) London" },
-      { value: "Europe/Paris", label: "(GMT+1) Paris" },
-      { value: "Europe/Berlin", label: "(GMT+1) Berlin" },
-      { value: "Europe/Rome", label: "(GMT+1) Rome" },
-      { value: "Europe/Madrid", label: "(GMT+1) Madrid" },
-      { value: "Europe/Amsterdam", label: "(GMT+1) Amsterdam" },
+      { label: "(GMT+0) London", value: "Europe/London" },
+      { label: "(GMT+1) Paris", value: "Europe/Paris" },
+      { label: "(GMT+1) Berlin", value: "Europe/Berlin" },
+      { label: "(GMT+1) Rome", value: "Europe/Rome" },
+      { label: "(GMT+1) Madrid", value: "Europe/Madrid" },
+      { label: "(GMT+1) Amsterdam", value: "Europe/Amsterdam" },
     ],
   },
   {
     label: "Asia/Pacific",
     timezones: [
-      { value: "Asia/Tokyo", label: "(GMT+9) Tokyo" },
-      { value: "Asia/Shanghai", label: "(GMT+8) Shanghai" },
-      { value: "Asia/Singapore", label: "(GMT+8) Singapore" },
-      { value: "Asia/Dubai", label: "(GMT+4) Dubai" },
-      { value: "Australia/Sydney", label: "(GMT+11) Sydney" },
-      { value: "Asia/Seoul", label: "(GMT+9) Seoul" },
+      { label: "(GMT+9) Tokyo", value: "Asia/Tokyo" },
+      { label: "(GMT+8) Shanghai", value: "Asia/Shanghai" },
+      { label: "(GMT+8) Singapore", value: "Asia/Singapore" },
+      { label: "(GMT+4) Dubai", value: "Asia/Dubai" },
+      { label: "(GMT+11) Sydney", value: "Australia/Sydney" },
+      { label: "(GMT+9) Seoul", value: "Asia/Seoul" },
     ],
   },
 ] as const;
@@ -101,23 +101,23 @@ const loginHistory = [
 
 const activeSessions = [
   {
-    device: "MacBook Pro",
     browser: "Chrome",
+    device: "MacBook Pro",
     os: "macOS",
   },
   {
+    browser: "Safari",
     device: "iPhone",
-    browser: "Safari",
     os: "iOS",
   },
   {
+    browser: "Safari",
     device: "iPad",
-    browser: "Safari",
     os: "iOS",
   },
   {
-    device: "Android Phone",
     browser: "Chrome",
+    device: "Android Phone",
     os: "Android",
   },
 ] as const;
@@ -309,9 +309,9 @@ export default function SettingsPage(): JSX.Element {
                       <TableCell>
                         <div className="flex flex-col gap-1">
                           {new Date(login.date).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
                             day: "numeric",
+                            month: "long",
+                            year: "numeric",
                           })}
                           <span className="@md/page:hidden flex">{login.ip}</span>
                         </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@codefast/ui";
 import {
   AudioWaveformIcon,
   BookOpenIcon,
@@ -14,13 +13,13 @@ import {
   Settings2Icon,
   SquareTerminalIcon,
 } from "lucide-react";
+import type { ComponentProps, ComponentType, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-07/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-07/_components/nav-projects";
 import { NavUser } from "@/registry/blocks/sidebar-07/_components/nav-user";
 import { TeamSwitcher } from "@/registry/blocks/sidebar-07/_components/team-switcher";
-
-import type { ComponentProps, ComponentType, JSX } from "react";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@codefast/ui";
 
 // This is sample data.
 const data: {
@@ -47,16 +46,8 @@ const data: {
     name: string;
   };
 } = {
-  user: { name: "@codefast/ui", email: "m@example.com", avatar: "/avatars/codefast-ui.webp" },
-  teams: [
-    { name: "Acme Inc", logo: GalleryVerticalEndIcon, plan: "Enterprise" },
-    { name: "Acme Corp.", logo: AudioWaveformIcon, plan: "Startup" },
-    { name: "Evil Corp.", logo: CommandIcon, plan: "Free" },
-  ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
       icon: SquareTerminalIcon,
       isActive: true,
       items: [
@@ -64,20 +55,20 @@ const data: {
         { title: "Starred", url: "#" },
         { title: "Settings", url: "#" },
       ],
+      title: "Playground",
+      url: "#",
     },
     {
-      title: "Models",
-      url: "#",
       icon: BotIcon,
       items: [
         { title: "Genesis", url: "#" },
         { title: "Explorer", url: "#" },
         { title: "Quantum", url: "#" },
       ],
+      title: "Models",
+      url: "#",
     },
     {
-      title: "Documentation",
-      url: "#",
       icon: BookOpenIcon,
       items: [
         { title: "Introduction", url: "#" },
@@ -85,10 +76,10 @@ const data: {
         { title: "Tutorials", url: "#" },
         { title: "Changelog", url: "#" },
       ],
+      title: "Documentation",
+      url: "#",
     },
     {
-      title: "Settings",
-      url: "#",
       icon: Settings2Icon,
       items: [
         { title: "General", url: "#" },
@@ -96,13 +87,21 @@ const data: {
         { title: "Billing", url: "#" },
         { title: "Limits", url: "#" },
       ],
+      title: "Settings",
+      url: "#",
     },
   ],
   projects: [
-    { name: "Design Engineering", url: "#", icon: FrameIcon },
-    { name: "Sales & Marketing", url: "#", icon: PieChartIcon },
-    { name: "Travel", url: "#", icon: MapIcon },
+    { icon: FrameIcon, name: "Design Engineering", url: "#" },
+    { icon: PieChartIcon, name: "Sales & Marketing", url: "#" },
+    { icon: MapIcon, name: "Travel", url: "#" },
   ],
+  teams: [
+    { logo: GalleryVerticalEndIcon, name: "Acme Inc", plan: "Enterprise" },
+    { logo: AudioWaveformIcon, name: "Acme Corp.", plan: "Startup" },
+    { logo: CommandIcon, name: "Evil Corp.", plan: "Free" },
+  ],
+  user: { avatar: "/avatars/codefast-ui.webp", email: "m@example.com", name: "@codefast/ui" },
 };
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.Element {

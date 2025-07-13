@@ -1,10 +1,11 @@
-import { createContext } from "@radix-ui/react-context";
 import { useRef, useState } from "react";
+import type { CSSProperties, JSX, ReactNode, RefObject } from "react";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 
 import type { FileTree } from "@/lib/registry";
 import type { RegistryItem } from "@/types/registry";
-import type { CSSProperties, JSX, ReactNode, RefObject } from "react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
+
+import { createContext } from "@radix-ui/react-context";
 
 /**
  * Possible viewer display modes
@@ -46,7 +47,7 @@ interface BlockViewerProviderProps extends Pick<BlockViewerContextValue, "item" 
   children: ReactNode;
 }
 
-export function BlockViewerProvider({ item, tree, children }: BlockViewerProviderProps): JSX.Element {
+export function BlockViewerProvider({ children, item, tree }: BlockViewerProviderProps): JSX.Element {
   const [view, setView] = useState<BlockViewerContextValue["view"]>("preview");
   const [activeFile, setActiveFile] = useState<BlockViewerContextValue["activeFile"]>(item.files?.[0].target ?? null);
   const resizablePanelRef = useRef<ImperativePanelHandle>(null);

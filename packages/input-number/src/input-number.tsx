@@ -1,11 +1,4 @@
-import * as InputPrimitive from "@codefast-ui/input";
-import { createInputScope } from "@codefast-ui/input";
-import { composeEventHandlers } from "@radix-ui/primitive";
-import { createContextScope } from "@radix-ui/react-context";
-import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-
-import type { Scope } from "@radix-ui/react-context";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -16,6 +9,14 @@ import type {
   PointerEventHandler,
   RefObject,
 } from "react";
+
+import type { Scope } from "@radix-ui/react-context";
+
+import * as InputPrimitive from "@codefast-ui/input";
+import { createInputScope } from "@codefast-ui/input";
+import { composeEventHandlers } from "@radix-ui/primitive";
+import { createContextScope } from "@radix-ui/react-context";
+import { useControllableState } from "@radix-ui/react-use-controllable-state";
 
 /* -----------------------------------------------------------------------------
  * Context: InputNumber
@@ -147,11 +148,11 @@ interface InputNumberProps extends ComponentProps<typeof InputPrimitive.Root> {
 function InputNumber(numberInputProps: ScopedProps<InputNumberProps>): JSX.Element {
   const {
     __scopeInputNumber,
-    id,
     ariaDecrementLabel,
     ariaIncrementLabel,
     defaultValue,
     formatOptions = { minimumFractionDigits: 0, style: "decimal" },
+    id,
     locale,
     max,
     min,
@@ -523,7 +524,7 @@ function InputNumberField({
 
     inputElement?.addEventListener("wheel", handleWheel);
 
-    return () => {
+    return (): void => {
       inputElement?.removeEventListener("wheel", handleWheel);
     };
   }, [onIncrement, onDecrement, inputRef, disabled, readOnly]);
@@ -557,7 +558,7 @@ function InputNumberField({
 
     form?.addEventListener("reset", handleReset);
 
-    return () => {
+    return (): void => {
       form?.removeEventListener("reset", handleReset);
     };
   }, [defaultValue, inputRef, onChange, parseValue]);
@@ -608,7 +609,7 @@ function NumberStepperButton({
   ...props
 }: ScopedProps<NumberStepperButtonProps>): JSX.Element {
   // Destructures relevant context values for the button functionality.
-  const { id, ariaDecrementLabel, ariaIncrementLabel, disabled, onDecrement, onIncrement, min, max, value } =
+  const { ariaDecrementLabel, ariaIncrementLabel, disabled, id, max, min, onDecrement, onIncrement, value } =
     useInputNumberContext(NUMBER_STEPPER_BUTTON_NAME, __scopeInputNumber);
 
   const isDisabled = useMemo(() => {
@@ -861,8 +862,8 @@ export {
 };
 
 export type {
-  InputNumberProps,
   InputNumberDecrementButtonProps,
   InputNumberFieldProps,
   InputNumberIncrementButtonProps,
+  InputNumberProps,
 };

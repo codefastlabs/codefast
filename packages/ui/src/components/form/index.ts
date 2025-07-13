@@ -9,11 +9,11 @@ export {
   FormMessage,
 } from "@/components/form/form";
 export type {
-  FormProps,
   FormControlProps,
   FormDescriptionProps,
   FormFieldProps,
   FormItemProps,
   FormLabelProps,
   FormMessageProps,
+  FormProps,
 } from "@/components/form/form";

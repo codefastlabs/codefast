@@ -1,13 +1,13 @@
 "use client";
 
-import * as SelectPrimitive from "@radix-ui/react-select";
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { buttonVariants } from "@/components/button";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+import * as SelectPrimitive from "@radix-ui/react-select";
 
 /* -----------------------------------------------------------------------------
  * Component: Select
@@ -217,11 +217,11 @@ export {
 };
 
 export type {
-  SelectProps,
   SelectContentProps,
   SelectGroupProps,
   SelectItemProps,
   SelectLabelProps,
+  SelectProps,
   SelectScrollDownButtonProps,
   SelectScrollUpButtonProps,
   SelectSeparatorProps,

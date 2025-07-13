@@ -1,12 +1,12 @@
 "use client";
 
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import type { ComponentProps, JSX } from "react";
+
+import type { VariantProps } from "@/lib/utils";
 
 import { separatorVariants } from "@/components/separator/separator.variants";
 import { cn } from "@/lib/utils";
-
-import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, JSX } from "react";
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
 
 /* -----------------------------------------------------------------------------
  * Component: Separator
@@ -49,4 +49,4 @@ function SeparatorItem({ className, ...props }: SeparatorItemProps): JSX.Element
  * -------------------------------------------------------------------------- */
 
 export { Separator, SeparatorItem };
-export type { SeparatorProps, SeparatorItemProps };
+export type { SeparatorItemProps, SeparatorProps };

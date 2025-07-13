@@ -1,45 +1,44 @@
-import { CheckboxGroup, CheckboxGroupItem, cn, Label } from "@codefast/ui";
 import { useId } from "react";
+import type { ComponentProps, JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-
-import type { ComponentProps, JSX } from "react";
+import { CheckboxGroup, CheckboxGroupItem, cn, Label } from "@codefast/ui";
 
 interface Plan {
   /** Mô tả ngắn về tính năng của gói dịch vụ */
   description: string;
+  /** Xác định xem gói dịch vụ có bị vô hiệu hóa không */
+  disabled?: boolean;
   /** Định danh duy nhất của gói dịch vụ */
   id: string;
   /** Tên hiển thị của gói dịch vụ */
   name: string;
   /** Giá gói dịch vụ (bao gồm ký hiệu tiền tệ) */
   price: string;
-  /** Xác định xem gói dịch vụ có bị vô hiệu hóa không */
-  disabled?: boolean;
   /** Giá trị được sử dụng khi chọn plan (tùy chọn, nếu không có sẽ dùng id) */
   value?: string;
 }
 
 const plans: readonly Plan[] = [
   {
+    description: "Perfect for small businesses getting started with our platform",
     id: "starter",
     name: "Starter Plan",
-    description: "Perfect for small businesses getting started with our platform",
     price: "$10",
   },
   {
+    description: "Advanced features for growing businesses with higher demands",
     id: "pro",
     name: "Pro Plan",
-    description: "Advanced features for growing businesses with higher demands",
     price: "$20",
   },
   {
-    id: "business",
-    value: "3",
-    name: "Business Plan",
     description: "Comprehensive solution for medium-sized businesses",
-    price: "$50",
     disabled: true,
+    id: "business",
+    name: "Business Plan",
+    price: "$50",
+    value: "3",
   },
 ];
 

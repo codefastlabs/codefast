@@ -1,13 +1,13 @@
 "use client";
 
-import { useAnimatedValue } from "@codefast/hooks";
-import * as ProgressCirclePrimitive from "@codefast-ui/progress-circle";
 import { useCallback, useMemo } from "react";
-
-import { progressCircleVariants } from "@/components/progress-circle/progress-circle.variants";
+import type { ComponentProps, CSSProperties, JSX } from "react";
 
 import type { VariantProps } from "@/lib/utils";
-import type { ComponentProps, CSSProperties, JSX } from "react";
+
+import { progressCircleVariants } from "@/components/progress-circle/progress-circle.variants";
+import * as ProgressCirclePrimitive from "@codefast-ui/progress-circle";
+import { useAnimatedValue } from "@codefast/hooks";
 
 /* -------------------------------------------------------------------------------------------------
  * Component: ProgressCircle
@@ -81,18 +81,18 @@ interface ProgressCircleProps
 }
 
 function ProgressCircle({
-  value = 0,
-  classNames,
-  customLabel,
-  showValue = false,
-  variant = "default",
-  size,
-  sizeInPixels,
-  thickness = "regular",
   animate = true,
   animationDuration = 1000,
   className,
+  classNames,
+  customLabel,
+  showValue = false,
+  size,
+  sizeInPixels,
   strokeWidth,
+  thickness = "regular",
+  value = 0,
+  variant = "default",
   ...props
 }: ProgressCircleProps): JSX.Element {
   const displayValue = useAnimatedValue(value, animationDuration, animate);
@@ -104,7 +104,7 @@ function ProgressCircle({
     [strokeWidth, thickness, actualSize],
   );
 
-  const slots = useMemo(() => progressCircleVariants({ variant, size, thickness }), [variant, size, thickness]);
+  const slots = useMemo(() => progressCircleVariants({ size, thickness, variant }), [variant, size, thickness]);
 
   const shouldShowLabel = showValue || Boolean(customLabel);
 
@@ -152,11 +152,11 @@ ProgressCircle.displayName = "ProgressCircle";
  */
 const getActualSize = (size?: VariantProps<typeof progressCircleVariants>["size"]): number => {
   const sizeMap: Record<NonNullable<typeof size>, number> = {
-    sm: 32,
-    md: 48,
-    lg: 64,
-    xl: 96,
     "2xl": 128,
+    lg: 64,
+    md: 48,
+    sm: 32,
+    xl: 96,
   };
 
   return size ? sizeMap[size] : 48;
@@ -167,9 +167,9 @@ const getActualSize = (size?: VariantProps<typeof progressCircleVariants>["size"
  */
 const getStrokeWidth = (thickness: VariantProps<typeof progressCircleVariants>["thickness"], size: number): number => {
   const thicknessMap: Record<NonNullable<typeof thickness>, number> = {
-    thin: Math.max(2, size * 0.025),
     regular: Math.max(3, size * 0.05),
     thick: Math.max(4, size * 0.075),
+    thin: Math.max(2, size * 0.025),
   };
 
   return thickness ? thicknessMap[thickness] : Math.max(3, size * 0.05);

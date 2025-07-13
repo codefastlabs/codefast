@@ -1,5 +1,13 @@
 "use client";
 
+import type { ReactNode } from "react";
+import { useId, useMemo, useState } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { z } from "zod";
+
+import type { ChartConfig } from "@codefast/ui";
+import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
+
 import { useIsMobile } from "@codefast/hooks";
 import {
   Badge,
@@ -80,26 +88,19 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useId, useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { z } from "zod";
-
-import type { ChartConfig } from "@codefast/ui";
-import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
-import type { JSX } from "react";
 
 export const schema = z.object({
-  id: z.number(),
   header: z.string(),
-  type: z.string(),
-  status: z.string(),
-  target: z.string(),
+  id: z.number(),
   limit: z.string(),
   reviewer: z.string(),
+  status: z.string(),
+  target: z.string(),
+  type: z.string(),
 });
 
 // Create a separate component for the drag handle
-function DragHandle({ id }: { id: number }): JSX.Element {
+function DragHandle({ id }: { id: number }): ReactNode {
   const { attributes, listeners } = useSortable({
     id,
   });
@@ -120,23 +121,11 @@ function DragHandle({ id }: { id: number }): JSX.Element {
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
-    id: "drag",
-    header: () => null,
     cell: ({ row }) => <DragHandle id={row.original.id} />,
+    header: () => null,
+    id: "drag",
   },
   {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          aria-label="Select all"
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-          onCheckedChange={(value) => {
-            table.toggleAllPageRowsSelected(Boolean(value));
-          }}
-        />
-      </div>
-    ),
     cell: ({ row }) => (
       <div className="flex items-center justify-center">
         <Checkbox
@@ -148,20 +137,31 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         />
       </div>
     ),
-    enableSorting: false,
     enableHiding: false,
+    enableSorting: false,
+    header: ({ table }) => (
+      <div className="flex items-center justify-center">
+        <Checkbox
+          aria-label="Select all"
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(Boolean(value));
+          }}
+        />
+      </div>
+    ),
+    id: "select",
   },
   {
     accessorKey: "header",
-    header: "Header",
-    cell: ({ row }) => {
+    cell: ({ row }): ReactNode => {
       return <TableCellViewer item={row.original} />;
     },
     enableHiding: false,
+    header: "Header",
   },
   {
     accessorKey: "type",
-    header: "Section Type",
     cell: ({ row }) => (
       <div className="w-32">
         <Badge className="text-muted-foreground px-1.5" variant="outline">
@@ -169,10 +169,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </Badge>
       </div>
     ),
+    header: "Section Type",
   },
   {
     accessorKey: "status",
-    header: "Status",
     cell: ({ row }) => (
       <Badge className="text-muted-foreground px-1.5" variant="outline">
         {row.original.status === "Done" ? (
@@ -183,10 +183,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         {row.original.status}
       </Badge>
     ),
+    header: "Status",
   },
   {
     accessorKey: "target",
-    header: () => <div className="w-full text-right">Target</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(event) => {
@@ -196,9 +196,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
               setTimeout(resolve, 1000);
             }),
             {
+              error: "Error",
               loading: `Saving ${row.original.header}`,
               success: "Done",
-              error: "Error",
             },
           );
         }}
@@ -213,10 +213,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         />
       </form>
     ),
+    header: () => <div className="w-full text-right">Target</div>,
   },
   {
     accessorKey: "limit",
-    header: () => <div className="w-full text-right">Limit</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(event) => {
@@ -226,9 +226,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
               setTimeout(resolve, 1000);
             }),
             {
+              error: "Error",
               loading: `Saving ${row.original.header}`,
               success: "Done",
-              error: "Error",
             },
           );
         }}
@@ -243,11 +243,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         />
       </form>
     ),
+    header: () => <div className="w-full text-right">Limit</div>,
   },
   {
     accessorKey: "reviewer",
-    header: "Reviewer",
-    cell: ({ row }) => {
+    cell: ({ row }): ReactNode => {
       const isAssigned = row.original.reviewer !== "Assign reviewer";
 
       if (isAssigned) {
@@ -275,9 +275,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </>
       );
     },
+    header: "Reviewer",
   },
   {
-    id: "actions",
     cell: () => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -295,11 +295,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         </DropdownMenuContent>
       </DropdownMenu>
     ),
+    id: "actions",
   },
 ];
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): JSX.Element {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
+function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): ReactNode {
+  const { isDragging, setNodeRef, transform, transition } = useSortable({
     id: row.original.id,
   });
 
@@ -321,7 +322,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): JSX.Elemen
   );
 }
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }): JSX.Element {
+export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }): ReactNode {
   const id = useId();
   const [data, setData] = useState(() => initialData);
   const [rowSelection, setRowSelection] = useState({});
@@ -338,28 +339,28 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
   const dataIds = useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id), [data]);
 
   const table = useReactTable({
-    data,
     columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      pagination,
-    },
-    getRowId: (row) => row.id.toString(),
+    data,
     enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getRowId: (row) => row.id.toString(),
+    getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    onRowSelectionChange: setRowSelection,
+    onSortingChange: setSorting,
+    state: {
+      columnFilters,
+      columnVisibility,
+      pagination,
+      rowSelection,
+      sorting,
+    },
   });
 
   function handleDragEnd(event: DragEndEvent): void {
@@ -578,26 +579,26 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
 }
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { desktop: 186, mobile: 80, month: "January" },
+  { desktop: 305, mobile: 200, month: "February" },
+  { desktop: 237, mobile: 120, month: "March" },
+  { desktop: 73, mobile: 190, month: "April" },
+  { desktop: 209, mobile: 130, month: "May" },
+  { desktop: 214, mobile: 140, month: "June" },
 ];
 
 const chartConfig = {
   desktop: {
-    label: "Desktop",
     color: "var(--primary)",
+    label: "Desktop",
   },
   mobile: {
-    label: "Mobile",
     color: "var(--primary)",
+    label: "Mobile",
   },
 } satisfies ChartConfig;
 
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }): JSX.Element {
+function TableCellViewer({ item }: { item: z.infer<typeof schema> }): ReactNode {
   const id = useId();
   const isMobile = useIsMobile();
 
