@@ -16,6 +16,17 @@ export const jestRules: Linter.Config[] = [
     rules: {
       ...pluginJest.configs.recommended.rules,
 
+      // Disabled rules
+      "jest/no-hooks": "off",
+      "jest/no-restricted-matchers": "off",
+      "jest/prefer-expect-assertions": "off",
+
+      // Warning rules
+      "jest/no-commented-out-tests": "warn",
+      "jest/no-disabled-tests": "warn",
+      "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
+
+      // Error rules
       "jest/consistent-test-it": ["error", { fn: "test" }],
       "jest/expect-expect": [
         "error",
@@ -25,10 +36,8 @@ export const jestRules: Linter.Config[] = [
       ],
       "jest/max-nested-describe": ["error", { max: 5 }],
       "jest/no-alias-methods": "error",
-      "jest/no-commented-out-tests": "warn",
       "jest/no-conditional-expect": "error",
       "jest/no-deprecated-functions": "error",
-      "jest/no-disabled-tests": "warn",
       "jest/no-done-callback": "error",
       "jest/no-duplicate-hooks": "error",
       "jest/no-export": "error",
@@ -36,7 +45,6 @@ export const jestRules: Linter.Config[] = [
       "jest/no-identical-title": "error",
       "jest/no-interpolation-in-snapshots": "error",
       "jest/no-jasmine-globals": "error",
-      "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
       "jest/no-mocks-import": "error",
       "jest/no-standalone-expect": "error",
       "jest/no-test-prefixes": "error",
@@ -62,11 +70,6 @@ export const jestRules: Linter.Config[] = [
       "jest/valid-expect": "error",
       "jest/valid-expect-in-promise": "error",
       "jest/valid-title": "error",
-
-      // Disabled rules
-      "jest/no-hooks": "off",
-      "jest/no-restricted-matchers": "off",
-      "jest/prefer-expect-assertions": "off",
     },
   },
 ];

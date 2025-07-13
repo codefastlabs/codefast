@@ -10,6 +10,14 @@ export const unicornRules: Linter.Config[] = [
     rules: {
       ...pluginUnicorn.configs.recommended.rules,
 
+      // Disabled rules
+      "unicorn/no-array-reduce": "off",
+      "unicorn/no-null": "off",
+      "unicorn/no-process-exit": "off",
+      "unicorn/prefer-module": "off",
+      "unicorn/prefer-top-level-await": "off",
+
+      // Error rules
       "unicorn/filename-case": [
         "error",
         {
@@ -52,13 +60,6 @@ export const unicornRules: Linter.Config[] = [
         },
       ],
       "unicorn/throw-new-error": "error",
-
-      // Disabled rules
-      "unicorn/no-array-reduce": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-process-exit": "off",
-      "unicorn/prefer-module": "off",
-      "unicorn/prefer-top-level-await": "off",
     },
   },
 ];

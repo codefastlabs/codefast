@@ -37,11 +37,11 @@ const config: Config = {
       "@swc/jest",
       {
         jsc: {
-          target: "es2021",
           parser: {
             syntax: "typescript",
             tsx: false,
           },
+          target: "es2021",
         },
       },
     ],

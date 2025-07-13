@@ -1,6 +1,5 @@
-import globals from "globals";
-
 import type { Linter } from "eslint";
+import globals from "globals";
 
 export const testEnvironment: Linter.Config[] = [
   {
@@ -16,22 +15,19 @@ export const testEnvironment: Linter.Config[] = [
         ...globals.node,
         ...globals.jest,
 
-        describe: "readonly",
-        it: "readonly",
-        test: "readonly",
-        expect: "readonly",
-        beforeAll: "readonly",
-        beforeEach: "readonly",
         afterAll: "readonly",
         afterEach: "readonly",
-        jest: "readonly",
-
-        vi: "readonly",
-
-        suite: "readonly",
-
-        spyOn: "readonly",
+        beforeAll: "readonly",
+        beforeEach: "readonly",
+        describe: "readonly",
+        expect: "readonly",
+        it: "readonly",
         jasmine: "readonly",
+        jest: "readonly",
+        spyOn: "readonly",
+        suite: "readonly",
+        test: "readonly",
+        vi: "readonly",
       },
     },
   },

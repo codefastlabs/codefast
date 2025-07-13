@@ -1,6 +1,6 @@
-import js from "@eslint/js";
-
 import type { Linter } from "eslint";
+
+import js from "@eslint/js";
 
 export const baseJavaScriptRules: Linter.Config[] = [
   {
@@ -12,32 +12,35 @@ export const baseJavaScriptRules: Linter.Config[] = [
     rules: {
       ...js.configs.recommended.rules,
 
-      "prefer-const": "error",
-      "no-var": "error",
-      "prefer-arrow-callback": "error",
-      "prefer-template": "error",
-      "prefer-destructuring": ["error", { object: true, array: false }],
-      "prefer-rest-params": "error",
-      "prefer-spread": "error",
-      "object-shorthand": "error",
-      "no-useless-concat": "error",
-      "no-useless-return": "error",
-      "no-useless-rename": "error",
-      "no-duplicate-imports": "error",
+      // Warning rules
       "no-console": "warn",
-      "no-debugger": "error",
-      "no-alert": "error",
+      "no-magic-numbers": ["warn", { ignore: [0, 1, -1] }],
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+
+      // Error rules
       "consistent-return": "error",
       "default-case-last": "error",
       eqeqeq: ["error", "always"],
+      "no-alert": "error",
+      "no-debugger": "error",
+      "no-duplicate-imports": "error",
       "no-implicit-coercion": "error",
-      "no-magic-numbers": ["warn", { ignore: [0, 1, -1] }],
       "no-nested-ternary": "error",
       "no-unneeded-ternary": "error",
+      "no-useless-concat": "error",
+      "no-useless-rename": "error",
+      "no-useless-return": "error",
+      "no-var": "error",
+      "object-shorthand": "error",
+      "prefer-arrow-callback": "error",
+      "prefer-const": "error",
+      "prefer-destructuring": ["error", { array: false, object: true }],
       "prefer-exponentiation-operator": "error",
       "prefer-numeric-literals": "error",
       "prefer-object-spread": "error",
+      "prefer-rest-params": "error",
+      "prefer-spread": "error",
+      "prefer-template": "error",
       radix: "error",
       yoda: "error",
     },

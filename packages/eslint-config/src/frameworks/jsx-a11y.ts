@@ -10,6 +10,11 @@ export const jsxA11yRules: Linter.Config[] = [
     rules: {
       ...pluginJsxA11y.configs.recommended.rules,
 
+      // Disabled rules
+      "jsx-a11y/autocomplete-valid": "off",
+      "jsx-a11y/no-onchange": "off",
+
+      // Error rules
       "jsx-a11y/accessible-emoji": "error",
       "jsx-a11y/alt-text": [
         "error",
@@ -130,10 +135,6 @@ export const jsxA11yRules: Linter.Config[] = [
       "jsx-a11y/role-supports-aria-props": "error",
       "jsx-a11y/scope": "error",
       "jsx-a11y/tabindex-no-positive": "error",
-
-      // Disabled rules
-      "jsx-a11y/autocomplete-valid": "off",
-      "jsx-a11y/no-onchange": "off",
     },
   },
 ];

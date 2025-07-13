@@ -1,5 +1,4 @@
 import type { Linter } from "eslint";
-
 import pluginPerfectionist from "eslint-plugin-perfectionist";
 
 export const perfectionistRules: Linter.Config[] = [

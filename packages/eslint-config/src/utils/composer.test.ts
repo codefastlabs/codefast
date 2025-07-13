@@ -1,8 +1,7 @@
-import { describe, expect, it } from "@jest/globals";
+import type { Linter } from "eslint";
 
 import { composeConfig } from "@/utils/composer";
-
-import type { Linter } from "eslint";
+import { describe, expect, it } from "@jest/globals";
 
 describe("composeConfig", () => {
   it("should flatten multiple config arrays into a single array", () => {

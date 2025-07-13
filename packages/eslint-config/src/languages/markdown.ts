@@ -1,12 +1,12 @@
-import markdown from "@eslint/markdown";
-
 import type { ESLint, Linter } from "eslint";
+
+import markdown from "@eslint/markdown";
 
 export const markdownRules: Linter.Config[] = [
   {
     files: ["**/*.md"],
-    plugins: { markdown } as Record<string, ESLint.Plugin>,
     language: "markdown/gfm",
+    plugins: { markdown } as Record<string, ESLint.Plugin>,
     rules: {
       ...markdown.configs.recommended
         .map(({ rules }) => rules)
