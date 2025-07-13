@@ -1,6 +1,6 @@
-import pluginImport from "eslint-plugin-import";
-
 import type { Linter } from "eslint";
+
+import pluginImport from "eslint-plugin-import";
 
 export const importRules: Linter.Config[] = [
   {
@@ -12,33 +12,29 @@ export const importRules: Linter.Config[] = [
       ...pluginImport.configs.recommended.rules,
       ...pluginImport.configs.typescript.rules,
 
-      // These rules duplicate TypeScript checking and can be slow
-      "import/no-unresolved": "off",
-      "import/named": "off",
       "import/default": "off",
+      "import/dynamic-import-chunkname": "off",
+      "import/export": "error",
+      "import/exports-last": "off",
+      // This rule can be slow due to disk checks - TypeScript handles extension checking
+      "import/extensions": "off",
+      "import/first": "error",
+      "import/group-exports": "off",
+      "import/max-dependencies": "off",
+      "import/named": "off",
       "import/namespace": "off",
-      "import/no-restricted-paths": "off",
+      "import/newline-after-import": "error",
       "import/no-absolute-path": "error",
-      "import/no-dynamic-require": "warn",
-      "import/no-internal-modules": "off",
-      "import/no-webpack-loader-syntax": "error",
-      "import/no-self-import": "error",
+      "import/no-amd": "error",
+      "import/no-anonymous-default-export": "off",
+
+      "import/no-commonjs": "off",
       // This rule is slow due to additional parsing - consider running only in CI
       "import/no-cycle": "off",
-      "import/no-useless-path-segments": [
-        "error",
-        {
-          commonjs: true,
-        },
-      ],
-      "import/no-relative-parent-imports": "off",
-      "import/no-relative-packages": "error",
-
-      "import/export": "error",
-      // These rules are slow due to additional parsing - consider running only in CI
-      "import/no-named-as-default": "off",
-      "import/no-named-as-default-member": "off",
+      "import/no-default-export": "off",
       "import/no-deprecated": "off",
+      "import/no-duplicates": "error",
+      "import/no-dynamic-require": "warn",
       "import/no-extraneous-dependencies": [
         "error",
         {
@@ -67,57 +63,52 @@ export const importRules: Linter.Config[] = [
           ],
         },
       ],
-      "import/no-mutable-exports": "error",
-      "import/no-unused-modules": "off",
 
-      "import/unambiguous": "off",
-      "import/no-commonjs": "off",
-      "import/no-amd": "error",
-      "import/no-nodejs-modules": "off",
       "import/no-import-module-exports": "error",
+      "import/no-internal-modules": "off",
+      "import/no-mutable-exports": "error",
+      // These rules are slow due to additional parsing - consider running only in CI
+      "import/no-named-as-default": "off",
+      "import/no-named-as-default-member": "off",
 
-      "import/first": "error",
-      "import/exports-last": "off",
-      "import/no-duplicates": "error",
+      "import/no-named-default": "error",
+      "import/no-named-export": "off",
       "import/no-namespace": "off",
-      // This rule can be slow due to disk checks - TypeScript handles extension checking
-      "import/extensions": "off",
-      "import/order": [
+      "import/no-nodejs-modules": "off",
+      "import/no-relative-packages": "error",
+      "import/no-relative-parent-imports": "off",
+      "import/no-restricted-paths": "off",
+      "import/no-self-import": "error",
+      "import/no-unassigned-import": "off",
+      // These rules duplicate TypeScript checking and can be slow
+      "import/no-unresolved": "off",
+      "import/no-unused-modules": "off",
+      "import/no-useless-path-segments": [
         "error",
         {
-          groups: ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"],
-          "newlines-between": "always",
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
+          commonjs: true,
         },
       ],
-      "import/newline-after-import": "error",
+      "import/no-webpack-loader-syntax": "error",
+      // Disabled in favor of perfectionist/sort-imports for better import sorting
+      "import/order": "off",
       "import/prefer-default-export": "off",
-      "import/max-dependencies": "off",
-      "import/no-unassigned-import": "off",
-      "import/no-named-default": "error",
-      "import/no-default-export": "off",
-      "import/no-named-export": "off",
-      "import/no-anonymous-default-export": "off",
-      "import/group-exports": "off",
-      "import/dynamic-import-chunkname": "off",
+      "import/unambiguous": "off",
     },
     settings: {
+      "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+      "import/parsers": {
+        "@typescript-eslint/parser": [".ts", ".tsx"],
+      },
       "import/resolver": {
+        node: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
         typescript: {
           alwaysTryTypes: true,
           // Use a single project reference to avoid glob performance issues
           project: "./tsconfig.json",
         },
-        node: {
-          extensions: [".js", ".jsx", ".ts", ".tsx"],
-        },
-      },
-      "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
-      "import/parsers": {
-        "@typescript-eslint/parser": [".ts", ".tsx"],
       },
     },
   },

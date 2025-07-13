@@ -1,5 +1,8 @@
+import type { Linter } from "eslint";
+
 import { importRules } from "@/core/import";
 import { baseJavaScriptRules } from "@/core/javascript";
+import { perfectionistRules } from "@/core/perfectionist";
 import { typescriptRules } from "@/core/typescript";
 import { unicornRules } from "@/core/unicorn";
 import { nodeEnvironment } from "@/environments/node";
@@ -8,8 +11,6 @@ import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
 import { composeConfig } from "@/utils/composer";
 import { tsdocRules } from "@/utils/tsdoc";
-
-import type { Linter } from "eslint";
 
 export const basePreset: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
@@ -21,6 +22,7 @@ export const basePreset: Linter.Config[] = composeConfig(
 
   unicornRules,
   importRules,
+  perfectionistRules,
 
   nodeEnvironment,
   testEnvironment,

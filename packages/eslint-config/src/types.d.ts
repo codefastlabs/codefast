@@ -55,3 +55,16 @@ declare module "eslint-plugin-jsx-a11y" {
   const plugin: JsxA11yESLintPlugin;
   export default plugin;
 }
+
+declare module "eslint-plugin-perfectionist" {
+  import type { ESLint, Linter } from "eslint";
+
+  interface PerfectionistESLintPlugin extends ESLint.Plugin {
+    configs: {
+      recommended: Linter.Config;
+    };
+  }
+
+  const plugin: PerfectionistESLintPlugin;
+  export default plugin;
+}
