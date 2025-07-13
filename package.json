@@ -29,7 +29,6 @@
     "prebuild": "pnpm -r exec rm -rf .next dist",
     "precommit": "lint-staged",
     "prepare": "simple-git-hooks",
-    "reinstall": "pnpm run clean:modules && pnpm install",
     "start": "turbo run start",
     "start:docs": "turbo run start --filter=@app/docs...",
     "test": "turbo run test",
