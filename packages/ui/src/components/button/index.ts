@@ -1,2 +1,4 @@
-export * from "@/components/button//button";
-export * from "@/components/button/button.variants";
+export { Button } from "@/components/button//button";
+export type { ButtonProps } from "@/components/button//button";
+
+export { buttonVariants } from "@/components/button/button.variants";

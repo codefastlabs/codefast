@@ -1,2 +1,4 @@
-export * from "@/components/input/input";
-export * from "@/components/input/input.variants";
+export { Input, TextInput } from "@/components/input/input";
+export type { InputProps, TextInputProps } from "@/components/input/input";
+
+export { inputVariants } from "@/components/input/input.variants";
