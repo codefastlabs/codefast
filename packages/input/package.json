@@ -1,6 +1,19 @@
 {
   "name": "@codefast-ui/input",
   "version": "0.3.5",
+  "description": "Accessible input component built with React and Radix UI",
+  "keywords": [
+    "input",
+    "form",
+    "ui",
+    "component",
+    "react",
+    "radix-ui",
+    "accessible",
+    "typescript",
+    "monorepo"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/input#readme",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },

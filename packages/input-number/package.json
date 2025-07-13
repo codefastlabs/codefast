@@ -1,6 +1,21 @@
 {
   "name": "@codefast-ui/input-number",
   "version": "0.3.5",
+  "description": "Accessible number input component built with React and Radix UI",
+  "keywords": [
+    "input",
+    "number",
+    "numeric",
+    "form",
+    "ui",
+    "component",
+    "react",
+    "radix-ui",
+    "accessible",
+    "typescript",
+    "monorepo"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/input-number#readme",
   "bugs": {
     "url": "https://github.com/codefastlabs/codefast/issues"
   },
