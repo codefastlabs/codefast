@@ -53,8 +53,9 @@ function extractExportsFromFile(filePath) {
         const aliasName = parts[1] ? parts[1].trim() : null;
 
         // Determine if it's a type based on naming convention
-        const isType =
-          originalName.endsWith("Props") || originalName.endsWith("Config") || originalName.endsWith("Api");
+        // Only consider things ending with "Props" or "Type" as types, not "Config" or "Api"
+        // since those could be functions (like composeConfig) or other non-type exports
+        const isType = originalName.endsWith("Props") || originalName.endsWith("Type");
 
         if (isType) {
           types.push(originalName);
@@ -403,14 +404,14 @@ function generateIndexContent(processedFile) {
     for (let i = 0; i < processedFile.individualExports.length; i++) {
       const exportGroup = processedFile.individualExports[i];
 
-      // Add a blank line before each module group (except the first one)
-      if (i > 0) {
-        cleanedLines.push("");
-      }
-
       // Add all statements for this module
       for (const statement of exportGroup.statements) {
         cleanedLines.push(statement);
+      }
+
+      // Add a blank line after each module group (except the last one)
+      if (i < processedFile.individualExports.length - 1) {
+        cleanedLines.push("");
       }
     }
   }
@@ -520,13 +521,20 @@ function createIndexFileForSubdirectory(subdirPath) {
 
     // If we found subdirectories with index files, create exports for them
     if (subdirectoriesWithIndex.length > 0) {
-      for (const subdir of subdirectoriesWithIndex) {
+      for (let i = 0; i < subdirectoriesWithIndex.length; i++) {
+        const subdir = subdirectoriesWithIndex[i];
+
         if (subdir.exports.components.length > 0) {
           indexContent.push(`export { ${subdir.exports.components.join(", ")} } from "./${subdir.name}";`);
         }
 
         if (subdir.exports.types.length > 0) {
           indexContent.push(`export type { ${subdir.exports.types.join(", ")} } from "./${subdir.name}";`);
+        }
+
+        // Add a blank line after each module group (except the last one)
+        if (i < subdirectoriesWithIndex.length - 1) {
+          indexContent.push("");
         }
       }
     } else {
