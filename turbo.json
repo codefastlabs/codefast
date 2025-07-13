@@ -14,10 +14,10 @@
       "persistent": true
     },
     "lint": {
-      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"]
+      "cache": false
     },
     "lint:fix": {
-      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"]
+      "cache": false
     },
     "start": {
       "cache": false
