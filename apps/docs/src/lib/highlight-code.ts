@@ -6,7 +6,7 @@ export async function highlightCode(code: string): Promise<string> {
     theme: "github-dark",
     transformers: [
       {
-        code(node) {
+        code(node): void {
           node.properties["data-line-numbers"] = "";
         },
       },
