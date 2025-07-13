@@ -1,30 +1,13 @@
-export { baseJavaScriptRules } from "@/core/javascript";
-export { typescriptRules } from "@/core/typescript";
-export { importRules } from "@/core/import";
-export { unicornRules } from "@/core/unicorn";
+export { importRules, baseJavaScriptRules, typescriptRules, unicornRules } from "@/core";
 
-export { nodeEnvironment } from "@/environments/node";
-export { browserEnvironment } from "@/environments/browser";
-export { testEnvironment } from "@/environments/test";
+export { browserEnvironment, nodeEnvironment, testEnvironment } from "@/environments";
 
-export { jsonRules } from "@/languages/json";
-export { cssRules } from "@/languages/css";
-export { markdownRules } from "@/languages/markdown";
+export { jsxA11yRules, nextRules, reactRules } from "@/frameworks";
 
-export { reactRules } from "@/frameworks/react";
-export { nextRules } from "@/frameworks/next";
-export { jsxA11yRules } from "@/frameworks/jsx-a11y";
+export { cssRules, jsonRules, markdownRules } from "@/languages";
 
-export { jestRules } from "@/testing/jest";
+export { basePreset, libraryPreset, nextAppPreset, reactAppPresetCore, reactAppPreset } from "@/presets";
 
-export { onlyWarnRules } from "@/utils/only-warn";
-export { prettierRules } from "@/utils/prettier";
-export { tsdocRules } from "@/utils/tsdoc";
-export { turboRules } from "@/utils/turbo";
+export { jestRules } from "@/testing";
 
-export { basePreset } from "@/presets/base";
-export { libraryPreset } from "@/presets/library";
-export { reactAppPreset } from "@/presets/react-app";
-export { nextAppPreset } from "@/presets/next-app";
-
-export { composeConfig } from "@/utils/composer";
+export { composeConfig, onlyWarnRules, prettierRules, tsdocRules, turboRules } from "@/utils";
