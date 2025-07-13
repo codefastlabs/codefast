@@ -39,6 +39,7 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@codefast/typescript-config": "workspace:*",
     "@codefast/eslint-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/js-cookie": "^3.0.6",
