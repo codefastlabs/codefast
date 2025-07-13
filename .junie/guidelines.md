@@ -128,6 +128,17 @@ describe("Feature Name", () => {
 - **Formatter**: Prettier with plugins for package.json and Tailwind CSS
 - **Pre-commit**: lint-staged with simple-git-hooks
 
+### ESLint Plugin Type Definitions
+In the `packages/eslint-config` directory, custom type definitions are maintained for ESLint plugins that don't yet support TypeScript natively. These are defined in `packages/eslint-config/src/types.d.ts`:
+
+- **@next/eslint-plugin-next**: Type definitions for Next.js ESLint plugin
+- **eslint-plugin-only-warn**: Type definitions for the only-warn plugin
+- **eslint-config-prettier**: Type definitions for Prettier ESLint config
+- **eslint-plugin-turbo**: Type definitions for Turbo ESLint plugin
+- **eslint-plugin-jsx-a11y**: Type definitions for JSX accessibility plugin
+
+**Important**: If a new `eslint-plugin-*` is added and it does not yet support TypeScript, define its types in the `packages/eslint-config/src/types.d.ts` file. Conversely, if the `eslint-plugin-*` already supports TypeScript, remove any custom type definitions for it.
+
 ### Code Style Commands
 ```bash
 pnpm lint              # Lint all packages
