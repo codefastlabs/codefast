@@ -1,5 +1,8 @@
+import type { Linter } from "eslint";
+
 import { importRules } from "@/core/import";
 import { baseJavaScriptRules } from "@/core/javascript";
+import { perfectionistRules } from "@/core/perfectionist";
 import { typescriptRules } from "@/core/typescript";
 import { unicornRules } from "@/core/unicorn";
 import { browserEnvironment } from "@/environments/browser";
@@ -12,8 +15,6 @@ import { jestRules } from "@/testing/jest";
 import { composeConfig } from "@/utils/composer";
 import { prettierRules } from "@/utils/prettier";
 import { tsdocRules } from "@/utils/tsdoc";
-
-import type { Linter } from "eslint";
 
 const reactAppPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
@@ -29,6 +30,7 @@ const reactAppPresetCore: Linter.Config[] = composeConfig(
 
   unicornRules,
   importRules,
+  perfectionistRules,
 
   browserEnvironment,
   testEnvironment,
