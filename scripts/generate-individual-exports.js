@@ -53,7 +53,8 @@ function extractExportsFromFile(filePath) {
         const aliasName = parts[1] ? parts[1].trim() : null;
 
         // Determine if it's a type based on naming convention
-        const isType = originalName.endsWith("Props") || originalName.endsWith("Config") || originalName.endsWith("Api");
+        const isType =
+          originalName.endsWith("Props") || originalName.endsWith("Config") || originalName.endsWith("Api");
 
         if (isType) {
           types.push(originalName);
@@ -255,7 +256,7 @@ function processIndexFile(indexFilePath) {
       // Keep the original export * statement if we can't resolve it
       individualExports.push({
         modulePath: exportStar.modulePath,
-        statements: [exportStar.statement]
+        statements: [exportStar.statement],
       });
       continue;
     }
@@ -279,13 +280,13 @@ function processIndexFile(indexFilePath) {
 
       individualExports.push({
         modulePath: exportStar.modulePath,
-        statements: statements
+        statements: statements,
       });
     } else {
       // Keep the original export * statement if no exports found
       individualExports.push({
         modulePath: exportStar.modulePath,
-        statements: [exportStar.statement]
+        statements: [exportStar.statement],
       });
     }
   }
@@ -364,30 +365,57 @@ function generateIndexContent(processedFile) {
     newLines.push(line);
   }
 
-  // Add the individual exports at the end
-  if (processedFile.individualExports.length > 0) {
-    // Add the individual export statements with blank lines between different modules
-    for (let i = 0; i < processedFile.individualExports.length; i++) {
-      const exportGroup = processedFile.individualExports[i];
-
-      // Add blank line before each module group (except the first one)
-      if (i > 0) {
-        newLines.push("");
-      }
-
-      // Add all statements for this module
-      for (const statement of exportGroup.statements) {
-        newLines.push(statement);
-      }
-    }
-  }
-
-  // Remove leading empty lines to avoid creating empty lines at the beginning of the file
+  // Remove leading empty lines
   while (newLines.length > 0 && newLines[0].trim() === "") {
     newLines.shift();
   }
 
-  return newLines.join("\n");
+  // Remove trailing empty lines
+  while (newLines.length > 0 && newLines[newLines.length - 1].trim() === "") {
+    newLines.pop();
+  }
+
+  // Clean up excessive consecutive empty lines (limit to max 1 consecutive empty line)
+  const cleanedLines = [];
+  let consecutiveEmptyLines = 0;
+
+  for (const line of newLines) {
+    if (line.trim() === "") {
+      consecutiveEmptyLines++;
+      // Only allow 1 consecutive empty line
+      if (consecutiveEmptyLines <= 1) {
+        cleanedLines.push(line);
+      }
+    } else {
+      consecutiveEmptyLines = 0;
+      cleanedLines.push(line);
+    }
+  }
+
+  // Add the individual exports at the end
+  if (processedFile.individualExports.length > 0) {
+    // Add a blank line before exports if there's existing content
+    if (cleanedLines.length > 0) {
+      cleanedLines.push("");
+    }
+
+    // Add the individual export statements with blank lines between different modules
+    for (let i = 0; i < processedFile.individualExports.length; i++) {
+      const exportGroup = processedFile.individualExports[i];
+
+      // Add a blank line before each module group (except the first one)
+      if (i > 0) {
+        cleanedLines.push("");
+      }
+
+      // Add all statements for this module
+      for (const statement of exportGroup.statements) {
+        cleanedLines.push(statement);
+      }
+    }
+  }
+
+  return cleanedLines.join("\n");
 }
 
 /**
