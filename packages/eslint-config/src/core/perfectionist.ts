@@ -9,22 +9,13 @@ export const perfectionistRules: Linter.Config[] = [
       perfectionist: pluginPerfectionist,
     },
     rules: {
-      // Sort array elements (useful for export arrays)
-      "perfectionist/sort-array-includes": [
-        "error",
-        {
-          ignoreCase: true,
-          order: "asc",
-          type: "alphabetical",
-        },
-      ],
-
       // Sort export statements
       "perfectionist/sort-exports": [
         "error",
         {
           ignoreCase: true,
           order: "asc",
+          partitionByNewLine: true,
           type: "alphabetical",
         },
       ],
@@ -48,7 +39,7 @@ export const perfectionistRules: Linter.Config[] = [
             "unknown",
           ],
           ignoreCase: true,
-          internalPattern: ["@*", "~*"],
+          internalPattern: ["@/*", "~/*"],
           newlinesBetween: "always",
           order: "asc",
           type: "alphabetical",
@@ -61,8 +52,7 @@ export const perfectionistRules: Linter.Config[] = [
         {
           ignoreCase: true,
           order: "asc",
-          partitionByComment: false,
-          partitionByNewLine: false,
+          partitionByNewLine: true,
           type: "alphabetical",
         },
       ],
@@ -73,6 +63,7 @@ export const perfectionistRules: Linter.Config[] = [
         {
           ignoreCase: true,
           order: "asc",
+          partitionByNewLine: true,
           type: "alphabetical",
         },
       ],
@@ -83,8 +74,7 @@ export const perfectionistRules: Linter.Config[] = [
         {
           ignoreCase: true,
           order: "asc",
-          partitionByComment: false,
-          partitionByNewLine: false,
+          partitionByNewLine: true,
           type: "alphabetical",
         },
       ],
@@ -95,6 +85,7 @@ export const perfectionistRules: Linter.Config[] = [
         {
           ignoreCase: true,
           order: "asc",
+          partitionByNewLine: true,
           type: "alphabetical",
         },
       ],
