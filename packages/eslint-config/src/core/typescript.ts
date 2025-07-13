@@ -16,55 +16,6 @@ const mapConfigWithFiles = (config: ConfigArray[number]): Linter.Config =>
     ...config,
   }) as Linter.Config;
 
-/**
- * Custom TypeScript rules configuration
- */
-const customTypescriptRules: Linter.RulesRecord = {
-  // Disabled rules
-  "@typescript-eslint/explicit-function-return-type": "off",
-
-  // Warning rules
-  "@typescript-eslint/no-unused-vars": [
-    "warn",
-    {
-      argsIgnorePattern: "^_",
-    },
-  ],
-
-  // Error rules
-  // Promise and async handling
-  "@typescript-eslint/no-misused-promises": [
-    "error",
-    {
-      checksVoidReturn: {
-        attributes: false,
-      },
-    },
-  ],
-  "@typescript-eslint/promise-function-async": "error",
-
-  // Code quality and safety
-  "@typescript-eslint/prefer-readonly": "error",
-  "@typescript-eslint/prefer-ts-expect-error": "error",
-  "@typescript-eslint/require-array-sort-compare": "error",
-  "@typescript-eslint/switch-exhaustiveness-check": "error",
-
-  // Type imports and exports
-  "@typescript-eslint/consistent-type-exports": "error",
-  "@typescript-eslint/consistent-type-imports": [
-    "error",
-    {
-      prefer: "type-imports",
-    },
-  ],
-  "@typescript-eslint/no-import-type-side-effects": "error",
-
-  // Code style and cleanup
-  "@typescript-eslint/method-signature-style": ["error", "property"],
-  "@typescript-eslint/no-unnecessary-qualifier": "error",
-  "@typescript-eslint/no-useless-empty-export": "error",
-};
-
 export const typescriptRules: Linter.Config[] = [
   // Apply strict type-checked rules
   ...tseslintConfigs.strictTypeChecked.map((config) => mapConfigWithFiles(config)),
@@ -81,6 +32,48 @@ export const typescriptRules: Linter.Config[] = [
         tsconfigRootDir: process.cwd(),
       },
     },
-    rules: customTypescriptRules,
+    rules: {
+      // Warning rules
+      "@typescript-eslint/explicit-function-return-type": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
+
+      // Error rules
+      // Promise and async handling
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
+      "@typescript-eslint/promise-function-async": "error",
+
+      // Code quality and safety
+      "@typescript-eslint/prefer-readonly": "error",
+      "@typescript-eslint/prefer-ts-expect-error": "error",
+      "@typescript-eslint/require-array-sort-compare": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+
+      // Type imports and exports
+      "@typescript-eslint/consistent-type-exports": "error",
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+        },
+      ],
+      "@typescript-eslint/no-import-type-side-effects": "error",
+
+      // Code style and cleanup
+      "@typescript-eslint/method-signature-style": ["error", "property"],
+      "@typescript-eslint/no-unnecessary-qualifier": "error",
+      "@typescript-eslint/no-useless-empty-export": "error",
+    },
   },
 ];
