@@ -1,6 +1,5 @@
-import pluginJsxA11y from "eslint-plugin-jsx-a11y";
-
 import type { Linter } from "eslint";
+import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
 export const jsxA11yRules: Linter.Config[] = [
   {
@@ -15,20 +14,20 @@ export const jsxA11yRules: Linter.Config[] = [
       "jsx-a11y/alt-text": [
         "error",
         {
+          area: ["Area"],
           elements: ["img", "object", "area", 'input[type="image"]'],
           img: ["Image"],
-          object: ["Object"],
-          area: ["Area"],
           'input[type="image"]': ["InputImage"],
+          object: ["Object"],
         },
       ],
       "jsx-a11y/anchor-has-content": ["error", { components: ["Link"] }],
       "jsx-a11y/anchor-is-valid": [
         "error",
         {
+          aspects: ["noHref", "invalidHref", "preferButton"],
           components: ["Link"],
           specialLink: ["to"],
-          aspects: ["noHref", "invalidHref", "preferButton"],
         },
       ],
       "jsx-a11y/aria-activedescendant-has-tabindex": "error",
@@ -36,18 +35,12 @@ export const jsxA11yRules: Linter.Config[] = [
       "jsx-a11y/aria-proptypes": "error",
       "jsx-a11y/aria-role": ["error", { ignoreNonDOM: false }],
       "jsx-a11y/aria-unsupported-elements": "error",
-      "jsx-a11y/autocomplete-valid": [
-        "off",
-        {
-          inputComponents: [],
-        },
-      ],
       "jsx-a11y/click-events-have-key-events": "error",
       "jsx-a11y/control-has-associated-label": [
         "error",
         {
-          labelAttributes: ["label"],
           controlComponents: [],
+          depth: 5,
           ignoreElements: ["audio", "canvas", "embed", "input", "textarea", "tr", "video"],
           ignoreRoles: [
             "grid",
@@ -61,7 +54,7 @@ export const jsxA11yRules: Linter.Config[] = [
             "tree",
             "treegrid",
           ],
-          depth: 5,
+          labelAttributes: ["label"],
         },
       ],
       "jsx-a11y/heading-has-content": ["error", { components: [""] }],
@@ -72,11 +65,11 @@ export const jsxA11yRules: Linter.Config[] = [
       "jsx-a11y/label-has-associated-control": [
         "error",
         {
-          labelComponents: [],
-          labelAttributes: [],
-          controlComponents: [],
           assert: "both",
+          controlComponents: [],
           depth: 25,
+          labelAttributes: [],
+          labelComponents: [],
         },
       ],
       "jsx-a11y/lang": "error",
@@ -84,8 +77,8 @@ export const jsxA11yRules: Linter.Config[] = [
         "error",
         {
           audio: [],
-          video: [],
           track: [],
+          video: [],
         },
       ],
       "jsx-a11y/mouse-events-have-key-events": "error",
@@ -112,21 +105,20 @@ export const jsxA11yRules: Linter.Config[] = [
       "jsx-a11y/no-noninteractive-element-to-interactive-role": [
         "error",
         {
-          ul: ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
-          ol: ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
           li: ["menuitem", "option", "row", "tab", "treeitem"],
+          ol: ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
           table: ["grid"],
           td: ["gridcell"],
+          ul: ["listbox", "menu", "menubar", "radiogroup", "tablist", "tree", "treegrid"],
         },
       ],
       "jsx-a11y/no-noninteractive-tabindex": [
         "error",
         {
-          tags: [],
           roles: ["tabpanel"],
+          tags: [],
         },
       ],
-      "jsx-a11y/no-onchange": "off",
       "jsx-a11y/no-redundant-roles": "error",
       "jsx-a11y/no-static-element-interactions": [
         "error",
@@ -138,6 +130,10 @@ export const jsxA11yRules: Linter.Config[] = [
       "jsx-a11y/role-supports-aria-props": "error",
       "jsx-a11y/scope": "error",
       "jsx-a11y/tabindex-no-positive": "error",
+
+      // Disabled rules
+      "jsx-a11y/autocomplete-valid": "off",
+      "jsx-a11y/no-onchange": "off",
     },
   },
 ];

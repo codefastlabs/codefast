@@ -1,6 +1,5 @@
-import pluginUnicorn from "eslint-plugin-unicorn";
-
 import type { Linter } from "eslint";
+import pluginUnicorn from "eslint-plugin-unicorn";
 
 export const unicornRules: Linter.Config[] = [
   {
@@ -15,15 +14,12 @@ export const unicornRules: Linter.Config[] = [
         "error",
         {
           cases: {
-            kebabCase: true,
             camelCase: true,
+            kebabCase: true,
             pascalCase: true,
           },
         },
       ],
-      "unicorn/no-array-reduce": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-process-exit": "off",
       "unicorn/prefer-array-flat-map": "error",
       "unicorn/prefer-array-some": "error",
       "unicorn/prefer-date-now": "error",
@@ -31,7 +27,6 @@ export const unicornRules: Linter.Config[] = [
       "unicorn/prefer-includes": "error",
       "unicorn/prefer-math-trunc": "error",
       "unicorn/prefer-modern-math-apis": "error",
-      "unicorn/prefer-module": "off",
       "unicorn/prefer-node-protocol": "error",
       "unicorn/prefer-number-properties": "error",
       "unicorn/prefer-optional-catch-binding": "error",
@@ -39,25 +34,31 @@ export const unicornRules: Linter.Config[] = [
       "unicorn/prefer-string-starts-ends-with": "error",
       "unicorn/prefer-string-trim-start-end": "error",
       "unicorn/prefer-ternary": "error",
-      "unicorn/prefer-top-level-await": "off",
       "unicorn/prevent-abbreviations": [
         "error",
         {
           checkFilenames: false,
           replacements: {
+            args: false,
+            dev: false,
+            env: false,
+            params: false,
+            prod: false,
             props: false,
             ref: false,
-            params: false,
-            args: false,
-            env: false,
-            dev: false,
-            prod: false,
             temp: false,
             tmp: false,
           },
         },
       ],
       "unicorn/throw-new-error": "error",
+
+      // Disabled rules
+      "unicorn/no-array-reduce": "off",
+      "unicorn/no-null": "off",
+      "unicorn/no-process-exit": "off",
+      "unicorn/prefer-module": "off",
+      "unicorn/prefer-top-level-await": "off",
     },
   },
 ];

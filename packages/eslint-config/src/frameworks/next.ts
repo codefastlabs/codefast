@@ -1,6 +1,6 @@
-import pluginNext from "@next/eslint-plugin-next";
-
 import type { Linter } from "eslint";
+
+import pluginNext from "@next/eslint-plugin-next";
 
 export const nextRules: Linter.Config[] = [
   {
@@ -12,9 +12,10 @@ export const nextRules: Linter.Config[] = [
       ...pluginNext.configs.recommended.rules,
       ...pluginNext.configs["core-web-vitals"].rules,
 
+      // Disabled rules
       "@next/next/no-html-link-for-pages": "off",
-      "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      "react/react-in-jsx-scope": "off",
     },
   },
 ];
