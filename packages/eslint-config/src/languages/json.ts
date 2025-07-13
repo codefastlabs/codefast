@@ -1,6 +1,6 @@
-import json from "@eslint/json";
-
 import type { Linter } from "eslint";
+
+import json from "@eslint/json";
 
 export const jsonRules: Linter.Config[] = [
   {
@@ -14,16 +14,16 @@ export const jsonRules: Linter.Config[] = [
   },
   {
     files: ["**/*.jsonc"],
-    plugins: { json },
     language: "json/jsonc",
+    plugins: { json },
     rules: {
       ...json.configs.recommended.rules,
     },
   },
   {
     files: ["**/*.json5"],
-    plugins: { json },
     language: "json/json5",
+    plugins: { json },
     rules: {
       ...json.configs.recommended.rules,
     },

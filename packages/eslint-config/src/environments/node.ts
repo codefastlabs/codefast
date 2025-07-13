@@ -1,6 +1,5 @@
-import globals from "globals";
-
 import type { Linter } from "eslint";
+import globals from "globals";
 
 export const nodeEnvironment: Linter.Config[] = [
   {
