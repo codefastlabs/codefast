@@ -1,6 +1,7 @@
 # Tree-shaking Analysis: Intermediate Components Index Pattern
 
 ## Question (Vietnamese)
+
 > Nếu trong packages/ui/src/components có 1 file index.ts và named export các folder cùng cấp của nó, sau đó packages/ui/src/index.ts sẽ named export packages/ui/src/components thì có phù hợp cho tree-shaking hay không?
 
 **Translation**: If in packages/ui/src/components there is 1 index.ts file that named exports the folders at the same level, and then packages/ui/src/index.ts will named export packages/ui/src/components, is this suitable for tree-shaking or not?
@@ -10,6 +11,7 @@
 ## Current vs Proposed Pattern
 
 ### Current Pattern (Already Excellent)
+
 ```
 packages/ui/src/index.ts
 ├── export { Button } from "@/components/button"
@@ -19,6 +21,7 @@ packages/ui/src/index.ts
 ```
 
 ### Proposed Pattern (Also Excellent)
+
 ```
 packages/ui/src/index.ts
 ├── export { Button } from "@/components"
@@ -41,16 +44,19 @@ packages/ui/src/index.ts
 ### Import Resolution Example
 
 When a consumer imports:
+
 ```typescript
 import { Button } from "@codefast/ui";
 ```
 
 **Current Pattern Chain:**
+
 ```
 main index.ts → components/button/index.ts → button.tsx
 ```
 
 **Proposed Pattern Chain:**
+
 ```
 main index.ts → components/index.ts → components/button/index.ts → button.tsx
 ```
@@ -60,6 +66,7 @@ main index.ts → components/index.ts → components/button/index.ts → button.
 ## Benefits of the Proposed Pattern
 
 ### ✅ Advantages
+
 1. **Better Organization**: Cleaner main index.ts file
 2. **Logical Grouping**: Components are grouped under `/components`
 3. **Maintainability**: Easier to manage component exports
@@ -67,6 +74,7 @@ main index.ts → components/index.ts → components/button/index.ts → button.
 5. **Tree-shaking**: Still excellent (no performance impact)
 
 ### ⚠️ Minor Considerations
+
 1. **Extra Layer**: One additional file in the import chain (negligible impact)
 2. **Maintenance**: Need to maintain the components/index.ts file
 3. **Build Time**: Minimal increase in build time (microseconds)
@@ -83,6 +91,7 @@ main index.ts → components/index.ts → components/button/index.ts → button.
 ### Implementation Steps
 
 1. Create `packages/ui/src/components/index.ts`:
+
 ```typescript
 export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger } from "@/components/accordion";
 export { Alert, AlertDescription, AlertTitle, alertVariants } from "@/components/alert";
@@ -91,6 +100,7 @@ export { Button, buttonVariants } from "@/components/button";
 ```
 
 2. Update `packages/ui/src/index.ts`:
+
 ```typescript
 export { tv, cn } from "@/lib/utils";
 export type { VariantProps } from "@/lib/utils";
@@ -113,6 +123,7 @@ export type {
 ```
 
 3. Use the existing script to maintain named exports:
+
 ```bash
 node scripts/generate-individual-exports.js
 ```

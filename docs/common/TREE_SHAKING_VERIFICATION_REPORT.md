@@ -1,6 +1,7 @@
 # Tree-shaking Verification Report for packages/ui/dist
 
 ## Câu hỏi gốc (Original Question)
+
 > kiểm tra packages/ui/dist có tốt cho tree-shaking hay không?
 
 **Translation**: Check if packages/ui/dist is good for tree-shaking or not?
@@ -16,6 +17,7 @@
 ## 📊 Phân tích chi tiết (Detailed Analysis)
 
 ### ✅ 1. Cấu trúc build output tối ưu
+
 - **ESM và CJS builds**: Cung cấp cả hai định dạng module
 - **Individual component files**: Mỗi component được build thành file riêng biệt
 - **Không bundle**: Sử dụng `bundle: false` trong rslib config
@@ -33,11 +35,13 @@
   ```
 
 ### ✅ 2. Package.json configuration hoàn hảo
+
 ```json
 {
-  "sideEffects": false,           // ✅ Quan trọng nhất cho tree-shaking
-  "type": "module",               // ✅ ES modules by default
-  "exports": {                    // ✅ Modern exports field
+  "sideEffects": false, // ✅ Quan trọng nhất cho tree-shaking
+  "type": "module", // ✅ ES modules by default
+  "exports": {
+    // ✅ Modern exports field
     ".": {
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.cjs"
@@ -48,7 +52,9 @@
 ```
 
 ### ✅ 3. Source code structure tối ưu
+
 **Import chain sử dụng named exports**:
+
 ```typescript
 // packages/ui/src/index.ts
 export { Button, Card, ... } from "@/components";
@@ -62,16 +68,17 @@ export { Button } from "./button";
 ```
 
 ### ✅ 4. Build configuration tối ưu
+
 ```typescript
 // rslib.config.ts
 export default defineConfig({
   lib: [
     {
-      bundle: false,  // ✅ Không bundle, giữ nguyên cấu trúc file
-      format: "esm",  // ✅ ES modules
-      dts: true       // ✅ TypeScript declarations
-    }
-  ]
+      bundle: false, // ✅ Không bundle, giữ nguyên cấu trúc file
+      format: "esm", // ✅ ES modules
+      dts: true, // ✅ TypeScript declarations
+    },
+  ],
 });
 ```
 
@@ -80,6 +87,7 @@ export default defineConfig({
 ## 🚀 Kết quả thực tế (Real-world Results)
 
 ### Consumers có thể import selective:
+
 ```typescript
 // Chỉ import Button → chỉ có Button code được include
 import { Button } from "@codefast/ui";
@@ -91,6 +99,7 @@ import { Button, Card, Alert } from "@codefast/ui";
 ```
 
 ### Bundle size optimization:
+
 - ✅ **Unused components**: Hoàn toàn bị loại bỏ khỏi bundle
 - ✅ **Individual imports**: Chỉ code cần thiết được include
 - ✅ **No side effects**: Bundler có thể safely remove unused code
@@ -99,14 +108,14 @@ import { Button, Card, Alert } from "@codefast/ui";
 
 ## 📈 So sánh với best practices
 
-| Tiêu chí | packages/ui/dist | Best Practice | Status |
-|----------|------------------|---------------|---------|
-| `sideEffects: false` | ✅ | ✅ | Perfect |
-| Named exports | ✅ | ✅ | Perfect |
-| ES modules | ✅ | ✅ | Perfect |
-| Individual builds | ✅ | ✅ | Perfect |
-| Proper exports field | ✅ | ✅ | Perfect |
-| TypeScript support | ✅ | ✅ | Perfect |
+| Tiêu chí             | packages/ui/dist | Best Practice | Status  |
+| -------------------- | ---------------- | ------------- | ------- |
+| `sideEffects: false` | ✅               | ✅            | Perfect |
+| Named exports        | ✅               | ✅            | Perfect |
+| ES modules           | ✅               | ✅            | Perfect |
+| Individual builds    | ✅               | ✅            | Perfect |
+| Proper exports field | ✅               | ✅            | Perfect |
+| TypeScript support   | ✅               | ✅            | Perfect |
 
 ---
 
@@ -115,6 +124,7 @@ import { Button, Card, Alert } from "@codefast/ui";
 ### ✅ **XUẤT SẮC**: packages/ui/dist là một ví dụ hoàn hảo về tree-shaking optimization!
 
 **Điểm mạnh chính**:
+
 1. **Individual component builds** - Mỗi component được build riêng biệt
 2. **Named exports throughout** - Sử dụng named exports xuyên suốt chain
 3. **sideEffects: false** - Cho phép bundler safely remove unused code
@@ -129,6 +139,7 @@ import { Button, Card, Alert } from "@codefast/ui";
 ## 🔧 Technical Verification
 
 Đã chạy comprehensive test script và tất cả tests đều PASS:
+
 - ✅ Individual component structure
 - ✅ Package.json tree-shaking configuration
 - ✅ Build configuration optimization
@@ -138,5 +149,5 @@ import { Button, Card, Alert } from "@codefast/ui";
 
 ---
 
-*Report generated: $(date)*
-*Verification method: Automated analysis + manual code review*
+_Report generated: $(date)_
+_Verification method: Automated analysis + manual code review_
