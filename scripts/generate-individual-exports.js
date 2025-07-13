@@ -43,15 +43,28 @@ function extractExportsFromFile(filePath) {
     while ((namedMatch = namedExportRegex.exec(cleanContent)) !== null) {
       const namedExports = namedMatch[1]
         .split(",")
-        .map((exp) => exp.trim().split(" as ")[0].trim())
+        .map((exp) => exp.trim())
         .filter((exp) => exp && exp.length > 0);
 
-      // Separate types from components based on naming convention
+      // Process each export, handling aliases properly
       for (const exp of namedExports) {
-        if (exp.endsWith("Props") || exp.endsWith("Config") || exp.endsWith("Api")) {
-          types.push(exp);
+        const parts = exp.split(" as ");
+        const originalName = parts[0].trim();
+        const aliasName = parts[1] ? parts[1].trim() : null;
+
+        // Determine if it's a type based on naming convention
+        const isType = originalName.endsWith("Props") || originalName.endsWith("Config") || originalName.endsWith("Api");
+
+        if (isType) {
+          types.push(originalName);
+          if (aliasName) {
+            types.push(aliasName);
+          }
         } else {
-          components.push(exp);
+          components.push(originalName);
+          if (aliasName) {
+            components.push(aliasName);
+          }
         }
       }
     }
