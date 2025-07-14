@@ -4,7 +4,7 @@ import pluginNext from "@next/eslint-plugin-next";
 
 export const nextRules: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     plugins: {
       "@next/next": pluginNext,
     },

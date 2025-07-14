@@ -3,16 +3,11 @@ import { configs as tseslintConfigs } from "typescript-eslint";
 import type { ConfigArray } from "typescript-eslint";
 
 /**
- * TypeScript file patterns
- */
-const TYPESCRIPT_FILES = ["**/*.{ts,mts,cts,tsx}"];
-
-/**
  * Helper function to map typescript-eslint configs with default file patterns
  */
 const mapConfigWithFiles = (config: ConfigArray[number]): Linter.Config =>
   ({
-    ...(!config.files && config.rules && { files: TYPESCRIPT_FILES }),
+    ...(!config.files && config.rules && { files: ["**/*.{ts,tsx}"] }),
     ...config,
   }) as Linter.Config;
 
@@ -25,7 +20,7 @@ export const typescriptRules: Linter.Config[] = [
 
   // Custom TypeScript configuration
   {
-    files: TYPESCRIPT_FILES,
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parserOptions: {
         projectService: true,

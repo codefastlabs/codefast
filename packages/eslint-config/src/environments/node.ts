@@ -3,7 +3,7 @@ import globals from "globals";
 
 export const nodeEnvironment: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    files: ["**/*.{js,mjs,cjs,ts}"],
     languageOptions: {
       globals: {
         ...globals.node,
