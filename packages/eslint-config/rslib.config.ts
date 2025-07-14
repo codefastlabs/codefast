@@ -29,12 +29,9 @@ export default defineConfig({
     cleanDistPath: false,
     target: "node",
   },
-  performance: {
-    printFileSize: false,
-  },
   source: {
     entry: {
-      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.{ts,tsx}"],
+      index: ["./src/**/*.{ts,tsx}", "!**/*.{test,spec,e2e}.{ts,tsx}", "!**/__tests__/**", "!**/__mocks__/**"],
     },
     tsconfigPath: "./tsconfig.build.json",
   },
