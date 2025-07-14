@@ -42,13 +42,10 @@ export default defineConfig({
     },
     target: "web",
   },
-  performance: {
-    printFileSize: false,
-  },
   plugins: [pluginReact()],
   source: {
     entry: {
-      index: ["./src/**/*.{ts,tsx}", "!./src/**/*.{test,spec}.{ts,tsx}"],
+      index: ["./src/**/*.{ts,tsx}", "!**/*.{test,spec,e2e}.{ts,tsx}", "!**/__tests__/**", "!**/__mocks__/**"],
     },
     tsconfigPath: "./tsconfig.build.json",
   },
