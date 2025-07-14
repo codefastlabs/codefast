@@ -6,7 +6,7 @@ import { prettierRules } from "@/utils/prettier";
 
 const libraryStrictRules: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    files: ["**/*.{js,mjs,cjs,ts}"],
     rules: {
       "@typescript-eslint/explicit-function-return-type": "warn",
       "@typescript-eslint/no-explicit-any": "error",

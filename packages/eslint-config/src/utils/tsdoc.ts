@@ -3,7 +3,7 @@ import pluginTsdoc from "eslint-plugin-tsdoc";
 
 export const tsdocRules: Linter.Config[] = [
   {
-    files: ["**/*.{ts,mts,cts,tsx}"],
+    files: ["**/*.{ts,tsx}"],
     plugins: {
       tsdoc: pluginTsdoc,
     },

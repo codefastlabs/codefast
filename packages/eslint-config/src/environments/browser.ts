@@ -3,7 +3,7 @@ import globals from "globals";
 
 export const browserEnvironment: Linter.Config[] = [
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     languageOptions: {
       globals: {
         ...globals.browser,
