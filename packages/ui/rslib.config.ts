@@ -45,7 +45,7 @@ export default defineConfig({
   plugins: [pluginReact()],
   source: {
     entry: {
-      index: ["./src/**/*.{ts,tsx}", "!**/*.{test,spec,e2e}.{ts,tsx}", "!**/__tests__/**", "!**/__mocks__/**"],
+      index: ["./src/**/*.{ts,tsx}", "!**/*.{test,spec,e2e,story,stories}.{ts,tsx}"],
     },
     tsconfigPath: "./tsconfig.build.json",
   },
