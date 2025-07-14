@@ -66,13 +66,13 @@ export const importRules: Linter.Config[] = [
       "import/no-webpack-loader-syntax": "error",
     },
     settings: {
-      "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+      "import/extensions": [".js", ".cjs", ".mjs", ".jsx", ".ts", ".tsx"],
       "import/parsers": {
         "@typescript-eslint/parser": [".ts", ".tsx"],
       },
       "import/resolver": {
         node: {
-          extensions: [".js", ".jsx", ".ts", ".tsx"],
+          extensions: [".js", ".cjs", ".mjs", ".jsx", ".ts", ".tsx"],
         },
         typescript: {
           alwaysTryTypes: true,
