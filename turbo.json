@@ -14,21 +14,25 @@
       "persistent": true
     },
     "lint": {
-      "cache": false
+      "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
+      "outputs": []
     },
     "lint:fix": {
+      "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
       "cache": false
     },
     "start": {
       "cache": false
     },
     "test": {
-      "cache": false
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*"]
     },
     "test:coverage": {
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*"],
       "outputs": ["coverage/**"]
     },
     "test:coverage:ci": {
+      "inputs": ["$TURBO_DEFAULT$", "jest.config.*"],
       "outputs": ["coverage/**"]
     },
     "test:watch": {
@@ -36,7 +40,7 @@
       "persistent": true
     },
     "type-check": {
-      "cache": false
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
     }
   }
 }
