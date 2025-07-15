@@ -5,6 +5,7 @@ import { pluginReact } from "@rsbuild/plugin-react";
 import { defineConfig } from "@rslib/core";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const isWatchMode = process.argv.includes("--watch");
 
 export default defineConfig({
   lib: [
@@ -30,7 +31,7 @@ export default defineConfig({
     },
   ],
   output: {
-    cleanDistPath: false,
+    cleanDistPath: !isWatchMode,
     copy: [
       {
         from: path.resolve(__dirname, "src", "styles", "index.css"),

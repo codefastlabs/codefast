@@ -1,6 +1,8 @@
 import { pluginReact } from "@rsbuild/plugin-react";
 import { defineConfig } from "@rslib/core";
 
+const isWatchMode = process.argv.includes("--watch");
+
 export default defineConfig({
   lib: [
     {
@@ -25,7 +27,7 @@ export default defineConfig({
     },
   ],
   output: {
-    cleanDistPath: false,
+    cleanDistPath: !isWatchMode,
     target: "web",
   },
   plugins: [pluginReact()],
