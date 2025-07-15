@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
 
     // Enable persistent caching for the turbopack dev server and build.
     // turbopackPersistentCaching: true,
+
+    // Enable attribution tracking for Core Web Vitals metrics
+    webVitalsAttribution: ["CLS", "LCP"],
   },
   images: {
     loader: "custom",
