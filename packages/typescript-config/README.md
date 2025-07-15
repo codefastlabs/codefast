@@ -167,7 +167,7 @@ This section explains the meaning and purpose of each TypeScript compiler option
 - `esModuleInterop: true` - Enables interoperability between CommonJS and ES modules, making imports more intuitive
 - `module: "ESNext"` - Uses the latest ECMAScript module system for modern bundlers
 - `moduleDetection: "force"` - Forces TypeScript to treat all files as modules, preventing global scope pollution
-- `moduleResolution: "bundler"` - Uses bundler-style module resolution for modern build tools like Vite, Webpack, etc.
+- `moduleResolution: "node"` - Uses Node.js-style module resolution for better compatibility with Node.js and npm packages
 - `resolveJsonModule: true` - Allows importing JSON files as modules with type safety
 
 **Type Checking and Safety:**
@@ -227,6 +227,7 @@ This section explains the meaning and purpose of each TypeScript compiler option
 **Build Settings:**
 
 - `target: "ES2020"` - Targets ES2020 for modern React applications
+- `moduleResolution: "node"` - Uses Node.js-style module resolution for better compatibility with npm packages
 - `noEmit: false` - Allows emitting files for React builds
 - `sourceMap: true` - Enables source maps for debugging React components
 
@@ -242,6 +243,7 @@ This section explains the meaning and purpose of each TypeScript compiler option
 **Compatibility:**
 
 - `target: "ES2018"` - Targets ES2018 for broader browser compatibility in Next.js apps
+- `moduleResolution: "node"` - Uses Node.js-style module resolution for better compatibility with npm packages
 - `incremental: true` - Enables incremental compilation for faster Next.js development builds
 
 ### Configuration Inheritance
@@ -311,7 +313,7 @@ Use different configurations for development and production builds:
 
 ### Common Issues
 
-1. **Module Resolution Errors**: Ensure `moduleResolution` is set to `"bundler"` for modern tooling
+1. **Module Resolution Errors**: Ensure `moduleResolution` is set to `"node"` for better npm package compatibility
 2. **JSX Errors**: Use the appropriate preset (`react.json` or `next.json`) for JSX projects
 3. **Declaration Errors**: Check that `declaration` is enabled for library builds
 4. **Path Mapping**: Verify `baseUrl` and `paths` are correctly configured
