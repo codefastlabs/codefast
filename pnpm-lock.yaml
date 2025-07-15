@@ -56,12 +56,12 @@ importers:
 
   apps/docs:
     dependencies:
-      '@codefast/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
       '@codefast/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
+      '@codefast/image-loader':
+        specifier: workspace:*
+        version: link:../../packages/image-loader
       '@codefast/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -103,7 +103,7 @@ importers:
         version: 0.525.0(react@19.1.0)
       next:
         specifier: ^15.4.1
-        version: 15.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 15.4.1(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -135,6 +135,9 @@ importers:
         specifier: ^4.0.5
         version: 4.0.5
     devDependencies:
+      '@codefast/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       '@codefast/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -405,6 +408,46 @@ importers:
       jest-environment-jsdom:
         specifier: ^30.0.4
         version: 30.0.4
+      jiti:
+        specifier: ^2.4.2
+        version: 2.4.2
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.12.14(@swc/helpers@0.5.17))(@types/node@24.0.13)(typescript@5.8.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/image-loader:
+    dependencies:
+      next:
+        specifier: ^15.4.1
+        version: 15.4.1(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+    devDependencies:
+      '@codefast/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@codefast/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@rslib/core':
+        specifier: ^0.10.5
+        version: 0.10.5(typescript@5.8.3)
+      '@swc/core':
+        specifier: ^1.12.14
+        version: 1.12.14(@swc/helpers@0.5.17)
+      '@swc/jest':
+        specifier: ^0.2.39
+        version: 0.2.39(@swc/core@1.12.14(@swc/helpers@0.5.17))
+      '@types/jest':
+        specifier: ^30.0.0
+        version: 30.0.0
+      eslint:
+        specifier: ^9.30.1
+        version: 9.31.0(jiti@2.4.2)
+      jest:
+        specifier: ^30.0.4
+        version: 30.0.4(@types/node@24.0.13)(ts-node@10.9.2(@swc/core@1.12.14(@swc/helpers@0.5.17))(@types/node@24.0.13)(typescript@5.8.3))
       jiti:
         specifier: ^2.4.2
         version: 2.4.2
@@ -11764,7 +11807,7 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  next@15.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  next@15.4.1(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@next/env': 15.4.1
       '@swc/helpers': 0.5.15
@@ -11772,7 +11815,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(react@19.1.0)
+      styled-jsx: 5.1.6(@babel/core@7.28.0)(react@19.1.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.4.1
       '@next/swc-darwin-x64': 15.4.1
@@ -12546,10 +12589,12 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  styled-jsx@5.1.6(react@19.1.0):
+  styled-jsx@5.1.6(@babel/core@7.28.0)(react@19.1.0):
     dependencies:
       client-only: 0.0.1
       react: 19.1.0
+    optionalDependencies:
+      '@babel/core': 7.28.0
 
   supports-color@7.2.0:
     dependencies:
