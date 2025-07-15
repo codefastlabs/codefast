@@ -16,7 +16,7 @@ export class SupabaseLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
-    return SupabaseLoader.DOMAIN_PATTERN.test(domain) && source.includes('/storage/v1/');
+    return SupabaseLoader.DOMAIN_PATTERN.test(domain) && source.includes("/storage/v1/");
   }
 
   protected transformUrl(config: ImageLoaderProps): string {

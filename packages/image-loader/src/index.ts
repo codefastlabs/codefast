@@ -1,9 +1,5 @@
 // Core types and interfaces
-export type {
-  CDNProvider,
-  ImageLoader,
-  ImageLoaderFactoryConfig,
-} from "@/types";
+export type { CDNProvider, ImageLoader, ImageLoaderFactoryConfig } from "@/types";
 
 // Base classes
 export { BaseImageLoader } from "@/base-loader";
@@ -12,13 +8,7 @@ export { BaseImageLoader } from "@/base-loader";
 export { defaultImageLoaderFactory, ImageLoaderFactory } from "@/loader-factory";
 
 // Individual loaders
-export {
-  AWSCloudFrontLoader,
-  CloudinaryLoader,
-  ImgixLoader,
-  SupabaseLoader,
-  UnsplashLoader,
-} from "@/loaders";
+export { AWSCloudFrontLoader, CloudinaryLoader, ImgixLoader, SupabaseLoader, UnsplashLoader } from "@/loaders";
 
 // Utility functions
 export { createDefaultImageLoaderFactory, registerDefaultLoaders } from "@/default-loaders";
