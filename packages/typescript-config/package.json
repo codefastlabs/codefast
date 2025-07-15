@@ -8,7 +8,7 @@
     "configuration",
     "monorepo",
     "react",
-    "nextjs",
+    "next",
     "node",
     "browser",
     "library"
@@ -28,7 +28,7 @@
   "exports": {
     "./base.json": "./base.json",
     "./library.json": "./library.json",
-    "./nextjs.json": "./nextjs.json",
+    "./next.json": "./next.json",
     "./react.json": "./react.json"
   },
   "files": [

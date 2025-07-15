@@ -2,8 +2,13 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "moduleResolution": "bundler"
+    "jsxImportSource": "react",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "moduleResolution": "bundler",
+    "noEmit": false,
+    "sourceMap": true,
+    "target": "ES2020"
   },
-  "display": "React",
+  "display": "React component and application configuration",
   "extends": "./base.json"
 }
