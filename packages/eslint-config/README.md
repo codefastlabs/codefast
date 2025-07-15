@@ -7,7 +7,7 @@ Shared ESLint configuration for the CodeFast monorepo, providing comprehensive l
 - 🎯 **Multiple Presets** - Ready-to-use configurations for different project types
 - 🔧 **Modular Architecture** - Composable rules and environments for custom configurations
 - ⚡ **Modern Standards** - Latest ESLint 9.x with flat config support
-- 🚀 **Framework Support** - Specialized rules for React, Next.js, and Node.js
+- 🚀 **Framework Support** - Specialized rules for React.js, Next.js, and Node.js
 - 📝 **Multi-Language** - Support for TypeScript, JavaScript, JSON, CSS, and Markdown
 - 🧪 **Testing Ready** - Jest and testing-specific configurations
 - 🎨 **Code Quality** - Perfectionist sorting, import organization, and accessibility rules
