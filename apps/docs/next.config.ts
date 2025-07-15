@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     // Enable package import optimization for specified libraries
-    optimizePackageImports: ["@codefast/ui", "@codefast/hooks"],
+    optimizePackageImports: ["@codefast/ui", "@codefast/hooks", "@codefast/image-loader"],
 
     // Forward browser logs to the terminal for easier debugging
     browserDebugInfoInTerminal: true,
@@ -21,9 +21,27 @@ const nextConfig: NextConfig = {
     // turbopackPersistentCaching: true,
   },
   images: {
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.ts",
     remotePatterns: [
       {
         hostname: "images.unsplash.com",
+        protocol: "https",
+      },
+      {
+        hostname: "*.cloudinary.com",
+        protocol: "https",
+      },
+      {
+        hostname: "*.imgix.net",
+        protocol: "https",
+      },
+      {
+        hostname: "*.cloudfront.net",
+        protocol: "https",
+      },
+      {
+        hostname: "*.supabase.co",
         protocol: "https",
       },
     ],
