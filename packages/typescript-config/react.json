@@ -4,7 +4,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "noEmit": false,
     "sourceMap": true,
     "target": "ES2020"
