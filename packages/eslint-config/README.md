@@ -1,6 +1,6 @@
 # @codefast/eslint-config
 
-Shared ESLint configuration for the CodeFast monorepo, providing comprehensive linting rules and presets for JavaScript, TypeScript, React, Next.js, and various other technologies with modern best practices.
+Shared ESLint configuration for the CodeFast monorepo, providing comprehensive linting rules and presets for JavaScript, TypeScript, React.js, Next.js, and various other technologies with modern best practices.
 
 ## Features
 
