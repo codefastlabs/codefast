@@ -2,7 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "allowJs": true,
+    "incremental": true,
     "jsx": "preserve",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
@@ -10,8 +12,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "resolveJsonModule": true,
+    "target": "ES2018"
   },
-  "display": "Next.js",
+  "display": "Next.js application configuration",
   "extends": "./base.json"
 }

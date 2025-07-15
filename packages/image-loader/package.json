@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Flexible image loader for Next.js supporting multiple CDN providers",
   "keywords": [
-    "nextjs",
+    "next",
     "image-loader",
     "cdn",
     "image-optimization",

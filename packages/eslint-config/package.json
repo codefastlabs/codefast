@@ -10,7 +10,7 @@
     "javascript",
     "typescript",
     "react",
-    "nextjs",
+    "next",
     "monorepo"
   ],
   "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/eslint-config#readme",
