@@ -33,18 +33,7 @@ const config: Config = {
    * Uses \@swc/jest to quickly transform JavaScript/TypeScript files
    */
   transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          parser: {
-            syntax: "typescript",
-            tsx: false,
-          },
-          target: "es2021",
-        },
-      },
-    ],
+    "^.+\\.(t|j)sx?$": "@swc/jest",
   },
 
   /**

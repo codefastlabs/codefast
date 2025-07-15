@@ -11,7 +11,6 @@ export default defineConfig({
           root: "./dist/esm",
         },
       },
-      syntax: "es2021",
     },
     {
       bundle: false,
@@ -22,7 +21,6 @@ export default defineConfig({
           root: "./dist/cjs",
         },
       },
-      syntax: "es2021",
     },
   ],
   output: {
