@@ -5,8 +5,13 @@ import stylistic from "@stylistic/eslint-plugin";
 export const stylisticRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
-    plugins: { "@stylistic": stylistic },
+    plugins: {
+      "@stylistic": stylistic,
+    },
     rules: {
+      ...stylistic.configs.recommended.rules,
+
+      // Error rules
       "@stylistic/padding-line-between-statements": [
         "error",
 

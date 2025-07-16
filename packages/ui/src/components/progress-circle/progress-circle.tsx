@@ -11,7 +11,7 @@ import { useAnimatedValue } from "@codefast/hooks";
 
 /* -------------------------------------------------------------------------------------------------
  * Component: ProgressCircle
- * -----------------------------------------------------------------------------------------------*/
+ * ----------------------------------------------------------------------------------------------- */
 
 interface ProgressCircleProps
   extends Omit<ComponentProps<typeof ProgressCirclePrimitive.Provider>, "children" | "size">,
