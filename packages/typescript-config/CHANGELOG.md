@@ -1,5 +1,25 @@
 # @codefast/typescript-config
 
+## 0.3.6
+
+### Patch Changes
+
+- [`33639d4`](https://github.com/codefastlabs/codefast/commit/33639d4a8698fb45815295fec5aa53ff8d4b72eb) Thanks [@thevuong](https://github.com/thevuong)! - feat(image-loader): integrate `query-string` for streamlined URL generation
+
+- [`ec7cc53`](https://github.com/codefastlabs/codefast/commit/ec7cc53f90eb466d89ce8327e18185fbbd13420b) Thanks [@thevuong](https://github.com/thevuong)! - feat(turbo): add `lint:ci` task with build dependency
+
+- [`728caa2`](https://github.com/codefastlabs/codefast/commit/728caa2b60273623e15543b2ef0963f0cc53d99f) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update @types/node to v24.0.14 across packages
+
+- [`f9c5603`](https://github.com/codefastlabs/codefast/commit/f9c5603dbe8f318251ec6f8c2e54137122dc2cd4) Thanks [@thevuong](https://github.com/thevuong)! - feat(docs): add Chrome DevTools integration and simplify scripts
+
+- [`3c58590`](https://github.com/codefastlabs/codefast/commit/3c58590419ccc95a564c5c9eef79679c1f93f32e) Thanks [@thevuong](https://github.com/thevuong)! - chore(eslint-config): remove all custom ESLint configuration files
+
+- [`a5b2a35`](https://github.com/codefastlabs/codefast/commit/a5b2a35b1a1f69442a0144eab392ef3effcfee66) Thanks [@thevuong](https://github.com/thevuong)! - feat(docs): update web app manifest and improve Biome configuration
+
+- [`3c58590`](https://github.com/codefastlabs/codefast/commit/3c58590419ccc95a564c5c9eef79679c1f93f32e) Thanks [@thevuong](https://github.com/thevuong)! - chore(eslint): remove custom ESLint configurations and related files
+
+- [`0a6c826`](https://github.com/codefastlabs/codefast/commit/0a6c826f30d4dccb557eaeb8ba32e8ef82c164dd) Thanks [@thevuong](https://github.com/thevuong)! - feat(eslint-config): introduce shared ESLint configuration package for consistent linting rules
+
 ## 0.3.5
 
 ### Patch Changes

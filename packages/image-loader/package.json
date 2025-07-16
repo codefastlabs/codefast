@@ -1,6 +1,6 @@
 {
   "name": "@codefast/image-loader",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Flexible image loader for Next.js supporting multiple CDN providers",
   "keywords": [
     "next",
