@@ -1,4 +1,5 @@
 import type { ImageLoaderProps } from "next/image";
+import queryString, { type StringifiableRecord } from "query-string";
 
 import { BaseImageLoader } from "@/base-loader";
 
@@ -23,8 +24,6 @@ export class ImgixLoader extends BaseImageLoader {
     const { quality, src, width } = config;
 
     try {
-      const url = new URL(src);
-
       // Imgix URL parameters:
       // w = width
       // q = quality (1-100)
@@ -32,24 +31,18 @@ export class ImgixLoader extends BaseImageLoader {
       // fit = fit mode (crop, scale, etc.)
       // crop = crop mode (faces, entropy, etc.)
 
-      // Set width parameter
-      url.searchParams.set("w", String(width));
+      const params: StringifiableRecord = {
+        auto: "format,compress",
+        crop: "faces,entropy",
+        fit: "crop",
+        q: quality,
+        w: width,
+      };
 
-      // Set quality parameter
-      if (quality !== undefined) {
-        url.searchParams.set("q", String(quality));
-      }
-
-      // Enable auto format and compression
-      url.searchParams.set("auto", "format,compress");
-
-      // Use crop fit mode for consistent sizing
-      url.searchParams.set("fit", "crop");
-
-      // Use faces crop mode for better cropping of images with people
-      url.searchParams.set("crop", "faces,entropy");
-
-      return url.toString();
+      return queryString.stringifyUrl({
+        query: params,
+        url: src,
+      });
     } catch (error) {
       console.warn(`Failed to transform Imgix URL: ${src}`, error);
       return src;
