@@ -99,16 +99,10 @@ pnpm test
 
 1. Create test files with `.test.ts` or `.spec.ts` extension
 2. Place tests alongside source files in `src/` directory
-3. Import test utilities from `@jest/globals`:
-   ```typescript
-   import { describe, expect, it } from "@jest/globals";
-   ```
 
 ### Test Example
 
 ```typescript
-import { describe, expect, it } from "@jest/globals";
-
 describe("Feature Name", () => {
   it("should demonstrate basic functionality", () => {
     const result = someFunction();

@@ -40,9 +40,4 @@ export interface ImageLoaderFactoryConfig {
  * Supported CDN providers
  * These are the CDN providers that have actual loader implementations
  */
-export type CDNProvider =
-  | "aws-cloudfront"
-  | "cloudinary"
-  | "imgix"
-  | "supabase"
-  | "unsplash";
+export type CDNProvider = "aws-cloudfront" | "cloudinary" | "imgix" | "supabase" | "unsplash";
