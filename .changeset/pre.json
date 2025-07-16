@@ -9,6 +9,7 @@
     "@codefast-ui/progress-circle": "0.3.5",
     "@codefast/eslint-config": "0.3.5",
     "@codefast/hooks": "0.3.5",
+    "@codefast/image-loader": "0.3.5",
     "@codefast/typescript-config": "0.3.5",
     "@codefast/ui": "0.3.5"
   },
