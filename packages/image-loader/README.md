@@ -10,7 +10,7 @@ A flexible and extensible image loader library for Next.js applications, designe
 - 🎯 **Automatic Detection** - Automatically selects the appropriate loader based on URL patterns
 - 🛠️ **Extensible** - Easy to add custom loaders for any CDN provider
 - 📦 **TypeScript First** - Full TypeScript support with comprehensive type definitions
-- ⚡ **Performance Optimized** - Efficient URL transformation with minimal overhead
+- ⚡ **Performance Optimized** - Efficient URL transformation with built-in caching
 - 🧪 **Well Tested** - Comprehensive test coverage for reliability
 
 ## Supported CDN Providers
@@ -130,7 +130,7 @@ export function MyComponent() {
 ### Core Types
 
 ```typescript
-// Uses Next.js ImageLoaderProps directly
+// Import ImageLoaderProps from Next.js
 import type { ImageLoaderProps } from "next/image";
 
 interface ImageLoader {
@@ -155,7 +155,7 @@ The main factory class for managing image loaders:
 import { ImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = new ImageLoaderFactory({
-  defaultQuality: 75,
+  defaultQuality: 75, // Default is 75
   domainMappings: {
     "my-custom-domain.com": "cloudinary",
   },
@@ -169,10 +169,27 @@ const factory = new ImageLoaderFactory({
 - `unregisterLoader(name: string)` - Remove a loader by name
 - `getLoaders()` - Get all registered loaders
 - `findLoader(src: string)` - Find appropriate loader for URL
-- `load(config: ImageLoaderProps)` - Transform image URL
+- `load(config: ImageLoaderProps)` - Transform image URL with caching
 - `createNextImageLoader()` - Create Next.js compatible function
 - `getStats()` - Get factory statistics
-- `clear()` - Remove all loaders
+- `clear()` - Remove all loaders and clear caches
+
+### Factory Instances
+
+The package provides two ways to get a factory with default loaders:
+
+```typescript
+import {
+  defaultImageLoaderFactory,     // Pre-created singleton instance
+  createDefaultImageLoaderFactory // Function to create new instance
+} from "@codefast/image-loader";
+
+// Option 1: Use the singleton (recommended for most cases)
+const factory1 = defaultImageLoaderFactory;
+
+// Option 2: Create a new instance
+const factory2 = createDefaultImageLoaderFactory();
+```
 
 ### BaseImageLoader
 
@@ -224,15 +241,13 @@ const cloudinaryLoader = new CloudinaryLoader();
 
 ## Usage Examples
 
-### Basic Usage with Default Setup
+### Basic Usage with Singleton Factory
 
 ```typescript
-import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
+import { defaultImageLoaderFactory } from "@codefast/image-loader";
 
-const factory = createDefaultImageLoaderFactory();
-
-// Transform Unsplash URL
-const unsplashUrl = factory.load({
+// Transform Unsplash URL using singleton
+const unsplashUrl = defaultImageLoaderFactory.load({
   src: "https://images.unsplash.com/photo-1234567890",
   width: 800,
   quality: 85,
@@ -240,12 +255,27 @@ const unsplashUrl = factory.load({
 // Result: https://images.unsplash.com/photo-1234567890?w=800&q=85&fm=auto&fit=crop
 
 // Transform Cloudinary URL
-const cloudinaryUrl = factory.load({
+const cloudinaryUrl = defaultImageLoaderFactory.load({
   src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
   width: 600,
   quality: 90,
 });
 // Result: https://res.cloudinary.com/demo/image/upload/w_600,q_90,f_auto,c_fill/sample.jpg
+```
+
+### Basic Usage with Factory Function
+
+```typescript
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
+
+const factory = createDefaultImageLoaderFactory();
+
+// Same usage as above
+const result = factory.load({
+  src: "https://images.unsplash.com/photo-1234567890",
+  width: 800,
+  quality: 85,
+});
 ```
 
 ### Custom Configuration
@@ -415,6 +445,38 @@ const result = factory.load({
 });
 ```
 
+## Performance Features
+
+### Built-in Caching
+
+The library includes sophisticated caching mechanisms for optimal performance:
+
+- **Loader Cache**: Caches domain-to-loader mappings for faster lookup
+- **Transform Cache**: Caches transformed URLs to avoid repeated processing
+- **LRU-like Behavior**: Automatically clears caches when they grow too large
+
+```typescript
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
+
+const factory = createDefaultImageLoaderFactory();
+
+// First call - processes and caches
+const url1 = factory.load({ src: "https://images.unsplash.com/photo-123", width: 800 });
+
+// Second call - returns cached result
+const url2 = factory.load({ src: "https://images.unsplash.com/photo-123", width: 800 });
+
+// Clear caches if needed
+factory.clear();
+```
+
+### Performance Considerations
+
+- **Lazy Loading**: Loaders are instantiated only when needed
+- **Fast Lookup**: Domain-based loader selection is O(1) with domain mappings
+- **Memory Efficient**: Factory pattern minimizes memory usage
+- **Stateless Transformations**: URL transformations are stateless and cacheable
+
 ## Integration Patterns
 
 ### React Hook Pattern
@@ -470,6 +532,23 @@ export function useImageLoaderContext() {
 }
 ```
 
+### Using the Singleton Pattern
+
+```tsx
+import { defaultImageLoaderFactory } from "@codefast/image-loader";
+
+// Direct usage of singleton - no need for useMemo or context
+function MyComponent() {
+  const optimizedUrl = defaultImageLoaderFactory.load({
+    src: "https://images.unsplash.com/photo-123",
+    width: 400,
+    quality: 80,
+  });
+
+  return <img src={optimizedUrl} alt="Optimized" />;
+}
+```
+
 ## Error Handling
 
 The library includes built-in error handling:
@@ -521,13 +600,6 @@ describe("Image Loader Tests", () => {
   });
 });
 ```
-
-## Performance Considerations
-
-- **Lazy Loading**: Loaders are instantiated only when needed
-- **Caching**: URL transformations are stateless and can be cached
-- **Memory Efficient**: Factory pattern minimizes memory usage
-- **Fast Lookup**: Domain-based loader selection is O(1) with domain mappings
 
 ## Migration Guide
 
@@ -637,7 +709,7 @@ export class MyCDNLoader extends BaseImageLoader {
 A: Ensure your domain is added to `remotePatterns` in `next.config.ts`
 
 **Q: TypeScript errors with ImageLoaderProps**
-A: Make sure you're importing the type from `@codefast/image-loader`, not Next.js
+A: Make sure you're importing the type from `next/image`, not from this package
 
 **Q: Loader not found warnings**
 A: Check that the URL domain matches the loader's `canHandle` method or add domain mappings
