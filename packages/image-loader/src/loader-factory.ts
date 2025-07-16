@@ -3,12 +3,26 @@ import type { ImageLoaderProps } from "next/image";
 import type { ImageLoader, ImageLoaderFactoryConfig } from "@/types";
 
 /**
+ * Cache for loader selection to improve performance
+ */
+type LoaderCache = Record<string, ImageLoader | null>;
+
+/**
+ * Cache for URL transformations to avoid repeated processing
+ */
+type TransformCache = Record<string, string>;
+
+/**
  * Factory class for managing and selecting image loaders
  * Implements the Factory pattern and follows the Dependency Inversion Principle
+ * Optimized for high performance with caching and memoization
  */
 export class ImageLoaderFactory {
   private readonly loaders: ImageLoader[] = [];
   private readonly config: ImageLoaderFactoryConfig;
+  private readonly loaderCache: LoaderCache = {};
+  private readonly transformCache: TransformCache = {};
+  private readonly maxCacheSize: number = 1000;
 
   constructor(config: ImageLoaderFactoryConfig = {}) {
     this.config = {
@@ -26,6 +40,8 @@ export class ImageLoaderFactory {
       throw new Error(`Loader with name "${loader.getName()}" is already registered`);
     }
     this.loaders.push(loader);
+    // Clear cache when a new loader is registered
+    this.clearLoaderCache();
   }
 
   /**
@@ -44,6 +60,8 @@ export class ImageLoaderFactory {
     const index = this.loaders.findIndex((loader) => loader.getName() === name);
     if (index !== -1) {
       this.loaders.splice(index, 1);
+      // Clear cache when the loader is unregistered
+      this.clearLoaderCache();
       return true;
     }
     return false;
@@ -59,27 +77,47 @@ export class ImageLoaderFactory {
   /**
    * Finds the appropriate loader for a given source URL
    * Returns the first loader that can handle the URL
+   * Uses caching for improved performance on repeated lookups
    */
   public findLoader(source: string): ImageLoader | null {
-    // Check domain mappings first
     const domain = this.extractDomain(source);
-    if (this.config.domainMappings?.[domain]) {
-      const mappedLoaderName = this.config.domainMappings[domain];
-      const mappedLoader = this.loaders.find((loader) => loader.getName() === mappedLoaderName);
-      if (mappedLoader) {
-        return mappedLoader;
-      }
+
+    // Check cache first for performance
+    if (domain in this.loaderCache) {
+      return this.loaderCache[domain];
     }
 
-    // Find the first loader that can handle the URL
-    return this.loaders.find((loader) => loader.canHandle(source)) ?? null;
+    let selectedLoader: ImageLoader | null = null;
+
+    // Check domain mappings first
+    if (this.config.domainMappings?.[domain]) {
+      const mappedLoaderName = this.config.domainMappings[domain];
+      selectedLoader = this.loaders.find((loader) => loader.getName() === mappedLoaderName) ?? null;
+    }
+
+    // If no mapped loader found, find the first loader that can handle the URL
+    selectedLoader ??= this.loaders.find((loader) => loader.canHandle(source)) ?? null;
+
+    // Cache the result for future lookups
+    this.cacheLoader(domain, selectedLoader);
+
+    return selectedLoader;
   }
 
   /**
    * Loads an image using the appropriate loader
    * Main entry point for image loading
+   * Uses memoization for improved performance on repeated transformations
    */
   public load(config: ImageLoaderProps): string {
+    // Create a cache key for memoization
+    const cacheKey = this.createTransformCacheKey(config);
+
+    // Check the transform cache first
+    if (this.transformCache[cacheKey]) {
+      return this.transformCache[cacheKey];
+    }
+
     const loader = this.findLoader(config.src);
 
     if (!loader) {
@@ -88,10 +126,17 @@ export class ImageLoaderFactory {
       return config.src;
     }
 
-    return loader.load({
+    const normalizedConfig = {
       ...config,
       quality: config.quality ?? this.config.defaultQuality,
-    });
+    };
+
+    const transformedUrl = loader.load(normalizedConfig);
+
+    // Cache the result for future use
+    this.cacheTransform(cacheKey, transformedUrl);
+
+    return transformedUrl;
   }
 
   /**
@@ -125,11 +170,13 @@ export class ImageLoaderFactory {
   }
 
   /**
-   * Clears all registered loaders
+   * Clears all registered loaders and caches
    * Useful for testing or reconfiguration
    */
   public clear(): void {
     this.loaders.length = 0;
+    this.clearLoaderCache();
+    this.clearTransformCache();
   }
 
   /**
@@ -141,6 +188,56 @@ export class ImageLoaderFactory {
       return urlObject.hostname.toLowerCase();
     } catch {
       return "";
+    }
+  }
+
+  /**
+   * Caches a loader for a specific domain
+   */
+  private cacheLoader(domain: string, loader: ImageLoader | null): void {
+    // Implement LRU-like behavior by clearing the cache if it gets too large
+    if (Object.keys(this.loaderCache).length >= this.maxCacheSize) {
+      this.clearLoaderCache();
+    }
+    this.loaderCache[domain] = loader;
+  }
+
+  /**
+   * Clears the loader cache
+   */
+  private clearLoaderCache(): void {
+    for (const key of Object.keys(this.loaderCache)) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete this.loaderCache[key];
+    }
+  }
+
+  /**
+   * Creates a cache key for URL transformation
+   */
+  private createTransformCacheKey(config: ImageLoaderProps): string {
+    const quality = config.quality ?? this.config.defaultQuality ?? 75;
+    return `${config.src}|${config.width.toString()}|${quality.toString()}`;
+  }
+
+  /**
+   * Caches a transformed URL
+   */
+  private cacheTransform(key: string, transformedUrl: string): void {
+    // Implement LRU-like behavior by clearing the cache if it gets too large
+    if (Object.keys(this.transformCache).length >= this.maxCacheSize) {
+      this.clearTransformCache();
+    }
+    this.transformCache[key] = transformedUrl;
+  }
+
+  /**
+   * Clears the transform cache
+   */
+  private clearTransformCache(): void {
+    for (const key of Object.keys(this.transformCache)) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete this.transformCache[key];
     }
   }
 }
