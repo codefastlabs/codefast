@@ -9,7 +9,7 @@ import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
  * Context: ProgressCircleProvider
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 const PROGRESS_CIRCLE_PROVIDER_NAME = "ProgressCircleProvider";
 
@@ -117,7 +117,7 @@ const [ProgressCircleContextProvider, useProgressCircleContext] =
 
 /* -----------------------------------------------------------------------------
  * Component: ProgressCircleProvider
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 interface ProgressCircleProviderProps {
   /** React children to be rendered inside the progress circle */
@@ -268,7 +268,7 @@ function ProgressCircleProvider({
 
 /* -----------------------------------------------------------------------------
  * Component: ProgressCircle
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 type ProgressCircleProps = ComponentProps<"div">;
 
@@ -283,7 +283,7 @@ function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<Progres
 
 /* -----------------------------------------------------------------------------
  * Component: ProgressCircleSVG
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 const PROGRESS_CIRCLE_SVG_NAME = "ProgressCircleSVG";
 
@@ -319,7 +319,7 @@ function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<Prog
 
 /* -----------------------------------------------------------------------------
  * Component: ProgressCircleTrack
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 const PROGRESS_CIRCLE_TRACK_NAME = "ProgressCircleTrack";
 
@@ -351,7 +351,7 @@ function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<Pr
 
 /* -----------------------------------------------------------------------------
  * Component: ProgressCircleIndicator
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 const PROGRESS_CIRCLE_INDICATOR_NAME = "ProgressCircleIndicator";
 
@@ -388,7 +388,7 @@ function ProgressCircleIndicator({
 
 /* -----------------------------------------------------------------------------
  * Component: ProgressCircleValue
- * ---------------------------------------------------------------------------*/
+ * --------------------------------------------------------------------------- */
 
 const PROGRESS_CIRCLE_VALUE_NAME = "ProgressCircleValue";
 
