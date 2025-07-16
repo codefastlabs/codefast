@@ -129,9 +129,9 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   const handlePointerDown: PointerEventHandler<HTMLDivElement> = (event) => {
     const target = event.target as HTMLElement;
 
-    // Skip handling when clicking directly on input or links
-    // This prevents interference with native input/link behavior
-    if (target.tagName.toLowerCase() === "input" || target.closest("input, a")) {
+    // Skip handling when clicking directly on input, links, buttons, or other interactive elements
+    // This prevents interference with native input/link/button behavior
+    if (target.tagName.toLowerCase() === "input" || target.closest("input, a, button")) {
       event.stopPropagation();
 
       return;
