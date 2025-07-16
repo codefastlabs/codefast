@@ -38,22 +38,11 @@ export interface ImageLoaderFactoryConfig {
 
 /**
  * Supported CDN providers
+ * These are the CDN providers that have actual loader implementations
  */
 export type CDNProvider =
-  | "akamai"
   | "aws-cloudfront"
-  | "cloudflare"
   | "cloudinary"
-  | "contentful"
-  | "fastly"
-  | "gumlet"
-  | "imageengine"
-  | "imagekit"
   | "imgix"
-  | "nitrogen-aio"
-  | "pixelbin"
-  | "sanity"
-  | "sirv"
   | "supabase"
-  | "thumbor"
   | "unsplash";

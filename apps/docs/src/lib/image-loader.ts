@@ -16,11 +16,7 @@ const imageLoaderFactory = createDefaultImageLoaderFactory();
  * @returns Transformed image URL optimized for the detected CDN
  */
 export function imageLoader(params: ImageLoaderProps): string {
-  return imageLoaderFactory.load({
-    quality: params.quality,
-    src: params.src,
-    width: params.width,
-  });
+  return imageLoaderFactory.load(params);
 }
 
 // Export the factory instance as default for convenience

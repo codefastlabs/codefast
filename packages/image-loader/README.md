@@ -34,6 +34,11 @@ npm install @codefast/image-loader
 yarn add @codefast/image-loader
 ```
 
+### Dependencies
+
+This package has the following dependencies:
+- `query-string`: ^7.1.3 (for URL parameter manipulation)
+
 ### Peer Dependencies
 
 This package requires Next.js 15.4.1 or higher:
@@ -57,11 +62,7 @@ const imageLoaderFactory = createDefaultImageLoaderFactory();
 
 // Export Next.js compatible loader function
 export function imageLoader(params: ImageLoaderProps): string {
-  return imageLoaderFactory.load({
-    src: params.src,
-    width: params.width,
-    quality: params.quality,
-  });
+  return imageLoaderFactory.load(params);
 }
 
 export default imageLoader;
@@ -129,25 +130,21 @@ export function MyComponent() {
 ### Core Types
 
 ```typescript
-interface ImageLoaderProps {
-  src: string;
-  width: number;
-  quality?: number;
-}
-
-interface ImageLoaderConfig {
-  src: string;
-  width: number;
-  quality?: number;
-}
+// Uses Next.js ImageLoaderProps directly
+import type { ImageLoaderProps } from "next/image";
 
 interface ImageLoader {
-  load(config: ImageLoaderConfig): string;
-
-  canHandle(src: string): boolean;
-
+  load(config: ImageLoaderProps): string;
+  canHandle(source: string): boolean;
   getName(): string;
 }
+
+interface ImageLoaderFactoryConfig {
+  defaultQuality?: number;
+  domainMappings?: Record<string, string>;
+}
+
+type CDNProvider = "aws-cloudfront" | "cloudinary" | "imgix" | "supabase" | "unsplash";
 ```
 
 ### ImageLoaderFactory
@@ -170,11 +167,42 @@ const factory = new ImageLoaderFactory({
 - `registerLoader(loader: ImageLoader)` - Register a new loader
 - `registerLoaders(loaders: ImageLoader[])` - Register multiple loaders
 - `unregisterLoader(name: string)` - Remove a loader by name
+- `getLoaders()` - Get all registered loaders
 - `findLoader(src: string)` - Find appropriate loader for URL
-- `load(config: ImageLoaderConfig)` - Transform image URL
+- `load(config: ImageLoaderProps)` - Transform image URL
 - `createNextImageLoader()` - Create Next.js compatible function
 - `getStats()` - Get factory statistics
 - `clear()` - Remove all loaders
+
+### BaseImageLoader
+
+Abstract base class for creating custom loaders:
+
+```typescript
+import { BaseImageLoader } from "@codefast/image-loader";
+import type { ImageLoaderProps } from "next/image";
+
+class MyCustomLoader extends BaseImageLoader {
+  constructor(config?: { defaultQuality?: number }) {
+    super(config);
+  }
+
+  public getName(): string {
+    return "my-custom-loader";
+  }
+
+  public canHandle(source: string): boolean {
+    return this.extractDomain(source) === "cdn.example.com";
+  }
+
+  protected transformUrl(config: ImageLoaderProps): string {
+    // Your transformation logic here
+    const { src, width, quality } = config;
+    // Use utility methods like this.buildQueryParams() if needed
+    return src; // Return transformed URL
+  }
+}
+```
 
 ### Individual Loaders
 
@@ -241,18 +269,18 @@ factory.registerLoaders([new UnsplashLoader({ defaultQuality: 85 }), new Cloudin
 
 ```typescript
 import { BaseImageLoader } from "@codefast/image-loader";
-import type { ImageLoaderConfig } from "@codefast/image-loader";
+import type { ImageLoaderProps } from "next/image";
 
 class MyCustomLoader extends BaseImageLoader {
   public getName(): string {
     return "my-custom-cdn";
   }
 
-  public canHandle(src: string): boolean {
-    return this.extractDomain(src) === "cdn.mysite.com";
+  public canHandle(source: string): boolean {
+    return this.extractDomain(source) === "cdn.mysite.com";
   }
 
-  protected transformUrl(config: ImageLoaderConfig): string {
+  protected transformUrl(config: ImageLoaderProps): string {
     const { src, width, quality } = config;
 
     try {
@@ -579,12 +607,24 @@ export class MyCDNLoader extends BaseImageLoader {
     return MyCDNLoader.NAME;
   }
 
-  public canHandle(src: string): boolean {
-    return this.extractDomain(src) === MyCDNLoader.DOMAIN;
+  public canHandle(source: string): boolean {
+    return this.extractDomain(source) === MyCDNLoader.DOMAIN;
   }
 
-  protected transformUrl(config: ImageLoaderConfig): string {
-    // Implementation here
+  protected transformUrl(config: ImageLoaderProps): string {
+    const { src, width, quality } = config;
+
+    try {
+      const url = new URL(src);
+      url.searchParams.set("w", String(width));
+      if (quality) {
+        url.searchParams.set("q", String(quality));
+      }
+      return url.toString();
+    } catch (error) {
+      console.warn(`Failed to transform URL: ${src}`, error);
+      return src;
+    }
   }
 }
 ```

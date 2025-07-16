@@ -32,7 +32,9 @@ export class ImageLoaderFactory {
    * Registers multiple image loaders at once
    */
   public registerLoaders(loaders: ImageLoader[]): void {
-    for (const loader of loaders) this.registerLoader(loader);
+    for (const loader of loaders) {
+      this.registerLoader(loader);
+    }
   }
 
   /**
