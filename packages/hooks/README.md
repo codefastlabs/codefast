@@ -81,7 +81,7 @@ function CopyButton({ text }: { text: string }) {
 **Returns:**
 
 - `copyToClipboard: (value: string) => Promise<void>` - Function to copy text
-- `isCopied: boolean` - Whether text was recently copied
+- `isCopied: boolean` - Whether a text was recently copied
 
 ### useIsMobile
 
@@ -215,7 +215,7 @@ function Pagination({
 - `resultsPerPage: number` - Number of results per page
 - `siblingPagesCount?: number` - Number of sibling pages to show (default: 1)
 
-**Returns:** `(number | string)[]` - Array of page numbers and ellipsis indicators
+**Returns:** Array of page numbers and ellipsis indicators
 
 **Exports:**
 
