@@ -1,4 +1,5 @@
 import type { ImageLoaderProps } from "next/image";
+import queryString from "query-string";
 
 import type { ImageLoader } from "@/types";
 
@@ -91,20 +92,12 @@ export abstract class BaseImageLoader implements ImageLoader {
   }
 
   /**
-   * Utility method to build query parameters
+   * Utility method to build query parameters using query-string library
    * Helper method for URL construction
    */
   protected buildQueryParams(params: Record<string, number | string | undefined>): string {
-    const searchParams = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined) {
-        searchParams.append(key, String(value));
-      }
-    }
-
-    const queryString = searchParams.toString();
-    return queryString ? `?${queryString}` : "";
+    const queryString_ = queryString.stringify(params);
+    return queryString_ ? `?${queryString_}` : "";
   }
 
   /**

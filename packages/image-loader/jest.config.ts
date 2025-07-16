@@ -34,8 +34,9 @@ const config: Config = {
   /**
    * Specifies which files should be ignored during transformation
    * Prevents Jest from transforming files in the node_modules directory
+   * Exception: query-string needs to be transformed as it uses ES modules
    */
-  transformIgnorePatterns: ["/node_modules/"],
+  transformIgnorePatterns: ["/node_modules/(?!query-string)"],
 
   verbose: true,
 

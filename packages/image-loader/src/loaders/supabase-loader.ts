@@ -1,4 +1,5 @@
 import type { ImageLoaderProps } from "next/image";
+import queryString, { type StringifiableRecord } from "query-string";
 
 import { BaseImageLoader } from "@/base-loader";
 
@@ -23,29 +24,23 @@ export class SupabaseLoader extends BaseImageLoader {
     const { quality, src, width } = config;
 
     try {
-      const url = new URL(src);
-
       // Supabase Storage image transformation parameters:
       // width = width
       // quality = quality (1-100)
       // format = format (auto, webp, jpg, png)
       // resize = resize mode (cover, contain, fill)
 
-      // Set width parameter
-      url.searchParams.set("width", String(width));
+      const params: StringifiableRecord = {
+        format: "auto",
+        quality: quality,
+        resize: "cover",
+        width: width,
+      };
 
-      // Set quality parameter
-      if (quality !== undefined) {
-        url.searchParams.set("quality", String(quality));
-      }
-
-      // Request auto format for best optimization
-      url.searchParams.set("format", "auto");
-
-      // Use cover resize mode for consistent sizing
-      url.searchParams.set("resize", "cover");
-
-      return url.toString();
+      return queryString.stringifyUrl({
+        query: params,
+        url: src,
+      });
     } catch (error) {
       console.warn(`Failed to transform Supabase URL: ${src}`, error);
       return src;

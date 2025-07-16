@@ -1,4 +1,6 @@
 import type { ImageLoaderProps } from "next/image";
+import type { StringifiableRecord } from "query-string";
+import queryString from "query-string";
 
 import { BaseImageLoader } from "@/base-loader";
 
@@ -23,8 +25,6 @@ export class AWSCloudFrontLoader extends BaseImageLoader {
     const { quality, src, width } = config;
 
     try {
-      const url = new URL(src);
-
       // AWS CloudFront with Lambda@Edge or CloudFront Functions
       // Common query parameters for image optimization:
       // w = width
@@ -32,21 +32,17 @@ export class AWSCloudFrontLoader extends BaseImageLoader {
       // f = format
       // fit = fit mode
 
-      // Set width parameter
-      url.searchParams.set("w", String(width));
+      const params: StringifiableRecord = {
+        f: "auto",
+        fit: "cover",
+        q: quality,
+        w: width,
+      };
 
-      // Set quality parameter
-      if (quality !== undefined) {
-        url.searchParams.set("q", String(quality));
-      }
-
-      // Request auto format (if supported by the Lambda function)
-      url.searchParams.set("f", "auto");
-
-      // Use cover fit mode for consistent sizing
-      url.searchParams.set("fit", "cover");
-
-      return url.toString();
+      return queryString.stringifyUrl({
+        query: params,
+        url: src,
+      });
     } catch (error) {
       console.warn(`Failed to transform AWS CloudFront URL: ${src}`, error);
       return src;

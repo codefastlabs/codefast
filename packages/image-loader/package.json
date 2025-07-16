@@ -57,6 +57,9 @@
     "test:watch": "jest --watch",
     "type-check": "tsc --noEmit"
   },
+  "dependencies": {
+    "query-string": "^7.1.3"
+  },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",

@@ -1,4 +1,5 @@
 import type { ImageLoaderProps } from "next/image";
+import queryString, { type StringifiableRecord } from "query-string";
 
 import { BaseImageLoader } from "@/base-loader";
 
@@ -23,29 +24,23 @@ export class UnsplashLoader extends BaseImageLoader {
     const { quality, src, width } = config;
 
     try {
-      const url = new URL(src);
-
       // Unsplash URL parameters:
       // w = width
       // q = quality (1-100)
       // fm = format (auto, jpg, png, webp)
       // fit = fit mode (crop, scale, etc.)
 
-      // Set width parameter
-      url.searchParams.set("w", String(width));
+      const params: StringifiableRecord = {
+        fit: "crop",
+        fm: "auto",
+        q: quality,
+        w: width,
+      };
 
-      // Set quality parameter
-      if (quality !== undefined) {
-        url.searchParams.set("q", String(quality));
-      }
-
-      // Set format to auto for the best optimization
-      url.searchParams.set("fm", "auto");
-
-      // Use crop fit mode for consistent sizing
-      url.searchParams.set("fit", "crop");
-
-      return url.toString();
+      return queryString.stringifyUrl({
+        query: params,
+        url: src,
+      });
     } catch (error) {
       console.warn(`Failed to transform Unsplash URL: ${src}`, error);
       return src;
