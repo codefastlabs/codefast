@@ -58,12 +58,15 @@ export class ImageLoaderFactory {
    */
   public unregisterLoader(name: string): boolean {
     const index = this.loaders.findIndex((loader) => loader.getName() === name);
+
     if (index !== -1) {
       this.loaders.splice(index, 1);
       // Clear cache when the loader is unregistered
       this.clearLoaderCache();
+
       return true;
     }
+
     return false;
   }
 
@@ -92,6 +95,7 @@ export class ImageLoaderFactory {
     // Check domain mappings first
     if (this.config.domainMappings?.[domain]) {
       const mappedLoaderName = this.config.domainMappings[domain];
+
       selectedLoader = this.loaders.find((loader) => loader.getName() === mappedLoaderName) ?? null;
     }
 
@@ -123,6 +127,7 @@ export class ImageLoaderFactory {
     if (!loader) {
       // Fallback: return the original URL if no loader can handle it
       console.warn(`No loader found for URL: ${config.src}. Returning original URL.`);
+
       return config.src;
     }
 
@@ -185,6 +190,7 @@ export class ImageLoaderFactory {
   private extractDomain(url: string): string {
     try {
       const urlObject = new URL(url);
+
       return urlObject.hostname.toLowerCase();
     } catch {
       return "";
@@ -217,6 +223,7 @@ export class ImageLoaderFactory {
    */
   private createTransformCacheKey(config: ImageLoaderProps): string {
     const quality = config.quality ?? this.config.defaultQuality ?? 75;
+
     return `${config.src}|${config.width.toString()}|${quality.toString()}`;
   }
 

@@ -5,6 +5,7 @@ import { cn, Label, Radio } from "@codefast/ui";
 
 export function RadioDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();
+
   return (
     <div className={cn("grid gap-2", className)} {...props}>
       <div className="flex items-center gap-3">

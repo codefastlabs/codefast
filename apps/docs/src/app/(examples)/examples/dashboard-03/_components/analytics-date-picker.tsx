@@ -13,6 +13,7 @@ export function AnalyticsDatePicker(): JSX.Element {
     to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),
   });
   const id = useId();
+
   return (
     <Popover>
       <PopoverTrigger asChild>

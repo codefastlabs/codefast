@@ -16,6 +16,7 @@ export class CloudinaryLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
+
     return CloudinaryLoader.DOMAIN_PATTERN.test(domain);
   }
 
@@ -32,6 +33,7 @@ export class CloudinaryLoader extends BaseImageLoader {
 
       if (uploadIndex === -1) {
         console.warn(`Invalid Cloudinary URL structure: ${src}`);
+
         return src;
       }
 
@@ -57,9 +59,11 @@ export class CloudinaryLoader extends BaseImageLoader {
       ];
 
       url.pathname = newPathParts.join("/");
+
       return url.toString();
     } catch (error) {
       console.warn(`Failed to transform Cloudinary URL: ${src}`, error);
+
       return src;
     }
   }

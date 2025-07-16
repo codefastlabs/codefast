@@ -5,6 +5,7 @@ import { Checkbox, Input, Label, Textarea } from "@codefast/ui";
 
 export function LabelDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper>
       <div className="flex items-center gap-3">

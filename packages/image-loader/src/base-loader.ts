@@ -85,6 +85,7 @@ export abstract class BaseImageLoader implements ImageLoader {
   protected extractDomain(url: string): string {
     try {
       const urlObject = new URL(url);
+
       return urlObject.hostname.toLowerCase();
     } catch {
       return "";
@@ -97,6 +98,7 @@ export abstract class BaseImageLoader implements ImageLoader {
    */
   protected buildQueryParams(params: Record<string, number | string | undefined>): string {
     const queryString_ = queryString.stringify(params);
+
     return queryString_ ? `?${queryString_}` : "";
   }
 
@@ -111,6 +113,7 @@ export abstract class BaseImageLoader implements ImageLoader {
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       return `${defaultProtocol}://${url}`;
     }
+
     return url;
   }
 }

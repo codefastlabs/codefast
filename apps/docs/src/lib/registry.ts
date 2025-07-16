@@ -139,6 +139,7 @@ async function getFileContentWithHighlighting(
 
   if (fileContentCache.has(cacheKey)) {
     const cached = fileContentCache.get(cacheKey);
+
     if (cached) {
       return cached;
     }
@@ -284,6 +285,7 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
 
   if (sourceFileCache.has(cacheKey)) {
     const cached = sourceFileCache.get(cacheKey);
+
     if (cached) {
       return cached;
     }

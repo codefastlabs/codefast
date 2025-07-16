@@ -41,6 +41,7 @@ const chartConfig = {
 
 export function ChartAreaGradient(): JSX.Element {
   const id = useId();
+
   return (
     <Card>
       <CardHeader>

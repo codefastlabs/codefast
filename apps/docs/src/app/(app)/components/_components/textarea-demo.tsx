@@ -5,6 +5,7 @@ import { Label, Textarea } from "@codefast/ui";
 
 export function TextareaDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper>
       <div>

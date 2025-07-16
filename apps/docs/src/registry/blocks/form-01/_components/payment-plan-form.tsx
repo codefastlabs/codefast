@@ -36,6 +36,7 @@ const plans = [
 
 export function PaymentPlanForm(): JSX.Element {
   const id = useId();
+
   return (
     <div className="flex max-w-md flex-col gap-4">
       <Card>

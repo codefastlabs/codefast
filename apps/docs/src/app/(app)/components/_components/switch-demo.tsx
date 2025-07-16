@@ -6,6 +6,7 @@ import { Label, Switch } from "@codefast/ui";
 
 export function SwitchDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper className="*:grid *:place-items-center">
       <div>

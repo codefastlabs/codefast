@@ -44,6 +44,7 @@ const plans: readonly Plan[] = [
 
 export function CheckboxGroupDemo({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper className={cn("*:grid *:place-items-center", className)} {...props}>
       <div className="">

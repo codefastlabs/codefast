@@ -23,6 +23,8 @@ export function registerDefaultLoaders(factory: ImageLoaderFactory): void {
  */
 export function createDefaultImageLoaderFactory(): ImageLoaderFactory {
   const factory = new ImageLoaderFactory();
+
   registerDefaultLoaders(factory);
+
   return factory;
 }

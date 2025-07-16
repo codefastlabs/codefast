@@ -17,6 +17,7 @@ class GitHubRawLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
+
     return GitHubRawLoader.DOMAIN_PATTERN.test(domain);
   }
 
@@ -33,6 +34,7 @@ class GitHubRawLoader extends BaseImageLoader {
       return queryString.stringifyUrl({ query: queryParams, url: src });
     } catch (error) {
       console.warn(`Failed to transform GitHub raw URL: ${src}`, error);
+
       return src;
     }
   }

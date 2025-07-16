@@ -4,6 +4,7 @@ import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from "@
 
 export function PopoverDemo(): JSX.Element {
   const id = useId();
+
   return (
     <Popover>
       <PopoverTrigger asChild>

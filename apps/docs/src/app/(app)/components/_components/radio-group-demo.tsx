@@ -43,6 +43,7 @@ const plans: readonly Plan[] = [
 
 export function RadioGroupDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper className="*:grid *:place-items-center">
       <div>

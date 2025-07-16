@@ -7,6 +7,7 @@ import { Button, Card, CardContent, cn, Input, Label, Separator, SeparatorItem }
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
