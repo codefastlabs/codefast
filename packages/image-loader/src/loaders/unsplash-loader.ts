@@ -17,6 +17,7 @@ export class UnsplashLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
+
     return domain === UnsplashLoader.DOMAIN;
   }
 
@@ -43,6 +44,7 @@ export class UnsplashLoader extends BaseImageLoader {
       });
     } catch (error) {
       console.warn(`Failed to transform Unsplash URL: ${src}`, error);
+
       return src;
     }
   }

@@ -17,6 +17,7 @@ export class SupabaseLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
+
     return SupabaseLoader.DOMAIN_PATTERN.test(domain) && source.includes("/storage/v1/");
   }
 
@@ -43,6 +44,7 @@ export class SupabaseLoader extends BaseImageLoader {
       });
     } catch (error) {
       console.warn(`Failed to transform Supabase URL: ${src}`, error);
+
       return src;
     }
   }

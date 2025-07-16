@@ -17,6 +17,7 @@ export class ImgixLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
+
     return ImgixLoader.DOMAIN_PATTERN.test(domain);
   }
 
@@ -45,6 +46,7 @@ export class ImgixLoader extends BaseImageLoader {
       });
     } catch (error) {
       console.warn(`Failed to transform Imgix URL: ${src}`, error);
+
       return src;
     }
   }

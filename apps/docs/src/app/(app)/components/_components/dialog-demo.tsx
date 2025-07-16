@@ -34,6 +34,7 @@ export function DialogDemo(): JSX.Element {
 
 function DialogWithForm(): JSX.Element {
   const id = useId();
+
   return (
     <Dialog>
       <form>

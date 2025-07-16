@@ -29,6 +29,7 @@ describe("composeConfig", () => {
 
   it("should handle empty arrays", () => {
     const result = composeConfig([], []);
+
     expect(result).toEqual([]);
     expect(result).toHaveLength(0);
   });

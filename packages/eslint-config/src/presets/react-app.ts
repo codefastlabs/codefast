@@ -3,6 +3,7 @@ import type { Linter } from "eslint";
 import { importRules } from "@/core/import";
 import { baseJavaScriptRules } from "@/core/javascript";
 import { perfectionistRules } from "@/core/perfectionist";
+import { stylisticRules } from "@/core/stylistic";
 import { typescriptRules } from "@/core/typescript";
 import { unicornRules } from "@/core/unicorn";
 import { browserEnvironment } from "@/environments/browser";
@@ -18,6 +19,7 @@ import { tsdocRules } from "@/utils/tsdoc";
 
 const reactAppPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
+  stylisticRules,
 
   typescriptRules,
   tsdocRules,

@@ -18,6 +18,7 @@ export class AWSCloudFrontLoader extends BaseImageLoader {
 
   public canHandle(source: string): boolean {
     const domain = this.extractDomain(source);
+
     return AWSCloudFrontLoader.DOMAIN_PATTERN.test(domain);
   }
 
@@ -45,6 +46,7 @@ export class AWSCloudFrontLoader extends BaseImageLoader {
       });
     } catch (error) {
       console.warn(`Failed to transform AWS CloudFront URL: ${src}`, error);
+
       return src;
     }
   }

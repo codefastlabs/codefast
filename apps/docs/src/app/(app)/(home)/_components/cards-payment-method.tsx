@@ -23,6 +23,7 @@ import {
 
 export function CardsPaymentMethod(): JSX.Element {
   const id = useId();
+
   return (
     <Card>
       <CardHeader>

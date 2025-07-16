@@ -6,6 +6,7 @@ import { Label, SidebarInput } from "@codefast/ui";
 
 export function SearchForm({ ...props }: ComponentProps<"form">): JSX.Element {
   const id = useId();
+
   return (
     <form {...props}>
       <div className="relative">

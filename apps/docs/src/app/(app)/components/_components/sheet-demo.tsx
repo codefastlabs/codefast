@@ -22,6 +22,7 @@ const SIDES = ["top", "right", "bottom", "left"] as const;
 
 export function SheetDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper className="*:grid *:place-content-center">
       <div>

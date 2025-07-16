@@ -718,6 +718,7 @@ describe("input-number", () => {
     test("has no accessibility violations", async () => {
       const TestComponent = (): ReactNode => {
         const id = useId();
+
         return (
           <div>
             {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}

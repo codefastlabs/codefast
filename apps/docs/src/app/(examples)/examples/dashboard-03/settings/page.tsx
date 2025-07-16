@@ -124,6 +124,7 @@ const activeSessions = [
 
 export default function SettingsPage(): JSX.Element {
   const id = useId();
+
   return (
     <div className="@container/page flex flex-1 flex-col gap-8 p-6">
       <Tabs className="gap-6" defaultValue="account">

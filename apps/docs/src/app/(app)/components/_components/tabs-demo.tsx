@@ -21,6 +21,7 @@ import {
 
 export function TabsDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper className="*:grid *:place-content-center">
       <div className="">

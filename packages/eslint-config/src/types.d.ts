@@ -9,6 +9,7 @@ declare module "@next/eslint-plugin-next" {
   }
 
   const plugin: NextESLintPlugin;
+
   export default plugin;
 }
 
@@ -16,6 +17,7 @@ declare module "eslint-plugin-only-warn" {
   import type { ESLint } from "eslint";
 
   const plugin: ESLint.Plugin;
+
   export default plugin;
 }
 
@@ -23,6 +25,7 @@ declare module "eslint-config-prettier" {
   import type { Linter } from "eslint";
 
   const config: Linter.Config;
+
   export default config;
 }
 
@@ -36,6 +39,7 @@ declare module "eslint-plugin-turbo" {
   }
 
   const plugin: TurboESLintPlugin;
+
   export default plugin;
 
   export const configs: {
@@ -53,6 +57,7 @@ declare module "eslint-plugin-jsx-a11y" {
   }
 
   const plugin: JsxA11yESLintPlugin;
+
   export default plugin;
 }
 
@@ -66,5 +71,6 @@ declare module "eslint-plugin-perfectionist" {
   }
 
   const plugin: PerfectionistESLintPlugin;
+
   export default plugin;
 }

@@ -6,6 +6,7 @@ import { Button, cn, Input, Label, Separator, SeparatorItem } from "@codefast/ui
 
 export function LoginForm({ className, ...props }: ComponentProps<"form">): JSX.Element {
   const id = useId();
+
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">

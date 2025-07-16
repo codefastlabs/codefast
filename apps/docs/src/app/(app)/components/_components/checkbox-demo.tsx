@@ -6,6 +6,7 @@ import { Checkbox, Label } from "@codefast/ui";
 
 export function CheckboxDemo(): JSX.Element {
   const id = useId();
+
   return (
     <GridWrapper>
       <div className="">

@@ -6,6 +6,7 @@ import { Label, SidebarGroup, SidebarGroupContent, SidebarInput } from "@codefas
 
 export function SearchForm({ ...props }: ComponentProps<"form">): JSX.Element {
   const id = useId();
+
   return (
     <form {...props}>
       <SidebarGroup className="py-0">
