@@ -1,5 +1,5 @@
 import { ImageLoaderFactory } from "@/loader-factory";
-import { UnsplashLoader, CloudinaryLoader, ImgixLoader, AWSCloudFrontLoader, SupabaseLoader } from "@/loaders";
+import { AWSCloudFrontLoader, CloudinaryLoader, ImgixLoader, SupabaseLoader, UnsplashLoader } from "@/loaders";
 
 /**
  * Registers all default image loaders to the factory
