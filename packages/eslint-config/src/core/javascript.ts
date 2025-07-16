@@ -32,19 +32,6 @@ export const baseJavaScriptRules: Linter.Config[] = [
       "no-useless-return": "error",
       "no-var": "error",
       "object-shorthand": "error",
-      "prefer-arrow-callback": "error",
-      "prefer-const": "error",
-      "prefer-destructuring": ["error", { array: false, object: true }],
-      "prefer-exponentiation-operator": "error",
-      "prefer-numeric-literals": "error",
-      "prefer-object-spread": "error",
-      "prefer-rest-params": "error",
-      "prefer-spread": "error",
-      "prefer-template": "error",
-      radix: "error",
-      yoda: "error",
-
-      // Spacing rules
       "padding-line-between-statements": [
         "error",
 
@@ -86,6 +73,17 @@ export const baseJavaScriptRules: Linter.Config[] = [
           prev: "*",
         },
       ],
+      "prefer-arrow-callback": "error",
+      "prefer-const": "error",
+      "prefer-destructuring": ["error", { array: false, object: true }],
+      "prefer-exponentiation-operator": "error",
+      "prefer-numeric-literals": "error",
+      "prefer-object-spread": "error",
+      "prefer-rest-params": "error",
+      "prefer-spread": "error",
+      "prefer-template": "error",
+      radix: "error",
+      yoda: "error",
     },
   },
 ];
