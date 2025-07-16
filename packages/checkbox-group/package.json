@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/checkbox-group",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Accessible checkbox group component built with React and Radix UI",
   "keywords": [
     "checkbox",
