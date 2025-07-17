@@ -18,6 +18,7 @@
 ### ❌ Tree-shaking Issues Identified
 
 1. **Three-Level Barrel Export Chain**:
+
    ```
    src/index.ts (572 lines)
    ↓ imports from @/components
@@ -40,6 +41,7 @@
 ## Tree-shaking Effectiveness Test
 
 When importing `import { Button } from '@codefast/ui'`:
+
 - Bundler must process the entire 11KB index.js file
 - File contains references to all ~60+ components
 - Even with tree-shaking, the import graph is unnecessarily large
@@ -47,6 +49,7 @@ When importing `import { Button } from '@codefast/ui'`:
 ## Recommendations for Improvement
 
 ### 1. **Individual Component Exports** (Recommended)
+
 Add individual component exports to package.json:
 
 ```json
@@ -70,11 +73,13 @@ Add individual component exports to package.json:
 ```
 
 ### 2. **Remove Barrel Export Layers**
+
 - Keep individual component index.ts files
 - Remove or minimize src/components/index.ts
 - Consider making src/index.ts optional for backward compatibility
 
 ### 3. **Build Configuration Optimization**
+
 Update rslib.config.ts to generate individual entry points:
 
 ```typescript
@@ -85,60 +90,62 @@ export default defineConfig({
       bundle: false,
       dts: true,
       format: "esm",
-      output: { distPath: { root: "./dist/esm" } }
+      output: { distPath: { root: "./dist/esm" } },
     },
     // Individual component entries
     {
       bundle: false,
       dts: true,
       format: "esm",
-      output: { distPath: { root: "./dist/esm" } }
-    }
+      output: { distPath: { root: "./dist/esm" } },
+    },
   ],
   source: {
     entry: {
       index: "./src/index.ts",
       "components/button/index": "./src/components/button/index.ts",
-      "components/accordion/index": "./src/components/accordion/index.ts"
-    }
-  }
+      "components/accordion/index": "./src/components/accordion/index.ts",
+    },
+  },
 });
 ```
 
 ### 4. **Documentation Updates**
+
 Update documentation to encourage individual imports:
 
 ```typescript
 // ❌ Avoid (pulls entire barrel export)
-import { Button, Accordion } from '@codefast/ui';
+import { Button, Accordion } from "@codefast/ui";
 
 // ✅ Prefer (optimal tree-shaking)
-import { Button } from '@codefast/ui/button';
-import { Accordion } from '@codefast/ui/accordion';
+import { Button } from "@codefast/ui/button";
+import { Accordion } from "@codefast/ui/accordion";
 ```
 
 ### 5. **Automated Export Generation**
+
 Create a script to automatically generate the exports field based on available components:
 
 ```javascript
 // scripts/generate-exports.js
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const componentsDir = './src/components';
+const componentsDir = "./src/components";
 const components = fs.readdirSync(componentsDir);
 
 const exports = {
   ".": {
-    "import": "./dist/esm/index.js",
-    "require": "./dist/cjs/index.cjs"
-  }
+    import: "./dist/esm/index.js",
+    require: "./dist/cjs/index.cjs",
+  },
 };
 
-components.forEach(component => {
+components.forEach((component) => {
   exports[`./${component}`] = {
-    "import": `./dist/esm/components/${component}/index.js`,
-    "require": `./dist/cjs/components/${component}/index.cjs`
+    import: `./dist/esm/components/${component}/index.js`,
+    require: `./dist/cjs/components/${component}/index.cjs`,
   };
 });
 
@@ -148,11 +155,13 @@ components.forEach(component => {
 ## Expected Impact
 
 ### Before Optimization:
+
 - Single component import: ~11KB+ initial processing
 - Bundle includes references to all components
 - Suboptimal tree-shaking effectiveness
 
 ### After Optimization:
+
 - Single component import: ~1-5KB processing
 - Bundle includes only required component
 - Optimal tree-shaking effectiveness

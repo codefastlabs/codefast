@@ -92,9 +92,9 @@ describe("CloudinaryLoader", () => {
       expect(consoleSpy).toHaveBeenCalledWith(
         `Failed to transform Cloudinary URL: ${malformedUrl}`,
         expect.objectContaining({
-          message: 'Invalid URL',
-          name: 'TypeError'
-        })
+          message: "Invalid URL",
+          name: "TypeError",
+        }),
       );
       consoleSpy.mockRestore();
     });

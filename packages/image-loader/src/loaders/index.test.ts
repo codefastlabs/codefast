@@ -75,7 +75,9 @@ describe("loaders/index exports", () => {
       expect(awsLoader.canHandle("https://d123456.cloudfront.net/image.jpg")).toBe(true);
       expect(cloudinaryLoader.canHandle("https://res.cloudinary.com/demo/image/upload/sample.jpg")).toBe(true);
       expect(imgixLoader.canHandle("https://demo.imgix.net/sample.jpg")).toBe(true);
-      expect(supabaseLoader.canHandle("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg")).toBe(true);
+      expect(supabaseLoader.canHandle("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg")).toBe(
+        true,
+      );
       expect(unsplashLoader.canHandle("https://images.unsplash.com/photo-123")).toBe(true);
 
       // Test that loaders don't handle other CDN URLs
@@ -83,7 +85,9 @@ describe("loaders/index exports", () => {
       expect(cloudinaryLoader.canHandle("https://images.unsplash.com/photo-123")).toBe(false);
       expect(imgixLoader.canHandle("https://d123456.cloudfront.net/image.jpg")).toBe(false);
       expect(supabaseLoader.canHandle("https://demo.imgix.net/sample.jpg")).toBe(false);
-      expect(unsplashLoader.canHandle("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg")).toBe(false);
+      expect(unsplashLoader.canHandle("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg")).toBe(
+        false,
+      );
     });
 
     it("should export loaders that can transform URLs correctly", () => {
@@ -131,7 +135,7 @@ describe("loaders/index exports", () => {
         new LoadersModule.UnsplashLoader(),
       ];
 
-      const names = loaders.map(loader => loader.getName());
+      const names = loaders.map((loader) => loader.getName());
       const uniqueNames = new Set(names);
 
       expect(uniqueNames.size).toBe(loaders.length);

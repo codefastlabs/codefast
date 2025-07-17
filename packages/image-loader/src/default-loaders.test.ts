@@ -17,11 +17,11 @@ describe("default-loaders", () => {
       expect(registeredLoaders).toHaveLength(5);
 
       // Verify all expected loader types are registered
-      expect(registeredLoaders.some(loader => loader instanceof UnsplashLoader)).toBe(true);
-      expect(registeredLoaders.some(loader => loader instanceof CloudinaryLoader)).toBe(true);
-      expect(registeredLoaders.some(loader => loader instanceof ImgixLoader)).toBe(true);
-      expect(registeredLoaders.some(loader => loader instanceof AWSCloudFrontLoader)).toBe(true);
-      expect(registeredLoaders.some(loader => loader instanceof SupabaseLoader)).toBe(true);
+      expect(registeredLoaders.some((loader) => loader instanceof UnsplashLoader)).toBe(true);
+      expect(registeredLoaders.some((loader) => loader instanceof CloudinaryLoader)).toBe(true);
+      expect(registeredLoaders.some((loader) => loader instanceof ImgixLoader)).toBe(true);
+      expect(registeredLoaders.some((loader) => loader instanceof AWSCloudFrontLoader)).toBe(true);
+      expect(registeredLoaders.some((loader) => loader instanceof SupabaseLoader)).toBe(true);
     });
 
     it("should register loaders in the correct order", () => {
@@ -43,7 +43,9 @@ describe("default-loaders", () => {
     it("should work with an empty factory", () => {
       const factory = new ImageLoaderFactory();
 
-      expect(() => { registerDefaultLoaders(factory); }).not.toThrow();
+      expect(() => {
+        registerDefaultLoaders(factory);
+      }).not.toThrow();
     });
   });
 
@@ -62,7 +64,9 @@ describe("default-loaders", () => {
       expect(factory.findLoader("https://res.cloudinary.com/demo/image/upload/sample.jpg")).toBeDefined();
       expect(factory.findLoader("https://demo.imgix.net/sample.jpg")).toBeDefined();
       expect(factory.findLoader("https://d123456.cloudfront.net/sample.jpg")).toBeDefined();
-      expect(factory.findLoader("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg")).toBeDefined();
+      expect(
+        factory.findLoader("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg"),
+      ).toBeDefined();
     });
 
     it("should create independent factory instances", () => {
@@ -83,7 +87,11 @@ describe("default-loaders", () => {
       expect(unsplashUrl).toContain("w=800");
       expect(unsplashUrl).toContain("q=75");
 
-      const cloudinaryUrl = factory.load({ quality: 75, src: "https://res.cloudinary.com/demo/image/upload/sample.jpg", width: 800 });
+      const cloudinaryUrl = factory.load({
+        quality: 75,
+        src: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+        width: 800,
+      });
 
       expect(cloudinaryUrl).toContain("w_800");
       expect(cloudinaryUrl).toContain("q_75");

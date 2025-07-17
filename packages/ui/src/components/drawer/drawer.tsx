@@ -5,7 +5,7 @@ import { Drawer as DrawerPrimitive } from "vaul";
 
 import type { VariantProps } from "@/lib/utils";
 
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "@/components/button/button.variants";
 import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------

@@ -37,6 +37,7 @@ yarn add @codefast/image-loader
 ### Dependencies
 
 This package has the following dependencies:
+
 - `query-string`: ^7.1.3 (for URL parameter manipulation)
 
 ### Peer Dependencies
@@ -180,8 +181,8 @@ The package provides two ways to get a factory with default loaders:
 
 ```typescript
 import {
-  defaultImageLoaderFactory,     // Pre-created singleton instance
-  createDefaultImageLoaderFactory // Function to create new instance
+  defaultImageLoaderFactory, // Pre-created singleton instance
+  createDefaultImageLoaderFactory, // Function to create new instance
 } from "@codefast/image-loader";
 
 // Option 1: Use the singleton (recommended for most cases)

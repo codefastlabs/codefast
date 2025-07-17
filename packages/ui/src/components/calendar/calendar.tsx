@@ -6,7 +6,7 @@ import type { ComponentProps, JSX, ReactNode } from "react";
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
 import type { CustomComponents, DateRange } from "react-day-picker";
 
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "@/components/button/button.variants";
 import { cn } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------

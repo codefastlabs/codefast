@@ -132,7 +132,7 @@ function findComponentFiles(componentsDir) {
               componentName: item,
               filePath: filePath,
               relativePath: relativePath,
-              exports: exports
+              exports: exports,
             });
           }
         }
@@ -157,7 +157,7 @@ function generateMainIndexContent(componentFiles, libExports = []) {
       exportsByComponent[file.componentName] = {
         components: [],
         types: [],
-        files: []
+        files: [],
       };
     }
 
@@ -310,24 +310,24 @@ function fixInternalComponentImports(componentsDir, componentFiles) {
 
       // Parse the imported items
       const imports = importedItems
-        .split(',')
-        .map(item => item.trim())
-        .filter(item => item.length > 0);
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
 
       // Group imports by their source files
       const importsByFile = {};
 
       for (const importItem of imports) {
         // Handle "as" aliases
-        const cleanImportName = importItem.split(' as ')[0].trim();
+        const cleanImportName = importItem.split(" as ")[0].trim();
 
         // Find which file exports this item
         let targetFile = null;
 
         if (exportToFileMapping[cleanImportName]) {
           // Find the file in the same component directory
-          const candidateFiles = exportToFileMapping[cleanImportName].filter(f =>
-            f.componentName === importedComponentName
+          const candidateFiles = exportToFileMapping[cleanImportName].filter(
+            (f) => f.componentName === importedComponentName,
           );
 
           if (candidateFiles.length > 0) {
@@ -338,8 +338,8 @@ function fixInternalComponentImports(componentsDir, componentFiles) {
         // If we can't find the specific export, fall back to the main component file
         if (!targetFile) {
           const componentFiles = componentMapping[importedComponentName];
-          targetFile = componentFiles.find(f =>
-            path.basename(f.filePath, path.extname(f.filePath)) === importedComponentName
+          targetFile = componentFiles.find(
+            (f) => path.basename(f.filePath, path.extname(f.filePath)) === importedComponentName,
           );
 
           // If no exact match, take the first file (fallback)
@@ -364,10 +364,10 @@ function fixInternalComponentImports(componentsDir, componentFiles) {
         const newImportStatements = [];
 
         for (const [filePath, imports] of Object.entries(importsByFile)) {
-          newImportStatements.push(`import { ${imports.join(', ')} } from "${filePath}";`);
+          newImportStatements.push(`import { ${imports.join(", ")} } from "${filePath}";`);
         }
 
-        newContent = newContent.replace(oldImportStatement, newImportStatements.join('\n'));
+        newContent = newContent.replace(oldImportStatement, newImportStatements.join("\n"));
         hasChanges = true;
         totalFixedImports++;
       }

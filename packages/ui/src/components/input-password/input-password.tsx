@@ -6,9 +6,9 @@ import type { ComponentProps, JSX, MouseEventHandler } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 
-import { Button } from "@/components/button";
-import { inputVariants } from "@/components/input";
-import { Spinner } from "@/components/spinner";
+import { Button } from "@/components/button/button";
+import { inputVariants } from "@/components/input/input.variants";
+import { Spinner } from "@/components/spinner/spinner";
 import * as InputPrimitive from "@codefast-ui/input";
 
 /* -----------------------------------------------------------------------------

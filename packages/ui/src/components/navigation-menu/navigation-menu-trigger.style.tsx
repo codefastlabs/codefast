@@ -1,4 +1,4 @@
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "@/components/button/button.variants";
 import { tv } from "@/lib/utils";
 
 /* -----------------------------------------------------------------------------
