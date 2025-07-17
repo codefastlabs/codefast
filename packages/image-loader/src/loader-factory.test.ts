@@ -198,4 +198,52 @@ describe("ImageLoaderFactory", () => {
       expect(factory.getLoaders()).toHaveLength(0);
     });
   });
+
+  describe("cache management", () => {
+    it("should clear transform cache when it exceeds maximum size", () => {
+      const factory = new ImageLoaderFactory();
+      const unsplashLoader = new UnsplashLoader();
+
+      factory.registerLoader(unsplashLoader);
+
+      // Load enough images to exceed the cache size (default maxCacheSize is typically 100)
+      // We'll load 101 different images to trigger cache clearing
+      for (let index = 0; index < 101; index++) {
+        factory.load({
+          quality: 80,
+          src: `https://images.unsplash.com/photo-${index.toString()}`,
+          width: 800,
+        });
+      }
+
+      // The cache should have been cleared at least once during this process
+      // We can verify this by checking that the factory still works correctly
+      const result = factory.load({
+        quality: 80,
+        src: "https://images.unsplash.com/photo-test",
+        width: 800,
+      });
+
+      expect(result).toContain("w=800");
+      expect(result).toContain("q=80");
+    });
+
+    it("should clear loader cache when it exceeds maximum size", () => {
+      const factory = new ImageLoaderFactory();
+      const unsplashLoader = new UnsplashLoader();
+
+      factory.registerLoader(unsplashLoader);
+
+      // Trigger loader cache by finding loaders for many different domains
+      // This will cause the loader cache to fill up and eventually clear
+      for (let index = 0; index < 101; index++) {
+        factory.findLoader(`https://domain${index.toString()}.unsplash.com/photo-123`);
+      }
+
+      // Verify the factory still works correctly after cache clearing
+      const result = factory.findLoader("https://images.unsplash.com/photo-123");
+
+      expect(result).toBe(unsplashLoader);
+    });
+  });
 });

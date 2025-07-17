@@ -1,5 +1,41 @@
 import type { CDNProvider, ImageLoader, ImageLoaderFactoryConfig } from "@/types";
 
+const getProviderDescription = (provider: CDNProvider): string => {
+  switch (provider) {
+    case "aws-cloudfront": {
+      return "Amazon CloudFront CDN";
+    }
+
+    case "cloudinary": {
+      return "Cloudinary image optimization";
+    }
+
+    case "imgix": {
+      return "Imgix image processing";
+    }
+
+    case "supabase": {
+      return "Supabase storage";
+    }
+
+    case "unsplash": {
+      return "Unsplash photo service";
+    }
+
+    default: {
+      // This should never be reached with proper typing
+      return provider;
+    }
+  }
+};
+
+const processConfig = (config: ImageLoaderFactoryConfig): string => {
+  const quality = config.defaultQuality ?? 75;
+  const mappingCount = config.domainMappings ? Object.keys(config.domainMappings).length : 0;
+
+  return `Quality: ${quality.toString()}, Mappings: ${mappingCount.toString()}`;
+};
+
 describe("types", () => {
   describe("CDNProvider type", () => {
     it("should accept valid CDN provider values", () => {
@@ -20,10 +56,10 @@ describe("types", () => {
       const providers: CDNProvider[] = ["aws-cloudfront", "cloudinary", "imgix", "supabase", "unsplash"];
       const providerMap: Record<CDNProvider, string> = {
         "aws-cloudfront": "AWS CloudFront",
-        "cloudinary": "Cloudinary",
-        "imgix": "Imgix",
-        "supabase": "Supabase",
-        "unsplash": "Unsplash",
+        cloudinary: "Cloudinary",
+        imgix: "Imgix",
+        supabase: "Supabase",
+        unsplash: "Unsplash",
       };
 
       expect(providers).toHaveLength(5);
@@ -32,37 +68,6 @@ describe("types", () => {
     });
 
     it("should work with switch statements", () => {
-      const getProviderDescription = (provider: CDNProvider): string => {
-        switch (provider) {
-          case "aws-cloudfront": {
-            return "Amazon CloudFront CDN";
-          }
-
-          case "cloudinary": {
-            return "Cloudinary image optimization";
-          }
-
-          case "imgix": {
-            return "Imgix image processing";
-          }
-
-          case "supabase": {
-            return "Supabase storage";
-          }
-
-          case "unsplash": {
-            return "Unsplash photo service";
-          }
-
-          default: {
-            // This should never be reached with proper typing
-            const exhaustiveCheck: never = provider;
-
-            return exhaustiveCheck;
-          }
-        }
-      };
-
       expect(getProviderDescription("cloudinary")).toBe("Cloudinary image optimization");
       expect(getProviderDescription("imgix")).toBe("Imgix image processing");
     });
@@ -86,7 +91,7 @@ describe("types", () => {
         canHandle: (source) => source.includes("example.com"),
         getName: () => "example-loader",
         load: ({ quality, src, width }) => {
-          return `${src}?w=${width}&q=${quality}`;
+          return `${src}?w=${width.toString()}&q=${quality?.toString() ?? ''}`;
         },
       };
 
@@ -100,8 +105,8 @@ describe("types", () => {
 
     it("should be implementable by classes", () => {
       class TestLoader implements ImageLoader {
-        load({ quality, src, width }: { src: string; width: number; quality?: number }) {
-          return `${src}?w=${width}${quality ? `&q=${quality}` : ""}`;
+        load({ quality, src, width }: { src: string; width: number; quality?: number }): string {
+          return `${src}?w=${width.toString()}${quality ? `&q=${quality.toString()}` : ""}`;
         }
 
         canHandle(source: string): boolean {
@@ -116,7 +121,9 @@ describe("types", () => {
       const loader = new TestLoader();
 
       expect(loader.load({ src: "https://test.com/image.jpg", width: 600 })).toBe("https://test.com/image.jpg?w=600");
-      expect(loader.load({ quality: 80, src: "https://test.com/image.jpg", width: 600 })).toBe("https://test.com/image.jpg?w=600&q=80");
+      expect(loader.load({ quality: 80, src: "https://test.com/image.jpg", width: 600 })).toBe(
+        "https://test.com/image.jpg?w=600&q=80",
+      );
       expect(loader.canHandle("https://test.com/image.jpg")).toBe(true);
       expect(loader.canHandle("https://other.com/image.jpg")).toBe(false);
       expect(loader.getName()).toBe("test-loader");
@@ -136,7 +143,7 @@ describe("types", () => {
       };
 
       const loaders: ImageLoader[] = [loader1, loader2];
-      const activeLoader = loaders.find(loader => loader.canHandle("https://example.com/image.jpg"));
+      const activeLoader = loaders.find((loader) => loader.canHandle("https://example.com/image.jpg"));
 
       expect(activeLoader).toBe(loader1);
       expect(activeLoader?.getName()).toBe("loader1");
@@ -198,22 +205,19 @@ describe("types", () => {
     });
 
     it("should work in function parameters", () => {
-      const processConfig = (config: ImageLoaderFactoryConfig): string => {
-        const quality = config.defaultQuality ?? 75;
-        const mappingCount = config.domainMappings ? Object.keys(config.domainMappings).length : 0;
-
-        return `Quality: ${quality}, Mappings: ${mappingCount}`;
-      };
-
       expect(processConfig({})).toBe("Quality: 75, Mappings: 0");
       expect(processConfig({ defaultQuality: 90 })).toBe("Quality: 90, Mappings: 0");
-      expect(processConfig({
-        domainMappings: { "a.com": "b.com", "c.com": "d.com" }
-      })).toBe("Quality: 75, Mappings: 2");
-      expect(processConfig({
-        defaultQuality: 85,
-        domainMappings: { "example.com": "cdn.example.com" }
-      })).toBe("Quality: 85, Mappings: 1");
+      expect(
+        processConfig({
+          domainMappings: { "a.com": "b.com", "c.com": "d.com" },
+        }),
+      ).toBe("Quality: 75, Mappings: 2");
+      expect(
+        processConfig({
+          defaultQuality: 85,
+          domainMappings: { "example.com": "cdn.example.com" },
+        }),
+      ).toBe("Quality: 85, Mappings: 1");
     });
   });
 
@@ -221,20 +225,17 @@ describe("types", () => {
     it("should work together in realistic scenarios", () => {
       type LoaderRegistry = Record<string, ImageLoader>;
 
-      const createLoaderRegistry = (
-        providers: CDNProvider[],
-        config: ImageLoaderFactoryConfig
-      ): LoaderRegistry => {
+      const createLoaderRegistry = (providers: CDNProvider[], config: ImageLoaderFactoryConfig): LoaderRegistry => {
         const registry: LoaderRegistry = {};
 
         for (const provider of providers) {
           registry[provider] = {
-            canHandle: (source) => source.includes(provider),
-            getName: () => provider,
-            load: ({ quality, src, width }) => {
+            canHandle: (source): boolean => source.includes(provider),
+            getName: (): CDNProvider => provider,
+            load: ({ quality, src, width }): string => {
               const q = quality ?? config.defaultQuality ?? 75;
 
-              return `${src}?provider=${provider}&w=${width}&q=${q}`;
+              return `${src}?provider=${provider}&w=${width.toString()}&q=${q.toString()}`;
             },
           };
         }
@@ -248,8 +249,9 @@ describe("types", () => {
 
       expect(Object.keys(registry)).toEqual(["cloudinary", "imgix"]);
       expect(registry.cloudinary.getName()).toBe("cloudinary");
-      expect(registry.cloudinary.load({ src: "https://cloudinary.com/image.jpg", width: 800 }))
-        .toBe("https://cloudinary.com/image.jpg?provider=cloudinary&w=800&q=80");
+      expect(registry.cloudinary.load({ src: "https://cloudinary.com/image.jpg", width: 800 })).toBe(
+        "https://cloudinary.com/image.jpg?provider=cloudinary&w=800&q=80",
+      );
     });
   });
 });

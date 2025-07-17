@@ -64,6 +64,9 @@ describe("CloudinaryLoader", () => {
     });
 
     it("should return original URL for invalid Cloudinary structure", () => {
+      const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {
+        // Intentionally empty to suppress console output during tests
+      });
       const invalidUrl = "https://res.cloudinary.com/demo/invalid/sample.jpg";
       const result = loader.load({
         src: invalidUrl,
@@ -71,9 +74,14 @@ describe("CloudinaryLoader", () => {
       });
 
       expect(result).toBe(invalidUrl);
+      expect(consoleSpy).toHaveBeenCalledWith(`Invalid Cloudinary URL structure: ${invalidUrl}`);
+      consoleSpy.mockRestore();
     });
 
     it("should return original URL for malformed URLs", () => {
+      const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {
+        // Intentionally empty to suppress console output during tests
+      });
       const malformedUrl = "not-a-valid-url";
       const result = loader.load({
         src: malformedUrl,
@@ -81,6 +89,14 @@ describe("CloudinaryLoader", () => {
       });
 
       expect(result).toBe(malformedUrl);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        `Failed to transform Cloudinary URL: ${malformedUrl}`,
+        expect.objectContaining({
+          message: 'Invalid URL',
+          name: 'TypeError'
+        })
+      );
+      consoleSpy.mockRestore();
     });
 
     it("should throw error for invalid width", () => {
