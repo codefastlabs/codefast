@@ -1,3 +1,5 @@
+import queryString from "query-string";
+
 import { AWSCloudFrontLoader } from "@/loaders/aws-cloudfront-loader";
 
 describe("AWSCloudFrontLoader", () => {
@@ -114,6 +116,34 @@ describe("AWSCloudFrontLoader", () => {
           width: 800,
         });
       }).toThrow("Image source URL is required");
+    });
+
+    it("should handle queryString.stringifyUrl errors and return original URL", () => {
+      // Mock queryString.stringifyUrl to throw an error
+      const stringifyUrlSpy = jest.spyOn(queryString, 'stringifyUrl').mockImplementation(() => {
+        throw new Error("Mock queryString error");
+      });
+
+      // Spy on console.warn to verify it's called
+      const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {
+        // Intentionally empty to suppress console output during tests
+      });
+
+      const testSource = "https://d123456789.cloudfront.net/image.jpg";
+      const result = loader.load({
+        src: testSource,
+        width: 800,
+      });
+
+      expect(result).toBe(testSource);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        `Failed to transform AWS CloudFront URL: ${testSource}`,
+        expect.any(Error)
+      );
+
+      // Restore original method and clean up
+      stringifyUrlSpy.mockRestore();
+      consoleSpy.mockRestore();
     });
   });
 });
