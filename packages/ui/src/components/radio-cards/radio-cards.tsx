@@ -2,7 +2,7 @@
 
 import type { ComponentProps, JSX } from "react";
 
-import { Label } from "@/components/label";
+import { Label } from "@/components/label/label";
 import { cn } from "@/lib/utils";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 

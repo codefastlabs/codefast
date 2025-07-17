@@ -91,7 +91,7 @@ describe("types", () => {
         canHandle: (source) => source.includes("example.com"),
         getName: () => "example-loader",
         load: ({ quality, src, width }) => {
-          return `${src}?w=${width.toString()}&q=${quality?.toString() ?? ''}`;
+          return `${src}?w=${width.toString()}&q=${quality?.toString() ?? ""}`;
         },
       };
 

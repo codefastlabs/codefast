@@ -8,7 +8,7 @@ import type { ComponentProps, JSX, KeyboardEvent } from "react";
 
 import type { Scope } from "@radix-ui/react-context";
 
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button";
 import { cn } from "@/lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 

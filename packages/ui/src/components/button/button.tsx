@@ -3,7 +3,7 @@ import type { ComponentProps, JSX, ReactNode } from "react";
 import type { VariantProps } from "@/lib/utils";
 
 import { buttonVariants } from "@/components/button/button.variants";
-import { Spinner } from "@/components/spinner";
+import { Spinner } from "@/components/spinner/spinner";
 
 /* -----------------------------------------------------------------------------
  * Component: Button

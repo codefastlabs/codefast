@@ -120,7 +120,7 @@ describe("AWSCloudFrontLoader", () => {
 
     it("should handle queryString.stringifyUrl errors and return original URL", () => {
       // Mock queryString.stringifyUrl to throw an error
-      const stringifyUrlSpy = jest.spyOn(queryString, 'stringifyUrl').mockImplementation(() => {
+      const stringifyUrlSpy = jest.spyOn(queryString, "stringifyUrl").mockImplementation(() => {
         throw new Error("Mock queryString error");
       });
 
@@ -138,7 +138,7 @@ describe("AWSCloudFrontLoader", () => {
       expect(result).toBe(testSource);
       expect(consoleSpy).toHaveBeenCalledWith(
         `Failed to transform AWS CloudFront URL: ${testSource}`,
-        expect.any(Error)
+        expect.any(Error),
       );
 
       // Restore original method and clean up

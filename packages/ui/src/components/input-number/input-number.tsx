@@ -3,9 +3,9 @@ import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 
-import { buttonVariants } from "@/components/button";
-import { inputVariants } from "@/components/input";
-import { Spinner } from "@/components/spinner";
+import { buttonVariants } from "@/components/button/button.variants";
+import { inputVariants } from "@/components/input/input.variants";
+import { Spinner } from "@/components/spinner/spinner";
 import { cn } from "@/lib/utils";
 import * as InputNumberPrimitive from "@codefast-ui/input-number";
 

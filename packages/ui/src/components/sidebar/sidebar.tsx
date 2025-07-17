@@ -6,13 +6,13 @@ import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } fro
 
 import type { VariantProps } from "@/lib/utils";
 
-import { Button } from "@/components/button";
-import { Input } from "@/components/input";
-import { Separator } from "@/components/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet";
+import { Button } from "@/components/button/button";
+import { Input } from "@/components/input/input";
+import { Separator } from "@/components/separator/separator";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet/sheet";
 import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button.variants";
-import { Skeleton } from "@/components/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
+import { Skeleton } from "@/components/skeleton/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip/tooltip";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@codefast/hooks";
 import { createContext } from "@radix-ui/react-context";

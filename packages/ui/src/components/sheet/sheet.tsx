@@ -5,7 +5,7 @@ import type { ComponentProps, JSX } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 
-import { buttonVariants } from "@/components/button";
+import { buttonVariants } from "@/components/button/button.variants";
 import { sheetContentVariants } from "@/components/sheet/sheet-content.variants";
 import { cn } from "@/lib/utils";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
