@@ -1,0 +1,85 @@
+{
+  "name": "@codefast/cli",
+  "version": "0.1.0",
+  "description": "Command line interface tools for CodeFast development",
+  "keywords": [
+    "cli",
+    "command-line",
+    "tools",
+    "typescript",
+    "monorepo",
+    "development"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/cli#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/index.d.ts"
+      },
+      "require": {
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/cjs/index.d.cts"
+      }
+    }
+  },
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "bin": {
+    "codefast": "./dist/esm/cli.js"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "clean": "rm -rf dist",
+    "dev": "rslib build --watch",
+    "lint": "TIMING=1 eslint --max-warnings 0 .",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:coverage:ci": "jest --coverage --ci",
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "fast-glob": "^3.3.2",
+    "ts-morph": "^24.0.0"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@rslib/core": "^0.10.6",
+    "@swc/core": "^1.12.14",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.14",
+    "eslint": "^9.30.1",
+    "jest": "^30.0.4",
+    "jiti": "^2.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
