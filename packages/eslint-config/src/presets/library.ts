@@ -10,7 +10,6 @@ const libraryStrictRules: Linter.Config[] = [
     rules: {
       "@typescript-eslint/explicit-function-return-type": "warn",
       "@typescript-eslint/no-explicit-any": "error",
-      "no-console": "warn",
       "no-var": "error",
       "prefer-const": "error",
     },

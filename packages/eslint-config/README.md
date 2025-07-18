@@ -260,7 +260,7 @@ If you're migrating from ESLint 8.x or older configurations:
 {
   "extends": ["@codefast/eslint-config/react"],
   "rules": {
-    "no-console": "warn"
+    "no-magic-numbers": "error"
   }
 }
 ```
@@ -274,7 +274,7 @@ export default [
   ...reactAppPreset,
   {
     rules: {
-      "no-console": "warn",
+      "no-magic-numbers": "error",
     },
   },
 ];
