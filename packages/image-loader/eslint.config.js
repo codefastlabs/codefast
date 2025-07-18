@@ -1,9 +1,1 @@
-import { libraryPreset, composeConfig } from "@codefast/eslint-config";
-
-export default composeConfig(libraryPreset, [
-  {
-    rules: {
-      "no-console": "off",
-    },
-  },
-]);
+export { libraryPreset as default } from "@codefast/eslint-config";
