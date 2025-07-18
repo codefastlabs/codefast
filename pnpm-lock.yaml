@@ -17,6 +17,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.5
         version: 2.29.5
+      '@codefast/cli':
+        specifier: workspace:*
+        version: link:packages/cli
       '@commitlint/cli':
         specifier: ^19.8.1
         version: 19.8.1(@types/node@24.0.14)(typescript@5.8.3)

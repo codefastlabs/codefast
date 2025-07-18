@@ -116,3 +116,7 @@ docs/build/
 # Benchmarks output
 benchmarks/results/
 benchmarks/output/
+
+# Markdown files - exclude from Prettier formatting
+*.md
+*.mdx
