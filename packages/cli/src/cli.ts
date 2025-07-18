@@ -19,7 +19,13 @@ const { version } = packageJson;
 
 const program = new Command();
 
-program.name("codefast").description("CLI tools for CodeFast development").version(version);
+program
+  .name("codefast")
+  .description("CLI tools for CodeFast development")
+  .version(version)
+  .action(() => {
+    program.help();
+  });
 
 program
   .command("hello")
