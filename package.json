@@ -58,5 +58,10 @@
   "packageManager": "pnpm@10.13.1",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "test-exclude": "^7.0.1"
+    }
   }
 }

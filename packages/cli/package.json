@@ -63,7 +63,10 @@
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
     "fast-glob": "^3.3.2",
-    "ts-morph": "^24.0.0"
+    "inversify": "^7.6.1",
+    "reflect-metadata": "^0.2.2",
+    "ts-morph": "^24.0.0",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
