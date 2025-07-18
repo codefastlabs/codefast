@@ -28,7 +28,7 @@ You must enforce the use of the following specific technologies and versions. An
 - **Next.js**: Version 15+ (with App Router)
 - **Dependency Injection**: InversifyJS Version 7+
 - **Database ORM**: Drizzle ORM
-- **Validation**: Zod
+- **Validation**: Zod 4
 - **Queueing System**: BullMQ with Redis
 - **TypeScript Configuration**: Must have `experimentalDecorators: true` and `emitDecoratorMetadata: true` enabled. `target` must be `ES2022` or newer, and `lib` must include `"ES2022.Error"`.
 
