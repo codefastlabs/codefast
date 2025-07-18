@@ -1,23 +1,42 @@
-# http://editorconfig.org
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
 root = true
 
+# All files
 [*]
 charset = utf-8
-insert_final_newline = true
-
 end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
-max_line_length = 120
 
-trim_trailing_whitespace = true
+# JSON files - align with Prettier override (printWidth: 120)
+[*.{json,jsonc}]
+indent_size = 2
 
+# Markdown files - align with Prettier override (printWidth: 100)
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Package files
+[package.json]
+indent_size = 2
+
+# Configuration files
+[*.{js,ts,jsx,tsx}]
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Makefile
 [Makefile]
 indent_style = tab
-
-[{go.mod,go.sum,*.go}]
-indent_style = tab
-
-[*.rs]
-# Keep in sync with rustfmt
-indent_size = 4
