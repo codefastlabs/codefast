@@ -60,6 +60,7 @@ export const typescriptRules: Linter.Config[] = [
       "@typescript-eslint/consistent-type-imports": [
         "error",
         {
+          fixStyle: "separate-type-imports",
           prefer: "type-imports",
         },
       ],
