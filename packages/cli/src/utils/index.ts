@@ -1,5 +1,7 @@
 import chalk from "chalk";
-import { glob } from "fast-glob";
+import pkg from "fast-glob";
+
+const { glob } = pkg;
 
 /**
  * Logger utility with colored output
