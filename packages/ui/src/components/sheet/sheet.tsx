@@ -48,7 +48,13 @@ interface SheetContentProps
   };
 }
 
-function SheetContent({ children, className, classNames, side = "right", ...props }: SheetContentProps): JSX.Element {
+function SheetContent({
+  children,
+  className,
+  classNames,
+  side = "right",
+  ...props
+}: SheetContentProps): JSX.Element {
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
@@ -89,7 +95,10 @@ type SheetHeaderProps = ComponentProps<"div">;
 function SheetHeader({ className, ...props }: SheetHeaderProps): JSX.Element {
   return (
     <header
-      className={cn("flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left", className)}
+      className={cn(
+        "flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left",
+        className,
+      )}
       data-slot="sheet-header"
       {...props}
     />
@@ -115,7 +124,10 @@ type SheetFooterProps = ComponentProps<"div">;
 function SheetFooter({ className, ...props }: SheetFooterProps): JSX.Element {
   return (
     <footer
-      className={cn("flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end",
+        className,
+      )}
       data-slot="sheet-footer"
       {...props}
     />
@@ -163,9 +175,18 @@ interface SheetCloseProps extends ComponentProps<typeof SheetPrimitive.Close> {
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
-function SheetClose({ className, size, variant = "outline", ...props }: SheetCloseProps): JSX.Element {
+function SheetClose({
+  className,
+  size,
+  variant = "outline",
+  ...props
+}: SheetCloseProps): JSX.Element {
   return (
-    <SheetPrimitive.Close className={buttonVariants({ className, size, variant })} data-slot="sheet-close" {...props} />
+    <SheetPrimitive.Close
+      className={buttonVariants({ className, size, variant })}
+      data-slot="sheet-close"
+      {...props}
+    />
   );
 }
 

@@ -16,4 +16,8 @@ const libraryStrictRules: Linter.Config[] = [
   },
 ];
 
-export const libraryPreset: Linter.Config[] = composeConfig(basePreset, libraryStrictRules, prettierRules);
+export const libraryPreset: Linter.Config[] = composeConfig(
+  basePreset,
+  libraryStrictRules,
+  prettierRules,
+);

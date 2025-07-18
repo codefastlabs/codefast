@@ -15,7 +15,13 @@ import { cn } from "@/lib/utils";
 type DrawerProps = ComponentProps<typeof DrawerPrimitive.Root>;
 
 function Drawer({ shouldScaleBackground = true, ...props }: DrawerProps): JSX.Element {
-  return <DrawerPrimitive.Root data-slot="drawer" shouldScaleBackground={shouldScaleBackground} {...props} />;
+  return (
+    <DrawerPrimitive.Root
+      data-slot="drawer"
+      shouldScaleBackground={shouldScaleBackground}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -40,7 +46,12 @@ interface DrawerContentProps extends ComponentProps<typeof DrawerPrimitive.Conte
   };
 }
 
-function DrawerContent({ children, className, classNames, ...props }: DrawerContentProps): JSX.Element {
+function DrawerContent({
+  children,
+  className,
+  classNames,
+  ...props
+}: DrawerContentProps): JSX.Element {
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Overlay
@@ -75,7 +86,13 @@ function DrawerContent({ children, className, classNames, ...props }: DrawerCont
 type DrawerHeaderProps = ComponentProps<"div">;
 
 function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
-  return <div className={cn("flex flex-col gap-1.5 p-4", className)} data-slot="drawer-header" {...props} />;
+  return (
+    <div
+      className={cn("flex flex-col gap-1.5 p-4", className)}
+      data-slot="drawer-header"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -85,7 +102,9 @@ function DrawerHeader({ className, ...props }: DrawerHeaderProps): JSX.Element {
 type DrawerBodyProps = ComponentProps<"div">;
 
 function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
-  return <main className={cn("overflow-auto px-4 py-2", className)} data-slot="drawer-body" {...props} />;
+  return (
+    <main className={cn("overflow-auto px-4 py-2", className)} data-slot="drawer-body" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -95,7 +114,13 @@ function DrawerBody({ className, ...props }: DrawerBodyProps): JSX.Element {
 type DrawerFooterProps = ComponentProps<"div">;
 
 function DrawerFooter({ className, ...props }: DrawerFooterProps): JSX.Element {
-  return <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} data-slot="drawer-footer" {...props} />;
+  return (
+    <div
+      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+      data-slot="drawer-footer"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -139,7 +164,12 @@ interface DrawerCloseProps extends ComponentProps<typeof DrawerPrimitive.Close> 
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
-function DrawerClose({ className, size, variant = "outline", ...props }: DrawerCloseProps): JSX.Element {
+function DrawerClose({
+  className,
+  size,
+  variant = "outline",
+  ...props
+}: DrawerCloseProps): JSX.Element {
   return (
     <DrawerPrimitive.Close
       className={buttonVariants({ className, size, variant })}

@@ -60,11 +60,17 @@ function DropdownMenuRadioGroup({ ...props }: DropdownMenuRadioGroupProps): JSX.
  * Component: DropdownMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-interface DropdownMenuSubTriggerProps extends ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> {
+interface DropdownMenuSubTriggerProps
+  extends ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
-function DropdownMenuSubTrigger({ children, className, inset, ...props }: DropdownMenuSubTriggerProps): JSX.Element {
+function DropdownMenuSubTrigger({
+  children,
+  className,
+  inset,
+  ...props
+}: DropdownMenuSubTriggerProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
@@ -108,7 +114,11 @@ function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentP
 
 type DropdownMenuContentProps = ComponentProps<typeof DropdownMenuPrimitive.Content>;
 
-function DropdownMenuContent({ className, sideOffset = 4, ...props }: DropdownMenuContentProps): JSX.Element {
+function DropdownMenuContent({
+  className,
+  sideOffset = 4,
+  ...props
+}: DropdownMenuContentProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -133,7 +143,12 @@ interface DropdownMenuItemProps extends ComponentProps<typeof DropdownMenuPrimit
   variant?: "default" | "destructive";
 }
 
-function DropdownMenuItem({ className, inset, variant, ...props }: DropdownMenuItemProps): JSX.Element {
+function DropdownMenuItem({
+  className,
+  inset,
+  variant,
+  ...props
+}: DropdownMenuItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
@@ -186,7 +201,11 @@ function DropdownMenuCheckboxItem({
 
 type DropdownMenuRadioItemProps = ComponentProps<typeof DropdownMenuPrimitive.RadioItem>;
 
-function DropdownMenuRadioItem({ children, className, ...props }: DropdownMenuRadioItemProps): JSX.Element {
+function DropdownMenuRadioItem({
+  children,
+  className,
+  ...props
+}: DropdownMenuRadioItemProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
@@ -217,7 +236,10 @@ interface DropdownMenuLabelProps extends ComponentProps<typeof DropdownMenuPrimi
 function DropdownMenuLabel({ className, inset, ...props }: DropdownMenuLabelProps): JSX.Element {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn("data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold", className)}
+      className={cn(
+        "data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold",
+        className,
+      )}
       data-inset={inset}
       data-slot="dropdown-menu-label"
       {...props}
@@ -268,7 +290,11 @@ type DropdownMenuArrowProps = ComponentProps<typeof DropdownMenuPrimitive.Arrow>
 
 function DropdownMenuArrow({ className, ...props }: DropdownMenuArrowProps): JSX.Element {
   return (
-    <DropdownMenuPrimitive.Arrow className={cn("fill-popover", className)} data-slot="dropdown-menu-arrow" {...props} />
+    <DropdownMenuPrimitive.Arrow
+      className={cn("fill-popover", className)}
+      data-slot="dropdown-menu-arrow"
+      {...props}
+    />
   );
 }
 

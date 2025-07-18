@@ -112,7 +112,12 @@ function SelectScrollDownButton({ className, ...props }: SelectScrollDownButtonP
 
 type SelectContentProps = ComponentProps<typeof SelectPrimitive.Content>;
 
-function SelectContent({ children, className, position = "popper", ...props }: SelectContentProps): JSX.Element {
+function SelectContent({
+  children,
+  className,
+  position = "popper",
+  ...props
+}: SelectContentProps): JSX.Element {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -130,7 +135,8 @@ function SelectContent({ children, className, position = "popper", ...props }: S
         <SelectPrimitive.Viewport
           className={cn(
             "p-1",
-            position === "popper" && "h-(--radix-select-trigger-height) min-w-(--radix-select-trigger-width) w-full",
+            position === "popper" &&
+              "h-(--radix-select-trigger-height) min-w-(--radix-select-trigger-width) w-full",
           )}
         >
           {children}

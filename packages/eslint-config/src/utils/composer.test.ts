@@ -10,7 +10,9 @@ describe("composeConfig", () => {
       { name: "config1-rule2", rules: { "no-debugger": "error" } },
     ];
 
-    const config2: Linter.Config[] = [{ name: "config2-rule1", rules: { "prefer-const": "error" } }];
+    const config2: Linter.Config[] = [
+      { name: "config2-rule1", rules: { "prefer-const": "error" } },
+    ];
 
     const config3: Linter.Config[] = [
       { name: "config3-rule1", rules: { "no-unused-vars": "error" } },
@@ -45,7 +47,9 @@ describe("composeConfig", () => {
 
   it("should handle mixed empty and non-empty arrays", () => {
     const config1: Linter.Config[] = [];
-    const config2: Linter.Config[] = [{ name: "config2-rule1", rules: { "prefer-const": "error" } }];
+    const config2: Linter.Config[] = [
+      { name: "config2-rule1", rules: { "prefer-const": "error" } },
+    ];
     const config3: Linter.Config[] = [];
 
     const result = composeConfig(config1, config2, config3);

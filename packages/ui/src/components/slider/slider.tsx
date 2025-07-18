@@ -12,7 +12,14 @@ import * as SliderPrimitive from "@radix-ui/react-slider";
 
 type SliderProps = ComponentProps<typeof SliderPrimitive.Root>;
 
-function Slider({ className, defaultValue, max = 100, min = 0, value, ...props }: SliderProps): JSX.Element {
+function Slider({
+  className,
+  defaultValue,
+  max = 100,
+  min = 0,
+  value,
+  ...props
+}: SliderProps): JSX.Element {
   const _values = useMemo(() => {
     if (Array.isArray(value)) {
       return value;

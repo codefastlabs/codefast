@@ -150,7 +150,10 @@ describe("ImgixLoader", () => {
       });
 
       expect(result).toBe(testSource);
-      expect(consoleSpy).toHaveBeenCalledWith(`Failed to transform Imgix URL: ${testSource}`, expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        `Failed to transform Imgix URL: ${testSource}`,
+        expect.any(Error),
+      );
 
       // Restore original method and clean up
       stringifyUrlSpy.mockRestore();

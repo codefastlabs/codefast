@@ -12,7 +12,8 @@ const alertVariants = tv({
   variants: {
     variant: {
       default: "text-card-foreground",
-      destructive: "text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+      destructive:
+        "text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
     },
   },
 });

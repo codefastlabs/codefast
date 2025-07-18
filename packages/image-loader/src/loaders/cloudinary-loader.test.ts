@@ -11,8 +11,12 @@ describe("CloudinaryLoader", () => {
 
   describe("canHandle", () => {
     it("should handle *.cloudinary.com URLs", () => {
-      expect(loader.canHandle("https://res.cloudinary.com/demo/image/upload/sample.jpg")).toBe(true);
-      expect(loader.canHandle("https://my-cloud.cloudinary.com/image/upload/sample.jpg")).toBe(true);
+      expect(loader.canHandle("https://res.cloudinary.com/demo/image/upload/sample.jpg")).toBe(
+        true,
+      );
+      expect(loader.canHandle("https://my-cloud.cloudinary.com/image/upload/sample.jpg")).toBe(
+        true,
+      );
     });
 
     it("should not handle other domains", () => {

@@ -89,7 +89,12 @@ interface MenubarSubTriggerProps extends ComponentProps<typeof MenubarPrimitive.
   inset?: boolean;
 }
 
-function MenubarSubTrigger({ children, className, inset, ...props }: MenubarSubTriggerProps): JSX.Element {
+function MenubarSubTrigger({
+  children,
+  className,
+  inset,
+  ...props
+}: MenubarSubTriggerProps): JSX.Element {
   return (
     <MenubarPrimitive.SubTrigger
       className={cn(
@@ -187,7 +192,12 @@ function MenubarItem({ className, inset, variant, ...props }: MenubarItemProps):
 
 type MenubarCheckboxItemProps = ComponentProps<typeof MenubarPrimitive.CheckboxItem>;
 
-function MenubarCheckboxItem({ checked, children, className, ...props }: MenubarCheckboxItemProps): JSX.Element {
+function MenubarCheckboxItem({
+  checked,
+  children,
+  className,
+  ...props
+}: MenubarCheckboxItemProps): JSX.Element {
   return (
     <MenubarPrimitive.CheckboxItem
       checked={checked}
@@ -245,7 +255,10 @@ interface MenubarLabelProps extends ComponentProps<typeof MenubarPrimitive.Label
 function MenubarLabel({ className, inset, ...props }: MenubarLabelProps): JSX.Element {
   return (
     <MenubarPrimitive.Label
-      className={cn("data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold", className)}
+      className={cn(
+        "data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold",
+        className,
+      )}
       data-inset={inset}
       data-slot="menubar-label"
       {...props}
@@ -295,7 +308,13 @@ function MenubarShortcut({ className, ...props }: MenubarShortcutProps): JSX.Ele
 type MenubarArrowProps = ComponentProps<typeof MenubarPrimitive.Arrow>;
 
 function MenubarArrow({ className, ...props }: MenubarArrowProps): JSX.Element {
-  return <MenubarPrimitive.Arrow className={cn("fill-popover", className)} data-slot="menubar-arrow" {...props} />;
+  return (
+    <MenubarPrimitive.Arrow
+      className={cn("fill-popover", className)}
+      data-slot="menubar-arrow"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

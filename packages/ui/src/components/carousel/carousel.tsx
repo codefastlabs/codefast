@@ -43,7 +43,8 @@ type CarouselContextValue = BaseCarouselProps & {
   scrollPrev: () => void;
 };
 
-const [CarouselContextProvider, useCarouselContext] = createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
+const [CarouselContextProvider, useCarouselContext] =
+  createCarouselContext<CarouselContextValue>(CAROUSEL_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Carousel
@@ -136,7 +137,12 @@ function Carousel({
       scrollNext={scrollNext}
       scrollPrev={scrollPrevious}
     >
-      <div className={cn("relative", className)} data-slot="carousel" onKeyDownCapture={handleKeyDown} {...props}>
+      <div
+        className={cn("relative", className)}
+        data-slot="carousel"
+        onKeyDownCapture={handleKeyDown}
+        {...props}
+      >
         {children}
       </div>
     </CarouselContextProvider>
@@ -165,7 +171,11 @@ function CarouselContent({
   const { carouselRef, orientation } = useCarouselContext(CAROUSEL_CONTENT_NAME, __scopeCarousel);
 
   return (
-    <div ref={carouselRef} className={cn("overflow-hidden", classNames?.wrapper)} data-slot="carousel-content">
+    <div
+      ref={carouselRef}
+      className={cn("overflow-hidden", classNames?.wrapper)}
+      data-slot="carousel-content"
+    >
       <div
         className={cn(
           "flex",
@@ -187,13 +197,21 @@ const CAROUSEL_ITEM_NAME = "CarouselItem";
 
 type CarouselItemProps = ComponentProps<"div">;
 
-function CarouselItem({ __scopeCarousel, className, ...props }: ScopedProps<CarouselItemProps>): JSX.Element {
+function CarouselItem({
+  __scopeCarousel,
+  className,
+  ...props
+}: ScopedProps<CarouselItemProps>): JSX.Element {
   const { orientation } = useCarouselContext(CAROUSEL_ITEM_NAME, __scopeCarousel);
 
   return (
     <div
       aria-roledescription="slide"
-      className={cn("min-w-0 shrink-0 grow-0 basis-full", orientation === "horizontal" ? "pl-4" : "pt-4", className)}
+      className={cn(
+        "min-w-0 shrink-0 grow-0 basis-full",
+        orientation === "horizontal" ? "pl-4" : "pt-4",
+        className,
+      )}
       data-slot="carousel-item"
       role="group"
       {...props}
@@ -216,7 +234,10 @@ function CarouselPrevious({
   variant = "outline",
   ...props
 }: ScopedProps<CarouselPreviousProps>): JSX.Element {
-  const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(CAROUSEL_PREVIOUS_NAME, __scopeCarousel);
+  const { canScrollPrev, orientation, scrollPrev } = useCarouselContext(
+    CAROUSEL_PREVIOUS_NAME,
+    __scopeCarousel,
+  );
 
   return (
     <Button
@@ -256,7 +277,10 @@ function CarouselNext({
   variant = "outline",
   ...props
 }: ScopedProps<CarouselNextProps>): JSX.Element {
-  const { canScrollNext, orientation, scrollNext } = useCarouselContext(CAROUSEL_NEXT_NAME, __scopeCarousel);
+  const { canScrollNext, orientation, scrollNext } = useCarouselContext(
+    CAROUSEL_NEXT_NAME,
+    __scopeCarousel,
+  );
 
   return (
     <Button
@@ -293,4 +317,11 @@ export type {
   CarouselPreviousProps,
   CarouselProps,
 };
-export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, createCarouselScope };
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  createCarouselScope,
+};

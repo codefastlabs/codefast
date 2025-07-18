@@ -104,7 +104,10 @@ function ProgressCircle({
     [strokeWidth, thickness, actualSize],
   );
 
-  const slots = useMemo(() => progressCircleVariants({ size, thickness, variant }), [variant, size, thickness]);
+  const slots = useMemo(
+    () => progressCircleVariants({ size, thickness, variant }),
+    [variant, size, thickness],
+  );
 
   const shouldShowLabel = showValue || Boolean(customLabel);
 
@@ -117,10 +120,19 @@ function ProgressCircle({
   }, [customLabel, displayValue]);
 
   return (
-    <ProgressCirclePrimitive.Provider size={actualSize} strokeWidth={actualThickness} value={value} {...props}>
-      <ProgressCirclePrimitive.Root className={slots.root({ className: [className, classNames?.root] })}>
+    <ProgressCirclePrimitive.Provider
+      size={actualSize}
+      strokeWidth={actualThickness}
+      value={value}
+      {...props}
+    >
+      <ProgressCirclePrimitive.Root
+        className={slots.root({ className: [className, classNames?.root] })}
+      >
         <ProgressCirclePrimitive.SVG className={slots.svg({ className: classNames?.svg })}>
-          <ProgressCirclePrimitive.Track className={slots.track({ className: classNames?.track })} />
+          <ProgressCirclePrimitive.Track
+            className={slots.track({ className: classNames?.track })}
+          />
           <ProgressCirclePrimitive.Indicator
             className={slots.indicator({ className: classNames?.indicator })}
             style={
@@ -165,7 +177,10 @@ const getActualSize = (size?: VariantProps<typeof progressCircleVariants>["size"
 /**
  * Calculates stroke width based on thickness variant and circle size
  */
-const getStrokeWidth = (thickness: VariantProps<typeof progressCircleVariants>["thickness"], size: number): number => {
+const getStrokeWidth = (
+  thickness: VariantProps<typeof progressCircleVariants>["thickness"],
+  size: number,
+): number => {
   const thicknessMap: Record<NonNullable<typeof thickness>, number> = {
     regular: Math.max(3, size * 0.05),
     thick: Math.max(4, size * 0.075),

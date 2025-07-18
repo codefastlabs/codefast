@@ -110,7 +110,10 @@ describe("UnsplashLoader", () => {
       });
 
       expect(result).toBe(testSource);
-      expect(consoleSpy).toHaveBeenCalledWith(`Failed to transform Unsplash URL: ${testSource}`, expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        `Failed to transform Unsplash URL: ${testSource}`,
+        expect.any(Error),
+      );
 
       // Restore original method and clean up
       stringifyUrlSpy.mockRestore();

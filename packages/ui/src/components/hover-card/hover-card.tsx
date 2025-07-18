@@ -60,7 +60,13 @@ function HoverCardContent({
 type HoverCardArrowProps = ComponentProps<typeof HoverCardPrimitive.Arrow>;
 
 function HoverCardArrow({ className, ...props }: HoverCardArrowProps): JSX.Element {
-  return <HoverCardPrimitive.Arrow className={cn("fill-popover", className)} data-slot="hover-card-arrow" {...props} />;
+  return (
+    <HoverCardPrimitive.Arrow
+      className={cn("fill-popover", className)}
+      data-slot="hover-card-arrow"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

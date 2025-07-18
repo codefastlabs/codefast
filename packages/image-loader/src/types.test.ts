@@ -53,7 +53,13 @@ describe("types", () => {
     });
 
     it("should be usable in arrays and objects", () => {
-      const providers: CDNProvider[] = ["aws-cloudfront", "cloudinary", "imgix", "supabase", "unsplash"];
+      const providers: CDNProvider[] = [
+        "aws-cloudfront",
+        "cloudinary",
+        "imgix",
+        "supabase",
+        "unsplash",
+      ];
       const providerMap: Record<CDNProvider, string> = {
         "aws-cloudfront": "AWS CloudFront",
         cloudinary: "Cloudinary",
@@ -95,7 +101,11 @@ describe("types", () => {
         },
       };
 
-      const result = mockLoader.load({ quality: 75, src: "https://example.com/image.jpg", width: 800 });
+      const result = mockLoader.load({
+        quality: 75,
+        src: "https://example.com/image.jpg",
+        width: 800,
+      });
 
       expect(result).toBe("https://example.com/image.jpg?w=800&q=75");
       expect(mockLoader.canHandle("https://example.com/test.jpg")).toBe(true);
@@ -120,7 +130,9 @@ describe("types", () => {
 
       const loader = new TestLoader();
 
-      expect(loader.load({ src: "https://test.com/image.jpg", width: 600 })).toBe("https://test.com/image.jpg?w=600");
+      expect(loader.load({ src: "https://test.com/image.jpg", width: 600 })).toBe(
+        "https://test.com/image.jpg?w=600",
+      );
       expect(loader.load({ quality: 80, src: "https://test.com/image.jpg", width: 600 })).toBe(
         "https://test.com/image.jpg?w=600&q=80",
       );
@@ -143,7 +155,9 @@ describe("types", () => {
       };
 
       const loaders: ImageLoader[] = [loader1, loader2];
-      const activeLoader = loaders.find((loader) => loader.canHandle("https://example.com/image.jpg"));
+      const activeLoader = loaders.find((loader) =>
+        loader.canHandle("https://example.com/image.jpg"),
+      );
 
       expect(activeLoader).toBe(loader1);
       expect(activeLoader?.getName()).toBe("loader1");
@@ -225,7 +239,10 @@ describe("types", () => {
     it("should work together in realistic scenarios", () => {
       type LoaderRegistry = Record<string, ImageLoader>;
 
-      const createLoaderRegistry = (providers: CDNProvider[], config: ImageLoaderFactoryConfig): LoaderRegistry => {
+      const createLoaderRegistry = (
+        providers: CDNProvider[],
+        config: ImageLoaderFactoryConfig,
+      ): LoaderRegistry => {
         const registry: LoaderRegistry = {};
 
         for (const provider of providers) {
@@ -249,9 +266,9 @@ describe("types", () => {
 
       expect(Object.keys(registry)).toEqual(["cloudinary", "imgix"]);
       expect(registry.cloudinary.getName()).toBe("cloudinary");
-      expect(registry.cloudinary.load({ src: "https://cloudinary.com/image.jpg", width: 800 })).toBe(
-        "https://cloudinary.com/image.jpg?provider=cloudinary&w=800&q=80",
-      );
+      expect(
+        registry.cloudinary.load({ src: "https://cloudinary.com/image.jpg", width: 800 }),
+      ).toBe("https://cloudinary.com/image.jpg?provider=cloudinary&w=800&q=80");
     });
   });
 });

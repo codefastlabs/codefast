@@ -9,7 +9,9 @@ import { Spinner } from "@/components/spinner/spinner";
  * Component: Button
  * -------------------------------------------------------------------------- */
 
-interface ButtonProps extends Omit<ComponentProps<"button">, "prefix">, VariantProps<typeof buttonVariants> {
+interface ButtonProps
+  extends Omit<ComponentProps<"button">, "prefix">,
+    VariantProps<typeof buttonVariants> {
   loaderPosition?: "prefix" | "suffix";
   loading?: boolean;
   prefix?: ReactNode;

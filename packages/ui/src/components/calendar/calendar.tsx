@@ -1,7 +1,13 @@
 "use client";
 
 import { format } from "date-fns";
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, DotIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  DotIcon,
+} from "lucide-react";
 import type { ComponentProps, JSX, ReactNode } from "react";
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
 import type { CustomComponents, DateRange } from "react-day-picker";
@@ -13,7 +19,11 @@ import { cn } from "@/lib/utils";
  * Component: Chevron
  * -------------------------------------------------------------------------- */
 
-function Chevron({ className, orientation, ...props }: ComponentProps<CustomComponents["Chevron"]>): JSX.Element {
+function Chevron({
+  className,
+  orientation,
+  ...props
+}: ComponentProps<CustomComponents["Chevron"]>): JSX.Element {
   switch (orientation) {
     case "up": {
       return <ChevronUpIcon className={cn("size-4", className)} {...props} />;
@@ -53,7 +63,10 @@ function Calendar({ classNames, showOutsideDays = true, ...props }: CalendarProp
   return (
     <DayPicker
       classNames={{
-        [UI.CaptionLabel]: cn("flex items-center gap-2 [&>svg]:opacity-50", classNames?.[UI.CaptionLabel]),
+        [UI.CaptionLabel]: cn(
+          "flex items-center gap-2 [&>svg]:opacity-50",
+          classNames?.[UI.CaptionLabel],
+        ),
         [UI.Chevron]: cn(classNames?.[UI.Chevron]),
         [UI.Day]: cn(
           "grid place-items-center text-center text-sm",
@@ -86,7 +99,10 @@ function Calendar({ classNames, showOutsideDays = true, ...props }: CalendarProp
         }),
         [UI.Root]: cn("p-3", classNames?.[UI.Root]),
         [UI.Week]: cn("mt-2 flex justify-between", classNames?.[UI.Week]),
-        [UI.Weekday]: cn("text-muted-foreground min-w-8.5 text-xs font-medium", classNames?.[UI.Weekday]),
+        [UI.Weekday]: cn(
+          "text-muted-foreground min-w-8.5 text-xs font-medium",
+          classNames?.[UI.Weekday],
+        ),
         [UI.Weekdays]: cn("flex w-full justify-between", classNames?.[UI.Weekdays]),
         [UI.WeekNumber]: cn(
           "text-muted-foreground min-w-8.5 grid h-8 place-items-center text-xs font-normal [&+*]:rounded-l-lg",

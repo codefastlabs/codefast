@@ -8,7 +8,13 @@ export { BaseImageLoader } from "@/base-loader";
 export { defaultImageLoaderFactory, ImageLoaderFactory } from "@/loader-factory";
 
 // Individual loaders
-export { AWSCloudFrontLoader, CloudinaryLoader, ImgixLoader, SupabaseLoader, UnsplashLoader } from "@/loaders";
+export {
+  AWSCloudFrontLoader,
+  CloudinaryLoader,
+  ImgixLoader,
+  SupabaseLoader,
+  UnsplashLoader,
+} from "@/loaders";
 
 // Utility functions
 export { createDefaultImageLoaderFactory, registerDefaultLoaders } from "@/default-loaders";

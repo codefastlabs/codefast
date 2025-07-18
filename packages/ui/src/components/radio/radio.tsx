@@ -22,7 +22,9 @@ function Radio({ className, onChange, onValueChange, ...props }: RadioProps): JS
       )}
       data-slot="radio"
       type="radio"
-      onChange={composeEventHandlers(onChange, (event) => onValueChange?.(event.currentTarget.value))}
+      onChange={composeEventHandlers(onChange, (event) =>
+        onValueChange?.(event.currentTarget.value),
+      )}
       {...props}
     />
   );

@@ -26,9 +26,12 @@ describe("cn utility function", () => {
   });
 
   test("should handle complex inputs", () => {
-    expect(cn("fixed inset-0", { "bg-black/50": true, hidden: false }, ["flex", { "items-center": true }])).toBe(
-      "fixed inset-0 bg-black/50 flex items-center",
-    );
+    expect(
+      cn("fixed inset-0", { "bg-black/50": true, hidden: false }, [
+        "flex",
+        { "items-center": true },
+      ]),
+    ).toBe("fixed inset-0 bg-black/50 flex items-center");
   });
 
   test("should return empty string when no valid inputs", () => {

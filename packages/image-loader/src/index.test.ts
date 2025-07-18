@@ -52,7 +52,9 @@ describe("index exports", () => {
 
     it("should export defaultImageLoaderFactory", () => {
       expect(ImageLoaderModule.defaultImageLoaderFactory).toBeDefined();
-      expect(ImageLoaderModule.defaultImageLoaderFactory).toBeInstanceOf(ImageLoaderModule.ImageLoaderFactory);
+      expect(ImageLoaderModule.defaultImageLoaderFactory).toBeInstanceOf(
+        ImageLoaderModule.ImageLoaderFactory,
+      );
     });
   });
 

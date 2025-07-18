@@ -1,5 +1,12 @@
 import { useRef } from "react";
-import type { ComponentProps, JSX, PointerEventHandler, PropsWithChildren, ReactNode, RefObject } from "react";
+import type {
+  ComponentProps,
+  JSX,
+  PointerEventHandler,
+  PropsWithChildren,
+  ReactNode,
+  RefObject,
+} from "react";
 
 import type { Scope } from "@radix-ui/react-context";
 
@@ -170,7 +177,12 @@ function Input(inputProps: ScopedProps<InputProps>): JSX.Element {
   };
 
   return (
-    <InputContextProvider disabled={disabled} inputRef={inputRef} readOnly={readOnly} scope={__scopeInput}>
+    <InputContextProvider
+      disabled={disabled}
+      inputRef={inputRef}
+      readOnly={readOnly}
+      scope={__scopeInput}
+    >
       <div
         data-disabled={disabled}
         data-readonly={readOnly}
@@ -208,7 +220,9 @@ function InputField({ __scopeInput, ...props }: ScopedProps<InputFieldProps>): J
    */
   const composedInputRef = useComposedRefs(inputRef);
 
-  return <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />;
+  return (
+    <input ref={composedInputRef} disabled={disabled} readOnly={readOnly} type="text" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------

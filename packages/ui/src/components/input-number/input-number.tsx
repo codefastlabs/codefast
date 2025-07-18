@@ -81,7 +81,8 @@ function InputNumber({
         <InputNumberPrimitive.IncrementButton
           aria-label="Increment"
           className={buttonVariants({
-            className: "text-muted-foreground h-auto rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]",
+            className:
+              "text-muted-foreground h-auto rounded-none rounded-tr-[calc(var(--radius-lg)-1px)]",
             variant: "ghost",
           })}
           data-slot="input-number-increment-button"
@@ -91,7 +92,8 @@ function InputNumber({
         <InputNumberPrimitive.DecrementButton
           aria-label="Decrement"
           className={buttonVariants({
-            className: "text-muted-foreground h-auto rounded-none rounded-br-[calc(var(--radius-lg)-1px)]",
+            className:
+              "text-muted-foreground h-auto rounded-none rounded-br-[calc(var(--radius-lg)-1px)]",
             variant: "ghost",
           })}
           data-slot="input-number-decrement-button"

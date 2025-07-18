@@ -18,7 +18,11 @@ import { useEffect, useRef, useState } from "react";
  * return <div>{animatedValue}%</div>;
  * ```
  */
-export function useAnimatedValue(targetValue: null | number, duration: number, animate?: boolean): number {
+export function useAnimatedValue(
+  targetValue: null | number,
+  duration: number,
+  animate?: boolean,
+): number {
   // Use the default value of 0 when targetValue is null
   const actualTargetValue = targetValue ?? 0;
 

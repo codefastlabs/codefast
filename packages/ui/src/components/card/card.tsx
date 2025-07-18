@@ -61,7 +61,13 @@ function CardTitle({ children, className, ...props }: CardTitleProps): JSX.Eleme
 type CardDescriptionProps = ComponentProps<"div">;
 
 function CardDescription({ className, ...props }: CardDescriptionProps): JSX.Element {
-  return <div className={cn("text-muted-foreground text-sm", className)} data-slot="card-description" {...props} />;
+  return (
+    <div
+      className={cn("text-muted-foreground text-sm", className)}
+      data-slot="card-description"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -82,7 +88,11 @@ type CardFooterProps = ComponentProps<"div">;
 
 function CardFooter({ className, ...props }: CardFooterProps): JSX.Element {
   return (
-    <div className={cn("[.border-t]:pt-6 flex items-center px-6", className)} data-slot="card-footer" {...props} />
+    <div
+      className={cn("[.border-t]:pt-6 flex items-center px-6", className)}
+      data-slot="card-footer"
+      {...props}
+    />
   );
 }
 

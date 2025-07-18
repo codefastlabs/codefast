@@ -38,7 +38,8 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const [FormFieldContextProvider, useFormFieldContext] = createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
+const [FormFieldContextProvider, useFormFieldContext] =
+  createFormFieldContext<FormFieldContextValue>(FORM_FIELD_NAME);
 
 function useFormItem(
   consumerName: string,
@@ -103,7 +104,8 @@ interface FormItemContextValue {
   id: string;
 }
 
-const [FormItemContextProvider, useFormItemContext] = createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
+const [FormItemContextProvider, useFormItemContext] =
+  createFormFieldContext<FormItemContextValue>(FORM_ITEM_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: FormItem
@@ -111,7 +113,11 @@ const [FormItemContextProvider, useFormItemContext] = createFormFieldContext<For
 
 type FormItemProps = ComponentProps<"div">;
 
-function FormItem({ __scopeFormField, className, ...props }: ScopedProps<FormItemProps>): JSX.Element {
+function FormItem({
+  __scopeFormField,
+  className,
+  ...props
+}: ScopedProps<FormItemProps>): JSX.Element {
   const id = useId();
 
   return (
@@ -132,7 +138,14 @@ type FormLabelProps = ComponentProps<typeof LabelPrimitive.Root>;
 function FormLabel({ __scopeFormField, ...props }: ScopedProps<FormLabelProps>): JSX.Element {
   const { error, formItemId } = useFormItem(FORM_LABEL_NAME, __scopeFormField);
 
-  return <Label data-invalid={error ? true : undefined} data-slot="form-label" htmlFor={formItemId} {...props} />;
+  return (
+    <Label
+      data-invalid={error ? true : undefined}
+      data-slot="form-label"
+      htmlFor={formItemId}
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -144,7 +157,10 @@ const FORM_CONTROL_NAME = "FormControl";
 type FormControlProps = ComponentProps<typeof Slot>;
 
 function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProps>): JSX.Element {
-  const { error, formDescriptionId, formItemId, formMessageId } = useFormItem(FORM_CONTROL_NAME, __scopeFormField);
+  const { error, formDescriptionId, formItemId, formMessageId } = useFormItem(
+    FORM_CONTROL_NAME,
+    __scopeFormField,
+  );
 
   return (
     <Slot
@@ -163,7 +179,11 @@ function FormControl({ __scopeFormField, ...props }: ScopedProps<FormControlProp
 
 type FormDescriptionProps = ComponentProps<"p">;
 
-function FormDescription({ __scopeFormField, className, ...props }: ScopedProps<FormDescriptionProps>): JSX.Element {
+function FormDescription({
+  __scopeFormField,
+  className,
+  ...props
+}: ScopedProps<FormDescriptionProps>): JSX.Element {
   const { formDescriptionId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
 
   return (
@@ -184,7 +204,12 @@ const FORM_MESSAGE_NAME = "FormMessage";
 
 type FormMessageProps = ComponentProps<"p">;
 
-function FormMessage({ __scopeFormField, children, className, ...props }: ScopedProps<FormMessageProps>): ReactNode {
+function FormMessage({
+  __scopeFormField,
+  children,
+  className,
+  ...props
+}: ScopedProps<FormMessageProps>): ReactNode {
   const { error, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
   const body = error?.message ? String(error.message) : children;
 
@@ -194,7 +219,11 @@ function FormMessage({ __scopeFormField, children, className, ...props }: Scoped
 
   return (
     <p
-      className={cn("text-xs", error?.message ? "text-destructive font-medium" : "text-muted-foreground", className)}
+      className={cn(
+        "text-xs",
+        error?.message ? "text-destructive font-medium" : "text-muted-foreground",
+        className,
+      )}
       data-slot="form-message"
       id={formMessageId}
       {...props}
@@ -217,4 +246,13 @@ export type {
   FormMessageProps,
   FormProps,
 };
-export { createFormFieldScope, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage };
+export {
+  createFormFieldScope,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+};
