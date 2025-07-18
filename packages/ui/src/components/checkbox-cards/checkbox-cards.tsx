@@ -23,7 +23,12 @@ interface CheckboxCardsItemProps extends ComponentProps<typeof CheckboxGroupPrim
   checkboxClassName?: string;
 }
 
-function CheckboxCardsItem({ checkboxClassName, children, className, ...props }: CheckboxCardsItemProps): JSX.Element {
+function CheckboxCardsItem({
+  checkboxClassName,
+  children,
+  className,
+  ...props
+}: CheckboxCardsItemProps): JSX.Element {
   return (
     <Label
       className={cn(

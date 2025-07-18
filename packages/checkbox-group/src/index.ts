@@ -9,4 +9,8 @@ export {
   Item,
   Root,
 } from "@/checkbox-group";
-export type { CheckboxGroupIndicatorProps, CheckboxGroupItemProps, CheckboxGroupProps } from "@/checkbox-group";
+export type {
+  CheckboxGroupIndicatorProps,
+  CheckboxGroupItemProps,
+  CheckboxGroupProps,
+} from "@/checkbox-group";

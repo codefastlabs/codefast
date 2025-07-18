@@ -60,11 +60,17 @@ function ContextMenuRadioGroup({ ...props }: ContextMenuRadioGroupProps): JSX.El
  * Component: ContextMenuSubTrigger
  * -------------------------------------------------------------------------- */
 
-interface ContextMenuSubTriggerProps extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
+interface ContextMenuSubTriggerProps
+  extends ComponentProps<typeof ContextMenuPrimitive.SubTrigger> {
   inset?: boolean;
 }
 
-function ContextMenuSubTrigger({ children, className, inset, ...props }: ContextMenuSubTriggerProps): JSX.Element {
+function ContextMenuSubTrigger({
+  children,
+  className,
+  inset,
+  ...props
+}: ContextMenuSubTriggerProps): JSX.Element {
   return (
     <ContextMenuPrimitive.SubTrigger
       className={cn(
@@ -132,7 +138,12 @@ interface ContextMenuItemProps extends ComponentProps<typeof ContextMenuPrimitiv
   variant?: "default" | "destructive";
 }
 
-function ContextMenuItem({ className, inset, variant, ...props }: ContextMenuItemProps): JSX.Element {
+function ContextMenuItem({
+  className,
+  inset,
+  variant,
+  ...props
+}: ContextMenuItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Item
       className={cn(
@@ -185,7 +196,11 @@ function ContextMenuCheckboxItem({
 
 type ContextMenuRadioItemProps = ComponentProps<typeof ContextMenuPrimitive.RadioItem>;
 
-function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadioItemProps): JSX.Element {
+function ContextMenuRadioItem({
+  children,
+  className,
+  ...props
+}: ContextMenuRadioItemProps): JSX.Element {
   return (
     <ContextMenuPrimitive.RadioItem
       className={cn(
@@ -216,7 +231,10 @@ interface ContextMenuLabelProps extends ComponentProps<typeof ContextMenuPrimiti
 function ContextMenuLabel({ className, inset, ...props }: ContextMenuLabelProps): JSX.Element {
   return (
     <ContextMenuPrimitive.Label
-      className={cn("data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold", className)}
+      className={cn(
+        "data-inset:pl-8 flex items-center gap-x-2 px-2 py-1.5 text-sm font-semibold",
+        className,
+      )}
       data-inset={inset}
       data-slot="context-menu-label"
       {...props}
@@ -267,7 +285,11 @@ type ContextMenuArrowProps = ComponentProps<typeof ContextMenuPrimitive.Arrow>;
 
 function ContextMenuArrow({ className, ...props }: ContextMenuArrowProps): JSX.Element {
   return (
-    <ContextMenuPrimitive.Arrow className={cn("fill-popover", className)} data-slot="context-menu-arrow" {...props} />
+    <ContextMenuPrimitive.Arrow
+      className={cn("fill-popover", className)}
+      data-slot="context-menu-arrow"
+      {...props}
+    />
   );
 }
 

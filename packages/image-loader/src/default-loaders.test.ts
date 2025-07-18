@@ -1,6 +1,12 @@
 import { createDefaultImageLoaderFactory, registerDefaultLoaders } from "@/default-loaders";
 import { ImageLoaderFactory } from "@/loader-factory";
-import { AWSCloudFrontLoader, CloudinaryLoader, ImgixLoader, SupabaseLoader, UnsplashLoader } from "@/loaders";
+import {
+  AWSCloudFrontLoader,
+  CloudinaryLoader,
+  ImgixLoader,
+  SupabaseLoader,
+  UnsplashLoader,
+} from "@/loaders";
 
 describe("default-loaders", () => {
   describe("registerDefaultLoaders", () => {
@@ -61,11 +67,15 @@ describe("default-loaders", () => {
 
       // Test that the factory can handle URLs from all supported CDNs
       expect(factory.findLoader("https://images.unsplash.com/photo-123")).toBeDefined();
-      expect(factory.findLoader("https://res.cloudinary.com/demo/image/upload/sample.jpg")).toBeDefined();
+      expect(
+        factory.findLoader("https://res.cloudinary.com/demo/image/upload/sample.jpg"),
+      ).toBeDefined();
       expect(factory.findLoader("https://demo.imgix.net/sample.jpg")).toBeDefined();
       expect(factory.findLoader("https://d123456.cloudfront.net/sample.jpg")).toBeDefined();
       expect(
-        factory.findLoader("https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg"),
+        factory.findLoader(
+          "https://project.supabase.co/storage/v1/object/public/bucket/sample.jpg",
+        ),
       ).toBeDefined();
     });
 
@@ -82,7 +92,11 @@ describe("default-loaders", () => {
       const factory = createDefaultImageLoaderFactory();
 
       // Test actual URL transformation for each CDN
-      const unsplashUrl = factory.load({ quality: 75, src: "https://images.unsplash.com/photo-123", width: 800 });
+      const unsplashUrl = factory.load({
+        quality: 75,
+        src: "https://images.unsplash.com/photo-123",
+        width: 800,
+      });
 
       expect(unsplashUrl).toContain("w=800");
       expect(unsplashUrl).toContain("q=75");
@@ -96,7 +110,11 @@ describe("default-loaders", () => {
       expect(cloudinaryUrl).toContain("w_800");
       expect(cloudinaryUrl).toContain("q_75");
 
-      const imgixUrl = factory.load({ quality: 75, src: "https://demo.imgix.net/sample.jpg", width: 800 });
+      const imgixUrl = factory.load({
+        quality: 75,
+        src: "https://demo.imgix.net/sample.jpg",
+        width: 800,
+      });
 
       expect(imgixUrl).toContain("w=800");
       expect(imgixUrl).toContain("q=75");

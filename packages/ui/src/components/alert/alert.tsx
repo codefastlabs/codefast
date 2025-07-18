@@ -12,7 +12,14 @@ import { cn } from "@/lib/utils";
 interface AlertProps extends ComponentProps<"div">, VariantProps<typeof alertVariants> {}
 
 function Alert({ className, variant, ...props }: AlertProps): JSX.Element {
-  return <div className={alertVariants({ className, variant })} data-slot="alert" role="alert" {...props} />;
+  return (
+    <div
+      className={alertVariants({ className, variant })}
+      data-slot="alert"
+      role="alert"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

@@ -78,7 +78,8 @@ interface ChartContextValue {
 
 const [createChartContext, createChartScope] = createContextScope(CHART_PROVIDER_NAME);
 
-const [ChartContextProvider, useChartContext] = createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);
+const [ChartContextProvider, useChartContext] =
+  createChartContext<ChartContextValue>(CHART_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: Chart
@@ -184,10 +185,13 @@ function ChartTooltipContent({
 
     const key = labelKey ?? item.dataKey ?? item.name ?? "value";
     const itemConfig = getPayloadConfigFromPayload(config, item, String(key));
-    const value = !labelKey && typeof label === "string" ? (config[label]?.label ?? label) : itemConfig?.label;
+    const value =
+      !labelKey && typeof label === "string" ? (config[label]?.label ?? label) : itemConfig?.label;
 
     if (labelFormatter) {
-      return <div className={cn("font-medium", labelClassName)}>{labelFormatter(value, payload)}</div>;
+      return (
+        <div className={cn("font-medium", labelClassName)}>{labelFormatter(value, payload)}</div>
+      );
     }
 
     if (!value) {
@@ -226,7 +230,13 @@ function ChartTooltipContent({
               )}
             >
               {formatter && item.value !== undefined && item.name ? (
-                formatter(item.value, item.name, item, index, item.payload as Payload<ValueType, NameType>[])
+                formatter(
+                  item.value,
+                  item.name,
+                  item,
+                  index,
+                  item.payload as Payload<ValueType, NameType>[],
+                )
               ) : (
                 <>
                   {itemConfig?.icon ? (
@@ -234,12 +244,15 @@ function ChartTooltipContent({
                   ) : (
                     !hideIndicator && (
                       <div
-                        className={cn("border-(--color-border) bg-(--color-bg) rounded-xs shrink-0", {
-                          "h-2.5 w-2.5": indicator === "dot",
-                          "my-0.5": nestLabel && indicator === "dashed",
-                          "w-0 border border-dashed bg-transparent": indicator === "dashed",
-                          "w-1": indicator === "line",
-                        })}
+                        className={cn(
+                          "border-(--color-border) bg-(--color-bg) rounded-xs shrink-0",
+                          {
+                            "h-2.5 w-2.5": indicator === "dot",
+                            "my-0.5": nestLabel && indicator === "dashed",
+                            "w-0 border border-dashed bg-transparent": indicator === "dashed",
+                            "w-1": indicator === "line",
+                          },
+                        )}
                         style={
                           {
                             "--color-bg": indicatorColor,
@@ -250,11 +263,16 @@ function ChartTooltipContent({
                     )
                   )}
                   <div
-                    className={cn("flex flex-1 justify-between leading-none", nestLabel ? "items-end" : "items-center")}
+                    className={cn(
+                      "flex flex-1 justify-between leading-none",
+                      nestLabel ? "items-end" : "items-center",
+                    )}
                   >
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
-                      <span className="text-muted-foreground">{itemConfig?.label ?? item.name}</span>
+                      <span className="text-muted-foreground">
+                        {itemConfig?.label ?? item.name}
+                      </span>
                     </div>
                     {item.value ? (
                       <span className="text-foreground font-mono font-medium tabular-nums">
@@ -308,7 +326,13 @@ function ChartLegendContent({
   }
 
   return (
-    <div className={cn("flex items-center justify-center gap-4", verticalAlign === "top" ? "pb-3" : "pt-3", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center gap-4",
+        verticalAlign === "top" ? "pb-3" : "pt-3",
+        className,
+      )}
+    >
       {payload.map((item) => {
         let key = "value";
 
@@ -360,12 +384,17 @@ function ChartLegendContent({
  *   `label`, `color` or `theme`, or `undefined` if the payload is invalid or
  *   no configuration is found for the provided key.
  */
-function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string): ChartConfigItem | undefined {
+function getPayloadConfigFromPayload(
+  config: ChartConfig,
+  payload: unknown,
+  key: string,
+): ChartConfigItem | undefined {
   if (!isValidObject(payload)) {
     return undefined;
   }
 
-  const nestedPayload = "payload" in payload && isValidObject(payload.payload) ? payload.payload : undefined;
+  const nestedPayload =
+    "payload" in payload && isValidObject(payload.payload) ? payload.payload : undefined;
 
   const configLabelKey = getConfigLabelKey(payload, nestedPayload, key);
 
@@ -423,7 +452,11 @@ function getConfigLabelKey(
  *   key and a chart configuration.
  * @returns The generated CSS as a string.
  */
-function generateThemeCSS(theme: Theme, id: string, configEntries: [string, ChartConfig[string]][]): string {
+function generateThemeCSS(
+  theme: Theme,
+  id: string,
+  configEntries: [string, ChartConfig[string]][],
+): string {
   const rules: string[] = [];
 
   rules.push(`${THEMES[theme]} [data-chart=${id}] {`);
@@ -451,7 +484,9 @@ function generateThemeCSS(theme: Theme, id: string, configEntries: [string, Char
  * @returns A string containing the generated CSS rules.
  */
 function generateCSS(id: string, config: ChartConfig): string {
-  const themeOrColorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig?.theme ?? itemConfig?.color);
+  const themeOrColorConfig = Object.entries(config).filter(
+    ([_, itemConfig]) => itemConfig?.theme ?? itemConfig?.color,
+  );
 
   const allRules: string[] = [];
 

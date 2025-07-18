@@ -40,7 +40,12 @@ interface AlertDialogContentProps extends ComponentProps<typeof AlertDialogPrimi
   };
 }
 
-function AlertDialogContent({ children, className, classNames, ...props }: AlertDialogContentProps): JSX.Element {
+function AlertDialogContent({
+  children,
+  className,
+  classNames,
+  ...props
+}: AlertDialogContentProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
@@ -82,7 +87,10 @@ type AlertDialogHeaderProps = ComponentProps<"div">;
 function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX.Element {
   return (
     <div
-      className={cn("flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left", className)}
+      className={cn(
+        "flex shrink-0 flex-col gap-1.5 px-6 pb-4 pt-6 text-center sm:text-left",
+        className,
+      )}
       data-slot="alert-dialog-header"
       {...props}
     />
@@ -96,7 +104,13 @@ function AlertDialogHeader({ className, ...props }: AlertDialogHeaderProps): JSX
 type AlertDialogBodyProps = ComponentProps<"div">;
 
 function AlertDialogBody({ className, ...props }: AlertDialogBodyProps): JSX.Element {
-  return <main className={cn("overflow-auto px-6 py-2", className)} data-slot="alert-dialog-body" {...props} />;
+  return (
+    <main
+      className={cn("overflow-auto px-6 py-2", className)}
+      data-slot="alert-dialog-body"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -108,7 +122,10 @@ type AlertDialogFooterProps = ComponentProps<"div">;
 function AlertDialogFooter({ className, ...props }: AlertDialogFooterProps): JSX.Element {
   return (
     <div
-      className={cn("flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-4 sm:flex-row sm:justify-end",
+        className,
+      )}
       data-slot="alert-dialog-footer"
       {...props}
     />
@@ -156,7 +173,12 @@ interface AlertDialogActionProps extends ComponentProps<typeof AlertDialogPrimit
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
-function AlertDialogAction({ className, size, variant, ...props }: AlertDialogActionProps): JSX.Element {
+function AlertDialogAction({
+  className,
+  size,
+  variant,
+  ...props
+}: AlertDialogActionProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Action
       className={buttonVariants({ className, size, variant })}
@@ -175,7 +197,12 @@ interface AlertDialogCancelProps extends ComponentProps<typeof AlertDialogPrimit
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
-function AlertDialogCancel({ className, size, variant = "outline", ...props }: AlertDialogCancelProps): JSX.Element {
+function AlertDialogCancel({
+  className,
+  size,
+  variant = "outline",
+  ...props
+}: AlertDialogCancelProps): JSX.Element {
   return (
     <AlertDialogPrimitive.Cancel
       className={buttonVariants({ className, size, variant })}

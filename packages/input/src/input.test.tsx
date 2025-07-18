@@ -18,7 +18,10 @@ describe("input", () => {
 
     test("should render with prefix and suffix", () => {
       render(
-        <Input prefix={<div data-testid="prefix">Prefix</div>} suffix={<div data-testid="suffix">Suffix</div>}>
+        <Input
+          prefix={<div data-testid="prefix">Prefix</div>}
+          suffix={<div data-testid="suffix">Suffix</div>}
+        >
           <InputField />
         </Input>,
       );

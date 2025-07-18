@@ -11,7 +11,11 @@ type TableProps = ComponentProps<"table">;
 function Table({ className, ...props }: TableProps): JSX.Element {
   return (
     <div className="relative w-full overflow-auto" data-slot="table-cotainer">
-      <table className={cn("w-full caption-bottom text-sm", className)} data-slot="table" {...props} />
+      <table
+        className={cn("w-full caption-bottom text-sm", className)}
+        data-slot="table"
+        {...props}
+      />
     </div>
   );
 }
@@ -39,7 +43,9 @@ function TableHeader({ className, ...props }: TableHeaderProps): JSX.Element {
 type TableBodyProps = ComponentProps<"tbody">;
 
 function TableBody({ className, ...props }: TableBodyProps): JSX.Element {
-  return <tbody className={cn("*:last-child:border-0", className)} data-slot="table-body" {...props} />;
+  return (
+    <tbody className={cn("*:last-child:border-0", className)} data-slot="table-body" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -51,7 +57,10 @@ type TableFooterProps = ComponentProps<"tfoot">;
 function TableFooter({ className, ...props }: TableFooterProps): JSX.Element {
   return (
     <tfoot
-      className={cn("bg-muted/50 *:has-aria-expanded:bg-transparent font-medium *:border-b-0 *:border-t", className)}
+      className={cn(
+        "bg-muted/50 *:has-aria-expanded:bg-transparent font-medium *:border-b-0 *:border-t",
+        className,
+      )}
       data-slot="table-footer"
       {...props}
     />
@@ -84,7 +93,13 @@ function TableRow({ className, ...props }: TableRowProps): JSX.Element {
 type TableHeadProps = ComponentProps<"th">;
 
 function TableHead({ className, ...props }: TableHeadProps): JSX.Element {
-  return <th className={cn("p-2 text-left align-middle font-medium", className)} data-slot="table-head" {...props} />;
+  return (
+    <th
+      className={cn("p-2 text-left align-middle font-medium", className)}
+      data-slot="table-head"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -105,7 +120,11 @@ type TableCaptionProps = ComponentProps<"caption">;
 
 function TableCaption({ className, ...props }: TableCaptionProps): JSX.Element {
   return (
-    <caption className={cn("text-muted-foreground mt-4 text-sm", className)} data-slot="table-caption" {...props} />
+    <caption
+      className={cn("text-muted-foreground mt-4 text-sm", className)}
+      data-slot="table-caption"
+      {...props}
+    />
   );
 }
 

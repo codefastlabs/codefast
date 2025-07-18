@@ -29,12 +29,24 @@ const [ScrollAreaContextProvider, useScrollAreaContext] =
  * Component: ScrollArea
  * -------------------------------------------------------------------------- */
 
-type ScrollAreaProps = ScopedProps<ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue>;
+type ScrollAreaProps = ScopedProps<
+  ComponentProps<typeof ScrollAreaPrimitive.Root> & ScrollAreaContextValue
+>;
 
-function ScrollArea({ __scopeScrollArea, children, className, size, ...props }: ScrollAreaProps): JSX.Element {
+function ScrollArea({
+  __scopeScrollArea,
+  children,
+  className,
+  size,
+  ...props
+}: ScrollAreaProps): JSX.Element {
   return (
     <ScrollAreaContextProvider scope={__scopeScrollArea} size={size}>
-      <ScrollAreaPrimitive.Root className={cn("relative", className)} data-slot="scroll-area" {...props}>
+      <ScrollAreaPrimitive.Root
+        className={cn("relative", className)}
+        data-slot="scroll-area"
+        {...props}
+      >
         <ScrollAreaPrimitive.Viewport
           className="outline-ring ring-ring/50 size-full rounded-[inherit] transition focus-visible:outline-1 focus-visible:ring-4"
           data-slot="scroll-area-viewport"

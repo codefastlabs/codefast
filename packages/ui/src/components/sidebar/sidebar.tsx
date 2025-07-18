@@ -9,10 +9,21 @@ import type { VariantProps } from "@/lib/utils";
 import { Button } from "@/components/button/button";
 import { Input } from "@/components/input/input";
 import { Separator } from "@/components/separator/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/sheet/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/sheet/sheet";
 import { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button.variants";
 import { Skeleton } from "@/components/skeleton/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/tooltip/tooltip";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@codefast/hooks";
 import { createContext } from "@radix-ui/react-context";
@@ -41,7 +52,8 @@ interface SidebarContextValue {
 
 const SIDEBAR_PROVIDER_NAME = "SidebarProvider";
 
-const [SidebarContextProvider, useSidebar] = createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
+const [SidebarContextProvider, useSidebar] =
+  createContext<SidebarContextValue>(SIDEBAR_PROVIDER_NAME);
 
 /* -----------------------------------------------------------------------------
  * Component: SidebarProvider
@@ -128,7 +140,10 @@ function SidebarProvider({
     >
       <TooltipProvider delayDuration={0}>
         <div
-          className={cn("group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full", className)}
+          className={cn(
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            className,
+          )}
           data-slot="sidebar-wrapper"
           style={
             {
@@ -171,7 +186,10 @@ function Sidebar({
   if (collapsible === "none") {
     return (
       <div
-        className={cn("bg-sidebar text-sidebar-foreground w-(--sidebar-width) flex h-full flex-col", className)}
+        className={cn(
+          "bg-sidebar text-sidebar-foreground w-(--sidebar-width) flex h-full flex-col",
+          className,
+        )}
         data-slot="sidebar"
         {...props}
       >
@@ -440,7 +458,11 @@ interface SidebarGroupLabelProps extends ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function SidebarGroupLabel({ asChild = false, className, ...props }: SidebarGroupLabelProps): JSX.Element {
+function SidebarGroupLabel({
+  asChild = false,
+  className,
+  ...props
+}: SidebarGroupLabelProps): JSX.Element {
   const Component = asChild ? Slot : "div";
 
   return (
@@ -464,7 +486,11 @@ interface SidebarGroupActionProps extends ComponentProps<"button"> {
   asChild?: boolean;
 }
 
-function SidebarGroupAction({ asChild = false, className, ...props }: SidebarGroupActionProps): JSX.Element {
+function SidebarGroupAction({
+  asChild = false,
+  className,
+  ...props
+}: SidebarGroupActionProps): JSX.Element {
   const Component = asChild ? Slot : "button";
 
   return (
@@ -537,7 +563,9 @@ function SidebarMenuItem({ className, ...props }: SidebarMenuItemProps): JSX.Ele
 
 const SIDEBAR_MENU_BUTTON_NAME = "SidebarMenuButton";
 
-interface SidebarMenuButtonProps extends ComponentProps<"button">, VariantProps<typeof sidebarMenuButtonVariants> {
+interface SidebarMenuButtonProps
+  extends ComponentProps<"button">,
+    VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean;
   isActive?: boolean;
   tooltip?: ComponentProps<typeof TooltipContent> | string;
@@ -579,7 +607,12 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent align="center" hidden={state !== "collapsed" || isMobile} side="right" {...tooltip} />
+      <TooltipContent
+        align="center"
+        hidden={state !== "collapsed" || isMobile}
+        side="right"
+        {...tooltip}
+      />
     </Tooltip>
   );
 }
@@ -644,7 +677,11 @@ interface SidebarMenuSkeletonProps extends ComponentProps<"div"> {
   showIcon?: boolean;
 }
 
-function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarMenuSkeletonProps): JSX.Element {
+function SidebarMenuSkeleton({
+  className,
+  showIcon = false,
+  ...props
+}: SidebarMenuSkeletonProps): JSX.Element {
   // Random width between 50 to 90%.
   const width = useMemo(() => {
     return `${String(Math.floor(Math.random() * 40) + 50)}%`;
@@ -657,7 +694,9 @@ function SidebarMenuSkeleton({ className, showIcon = false, ...props }: SidebarM
       data-slot="sidebar-menu-skeleton"
       {...props}
     >
-      {showIcon ? <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" /> : null}
+      {showIcon ? (
+        <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />
+      ) : null}
       <Skeleton
         className="max-w-(--skeleton-width) h-4 flex-1"
         data-sidebar="menu-skeleton-text"

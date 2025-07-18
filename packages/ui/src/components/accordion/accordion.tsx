@@ -104,4 +104,10 @@ function AccordionContent({ children, className, ...props }: AccordionContentPro
  * -------------------------------------------------------------------------- */
 
 export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger };
-export type { AccordionContentProps, AccordionIconProps, AccordionItemProps, AccordionProps, AccordionTriggerProps };
+export type {
+  AccordionContentProps,
+  AccordionIconProps,
+  AccordionItemProps,
+  AccordionProps,
+  AccordionTriggerProps,
+};

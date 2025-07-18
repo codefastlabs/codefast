@@ -29,7 +29,11 @@ type AvatarImageProps = ComponentProps<typeof AvatarPrimitive.Image>;
 
 function AvatarImage({ className, ...props }: AvatarImageProps): JSX.Element {
   return (
-    <AvatarPrimitive.Image className={cn("aspect-square size-full", className)} data-slot="avatar-image" {...props} />
+    <AvatarPrimitive.Image
+      className={cn("aspect-square size-full", className)}
+      data-slot="avatar-image"
+      {...props}
+    />
   );
 }
 

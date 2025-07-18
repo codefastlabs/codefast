@@ -36,7 +36,10 @@ function RadioCardsItem({ children, className, ...props }: RadioCardsItemProps):
         data-slot="radio-card-item"
         {...props}
       >
-        <RadioGroupPrimitive.Indicator className="bg-background size-1 rounded-full" data-slot="radio-card-indicator" />
+        <RadioGroupPrimitive.Indicator
+          className="bg-background size-1 rounded-full"
+          data-slot="radio-card-indicator"
+        />
       </RadioGroupPrimitive.Item>
       {children}
     </Label>

@@ -11,7 +11,13 @@ import * as CheckboxGroupPrimitive from "@codefast-ui/checkbox-group";
 type CheckboxGroupProps = ComponentProps<typeof CheckboxGroupPrimitive.Root>;
 
 function CheckboxGroup({ className, ...props }: CheckboxGroupProps): JSX.Element {
-  return <CheckboxGroupPrimitive.Root className={cn("grid gap-2", className)} data-slot="checkbox-group" {...props} />;
+  return (
+    <CheckboxGroupPrimitive.Root
+      className={cn("grid gap-2", className)}
+      data-slot="checkbox-group"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

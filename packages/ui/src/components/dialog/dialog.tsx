@@ -42,7 +42,12 @@ interface DialogContentProps extends ComponentProps<typeof DialogPrimitive.Conte
   };
 }
 
-function DialogContent({ children, className, classNames, ...props }: DialogContentProps): JSX.Element {
+function DialogContent({
+  children,
+  className,
+  classNames,
+  ...props
+}: DialogContentProps): JSX.Element {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
@@ -95,7 +100,10 @@ type DialogHeaderProps = ComponentProps<"div">;
 function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
   return (
     <header
-      className={cn("flex shrink-0 flex-col gap-1.5 px-6 pb-2 pt-6 text-center sm:text-left", className)}
+      className={cn(
+        "flex shrink-0 flex-col gap-1.5 px-6 pb-2 pt-6 text-center sm:text-left",
+        className,
+      )}
       data-slot="dialog-header"
       {...props}
     />
@@ -109,7 +117,9 @@ function DialogHeader({ className, ...props }: DialogHeaderProps): JSX.Element {
 type DialogBodyProps = ComponentProps<"div">;
 
 function DialogBody({ className, ...props }: DialogBodyProps): JSX.Element {
-  return <main className={cn("overflow-auto px-6 py-2", className)} data-slot="dialog-body" {...props} />;
+  return (
+    <main className={cn("overflow-auto px-6 py-2", className)} data-slot="dialog-body" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -121,7 +131,10 @@ type DialogFooterProps = ComponentProps<"div">;
 function DialogFooter({ className, ...props }: DialogFooterProps): JSX.Element {
   return (
     <footer
-      className={cn("flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex shrink-0 flex-col-reverse gap-2 px-6 pb-6 pt-2 sm:flex-row sm:justify-end",
+        className,
+      )}
       data-slot="dialog-footer"
       {...props}
     />
@@ -169,7 +182,12 @@ interface DialogCloseProps extends Omit<ComponentProps<typeof DialogPrimitive.Cl
   variant?: VariantProps<typeof buttonVariants>["variant"];
 }
 
-function DialogClose({ className, size, variant = "outline", ...props }: DialogCloseProps): JSX.Element {
+function DialogClose({
+  className,
+  size,
+  variant = "outline",
+  ...props
+}: DialogCloseProps): JSX.Element {
   return (
     <DialogPrimitive.Close
       className={buttonVariants({ className, size, variant })}

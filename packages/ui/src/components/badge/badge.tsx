@@ -18,7 +18,9 @@ interface BadgeProps extends ComponentProps<"span">, VariantProps<typeof badgeVa
 function Badge({ asChild, className, variant, ...props }: BadgeProps): JSX.Element {
   const Component = asChild ? Slot : "span";
 
-  return <Component className={badgeVariants({ className, variant })} data-slot="badge" {...props} />;
+  return (
+    <Component className={badgeVariants({ className, variant })} data-slot="badge" {...props} />
+  );
 }
 
 /* -----------------------------------------------------------------------------

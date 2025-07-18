@@ -27,10 +27,10 @@ type ScopedProps<P> = P & {
   __scopeCheckboxGroup?: Scope;
 };
 
-const [createCheckboxGroupContext, createCheckboxGroupScope] = createContextScope(CHECKBOX_GROUP_NAME, [
-  createRovingFocusGroupScope,
-  createCheckboxScope,
-]);
+const [createCheckboxGroupContext, createCheckboxGroupScope] = createContextScope(
+  CHECKBOX_GROUP_NAME,
+  [createRovingFocusGroupScope, createCheckboxScope],
+);
 
 const useRovingFocusGroupScope = createRovingFocusGroupScope();
 const useCheckboxScope = createCheckboxScope();
@@ -210,7 +210,13 @@ function CheckboxGroup({
       onItemCheck={handleItemCheck}
       onItemUncheck={handleItemUncheck}
     >
-      <RovingFocusGroup.Root asChild {...rovingFocusGroupScope} dir={direction} loop={loop} orientation={orientation}>
+      <RovingFocusGroup.Root
+        asChild
+        {...rovingFocusGroupScope}
+        dir={direction}
+        loop={loop}
+        orientation={orientation}
+      >
         <div data-disabled={disabled ? "" : undefined} dir={direction} role="group" {...props} />
       </RovingFocusGroup.Root>
     </CheckboxGroupContextProvider>
@@ -275,7 +281,12 @@ function CheckboxGroupItem({
   const checked = context.value?.includes(props.value);
 
   return (
-    <RovingFocusGroup.Item asChild {...rovingFocusGroupScope} active={checked} focusable={!isDisabled}>
+    <RovingFocusGroup.Item
+      asChild
+      {...rovingFocusGroupScope}
+      active={checked}
+      focusable={!isDisabled}
+    >
       <CheckboxPrimitive.Root
         aria-label={props.value}
         checked={checked}

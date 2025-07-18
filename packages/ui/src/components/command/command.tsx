@@ -39,7 +39,9 @@ function CommandDialog({ children, ...props }: CommandDialogProps): JSX.Element 
       <DialogContent className="rounded-t-lg sm:rounded-lg" data-slot="command-dialog-content">
         <VisuallyHidden>
           <DialogTitle>Search command</DialogTitle>
-          <DialogDescription>Use the search bar to find and select the desired command.</DialogDescription>
+          <DialogDescription>
+            Use the search bar to find and select the desired command.
+          </DialogDescription>
         </VisuallyHidden>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12">
           {children}
@@ -57,7 +59,11 @@ type CommandInputProps = ComponentProps<typeof CommandPrimitive.Input>;
 
 function CommandInput({ className, ...props }: CommandInputProps): JSX.Element {
   return (
-    <div cmdk-input-wrapper className="flex items-center gap-2 border-b px-3" data-slot="command-input-wrapper">
+    <div
+      cmdk-input-wrapper
+      className="flex items-center gap-2 border-b px-3"
+      data-slot="command-input-wrapper"
+    >
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input
         className={cn(

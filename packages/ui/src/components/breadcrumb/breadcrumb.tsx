@@ -44,7 +44,13 @@ function BreadcrumbList({ className, ...props }: BreadcrumbListProps): JSX.Eleme
 type BreadcrumbItemProps = ComponentProps<"li">;
 
 function BreadcrumbItem({ className, ...props }: BreadcrumbItemProps): JSX.Element {
-  return <li className={cn("inline-flex items-center gap-1.5", className)} data-slot="breadcrumb-item" {...props} />;
+  return (
+    <li
+      className={cn("inline-flex items-center gap-1.5", className)}
+      data-slot="breadcrumb-item"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------

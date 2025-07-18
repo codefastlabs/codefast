@@ -110,7 +110,9 @@ interface ProgressCircleContextValue {
   valueText: string;
 }
 
-const [createProgressCircleContext, createProgressCircleScope] = createContextScope(PROGRESS_CIRCLE_PROVIDER_NAME);
+const [createProgressCircleContext, createProgressCircleScope] = createContextScope(
+  PROGRESS_CIRCLE_PROVIDER_NAME,
+);
 
 const [ProgressCircleContextProvider, useProgressCircleContext] =
   createProgressCircleContext<ProgressCircleContextValue>(PROGRESS_CIRCLE_PROVIDER_NAME);
@@ -211,13 +213,17 @@ function ProgressCircleProvider({
   const isIndeterminate = value === null || value === undefined;
   const clampedValue = isIndeterminate ? undefined : clamp(validMin, validMax, value);
   const range = validMax - validMin;
-  const percentage = clampedValue !== undefined && range > 0 ? ((clampedValue - validMin) / range) * 100 : 0;
+  const percentage =
+    clampedValue !== undefined && range > 0 ? ((clampedValue - validMin) / range) * 100 : 0;
   const valueText =
-    clampedValue !== undefined && formatValue ? formatValue(clampedValue) : `${String(Math.round(percentage))}%`;
+    clampedValue !== undefined && formatValue
+      ? formatValue(clampedValue)
+      : `${String(Math.round(percentage))}%`;
 
   // Sort thresholds by value
   const sortedThresholds = useMemo(
-    () => (thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : []),
+    () =>
+      thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : [],
     [thresholds],
   );
 
@@ -277,7 +283,10 @@ type ProgressCircleProps = ComponentProps<"div">;
  *
  * Serves as a wrapper for other progress circle components.
  */
-function ProgressCircle({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleProps>): ReactNode {
+function ProgressCircle({
+  __scopeProgressCircle,
+  ...props
+}: ScopedProps<ProgressCircleProps>): ReactNode {
   return <div {...props} />;
 }
 
@@ -294,7 +303,10 @@ type ProgressCircleSVGProps = ComponentProps<"svg">;
  *
  * Renders the SVG with accessibility attributes and supports indeterminate state.
  */
-function ProgressCircleSVG({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleSVGProps>): ReactNode {
+function ProgressCircleSVG({
+  __scopeProgressCircle,
+  ...props
+}: ScopedProps<ProgressCircleSVGProps>): ReactNode {
   const { clampedValue, id, max, min, size, valueText } = useProgressCircleContext(
     PROGRESS_CIRCLE_SVG_NAME,
     __scopeProgressCircle,
@@ -330,7 +342,10 @@ type ProgressCircleTrackProps = ComponentProps<"circle">;
  *
  * Renders the static track of the progress circle.
  */
-function ProgressCircleTrack({ __scopeProgressCircle, ...props }: ScopedProps<ProgressCircleTrackProps>): ReactNode {
+function ProgressCircleTrack({
+  __scopeProgressCircle,
+  ...props
+}: ScopedProps<ProgressCircleTrackProps>): ReactNode {
   const { center, radius, strokeWidth, threshold } = useProgressCircleContext(
     PROGRESS_CIRCLE_TRACK_NAME,
     __scopeProgressCircle,
@@ -366,8 +381,15 @@ function ProgressCircleIndicator({
   __scopeProgressCircle,
   ...props
 }: ScopedProps<ProgressCircleIndicatorProps>): ReactNode {
-  const { center, circumference, radius, rotationTransform, strokeDashoffset, strokeWidth, threshold } =
-    useProgressCircleContext(PROGRESS_CIRCLE_INDICATOR_NAME, __scopeProgressCircle);
+  const {
+    center,
+    circumference,
+    radius,
+    rotationTransform,
+    strokeDashoffset,
+    strokeWidth,
+    threshold,
+  } = useProgressCircleContext(PROGRESS_CIRCLE_INDICATOR_NAME, __scopeProgressCircle);
 
   return (
     <circle
@@ -406,7 +428,10 @@ function ProgressCircleValue({
   children,
   ...props
 }: ScopedProps<ProgressCircleValueProps>): ReactNode {
-  const { clampedValue, valueText } = useProgressCircleContext(PROGRESS_CIRCLE_VALUE_NAME, __scopeProgressCircle);
+  const { clampedValue, valueText } = useProgressCircleContext(
+    PROGRESS_CIRCLE_VALUE_NAME,
+    __scopeProgressCircle,
+  );
 
   if (typeof children === "function") {
     return children({ value: clampedValue, valueText });

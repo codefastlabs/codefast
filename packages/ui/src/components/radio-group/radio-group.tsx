@@ -12,7 +12,13 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 type RadioGroupProps = ComponentProps<typeof RadioGroupPrimitive.Root>;
 
 function RadioGroup({ className, ...props }: RadioGroupProps): JSX.Element {
-  return <RadioGroupPrimitive.Root className={cn("grid gap-2", className)} data-slot="radio-group" {...props} />;
+  return (
+    <RadioGroupPrimitive.Root
+      className={cn("grid gap-2", className)}
+      data-slot="radio-group"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -31,7 +37,10 @@ function RadioGroupItem({ className, ...props }: RadioGroupItemProps): JSX.Eleme
       data-slot="radio-group-item"
       {...props}
     >
-      <RadioGroupPrimitive.Indicator className="bg-background size-1 rounded-full" data-slot="radio-group-indicator" />
+      <RadioGroupPrimitive.Indicator
+        className="bg-background size-1 rounded-full"
+        data-slot="radio-group-indicator"
+      />
     </RadioGroupPrimitive.Item>
   );
 }

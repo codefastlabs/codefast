@@ -13,8 +13,14 @@ describe("SupabaseLoader", () => {
 
   describe("canHandle", () => {
     it("should handle *.supabase.co URLs with /storage/v1/ path", () => {
-      expect(loader.canHandle("https://project.supabase.co/storage/v1/object/bucket/image.jpg")).toBe(true);
-      expect(loader.canHandle("https://my-project.supabase.co/storage/v1/object/public/images/photo.jpg")).toBe(true);
+      expect(
+        loader.canHandle("https://project.supabase.co/storage/v1/object/bucket/image.jpg"),
+      ).toBe(true);
+      expect(
+        loader.canHandle(
+          "https://my-project.supabase.co/storage/v1/object/public/images/photo.jpg",
+        ),
+      ).toBe(true);
     });
 
     it("should not handle *.supabase.co URLs without /storage/v1/ path", () => {
@@ -30,7 +36,9 @@ describe("SupabaseLoader", () => {
     });
 
     it("should not handle URLs without protocol", () => {
-      expect(loader.canHandle("project.supabase.co/storage/v1/object/bucket/image.jpg")).toBe(false);
+      expect(loader.canHandle("project.supabase.co/storage/v1/object/bucket/image.jpg")).toBe(
+        false,
+      );
     });
   });
 
@@ -153,7 +161,10 @@ describe("SupabaseLoader", () => {
       });
 
       expect(result).toBe(testSource);
-      expect(consoleSpy).toHaveBeenCalledWith(`Failed to transform Supabase URL: ${testSource}`, expect.any(Error));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        `Failed to transform Supabase URL: ${testSource}`,
+        expect.any(Error),
+      );
 
       // Restore original method and clean up
       stringifyUrlSpy.mockRestore();

@@ -30,7 +30,8 @@ const [ToggleGroupProvider, useToggleGroupContext] =
  * Component: ToggleGroup
  * -------------------------------------------------------------------------- */
 
-type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> & VariantProps<typeof toggleVariants>;
+type ToggleGroupProps = ComponentProps<typeof ToggleGroupPrimitive.Root> &
+  VariantProps<typeof toggleVariants>;
 
 function ToggleGroup({
   __scopeToggleGroup,
@@ -45,7 +46,10 @@ function ToggleGroup({
   return (
     <ToggleGroupProvider scope={__scopeToggleGroup} size={size} variant={variant}>
       <ToggleGroupPrimitive.Root
-        className={cn("group/toggle-group flex w-fit items-center -space-x-px rounded-md", className)}
+        className={cn(
+          "group/toggle-group flex w-fit items-center -space-x-px rounded-md",
+          className,
+        )}
         data-size={size}
         data-slot="toggle-group"
         data-variant={variant}

@@ -16,7 +16,13 @@ interface SeparatorProps
   extends ComponentProps<typeof SeparatorPrimitive.Root>,
     Omit<VariantProps<typeof separatorVariants>, "orientation"> {}
 
-function Separator({ align, className, decorative = true, orientation, ...props }: SeparatorProps): JSX.Element {
+function Separator({
+  align,
+  className,
+  decorative = true,
+  orientation,
+  ...props
+}: SeparatorProps): JSX.Element {
   return (
     <SeparatorPrimitive.Root
       className={separatorVariants({ align, className, orientation })}

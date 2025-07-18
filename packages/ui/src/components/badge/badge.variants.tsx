@@ -17,7 +17,8 @@ const badgeVariants = tv({
         "bg-destructive dark:bg-destructive/60 [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 border-transparent text-white",
       outline:
         "bg-background border-input [a&]:hover:bg-accent [a&]:hover:text-accent-foreground [a&]:hover:border-ring/60 focus-visible:border-ring",
-      secondary: "bg-secondary [a&]:hover:bg-secondary/80 text-secondary-foreground border-transparent",
+      secondary:
+        "bg-secondary [a&]:hover:bg-secondary/80 text-secondary-foreground border-transparent",
     },
   },
 });

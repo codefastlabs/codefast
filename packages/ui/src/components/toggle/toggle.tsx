@@ -18,9 +18,21 @@ interface ToggleProps
   suffix?: ReactNode;
 }
 
-function Toggle({ children, className, prefix, size, suffix, variant, ...props }: ToggleProps): JSX.Element {
+function Toggle({
+  children,
+  className,
+  prefix,
+  size,
+  suffix,
+  variant,
+  ...props
+}: ToggleProps): JSX.Element {
   return (
-    <TogglePrimitive.Root className={toggleVariants({ className, size, variant })} data-slot="toggle" {...props}>
+    <TogglePrimitive.Root
+      className={toggleVariants({ className, size, variant })}
+      data-slot="toggle"
+      {...props}
+    >
       {prefix}
       {children}
       {suffix}

@@ -30,7 +30,13 @@ function Pagination({ className, ...props }: PaginationProps): JSX.Element {
 type PaginationContentProps = ComponentProps<"ul">;
 
 function PaginationContent({ className, ...props }: PaginationContentProps): JSX.Element {
-  return <ul className={cn("flex flex-row items-center gap-1", className)} data-slot="pagination-content" {...props} />;
+  return (
+    <ul
+      className={cn("flex flex-row items-center gap-1", className)}
+      data-slot="pagination-content"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -47,11 +53,19 @@ function PaginationItem(props: PaginationItemProps): JSX.Element {
  * Component: PaginationLink
  * -------------------------------------------------------------------------- */
 
-interface PaginationLinkProps extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
+interface PaginationLinkProps
+  extends ComponentProps<"a">,
+    Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 
-function PaginationLink({ children, className, isActive, size = "icon", ...props }: PaginationLinkProps): JSX.Element {
+function PaginationLink({
+  children,
+  className,
+  isActive,
+  size = "icon",
+  ...props
+}: PaginationLinkProps): JSX.Element {
   return (
     <a
       aria-current={isActive ? "page" : undefined}
@@ -68,13 +82,20 @@ function PaginationLink({ children, className, isActive, size = "icon", ...props
  * Component: PaginationPrevious
  * -------------------------------------------------------------------------- */
 
-interface PaginationPreviousProps extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
+interface PaginationPreviousProps
+  extends ComponentProps<"a">,
+    Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 
 function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element {
   return (
-    <PaginationLink aria-label="Go to previous page" data-slot="pagination-previous" size="md" {...props}>
+    <PaginationLink
+      aria-label="Go to previous page"
+      data-slot="pagination-previous"
+      size="md"
+      {...props}
+    >
       <ChevronLeftIcon className="size-4" />
       <span>Previous</span>
     </PaginationLink>
@@ -85,7 +106,9 @@ function PaginationPrevious({ ...props }: PaginationPreviousProps): JSX.Element 
  * Component: PaginationNext
  * -------------------------------------------------------------------------- */
 
-interface PaginationNextProps extends ComponentProps<"a">, Pick<VariantProps<typeof buttonVariants>, "size"> {
+interface PaginationNextProps
+  extends ComponentProps<"a">,
+    Pick<VariantProps<typeof buttonVariants>, "size"> {
   isActive?: boolean;
 }
 

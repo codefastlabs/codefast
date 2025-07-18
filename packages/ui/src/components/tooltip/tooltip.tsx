@@ -41,7 +41,12 @@ function TooltipTrigger({ ...props }: TooltipTriggerProps): JSX.Element {
 
 type TooltipContentProps = ComponentProps<typeof TooltipPrimitive.Content>;
 
-function TooltipContent({ children, className, sideOffset = 4, ...props }: TooltipContentProps): JSX.Element {
+function TooltipContent({
+  children,
+  className,
+  sideOffset = 4,
+  ...props
+}: TooltipContentProps): JSX.Element {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
@@ -69,7 +74,13 @@ function TooltipContent({ children, className, sideOffset = 4, ...props }: Toolt
 type TooltipArrowProps = ComponentProps<typeof TooltipPrimitive.Arrow>;
 
 function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
-  return <TooltipPrimitive.Arrow className={cn("fill-primary", className)} data-slot="tooltip-arrow" {...props} />;
+  return (
+    <TooltipPrimitive.Arrow
+      className={cn("fill-primary", className)}
+      data-slot="tooltip-arrow"
+      {...props}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -77,4 +88,10 @@ function TooltipArrow({ className, ...props }: TooltipArrowProps): JSX.Element {
  * -------------------------------------------------------------------------- */
 
 export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger };
-export type { TooltipArrowProps, TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps };
+export type {
+  TooltipArrowProps,
+  TooltipContentProps,
+  TooltipProps,
+  TooltipProviderProps,
+  TooltipTriggerProps,
+};
