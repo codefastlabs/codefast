@@ -1,6 +1,7 @@
-import chalk from "chalk";
 import { glob } from "fast-glob";
 import { Project } from "ts-morph";
+
+import { logger } from "@/utils";
 
 /**
  * Find TypeScript files in a directory
@@ -13,7 +14,7 @@ export async function findTsFiles(pattern = "**/*.ts"): Promise<string[]> {
 
     return files;
   } catch (error) {
-    console.error(chalk.red("Error finding TypeScript files:"), error);
+    logger.error(`Error finding TypeScript files: ${String(error)}`);
 
     return [];
   }
@@ -34,11 +35,11 @@ export function analyzeProject(tsConfigPath?: string): Project {
  * Get basic information about TypeScript files
  */
 export async function getProjectInfo(pattern = "src/**/*.ts"): Promise<void> {
-  console.log(chalk.blue("🔍 Analyzing TypeScript project..."));
+  logger.info("🔍 Analyzing TypeScript project...");
 
   const files = await findTsFiles(pattern);
 
-  console.log(chalk.green(`Found ${files.length} TypeScript files`));
+  logger.success(`Found ${String(files.length)} TypeScript files`);
 
   if (files.length > 0) {
     const project = analyzeProject();
@@ -47,7 +48,7 @@ export async function getProjectInfo(pattern = "src/**/*.ts"): Promise<void> {
 
     const sourceFiles = project.getSourceFiles();
 
-    console.log(chalk.yellow(`Loaded ${sourceFiles.length} source files for analysis`));
+    logger.warning(`Loaded ${String(sourceFiles.length)} source files for analysis`);
 
     // Basic analysis
     let totalClasses = 0;
@@ -60,9 +61,9 @@ export async function getProjectInfo(pattern = "src/**/*.ts"): Promise<void> {
       totalInterfaces += sourceFile.getInterfaces().length;
     }
 
-    console.log(chalk.cyan(`📊 Project Statistics:`));
-    console.log(chalk.white(`  Classes: ${totalClasses}`));
-    console.log(chalk.white(`  Functions: ${totalFunctions}`));
-    console.log(chalk.white(`  Interfaces: ${totalInterfaces}`));
+    logger.info(`📊 Project Statistics:`);
+    logger.info(`  Classes: ${String(totalClasses)}`);
+    logger.info(`  Functions: ${String(totalFunctions)}`);
+    logger.info(`  Interfaces: ${String(totalInterfaces)}`);
   }
 }
