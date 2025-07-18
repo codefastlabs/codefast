@@ -149,7 +149,7 @@ function findComponentFiles(componentsDir) {
 function generateMainIndexContent(componentFiles, libExports = [], componentsDir) {
   const lines = [];
   const leafModules = identifyLeafModules(componentsDir);
-  const leafModuleNames = new Set(leafModules.map(lm => lm.dirName));
+  const leafModuleNames = new Set(leafModules.map((lm) => lm.dirName));
 
   // Group exports by component directory
   const exportsByComponent = {};
@@ -243,15 +243,15 @@ function identifyLeafModules(componentsDir) {
     if (stat.isDirectory()) {
       // Check if directory contains a file with matching name
       const dirItems = fs.readdirSync(itemPath);
-      const hasMatchingFile = dirItems.some(file => {
+      const hasMatchingFile = dirItems.some((file) => {
         const baseName = path.basename(file, path.extname(file));
-        return baseName === item && (file.endsWith('.tsx') || file.endsWith('.ts'));
+        return baseName === item && (file.endsWith(".tsx") || file.endsWith(".ts"));
       });
 
       if (hasMatchingFile) {
         leafModules.push({
           dirName: item,
-          dirPath: itemPath
+          dirPath: itemPath,
         });
       }
     }
@@ -271,7 +271,7 @@ function createLeafModuleIndexFiles(componentsDir, componentFiles) {
     const indexPath = path.join(leafModule.dirPath, "index.ts");
 
     // Find all files in this leaf module directory
-    const moduleFiles = componentFiles.filter(file => file.componentName === leafModule.dirName);
+    const moduleFiles = componentFiles.filter((file) => file.componentName === leafModule.dirName);
 
     if (moduleFiles.length === 0) continue;
 
@@ -303,7 +303,9 @@ function createLeafModuleIndexFiles(componentsDir, componentFiles) {
         console.log(`    ✅ Created leaf module index: ${path.relative(PROJECT_ROOT, indexPath)}`);
         createdCount++;
       } catch (error) {
-        console.warn(`    ⚠️  Could not create ${path.relative(PROJECT_ROOT, indexPath)}: ${error.message}`);
+        console.warn(
+          `    ⚠️  Could not create ${path.relative(PROJECT_ROOT, indexPath)}: ${error.message}`,
+        );
       }
     }
   }
@@ -326,7 +328,7 @@ function removeIntermediateIndexFiles(uiSrcPath) {
   // Only remove intermediate index files, not leaf module index files
   const componentsDir = path.join(uiSrcPath, "components");
   const leafModules = identifyLeafModules(componentsDir);
-  const leafModuleNames = new Set(leafModules.map(lm => lm.dirName));
+  const leafModuleNames = new Set(leafModules.map((lm) => lm.dirName));
 
   if (fs.existsSync(componentsDir)) {
     const items = fs.readdirSync(componentsDir);
@@ -354,7 +356,9 @@ function removeIntermediateIndexFiles(uiSrcPath) {
       console.log(`    ✅ Removed intermediate index: ${path.relative(PROJECT_ROOT, filePath)}`);
       removedCount++;
     } catch (error) {
-      console.warn(`    ⚠️  Could not remove ${path.relative(PROJECT_ROOT, filePath)}: ${error.message}`);
+      console.warn(
+        `    ⚠️  Could not remove ${path.relative(PROJECT_ROOT, filePath)}: ${error.message}`,
+      );
     }
   }
 
