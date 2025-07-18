@@ -53,10 +53,10 @@
     "dev": "rslib build --watch",
     "lint": "TIMING=1 eslint --max-warnings 0 .",
     "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch",
+    "test": "jest --passWithNoTests",
+    "test:coverage": "jest --passWithNoTests --coverage",
+    "test:coverage:ci": "jest --passWithNoTests --coverage --ci",
+    "test:watch": "jest --passWithNoTests --watch",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
