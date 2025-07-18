@@ -5,7 +5,7 @@
 Currently, we are supporting the following versions of the project with security updates:
 
 | Version | Supported          |
-| ------- | ------------------ |
+|---------|--------------------|
 | 15.x.x  | :white_check_mark: |
 | 14.x.x  | :white_check_mark: |
 | < 14.0  | :x:                |
