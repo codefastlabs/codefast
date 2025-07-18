@@ -1,21 +1,14 @@
-export {
-  Accordion,
-  AccordionContent,
-  AccordionIcon,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/accordion/accordion";
+export { Accordion, AccordionContent, AccordionIcon, AccordionItem, AccordionTrigger } from "@/components/accordion";
 export type {
   AccordionContentProps,
   AccordionIconProps,
   AccordionItemProps,
   AccordionProps,
   AccordionTriggerProps,
-} from "@/components/accordion/accordion";
+} from "@/components/accordion";
 
-export { Alert, AlertDescription, AlertTitle } from "@/components/alert/alert";
-export type { AlertDescriptionProps, AlertProps, AlertTitleProps } from "@/components/alert/alert";
-export { alertVariants } from "@/components/alert/alert.variants";
+export { Alert, AlertDescription, AlertTitle, alertVariants } from "@/components/alert";
+export type { AlertDescriptionProps, AlertProps, AlertTitleProps } from "@/components/alert";
 
 export {
   AlertDialog,
@@ -28,7 +21,7 @@ export {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/alert-dialog/alert-dialog";
+} from "@/components/alert-dialog";
 export type {
   AlertDialogActionProps,
   AlertDialogBodyProps,
@@ -40,23 +33,22 @@ export type {
   AlertDialogProps,
   AlertDialogTitleProps,
   AlertDialogTriggerProps,
-} from "@/components/alert-dialog/alert-dialog";
+} from "@/components/alert-dialog";
 
-export { AspectRatio } from "@/components/aspect-ratio/aspect-ratio";
-export type { AspectRatioProps } from "@/components/aspect-ratio/aspect-ratio";
+export { AspectRatio } from "@/components/aspect-ratio";
+export type { AspectRatioProps } from "@/components/aspect-ratio";
 
-export { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar/avatar";
-export type { AvatarFallbackProps, AvatarImageProps, AvatarProps } from "@/components/avatar/avatar";
+export { Avatar, AvatarFallback, AvatarImage } from "@/components/avatar";
+export type { AvatarFallbackProps, AvatarImageProps, AvatarProps } from "@/components/avatar";
 
-export { Badge } from "@/components/badge/badge";
-export type { BadgeProps } from "@/components/badge/badge";
-export { badgeVariants } from "@/components/badge/badge.variants";
+export { Badge, badgeVariants } from "@/components/badge";
+export type { BadgeProps } from "@/components/badge";
 
-export { Blockquote } from "@/components/blockquote/blockquote";
-export type { BlockquoteProps } from "@/components/blockquote/blockquote";
+export { Blockquote } from "@/components/blockquote";
+export type { BlockquoteProps } from "@/components/blockquote";
 
-export { Box } from "@/components/box/box";
-export type { BoxProps } from "@/components/box/box";
+export { Box } from "@/components/box";
+export type { BoxProps } from "@/components/box";
 
 export {
   Breadcrumb,
@@ -66,7 +58,7 @@ export {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/breadcrumb/breadcrumb";
+} from "@/components/breadcrumb";
 export type {
   BreadcrumbEllipsisProps,
   BreadcrumbItemProps,
@@ -75,24 +67,15 @@ export type {
   BreadcrumbPageProps,
   BreadcrumbProps,
   BreadcrumbSeparatorProps,
-} from "@/components/breadcrumb/breadcrumb";
+} from "@/components/breadcrumb";
 
-export { Button } from "@/components/button/button";
-export type { ButtonProps } from "@/components/button/button";
-export { buttonVariants } from "@/components/button/button.variants";
+export { Button, buttonVariants } from "@/components/button";
+export type { ButtonProps } from "@/components/button";
 
-export { Calendar, CalendarLabel, CalendarRangeLabel } from "@/components/calendar/calendar";
-export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps } from "@/components/calendar/calendar";
+export { Calendar, CalendarLabel, CalendarRangeLabel } from "@/components/calendar";
+export type { CalendarLabelProps, CalendarProps, CalendarRangeLabelProps } from "@/components/calendar";
 
-export {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/card/card";
+export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/card";
 export type {
   CardActionProps,
   CardContentProps,
@@ -101,7 +84,7 @@ export type {
   CardHeaderProps,
   CardProps,
   CardTitleProps,
-} from "@/components/card/card";
+} from "@/components/card";
 
 export {
   Carousel,
@@ -110,7 +93,7 @@ export {
   CarouselNext,
   CarouselPrevious,
   createCarouselScope,
-} from "@/components/carousel/carousel";
+} from "@/components/carousel";
 export type {
   CarouselApi,
   CarouselContentProps,
@@ -118,7 +101,7 @@ export type {
   CarouselNextProps,
   CarouselPreviousProps,
   CarouselProps,
-} from "@/components/carousel/carousel";
+} from "@/components/carousel";
 
 export {
   ChartContainer,
@@ -128,7 +111,7 @@ export {
   ChartTooltip,
   ChartTooltipContent,
   createChartScope,
-} from "@/components/chart/chart";
+} from "@/components/chart";
 export type {
   ChartConfig,
   ChartContainerProps,
@@ -137,26 +120,22 @@ export type {
   ChartStyleProps,
   ChartTooltipContentProps,
   ChartTooltipProps,
-} from "@/components/chart/chart";
+} from "@/components/chart";
 
-export { Checkbox } from "@/components/checkbox/checkbox";
-export type { CheckboxProps } from "@/components/checkbox/checkbox";
+export { Checkbox } from "@/components/checkbox";
+export type { CheckboxProps } from "@/components/checkbox";
 
-export { CheckboxCards, CheckboxCardsItem } from "@/components/checkbox-cards/checkbox-cards";
-export type { CheckboxCardsItemProps, CheckboxCardsProps } from "@/components/checkbox-cards/checkbox-cards";
+export { CheckboxCards, CheckboxCardsItem } from "@/components/checkbox-cards";
+export type { CheckboxCardsItemProps, CheckboxCardsProps } from "@/components/checkbox-cards";
 
-export { CheckboxGroup, CheckboxGroupItem } from "@/components/checkbox-group/checkbox-group";
-export type { CheckboxGroupItemProps, CheckboxGroupProps } from "@/components/checkbox-group/checkbox-group";
+export { CheckboxGroup, CheckboxGroupItem } from "@/components/checkbox-group";
+export type { CheckboxGroupItemProps, CheckboxGroupProps } from "@/components/checkbox-group";
 
-export { Code } from "@/components/code/code";
-export type { CodeProps } from "@/components/code/code";
+export { Code } from "@/components/code";
+export type { CodeProps } from "@/components/code";
 
-export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/collapsible/collapsible";
-export type {
-  CollapsibleContentProps,
-  CollapsibleProps,
-  CollapsibleTriggerProps,
-} from "@/components/collapsible/collapsible";
+export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/collapsible";
+export type { CollapsibleContentProps, CollapsibleProps, CollapsibleTriggerProps } from "@/components/collapsible";
 
 export {
   Command,
@@ -169,7 +148,7 @@ export {
   CommandLoading,
   CommandSeparator,
   CommandShortcut,
-} from "@/components/command/command";
+} from "@/components/command";
 export type {
   CommandDialogProps,
   CommandEmptyProps,
@@ -181,10 +160,10 @@ export type {
   CommandProps,
   CommandSeparatorProps,
   CommandShortcutProps,
-} from "@/components/command/command";
+} from "@/components/command";
 
-export { Container } from "@/components/container/container";
-export type { ContainerProps } from "@/components/container/container";
+export { Container } from "@/components/container";
+export type { ContainerProps } from "@/components/container";
 
 export {
   ContextMenu,
@@ -202,7 +181,7 @@ export {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "@/components/context-menu/context-menu";
+} from "@/components/context-menu";
 export type {
   ContextMenuArrowProps,
   ContextMenuCheckboxItemProps,
@@ -219,7 +198,7 @@ export type {
   ContextMenuSubProps,
   ContextMenuSubTriggerProps,
   ContextMenuTriggerProps,
-} from "@/components/context-menu/context-menu";
+} from "@/components/context-menu";
 
 export {
   Dialog,
@@ -231,7 +210,7 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/dialog/dialog";
+} from "@/components/dialog";
 export type {
   DialogBodyProps,
   DialogCloseProps,
@@ -242,7 +221,7 @@ export type {
   DialogProps,
   DialogTitleProps,
   DialogTriggerProps,
-} from "@/components/dialog/dialog";
+} from "@/components/dialog";
 
 export {
   Drawer,
@@ -254,7 +233,7 @@ export {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/drawer/drawer";
+} from "@/components/drawer";
 export type {
   DrawerBodyProps,
   DrawerCloseProps,
@@ -265,7 +244,7 @@ export type {
   DrawerProps,
   DrawerTitleProps,
   DrawerTriggerProps,
-} from "@/components/drawer/drawer";
+} from "@/components/drawer";
 
 export {
   DropdownMenu,
@@ -283,7 +262,7 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/dropdown-menu/dropdown-menu";
+} from "@/components/dropdown-menu";
 export type {
   DropdownMenuArrowProps,
   DropdownMenuCheckboxItemProps,
@@ -300,10 +279,10 @@ export type {
   DropdownMenuSubProps,
   DropdownMenuSubTriggerProps,
   DropdownMenuTriggerProps,
-} from "@/components/dropdown-menu/dropdown-menu";
+} from "@/components/dropdown-menu";
 
-export { Em } from "@/components/em/em";
-export type { EmProps } from "@/components/em/em";
+export { Em } from "@/components/em";
+export type { EmProps } from "@/components/em";
 
 export {
   createFormFieldScope,
@@ -314,7 +293,7 @@ export {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/form/form";
+} from "@/components/form";
 export type {
   FormControlProps,
   FormDescriptionProps,
@@ -323,28 +302,27 @@ export type {
   FormLabelProps,
   FormMessageProps,
   FormProps,
-} from "@/components/form/form";
+} from "@/components/form";
 
-export { Heading } from "@/components/heading/heading";
-export type { HeadingProps } from "@/components/heading/heading";
+export { Heading } from "@/components/heading";
+export type { HeadingProps } from "@/components/heading";
 
-export { HoverCard, HoverCardArrow, HoverCardContent, HoverCardTrigger } from "@/components/hover-card/hover-card";
+export { HoverCard, HoverCardArrow, HoverCardContent, HoverCardTrigger } from "@/components/hover-card";
 export type {
   HoverCardArrowProps,
   HoverCardContentProps,
   HoverCardProps,
   HoverCardTriggerProps,
-} from "@/components/hover-card/hover-card";
+} from "@/components/hover-card";
 
-export { Inline } from "@/components/inline/inline";
-export type { InlineProps } from "@/components/inline/inline";
+export { Inline } from "@/components/inline";
+export type { InlineProps } from "@/components/inline";
 
-export { Input, TextInput } from "@/components/input/input";
-export type { InputProps, TextInputProps } from "@/components/input/input";
-export { inputVariants } from "@/components/input/input.variants";
+export { Input, inputVariants, TextInput } from "@/components/input";
+export type { InputProps, TextInputProps } from "@/components/input";
 
-export { InputNumber, NumberInput } from "@/components/input-number/input-number";
-export type { InputNumberProps, NumberInputProps } from "@/components/input-number/input-number";
+export { InputNumber, NumberInput } from "@/components/input-number";
+export type { InputNumberProps, NumberInputProps } from "@/components/input-number";
 
 export {
   InputOTP,
@@ -354,25 +332,25 @@ export {
   REGEXP_ONLY_CHARS,
   REGEXP_ONLY_DIGITS,
   REGEXP_ONLY_DIGITS_AND_CHARS,
-} from "@/components/input-otp/input-otp";
+} from "@/components/input-otp";
 export type {
   InputOTPGroupProps,
   InputOTPProps,
   InputOTPSeparatorProps,
   InputOTPSlotProps,
-} from "@/components/input-otp/input-otp";
+} from "@/components/input-otp";
 
-export { InputPassword, PasswordInput } from "@/components/input-password/input-password";
-export type { InputPasswordProps, PasswordInputProps } from "@/components/input-password/input-password";
+export { InputPassword, PasswordInput } from "@/components/input-password";
+export type { InputPasswordProps, PasswordInputProps } from "@/components/input-password";
 
-export { InputSearch, SearchInput } from "@/components/input-search/input-search";
-export type { InputSearchProps, SearchInputProps } from "@/components/input-search/input-search";
+export { InputSearch, SearchInput } from "@/components/input-search";
+export type { InputSearchProps, SearchInputProps } from "@/components/input-search";
 
-export { Kbd } from "@/components/kbd/kbd";
-export type { KbdProps } from "@/components/kbd/kbd";
+export { Kbd } from "@/components/kbd";
+export type { KbdProps } from "@/components/kbd";
 
-export { Label } from "@/components/label/label";
-export type { LabelProps } from "@/components/label/label";
+export { Label } from "@/components/label";
+export type { LabelProps } from "@/components/label";
 
 export {
   Menubar,
@@ -391,7 +369,7 @@ export {
   MenubarSubContent,
   MenubarSubTrigger,
   MenubarTrigger,
-} from "@/components/menubar/menubar";
+} from "@/components/menubar";
 export type {
   MenubarArrowProps,
   MenubarCheckboxItemProps,
@@ -409,7 +387,7 @@ export type {
   MenubarSubProps,
   MenubarSubTriggerProps,
   MenubarTriggerProps,
-} from "@/components/menubar/menubar";
+} from "@/components/menubar";
 
 export {
   NavigationMenu,
@@ -418,7 +396,8 @@ export {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from "@/components/navigation-menu/navigation-menu";
+  navigationMenuTriggerStyle,
+} from "@/components/navigation-menu";
 export type {
   NavigationMenuContentProps,
   NavigationMenuItemProps,
@@ -426,8 +405,7 @@ export type {
   NavigationMenuListProps,
   NavigationMenuProps,
   NavigationMenuTriggerProps,
-} from "@/components/navigation-menu/navigation-menu";
-export { navigationMenuTriggerStyle } from "@/components/navigation-menu/navigation-menu-trigger.style";
+} from "@/components/navigation-menu";
 
 export {
   Pagination,
@@ -437,7 +415,7 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/pagination/pagination";
+} from "@/components/pagination";
 export type {
   PaginationContentProps,
   PaginationEllipsisProps,
@@ -446,52 +424,46 @@ export type {
   PaginationNextProps,
   PaginationPreviousProps,
   PaginationProps,
-} from "@/components/pagination/pagination";
+} from "@/components/pagination";
 
-export { Popover, PopoverAnchor, PopoverArrow, PopoverContent, PopoverTrigger } from "@/components/popover/popover";
+export { Popover, PopoverAnchor, PopoverArrow, PopoverContent, PopoverTrigger } from "@/components/popover";
 export type {
   PopoverAnchorProps,
   PopoverArrowProps,
   PopoverContentProps,
   PopoverProps,
   PopoverTriggerProps,
-} from "@/components/popover/popover";
+} from "@/components/popover";
 
-export { Pre } from "@/components/pre/pre";
-export type { PreProps } from "@/components/pre/pre";
+export { Pre } from "@/components/pre";
+export type { PreProps } from "@/components/pre";
 
-export { Progress } from "@/components/progress/progress";
-export type { ProgressProps } from "@/components/progress/progress";
+export { Progress } from "@/components/progress";
+export type { ProgressProps } from "@/components/progress";
 
-export { ProgressCircle } from "@/components/progress-circle/progress-circle";
-export type { ProgressCircleProps } from "@/components/progress-circle/progress-circle";
-export { progressCircleVariants } from "@/components/progress-circle/progress-circle.variants";
+export { ProgressCircle, progressCircleVariants } from "@/components/progress-circle";
+export type { ProgressCircleProps } from "@/components/progress-circle";
 
-export { Quote } from "@/components/quote/quote";
-export type { QuoteProps } from "@/components/quote/quote";
+export { Quote } from "@/components/quote";
+export type { QuoteProps } from "@/components/quote";
 
-export { Radio } from "@/components/radio/radio";
-export type { RadioProps } from "@/components/radio/radio";
+export { Radio } from "@/components/radio";
+export type { RadioProps } from "@/components/radio";
 
-export { RadioCards, RadioCardsItem } from "@/components/radio-cards/radio-cards";
-export type { RadioCardsItemProps, RadioCardsProps } from "@/components/radio-cards/radio-cards";
+export { RadioCards, RadioCardsItem } from "@/components/radio-cards";
+export type { RadioCardsItemProps, RadioCardsProps } from "@/components/radio-cards";
 
-export { RadioGroup, RadioGroupItem } from "@/components/radio-group/radio-group";
-export type { RadioGroupItemProps, RadioGroupProps } from "@/components/radio-group/radio-group";
+export { RadioGroup, RadioGroupItem } from "@/components/radio-group";
+export type { RadioGroupItemProps, RadioGroupProps } from "@/components/radio-group";
 
-export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/resizable/resizable";
-export type {
-  ResizableHandleProps,
-  ResizablePanelGroupProps,
-  ResizablePanelProps,
-} from "@/components/resizable/resizable";
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/resizable";
+export type { ResizableHandleProps, ResizablePanelGroupProps, ResizablePanelProps } from "@/components/resizable";
 
-export { ScrollArea, ScrollAreaScrollbar } from "@/components/scroll-area/scroll-area";
-export type { ScrollAreaProps, ScrollAreaScrollbarProps } from "@/components/scroll-area/scroll-area";
-export { scrollAreaScrollbarVariants } from "@/components/scroll-area/scroll-area-scrollbar.variants";
+export { ScrollArea, ScrollAreaScrollbar, scrollAreaScrollbarVariants } from "@/components/scroll-area";
+export type { ScrollAreaProps, ScrollAreaScrollbarProps } from "@/components/scroll-area";
 
-export { Section } from "@/components/section/section";
-export type { SectionProps } from "@/components/section/section";
+export { Section } from "@/components/section";
+export type { SectionProps } from "@/components/section";
 
 export {
   Select,
@@ -504,7 +476,7 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "@/components/select/select";
+} from "@/components/select";
 export type {
   SelectContentProps,
   SelectGroupProps,
@@ -516,23 +488,23 @@ export type {
   SelectSeparatorProps,
   SelectTriggerProps,
   SelectValueProps,
-} from "@/components/select/select";
+} from "@/components/select";
 
-export { Separator, SeparatorItem } from "@/components/separator/separator";
-export type { SeparatorItemProps, SeparatorProps } from "@/components/separator/separator";
-export { separatorVariants } from "@/components/separator/separator.variants";
+export { Separator, SeparatorItem, separatorVariants } from "@/components/separator";
+export type { SeparatorItemProps, SeparatorProps } from "@/components/separator";
 
 export {
   Sheet,
   SheetBody,
   SheetClose,
   SheetContent,
+  sheetContentVariants,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/sheet/sheet";
+} from "@/components/sheet";
 export type {
   SheetBodyProps,
   SheetCloseProps,
@@ -543,8 +515,7 @@ export type {
   SheetProps,
   SheetTitleProps,
   SheetTriggerProps,
-} from "@/components/sheet/sheet";
-export { sheetContentVariants } from "@/components/sheet/sheet-content.variants";
+} from "@/components/sheet";
 
 export {
   Sidebar,
@@ -561,6 +532,7 @@ export {
   SidebarMenuAction,
   SidebarMenuBadge,
   SidebarMenuButton,
+  sidebarMenuButtonVariants,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,
@@ -571,7 +543,7 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
-} from "@/components/sidebar/sidebar";
+} from "@/components/sidebar";
 export type {
   SidebarContentProps,
   SidebarFooterProps,
@@ -596,26 +568,25 @@ export type {
   SidebarRailProps,
   SidebarSeparatorProps,
   SidebarTriggerProps,
-} from "@/components/sidebar/sidebar";
-export { sidebarMenuButtonVariants } from "@/components/sidebar/sidebar-menu-button.variants";
+} from "@/components/sidebar";
 
-export { Skeleton } from "@/components/skeleton/skeleton";
-export type { SkeletonProps } from "@/components/skeleton/skeleton";
+export { Skeleton } from "@/components/skeleton";
+export type { SkeletonProps } from "@/components/skeleton";
 
-export { Slider } from "@/components/slider/slider";
-export type { SliderProps } from "@/components/slider/slider";
+export { Slider } from "@/components/slider";
+export type { SliderProps } from "@/components/slider";
 
-export { toast, Toaster, useSonner } from "@/components/sonner/sonner";
-export type { ToasterProps } from "@/components/sonner/sonner";
+export { toast, Toaster, useSonner } from "@/components/sonner";
+export type { ToasterProps } from "@/components/sonner";
 
-export { Spinner } from "@/components/spinner/spinner";
-export type { SpinnerProps } from "@/components/spinner/spinner";
+export { Spinner } from "@/components/spinner";
+export type { SpinnerProps } from "@/components/spinner";
 
-export { Strong } from "@/components/strong/strong";
-export type { StrongProps } from "@/components/strong/strong";
+export { Strong } from "@/components/strong";
+export type { StrongProps } from "@/components/strong";
 
-export { Switch } from "@/components/switch/switch";
-export type { SwitchProps } from "@/components/switch/switch";
+export { Switch } from "@/components/switch";
+export type { SwitchProps } from "@/components/switch";
 
 export {
   Table,
@@ -626,7 +597,7 @@ export {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/table/table";
+} from "@/components/table";
 export type {
   TableBodyProps,
   TableCaptionProps,
@@ -636,32 +607,31 @@ export type {
   TableHeadProps,
   TableProps,
   TableRowProps,
-} from "@/components/table/table";
+} from "@/components/table";
 
-export { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs/tabs";
-export type { TabsContentProps, TabsListProps, TabsProps, TabsTriggerProps } from "@/components/tabs/tabs";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
+export type { TabsContentProps, TabsListProps, TabsProps, TabsTriggerProps } from "@/components/tabs";
 
-export { Text } from "@/components/text/text";
-export type { TextProps } from "@/components/text/text";
+export { Text } from "@/components/text";
+export type { TextProps } from "@/components/text";
 
-export { Textarea } from "@/components/textarea/textarea";
-export type { TextareaProps } from "@/components/textarea/textarea";
+export { Textarea } from "@/components/textarea";
+export type { TextareaProps } from "@/components/textarea";
 
-export { Toggle } from "@/components/toggle/toggle";
-export type { ToggleProps } from "@/components/toggle/toggle";
-export { toggleVariants } from "@/components/toggle/toggle.variants";
+export { Toggle, toggleVariants } from "@/components/toggle";
+export type { ToggleProps } from "@/components/toggle";
 
-export { ToggleGroup, ToggleGroupItem } from "@/components/toggle-group/toggle-group";
-export type { ToggleGroupItemProps, ToggleGroupProps } from "@/components/toggle-group/toggle-group";
+export { ToggleGroup, ToggleGroupItem } from "@/components/toggle-group";
+export type { ToggleGroupItemProps, ToggleGroupProps } from "@/components/toggle-group";
 
-export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip/tooltip";
+export { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/tooltip";
 export type {
   TooltipArrowProps,
   TooltipContentProps,
   TooltipProps,
   TooltipProviderProps,
   TooltipTriggerProps,
-} from "@/components/tooltip/tooltip";
+} from "@/components/tooltip";
 
 export { cn, tv } from "@/lib";
 export type { VariantProps } from "@/lib";
