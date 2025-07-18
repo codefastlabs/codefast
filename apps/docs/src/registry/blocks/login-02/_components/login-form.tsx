@@ -11,7 +11,9 @@ export function LoginForm({ className, ...props }: ComponentProps<"form">): JSX.
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
-        <p className="text-muted-foreground text-balance text-sm">Enter your email below to login to your account</p>
+        <p className="text-muted-foreground text-balance text-sm">
+          Enter your email below to login to your account
+        </p>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-3">

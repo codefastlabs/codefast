@@ -62,7 +62,8 @@ export function TooltipDemo(): JSX.Element {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              To learn more about how this works, check out the docs. If you have any questions, please reach out to us.
+              To learn more about how this works, check out the docs. If you have any questions,
+              please reach out to us.
             </TooltipContent>
           </Tooltip>
         </div>

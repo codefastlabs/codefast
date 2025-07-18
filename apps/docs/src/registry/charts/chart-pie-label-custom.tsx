@@ -70,7 +70,13 @@ export function ChartPieLabelCustom(): JSX.Element {
         <ChartContainer className="mx-auto aspect-square max-h-[250px] px-0" config={chartConfig}>
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel nameKey="visitors" />} />
-            <Pie data={chartData} dataKey="visitors" label={label} labelLine={false} nameKey="browser" />
+            <Pie
+              data={chartData}
+              dataKey="visitors"
+              label={label}
+              labelLine={false}
+              nameKey="browser"
+            />
           </PieChart>
         </ChartContainer>
       </CardContent>
@@ -78,7 +84,9 @@ export function ChartPieLabelCustom(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

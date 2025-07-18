@@ -46,7 +46,9 @@ export function CheckboxDemo(): JSX.Element {
           />
           <div className="grid gap-1.5 font-normal">
             <p className="text-sm font-medium leading-none">Enable notifications</p>
-            <p className="text-muted-foreground text-sm">You can enable or disable notifications at any time.</p>
+            <p className="text-muted-foreground text-sm">
+              You can enable or disable notifications at any time.
+            </p>
           </div>
         </Label>
       </div>

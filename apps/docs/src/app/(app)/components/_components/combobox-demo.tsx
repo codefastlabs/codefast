@@ -89,7 +89,10 @@ export function ComboboxDemo(): JSX.Element {
         <UserCombobox selectedUserId={usersOptions[0].id} users={[...usersOptions]} />
       </div>
       <div className="">
-        <TimezoneCombobox selectedTimezone={timezonesOptions[0].timezones[0]} timezones={[...timezonesOptions]} />
+        <TimezoneCombobox
+          selectedTimezone={timezonesOptions[0].timezones[0]}
+          timezones={[...timezonesOptions]}
+        />
       </div>
       <div className="">
         <ComboboxWithCheckbox frameworks={[...frameworkOptions]} />
@@ -111,7 +114,9 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
           suffix={<ChevronsUpDownIcon className="text-muted-foreground" />}
           variant="outline"
         >
-          {value ? frameworks.find((framework) => framework.value === value)?.label : "Select framework..."}
+          {value
+            ? frameworks.find((framework) => framework.value === value)?.label
+            : "Select framework..."}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
@@ -131,7 +136,12 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
                 >
                   {framework.label}
 
-                  <CheckIcon className={cn("ml-auto", value === framework.value ? "opacity-100" : "opacity-0")} />
+                  <CheckIcon
+                    className={cn(
+                      "ml-auto",
+                      value === framework.value ? "opacity-100" : "opacity-0",
+                    )}
+                  />
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -142,7 +152,13 @@ function FrameworkCombobox({ frameworks }: { frameworks: Framework[] }): JSX.Ele
   );
 }
 
-function UserCombobox({ selectedUserId, users }: { selectedUserId: string; users: User[] }): JSX.Element {
+function UserCombobox({
+  selectedUserId,
+  users,
+}: {
+  selectedUserId: string;
+  users: User[];
+}): JSX.Element {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(selectedUserId);
 
@@ -191,7 +207,9 @@ function UserCombobox({ selectedUserId, users }: { selectedUserId: string; users
                   </Avatar>
                   {user.username}
 
-                  <CheckIcon className={cn("ml-auto", value === user.id ? "opacity-100" : "opacity-0")} />
+                  <CheckIcon
+                    className={cn("ml-auto", value === user.id ? "opacity-100" : "opacity-0")}
+                  />
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -239,7 +257,9 @@ function TimezoneCombobox({
         >
           {selectedTimezone ? (
             <div className="flex flex-col items-start gap-0.5">
-              <span className="text-muted-foreground text-xs font-normal">{selectedGroup?.label}</span>
+              <span className="text-muted-foreground text-xs font-normal">
+                {selectedGroup?.label}
+              </span>
               <span>{selectedTimezoneLabel}</span>
             </div>
           ) : (

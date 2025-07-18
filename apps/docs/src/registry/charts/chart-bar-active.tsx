@@ -74,12 +74,20 @@ export function ChartBarActive(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="browser"
-              tickFormatter={(value: string) => chartConfig[value as keyof typeof chartConfig].label}
+              tickFormatter={(value: string) =>
+                chartConfig[value as keyof typeof chartConfig].label
+              }
               tickLine={false}
               tickMargin={10}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
-            <Bar activeBar={activeBar} activeIndex={2} dataKey="visitors" radius={8} strokeWidth={2} />
+            <Bar
+              activeBar={activeBar}
+              activeIndex={2}
+              dataKey="visitors"
+              radius={8}
+              strokeWidth={2}
+            />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -87,7 +95,9 @@ export function ChartBarActive(): JSX.Element {
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

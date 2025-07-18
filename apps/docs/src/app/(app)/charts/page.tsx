@@ -4,7 +4,9 @@ import type { JSX } from "react";
 import { ComponentWrapper } from "@/components/component-wrapper";
 import { registryCharts } from "@/registry/registry-charts";
 
-const sortedCharts = Object.entries(registryCharts).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+const sortedCharts = Object.entries(registryCharts).sort(([keyA], [keyB]) =>
+  keyA.localeCompare(keyB),
+);
 
 export const metadata: Metadata = {
   title: "Charts",

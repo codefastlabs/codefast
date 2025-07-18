@@ -7,7 +7,13 @@ import { z } from "zod";
 
 import type { ChartConfig } from "@codefast/ui";
 import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
-import type { ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState } from "@tanstack/react-table";
+import type {
+  ColumnDef,
+  ColumnFiltersState,
+  Row,
+  SortingState,
+  VisibilityState,
+} from "@tanstack/react-table";
 
 import { useIsMobile } from "@codefast/hooks";
 import {
@@ -61,7 +67,12 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
   IconChevronDown,
@@ -142,7 +153,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <div className="flex items-center justify-center">
         <Checkbox
           aria-label="Select all"
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => {
             table.toggleAllPageRowsSelected(Boolean(value));
           }}
@@ -280,7 +294,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: () => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon" variant="ghost">
+          <Button
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            size="icon"
+            variant="ghost"
+          >
             <IconDotsVertical />
             <span className="sr-only">Open menu</span>
           </Button>
@@ -315,7 +333,9 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }): ReactNode 
       }}
     >
       {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+        <TableCell key={cell.id}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </TableCell>
       ))}
     </TableRow>
   );
@@ -332,7 +352,11 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
     pageSize: 10,
   });
   const sortableId = useId();
-  const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {}),
+  );
 
   const dataIds = useMemo<UniqueIdentifier[]>(() => data.map(({ id }) => id), [data]);
 
@@ -383,7 +407,11 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
           View
         </Label>
         <Select defaultValue="outline">
-          <SelectTrigger className="@4xl/main:hidden flex w-fit" id={`${id}-view-selector`} size="sm">
+          <SelectTrigger
+            className="@4xl/main:hidden flex w-fit"
+            id={`${id}-view-selector`}
+            size="sm"
+          >
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
           <SelectContent>
@@ -439,7 +467,10 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
           </Button>
         </div>
       </div>
-      <TabsContent className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6" value="outline">
+      <TabsContent
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+        value="outline"
+      >
         <div className="overflow-hidden rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}
@@ -454,7 +485,9 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -480,8 +513,8 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-            selected.
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
@@ -658,8 +691,8 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }): ReactNode 
                   Trending up by 5.2% this month <IconTrendingUp className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It
-                  spans multiple lines and should wrap around.
+                  Showing total visitors for the last 6 months. This is just some random text to
+                  test the layout. It spans multiple lines and should wrap around.
                 </div>
               </div>
               <Separator />

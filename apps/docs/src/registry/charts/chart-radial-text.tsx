@@ -7,7 +7,15 @@ import type { Props } from "recharts/types/component/Label";
 
 import type { ChartConfig } from "@codefast/ui";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from "@codefast/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  ChartContainer,
+} from "@codefast/ui";
 
 const chartData = [{ browser: "safari", fill: "var(--color-safari)", visitors: 200 }];
 
@@ -30,7 +38,13 @@ export function ChartRadialText(): JSX.Element {
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer className="mx-auto aspect-square max-h-[250px]" config={chartConfig}>
-          <RadialBarChart data={chartData} endAngle={250} innerRadius={80} outerRadius={110} startAngle={0}>
+          <RadialBarChart
+            data={chartData}
+            endAngle={250}
+            innerRadius={80}
+            outerRadius={110}
+            startAngle={0}
+          >
             <PolarGrid
               className="first:fill-muted last:fill-background"
               gridType="circle"
@@ -49,7 +63,9 @@ export function ChartRadialText(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

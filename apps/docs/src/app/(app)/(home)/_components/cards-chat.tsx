@@ -134,7 +134,9 @@ export function CardsChat(): JSX.Element {
                 key={index}
                 className={cn(
                   "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
-                  message.role === "user" ? "bg-primary text-primary-foreground ml-auto" : "bg-muted",
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground ml-auto"
+                    : "bg-muted",
                 )}
               >
                 {message.content}
@@ -183,7 +185,9 @@ export function CardsChat(): JSX.Element {
         <DialogContent className="gap-0 p-0 outline-none">
           <DialogHeader>
             <DialogTitle>New message</DialogTitle>
-            <DialogDescription>Invite a user to this thread. This will create a new group message.</DialogDescription>
+            <DialogDescription>
+              Invite a user to this thread. This will create a new group message.
+            </DialogDescription>
           </DialogHeader>
           <DialogBody className="border-y px-0 py-0">
             <Command className="overflow-hidden rounded-t-none bg-transparent">
@@ -197,12 +201,16 @@ export function CardsChat(): JSX.Element {
                       className="flex items-center px-2"
                       onSelect={() => {
                         if (selectedUsers.includes(user)) {
-                          setSelectedUsers(selectedUsers.filter((selectedUser) => selectedUser !== user));
+                          setSelectedUsers(
+                            selectedUsers.filter((selectedUser) => selectedUser !== user),
+                          );
 
                           return;
                         }
 
-                        setSelectedUsers([...users].filter((u) => [...selectedUsers, user].includes(u)));
+                        setSelectedUsers(
+                          [...users].filter((u) => [...selectedUsers, user].includes(u)),
+                        );
                       }}
                     >
                       <Avatar>
@@ -213,7 +221,9 @@ export function CardsChat(): JSX.Element {
                         <p className="text-sm font-medium leading-none">{user.name}</p>
                         <p className="text-muted-foreground text-sm">{user.email}</p>
                       </div>
-                      {selectedUsers.includes(user) ? <Check className="text-primary ml-auto flex h-5 w-5" /> : null}
+                      {selectedUsers.includes(user) ? (
+                        <Check className="text-primary ml-auto flex h-5 w-5" />
+                      ) : null}
                     </CommandItem>
                   ))}
                 </CommandGroup>

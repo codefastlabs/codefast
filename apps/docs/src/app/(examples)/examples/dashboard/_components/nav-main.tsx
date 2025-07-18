@@ -35,7 +35,11 @@ export function NavMain({
               <IconCirclePlusFilled />
               <span>Quick Create</span>
             </SidebarMenuButton>
-            <Button className="size-8 group-data-[collapsible=icon]:opacity-0" size="icon" variant="outline">
+            <Button
+              className="size-8 group-data-[collapsible=icon]:opacity-0"
+              size="icon"
+              variant="outline"
+            >
               <IconMail />
               <span className="sr-only">Inbox</span>
             </Button>

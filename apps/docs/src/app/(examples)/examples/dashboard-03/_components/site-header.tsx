@@ -37,9 +37,17 @@ export function SiteHeader(): JSX.Element {
   }, [pathname]);
 
   return (
-    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b" data-slot="site-header">
+    <header
+      className="bg-background sticky top-0 z-50 flex w-full items-center border-b"
+      data-slot="site-header"
+    >
       <div className="h-(--header-height) flex w-full items-center gap-2 px-2 pr-4">
-        <Button className="gap-2.5 has-[>svg]:px-2" size="sm" variant="ghost" onClick={toggleSidebar}>
+        <Button
+          className="gap-2.5 has-[>svg]:px-2"
+          size="sm"
+          variant="ghost"
+          onClick={toggleSidebar}
+        >
           <SidebarIcon />
           <span className="truncate font-medium">Acme Inc</span>
         </Button>

@@ -114,7 +114,8 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      {item.title} <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                      {item.title}{" "}
+                      <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
                       <MinusIcon className="ml-auto group-data-[state=closed]/collapsible:hidden" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>

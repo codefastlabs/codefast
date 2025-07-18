@@ -44,11 +44,17 @@ export function ChartBarNegative(): JSX.Element {
         <ChartContainer config={chartConfig}>
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
-            <ChartTooltip content={<ChartTooltipContent hideIndicator hideLabel />} cursor={false} />
+            <ChartTooltip
+              content={<ChartTooltipContent hideIndicator hideLabel />}
+              cursor={false}
+            />
             <Bar dataKey="visitors">
               <LabelList dataKey="month" fillOpacity={1} position="top" />
               {chartData.map((item) => (
-                <Cell key={item.month} fill={item.visitors > 0 ? "var(--chart-1)" : "var(--chart-2)"} />
+                <Cell
+                  key={item.month}
+                  fill={item.visitors > 0 ? "var(--chart-1)" : "var(--chart-2)"}
+                />
               ))}
             </Bar>
           </BarChart>
@@ -58,7 +64,9 @@ export function ChartBarNegative(): JSX.Element {
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

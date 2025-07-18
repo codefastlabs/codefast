@@ -8,7 +8,11 @@ import { getCachedComponentsRegistry } from "@/lib/registry-cache";
 
 export const dynamicParams = false;
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const registry = getCachedComponentsRegistry(slug);
 
@@ -31,7 +35,11 @@ export function generateStaticParams(): { slug: string }[] {
   }));
 }
 
-export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
+export default async function ComponentPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<JSX.Element> {
   const { slug } = await params;
 
   const registry = getCachedComponentsRegistry(slug);

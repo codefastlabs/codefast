@@ -37,7 +37,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-area-interactive": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-area-interactive").then((module_) => module_.ChartAreaInteractive),
+      import("@/registry/charts/chart-area-interactive").then(
+        (module_) => module_.ChartAreaInteractive,
+      ),
     ),
     description: "Chart Area Interactive",
     slug: "chart-area-interactive",
@@ -69,7 +71,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-area-stacked-expand": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-area-stacked-expand").then((module_) => module_.ChartAreaStackedExpand),
+      import("@/registry/charts/chart-area-stacked-expand").then(
+        (module_) => module_.ChartAreaStackedExpand,
+      ),
     ),
     description: "Chart Area StackedExpand",
     slug: "chart-area-stacked-expand",
@@ -101,7 +105,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-bar-horizontal": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-bar-horizontal").then((module_) => module_.ChartBarHorizontal),
+      import("@/registry/charts/chart-bar-horizontal").then(
+        (module_) => module_.ChartBarHorizontal,
+      ),
     ),
     description: "Chart Bar Horizontal",
     slug: "chart-bar-horizontal",
@@ -109,7 +115,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-bar-interactive": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-bar-interactive").then((module_) => module_.ChartBarInteractive),
+      import("@/registry/charts/chart-bar-interactive").then(
+        (module_) => module_.ChartBarInteractive,
+      ),
     ),
     description: "Chart Bar Interactive",
     slug: "chart-bar-interactive",
@@ -125,7 +133,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-bar-label-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-bar-label-custom").then((module_) => module_.ChartBarLabelCustom),
+      import("@/registry/charts/chart-bar-label-custom").then(
+        (module_) => module_.ChartBarLabelCustom,
+      ),
     ),
     description: "Chart Bar LabelCustom",
     slug: "chart-bar-label-custom",
@@ -181,7 +191,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-line-dots-colors": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-line-dots-colors").then((module_) => module_.ChartLineDotsColors),
+      import("@/registry/charts/chart-line-dots-colors").then(
+        (module_) => module_.ChartLineDotsColors,
+      ),
     ),
     description: "Chart Line DotsColors",
     slug: "chart-line-dots-colors",
@@ -189,7 +201,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-line-dots-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-line-dots-custom").then((module_) => module_.ChartLineDotsCustom),
+      import("@/registry/charts/chart-line-dots-custom").then(
+        (module_) => module_.ChartLineDotsCustom,
+      ),
     ),
     description: "Chart Line DotsCustom",
     slug: "chart-line-dots-custom",
@@ -197,7 +211,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-line-interactive": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-line-interactive").then((module_) => module_.ChartLineInteractive),
+      import("@/registry/charts/chart-line-interactive").then(
+        (module_) => module_.ChartLineInteractive,
+      ),
     ),
     description: "Chart Line Interactive",
     slug: "chart-line-interactive",
@@ -213,7 +229,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-line-label-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-line-label-custom").then((module_) => module_.ChartLineLabelCustom),
+      import("@/registry/charts/chart-line-label-custom").then(
+        (module_) => module_.ChartLineLabelCustom,
+      ),
     ),
     description: "Chart Line LabelCustom",
     slug: "chart-line-label-custom",
@@ -253,7 +271,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-pie-donut-active": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-pie-donut-active").then((module_) => module_.ChartPieDonutActive),
+      import("@/registry/charts/chart-pie-donut-active").then(
+        (module_) => module_.ChartPieDonutActive,
+      ),
     ),
     description: "Chart Pie Donut Active",
     slug: "chart-pie-donut-active",
@@ -269,7 +289,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-pie-interactive": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-pie-interactive").then((module_) => module_.ChartPieInteractive),
+      import("@/registry/charts/chart-pie-interactive").then(
+        (module_) => module_.ChartPieInteractive,
+      ),
     ),
     description: "Chart Pie Interactive",
     slug: "chart-pie-interactive",
@@ -285,7 +307,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-pie-label-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-pie-label-custom").then((module_) => module_.ChartPieLabelCustom),
+      import("@/registry/charts/chart-pie-label-custom").then(
+        (module_) => module_.ChartPieLabelCustom,
+      ),
     ),
     description: "Chart Pie Label Custom",
     slug: "chart-pie-label-custom",
@@ -309,7 +333,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-pie-separator-none": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-pie-separator-none").then((module_) => module_.ChartPieSeparatorNone),
+      import("@/registry/charts/chart-pie-separator-none").then(
+        (module_) => module_.ChartPieSeparatorNone,
+      ),
     ),
     description: "Chart Pie Separator None",
     slug: "chart-pie-separator-none",
@@ -349,7 +375,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-grid-circle": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-grid-circle").then((module_) => module_.ChartRadarGridCircle),
+      import("@/registry/charts/chart-radar-grid-circle").then(
+        (module_) => module_.ChartRadarGridCircle,
+      ),
     ),
     description: "Chart Radar Grid Circle ",
     slug: "chart-radar-grid-circle",
@@ -357,7 +385,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-grid-circle-fill": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-grid-circle-fill").then((module_) => module_.ChartRadarGridCircleFill),
+      import("@/registry/charts/chart-radar-grid-circle-fill").then(
+        (module_) => module_.ChartRadarGridCircleFill,
+      ),
     ),
     description: "Chart Radar Grid Circle Fill",
     slug: "chart-radar-grid-circle-fill",
@@ -375,7 +405,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-grid-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-grid-custom").then((module_) => module_.ChartRadarGridCustom),
+      import("@/registry/charts/chart-radar-grid-custom").then(
+        (module_) => module_.ChartRadarGridCustom,
+      ),
     ),
     description: "Chart Radar Grid Custom",
     slug: "chart-radar-grid-custom",
@@ -383,7 +415,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-grid-fill": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-grid-fill").then((module_) => module_.ChartRadarGridFill),
+      import("@/registry/charts/chart-radar-grid-fill").then(
+        (module_) => module_.ChartRadarGridFill,
+      ),
     ),
     description: "Chart Radar Grid Fill",
     slug: "chart-radar-grid-fill",
@@ -391,7 +425,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-grid-none": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-grid-none").then((module_) => module_.ChartRadarGridNone),
+      import("@/registry/charts/chart-radar-grid-none").then(
+        (module_) => module_.ChartRadarGridNone,
+      ),
     ),
     description: "Chart Radar Grid None",
     slug: "chart-radar-grid-none",
@@ -407,7 +443,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-label-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-label-custom").then((module_) => module_.ChartRadarLabelCustom),
+      import("@/registry/charts/chart-radar-label-custom").then(
+        (module_) => module_.ChartRadarLabelCustom,
+      ),
     ),
     description: "Chart Radar Label Custom",
     slug: "chart-radar-label-custom",
@@ -423,7 +461,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-lines-only": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-lines-only").then((module_) => module_.ChartRadarLinesOnly),
+      import("@/registry/charts/chart-radar-lines-only").then(
+        (module_) => module_.ChartRadarLinesOnly,
+      ),
     ),
     description: "Chart Radar Lines Only",
     slug: "chart-radar-lines-only",
@@ -431,7 +471,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radar-multiple": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radar-multiple").then((module_) => module_.ChartRadarMultiple),
+      import("@/registry/charts/chart-radar-multiple").then(
+        (module_) => module_.ChartRadarMultiple,
+      ),
     ),
     description: "Chart Radar Multiple",
     slug: "chart-radar-multiple",
@@ -479,7 +521,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-radial-stacked": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-radial-stacked").then((module_) => module_.ChartRadialStacked),
+      import("@/registry/charts/chart-radial-stacked").then(
+        (module_) => module_.ChartRadialStacked,
+      ),
     ),
     description: "Chart Radial Stacked",
     slug: "chart-radial-stacked",
@@ -495,7 +539,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-advanced": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-advanced").then((module_) => module_.ChartTooltipAdvanced),
+      import("@/registry/charts/chart-tooltip-advanced").then(
+        (module_) => module_.ChartTooltipAdvanced,
+      ),
     ),
     description: "Chart Tooltip Advanced",
     slug: "chart-tooltip-advanced",
@@ -503,7 +549,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-default": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-default").then((module_) => module_.ChartTooltipDefault),
+      import("@/registry/charts/chart-tooltip-default").then(
+        (module_) => module_.ChartTooltipDefault,
+      ),
     ),
     description: "Chart Tooltip Default",
     slug: "chart-tooltip-default",
@@ -511,7 +559,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-formatter": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-formatter").then((module_) => module_.ChartTooltipFormatter),
+      import("@/registry/charts/chart-tooltip-formatter").then(
+        (module_) => module_.ChartTooltipFormatter,
+      ),
     ),
     description: "Chart Tooltip Formatter",
     slug: "chart-tooltip-formatter",
@@ -527,7 +577,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-indicator-line": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-indicator-line").then((module_) => module_.ChartTooltipIndicatorLine),
+      import("@/registry/charts/chart-tooltip-indicator-line").then(
+        (module_) => module_.ChartTooltipIndicatorLine,
+      ),
     ),
     description: "Chart Tooltip Indicator Line",
     slug: "chart-tooltip-indicator-line",
@@ -535,7 +587,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-indicator-none": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-indicator-none").then((module_) => module_.ChartTooltipIndicatorNone),
+      import("@/registry/charts/chart-tooltip-indicator-none").then(
+        (module_) => module_.ChartTooltipIndicatorNone,
+      ),
     ),
     description: "Chart Tooltip Indicator None",
     slug: "chart-tooltip-indicator-none",
@@ -543,7 +597,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-label-custom": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-label-custom").then((module_) => module_.ChartTooltipLabelCustom),
+      import("@/registry/charts/chart-tooltip-label-custom").then(
+        (module_) => module_.ChartTooltipLabelCustom,
+      ),
     ),
     description: "Chart Tooltip Label Custom",
     slug: "chart-tooltip-label-custom",
@@ -551,7 +607,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-label-formatter": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-label-formatter").then((module_) => module_.ChartTooltipLabelFormatter),
+      import("@/registry/charts/chart-tooltip-label-formatter").then(
+        (module_) => module_.ChartTooltipLabelFormatter,
+      ),
     ),
     description: "Chart Tooltip Label Formatter",
     slug: "chart-tooltip-label-formatter",
@@ -559,7 +617,9 @@ export const registryCharts: Record<string, RegistryItem> = {
   },
   "chart-tooltip-label-none": {
     component: dynamic(async () =>
-      import("@/registry/charts/chart-tooltip-label-none").then((module_) => module_.ChartTooltipLabelNone),
+      import("@/registry/charts/chart-tooltip-label-none").then(
+        (module_) => module_.ChartTooltipLabelNone,
+      ),
     ),
     description: "Chart Tooltip Label None",
     slug: "chart-tooltip-label-none",

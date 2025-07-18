@@ -37,7 +37,13 @@ export const Icons = {
     </svg>
   ),
   logo: (props: IconProps): ReactNode => (
-    <svg aria-label="Logo" role="img" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      aria-label="Logo"
+      role="img"
+      viewBox="0 0 256 256"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <title>Logo</title>
       <rect fill="none" height="256" width="256" />
       <line

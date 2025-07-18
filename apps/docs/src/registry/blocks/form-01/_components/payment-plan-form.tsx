@@ -43,7 +43,8 @@ export function PaymentPlanForm(): JSX.Element {
         <CardHeader>
           <CardTitle className="text-lg">Upgrade your subscription</CardTitle>
           <CardDescription>
-            You are currently on the free plan. Upgrade to the pro plan to get access to all features.
+            You are currently on the free plan. Upgrade to the pro plan to get access to all
+            features.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -72,13 +73,17 @@ export function PaymentPlanForm(): JSX.Element {
             </div>
             <fieldset className="flex flex-col gap-3">
               <legend className="text-sm font-medium">Plan</legend>
-              <p className="text-muted-foreground text-sm">Select the plan that best fits your needs.</p>
+              <p className="text-muted-foreground text-sm">
+                Select the plan that best fits your needs.
+              </p>
               <RadioCards className="grid gap-3 md:grid-cols-2" defaultValue="starter">
                 {plans.map((plan) => (
                   <RadioCardsItem key={plan.id} id={plan.name} value={plan.id}>
                     <div className="grid gap-1 font-normal">
                       <div className="font-medium">{plan.name}</div>
-                      <div className="text-muted-foreground text-xs leading-snug">{plan.description}</div>
+                      <div className="text-muted-foreground text-xs leading-snug">
+                        {plan.description}
+                      </div>
                     </div>
                   </RadioCardsItem>
                 ))}

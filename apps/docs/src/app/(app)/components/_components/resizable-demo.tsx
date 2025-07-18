@@ -32,7 +32,10 @@ export function ResizableDemo(): JSX.Element {
         </ResizablePanelGroup>
       </div>
       <div className="">
-        <ResizablePanelGroup className="min-h-[200px] max-w-md rounded-lg border" direction="horizontal">
+        <ResizablePanelGroup
+          className="min-h-[200px] max-w-md rounded-lg border"
+          direction="horizontal"
+        >
           <ResizablePanel defaultSize={25}>
             <div className="flex h-full items-center justify-center p-6">
               <span className="font-semibold">Sidebar</span>
@@ -47,7 +50,10 @@ export function ResizableDemo(): JSX.Element {
         </ResizablePanelGroup>
       </div>
       <div className="">
-        <ResizablePanelGroup className="min-h-[200px] max-w-md rounded-lg border" direction="vertical">
+        <ResizablePanelGroup
+          className="min-h-[200px] max-w-md rounded-lg border"
+          direction="vertical"
+        >
           <ResizablePanel defaultSize={25}>
             <div className="flex h-full items-center justify-center p-6">
               <span className="font-semibold">Header</span>

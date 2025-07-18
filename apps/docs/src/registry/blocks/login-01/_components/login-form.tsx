@@ -2,7 +2,17 @@ import Link from "next/link";
 import { useId } from "react";
 import type { ComponentProps, JSX } from "react";
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, cn, Input, Label } from "@codefast/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  cn,
+  Input,
+  Label,
+} from "@codefast/ui";
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.Element {
   const id = useId();
@@ -24,7 +34,10 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">): JSX.E
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor={`${id}-password`}>Password</Label>
-                  <Link className="ml-auto inline-block text-sm underline-offset-4 hover:underline" href="/">
+                  <Link
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    href="/"
+                  >
                     Forgot your password?
                   </Link>
                 </div>

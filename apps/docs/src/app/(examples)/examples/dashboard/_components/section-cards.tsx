@@ -1,6 +1,14 @@
 import type { JSX } from "react";
 
-import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui";
+import {
+  Badge,
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
 export function SectionCards(): JSX.Element {
@@ -9,7 +17,9 @@ export function SectionCards(): JSX.Element {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">$1,250.00</CardTitle>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            $1,250.00
+          </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
@@ -27,7 +37,9 @@ export function SectionCards(): JSX.Element {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>New Customers</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">1,234</CardTitle>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            1,234
+          </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingDown />
@@ -45,7 +57,9 @@ export function SectionCards(): JSX.Element {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Active Accounts</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">45,678</CardTitle>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            45,678
+          </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
@@ -63,7 +77,9 @@ export function SectionCards(): JSX.Element {
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Growth Rate</CardDescription>
-          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">4.5%</CardTitle>
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+            4.5%
+          </CardTitle>
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />

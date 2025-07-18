@@ -39,7 +39,10 @@ function DatePickerSimple(): JSX.Element {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          className={cn("min-w-[200px] justify-start px-3 font-normal", !date && "text-muted-foreground")}
+          className={cn(
+            "min-w-[200px] justify-start px-3 font-normal",
+            !date && "text-muted-foreground",
+          )}
           variant="outline"
         >
           <CalendarIcon className="text-muted-foreground" />

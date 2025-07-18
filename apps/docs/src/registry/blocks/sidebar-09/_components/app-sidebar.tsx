@@ -124,7 +124,11 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
   const { setOpen } = useSidebar("AppSidebar");
 
   return (
-    <Sidebar className="overflow-hidden *:data-[sidebar=sidebar]:flex-row" collapsible="icon" {...props}>
+    <Sidebar
+      className="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
+      collapsible="icon"
+      {...props}
+    >
       {/* This is the first sidebar */}
       {/* We disable collapsible and adjust width to icon. */}
       {/* This will make the sidebar appear as icons. */}
@@ -204,7 +208,9 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                     <span className="ml-auto text-xs">{mail.date}</span>
                   </div>
                   <span className="font-medium">{mail.subject}</span>
-                  <span className="line-clamp-2 whitespace-break-spaces text-xs">{mail.teaser}</span>
+                  <span className="line-clamp-2 whitespace-break-spaces text-xs">
+                    {mail.teaser}
+                  </span>
                 </Link>
               ))}
             </SidebarGroupContent>

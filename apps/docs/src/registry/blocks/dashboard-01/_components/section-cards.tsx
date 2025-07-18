@@ -1,6 +1,14 @@
 import type { JSX } from "react";
 
-import { Badge, Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from "@codefast/ui";
+import {
+  Badge,
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@codefast/ui";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
 type TrendDirection = "down" | "up";
@@ -25,7 +33,9 @@ function MetricCard({ footer, title, trend, value }: MetricCardProps): JSX.Eleme
     <Card className="@container/card">
       <CardHeader>
         <CardDescription>{title}</CardDescription>
-        <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">{value}</CardTitle>
+        <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
+          {value}
+        </CardTitle>
         <CardAction>
           <Badge variant="outline">
             <TrendIcon />

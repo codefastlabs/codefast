@@ -27,7 +27,8 @@ enum TargetPrefixes {
 const VARIABLES_TO_REMOVE = ["iframeHeight", "containerClassName", "description"];
 
 // Pre-compile regex pattern for better performance
-const IMPORT_REGEX = /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](?<importPath>[^"']+)["']/g;
+const IMPORT_REGEX =
+  /import\s+(?:(?:{[^}]+}|\*\s+as\s+\w+|\w+)\s+from\s+)?["'](?<importPath>[^"']+)["']/g;
 
 // In-memory cache for processed files
 const fileContentCache = new Map<string, { content: string; highlightedContent: string }>();
@@ -89,7 +90,9 @@ export async function getRegistryItem(name: string): Promise<null | RegistryItem
  * @param itemFiles - Array of registry item files to process
  * @returns Promise resolving to an array of processed files with content and target paths
  */
-async function processRegistryItemFiles(itemFiles: RegistryItemFile[]): Promise<RegistryItemFile[]> {
+async function processRegistryItemFiles(
+  itemFiles: RegistryItemFile[],
+): Promise<RegistryItemFile[]> {
   const files: RegistryItemFile[] = itemFiles.map((file) => ({
     ...file,
     path: path.join(process.cwd(), file.path),
@@ -215,7 +218,12 @@ export function createFileTreeForRegistryItemFiles(files: RegistryItemFile[]): F
  * @param filePath - Full file path, applicable only when isFile is true
  * @returns The found or newly created node
  */
-function findOrCreateNode(level: FileTree[], nodeName: string, isFile: boolean, filePath?: string): FileTree {
+function findOrCreateNode(
+  level: FileTree[],
+  nodeName: string,
+  isFile: boolean,
+  filePath?: string,
+): FileTree {
   let node = level.find(({ name }) => name === nodeName);
 
   if (!node) {
@@ -251,7 +259,10 @@ function sortFileTreeByName(fileTree: FileTree[]): FileTree[] {
  * @param allFiles - Array of all registry item files for import resolution
  * @returns Promise resolving to the processed file content as string
  */
-async function getFileContent(file: RegistryItemFile, allFiles: RegistryItemFile[]): Promise<string> {
+async function getFileContent(
+  file: RegistryItemFile,
+  allFiles: RegistryItemFile[],
+): Promise<string> {
   try {
     const raw = await fs.readFile(file.path, "utf8");
     const sourceFile = await createProcessedSourceFile(file.path, raw);
@@ -354,7 +365,11 @@ function fixImports(content: string, file: RegistryItemFile, allFiles: RegistryI
   }
 
   return content.replaceAll(IMPORT_REGEX, (match: string, importPath: string) => {
-    if (!importPath.startsWith("@/") && !importPath.startsWith("./") && !importPath.startsWith("../")) {
+    if (
+      !importPath.startsWith("@/") &&
+      !importPath.startsWith("./") &&
+      !importPath.startsWith("../")
+    ) {
       return match;
     }
 
@@ -378,7 +393,11 @@ function fixImports(content: string, file: RegistryItemFile, allFiles: RegistryI
  * @param allFiles - Array of all registry item files for path resolution
  * @returns The updated import statement with a corrected path
  */
-function processAliasImport(match: string, importPath: string, allFiles: RegistryItemFile[]): string {
+function processAliasImport(
+  match: string,
+  importPath: string,
+  allFiles: RegistryItemFile[],
+): string {
   const importPathWithoutAlias = importPath.replace("@/", "");
   const importedFile = allFiles.find(
     (f) => f.path.includes(importPathWithoutAlias) || f.target?.includes(importPathWithoutAlias),
@@ -408,7 +427,9 @@ function processRelativeImport(
 ): string {
   const currentDirectory = path.dirname(file.path);
   const absoluteImportPath = path.resolve(currentDirectory, importPath);
-  const importedFile = allFiles.find((f) => absoluteImportPath.includes(path.basename(f.path, path.extname(f.path))));
+  const importedFile = allFiles.find((f) =>
+    absoluteImportPath.includes(path.basename(f.path, path.extname(f.path))),
+  );
 
   if (importedFile?.target) {
     return match.replace(importPath, `@/${importedFile.target}`);

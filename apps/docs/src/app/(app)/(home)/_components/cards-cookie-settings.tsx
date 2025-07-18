@@ -24,7 +24,9 @@ function CookieSettingItem({ defaultChecked, description, id, title }: CookieOpt
     <div className="flex items-center justify-between space-x-4">
       <Label className="flex flex-col space-y-1" htmlFor={id}>
         <span>{title}</span>
-        <span className="text-muted-foreground text-xs font-normal leading-snug">{description}</span>
+        <span className="text-muted-foreground text-xs font-normal leading-snug">
+          {description}
+        </span>
       </Label>
       <Switch aria-label={title} defaultChecked={defaultChecked} id={id} />
     </div>

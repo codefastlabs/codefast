@@ -7,7 +7,11 @@ import { AppSidebar } from "@/app/(examples)/examples/dashboard/_components/app-
 import { SiteHeader } from "@/app/(examples)/examples/dashboard/_components/site-header";
 import { SidebarInset, SidebarProvider } from "@codefast/ui";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }): Promise<JSX.Element> {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}): Promise<JSX.Element> {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 

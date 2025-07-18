@@ -97,7 +97,12 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
       <SidebarContent className="gap-0">
         {/* We create a collapsible SidebarGroup for each parent. */}
         {data.navMain.map((item) => (
-          <Collapsible key={item.title} defaultOpen className="group/collapsible" title={item.title}>
+          <Collapsible
+            key={item.title}
+            defaultOpen
+            className="group/collapsible"
+            title={item.title}
+          >
             <SidebarGroup>
               <SidebarGroupLabel
                 asChild

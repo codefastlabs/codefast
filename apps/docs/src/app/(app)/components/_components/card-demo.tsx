@@ -42,7 +42,10 @@ export function CardDemo(): JSX.Element {
                 <div className="grid gap-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <Label htmlFor={`${id}-password`}>Password</Label>
-                    <Link className="inline-block text-sm underline-offset-4 hover:underline" href="/">
+                    <Link
+                      className="inline-block text-sm underline-offset-4 hover:underline"
+                      href="/"
+                    >
                       Forgot your password?
                     </Link>
                   </div>

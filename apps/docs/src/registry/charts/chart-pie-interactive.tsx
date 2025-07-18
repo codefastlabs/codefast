@@ -71,7 +71,10 @@ export function ChartPieInteractive(): JSX.Element {
   const id = "pie-interactive";
   const [activeMonth, setActiveMonth] = useState(desktopData[0].month);
 
-  const activeIndex = useMemo(() => desktopData.findIndex((item) => item.month === activeMonth), [activeMonth]);
+  const activeIndex = useMemo(
+    () => desktopData.findIndex((item) => item.month === activeMonth),
+    [activeMonth],
+  );
   const months = useMemo(() => desktopData.map((item) => item.month), []);
 
   return (
@@ -83,7 +86,10 @@ export function ChartPieInteractive(): JSX.Element {
           <CardDescription>January - June 2024</CardDescription>
         </div>
         <Select value={activeMonth} onValueChange={setActiveMonth}>
-          <SelectTrigger aria-label="Select a value" className="ml-auto h-7 w-[130px] rounded-lg pl-2.5">
+          <SelectTrigger
+            aria-label="Select a value"
+            className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
+          >
             <SelectValue placeholder="Select month" />
           </SelectTrigger>
           <SelectContent align="end" className="rounded-xl">
@@ -112,7 +118,11 @@ export function ChartPieInteractive(): JSX.Element {
         </Select>
       </CardHeader>
       <CardContent className="flex flex-1 justify-center pb-0">
-        <ChartContainer className="mx-auto aspect-square w-full max-w-[300px]" config={chartConfig} id={id}>
+        <ChartContainer
+          className="mx-auto aspect-square w-full max-w-[300px]"
+          config={chartConfig}
+          id={id}
+        >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
             <Pie
@@ -133,7 +143,10 @@ export function ChartPieInteractive(): JSX.Element {
   );
 }
 
-const activeShape: ActiveShape<PieSectorDataItem> = ({ outerRadius = 0, ...props }: PieSectorDataItem) => (
+const activeShape: ActiveShape<PieSectorDataItem> = ({
+  outerRadius = 0,
+  ...props
+}: PieSectorDataItem) => (
   <g>
     <Sector {...props} outerRadius={outerRadius + 10} />
     <Sector {...props} innerRadius={outerRadius + 12} outerRadius={outerRadius + 25} />

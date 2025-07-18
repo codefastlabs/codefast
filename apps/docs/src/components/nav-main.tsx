@@ -83,7 +83,9 @@ function NavGroup({
     <SidebarMenuSubItem key={group.title}>
       {hasComponents ? (
         <>
-          <SidebarGroupLabel className="font-mono text-xs font-semibold uppercase">{group.title}</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-mono text-xs font-semibold uppercase">
+            {group.title}
+          </SidebarGroupLabel>
           <ComponentList basePath={itemPath} components={group.components} currentPath={pathname} />
         </>
       ) : (
@@ -113,7 +115,12 @@ export function NavMain({ items }: NavMainProps): JSX.Element {
               <CollapsibleContent asChild>
                 <SidebarMenuSub className="ml-2.5 mr-0">
                   {item.groups.map((group) => (
-                    <NavGroup key={group.title} group={group} itemPath={item.path} pathname={pathname} />
+                    <NavGroup
+                      key={group.title}
+                      group={group}
+                      itemPath={item.path}
+                      pathname={pathname}
+                    />
                   ))}
                 </SidebarMenuSub>
               </CollapsibleContent>

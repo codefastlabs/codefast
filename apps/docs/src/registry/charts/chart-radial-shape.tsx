@@ -7,7 +7,15 @@ import type { Props } from "recharts/types/component/Label";
 
 import type { ChartConfig } from "@codefast/ui";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, ChartContainer } from "@codefast/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  ChartContainer,
+} from "@codefast/ui";
 
 const chartData = [{ browser: "safari", fill: "var(--color-safari)", visitors: 1260 }];
 
@@ -49,7 +57,9 @@ export function ChartRadialShape(): JSX.Element {
         <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

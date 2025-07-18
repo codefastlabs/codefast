@@ -11,7 +11,11 @@ export function InputSearchDemo(): JSX.Element {
         <InputSearch placeholder="Search..." />
       </div>
       <div className="">
-        <InputSearch aria-invalid="true" defaultValue="Invalid search" placeholder="Invalid search" />
+        <InputSearch
+          aria-invalid="true"
+          defaultValue="Invalid search"
+          placeholder="Invalid search"
+        />
       </div>
       <div className="">
         <InputSearch loading placeholder="Loading..." />

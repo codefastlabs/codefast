@@ -170,7 +170,9 @@ export function ProductsTable({
         </Table>
       </CardContent>
       <CardFooter className="@3xl/page:flex-row flex flex-col items-center justify-between border-t pt-6">
-        <div className="text-muted-foreground @3xl/page:block hidden text-sm">Showing 1-10 of 100 products</div>
+        <div className="text-muted-foreground @3xl/page:block hidden text-sm">
+          Showing 1-10 of 100 products
+        </div>
         <Pagination className="mx-0 w-fit">
           <PaginationContent>
             <PaginationItem>

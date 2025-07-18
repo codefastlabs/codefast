@@ -5,7 +5,15 @@ import { CalendarIcon } from "lucide-react";
 import { type JSX, useId, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
-import { Button, Calendar, CalendarRangeLabel, cn, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
+import {
+  Button,
+  Calendar,
+  CalendarRangeLabel,
+  cn,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@codefast/ui";
 
 export function AnalyticsDatePicker(): JSX.Element {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -27,7 +35,13 @@ export function AnalyticsDatePicker(): JSX.Element {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-auto p-0">
-        <Calendar defaultMonth={date?.from} mode="range" numberOfMonths={2} selected={date} onSelect={setDate} />
+        <Calendar
+          defaultMonth={date?.from}
+          mode="range"
+          numberOfMonths={2}
+          selected={date}
+          onSelect={setDate}
+        />
       </PopoverContent>
     </Popover>
   );

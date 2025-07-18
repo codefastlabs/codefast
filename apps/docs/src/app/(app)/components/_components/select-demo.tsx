@@ -2,7 +2,15 @@ import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "luc
 import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@codefast/ui";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@codefast/ui";
 
 export function SelectDemo(): JSX.Element {
   return (

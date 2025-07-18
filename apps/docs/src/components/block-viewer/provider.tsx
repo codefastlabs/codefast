@@ -41,15 +41,22 @@ export interface BlockViewerContextValue {
 
 const BLOCK_VIEWER_NAME = "BlockViewerProvider";
 
-const [BlockViewerContextProvider, useBlockViewer] = createContext<BlockViewerContextValue>(BLOCK_VIEWER_NAME);
+const [BlockViewerContextProvider, useBlockViewer] =
+  createContext<BlockViewerContextValue>(BLOCK_VIEWER_NAME);
 
 interface BlockViewerProviderProps extends Pick<BlockViewerContextValue, "item" | "tree"> {
   children: ReactNode;
 }
 
-export function BlockViewerProvider({ children, item, tree }: BlockViewerProviderProps): JSX.Element {
+export function BlockViewerProvider({
+  children,
+  item,
+  tree,
+}: BlockViewerProviderProps): JSX.Element {
   const [view, setView] = useState<BlockViewerContextValue["view"]>("preview");
-  const [activeFile, setActiveFile] = useState<BlockViewerContextValue["activeFile"]>(item.files?.[0].target ?? null);
+  const [activeFile, setActiveFile] = useState<BlockViewerContextValue["activeFile"]>(
+    item.files?.[0].target ?? null,
+  );
   const resizablePanelRef = useRef<ImperativePanelHandle>(null);
 
   return (
