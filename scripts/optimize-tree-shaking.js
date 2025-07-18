@@ -144,10 +144,12 @@ function findComponentFiles(componentsDir) {
 }
 
 /**
- * Generate new main index.ts content that exports directly from component files
+ * Generate new main index.ts content that exports from leaf module index files
  */
-function generateMainIndexContent(componentFiles, libExports = []) {
+function generateMainIndexContent(componentFiles, libExports = [], componentsDir) {
   const lines = [];
+  const leafModules = identifyLeafModules(componentsDir);
+  const leafModuleNames = new Set(leafModules.map(lm => lm.dirName));
 
   // Group exports by component directory
   const exportsByComponent = {};
@@ -176,16 +178,30 @@ function generateMainIndexContent(componentFiles, libExports = []) {
     const uniqueComponents = [...new Set(componentData.components)];
     const uniqueTypes = [...new Set(componentData.types)];
 
-    // For each file in this component directory, create export statements
-    for (const file of componentData.files) {
-      const fromPath = `@/components/${file.relativePath}`;
+    // Check if this is a leaf module
+    if (leafModuleNames.has(componentName)) {
+      // For leaf modules, import from the index file
+      const fromPath = `@/components/${componentName}`;
 
-      if (file.exports.components.length > 0) {
-        lines.push(`export { ${file.exports.components.join(", ")} } from "${fromPath}";`);
+      if (uniqueComponents.length > 0) {
+        lines.push(`export { ${uniqueComponents.join(", ")} } from "${fromPath}";`);
       }
 
-      if (file.exports.types.length > 0) {
-        lines.push(`export type { ${file.exports.types.join(", ")} } from "${fromPath}";`);
+      if (uniqueTypes.length > 0) {
+        lines.push(`export type { ${uniqueTypes.join(", ")} } from "${fromPath}";`);
+      }
+    } else {
+      // For non-leaf modules, import directly from component files (fallback)
+      for (const file of componentData.files) {
+        const fromPath = `@/components/${file.relativePath}`;
+
+        if (file.exports.components.length > 0) {
+          lines.push(`export { ${file.exports.components.join(", ")} } from "${fromPath}";`);
+        }
+
+        if (file.exports.types.length > 0) {
+          lines.push(`export type { ${file.exports.types.join(", ")} } from "${fromPath}";`);
+        }
       }
     }
 
@@ -209,19 +225,109 @@ function generateMainIndexContent(componentFiles, libExports = []) {
 }
 
 /**
- * Remove intermediate index files
+ * Identify leaf modules (directories with files matching directory name)
+ */
+function identifyLeafModules(componentsDir) {
+  const leafModules = [];
+
+  if (!fs.existsSync(componentsDir)) {
+    return leafModules;
+  }
+
+  const items = fs.readdirSync(componentsDir);
+
+  for (const item of items) {
+    const itemPath = path.join(componentsDir, item);
+    const stat = fs.statSync(itemPath);
+
+    if (stat.isDirectory()) {
+      // Check if directory contains a file with matching name
+      const dirItems = fs.readdirSync(itemPath);
+      const hasMatchingFile = dirItems.some(file => {
+        const baseName = path.basename(file, path.extname(file));
+        return baseName === item && (file.endsWith('.tsx') || file.endsWith('.ts'));
+      });
+
+      if (hasMatchingFile) {
+        leafModules.push({
+          dirName: item,
+          dirPath: itemPath
+        });
+      }
+    }
+  }
+
+  return leafModules;
+}
+
+/**
+ * Create index files for leaf modules
+ */
+function createLeafModuleIndexFiles(componentsDir, componentFiles) {
+  const leafModules = identifyLeafModules(componentsDir);
+  let createdCount = 0;
+
+  for (const leafModule of leafModules) {
+    const indexPath = path.join(leafModule.dirPath, "index.ts");
+
+    // Find all files in this leaf module directory
+    const moduleFiles = componentFiles.filter(file => file.componentName === leafModule.dirName);
+
+    if (moduleFiles.length === 0) continue;
+
+    // Generate index content for this leaf module
+    const lines = [];
+    const allComponents = [];
+    const allTypes = [];
+
+    for (const file of moduleFiles) {
+      const fileName = path.basename(file.filePath, path.extname(file.filePath));
+      const relativePath = `./${fileName}`;
+
+      if (file.exports.components.length > 0) {
+        lines.push(`export { ${file.exports.components.join(", ")} } from "${relativePath}";`);
+        allComponents.push(...file.exports.components);
+      }
+
+      if (file.exports.types.length > 0) {
+        lines.push(`export type { ${file.exports.types.join(", ")} } from "${relativePath}";`);
+        allTypes.push(...file.exports.types);
+      }
+    }
+
+    if (lines.length > 0) {
+      const indexContent = lines.join("\n") + "\n";
+
+      try {
+        fs.writeFileSync(indexPath, indexContent);
+        console.log(`    ✅ Created leaf module index: ${path.relative(PROJECT_ROOT, indexPath)}`);
+        createdCount++;
+      } catch (error) {
+        console.warn(`    ⚠️  Could not create ${path.relative(PROJECT_ROOT, indexPath)}: ${error.message}`);
+      }
+    }
+  }
+
+  return createdCount;
+}
+
+/**
+ * Remove intermediate index files (but preserve leaf module index files)
  */
 function removeIntermediateIndexFiles(uiSrcPath) {
   const filesToRemove = [];
 
-  // Remove components/index.ts
+  // Remove components/index.ts (this is intermediate, not a leaf module)
   const componentsIndexPath = path.join(uiSrcPath, "components", "index.ts");
   if (fs.existsSync(componentsIndexPath)) {
     filesToRemove.push(componentsIndexPath);
   }
 
-  // Remove all component-level index files
+  // Only remove intermediate index files, not leaf module index files
   const componentsDir = path.join(uiSrcPath, "components");
+  const leafModules = identifyLeafModules(componentsDir);
+  const leafModuleNames = new Set(leafModules.map(lm => lm.dirName));
+
   if (fs.existsSync(componentsDir)) {
     const items = fs.readdirSync(componentsDir);
 
@@ -231,7 +337,9 @@ function removeIntermediateIndexFiles(uiSrcPath) {
 
       if (stat.isDirectory()) {
         const indexPath = path.join(itemPath, "index.ts");
-        if (fs.existsSync(indexPath)) {
+
+        // Only remove if it exists AND it's not a leaf module
+        if (fs.existsSync(indexPath) && !leafModuleNames.has(item)) {
           filesToRemove.push(indexPath);
         }
       }
@@ -243,7 +351,7 @@ function removeIntermediateIndexFiles(uiSrcPath) {
   for (const filePath of filesToRemove) {
     try {
       fs.unlinkSync(filePath);
-      console.log(`    ✅ Removed ${path.relative(PROJECT_ROOT, filePath)}`);
+      console.log(`    ✅ Removed intermediate index: ${path.relative(PROJECT_ROOT, filePath)}`);
       removedCount++;
     } catch (error) {
       console.warn(`    ⚠️  Could not remove ${path.relative(PROJECT_ROOT, filePath)}: ${error.message}`);
@@ -383,7 +491,7 @@ function fixInternalComponentImports(componentsDir, componentFiles) {
 }
 
 /**
- * Process UI package to eliminate intermediate index files
+ * Process UI package to optimize tree-shaking with leaf module index files
  */
 function processUIPackage() {
   const uiPackagePath = path.join(PACKAGES_PATH, "ui");
@@ -417,30 +525,36 @@ function processUIPackage() {
     }
   }
 
-  // Step 3: Fix internal component imports
+  // Step 3: Create leaf module index files
+  console.log("\n📝 Creating leaf module index files...");
+  const createdCount = createLeafModuleIndexFiles(componentsDir, componentFiles);
+  console.log(`    📊 Created ${createdCount} leaf module index files`);
+
+  // Step 4: Fix internal component imports
   console.log("\n🔧 Fixing internal component imports...");
   const fixedImports = fixInternalComponentImports(componentsDir, componentFiles);
   console.log(`    📊 Fixed ${fixedImports} internal imports`);
 
-  // Step 4: Generate new main index content
-  const newMainIndexContent = generateMainIndexContent(componentFiles, libExports);
+  // Step 5: Generate new main index content
+  const newMainIndexContent = generateMainIndexContent(componentFiles, libExports, componentsDir);
 
-  // Step 5: Remove intermediate index files
+  // Step 6: Remove intermediate index files (preserving leaf module index files)
   console.log("\n🗑️  Removing intermediate index files...");
   const removedCount = removeIntermediateIndexFiles(uiSrcPath);
   console.log(`    📊 Removed ${removedCount} intermediate index files`);
 
-  // Step 6: Update main index.ts
+  // Step 7: Update main index.ts
   console.log("\n📝 Updating main index.ts...");
   fs.writeFileSync(mainIndexPath, newMainIndexContent);
   console.log(`    ✅ Updated ${path.relative(PROJECT_ROOT, mainIndexPath)}`);
 
-  // Step 7: Summary
+  // Step 8: Summary
   console.log(`\n🎉 Tree-shaking optimization complete!`);
   console.log(`   - Component files processed: ${componentFiles.length}`);
+  console.log(`   - Leaf module index files created: ${createdCount}`);
   console.log(`   - Internal imports fixed: ${fixedImports}`);
   console.log(`   - Intermediate index files removed: ${removedCount}`);
-  console.log(`   - Main index.ts updated with direct exports`);
+  console.log(`   - Main index.ts updated with leaf module exports`);
 }
 
 /**
