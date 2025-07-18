@@ -13,7 +13,6 @@ export const baseJavaScriptRules: Linter.Config[] = [
       ...js.configs.recommended.rules,
 
       // Warning rules
-      "no-console": "warn",
       "no-magic-numbers": ["warn", { ignore: [0, 1, -1] }],
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
 
