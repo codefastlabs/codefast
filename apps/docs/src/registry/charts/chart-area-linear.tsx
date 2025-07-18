@@ -59,7 +59,10 @@ export function ChartAreaLinear(): JSX.Element {
               tickLine={false}
               tickMargin={8}
             />
-            <ChartTooltip content={<ChartTooltipContent hideLabel indicator="dot" />} cursor={false} />
+            <ChartTooltip
+              content={<ChartTooltipContent hideLabel indicator="dot" />}
+              cursor={false}
+            />
             <Area
               aria-label="Desktop visitors trend line"
               dataKey="desktop"
@@ -77,7 +80,9 @@ export function ChartAreaLinear(): JSX.Element {
             <div className="flex items-center gap-2 font-medium leading-none">
               Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
             </div>
-            <div className="text-muted-foreground flex items-center gap-2 leading-none">January - June 2024</div>
+            <div className="text-muted-foreground flex items-center gap-2 leading-none">
+              January - June 2024
+            </div>
           </div>
         </div>
       </CardFooter>

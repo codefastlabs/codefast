@@ -24,7 +24,9 @@ export function AlertDemo(): JSX.Element {
       <div className="">
         <Alert>
           <BookmarkCheckIcon>Heads up!</BookmarkCheckIcon>
-          <AlertDescription>This one has an icon and a description only. No title.</AlertDescription>
+          <AlertDescription>
+            This one has an icon and a description only. No title.
+          </AlertDescription>
         </Alert>
       </div>
       <div className="">
@@ -42,8 +44,8 @@ export function AlertDemo(): JSX.Element {
         <Alert>
           <ShieldAlertIcon />
           <AlertTitle>
-            This is a very long alert title that demonstrates how the component handles extended text content and
-            potentially wraps across multiple lines
+            This is a very long alert title that demonstrates how the component handles extended
+            text content and potentially wraps across multiple lines
           </AlertTitle>
         </Alert>
       </div>
@@ -51,8 +53,8 @@ export function AlertDemo(): JSX.Element {
         <Alert>
           <GiftIcon />
           <AlertDescription>
-            This is a very long alert description that demonstrates how the component handles extended text content and
-            potentially wraps across multiple lines
+            This is a very long alert description that demonstrates how the component handles
+            extended text content and potentially wraps across multiple lines
           </AlertDescription>
         </Alert>
       </div>
@@ -60,14 +62,16 @@ export function AlertDemo(): JSX.Element {
         <Alert>
           <AlertCircleIcon />
           <AlertTitle>
-            This is an extremely long alert title that spans multiple lines to demonstrate how the component handles
-            very lengthy headings while maintaining readability and proper text wrapping behavior
+            This is an extremely long alert title that spans multiple lines to demonstrate how the
+            component handles very lengthy headings while maintaining readability and proper text
+            wrapping behavior
           </AlertTitle>
           <AlertDescription>
-            This is an equally long description that contains detailed information about the alert. It shows how the
-            component can accommodate extensive content while preserving proper spacing, alignment, and readability
-            across different screen sizes and viewport widths. This helps ensure the user experience remains consistent
-            regardless of the content length.
+            This is an equally long description that contains detailed information about the alert.
+            It shows how the component can accommodate extensive content while preserving proper
+            spacing, alignment, and readability across different screen sizes and viewport widths.
+            This helps ensure the user experience remains consistent regardless of the content
+            length.
           </AlertDescription>
         </Alert>
       </div>

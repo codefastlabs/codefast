@@ -1,6 +1,13 @@
 "use client";
 
-import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, SparklesIcon } from "lucide-react";
+import {
+  BadgeCheckIcon,
+  BellIcon,
+  ChevronsUpDownIcon,
+  CreditCardIcon,
+  LogOutIcon,
+  SparklesIcon,
+} from "lucide-react";
 import type { JSX } from "react";
 
 import {

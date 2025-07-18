@@ -48,7 +48,11 @@ export function CardsReportIssue(): JSX.Element {
           <div className="grid gap-2">
             <Label htmlFor={`security-level-${id}`}>Security Level</Label>
             <Select defaultValue="2">
-              <SelectTrigger aria-label="Security Level" className="w-full" id={`security-level-${id}`}>
+              <SelectTrigger
+                aria-label="Security Level"
+                className="w-full"
+                id={`security-level-${id}`}
+              >
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
               <SelectContent>
@@ -66,7 +70,10 @@ export function CardsReportIssue(): JSX.Element {
         </div>
         <div className="grid gap-2">
           <Label htmlFor={`description-${id}`}>Description</Label>
-          <Textarea id={`description-${id}`} placeholder="Please include all information relevant to your issue." />
+          <Textarea
+            id={`description-${id}`}
+            placeholder="Please include all information relevant to your issue."
+          />
         </div>
       </CardContent>
       <CardFooter className="justify-between space-x-2">

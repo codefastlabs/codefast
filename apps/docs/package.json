@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "build": "next build --turbopack",
-    "type-check": "tsc --noEmit",
     "clean": "rm -rf .next",
     "dev": "next dev --turbopack",
-    "start": "next start",
     "lint": "TIMING=1 next lint",
-    "lint:fix": "TIMING=1 next lint --fix"
+    "lint:fix": "TIMING=1 next lint --fix",
+    "start": "next start",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@codefast/hooks": "workspace:*",

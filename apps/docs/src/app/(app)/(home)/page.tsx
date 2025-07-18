@@ -26,7 +26,9 @@ export default function AppPage(): JSX.Element {
   return (
     <div className="container mx-auto p-6">
       <div className="flex flex-col items-start gap-1 py-8 md:py-10 lg:py-12">
-        <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-3xl md:text-4xl">{title}</h1>
+        <h1 className="text-2xl font-bold leading-tight tracking-tighter sm:text-3xl md:text-4xl">
+          {title}
+        </h1>
         <p className="text-foreground max-w-2xl text-base font-light sm:text-lg">{description}</p>
       </div>
       <div className="3xl:grid-cols-2 grid gap-6">

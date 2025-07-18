@@ -14,7 +14,11 @@ import {
 } from "@codefast/ui";
 import { IconCirclePlusFilled, IconMail } from "@tabler/icons-react";
 
-export function NavMain({ items }: { items: { title: string; url: string; icon?: Icon }[] }): JSX.Element {
+export function NavMain({
+  items,
+}: {
+  items: { title: string; url: string; icon?: Icon }[];
+}): JSX.Element {
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
@@ -27,7 +31,11 @@ export function NavMain({ items }: { items: { title: string; url: string; icon?:
               <IconCirclePlusFilled />
               <span>Quick Create</span>
             </SidebarMenuButton>
-            <Button className="size-8 group-data-[collapsible=icon]:opacity-0" size="icon" variant="outline">
+            <Button
+              className="size-8 group-data-[collapsible=icon]:opacity-0"
+              size="icon"
+              variant="outline"
+            >
               <IconMail />
               <span className="sr-only">Inbox</span>
             </Button>

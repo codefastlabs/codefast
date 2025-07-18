@@ -42,7 +42,9 @@ export function CardsMetric(): JSX.Element {
     <Card>
       <CardHeader>
         <CardTitle>Exercise Minutes</CardTitle>
-        <CardDescription>Your exercise minutes are ahead of where you normally are.</CardDescription>
+        <CardDescription>
+          Your exercise minutes are ahead of where you normally are.
+        </CardDescription>
       </CardHeader>
       <CardContent className="pb-4">
         <ChartContainer className="w-full md:h-[200px]" config={chartConfig}>

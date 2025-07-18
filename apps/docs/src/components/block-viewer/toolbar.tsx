@@ -1,4 +1,11 @@
-import { CheckIcon, FullscreenIcon, MonitorIcon, SmartphoneIcon, TabletIcon, TerminalIcon } from "lucide-react";
+import {
+  CheckIcon,
+  FullscreenIcon,
+  MonitorIcon,
+  SmartphoneIcon,
+  TabletIcon,
+  TerminalIcon,
+} from "lucide-react";
 import Link from "next/link";
 import type { JSX } from "react";
 
@@ -38,7 +45,10 @@ export function BlockViewerToolbar(): JSX.Element {
         </TabsList>
       </Tabs>
       <Separator className="mx-2 hidden h-4 lg:flex" orientation="vertical" />
-      <Link className="text-sm font-medium underline-offset-2 hover:underline" href={`/blocks/${item.slug}`}>
+      <Link
+        className="text-sm font-medium underline-offset-2 hover:underline"
+        href={`/blocks/${item.slug}`}
+      >
         {item.description}
       </Link>
       <div className="ml-auto hidden items-center gap-2 md:flex">
@@ -58,13 +68,25 @@ export function BlockViewerToolbar(): JSX.Element {
               }
             }}
           >
-            <ToggleGroupItem className="size-7 rounded-md first:rounded-md last:rounded-md" title="Desktop" value="100">
+            <ToggleGroupItem
+              className="size-7 rounded-md first:rounded-md last:rounded-md"
+              title="Desktop"
+              value="100"
+            >
               <MonitorIcon />
             </ToggleGroupItem>
-            <ToggleGroupItem className="size-7 rounded-md first:rounded-md last:rounded-md" title="Tablet" value="60">
+            <ToggleGroupItem
+              className="size-7 rounded-md first:rounded-md last:rounded-md"
+              title="Tablet"
+              value="60"
+            >
               <TabletIcon />
             </ToggleGroupItem>
-            <ToggleGroupItem className="size-7 rounded-md first:rounded-md last:rounded-md" title="Mobile" value="30">
+            <ToggleGroupItem
+              className="size-7 rounded-md first:rounded-md last:rounded-md"
+              title="Mobile"
+              value="30"
+            >
               <SmartphoneIcon />
             </ToggleGroupItem>
           </ToggleGroup>

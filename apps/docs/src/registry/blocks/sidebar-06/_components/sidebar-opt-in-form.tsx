@@ -1,6 +1,14 @@
 import type { JSX } from "react";
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, SidebarInput } from "@codefast/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  SidebarInput,
+} from "@codefast/ui";
 
 export function SidebarOptInForm(): JSX.Element {
   return (
@@ -13,7 +21,10 @@ export function SidebarOptInForm(): JSX.Element {
         <form>
           <div className="grid gap-2.5">
             <SidebarInput placeholder="Email" type="email" />
-            <Button className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none" size="sm">
+            <Button
+              className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none"
+              size="sm"
+            >
               Subscribe
             </Button>
           </div>

@@ -7,7 +7,11 @@ import { registryBlocks } from "@/registry/registry-blocks";
 
 export const dynamicParams = false;
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const registry = getCachedBlockRegistry(slug);
 
@@ -30,7 +34,11 @@ export function generateStaticParams(): { slug: string | undefined }[] {
   }));
 }
 
-export default async function ViewPage({ params }: { params: Promise<{ slug: string }> }): Promise<JSX.Element> {
+export default async function ViewPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<JSX.Element> {
   const { slug } = await params;
 
   const registry = getCachedBlockRegistry(slug);

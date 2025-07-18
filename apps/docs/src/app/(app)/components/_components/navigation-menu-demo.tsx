@@ -14,7 +14,8 @@ import {
 
 const components: { description: string; href: string; title: string }[] = [
   {
-    description: "A modal dialog that interrupts the user with important content and expects a response.",
+    description:
+      "A modal dialog that interrupts the user with important content and expects a response.",
     href: "/components/alert-dialog",
     title: "Alert Dialog",
   },
@@ -35,7 +36,8 @@ const components: { description: string; href: string; title: string }[] = [
     title: "Scroll-area",
   },
   {
-    description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    description:
+      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
     href: "/components/tabs",
     title: "Tabs",
   },
@@ -115,7 +117,9 @@ export function NavigationMenuDemo(): JSX.Element {
                   <NavigationMenuLink asChild>
                     <Link href="/components">
                       <div className="font-medium">Components</div>
-                      <div className="text-muted-foreground">Browse all components in the library.</div>
+                      <div className="text-muted-foreground">
+                        Browse all components in the library.
+                      </div>
                     </Link>
                   </NavigationMenuLink>
                   <NavigationMenuLink asChild>
@@ -185,7 +189,12 @@ export function NavigationMenuDemo(): JSX.Element {
   );
 }
 
-function ListItem({ children, href, title, ...props }: ComponentProps<"li"> & { href: string }): JSX.Element {
+function ListItem({
+  children,
+  href,
+  title,
+  ...props
+}: ComponentProps<"li"> & { href: string }): JSX.Element {
   return (
     <li {...props}>
       <NavigationMenuLink asChild>

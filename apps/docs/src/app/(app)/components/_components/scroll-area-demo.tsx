@@ -18,7 +18,9 @@ export function ScrollAreaDemo(): JSX.Element {
   );
 }
 
-const tags = Array.from({ length: 50 }).map((_, index, a) => `v1.2.0-beta.${String(a.length - index)}`);
+const tags = Array.from({ length: 50 }).map(
+  (_, index, a) => `v1.2.0-beta.${String(a.length - index)}`,
+);
 
 function ScrollAreaVertical(): JSX.Element {
   return (

@@ -5,7 +5,9 @@ import type { RegistryGroup, RegistryItem } from "@/types/registry";
 export const registryComponents: Record<string, RegistryItem> = {
   accordion: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/accordion-demo").then((module_) => module_.AccordionDemo),
+      import("@/app/(app)/components/_components/accordion-demo").then(
+        (module_) => module_.AccordionDemo,
+      ),
     ),
     description: "Accordion",
     slug: "accordion",
@@ -21,7 +23,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "alert-dialog": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/alert-dialog-demo").then((module_) => module_.AlertDialogDemo),
+      import("@/app/(app)/components/_components/alert-dialog-demo").then(
+        (module_) => module_.AlertDialogDemo,
+      ),
     ),
     description: "Alert Dialog",
     slug: "alert-dialog",
@@ -29,7 +33,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "aspect-ratio": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/aspect-ratio-demo").then((module_) => module_.AspectRatioDemo),
+      import("@/app/(app)/components/_components/aspect-ratio-demo").then(
+        (module_) => module_.AspectRatioDemo,
+      ),
     ),
     description: "Aspect Ratio",
     slug: "aspect-ratio",
@@ -37,7 +43,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   avatar: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/avatar-demo").then((module_) => module_.AvatarDemo),
+      import("@/app/(app)/components/_components/avatar-demo").then(
+        (module_) => module_.AvatarDemo,
+      ),
     ),
     description: "Avatar",
     slug: "avatar",
@@ -53,7 +61,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   breadcrumb: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/breadcrumb-demo").then((module_) => module_.BreadcrumbDemo),
+      import("@/app/(app)/components/_components/breadcrumb-demo").then(
+        (module_) => module_.BreadcrumbDemo,
+      ),
     ),
     description: "Breadcrumb",
     slug: "breadcrumb",
@@ -61,7 +71,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   button: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/button-demo").then((module_) => module_.ButtonDemo),
+      import("@/app/(app)/components/_components/button-demo").then(
+        (module_) => module_.ButtonDemo,
+      ),
     ),
     description: "Button",
     slug: "button",
@@ -69,7 +81,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   calendar: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/calendar-demo").then((module_) => module_.CalendarDemo),
+      import("@/app/(app)/components/_components/calendar-demo").then(
+        (module_) => module_.CalendarDemo,
+      ),
     ),
     description: "Calendar",
     slug: "calendar",
@@ -85,7 +99,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   carousel: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/carousel-demo").then((module_) => module_.CarouselDemo),
+      import("@/app/(app)/components/_components/carousel-demo").then(
+        (module_) => module_.CarouselDemo,
+      ),
     ),
     description: "Carousel",
     slug: "carousel",
@@ -101,7 +117,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   checkbox: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/checkbox-demo").then((module_) => module_.CheckboxDemo),
+      import("@/app/(app)/components/_components/checkbox-demo").then(
+        (module_) => module_.CheckboxDemo,
+      ),
     ),
     description: "Checkbox",
     slug: "checkbox",
@@ -109,7 +127,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "checkbox-cards": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/checkbox-cards-demo").then((module_) => module_.CheckboxCardsDemo),
+      import("@/app/(app)/components/_components/checkbox-cards-demo").then(
+        (module_) => module_.CheckboxCardsDemo,
+      ),
     ),
     description: "Checkbox Cards",
     slug: "checkbox-cards",
@@ -117,7 +137,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "checkbox-group": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/checkbox-group-demo").then((module_) => module_.CheckboxGroupDemo),
+      import("@/app/(app)/components/_components/checkbox-group-demo").then(
+        (module_) => module_.CheckboxGroupDemo,
+      ),
     ),
     description: "Checkbox Group",
     slug: "checkbox-group",
@@ -125,7 +147,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   collapsible: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/collapsible-demo").then((module_) => module_.CollapsibleDemo),
+      import("@/app/(app)/components/_components/collapsible-demo").then(
+        (module_) => module_.CollapsibleDemo,
+      ),
     ),
     description: "Collapsible",
     slug: "collapsible",
@@ -133,7 +157,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   combobox: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/combobox-demo").then((module_) => module_.ComboboxDemo),
+      import("@/app/(app)/components/_components/combobox-demo").then(
+        (module_) => module_.ComboboxDemo,
+      ),
     ),
     description: "Combobox",
     slug: "combobox",
@@ -141,7 +167,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   command: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/command-demo").then((module_) => module_.CommandDemo),
+      import("@/app/(app)/components/_components/command-demo").then(
+        (module_) => module_.CommandDemo,
+      ),
     ),
     description: "Command",
     slug: "command",
@@ -149,7 +177,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "context-menu": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/context-menu-demo").then((module_) => module_.ContextMenuDemo),
+      import("@/app/(app)/components/_components/context-menu-demo").then(
+        (module_) => module_.ContextMenuDemo,
+      ),
     ),
     description: "Context Menu",
     slug: "context-menu",
@@ -157,7 +187,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "date-picker": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/date-picker-demo").then((module_) => module_.DatePickerDemo),
+      import("@/app/(app)/components/_components/date-picker-demo").then(
+        (module_) => module_.DatePickerDemo,
+      ),
     ),
     description: "Date Picker",
     slug: "date-picker",
@@ -165,7 +197,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   dialog: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/dialog-demo").then((module_) => module_.DialogDemo),
+      import("@/app/(app)/components/_components/dialog-demo").then(
+        (module_) => module_.DialogDemo,
+      ),
     ),
     description: "Dialog",
     slug: "dialog",
@@ -173,7 +207,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   drawer: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/drawer-demo").then((module_) => module_.DrawerDemo),
+      import("@/app/(app)/components/_components/drawer-demo").then(
+        (module_) => module_.DrawerDemo,
+      ),
     ),
     description: "Drawer",
     slug: "drawer",
@@ -181,7 +217,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "dropdown-menu": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/dropdown-menu-demo").then((module_) => module_.DropdownMenuDemo),
+      import("@/app/(app)/components/_components/dropdown-menu-demo").then(
+        (module_) => module_.DropdownMenuDemo,
+      ),
     ),
     description: "Dropdown Menu",
     slug: "dropdown-menu",
@@ -197,7 +235,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "hover-card": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/hover-card-demo").then((module_) => module_.HoverCardDemo),
+      import("@/app/(app)/components/_components/hover-card-demo").then(
+        (module_) => module_.HoverCardDemo,
+      ),
     ),
     description: "Hover Card",
     slug: "hover-card",
@@ -213,7 +253,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "input-date": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-date-demo").then((module_) => module_.InputDateDemo),
+      import("@/app/(app)/components/_components/input-date-demo").then(
+        (module_) => module_.InputDateDemo,
+      ),
     ),
     description: "Input Date",
     slug: "input-date",
@@ -221,7 +263,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "input-number": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-number-demo").then((module_) => module_.InputNumberDemo),
+      import("@/app/(app)/components/_components/input-number-demo").then(
+        (module_) => module_.InputNumberDemo,
+      ),
     ),
     description: "Input Number",
     slug: "input-number",
@@ -229,7 +273,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "input-otp": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-otp-demo").then((module_) => module_.InputOTPDemo),
+      import("@/app/(app)/components/_components/input-otp-demo").then(
+        (module_) => module_.InputOTPDemo,
+      ),
     ),
     description: "Input OTP",
     slug: "input-otp",
@@ -237,7 +283,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "input-password": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-password-demo").then((module_) => module_.InputPasswordDemo),
+      import("@/app/(app)/components/_components/input-password-demo").then(
+        (module_) => module_.InputPasswordDemo,
+      ),
     ),
     description: "Input Password",
     slug: "input-password",
@@ -245,7 +293,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "input-search": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-search-demo").then((module_) => module_.InputSearchDemo),
+      import("@/app/(app)/components/_components/input-search-demo").then(
+        (module_) => module_.InputSearchDemo,
+      ),
     ),
     description: "Input Search",
     slug: "input-search",
@@ -253,7 +303,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "input-time": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/input-time-demo").then((module_) => module_.InputTimeDemo),
+      import("@/app/(app)/components/_components/input-time-demo").then(
+        (module_) => module_.InputTimeDemo,
+      ),
     ),
     description: "Input Time",
     slug: "input-time",
@@ -277,7 +329,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   menubar: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/menubar-demo").then((module_) => module_.MenubarDemo),
+      import("@/app/(app)/components/_components/menubar-demo").then(
+        (module_) => module_.MenubarDemo,
+      ),
     ),
     description: "Menubar",
     slug: "menubar",
@@ -285,7 +339,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "navigation-menu": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/navigation-menu-demo").then((module_) => module_.NavigationMenuDemo),
+      import("@/app/(app)/components/_components/navigation-menu-demo").then(
+        (module_) => module_.NavigationMenuDemo,
+      ),
     ),
     description: "Navigation Menu",
     slug: "navigation-menu",
@@ -293,7 +349,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   pagination: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/pagination-demo").then((module_) => module_.PaginationDemo),
+      import("@/app/(app)/components/_components/pagination-demo").then(
+        (module_) => module_.PaginationDemo,
+      ),
     ),
     description: "Pagination",
     slug: "pagination",
@@ -301,7 +359,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   popover: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/popover-demo").then((module_) => module_.PopoverDemo),
+      import("@/app/(app)/components/_components/popover-demo").then(
+        (module_) => module_.PopoverDemo,
+      ),
     ),
     description: "Popover",
     slug: "popover",
@@ -309,7 +369,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   progress: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/progress-demo").then((module_) => module_.ProgressDemo),
+      import("@/app/(app)/components/_components/progress-demo").then(
+        (module_) => module_.ProgressDemo,
+      ),
     ),
     description: "Progress",
     slug: "progress",
@@ -317,7 +379,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "progress-circle": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/progress-circle-demo").then((module_) => module_.ProgressCircleDemo),
+      import("@/app/(app)/components/_components/progress-circle-demo").then(
+        (module_) => module_.ProgressCircleDemo,
+      ),
     ),
     description: "Progress Circle",
     slug: "progress-circle",
@@ -333,7 +397,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "radio-cards": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/radio-cards-demo").then((module_) => module_.RadioCardsDemo),
+      import("@/app/(app)/components/_components/radio-cards-demo").then(
+        (module_) => module_.RadioCardsDemo,
+      ),
     ),
     description: "Radio Cards",
     slug: "radio-cards",
@@ -341,7 +407,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "radio-group": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/radio-group-demo").then((module_) => module_.RadioGroupDemo),
+      import("@/app/(app)/components/_components/radio-group-demo").then(
+        (module_) => module_.RadioGroupDemo,
+      ),
     ),
     description: "Radio Group",
     slug: "radio-group",
@@ -349,7 +417,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   resizable: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/resizable-demo").then((module_) => module_.ResizableDemo),
+      import("@/app/(app)/components/_components/resizable-demo").then(
+        (module_) => module_.ResizableDemo,
+      ),
     ),
     description: "Resizable",
     slug: "resizable",
@@ -357,7 +427,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "scroll-area": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/scroll-area-demo").then((module_) => module_.ScrollAreaDemo),
+      import("@/app/(app)/components/_components/scroll-area-demo").then(
+        (module_) => module_.ScrollAreaDemo,
+      ),
     ),
     description: "Scroll Area",
     slug: "scroll-area",
@@ -365,7 +437,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   select: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/select-demo").then((module_) => module_.SelectDemo),
+      import("@/app/(app)/components/_components/select-demo").then(
+        (module_) => module_.SelectDemo,
+      ),
     ),
     description: "Select",
     slug: "select",
@@ -373,7 +447,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   separator: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/separator-demo").then((module_) => module_.SeparatorDemo),
+      import("@/app/(app)/components/_components/separator-demo").then(
+        (module_) => module_.SeparatorDemo,
+      ),
     ),
     description: "Separator",
     slug: "separator",
@@ -389,7 +465,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   skeleton: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/skeleton-demo").then((module_) => module_.SkeletonDemo),
+      import("@/app/(app)/components/_components/skeleton-demo").then(
+        (module_) => module_.SkeletonDemo,
+      ),
     ),
     description: "Skeleton",
     slug: "skeleton",
@@ -397,7 +475,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   slider: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/slider-demo").then((module_) => module_.SliderDemo),
+      import("@/app/(app)/components/_components/slider-demo").then(
+        (module_) => module_.SliderDemo,
+      ),
     ),
     description: "Slider",
     slug: "slider",
@@ -405,7 +485,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   sonner: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/sonner-demo").then((module_) => module_.SonnerDemo),
+      import("@/app/(app)/components/_components/sonner-demo").then(
+        (module_) => module_.SonnerDemo,
+      ),
     ),
     description: "Sonner",
     slug: "sonner",
@@ -413,7 +495,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   switch: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/switch-demo").then((module_) => module_.SwitchDemo),
+      import("@/app/(app)/components/_components/switch-demo").then(
+        (module_) => module_.SwitchDemo,
+      ),
     ),
     description: "Switch",
     slug: "switch",
@@ -437,7 +521,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   textarea: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/textarea-demo").then((module_) => module_.TextareaDemo),
+      import("@/app/(app)/components/_components/textarea-demo").then(
+        (module_) => module_.TextareaDemo,
+      ),
     ),
     description: "Textarea",
     slug: "textarea",
@@ -445,7 +531,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   toggle: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/toggle-demo").then((module_) => module_.ToggleDemo),
+      import("@/app/(app)/components/_components/toggle-demo").then(
+        (module_) => module_.ToggleDemo,
+      ),
     ),
     description: "Toggle",
     slug: "toggle",
@@ -453,7 +541,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   "toggle-group": {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/toggle-group-demo").then((module_) => module_.ToggleGroupDemo),
+      import("@/app/(app)/components/_components/toggle-group-demo").then(
+        (module_) => module_.ToggleGroupDemo,
+      ),
     ),
     description: "Toggle Group",
     slug: "toggle-group",
@@ -461,7 +551,9 @@ export const registryComponents: Record<string, RegistryItem> = {
   },
   tooltip: {
     component: dynamic(async () =>
-      import("@/app/(app)/components/_components/tooltip-demo").then((module_) => module_.TooltipDemo),
+      import("@/app/(app)/components/_components/tooltip-demo").then(
+        (module_) => module_.TooltipDemo,
+      ),
     ),
     description: "Tooltip",
     slug: "tooltip",

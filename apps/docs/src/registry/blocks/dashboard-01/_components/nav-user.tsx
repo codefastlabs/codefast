@@ -18,7 +18,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@codefast/ui";
-import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from "@tabler/icons-react";
+import {
+  IconCreditCard,
+  IconDotsVertical,
+  IconLogout,
+  IconNotification,
+  IconUserCircle,
+} from "@tabler/icons-react";
 
 export function NavUser({
   user,

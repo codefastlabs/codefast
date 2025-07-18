@@ -144,7 +144,9 @@ export function FormDemo(): JSX.Element {
                   <SelectItem value="m3@support.com">m@support.com</SelectItem>
                 </SelectContent>
               </Select>
-              <FormDescription>You can manage email addresses in your email settings.</FormDescription>
+              <FormDescription>
+                You can manage email addresses in your email settings.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -156,7 +158,11 @@ export function FormDemo(): JSX.Element {
             <FormItem>
               <FormLabel>Bio</FormLabel>
               <FormControl>
-                <Textarea className="resize-none" placeholder="Tell us a little bit about yourself" {...field} />
+                <Textarea
+                  className="resize-none"
+                  placeholder="Tell us a little bit about yourself"
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
                 You can <span>@mention</span> other users and organizations.
@@ -172,7 +178,11 @@ export function FormDemo(): JSX.Element {
             <FormItem className="flex flex-col gap-3">
               <FormLabel>Notify me about...</FormLabel>
               <FormControl>
-                <RadioGroup className="flex flex-col gap-3" defaultValue={field.value} onValueChange={field.onChange}>
+                <RadioGroup
+                  className="flex flex-col gap-3"
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                >
                   <FormItem className="flex items-center gap-3">
                     <FormControl>
                       <RadioGroupItem value="all" />
@@ -206,7 +216,9 @@ export function FormDemo(): JSX.Element {
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="flex flex-col gap-1">
-                <FormLabel className="leading-snug">Use different settings for my mobile devices</FormLabel>
+                <FormLabel className="leading-snug">
+                  Use different settings for my mobile devices
+                </FormLabel>
                 <FormDescription className="leading-snug">
                   You can manage your mobile notifications in the mobile settings page.
                 </FormDescription>
@@ -221,7 +233,9 @@ export function FormDemo(): JSX.Element {
             <FormItem className="flex flex-col gap-4">
               <div>
                 <FormLabel className="text-base">Sidebar</FormLabel>
-                <FormDescription>Select the items you want to display in the sidebar.</FormDescription>
+                <FormDescription>
+                  Select the items you want to display in the sidebar.
+                </FormDescription>
               </div>
               <div className="flex flex-col gap-2">
                 {items.map((item) => (
@@ -244,7 +258,9 @@ export function FormDemo(): JSX.Element {
                               }}
                             />
                           </FormControl>
-                          <FormLabel className="text-sm font-normal leading-tight">{item.label}</FormLabel>
+                          <FormLabel className="text-sm font-normal leading-tight">
+                            {item.label}
+                          </FormLabel>
                         </FormItem>
                       );
                     }}
@@ -322,7 +338,12 @@ export function FormDemo(): JSX.Element {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch aria-readonly disabled checked={field.value} onCheckedChange={field.onChange} />
+                    <Switch
+                      aria-readonly
+                      disabled
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
                 </FormItem>
               )}

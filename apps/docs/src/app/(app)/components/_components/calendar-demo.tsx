@@ -32,7 +32,12 @@ export function CalendarDemo(): JSX.Element {
         <Calendar showWeekNumber className="rounded-md border shadow-sm" />
       </div>
       <div className="">
-        <Calendar className="rounded-md border shadow-sm" mode="single" selected={date} onSelect={setDate} />
+        <Calendar
+          className="rounded-md border shadow-sm"
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+        />
       </div>
       <div className="col-span-full">
         <Calendar

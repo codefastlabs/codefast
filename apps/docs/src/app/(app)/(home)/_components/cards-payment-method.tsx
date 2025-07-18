@@ -33,7 +33,12 @@ export function CardsPaymentMethod(): JSX.Element {
       <CardContent className="grid gap-6">
         <RadioGroup className="grid grid-cols-3 gap-4" defaultValue="card">
           <div>
-            <RadioGroupItem aria-label="Card" className="peer sr-only" id={`${id}-card`} value="card" />
+            <RadioGroupItem
+              aria-label="Card"
+              className="peer sr-only"
+              id={`${id}-card`}
+              value="card"
+            />
             <Label
               className="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 bg-transparent p-4"
               htmlFor={`${id}-card`}
@@ -58,7 +63,12 @@ export function CardsPaymentMethod(): JSX.Element {
             </Label>
           </div>
           <div>
-            <RadioGroupItem aria-label="Paypal" className="peer sr-only" id={`${id}-paypal`} value="paypal" />
+            <RadioGroupItem
+              aria-label="Paypal"
+              className="peer sr-only"
+              id={`${id}-paypal`}
+              value="paypal"
+            />
             <Label
               className="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 bg-transparent p-4"
               htmlFor={`${id}-paypal`}
@@ -68,7 +78,12 @@ export function CardsPaymentMethod(): JSX.Element {
             </Label>
           </div>
           <div>
-            <RadioGroupItem aria-label="Apple" className="peer sr-only" id={`${id}-apple`} value="apple" />
+            <RadioGroupItem
+              aria-label="Apple"
+              className="peer sr-only"
+              id={`${id}-apple`}
+              value="apple"
+            />
             <Label
               className="border-muted hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary flex flex-col items-center justify-between rounded-md border-2 bg-transparent p-4"
               htmlFor={`${id}-apple`}

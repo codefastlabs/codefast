@@ -41,7 +41,9 @@ export function ActiveThemeProvider({
 
     const element = document.documentElement;
 
-    for (const className of [...element.classList].filter((currentClass) => currentClass.startsWith("theme-"))) {
+    for (const className of [...element.classList].filter((currentClass) =>
+      currentClass.startsWith("theme-"),
+    )) {
       element.classList.remove(className);
     }
 
@@ -52,7 +54,11 @@ export function ActiveThemeProvider({
     }
   }, [activeTheme]);
 
-  return <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export function useThemeConfig(): ThemeContextValue {

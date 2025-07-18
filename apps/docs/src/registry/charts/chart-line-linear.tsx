@@ -60,7 +60,13 @@ export function ChartLineLinear(): JSX.Element {
               tickMargin={8}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
-            <Line dataKey="desktop" dot={false} stroke="var(--color-desktop)" strokeWidth={2} type="linear" />
+            <Line
+              dataKey="desktop"
+              dot={false}
+              stroke="var(--color-desktop)"
+              strokeWidth={2}
+              type="linear"
+            />
           </LineChart>
         </ChartContainer>
       </CardContent>
@@ -68,7 +74,9 @@ export function ChartLineLinear(): JSX.Element {
         <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUpIcon className="h-4 w-4" />
         </div>
-        <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
       </CardFooter>
     </Card>
   );

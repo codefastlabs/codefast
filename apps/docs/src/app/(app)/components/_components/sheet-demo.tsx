@@ -33,7 +33,9 @@ export function SheetDemo(): JSX.Element {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Edit profile</SheetTitle>
-              <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
+              <SheetDescription>
+                Make changes to your profile here. Click save when you&apos;re done.
+              </SheetDescription>
             </SheetHeader>
             <SheetBody className="grid flex-1 auto-rows-min gap-6 px-4">
               <div className="grid gap-3">
@@ -87,10 +89,11 @@ export function SheetDemo(): JSX.Element {
                     <h4 className="mb-4 text-lg font-medium leading-none">Lorem Ipsum</h4>
                     {Array.from({ length: 10 }).map((_, index) => (
                       <p key={index} className="mb-4 leading-normal">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-                        voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
                         non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                       </p>
                     ))}

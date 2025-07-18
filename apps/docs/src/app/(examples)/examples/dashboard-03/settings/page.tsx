@@ -213,7 +213,9 @@ export default function SettingsPage(): JSX.Element {
                         <Label htmlFor={`${id}-notification-push`}>Push</Label>
                       </div>
                     </FieldControl>
-                    <FieldDescription>Choose how you want to receive notifications.</FieldDescription>
+                    <FieldDescription>
+                      Choose how you want to receive notifications.
+                    </FieldDescription>
                   </Field>
                   <Field>
                     <Label htmlFor="types">Notification Types</Label>
@@ -228,10 +230,14 @@ export default function SettingsPage(): JSX.Element {
                       </div>
                       <div className="flex items-center gap-2">
                         <Checkbox id={`${id}-notification-marketing`} />
-                        <Label htmlFor={`${id}-notification-marketing`}>Marketing & Promotions</Label>
+                        <Label htmlFor={`${id}-notification-marketing`}>
+                          Marketing & Promotions
+                        </Label>
                       </div>
                     </FieldControl>
-                    <FieldDescription>Choose how you want to receive notifications.</FieldDescription>
+                    <FieldDescription>
+                      Choose how you want to receive notifications.
+                    </FieldDescription>
                   </Field>
                 </FieldGroup>
               </form>
@@ -255,7 +261,11 @@ export default function SettingsPage(): JSX.Element {
                   <Field>
                     <Label htmlFor="current-password">Current Password</Label>
                     <FieldControl>
-                      <Input required id={`${id}-current-password`} placeholder="Current password" />
+                      <Input
+                        required
+                        id={`${id}-current-password`}
+                        placeholder="Current password"
+                      />
                     </FieldControl>
                     <FieldDescription>This is your current password.</FieldDescription>
                   </Field>
@@ -277,8 +287,8 @@ export default function SettingsPage(): JSX.Element {
                     </FieldControl>
                     <Label htmlFor="enable-two-factor-auth">Enable two-factor authentication</Label>
                     <FieldDescription>
-                      This will add an extra layer of security to your account. Make this an extra long description to
-                      test the layout.
+                      This will add an extra layer of security to your account. Make this an extra
+                      long description to test the layout.
                     </FieldDescription>
                   </Field>
                 </FieldGroup>
@@ -365,7 +375,10 @@ export default function SettingsPage(): JSX.Element {
 
 function FieldGroup({ children }: ComponentProps<"div">): JSX.Element {
   return (
-    <div className="@container/field-group @3xl:gap-6 flex min-w-0 max-w-4xl flex-col gap-8" data-slot="field-group">
+    <div
+      className="@container/field-group @3xl:gap-6 flex min-w-0 max-w-4xl flex-col gap-8"
+      data-slot="field-group"
+    >
       {children}
     </div>
   );

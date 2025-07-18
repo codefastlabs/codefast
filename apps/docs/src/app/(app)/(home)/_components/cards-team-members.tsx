@@ -41,8 +41,16 @@ interface TeamMember {
 
 const roleOptions: Role[] = [
   { description: "Can view and comment.", keywords: ["view", "comment"], name: "Viewer" },
-  { description: "Can view, comment and edit.", keywords: ["view", "comment", "edit"], name: "Developer" },
-  { description: "Can view, comment and manage billing.", keywords: ["view", "comment", "billing"], name: "Billing" },
+  {
+    description: "Can view, comment and edit.",
+    keywords: ["view", "comment", "edit"],
+    name: "Developer",
+  },
+  {
+    description: "Can view, comment and manage billing.",
+    keywords: ["view", "comment", "billing"],
+    name: "Billing",
+  },
   { description: "Admin-level access to all resources.", keywords: ["admin"], name: "Owner" },
 ];
 
@@ -157,7 +165,9 @@ export function CardsTeamMembers(): JSX.Element {
 
   const handleRoleChange = (memberId: string, newRole: string): void => {
     setTeamMembers((previousMembers) =>
-      previousMembers.map((member) => (member.email === memberId ? { ...member, role: newRole } : member)),
+      previousMembers.map((member) =>
+        member.email === memberId ? { ...member, role: newRole } : member,
+      ),
     );
   };
 

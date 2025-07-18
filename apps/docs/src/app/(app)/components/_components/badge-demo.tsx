@@ -36,7 +36,10 @@ export function BadgeDemo(): JSX.Element {
         <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums">8</Badge>
       </div>
       <div className="">
-        <Badge className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums" variant="destructive">
+        <Badge
+          className="h-5 min-w-5 rounded-full px-1 font-mono tabular-nums"
+          variant="destructive"
+        >
           99
         </Badge>
       </div>

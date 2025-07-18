@@ -20,7 +20,10 @@ export function BlockViewerFileTree(): ReactNode {
 
   return (
     <SidebarProvider className="flex !min-h-full flex-col">
-      <Sidebar className="w-full flex-1 border-r border-zinc-700 bg-zinc-900 text-white" collapsible="none">
+      <Sidebar
+        className="w-full flex-1 border-r border-zinc-700 bg-zinc-900 text-white"
+        collapsible="none"
+      >
         <SidebarGroupLabel className="h-12 rounded-none border-b border-zinc-700 px-4 text-sm text-white">
           Files
         </SidebarGroupLabel>

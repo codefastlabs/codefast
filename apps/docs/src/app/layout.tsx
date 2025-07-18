@@ -68,7 +68,13 @@ export default async function RootLayout({
       lang="en"
     >
       <body>
-        <ThemeProvider disableTransitionOnChange enableColorScheme enableSystem attribute="class" defaultTheme="system">
+        <ThemeProvider
+          disableTransitionOnChange
+          enableColorScheme
+          enableSystem
+          attribute="class"
+          defaultTheme="system"
+        >
           <ActiveThemeProvider initialTheme={activeThemeValue}>{children}</ActiveThemeProvider>
           <Toaster />
         </ThemeProvider>

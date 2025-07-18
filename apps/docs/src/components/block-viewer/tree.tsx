@@ -49,7 +49,10 @@ export function BlockViewerTree({ index, item }: TreeProps): JSX.Element {
 
   return (
     <SidebarMenuItem>
-      <Collapsible defaultOpen className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90">
+      <Collapsible
+        defaultOpen
+        className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
+      >
         <CollapsibleTrigger asChild>
           <SidebarMenuButton
             className="pl-(--index) whitespace-nowrap rounded-none hover:bg-zinc-700 hover:text-white focus-visible:bg-zinc-700 focus-visible:text-white active:bg-zinc-700 active:text-white data-[active=true]:bg-zinc-700 data-[active=true]:text-white data-[state=open]:hover:bg-zinc-700 data-[state=open]:hover:text-white"

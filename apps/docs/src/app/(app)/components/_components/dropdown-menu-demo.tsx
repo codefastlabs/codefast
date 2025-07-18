@@ -150,7 +150,11 @@ function DropdownMenuCheckboxes(): JSX.Element {
           <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
             Status Bar
           </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem disabled checked={showActivityBar} onCheckedChange={setShowActivityBar}>
+          <DropdownMenuCheckboxItem
+            disabled
+            checked={showActivityBar}
+            onCheckedChange={setShowActivityBar}
+          >
             Activity Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>
@@ -208,7 +212,10 @@ function DropdownMenuWithAvatar(): JSX.Element {
           <ChevronsUpDownIcon className="text-muted-foreground ml-auto" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-(--radix-dropdown-menu-trigger-width) min-w-56">
+      <DropdownMenuContent
+        align="start"
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
+      >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>
@@ -217,7 +224,9 @@ function DropdownMenuWithAvatar(): JSX.Element {
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">@codefast/ui</span>
-              <span className="text-muted-foreground truncate text-xs">codefastlabs@example.com</span>
+              <span className="text-muted-foreground truncate text-xs">
+                codefastlabs@example.com
+              </span>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -264,7 +273,10 @@ function DropdownMenuAvatarOnly(): JSX.Element {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-(--radix-dropdown-menu-trigger-width) min-w-56">
+      <DropdownMenuContent
+        align="start"
+        className="w-(--radix-dropdown-menu-trigger-width) min-w-56"
+      >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar>

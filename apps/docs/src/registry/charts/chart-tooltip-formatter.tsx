@@ -2,7 +2,11 @@
 
 import type { JSX } from "react";
 import { Bar, BarChart, XAxis } from "recharts";
-import type { Formatter, NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type {
+  Formatter,
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 import type { ChartConfig } from "@codefast/ui";
 
@@ -59,7 +63,12 @@ export function ChartTooltipFormatter(): JSX.Element {
               tickMargin={10}
             />
             <Bar dataKey="running" fill="var(--color-running)" radius={[0, 0, 4, 4]} stackId="a" />
-            <Bar dataKey="swimming" fill="var(--color-swimming)" radius={[4, 4, 0, 0]} stackId="a" />
+            <Bar
+              dataKey="swimming"
+              fill="var(--color-swimming)"
+              radius={[4, 4, 0, 0]}
+              stackId="a"
+            />
             <ChartTooltip
               content={<ChartTooltipContent hideLabel formatter={formatter} />}
               cursor={false}

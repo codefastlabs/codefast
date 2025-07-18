@@ -4,7 +4,12 @@ import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import type { JSX } from "react";
 
-import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from "@tanstack/react-table";
+import type {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+} from "@tanstack/react-table";
 
 import {
   Button,
@@ -88,7 +93,9 @@ export const columns: ColumnDef<Payment>[] = [
     header: ({ table }) => (
       <Checkbox
         aria-label="Select all"
-        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+        checked={
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
         onCheckedChange={(value) => {
           table.toggleAllPageRowsSelected(Boolean(value));
         }}
@@ -236,7 +243,9 @@ export function CardsDataTable(): JSX.Element {
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead key={header.id} className="[&:has([role=checkbox])]:pl-3">
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     );
                   })}
@@ -248,7 +257,10 @@ export function CardsDataTable(): JSX.Element {
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="last:text-right [&:has([role=checkbox])]:pl-3">
+                      <TableCell
+                        key={cell.id}
+                        className="last:text-right [&:has([role=checkbox])]:pl-3"
+                      >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -266,8 +278,8 @@ export function CardsDataTable(): JSX.Element {
         </div>
         <div className="flex items-center justify-end space-x-2 pt-4">
           <div className="text-muted-foreground flex-1 text-sm">
-            {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
-            selected.
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
           <div className="space-x-2">
             <Button

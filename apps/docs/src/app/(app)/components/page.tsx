@@ -4,7 +4,9 @@ import type { JSX } from "react";
 import { registryComponents } from "@/app/(app)/components/registry-components";
 import { ComponentWrapper } from "@/components/component-wrapper";
 
-const sortedComponents = Object.entries(registryComponents).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+const sortedComponents = Object.entries(registryComponents).sort(([keyA], [keyB]) =>
+  keyA.localeCompare(keyB),
+);
 
 export const metadata: Metadata = {
   title: "Components",
