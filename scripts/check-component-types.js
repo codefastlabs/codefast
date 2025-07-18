@@ -191,7 +191,9 @@ function checkComponentTypes() {
   console.log(`\nComponent-Type Correspondence Analysis:`);
   console.log("--------------------------------------");
 
-  console.log(`\nComponents with proper type correspondence (${componentsWithProperCorrespondence.length}):`);
+  console.log(
+    `\nComponents with proper type correspondence (${componentsWithProperCorrespondence.length}):`,
+  );
   console.log("-----------------------------------------------------------");
   componentsWithProperCorrespondence.forEach((result) => {
     console.log(`✓ ${result.package}/${result.component}`);
@@ -199,14 +201,18 @@ function checkComponentTypes() {
       console.log(`  Components (filtered): ${result.actualComponents.join(", ")}`);
       console.log(`  Exported types: ${result.exportedTypes.join(", ")}`);
       if (result.exportedComponents.length !== result.actualComponents.length) {
-        const filtered = result.exportedComponents.filter((c) => !result.actualComponents.includes(c));
+        const filtered = result.exportedComponents.filter(
+          (c) => !result.actualComponents.includes(c),
+        );
         console.log(`  Filtered out (non-components): ${filtered.join(", ")}`);
       }
     }
     console.log("");
   });
 
-  console.log(`\nComponents with correspondence issues (${componentsWithCorrespondenceIssues.length}):`);
+  console.log(
+    `\nComponents with correspondence issues (${componentsWithCorrespondenceIssues.length}):`,
+  );
   console.log("----------------------------------------------------");
   componentsWithCorrespondenceIssues.forEach((result) => {
     console.log(`✗ ${result.package}/${result.component}: ${result.file}`);
@@ -214,7 +220,9 @@ function checkComponentTypes() {
     console.log(`  Exported types: ${result.exportedTypes.join(", ") || "None"}`);
 
     if (result.exportedComponents.length !== result.actualComponents.length) {
-      const filtered = result.exportedComponents.filter((c) => !result.actualComponents.includes(c));
+      const filtered = result.exportedComponents.filter(
+        (c) => !result.actualComponents.includes(c),
+      );
       console.log(`  Filtered out (non-components): ${filtered.join(", ")}`);
     }
 
@@ -232,7 +240,9 @@ function checkComponentTypes() {
     console.log("");
   });
 
-  console.log(`\nComponents with false positive type exports (${componentsWithFalsePositiveTypes.length}):`);
+  console.log(
+    `\nComponents with false positive type exports (${componentsWithFalsePositiveTypes.length}):`,
+  );
   console.log("-------------------------------------------------------");
   componentsWithFalsePositiveTypes.forEach((result) => {
     console.log(`⚠ ${result.package}/${result.component}: ${result.file}`);
@@ -242,7 +252,9 @@ function checkComponentTypes() {
     if (result.falsePositiveTypeExports.length > 0) {
       console.log(`  False positive type exports (types without corresponding component exports):`);
       result.falsePositiveTypeExports.forEach((falsePositive) => {
-        console.log(`    - ${falsePositive.typeName} (expected component: ${falsePositive.expectedComponent})`);
+        console.log(
+          `    - ${falsePositive.typeName} (expected component: ${falsePositive.expectedComponent})`,
+        );
       });
     }
     console.log("");
@@ -251,9 +263,15 @@ function checkComponentTypes() {
   console.log(`\nSummary:`);
   console.log("--------");
   console.log(`Total components: ${results.length}`);
-  console.log(`Components with proper correspondence: ${componentsWithProperCorrespondence.length}`);
-  console.log(`Components with correspondence issues: ${componentsWithCorrespondenceIssues.length}`);
-  console.log(`Components with false positive type exports: ${componentsWithFalsePositiveTypes.length}`);
+  console.log(
+    `Components with proper correspondence: ${componentsWithProperCorrespondence.length}`,
+  );
+  console.log(
+    `Components with correspondence issues: ${componentsWithCorrespondenceIssues.length}`,
+  );
+  console.log(
+    `Components with false positive type exports: ${componentsWithFalsePositiveTypes.length}`,
+  );
 
   return results;
 }
