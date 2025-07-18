@@ -53,14 +53,6 @@ export interface FileTree {
  *
  * @param name - The identifier name of the registry item to retrieve
  * @returns A Promise that resolves to the processed RegistryItem or null if not found
- * @example
- * ```tsx
- * const item = await getRegistryItem("button");
- * if (item) {
- *   // eslint-disable-next-line no-console -- for debugging purposes
- *   console.log(item.files);
- * }
- * ```
  */
 export async function getRegistryItem(name: string): Promise<null | RegistryItem> {
   try {
