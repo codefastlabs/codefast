@@ -13,8 +13,7 @@
         "name": "next"
       }
     ],
-    "resolveJsonModule": true,
-    "target": "ES2018"
+    "resolveJsonModule": true
   },
   "display": "Next.js application configuration",
   "extends": "./base.json"

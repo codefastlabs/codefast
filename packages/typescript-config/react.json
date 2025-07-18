@@ -6,8 +6,7 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "moduleResolution": "node",
     "noEmit": false,
-    "sourceMap": true,
-    "target": "ES2020"
+    "sourceMap": true
   },
   "display": "React component and application configuration",
   "extends": "./base.json"
