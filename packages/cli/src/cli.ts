@@ -3,7 +3,8 @@
 import { Command } from "commander";
 
 import { logger } from "@/utils";
-import { version } from "~/package.json";
+
+import { version } from "../package.json" with { type: "json" };
 
 const program = new Command();
 
