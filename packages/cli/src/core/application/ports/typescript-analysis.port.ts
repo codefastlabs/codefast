@@ -12,7 +12,7 @@ export interface ProjectStatistics {
   totalInterfaces: number;
 }
 
-export interface ITypeScriptAnalysisService {
+export interface TypeScriptAnalysisService {
   /**
    * Create a TypeScript project for analysis
    */

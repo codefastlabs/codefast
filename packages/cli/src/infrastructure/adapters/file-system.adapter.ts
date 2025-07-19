@@ -9,12 +9,12 @@ import chalk from "chalk";
 import pkg from "fast-glob";
 import { injectable } from "inversify";
 
-import type { IFileSystemService } from "@/core/application/ports/file-system.port";
+import type { FileSystemService } from "@/core/application/ports/file-system.port";
 
 const { glob } = pkg;
 
 @injectable()
-export class FastGlobFileSystemAdapter implements IFileSystemService {
+export class FastGlobFileSystemAdapter implements FileSystemService {
   async findFiles(pattern: string, options?: { ignore?: string[] }): Promise<string[]> {
     try {
       const files = await glob(pattern, {
@@ -40,11 +40,11 @@ export class FastGlobFileSystemAdapter implements IFileSystemService {
   }
 
   formatFileSize(bytes: number): string {
-    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
 
     if (bytes === 0) return "0 Bytes";
 
-    const index = Math.floor(Math.log(bytes) / Math.log(1024));
+    const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
 
     return String(Math.round((bytes / Math.pow(1024, index)) * 100) / 100) + " " + sizes[index];
   }

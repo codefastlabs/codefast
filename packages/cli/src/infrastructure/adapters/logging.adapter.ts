@@ -5,13 +5,13 @@
  * Following explicit architecture guidelines for CLI applications.
  */
 
-import chalk from 'chalk';
-import { injectable } from 'inversify';
+import chalk from "chalk";
+import { injectable } from "inversify";
 
-import type { ILoggingService } from '@/core/application/ports/logging.port';
+import type { LoggingService } from "@/core/application/ports/logging.port";
 
 @injectable()
-export class ChalkLoggingAdapter implements ILoggingService {
+export class ChalkLoggingAdapter implements LoggingService {
   debug(message: string): void {
     console.log(chalk.gray(`🐛 ${message}`));
   }
