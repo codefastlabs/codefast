@@ -1,131 +1,185 @@
-# AI Development Guidelines for Explicit Architecture
+# Explicit Architecture Guidelines for AI Development
 
-## 1. Core Principles & Mandates
+This document outlines programming guidelines for building AI systems using an Explicit Architecture approach. It distills key principles, best practices, and actionable recommendations to ensure clarity, maintainability, testability, and scalability in AI-driven applications. The guidelines are tailored for developers working with modern web stacks, emphasizing Dependency Injection (DI), layered architecture, and Domain-Driven Design (DDD) principles.
 
-Your primary function is to act as a **guardian of the Explicit Architecture**. You must enforce all principles, conventions, and rules outlined in the source document (`explicit-architecture.md`) without exception.
+## 1. Core Principles
 
-- **Primacy of the Source Document**: All old knowledge is superseded. You must rely **exclusively** on the provided `explicit-architecture.md` document. Do not use external sources or prior knowledge. Your main task is to detect and correct any violations against this document.
-- **Strict Type Safety**: The use of the `any` type is **strictly forbidden** in all circumstances. Always enforce specific, explicit types.
-- **Explicit Over Implicit**: Every dependency, interface, and data flow must be explicitly declared. There should be no reliance on hidden conventions or implicit behaviors.
-- **Adherence to Design Patterns**:
-- **Constructor Prohibition**: Direct instantiation of entities using constructors with multiple parameters is forbidden. You **must** enforce the use of the **Builder Pattern** or a **static Factory Method** as per the guidelines.
-- **Required Patterns**: You must ensure the correct implementation and usage of core patterns as defined: Dependency Injection, Ports & Adapters, Repository, Domain Event, Observer, and Worker patterns.
-- **Violation Reporting Protocol**: For every detected violation, you **must**:
+- **Clarity and Explicitness**: Declare all dependencies, interfaces, and data flows explicitly to minimize ambiguity and enhance code readability.
+- **Separation of Concerns**: Organize code into distinct layers (Domain, Application, Infrastructure, Presentation) to isolate responsibilities.
+- **Dependency Inversion**: Depend on abstractions (interfaces/ports) rather than concrete implementations to promote flexibility and testability.
+- **Testability**: Design components to be easily testable through clear interfaces and mocked dependencies.
+- **Scalability and Maintainability**: Structure code to support long-term growth, collaboration, and adaptation to changing requirements.
 
-1. Clearly identify the violation.
-2. Explain precisely why it violates the architecture, citing the specific section of the `explicit-architecture.md` document.
-3. Propose a concrete, compliant code solution that adheres to all architectural rules.
-4. All violations must be addressed before proceeding.
+## 2. Layered Architecture Structure
 
----
+Organize AI systems into four core layers:
 
-## 2. Technology Stack
+### 2.1. Domain Layer
 
-You must enforce the use of the following specific technologies and versions. Any deviation is a violation.
+- **Purpose**: Encapsulate core business logic, entities, and rules independent of external systems or technologies.
+- **Components**:
+  - **Entities**: Use `class` to define entities with behavior and invariants (e.g., `User`, `Order`). Store in `src/core/domain/entities/`.
+  - **Value Objects**: Define immutable objects for semantic attributes (e.g., `Email`, `Money`). Store in `src/core/domain/value-objects/`.
+  - **Domain Services**: Handle complex business logic involving multiple entities. Store in `src/core/domain/services/`.
+  - **Domain Events**: Represent significant business events (e.g., `OrderPlaced`). Store in `src/core/domain/events/`.
+  - **Exceptions**: Define business-specific errors (e.g., `InvalidOrderError`). Store in `src/core/domain/errors/`.
+- **Best Practices**:
+  - Keep Domain layer independent of other layers.
+  - Use `class` for entities to encapsulate behavior and ensure invariants.
+  - Employ Value Objects for attributes to enforce business rules and immutability.
+  - Use descriptive naming aligned with the Ubiquitous Language of the business domain.
 
-- **Node.js**: LTS version
-- **React**: Version 19+
-- **Next.js**: Version 15+ (with App Router)
-- **Dependency Injection**: InversifyJS Version 7+
-- **Database ORM**: Drizzle ORM
-- **Validation**: Zod 4
-- **Queueing System**: BullMQ with Redis
-- **TypeScript Configuration**: Must have `experimentalDecorators: true` and `emitDecoratorMetadata: true` enabled. `target` must be `ES2022` or newer, and `lib` must include `"ES2022.Error"`.
+### 2.2. Application Layer
 
----
+- **Purpose**: Orchestrate business logic through Use Cases, defining interfaces (Ports) for external interactions.
+- **Components**:
+  - **Use Cases**: Implement business workflows (e.g., `CreateOrderUseCase`). Store in `src/core/application/use-cases/`.
+  - **Ports**: Define interfaces for repositories and services (e.g., `UserRepository`, `EmailService`). Store in `src/core/application/ports/`.
+  - **DTOs**: Use Data Transfer Objects with schema validation (e.g., Zod) for input/output. Store in `src/core/application/dtos/`.
+- **Best Practices**:
+  - Define clear input/output contracts using DTOs.
+  - Use Ports to abstract external interactions, ensuring loose coupling.
+  - Inject dependencies via DI to maintain flexibility.
 
-## 3. Architecture, Layers, and Dependency Rule
+### 2.3. Infrastructure Layer
 
-The architecture is composed of distinct layers. The **Dependency Rule** is absolute: outer layers can only depend on inner layers.
+- **Purpose**: Implement technical details (e.g., database access, external APIs) through Adapters.
+- **Components**:
+  - **Adapters**: Implement Ports (e.g., `DrizzleUserRepositoryAdapter`, `SendGridEmailServiceAdapter`). Store in `src/infrastructure/adapters/`.
+  - **Workers**: Handle asynchronous tasks (e.g., event processing). Store in `src/infrastructure/workers/`.
+  - **Jobs**: Define asynchronous job structures (e.g., queue jobs). Store in `src/infrastructure/jobs/`.
+  - **Configuration**: Store constants and configurations (e.g., API timeouts). Store in `src/infrastructure/config/` or `src/infrastructure/constants/`.
+- **Best Practices**:
+  - Map Domain Entities to ORM schemas or external API responses in Adapters.
+  - Use DI to inject infrastructure dependencies into Adapters.
+  - Optimize database queries (e.g., selective `select()`, pagination) in Repository Adapters.
 
-- **Dependency Flow**: `Infrastructure` -> `Application`. `Presentation` -> `Application`. `Application` -> `Domain`.
-- **`Domain` Layer**: The innermost layer. It **must not** depend on any other layer.
-- **`Core` (`Domain` + `Application`)**: Must be completely independent of infrastructure details like databases, frameworks, or UI.
-- **Ports & Adapters**: The communication between the `Application` and `Infrastructure` layers **must** be mediated by Ports (interfaces) and Adapters (implementations).
+### 2.4. Presentation Layer
 
----
+- **Purpose**: Handle user interface and API entry points, integrating with the Application layer.
+- **Components**:
+  - **Server Components**: Render server-side UI or data fetching logic. Store in `src/app/` (e.g., `page.tsx`).
+  - **Client Components**: Handle interactive UI. Store in `src/app/.../_components/` or `src/presentation/components/`.
+  - **Server Actions**: Define server-side logic callable from the client. Store in `src/app/.../_actions/`.
+  - **API Routes**: Define RESTful endpoints. Store in `src/app/api/`.
+- **Best Practices**:
+  - Use Server Components for initial rendering and data fetching.
+  - Leverage Client Components for interactivity, using hooks like `useSearchParams` or `useActionState`.
+  - Co-locate feature-specific components and actions in `src/app/` for clarity.
 
-## 4. Directory Structure & Naming Conventions
+## 3. Dependency Injection with InversifyJS
 
-The project **must** adhere to the exact directory structure and naming conventions outlined in Sections 9 and 11 of the source document. Any file or folder in the wrong location or with an incorrect name is a violation.
+- **Purpose**: Manage dependencies explicitly using an Inversion of Control (IoC) container.
+- **Implementation**:
+  - Use InversifyJS (version 7+) for DI.
+  - Centralize DI configuration in `src/di/` (e.g., `container.ts`, `types.ts`, `modules/`).
+  - Define service identifiers as `Symbol` in `src/di/types.ts`.
+  - Use `ContainerModule` in `src/di/modules/` to organize bindings by feature or layer.
+  - Mark injectable classes with `@injectable` and inject dependencies with `@inject`.
+- **Best Practices**:
+  - Use `Singleton` scope for shared services, `Transient` for per-request instances.
+  - Support asynchronous bindings for database connections or external services.
+  - Use `@postConstruct` for initialization and `@preDestroy` for cleanup.
+  - Organize bindings modularly to improve maintainability.
 
-### 4.1. Key Directory Rules
+## 4. Event-Driven Architecture
 
-- `src/core/`: Contains the `domain/` and `application/` layers.
-- `src/infrastructure/`: Contains `adapters/`, `config/`, `drizzle/` (schemas/migrations), `jobs/`, `workers/`.
-- `src/presentation/`: Contains shared, reusable UI (`components/ui/`), `hooks/`, `emails/`, etc.
-- `src/app/`: The primary entrypoint for the Presentation layer, structured by routes. Feature-specific components and actions **must** be co-located in `_components/` and `_actions/` subdirectories.
-- `src/di/`: Centralized InversifyJS configuration. Contains `container.ts`, `types.ts`, and `modules/`.
+- **Purpose**: Enable loose coupling and asynchronous processing for AI-driven workflows.
+- **Implementation**:
+  - Define Domain Events in `src/core/domain/events/` to capture significant business events.
+  - Use an `EventPublisher` Port (`src/core/application/ports/event-publisher/`) and implement with an Adapter (e.g., `BullMQEventPublisherAdapter` in `src/infrastructure/adapters/`).
+  - Process events asynchronously using Workers in `src/infrastructure/workers/`.
+- **Best Practices**:
+  - Emit Domain Events from Entities or Use Cases.
+  - Use a message queue (e.g., BullMQ) for reliable event delivery.
+  - Handle errors in Workers with retry strategies or Dead-Letter Queues.
 
-### 4.2. Key Naming Rules
+## 5. Constants and Enums
 
-- **No Prefixes**: Do not use `I` for interfaces or `T` for type aliases.
-- **Files**: Follow the `[name].[type].ts` convention (e.g., `user.entity.ts`, `create-user.use-case.ts`, `drizzle-user.repository.adapter.ts`).
-- **Ports (Interfaces)**: PascalCase, describing the contract (e.g., `UserRepository`, `EmailService`).
-- **Adapters (Classes)**: `[Technology][PortName]Adapter` (e.g., `DrizzleUserRepositoryAdapter`).
-- **Use Cases (Classes)**: `[Action][Entity]UseCase` (e.g., `CreateUserUseCase`).
-- **Constants**: `UPPER_SNAKE_CASE`.
-- **Enums**: PascalCase for the enum name and its members. Prefer String Enums.
+- **Purpose**: Ensure consistency and readability for fixed values.
+- **Implementation**:
+  - Store domain-specific constants/enums in `src/core/domain/[feature]/constants/` or `enums/`.
+  - Store application-wide constants/enums in `src/core/application/constants/` or `enums/`.
+  - Store infrastructure-specific constants in `src/infrastructure/constants/` or `config/`.
+  - Store presentation-specific constants in `src/presentation/constants/` or `src/app/.../_constants/`.
+- **Best Practices**:
+  - Use `UPPER_SNAKE_CASE` for constants (e.g., `DEFAULT_PAGE_SIZE`).
+  - Use string enums with `PascalCase` members for semantic clarity (e.g., `enum OrderStatus { Pending = 'PENDING' }`).
+  - Prefer string enums over numeric enums for readability and debugging.
+  - Use object literals with `as const` for lightweight string literal unions when enums are unnecessary.
 
----
+## 6. Error Handling and Logging
 
-## 5. Layer-Specific Rules
+- **Purpose**: Ensure robust error management and traceability.
+- **Implementation**:
+  - Define business-specific errors in `src/core/domain/errors/` (e.g., `InvalidOrderError`).
+  - Use a `LoggingService` Port (`src/core/application/ports/logging/`) with an Adapter (e.g., `WinstonLoggingAdapter` in `src/infrastructure/adapters/`).
+  - Implement error boundaries in the Presentation layer for UI resilience.
+- **Best Practices**:
+  - Throw domain-specific errors for business rule violations.
+  - Log errors at appropriate levels (e.g., `error` for critical issues, `warn` for recoverable issues).
+  - Avoid exposing sensitive information in error responses.
 
-### 5.1. Domain Layer (`src/core/domain/`)
+## 7. Testing Guidelines
 
-- **Entities**: Must be defined in `src/core/domain/entities/`. They should preferably be **classes** that encapsulate business logic and state (a Rich Domain Model), not just data bags.
-- **Value Objects**: Must be defined in `src/core/domain/value-objects/`. They **must** be immutable classes. Entity properties should use Value Objects to enforce business rules and invariants.
-- **Domain Events**: Must be defined in `src/core/domain/events/` and represent past business occurrences.
+- **Purpose**: Ensure high code quality and reliability.
+- **Implementation**:
+  - Write unit tests for Domain Entities, Value Objects, and Use Cases.
+  - Mock dependencies using InversifyJS for isolated testing.
+  - Write integration tests for Infrastructure Adapters and API routes.
+  - Use end-to-end (E2E) tests for critical user flows in the Presentation layer.
+- **Best Practices**:
+  - Mock Ports in unit tests to isolate layers.
+  - Test error scenarios and edge cases thoroughly.
+  - Use testing frameworks like Jest or Vitest with TypeScript support.
 
-### 5.2. Application Layer (`src/core/application/`)
+## 8. Asynchronous Processing for AI Workflows
 
-- **Use Cases**: Must be defined in `src/core/application/use-cases/`. They orchestrate the domain layer to perform tasks.
-- **Ports**: All external dependencies (DB, services, etc.) **must** be fronted by an interface (Port) defined in `src/core/application/ports/`.
-- **DTOs**: Data Transfer Objects must be defined in `src/core/application/dtos/` and validated using **Zod**, typically at the beginning of a Use Case or in the Presentation layer entrypoint (Server Action). Use Cases are responsible for mapping validated DTOs to Domain Entities/Value Objects.
+- **Purpose**: Handle compute-intensive AI tasks (e.g., model inference) without blocking the main thread.
+- **Implementation**:
+  - Use Workers (`src/infrastructure/workers/`) and Queues (e.g., BullMQ) for background tasks.
+  - Define job structures in `src/infrastructure/jobs/` for AI-related tasks (e.g., `ProcessInferenceJob`).
+  - Use Server Actions or API Routes in `src/app/` to trigger asynchronous tasks.
+- **Best Practices**:
+  - Prioritize jobs for critical AI tasks (e.g., real-time predictions).
+  - Implement retry and error-handling strategies for job failures.
+  - Monitor queue performance with dashboards or metrics.
 
-### 5.3. Infrastructure Layer (`src/infrastructure/`)
+## 9. Next.js 15 Integration
 
-- **Adapters**: Must be defined in `src/infrastructure/adapters/` and **must** implement a corresponding Port from the Application layer.
-- **Repository Adapters**: Responsible for persistence logic and mapping between Domain Entities and ORM schemas (e.g., Drizzle schemas).
-- **ORM Schemas**: Must be defined in `src/infrastructure/drizzle/schemas/`.
-- **Async Tasks**: Job definitions must be in `src/infrastructure/jobs/`, and the processing logic in `src/infrastructure/workers/`.
+- **Purpose**: Leverage Next.js 15 features for optimal AI system performance.
+- **Implementation**:
+  - Use Server Components (`src/app/.../page.tsx`) for initial rendering and data fetching.
+  - Handle asynchronous `params` and `searchParams` with `async/await` in Server Components.
+  - Use Client Components with React 19 hooks (e.g., `useActionState`, `useSearchParams`) for interactivity.
+  - Enable Turbopack for faster development (`next dev --turbo`).
+  - Use `unstable_after` for non-critical post-response tasks (e.g., logging).
+- **Best Practices**:
+  - Define precise TypeScript types for `params` and `searchParams` (e.g., `Promise<{ id: string }>`).
+  - Opt-in to caching for `GET` Route Handlers if needed (`dynamic = 'force-static'`).
+  - Update to `next/font` and ESLint 9 for compatibility.
 
-### 5.4. Presentation Layer (`src/app/` & `src/presentation/`)
+## 10. Evolving the Architecture
 
-- **Server Components**: Should fetch data by calling Application Layer Use Cases.
-- **Client Components**: Should manage UI state. Data mutations **must** be handled by calling **Server Actions**.
-- **Server Actions**: Act as thin controllers. They must validate input (using DTOs), get the appropriate Use Case from the DI container, execute it, and handle errors, returning a structured response to the client.
+- **Purpose**: Ensure the architecture adapts to new requirements and technologies.
+- **Implementation**:
+  - Refactor within layers to improve Entities, Use Cases, or Adapters.
+  - Introduce new features as modular "feature slices" in `src/app/` and `src/core/`.
+  - Consider Domain-Driven Design Bounded Contexts for large systems.
+  - Transition to microservices only when justified by scale or team needs.
+- **Best Practices**:
+  - Maintain automated tests to validate refactors.
+  - Document architectural changes and update conventions.
+  - Avoid premature optimization or premature microservices.
 
----
+## 11. Anti-Patterns to Avoid
 
-## 6. Mandatory Practices & Conventions
+- **Breaking Layer Boundaries**: Avoid direct dependencies between non-adjacent layers (e.g., Presentation accessing Infrastructure directly).
+- **Fat Controllers/Use Cases**: Keep Use Cases focused and delegate complex logic to Domain Services.
+- **Magic Values**: Always define constants or enums for fixed values.
+- **Neglecting Tests**: Ensure comprehensive test coverage for all layers.
+- **Overusing Global Constants**: Limit global constants/enums to maintain modularity.
 
-### 6.1. Dependency Injection (InversifyJS)
+## 12. Conclusion
 
-- All DI configuration **must** be in the `src/di/` directory.
-- All service identifiers **must** be `Symbol`s defined in `src/di/types.ts`.
-- Bindings **must** be organized into `ContainerModule` files within `src/di/modules/`.
-
-### 6.2. Next.js 15 & React 19
-
-- You must enforce the correct handling of new framework features.
-- **Async Request APIs**: `params` and `searchParams` in Server Components, Layouts, and Route Handlers **must** be treated as `Promise`s and accessed with `async/await`.
-- **React 19 Hooks**: Client Components interacting with forms and actions **must** use `useActionState` (not `useFormState`) and the updated `useFormStatus`.
-- **Caching**: Be aware that `GET` Route Handlers are no longer cached by default. Caching must be explicitly opted into where appropriate.
-
-### 6.3. Error Handling
-
-- Must follow the strategy in Section 13.
-- Errors must be classified as **Domain**, **Application**, or **Infrastructure**.
-- Adapters **must** catch technology-specific errors and wrap them in generic `InfrastructureError` types (e.g., `RepositoryError`). The Application layer must not be exposed to raw infrastructure exceptions.
-- Server Actions and API Routes must return a standardized JSON error structure.
-
-### 6.4. Code Documentation
-
-- All public classes, methods, interfaces, and types **must** be documented using **TSDoc** syntax.
-- The TSDoc must be valid according to the `tsdoc/syntax: "error"` ESLint rule.
-
-### 6.5. Immutability
-
-- State **must** be treated as immutable, especially in the Domain layer (Value Objects) and in React client-side state management.
-- When updating state, always create a new object/array instead of mutating the existing one.
+By adhering to these guidelines, developers can build AI systems that are clear, maintainable, and scalable. The Explicit Architecture approach, with its emphasis on DI, layered structure, and DDD principles, ensures that AI-driven applications remain robust and adaptable. Leveraging tools like InversifyJS, Next.js 15, and modern TypeScript practices enhances developer productivity and system reliability, paving the way for sustainable growth and innovation.
