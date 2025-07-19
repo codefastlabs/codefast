@@ -21,7 +21,6 @@ export const jestRules: Linter.Config[] = [
       "jest/no-disabled-tests": "warn",
       "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
 
-      // Error rules
       "jest/consistent-test-it": ["error", { fn: "test" }],
       "jest/expect-expect": [
         "error",
