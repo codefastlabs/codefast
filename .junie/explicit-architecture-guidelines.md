@@ -122,16 +122,373 @@ Organize AI systems into four core layers:
 
 ## 7. Testing Guidelines
 
-- **Purpose**: Ensure high code quality and reliability.
+### 7.1. Testing Strategy Overview
+
+- **Purpose**: Ensure high code quality, reliability, and maintainability across all architectural layers.
+- **Testing Pyramid**: Follow a balanced approach with more unit tests at the base, fewer integration tests in the middle, and minimal E2E tests at the top.
+- **Layer Isolation**: Test each layer independently using mocks and stubs to ensure true unit testing and faster feedback loops.
+
+### 7.2. Domain Layer Testing
+
+- **Focus**: Test business logic, entity behavior, and domain rules in complete isolation.
+- **Components to Test**:
+  - **Entities**: Test business methods, invariants, and state transitions
+  - **Value Objects**: Test immutability, validation, and equality
+  - **Domain Services**: Test complex business logic involving multiple entities
+  - **Domain Events**: Test event creation and payload structure
 - **Implementation**:
-  - Write unit tests for Domain Entities, Value Objects, and Use Cases.
-  - Mock dependencies using InversifyJS for isolated testing.
-  - Write integration tests for Infrastructure Adapters and API routes.
-  - Use end-to-end (E2E) tests for critical user flows in the Presentation layer.
+  ```typescript
+  // Example: Entity testing
+  describe('User Entity', () => {
+    it('should create user with valid email', () => {
+      const user = new User('john@example.com', 'John Doe');
+      expect(user.email.value).toBe('john@example.com');
+      expect(user.isActive()).toBe(true);
+    });
+
+    it('should throw error for invalid email', () => {
+      expect(() => new User('invalid-email', 'John')).toThrow(InvalidEmailError);
+    });
+  });
+  ```
 - **Best Practices**:
-  - Mock Ports in unit tests to isolate layers.
-  - Test error scenarios and edge cases thoroughly.
-  - Use testing frameworks like Jest or Vitest with TypeScript support.
+  - No external dependencies or mocks needed
+  - Test all business rules and edge cases
+  - Use descriptive test names that reflect business scenarios
+  - Test both happy path and error conditions
+
+### 7.3. Application Layer Testing
+
+- **Focus**: Test use case orchestration and business workflow coordination.
+- **Components to Test**:
+  - **Use Cases**: Test business workflows and port interactions
+  - **DTOs**: Test data validation and transformation
+  - **Application Services**: Test coordination logic
+- **Implementation**:
+  ```typescript
+  // Example: Use Case testing with mocked ports
+  describe('CreateOrderUseCase', () => {
+    let useCase: CreateOrderUseCase;
+    let mockUserRepository: jest.Mocked<UserRepository>;
+    let mockOrderRepository: jest.Mocked<OrderRepository>;
+    let mockEventPublisher: jest.Mocked<EventPublisher>;
+
+    beforeEach(() => {
+      mockUserRepository = createMock<UserRepository>();
+      mockOrderRepository = createMock<OrderRepository>();
+      mockEventPublisher = createMock<EventPublisher>();
+      
+      useCase = new CreateOrderUseCase(
+        mockUserRepository,
+        mockOrderRepository,
+        mockEventPublisher
+      );
+    });
+
+    it('should create order successfully', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const orderData = { productId: 'prod-456', quantity: 2 };
+      const mockUser = new User('user@example.com', 'John Doe');
+      
+      mockUserRepository.findById.mockResolvedValue(mockUser);
+      mockOrderRepository.save.mockResolvedValue(undefined);
+
+      // Act
+      const result = await useCase.execute({ userId, ...orderData });
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(mockOrderRepository.save).toHaveBeenCalledWith(
+        expect.any(Order)
+      );
+      expect(mockEventPublisher.publish).toHaveBeenCalledWith(
+        expect.any(OrderCreatedEvent)
+      );
+    });
+  });
+  ```
+- **Best Practices**:
+  - Mock all Ports (repository interfaces, external services)
+  - Test use case orchestration logic, not implementation details
+  - Verify interactions with mocked dependencies
+  - Test error handling and validation scenarios
+  - Use dependency injection container for test setup when needed
+
+### 7.4. Infrastructure Layer Testing
+
+- **Focus**: Test technical implementations and external system integrations.
+- **Components to Test**:
+  - **Repository Adapters**: Test data persistence and retrieval
+  - **External Service Adapters**: Test API integrations
+  - **Event Publishers**: Test message queue interactions
+  - **Configuration**: Test environment-specific settings
+- **Implementation**:
+  ```typescript
+  // Example: Repository Adapter integration testing
+  describe('DrizzleUserRepositoryAdapter', () => {
+    let repository: DrizzleUserRepositoryAdapter;
+    let testDb: Database;
+
+    beforeEach(async () => {
+      testDb = await createTestDatabase();
+      repository = new DrizzleUserRepositoryAdapter(testDb);
+    });
+
+    afterEach(async () => {
+      await cleanupTestDatabase(testDb);
+    });
+
+    it('should save and retrieve user', async () => {
+      // Arrange
+      const user = new User('test@example.com', 'Test User');
+
+      // Act
+      await repository.save(user);
+      const retrievedUser = await repository.findById(user.id);
+
+      // Assert
+      expect(retrievedUser).toBeDefined();
+      expect(retrievedUser!.email.value).toBe('test@example.com');
+    });
+  });
+
+  // Example: External Service Adapter testing
+  describe('SendGridEmailServiceAdapter', () => {
+    let emailService: SendGridEmailServiceAdapter;
+    let mockHttpClient: jest.Mocked<HttpClient>;
+
+    beforeEach(() => {
+      mockHttpClient = createMock<HttpClient>();
+      emailService = new SendGridEmailServiceAdapter(mockHttpClient);
+    });
+
+    it('should send email successfully', async () => {
+      // Arrange
+      mockHttpClient.post.mockResolvedValue({ status: 202 });
+      const email = new Email('to@example.com', 'Subject', 'Body');
+
+      // Act
+      const result = await emailService.send(email);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        '/mail/send',
+        expect.objectContaining({
+          to: [{ email: 'to@example.com' }]
+        })
+      );
+    });
+  });
+  ```
+- **Best Practices**:
+  - Use test databases or in-memory alternatives for repository tests
+  - Mock external HTTP clients and third-party services
+  - Test error handling and retry mechanisms
+  - Verify data mapping between domain entities and persistence models
+  - Use integration test environment configurations
+
+### 7.5. Presentation Layer Testing
+
+- **Focus**: Test user interfaces, API endpoints, and user interactions.
+- **Components to Test**:
+  - **React Components**: Test rendering, user interactions, and accessibility
+  - **API Routes**: Test request/response handling and validation
+  - **Server Actions**: Test form submissions and server-side logic
+  - **Client-side Logic**: Test hooks and interactive behavior
+- **Implementation**:
+  ```typescript
+  // Example: React Component testing
+  describe('UserProfile Component', () => {
+    it('should render user information', () => {
+      const user = { name: 'John Doe', email: 'john@example.com' };
+      
+      render(React.createElement(UserProfile, { user }));
+      
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('john@example.com')).toBeInTheDocument();
+    });
+
+    it('should be accessible', async () => {
+      const user = { name: 'John Doe', email: 'john@example.com' };
+      const { container } = render(React.createElement(UserProfile, { user }));
+      
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+  });
+
+  // Example: API Route testing
+  describe('/api/users', () => {
+    it('should create user successfully', async () => {
+      const userData = { name: 'John Doe', email: 'john@example.com' };
+      
+      const response = await request(app)
+        .post('/api/users')
+        .send(userData)
+        .expect(201);
+      
+      expect(response.body).toMatchObject({
+        id: expect.any(String),
+        name: 'John Doe',
+        email: 'john@example.com'
+      });
+    });
+  });
+  ```
+- **Best Practices**:
+  - Use React Testing Library for component testing
+  - Include accessibility testing with jest-axe
+  - Mock API calls and external dependencies
+  - Test user interactions and form submissions
+  - Use MSW (Mock Service Worker) for API mocking in integration tests
+
+### 7.6. Testing with Dependency Injection
+
+- **Purpose**: Leverage InversifyJS container for test isolation and dependency management.
+- **Implementation**:
+  ```typescript
+  // Test container setup
+  const createTestContainer = (): Container => {
+    const container = new Container();
+    
+    // Bind mocks for testing
+    container.bind<UserRepository>(TYPES.UserRepository)
+      .toConstantValue(createMock<UserRepository>());
+    container.bind<EmailService>(TYPES.EmailService)
+      .toConstantValue(createMock<EmailService>());
+    
+    // Bind real implementations under test
+    container.bind<CreateUserUseCase>(TYPES.CreateUserUseCase)
+      .to(CreateUserUseCase);
+    
+    return container;
+  };
+
+  describe('DI Integration Tests', () => {
+    let container: Container;
+
+    beforeEach(() => {
+      container = createTestContainer();
+    });
+
+    it('should resolve use case with mocked dependencies', () => {
+      const useCase = container.get<CreateUserUseCase>(TYPES.CreateUserUseCase);
+      expect(useCase).toBeInstanceOf(CreateUserUseCase);
+    });
+  });
+  ```
+- **Best Practices**:
+  - Create separate test containers with mocked dependencies
+  - Use `@injectable` decorator for testable classes
+  - Leverage container modules for organized test setup
+  - Mock external dependencies at the container level
+
+### 7.7. Test Organization and Structure
+
+- **File Structure**:
+  ```
+  src/
+  ├── core/
+  │   ├── domain/
+  │   │   ├── entities/
+  │   │   │   ├── user.entity.ts
+  │   │   │   └── user.entity.test.ts
+  │   │   └── services/
+  │   │       ├── user.service.ts
+  │   │       └── user.service.test.ts
+  │   └── application/
+  │       └── use-cases/
+  │           ├── create-user.use-case.ts
+  │           └── create-user.use-case.test.ts
+  ├── infrastructure/
+  │   └── adapters/
+  │       ├── user-repository.adapter.ts
+  │       └── user-repository.adapter.test.ts
+  └── presentation/
+      └── components/
+          ├── user-profile.tsx
+          └── user-profile.test.tsx
+  ```
+
+### 7.8. Testing Best Practices
+
+- **Naming Conventions**:
+  - Use descriptive test names that explain the scenario: `should create user when valid data provided`
+  - Group related tests using `describe` blocks by feature or component
+  - Use Vietnamese for business-specific test descriptions when appropriate
+
+- **Test Data Management**:
+  - Use factory functions or builders for test data creation
+  - Create reusable test fixtures for common scenarios
+  - Use `beforeEach` and `afterEach` for setup and cleanup
+
+- **Mocking Strategy**:
+  - Mock at the boundary of your system (Ports/Interfaces)
+  - Avoid mocking implementation details
+  - Use type-safe mocks with proper TypeScript support
+
+- **Coverage Guidelines**:
+  - Aim for 80%+ code coverage across all layers
+  - Focus on critical business logic and edge cases
+  - Use coverage reports to identify untested code paths
+
+- **Performance**:
+  - Keep unit tests fast (< 100ms each)
+  - Use parallel test execution for large test suites
+  - Isolate slow integration tests from fast unit tests
+
+### 7.9. Testing Tools and Frameworks
+
+- **Core Testing Stack**:
+  - **Jest**: Primary testing framework with TypeScript support
+  - **React Testing Library**: For component testing
+  - **jest-axe**: For accessibility testing
+  - **MSW**: For API mocking in integration tests
+  - **Supertest**: For API endpoint testing
+
+- **Configuration**:
+  ```typescript
+  // jest.config.ts
+  export default {
+    preset: 'ts-jest',
+    testEnvironment: 'node', // or 'jsdom' for React components
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+    testMatch: ['**/?(*.)+(test|spec|e2e).[jt]s?(x)'],
+    collectCoverageFrom: [
+      'src/**/*.{ts,tsx}',
+      '!src/**/*.d.ts',
+      '!src/**/*.test.{ts,tsx}'
+    ],
+    coverageThreshold: {
+      global: {
+        branches: 80,
+        functions: 80,
+        lines: 80,
+        statements: 80
+      }
+    }
+  };
+  ```
+
+### 7.10. Continuous Integration Testing
+
+- **Pipeline Integration**:
+  - Run tests on every pull request
+  - Generate and publish coverage reports
+  - Fail builds on coverage threshold violations
+  - Run different test suites in parallel (unit, integration, E2E)
+
+- **Test Commands**:
+  ```bash
+  pnpm test              # Run all tests
+  pnpm test:watch        # Run tests in watch mode
+  pnpm test:coverage     # Run tests with coverage
+  pnpm test:coverage:ci  # Run tests with CI-optimized coverage
+  ```
+
+By following these comprehensive testing guidelines, teams can ensure robust, maintainable, and reliable AI systems built with explicit architecture principles. The layered approach to testing mirrors the architectural structure, making it easier to identify issues and maintain code quality over time.
 
 ## 8. Asynchronous Processing for AI Workflows
 
