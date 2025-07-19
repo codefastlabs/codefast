@@ -17,6 +17,7 @@ describe("AnalyzeProjectUseCase", () => {
   beforeEach(() => {
     // Create mock services
     mockLoggingService = {
+      debug: jest.fn(),
       error: jest.fn(),
       info: jest.fn(),
       success: jest.fn(),
@@ -24,7 +25,10 @@ describe("AnalyzeProjectUseCase", () => {
     };
 
     mockFileSystemService = {
+      createProgressIndicator: jest.fn(),
       findFiles: jest.fn(),
+      formatFileSize: jest.fn(),
+      pathExists: jest.fn(),
     };
 
     mockAnalysisService = {

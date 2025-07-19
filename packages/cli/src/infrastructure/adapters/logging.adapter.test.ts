@@ -7,11 +7,11 @@ import { ChalkLoggingAdapter } from "./logging.adapter";
 jest.mock("chalk", () => ({
   __esModule: true,
   default: {
-    blue: jest.fn((text) => `blue(${text})`),
-    gray: jest.fn((text) => `gray(${text})`),
-    green: jest.fn((text) => `green(${text})`),
-    red: jest.fn((text) => `red(${text})`),
-    yellow: jest.fn((text) => `yellow(${text})`),
+    blue: jest.fn((text: string) => `blue(${text})`),
+    gray: jest.fn((text: string) => `gray(${text})`),
+    green: jest.fn((text: string) => `green(${text})`),
+    red: jest.fn((text: string) => `red(${text})`),
+    yellow: jest.fn((text: string) => `yellow(${text})`),
   },
 }));
 

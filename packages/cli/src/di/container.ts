@@ -31,6 +31,7 @@ export function configureContainer(): Container {
 /**
  * Get a service from the container
  */
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function getService<T>(serviceIdentifier: symbol): T {
   return container.get<T>(serviceIdentifier);
 }

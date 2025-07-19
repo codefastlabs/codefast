@@ -13,6 +13,7 @@ describe("GreetUserUseCase", () => {
   beforeEach(() => {
     // Create mock logging service
     mockLoggingService = {
+      debug: jest.fn(),
       error: jest.fn(),
       info: jest.fn(),
       success: jest.fn(),
