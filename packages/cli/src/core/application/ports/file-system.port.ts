@@ -9,9 +9,12 @@ export interface FileSystemService {
   /**
    * Find files matching a glob pattern
    */
-  findFiles: (pattern: string, options?: {
-    ignore?: string[];
-  }) => Promise<string[]>;
+  findFiles: (
+    pattern: string,
+    options?: {
+      ignore?: string[];
+    },
+  ) => Promise<string[]>;
 
   /**
    * Check if a path exists using glob patterns
