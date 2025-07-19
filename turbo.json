@@ -14,10 +14,12 @@
       "persistent": true
     },
     "lint": {
+      "dependsOn": ["build"],
       "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
       "outputs": []
     },
     "lint:fix": {
+      "dependsOn": ["build"],
       "inputs": ["$TURBO_DEFAULT$", "eslint.config.*"],
       "cache": false
     },
@@ -40,6 +42,7 @@
       "persistent": true
     },
     "type-check": {
+      "dependsOn": ["build"],
       "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
     }
   }

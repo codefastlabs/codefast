@@ -19,8 +19,9 @@ describe("SupabaseLoader", () => {
     // Reset all mocks before each test
     jest.clearAllMocks();
     // Set up default mock implementation for stringifyUrl
-    mockedQueryString.stringifyUrl.mockImplementation(({ url, query }) => {
+    mockedQueryString.stringifyUrl.mockImplementation(({ query, url }) => {
       const queryParams = new URLSearchParams(query as Record<string, string>).toString();
+
       return queryParams ? `${url}?${queryParams}` : url;
     });
   });
