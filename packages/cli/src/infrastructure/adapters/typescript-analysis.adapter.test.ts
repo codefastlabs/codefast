@@ -2,7 +2,7 @@
  * Tests for TypeScript Analysis Adapter
  */
 
-import { Project } from 'ts-morph';
+import { Project, type SourceFile } from 'ts-morph';
 
 import { TsMorphAnalysisAdapter } from './typescript-analysis.adapter';
 
@@ -16,11 +16,11 @@ jest.mock('ts-morph', () => ({
 
 const MockProject = Project as jest.MockedClass<typeof Project>;
 
-interface MockSourceFile {
+type MockSourceFile = Pick<SourceFile, 'getClasses' | 'getFunctions' | 'getInterfaces'> & {
   getClasses: jest.MockedFunction<() => unknown[]>;
   getFunctions: jest.MockedFunction<() => unknown[]>;
   getInterfaces: jest.MockedFunction<() => unknown[]>;
-}
+};
 
 describe('TsMorphAnalysisAdapter', () => {
   let adapter: TsMorphAnalysisAdapter;
@@ -36,7 +36,7 @@ describe('TsMorphAnalysisAdapter', () => {
     };
 
     // Make Project constructor return our mock
-    MockProject.mockImplementation(() => mockProject as any);
+    MockProject.mockImplementation(() => mockProject as unknown as InstanceType<typeof Project>);
 
     jest.clearAllMocks();
   });
@@ -146,7 +146,7 @@ describe('TsMorphAnalysisAdapter', () => {
       ];
 
       adapter.createProject();
-      mockProject.getSourceFiles.mockReturnValue(mockSourceFiles as any);
+      mockProject.getSourceFiles.mockReturnValue(mockSourceFiles as unknown as SourceFile[]);
 
       // Act
       const statistics = adapter.getProjectStatistics();
@@ -193,7 +193,7 @@ describe('TsMorphAnalysisAdapter', () => {
       ];
 
       adapter.createProject();
-      mockProject.getSourceFiles.mockReturnValue(mockSourceFiles as any);
+      mockProject.getSourceFiles.mockReturnValue(mockSourceFiles as unknown as SourceFile[]);
 
       // Act
       const statistics = adapter.getProjectStatistics();
@@ -289,7 +289,7 @@ describe('TsMorphAnalysisAdapter', () => {
       adapter.createProject('./tsconfig.json');
       adapter.addSourceFiles(filePaths);
 
-      mockProject.getSourceFiles.mockReturnValue(mockSourceFiles as any);
+      mockProject.getSourceFiles.mockReturnValue(mockSourceFiles as unknown as SourceFile[]);
       const statistics = adapter.getProjectStatistics();
 
       adapter.reset();
