@@ -12,7 +12,6 @@ export const nextRules: Linter.Config[] = [
       ...pluginNext.configs.recommended.rules,
       ...pluginNext.configs["core-web-vitals"].rules,
 
-      // Disabled rules
       "@next/next/no-html-link-for-pages": "off",
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",

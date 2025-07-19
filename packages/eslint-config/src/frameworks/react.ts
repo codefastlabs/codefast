@@ -13,11 +13,9 @@ export const reactRules: Linter.Config[] = [
       ...pluginReact.configs.flat.recommended.rules,
       ...pluginReactHooks.configs.recommended.rules,
 
-      // Disabled rules
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
 
-      // Error rules
       "react/jsx-sort-props": [
         "error",
         {

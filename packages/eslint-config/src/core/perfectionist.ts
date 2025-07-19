@@ -8,7 +8,11 @@ export const perfectionistRules: Linter.Config[] = [
       perfectionist: pluginPerfectionist,
     },
     rules: {
-      // Sort export statements
+      /**
+       * Sorts export statements alphabetically for better code organization.
+       * This rule ensures that all export statements are arranged in ascending alphabetical order,
+       * making it easier to locate specific exports in a file.
+       */
       "perfectionist/sort-exports": [
         "error",
         {
@@ -19,7 +23,12 @@ export const perfectionistRules: Linter.Config[] = [
         },
       ],
 
-      // Sort imports - prioritizing perfectionist over import/order
+      /**
+       * Sorts import statements based on defined groups and ordering.
+       * This rule organizes imports into logical groups (side-effects, built-ins, external, internal, etc.)
+       * and sorts them alphabetically within each group, improving code readability and maintenance.
+       * It takes precedence over the import/order rule.
+       */
       "perfectionist/sort-imports": [
         "error",
         {
@@ -46,7 +55,12 @@ export const perfectionistRules: Linter.Config[] = [
         },
       ],
 
-      // Sort interface properties (useful for TypeScript exports)
+      /**
+       * Sorts interface properties alphabetically in TypeScript interfaces.
+       * This rule ensures consistent property ordering within interfaces, making it easier
+       * to scan and find specific properties, especially in large interface definitions.
+       * Particularly useful for TypeScript exports that define data structures.
+       */
       "perfectionist/sort-interfaces": [
         "error",
         {
@@ -57,7 +71,12 @@ export const perfectionistRules: Linter.Config[] = [
         },
       ],
 
-      // Sort named exports alphabetically
+      /**
+       * Sorts named exports alphabetically within a named export statement.
+       * This rule ensures that exports with multiple items have consistent internal ordering,
+       * making it easier to scan export lists and find specific exported members.
+       * Especially helpful in files with many named exports.
+       */
       "perfectionist/sort-named-exports": [
         "error",
         {
@@ -68,7 +87,12 @@ export const perfectionistRules: Linter.Config[] = [
         },
       ],
 
-      // Sort object properties in exports
+      /**
+       * Sorts object properties alphabetically for consistent property ordering.
+       * This rule standardizes the order of properties in object literals throughout the codebase,
+       * making objects easier to read and properties easier to locate, especially in
+       * configuration objects and export definitions.
+       */
       "perfectionist/sort-objects": [
         "error",
         {
@@ -79,7 +103,12 @@ export const perfectionistRules: Linter.Config[] = [
         },
       ],
 
-      // Sort type union members
+      /**
+       * Sorts type union members alphabetically in TypeScript union types.
+       * This rule ensures that union type definitions have consistent ordering of their members,
+       * making it easier to read and maintain type definitions, and helping to prevent
+       * accidental duplication of union members.
+       */
       "perfectionist/sort-union-types": [
         "error",
         {

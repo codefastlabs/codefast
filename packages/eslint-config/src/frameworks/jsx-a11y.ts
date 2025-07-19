@@ -10,10 +10,8 @@ export const jsxA11yRules: Linter.Config[] = [
     rules: {
       ...pluginJsxA11y.configs.recommended.rules,
 
-      // Disabled rules
       "jsx-a11y/autocomplete-valid": "off",
 
-      // Error rules
       "jsx-a11y/accessible-emoji": "error",
       "jsx-a11y/alt-text": [
         "error",
