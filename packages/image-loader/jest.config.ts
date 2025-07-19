@@ -7,6 +7,11 @@ const config: Config = {
   coverageProvider: "v8",
 
   /**
+   * A list of file extensions to treat as ESM
+   */
+  extensionsToTreatAsEsm: [".ts", ".tsx"],
+
+  /**
    * Configuration for module name mapping used in module resolution.
    */
   moduleNameMapper: {
@@ -33,11 +38,16 @@ const config: Config = {
 
   /**
    * Specifies which files should be ignored during transformation
-   * Prevents Jest from transforming files in the node_modules directory
-   * Exception: query-string needs to be transformed as it uses ES modules
+   * Allows transformation of ES modules and their dependencies while ignoring others
+   * Handles pnpm's nested node_modules structure
    */
-  transformIgnorePatterns: ["/node_modules/"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!(.pnpm/)?(query-string|decode-uri-component|filter-obj|split-on-first))",
+  ],
 
+  /**
+   * Displays detailed information about each test
+   */
   verbose: true,
 
   /**
