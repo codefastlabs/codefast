@@ -1,38 +1,24 @@
 #!/usr/bin/env node
 
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+/**
+ * CLI Entry Point
+ *
+ * Main entry point for the CLI application using explicit architecture.
+ * Following explicit architecture guidelines for CLI applications.
+ */
 
-import { Command } from "commander";
+import "reflect-metadata";
 
-import { logger } from "@/utils";
+import type { CLIApplication } from "@/presentation/cli-application";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const packageJson = JSON.parse(
-  readFileSync(path.join(__dirname, "..", "..", "package.json"), "utf8"),
-) as {
-  version: string;
-};
-const { version } = packageJson;
+import { configureContainer, getService } from "@/di/container";
+import { TYPES } from "@/di/types";
 
-const program = new Command();
+// Configure dependency injection container
+configureContainer();
 
-program
-  .name("codefast")
-  .description("CLI tools for CodeFast development")
-  .version(version)
-  .action(() => {
-    program.help();
-  });
+// Get CLI application instance from container
+const cliApplication = getService<CLIApplication>(TYPES.CLIApplication);
 
-program
-  .command("hello")
-  .description("Say hello")
-  .option("-n, --name <name>", "name to greet", "World")
-  .action((options: { name: string }) => {
-    logger.success(`Hello, ${options.name}!`);
-  });
-
-program.parse();
+// Run the CLI application
+cliApplication.run();

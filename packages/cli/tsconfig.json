@@ -2,6 +2,8 @@
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "outDir": "dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@/*": ["./src/*"]
     }
