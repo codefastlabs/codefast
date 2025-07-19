@@ -5,7 +5,7 @@
  * This port abstracts logging operations from the infrastructure implementation.
  */
 
-export interface ILoggingService {
+export interface LoggingService {
   /**
    * Log debug information
    */

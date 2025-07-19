@@ -33,7 +33,21 @@ const config: Config = {
    * Uses \@swc/jest to quickly transform JavaScript/TypeScript files
    */
   transform: {
-    "^.+\\.(t|j)sx?$": "@swc/jest",
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          parser: {
+            decorators: true,
+            syntax: "typescript",
+          },
+          transform: {
+            decoratorMetadata: true,
+            legacyDecorator: true,
+          },
+        },
+      },
+    ],
   },
 
   /**
@@ -41,7 +55,9 @@ const config: Config = {
    * Prevents Jest from transforming files in the node_modules directory
    * Exception for chalk and ansi-styles to handle ESM imports
    */
-  transformIgnorePatterns: ["/node_modules/"],
+  transformIgnorePatterns: [
+    "/node_modules/(?!(chalk|ansi-styles|#ansi-styles|strip-ansi|ansi-regex)/)",
+  ],
 
   /**
    * Displays detailed information about each test

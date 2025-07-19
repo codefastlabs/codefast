@@ -5,7 +5,7 @@
  * This port abstracts file system interactions from the infrastructure implementation.
  */
 
-export interface IFileSystemService {
+export interface FileSystemService {
   /**
    * Find files matching a glob pattern
    */

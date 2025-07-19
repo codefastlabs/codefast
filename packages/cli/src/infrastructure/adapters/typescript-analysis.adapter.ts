@@ -5,13 +5,16 @@
  * Following explicit architecture guidelines for CLI applications.
  */
 
-import { injectable } from 'inversify';
-import { Project } from 'ts-morph';
+import { injectable } from "inversify";
+import { Project } from "ts-morph";
 
-import type { ITypeScriptAnalysisService, ProjectStatistics } from '@/core/application/ports/typescript-analysis.port';
+import type {
+  TypeScriptAnalysisService,
+  ProjectStatistics,
+} from "@/core/application/ports/typescript-analysis.port";
 
 @injectable()
-export class TsMorphAnalysisAdapter implements ITypeScriptAnalysisService {
+export class TsMorphAnalysisAdapter implements TypeScriptAnalysisService {
   private project: null | Project = null;
 
   createProject(tsConfigPath?: string): void {
@@ -22,7 +25,7 @@ export class TsMorphAnalysisAdapter implements ITypeScriptAnalysisService {
 
   addSourceFiles(filePaths: string[]): void {
     if (!this.project) {
-      throw new Error('Project not initialized. Call createProject() first.');
+      throw new Error("Project not initialized. Call createProject() first.");
     }
 
     this.project.addSourceFilesAtPaths(filePaths);
@@ -30,7 +33,7 @@ export class TsMorphAnalysisAdapter implements ITypeScriptAnalysisService {
 
   getProjectStatistics(): ProjectStatistics {
     if (!this.project) {
-      throw new Error('Project not initialized. Call createProject() first.');
+      throw new Error("Project not initialized. Call createProject() first.");
     }
 
     const sourceFiles = this.project.getSourceFiles();
