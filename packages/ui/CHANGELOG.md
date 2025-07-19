@@ -1,5 +1,18 @@
 # @codefast/ui
 
+## 0.3.7-canary.0
+
+### Patch Changes
+
+- [`c98a4f3`](https://github.com/codefastlabs/codefast/commit/c98a4f3c821039557205fdb0fc4b5a55d8b81944) Thanks [@thevuong](https://github.com/thevuong)! - chore(dependencies): update multiple dependencies to latest versions
+
+- Updated dependencies [[`c98a4f3`](https://github.com/codefastlabs/codefast/commit/c98a4f3c821039557205fdb0fc4b5a55d8b81944)]:
+  - @codefast-ui/progress-circle@0.3.7-canary.0
+  - @codefast-ui/checkbox-group@0.3.7-canary.0
+  - @codefast-ui/input-number@0.3.7-canary.0
+  - @codefast/hooks@0.3.7-canary.0
+  - @codefast-ui/input@0.3.7-canary.0
+
 ## 0.3.6
 
 ### Patch Changes
