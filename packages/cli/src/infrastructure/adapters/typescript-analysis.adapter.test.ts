@@ -16,9 +16,15 @@ jest.mock('ts-morph', () => ({
 
 const MockProject = Project as jest.MockedClass<typeof Project>;
 
+interface MockSourceFile {
+  getClasses: jest.MockedFunction<() => unknown[]>;
+  getFunctions: jest.MockedFunction<() => unknown[]>;
+  getInterfaces: jest.MockedFunction<() => unknown[]>;
+}
+
 describe('TsMorphAnalysisAdapter', () => {
   let adapter: TsMorphAnalysisAdapter;
-  let mockProject: jest.Mocked<InstanceType<typeof Project>>;
+  let mockProject: jest.Mocked<Pick<InstanceType<typeof Project>, 'addSourceFilesAtPaths' | 'getSourceFiles'>>;
 
   beforeEach(() => {
     adapter = new TsMorphAnalysisAdapter();
@@ -27,10 +33,10 @@ describe('TsMorphAnalysisAdapter', () => {
     mockProject = {
       addSourceFilesAtPaths: jest.fn(),
       getSourceFiles: jest.fn(),
-    } as any;
+    };
 
     // Make Project constructor return our mock
-    MockProject.mockImplementation(() => mockProject);
+    MockProject.mockImplementation(() => mockProject as any);
 
     jest.clearAllMocks();
   });
@@ -126,7 +132,7 @@ describe('TsMorphAnalysisAdapter', () => {
   describe('getProjectStatistics', () => {
     it('should return correct statistics when project has files', () => {
       // Arrange
-      const mockSourceFiles = [
+      const mockSourceFiles: MockSourceFile[] = [
         {
           getClasses: jest.fn().mockReturnValue([{}, {}]), // 2 classes
           getFunctions: jest.fn().mockReturnValue([{}, {}, {}]), // 3 functions
@@ -173,7 +179,7 @@ describe('TsMorphAnalysisAdapter', () => {
 
     it('should handle files with no classes, functions, or interfaces', () => {
       // Arrange
-      const mockSourceFiles = [
+      const mockSourceFiles: MockSourceFile[] = [
         {
           getClasses: jest.fn().mockReturnValue([]),
           getFunctions: jest.fn().mockReturnValue([]),
@@ -271,7 +277,7 @@ describe('TsMorphAnalysisAdapter', () => {
     it('should work through complete workflow', () => {
       // Arrange
       const filePaths = ['src/test.ts'];
-      const mockSourceFiles = [
+      const mockSourceFiles: MockSourceFile[] = [
         {
           getClasses: jest.fn().mockReturnValue([{}]),
           getFunctions: jest.fn().mockReturnValue([{}, {}]),
