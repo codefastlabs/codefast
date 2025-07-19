@@ -7,6 +7,11 @@ const config: Config = {
   coverageProvider: "v8",
 
   /**
+   * A list of file extensions to treat as ESM
+   */
+  extensionsToTreatAsEsm: [".ts", ".tsx"],
+
+  /**
    * Configuration for module name mapping used in module resolution.
    */
   moduleNameMapper: {
@@ -28,22 +33,19 @@ const config: Config = {
    * Uses \@swc/jest to quickly transform JavaScript/TypeScript files
    */
   transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "es2022",
-        },
-      },
-    ],
+    "^.+\\.(t|j)sx?$": "@swc/jest",
   },
 
   /**
    * Specifies which files should be ignored during transformation
    * Prevents Jest from transforming files in the node_modules directory
+   * Exception for chalk and ansi-styles to handle ESM imports
    */
   transformIgnorePatterns: ["/node_modules/"],
 
+  /**
+   * Displays detailed information about each test
+   */
   verbose: true,
 
   /**

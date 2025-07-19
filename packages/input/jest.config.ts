@@ -7,6 +7,11 @@ const config: Config = {
   coverageProvider: "v8",
 
   /**
+   * A list of file extensions to treat as ESM
+   */
+  extensionsToTreatAsEsm: [".ts", ".tsx"],
+
+  /**
    * Configuration for module name mapping used in module resolution.
    */
   moduleNameMapper: {
@@ -53,6 +58,9 @@ const config: Config = {
    */
   transformIgnorePatterns: ["/node_modules/"],
 
+  /**
+   * Displays detailed information about each test
+   */
   verbose: true,
 
   /**
