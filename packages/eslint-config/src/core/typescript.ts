@@ -60,6 +60,7 @@ export const typescriptRules: Linter.Config[] = [
       "@typescript-eslint/consistent-type-imports": [
         "error",
         {
+          disallowTypeAnnotations: true,
           fixStyle: "separate-type-imports",
           prefer: "type-imports",
         },
@@ -70,6 +71,25 @@ export const typescriptRules: Linter.Config[] = [
       "@typescript-eslint/method-signature-style": ["error", "property"],
       "@typescript-eslint/no-unnecessary-qualifier": "error",
       "@typescript-eslint/no-useless-empty-export": "error",
+
+      // Naming conventions
+      "@typescript-eslint/naming-convention": [
+        "error",
+        // Interfaces should be PascalCase and not prefixed with 'I'
+        {
+          custom: {
+            match: false,
+            regex: "^I[A-Z]|^(Interface|Props|State)$",
+          },
+          format: ["PascalCase"],
+          selector: "interface",
+        },
+        // Type aliases, type parameters, enums, and their members should follow PascalCase
+        {
+          format: ["PascalCase"],
+          selector: ["typeAlias", "typeParameter", "enum", "enumMember"],
+        },
+      ],
     },
   },
 ];
