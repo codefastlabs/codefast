@@ -13,11 +13,11 @@ import type { LoggingService } from "@/core/application/ports/logging.port";
 @injectable()
 export class ChalkLoggingAdapter implements LoggingService {
   debug(message: string): void {
-    console.log(chalk.gray(`🐛 ${message}`));
+    console.log(chalk.gray(`◎ ${message}`));
   }
 
   error(message: string): void {
-    console.log(chalk.red(`❌ ${message}`));
+    console.log(chalk.red(`✗ ${message}`));
   }
 
   info(message: string): void {
@@ -29,11 +29,11 @@ export class ChalkLoggingAdapter implements LoggingService {
   }
 
   success(message: string): void {
-    console.log(chalk.green(`✅ ${message}`));
+    console.log(chalk.green(`✓ ${message}`));
   }
 
   warning(message: string): void {
-    console.log(chalk.yellow(`⚠️ ${message}`));
+    console.log(chalk.yellow(`⚠ ${message}`));
   }
 
   // Vertical Flow UI Methods
