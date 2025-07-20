@@ -39,6 +39,7 @@ export class ImageLoaderFactory {
     if (this.loaders.some((l) => l.getName() === loader.getName())) {
       throw new Error(`Loader with name "${loader.getName()}" is already registered`);
     }
+
     this.loaders.push(loader);
     // Clear cache when a new loader is registered
     this.clearLoaderCache();
@@ -205,6 +206,7 @@ export class ImageLoaderFactory {
     if (Object.keys(this.loaderCache).length >= this.maxCacheSize) {
       this.clearLoaderCache();
     }
+
     this.loaderCache[domain] = loader;
   }
 
@@ -235,6 +237,7 @@ export class ImageLoaderFactory {
     if (Object.keys(this.transformCache).length >= this.maxCacheSize) {
       this.clearTransformCache();
     }
+
     this.transformCache[key] = transformedUrl;
   }
 

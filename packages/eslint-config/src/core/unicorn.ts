@@ -198,11 +198,13 @@ export const unicornRules: Linter.Config[] = [
         {
           checkFilenames: false,
           replacements: {
+            args: false,
             ctx: false,
             dev: false,
             dist: false,
             env: false,
             lib: false,
+            params: false,
             pkg: false,
             prod: false,
             props: false,

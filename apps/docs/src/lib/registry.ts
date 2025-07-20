@@ -33,7 +33,7 @@ const IMPORT_REGEX =
 // In-memory cache for processed files
 const fileContentCache = new Map<string, { content: string; highlightedContent: string }>();
 const sourceFileCache = new Map<string, SourceFile>();
-const tempDirectories = new Set<string>();
+const temporaryDirectories = new Set<string>();
 
 /**
  * Represents a node in the file tree structure.
@@ -75,7 +75,7 @@ export async function getRegistryItem(name: string): Promise<null | RegistryItem
     return null;
   } finally {
     // Clean up all temp directories
-    await cleanupTempDirectories();
+    await cleanupTemporaryDirectories();
   }
 }
 
@@ -295,9 +295,9 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
   }
 
   const project = new Project({ compilerOptions: {} });
-  const tempFile = await createTempSourceFile(filePath);
+  const temporaryFile = await createTemporarySourceFile(filePath);
 
-  const sourceFile = project.createSourceFile(tempFile, content, {
+  const sourceFile = project.createSourceFile(temporaryFile, content, {
     scriptKind: ScriptKind.TSX,
   });
 
@@ -317,10 +317,10 @@ async function createProcessedSourceFile(filePath: string, content: string): Pro
  * @param filename - The original filename to use in the temporary location
  * @returns Promise resolving to the path of the created temporary file
  */
-async function createTempSourceFile(filename: string): Promise<string> {
+async function createTemporarySourceFile(filename: string): Promise<string> {
   const directory = await fs.mkdtemp(path.join(tmpdir(), "codefast-ui-"));
 
-  tempDirectories.add(directory);
+  temporaryDirectories.add(directory);
 
   return path.join(directory, path.basename(filename));
 }
@@ -328,11 +328,11 @@ async function createTempSourceFile(filename: string): Promise<string> {
 /**
  * Cleans up all temporary directories created during processing
  */
-async function cleanupTempDirectories(): Promise<void> {
-  const cleanupPromises = [...tempDirectories].map(async (directory) => {
+async function cleanupTemporaryDirectories(): Promise<void> {
+  const cleanupPromises = [...temporaryDirectories].map(async (directory) => {
     try {
       await fs.rm(directory, { force: true, recursive: true });
-      tempDirectories.delete(directory);
+      temporaryDirectories.delete(directory);
     } catch (error) {
       console.error(`Error cleaning up temp directory '${directory}':`, error);
     }

@@ -111,6 +111,7 @@ export abstract class BaseImageLoader implements ImageLoader {
     if (url.startsWith("//")) {
       return `${defaultProtocol}:${url}`;
     }
+
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       return `${defaultProtocol}://${url}`;
     }

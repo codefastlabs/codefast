@@ -172,6 +172,7 @@ export class CheckComponentTypesUseCase {
       if (!packageGroups.has(packageName)) {
         packageGroups.set(packageName, []);
       }
+
       const packageResults = packageGroups.get(packageName);
 
       if (packageResults) {
