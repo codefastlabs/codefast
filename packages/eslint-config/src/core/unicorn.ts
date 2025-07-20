@@ -212,6 +212,14 @@ export const unicornRules: Linter.Config[] = [
       ],
 
       /**
+       * Prefer export...from over import then export.
+       *
+       * Enforces using 'export \{ foo \} from "module"' instead of
+       * 'import \{ foo \} from "module"; export \{ foo \};' for cleaner re-exports.
+       */
+      "unicorn/prefer-export-from": "error",
+
+      /**
        * Require new when throwing an error.
        *
        * Enforces using 'new Error()' instead of 'Error()' when throwing errors
