@@ -17,7 +17,7 @@ import type {
 
 @injectable()
 export class ComponentAnalysisAdapter implements ComponentAnalysisService {
-  async discoverPackages(packagesDirectory: string): Promise<string[]> {
+  discoverPackages(packagesDirectory: string): string[] {
     try {
       const packages = readdirSync(packagesDirectory);
 
@@ -32,10 +32,10 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
     }
   }
 
-  async findComponentsInPackage(
+  findComponentsInPackage(
     packagePath: string,
     packageName: string,
-  ): Promise<ComponentInfo[]> {
+  ): ComponentInfo[] {
     const componentsToCheck: ComponentInfo[] = [];
 
     try {
@@ -86,9 +86,9 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
     }
   }
 
-  async analyzeComponentFile(
+  analyzeComponentFile(
     componentInfo: ComponentInfo,
-  ): Promise<ComponentAnalysisResult | null> {
+  ): ComponentAnalysisResult | null {
     const { name: componentName, packageName: packageName, path: componentPath } = componentInfo;
 
     try {

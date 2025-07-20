@@ -27,7 +27,7 @@ export class CheckComponentTypesUseCase {
     private readonly componentAnalysisService: ComponentAnalysisService,
   ) {}
 
-  async execute(input: CheckComponentTypesInput = {}): Promise<void> {
+  execute(input: CheckComponentTypesInput = {}): void {
     const { packagesDirectory = "packages" } = input;
 
     this.loggingService.startSection("Component Type Analysis");
@@ -35,7 +35,7 @@ export class CheckComponentTypesUseCase {
 
     try {
       // Discover all packages
-      const packages = await this.componentAnalysisService.discoverPackages(packagesDirectory);
+      const packages = this.componentAnalysisService.discoverPackages(packagesDirectory);
 
       this.loggingService.continue(`Found ${packages.length} packages`);
 
@@ -48,14 +48,14 @@ export class CheckComponentTypesUseCase {
         const packagePath = `${packagesDirectory}/${packageName}`;
 
         // Find components in this package
-        const components = await this.componentAnalysisService.findComponentsInPackage(
+        const components = this.componentAnalysisService.findComponentsInPackage(
           packagePath,
           packageName,
         );
 
         // Analyze each component
         for (const componentInfo of components) {
-          const result = await this.componentAnalysisService.analyzeComponentFile(componentInfo);
+          const result = this.componentAnalysisService.analyzeComponentFile(componentInfo);
 
           if (result) {
             results.push(result);
@@ -172,14 +172,22 @@ export class CheckComponentTypesUseCase {
       if (!packageGroups.has(packageName)) {
         packageGroups.set(packageName, []);
       }
-      packageGroups.get(packageName)!.push(result);
+      const packageResults = packageGroups.get(packageName);
+
+      if (packageResults) {
+        packageResults.push(result);
+      }
     }
 
     // Sort packages alphabetically
     const sortedPackages = [...packageGroups.keys()].sort();
 
     for (const packageName of sortedPackages) {
-      const packageResults = packageGroups.get(packageName)!;
+      const packageResults = packageGroups.get(packageName);
+
+      if (!packageResults) {
+        continue;
+      }
 
       // Package header with component count
       this.loggingService.result(

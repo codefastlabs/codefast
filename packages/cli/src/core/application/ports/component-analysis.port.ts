@@ -39,17 +39,17 @@ export interface ComponentAnalysisService {
   /**
    * Discover all packages in the packages directory
    */
-  discoverPackages: (packagesDirectory: string) => Promise<string[]>;
+  discoverPackages: (packagesDirectory: string) => string[];
 
   /**
    * Find components in a specific package
    */
-  findComponentsInPackage: (packagePath: string, packageName: string) => Promise<ComponentInfo[]>;
+  findComponentsInPackage: (packagePath: string, packageName: string) => ComponentInfo[];
 
   /**
    * Analyze a component file for exports and types
    */
-  analyzeComponentFile: (componentInfo: ComponentInfo) => Promise<ComponentAnalysisResult | null>;
+  analyzeComponentFile: (componentInfo: ComponentInfo) => ComponentAnalysisResult | null;
 
   /**
    * Check if an export name represents a React component

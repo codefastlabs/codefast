@@ -83,8 +83,8 @@ export class CLIApplication {
       .command("check-component-types")
       .description("Check React component type correspondence")
       .option("-d, --packages-dir <dir>", "packages directory to analyze", "packages")
-      .action(async (options: { packagesDir?: string }) => {
-        await this.checkComponentTypesUseCase.execute({
+      .action((options: { packagesDir?: string }) => {
+        this.checkComponentTypesUseCase.execute({
           packagesDirectory: options.packagesDir,
         });
       });
