@@ -5,9 +5,9 @@
  * Following explicit architecture guidelines for CLI applications.
  */
 
+import { injectable } from "inversify";
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import path from "node:path";
-import { injectable } from "inversify";
 
 import type {
   ComponentAnalysisResult,
@@ -17,55 +17,64 @@ import type {
 
 @injectable()
 export class ComponentAnalysisAdapter implements ComponentAnalysisService {
-  async discoverPackages(packagesDir: string): Promise<string[]> {
+  async discoverPackages(packagesDirectory: string): Promise<string[]> {
     try {
-      const packages = readdirSync(packagesDir);
+      const packages = readdirSync(packagesDirectory);
+
       return packages.filter((packageName) => {
-        const packagePath = path.join(packagesDir, packageName);
+        const packagePath = path.join(packagesDirectory, packageName);
         const stats = statSync(packagePath);
+
         return stats.isDirectory() && packageName !== ".DS_Store";
       });
     } catch (error) {
-      throw new Error(`Failed to discover packages in ${packagesDir}: ${String(error)}`);
+      throw new Error(`Failed to discover packages in ${packagesDirectory}: ${String(error)}`);
     }
   }
 
-  async findComponentsInPackage(packagePath: string, packageName: string): Promise<ComponentInfo[]> {
+  async findComponentsInPackage(
+    packagePath: string,
+    packageName: string,
+  ): Promise<ComponentInfo[]> {
     const componentsToCheck: ComponentInfo[] = [];
 
     try {
       // For ui package, check components in src/components/
       if (packageName === "ui") {
-        const uiComponentsDir = path.join(packagePath, "src", "components");
-        if (existsSync(uiComponentsDir)) {
-          const uiComponents = readdirSync(uiComponentsDir);
+        const uiComponentsDirectory = path.join(packagePath, "src", "components");
+
+        if (existsSync(uiComponentsDirectory)) {
+          const uiComponents = readdirSync(uiComponentsDirectory);
+
           for (const componentName of uiComponents) {
-            const componentPath = path.join(uiComponentsDir, componentName);
+            const componentPath = path.join(uiComponentsDirectory, componentName);
             const componentStats = statSync(componentPath);
+
             if (componentStats.isDirectory()) {
               componentsToCheck.push({
                 name: componentName,
-                path: componentPath,
                 packageName: packageName,
+                path: componentPath,
               });
             }
           }
         }
       } else {
         // For other packages, check if they have components directly in src/
-        const srcDir = path.join(packagePath, "src");
-        if (existsSync(srcDir)) {
+        const sourceDirectory = path.join(packagePath, "src");
+
+        if (existsSync(sourceDirectory)) {
           // Check if this package has component files (tsx files that aren't test files)
-          const srcFiles = readdirSync(srcDir);
-          const hasComponentFiles = srcFiles.some(
+          const sourceFiles = readdirSync(sourceDirectory);
+          const hasComponentFiles = sourceFiles.some(
             (file) => file.endsWith(".tsx") && !file.includes(".test.") && !file.includes(".spec."),
           );
 
           if (hasComponentFiles) {
             componentsToCheck.push({
               name: packageName,
-              path: srcDir,
               packageName: packageName,
+              path: sourceDirectory,
             });
           }
         }
@@ -77,8 +86,10 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
     }
   }
 
-  async analyzeComponentFile(componentInfo: ComponentInfo): Promise<ComponentAnalysisResult | null> {
-    const { name: componentName, path: componentPath, packageName: pkgName } = componentInfo;
+  async analyzeComponentFile(
+    componentInfo: ComponentInfo,
+  ): Promise<ComponentAnalysisResult | null> {
+    const { name: componentName, packageName: packageName, path: componentPath } = componentInfo;
 
     try {
       // Check for a main component file
@@ -88,7 +99,8 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
         path.join(componentPath, "index.ts"),
       ];
 
-      let mainFile: string | null = null;
+      let mainFile: null | string = null;
+
       for (const file of possibleFiles) {
         if (existsSync(file)) {
           mainFile = file;
@@ -103,31 +115,37 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
       const content = readFileSync(mainFile, "utf8");
 
       // Extract exported components from export { ... } statements
-      const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*\}/g) || [];
+      const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*\}/g) ?? [];
       const exportedComponents: string[] = [];
+
       for (const match of exportComponentMatches) {
         const componentsInExport = match.replace(/export\s*\{\s*/, "").replace(/\s*\}/, "");
         const components = componentsInExport
           .split(",")
           .map((c) => c.trim())
-          .filter((c) => c);
+          .filter(Boolean);
+
         exportedComponents.push(...components);
       }
 
       // Extract exported types from export type { ... } statements
-      const exportTypeMatches = content.match(/export\s+type\s*\{\s*([^}]+)\s*\}/g) || [];
+      const exportTypeMatches = content.match(/export\s+type\s*\{\s*([^}]+)\s*\}/g) ?? [];
       const exportedTypes: string[] = [];
+
       for (const match of exportTypeMatches) {
         const typesInExport = match.replace(/export\s+type\s*\{\s*/, "").replace(/\s*\}/, "");
         const types = typesInExport
           .split(",")
           .map((t) => t.trim())
-          .filter((t) => t);
+          .filter(Boolean);
+
         exportedTypes.push(...types);
       }
 
       // Filter exported components to only include actual React components
-      const actualComponents = exportedComponents.filter((exportName) => this.isComponent(exportName));
+      const actualComponents = exportedComponents.filter((exportName) =>
+        this.isComponent(exportName),
+      );
 
       // Check correspondence between exported components and types
       const componentTypeCorrespondence = [];
@@ -137,6 +155,7 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
       for (const component of actualComponents) {
         const expectedTypeName = `${component}Props`;
         const hasCorrespondingType = exportedTypes.includes(expectedTypeName);
+
         componentTypeCorrespondence.push({
           component,
           expectedType: expectedTypeName,
@@ -153,27 +172,28 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
         if (typeName.endsWith("Props")) {
           const expectedComponentName = typeName.replace(/Props$/, "");
           const hasCorrespondingComponent = actualComponents.includes(expectedComponentName);
+
           if (!hasCorrespondingComponent) {
             falsePositiveTypeExports.push({
-              typeName,
               expectedComponent: expectedComponentName,
+              typeName,
             });
           }
         }
       }
 
       return {
-        package: pkgName,
-        component: componentName,
-        file: mainFile,
-        exportedComponents,
         actualComponents,
-        exportedTypes,
+        component: componentName,
         componentTypeCorrespondence,
-        missingTypeExports,
+        exportedComponents,
+        exportedTypes,
         falsePositiveTypeExports,
+        file: mainFile,
         hasCorrespondenceIssues: missingTypeExports.length > 0 && actualComponents.length > 0,
         hasFalsePositiveTypes: falsePositiveTypeExports.length > 0,
+        missingTypeExports,
+        package: packageName,
       };
     } catch (error) {
       throw new Error(`Failed to analyze component file ${componentInfo.name}: ${String(error)}`);
@@ -192,16 +212,16 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
     }
 
     // Exclude constants (all uppercase with underscores)
-    if (exportName.match(/^[A-Z][A-Z_]*$/)) {
+    if (/^[A-Z][A-Z_]*$/.test(exportName)) {
       return false;
     }
 
     // Exclude other common utility patterns
-    if (exportName.startsWith("create") && !exportName.match(/^[A-Z]/)) {
+    if (exportName.startsWith("create") && !/^[A-Z]/.test(exportName)) {
       return false;
     }
 
     // Include only capitalized names that look like React components (PascalCase)
-    return Boolean(exportName.match(/^[A-Z][a-zA-Z0-9]*$/));
+    return Boolean(/^[A-Z][a-zA-Z0-9]*$/.test(exportName));
   }
 }

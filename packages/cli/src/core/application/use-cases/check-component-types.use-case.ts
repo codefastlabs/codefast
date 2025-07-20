@@ -16,7 +16,7 @@ import type { LoggingService } from "@/core/application/ports/logging.port";
 import { TYPES } from "@/di/types";
 
 export interface CheckComponentTypesInput {
-  packagesDir?: string;
+  packagesDirectory?: string;
 }
 
 @injectable()
@@ -28,7 +28,7 @@ export class CheckComponentTypesUseCase {
   ) {}
 
   async execute(input: CheckComponentTypesInput = {}): Promise<void> {
-    const { packagesDir = "packages" } = input;
+    const { packagesDirectory = "packages" } = input;
 
     this.loggingService.startSection("Component Type Analysis");
     this.loggingService.continue("");
@@ -36,7 +36,7 @@ export class CheckComponentTypesUseCase {
 
     try {
       // Discover all packages
-      const packages = await this.componentAnalysisService.discoverPackages(packagesDir);
+      const packages = await this.componentAnalysisService.discoverPackages(packagesDirectory);
 
       this.loggingService.continue(`Found ${packages.length} packages`);
 
@@ -47,7 +47,7 @@ export class CheckComponentTypesUseCase {
 
       // Process each package
       for (const packageName of packages) {
-        const packagePath = `${packagesDir}/${packageName}`;
+        const packagePath = `${packagesDirectory}/${packageName}`;
 
         // Find components in this package
         const components = await this.componentAnalysisService.findComponentsInPackage(
