@@ -209,8 +209,12 @@ export class CheckComponentTypesUseCase {
         const isComplex = result.actualComponents.length > 3 || result.exportedTypes.length > 3;
 
         if (isComplex) {
-          this.loggingService.item(`└─ Components: ${result.actualComponents.join(", ")}`, 3);
-          this.loggingService.item(`└─ Types: ${result.exportedTypes.join(", ")}`, 3);
+          // Show component-to-type mappings instead of separate lists
+          const mappings = this.createComponentTypeMappings(result);
+
+          for (const mapping of mappings) {
+            this.loggingService.item(`└─ ${mapping}`, 3);
+          }
         }
       }
     }
@@ -220,6 +224,37 @@ export class CheckComponentTypesUseCase {
       `📊 Summary: ${sortedPackages.length} packages, ${results.length} components`,
       1,
     );
+  }
+
+  private createComponentTypeMappings(result: ComponentAnalysisResult): string[] {
+    const mappings: string[] = [];
+
+    // Create mappings between components and their corresponding types
+    for (const component of result.actualComponents) {
+      // Find the corresponding type for this component
+      const expectedTypeName = `${component}Props`;
+      const hasCorrespondingType = result.exportedTypes.includes(expectedTypeName);
+
+      if (hasCorrespondingType) {
+        mappings.push(`${component} → ${expectedTypeName}`);
+      } else {
+        // If no direct Props match, show component without mapping
+        mappings.push(`${component} → (no corresponding type)`);
+      }
+    }
+
+    // Also show any types that don't have corresponding components
+    const unmatchedTypes = result.exportedTypes.filter((type) => {
+      const componentName = type.replace(/Props$/, "");
+
+      return !result.actualComponents.includes(componentName);
+    });
+
+    for (const unmatchedType of unmatchedTypes) {
+      mappings.push(`(no component) → ${unmatchedType}`);
+    }
+
+    return mappings;
   }
 
   private formatComponentInfo(result: ComponentAnalysisResult): string {
