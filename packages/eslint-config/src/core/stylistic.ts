@@ -69,13 +69,35 @@ export const stylisticRules: Linter.Config[] = [
 
         /**
          * Enforces blank lines before return statements.
-         * This improves readability by visually separating the return statement from preceding code,
+         * This improves readability by visually separating the return statement from the preceding code,
          * making it easier to identify where functions exit.
          */
         {
           blankLine: "always",
           next: "return",
           prev: "*",
+        },
+
+        /**
+         * Enforces blank lines after block statements.
+         * Block statements (like if, for, while, try blocks) should have blank lines below them
+         * to improve readability by visually separating different code sections.
+         */
+        {
+          blankLine: "always",
+          next: "*",
+          prev: ["if", "for", "while", "do", "try", "with"],
+        },
+
+        /**
+         * Enforces blank lines after block-like statements.
+         * Block-like statements (like function declarations, class declarations) should have blank lines below them
+         * to improve readability by visually separating different code sections.
+         */
+        {
+          blankLine: "always",
+          next: "*",
+          prev: ["function", "class"],
         },
       ],
     },
