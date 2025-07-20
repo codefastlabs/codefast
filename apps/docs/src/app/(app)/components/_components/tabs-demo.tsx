@@ -1,6 +1,7 @@
+import type { JSX } from "react";
+
 import { AppWindowIcon, CodeIcon } from "lucide-react";
 import { useId } from "react";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import {

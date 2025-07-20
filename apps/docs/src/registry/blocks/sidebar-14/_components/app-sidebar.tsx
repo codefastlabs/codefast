@@ -1,5 +1,6 @@
-import Link from "next/link";
 import type { ComponentProps, JSX } from "react";
+
+import Link from "next/link";
 
 import {
   Sidebar,

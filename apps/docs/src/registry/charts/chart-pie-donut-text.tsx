@@ -1,10 +1,11 @@
 "use client";
 
+import type { JSX, ReactNode } from "react";
+import type { Props } from "recharts/types/component/Label";
+
 import { TrendingUpIcon } from "lucide-react";
 import { useMemo } from "react";
-import type { JSX, ReactNode } from "react";
 import { Label, Pie, PieChart } from "recharts";
-import type { Props } from "recharts/types/component/Label";
 
 import type { ChartConfig } from "@codefast/ui";
 

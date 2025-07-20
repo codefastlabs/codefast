@@ -1,8 +1,9 @@
 "use client";
 
+import type { ComponentProps, JSX, MouseEventHandler } from "react";
+
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useCallback, useState } from "react";
-import type { ComponentProps, JSX, MouseEventHandler } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 

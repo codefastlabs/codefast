@@ -1,9 +1,10 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { SidebarIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Fragment, useMemo } from "react";
-import type { JSX } from "react";
 
 import { ModeToggle } from "@/app/(examples)/examples/dashboard-03/_components/mode-toggle";
 import { NavUser } from "@/app/(examples)/examples/dashboard-03/_components/nav-user";

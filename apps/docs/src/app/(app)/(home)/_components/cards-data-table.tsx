@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-import type { JSX } from "react";
 
 import type {
   ColumnDef,

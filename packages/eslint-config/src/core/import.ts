@@ -1,4 +1,5 @@
 import type { Linter } from "eslint";
+
 import pluginImport from "eslint-plugin-import";
 
 export const importRules: Linter.Config[] = [

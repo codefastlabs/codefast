@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, useMemo } from "react";
 import type { ComponentProps, ReactNode } from "react";
+
+import { useId, useMemo } from "react";
 
 import type { Scope } from "@radix-ui/react-context";
 

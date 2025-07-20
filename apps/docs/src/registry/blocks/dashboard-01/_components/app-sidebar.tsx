@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { ComponentProps, JSX } from "react";
+
+import Link from "next/link";
 
 import { NavDocuments } from "@/registry/blocks/dashboard-01/_components/nav-documents";
 import { NavMain } from "@/registry/blocks/dashboard-01/_components/nav-main";

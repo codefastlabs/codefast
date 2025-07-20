@@ -1,4 +1,5 @@
 import type { ImageLoaderProps } from "next/image";
+
 import queryString from "query-string";
 
 import type { ImageLoader } from "@/types";

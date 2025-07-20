@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -18,7 +20,6 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { JSX } from "react";
 
 import {
   Button,

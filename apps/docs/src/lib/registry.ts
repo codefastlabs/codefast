@@ -1,10 +1,10 @@
+import type { SourceFile } from "ts-morph";
+
+import { isEmpty } from "lodash-es";
 import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-
-import { isEmpty } from "lodash-es";
 import { Project, ScriptKind } from "ts-morph";
-import type { SourceFile } from "ts-morph";
 
 import type { RegistryItem, RegistryItemFile } from "@/types/registry";
 

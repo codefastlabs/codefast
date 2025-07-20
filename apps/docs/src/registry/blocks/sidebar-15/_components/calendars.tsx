@@ -1,6 +1,7 @@
+import type { JSX } from "react";
+
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import { Fragment } from "react";
-import type { JSX } from "react";
 
 import {
   Collapsible,

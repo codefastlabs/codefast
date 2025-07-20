@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX, ReactNode } from "react";
+
 import Cookies from "js-cookie";
 import { createContext, useContext, useEffect, useState } from "react";
-import type { JSX, ReactNode } from "react";
 
 const THEME_COOKIE_NAME = "active_theme";
 const DEFAULT_THEME = "default";

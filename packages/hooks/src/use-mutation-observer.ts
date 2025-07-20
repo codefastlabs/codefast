@@ -1,5 +1,6 @@
-import { useEffect } from "react";
 import type { RefObject } from "react";
+
+import { useEffect } from "react";
 
 /**
  * Default options for the MutationObserver.

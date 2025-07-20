@@ -1,4 +1,5 @@
 import type { Linter } from "eslint";
+
 import pluginPerfectionist from "eslint-plugin-perfectionist";
 
 export const perfectionistRules: Linter.Config[] = [
@@ -32,14 +33,10 @@ export const perfectionistRules: Linter.Config[] = [
       "perfectionist/sort-imports": [
         "error",
         {
-          customGroups: {
-            type: {},
-            value: {},
-          },
           groups: [
             "side-effect",
-            "builtin",
-            "external",
+            "type",
+            ["builtin", "external"],
             "internal-type",
             "internal",
             ["parent-type", "sibling-type", "index-type"],

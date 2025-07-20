@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -8,7 +10,6 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from "lucide-react";
-import type { JSX } from "react";
 
 import {
   Avatar,

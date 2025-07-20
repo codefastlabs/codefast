@@ -1,7 +1,8 @@
 "use client";
 
-import { FootprintsIcon, WavesIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { FootprintsIcon, WavesIcon } from "lucide-react";
 import { Bar, BarChart, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

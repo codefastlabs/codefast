@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, useState } from "react";
 import type { JSX } from "react";
+
+import { useId, useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Label, Slider } from "@codefast/ui";

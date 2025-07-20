@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
+
 import { FileIcon } from "lucide-react";
 import { useMemo } from "react";
-import type { ReactNode } from "react";
 
 import { BlockViewerCopyCodeButton } from "@/components/block-viewer/copy-code-button";
 import { BlockViewerFileTree } from "@/components/block-viewer/file-tree";

@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import {
   BellIcon,
   CheckIcon,
@@ -16,7 +18,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import type { JSX } from "react";
 
 import {
   Breadcrumb,

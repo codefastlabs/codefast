@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { useId } from "react";
 import type { ComponentProps, JSX } from "react";
+
+import { useId } from "react";
 
 import {
   Button,

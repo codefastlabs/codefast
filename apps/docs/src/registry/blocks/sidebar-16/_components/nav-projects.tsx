@@ -1,9 +1,10 @@
 "use client";
 
-import { FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
 import type { JSX } from "react";
+
+import { FolderIcon, MoreHorizontalIcon, ShareIcon, Trash2Icon } from "lucide-react";
+import Link from "next/link";
 
 import {
   DropdownMenu,

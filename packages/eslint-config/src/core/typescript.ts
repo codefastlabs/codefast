@@ -1,6 +1,7 @@
 import type { Linter } from "eslint";
-import { configs as tseslintConfigs } from "typescript-eslint";
 import type { ConfigArray } from "typescript-eslint";
+
+import { configs as tseslintConfigs } from "typescript-eslint";
 
 /**
  * Helper function to map typescript-eslint configs with default file patterns.

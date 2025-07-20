@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 import type { ComponentProps, JSX, ReactNode } from "react";
+
+import { ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";

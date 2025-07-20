@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import {
   ArrowUpRightIcon,
   LinkIcon,
@@ -8,7 +10,6 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import Link from "next/link";
-import type { JSX } from "react";
 
 import {
   DropdownMenu,

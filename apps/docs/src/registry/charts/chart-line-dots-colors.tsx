@@ -1,10 +1,11 @@
 "use client";
 
-import { TrendingUpIcon } from "lucide-react";
 import type { JSX } from "react";
-import { CartesianGrid, Dot, Line, LineChart } from "recharts";
 import type { DotProps } from "recharts";
 import type { LineDot } from "recharts/types/cartesian/Line";
+
+import { TrendingUpIcon } from "lucide-react";
+import { CartesianGrid, Dot, Line, LineChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
 

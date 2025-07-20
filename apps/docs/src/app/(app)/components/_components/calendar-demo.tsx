@@ -1,9 +1,10 @@
 "use client";
 
-import { addDays } from "date-fns";
-import { useState } from "react";
 import type { JSX } from "react";
 import type { DateRange } from "react-day-picker";
+
+import { addDays } from "date-fns";
+import { useState } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Calendar } from "@codefast/ui";

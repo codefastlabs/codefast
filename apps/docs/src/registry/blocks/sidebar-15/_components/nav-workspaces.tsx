@@ -1,6 +1,7 @@
+import type { JSX, ReactNode } from "react";
+
 import { ChevronRightIcon, MoreHorizontalIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import type { JSX, ReactNode } from "react";
 
 import {
   Collapsible,

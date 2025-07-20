@@ -1,6 +1,7 @@
+import type { ComponentProps, JSX } from "react";
+
 import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 import Link from "next/link";
-import type { ComponentProps, JSX } from "react";
 
 import {
   NavigationMenu,

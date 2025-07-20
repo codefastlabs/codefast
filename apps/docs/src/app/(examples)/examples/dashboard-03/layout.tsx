@@ -1,5 +1,6 @@
-import { cookies } from "next/headers";
 import type { JSX, ReactNode } from "react";
+
+import { cookies } from "next/headers";
 
 import { AppSidebar } from "@/app/(examples)/examples/dashboard-03/_components/app-sidebar";
 import { SiteHeader } from "@/app/(examples)/examples/dashboard-03/_components/site-header";

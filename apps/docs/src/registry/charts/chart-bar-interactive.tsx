@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import type { JSX } from "react";
+
+import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

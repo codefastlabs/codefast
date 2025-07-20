@@ -1,7 +1,8 @@
+import type { ComponentProps, JSX } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useId } from "react";
-import type { ComponentProps, JSX } from "react";
 
 import {
   Button,

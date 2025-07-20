@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { TrendingUpIcon } from "lucide-react";
 import { useId } from "react";
-import type { JSX } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

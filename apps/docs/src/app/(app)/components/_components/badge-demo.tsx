@@ -1,6 +1,7 @@
+import type { JSX } from "react";
+
 import { AlertCircleIcon, ArrowRightIcon, CheckIcon } from "lucide-react";
 import Link from "next/link";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Badge } from "@codefast/ui";

@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import type {
   ComponentProps,
   JSX,
@@ -7,6 +6,8 @@ import type {
   ReactNode,
   RefObject,
 } from "react";
+
+import { useRef } from "react";
 
 import type { Scope } from "@radix-ui/react-context";
 

@@ -1,5 +1,6 @@
-import { CalendarIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { CalendarIcon } from "lucide-react";
 
 import {
   Avatar,

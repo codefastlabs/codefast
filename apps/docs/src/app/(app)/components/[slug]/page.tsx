@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import type { JSX } from "react";
+
+import { notFound } from "next/navigation";
 
 import { registryComponents } from "@/app/(app)/components/registry-components";
 import { ComponentWrapper } from "@/components/component-wrapper";

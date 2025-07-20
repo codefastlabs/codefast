@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { CheckIcon, ChevronsUpDownIcon, GalleryVerticalEndIcon } from "lucide-react";
 import { useState } from "react";
-import type { JSX } from "react";
 
 import {
   DropdownMenu,

@@ -1,5 +1,7 @@
 import type { ImageLoaderProps } from "next/image";
-import queryString, { type StringifiableRecord } from "query-string";
+import type { StringifiableRecord } from "query-string";
+
+import queryString from "query-string";
 
 import { BaseImageLoader } from "@/base-loader";
 

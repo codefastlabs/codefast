@@ -1,5 +1,7 @@
+import type { JSX } from "react";
+
 import { ChevronUpIcon, CircleIcon } from "lucide-react";
-import { type JSX, useId } from "react";
+import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import {

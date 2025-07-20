@@ -1,6 +1,7 @@
+import type { JSX } from "react";
+
 import Image from "next/image";
 import { Fragment } from "react";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { ScrollArea, Separator } from "@codefast/ui";

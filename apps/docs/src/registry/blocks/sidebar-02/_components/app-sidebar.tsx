@@ -1,7 +1,8 @@
-import { ChevronRightIcon } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
 import type { ComponentProps, JSX } from "react";
+
+import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
 
 import { SearchForm } from "@/registry/blocks/sidebar-02/_components/search-form";
 import { VersionSwitcher } from "@/registry/blocks/sidebar-02/_components/version-switcher";
