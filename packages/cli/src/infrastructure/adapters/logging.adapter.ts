@@ -41,6 +41,10 @@ export class ChalkLoggingAdapter implements LoggingService {
     console.log(chalk.cyan(`◆  ${title}`));
   }
 
+  finishSection(title: string): void {
+    console.log(chalk.cyan(`◆  ${title}`));
+  }
+
   step(message: string): void {
     console.log(chalk.gray(`│`));
     console.log(chalk.blue(`◇  ${message}`));
