@@ -43,7 +43,12 @@ export interface LoggingService {
   startSection: (title: string) => void;
 
   /**
-   * Log a step with circle symbol (◇)
+   * Finish a section with a diamond symbol (◆)
+   */
+  finishSection: (title: string) => void;
+
+  /**
+   * Log a step with a circle symbol (◇)
    */
   step: (message: string) => void;
 

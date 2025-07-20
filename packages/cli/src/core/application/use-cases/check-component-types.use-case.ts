@@ -67,8 +67,11 @@ export class CheckComponentTypesUseCase {
 
       // Generate and display report
       this.generateReport(results);
+
+      this.loggingService.finishSection("Component Type Analysis Complete");
     } catch (error) {
       this.loggingService.result(`Error analyzing component types: ${String(error)}`, "error");
+      this.loggingService.finishSection("Component Type Analysis Failed");
     }
   }
 
