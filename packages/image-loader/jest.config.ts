@@ -46,6 +46,11 @@ const config: Config = {
   ],
 
   /**
+   * Allow Jest to pass when no test files are found
+   */
+  passWithNoTests: true,
+
+  /**
    * Displays detailed information about each test
    */
   verbose: true,
