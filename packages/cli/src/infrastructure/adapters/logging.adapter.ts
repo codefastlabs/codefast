@@ -13,7 +13,7 @@ import type { LoggingService } from "@/core/application/ports/logging.port";
 @injectable()
 export class ChalkLoggingAdapter implements LoggingService {
   debug(message: string): void {
-    console.log(chalk.gray(`◎ ${message}`));
+    console.log(chalk.dim(`◎ ${message}`));
   }
 
   error(message: string): void {
@@ -21,7 +21,7 @@ export class ChalkLoggingAdapter implements LoggingService {
   }
 
   info(message: string): void {
-    console.log(chalk.blue(`ℹ ${message}`));
+    console.log(chalk.cyan(`ℹ ${message}`));
   }
 
   plain(message: string): void {
@@ -33,7 +33,7 @@ export class ChalkLoggingAdapter implements LoggingService {
   }
 
   warning(message: string): void {
-    console.log(chalk.yellow(`⚠ ${message}`));
+    console.log(chalk.magenta(`⚠ ${message}`));
   }
 
   // Vertical Flow UI Methods
@@ -46,29 +46,29 @@ export class ChalkLoggingAdapter implements LoggingService {
   }
 
   step(message: string): void {
-    console.log(chalk.gray(`│`));
-    console.log(chalk.blue(`◇  ${message}`));
+    console.log(chalk.dim(`│`));
+    console.log(chalk.cyan(`◇  ${message}`));
   }
 
   continue(message: string): void {
-    console.log(chalk.gray(`│  ${message}`));
+    console.log(chalk.dim(`│  ${message}`));
   }
 
   item(message: string, level = 1): void {
     const indent = "  ".repeat(level);
 
-    console.log(chalk.gray(`│${indent}${message}`));
+    console.log(chalk.dim(`│${indent}${message}`));
   }
 
   result(message: string, status: "error" | "success" | "warning"): void {
     const symbol = status === "success" ? "✓" : status === "error" ? "✗" : "⚠";
     const color =
-      status === "success" ? chalk.green : status === "error" ? chalk.red : chalk.yellow;
+      status === "success" ? chalk.green : status === "error" ? chalk.red : chalk.magenta;
 
-    console.log(chalk.gray(`│  `) + color(`${symbol} ${message}`));
+    console.log(chalk.dim(`│  `) + color(`${symbol} ${message}`));
   }
 
   spacing(): void {
-    console.log(chalk.gray(`│`));
+    console.log(chalk.dim(`│`));
   }
 }
