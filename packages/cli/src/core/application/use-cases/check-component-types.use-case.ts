@@ -9,9 +9,9 @@ import { inject, injectable } from "inversify";
 
 import type {
   ComponentAnalysisResult,
-  ComponentAnalysisService,
-} from "@/core/application/ports/component-analysis.port";
-import type { LoggingService } from "@/core/application/ports/logging.port";
+  ComponentAnalysisPort,
+} from "@/core/application/ports/analysis/component.analysis.port";
+import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
 
 import { TYPES } from "@/di/types";
 
@@ -22,9 +22,10 @@ export interface CheckComponentTypesInput {
 @injectable()
 export class CheckComponentTypesUseCase {
   constructor(
-    @inject(TYPES.LoggingService) private readonly loggingService: LoggingService,
-    @inject(TYPES.ComponentAnalysisService)
-    private readonly componentAnalysisService: ComponentAnalysisService,
+    @inject(TYPES.LoggingServicePort)
+    private readonly loggingService: LoggingServicePort,
+    @inject(TYPES.ComponentAnalysisPort)
+    private readonly componentAnalysisService: ComponentAnalysisPort,
   ) {}
 
   execute(input: CheckComponentTypesInput = {}): void {

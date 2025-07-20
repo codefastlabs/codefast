@@ -1,16 +1,16 @@
 /**
- * CLI Application
+ * Command Handler
  *
- * Presentation layer CLI application using Commander.js.
+ * Commands layer command handler using Commander.js.
  * Following explicit architecture guidelines for CLI applications.
  */
 
 import { Command } from "commander";
 import { inject, injectable } from "inversify";
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
+import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
+import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
+import type { UrlSystemPort } from "@/core/application/ports/system/url.system.port";
 import type { AnalyzeProjectUseCase } from "@/core/application/use-cases/analyze-project.use-case";
 import type { CheckComponentTypesUseCase } from "@/core/application/use-cases/check-component-types.use-case";
 import type { GreetUserUseCase } from "@/core/application/use-cases/greet-user.use-case";
@@ -18,7 +18,7 @@ import type { GreetUserUseCase } from "@/core/application/use-cases/greet-user.u
 import { TYPES } from "@/di/types";
 
 @injectable()
-export class CLIApplication {
+export class CommandHandler {
   private readonly program: Command;
 
   constructor(
@@ -26,7 +26,14 @@ export class CLIApplication {
     private readonly analyzeProjectUseCase: AnalyzeProjectUseCase,
     @inject(TYPES.CheckComponentTypesUseCase)
     private readonly checkComponentTypesUseCase: CheckComponentTypesUseCase,
-    @inject(TYPES.GreetUserUseCase) private readonly greetUserUseCase: GreetUserUseCase,
+    @inject(TYPES.GreetUserUseCase)
+    private readonly greetUserUseCase: GreetUserUseCase,
+    @inject(TYPES.FilesystemSystemPort)
+    private readonly fileSystemService: FileSystemSystemPort,
+    @inject(TYPES.PathSystemPort)
+    private readonly pathService: PathSystemPort,
+    @inject(TYPES.UrlSystemPort)
+    private readonly urlService: UrlSystemPort,
   ) {
     this.program = new Command();
     this.setupCommands();
@@ -38,10 +45,13 @@ export class CLIApplication {
 
   private setupCommands(): void {
     // Get package version
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
+    const __filename = this.urlService.fileURLToPath(import.meta.url);
+    const __dirname = this.pathService.dirname(__filename);
     const packageJson = JSON.parse(
-      readFileSync(path.join(__dirname, "..", "..", "..", "package.json"), "utf8"),
+      this.fileSystemService.readFileSync(
+        this.pathService.join(__dirname, "..", "..", "..", "package.json"),
+        "utf8",
+      ),
     ) as {
       version: string;
     };

@@ -36,6 +36,9 @@ Organize AI systems into four core layers:
   - **Use Cases**: Implement business workflows (e.g., `CreateOrderUseCase`). Store in `src/core/application/use-cases/`.
   - **Ports**: Define interfaces for repositories and services (e.g., `UserRepository`, `EmailService`). Store in `src/core/application/ports/`.
   - **DTOs**: Use Data Transfer Objects with schema validation (e.g., Zod) for input/output. Store in `src/core/application/dtos/`.
+- **File Naming Convention**:
+  - Use dot notation for semantic grouping: `domain.subdomain.type.ts` (e.g., `component.analysis.port.ts`, `user.repository.port.ts`)
+  - This provides better conceptual organization and supports domain-driven design principles
 - **Best Practices**:
   - Define clear input/output contracts using DTOs.
   - Use Ports to abstract external interactions, ensuring loose coupling.

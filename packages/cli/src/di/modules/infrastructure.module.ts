@@ -7,32 +7,39 @@
 
 import { ContainerModule } from "inversify";
 
-import type { ComponentAnalysisService } from "@/core/application/ports/component-analysis.port";
-import type { FileSystemService } from "@/core/application/ports/file-system.port";
-import type { LoggingService } from "@/core/application/ports/logging.port";
-import type { TypeScriptAnalysisService } from "@/core/application/ports/typescript-analysis.port";
+import type { ComponentAnalysisPort } from "@/core/application/ports/analysis/component.analysis.port";
+import type { TypeScriptAnalysisPort } from "@/core/application/ports/analysis/typescript.analysis.port";
+import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
+import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
+import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
+import type { UrlSystemPort } from "@/core/application/ports/system/url.system.port";
 
 import { TYPES } from "@/di/types";
-import { ComponentAnalysisAdapter } from "@/infrastructure/adapters/component-analysis.adapter";
-import { FastGlobFileSystemAdapter } from "@/infrastructure/adapters/file-system.adapter";
-import { ChalkLoggingAdapter } from "@/infrastructure/adapters/logging.adapter";
-import { TsMorphAnalysisAdapter } from "@/infrastructure/adapters/typescript-analysis.adapter";
+import { ReactComponentAnalysisAdapter } from "@/infrastructure/adapters/analysis/react.component.analysis.adapter";
+import { TsMorphTypescriptAnalysisAdapter } from "@/infrastructure/adapters/analysis/ts-morph.typescript.analysis.adapter";
+import { ChalkLoggingServiceAdapter } from "@/infrastructure/adapters/services/chalk.logging.service.adapter";
+import { FastGlobFileSystemSystemAdapter } from "@/infrastructure/adapters/system/fast-glob.file-system.system.adapter";
+import { NodePathSystemAdapter } from "@/infrastructure/adapters/system/node.path.system.adapter";
+import { NodeUrlSystemAdapter } from "@/infrastructure/adapters/system/node.url.system.adapter";
 
-export const infrastructureModule = new ContainerModule(({ bind }) => {
-  // Logging Service
-  bind<LoggingService>(TYPES.LoggingService).to(ChalkLoggingAdapter).inSingletonScope();
-
-  // File System Service
-  bind<FileSystemService>(TYPES.FileSystemService).to(FastGlobFileSystemAdapter).inSingletonScope();
-
-  // TypeScript Analysis Service
-  bind<TypeScriptAnalysisService>(TYPES.TypeScriptAnalysisService)
-    .to(TsMorphAnalysisAdapter)
-    // Use transient scope for stateful analysis service
+export const infrastructureModule = new ContainerModule((options) => {
+  // Ports
+  options
+    .bind<LoggingServicePort>(TYPES.LoggingServicePort)
+    .to(ChalkLoggingServiceAdapter)
+    .inSingletonScope();
+  options
+    .bind<FileSystemSystemPort>(TYPES.FilesystemSystemPort)
+    .to(FastGlobFileSystemSystemAdapter)
+    .inSingletonScope();
+  options.bind<PathSystemPort>(TYPES.PathSystemPort).to(NodePathSystemAdapter).inSingletonScope();
+  options.bind<UrlSystemPort>(TYPES.UrlSystemPort).to(NodeUrlSystemAdapter).inSingletonScope();
+  options
+    .bind<TypeScriptAnalysisPort>(TYPES.TypeScriptAnalysisPort)
+    .to(TsMorphTypescriptAnalysisAdapter)
     .inTransientScope();
-
-  // Component Analysis Service
-  bind<ComponentAnalysisService>(TYPES.ComponentAnalysisService)
-    .to(ComponentAnalysisAdapter)
+  options
+    .bind<ComponentAnalysisPort>(TYPES.ComponentAnalysisPort)
+    .to(ReactComponentAnalysisAdapter)
     .inSingletonScope();
 });

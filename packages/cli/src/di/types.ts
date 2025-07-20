@@ -5,25 +5,20 @@
  * Following explicit architecture guidelines for CLI applications.
  */
 
-// Application Layer - Ports
 export const TYPES = {
-  // Logging Service
-  LoggingService: Symbol.for("LoggingService"),
-
-  // File System Service
-  FileSystemService: Symbol.for("FileSystemService"),
-
-  // TypeScript Analysis Service
-  TypeScriptAnalysisService: Symbol.for("TypeScriptAnalysisService"),
-
-  // Component Analysis Service
-  ComponentAnalysisService: Symbol.for("ComponentAnalysisService"),
+  // Ports
+  ComponentAnalysisPort: Symbol.for("ComponentAnalysisPort"),
+  FilesystemSystemPort: Symbol.for("FilesystemSystemPort"),
+  LoggingServicePort: Symbol.for("LoggingServicePort"),
+  PathSystemPort: Symbol.for("PathSystemPort"),
+  TypeScriptAnalysisPort: Symbol.for("TypeScriptAnalysisPort"),
+  UrlSystemPort: Symbol.for("UrlSystemPort"),
 
   // Use Cases
   AnalyzeProjectUseCase: Symbol.for("AnalyzeProjectUseCase"),
   CheckComponentTypesUseCase: Symbol.for("CheckComponentTypesUseCase"),
   GreetUserUseCase: Symbol.for("GreetUserUseCase"),
 
-  // CLI Presentation
-  CLIApplication: Symbol.for("CLIApplication"),
+  // CLI Commands
+  CommandHandler: Symbol.for("CommandHandler"),
 } as const;

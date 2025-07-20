@@ -1,5 +1,5 @@
 /**
- * Logging Service Adapter
+ * Chalk Logging Service Adapter
  *
  * Infrastructure implementation of the logging service using chalk for colored output.
  * Following explicit architecture guidelines for CLI applications.
@@ -8,10 +8,10 @@
 import chalk from "chalk";
 import { injectable } from "inversify";
 
-import type { LoggingService } from "@/core/application/ports/logging.port";
+import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
 
 @injectable()
-export class ChalkLoggingAdapter implements LoggingService {
+export class ChalkLoggingServiceAdapter implements LoggingServicePort {
   debug(message: string): void {
     console.log(chalk.dim(`◎ ${message}`));
   }

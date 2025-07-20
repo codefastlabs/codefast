@@ -39,7 +39,7 @@
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
   "bin": {
-    "codefast": "./dist/esm/cli.js"
+    "codefast": "./dist/esm/index.js"
   },
   "files": [
     "dist",

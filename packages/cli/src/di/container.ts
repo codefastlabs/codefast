@@ -8,8 +8,8 @@
 import { Container } from "inversify";
 
 import { applicationModule } from "@/di/modules/application.module";
+import { commandsModule } from "@/di/modules/commands.module";
 import { infrastructureModule } from "@/di/modules/infrastructure.module";
-import { presentationModule } from "@/di/modules/presentation.module";
 
 /**
  * Main IoC container instance
@@ -23,7 +23,7 @@ export const container = new Container({
  */
 export function configureContainer(): Container {
   // Load modules in dependency order
-  container.loadSync(infrastructureModule, applicationModule, presentationModule);
+  container.loadSync(infrastructureModule, applicationModule, commandsModule);
 
   return container;
 }

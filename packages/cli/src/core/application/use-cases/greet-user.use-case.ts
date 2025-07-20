@@ -7,7 +7,7 @@
 
 import { inject, injectable } from "inversify";
 
-import type { LoggingService } from "@/core/application/ports/logging.port";
+import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
 
 import { TYPES } from "@/di/types";
 
@@ -17,7 +17,10 @@ export interface GreetUserInput {
 
 @injectable()
 export class GreetUserUseCase {
-  constructor(@inject(TYPES.LoggingService) private readonly loggingService: LoggingService) {}
+  constructor(
+    @inject(TYPES.LoggingServicePort)
+    private readonly loggingService: LoggingServicePort,
+  ) {}
 
   execute(input: GreetUserInput): void {
     const { name } = input;

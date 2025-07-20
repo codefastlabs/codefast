@@ -1,24 +1,24 @@
+#!/usr/bin/env node
+
 /**
- * CLI Package Exports
+ * CLI Entry Point
  *
- * Main exports for the CLI package following explicit architecture.
+ * Main entry point for the CLI application using explicit architecture.
+ * Following explicit architecture guidelines for CLI applications.
  */
 
-// Core Application Layer
-export type * from "@/core/application/ports/file-system.port";
-export type * from "@/core/application/ports/logging.port";
-export type * from "@/core/application/ports/typescript-analysis.port";
-export * from "@/core/application/use-cases/analyze-project.use-case";
-export * from "@/core/application/use-cases/greet-user.use-case";
+import "reflect-metadata";
 
-// Infrastructure Layer
-export * from "@/infrastructure/adapters/file-system.adapter";
-export * from "@/infrastructure/adapters/logging.adapter";
-export * from "@/infrastructure/adapters/typescript-analysis.adapter";
+import type { CommandHandler } from "@/commands/command-handler";
 
-// Presentation Layer
-export * from "@/presentation/cli-application";
+import { configureContainer, getService } from "@/di/container";
+import { TYPES } from "@/di/types";
 
-// Dependency Injection
-export * from "@/di/container";
-export * from "@/di/types";
+// Configure dependency injection container
+configureContainer();
+
+// Get command handler instance from container
+const commandHandler = getService<CommandHandler>(TYPES.CommandHandler);
+
+// Run the command handler
+commandHandler.run();

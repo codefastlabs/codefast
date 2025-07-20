@@ -35,7 +35,7 @@ export interface ComponentAnalysisResult {
   package: string;
 }
 
-export interface ComponentAnalysisService {
+export interface ComponentAnalysisPort {
   /**
    * Discover all packages in the packages directory
    */
