@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { AnalyzeProjectUseCase } from "@/core/application/use-cases/analyze-project.use-case";
+import type { CheckComponentTypesUseCase } from "@/core/application/use-cases/check-component-types.use-case";
 import type { GreetUserUseCase } from "@/core/application/use-cases/greet-user.use-case";
 
 import { TYPES } from "@/di/types";
@@ -23,6 +24,8 @@ export class CLIApplication {
   constructor(
     @inject(TYPES.AnalyzeProjectUseCase)
     private readonly analyzeProjectUseCase: AnalyzeProjectUseCase,
+    @inject(TYPES.CheckComponentTypesUseCase)
+    private readonly checkComponentTypesUseCase: CheckComponentTypesUseCase,
     @inject(TYPES.GreetUserUseCase) private readonly greetUserUseCase: GreetUserUseCase,
   ) {
     this.program = new Command();
@@ -68,6 +71,17 @@ export class CLIApplication {
         await this.analyzeProjectUseCase.execute({
           pattern: options.pattern,
           tsConfigPath: options.config,
+        });
+      });
+
+    // Check component types command
+    this.program
+      .command("check-component-types")
+      .description("Check React component type correspondence")
+      .option("-d, --packages-dir <dir>", "packages directory to analyze", "packages")
+      .action(async (options: { packagesDir?: string }) => {
+        await this.checkComponentTypesUseCase.execute({
+          packagesDir: options.packagesDir,
         });
       });
   }

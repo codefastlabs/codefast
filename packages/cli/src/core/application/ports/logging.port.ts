@@ -22,6 +22,11 @@ export interface LoggingService {
   info: (message: string) => void;
 
   /**
+   * Log plain messages without prefixes (for headers, separators, etc.)
+   */
+  plain: (message: string) => void;
+
+  /**
    * Log success messages
    */
   success: (message: string) => void;
@@ -30,4 +35,35 @@ export interface LoggingService {
    * Log warning messages
    */
   warning: (message: string) => void;
+
+  // Vertical Flow UI Methods
+  /**
+   * Start a new section with a diamond symbol (◆)
+   */
+  startSection: (title: string) => void;
+
+  /**
+   * Log a step with circle symbol (◇)
+   */
+  step: (message: string) => void;
+
+  /**
+   * Log a continuation line with vertical bar (│)
+   */
+  continue: (message: string) => void;
+
+  /**
+   * Log an indented item
+   */
+  item: (message: string, level?: number) => void;
+
+  /**
+   * Log a result or status
+   */
+  result: (message: string, status: "error" | "success" | "warning") => void;
+
+  /**
+   * Add spacing between sections
+   */
+  spacing: () => void;
 }

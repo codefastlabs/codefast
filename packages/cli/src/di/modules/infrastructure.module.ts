@@ -7,11 +7,13 @@
 
 import { ContainerModule } from "inversify";
 
+import type { ComponentAnalysisService } from "@/core/application/ports/component-analysis.port";
 import type { FileSystemService } from "@/core/application/ports/file-system.port";
 import type { LoggingService } from "@/core/application/ports/logging.port";
 import type { TypeScriptAnalysisService } from "@/core/application/ports/typescript-analysis.port";
 
 import { TYPES } from "@/di/types";
+import { ComponentAnalysisAdapter } from "@/infrastructure/adapters/component-analysis.adapter";
 import { FastGlobFileSystemAdapter } from "@/infrastructure/adapters/file-system.adapter";
 import { ChalkLoggingAdapter } from "@/infrastructure/adapters/logging.adapter";
 import { TsMorphAnalysisAdapter } from "@/infrastructure/adapters/typescript-analysis.adapter";
@@ -28,4 +30,9 @@ export const infrastructureModule = new ContainerModule(({ bind }) => {
     .to(TsMorphAnalysisAdapter)
     // Use transient scope for stateful analysis service
     .inTransientScope();
+
+  // Component Analysis Service
+  bind<ComponentAnalysisService>(TYPES.ComponentAnalysisService)
+    .to(ComponentAnalysisAdapter)
+    .inSingletonScope();
 });
