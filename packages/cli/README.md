@@ -57,7 +57,7 @@ Analyze TypeScript project and generate statistics about classes, functions, and
 
 **Example Output:**
 
-```
+```text
 🔍 Analyzing TypeScript project...
 ✅ Found 45 TypeScript files
 ⚠️  Loaded 45 source files for analysis
@@ -86,7 +86,7 @@ This CLI follows **Explicit Architecture** principles, ensuring clear separation
 
 ### Directory Structure
 
-```
+```text
 src/
 ├── core/                           # Core business logic
 │   └── application/               # Application layer
@@ -139,7 +139,7 @@ Implements the ports using concrete technologies and external libraries.
 
 #### 3. Commands Layer
 
-Handles CLI interface using Commander.js framework.
+Handles CLI interface using the Commander.js framework.
 
 - `CommandHandler`: Main command orchestrator with dependency injection
 
@@ -215,7 +215,7 @@ The CLI follows a comprehensive testing approach aligned with the explicit archi
 
 #### Test Structure
 
-```
+```text
 src/
 ├── core/application/use-cases/
 │   ├── analyze-project.use-case.ts

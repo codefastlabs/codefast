@@ -685,5 +685,5 @@ export type {
   TooltipTriggerProps,
 } from "@/components/tooltip";
 
-export { cn, tv } from "@/lib";
-export type { VariantProps } from "@/lib";
+export { cn, tv } from "@/lib/utils";
+export type { VariantProps } from "@/lib/utils";
