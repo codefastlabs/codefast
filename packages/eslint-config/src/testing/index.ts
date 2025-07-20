@@ -1,1 +1,0 @@
-export { jestRules } from "./jest";
