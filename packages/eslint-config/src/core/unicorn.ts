@@ -190,23 +190,26 @@ export const unicornRules: Linter.Config[] = [
        * Prevent abbreviations in variable names, function names, and filenames.
        *
        * Enforces descriptive naming by preventing common abbreviations.
-       * Configured to allow common abbreviations like 'args', 'dev', 'env',
-       * 'params', 'prod', 'props', 'ref', 'temp', and 'tmp' for practicality.
+       * Configured to allow common abbreviations that are widely accepted
+       * in the React/JavaScript ecosystem for practicality and readability.
        */
       "unicorn/prevent-abbreviations": [
         "error",
         {
           checkFilenames: false,
           replacements: {
-            args: false,
+            ctx: false,
             dev: false,
+            dist: false,
             env: false,
-            params: false,
+            lib: false,
+            pkg: false,
             prod: false,
             props: false,
             ref: false,
-            temp: false,
-            tmp: false,
+            req: false,
+            res: false,
+            src: false,
           },
         },
       ],

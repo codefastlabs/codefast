@@ -167,6 +167,25 @@ export const typescriptRules: Linter.Config[] = [
       "@typescript-eslint/no-useless-empty-export": "error",
 
       /**
+       * Restricts the types allowed in template literal expressions.
+       * Prevents potentially unsafe type coercion in template literals by only allowing
+       * specific types that have predictable string representations.
+       * Configured to allow boolean and number types while disallowing potentially
+       * problematic types like any, nullish values, and regular expressions.
+       */
+      "@typescript-eslint/restrict-template-expressions": [
+        "error",
+        {
+          allowAny: false,
+          allowBoolean: true,
+          allowNever: false,
+          allowNullish: false,
+          allowNumber: true,
+          allowRegExp: false,
+        },
+      ],
+
+      /**
        * Enforces consistent naming conventions across TypeScript constructs.
        *
        * This rule is configured with two main patterns:
