@@ -31,7 +31,6 @@ export class CheckComponentTypesUseCase {
     const { packagesDirectory = "packages" } = input;
 
     this.loggingService.startSection("Component Type Analysis");
-    this.loggingService.continue("");
     this.loggingService.step("Discovering packages");
 
     try {
@@ -42,7 +41,6 @@ export class CheckComponentTypesUseCase {
 
       const results: ComponentAnalysisResult[] = [];
 
-      this.loggingService.spacing();
       this.loggingService.step("Analyzing components");
 
       // Process each package
@@ -70,13 +68,11 @@ export class CheckComponentTypesUseCase {
       // Generate and display report
       this.generateReport(results);
     } catch (error) {
-      this.loggingService.spacing();
       this.loggingService.result(`Error analyzing component types: ${String(error)}`, "error");
     }
   }
 
   private generateReport(results: ComponentAnalysisResult[]): void {
-    this.loggingService.spacing();
     this.loggingService.step("Generating report");
 
     // Categorize results
@@ -88,7 +84,6 @@ export class CheckComponentTypesUseCase {
 
     // Report proper correspondence with improved formatting
     if (componentsWithProperCorrespondence.length > 0) {
-      this.loggingService.spacing();
       this.loggingService.step(
         `Components with proper correspondence (${componentsWithProperCorrespondence.length})`,
       );
@@ -98,7 +93,6 @@ export class CheckComponentTypesUseCase {
 
     // Report correspondence issues
     if (componentsWithCorrespondenceIssues.length > 0) {
-      this.loggingService.spacing();
       this.loggingService.step(
         `Components with correspondence issues (${componentsWithCorrespondenceIssues.length})`,
       );
@@ -132,7 +126,6 @@ export class CheckComponentTypesUseCase {
 
     // Report false positive types
     if (componentsWithFalsePositiveTypes.length > 0) {
-      this.loggingService.spacing();
       this.loggingService.step(
         `Components with false positive types (${componentsWithFalsePositiveTypes.length})`,
       );
@@ -156,7 +149,6 @@ export class CheckComponentTypesUseCase {
     }
 
     // Summary
-    this.loggingService.spacing();
     this.loggingService.step("Summary");
     this.loggingService.continue(`Total components: ${results.length}`);
     this.loggingService.continue(
@@ -190,7 +182,6 @@ export class CheckComponentTypesUseCase {
       const packageResults = packageGroups.get(packageName)!;
 
       // Package header with component count
-      this.loggingService.spacing();
       this.loggingService.result(
         `📦 ${packageName} (${packageResults.length} components)`,
         "success",
@@ -216,7 +207,6 @@ export class CheckComponentTypesUseCase {
     }
 
     // Summary statistics
-    this.loggingService.spacing();
     this.loggingService.item(
       `📊 Summary: ${sortedPackages.length} packages, ${results.length} components`,
       1,
@@ -238,7 +228,7 @@ export class CheckComponentTypesUseCase {
       parts.push(`✓ ${componentCount}c:${typeCount}t`);
     }
 
-    // Add filtered count if there are filtered exports
+    // Add a filtered count if there are filtered exports
     const filteredCount = result.exportedComponents.length - result.actualComponents.length;
 
     if (filteredCount > 0) {
