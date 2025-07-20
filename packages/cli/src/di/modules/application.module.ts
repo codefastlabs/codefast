@@ -12,15 +12,11 @@ import { CheckComponentTypesUseCase } from "@/core/application/use-cases/check-c
 import { GreetUserUseCase } from "@/core/application/use-cases/greet-user.use-case";
 import { TYPES } from "@/di/types";
 
-export const applicationModule = new ContainerModule(({ bind }) => {
+export const applicationModule = new ContainerModule((options) => {
   // Use Cases
-  bind<AnalyzeProjectUseCase>(TYPES.AnalyzeProjectUseCase)
-    .to(AnalyzeProjectUseCase)
-    .inSingletonScope();
-
-  bind<CheckComponentTypesUseCase>(TYPES.CheckComponentTypesUseCase)
-    .to(CheckComponentTypesUseCase)
-    .inSingletonScope();
-
-  bind<GreetUserUseCase>(TYPES.GreetUserUseCase).to(GreetUserUseCase).inSingletonScope();
+  options.bind<AnalyzeProjectUseCase>(TYPES.AnalyzeProjectUseCase).to(AnalyzeProjectUseCase);
+  options
+    .bind<CheckComponentTypesUseCase>(TYPES.CheckComponentTypesUseCase)
+    .to(CheckComponentTypesUseCase);
+  options.bind<GreetUserUseCase>(TYPES.GreetUserUseCase).to(GreetUserUseCase);
 });

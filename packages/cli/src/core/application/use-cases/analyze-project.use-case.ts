@@ -7,9 +7,9 @@
 
 import { inject, injectable } from "inversify";
 
-import type { FileSystemService } from "@/core/application/ports/file-system.port";
-import type { LoggingService } from "@/core/application/ports/logging.port";
-import type { TypeScriptAnalysisService } from "@/core/application/ports/typescript-analysis.port";
+import type { TypeScriptAnalysisPort } from "@/core/application/ports/analysis/typescript.analysis.port";
+import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
+import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
 
 import { TYPES } from "@/di/types";
 
@@ -21,10 +21,12 @@ export interface AnalyzeProjectInput {
 @injectable()
 export class AnalyzeProjectUseCase {
   constructor(
-    @inject(TYPES.LoggingService) private readonly loggingService: LoggingService,
-    @inject(TYPES.FileSystemService) private readonly fileSystemService: FileSystemService,
-    @inject(TYPES.TypeScriptAnalysisService)
-    private readonly analysisService: TypeScriptAnalysisService,
+    @inject(TYPES.LoggingServicePort)
+    private readonly loggingService: LoggingServicePort,
+    @inject(TYPES.FilesystemSystemPort)
+    private readonly fileSystemService: FileSystemSystemPort,
+    @inject(TYPES.TypeScriptAnalysisPort)
+    private readonly analysisService: TypeScriptAnalysisPort,
   ) {}
 
   async execute(input: AnalyzeProjectInput = {}): Promise<void> {

@@ -1,5 +1,5 @@
 /**
- * File System Service Adapter
+ * Fast-Glob File System Service Adapter
  *
  * Infrastructure implementation of the file system service using fast-glob.
  * Following explicit architecture guidelines for CLI applications.
@@ -8,13 +8,17 @@
 import chalk from "chalk";
 import pkg from "fast-glob";
 import { injectable } from "inversify";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 
-import type { FileSystemService } from "@/core/application/ports/file-system.port";
+import type {
+  FileSystemSystemPort,
+  Stats,
+} from "@/core/application/ports/system/file-system.system.port";
 
 const { glob } = pkg;
 
 @injectable()
-export class FastGlobFileSystemAdapter implements FileSystemService {
+export class FastGlobFileSystemSystemAdapter implements FileSystemSystemPort {
   async findFiles(pattern: string, options?: { ignore?: string[] }): Promise<string[]> {
     try {
       const files = await glob(pattern, {
@@ -67,5 +71,21 @@ export class FastGlobFileSystemAdapter implements FileSystemService {
         );
       },
     };
+  }
+
+  readFileSync(path: string, encoding: BufferEncoding = "utf8"): string {
+    return readFileSync(path, encoding);
+  }
+
+  readdirSync(path: string): string[] {
+    return readdirSync(path);
+  }
+
+  statSync(path: string): Stats {
+    return statSync(path);
+  }
+
+  existsSync(path: string): boolean {
+    return existsSync(path);
   }
 }

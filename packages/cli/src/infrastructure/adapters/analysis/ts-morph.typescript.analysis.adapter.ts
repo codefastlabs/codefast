@@ -1,5 +1,5 @@
 /**
- * TypeScript Analysis Service Adapter
+ * ts-morph TypeScript Analysis Service Adapter
  *
  * Infrastructure implementation of the TypeScript analysis service using ts-morph.
  * Following explicit architecture guidelines for CLI applications.
@@ -9,12 +9,12 @@ import { injectable } from "inversify";
 import { Project } from "ts-morph";
 
 import type {
-  TypeScriptAnalysisService,
+  TypeScriptAnalysisPort,
   ProjectStatistics,
-} from "@/core/application/ports/typescript-analysis.port";
+} from "@/core/application/ports/analysis/typescript.analysis.port";
 
 @injectable()
-export class TsMorphAnalysisAdapter implements TypeScriptAnalysisService {
+export class TsMorphTypescriptAnalysisAdapter implements TypeScriptAnalysisPort {
   private project: null | Project = null;
 
   createProject(tsConfigPath?: string): void {

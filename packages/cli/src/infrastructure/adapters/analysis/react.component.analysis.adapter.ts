@@ -1,29 +1,38 @@
 /**
- * Component Analysis Adapter
+ * React Component Analysis Adapter
  *
  * Infrastructure layer adapter for analyzing React components and their TypeScript types.
  * Following explicit architecture guidelines for CLI applications.
  */
 
-import { injectable } from "inversify";
-import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import path from "node:path";
+import { inject, injectable } from "inversify";
 
 import type {
   ComponentAnalysisResult,
-  ComponentAnalysisService,
+  ComponentAnalysisPort,
   ComponentInfo,
-} from "@/core/application/ports/component-analysis.port";
+} from "@/core/application/ports/analysis/component.analysis.port";
+import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
+import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
+
+import { TYPES } from "@/di/types";
 
 @injectable()
-export class ComponentAnalysisAdapter implements ComponentAnalysisService {
+export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {
+  constructor(
+    @inject(TYPES.FilesystemSystemPort)
+    private readonly fileSystemService: FileSystemSystemPort,
+    @inject(TYPES.PathSystemPort)
+    private readonly pathService: PathSystemPort,
+  ) {}
+
   discoverPackages(packagesDirectory: string): string[] {
     try {
-      const packages = readdirSync(packagesDirectory);
+      const packages = this.fileSystemService.readdirSync(packagesDirectory);
 
       return packages.filter((packageName) => {
-        const packagePath = path.join(packagesDirectory, packageName);
-        const stats = statSync(packagePath);
+        const packagePath = this.pathService.join(packagesDirectory, packageName);
+        const stats = this.fileSystemService.statSync(packagePath);
 
         return stats.isDirectory() && packageName !== ".DS_Store";
       });
@@ -32,23 +41,20 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
     }
   }
 
-  findComponentsInPackage(
-    packagePath: string,
-    packageName: string,
-  ): ComponentInfo[] {
+  findComponentsInPackage(packagePath: string, packageName: string): ComponentInfo[] {
     const componentsToCheck: ComponentInfo[] = [];
 
     try {
       // For ui package, check components in src/components/
       if (packageName === "ui") {
-        const uiComponentsDirectory = path.join(packagePath, "src", "components");
+        const uiComponentsDirectory = this.pathService.join(packagePath, "src", "components");
 
-        if (existsSync(uiComponentsDirectory)) {
-          const uiComponents = readdirSync(uiComponentsDirectory);
+        if (this.fileSystemService.existsSync(uiComponentsDirectory)) {
+          const uiComponents = this.fileSystemService.readdirSync(uiComponentsDirectory);
 
           for (const componentName of uiComponents) {
-            const componentPath = path.join(uiComponentsDirectory, componentName);
-            const componentStats = statSync(componentPath);
+            const componentPath = this.pathService.join(uiComponentsDirectory, componentName);
+            const componentStats = this.fileSystemService.statSync(componentPath);
 
             if (componentStats.isDirectory()) {
               componentsToCheck.push({
@@ -61,13 +67,14 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
         }
       } else {
         // For other packages, check if they have components directly in src/
-        const sourceDirectory = path.join(packagePath, "src");
+        const sourceDirectory = this.pathService.join(packagePath, "src");
 
-        if (existsSync(sourceDirectory)) {
+        if (this.fileSystemService.existsSync(sourceDirectory)) {
           // Check if this package has component files (tsx files that aren't test files)
-          const sourceFiles = readdirSync(sourceDirectory);
+          const sourceFiles = this.fileSystemService.readdirSync(sourceDirectory);
           const hasComponentFiles = sourceFiles.some(
-            (file) => file.endsWith(".tsx") && !file.includes(".test.") && !file.includes(".spec."),
+            (file: string) =>
+              file.endsWith(".tsx") && !file.includes(".test.") && !file.includes(".spec."),
           );
 
           if (hasComponentFiles) {
@@ -86,23 +93,21 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
     }
   }
 
-  analyzeComponentFile(
-    componentInfo: ComponentInfo,
-  ): ComponentAnalysisResult | null {
+  analyzeComponentFile(componentInfo: ComponentInfo): ComponentAnalysisResult | null {
     const { name: componentName, packageName: packageName, path: componentPath } = componentInfo;
 
     try {
       // Check for a main component file
       const possibleFiles = [
-        path.join(componentPath, `${componentName}.tsx`),
-        path.join(componentPath, "index.tsx"),
-        path.join(componentPath, "index.ts"),
+        this.pathService.join(componentPath, `${componentName}.tsx`),
+        this.pathService.join(componentPath, "index.tsx"),
+        this.pathService.join(componentPath, "index.ts"),
       ];
 
       let mainFile: null | string = null;
 
       for (const file of possibleFiles) {
-        if (existsSync(file)) {
+        if (this.fileSystemService.existsSync(file)) {
           mainFile = file;
           break;
         }
@@ -112,14 +117,14 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
         return null;
       }
 
-      const content = readFileSync(mainFile, "utf8");
+      const content = this.fileSystemService.readFileSync(mainFile, "utf8");
 
       // Extract exported components from export { ... } statements
-      const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*\}/g) ?? [];
+      const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*}/g) ?? [];
       const exportedComponents: string[] = [];
 
       for (const match of exportComponentMatches) {
-        const componentsInExport = match.replace(/export\s*\{\s*/, "").replace(/\s*\}/, "");
+        const componentsInExport = match.replace(/export\s*\{\s*/, "").replace(/\s*}/, "");
         const components = componentsInExport
           .split(",")
           .map((c) => c.trim())
@@ -128,12 +133,12 @@ export class ComponentAnalysisAdapter implements ComponentAnalysisService {
         exportedComponents.push(...components);
       }
 
-      // Extract exported types from export type { ... } statements
-      const exportTypeMatches = content.match(/export\s+type\s*\{\s*([^}]+)\s*\}/g) ?? [];
+      // Extract exported types from an export type { ... } statements
+      const exportTypeMatches = content.match(/export\s+type\s*\{\s*([^}]+)\s*}/g) ?? [];
       const exportedTypes: string[] = [];
 
       for (const match of exportTypeMatches) {
-        const typesInExport = match.replace(/export\s+type\s*\{\s*/, "").replace(/\s*\}/, "");
+        const typesInExport = match.replace(/export\s+type\s*\{\s*/, "").replace(/\s*}/, "");
         const types = typesInExport
           .split(",")
           .map((t) => t.trim())
