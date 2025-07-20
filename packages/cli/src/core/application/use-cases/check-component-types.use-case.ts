@@ -213,7 +213,7 @@ export class CheckComponentTypesUseCase {
           const mappings = this.createComponentTypeMappings(result);
 
           for (const mapping of mappings) {
-            this.loggingService.item(`└─ ${mapping}`, 3);
+            this.loggingService.item(`• ${mapping}`, 3);
           }
         }
       }
