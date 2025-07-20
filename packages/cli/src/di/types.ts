@@ -16,9 +16,13 @@ export const TYPES = {
   // TypeScript Analysis Service
   TypeScriptAnalysisService: Symbol.for("TypeScriptAnalysisService"),
 
+  // Component Analysis Service
+  ComponentAnalysisService: Symbol.for("ComponentAnalysisService"),
+
   // Use Cases
   AnalyzeProjectUseCase: Symbol.for("AnalyzeProjectUseCase"),
   GreetUserUseCase: Symbol.for("GreetUserUseCase"),
+  CheckComponentTypesUseCase: Symbol.for("CheckComponentTypesUseCase"),
 
   // CLI Presentation
   CLIApplication: Symbol.for("CLIApplication"),
