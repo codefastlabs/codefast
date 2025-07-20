@@ -1,9 +1,10 @@
 "use client";
 
-import { TrendingUpIcon } from "lucide-react";
 import type { JSX } from "react";
-import { Pie, PieChart } from "recharts";
 import type { PieLabel, PieProps } from "recharts";
+
+import { TrendingUpIcon } from "lucide-react";
+import { Pie, PieChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
 

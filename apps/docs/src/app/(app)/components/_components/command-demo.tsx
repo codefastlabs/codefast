@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import {
   CalculatorIcon,
   CalendarIcon,
@@ -9,7 +11,6 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { JSX } from "react";
 
 import {
   CommandDialog,

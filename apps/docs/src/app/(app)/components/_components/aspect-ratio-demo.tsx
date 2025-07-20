@@ -1,5 +1,6 @@
-import Image from "next/image";
 import type { JSX } from "react";
+
+import Image from "next/image";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { AspectRatio } from "@codefast/ui";

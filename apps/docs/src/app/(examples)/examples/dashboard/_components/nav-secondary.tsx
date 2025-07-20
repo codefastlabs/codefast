@@ -1,8 +1,9 @@
 "use client";
 
+import type { ComponentProps, JSX } from "react";
+
 import { useTheme } from "next-themes";
 import { useEffect, useId, useState } from "react";
-import type { ComponentProps, JSX } from "react";
 
 import type { Icon } from "@tabler/icons-react";
 

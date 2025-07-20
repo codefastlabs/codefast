@@ -1,4 +1,6 @@
-import { type JSX, useId } from "react";
+import type { JSX } from "react";
+
+import { useId } from "react";
 
 import { Button, Input, Label, Popover, PopoverContent, PopoverTrigger } from "@codefast/ui";
 

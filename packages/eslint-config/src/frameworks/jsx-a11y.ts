@@ -1,4 +1,5 @@
 import type { Linter } from "eslint";
+
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
 export const jsxA11yRules: Linter.Config[] = [

@@ -1,5 +1,6 @@
-import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
+
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisIcon } from "lucide-react";
 
 import type { VariantProps } from "@/lib/utils";
 

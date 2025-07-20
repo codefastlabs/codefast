@@ -1,5 +1,6 @@
-import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
+
+import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 
 import {
   Collapsible,

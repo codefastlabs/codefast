@@ -1,5 +1,7 @@
 "use client";
 
+import type { JSX } from "react";
+
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -15,7 +17,6 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useState } from "react";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import {

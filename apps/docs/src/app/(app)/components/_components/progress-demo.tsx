@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { JSX } from "react";
+
+import { useEffect, useState } from "react";
 
 import { Progress } from "@codefast/ui";
 

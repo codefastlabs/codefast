@@ -1,8 +1,9 @@
 "use client";
 
+import type { ComponentProps, JSX } from "react";
+
 import { CommandIcon } from "lucide-react";
 import Link from "next/link";
-import type { ComponentProps, JSX } from "react";
 
 import type { NavItemProps } from "@/components/nav-main";
 

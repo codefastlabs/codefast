@@ -1,5 +1,6 @@
-import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
+
+import { ChevronRightIcon, FileIcon, FolderIcon } from "lucide-react";
 
 import type { FileTree } from "@/lib/registry";
 

@@ -1,7 +1,8 @@
+import type { ComponentProps, JSX } from "react";
+
 import { GalleryVerticalEndIcon } from "lucide-react";
 import Link from "next/link";
 import { useId } from "react";
-import type { ComponentProps, JSX } from "react";
 
 import { Button, cn, Input, Label } from "@codefast/ui";
 

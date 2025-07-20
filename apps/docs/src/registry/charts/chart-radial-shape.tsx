@@ -1,9 +1,10 @@
 "use client";
 
-import { TrendingUpIcon } from "lucide-react";
 import type { JSX, ReactNode } from "react";
-import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 import type { Props } from "recharts/types/component/Label";
+
+import { TrendingUpIcon } from "lucide-react";
+import { Label, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
 

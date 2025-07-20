@@ -1,7 +1,8 @@
 "use client";
 
-import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
+
+import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
 
 import type { VariantProps } from "@/lib/utils";
 

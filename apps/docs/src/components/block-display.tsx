@@ -1,5 +1,6 @@
-import { unstable_cache as cache } from "next/cache";
 import type { ReactNode } from "react";
+
+import { unstable_cache as cache } from "next/cache";
 
 import type { RegistryItemFile } from "@/types/registry";
 

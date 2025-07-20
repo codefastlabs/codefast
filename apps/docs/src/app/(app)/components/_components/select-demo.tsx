@@ -1,5 +1,6 @@
-import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { ChartBarIcon, ChartLineIcon, ChartPieIcon, CircleDashedIcon } from "lucide-react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import {

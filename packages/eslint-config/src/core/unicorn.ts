@@ -1,4 +1,5 @@
 import type { Linter } from "eslint";
+
 import pluginUnicorn from "eslint-plugin-unicorn";
 
 /**

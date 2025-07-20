@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+
 import { z } from "zod";
 
 export const componentTypeSchema = z.custom<ComponentType>(

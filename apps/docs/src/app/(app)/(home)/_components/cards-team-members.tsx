@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import type { JSX } from "react";
 
 import {
   Avatar,

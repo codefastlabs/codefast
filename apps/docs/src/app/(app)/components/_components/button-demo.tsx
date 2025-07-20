@@ -1,5 +1,6 @@
-import { ArrowRightIcon, SendIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { ArrowRightIcon, SendIcon } from "lucide-react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Button } from "@codefast/ui";

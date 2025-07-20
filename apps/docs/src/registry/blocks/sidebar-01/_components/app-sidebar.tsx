@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
 import type { ComponentProps, JSX } from "react";
+
+import Link from "next/link";
 
 import { SearchForm } from "@/registry/blocks/sidebar-01/_components/search-form";
 import { VersionSwitcher } from "@/registry/blocks/sidebar-01/_components/version-switcher";

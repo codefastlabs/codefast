@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useMemo } from "react";
 import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
-import * as RechartsPrimitive from "recharts";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+
+import { useId, useMemo } from "react";
+import * as RechartsPrimitive from "recharts";
 
 import type { Scope } from "@radix-ui/react-context";
 

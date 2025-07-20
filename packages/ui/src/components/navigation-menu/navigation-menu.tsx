@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronDownIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
+
+import { ChevronDownIcon } from "lucide-react";
 
 import { navigationMenuTriggerStyle } from "@/components/navigation-menu/navigation-menu-trigger.style";
 import { cn } from "@/lib/utils";

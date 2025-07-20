@@ -1,9 +1,10 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import type { CSSProperties, JSX } from "react";
-import { Toaster as Sonner } from "sonner";
 import type { ToasterProps as SonnerToasterProps } from "sonner";
+
+import { useTheme } from "next-themes";
+import { Toaster as Sonner } from "sonner";
 
 /* -----------------------------------------------------------------------------
  * Component: Sonner

@@ -1,5 +1,8 @@
 "use client";
 
+import type { ComponentProps, JSX, ReactNode } from "react";
+import type { CustomComponents, DateRange } from "react-day-picker";
+
 import { format } from "date-fns";
 import {
   ChevronDownIcon,
@@ -8,9 +11,7 @@ import {
   ChevronUpIcon,
   DotIcon,
 } from "lucide-react";
-import type { ComponentProps, JSX, ReactNode } from "react";
 import { DayFlag, DayPicker, SelectionState, UI } from "react-day-picker";
-import type { CustomComponents, DateRange } from "react-day-picker";
 
 import { buttonVariants } from "@/components/button/button.variants";
 import { cn } from "@/lib/utils";

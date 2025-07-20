@@ -1,7 +1,8 @@
 "use client";
 
-import { SidebarIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { SidebarIcon } from "lucide-react";
 
 import { SearchForm } from "@/registry/blocks/sidebar-16/_components/search-form";
 import {

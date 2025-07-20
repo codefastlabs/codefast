@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { useTheme } from "next-themes";
 import { useCallback } from "react";
-import type { JSX } from "react";
 
 import { Button } from "@codefast/ui";
 import { IconBrightness } from "@tabler/icons-react";

@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { Code2Icon, PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
-import type { JSX } from "react";
 
 import {
   ContextMenu,

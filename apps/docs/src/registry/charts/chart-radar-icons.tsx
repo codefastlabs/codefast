@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowDownFromLineIcon, ArrowUpFromLineIcon, TrendingUpIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { ArrowDownFromLineIcon, ArrowUpFromLineIcon, TrendingUpIcon } from "lucide-react";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

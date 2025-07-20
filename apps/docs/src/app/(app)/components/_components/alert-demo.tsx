@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import {
   AlertCircleIcon,
   BookmarkCheckIcon,
@@ -6,7 +8,6 @@ import {
   PopcornIcon,
   ShieldAlertIcon,
 } from "lucide-react";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Alert, AlertDescription, AlertTitle, Button } from "@codefast/ui";

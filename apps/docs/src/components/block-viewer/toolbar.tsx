@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import {
   CheckIcon,
   FullscreenIcon,
@@ -7,7 +9,6 @@ import {
   TerminalIcon,
 } from "lucide-react";
 import Link from "next/link";
-import type { JSX } from "react";
 
 import type { BlockViewMode } from "@/components/block-viewer/provider";
 

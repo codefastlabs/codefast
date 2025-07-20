@@ -1,5 +1,6 @@
-import { HelpCircleIcon, SettingsIcon, Trash2Icon } from "lucide-react";
 import type { JSX } from "react";
+
+import { HelpCircleIcon, SettingsIcon, Trash2Icon } from "lucide-react";
 
 import {
   Menubar,

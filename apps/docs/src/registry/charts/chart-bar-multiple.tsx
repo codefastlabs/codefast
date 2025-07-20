@@ -1,7 +1,8 @@
 "use client";
 
-import { TrendingUpIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { TrendingUpIcon } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

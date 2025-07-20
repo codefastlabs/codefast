@@ -1,9 +1,10 @@
 import "@/app/globals.css";
 
 import type { Metadata, Viewport } from "next";
+import type { JSX, ReactNode } from "react";
+
 import { cookies } from "next/headers";
 import Script from "next/script";
-import type { JSX, ReactNode } from "react";
 
 import { ActiveThemeProvider } from "@/components/active-theme";
 import { ThemeProvider } from "@/components/theme-provider";

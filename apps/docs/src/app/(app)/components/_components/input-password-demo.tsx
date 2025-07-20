@@ -1,5 +1,6 @@
-import { LockIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { LockIcon } from "lucide-react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { InputPassword } from "@codefast/ui";

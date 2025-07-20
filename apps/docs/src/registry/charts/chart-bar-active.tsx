@@ -1,10 +1,11 @@
 "use client";
 
-import { TrendingUpIcon } from "lucide-react";
 import type { JSX } from "react";
-import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
 import type { BarProps } from "recharts";
 import type { ActiveShape } from "recharts/types/util/types";
+
+import { TrendingUpIcon } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";
 

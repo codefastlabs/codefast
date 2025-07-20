@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import type { JSX } from "react";
 import { Bar, BarChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

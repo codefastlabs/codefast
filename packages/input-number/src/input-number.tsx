@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
 import type {
   ComponentProps,
   FocusEventHandler,
@@ -9,6 +8,8 @@ import type {
   PointerEventHandler,
   RefObject,
 } from "react";
+
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import type { Scope } from "@radix-ui/react-context";
 

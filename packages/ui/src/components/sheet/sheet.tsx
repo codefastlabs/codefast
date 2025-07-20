@@ -1,7 +1,8 @@
 "use client";
 
-import { XIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
+
+import { XIcon } from "lucide-react";
 
 import type { VariantProps } from "@/lib/utils";
 

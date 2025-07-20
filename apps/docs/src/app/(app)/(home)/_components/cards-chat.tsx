@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { Check, Plus, Send } from "lucide-react";
 import { useId, useState } from "react";
-import type { JSX } from "react";
 
 import {
   Avatar,

@@ -1,9 +1,10 @@
 "use client";
 
+import type { ComponentProps, JSX } from "react";
+
 import { OTPInput, OTPInputContext } from "input-otp";
 import { MinusIcon } from "lucide-react";
 import { use } from "react";
-import type { ComponentProps, JSX } from "react";
 
 import { cn } from "@/lib/utils";
 

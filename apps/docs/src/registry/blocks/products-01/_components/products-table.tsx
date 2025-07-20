@@ -1,5 +1,6 @@
-import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { ArrowUpDownIcon, EllipsisVerticalIcon, ListFilterIcon, PlusIcon } from "lucide-react";
 
 import {
   Badge,

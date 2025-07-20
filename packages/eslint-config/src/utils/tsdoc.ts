@@ -1,4 +1,5 @@
 import type { Linter } from "eslint";
+
 import pluginTsdoc from "eslint-plugin-tsdoc";
 
 export const tsdocRules: Linter.Config[] = [

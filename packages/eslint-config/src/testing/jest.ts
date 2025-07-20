@@ -1,4 +1,5 @@
 import type { Linter } from "eslint";
+
 import pluginJest from "eslint-plugin-jest";
 
 export const jestRules: Linter.Config[] = [

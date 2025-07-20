@@ -1,7 +1,8 @@
 "use client";
 
-import { ActivityIcon, TrendingUpIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { ActivityIcon, TrendingUpIcon } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

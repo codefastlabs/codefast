@@ -1,8 +1,9 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
 import type { JSX } from "react";
+
+import Link from "next/link";
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@codefast/ui";
 

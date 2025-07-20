@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
 import type { ComponentProps, CSSProperties, JSX } from "react";
+
+import { useCallback, useMemo } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 

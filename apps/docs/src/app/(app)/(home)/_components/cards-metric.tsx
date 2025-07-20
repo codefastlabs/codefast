@@ -1,6 +1,7 @@
 "use client";
 
 import type { JSX } from "react";
+
 import { Line, LineChart } from "recharts";
 
 import type { ChartConfig } from "@codefast/ui";

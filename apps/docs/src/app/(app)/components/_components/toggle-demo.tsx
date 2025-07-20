@@ -1,5 +1,6 @@
-import { BoldIcon, BookmarkIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
 import type { JSX } from "react";
+
+import { BoldIcon, BookmarkIcon, ItalicIcon, UnderlineIcon } from "lucide-react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Toggle } from "@codefast/ui";

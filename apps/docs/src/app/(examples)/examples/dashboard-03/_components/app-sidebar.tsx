@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, JSX } from "react";
+
 import {
   ChartLineIcon,
   FileIcon,
@@ -11,7 +13,6 @@ import {
   ShoppingCartIcon,
   UserIcon,
 } from "lucide-react";
-import type { ComponentProps, JSX } from "react";
 
 import { NavMain } from "@/app/(examples)/examples/dashboard-03/_components/nav-main";
 import { NavSecondary } from "@/app/(examples)/examples/dashboard-03/_components/nav-secondary";

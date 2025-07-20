@@ -1,6 +1,7 @@
+import type { ComponentProps, JSX } from "react";
+
 import { SearchIcon } from "lucide-react";
 import { useId } from "react";
-import type { ComponentProps, JSX } from "react";
 
 import { Label, SidebarInput } from "@codefast/ui";
 

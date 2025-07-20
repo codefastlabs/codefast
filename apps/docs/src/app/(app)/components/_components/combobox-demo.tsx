@@ -1,8 +1,9 @@
 "use client";
 
+import type { JSX } from "react";
+
 import { CheckIcon, ChevronDownIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import {

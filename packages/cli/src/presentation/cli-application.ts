@@ -5,12 +5,11 @@
  * Following explicit architecture guidelines for CLI applications.
  */
 
+import { Command } from "commander";
+import { inject, injectable } from "inversify";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-
-import { Command } from "commander";
-import { inject, injectable } from "inversify";
 
 import type { AnalyzeProjectUseCase } from "@/core/application/use-cases/analyze-project.use-case";
 import type { GreetUserUseCase } from "@/core/application/use-cases/greet-user.use-case";

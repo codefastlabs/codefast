@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 import {
   BoldIcon,
   FullscreenIcon,
@@ -8,7 +10,6 @@ import {
   UnderlineIcon,
 } from "lucide-react";
 import Link from "next/link";
-import type { JSX } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { buttonVariants, Separator, ToggleGroup, ToggleGroupItem } from "@codefast/ui";

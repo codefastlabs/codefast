@@ -1,9 +1,10 @@
 "use client";
 
-import { MoreHorizontalIcon } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
 import type { JSX } from "react";
+
+import { MoreHorizontalIcon } from "lucide-react";
+import Link from "next/link";
 
 import {
   DropdownMenu,

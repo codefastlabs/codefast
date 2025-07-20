@@ -1,5 +1,6 @@
-import { PlusIcon } from "lucide-react";
 import type { ComponentProps, JSX } from "react";
+
+import { PlusIcon } from "lucide-react";
 
 import { Calendars } from "@/registry/blocks/sidebar-15/_components/calendars";
 import { DatePicker } from "@/registry/blocks/sidebar-15/_components/date-picker";

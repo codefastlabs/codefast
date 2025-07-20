@@ -1,8 +1,9 @@
 "use client";
 
+import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
+
 import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { ComponentProps, CSSProperties, Dispatch, JSX, SetStateAction } from "react";
 
 import type { VariantProps } from "@/lib/utils";
 

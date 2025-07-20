@@ -1,4 +1,6 @@
-import { type JSX, useId } from "react";
+import type { JSX } from "react";
+
+import { useId } from "react";
 
 import { GridWrapper } from "@/components/grid-wrapper";
 import { Checkbox, Input, Label, Textarea } from "@codefast/ui";

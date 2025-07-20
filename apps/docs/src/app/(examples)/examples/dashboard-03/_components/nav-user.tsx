@@ -1,7 +1,8 @@
 "use client";
 
-import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react";
 import type { JSX } from "react";
+
+import { BadgeCheck, Bell, CreditCard, LogOut, Sparkles } from "lucide-react";
 
 import {
   Avatar,

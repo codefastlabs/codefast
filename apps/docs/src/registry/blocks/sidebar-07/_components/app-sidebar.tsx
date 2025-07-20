@@ -1,5 +1,7 @@
 "use client";
 
+import type { ComponentProps, ComponentType, JSX } from "react";
+
 import {
   AudioWaveformIcon,
   BookOpenIcon,
@@ -13,7 +15,6 @@ import {
   Settings2Icon,
   SquareTerminalIcon,
 } from "lucide-react";
-import type { ComponentProps, ComponentType, JSX } from "react";
 
 import { NavMain } from "@/registry/blocks/sidebar-07/_components/nav-main";
 import { NavProjects } from "@/registry/blocks/sidebar-07/_components/nav-projects";
