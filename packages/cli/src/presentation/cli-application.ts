@@ -32,6 +32,10 @@ export class CLIApplication {
     this.setupCommands();
   }
 
+  run(argv?: string[]): void {
+    this.program.parse(argv);
+  }
+
   private setupCommands(): void {
     // Get package version
     const __filename = fileURLToPath(import.meta.url);
@@ -81,12 +85,8 @@ export class CLIApplication {
       .option("-d, --packages-dir <dir>", "packages directory to analyze", "packages")
       .action(async (options: { packagesDir?: string }) => {
         await this.checkComponentTypesUseCase.execute({
-          packagesDir: options.packagesDir,
+          packagesDirectory: options.packagesDir,
         });
       });
-  }
-
-  run(argv?: string[]): void {
-    this.program.parse(argv);
   }
 }

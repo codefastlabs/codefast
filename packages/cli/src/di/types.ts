@@ -21,8 +21,8 @@ export const TYPES = {
 
   // Use Cases
   AnalyzeProjectUseCase: Symbol.for("AnalyzeProjectUseCase"),
-  GreetUserUseCase: Symbol.for("GreetUserUseCase"),
   CheckComponentTypesUseCase: Symbol.for("CheckComponentTypesUseCase"),
+  GreetUserUseCase: Symbol.for("GreetUserUseCase"),
 
   // CLI Presentation
   CLIApplication: Symbol.for("CLIApplication"),

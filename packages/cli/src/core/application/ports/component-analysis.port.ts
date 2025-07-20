@@ -7,52 +7,52 @@
 
 export interface ComponentInfo {
   name: string;
-  path: string;
   packageName: string;
+  path: string;
 }
 
 export interface ComponentAnalysisResult {
-  package: string;
-  component: string;
-  file: string;
-  exportedComponents: string[];
   actualComponents: string[];
-  exportedTypes: string[];
-  componentTypeCorrespondence: Array<{
+  component: string;
+  componentTypeCorrespondence: {
     component: string;
     expectedType: string;
     hasCorrespondingType: boolean;
-  }>;
-  missingTypeExports: Array<{
-    component: string;
-    expectedType: string;
-  }>;
-  falsePositiveTypeExports: Array<{
+  }[];
+  exportedComponents: string[];
+  exportedTypes: string[];
+  falsePositiveTypeExports: {
     typeName: string;
     expectedComponent: string;
-  }>;
+  }[];
+  file: string;
   hasCorrespondenceIssues: boolean;
   hasFalsePositiveTypes: boolean;
+  missingTypeExports: {
+    component: string;
+    expectedType: string;
+  }[];
+  package: string;
 }
 
 export interface ComponentAnalysisService {
   /**
    * Discover all packages in the packages directory
    */
-  discoverPackages(packagesDir: string): Promise<string[]>;
+  discoverPackages: (packagesDirectory: string) => Promise<string[]>;
 
   /**
    * Find components in a specific package
    */
-  findComponentsInPackage(packagePath: string, packageName: string): Promise<ComponentInfo[]>;
+  findComponentsInPackage: (packagePath: string, packageName: string) => Promise<ComponentInfo[]>;
 
   /**
    * Analyze a component file for exports and types
    */
-  analyzeComponentFile(componentInfo: ComponentInfo): Promise<ComponentAnalysisResult | null>;
+  analyzeComponentFile: (componentInfo: ComponentInfo) => Promise<ComponentAnalysisResult | null>;
 
   /**
    * Check if an export name represents a React component
    */
-  isComponent(exportName: string): boolean;
+  isComponent: (exportName: string) => boolean;
 }
