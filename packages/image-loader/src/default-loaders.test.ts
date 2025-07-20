@@ -1,12 +1,10 @@
 import { createDefaultImageLoaderFactory, registerDefaultLoaders } from "@/default-loaders";
 import { ImageLoaderFactory } from "@/loader-factory";
-import {
-  AWSCloudFrontLoader,
-  CloudinaryLoader,
-  ImgixLoader,
-  SupabaseLoader,
-  UnsplashLoader,
-} from "@/loaders";
+import { AWSCloudFrontLoader } from "@/loaders/aws-cloudfront-loader";
+import { CloudinaryLoader } from "@/loaders/cloudinary-loader";
+import { ImgixLoader } from "@/loaders/imgix-loader";
+import { SupabaseLoader } from "@/loaders/supabase-loader";
+import { UnsplashLoader } from "@/loaders/unsplash-loader";
 
 describe("default-loaders", () => {
   describe("registerDefaultLoaders", () => {
