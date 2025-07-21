@@ -8,6 +8,11 @@
 
 import { inject, injectable } from "inversify";
 
+import type {
+  FileAnalysis,
+  TreeShakingAnalysisPort,
+} from "@/core/application/ports/analysis/tree-shaking.analysis.port";
+import type { FileFinderServicePort } from "@/core/application/ports/services/file-finder.service.port";
 import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
 import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
 import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
@@ -48,10 +53,14 @@ export class AnalyzeTreeShakingUseCase {
     private readonly fileSystemService: FileSystemSystemPort,
     @inject(TYPES.PathSystemPort)
     private readonly pathService: PathSystemPort,
+    @inject(TYPES.FileFinderServicePort)
+    private readonly fileFinderService: FileFinderServicePort,
+    @inject(TYPES.TreeShakingAnalysisPort)
+    private readonly treeShakingAnalysisService: TreeShakingAnalysisPort,
   ) {}
 
   async execute(input: AnalyzeTreeShakingInput = {}): Promise<PackageAnalysis[]> {
-    const { packageName, packagesPath = "packages" } = input;
+    const { fix = false, packageName, packagesPath = "packages" } = input;
 
     this.loggingService.info("🌳 Analyzing tree-shaking optimization opportunities...");
 
@@ -73,6 +82,16 @@ export class AnalyzeTreeShakingUseCase {
         const analysis = await this.analyzePackage(packageDirectory);
 
         analyses.push(analysis);
+
+        // Apply auto-fix if requested
+        if (
+          fix &&
+          analysis.issues.some(
+            (issue) => issue.type === "wildcard-export" || issue.type === "deep-reexport",
+          )
+        ) {
+          await this.applyAutoFix(analysis);
+        }
       }
 
       // Display summary
@@ -94,9 +113,12 @@ export class AnalyzeTreeShakingUseCase {
       return exists ? [packagePath] : [];
     }
 
-    // Find all package directories
-    const pattern = this.pathService.join(packagesPath, "*/package.json");
-    const packageJsonFiles = await this.fileSystemService.findFiles(pattern);
+    // Use fast-glob to find all package directories efficiently
+    const pattern = `${packagesPath}/*/package.json`;
+    const packageJsonFiles = await this.fileFinderService.findFiles(pattern, {
+      absolute: true,
+      onlyFiles: true,
+    });
 
     return packageJsonFiles.map((file) => this.pathService.dirname(file));
   }
@@ -118,9 +140,10 @@ export class AnalyzeTreeShakingUseCase {
     };
 
     // Check if index file exists
-    const indexExists = this.fileSystemService.existsSync(indexFile);
-
-    if (!indexExists) {
+    if (
+      !this.treeShakingAnalysisService.isTypeScriptFile(indexFile) ||
+      !this.fileSystemService.existsSync(indexFile)
+    ) {
       analysis.issues.push({
         description: "No index.ts file found",
         file: indexFile,
@@ -133,165 +156,151 @@ export class AnalyzeTreeShakingUseCase {
       return analysis;
     }
 
-    // Analyze the index file
-    await this.analyzeIndexFile(analysis);
-
-    // Calculate tree-shaking score
-    analysis.treeShakingScore = this.calculateTreeShakingScore(analysis);
-
-    return analysis;
-  }
-
-  private async analyzeIndexFile(analysis: PackageAnalysis): Promise<void> {
     try {
-      // Read the index file content
-      const content = this.fileSystemService.readFileSync(analysis.indexFile, "utf8");
+      // Use AST-based analysis instead of regex
+      const fileAnalysis = await this.treeShakingAnalysisService.analyzeFile(indexFile);
 
-      // Count export statements using simple regex
-      const exportLines = content
-        .split("\n")
-        .filter(
-          (line) => line.trim().startsWith("export ") && !line.trim().startsWith("export type"),
-        );
+      analysis.exportCount = fileAnalysis.exports.length;
+      analysis.reexportDepth = fileAnalysis.reexportDepth;
 
-      const typeExportLines = content
-        .split("\n")
-        .filter((line) => line.trim().startsWith("export type"));
+      // Analyze export patterns and identify issues
+      await this.analyzeExportPatterns(analysis, fileAnalysis);
 
-      analysis.exportCount = exportLines.length + typeExportLines.length;
+      // Find and analyze all index.ts files in the package for intermediate file detection
+      await this.findAndAnalyzeIntermediateFiles(analysis, packagePath);
 
-      // Analyze export patterns
-      for (const [index, line] of exportLines.entries()) {
-        await this.analyzeExportLine(analysis, line, index + 1);
-      }
-
-      // Check for large barrel exports
-      if (analysis.exportCount > 50) {
-        analysis.issues.push({
-          description: `Large barrel export with ${analysis.exportCount} exports`,
-          file: analysis.indexFile,
-          recommendation:
-            "Consider splitting into smaller, focused exports or providing selective entry points",
-          severity: "critical",
-          type: "large-barrel",
-        });
-      } else if (analysis.exportCount > 20) {
-        analysis.issues.push({
-          description: `Medium-sized barrel export with ${analysis.exportCount} exports`,
-          file: analysis.indexFile,
-          recommendation:
-            "Consider organizing exports by feature or providing selective entry points",
-          severity: "high",
-          type: "large-barrel",
-        });
-      }
+      // Calculate a tree-shaking score based on enhanced criteria
+      analysis.treeShakingScore = this.calculateEnhancedTreeShakingScore(analysis);
     } catch (error) {
       analysis.issues.push({
         description: `Error analyzing file: ${String(error)}`,
-        file: analysis.indexFile,
+        file: indexFile,
         recommendation: "Check file syntax and structure",
         severity: "medium",
         type: "unused-export",
       });
+      analysis.treeShakingScore = 50;
     }
+
+    return analysis;
   }
 
-  private async analyzeExportLine(
+  private async analyzeExportPatterns(
     analysis: PackageAnalysis,
-    line: string,
-    lineNumber: number,
+    fileAnalysis: FileAnalysis,
   ): Promise<void> {
-    // Extract module specifier from export statement
-    const fromMatch = /from\s+["']([^"']+)["']/.exec(line);
-
-    if (!fromMatch) {
-      return;
-    }
-
-    const moduleSpecifier = fromMatch[1];
-
-    // Check for wildcard exports
-    if (line.includes("export *")) {
-      analysis.issues.push({
-        description: `Wildcard export from "${moduleSpecifier}" prevents tree-shaking`,
-        file: analysis.indexFile,
-        line: lineNumber,
-        recommendation: "Use named exports instead of wildcard exports for better tree-shaking",
-        severity: "high",
-        type: "wildcard-export",
-      });
-    }
-
-    // Check re-export depth for relative imports
-    if (moduleSpecifier.startsWith("./") || moduleSpecifier.startsWith("../")) {
-      const reexportPath = this.pathService.resolve(
-        this.pathService.dirname(analysis.indexFile),
-        moduleSpecifier,
-      );
-
-      const depth = await this.calculateReexportDepth(reexportPath, 1);
-
-      analysis.reexportDepth = Math.max(analysis.reexportDepth, depth);
-
-      if (depth > 3) {
+    for (const exportInfo of fileAnalysis.exports) {
+      // Only penalize problematic patterns, not all named exports
+      if (exportInfo.type === "wildcard" && exportInfo.isReexport) {
         analysis.issues.push({
-          description: `Deep re-export chain (depth: ${depth}) from "${moduleSpecifier}"`,
+          description: `Wildcard export from "${exportInfo.moduleSpecifier ?? "unknown"}" prevents tree-shaking`,
           file: analysis.indexFile,
-          line: lineNumber,
-          recommendation: "Consider flattening the export structure to reduce re-export depth",
-          severity: "medium",
-          type: "deep-reexport",
+          line: exportInfo.line,
+          recommendation: "Use named exports instead of wildcard exports for better tree-shaking",
+          severity: "high",
+          type: "wildcard-export",
         });
       }
-    }
-  }
 
-  private async calculateReexportDepth(filePath: string, currentDepth: number): Promise<number> {
-    if (currentDepth > 5) return currentDepth; // Prevent infinite recursion
+      // Check for deep re-export chains (only problematic ones)
+      if (exportInfo.isReexport && exportInfo.moduleSpecifier?.startsWith("./")) {
+        const depth = await this.treeShakingAnalysisService.calculateReexportDepth(
+          this.pathService.resolve(
+            this.pathService.dirname(analysis.indexFile),
+            exportInfo.moduleSpecifier,
+          ),
+        );
 
-    const indexPath = filePath.endsWith(".ts") ? filePath : `${filePath}/index.ts`;
-    const exists = this.fileSystemService.existsSync(indexPath);
-
-    if (!exists) {
-      return currentDepth;
-    }
-
-    try {
-      const content = this.fileSystemService.readFileSync(indexPath, "utf8");
-      const exportLines = content
-        .split("\n")
-        .filter((line) => line.trim().startsWith("export ") && line.includes("from"));
-
-      let maxDepth = currentDepth;
-
-      for (const line of exportLines) {
-        const fromMatch = /from\s+["']([^"']+)["']/.exec(line);
-
-        if (fromMatch) {
-          const moduleSpecifier = fromMatch[1];
-
-          if (moduleSpecifier.startsWith("./") || moduleSpecifier.startsWith("../")) {
-            const nextPath = this.pathService.resolve(
-              this.pathService.dirname(indexPath),
-              moduleSpecifier,
-            );
-            const depth = await this.calculateReexportDepth(nextPath, currentDepth + 1);
-
-            maxDepth = Math.max(maxDepth, depth);
-          }
+        if (depth > 3) {
+          analysis.issues.push({
+            description: `Deep re-export chain (depth: ${depth}) from "${exportInfo.moduleSpecifier ?? "unknown"}"`,
+            file: analysis.indexFile,
+            line: exportInfo.line,
+            recommendation: "Consider flattening the export structure to reduce re-export depth",
+            severity: "medium",
+            type: "deep-reexport",
+          });
         }
       }
+    }
 
-      return maxDepth;
-    } catch {
-      return currentDepth;
+    // Only warn about large barrel exports if they're problematic (many wildcard exports)
+    const wildcardExports = fileAnalysis.exports.filter((exp) => exp.type === "wildcard");
+
+    if (wildcardExports.length > 10) {
+      analysis.issues.push({
+        description: `Large number of wildcard exports (${wildcardExports.length}) creates tree-shaking issues`,
+        file: analysis.indexFile,
+        recommendation: "Convert wildcard exports to named exports for better tree-shaking",
+        severity: "critical",
+        type: "large-barrel",
+      });
     }
   }
 
-  private calculateTreeShakingScore(analysis: PackageAnalysis): number {
+  private async findAndAnalyzeIntermediateFiles(
+    analysis: PackageAnalysis,
+    packagePath: string,
+  ): Promise<void> {
+    // Find all index.ts files in the package using fast-glob
+    const indexPattern = `${packagePath}/**/index.ts`;
+    const indexFiles = await this.fileFinderService.findFiles(indexPattern, {
+      absolute: true,
+      onlyFiles: true,
+    });
+
+    // Filter out the main index file and analyze the rest
+    const intermediateFiles = indexFiles.filter((file) => file !== analysis.indexFile);
+
+    for (const indexFile of intermediateFiles) {
+      try {
+        const isIntermediate =
+          await this.treeShakingAnalysisService.isIntermediateIndexFile(indexFile);
+
+        if (isIntermediate) {
+          const fileAnalysis = await this.treeShakingAnalysisService.analyzeFile(indexFile);
+          const depth = fileAnalysis.reexportDepth;
+
+          // Update the maximum re-export depth
+          analysis.reexportDepth = Math.max(analysis.reexportDepth, depth);
+
+          // Add issue for intermediate files that create deep chains
+          if (depth > 2) {
+            analysis.issues.push({
+              description: `Intermediate index file creates ${depth}-level re-export chain`,
+              file: indexFile,
+              recommendation: "Consider flattening exports to the main index.ts file",
+              severity: depth > 3 ? "high" : "medium",
+              type: "deep-reexport",
+            });
+          }
+
+          // Check for wildcard exports in intermediate files
+          const wildcardExports = fileAnalysis.exports.filter((exp) => exp.type === "wildcard");
+
+          if (wildcardExports.length > 0) {
+            analysis.issues.push({
+              description: `Intermediate file contains ${wildcardExports.length} wildcard export(s)`,
+              file: indexFile,
+              recommendation: "Convert to named exports or flatten to main index.ts",
+              severity: "high",
+              type: "wildcard-export",
+            });
+          }
+        }
+      } catch (error) {
+        // Skip files that can't be analyzed
+        this.loggingService.warning(
+          `Failed to analyze intermediate file ${indexFile}: ${String(error)}`,
+        );
+      }
+    }
+  }
+
+  private calculateEnhancedTreeShakingScore(analysis: PackageAnalysis): number {
     let score = 100;
 
-    // Deduct points for issues
+    // Enhanced scoring that only penalizes problematic patterns
     for (const issue of analysis.issues) {
       switch (issue.severity) {
         case "critical": {
@@ -316,16 +325,73 @@ export class AnalyzeTreeShakingUseCase {
       }
     }
 
-    // Additional deductions for metrics
-    if (analysis.exportCount > 100) score -= 20;
-    else if (analysis.exportCount > 50) score -= 10;
-    else if (analysis.exportCount > 20) score -= 5;
+    // Only penalize deep re-export chains (not all re-exports)
+    if (analysis.reexportDepth > 4) {
+      score -= 20;
+    } else if (analysis.reexportDepth > 3) {
+      score -= 10;
+    }
 
-    if (analysis.reexportDepth > 4) score -= 15;
-    else if (analysis.reexportDepth > 3) score -= 10;
-    else if (analysis.reexportDepth > 2) score -= 5;
+    // Don't penalize large numbers of named exports (this is actually good practice)
+    // Only penalize if there are many wildcard exports
+    const wildcardIssues = analysis.issues.filter((issue) => issue.type === "wildcard-export");
+
+    if (wildcardIssues.length > 5) {
+      score -= 15;
+    }
 
     return Math.max(0, score);
+  }
+
+  private async applyAutoFix(analysis: PackageAnalysis): Promise<void> {
+    this.loggingService.info(`🔧 Applying auto-fix for package: ${analysis.packageName}`);
+
+    try {
+      // Find all intermediate index files in the package
+      const packagePath = analysis.packagePath;
+      const indexPattern = `${packagePath}/**/index.ts`;
+      const allIndexFiles = await this.fileFinderService.findFiles(indexPattern, {
+        absolute: true,
+        onlyFiles: true,
+      });
+
+      const intermediateFiles: string[] = [];
+
+      for (const indexFile of allIndexFiles) {
+        if (indexFile !== analysis.indexFile) {
+          const isIntermediate =
+            await this.treeShakingAnalysisService.isIntermediateIndexFile(indexFile);
+
+          if (isIntermediate) {
+            intermediateFiles.push(indexFile);
+          }
+        }
+      }
+
+      if (intermediateFiles.length > 0) {
+        // Flatten exports from intermediate files to the main index file
+        await this.treeShakingAnalysisService.flattenExports(intermediateFiles, {
+          createBackup: true,
+          preserveTypeExports: true,
+          removeIntermediateFiles: true,
+          targetIndexFile: analysis.indexFile,
+        });
+
+        this.loggingService.success(
+          `✅ Flattened ${intermediateFiles.length} intermediate files to ${analysis.indexFile}`,
+        );
+
+        // Re-analyze the package after fixes
+        const updatedAnalysis = await this.analyzePackage(analysis.packagePath);
+
+        analysis.issues = updatedAnalysis.issues;
+        analysis.treeShakingScore = updatedAnalysis.treeShakingScore;
+        analysis.exportCount = updatedAnalysis.exportCount;
+        analysis.reexportDepth = updatedAnalysis.reexportDepth;
+      }
+    } catch (error) {
+      this.loggingService.error(`Failed to apply auto-fix: ${String(error)}`);
+    }
   }
 
   private displaySummary(analyses: PackageAnalysis[]): void {

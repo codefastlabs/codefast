@@ -8,9 +8,11 @@
 export const TYPES = {
   // Ports
   ComponentAnalysisPort: Symbol.for("ComponentAnalysisPort"),
+  FileFinderServicePort: Symbol.for("FileFinderServicePort"),
   FilesystemSystemPort: Symbol.for("FilesystemSystemPort"),
   LoggingServicePort: Symbol.for("LoggingServicePort"),
   PathSystemPort: Symbol.for("PathSystemPort"),
+  TreeShakingAnalysisPort: Symbol.for("TreeShakingAnalysisPort"),
   TypeScriptAnalysisPort: Symbol.for("TypeScriptAnalysisPort"),
   UrlSystemPort: Symbol.for("UrlSystemPort"),
 
