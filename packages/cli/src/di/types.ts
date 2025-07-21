@@ -20,5 +20,7 @@ export const TYPES = {
   GreetUserUseCase: Symbol.for("GreetUserUseCase"),
 
   // CLI Commands
+  Command: Symbol.for("Command"),
   CommandHandler: Symbol.for("CommandHandler"),
+  CommandRegistry: Symbol.for("CommandRegistry"),
 } as const;
