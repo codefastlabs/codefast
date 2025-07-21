@@ -8,12 +8,8 @@
 import chalk from "chalk";
 import pkg from "fast-glob";
 import { injectable } from "inversify";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 
-import type {
-  FileSystemSystemPort,
-  Stats,
-} from "@/core/application/ports/system/file-system.system.port";
+import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
 
 const { glob } = pkg;
 
@@ -71,21 +67,5 @@ export class FastGlobFileSystemSystemAdapter implements FileSystemSystemPort {
         );
       },
     };
-  }
-
-  readFileSync(path: string, encoding: BufferEncoding = "utf8"): string {
-    return readFileSync(path, encoding);
-  }
-
-  readdirSync(path: string): string[] {
-    return readdirSync(path);
-  }
-
-  statSync(path: string): Stats {
-    return statSync(path);
-  }
-
-  existsSync(path: string): boolean {
-    return existsSync(path);
   }
 }

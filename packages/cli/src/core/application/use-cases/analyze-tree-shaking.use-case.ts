@@ -7,6 +7,8 @@
  */
 
 import { inject, injectable } from "inversify";
+import fs from "node:fs";
+import path from "node:path";
 
 import type {
   FileAnalysis,
@@ -14,8 +16,6 @@ import type {
 } from "@/core/application/ports/analysis/tree-shaking.analysis.port";
 import type { FileFinderServicePort } from "@/core/application/ports/services/file-finder.service.port";
 import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
-import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
-import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
 
 import { TYPES } from "@/di/types";
 
@@ -49,10 +49,6 @@ export class AnalyzeTreeShakingUseCase {
   constructor(
     @inject(TYPES.LoggingServicePort)
     private readonly loggingService: LoggingServicePort,
-    @inject(TYPES.FilesystemSystemPort)
-    private readonly fileSystemService: FileSystemSystemPort,
-    @inject(TYPES.PathSystemPort)
-    private readonly pathService: PathSystemPort,
     @inject(TYPES.FileFinderServicePort)
     private readonly fileFinderService: FileFinderServicePort,
     @inject(TYPES.TreeShakingAnalysisPort)
@@ -107,8 +103,8 @@ export class AnalyzeTreeShakingUseCase {
 
   private async findPackages(packagesPath: string, packageName?: string): Promise<string[]> {
     if (packageName) {
-      const packagePath = this.pathService.join(packagesPath, packageName);
-      const exists = this.fileSystemService.existsSync(packagePath);
+      const packagePath = path.join(packagesPath, packageName);
+      const exists = fs.existsSync(packagePath);
 
       return exists ? [packagePath] : [];
     }
@@ -120,12 +116,12 @@ export class AnalyzeTreeShakingUseCase {
       onlyFiles: true,
     });
 
-    return packageJsonFiles.map((file) => this.pathService.dirname(file));
+    return packageJsonFiles.map((file) => path.dirname(file));
   }
 
   private async analyzePackage(packagePath: string): Promise<PackageAnalysis> {
-    const packageName = this.pathService.basename(packagePath);
-    const indexFile = this.pathService.join(packagePath, "src", "index.ts");
+    const packageName = path.basename(packagePath);
+    const indexFile = path.join(packagePath, "src", "index.ts");
 
     this.loggingService.info(`📦 Analyzing package: ${packageName}`);
 
@@ -139,11 +135,8 @@ export class AnalyzeTreeShakingUseCase {
       treeShakingScore: 100,
     };
 
-    // Check if index file exists
-    if (
-      !this.treeShakingAnalysisService.isTypeScriptFile(indexFile) ||
-      !this.fileSystemService.existsSync(indexFile)
-    ) {
+    // Check if an index file exists
+    if (!this.treeShakingAnalysisService.isTypeScriptFile(indexFile) || !fs.existsSync(indexFile)) {
       analysis.issues.push({
         description: "No index.ts file found",
         file: indexFile,
@@ -205,10 +198,7 @@ export class AnalyzeTreeShakingUseCase {
       // Check for deep re-export chains (only problematic ones)
       if (exportInfo.isReexport && exportInfo.moduleSpecifier?.startsWith("./")) {
         const depth = await this.treeShakingAnalysisService.calculateReexportDepth(
-          this.pathService.resolve(
-            this.pathService.dirname(analysis.indexFile),
-            exportInfo.moduleSpecifier,
-          ),
+          path.resolve(path.dirname(analysis.indexFile), exportInfo.moduleSpecifier),
         );
 
         if (depth > 3) {

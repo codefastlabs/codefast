@@ -5,34 +5,25 @@
  * Following explicit architecture guidelines for CLI applications.
  */
 
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
+import fs from "node:fs";
+import path from "node:path";
 
 import type {
-  ComponentAnalysisResult,
   ComponentAnalysisPort,
+  ComponentAnalysisResult,
   ComponentInfo,
 } from "@/core/application/ports/analysis/component.analysis.port";
-import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
-import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
-
-import { TYPES } from "@/di/types";
 
 @injectable()
 export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {
-  constructor(
-    @inject(TYPES.FilesystemSystemPort)
-    private readonly fileSystemService: FileSystemSystemPort,
-    @inject(TYPES.PathSystemPort)
-    private readonly pathService: PathSystemPort,
-  ) {}
-
   discoverPackages(packagesDirectory: string): string[] {
     try {
-      const packages = this.fileSystemService.readdirSync(packagesDirectory);
+      const packages = fs.readdirSync(packagesDirectory);
 
       return packages.filter((packageName) => {
-        const packagePath = this.pathService.join(packagesDirectory, packageName);
-        const stats = this.fileSystemService.statSync(packagePath);
+        const packagePath = path.join(packagesDirectory, packageName);
+        const stats = fs.statSync(packagePath);
 
         return stats.isDirectory() && packageName !== ".DS_Store";
       });
@@ -47,14 +38,14 @@ export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {
     try {
       // For ui package, check components in src/components/
       if (packageName === "ui") {
-        const uiComponentsDirectory = this.pathService.join(packagePath, "src", "components");
+        const uiComponentsDirectory = path.join(packagePath, "src", "components");
 
-        if (this.fileSystemService.existsSync(uiComponentsDirectory)) {
-          const uiComponents = this.fileSystemService.readdirSync(uiComponentsDirectory);
+        if (fs.existsSync(uiComponentsDirectory)) {
+          const uiComponents = fs.readdirSync(uiComponentsDirectory);
 
           for (const componentName of uiComponents) {
-            const componentPath = this.pathService.join(uiComponentsDirectory, componentName);
-            const componentStats = this.fileSystemService.statSync(componentPath);
+            const componentPath = path.join(uiComponentsDirectory, componentName);
+            const componentStats = fs.statSync(componentPath);
 
             if (componentStats.isDirectory()) {
               componentsToCheck.push({
@@ -67,11 +58,11 @@ export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {
         }
       } else {
         // For other packages, check if they have components directly in src/
-        const sourceDirectory = this.pathService.join(packagePath, "src");
+        const sourceDirectory = path.join(packagePath, "src");
 
-        if (this.fileSystemService.existsSync(sourceDirectory)) {
+        if (fs.existsSync(sourceDirectory)) {
           // Check if this package has component files (tsx files that aren't test files)
-          const sourceFiles = this.fileSystemService.readdirSync(sourceDirectory);
+          const sourceFiles = fs.readdirSync(sourceDirectory);
           const hasComponentFiles = sourceFiles.some(
             (file: string) =>
               file.endsWith(".tsx") && !file.includes(".test.") && !file.includes(".spec."),
@@ -97,17 +88,17 @@ export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {
     const { name: componentName, packageName: packageName, path: componentPath } = componentInfo;
 
     try {
-      // Check for a main component file
+      // Check for a main part file
       const possibleFiles = [
-        this.pathService.join(componentPath, `${componentName}.tsx`),
-        this.pathService.join(componentPath, "index.tsx"),
-        this.pathService.join(componentPath, "index.ts"),
+        path.join(componentPath, `${componentName}.tsx`),
+        path.join(componentPath, "index.tsx"),
+        path.join(componentPath, "index.ts"),
       ];
 
       let mainFile: null | string = null;
 
       for (const file of possibleFiles) {
-        if (this.fileSystemService.existsSync(file)) {
+        if (fs.existsSync(file)) {
           mainFile = file;
           break;
         }
@@ -117,7 +108,7 @@ export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {
         return null;
       }
 
-      const content = this.fileSystemService.readFileSync(mainFile, "utf8");
+      const content = fs.readFileSync(mainFile, "utf8");
 
       // Extract exported components from export { ... } statements
       const exportComponentMatches = content.match(/export\s*\{\s*([^}]+)\s*}/g) ?? [];
