@@ -13,8 +13,6 @@ import type { TypeScriptAnalysisPort } from "@/core/application/ports/analysis/t
 import type { FileFinderServicePort } from "@/core/application/ports/services/file-finder.service.port";
 import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
 import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
-import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
-import type { UrlSystemPort } from "@/core/application/ports/system/url.system.port";
 
 import { TYPES } from "@/di/types";
 import { ReactComponentAnalysisAdapter } from "@/infrastructure/adapters/analysis/react.component.analysis.adapter";
@@ -23,8 +21,6 @@ import { TsMorphTypescriptAnalysisAdapter } from "@/infrastructure/adapters/anal
 import { ChalkLoggingServiceAdapter } from "@/infrastructure/adapters/services/chalk.logging.service.adapter";
 import { FastGlobFileFinderAdapter } from "@/infrastructure/adapters/services/fast-glob.file-finder.adapter";
 import { FastGlobFileSystemSystemAdapter } from "@/infrastructure/adapters/system/fast-glob.file-system.system.adapter";
-import { NodePathSystemAdapter } from "@/infrastructure/adapters/system/node.path.system.adapter";
-import { NodeUrlSystemAdapter } from "@/infrastructure/adapters/system/node.url.system.adapter";
 
 export const infrastructureModule = new ContainerModule((options) => {
   // Ports
@@ -32,8 +28,6 @@ export const infrastructureModule = new ContainerModule((options) => {
   options
     .bind<FileSystemSystemPort>(TYPES.FilesystemSystemPort)
     .to(FastGlobFileSystemSystemAdapter);
-  options.bind<PathSystemPort>(TYPES.PathSystemPort).to(NodePathSystemAdapter).inSingletonScope();
-  options.bind<UrlSystemPort>(TYPES.UrlSystemPort).to(NodeUrlSystemAdapter).inSingletonScope();
   options
     .bind<TypeScriptAnalysisPort>(TYPES.TypeScriptAnalysisPort)
     .to(TsMorphTypescriptAnalysisAdapter)

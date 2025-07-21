@@ -11,10 +11,8 @@ export const TYPES = {
   FileFinderServicePort: Symbol.for("FileFinderServicePort"),
   FilesystemSystemPort: Symbol.for("FilesystemSystemPort"),
   LoggingServicePort: Symbol.for("LoggingServicePort"),
-  PathSystemPort: Symbol.for("PathSystemPort"),
   TreeShakingAnalysisPort: Symbol.for("TreeShakingAnalysisPort"),
   TypeScriptAnalysisPort: Symbol.for("TypeScriptAnalysisPort"),
-  UrlSystemPort: Symbol.for("UrlSystemPort"),
 
   // Use Cases
   AnalyzeProjectUseCase: Symbol.for("AnalyzeProjectUseCase"),
