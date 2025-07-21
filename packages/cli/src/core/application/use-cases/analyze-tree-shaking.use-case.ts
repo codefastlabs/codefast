@@ -500,6 +500,7 @@ export class AnalyzeTreeShakingUseCase {
 
           this.loggingService.item(`${typeLabel}: ${issue.description}`, 2);
           this.loggingService.item(`File: ${issue.file}`, 2);
+
           if (issue.line) {
             this.loggingService.item(`Line: ${issue.line}`, 2);
           }
@@ -517,6 +518,7 @@ export class AnalyzeTreeShakingUseCase {
 
     if (worstPackages.length > 0) {
       this.loggingService.step("Packages Needing Attention");
+
       for (const pkg of worstPackages) {
         this.loggingService.result(
           `${pkg.packageName}: ${pkg.treeShakingScore}/100 (${pkg.issues.length} issues)`,
@@ -532,6 +534,7 @@ export class AnalyzeTreeShakingUseCase {
 
     if (bestPackages.length > 0) {
       this.loggingService.step("Well-Optimized Packages");
+
       for (const pkg of bestPackages) {
         this.loggingService.result(`${pkg.packageName}: ${pkg.treeShakingScore}/100`, "success");
       }

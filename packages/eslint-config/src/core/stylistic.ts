@@ -99,6 +99,28 @@ export const stylisticRules: Linter.Config[] = [
           next: "*",
           prev: ["function", "class"],
         },
+
+        /**
+         * Enforces blank lines before block statements.
+         * Block statements (like if, for, while, do, try blocks) should have blank lines above them
+         * to improve readability by visually separating different code sections.
+         */
+        {
+          blankLine: "always",
+          next: ["if", "for", "while", "do", "try", "with"],
+          prev: "*",
+        },
+
+        /**
+         * Enforces blank lines before block-like statements.
+         * Block-like statements (like function declarations, class declarations) should have blank lines above them
+         * to improve readability by visually separating different code sections.
+         */
+        {
+          blankLine: "always",
+          next: ["function", "class"],
+          prev: "*",
+        },
       ],
     },
   },
