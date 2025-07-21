@@ -117,6 +117,7 @@ export class CheckComponentTypesUseCase {
 
         if (result.missingTypeExports.length > 0) {
           this.loggingService.item("Missing type exports:", 2);
+
           for (const missing of result.missingTypeExports) {
             this.loggingService.item(`${missing.component} → ${missing.expectedType}`, 3);
           }
@@ -142,6 +143,7 @@ export class CheckComponentTypesUseCase {
 
         if (result.falsePositiveTypeExports.length > 0) {
           this.loggingService.item("False positive type exports:", 2);
+
           for (const falsePositive of result.falsePositiveTypeExports) {
             this.loggingService.item(
               `${falsePositive.typeName} (expected: ${falsePositive.expectedComponent})`,
@@ -204,12 +206,12 @@ export class CheckComponentTypesUseCase {
       const sortedResults = packageResults.sort((a, b) => a.component.localeCompare(b.component));
 
       for (const result of sortedResults) {
-        // Component name with compact info
+        // Component name with compact information
         const componentInfo = this.formatComponentInfo(result);
 
         this.loggingService.item(`${result.component} ${componentInfo}`, 2);
 
-        // Show detailed info only for complex components (more than 3 components or types)
+        // Show detailed information only for complex components (more than 3 components or types)
         const isComplex = result.actualComponents.length > 3 || result.exportedTypes.length > 3;
 
         if (isComplex) {
