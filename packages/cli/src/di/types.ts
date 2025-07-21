@@ -16,6 +16,7 @@ export const TYPES = {
 
   // Use Cases
   AnalyzeProjectUseCase: Symbol.for("AnalyzeProjectUseCase"),
+  AnalyzeTreeShakingUseCase: Symbol.for("AnalyzeTreeShakingUseCase"),
   CheckComponentTypesUseCase: Symbol.for("CheckComponentTypesUseCase"),
   GreetUserUseCase: Symbol.for("GreetUserUseCase"),
 
