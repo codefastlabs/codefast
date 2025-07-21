@@ -119,7 +119,7 @@
     "@codefast/typescript-config": "workspace:*",
     "@rsbuild/plugin-react": "^1.3.4",
     "@rslib/core": "^0.10.6",
-    "@swc/core": "^1.13.0",
+    "@swc/core": "^1.13.1",
     "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/dom": "^10.4.0",
