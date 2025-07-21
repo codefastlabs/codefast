@@ -61,7 +61,7 @@
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@rslib/core": "^0.10.6",
-    "@swc/core": "^1.13.0",
+    "@swc/core": "^1.13.1",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
