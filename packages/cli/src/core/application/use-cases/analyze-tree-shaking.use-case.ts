@@ -385,16 +385,18 @@ export class AnalyzeTreeShakingUseCase {
   }
 
   private displaySummary(analyses: PackageAnalysis[]): void {
-    this.loggingService.info("\n📊 Tree-Shaking Analysis Summary:");
-    this.loggingService.info("=".repeat(50));
+    this.loggingService.spacing();
+    this.loggingService.startSection("📊 Tree-Shaking Analysis Summary");
 
     const totalIssues = analyses.reduce((sum, analysis) => sum + analysis.issues.length, 0);
     const avgScore =
       analyses.reduce((sum, analysis) => sum + analysis.treeShakingScore, 0) / analyses.length;
 
-    this.loggingService.info(`Total packages analyzed: ${analyses.length}`);
-    this.loggingService.info(`Total issues found: ${totalIssues}`);
-    this.loggingService.info(`Average tree-shaking score: ${avgScore.toFixed(1)}/100`);
+    // Overview statistics
+    this.loggingService.step("📈 Overview Statistics");
+    this.loggingService.item(`Packages analyzed: ${analyses.length}`);
+    this.loggingService.item(`Total issues found: ${totalIssues}`);
+    this.loggingService.item(`Average score: ${avgScore.toFixed(1)}/100`);
 
     // Group by severity
     const criticalIssues = analyses.flatMap((a) =>
@@ -408,20 +410,26 @@ export class AnalyzeTreeShakingUseCase {
     );
     const lowIssues = analyses.flatMap((a) => a.issues.filter((index) => index.severity === "low"));
 
-    if (criticalIssues.length > 0) {
-      this.loggingService.error(`🚨 Critical issues: ${criticalIssues.length}`);
-    }
+    // Issues breakdown
+    if (totalIssues > 0) {
+      this.loggingService.spacing();
+      this.loggingService.step("🔍 Issues Breakdown");
 
-    if (highIssues.length > 0) {
-      this.loggingService.warning(`⚠️  High priority issues: ${highIssues.length}`);
-    }
+      if (criticalIssues.length > 0) {
+        this.loggingService.result(`Critical issues: ${criticalIssues.length}`, "error");
+      }
 
-    if (mediumIssues.length > 0) {
-      this.loggingService.info(`📋 Medium priority issues: ${mediumIssues.length}`);
-    }
+      if (highIssues.length > 0) {
+        this.loggingService.result(`High priority issues: ${highIssues.length}`, "warning");
+      }
 
-    if (lowIssues.length > 0) {
-      this.loggingService.info(`📝 Low priority issues: ${lowIssues.length}`);
+      if (mediumIssues.length > 0) {
+        this.loggingService.item(`Medium priority issues: ${mediumIssues.length}`);
+      }
+
+      if (lowIssues.length > 0) {
+        this.loggingService.item(`Low priority issues: ${lowIssues.length}`);
+      }
     }
 
     // Show worst packages
@@ -431,10 +439,12 @@ export class AnalyzeTreeShakingUseCase {
       .slice(0, 5);
 
     if (worstPackages.length > 0) {
-      this.loggingService.warning("\n🎯 Packages needing attention:");
+      this.loggingService.spacing();
+      this.loggingService.step("🎯 Packages Needing Attention");
       for (const pkg of worstPackages) {
-        this.loggingService.warning(
-          `  ${pkg.packageName}: ${pkg.treeShakingScore}/100 (${pkg.issues.length} issues)`,
+        this.loggingService.result(
+          `${pkg.packageName}: ${pkg.treeShakingScore}/100 (${pkg.issues.length} issues)`,
+          "warning"
         );
       }
     }
@@ -446,10 +456,14 @@ export class AnalyzeTreeShakingUseCase {
       .slice(0, 3);
 
     if (bestPackages.length > 0) {
-      this.loggingService.success("\n✅ Well-optimized packages:");
+      this.loggingService.spacing();
+      this.loggingService.step("✨ Well-Optimized Packages");
       for (const pkg of bestPackages) {
-        this.loggingService.success(`  ${pkg.packageName}: ${pkg.treeShakingScore}/100`);
+        this.loggingService.result(`${pkg.packageName}: ${pkg.treeShakingScore}/100`, "success");
       }
     }
+
+    this.loggingService.spacing();
+    this.loggingService.finishSection("Analysis Complete");
   }
 }
