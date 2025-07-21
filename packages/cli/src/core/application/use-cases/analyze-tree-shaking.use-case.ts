@@ -482,8 +482,7 @@ export class AnalyzeTreeShakingUseCase {
     // Show the best packages
     const bestPackages = analyses
       .filter((a) => a.treeShakingScore >= 90)
-      .sort((a, b) => b.treeShakingScore - a.treeShakingScore)
-      .slice(0, 3);
+      .sort((a, b) => b.treeShakingScore - a.treeShakingScore);
 
     if (bestPackages.length > 0) {
       this.loggingService.step("Well-Optimized Packages");

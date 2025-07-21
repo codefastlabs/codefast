@@ -62,16 +62,12 @@ export class TreeShakingCommand implements CommandInterface {
           const failingPackages = analyses.filter((a) => a.treeShakingScore < threshold);
 
           if (failingPackages.length > 0) {
-            this.loggingService.result(
+            this.loggingService.error(
               `${failingPackages.length} package(s) below threshold (${threshold})`,
-              "error",
             );
             process.exit(1);
           } else {
-            this.loggingService.result(
-              `All packages meet tree-shaking threshold (${threshold})`,
-              "success",
-            );
+            this.loggingService.success(`All packages meet tree-shaking threshold (${threshold})`);
           }
         },
       );
