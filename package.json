@@ -19,6 +19,7 @@
     "clean:modules": "pnpm -r exec rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml",
     "codefast": "codefast",
     "codefast:check-component-types": "codefast check-component-types",
+    "codefast:tree-shaking": "codefast tree-shaking",
     "deploy:preview": "vercel deploy --archive=tgz",
     "dev": "turbo run dev",
     "dev:docs": "turbo run dev --filter=@app/docs...",

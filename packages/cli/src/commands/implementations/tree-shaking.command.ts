@@ -10,6 +10,7 @@ import type { Command } from "commander";
 import { inject, injectable } from "inversify";
 
 import type { CommandInterface } from "@/commands/interfaces/command.interface";
+import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
 import type { AnalyzeTreeShakingUseCase } from "@/core/application/use-cases/analyze-tree-shaking.use-case";
 
 import { TYPES } from "@/di/types";
@@ -22,6 +23,8 @@ export class TreeShakingCommand implements CommandInterface {
   constructor(
     @inject(TYPES.AnalyzeTreeShakingUseCase)
     private readonly analyzeTreeShakingUseCase: AnalyzeTreeShakingUseCase,
+    @inject(TYPES.LoggingServicePort)
+    private readonly loggingService: LoggingServicePort,
   ) {}
 
   register(program: Command): void {
@@ -59,12 +62,18 @@ export class TreeShakingCommand implements CommandInterface {
           const failingPackages = analyses.filter((a) => a.treeShakingScore < threshold);
 
           if (failingPackages.length > 0) {
-            console.error(
-              `\n❌ ${failingPackages.length} package(s) below threshold (${threshold})`,
+            this.loggingService.spacing();
+            this.loggingService.result(
+              `${failingPackages.length} package(s) below threshold (${threshold})`,
+              "error",
             );
             process.exit(1);
           } else {
-            console.log(`\n✅ All packages meet tree-shaking threshold (${threshold})`);
+            this.loggingService.spacing();
+            this.loggingService.result(
+              `All packages meet tree-shaking threshold (${threshold})`,
+              "success",
+            );
           }
         },
       );
