@@ -77,6 +77,11 @@ export class AnalyzeTreeShakingUseCase {
       for (const packageDirectory of packageDirectories) {
         const analysis = await this.analyzePackage(packageDirectory);
 
+        // Skip packages that don't have JS/TS files (analyzePackage returns null)
+        if (analysis === null) {
+          continue;
+        }
+
         analyses.push(analysis);
 
         // Apply auto-fix if requested
@@ -119,11 +124,48 @@ export class AnalyzeTreeShakingUseCase {
     return packageJsonFiles.map((file) => path.dirname(file));
   }
 
-  private async analyzePackage(packagePath: string): Promise<PackageAnalysis> {
+  private async hasJavaScriptOrTypeScriptFiles(packagePath: string): Promise<boolean> {
+    try {
+      // Look for JS/TS files in common source directories
+      const patterns = [
+        `${packagePath}/src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}`,
+        `${packagePath}/dist/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}`,
+        `${packagePath}/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}`,
+      ];
+
+      for (const pattern of patterns) {
+        const files = await this.fileFinderService.findFiles(pattern, {
+          absolute: true,
+          onlyFiles: true,
+        });
+
+        if (files.length > 0) {
+          return true;
+        }
+      }
+
+      return false;
+    } catch {
+      // If there are error checking files, assume the package might have JS/TS files
+      // to avoid accidentally skipping packages that should be analyzed
+      return true;
+    }
+  }
+
+  private async analyzePackage(packagePath: string): Promise<null | PackageAnalysis> {
     const packageName = path.basename(packagePath);
     const indexFile = path.join(packagePath, "src", "index.ts");
 
     this.loggingService.item(`Analyzing package: ${packageName}`);
+
+    // Check if the package contains any JavaScript or TypeScript files
+    const hasJsTsFiles = await this.hasJavaScriptOrTypeScriptFiles(packagePath);
+
+    if (!hasJsTsFiles) {
+      this.loggingService.item(`Skipping ${packageName}: No JavaScript/TypeScript files found`);
+
+      return null;
+    }
 
     const analysis: PackageAnalysis = {
       exportCount: 0,
@@ -374,10 +416,14 @@ export class AnalyzeTreeShakingUseCase {
         // Re-analyze the package after fixes
         const updatedAnalysis = await this.analyzePackage(analysis.packagePath);
 
-        analysis.issues = updatedAnalysis.issues;
-        analysis.treeShakingScore = updatedAnalysis.treeShakingScore;
-        analysis.exportCount = updatedAnalysis.exportCount;
-        analysis.reexportDepth = updatedAnalysis.reexportDepth;
+        // If the re-analysis returns null (shouldn't happen since we're fixing an existing package),
+        // we'll keep the original analysis
+        if (updatedAnalysis !== null) {
+          analysis.issues = updatedAnalysis.issues;
+          analysis.treeShakingScore = updatedAnalysis.treeShakingScore;
+          analysis.exportCount = updatedAnalysis.exportCount;
+          analysis.reexportDepth = updatedAnalysis.reexportDepth;
+        }
       }
     } catch (error) {
       this.loggingService.error(`Failed to apply auto-fix: ${String(error)}`);
