@@ -200,7 +200,7 @@ export class CheckComponentTypesUseCase {
         "success",
       );
 
-      // Sort components within package
+      // Sort components within a package
       const sortedResults = packageResults.sort((a, b) => a.component.localeCompare(b.component));
 
       for (const result of sortedResults) {
@@ -242,7 +242,7 @@ export class CheckComponentTypesUseCase {
       if (hasCorrespondingType) {
         mappings.push(`${component} → ${expectedTypeName}`);
       } else {
-        // If no direct Props match, show component without mapping
+        // If no direct Props match, show the component without mapping
         mappings.push(`${component} → (no corresponding type)`);
       }
     }
