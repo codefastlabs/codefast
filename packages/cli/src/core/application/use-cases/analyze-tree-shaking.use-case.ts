@@ -58,7 +58,7 @@ export class AnalyzeTreeShakingUseCase {
   async execute(input: AnalyzeTreeShakingInput = {}): Promise<PackageAnalysis[]> {
     const { fix = false, packageName, packagesPath = "packages" } = input;
 
-    this.loggingService.info("🌳 Analyzing tree-shaking optimization opportunities...");
+    this.loggingService.startSection("Analyzing tree-shaking optimization opportunities...");
 
     try {
       // Find all packages or specific package
@@ -70,7 +70,7 @@ export class AnalyzeTreeShakingUseCase {
         return [];
       }
 
-      this.loggingService.info(`Found ${packageDirectories.length} package(s) to analyze`);
+      this.loggingService.step(`Found ${packageDirectories.length} package(s) to analyze`);
 
       const analyses: PackageAnalysis[] = [];
 
@@ -123,7 +123,7 @@ export class AnalyzeTreeShakingUseCase {
     const packageName = path.basename(packagePath);
     const indexFile = path.join(packagePath, "src", "index.ts");
 
-    this.loggingService.info(`📦 Analyzing package: ${packageName}`);
+    this.loggingService.item(`Analyzing package: ${packageName}`);
 
     const analysis: PackageAnalysis = {
       exportCount: 0,
@@ -368,7 +368,7 @@ export class AnalyzeTreeShakingUseCase {
         });
 
         this.loggingService.success(
-          `✅ Flattened ${intermediateFiles.length} intermediate files to ${analysis.indexFile}`,
+          `Flattened ${intermediateFiles.length} intermediate files to ${analysis.indexFile}`,
         );
 
         // Re-analyze the package after fixes
@@ -385,15 +385,14 @@ export class AnalyzeTreeShakingUseCase {
   }
 
   private displaySummary(analyses: PackageAnalysis[]): void {
-    this.loggingService.spacing();
-    this.loggingService.startSection("📊 Tree-Shaking Analysis Summary");
+    this.loggingService.step("Tree-Shaking Analysis Summary");
 
     const totalIssues = analyses.reduce((sum, analysis) => sum + analysis.issues.length, 0);
     const avgScore =
       analyses.reduce((sum, analysis) => sum + analysis.treeShakingScore, 0) / analyses.length;
 
     // Overview statistics
-    this.loggingService.step("📈 Overview Statistics");
+    this.loggingService.step("Overview Statistics");
     this.loggingService.item(`Packages analyzed: ${analyses.length}`);
     this.loggingService.item(`Total issues found: ${totalIssues}`);
     this.loggingService.item(`Average score: ${avgScore.toFixed(1)}/100`);
@@ -412,8 +411,7 @@ export class AnalyzeTreeShakingUseCase {
 
     // Issues breakdown
     if (totalIssues > 0) {
-      this.loggingService.spacing();
-      this.loggingService.step("🔍 Issues Breakdown");
+      this.loggingService.step("Issues Breakdown");
 
       if (criticalIssues.length > 0) {
         this.loggingService.result(`Critical issues: ${criticalIssues.length}`, "error");
@@ -430,6 +428,39 @@ export class AnalyzeTreeShakingUseCase {
       if (lowIssues.length > 0) {
         this.loggingService.item(`Low priority issues: ${lowIssues.length}`);
       }
+
+      // Show detailed issues for each package
+      this.loggingService.step("Detailed Issues by Package");
+
+      const packagesWithIssues = analyses.filter((analysis) => analysis.issues.length > 0);
+
+      for (const analysis of packagesWithIssues) {
+        this.loggingService.result(
+          `${analysis.packageName} (Score: ${analysis.treeShakingScore}/100)`,
+          analysis.treeShakingScore < 60
+            ? "error"
+            : analysis.treeShakingScore < 80
+              ? "warning"
+              : "success",
+        );
+
+        for (const issue of analysis.issues) {
+          const typeLabel = {
+            "deep-reexport": "Deep Re-export",
+            "large-barrel": "Large Barrel File",
+            "unused-export": "Unused Export",
+            "wildcard-export": "Wildcard Export",
+          }[issue.type];
+
+          this.loggingService.item(`${typeLabel}: ${issue.description}`, 2);
+          this.loggingService.item(`File: ${issue.file}`, 2);
+          if (issue.line) {
+            this.loggingService.item(`Line: ${issue.line}`, 2);
+          }
+
+          this.loggingService.item(`Recommendation: ${issue.recommendation}`, 2);
+        }
+      }
     }
 
     // Show worst packages
@@ -439,12 +470,11 @@ export class AnalyzeTreeShakingUseCase {
       .slice(0, 5);
 
     if (worstPackages.length > 0) {
-      this.loggingService.spacing();
-      this.loggingService.step("🎯 Packages Needing Attention");
+      this.loggingService.step("Packages Needing Attention");
       for (const pkg of worstPackages) {
         this.loggingService.result(
           `${pkg.packageName}: ${pkg.treeShakingScore}/100 (${pkg.issues.length} issues)`,
-          "warning"
+          "warning",
         );
       }
     }
@@ -456,8 +486,7 @@ export class AnalyzeTreeShakingUseCase {
       .slice(0, 3);
 
     if (bestPackages.length > 0) {
-      this.loggingService.spacing();
-      this.loggingService.step("✨ Well-Optimized Packages");
+      this.loggingService.step("Well-Optimized Packages");
       for (const pkg of bestPackages) {
         this.loggingService.result(`${pkg.packageName}: ${pkg.treeShakingScore}/100`, "success");
       }
