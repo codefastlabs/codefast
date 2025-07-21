@@ -3,17 +3,16 @@
  *
  * Commands layer command handler using Commander.js.
  * Following explicit architecture guidelines for CLI applications.
+ * Uses command registry for scalable command organization.
  */
 
 import { Command } from "commander";
 import { inject, injectable } from "inversify";
 
+import type { CommandRegistry } from "@/commands/registry/command.registry";
 import type { FileSystemSystemPort } from "@/core/application/ports/system/file-system.system.port";
 import type { PathSystemPort } from "@/core/application/ports/system/path.system.port";
 import type { UrlSystemPort } from "@/core/application/ports/system/url.system.port";
-import type { AnalyzeProjectUseCase } from "@/core/application/use-cases/analyze-project.use-case";
-import type { CheckComponentTypesUseCase } from "@/core/application/use-cases/check-component-types.use-case";
-import type { GreetUserUseCase } from "@/core/application/use-cases/greet-user.use-case";
 
 import { TYPES } from "@/di/types";
 
@@ -22,12 +21,8 @@ export class CommandHandler {
   private readonly program: Command;
 
   constructor(
-    @inject(TYPES.AnalyzeProjectUseCase)
-    private readonly analyzeProjectUseCase: AnalyzeProjectUseCase,
-    @inject(TYPES.CheckComponentTypesUseCase)
-    private readonly checkComponentTypesUseCase: CheckComponentTypesUseCase,
-    @inject(TYPES.GreetUserUseCase)
-    private readonly greetUserUseCase: GreetUserUseCase,
+    @inject(TYPES.CommandRegistry)
+    private readonly commandRegistry: CommandRegistry,
     @inject(TYPES.FilesystemSystemPort)
     private readonly fileSystemService: FileSystemSystemPort,
     @inject(TYPES.PathSystemPort)
@@ -66,37 +61,11 @@ export class CommandHandler {
         this.program.help();
       });
 
-    // Hello command
-    this.program
-      .command("hello")
-      .description("Say hello")
-      .option("-n, --name <name>", "name to greet", "World")
-      .action((options: { name: string }) => {
-        this.greetUserUseCase.execute({ name: options.name });
-      });
+    // Register all commands from the registry
+    const commands = this.commandRegistry.getCommands();
 
-    // Analyze command
-    this.program
-      .command("analyze")
-      .description("Analyze TypeScript project")
-      .option("-p, --pattern <pattern>", "file pattern to analyze", "src/**/*.ts")
-      .option("-c, --config <path>", "path to tsconfig.json")
-      .action(async (options: { pattern?: string; config?: string }) => {
-        await this.analyzeProjectUseCase.execute({
-          pattern: options.pattern,
-          tsConfigPath: options.config,
-        });
-      });
-
-    // Check component types command
-    this.program
-      .command("check-component-types")
-      .description("Check React component type correspondence")
-      .option("-d, --packages-dir <dir>", "packages directory to analyze", "packages")
-      .action((options: { packagesDir?: string }) => {
-        this.checkComponentTypesUseCase.execute({
-          packagesDirectory: options.packagesDir,
-        });
-      });
+    for (const command of commands) {
+      command.register(this.program);
+    }
   }
 }
