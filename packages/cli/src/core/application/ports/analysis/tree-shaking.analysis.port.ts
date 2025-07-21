@@ -91,6 +91,129 @@ export interface TreeShakingFixOptions {
   createBackup?: boolean;
 }
 
+export interface ComprehensiveAutoFixOptions {
+  /**
+   * Whether to create backup files before modification
+   */
+  createBackup?: boolean;
+
+  /**
+   * Whether to preserve type-only exports separately
+   */
+  preserveTypeExports?: boolean;
+
+  /**
+   * Whether to remove intermediate files after flattening
+   */
+  removeIntermediateFiles?: boolean;
+
+  /**
+   * Maximum depth for re-export chains before flagging as issue
+   */
+  maxReexportDepth?: number;
+
+  /**
+   * Maximum number of wildcard exports before flagging as issue
+   */
+  maxWildcardExports?: number;
+
+  /**
+   * Whether to show preview of changes before applying
+   */
+  preview?: boolean;
+
+  /**
+   * Directories to exclude from scanning
+   */
+  excludeDirectories?: string[];
+
+  /**
+   * File patterns to exclude from processing
+   */
+  excludePatterns?: string[];
+}
+
+export interface LeafDirectory {
+  /**
+   * Full path to the directory
+   */
+  path: string;
+
+  /**
+   * Directory name
+   */
+  name: string;
+
+  /**
+   * TypeScript/JavaScript files in the directory
+   */
+  files: string[];
+
+  /**
+   * Whether the directory has an index.ts file
+   */
+  hasIndexFile: boolean;
+
+  /**
+   * Parent directory path
+   */
+  parentPath: string;
+}
+
+export interface AutoFixPreview {
+  /**
+   * Files that will be created
+   */
+  filesToCreate: string[];
+
+  /**
+   * Files that will be modified
+   */
+  filesToModify: string[];
+
+  /**
+   * Files that will be deleted
+   */
+  filesToDelete: string[];
+
+  /**
+   * Backup files that will be created
+   */
+  backupFiles: string[];
+
+  /**
+   * Summary of changes
+   */
+  summary: {
+    indexFilesCreated: number;
+    wildcardExportsConverted: number;
+    intermediateFilesFlattened: number;
+    deepReexportChainsFixed: number;
+  };
+}
+
+export interface BackupInfo {
+  /**
+   * Original file path
+   */
+  originalPath: string;
+
+  /**
+   * Backup file path
+   */
+  backupPath: string;
+
+  /**
+   * Timestamp when backup was created
+   */
+  timestamp: number;
+
+  /**
+   * Whether the backup is still valid
+   */
+  isValid: boolean;
+}
+
 export interface TreeShakingAnalysisPort {
   /**
    * Analyze a TypeScript file for export patterns
@@ -146,4 +269,61 @@ export interface TreeShakingAnalysisPort {
    * Write content to a file
    */
   writeFile: (filePath: string, content: string) => void;
+
+  // Comprehensive Auto-Fix Methods
+
+  /**
+   * Scan a directory tree to identify leaf directories that contain modules/components
+   */
+  scanLeafDirectories: (rootPath: string, options?: ComprehensiveAutoFixOptions) => Promise<LeafDirectory[]>;
+
+  /**
+   * Create an index.ts file for a leaf directory with proper named exports
+   */
+  createIndexFileForLeafDirectory: (leafDirectory: LeafDirectory, options?: ComprehensiveAutoFixOptions) => Promise<string>;
+
+  /**
+   * Convert wildcard exports to named exports in a file
+   */
+  convertWildcardExportsToNamed: (filePath: string, options?: ComprehensiveAutoFixOptions) => Promise<void>;
+
+  /**
+   * Generate preview of comprehensive auto-fix changes
+   */
+  generateAutoFixPreview: (packagePath: string, options?: ComprehensiveAutoFixOptions) => Promise<AutoFixPreview>;
+
+  /**
+   * Apply comprehensive auto-fix to a package
+   */
+  applyComprehensiveAutoFix: (packagePath: string, options?: ComprehensiveAutoFixOptions) => Promise<BackupInfo[]>;
+
+  /**
+   * Restore files from backup
+   */
+  restoreFromBackup: (backupInfos: BackupInfo[]) => Promise<void>;
+
+  /**
+   * Clean up old backup files
+   */
+  cleanupBackups: (packagePath: string, olderThanDays?: number) => Promise<void>;
+
+  /**
+   * Check if a directory is a leaf directory (contains modules but no subdirectories with modules)
+   */
+  isLeafDirectory: (directoryPath: string) => Promise<boolean>;
+
+  /**
+   * Get all TypeScript/JavaScript files in a directory (non-recursive)
+   */
+  getModuleFilesInDirectory: (directoryPath: string) => Promise<string[]>;
+
+  /**
+   * Generate index.ts content for a set of module files
+   */
+  generateIndexContent: (moduleFiles: string[], options?: ComprehensiveAutoFixOptions) => Promise<string>;
+
+  /**
+   * Validate that generated exports are correct and don't break existing functionality
+   */
+  validateGeneratedExports: (indexFilePath: string, moduleFiles: string[]) => Promise<boolean>;
 }
