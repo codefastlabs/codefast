@@ -11,6 +11,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 import type {
+  AutoFixPreview,
+  ComprehensiveAutoFixOptions,
   FileAnalysis,
   TreeShakingAnalysisPort,
 } from "@/core/application/ports/analysis/tree-shaking.analysis.port";
@@ -20,9 +22,18 @@ import type { LoggingServicePort } from "@/core/application/ports/services/loggi
 import { TYPES } from "@/di/types";
 
 export interface AnalyzeTreeShakingInput {
+  comprehensive?: boolean;
+  createBackup?: boolean;
+  excludeDirectories?: string[];
+  excludePatterns?: string[];
   fix?: boolean;
+  maxReexportDepth?: number;
+  maxWildcardExports?: number;
   packageName?: string;
   packagesPath?: string;
+  preserveTypeExports?: boolean;
+  preview?: boolean;
+  removeIntermediateFiles?: boolean;
 }
 
 export interface TreeShakingIssue {
@@ -56,7 +67,20 @@ export class AnalyzeTreeShakingUseCase {
   ) {}
 
   async execute(input: AnalyzeTreeShakingInput = {}): Promise<PackageAnalysis[]> {
-    const { fix = false, packageName, packagesPath = "packages" } = input;
+    const {
+      comprehensive = false,
+      createBackup = true,
+      excludeDirectories = [],
+      excludePatterns = [],
+      fix = false,
+      maxReexportDepth = 3,
+      maxWildcardExports = 10,
+      packageName,
+      packagesPath = "packages",
+      preserveTypeExports = true,
+      preview = false,
+      removeIntermediateFiles = false
+    } = input;
 
     this.loggingService.startSection("Analyzing tree-shaking optimization opportunities...");
 
@@ -84,9 +108,23 @@ export class AnalyzeTreeShakingUseCase {
 
         analyses.push(analysis);
 
-        // Apply auto-fix if requested
-        if (
+        // Apply comprehensive auto-fix if requested
+        if (comprehensive && (fix || preview)) {
+          await this.applyComprehensiveAutoFix(analysis, {
+            createBackup,
+            excludeDirectories,
+            excludePatterns,
+            maxReexportDepth,
+            maxWildcardExports,
+            preserveTypeExports,
+            preview,
+            removeIntermediateFiles
+          });
+        }
+        // Apply legacy auto-fix if requested (and not using comprehensive mode)
+        else if (
           fix &&
+          !comprehensive &&
           analysis.issues.some(
             (issue) => issue.type === "wildcard-export" || issue.type === "deep-reexport",
           )
@@ -428,6 +466,115 @@ export class AnalyzeTreeShakingUseCase {
     } catch (error) {
       this.loggingService.error(`Failed to apply auto-fix: ${String(error)}`);
     }
+  }
+
+  private async applyComprehensiveAutoFix(
+    analysis: PackageAnalysis,
+    options: ComprehensiveAutoFixOptions,
+  ): Promise<void> {
+    const packagePath = analysis.packagePath;
+
+    if (options.preview) {
+      this.loggingService.info(`🔍 Generating preview for package: ${analysis.packageName}`);
+
+      try {
+        const preview = await this.treeShakingAnalysisService.generateAutoFixPreview(packagePath, options);
+
+        this.displayAutoFixPreview(analysis.packageName, preview);
+
+        return;
+      } catch (error) {
+        this.loggingService.error(`Failed to generate preview: ${String(error)}`);
+
+        return;
+      }
+    }
+
+    this.loggingService.info(`🔧 Applying comprehensive auto-fix for package: ${analysis.packageName}`);
+
+    try {
+      const backupInfos = await this.treeShakingAnalysisService.applyComprehensiveAutoFix(packagePath, options);
+
+      if (backupInfos.length > 0) {
+        this.loggingService.success(
+          `Created ${backupInfos.length} backup file(s) for ${analysis.packageName}`,
+        );
+      }
+
+      // Re-analyze the package after comprehensive fixes
+      const updatedAnalysis = await this.analyzePackage(analysis.packagePath);
+
+      if (updatedAnalysis !== null) {
+        analysis.issues = updatedAnalysis.issues;
+        analysis.treeShakingScore = updatedAnalysis.treeShakingScore;
+        analysis.exportCount = updatedAnalysis.exportCount;
+        analysis.reexportDepth = updatedAnalysis.reexportDepth;
+
+        this.loggingService.success(
+          `Comprehensive auto-fix completed for ${analysis.packageName}. New score: ${analysis.treeShakingScore}/100`,
+        );
+      }
+    } catch (error) {
+      this.loggingService.error(`Failed to apply comprehensive auto-fix: ${String(error)}`);
+    }
+  }
+
+  private displayAutoFixPreview(packageName: string, preview: AutoFixPreview): void {
+    this.loggingService.step(`Preview for ${packageName}`);
+
+    // Summary
+    this.loggingService.item(`Files to create: ${preview.filesToCreate.length}`);
+    this.loggingService.item(`Files to modify: ${preview.filesToModify.length}`);
+    this.loggingService.item(`Files to delete: ${preview.filesToDelete.length}`);
+    this.loggingService.item(`Backup files: ${preview.backupFiles.length}`);
+
+    // Detailed summary
+    const { summary } = preview;
+
+    if (summary.indexFilesCreated > 0) {
+      this.loggingService.item(`Index files to create: ${summary.indexFilesCreated}`, 1);
+    }
+
+    if (summary.wildcardExportsConverted > 0) {
+      this.loggingService.item(`Wildcard exports to convert: ${summary.wildcardExportsConverted}`, 1);
+    }
+
+    if (summary.intermediateFilesFlattened > 0) {
+      this.loggingService.item(`Intermediate files to flatten: ${summary.intermediateFilesFlattened}`, 1);
+    }
+
+    if (summary.deepReexportChainsFixed > 0) {
+      this.loggingService.item(`Deep re-export chains to fix: ${summary.deepReexportChainsFixed}`, 1);
+    }
+
+    // Files to create
+    if (preview.filesToCreate.length > 0) {
+      this.loggingService.step("Files to create:");
+
+      for (const file of preview.filesToCreate) {
+        this.loggingService.item(file, 1);
+      }
+    }
+
+    // Files to modify
+    if (preview.filesToModify.length > 0) {
+      this.loggingService.step("Files to modify:");
+
+      for (const file of preview.filesToModify) {
+        this.loggingService.item(file, 1);
+      }
+    }
+
+    // Files to delete
+    if (preview.filesToDelete.length > 0) {
+      this.loggingService.step("Files to delete:");
+
+      for (const file of preview.filesToDelete) {
+        this.loggingService.item(file, 1);
+      }
+    }
+
+    this.loggingService.spacing();
   }
 
   private displaySummary(analyses: PackageAnalysis[]): void {

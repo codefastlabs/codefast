@@ -11,8 +11,12 @@ import path from "node:path";
 import { Project, SourceFile, Node } from "ts-morph";
 
 import type {
+  AutoFixPreview,
+  BackupInfo,
+  ComprehensiveAutoFixOptions,
   ExportInfo,
   FileAnalysis,
+  LeafDirectory,
   TreeShakingAnalysisPort,
   TreeShakingFixOptions,
 } from "@/core/application/ports/analysis/tree-shaking.analysis.port";
@@ -252,6 +256,479 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     }
 
     fs.writeFileSync(filePath, content, "utf8");
+  }
+
+  // Comprehensive Auto-Fix Methods
+
+  async scanLeafDirectories(rootPath: string, options: ComprehensiveAutoFixOptions = {}): Promise<LeafDirectory[]> {
+    const leafDirectories: LeafDirectory[] = [];
+    const excludeDirectories = options.excludeDirectories || ['node_modules', 'dist', 'build', '.turbo', 'coverage'];
+
+    const scanDirectory = async (currentPath: string): Promise<void> => {
+      if (!fs.existsSync(currentPath) || !fs.statSync(currentPath).isDirectory()) {
+        return;
+      }
+
+      const dirName = path.basename(currentPath);
+
+      if (excludeDirectories.includes(dirName)) {
+        return;
+      }
+
+      const isLeaf = await this.isLeafDirectory(currentPath);
+
+      if (isLeaf) {
+        const moduleFiles = await this.getModuleFilesInDirectory(currentPath);
+
+        if (moduleFiles.length > 0) {
+          const hasIndexFile = fs.existsSync(path.join(currentPath, 'index.ts')) ||
+                              fs.existsSync(path.join(currentPath, 'index.tsx'));
+
+          leafDirectories.push({
+            files: moduleFiles,
+            hasIndexFile,
+            name: dirName,
+            parentPath: path.dirname(currentPath),
+            path: currentPath
+          });
+        }
+      } else {
+        // Recursively scan subdirectories
+        const entries = fs.readdirSync(currentPath, { withFileTypes: true });
+
+        for (const entry of entries) {
+          if (entry.isDirectory()) {
+            await scanDirectory(path.join(currentPath, entry.name));
+          }
+        }
+      }
+    };
+
+    await scanDirectory(rootPath);
+
+    return leafDirectories;
+  }
+
+  async isLeafDirectory(directoryPath: string): Promise<boolean> {
+    if (!fs.existsSync(directoryPath) || !fs.statSync(directoryPath).isDirectory()) {
+      return false;
+    }
+
+    const entries = fs.readdirSync(directoryPath, { withFileTypes: true });
+    const hasModuleFiles = entries.some(entry =>
+      entry.isFile() && this.isTypeScriptFile(entry.name) && !entry.name.includes('.test.') && !entry.name.includes('.spec.')
+    );
+
+    if (!hasModuleFiles) {
+      return false;
+    }
+
+    // Check if any subdirectories contain module files
+    for (const entry of entries) {
+      if (entry.isDirectory() && !['node_modules', 'dist', 'build', '.turbo', 'coverage'].includes(entry.name)) {
+        const subDirPath = path.join(directoryPath, entry.name);
+        const subDirFiles = await this.getModuleFilesInDirectory(subDirPath);
+
+        if (subDirFiles.length > 0) {
+          return false; // Not a leaf if subdirectories have modules
+        }
+      }
+    }
+
+    return true;
+  }
+
+  async getModuleFilesInDirectory(directoryPath: string): Promise<string[]> {
+    if (!fs.existsSync(directoryPath) || !fs.statSync(directoryPath).isDirectory()) {
+      return [];
+    }
+
+    const entries = fs.readdirSync(directoryPath, { withFileTypes: true });
+    const moduleFiles: string[] = [];
+
+    for (const entry of entries) {
+      if (entry.isFile() &&
+          this.isTypeScriptFile(entry.name) &&
+          !entry.name.includes('.test.') &&
+          !entry.name.includes('.spec.') &&
+          entry.name !== 'index.ts' &&
+          entry.name !== 'index.tsx') {
+        moduleFiles.push(path.join(directoryPath, entry.name));
+      }
+    }
+
+    return moduleFiles;
+  }
+
+  async generateIndexContent(moduleFiles: string[], options: ComprehensiveAutoFixOptions = {}): Promise<string> {
+    const preserveTypeExports = options.preserveTypeExports ?? true;
+    const lines: string[] = [];
+    const processedModules = new Set<string>();
+
+    for (const filePath of moduleFiles) {
+      const fileName = path.basename(filePath, path.extname(filePath));
+      const relativePath = `./${fileName}`;
+
+      if (processedModules.has(fileName)) {
+        continue;
+      }
+
+      processedModules.add(fileName);
+
+      try {
+        const sourceFile = this.project.addSourceFileAtPath(filePath);
+        const exportedDeclarations = sourceFile.getExportedDeclarations();
+
+        const valueExports: string[] = [];
+        const typeExports: string[] = [];
+
+        for (const [name, declarations] of exportedDeclarations) {
+          if (name === 'default') {
+            continue; // Skip default exports for now
+          }
+
+          // Check if this is a type-only export
+          const isTypeOnly = declarations.some(decl =>
+            decl.getKind() === 253 || // InterfaceDeclaration
+            decl.getKind() === 254 || // TypeAliasDeclaration
+            decl.getKind() === 255    // EnumDeclaration (can be both)
+          );
+
+          if (isTypeOnly && preserveTypeExports) {
+            typeExports.push(name);
+          } else {
+            valueExports.push(name);
+          }
+        }
+
+        // Add value exports
+        if (valueExports.length > 0) {
+          lines.push(`export { ${valueExports.join(', ')} } from "${relativePath}";`);
+        }
+
+        // Add type exports
+        if (typeExports.length > 0 && preserveTypeExports) {
+          lines.push(`export type { ${typeExports.join(', ')} } from "${relativePath}";`);
+        }
+
+        this.project.removeSourceFile(sourceFile);
+      } catch {
+        // If we can't analyze the file, create a simple export
+        lines.push(`export * from "${relativePath}";`);
+      }
+    }
+
+    return lines.join('\n') + '\n';
+  }
+
+  async createIndexFileForLeafDirectory(leafDirectory: LeafDirectory, options: ComprehensiveAutoFixOptions = {}): Promise<string> {
+    const indexPath = path.join(leafDirectory.path, 'index.ts');
+
+    if (leafDirectory.hasIndexFile && !options.preview) {
+      throw new Error(`Index file already exists at ${indexPath}`);
+    }
+
+    const content = await this.generateIndexContent(leafDirectory.files, options);
+
+    if (!options.preview) {
+      if (options.createBackup && fs.existsSync(indexPath)) {
+        this.createBackup(indexPath);
+      }
+
+      this.writeFile(indexPath, content);
+    }
+
+    return indexPath;
+  }
+
+  async convertWildcardExportsToNamed(filePath: string, options: ComprehensiveAutoFixOptions = {}): Promise<void> {
+    if (!this.isTypeScriptFile(filePath) || !fs.existsSync(filePath)) {
+      return;
+    }
+
+    if (options.createBackup) {
+      this.createBackup(filePath);
+    }
+
+    const sourceFile = this.project.addSourceFileAtPath(filePath);
+    let hasChanges = false;
+
+    // Find all wildcard exports
+    const exportDeclarations = sourceFile.getExportDeclarations();
+
+    for (const exportDecl of exportDeclarations) {
+      if (exportDecl.isNamespaceExport()) {
+        const moduleSpecifier = exportDecl.getModuleSpecifierValue();
+
+        if (moduleSpecifier) {
+          const resolvedPath = this.resolveModulePath(filePath, moduleSpecifier);
+
+          if (resolvedPath) {
+            const exportedSymbols = this.getExportedSymbols(resolvedPath);
+
+            if (exportedSymbols.length > 0) {
+              // Replace wildcard export with named exports
+              const namedExports = exportedSymbols.join(', ');
+              const isTypeOnly = exportDecl.isTypeOnly();
+              const typePrefix = isTypeOnly ? 'type ' : '';
+
+              exportDecl.replaceWithText(`export ${typePrefix}{ ${namedExports} } from "${moduleSpecifier}";`);
+              hasChanges = true;
+            }
+          }
+        }
+      }
+    }
+
+    if (hasChanges && !options.preview) {
+      sourceFile.saveSync();
+    }
+
+    this.project.removeSourceFile(sourceFile);
+  }
+
+  async generateAutoFixPreview(packagePath: string, options: ComprehensiveAutoFixOptions = {}): Promise<AutoFixPreview> {
+    const preview: AutoFixPreview = {
+      backupFiles: [],
+      filesToCreate: [],
+      filesToDelete: [],
+      filesToModify: [],
+      summary: {
+        deepReexportChainsFixed: 0,
+        indexFilesCreated: 0,
+        intermediateFilesFlattened: 0,
+        wildcardExportsConverted: 0
+      }
+    };
+
+    // Scan for leaf directories that need index files
+    const leafDirectories = await this.scanLeafDirectories(packagePath, options);
+
+    for (const leafDir of leafDirectories) {
+      if (!leafDir.hasIndexFile) {
+        const indexPath = path.join(leafDir.path, 'index.ts');
+
+        preview.filesToCreate.push(indexPath);
+        preview.summary.indexFilesCreated++;
+      }
+    }
+
+    // Find files with wildcard exports
+    const srcPath = path.join(packagePath, 'src');
+
+    if (fs.existsSync(srcPath)) {
+      const indexFiles = await this.findIndexFiles(srcPath);
+
+      for (const indexFile of indexFiles) {
+        const analysis = await this.analyzeFile(indexFile);
+        const wildcardExports = analysis.exports.filter(exp => exp.type === 'wildcard');
+
+        if (wildcardExports.length > 0) {
+          preview.filesToModify.push(indexFile);
+          preview.summary.wildcardExportsConverted += wildcardExports.length;
+
+          if (options.createBackup) {
+            preview.backupFiles.push(`${indexFile}.backup.${Date.now()}`);
+          }
+        }
+      }
+    }
+
+    return preview;
+  }
+
+  async applyComprehensiveAutoFix(packagePath: string, options: ComprehensiveAutoFixOptions = {}): Promise<BackupInfo[]> {
+    const backupInfos: BackupInfo[] = [];
+    const timestamp = Date.now();
+
+    try {
+      // Step 1: Scan for leaf directories and create index files
+      const leafDirectories = await this.scanLeafDirectories(packagePath, options);
+
+      for (const leafDir of leafDirectories) {
+        if (!leafDir.hasIndexFile) {
+          await this.createIndexFileForLeafDirectory(leafDir, options);
+        }
+      }
+
+      // Step 2: Convert wildcard exports to named exports
+      const srcPath = path.join(packagePath, 'src');
+
+      if (fs.existsSync(srcPath)) {
+        const indexFiles = await this.findIndexFiles(srcPath);
+
+        for (const indexFile of indexFiles) {
+          const analysis = await this.analyzeFile(indexFile);
+          const wildcardExports = analysis.exports.filter(exp => exp.type === 'wildcard');
+
+          if (wildcardExports.length > 0) {
+            if (options.createBackup) {
+              const backupPath = this.createBackup(indexFile);
+
+              backupInfos.push({
+                backupPath,
+                isValid: true,
+                originalPath: indexFile,
+                timestamp
+              });
+            }
+
+            await this.convertWildcardExportsToNamed(indexFile, options);
+          }
+        }
+      }
+
+      // Step 3: Flatten intermediate files if requested
+      if (options.removeIntermediateFiles) {
+        const intermediateFiles = await this.findIntermediateFiles(packagePath);
+
+        if (intermediateFiles.length > 0) {
+          const mainIndexFile = path.join(packagePath, 'src', 'index.ts');
+
+          if (fs.existsSync(mainIndexFile)) {
+            await this.flattenExports(intermediateFiles, {
+              createBackup: options.createBackup,
+              preserveTypeExports: options.preserveTypeExports,
+              removeIntermediateFiles: true,
+              targetIndexFile: mainIndexFile
+            });
+          }
+        }
+      }
+
+      return backupInfos;
+    } catch (error) {
+      // If something goes wrong, restore from backups
+      if (backupInfos.length > 0) {
+        await this.restoreFromBackup(backupInfos);
+      }
+
+      throw error;
+    }
+  }
+
+  async restoreFromBackup(backupInfos: BackupInfo[]): Promise<void> {
+    for (const backupInfo of backupInfos) {
+      if (backupInfo.isValid && fs.existsSync(backupInfo.backupPath)) {
+        try {
+          fs.copyFileSync(backupInfo.backupPath, backupInfo.originalPath);
+          // Clean up the backup file after successful restore
+          fs.unlinkSync(backupInfo.backupPath);
+        } catch (error) {
+          console.warn(`Failed to restore ${backupInfo.originalPath} from backup: ${error}`);
+        }
+      }
+    }
+  }
+
+  async cleanupBackups(packagePath: string, olderThanDays = 7): Promise<void> {
+    const cutoffTime = Date.now() - (olderThanDays * 24 * 60 * 60 * 1000);
+
+    const findBackupFiles = (dir: string): void => {
+      if (!fs.existsSync(dir)) return;
+
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+          findBackupFiles(fullPath);
+        } else if (entry.isFile() && entry.name.includes('.backup.')) {
+          try {
+            const stats = fs.statSync(fullPath);
+
+            if (stats.mtime.getTime() < cutoffTime) {
+              fs.unlinkSync(fullPath);
+            }
+          } catch {
+            // Ignore errors when cleaning up backup files
+          }
+        }
+      }
+    };
+
+    findBackupFiles(packagePath);
+  }
+
+  async validateGeneratedExports(indexFilePath: string, moduleFiles: string[]): Promise<boolean> {
+    if (!fs.existsSync(indexFilePath)) {
+      return false;
+    }
+
+    try {
+      const sourceFile = this.project.addSourceFileAtPath(indexFilePath);
+      const indexExports = sourceFile.getExportedDeclarations();
+
+      // Check that all expected exports are present
+      for (const moduleFile of moduleFiles) {
+        const moduleSourceFile = this.project.addSourceFileAtPath(moduleFile);
+        const moduleExports = moduleSourceFile.getExportedDeclarations();
+
+        for (const [exportName] of moduleExports) {
+          if (exportName !== 'default' && !indexExports.has(exportName)) {
+            this.project.removeSourceFile(sourceFile);
+            this.project.removeSourceFile(moduleSourceFile);
+
+            return false;
+          }
+        }
+
+        this.project.removeSourceFile(moduleSourceFile);
+      }
+
+      this.project.removeSourceFile(sourceFile);
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private async findIndexFiles(rootPath: string): Promise<string[]> {
+    const indexFiles: string[] = [];
+
+    const scanDirectory = (currentPath: string): void => {
+      if (!fs.existsSync(currentPath) || !fs.statSync(currentPath).isDirectory()) {
+        return;
+      }
+
+      const entries = fs.readdirSync(currentPath, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(currentPath, entry.name);
+
+        if (entry.isFile() && (entry.name === 'index.ts' || entry.name === 'index.tsx')) {
+          indexFiles.push(fullPath);
+        } else if (entry.isDirectory() && !['node_modules', 'dist', 'build', '.turbo', 'coverage'].includes(entry.name)) {
+          scanDirectory(fullPath);
+        }
+      }
+    };
+
+    scanDirectory(rootPath);
+
+    return indexFiles;
+  }
+
+  private async findIntermediateFiles(packagePath: string): Promise<string[]> {
+    const srcPath = path.join(packagePath, 'src');
+    const mainIndexFile = path.join(srcPath, 'index.ts');
+    const indexFiles = await this.findIndexFiles(srcPath);
+
+    const intermediateFiles: string[] = [];
+
+    for (const indexFile of indexFiles) {
+      if (indexFile !== mainIndexFile) {
+        const isIntermediate = await this.isIntermediateIndexFile(indexFile);
+
+        if (isIntermediate) {
+          intermediateFiles.push(indexFile);
+        }
+      }
+    }
+
+    return intermediateFiles;
   }
 
   private extractExports(sourceFile: SourceFile): ExportInfo[] {
