@@ -14,6 +14,7 @@ import { CommandHandler } from "@/commands/command-handler";
 import { AnalyzeCommand } from "@/commands/implementations/analyze.command";
 import { CheckComponentTypesCommand } from "@/commands/implementations/check-component-types.command";
 import { HelloCommand } from "@/commands/implementations/hello.command";
+import { TreeShakingCommand } from "@/commands/implementations/tree-shaking.command";
 import { CommandRegistry } from "@/commands/registry/command.registry";
 import { TYPES } from "@/di/types";
 
@@ -28,4 +29,5 @@ export const commandsModule = new ContainerModule((options) => {
   options.bind<CommandInterface>(TYPES.Command).to(HelloCommand);
   options.bind<CommandInterface>(TYPES.Command).to(AnalyzeCommand);
   options.bind<CommandInterface>(TYPES.Command).to(CheckComponentTypesCommand);
+  options.bind<CommandInterface>(TYPES.Command).to(TreeShakingCommand);
 });
