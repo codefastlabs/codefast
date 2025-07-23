@@ -337,4 +337,3 @@ MIT License - see LICENSE file for details.
 ## Related
 
 - [CodeFast UI Components](../ui/README.md)
-- [Explicit Architecture Guidelines](../../.junie/explicit-architecture-guidelines.md)
