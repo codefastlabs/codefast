@@ -108,17 +108,17 @@ export interface ComprehensiveAutoFixOptions {
   removeIntermediateFiles?: boolean;
 
   /**
-   * Maximum depth for re-export chains before flagging as issue
+   * Maximum depth for re-export chains before flagging as an issue
    */
   maxReexportDepth?: number;
 
   /**
-   * Maximum number of wildcard exports before flagging as issue
+   * Maximum number of wildcard exports before flagging as an issue
    */
   maxWildcardExports?: number;
 
   /**
-   * Whether to show preview of changes before applying
+   * Whether to show a preview of changes before applying
    */
   preview?: boolean;
 
@@ -162,22 +162,22 @@ export interface LeafDirectory {
 
 export interface AutoFixPreview {
   /**
-   * Files that will be created
+   * Files that'll be created
    */
   filesToCreate: string[];
 
   /**
-   * Files that will be modified
+   * Files that'll be modified
    */
   filesToModify: string[];
 
   /**
-   * Files that will be deleted
+   * Files that'll be deleted
    */
   filesToDelete: string[];
 
   /**
-   * Backup files that will be created
+   * Backup files that'll be created
    */
   backupFiles: string[];
 
@@ -275,55 +275,67 @@ export interface TreeShakingAnalysisPort {
   /**
    * Scan a directory tree to identify leaf directories that contain modules/components
    */
-  scanLeafDirectories: (rootPath: string, options?: ComprehensiveAutoFixOptions) => Promise<LeafDirectory[]>;
+  scanLeafDirectories: (
+    rootPath: string,
+    options?: ComprehensiveAutoFixOptions,
+  ) => Promise<LeafDirectory[]>;
 
   /**
    * Create an index.ts file for a leaf directory with proper named exports
    */
-  createIndexFileForLeafDirectory: (leafDirectory: LeafDirectory, options?: ComprehensiveAutoFixOptions) => Promise<string>;
+  createIndexFileForLeafDirectory: (
+    leafDirectory: LeafDirectory,
+    options?: ComprehensiveAutoFixOptions,
+  ) => string;
 
   /**
    * Convert wildcard exports to named exports in a file
    */
-  convertWildcardExportsToNamed: (filePath: string, options?: ComprehensiveAutoFixOptions) => Promise<void>;
+  convertWildcardExportsToNamed: (filePath: string, options?: ComprehensiveAutoFixOptions) => void;
 
   /**
-   * Generate preview of comprehensive auto-fix changes
+   * Generate a preview of comprehensive auto-fix changes
    */
-  generateAutoFixPreview: (packagePath: string, options?: ComprehensiveAutoFixOptions) => Promise<AutoFixPreview>;
+  generateAutoFixPreview: (
+    packagePath: string,
+    options?: ComprehensiveAutoFixOptions,
+  ) => Promise<AutoFixPreview>;
 
   /**
-   * Apply comprehensive auto-fix to a package
+   * Apply a comprehensive auto-fix to a package
    */
-  applyComprehensiveAutoFix: (packagePath: string, options?: ComprehensiveAutoFixOptions) => Promise<BackupInfo[]>;
+  applyComprehensiveAutoFix: (
+    packagePath: string,
+    options?: ComprehensiveAutoFixOptions,
+  ) => Promise<BackupInfo[]>;
 
   /**
    * Restore files from backup
    */
-  restoreFromBackup: (backupInfos: BackupInfo[]) => Promise<void>;
+  restoreFromBackup: (backupInfos: BackupInfo[]) => void;
 
   /**
    * Clean up old backup files
    */
-  cleanupBackups: (packagePath: string, olderThanDays?: number) => Promise<void>;
+  cleanupBackups: (packagePath: string, olderThanDays?: number) => void;
 
   /**
    * Check if a directory is a leaf directory (contains modules but no subdirectories with modules)
    */
-  isLeafDirectory: (directoryPath: string) => Promise<boolean>;
+  isLeafDirectory: (directoryPath: string) => boolean;
 
   /**
    * Get all TypeScript/JavaScript files in a directory (non-recursive)
    */
-  getModuleFilesInDirectory: (directoryPath: string) => Promise<string[]>;
+  getModuleFilesInDirectory: (directoryPath: string) => string[];
 
   /**
    * Generate index.ts content for a set of module files
    */
-  generateIndexContent: (moduleFiles: string[], options?: ComprehensiveAutoFixOptions) => Promise<string>;
+  generateIndexContent: (moduleFiles: string[], options?: ComprehensiveAutoFixOptions) => string;
 
   /**
    * Validate that generated exports are correct and don't break existing functionality
    */
-  validateGeneratedExports: (indexFilePath: string, moduleFiles: string[]) => Promise<boolean>;
+  validateGeneratedExports: (indexFilePath: string, moduleFiles: string[]) => boolean;
 }

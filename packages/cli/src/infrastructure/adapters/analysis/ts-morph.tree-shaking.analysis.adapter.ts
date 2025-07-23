@@ -8,7 +8,7 @@
 import { injectable } from "inversify";
 import fs from "node:fs";
 import path from "node:path";
-import { Project, SourceFile, Node } from "ts-morph";
+import { Project, SourceFile, Node, SyntaxKind } from "ts-morph";
 
 import type {
   AutoFixPreview,
@@ -43,7 +43,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     const isIntermediateFile = this.isIntermediateFile(sourceFile, exports);
     const reexportDepth = await this.calculateReexportDepth(filePath);
 
-    // Clean up the source file from project
+    // Clean up the source file from a project
     this.project.removeSourceFile(sourceFile);
 
     return {
@@ -187,7 +187,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     // Generate flattened export statements
     const exportStatements = this.generateExportStatements(allExports, options);
 
-    // Write to target index file
+    // Write to target an index file
     this.writeFile(targetIndexFile, exportStatements);
 
     // Remove intermediate files if requested
@@ -260,36 +260,46 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
 
   // Comprehensive Auto-Fix Methods
 
-  async scanLeafDirectories(rootPath: string, options: ComprehensiveAutoFixOptions = {}): Promise<LeafDirectory[]> {
+  async scanLeafDirectories(
+    rootPath: string,
+    options: ComprehensiveAutoFixOptions = {},
+  ): Promise<LeafDirectory[]> {
     const leafDirectories: LeafDirectory[] = [];
-    const excludeDirectories = options.excludeDirectories || ['node_modules', 'dist', 'build', '.turbo', 'coverage'];
+    const excludeDirectories = options.excludeDirectories ?? [
+      "node_modules",
+      "dist",
+      "build",
+      ".turbo",
+      "coverage",
+    ];
 
     const scanDirectory = async (currentPath: string): Promise<void> => {
       if (!fs.existsSync(currentPath) || !fs.statSync(currentPath).isDirectory()) {
         return;
       }
 
-      const dirName = path.basename(currentPath);
+      const directoryName = path.basename(currentPath);
 
-      if (excludeDirectories.includes(dirName)) {
+      if (excludeDirectories.includes(directoryName)) {
         return;
       }
 
-      const isLeaf = await this.isLeafDirectory(currentPath);
+      const isLeaf = this.isLeafDirectory(currentPath);
 
       if (isLeaf) {
-        const moduleFiles = await this.getModuleFilesInDirectory(currentPath);
+        const moduleFiles = this.getModuleFilesInDirectory(currentPath);
 
         if (moduleFiles.length > 0) {
-          const hasIndexFile = fs.existsSync(path.join(currentPath, 'index.ts')) ||
-                              fs.existsSync(path.join(currentPath, 'index.tsx'));
+          const hasIndexFile =
+            fs.existsSync(path.join(currentPath, "index.ts")) ||
+            fs.existsSync(path.join(currentPath, "index.tsx"));
 
           leafDirectories.push({
             files: moduleFiles,
             hasIndexFile,
-            name: dirName,
+            name: directoryName,
             parentPath: path.dirname(currentPath),
-            path: currentPath
+            path: currentPath,
           });
         }
       } else {
@@ -309,14 +319,18 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     return leafDirectories;
   }
 
-  async isLeafDirectory(directoryPath: string): Promise<boolean> {
+  isLeafDirectory(directoryPath: string): boolean {
     if (!fs.existsSync(directoryPath) || !fs.statSync(directoryPath).isDirectory()) {
       return false;
     }
 
     const entries = fs.readdirSync(directoryPath, { withFileTypes: true });
-    const hasModuleFiles = entries.some(entry =>
-      entry.isFile() && this.isTypeScriptFile(entry.name) && !entry.name.includes('.test.') && !entry.name.includes('.spec.')
+    const hasModuleFiles = entries.some(
+      (entry) =>
+        entry.isFile() &&
+        this.isTypeScriptFile(entry.name) &&
+        !entry.name.includes(".test.") &&
+        !entry.name.includes(".spec."),
     );
 
     if (!hasModuleFiles) {
@@ -325,11 +339,14 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
 
     // Check if any subdirectories contain module files
     for (const entry of entries) {
-      if (entry.isDirectory() && !['node_modules', 'dist', 'build', '.turbo', 'coverage'].includes(entry.name)) {
-        const subDirPath = path.join(directoryPath, entry.name);
-        const subDirFiles = await this.getModuleFilesInDirectory(subDirPath);
+      if (
+        entry.isDirectory() &&
+        !["node_modules", "dist", "build", ".turbo", "coverage"].includes(entry.name)
+      ) {
+        const subDirectoryPath = path.join(directoryPath, entry.name);
+        const subDirectoryFiles = this.getModuleFilesInDirectory(subDirectoryPath);
 
-        if (subDirFiles.length > 0) {
+        if (subDirectoryFiles.length > 0) {
           return false; // Not a leaf if subdirectories have modules
         }
       }
@@ -338,7 +355,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     return true;
   }
 
-  async getModuleFilesInDirectory(directoryPath: string): Promise<string[]> {
+  getModuleFilesInDirectory(directoryPath: string): string[] {
     if (!fs.existsSync(directoryPath) || !fs.statSync(directoryPath).isDirectory()) {
       return [];
     }
@@ -347,12 +364,14 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     const moduleFiles: string[] = [];
 
     for (const entry of entries) {
-      if (entry.isFile() &&
-          this.isTypeScriptFile(entry.name) &&
-          !entry.name.includes('.test.') &&
-          !entry.name.includes('.spec.') &&
-          entry.name !== 'index.ts' &&
-          entry.name !== 'index.tsx') {
+      if (
+        entry.isFile() &&
+        this.isTypeScriptFile(entry.name) &&
+        !entry.name.includes(".test.") &&
+        !entry.name.includes(".spec.") &&
+        entry.name !== "index.ts" &&
+        entry.name !== "index.tsx"
+      ) {
         moduleFiles.push(path.join(directoryPath, entry.name));
       }
     }
@@ -360,7 +379,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     return moduleFiles;
   }
 
-  async generateIndexContent(moduleFiles: string[], options: ComprehensiveAutoFixOptions = {}): Promise<string> {
+  generateIndexContent(moduleFiles: string[], options: ComprehensiveAutoFixOptions = {}): string {
     const preserveTypeExports = options.preserveTypeExports ?? true;
     const lines: string[] = [];
     const processedModules = new Set<string>();
@@ -383,15 +402,16 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
         const typeExports: string[] = [];
 
         for (const [name, declarations] of exportedDeclarations) {
-          if (name === 'default') {
+          if (name === "default") {
             continue; // Skip default exports for now
           }
 
           // Check if this is a type-only export
-          const isTypeOnly = declarations.some(decl =>
-            decl.getKind() === 253 || // InterfaceDeclaration
-            decl.getKind() === 254 || // TypeAliasDeclaration
-            decl.getKind() === 255    // EnumDeclaration (can be both)
+          const isTypeOnly = declarations.some(
+            (decl) =>
+              decl.getKind() === SyntaxKind.InterfaceDeclaration ||
+              decl.getKind() === SyntaxKind.TypeAliasDeclaration ||
+              decl.getKind() === SyntaxKind.EnumDeclaration,
           );
 
           if (isTypeOnly && preserveTypeExports) {
@@ -403,12 +423,12 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
 
         // Add value exports
         if (valueExports.length > 0) {
-          lines.push(`export { ${valueExports.join(', ')} } from "${relativePath}";`);
+          lines.push(`export { ${valueExports.join(", ")} } from "${relativePath}";`);
         }
 
         // Add type exports
         if (typeExports.length > 0 && preserveTypeExports) {
-          lines.push(`export type { ${typeExports.join(', ')} } from "${relativePath}";`);
+          lines.push(`export type { ${typeExports.join(", ")} } from "${relativePath}";`);
         }
 
         this.project.removeSourceFile(sourceFile);
@@ -418,17 +438,20 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
       }
     }
 
-    return lines.join('\n') + '\n';
+    return lines.join("\n") + "\n";
   }
 
-  async createIndexFileForLeafDirectory(leafDirectory: LeafDirectory, options: ComprehensiveAutoFixOptions = {}): Promise<string> {
-    const indexPath = path.join(leafDirectory.path, 'index.ts');
+  createIndexFileForLeafDirectory(
+    leafDirectory: LeafDirectory,
+    options: ComprehensiveAutoFixOptions = {},
+  ): string {
+    const indexPath = path.join(leafDirectory.path, "index.ts");
 
     if (leafDirectory.hasIndexFile && !options.preview) {
       throw new Error(`Index file already exists at ${indexPath}`);
     }
 
-    const content = await this.generateIndexContent(leafDirectory.files, options);
+    const content = this.generateIndexContent(leafDirectory.files, options);
 
     if (!options.preview) {
       if (options.createBackup && fs.existsSync(indexPath)) {
@@ -441,7 +464,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     return indexPath;
   }
 
-  async convertWildcardExportsToNamed(filePath: string, options: ComprehensiveAutoFixOptions = {}): Promise<void> {
+  convertWildcardExportsToNamed(filePath: string, options: ComprehensiveAutoFixOptions = {}): void {
     if (!this.isTypeScriptFile(filePath) || !fs.existsSync(filePath)) {
       return;
     }
@@ -468,11 +491,13 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
 
             if (exportedSymbols.length > 0) {
               // Replace wildcard export with named exports
-              const namedExports = exportedSymbols.join(', ');
+              const namedExports = exportedSymbols.join(", ");
               const isTypeOnly = exportDecl.isTypeOnly();
-              const typePrefix = isTypeOnly ? 'type ' : '';
+              const typePrefix = isTypeOnly ? "type " : "";
 
-              exportDecl.replaceWithText(`export ${typePrefix}{ ${namedExports} } from "${moduleSpecifier}";`);
+              exportDecl.replaceWithText(
+                `export ${typePrefix}{ ${namedExports} } from "${moduleSpecifier}";`,
+              );
               hasChanges = true;
             }
           }
@@ -487,7 +512,10 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     this.project.removeSourceFile(sourceFile);
   }
 
-  async generateAutoFixPreview(packagePath: string, options: ComprehensiveAutoFixOptions = {}): Promise<AutoFixPreview> {
+  async generateAutoFixPreview(
+    packagePath: string,
+    options: ComprehensiveAutoFixOptions = {},
+  ): Promise<AutoFixPreview> {
     const preview: AutoFixPreview = {
       backupFiles: [],
       filesToCreate: [],
@@ -497,16 +525,16 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
         deepReexportChainsFixed: 0,
         indexFilesCreated: 0,
         intermediateFilesFlattened: 0,
-        wildcardExportsConverted: 0
-      }
+        wildcardExportsConverted: 0,
+      },
     };
 
     // Scan for leaf directories that need index files
     const leafDirectories = await this.scanLeafDirectories(packagePath, options);
 
-    for (const leafDir of leafDirectories) {
-      if (!leafDir.hasIndexFile) {
-        const indexPath = path.join(leafDir.path, 'index.ts');
+    for (const leafDirectory of leafDirectories) {
+      if (!leafDirectory.hasIndexFile) {
+        const indexPath = path.join(leafDirectory.path, "index.ts");
 
         preview.filesToCreate.push(indexPath);
         preview.summary.indexFilesCreated++;
@@ -514,14 +542,14 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     }
 
     // Find files with wildcard exports
-    const srcPath = path.join(packagePath, 'src');
+    const srcPath = path.join(packagePath, "src");
 
     if (fs.existsSync(srcPath)) {
-      const indexFiles = await this.findIndexFiles(srcPath);
+      const indexFiles = this.findIndexFiles(srcPath);
 
       for (const indexFile of indexFiles) {
         const analysis = await this.analyzeFile(indexFile);
-        const wildcardExports = analysis.exports.filter(exp => exp.type === 'wildcard');
+        const wildcardExports = analysis.exports.filter((exp) => exp.type === "wildcard");
 
         if (wildcardExports.length > 0) {
           preview.filesToModify.push(indexFile);
@@ -537,7 +565,10 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     return preview;
   }
 
-  async applyComprehensiveAutoFix(packagePath: string, options: ComprehensiveAutoFixOptions = {}): Promise<BackupInfo[]> {
+  async applyComprehensiveAutoFix(
+    packagePath: string,
+    options: ComprehensiveAutoFixOptions = {},
+  ): Promise<BackupInfo[]> {
     const backupInfos: BackupInfo[] = [];
     const timestamp = Date.now();
 
@@ -545,21 +576,21 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
       // Step 1: Scan for leaf directories and create index files
       const leafDirectories = await this.scanLeafDirectories(packagePath, options);
 
-      for (const leafDir of leafDirectories) {
-        if (!leafDir.hasIndexFile) {
-          await this.createIndexFileForLeafDirectory(leafDir, options);
+      for (const leafDirectory of leafDirectories) {
+        if (!leafDirectory.hasIndexFile) {
+          this.createIndexFileForLeafDirectory(leafDirectory, options);
         }
       }
 
       // Step 2: Convert wildcard exports to named exports
-      const srcPath = path.join(packagePath, 'src');
+      const srcPath = path.join(packagePath, "src");
 
       if (fs.existsSync(srcPath)) {
-        const indexFiles = await this.findIndexFiles(srcPath);
+        const indexFiles = this.findIndexFiles(srcPath);
 
         for (const indexFile of indexFiles) {
           const analysis = await this.analyzeFile(indexFile);
-          const wildcardExports = analysis.exports.filter(exp => exp.type === 'wildcard');
+          const wildcardExports = analysis.exports.filter((exp) => exp.type === "wildcard");
 
           if (wildcardExports.length > 0) {
             if (options.createBackup) {
@@ -569,11 +600,11 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
                 backupPath,
                 isValid: true,
                 originalPath: indexFile,
-                timestamp
+                timestamp,
               });
             }
 
-            await this.convertWildcardExportsToNamed(indexFile, options);
+            this.convertWildcardExportsToNamed(indexFile, options);
           }
         }
       }
@@ -583,14 +614,14 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
         const intermediateFiles = await this.findIntermediateFiles(packagePath);
 
         if (intermediateFiles.length > 0) {
-          const mainIndexFile = path.join(packagePath, 'src', 'index.ts');
+          const mainIndexFile = path.join(packagePath, "src", "index.ts");
 
           if (fs.existsSync(mainIndexFile)) {
             await this.flattenExports(intermediateFiles, {
               createBackup: options.createBackup,
               preserveTypeExports: options.preserveTypeExports,
               removeIntermediateFiles: true,
-              targetIndexFile: mainIndexFile
+              targetIndexFile: mainIndexFile,
             });
           }
         }
@@ -600,14 +631,14 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     } catch (error) {
       // If something goes wrong, restore from backups
       if (backupInfos.length > 0) {
-        await this.restoreFromBackup(backupInfos);
+        this.restoreFromBackup(backupInfos);
       }
 
       throw error;
     }
   }
 
-  async restoreFromBackup(backupInfos: BackupInfo[]): Promise<void> {
+  restoreFromBackup(backupInfos: BackupInfo[]): void {
     for (const backupInfo of backupInfos) {
       if (backupInfo.isValid && fs.existsSync(backupInfo.backupPath)) {
         try {
@@ -615,26 +646,28 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
           // Clean up the backup file after successful restore
           fs.unlinkSync(backupInfo.backupPath);
         } catch (error) {
-          console.warn(`Failed to restore ${backupInfo.originalPath} from backup: ${error}`);
+          console.warn(
+            `Failed to restore ${backupInfo.originalPath} from backup: ${String(error)}`,
+          );
         }
       }
     }
   }
 
-  async cleanupBackups(packagePath: string, olderThanDays = 7): Promise<void> {
-    const cutoffTime = Date.now() - (olderThanDays * 24 * 60 * 60 * 1000);
+  cleanupBackups(packagePath: string, olderThanDays = 7): void {
+    const cutoffTime = Date.now() - olderThanDays * 24 * 60 * 60 * 1000;
 
-    const findBackupFiles = (dir: string): void => {
-      if (!fs.existsSync(dir)) return;
+    const findBackupFiles = (directory: string): void => {
+      if (!fs.existsSync(directory)) return;
 
-      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      const entries = fs.readdirSync(directory, { withFileTypes: true });
 
       for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
+        const fullPath = path.join(directory, entry.name);
 
         if (entry.isDirectory()) {
           findBackupFiles(fullPath);
-        } else if (entry.isFile() && entry.name.includes('.backup.')) {
+        } else if (entry.isFile() && entry.name.includes(".backup.")) {
           try {
             const stats = fs.statSync(fullPath);
 
@@ -651,7 +684,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     findBackupFiles(packagePath);
   }
 
-  async validateGeneratedExports(indexFilePath: string, moduleFiles: string[]): Promise<boolean> {
+  validateGeneratedExports(indexFilePath: string, moduleFiles: string[]): boolean {
     if (!fs.existsSync(indexFilePath)) {
       return false;
     }
@@ -666,7 +699,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
         const moduleExports = moduleSourceFile.getExportedDeclarations();
 
         for (const [exportName] of moduleExports) {
-          if (exportName !== 'default' && !indexExports.has(exportName)) {
+          if (exportName !== "default" && !indexExports.has(exportName)) {
             this.project.removeSourceFile(sourceFile);
             this.project.removeSourceFile(moduleSourceFile);
 
@@ -685,7 +718,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
     }
   }
 
-  private async findIndexFiles(rootPath: string): Promise<string[]> {
+  private findIndexFiles(rootPath: string): string[] {
     const indexFiles: string[] = [];
 
     const scanDirectory = (currentPath: string): void => {
@@ -698,9 +731,12 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
       for (const entry of entries) {
         const fullPath = path.join(currentPath, entry.name);
 
-        if (entry.isFile() && (entry.name === 'index.ts' || entry.name === 'index.tsx')) {
+        if (entry.isFile() && (entry.name === "index.ts" || entry.name === "index.tsx")) {
           indexFiles.push(fullPath);
-        } else if (entry.isDirectory() && !['node_modules', 'dist', 'build', '.turbo', 'coverage'].includes(entry.name)) {
+        } else if (
+          entry.isDirectory() &&
+          !["node_modules", "dist", "build", ".turbo", "coverage"].includes(entry.name)
+        ) {
           scanDirectory(fullPath);
         }
       }
@@ -712,9 +748,9 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
   }
 
   private async findIntermediateFiles(packagePath: string): Promise<string[]> {
-    const srcPath = path.join(packagePath, 'src');
-    const mainIndexFile = path.join(srcPath, 'index.ts');
-    const indexFiles = await this.findIndexFiles(srcPath);
+    const srcPath = path.join(packagePath, "src");
+    const mainIndexFile = path.join(srcPath, "index.ts");
+    const indexFiles = this.findIndexFiles(srcPath);
 
     const intermediateFiles: string[] = [];
 
@@ -788,7 +824,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
       if (Node.isExportable(statement) && statement.hasExportKeyword()) {
         let name = "default";
 
-        // Get name based on statement type
+        // Get a name based on a statement type
         if (
           Node.isFunctionDeclaration(statement) ||
           Node.isClassDeclaration(statement) ||
@@ -825,7 +861,7 @@ export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPor
   }
 
   private hasImplementation(sourceFile: SourceFile): boolean {
-    // Check if file has any actual implementation beyond just exports
+    // Check if a file has any actual implementation beyond just exports
     const statements = sourceFile.getStatements();
 
     for (const statement of statements) {
