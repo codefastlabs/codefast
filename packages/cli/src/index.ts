@@ -9,10 +9,10 @@
 
 import "reflect-metadata";
 
-import type { CommandHandler } from "./ui/controllers/command-handler";
+import type { CommandHandler } from "@/ui/controllers/command-handler";
 
-import { configureContainer, getService } from "./shared/di/container";
-import { TYPES } from "./shared/di/types";
+import { configureContainer, getService } from "@/shared/di/container";
+import { TYPES } from "@/shared/di/types";
 
 // Configure dependency injection container
 configureContainer();

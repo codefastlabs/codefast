@@ -11,7 +11,7 @@ import { injectable } from "inversify";
 import type {
   FileFinderOptions,
   FileFinderServicePort,
-} from "../../../application/ports/services/file-finder.service.port";
+} from "@/application/ports/services/file-finder.service.port";
 
 @injectable()
 export class FastGlobFileFinderAdapter implements FileFinderServicePort {
@@ -30,7 +30,11 @@ export class FastGlobFileFinderAdapter implements FileFinderServicePort {
 
       return files;
     } catch (error) {
-      throw new Error(`Failed to find files with pattern "${Array.isArray(patterns) ? patterns.join(', ') : patterns}": ${String(error)}`);
+      throw new Error(
+        `Failed to find files with pattern "${Array.isArray(patterns) ? patterns.join(", ") : patterns}": ${String(
+          error,
+        )}`,
+      );
     }
   }
 
@@ -49,7 +53,11 @@ export class FastGlobFileFinderAdapter implements FileFinderServicePort {
 
       return files;
     } catch (error) {
-      throw new Error(`Failed to find files with pattern "${Array.isArray(patterns) ? patterns.join(', ') : patterns}": ${String(error)}`);
+      throw new Error(
+        `Failed to find files with pattern "${Array.isArray(patterns) ? patterns.join(", ") : patterns}": ${String(
+          error,
+        )}`,
+      );
     }
   }
 

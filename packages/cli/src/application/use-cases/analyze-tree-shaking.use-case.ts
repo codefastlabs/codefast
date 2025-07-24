@@ -15,11 +15,11 @@ import type {
   ComprehensiveAutoFixOptions,
   FileAnalysis,
   TreeShakingAnalysisPort,
-} from "../ports/analysis/tree-shaking.analysis.port";
-import type { FileFinderServicePort } from "../ports/services/file-finder.service.port";
-import type { LoggingServicePort } from "../ports/services/logging.service.port";
+} from "@/application/ports/analysis/tree-shaking.analysis.port";
+import type { FileFinderServicePort } from "@/application/ports/services/file-finder.service.port";
+import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
 
-import { TYPES } from "../../shared/di/types";
+import { TYPES } from "@/shared/di/types";
 
 export interface AnalyzeTreeShakingInput {
   comprehensive?: boolean;
@@ -79,7 +79,7 @@ export class AnalyzeTreeShakingUseCase {
       packagesPath = "packages",
       preserveTypeExports = true,
       preview = false,
-      removeIntermediateFiles = false
+      removeIntermediateFiles = false,
     } = input;
 
     this.loggingService.startSection("Analyzing tree-shaking optimization opportunities...");
@@ -118,7 +118,7 @@ export class AnalyzeTreeShakingUseCase {
             maxWildcardExports,
             preserveTypeExports,
             preview,
-            removeIntermediateFiles
+            removeIntermediateFiles,
           });
         }
         // Apply legacy auto-fix if requested (and not using comprehensive mode)
@@ -478,7 +478,10 @@ export class AnalyzeTreeShakingUseCase {
       this.loggingService.info(`🔍 Generating preview for package: ${analysis.packageName}`);
 
       try {
-        const preview = await this.treeShakingAnalysisService.generateAutoFixPreview(packagePath, options);
+        const preview = await this.treeShakingAnalysisService.generateAutoFixPreview(
+          packagePath,
+          options,
+        );
 
         this.displayAutoFixPreview(analysis.packageName, preview);
 
@@ -490,10 +493,15 @@ export class AnalyzeTreeShakingUseCase {
       }
     }
 
-    this.loggingService.info(`🔧 Applying comprehensive auto-fix for package: ${analysis.packageName}`);
+    this.loggingService.info(
+      `🔧 Applying comprehensive auto-fix for package: ${analysis.packageName}`,
+    );
 
     try {
-      const backupInfos = await this.treeShakingAnalysisService.applyComprehensiveAutoFix(packagePath, options);
+      const backupInfos = await this.treeShakingAnalysisService.applyComprehensiveAutoFix(
+        packagePath,
+        options,
+      );
 
       if (backupInfos.length > 0) {
         this.loggingService.success(
@@ -536,15 +544,24 @@ export class AnalyzeTreeShakingUseCase {
     }
 
     if (summary.wildcardExportsConverted > 0) {
-      this.loggingService.item(`Wildcard exports to convert: ${summary.wildcardExportsConverted}`, 1);
+      this.loggingService.item(
+        `Wildcard exports to convert: ${summary.wildcardExportsConverted}`,
+        1,
+      );
     }
 
     if (summary.intermediateFilesFlattened > 0) {
-      this.loggingService.item(`Intermediate files to flatten: ${summary.intermediateFilesFlattened}`, 1);
+      this.loggingService.item(
+        `Intermediate files to flatten: ${summary.intermediateFilesFlattened}`,
+        1,
+      );
     }
 
     if (summary.deepReexportChainsFixed > 0) {
-      this.loggingService.item(`Deep re-export chains to fix: ${summary.deepReexportChainsFixed}`, 1);
+      this.loggingService.item(
+        `Deep re-export chains to fix: ${summary.deepReexportChainsFixed}`,
+        1,
+      );
     }
 
     // Files to create
