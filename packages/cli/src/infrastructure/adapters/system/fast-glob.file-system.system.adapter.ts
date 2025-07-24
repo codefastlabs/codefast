@@ -9,7 +9,7 @@ import chalk from "chalk";
 import pkg from "fast-glob";
 import { injectable } from "inversify";
 
-import type { FileSystemSystemPort } from "@/application/ports/secondary/system/file-system.system.port";
+import type { FileSystemSystemPort } from "../../../application/ports/secondary/system/file-system.system.port";
 
 const { glob } = pkg;
 

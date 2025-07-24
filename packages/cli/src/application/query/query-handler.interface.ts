@@ -5,7 +5,7 @@
  * Query handlers execute queries and return results without side effects.
  */
 
-import type { Query } from "@/application/query/query.interface";
+import type { Query } from "./query.interface";
 
 export interface QueryHandler<TQuery extends Query, TResult> {
   handle: (query: TQuery) => Promise<TResult>;

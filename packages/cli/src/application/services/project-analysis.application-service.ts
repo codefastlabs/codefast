@@ -10,10 +10,10 @@ import { inject, injectable } from "inversify";
 import type {
   GetProjectStatisticsQueryHandler,
   GetProjectStatisticsResult,
-} from "@/application/query/get-project-statistics.query-handler";
+} from "../query/get-project-statistics.query-handler";
 
-import { GetProjectStatisticsQuery } from "@/application/query/get-project-statistics.query";
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../shared/di/types";
+import { GetProjectStatisticsQuery } from "../query/get-project-statistics.query";
 
 export interface ProjectAnalysisRequest {
   pattern?: string;

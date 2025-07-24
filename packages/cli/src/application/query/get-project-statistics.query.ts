@@ -5,7 +5,7 @@
  * This is a read operation that doesn't change system state.
  */
 
-import type { Query } from "@/application/query/query.interface";
+import type { Query } from "./query.interface";
 
 export class GetProjectStatisticsQuery implements Query {
   readonly timestamp: Date;

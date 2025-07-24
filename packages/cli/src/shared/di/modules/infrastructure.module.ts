@@ -7,20 +7,20 @@
 
 import { ContainerModule } from "inversify";
 
-import type { ComponentAnalysisPort } from "@/application/ports/secondary/analysis/component.analysis.port";
-import type { TreeShakingAnalysisPort } from "@/application/ports/secondary/analysis/tree-shaking.analysis.port";
-import type { TypeScriptAnalysisPort } from "@/application/ports/secondary/analysis/typescript.analysis.port";
-import type { FileFinderServicePort } from "@/application/ports/secondary/services/file-finder.service.port";
-import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
-import type { FileSystemSystemPort } from "@/application/ports/secondary/system/file-system.system.port";
+import type { ComponentAnalysisPort } from "../../../application/ports/secondary/analysis/component.analysis.port";
+import type { TreeShakingAnalysisPort } from "../../../application/ports/secondary/analysis/tree-shaking.analysis.port";
+import type { TypeScriptAnalysisPort } from "../../../application/ports/secondary/analysis/typescript.analysis.port";
+import type { FileFinderServicePort } from "../../../application/ports/secondary/services/file-finder.service.port";
+import type { LoggingServicePort } from "../../../application/ports/secondary/services/logging.service.port";
+import type { FileSystemSystemPort } from "../../../application/ports/secondary/system/file-system.system.port";
 
-import { ReactComponentAnalysisAdapter } from "@/infrastructure/adapters/analysis/react.component.analysis.adapter";
-import { TsMorphTreeShakingAnalysisAdapter } from "@/infrastructure/adapters/analysis/ts-morph.tree-shaking.analysis.adapter";
-import { TsMorphTypescriptAnalysisAdapter } from "@/infrastructure/adapters/analysis/ts-morph.typescript.analysis.adapter";
-import { ChalkLoggingServiceAdapter } from "@/infrastructure/adapters/services/chalk.logging.service.adapter";
-import { FastGlobFileFinderAdapter } from "@/infrastructure/adapters/services/fast-glob.file-finder.adapter";
-import { FastGlobFileSystemSystemAdapter } from "@/infrastructure/adapters/system/fast-glob.file-system.system.adapter";
-import { TYPES } from "@/shared/di/types";
+import { ReactComponentAnalysisAdapter } from "../../../infrastructure/adapters/analysis/react.component.analysis.adapter";
+import { TsMorphTreeShakingAnalysisAdapter } from "../../../infrastructure/adapters/analysis/ts-morph.tree-shaking.analysis.adapter";
+import { TsMorphTypescriptAnalysisAdapter } from "../../../infrastructure/adapters/analysis/ts-morph.typescript.analysis.adapter";
+import { ChalkLoggingServiceAdapter } from "../../../infrastructure/adapters/services/chalk.logging.service.adapter";
+import { FastGlobFileFinderAdapter } from "../../../infrastructure/adapters/services/fast-glob.file-finder.adapter";
+import { FastGlobFileSystemSystemAdapter } from "../../../infrastructure/adapters/system/fast-glob.file-system.system.adapter";
+import { TYPES } from "../types";
 
 export const infrastructureModule = new ContainerModule((options) => {
   // Ports

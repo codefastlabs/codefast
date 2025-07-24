@@ -9,10 +9,10 @@ import type { Command } from "commander";
 
 import { inject, injectable } from "inversify";
 
-import type { GreetUserUseCase } from "@/application/use-cases/greet-user.use-case";
-import type { CommandInterface } from "@/ui/controllers/interfaces/command.interface";
+import type { GreetUserUseCase } from "../../../application/use-cases/greet-user.use-case";
+import type { CommandInterface } from "../interfaces/command.interface";
 
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../../shared/di/types";
 
 @injectable()
 export class HelloCommand implements CommandInterface {

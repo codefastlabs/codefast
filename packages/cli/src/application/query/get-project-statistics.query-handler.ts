@@ -7,15 +7,15 @@
 
 import { inject, injectable } from "inversify";
 
-import type { TypeScriptAnalysisPort } from "@/application/ports/secondary/analysis/typescript.analysis.port";
-import type { FileSystemSystemPort } from "@/application/ports/secondary/system/file-system.system.port";
-import type { GetProjectStatisticsQuery } from "@/application/query/get-project-statistics.query";
-import type { QueryHandler } from "@/application/query/query-handler.interface";
+import type { TypeScriptAnalysisPort } from "../ports/secondary/analysis/typescript.analysis.port";
+import type { FileSystemSystemPort } from "../ports/secondary/system/file-system.system.port";
+import type { GetProjectStatisticsQuery } from "./get-project-statistics.query";
+import type { QueryHandler } from "./query-handler.interface";
 
-import { Project } from "@/domain/entities/project.entity";
-import { FilePath } from "@/domain/value-objects/file-path.value-object";
-import { ProjectStatistics } from "@/domain/value-objects/project-statistics.value-object";
-import { TYPES } from "@/shared/di/types";
+import { Project } from "../../domain/entities/project.entity";
+import { FilePath } from "../../domain/value-objects/file-path.value-object";
+import { ProjectStatistics } from "../../domain/value-objects/project-statistics.value-object";
+import { TYPES } from "../../shared/di/types";
 
 export interface GetProjectStatisticsResult {
   filePaths: FilePath[];

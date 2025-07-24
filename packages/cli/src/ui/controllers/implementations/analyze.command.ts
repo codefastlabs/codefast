@@ -9,11 +9,11 @@ import type { Command } from "commander";
 
 import { inject, injectable } from "inversify";
 
-import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
-import type { ProjectAnalysisApplicationService } from "@/application/services/project-analysis.application-service";
-import type { CommandInterface } from "@/ui/controllers/interfaces/command.interface";
+import type { LoggingServicePort } from "../../../application/ports/secondary/services/logging.service.port";
+import type { ProjectAnalysisApplicationService } from "../../../application/services/project-analysis.application-service";
+import type { CommandInterface } from "../interfaces/command.interface";
 
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../../shared/di/types";
 
 @injectable()
 export class AnalyzeCommand implements CommandInterface {
