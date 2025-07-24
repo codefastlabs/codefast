@@ -5,14 +5,12 @@
  * Contains core business logic and rules for project analysis.
  */
 
-import type { FilePath } from "../value-objects/file-path.value-object";
-import type { ProjectStatistics } from "../value-objects/project-statistics.value-object";
+import type { FilePath } from "@/domain/value-objects/file-path.value-object";
+import type { ProjectStatistics } from "@/domain/value-objects/project-statistics.value-object";
 
 export class Project {
   private readonly _id: string;
   private readonly _configPath?: string;
-  private _sourceFiles: FilePath[] = [];
-  private _statistics?: ProjectStatistics;
 
   constructor(id: string, configPath?: string) {
     if (!id.trim()) {
@@ -23,20 +21,24 @@ export class Project {
     this._configPath = configPath;
   }
 
+  private _sourceFiles: FilePath[] = [];
+
+  get sourceFiles(): FilePath[] {
+    return [...this._sourceFiles];
+  }
+
+  private _statistics?: ProjectStatistics;
+
+  get statistics(): ProjectStatistics | undefined {
+    return this._statistics;
+  }
+
   get id(): string {
     return this._id;
   }
 
   get configPath(): string | undefined {
     return this._configPath;
-  }
-
-  get sourceFiles(): FilePath[] {
-    return [...this._sourceFiles];
-  }
-
-  get statistics(): ProjectStatistics | undefined {
-    return this._statistics;
   }
 
   addSourceFiles(filePaths: FilePath[]): void {

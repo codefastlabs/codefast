@@ -7,14 +7,14 @@
 
 import { inject, injectable } from "inversify";
 
-import type { TypeScriptAnalysisPort } from "../ports/analysis/typescript.analysis.port";
-import type { LoggingServicePort } from "../ports/services/logging.service.port";
-import type { FileSystemSystemPort } from "../ports/system/file-system.system.port";
+import type { TypeScriptAnalysisPort } from "@/application/ports/analysis/typescript.analysis.port";
+import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
+import type { FileSystemSystemPort } from "@/application/ports/system/file-system.system.port";
 
-import { Project } from "../../domain/entities/project.entity";
-import { FilePath } from "../../domain/value-objects/file-path.value-object";
-import { ProjectStatistics } from "../../domain/value-objects/project-statistics.value-object";
-import { TYPES } from "../../shared/di/types";
+import { Project } from "@/domain/entities/project.entity";
+import { FilePath } from "@/domain/value-objects/file-path.value-object";
+import { ProjectStatistics } from "@/domain/value-objects/project-statistics.value-object";
+import { TYPES } from "@/shared/di/types";
 
 export interface AnalyzeProjectInput {
   pattern?: string;
@@ -51,9 +51,9 @@ export class AnalyzeProjectUseCase {
     try {
       // Create domain entities
       const project = new Project("analysis-project", tsConfigPath);
-      const filePaths = filePathStrings.map(path => new FilePath(path));
+      const filePaths = filePathStrings.map((path) => new FilePath(path));
 
-      // Add source files to project
+      // Add source files to the project
       project.addSourceFiles(filePaths);
 
       // Create an analysis project
@@ -68,10 +68,10 @@ export class AnalyzeProjectUseCase {
         statisticsData.totalFiles,
         statisticsData.totalClasses,
         statisticsData.totalFunctions,
-        statisticsData.totalInterfaces
+        statisticsData.totalInterfaces,
       );
 
-      // Update project with statistics
+      // Update the project with statistics
       project.updateStatistics(statistics);
 
       // Display results
@@ -83,7 +83,9 @@ export class AnalyzeProjectUseCase {
       this.loggingService.info(`  Functions: ${String(statistics.totalFunctions)}`);
       this.loggingService.info(`  Interfaces: ${String(statistics.totalInterfaces)}`);
       this.loggingService.info(`  Total Symbols: ${String(statistics.totalSymbols)}`);
-      this.loggingService.info(`  Average Symbols per File: ${String(statistics.averageSymbolsPerFile.toFixed(2))}`);
+      this.loggingService.info(
+        `  Average Symbols per File: ${String(statistics.averageSymbolsPerFile.toFixed(2))}`,
+      );
     } catch (error) {
       this.loggingService.error(`Error analyzing project: ${String(error)}`);
     } finally {
