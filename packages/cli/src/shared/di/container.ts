@@ -7,9 +7,9 @@
 
 import { Container } from "inversify";
 
-import { applicationModule } from "@/shared/di/modules/application.module";
-import { commandsModule } from "@/shared/di/modules/commands.module";
-import { infrastructureModule } from "@/shared/di/modules/infrastructure.module";
+import { applicationModule } from "./modules/application.module";
+import { commandsModule } from "./modules/commands.module";
+import { infrastructureModule } from "./modules/infrastructure.module";
 
 /**
  * Main IoC container instance

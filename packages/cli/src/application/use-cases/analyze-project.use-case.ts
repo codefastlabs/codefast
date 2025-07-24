@@ -7,14 +7,14 @@
 
 import { inject, injectable } from "inversify";
 
-import type { TypeScriptAnalysisPort } from "@/application/ports/secondary/analysis/typescript.analysis.port";
-import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
-import type { FileSystemSystemPort } from "@/application/ports/secondary/system/file-system.system.port";
+import type { TypeScriptAnalysisPort } from "../ports/secondary/analysis/typescript.analysis.port";
+import type { LoggingServicePort } from "../ports/secondary/services/logging.service.port";
+import type { FileSystemSystemPort } from "../ports/secondary/system/file-system.system.port";
 
-import { Project } from "@/domain/entities/project.entity";
-import { FilePath } from "@/domain/value-objects/file-path.value-object";
-import { ProjectStatistics } from "@/domain/value-objects/project-statistics.value-object";
-import { TYPES } from "@/shared/di/types";
+import { Project } from "../../domain/entities/project.entity";
+import { FilePath } from "../../domain/value-objects/file-path.value-object";
+import { ProjectStatistics } from "../../domain/value-objects/project-statistics.value-object";
+import { TYPES } from "../../shared/di/types";
 
 export interface AnalyzeProjectInput {
   pattern?: string;

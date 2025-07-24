@@ -9,10 +9,10 @@ import type { Command } from "commander";
 
 import { inject, injectable } from "inversify";
 
-import type { CheckComponentTypesUseCase } from "@/application/use-cases/check-component-types.use-case";
-import type { CommandInterface } from "@/ui/controllers/interfaces/command.interface";
+import type { CheckComponentTypesUseCase } from "../../../application/use-cases/check-component-types.use-case";
+import type { CommandInterface } from "../interfaces/command.interface";
 
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../../shared/di/types";
 
 @injectable()
 export class CheckComponentTypesCommand implements CommandInterface {

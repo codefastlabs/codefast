@@ -15,11 +15,11 @@ import type {
   ComprehensiveAutoFixOptions,
   FileAnalysis,
   TreeShakingAnalysisPort,
-} from "@/application/ports/secondary/analysis/tree-shaking.analysis.port";
-import type { FileFinderServicePort } from "@/application/ports/secondary/services/file-finder.service.port";
-import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
+} from "../ports/secondary/analysis/tree-shaking.analysis.port";
+import type { FileFinderServicePort } from "../ports/secondary/services/file-finder.service.port";
+import type { LoggingServicePort } from "../ports/secondary/services/logging.service.port";
 
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../shared/di/types";
 
 export interface AnalyzeTreeShakingInput {
   comprehensive?: boolean;

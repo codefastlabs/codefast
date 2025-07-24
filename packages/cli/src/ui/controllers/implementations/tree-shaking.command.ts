@@ -9,11 +9,11 @@ import type { Command } from "commander";
 
 import { inject, injectable } from "inversify";
 
-import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
-import type { AnalyzeTreeShakingUseCase } from "@/application/use-cases/analyze-tree-shaking.use-case";
-import type { CommandInterface } from "@/ui/controllers/interfaces/command.interface";
+import type { LoggingServicePort } from "../../../application/ports/secondary/services/logging.service.port";
+import type { AnalyzeTreeShakingUseCase } from "../../../application/use-cases/analyze-tree-shaking.use-case";
+import type { CommandInterface } from "../interfaces/command.interface";
 
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../../shared/di/types";
 
 @injectable()
 export class TreeShakingCommand implements CommandInterface {

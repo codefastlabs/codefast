@@ -5,8 +5,8 @@
  * Contains core business logic and rules for project analysis.
  */
 
-import type { FilePath } from "@/domain/value-objects/file-path.value-object";
-import type { ProjectStatistics } from "@/domain/value-objects/project-statistics.value-object";
+import type { FilePath } from "../value-objects/file-path.value-object";
+import type { ProjectStatistics } from "../value-objects/project-statistics.value-object";
 
 export class Project {
   private readonly _id: string;

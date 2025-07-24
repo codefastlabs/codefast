@@ -12,9 +12,9 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-import type { CommandRegistry } from "@/ui/controllers/registry/command.registry";
+import type { CommandRegistry } from "./registry/command.registry";
 
-import { TYPES } from "@/shared/di/types";
+import { TYPES } from "../../shared/di/types";
 
 @injectable()
 export class CommandHandler {
