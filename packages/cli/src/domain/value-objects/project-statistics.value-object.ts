@@ -15,7 +15,7 @@ export class ProjectStatistics {
     totalFiles: number,
     totalClasses: number,
     totalFunctions: number,
-    totalInterfaces: number
+    totalInterfaces: number,
   ) {
     if (totalFiles < 0) {
       throw new Error("Total files cannot be negative");
