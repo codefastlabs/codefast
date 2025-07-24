@@ -7,11 +7,11 @@
 
 import { ContainerModule } from "inversify";
 
-import { AnalyzeProjectUseCase } from "@/core/application/use-cases/analyze-project.use-case";
-import { AnalyzeTreeShakingUseCase } from "@/core/application/use-cases/analyze-tree-shaking.use-case";
-import { CheckComponentTypesUseCase } from "@/core/application/use-cases/check-component-types.use-case";
-import { GreetUserUseCase } from "@/core/application/use-cases/greet-user.use-case";
-import { TYPES } from "@/di/types";
+import { AnalyzeProjectUseCase } from "../../../application/use-cases/analyze-project.use-case";
+import { AnalyzeTreeShakingUseCase } from "../../../application/use-cases/analyze-tree-shaking.use-case";
+import { CheckComponentTypesUseCase } from "../../../application/use-cases/check-component-types.use-case";
+import { GreetUserUseCase } from "../../../application/use-cases/greet-user.use-case";
+import { TYPES } from "../types";
 
 export const applicationModule = new ContainerModule((options) => {
   // Use Cases

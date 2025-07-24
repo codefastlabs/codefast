@@ -9,10 +9,10 @@ import type { Command } from "commander";
 
 import { inject, injectable } from "inversify";
 
-import type { CommandInterface } from "@/commands/interfaces/command.interface";
-import type { AnalyzeProjectUseCase } from "@/core/application/use-cases/analyze-project.use-case";
+import type { AnalyzeProjectUseCase } from "../../../application/use-cases/analyze-project.use-case";
+import type { CommandInterface } from "../interfaces/command.interface";
 
-import { TYPES } from "@/di/types";
+import { TYPES } from "../../../shared/di/types";
 
 @injectable()
 export class AnalyzeCommand implements CommandInterface {

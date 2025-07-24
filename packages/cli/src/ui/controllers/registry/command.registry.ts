@@ -7,9 +7,9 @@
 
 import { injectable, multiInject } from "inversify";
 
-import type { CommandInterface, CommandMetadata } from "@/commands/interfaces/command.interface";
+import type { CommandInterface, CommandMetadata } from "../interfaces/command.interface";
 
-import { TYPES } from "@/di/types";
+import { TYPES } from "../../../shared/di/types";
 
 @injectable()
 export class CommandRegistry {

@@ -19,7 +19,7 @@ import type {
   LeafDirectory,
   TreeShakingAnalysisPort,
   TreeShakingFixOptions,
-} from "@/core/application/ports/analysis/tree-shaking.analysis.port";
+} from "../../../application/ports/analysis/tree-shaking.analysis.port";
 
 @injectable()
 export class TsMorphTreeShakingAnalysisAdapter implements TreeShakingAnalysisPort {

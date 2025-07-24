@@ -10,10 +10,10 @@ import { inject, injectable } from "inversify";
 import type {
   ComponentAnalysisResult,
   ComponentAnalysisPort,
-} from "@/core/application/ports/analysis/component.analysis.port";
-import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
+} from "../ports/analysis/component.analysis.port";
+import type { LoggingServicePort } from "../ports/services/logging.service.port";
 
-import { TYPES } from "@/di/types";
+import { TYPES } from "../../shared/di/types";
 
 export interface CheckComponentTypesInput {
   packagesDirectory?: string;
