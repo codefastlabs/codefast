@@ -7,9 +7,9 @@
 
 import { inject, injectable } from "inversify";
 
-import type { TypeScriptAnalysisPort } from "@/application/ports/analysis/typescript.analysis.port";
-import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
-import type { FileSystemSystemPort } from "@/application/ports/system/file-system.system.port";
+import type { TypeScriptAnalysisPort } from "@/application/ports/secondary/analysis/typescript.analysis.port";
+import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
+import type { FileSystemSystemPort } from "@/application/ports/secondary/system/file-system.system.port";
 
 import { Project } from "@/domain/entities/project.entity";
 import { FilePath } from "@/domain/value-objects/file-path.value-object";
