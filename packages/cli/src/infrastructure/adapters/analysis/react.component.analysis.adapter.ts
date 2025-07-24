@@ -13,7 +13,7 @@ import type {
   ComponentAnalysisPort,
   ComponentAnalysisResult,
   ComponentInfo,
-} from "@/core/application/ports/analysis/component.analysis.port";
+} from "../../../application/ports/analysis/component.analysis.port";
 
 @injectable()
 export class ReactComponentAnalysisAdapter implements ComponentAnalysisPort {

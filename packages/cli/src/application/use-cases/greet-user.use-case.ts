@@ -7,9 +7,9 @@
 
 import { inject, injectable } from "inversify";
 
-import type { LoggingServicePort } from "@/core/application/ports/services/logging.service.port";
+import type { LoggingServicePort } from "../ports/services/logging.service.port";
 
-import { TYPES } from "@/di/types";
+import { TYPES } from "../../shared/di/types";
 
 export interface GreetUserInput {
   name: string;

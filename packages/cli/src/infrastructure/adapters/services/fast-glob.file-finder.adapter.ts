@@ -11,7 +11,7 @@ import { injectable } from "inversify";
 import type {
   FileFinderOptions,
   FileFinderServicePort,
-} from "@/core/application/ports/services/file-finder.service.port";
+} from "../../../application/ports/services/file-finder.service.port";
 
 @injectable()
 export class FastGlobFileFinderAdapter implements FileFinderServicePort {

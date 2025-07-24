@@ -12,9 +12,9 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-import type { CommandRegistry } from "@/commands/registry/command.registry";
+import type { CommandRegistry } from "./registry/command.registry";
 
-import { TYPES } from "@/di/types";
+import { TYPES } from "../../shared/di/types";
 
 @injectable()
 export class CommandHandler {
@@ -36,8 +36,9 @@ export class CommandHandler {
     // Get package version
     const __filename = url.fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
+    // Navigate from dist/cjs/ui/controllers/ back to package root
     const packageJson = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "..", "..", "..", "package.json"), "utf8"),
+      fs.readFileSync(path.join(__dirname, "..", "..", "..", "..", "package.json"), "utf8"),
     ) as {
       version: string;
     };

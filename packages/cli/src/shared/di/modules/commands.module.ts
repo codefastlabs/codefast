@@ -8,15 +8,15 @@
 
 import { ContainerModule } from "inversify";
 
-import type { CommandInterface } from "@/commands/interfaces/command.interface";
+import type { CommandInterface } from "../../../ui/controllers/interfaces/command.interface";
 
-import { CommandHandler } from "@/commands/command-handler";
-import { AnalyzeCommand } from "@/commands/implementations/analyze.command";
-import { CheckComponentTypesCommand } from "@/commands/implementations/check-component-types.command";
-import { HelloCommand } from "@/commands/implementations/hello.command";
-import { TreeShakingCommand } from "@/commands/implementations/tree-shaking.command";
-import { CommandRegistry } from "@/commands/registry/command.registry";
-import { TYPES } from "@/di/types";
+import { CommandHandler } from "../../../ui/controllers/command-handler";
+import { AnalyzeCommand } from "../../../ui/controllers/implementations/analyze.command";
+import { CheckComponentTypesCommand } from "../../../ui/controllers/implementations/check-component-types.command";
+import { HelloCommand } from "../../../ui/controllers/implementations/hello.command";
+import { TreeShakingCommand } from "../../../ui/controllers/implementations/tree-shaking.command";
+import { CommandRegistry } from "../../../ui/controllers/registry/command.registry";
+import { TYPES } from "../types";
 
 export const commandsModule = new ContainerModule((options) => {
   // Command Registry

@@ -8,10 +8,7 @@
 import { injectable } from "inversify";
 import { Project } from "ts-morph";
 
-import type {
-  TypeScriptAnalysisPort,
-  ProjectStatistics,
-} from "@/core/application/ports/analysis/typescript.analysis.port";
+import type { TypeScriptAnalysisPort } from "../../../application/ports/analysis/typescript.analysis.port";
 
 @injectable()
 export class TsMorphTypescriptAnalysisAdapter implements TypeScriptAnalysisPort {
@@ -31,7 +28,12 @@ export class TsMorphTypescriptAnalysisAdapter implements TypeScriptAnalysisPort 
     this.project.addSourceFilesAtPaths(filePaths);
   }
 
-  getProjectStatistics(): ProjectStatistics {
+  getProjectStatistics(): {
+    totalFiles: number;
+    totalClasses: number;
+    totalFunctions: number;
+    totalInterfaces: number;
+  } {
     if (!this.project) {
       throw new Error("Project not initialized. Call createProject() first.");
     }

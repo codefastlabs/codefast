@@ -5,13 +5,6 @@
  * This port abstracts TypeScript analysis operations from the infrastructure implementation.
  */
 
-export interface ProjectStatistics {
-  totalClasses: number;
-  totalFiles: number;
-  totalFunctions: number;
-  totalInterfaces: number;
-}
-
 export interface TypeScriptAnalysisPort {
   /**
    * Create a TypeScript project for analysis
@@ -25,8 +18,14 @@ export interface TypeScriptAnalysisPort {
 
   /**
    * Get basic statistics about the TypeScript project
+   * Returns plain object that can be used to create ProjectStatistics value object
    */
-  getProjectStatistics: () => ProjectStatistics;
+  getProjectStatistics: () => {
+    totalFiles: number;
+    totalClasses: number;
+    totalFunctions: number;
+    totalInterfaces: number;
+  };
 
   /**
    * Reset the project analysis
