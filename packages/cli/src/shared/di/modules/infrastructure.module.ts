@@ -7,12 +7,12 @@
 
 import { ContainerModule } from "inversify";
 
-import type { ComponentAnalysisPort } from "@/application/ports/analysis/component.analysis.port";
-import type { TreeShakingAnalysisPort } from "@/application/ports/analysis/tree-shaking.analysis.port";
-import type { TypeScriptAnalysisPort } from "@/application/ports/analysis/typescript.analysis.port";
-import type { FileFinderServicePort } from "@/application/ports/services/file-finder.service.port";
-import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
-import type { FileSystemSystemPort } from "@/application/ports/system/file-system.system.port";
+import type { ComponentAnalysisPort } from "@/application/ports/secondary/analysis/component.analysis.port";
+import type { TreeShakingAnalysisPort } from "@/application/ports/secondary/analysis/tree-shaking.analysis.port";
+import type { TypeScriptAnalysisPort } from "@/application/ports/secondary/analysis/typescript.analysis.port";
+import type { FileFinderServicePort } from "@/application/ports/secondary/services/file-finder.service.port";
+import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
+import type { FileSystemSystemPort } from "@/application/ports/secondary/system/file-system.system.port";
 
 import { ReactComponentAnalysisAdapter } from "@/infrastructure/adapters/analysis/react.component.analysis.adapter";
 import { TsMorphTreeShakingAnalysisAdapter } from "@/infrastructure/adapters/analysis/ts-morph.tree-shaking.analysis.adapter";

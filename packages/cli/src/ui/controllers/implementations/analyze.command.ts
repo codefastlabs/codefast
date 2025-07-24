@@ -9,7 +9,8 @@ import type { Command } from "commander";
 
 import { inject, injectable } from "inversify";
 
-import type { AnalyzeProjectUseCase } from "@/application/use-cases/analyze-project.use-case";
+import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
+import type { ProjectAnalysisApplicationService } from "@/application/services/project-analysis.application-service";
 import type { CommandInterface } from "@/ui/controllers/interfaces/command.interface";
 
 import { TYPES } from "@/shared/di/types";
@@ -20,8 +21,10 @@ export class AnalyzeCommand implements CommandInterface {
   readonly description = "Analyze TypeScript project";
 
   constructor(
-    @inject(TYPES.AnalyzeProjectUseCase)
-    private readonly analyzeProjectUseCase: AnalyzeProjectUseCase,
+    @inject(TYPES.ProjectAnalysisApplicationService)
+    private readonly projectAnalysisService: ProjectAnalysisApplicationService,
+    @inject(TYPES.LoggingServicePort)
+    private readonly loggingService: LoggingServicePort,
   ) {}
 
   register(program: Command): void {
@@ -31,10 +34,42 @@ export class AnalyzeCommand implements CommandInterface {
       .option("-p, --pattern <pattern>", "file pattern to analyze", "src/**/*.ts")
       .option("-c, --config <path>", "path to tsconfig.json")
       .action(async (options: { pattern?: string; config?: string }) => {
-        await this.analyzeProjectUseCase.execute({
-          pattern: options.pattern,
-          tsConfigPath: options.config,
-        });
+        try {
+          this.loggingService.info("🔍 Analyzing TypeScript project...");
+
+          const result = await this.projectAnalysisService.getProjectStatistics({
+            pattern: options.pattern,
+            tsConfigPath: options.config,
+          });
+
+          const { project } = result;
+          const statistics = project.statistics;
+
+          if (!statistics) {
+            this.loggingService.warning("No statistics available");
+
+            return;
+          }
+
+          this.loggingService.success(`Found ${String(result.filePaths.length)} TypeScript files`);
+          this.loggingService.warning(
+            `Loaded ${String(statistics.totalFiles)} source files for analysis`,
+          );
+          this.loggingService.info("📊 Project Statistics:");
+          this.loggingService.info(`  Classes: ${String(statistics.totalClasses)}`);
+          this.loggingService.info(`  Functions: ${String(statistics.totalFunctions)}`);
+          this.loggingService.info(`  Interfaces: ${String(statistics.totalInterfaces)}`);
+          this.loggingService.info(`  Total Symbols: ${String(statistics.totalSymbols)}`);
+          this.loggingService.info(
+            `  Average Symbols per File: ${String(statistics.averageSymbolsPerFile.toFixed(2))}`,
+          );
+        } catch (error) {
+          if (error instanceof Error && error.message === "No TypeScript files found to analyze") {
+            this.loggingService.warning("No TypeScript files found to analyze");
+          } else {
+            this.loggingService.error(`Error analyzing project: ${String(error)}`);
+          }
+        }
       });
   }
 }

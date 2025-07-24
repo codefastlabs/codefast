@@ -7,7 +7,7 @@
 
 import { inject, injectable } from "inversify";
 
-import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
+import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
 
 import { TYPES } from "@/shared/di/types";
 

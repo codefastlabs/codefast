@@ -14,7 +14,13 @@ export const TYPES = {
   TreeShakingAnalysisPort: Symbol.for("TreeShakingAnalysisPort"),
   TypeScriptAnalysisPort: Symbol.for("TypeScriptAnalysisPort"),
 
-  // Use Cases
+  // Application Services
+  ProjectAnalysisApplicationService: Symbol.for("ProjectAnalysisApplicationService"),
+
+  // Query Handlers
+  GetProjectStatisticsQueryHandler: Symbol.for("GetProjectStatisticsQueryHandler"),
+
+  // Use Cases (Legacy - to be refactored)
   AnalyzeProjectUseCase: Symbol.for("AnalyzeProjectUseCase"),
   AnalyzeTreeShakingUseCase: Symbol.for("AnalyzeTreeShakingUseCase"),
   CheckComponentTypesUseCase: Symbol.for("CheckComponentTypesUseCase"),

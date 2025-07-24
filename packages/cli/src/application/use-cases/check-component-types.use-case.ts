@@ -10,8 +10,8 @@ import { inject, injectable } from "inversify";
 import type {
   ComponentAnalysisResult,
   ComponentAnalysisPort,
-} from "@/application/ports/analysis/component.analysis.port";
-import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
+} from "@/application/ports/secondary/analysis/component.analysis.port";
+import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
 
 import { TYPES } from "@/shared/di/types";
 

@@ -15,9 +15,9 @@ import type {
   ComprehensiveAutoFixOptions,
   FileAnalysis,
   TreeShakingAnalysisPort,
-} from "@/application/ports/analysis/tree-shaking.analysis.port";
-import type { FileFinderServicePort } from "@/application/ports/services/file-finder.service.port";
-import type { LoggingServicePort } from "@/application/ports/services/logging.service.port";
+} from "@/application/ports/secondary/analysis/tree-shaking.analysis.port";
+import type { FileFinderServicePort } from "@/application/ports/secondary/services/file-finder.service.port";
+import type { LoggingServicePort } from "@/application/ports/secondary/services/logging.service.port";
 
 import { TYPES } from "@/shared/di/types";
 

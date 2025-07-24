@@ -8,7 +8,7 @@
 import { injectable } from "inversify";
 import { Project } from "ts-morph";
 
-import type { TypeScriptAnalysisPort } from "@/application/ports/analysis/typescript.analysis.port";
+import type { TypeScriptAnalysisPort } from "@/application/ports/secondary/analysis/typescript.analysis.port";
 
 @injectable()
 export class TsMorphTypescriptAnalysisAdapter implements TypeScriptAnalysisPort {
