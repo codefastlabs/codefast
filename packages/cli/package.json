@@ -66,7 +66,7 @@
     "inversify": "^7.6.1",
     "reflect-metadata": "^0.2.2",
     "ts-morph": "^26.0.0",
-    "zod": "^4.0.7"
+    "zod": "^4.0.8"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
