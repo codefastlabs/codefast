@@ -67,7 +67,7 @@ done
 
 # Check if packages directory exists
 if [[ ! -d "$PACKAGES_DIR" ]]; then
-    echo -e "${RED}Error: $PACKAGES_DIR directory not found!${NC}"
+    echo -e "${RED}✗ $PACKAGES_DIR directory not found!${NC}"
     echo "Make sure you're running this script from the project root."
     exit 1
 fi
@@ -81,16 +81,16 @@ FIND_CMD="find $PACKAGES_DIR -type d -empty"
 # Handle node_modules inclusion/exclusion
 if [[ "$EXCLUDE_NODE_MODULES" == true ]]; then
     FIND_CMD="$FIND_CMD -not -path '*/node_modules/*'"
-    echo -e "${YELLOW}ℹ️  Excluding node_modules directories (default behavior)${NC}"
+    echo -e "${YELLOW}i Excluding node_modules directories (default behavior)${NC}"
 else
-    echo -e "${YELLOW}ℹ️  Including node_modules directories${NC}"
+    echo -e "${YELLOW}i Including node_modules directories${NC}"
 fi
 
 # Find empty directories
 EMPTY_DIRS=$(eval $FIND_CMD)
 
 if [[ -z "$EMPTY_DIRS" ]]; then
-    echo -e "${GREEN}✅ No empty directories found in $PACKAGES_DIR${NC}"
+    echo -e "${GREEN}✓ No empty directories found in $PACKAGES_DIR${NC}"
     exit 0
 fi
 
@@ -102,20 +102,20 @@ echo ""
 
 # Display the directories that will be deleted
 echo "$EMPTY_DIRS" | while read -r dir; do
-    echo -e "  ${RED}🗑️  $dir${NC}"
+    echo -e "  ${RED}⌫ $dir${NC}"
 done
 
 echo ""
 
 if [[ "$DRY_RUN" == true ]]; then
-    echo -e "${BLUE}🔍 Dry run mode - no directories were deleted${NC}"
+    echo -e "${BLUE}⌕ Dry run mode - no directories were deleted${NC}"
     echo -e "${BLUE}Run without --dry-run to actually delete these directories${NC}"
     exit 0
 fi
 
 # Confirmation prompt (unless --force is used)
 if [[ "$FORCE" != true ]]; then
-    echo -e "${YELLOW}⚠️  This will permanently delete $DIR_COUNT empty directories.${NC}"
+    echo -e "${YELLOW}! This will permanently delete $DIR_COUNT empty directories.${NC}"
     read -p "Do you want to continue? (y/N): " -n 1 -r
     echo ""
 
@@ -126,29 +126,29 @@ if [[ "$FORCE" != true ]]; then
 fi
 
 # Delete empty directories
-echo -e "${BLUE}🗑️  Deleting empty directories...${NC}"
+echo -e "${BLUE}⌫ Deleting empty directories...${NC}"
 DELETED_COUNT=0
 
 echo "$EMPTY_DIRS" | while read -r dir; do
     if [[ -d "$dir" ]]; then
         if rmdir "$dir" 2>/dev/null; then
-            echo -e "  ${GREEN}✅ Deleted: $dir${NC}"
+            echo -e "  ${GREEN}✓ Deleted: $dir${NC}"
             ((DELETED_COUNT++))
         else
-            echo -e "  ${RED}❌ Failed to delete: $dir${NC}"
+            echo -e "  ${RED}✗ Failed to delete: $dir${NC}"
         fi
     fi
 done
 
 # Final summary
 echo ""
-echo -e "${GREEN}🎉 Cleanup completed!${NC}"
+echo -e "${GREEN}★ Cleanup completed!${NC}"
 
 # Re-check for any remaining empty directories
 REMAINING_DIRS=$(eval $FIND_CMD)
 if [[ -z "$REMAINING_DIRS" ]]; then
-    echo -e "${GREEN}✅ All empty directories have been removed from $PACKAGES_DIR${NC}"
+    echo -e "${GREEN}✓ All empty directories have been removed from $PACKAGES_DIR${NC}"
 else
     REMAINING_COUNT=$(echo "$REMAINING_DIRS" | wc -l | tr -d ' ')
-    echo -e "${YELLOW}ℹ️  $REMAINING_COUNT directories could not be deleted (may contain hidden files)${NC}"
+    echo -e "${YELLOW}i $REMAINING_COUNT directories could not be deleted (may contain hidden files)${NC}"
 fi
