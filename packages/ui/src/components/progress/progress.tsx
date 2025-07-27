@@ -22,7 +22,7 @@ function Progress({ className, value, ...props }: ProgressProps): JSX.Element {
         className="bg-primary size-full flex-1 transition-all"
         data-slot="progress-indicator"
         style={{
-          transform: `translateX(-${String(100 - (value ?? 0))}%)`,
+          transform: `translateX(-${(100 - (value ?? 0)).toString()}%)`,
         }}
       />
     </ProgressPrimitive.Root>
