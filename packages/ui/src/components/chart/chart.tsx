@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps, ComponentType, CSSProperties, JSX, Key, ReactNode } from "react";
+import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import { useId, useMemo } from "react";
@@ -240,7 +240,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
 
           return (
             <div
-              key={item.dataKey as Key}
+              key={key}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:size-2.5",
                 indicator === "dot" && "items-center",
