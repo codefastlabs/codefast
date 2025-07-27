@@ -105,7 +105,9 @@ interface ChartStyleProps {
 }
 
 function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
-  const colorConfig = Object.entries(config).filter(([, config]) => config.theme ?? config.color);
+  const colorConfig = Object.entries(config).filter(
+    ([, itemConfig]) => itemConfig.theme ?? itemConfig.color,
+  );
 
   if (colorConfig.length === 0) {
     return null;
@@ -185,7 +187,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
 }: ScopedProps<ChartTooltipContentProps<TValue, TName>>): ReactNode {
   const { config } = useChartContext(CHART_TOOLTIP_CONTENT_NAME, __scopeChart);
 
-  const tooltipLabel = useMemo(() => {
+  const tooltipLabel = useMemo((): ReactNode => {
     if (hideLabel || payload.length === 0) {
       return null;
     }
@@ -233,8 +235,10 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
           const indicatorColor =
             color ??
-            (item.payload && typeof item.payload === "object" && "fill" in item.payload
-              ? (item.payload as { fill?: string }).fill
+            (isRecord(item.payload) &&
+            "fill" in item.payload &&
+            typeof item.payload.fill === "string"
+              ? item.payload.fill
               : undefined) ??
             item.color;
 
@@ -247,7 +251,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
               )}
             >
               {formatter && item.value !== undefined && item.name ? (
-                formatter(item.value, item.name, item, index, [item] as Payload<TValue, TName>[])
+                formatter(item.value, item.name, item, index, [item])
               ) : (
                 <>
                   {itemConfig?.icon ? (
@@ -286,9 +290,11 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                         {itemConfig?.label ?? item.name}
                       </span>
                     </div>
-                    {item.value && (
+                    {item.value != null && (
                       <span className="text-foreground font-mono font-medium tabular-nums">
-                        {item.value.toLocaleString()}
+                        {typeof item.value === "number"
+                          ? item.value.toLocaleString()
+                          : String(item.value)}
                       </span>
                     )}
                   </div>
@@ -349,15 +355,15 @@ function ChartLegendContent({
 
         if (nameKey) {
           key = nameKey;
-        } else if (item.dataKey) {
-          key = item.dataKey.toString();
+        } else if (item.dataKey != null) {
+          key = String(item.dataKey);
         }
 
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (
           <div
-            key={nameKey ? itemConfig?.color?.toString() : item.value?.toString()}
+            key={nameKey ? String(itemConfig?.color ?? "") : String(item.value ?? "")}
             className={cn("[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3")}
           >
             {itemConfig?.icon && !hideIcon ? (
@@ -382,30 +388,50 @@ function ChartLegendContent({
  * Helpers
  * -------------------------------------------------------------------------- */
 
+/**
+ * Type guard to check if an unknown value is a record with string keys
+ */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+/**
+ * Safely gets a string value from a record by key
+ */
+function getStringValue(record: Record<string, unknown>, key: string): string | undefined {
+  if (key in record) {
+    const value = record[key];
+
+    return typeof value === "string" ? value : undefined;
+  }
+
+  return undefined;
+}
+
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,
   key: string,
 ): ChartConfig[string] | undefined {
-  if (typeof payload !== "object" || payload === null) {
-    return;
+  if (!isRecord(payload)) {
+    return undefined;
   }
 
-  const payloadPayload =
-    "payload" in payload && typeof payload.payload === "object" && payload.payload !== null
-      ? payload.payload
-      : undefined;
-
+  const payloadPayload = isRecord(payload.payload) ? payload.payload : undefined;
   let configLabelKey: string = key;
 
-  if (key in payload && typeof payload[key as keyof typeof payload] === "string") {
-    configLabelKey = payload[key as keyof typeof payload] as string;
-  } else if (
-    payloadPayload &&
-    key in payloadPayload &&
-    typeof payloadPayload[key as keyof typeof payloadPayload] === "string"
-  ) {
-    configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
+  // Try to get the config key from the payload first
+  const payloadValue = getStringValue(payload, key);
+
+  if (payloadValue) {
+    configLabelKey = payloadValue;
+  } else if (payloadPayload) {
+    // If not found in payload, try the nested payload
+    const nestedValue = getStringValue(payloadPayload, key);
+
+    if (nestedValue) {
+      configLabelKey = nestedValue;
+    }
   }
 
   return configLabelKey in config ? config[configLabelKey] : config[key];
