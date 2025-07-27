@@ -11,6 +11,10 @@ import type { Scope } from "@radix-ui/react-context";
 import { cn } from "@/lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 
+/* -----------------------------------------------------------------------------
+ * Type Utilities
+ * -------------------------------------------------------------------------- */
+
 type ExtractProps<T> = T extends (props: infer P) => ReactNode ? P : never;
 
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -34,7 +38,7 @@ type Theme = "dark" | "light";
 const THEMES: Record<Theme, string> = {
   dark: ".dark",
   light: "",
-};
+} as const;
 
 /**
  * Configuration for icon and label display in charts
@@ -190,7 +194,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
 }: ScopedProps<ChartTooltipContentProps<TValue, TName>>): ReactNode {
   const { config } = useChartContext(CHART_TOOLTIP_CONTENT_NAME, __scopeChart);
 
-  const tooltipLabel = useMemo(() => {
+  const tooltipLabel = useMemo((): ReactNode => {
     if (hideLabel || payload.length === 0) {
       return null;
     }
