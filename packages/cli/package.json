@@ -1,6 +1,6 @@
 {
   "name": "@codefast/cli",
-  "version": "0.3.6",
+  "version": "0.3.7-canary.0",
   "description": "Command line interface tools for CodeFast development",
   "keywords": [
     "cli",
