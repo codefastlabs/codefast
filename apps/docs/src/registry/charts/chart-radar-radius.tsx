@@ -60,7 +60,7 @@ export function ChartRadarRadius(): JSX.Element {
               angle={60}
               axisLine={false}
               orientation="middle"
-              stroke="hsla(var(--foreground))"
+              stroke="var(--foreground)"
             />
           </RadarChart>
         </ChartContainer>

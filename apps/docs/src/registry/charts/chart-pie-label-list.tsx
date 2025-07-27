@@ -72,7 +72,7 @@ export function ChartPieLabelList(): JSX.Element {
                 className="fill-background"
                 dataKey="browser"
                 fontSize={12}
-                formatter={(value: keyof typeof chartConfig) => chartConfig[value].label}
+                formatter={(value) => chartConfig[value as keyof typeof chartConfig].label}
                 stroke="none"
               />
             </Pie>

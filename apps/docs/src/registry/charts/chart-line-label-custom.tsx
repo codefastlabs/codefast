@@ -1,6 +1,6 @@
 "use client";
 
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { TrendingUpIcon } from "lucide-react";
 import { CartesianGrid, LabelList, Line, LineChart } from "recharts";
@@ -93,7 +93,13 @@ export function ChartLineLabelCustom(): JSX.Element {
                 className="fill-foreground"
                 dataKey="browser"
                 fontSize={12}
-                formatter={(value: keyof typeof chartConfig) => chartConfig[value].label}
+                formatter={(value): ReactNode => {
+                  if (typeof value === "string" && value in chartConfig) {
+                    return chartConfig[value as keyof typeof chartConfig].label;
+                  }
+
+                  return value;
+                }}
                 offset={12}
                 position="top"
               />

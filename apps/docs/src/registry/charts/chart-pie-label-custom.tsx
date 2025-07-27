@@ -1,7 +1,6 @@
 "use client";
 
-import type { JSX } from "react";
-import type { PieLabel, PieProps } from "recharts";
+import type { ComponentProps, JSX } from "react";
 
 import { TrendingUpIcon } from "lucide-react";
 import { Pie, PieChart } from "recharts";
@@ -93,23 +92,10 @@ export function ChartPieLabelCustom(): JSX.Element {
   );
 }
 
-const label: PieLabel = ({
-  payload,
-  ...props
-}: PieProps & {
-  payload: DataItem;
-}) => {
+const label: ComponentProps<typeof Pie>["label"] = ({ cx, cy, payload, textAnchor, x, y }) => {
   return (
-    <text
-      cx={props.cx}
-      cy={props.cy}
-      dominantBaseline={props.dominantBaseline}
-      fill="hsla(var(--foreground))"
-      textAnchor={props.textAnchor}
-      x={props.x}
-      y={props.y}
-    >
-      {payload.visitors}
+    <text cx={cx} cy={cy} fill="var(--foreground)" textAnchor={textAnchor} x={x} y={y}>
+      {(payload as DataItem).visitors}
     </text>
   );
 };

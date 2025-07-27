@@ -1,8 +1,7 @@
 "use client";
 
-import type { JSX } from "react";
+import type { ComponentProps, JSX } from "react";
 import type { DotProps } from "recharts";
-import type { LineDot } from "recharts/types/cartesian/Line";
 
 import { GitCommitVerticalIcon, TrendingUpIcon } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
@@ -95,7 +94,7 @@ export function ChartLineDotsCustom(): JSX.Element {
   );
 }
 
-const dot: LineDot = ({
+const dot: ComponentProps<typeof Line>["dot"] = ({
   cx = 0,
   cy = 0,
   payload,

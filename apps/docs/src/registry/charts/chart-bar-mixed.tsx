@@ -73,16 +73,20 @@ export function ChartBarMixed(): JSX.Element {
             <YAxis
               axisLine={false}
               dataKey="browser"
-              tickFormatter={(value: string) =>
-                chartConfig[value as keyof typeof chartConfig].label
-              }
+              tickFormatter={(value: keyof typeof chartConfig | number) => {
+                if (typeof value === "number") {
+                  return "";
+                }
+
+                return chartConfig[value].label;
+              }}
               tickLine={false}
               tickMargin={10}
               type="category"
             />
             <XAxis hide dataKey="visitors" type="number" />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
-            <Bar dataKey="visitors" layout="vertical" radius={5} />
+            <Bar dataKey="visitors" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>

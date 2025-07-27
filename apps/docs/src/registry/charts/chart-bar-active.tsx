@@ -75,20 +75,16 @@ export function ChartBarActive(): JSX.Element {
             <XAxis
               axisLine={false}
               dataKey="browser"
-              tickFormatter={(value: string) =>
-                chartConfig[value as keyof typeof chartConfig].label
-              }
+              tickFormatter={(value: keyof typeof chartConfig) => chartConfig[value].label}
               tickLine={false}
               tickMargin={10}
             />
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
-            <Bar
-              activeBar={activeBar}
-              activeIndex={2}
-              dataKey="visitors"
-              radius={8}
-              strokeWidth={2}
+            <ChartTooltip
+              content={<ChartTooltipContent hideLabel />}
+              cursor={false}
+              defaultIndex={2}
             />
+            <Bar activeBar={activeBar} dataKey="visitors" radius={8} strokeWidth={2} />
           </BarChart>
         </ChartContainer>
       </CardContent>
