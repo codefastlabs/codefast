@@ -57,7 +57,7 @@ function AlertDialogContent({
       />
       <AlertDialogPrimitive.Content
         className={cn(
-          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 ease-[cubic-bezier(0.32,0.72,0,1)] sm:grid-rows-[1fr_auto_3fr] sm:p-4",
+          "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 ease-ui fixed inset-0 z-50 grid grid-rows-[1fr_auto_1fr] justify-items-center overflow-auto p-8 sm:grid-rows-[1fr_auto_3fr] sm:p-4",
           classNames?.wrapper,
         )}
         data-slot="alert-dialog-content-wrapper"
