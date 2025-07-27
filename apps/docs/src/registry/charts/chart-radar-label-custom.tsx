@@ -89,7 +89,6 @@ export function PolarAngleAxisTick({
   textAnchor,
   x = 0,
   y = 0,
-  ...props
 }: PolarAngleAxisTickProps): ReactNode {
   const data = index ? chartData[index] : null;
 
@@ -98,17 +97,10 @@ export function PolarAngleAxisTick({
   }
 
   return (
-    <text
-      fontSize={13}
-      fontWeight={500}
-      textAnchor={textAnchor}
-      x={x}
-      y={index === 0 ? y - 10 : y}
-      {...props}
-    >
-      <tspan>{data.desktop}</tspan>
+    <text fontSize={13} fontWeight={500} textAnchor={textAnchor} x={x} y={index === 0 ? y - 10 : y}>
+      <tspan className="fill-foreground">{data.desktop}</tspan>
       <tspan className="fill-muted-foreground">/</tspan>
-      <tspan>{data.mobile}</tspan>
+      <tspan className="fill-foreground">{data.mobile}</tspan>
       <tspan className="fill-muted-foreground" dy="1rem" fontSize={12} x={x}>
         {data.month}
       </tspan>
