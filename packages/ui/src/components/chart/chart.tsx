@@ -116,21 +116,7 @@ function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
   return (
     <style
       dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ?? itemConfig.color;
-
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .join("\n")}
-}
-`,
-          )
-          .join("\n"),
+        __html: generateChartStyles(id, colorConfig),
       }}
     />
   );
@@ -271,8 +257,8 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                         )}
                         style={
                           {
-                            "--color-bg": indicatorColor ?? "",
-                            "--color-border": indicatorColor ?? "",
+                            "--color-bg": indicatorColor,
+                            "--color-border": indicatorColor,
                           } as CSSProperties
                         }
                       />
@@ -467,6 +453,45 @@ function getPayloadConfigFromPayload(
   }
 
   return configLabelKey in config ? config[configLabelKey] : config[key];
+}
+
+/**
+ * Generates CSS custom property for a specific theme and config item
+ */
+function generateCssVariable(
+  key: string,
+  itemConfig: ChartConfig[string],
+  theme: string,
+): null | string {
+  const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ?? itemConfig.color;
+
+  return color ? `  --color-${key}: ${color};` : null;
+}
+
+/**
+ * Generates CSS rules for a specific theme
+ */
+function generateThemeStyles(
+  theme: string,
+  prefix: string,
+  id: string,
+  colorConfig: [string, ChartConfig[string]][],
+): string {
+  const cssVariables = colorConfig
+    .map(([key, itemConfig]) => generateCssVariable(key, itemConfig, theme))
+    .filter(Boolean)
+    .join("\n");
+
+  return `${prefix} [data-chart=${id}] {\n${cssVariables}\n}`;
+}
+
+/**
+ * Generates complete CSS styles for all themes
+ */
+function generateChartStyles(id: string, colorConfig: [string, ChartConfig[string]][]): string {
+  return Object.entries(THEMES)
+    .map(([theme, prefix]) => generateThemeStyles(theme, prefix, id, colorConfig))
+    .join("\n\n");
 }
 
 /* -----------------------------------------------------------------------------
