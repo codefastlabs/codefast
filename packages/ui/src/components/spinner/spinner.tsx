@@ -29,7 +29,7 @@ function Spinner({ children, className, loading = true, ...props }: SpinnerProps
         <span
           key={index}
           className={cn(
-            "rotate-(--spinner-rotate) before:animate-out before:fade-out-25 before:animation-repeat-infinite before:animation-delay-(--spinner-delay) before:animation-duration-(--spinner-duration) absolute h-full before:block before:h-1/3 before:w-full before:rounded-full before:bg-current",
+            "rotate-(--spinner-rotate) before:animate-out before:fade-out-25 before:repeat-infinite before:delay-(--spinner-delay) before:animation-duration-(--spinner-duration) absolute h-full before:block before:h-1/3 before:w-full before:rounded-full before:bg-current",
           )}
           style={
             {

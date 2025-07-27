@@ -1,10 +1,37 @@
 /**
- * Base Styles
- * -----------------------------------------------------------------------------
- * Apply general settings for the entire interface, including background color,
- * text color, default border color, and customizations for input.
+ * |--------------------------------------------------------------------------
+ * | Global Styles & Theme Configuration
+ * |--------------------------------------------------------------------------
+ * |
+ * | This file contains the global styling configuration for the application,
+ * | including Tailwind CSS imports, custom scrollbar styles, and theme
+ * | variable definitions. It serves as the foundation for the entire
+ * | design system.
+ * |
  */
+
+@import "tailwindcss";
+
+@import "tw-animate-css";
+
+/**
+ * |--------------------------------------------------------------------------
+ * | Base Layer Styles
+ * |--------------------------------------------------------------------------
+ * |
+ * | These styles are applied at the base layer and include:
+ * | - Global border and outline color configurations
+ * | - Custom scrollbar styling for webkit browsers
+ * | - Input field appearance normalization
+ * | - Root background and foreground color setup
+ * |
+ */
+
 @layer base {
+  /**
+   * Global border and outline configuration
+   * Sets consistent border colors and focus ring styles across all elements
+   */
   *,
   ::after,
   ::before,
@@ -14,6 +41,10 @@
     outline-color: color-mix(in oklab, var(--color-ring) 20%, transparent);
   }
 
+  /**
+   * Custom scrollbar styling for webkit browsers
+   * Provides a minimal, themed scrollbar experience
+   */
   ::-webkit-scrollbar {
     @apply size-2;
   }
@@ -26,17 +57,29 @@
     @apply bg-border rounded-full;
   }
 
+  /**
+   * Firefox scrollbar styling
+   * Ensures consistent scrollbar appearance across browsers
+   */
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
 
+  /**
+   * Root element styling
+   * Sets the foundation colors for the entire application
+   */
   html,
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
 
+  /**
+   * Input field normalization
+   * Removes browser-specific styling and behaviors for consistent appearance
+   */
   input {
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {
@@ -56,454 +99,74 @@
 }
 
 /**
- * Named Color Theme Definitions
- * -----------------------------------------------------------------------------
- * Defines color variables used throughout the application to ensure interface
- * consistency. Each color group serves a specific purpose
- * (e.g., background, border, highlights).
+ * |--------------------------------------------------------------------------
+ * | Theme Color Variables
+ * |--------------------------------------------------------------------------
+ * |
+ * | This section defines all the CSS custom properties that power the
+ * | application's theming system. These variables are mapped from the
+ * | base theme tokens and provide a consistent color palette throughout
+ * | the application.
+ * |
+ * | Categories:
+ * | - Base colors (background, foreground, border)
+ * | - Interactive colors (primary, secondary, accent)
+ * | - Status colors (destructive)
+ * | - Component-specific colors (popover, card, sidebar)
+ * | - Chart colors for data visualization
+ * |
  */
+
 @theme inline {
+  /* Base Interface Colors */
   --color-input: var(--input);
   --color-border: var(--border);
-
   --color-ring: var(--ring);
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
+  /* Primary Action Colors */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
 
+  /* Secondary Action Colors */
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
+  /* Status Colors */
   --color-destructive: var(--destructive);
 
+  /* Accent Colors */
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
+  /* Muted/Disabled Colors */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
+  /* Popover Component Colors */
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover-overlay: var(--popover-overlay);
 
+  /* Card Component Colors */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
+  /* Sidebar Component Colors */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
-
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Chart/Data Visualization Colors */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-}
-
-/**
- * Keyframe Animations
- * -----------------------------------------------------------------------------
- * Defines basic animations such as cursor blinking effects,
- * expanding/collapsing content effects.
- */
-@theme inline {
-  --animate-caret-blink: caret-blink 1250ms ease-out infinite;
-  --animate-collapsible-up: collapsible-up 200ms ease-in;
-  --animate-collapsible-down: collapsible-down 200ms ease-out;
-
-  @keyframes caret-blink {
-    0%,
-    70%,
-    100% {
-      opacity: 1;
-    }
-
-    20%,
-    50% {
-      opacity: 0;
-    }
-  }
-
-  @keyframes collapsible-up {
-    from {
-      /*noinspection CssUnresolvedCustomProperty*/
-      height: var(--radix-collapsible-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
-
-  @keyframes collapsible-down {
-    from {
-      height: 0;
-    }
-    to {
-      /*noinspection CssUnresolvedCustomProperty*/
-      height: var(--radix-collapsible-content-height);
-    }
-  }
-}
-
-/**
- * Animation Timing Functions
- * -----------------------------------------------------------------------------
- * Easing functions used to adjust the speed of animation transitions.
- */
-@theme inline {
-  --animate-fade-in: fadeIn 250ms ease-out;
-  --animate-fade-out: fadeOut 250ms ease-in;
-
-  --animate-in: enter 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  --animate-out: exit 250ms cubic-bezier(0.32, 0.72, 0, 1);
-
-  @keyframes fadeIn {
-    from {
-      opacity: var(--tw-enter-opacity, 0);
-    }
-  }
-
-  @keyframes fadeOut {
-    to {
-      opacity: var(--tw-exit-opacity, 0);
-    }
-  }
-
-  @keyframes enter {
-    from {
-      opacity: var(--tw-enter-opacity, 1);
-      transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0)
-        scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1))
-        rotate(var(--tw-enter-rotate, 0));
-    }
-  }
-
-  @keyframes exit {
-    to {
-      opacity: var(--tw-exit-opacity, 1);
-      transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0)
-        scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1))
-        rotate(var(--tw-exit-rotate, 0));
-    }
-  }
-}
-
-/**
- * Animation Timing Functions
- * -----------------------------------------------------------------------------
- * Defines utilities to adjust animation speed.
- */
-@utility animation-ease-linear {
-  animation-timing-function: linear;
-}
-
-@utility animation-ease-in {
-  animation-timing-function: var(--ease-in);
-}
-
-@utility animation-ease-out {
-  animation-timing-function: var(--ease-out);
-}
-
-@utility animation-ease-in-out {
-  animation-timing-function: var(--ease-in-out);
-}
-
-@utility animation-ease-initial {
-  animation-timing-function: initial;
-}
-
-@utility animation-ease-* {
-  animation-timing-function: --value([*]);
-}
-
-/**
- * Animation Play State
- * -----------------------------------------------------------------------------
- * Adjust the playback state of the animation.
- */
-@utility animation-state-paused {
-  animation-play-state: paused;
-}
-
-@utility animation-state-running {
-  animation-play-state: running;
-}
-
-@utility animation-state-initial {
-  animation-play-state: initial;
-}
-
-@utility animation-state-* {
-  animation-play-state: --value([*]);
-}
-
-/**
- * Animation Repeat
- * -----------------------------------------------------------------------------
- * Controls the number of repetitions of the animation.
- */
-@utility animation-repeat-infinite {
-  animation-iteration-count: infinite;
-}
-
-@utility animation-repeat-initial {
-  animation-iteration-count: initial;
-}
-
-@utility animation-repeat-* {
-  animation-iteration-count: --value(integer, [integer]);
-}
-
-/**
- * Animation Composition
- * -----------------------------------------------------------------------------
- * Defines how animations combine with each other.
- */
-@utility animation-composition-replace {
-  animation-composition: replace;
-}
-
-@utility animation-composition-add {
-  animation-composition: add;
-}
-
-@utility animation-composition-accumulate {
-  animation-composition: accumulate;
-}
-
-@utility animation-composition-initial {
-  animation-composition: initial;
-}
-
-@utility animation-composition-* {
-  animation-composition: --value([*]);
-}
-
-/**
- * Animation Delay
- * -----------------------------------------------------------------------------
- * Adjust the delay time before the animation starts.
- */
-@utility animation-delay-initial {
-  animation-delay: initial;
-}
-
-@utility animation-delay-* {
-  animation-delay: calc(--value(integer) * 1ms);
-  animation-delay: --value([*]);
-}
-
-/**
- * Animation Direction
- * -----------------------------------------------------------------------------
- * Determines the playback direction of the animation.
- */
-@utility animation-direction-normal {
-  animation-direction: normal;
-}
-
-@utility animation-direction-reverse {
-  animation-direction: reverse;
-}
-
-@utility animation-direction-alternate {
-  animation-direction: alternate;
-}
-
-@utility animation-direction-alternate-reverse {
-  animation-direction: alternate-reverse;
-}
-
-@utility animation-direction-initial {
-  animation-direction: initial;
-}
-
-@utility animation-direction-* {
-  animation-direction: --value([*]);
-}
-
-/**
- * Animation Duration
- * -----------------------------------------------------------------------------
- * Defines the duration of the animation execution.
- */
-@utility animation-duration-initial {
-  animation-duration: initial;
-}
-
-@utility animation-duration-* {
-  animation-duration: calc(--value(integer) * 1ms);
-  animation-duration: --value([*]);
-}
-
-/**
- * Animation Fill Mode
- * -----------------------------------------------------------------------------
- * Defines the state of the element after the animation ends.
- */
-@utility animation-fill-none {
-  animation-fill-mode: none;
-}
-
-@utility animation-fill-forwards {
-  animation-fill-mode: forwards;
-}
-
-@utility animation-fill-backwards {
-  animation-fill-mode: backwards;
-}
-
-@utility animation-fill-both {
-  animation-fill-mode: both;
-}
-
-@utility animation-fill-* {
-  animation-fill-mode: --value([*]);
-}
-
-/**
- * Fade Animations
- * -----------------------------------------------------------------------------
- * Create fade-in and fade-out effects.
- */
-@utility fade-in-* {
-  --tw-enter-opacity: calc(--value(integer) * 1%);
-  --tw-enter-opacity: --value(--opacity-*, [percentage]);
-}
-
-@utility fade-out-* {
-  --tw-exit-opacity: calc(--value(integer) * 1%);
-  --tw-exit-opacity: --value(--opacity-*, [percentage]);
-}
-
-/**
- * Rotate Animations
- * -----------------------------------------------------------------------------
- * Adjust the rotation angle of the element when it appears or disappears.
- */
-@utility spin-in-* {
-  --tw-enter-rotate: calc(1deg * --value(integer));
-}
-
-@utility spin-out-* {
-  --tw-exit-rotate: calc(1deg * --value(integer));
-}
-
-/**
- * Scale Animations
- * -----------------------------------------------------------------------------
- * Adjust the size of the element when it appears or disappears.
- */
-@utility zoom-in-* {
-  --tw-enter-scale: --value([percentage]);
-  --tw-enter-scale: calc(--value(integer) * 1%);
-}
-
-@utility zoom-out-* {
-  --tw-exit-scale: --value([percentage]);
-  --tw-exit-scale: calc(--value(integer) * 1%);
-}
-
-/**
- * Slide Animations - Enter
- * -----------------------------------------------------------------------------
- * Effects for sliding in from directions: left, right, top, bottom.
- */
-
-@utility slide-in-from-top {
-  --tw-enter-translate-y: -100%;
-}
-
-@utility slide-in-from-top-* {
-  --tw-enter-translate-y: calc(var(--spacing) * --value(number) * -1);
-  --tw-enter-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --tw-enter-translate-y: calc(--value([length], [percentage]) * -1);
-}
-
-@utility slide-in-from-left {
-  --tw-enter-translate-x: -100%;
-}
-
-@utility slide-in-from-left-* {
-  --tw-enter-translate-x: calc(var(--spacing) * --value(number) * -1);
-  --tw-enter-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --tw-enter-translate-x: calc(--value([length], [percentage]) * -1);
-}
-
-@utility slide-in-from-bottom {
-  --tw-enter-translate-y: 100%;
-}
-
-@utility slide-in-from-bottom-* {
-  --tw-enter-translate-y: calc(var(--spacing) * --value(number));
-  --tw-enter-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --tw-enter-translate-y: --value([length], [percentage]);
-}
-
-@utility slide-in-from-right {
-  --tw-enter-translate-x: 100%;
-}
-
-@utility slide-in-from-right-* {
-  --tw-enter-translate-x: calc(var(--spacing) * --value(number));
-  --tw-enter-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --tw-enter-translate-x: --value([length], [percentage]);
-}
-
-/**
- * Slide Animations - Exit
- * -----------------------------------------------------------------------------
- * Effects for sliding out of the screen in directions: left, right, top, bottom.
- */
-
-@utility slide-out-to-top {
-  --tw-exit-translate-y: -100%;
-}
-
-@utility slide-out-to-top-* {
-  --tw-exit-translate-y: calc(var(--spacing) * --value(number) * -1);
-  --tw-exit-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --tw-exit-translate-y: calc(--value([length], [percentage]) * -1);
-}
-
-@utility slide-out-to-left {
-  --tw-exit-translate-x: -100%;
-}
-
-@utility slide-out-to-left-* {
-  --tw-exit-translate-x: calc(var(--spacing) * --value(number) * -1);
-  --tw-exit-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * -100%);
-  --tw-exit-translate-x: calc(--value([length], [percentage]) * -1);
-}
-
-@utility slide-out-to-bottom {
-  --tw-exit-translate-y: 100%;
-}
-
-@utility slide-out-to-bottom-* {
-  --tw-exit-translate-y: calc(var(--spacing) * --value(number));
-  --tw-exit-translate-y: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --tw-exit-translate-y: --value([length], [percentage]);
-}
-
-@utility slide-out-to-right {
-  --tw-exit-translate-x: 100%;
-}
-
-@utility slide-out-to-right-* {
-  --tw-exit-translate-x: calc(var(--spacing) * --value(number));
-  --tw-exit-translate-x: calc(--value(--aspect-ratio-*, ratio, [ratio]) * 100%);
-  --tw-exit-translate-x: --value([length], [percentage]);
 }
