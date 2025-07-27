@@ -125,9 +125,12 @@ export function ChartVisitors(): JSX.Element {
           id={id}
         >
           <PieChart>
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} cursor={false} />
+            <ChartTooltip
+              content={<ChartTooltipContent hideLabel />}
+              cursor={false}
+              defaultIndex={activeIndex}
+            />
             <Pie
-              activeIndex={activeIndex}
               activeShape={activeShape}
               data={desktopData}
               dataKey="desktop"
