@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps, ComponentType, CSSProperties, JSX, ReactNode } from "react";
+import type { ComponentProps, ComponentType, CSSProperties, JSX, Key, ReactNode } from "react";
 import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 
 import { useId, useMemo } from "react";
@@ -12,12 +12,29 @@ import { cn } from "@/lib/utils";
 import { createContextScope } from "@radix-ui/react-context";
 
 /* -----------------------------------------------------------------------------
- * Type Utilities
+ * Type Definitions and Utilities
  * -------------------------------------------------------------------------- */
 
 type ExtractProps<T> = T extends (props: infer P) => ReactNode ? P : never;
 
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+/* -----------------------------------------------------------------------------
+ * Chart Configuration and Theme Constants
+ * --------------------------------------------------------------------------- */
+
+const THEMES = { dark: ".dark", light: "" } as const;
+
+type ChartConfig = Record<
+  string,
+  {
+    label?: ReactNode;
+    icon?: ComponentType;
+  } & (
+    | { color?: never; theme: Record<keyof typeof THEMES, string> }
+    | { color?: string; theme?: never }
+  )
+>;
 
 /* -----------------------------------------------------------------------------
  * Context: ChartProvider
@@ -26,56 +43,6 @@ type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 const CHART_PROVIDER_NAME = "ChartProvider";
 
 type ScopedProps<P> = P & { __scopeChart?: Scope };
-
-/**
- * Supported themes in the application
- */
-type Theme = "dark" | "light";
-
-/**
- * Mapping between themes and their corresponding CSS classes
- */
-const THEMES: Record<Theme, string> = {
-  dark: ".dark",
-  light: "",
-} as const;
-
-/**
- * Configuration for icon and label display in charts
- */
-interface IconLabelConfig {
-  /** Icon to display with data */
-  icon?: ComponentType;
-  /** Label to display with data */
-  label?: ReactNode;
-}
-
-/**
- * Single color configuration for chart elements
- */
-type ColorConfig = {
-  /** Valid CSS color (hex, rgba, etc.) */
-  color?: string;
-} & { theme?: never };
-
-/**
- * Theme-based color configuration for chart elements
- */
-type ThemeConfig = {
-  /** Map of colors for each theme mode */
-  theme: Record<Theme, string>;
-} & { color?: never };
-
-/**
- * Complete configuration for a chart element
- */
-type ChartConfigItem = (ColorConfig | ThemeConfig) & IconLabelConfig;
-
-/**
- * Configuration for the entire chart organized by series/data keys
- * Where keys are the names of data in the chart
- */
-type ChartConfig = Record<string, ChartConfigItem | undefined>;
 
 /**
  * Value provided by Chart Context
@@ -138,9 +105,33 @@ interface ChartStyleProps {
 }
 
 function ChartStyle({ config, id }: ChartStyleProps): ReactNode {
-  const cssString = useMemo(() => generateCSS(id, config), [id, config]);
+  const colorConfig = Object.entries(config).filter(([, config]) => config.theme ?? config.color);
 
-  return <style dangerouslySetInnerHTML={{ __html: cssString }} />;
+  if (colorConfig.length === 0) {
+    return null;
+  }
+
+  return (
+    <style
+      dangerouslySetInnerHTML={{
+        __html: Object.entries(THEMES)
+          .map(
+            ([theme, prefix]) => `
+${prefix} [data-chart=${id}] {
+${colorConfig
+  .map(([key, itemConfig]) => {
+    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ?? itemConfig.color;
+
+    return color ? `  --color-${key}: ${color};` : null;
+  })
+  .join("\n")}
+}
+`,
+          )
+          .join("\n"),
+      }}
+    />
+  );
 }
 
 /* -----------------------------------------------------------------------------
@@ -194,25 +185,16 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
 }: ScopedProps<ChartTooltipContentProps<TValue, TName>>): ReactNode {
   const { config } = useChartContext(CHART_TOOLTIP_CONTENT_NAME, __scopeChart);
 
-  const tooltipLabel = useMemo((): ReactNode => {
+  const tooltipLabel = useMemo(() => {
     if (hideLabel || payload.length === 0) {
       return null;
     }
 
     const [item] = payload;
-
-    if (!isValidObject(item)) {
-      return null;
-    }
-
-    const key =
-      labelKey ??
-      (typeof item.dataKey === "string" ? item.dataKey : undefined) ??
-      (typeof item.name === "string" ? item.name : undefined) ??
-      "value";
-    const itemConfig = getPayloadConfigFromPayload(config, item, key.toString());
+    const key = String(labelKey ?? item.dataKey ?? item.name ?? "value");
+    const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
-      !labelKey && typeof label === "string" ? (config[label]?.label ?? label) : itemConfig?.label;
+      !labelKey && typeof label === "string" ? (config[label].label ?? label) : itemConfig?.label;
 
     if (labelFormatter) {
       return (
@@ -225,7 +207,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
     }
 
     return <div className={cn("font-medium", labelClassName)}>{value}</div>;
-  }, [config, hideLabel, label, labelClassName, labelFormatter, labelKey, payload]);
+  }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
 
   if (!active || payload.length === 0) {
     return null;
@@ -236,49 +218,32 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
   return (
     <div
       className={cn(
-        "bg-background grid min-w-32 items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+        "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
         className,
       )}
     >
       {nestLabel ? null : tooltipLabel}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
-          if (!isValidObject(item)) {
-            return null;
-          }
-
-          const key =
-            nameKey ??
-            (typeof item.name === "string" ? item.name : undefined) ??
-            (typeof item.dataKey === "string" ? item.dataKey : undefined) ??
-            "value";
-          const itemConfig = getPayloadConfigFromPayload(config, item, key.toString());
-
-          const itemPayload = isValidObject(item.payload) ? item.payload : {};
-          const fillColor = typeof itemPayload.fill === "string" ? itemPayload.fill : undefined;
-          const itemColor = typeof item.color === "string" ? item.color : undefined;
-          const indicatorColor = color ?? fillColor ?? itemColor;
-
-          const dataKey = typeof item.dataKey === "string" ? item.dataKey : `item-${index}`;
-          const itemValue = item.value as TValue;
-          const itemName = (typeof item.name === "string" ? item.name : undefined) as TName;
+          const key = String(nameKey ?? item.name ?? item.dataKey ?? "value");
+          const itemConfig = getPayloadConfigFromPayload(config, item, key);
+          const indicatorColor =
+            color ??
+            (item.payload && typeof item.payload === "object" && "fill" in item.payload
+              ? (item.payload as { fill?: string }).fill
+              : undefined) ??
+            item.color;
 
           return (
             <div
-              key={dataKey}
+              key={item.dataKey as Key}
               className={cn(
-                "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:size-2.5",
+                "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                 indicator === "dot" && "items-center",
               )}
             >
-              {formatter && itemName ? (
-                formatter(
-                  itemValue,
-                  itemName,
-                  item,
-                  index,
-                  item.payload as readonly Payload<TValue, TName>[],
-                )
+              {formatter && item.value !== undefined && item.name ? (
+                formatter(item.value, item.name, item, index, [item] as Payload<TValue, TName>[])
               ) : (
                 <>
                   {itemConfig?.icon ? (
@@ -287,18 +252,19 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                     !hideIndicator && (
                       <div
                         className={cn(
-                          "border-(--color-border) bg-(--color-bg) rounded-xs shrink-0",
+                          "border-(--color-border) bg-(--color-bg) shrink-0 rounded-[2px]",
                           {
                             "h-2.5 w-2.5": indicator === "dot",
                             "my-0.5": nestLabel && indicator === "dashed",
-                            "w-0 border border-dashed bg-transparent": indicator === "dashed",
+                            "w-0 border-[1.5px] border-dashed bg-transparent":
+                              indicator === "dashed",
                             "w-1": indicator === "line",
                           },
                         )}
                         style={
                           {
-                            "--color-bg": indicatorColor,
-                            "--color-border": indicatorColor,
+                            "--color-bg": indicatorColor ?? "",
+                            "--color-border": indicatorColor ?? "",
                           } as CSSProperties
                         }
                       />
@@ -312,15 +278,15 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                   >
                     <div className="grid gap-1.5">
                       {nestLabel ? tooltipLabel : null}
-                      <span className="text-muted-foreground">{itemConfig?.label ?? itemName}</span>
+                      <span className="text-muted-foreground">
+                        {itemConfig?.label ?? item.name}
+                      </span>
                     </div>
-                    <span className="text-foreground font-mono font-medium tabular-nums">
-                      {typeof itemValue === "number"
-                        ? itemValue.toLocaleString()
-                        : typeof itemValue === "string"
-                          ? itemValue.toString()
-                          : JSON.stringify(itemValue)}
-                    </span>
+                    {item.value && (
+                      <span className="text-foreground font-mono font-medium tabular-nums">
+                        {item.value.toLocaleString()}
+                      </span>
+                    )}
                   </div>
                 </>
               )}
@@ -412,132 +378,33 @@ function ChartLegendContent({
  * Helpers
  * -------------------------------------------------------------------------- */
 
-/**
- * Extracts and returns the appropriate configuration object from
- * the payload based on the specified key.
- *
- * @param config - The chart configuration object that contains various
- *   settings.
- * @param payload - The payload object that might contain nested payload data.
- * @param key - The key used to retrieve the specific configuration from the
- *   chart config.
- * @returns Returns a configuration object with optional properties `icon`,
- *   `label`, `color` or `theme`, or `undefined` if the payload is invalid or
- *   no configuration is found for the provided key.
- */
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,
   key: string,
-): ChartConfigItem | undefined {
-  if (!isValidObject(payload)) {
-    return undefined;
+): ChartConfig[string] | undefined {
+  if (typeof payload !== "object" || payload === null) {
+    return;
   }
 
-  const nestedPayload =
-    "payload" in payload && isValidObject(payload.payload) ? payload.payload : undefined;
+  const payloadPayload =
+    "payload" in payload && typeof payload.payload === "object" && payload.payload !== null
+      ? payload.payload
+      : undefined;
 
-  const configLabelKey = getConfigLabelKey(payload, nestedPayload, key);
+  let configLabelKey: string = key;
+
+  if (key in payload && typeof payload[key as keyof typeof payload] === "string") {
+    configLabelKey = payload[key as keyof typeof payload] as string;
+  } else if (
+    payloadPayload &&
+    key in payloadPayload &&
+    typeof payloadPayload[key as keyof typeof payloadPayload] === "string"
+  ) {
+    configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
+  }
 
   return configLabelKey in config ? config[configLabelKey] : config[key];
-}
-
-/**
- * Checks if the provided value is a valid object.
- *
- * @param object - The value to check.
- * @returns - Returns true if the value is an object and not null, false
- *   otherwise.
- */
-function isValidObject(object: unknown): object is Record<string, unknown> {
-  return typeof object === "object" && object !== null;
-}
-
-/**
- * Retrieves the configuration label key from either the payload or
- * nestedPayload. If the key exists in the payload and is a string, the
- * corresponding value is returned. Otherwise, if the key exists in the
- * nestedPayload and is a string, its value is returned. If the key is not
- * found as a string in either object, the key itself is returned.
- *
- * @param payload - The primary payload containing key-value pairs.
- * @param nestedPayload - An optional nested payload containing additional
- *   key-value pairs.
- * @param key - The key to search for within the payload and nestedPayload.
- *
- * @returns The string value associated with the key if found; otherwise, the
- *   key itself.
- */
-function getConfigLabelKey(
-  payload: Record<string, unknown>,
-  nestedPayload: Record<string, unknown> | undefined,
-  key: string,
-): string {
-  if (key in payload && typeof payload[key] === "string") {
-    return payload[key];
-  }
-
-  if (nestedPayload && key in nestedPayload && typeof nestedPayload[key] === "string") {
-    return nestedPayload[key];
-  }
-
-  return key;
-}
-
-/**
- * Generates CSS for a specified theme and chart configuration.
- *
- * @param theme - The theme to be used (for example, 'light', 'dark').
- * @param id - The unique identifier of the chart.
- * @param configEntries - A list of configuration entries, each containing a
- *   key and a chart configuration.
- * @returns The generated CSS as a string.
- */
-function generateThemeCSS(
-  theme: Theme,
-  id: string,
-  configEntries: [string, ChartConfig[string]][],
-): string {
-  const rules: string[] = [];
-
-  rules.push(`${THEMES[theme]} [data-chart=${id}] {`);
-
-  for (const [key, itemConfig] of configEntries) {
-    const color = itemConfig?.theme?.[theme] ?? itemConfig?.color;
-
-    if (color) {
-      rules.push(`  --color-${key}: ${color};`);
-    }
-  }
-
-  rules.push("}");
-
-  return rules.join("\n");
-}
-
-/**
- * Generates CSS styles for a chart based on the provided configuration and
- * themes.
- *
- * @param id - The unique identifier for the chart element.
- * @param config - Configuration object for the chart. This includes theme and
- *   color settings.
- * @returns A string containing the generated CSS rules.
- */
-function generateCSS(id: string, config: ChartConfig): string {
-  const themeOrColorConfig = Object.entries(config).filter(
-    ([_, itemConfig]) => itemConfig?.theme ?? itemConfig?.color,
-  );
-
-  const allRules: string[] = [];
-
-  for (const theme of Object.keys(THEMES)) {
-    const themeCSS = generateThemeCSS(theme as Theme, id, themeOrColorConfig);
-
-    allRules.push(themeCSS);
-  }
-
-  return allRules.join("\n");
 }
 
 /* -----------------------------------------------------------------------------
