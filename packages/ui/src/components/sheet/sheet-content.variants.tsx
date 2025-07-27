@@ -5,7 +5,7 @@ import { tv } from "@/lib/utils";
  * -------------------------------------------------------------------------- */
 
 const sheetContentVariants = tv({
-  base: "bg-background animation-ease-in-out data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 fixed z-50 flex flex-col overflow-auto shadow-lg",
+  base: "bg-background ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 fixed z-50 flex flex-col overflow-auto shadow-lg",
   defaultVariants: {
     side: "right",
   },

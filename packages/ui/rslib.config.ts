@@ -38,10 +38,7 @@ export default defineConfig({
         to: path.resolve(__dirname, "dist", "styles", "index.css"),
       },
     ],
-    minify: {
-      css: false,
-      js: !isWatchMode,
-    },
+    minify: !isWatchMode,
     target: "web",
   },
   plugins: [pluginReact()],
