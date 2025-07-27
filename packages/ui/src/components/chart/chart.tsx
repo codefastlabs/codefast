@@ -194,7 +194,11 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
     const key = String(labelKey ?? item.dataKey ?? item.name ?? "value");
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
-      !labelKey && typeof label === "string" ? (config[label].label ?? label) : itemConfig?.label;
+      !labelKey && typeof label === "string"
+        ? label in config
+          ? (config[label].label ?? label)
+          : label
+        : itemConfig?.label;
 
     if (labelFormatter) {
       return (
@@ -238,7 +242,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
             <div
               key={item.dataKey as Key}
               className={cn(
-                "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
+                "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:size-2.5",
                 indicator === "dot" && "items-center",
               )}
             >
@@ -252,7 +256,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                     !hideIndicator && (
                       <div
                         className={cn(
-                          "border-(--color-border) bg-(--color-bg) shrink-0 rounded-[2px]",
+                          "border-(--color-border) bg-(--color-bg) rounded-xs shrink-0",
                           {
                             "h-2.5 w-2.5": indicator === "dot",
                             "my-0.5": nestLabel && indicator === "dashed",
