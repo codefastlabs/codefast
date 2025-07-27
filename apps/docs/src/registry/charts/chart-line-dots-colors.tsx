@@ -1,8 +1,7 @@
 "use client";
 
-import type { JSX } from "react";
+import type { ComponentProps, JSX } from "react";
 import type { DotProps } from "recharts";
-import type { LineDot } from "recharts/types/cartesian/Line";
 
 import { TrendingUpIcon } from "lucide-react";
 import { CartesianGrid, Dot, Line, LineChart } from "recharts";
@@ -107,7 +106,7 @@ export function ChartLineDotsColors(): JSX.Element {
   );
 }
 
-const dot: LineDot = ({
+const dot: ComponentProps<typeof Line>["dot"] = ({
   payload,
   ...props
 }: DotProps & {

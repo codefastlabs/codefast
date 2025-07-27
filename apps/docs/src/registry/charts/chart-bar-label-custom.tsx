@@ -71,7 +71,7 @@ export function ChartBarLabelCustom(): JSX.Element {
             />
             <XAxis hide dataKey="desktop" type="number" />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} cursor={false} />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" layout="vertical" radius={4}>
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4}>
               <LabelList
                 className="fill-(--color-label)"
                 dataKey="month"

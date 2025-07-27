@@ -81,9 +81,9 @@ export function ChartPieStacked(): JSX.Element {
               content={
                 <ChartTooltipContent
                   indicator="line"
-                  labelFormatter={(_, payload) => {
-                    return chartConfig[payload[0].dataKey as keyof typeof chartConfig].label;
-                  }}
+                  labelFormatter={(_, payload) =>
+                    chartConfig[payload[0].dataKey as keyof typeof chartConfig].label
+                  }
                   labelKey="visitors"
                   nameKey="month"
                 />
