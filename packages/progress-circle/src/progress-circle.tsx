@@ -219,7 +219,7 @@ function ProgressCircleProvider({
   const valueText =
     clampedValue !== undefined && formatValue
       ? formatValue(clampedValue)
-      : `${String(Math.round(percentage))}%`;
+      : `${Math.round(percentage).toString()}%`;
 
   // Sort thresholds by value
   const sortedThresholds = useMemo(
@@ -248,7 +248,7 @@ function ProgressCircleProvider({
   const radius = Math.max(0, center - validStrokeWidth / 2);
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
-  const rotationTransform = `rotate(${String(validStartAngle)}, 0, 0)`;
+  const rotationTransform = `rotate(${validStartAngle.toString()}, 0, 0)`;
 
   return (
     <ProgressCircleContextProvider
@@ -323,7 +323,7 @@ function ProgressCircleSVG({
       height={size}
       id={id}
       role="progressbar"
-      viewBox={`0 0 ${String(size)} ${String(size)}`}
+      viewBox={`0 0 ${size.toString()} ${size.toString()}`}
       width={size}
       {...props}
     />

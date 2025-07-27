@@ -212,7 +212,7 @@ function FormMessage({
   ...props
 }: ScopedProps<FormMessageProps>): ReactNode {
   const { error, formMessageId } = useFormItem(FORM_MESSAGE_NAME, __scopeFormField);
-  const body = error?.message ? String(error.message) : children;
+  const body = error?.message ? error.message.toString() : children;
 
   if (!body) {
     return null;

@@ -93,9 +93,7 @@ function SidebarProvider({
       }
 
       // eslint-disable-next-line unicorn/no-document-cookie
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${String(openState)}; path=/; max-age=${String(
-        SIDEBAR_COOKIE_MAX_AGE,
-      )}`;
+      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState.toString()}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE.toString()}`;
     },
     [setOpenProperty, open],
   );

@@ -318,9 +318,9 @@ class MyCustomLoader extends BaseImageLoader {
       const url = new URL(src);
 
       // Add your custom transformation logic
-      url.searchParams.set("w", String(width));
+      url.searchParams.set("w", width.toString());
       if (quality) {
-        url.searchParams.set("q", String(quality));
+        url.searchParams.set("q", quality.toString());
       }
 
       return url.toString();
@@ -689,9 +689,9 @@ export class MyCDNLoader extends BaseImageLoader {
 
     try {
       const url = new URL(src);
-      url.searchParams.set("w", String(width));
+      url.searchParams.set("w", width.toString());
       if (quality) {
-        url.searchParams.set("q", String(quality));
+        url.searchParams.set("q", quality.toString());
       }
       return url.toString();
     } catch (error) {
