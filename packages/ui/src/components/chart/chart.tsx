@@ -193,7 +193,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
     }
 
     const [item] = payload;
-    const key = String(labelKey ?? item.dataKey ?? item.name ?? "value");
+    const key = safeToString(labelKey ?? item.dataKey ?? item.name ?? "value");
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
       !labelKey && typeof label === "string"
@@ -231,7 +231,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
       {nestLabel ? null : tooltipLabel}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
-          const key = String(nameKey ?? item.name ?? item.dataKey ?? "value");
+          const key = safeToString(nameKey ?? item.name ?? item.dataKey ?? "value");
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
           const indicatorColor =
             color ??
@@ -294,7 +294,7 @@ function ChartTooltipContent<TValue extends ValueType, TName extends NameType>({
                       <span className="text-foreground font-mono font-medium tabular-nums">
                         {typeof item.value === "number"
                           ? item.value.toLocaleString()
-                          : String(item.value)}
+                          : safeToString(item.value)}
                       </span>
                     )}
                   </div>
@@ -356,14 +356,14 @@ function ChartLegendContent({
         if (nameKey) {
           key = nameKey;
         } else if (item.dataKey != null) {
-          key = String(item.dataKey);
+          key = safeToString(item.dataKey);
         }
 
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (
           <div
-            key={nameKey ? String(itemConfig?.color ?? "") : String(item.value ?? "")}
+            key={nameKey ? safeToString(itemConfig?.color ?? "") : safeToString(item.value ?? "")}
             className={cn("[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:size-3")}
           >
             {itemConfig?.icon && !hideIcon ? (
@@ -408,6 +408,38 @@ function getStringValue(record: Record<string, unknown>, key: string): string | 
   return undefined;
 }
 
+/**
+ * Safely converts a value to string without type coercion
+ */
+function safeToString(value: unknown): string {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return value.toString();
+  }
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "boolean") {
+    return value.toString();
+  }
+
+  if (typeof value === "bigint") {
+    return value.toString();
+  }
+
+  if (typeof value === "symbol") {
+    return value.toString();
+  }
+
+  // For objects, arrays, functions, and other complex types, return empty string to avoid [object Object]
+  return "";
+}
+
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,
@@ -426,7 +458,7 @@ function getPayloadConfigFromPayload(
   if (payloadValue) {
     configLabelKey = payloadValue;
   } else if (payloadPayload) {
-    // If not found in payload, try the nested payload
+    // If not found in the payload, try the nested payload
     const nestedValue = getStringValue(payloadPayload, key);
 
     if (nestedValue) {
