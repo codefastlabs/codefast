@@ -40,6 +40,7 @@ export default defineConfig({
     ],
     minify: {
       css: false,
+      js: !isWatchMode,
     },
     target: "web",
   },
