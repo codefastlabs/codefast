@@ -27,6 +27,7 @@ export default defineConfig({
   ],
   output: {
     cleanDistPath: !isWatchMode,
+    minify: !isWatchMode,
     target: "web",
   },
   source: {
