@@ -53,7 +53,7 @@ function InputPassword({
       loading={loading}
       prefix={prefix}
       readOnly={readOnly}
-      spinner={spinner ?? <Spinner />}
+      spinner={spinner ?? <Spinner key="spinner-input-password" />}
       suffix={suffix}
     >
       <InputPrimitive.Field
