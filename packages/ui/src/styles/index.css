@@ -1,67 +1,6 @@
-/**
- * |--------------------------------------------------------------------------
- * | Global Styles & Theme Configuration
- * |--------------------------------------------------------------------------
- * |
- * | This file contains the global style configurations and theme system for
- * | the application. It serves as the foundation for consistent styling across
- * | all components and pages within the CodeFast ecosystem.
- * |
- * | Key Components:
- * |
- * | Base Layer Styles (@layer base):
- * |   - Global border and outline color configurations
- * |   - Custom scrollbar styling for webkit browsers
- * |   - Input field appearance normalization across browsers
- * |   - Root background and foreground color setup
- * |   - Cross-browser compatibility fixes
- * |
- * | Theme Variables (@theme inline):
- * |   - Animation & timing functions for consistent motion design
- * |   - CSS custom properties for the entire theming system
- * |   - Organized color categories (base, interactive, status, component-specific)
- * |   - Chart colors for data visualization components
- * |   - Semantic naming for better maintainability
- * |
- * | Technical Integration:
- * |   - Built on Tailwind CSS framework foundation
- * |   - Imports tw-animate-css for enhanced animations
- * |   - Supports automatic dark/light mode switching
- * |   - Follows design system principles from the monorepo
- * |
- * | Architecture Benefits:
- * |   - Centralized theme management across bounded contexts
- * |   - Consistent visual identity throughout the application
- * |   - Easy theme customization and brand adaptation
- * |   - Performance-optimized CSS custom properties
- * |   - Developer-friendly semantic color naming
- * |   - Accessibility-first approach with proper contrast ratios
- * |
- * | Responsive Design:
- * |   - Mobile-first approach with fluid scaling
- * |   - Touch-friendly interactive elements
- * |   - Optimized for various screen sizes and devices
- * |
- * | This configuration enables seamless theming across the entire application
- * | while maintaining consistency with the explicit architecture principles
- * | and component library standards defined in the CodeFast project.
- * |
- */
-
 @import "tw-animate-css";
 
-/**
- * |--------------------------------------------------------------------------
- * | Base Layer Styles
- * |--------------------------------------------------------------------------
- * |
- * | These styles are applied at the base layer and include:
- * | - Global border and outline color configurations
- * | - Custom scrollbar styling for webkit browsers
- * | - Input field appearance normalization
- * | - Root background and foreground color setup
- * |
- */
+@plugin "@tailwindcss/typography";
 
 @layer base {
   /**
@@ -134,25 +73,6 @@
   }
 }
 
-/**
- * |--------------------------------------------------------------------------
- * | Theme Color Variables
- * |--------------------------------------------------------------------------
- * |
- * | This section defines all the CSS custom properties that power the
- * | application's theming system. These variables are mapped from the
- * | base theme tokens and provide a consistent color palette throughout
- * | the application.
- * |
- * | Categories:
- * | - Base colors (background, foreground, border)
- * | - Interactive colors (primary, secondary, accent)
- * | - Status colors (destructive)
- * | - Component-specific colors (popover, card, sidebar)
- * | - Chart colors for data visualization
- * |
- */
-
 @theme inline {
   /* Base Interface Colors */
   --color-input: var(--input);
@@ -206,46 +126,6 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 }
-
-/**
- * |--------------------------------------------------------------------------
- * | Smooth Easing Animation Function
- * |--------------------------------------------------------------------------
- * |
- * | This custom cubic-bezier timing function provides a smooth, natural
- * | animation easing that enhances user experience across interactive
- * | elements and transitions within the application.
- * |
- * | Technical Specifications:
- * |   - Cubic-bezier values: (0.32, 0.72, 0, 1)
- * |   - Animation curve: Smooth acceleration with gentle deceleration
- * |   - Optimized for UI micro-interactions and page transitions
- * |   - Cross-browser compatible timing function
- * |
- * | Usage Examples:
- * |   - Button hover effects and state changes
- * |   - Modal and drawer slide-in animations
- * |   - Loading states and progress indicators
- * |   - Page route transitions
- * |   - Component fade-in/fade-out effects
- * |
- * | Design Philosophy:
- * |   - Creates organic, human-like motion patterns
- * |   - Reduces jarring visual interruptions
- * |   - Maintains consistency with design system principles
- * |   - Enhances perceived performance through smooth transitions
- * |
- * | Performance Benefits:
- * |   - Hardware-accelerated when used with transform properties
- * |   - Lightweight alternative to complex animation libraries
- * |   - Optimized for 60fps smooth animations
- * |   - Memory-efficient CSS-native implementation
- * |
- * | This easing function aligns with the CodeFast design system's
- * | commitment to providing delightful, accessible user experiences
- * | through thoughtful animation and interaction design.
- * |
- */
 
 @theme {
   /* Animation & Timing Functions */
