@@ -1,6 +1,39 @@
+/**
+ * Theme Styles for CodeFast Documentation
+ *
+ * This file contains comprehensive theme definitions for the CodeFast UI library
+ * documentation site. It provides multiple color schemes and scaling options
+ * to demonstrate the flexibility and customization capabilities of the component library.
+ *
+ * Features:
+ * - Multiple color themes (Slate, Gray, Zinc, Stone)
+ * - Dark mode support for all themes
+ * - Responsive scaling adjustments
+ * - OKLCH color space for better color accuracy
+ * - CSS custom properties for easy customization
+ */
+
+/**
+ * Dark Mode Variant Definition
+ *
+ * Defines a custom variant for dark mode that applies to elements
+ * with the 'dark' class or any of their descendants.
+ */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
+  /**
+   * Scaled Theme Configuration
+   *
+   * Provides responsive scaling adjustments for typography and spacing
+   * on larger screens (1024px and above). This theme modifier ensures
+   * optimal readability and spacing across different screen sizes.
+   *
+   * Adjustments:
+   * - Border radius: 0.6rem
+   * - Typography scaling: Adjusted for better readability
+   * - Spacing optimization: Consistent spacing throughout components
+   */
   .theme-scaled {
     @media (min-width: 1024px) {
       --radius: 0.6rem;
@@ -21,13 +54,33 @@
     }
   }
 
+  /**
+   * Slate Theme Configuration
+   *
+   * A modern, professional theme using slate gray tones as the foundation.
+   * This theme provides excellent contrast and readability while maintaining
+   * a sophisticated, neutral appearance suitable for professional applications.
+   *
+   * Color Palette:
+   * - Primary: Blue-tinted slate for interactive elements
+   * - Background: Pure white (light) / Dark slate (dark)
+   * - Foreground: Deep slate for optimal text contrast
+   * - Accent: Light slate for subtle highlights
+   *
+   * Features:
+   * - Full dark mode support with automatic color inversion
+   * - OKLCH color space for consistent color perception
+   * - Sidebar-specific color variants
+   * - Chart color palette for data visualization
+   * - Comprehensive component color mapping
+   */
   .theme-slate {
     --input: oklch(0.929 0.013 255.508);
     --border: oklch(0.929 0.013 255.508);
 
     --ring: oklch(0.704 0.04 256.788);
 
-    --background: #fff;
+    --background: #ffffff;
     --foreground: oklch(0.129 0.042 264.695);
 
     --primary: oklch(0.685 0.169 237.323);
@@ -44,11 +97,11 @@
     --muted: oklch(0.968 0.007 247.896);
     --muted-foreground: oklch(0.554 0.046 257.417);
 
-    --popover: #fff;
+    --popover: #ffffff;
     --popover-foreground: oklch(0.129 0.042 264.695);
     --popover-overlay: oklch(0.208 0.042 265.755 / 20%);
 
-    --card: #fff;
+    --card: #ffffff;
     --card-foreground: oklch(0.129 0.042 264.695);
 
     --sidebar: oklch(0.984 0.003 247.858);
@@ -119,13 +172,33 @@
     }
   }
 
+  /**
+   * Gray Theme Configuration
+   *
+   * A clean, minimalist theme built on neutral gray tones. This theme offers
+   * excellent versatility and works well across various content types while
+   * maintaining high readability and accessibility standards.
+   *
+   * Color Palette:
+   * - Primary: Blue accent for interactive elements
+   * - Background: Pure white (light) / Deep gray (dark)
+   * - Foreground: Charcoal gray for optimal readability
+   * - Accent: Light gray for subtle UI elements
+   *
+   * Features:
+   * - Neutral color scheme suitable for any content
+   * - High contrast ratios for accessibility compliance
+   * - Smooth dark mode transitions
+   * - Balanced color temperature for reduced eye strain
+   * - Professional appearance for business applications
+   */
   .theme-gray {
     --input: oklch(0.928 0.006 264.531);
     --border: oklch(0.928 0.006 264.531);
 
     --ring: oklch(0.707 0.022 261.325);
 
-    --background: #fff;
+    --background: #ffffff;
     --foreground: oklch(0.13 0.028 261.692);
 
     --primary: oklch(0.685 0.169 237.323);
@@ -142,11 +215,11 @@
     --muted: oklch(0.967 0.003 264.542);
     --muted-foreground: oklch(0.551 0.027 264.364);
 
-    --popover: #fff;
+    --popover: #ffffff;
     --popover-foreground: oklch(0.13 0.028 261.692);
     --popover-overlay: oklch(0.21 0.034 264.665 / 20%);
 
-    --card: #fff;
+    --card: #ffffff;
     --card-foreground: oklch(0.13 0.028 261.692);
 
     --sidebar: oklch(0.985 0.002 247.839);
@@ -217,13 +290,33 @@
     }
   }
 
+  /**
+   * Zinc Theme Configuration
+   *
+   * A sophisticated theme featuring zinc-based neutral tones with subtle
+   * warm undertones. This theme provides a modern, industrial aesthetic
+   * while maintaining excellent readability and user experience.
+   *
+   * Color Palette:
+   * - Primary: Blue accent for interactive elements
+   * - Background: Pure white (light) / Deep zinc (dark)
+   * - Foreground: Rich zinc for text content
+   * - Accent: Light zinc for UI elements and borders
+   *
+   * Features:
+   * - Warm-neutral color temperature for comfortable viewing
+   * - Industrial-inspired design aesthetic
+   * - Excellent color harmony across all variants
+   * - Optimized for both light and dark environments
+   * - Subtle color saturation for reduced visual fatigue
+   */
   .theme-zinc {
     --input: oklch(0.92 0.004 286.32);
     --border: oklch(0.92 0.004 286.32);
 
     --ring: oklch(0.705 0.015 286.067);
 
-    --background: #fff;
+    --background: #ffffff;
     --foreground: oklch(0.141 0.005 285.823);
 
     --primary: oklch(0.685 0.169 237.323);
@@ -240,11 +333,11 @@
     --muted: oklch(0.967 0.001 286.375);
     --muted-foreground: oklch(0.552 0.016 285.938);
 
-    --popover: #fff;
+    --popover: #ffffff;
     --popover-foreground: oklch(0.141 0.005 285.823);
     --popover-overlay: oklch(0.21 0.006 285.885 / 20%);
 
-    --card: #fff;
+    --card: #ffffff;
     --card-foreground: oklch(0.141 0.005 285.823);
 
     --sidebar: oklch(0.985 0 0);
@@ -315,13 +408,34 @@
     }
   }
 
+  /**
+   * Stone Theme Configuration
+   *
+   * An earthy, natural theme inspired by stone and mineral tones. This theme
+   * offers a warm, organic feel while maintaining professional standards
+   * and excellent accessibility across all interface elements.
+   *
+   * Color Palette:
+   * - Primary: Blue accent for interactive elements
+   * - Background: Pure white (light) / Deep stone (dark)
+   * - Foreground: Rich stone for text content
+   * - Accent: Light stone for subtle UI elements
+   *
+   * Features:
+   * - Natural, earth-inspired color palette
+   * - Warm undertones for comfortable extended use
+   * - Organic aesthetic suitable for creative applications
+   * - Excellent contrast ratios for accessibility
+   * - Harmonious color relationships across all variants
+   * - Optimized for both professional and creative contexts
+   */
   .theme-stone {
     --input: oklch(0.923 0.003 48.717);
     --border: oklch(0.923 0.003 48.717);
 
     --ring: oklch(0.709 0.01 56.259);
 
-    --background: #fff;
+    --background: #ffffff;
     --foreground: oklch(0.147 0.004 49.25);
 
     --primary: oklch(0.685 0.169 237.323);
@@ -338,11 +452,11 @@
     --muted: oklch(0.97 0.001 106.424);
     --muted-foreground: oklch(0.553 0.013 58.071);
 
-    --popover: #fff;
+    --popover: #ffffff;
     --popover-foreground: oklch(0.147 0.004 49.25);
     --popover-overlay: oklch(0.216 0.006 56.043 / 20%);
 
-    --card: #fff;
+    --card: #ffffff;
     --card-foreground: oklch(0.147 0.004 49.25);
 
     --sidebar: oklch(0.985 0.001 106.423);

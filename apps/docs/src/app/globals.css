@@ -1,49 +1,117 @@
+/**
+ * Global Styles for CodeFast Documentation
+ *
+ * This file contains the global CSS styles for the CodeFast documentation application.
+ * It includes TailwindCSS configuration, theme variables, and custom styling for both
+ * light and dark modes.
+ */
+
+/**
+ * Core Dependencies
+ *
+ * Import TailwindCSS base styles and utilities, along with the CodeFast UI
+ * component library styles. These imports provide the foundation for all
+ * styling throughout the documentation application.
+ */
 @import "tailwindcss";
 
 @import "@codefast/ui/styles.css";
 
+/**
+ * Component Source Configuration
+ *
+ * Define the source path for CodeFast UI components to enable proper
+ * style resolution and component discovery within the documentation.
+ */
 @source '../../node_modules/@codefast/ui/src';
 
+/**
+ * Dark Mode Variant Configuration
+ *
+ * Configure the dark mode variant selector to work with both class-based
+ * and descendant-based dark mode implementations. This ensures consistent
+ * dark mode behavior across all components.
+ */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/**
+ * Theme Configuration
+ *
+ * Define custom theme extensions including additional breakpoints
+ * that are specific to the documentation layout requirements.
+ */
 @theme {
   --breakpoint-3xl: 112rem;
 }
 
+/**
+ * Base Layer Styles
+ *
+ * Define the foundational CSS custom properties and base styles for the
+ * documentation application. This layer contains theme variables that
+ * control the visual appearance across all components.
+ */
 @layer base {
+  /**
+   * Light Theme Variables (Default)
+   *
+   * CSS custom properties for the default light theme. These variables
+   * define colors, typography, and component styling that will be used
+   * throughout the application when no dark mode is active.
+   *
+   * Variable Categories:
+   * - Typography: Font family definitions
+   * - Form Elements: Input, border, and focus ring colors
+   * - Layout: Background and foreground colors
+   * - Semantic Colors: Primary, secondary, destructive, accent, muted
+   * - Component Colors: Popover, card, sidebar styling
+   * - Data Visualization: Chart color palette
+   */
   :root {
+    /* Typography Variables */
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-jetbrains-mono);
 
+    /* Form Element Colors */
     --input: var(--color-neutral-200);
     --border: var(--color-neutral-200);
 
+    /* Focus and Interaction States */
     --ring: var(--color-neutral-400);
 
+    /* Base Layout Colors */
     --background: var(--color-white);
     --foreground: var(--color-neutral-950);
 
+    /* Primary Brand Colors */
     --primary: var(--color-sky-500);
     --primary-foreground: var(--color-neutral-50);
 
+    /* Secondary Colors */
     --secondary: var(--color-neutral-100);
     --secondary-foreground: var(--color-neutral-900);
 
+    /* Destructive/Error Colors */
     --destructive: var(--color-red-600);
 
+    /* Accent Colors */
     --accent: var(--color-neutral-100);
     --accent-foreground: var(--color-neutral-900);
 
+    /* Muted/Subdued Colors */
     --muted: var(--color-neutral-100);
     --muted-foreground: var(--color-neutral-500);
 
+    /* Popover Component Colors */
     --popover: var(--color-white);
     --popover-foreground: var(--color-neutral-950);
     --popover-overlay: --alpha(var(--color-neutral-900) / 20%);
 
+    /* Card Component Colors */
     --card: var(--color-white);
     --card-foreground: var(--color-neutral-950);
 
+    /* Sidebar Component Colors */
     --sidebar: var(--color-neutral-50);
     --sidebar-foreground: var(--color-neutral-950);
 
@@ -56,6 +124,7 @@
     --sidebar-border: var(--color-neutral-200);
     --sidebar-ring: var(--color-neutral-400);
 
+    /* Chart and Data Visualization Colors */
     --chart-1: var(--color-orange-600);
     --chart-2: var(--color-teal-600);
     --chart-3: var(--color-cyan-600);
@@ -63,36 +132,62 @@
     --chart-5: var(--color-amber-500);
   }
 
+  /**
+   * Dark Theme Variables (Dark Mode Override)
+   *
+   * CSS custom properties that override the default light theme when
+   * dark mode is active. These variables provide appropriate contrast
+   * and visual hierarchy for dark backgrounds while maintaining
+   * accessibility and readability standards.
+   *
+   * Key Changes from Light Theme:
+   * - Inverted background/foreground relationships
+   * - Darker primary colors for better contrast
+   * - Adjusted opacity values for overlays
+   * - Modified chart colors optimized for dark backgrounds
+   * - Enhanced border and accent colors for visibility
+   */
   @variant dark {
+    /* Form Element Colors - Dark Mode */
     --input: var(--color-neutral-700);
     --border: --alpha(var(--color-neutral-700) / 50%);
 
+    /* Focus and Interaction States - Dark Mode */
     --ring: var(--color-neutral-500);
 
+    /* Base Layout Colors - Dark Mode */
     --background: var(--color-neutral-950);
     --foreground: var(--color-neutral-50);
 
+    /* Primary Brand Colors - Dark Mode */
     --primary: var(--color-sky-700);
     --primary-foreground: var(--color-neutral-50);
 
+    /* Secondary Colors - Dark Mode */
     --secondary: var(--color-neutral-800);
     --secondary-foreground: var(--color-neutral-50);
 
+    /* Destructive/Error Colors - Dark Mode */
     --destructive: var(--color-red-400);
 
+    /* Accent Colors - Dark Mode */
     --accent: var(--color-neutral-700);
     --accent-foreground: var(--color-neutral-50);
 
+    /* Muted/Subdued Colors - Dark Mode */
     --muted: var(--color-neutral-800);
     --muted-foreground: var(--color-neutral-400);
 
+    /* Popover Component Colors - Dark Mode */
     --popover: var(--color-neutral-800);
     --popover-foreground: var(--color-neutral-50);
     --popover-overlay: --alpha(var(--color-neutral-900) / 80%);
 
+    /* Card Component Colors - Dark Mode */
     --card: var(--color-neutral-900);
     --card-foreground: var(--color-neutral-50);
 
+    /* Sidebar Component Colors - Dark Mode */
     --sidebar: var(--color-neutral-900);
     --sidebar-foreground: var(--color-neutral-50);
 
@@ -105,6 +200,7 @@
     --sidebar-border: var(--color-neutral-800);
     --sidebar-ring: var(--color-neutral-600);
 
+    /* Chart and Data Visualization Colors - Dark Mode */
     --chart-1: var(--color-blue-700);
     --chart-2: var(--color-emerald-500);
     --chart-3: var(--color-amber-500);
