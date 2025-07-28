@@ -253,7 +253,7 @@ export interface NewFeaturePort {
 @injectable()
 export class NewFeatureUseCase {
   constructor(
-    @inject(TYPES.NewFeaturePort)
+    @inject(DI_TYPES.NewFeaturePort)
     private readonly newFeatureService: NewFeaturePort,
   ) {}
 
@@ -288,10 +288,10 @@ export const TYPES = {
 };
 
 // src/di/modules/infrastructure.module.ts
-infrastructureModule.bind<NewFeaturePort>(TYPES.NewFeaturePort).to(NewFeatureAdapter);
+infrastructureModule.bind<NewFeaturePort>(DI_TYPES.NewFeaturePort).to(NewFeatureAdapter);
 
 // src/di/modules/application.module.ts
-applicationModule.bind<NewFeatureUseCase>(TYPES.NewFeatureUseCase).to(NewFeatureUseCase);
+applicationModule.bind<NewFeatureUseCase>(DI_TYPES.NewFeatureUseCase).to(NewFeatureUseCase);
 ```
 
 #### 5. Add CLI Command
