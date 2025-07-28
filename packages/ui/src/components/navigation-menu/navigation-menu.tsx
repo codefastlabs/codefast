@@ -175,7 +175,7 @@ function NavigationMenuIndicator({
   return (
     <NavigationMenuPrimitive.Indicator
       className={cn(
-        "data-[state=visible]:animate-fade-in data-[state=hidden]:animate-fade-out top-full z-10 flex h-2 items-center justify-center overflow-hidden",
+        "data-[state=visible]:fade-in-0 ease-ui data-[state=visible]:animate-in data-[state=hidden]:fade-out-0 data-[state=hidden]:animate-out top-full z-10 flex h-2 items-center justify-center overflow-hidden",
         className,
       )}
       data-slot="navigation-menu-indicator"
