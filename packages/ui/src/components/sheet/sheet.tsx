@@ -60,7 +60,7 @@ function SheetContent({
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         className={cn(
-          "bg-popover-overlay data-[state=open]:animate-fade-in data-[state=open]:animation-duration-500 data-[state=closed]:animate-fade-out data-[state=closed]:animation-duration-500 fixed inset-0 z-50",
+          "bg-popover-overlay data-[state=open]:fade-in-0 ease-ui data-[state=open]:animate-in data-[state=open]:animation-duration-500 data-[state=closed]:fade-out-0 data-[state=closed]:animate-out data-[state=closed]:animation-duration-500 fixed inset-0 z-50",
           classNames?.overlay,
         )}
         data-slot="sheet-overlay"
