@@ -57,9 +57,9 @@ function InputSearch({
       disabled={disabled}
       loaderPosition={loaderPosition}
       loading={loading}
-      prefix={prefix ?? <SearchIcon />}
+      prefix={prefix ?? <SearchIcon key="search-icon-input-search" />}
       readOnly={readOnly}
-      spinner={spinner ?? <Spinner />}
+      spinner={spinner ?? <Spinner key="spinner-input-search" />}
       suffix={suffix}
     >
       <InputPrimitive.Field

@@ -58,7 +58,7 @@ function InputNumber({
       min={min}
       prefix={prefix}
       readOnly={readOnly}
-      spinner={spinner ?? <Spinner />}
+      spinner={spinner ?? <Spinner key="spinner-input-number" />}
       step={step}
       suffix={suffix}
       value={value}
