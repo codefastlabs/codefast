@@ -1,12 +1,50 @@
+/*
+|--------------------------------------------------------------------------
+| CodeFast UI Styles
+|--------------------------------------------------------------------------
+|
+| This file contains the core styling definitions for the CodeFast UI
+| component library. It includes global base styles, theme variables,
+| and utility configurations that provide a consistent design system
+| across all components.
+|
+| Dependencies:
+| - TailwindCSS 4.x
+| - @tailwindcss/typography plugin
+| - tw-animate-css for animations
+|
+| Author: CodeFast Labs
+| Version: 1.0.0
+| Last Modified: 2025-07-28
+|
+*/
+
 @import "tw-animate-css";
 
 @plugin "@tailwindcss/typography";
 
+/*
+|--------------------------------------------------------------------------
+| Base Layer Styles
+|--------------------------------------------------------------------------
+|
+| The base layer contains fundamental styling that applies globally
+| across the entire application. This includes element resets,
+| browser normalization, and foundational visual consistency.
+|
+*/
+
 @layer base {
-  /**
-   * Global border and outline configuration
-   * Sets consistent border colors and focus ring styles across all elements
-   */
+  /*
+  |--------------------------------------------------------------------------
+  | Global Border & Outline Configuration
+  |--------------------------------------------------------------------------
+  |
+  | Establishes consistent border colors and focus ring styles across
+  | all elements using CSS custom properties. This ensures a unified
+  | visual language throughout the component library.
+  |
+  */
   *,
   ::after,
   ::before,
@@ -16,10 +54,16 @@
     outline-color: color-mix(in oklab, var(--color-ring) 20%, transparent);
   }
 
-  /**
-   * Custom scrollbar styling for webkit browsers
-   * Provides a minimal, themed scrollbar experience
-   */
+  /*
+  |--------------------------------------------------------------------------
+  | Custom Scrollbar Styling (WebKit)
+  |--------------------------------------------------------------------------
+  |
+  | Provides a minimal, themed scrollbar experience for WebKit-based
+  | browsers (Chrome, Safari, Edge). These styles create a consistent
+  | scrollbar appearance that matches the overall design system.
+  |
+  */
   ::-webkit-scrollbar {
     @apply size-2;
   }
@@ -32,29 +76,47 @@
     @apply bg-border rounded-full;
   }
 
-  /**
-   * Firefox scrollbar styling
-   * Ensures consistent scrollbar appearance across browsers
-   */
+  /*
+  |--------------------------------------------------------------------------
+  | Firefox Scrollbar Styling
+  |--------------------------------------------------------------------------
+  |
+  | Ensures consistent scrollbar appearance across browsers by applying
+  | Firefox-specific scrollbar properties. This maintains visual consistency
+  | between WebKit and Gecko-based browsers.
+  |
+  */
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
 
-  /**
-   * Root element styling
-   * Sets the foundation colors for the entire application
-   */
+  /*
+  |--------------------------------------------------------------------------
+  | Root Element Foundation
+  |--------------------------------------------------------------------------
+  |
+  | Sets the foundation colors and base styling for the entire application.
+  | These styles are applied to the html and body elements to establish
+  | the primary background and foreground colors using CSS custom properties.
+  |
+  */
   html,
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
 
-  /**
-   * Input field normalization
-   * Removes browser-specific styling and behaviors for consistent appearance
-   */
+  /*
+  |--------------------------------------------------------------------------
+  | Input Field Normalization
+  |--------------------------------------------------------------------------
+  |
+  | Removes browser-specific styling and behaviors to ensure consistent
+  | input field appearance across all browsers. This includes removing
+  | WebKit search decorations, spin buttons, and Firefox number input styling.
+  |
+  */
   input {
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {
@@ -73,43 +135,127 @@
   }
 }
 
+/*
+|--------------------------------------------------------------------------
+| Theme Color System
+|--------------------------------------------------------------------------
+|
+| This section defines the comprehensive color system for the CodeFast UI
+| library. All color variables are organized by their semantic purpose
+| and usage context, providing a consistent theming foundation across
+| all components.
+|
+*/
+
 @theme inline {
-  /* Base Interface Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Base Interface Colors
+  |--------------------------------------------------------------------------
+  |
+  | Fundamental colors used throughout the interface for basic elements
+  | like inputs, borders, rings, backgrounds, and foreground text.
+  |
+  */
   --color-input: var(--input);
   --color-border: var(--border);
   --color-ring: var(--ring);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Primary Action Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Primary Action Colors
+  |--------------------------------------------------------------------------
+  |
+  | Colors used for primary actions and interactive elements like buttons,
+  | links, and other prominent UI components that require user attention.
+  |
+  */
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
 
-  /* Secondary Action Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Secondary Action Colors
+  |--------------------------------------------------------------------------
+  |
+  | Colors used for secondary actions and less prominent interactive elements
+  | that complement the primary action colors in the interface hierarchy.
+  |
+  */
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
 
-  /* Status Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Status & State Colors
+  |--------------------------------------------------------------------------
+  |
+  | Colors used to communicate different states and status messages,
+  | including destructive actions, warnings, and success states.
+  |
+  */
   --color-destructive: var(--destructive);
 
-  /* Accent Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Accent Colors
+  |--------------------------------------------------------------------------
+  |
+  | Colors used for highlighting and accent elements that need to stand out
+  | from the primary interface without being as prominent as primary colors.
+  |
+  */
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
-  /* Muted/Disabled Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Muted & Disabled Colors
+  |--------------------------------------------------------------------------
+  |
+  | Colors used for muted text, disabled elements, and subtle interface
+  | components that should have reduced visual prominence.
+  |
+  */
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
-  /* Popover Component Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Popover Component Colors
+  |--------------------------------------------------------------------------
+  |
+  | Specialized colors for popover components including backgrounds,
+  | foregrounds, and overlay effects for floating UI elements.
+  |
+  */
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover-overlay: var(--popover-overlay);
 
-  /* Card Component Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Card Component Colors
+  |--------------------------------------------------------------------------
+  |
+  | Colors specifically designed for card components and similar
+  | container elements that group related content.
+  |
+  */
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
-  /* Sidebar Component Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Sidebar Component Colors
+  |--------------------------------------------------------------------------
+  |
+  | Comprehensive color system for sidebar navigation components including
+  | backgrounds, foregrounds, accents, borders, and focus states.
+  |
+  */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -119,7 +265,15 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Chart/Data Visualization Colors */
+  /*
+  |--------------------------------------------------------------------------
+  | Chart & Data Visualization Colors
+  |--------------------------------------------------------------------------
+  |
+  | Color palette specifically designed for charts, graphs, and data
+  | visualization components to ensure proper contrast and accessibility.
+  |
+  */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -127,7 +281,26 @@
   --color-chart-5: var(--chart-5);
 }
 
+/*
+|--------------------------------------------------------------------------
+| Animation & Timing System
+|--------------------------------------------------------------------------
+|
+| This section defines custom timing functions and animation-related
+| variables that provide smooth, consistent motion throughout the UI.
+| These values are optimized for modern interfaces and user experience.
+|
+*/
+
 @theme {
-  /* Animation & Timing Functions */
+  /*
+  |--------------------------------------------------------------------------
+  | Custom Easing Functions
+  |--------------------------------------------------------------------------
+  |
+  | Carefully crafted cubic-bezier timing functions that provide natural,
+  | smooth animations for UI transitions and micro-interactions.
+  |
+  */
   --ease-ui: cubic-bezier(0.32, 0.72, 0, 1);
 }
