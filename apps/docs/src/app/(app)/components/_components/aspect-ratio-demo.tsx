@@ -14,6 +14,7 @@ export function AspectRatioDemo(): JSX.Element {
             fill
             alt="Photo by Drew Beamer"
             className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd"
           />
         </AspectRatio>
@@ -24,6 +25,7 @@ export function AspectRatioDemo(): JSX.Element {
             fill
             alt="Photo by Drew Beamer"
             className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd"
           />
         </AspectRatio>
@@ -34,6 +36,7 @@ export function AspectRatioDemo(): JSX.Element {
             fill
             alt="Photo by Drew Beamer"
             className="h-full w-full rounded-lg object-cover dark:brightness-[0.2] dark:grayscale"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd"
           />
         </AspectRatio>
