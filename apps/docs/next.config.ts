@@ -2,29 +2,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
-    // Enable package import optimization for specified libraries
-    optimizePackageImports: ["@codefast/ui", "@codefast/hooks", "@codefast/image-loader"],
-
-    // Forward browser logs to the terminal for easier debugging
+    /** Forward browser logs to the terminal for easier debugging */
     browserDebugInfoInTerminal: true,
 
-    // Enable Partial Pre-rendering (PPR) - combines static and dynamic content
-    ppr: true,
-
-    // Activate new client-side router improvements
-    clientSegmentCache: true,
-
-    // Explore route composition and segment overrides via DevTools
+    /** Explore route composition and segment overrides via DevTools */
     devtoolSegmentExplorer: true,
 
-    // Enable persistent caching for the turbopack dev server and build.
-    turbopackPersistentCaching: true,
+    /** Enable package import optimization for specified libraries */
+    optimizePackageImports: ["@codefast/ui", "@codefast/hooks", "@codefast/image-loader"],
 
-    // Enable attribution tracking for Core Web Vitals metrics
-    webVitalsAttribution: ["CLS", "LCP"],
-
-    // Enable component caching for improved performance
-    // cacheComponents: true,
+    /** Enable Partial Pre-rendering (PPR) - combines static and dynamic content */
+    ppr: true,
   },
   images: {
     loader: "custom",
