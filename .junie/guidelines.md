@@ -192,5 +192,6 @@ When working on this project:
 6. **Update documentation** when adding new features or changing APIs
 7. **Follow existing patterns** in the codebase for consistency
 8. **Use workspace dependencies** (`workspace:*`) for internal package references
+9. **Avoid running development server commands** like `pnpm dev` or `pnpm dev:docs` - these are watch processes that never exit automatically and can cause hanging processes
 
 **Note**: The development workflow now automatically builds packages before running `lint`, `lint:fix`, and `type-check` commands, ensuring quality checks always work on the latest code.
