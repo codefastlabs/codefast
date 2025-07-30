@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
     // Forward browser logs to the terminal for easier debugging
     browserDebugInfoInTerminal: true,
 
-    // Enable new caching and pre-rendering behavior
-    // dynamicIO: true, // will be renamed to cacheComponents in Next.js 16
+    // Enable Partial Pre-rendering (PPR) - combines static and dynamic content
+    ppr: true,
 
     // Activate new client-side router improvements
     clientSegmentCache: true,
@@ -18,10 +18,13 @@ const nextConfig: NextConfig = {
     devtoolSegmentExplorer: true,
 
     // Enable persistent caching for the turbopack dev server and build.
-    // turbopackPersistentCaching: true,
+    turbopackPersistentCaching: true,
 
     // Enable attribution tracking for Core Web Vitals metrics
     webVitalsAttribution: ["CLS", "LCP"],
+
+    // Enable component caching for improved performance
+    // cacheComponents: true,
   },
   images: {
     loader: "custom",
