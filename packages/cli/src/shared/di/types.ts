@@ -14,8 +14,6 @@ export const DI_TYPES = {
   TreeShakingAnalysisPort: Symbol.for("TreeShakingAnalysisPort"),
   TypeScriptAnalysisPort: Symbol.for("TypeScriptAnalysisPort"),
 
-
-
   // Use Cases
   AnalyzeTreeShakingUseCase: Symbol.for("AnalyzeTreeShakingUseCase"),
   CheckComponentTypesUseCase: Symbol.for("CheckComponentTypesUseCase"),

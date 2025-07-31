@@ -13,8 +13,6 @@ import { GreetUserUseCase } from "@/application/use-cases/greet-user.use-case";
 import { DI_TYPES } from "@/shared/di/types";
 
 export const applicationModule = new ContainerModule((options) => {
-
-
   // Use Cases
   options
     .bind<AnalyzeTreeShakingUseCase>(DI_TYPES.AnalyzeTreeShakingUseCase)
