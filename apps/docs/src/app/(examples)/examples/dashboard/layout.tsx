@@ -1,5 +1,3 @@
-import "@/app/(examples)/examples/dashboard/theme.css";
-
 import type { CSSProperties, JSX, ReactNode } from "react";
 
 import { cookies } from "next/headers";

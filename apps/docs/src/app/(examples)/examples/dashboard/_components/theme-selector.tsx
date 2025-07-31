@@ -4,7 +4,6 @@ import type { JSX } from "react";
 
 import { useId } from "react";
 
-import { useThemeConfig } from "@/components/active-theme";
 import {
   Label,
   Select,
@@ -55,7 +54,6 @@ const MONO_THEMES = [
 ];
 
 export function ThemeSelector(): JSX.Element {
-  const { activeTheme, setActiveTheme } = useThemeConfig();
   const id = useId();
 
   return (
@@ -63,7 +61,7 @@ export function ThemeSelector(): JSX.Element {
       <Label className="sr-only" htmlFor="theme-selector">
         Theme
       </Label>
-      <Select value={activeTheme} onValueChange={setActiveTheme}>
+      <Select>
         <SelectTrigger
           className="justify-start *:data-[slot=select-value]:w-12"
           id={`${id}-theme-selector`}

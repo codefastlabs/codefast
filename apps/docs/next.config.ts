@@ -9,7 +9,13 @@ const nextConfig: NextConfig = {
     devtoolSegmentExplorer: true,
 
     /** Enable package import optimization for specified libraries */
-    optimizePackageImports: ["@codefast/ui", "@codefast/hooks", "@codefast/image-loader"],
+    optimizePackageImports: [
+      "@codefast/hooks",
+      "@codefast/image-loader",
+      "@codefast/ui",
+      "@codefast/eslint-config",
+      "@codefast/typescript-config",
+    ],
 
     /** Enable Partial Pre-rendering (PPR) - combines static and dynamic content */
     ppr: true,
