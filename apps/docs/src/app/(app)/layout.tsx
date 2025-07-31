@@ -5,9 +5,7 @@ import type { JSX, ReactNode } from "react";
 import { cookies } from "next/headers";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import { ModeSwitcher } from "@/components/mode-switcher";
 import { NavHeader } from "@/components/nav-header";
-import { ThemeSelector } from "@/components/theme-selector";
 import { Separator, SidebarInset, SidebarProvider, SidebarTrigger } from "@codefast/ui";
 
 export default async function AppLayout({
@@ -28,10 +26,6 @@ export default async function AppLayout({
               orientation="vertical"
             />
             <NavHeader className="max-lg:hidden" />
-            <div className="ml-auto flex items-center gap-2">
-              <ThemeSelector />
-              <ModeSwitcher />
-            </div>
           </div>
         </header>
         {children}
