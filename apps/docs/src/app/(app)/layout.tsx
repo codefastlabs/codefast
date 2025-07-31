@@ -1,5 +1,3 @@
-import "@/app/(app)/themes.css";
-
 import type { JSX, ReactNode } from "react";
 
 import { cookies } from "next/headers";
