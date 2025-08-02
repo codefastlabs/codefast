@@ -63,7 +63,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.11.0",
+    "@rslib/core": "^0.11.1",
     "@swc/core": "^1.13.3",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30.0.0",
@@ -72,7 +72,7 @@
     "jest": "^30.0.5",
     "jiti": "^2.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "peerDependencies": {
     "next": "^15.4.1"
