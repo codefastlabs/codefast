@@ -1,197 +1,242 @@
-# CodeFast Project Guidelines
+# CodeFast Monorepo Development Guidelines
 
 ## Project Overview
 
-CodeFast is a comprehensive UI component library built with modern web technologies. It's designed as a monorepo containing reusable React components, utilities, and applications.
+This is a TypeScript monorepo using pnpm workspaces with Turbo for build orchestration. The project follows modern development practices with comprehensive tooling for code quality, testing, and deployment.
 
-### Key Technologies
+**Key Technologies:**
+- Node.js ≥20.0.0
+- pnpm 10.14.0 (required package manager)
+- TypeScript with ES modules
+- Turbo for monorepo build orchestration
+- rslib for library building
+- Jest with SWC for testing
 
-- **React 19** - Component framework
-- **TypeScript 5** - Type safety and development experience
-- **Next.js 15** - Application framework
-- **TailwindCSS 4** - Utility-first CSS framework
-- **Radix UI** - Accessible component primitives
-- **Zod 4** - Schema validation
+## Build/Configuration Instructions
 
-### Project Objectives
-
-- **Reusability**: Provide versatile UI components for multiple projects
-- **Flexible Customization**: Easy style overrides using Tailwind Variants
-- **High Performance**: Optimized for speed and minimal resource usage
-- **Clear Codebase**: Modern, maintainable structure
-
-## Project Structure
-
-This is a **pnpm monorepo** with the following structure:
-
-```
-codefast/
-├── apps/                    # Applications
-│   └── docs/               # Documentation site
-├── packages/               # Reusable packages
-│   ├── ui/                # Main UI component library
-│   ├── progress-circle/   # Progress circle component
-│   ├── input-number/      # Number input component
-│   ├── image-loader/      # Image loading utilities
-│   └── ...               # Other packages
-├── docs/                  # Project documentation
-│   └── reports/          # Automated reports
-├── scripts/              # Build and utility scripts
-└── benchmarks/           # Performance benchmarks
-```
-
-### Package Management
-
-- **Package Manager**: pnpm (version 10.13.1+)
-- **Node.js**: Requires version 20.0.0+
-- **Build Tool**: Turbo for monorepo orchestration
-- **Workspace**: Defined in `pnpm-workspace.yaml`
-
-## Development Workflow
-
-### Installation and Setup
-
+### Initial Setup
 ```bash
-pnpm install                    # Install dependencies
-pnpm build:packages            # Build all packages
+# Install dependencies (use pnpm, not npm or yarn)
+pnpm install
+
+# Clean and rebuild all packages
+pnpm clean
+pnpm build:packages
 ```
 
-### Development Commands
+### Workspace Structure
+The monorepo is organized into:
+- `apps/*` - Application packages (e.g., docs)
+- `packages/**` - Library packages (nested structure supported)
+- `benchmarks/**` - Performance benchmarks
 
+### Building Packages
+
+#### Individual Package Build
 ```bash
-pnpm dev                       # Start development servers
-pnpm dev:docs                  # Start docs app only
-pnpm build                     # Build all packages and apps
-pnpm build:packages            # Build packages only
-pnpm build:docs                # Build docs only
+# Build specific package
+cd packages/[package-name]
+pnpm build
+
+# Watch mode for development
+pnpm dev
 ```
 
-### Code Quality
-
+#### Monorepo-wide Builds
 ```bash
-pnpm lint                      # Run ESLint (automatically builds packages first)
-pnpm lint:fix                  # Fix linting issues (automatically builds packages first)
-pnpm format                    # Format code with Prettier
-pnpm format:check              # Check formatting
-pnpm type-check                # TypeScript type checking (automatically builds packages first)
+# Build all packages
+pnpm build:packages
+
+# Build docs and dependencies
+pnpm build:docs
+
+# Build everything
+pnpm build
 ```
 
-**Note**: The `lint`, `lint:fix`, and `type-check` commands now automatically build packages before running to ensure quality checks work on the latest code.
+### Library Build Configuration (rslib)
+Packages use rslib with dual ESM/CJS output:
+- **Bundle-free builds** - Preserves individual file structure
+- **Dual format** - ESM (`dist/esm/`) and CJS (`dist/cjs/`) with TypeScript declarations
+- **Watch mode optimization** - No cleanup/minification during development
+- **Node.js target** with automatic test file exclusion
 
-## Testing Guidelines
+Example rslib config pattern:
+```typescript
+export default defineConfig({
+  lib: [
+    { bundle: false, dts: true, format: "esm", output: { distPath: { root: "./dist/esm" } } },
+    { bundle: false, dts: true, format: "cjs", output: { distPath: { root: "./dist/cjs" } } }
+  ],
+  source: {
+    entry: { index: ["./src/**/*.{ts,tsx}", "!**/*.{test,spec,e2e,story,stories}.{ts,tsx}"] },
+    tsconfigPath: "./tsconfig.build.json"
+  }
+});
+```
+
+### Development Scripts
+```bash
+# Development with hot reload (11 concurrent processes)
+pnpm dev
+
+# Lint with timing metrics
+pnpm lint
+pnpm lint:fix
+
+# Type checking
+pnpm type-check
+
+# Code formatting
+pnpm format
+pnpm format:check
+```
+
+## Testing Information
+
+### Jest Configuration
+The project uses Jest with SWC for fast TypeScript transformation:
+- **V8 coverage provider** for performance
+- **ESM support** with proper extension handling
+- **Module path mapping** (`@/...` → `src/...`)
+- **SWC transformation** with decorator support
+- **Watch mode optimizations**
 
 ### Running Tests
 
-- **All tests**: `pnpm test`
-- **Watch mode**: `pnpm test:watch`
-- **Coverage**: `pnpm test:coverage`
-- **CI Coverage**: `pnpm test:coverage:ci`
+#### Basic Test Commands
+```bash
+# Run all tests
+pnpm test
 
-### Testing Requirements
+# Run tests in watch mode
+pnpm test:watch
 
-- **Always run tests** when modifying existing functionality
-- **Write tests** for new components and utilities
-- **Maintain coverage** - check coverage reports in `packages/*/coverage/`
-- **Test files** should be co-located with source files using `.test.ts` or `.test.tsx` extensions
+# Generate coverage reports
+pnpm test:coverage
 
-### Test Framework
+# CI coverage (with coverage outputs)
+pnpm test:coverage:ci
+```
 
-- **Jest** for unit testing
-- **Testing Library** for React component testing
-- Each package has its own `jest.config.ts`
+#### Package-specific Testing
+```bash
+cd packages/[package-name]
+pnpm test
+pnpm test:watch
+pnpm test:coverage
+```
 
-## Build Process
+### Test File Patterns
+Jest automatically detects test files matching:
+- `**/?(*.)+(test|spec|e2e).[jt]s?(x)`
 
-### Build Requirements
+### Adding New Tests
+1. Create test files alongside source files with `.test.ts` or `.spec.ts` extension
+2. Use Jest's `describe` and `it` blocks
+3. Import functions to test using relative paths or module mapping
 
-- **Always build packages** before submitting changes: `pnpm build:packages`
-- **Clean builds** when needed: `pnpm clean && pnpm build`
-- **Verify builds** work across all packages
+#### Example Test Structure
+```typescript
+import { functionToTest } from "./module";
 
-### Build Outputs
+describe("functionToTest", () => {
+  it("should handle basic input", () => {
+    const result = functionToTest("input");
+    expect(result).toBe("expected");
+  });
 
-- **Packages**: Built to `dist/` directories
-- **Apps**: Built to `.next/` directories
-- **Types**: Generated TypeScript declarations included
+  it("should handle edge cases", () => {
+    const result = functionToTest("");
+    expect(result).toBe("");
+  });
+});
+```
 
-## Code Style Guidelines
+### Working Test Example
+A working test example has been created in `packages/tailwind-variants/src/cn.test.ts` that demonstrates:
+- Testing utility functions
+- Handling external dependencies (tailwind-merge)
+- Class merging behavior validation
+- Configuration handling
 
-### TypeScript
+To run this example:
+```bash
+cd packages/tailwind-variants
+pnpm test
+```
 
-- **Strict mode** enabled
-- **Type safety** is mandatory - no `any` types without justification
-- **Interfaces** preferred over type aliases for object shapes
-- **Export types** explicitly when used across packages
+## Development Information
 
-### React Components
+### Code Style & Linting
+- **ESLint 9.x** with flat config format
+- **Timing metrics enabled** (`TIMING=1`) for performance monitoring
+- **Zero warnings policy** (`--max-warnings 0`)
+- **Comprehensive plugin suite**:
+  - TypeScript, React, Next.js support
+  - Import/export validation
+  - Accessibility checking
+  - Code style enforcement
+  - Turbo monorepo optimizations
 
-- **Functional components** with hooks
-- **TypeScript interfaces** for props
-- **Forward refs** for component composition
-- **Radix UI primitives** as base for complex components
+### Commit Standards
+- **Conventional Commits** with commitlint
+- **Automated hooks** via simple-git-hooks
+- **Lint-staged** for pre-commit validation
 
-### Styling
+### Package Publishing
+- **Changesets** for version management and changelog generation
+- **Canary releases** supported
+- **Public access** configured for scoped packages (`@codefast/*`)
 
-- **TailwindCSS** for styling
-- **Tailwind Variants** for component variants
-- **CSS-in-JS** avoided in favor of utility classes
-- **Responsive design** considerations
+### Dependency Management
+```bash
+# Check for outdated dependencies
+pnpm deps:outdated
 
-### File Organization
+# Update dependencies interactively
+pnpm deps:update
 
-- **Co-location** of related files (component + test + stories)
-- **Index files** for clean imports
-- **Consistent naming**: PascalCase for components, camelCase for utilities
+# Audit for vulnerabilities
+pnpm deps:audit
+pnpm deps:audit:fix
 
-### Git Workflow
+# Clean reinstall
+pnpm deps:reinstall
+```
 
-- **Conventional commits** enforced via commitlint
-- **Pre-commit hooks** run linting and formatting
-- **Changesets** for version management
+### Performance Optimization
+- **onlyBuiltDependencies** for native modules requiring source builds
+- **Turbo caching** with intelligent input/output detection
+- **SWC compilation** for fast builds and tests
+- **Watch mode optimizations** in both build and test configurations
 
-## Package Development
+### Workspace Dependencies
+Packages can reference each other using `workspace:*` protocol:
+```json
+{
+  "dependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*"
+  }
+}
+```
 
-### Creating New Packages
+### Key Configuration Files
+- `turbo.json` - Build pipeline configuration with caching
+- `pnpm-workspace.yaml` - Workspace and dependency configuration
+- `jest.config.ts` - Test configuration (per package)
+- `rslib.config.ts` - Build configuration (per package)
+- `tsconfig.build.json` - Build-specific TypeScript settings
+- `lint-staged.config.js` - Pre-commit linting rules
 
-1. Follow existing package structure in `packages/`
-2. Include `package.json`, `tsconfig.json`, `jest.config.ts`
-3. Add appropriate build scripts
-4. Include README.md and CHANGELOG.md
-5. Add to workspace dependencies as needed
+### Debugging Tips
+- Use `TIMING=1` with ESLint commands to identify performance bottlenecks
+- Run `turbo clean` to clear build cache if experiencing issues
+- Use `pnpm store prune` to clean package cache
+- Test files are automatically excluded from builds via rslib configuration
+- Watch modes (dev/test:watch) automatically disable optimizations for faster iteration
 
-### Package Dependencies
+---
 
-- **Peer dependencies** for React, TypeScript
-- **Dev dependencies** for build tools
-- **Workspace dependencies** using `workspace:*` protocol
-
-## Documentation
-
-### Requirements
-
-- **README.md** for each package
-- **CHANGELOG.md** for version history
-- **JSDoc comments** for public APIs
-- **Storybook stories** for UI components (when applicable)
-
-### Documentation Site
-
-- Located in `apps/docs`
-- Built with Next.js
-- Deployed automatically via Vercel
-
-## Junie-Specific Instructions
-
-When working on this project:
-
-1. **Always run tests** after making changes: `pnpm test`
-2. **Run quality checks** (packages are built automatically): `pnpm lint`, `pnpm type-check`
-3. **Check formatting** and fix if needed: `pnpm format`
-4. **Build packages explicitly** when needed: `pnpm build:packages`
-5. **Test affected packages** individually when making targeted changes
-6. **Update documentation** when adding new features or changing APIs
-7. **Follow existing patterns** in the codebase for consistency
-8. **Use workspace dependencies** (`workspace:*`) for internal package references
-9. **Avoid running development server commands** like `pnpm dev` or `pnpm dev:docs` - these are watch processes that never exit automatically and can cause hanging processes
-
-**Note**: The development workflow now automatically builds packages before running `lint`, `lint:fix`, and `type-check` commands, ensuring quality checks always work on the latest code.
+*Generated on August 9, 2025 for advanced developers working on the CodeFast monorepo.*
