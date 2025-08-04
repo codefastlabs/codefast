@@ -71,7 +71,7 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rsbuild/plugin-react": "^1.3.4",
+    "@rsbuild/plugin-react": "^1.3.5",
     "@rslib/core": "^0.11.1",
     "@swc/core": "^1.13.3",
     "@swc/jest": "^0.2.39",
@@ -81,7 +81,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/jest-axe": "^3.5.9",
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.2.0",
     "eslint": "^9.32.0",
     "jest": "^30.0.5",
     "jest-axe": "^10.0.0",
