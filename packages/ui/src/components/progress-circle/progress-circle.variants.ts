@@ -15,11 +15,15 @@ const progressCircleVariants = tv({
   },
   variants: {
     size: {
-      "2xl": { label: "text-lg" },
-      lg: { label: "text-sm" },
-      md: { label: "text-xs" },
       sm: { label: "text-[10px]" },
+
+      md: { label: "text-xs" },
+
+      lg: { label: "text-sm" },
+
       xl: { label: "text-base" },
+
+      "2xl": { label: "text-lg" },
     },
     thickness: { regular: {}, thick: {}, thin: {} },
     variant: {

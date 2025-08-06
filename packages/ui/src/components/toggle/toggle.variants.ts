@@ -12,9 +12,11 @@ const toggleVariants = tv({
   },
   variants: {
     size: {
-      lg: "h-10 min-w-10 px-2.5", // 40px
-      md: "h-9 min-w-9 px-2", // 36px
       sm: "h-8 min-w-8 px-1.5", // 32px
+
+      md: "h-9 min-w-9 px-2", // 36px
+
+      lg: "h-10 min-w-10 px-2.5", // 40px
     },
     variant: {
       default: "hover:not-disabled:not-data-[state=on]:text-muted-foreground bg-transparent",

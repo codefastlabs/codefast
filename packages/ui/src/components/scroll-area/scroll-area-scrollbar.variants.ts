@@ -48,10 +48,13 @@ const scrollAreaScrollbarVariants = tv({
       vertical: "h-full flex-row border-l border-l-transparent",
     },
     size: {
-      lg: "",
-      md: "",
       none: "",
+
       sm: "",
+
+      md: "",
+
+      lg: "",
     },
   },
 });
