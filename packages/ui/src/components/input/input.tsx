@@ -56,7 +56,7 @@ function Input({
       loading={loading}
       prefix={prefix}
       readOnly={readOnly}
-      spinner={spinner ?? <Spinner key="spinner-input" />}
+      spinner={spinner ?? <Spinner key="spinner" />}
       suffix={suffix}
     >
       <InputPrimitive.Field className={input()} data-slot="input-item" {...props} />

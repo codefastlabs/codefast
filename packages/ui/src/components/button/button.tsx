@@ -41,9 +41,9 @@ function Button({
       type="button"
       {...props}
     >
-      {loading && loaderPosition === "prefix" ? (spinner ?? <Spinner />) : prefix}
+      {loading && loaderPosition === "prefix" ? (spinner ?? <Spinner key="prefix" />) : prefix}
       {children}
-      {loading && loaderPosition === "suffix" ? (spinner ?? <Spinner />) : suffix}
+      {loading && loaderPosition === "suffix" ? (spinner ?? <Spinner key="suffix" />) : suffix}
     </button>
   );
 }
