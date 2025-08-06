@@ -12,10 +12,17 @@ const buttonVariants = tv({
   },
   variants: {
     size: {
-      icon: "size-9", // 36px
-      lg: "h-10 px-6 has-[>svg]:px-4", // 40px
-      md: "h-9 px-4 has-[>svg]:px-3", // 36px
-      sm: "h-8 px-3 has-[>svg]:px-2.5", // 32px
+      // 36px
+      icon: "size-9",
+
+      // 32px
+      sm: "h-8 px-3 has-[>svg]:px-2.5",
+
+      // 36px
+      md: "h-9 px-4 has-[>svg]:px-3",
+
+      // 40px
+      lg: "h-10 px-6 has-[>svg]:px-4",
     },
     variant: {
       default:

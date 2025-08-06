@@ -12,9 +12,11 @@ const sidebarMenuButtonVariants = tv({
   },
   variants: {
     size: {
-      lg: "group-data-[collapsible=icon]:p-0! h-12 text-sm",
-      md: "h-8 text-sm",
       sm: "h-7 text-xs",
+
+      md: "h-8 text-sm",
+
+      lg: "group-data-[collapsible=icon]:p-0! h-12 text-sm",
     },
     variant: {
       default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
