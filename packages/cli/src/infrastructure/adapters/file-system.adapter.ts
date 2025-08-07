@@ -14,7 +14,29 @@ export class FileSystemAdapter implements FileSystemPort {
 
       const files = await glob(fullPattern, {
         absolute: true,
-        ignore: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/coverage/**"],
+        ignore: [
+          "**/node_modules/**",
+          "**/dist/**",
+          "**/.next/**",
+          "**/coverage/**",
+          // Next.js App Router files (should use default exports)
+          "**/app/**/page.tsx",
+          "**/app/**/layout.tsx",
+          "**/app/**/loading.tsx",
+          "**/app/**/error.tsx",
+          "**/app/**/not-found.tsx",
+          "**/app/**/global-error.tsx",
+          "**/app/**/template.tsx",
+          "**/app/**/default.tsx",
+          // Registry and example files (may have different export patterns)
+          "**/registry/**",
+          "**/examples/**",
+          // Test files
+          "**/*.test.tsx",
+          "**/*.spec.tsx",
+          // Story files
+          "**/*.stories.tsx",
+        ],
         onlyFiles: true,
       });
 
