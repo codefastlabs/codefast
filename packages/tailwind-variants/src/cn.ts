@@ -1,0 +1,78 @@
+import {isEmptyObject} from "./utils.js";
+
+let twMergeModule = null;
+let loadingPromise = null;
+
+const loadTwMerge = async () => {
+  if (twMergeModule) return twMergeModule;
+
+  if (loadingPromise) return loadingPromise;
+
+  loadingPromise = import("tailwind-merge")
+  .then((module) => {
+    twMergeModule = module;
+
+    return module;
+  })
+  .catch(() => {
+    // If tailwind-merge is not installed, return null
+    return null;
+  });
+
+  return loadingPromise;
+};
+
+export const createTwMerge = (cachedTwMergeConfig) => {
+  // Return a function that will lazily load and use twMerge
+  return (classes) => {
+    // If tailwind-merge was already loaded and failed, just return the classes
+    if (loadingPromise && !twMergeModule) {
+      return classes;
+    }
+
+    // Try to load synchronously if already loaded
+    if (twMergeModule) {
+      const {extendTailwindMerge, twMerge: twMergeBase} = twMergeModule;
+      const twMergeFunction = isEmptyObject(cachedTwMergeConfig)
+        ? twMergeBase
+        : extendTailwindMerge({
+          ...cachedTwMergeConfig,
+          extend: {
+            classGroups: cachedTwMergeConfig.classGroups,
+            conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
+            conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
+            theme: cachedTwMergeConfig.theme,
+            ...cachedTwMergeConfig.extend,
+          },
+        });
+
+      return twMergeFunction(classes);
+    }
+
+    // Try to require synchronously for CommonJS environments
+    try {
+      const {extendTailwindMerge, twMerge: twMergeBase} = require("tailwind-merge");
+
+      twMergeModule = {extendTailwindMerge, twMerge: twMergeBase};
+      const twMergeFunction = isEmptyObject(cachedTwMergeConfig)
+        ? twMergeBase
+        : extendTailwindMerge({
+          ...cachedTwMergeConfig,
+          extend: {
+            classGroups: cachedTwMergeConfig.classGroups,
+            conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
+            conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
+            theme: cachedTwMergeConfig.theme,
+            ...cachedTwMergeConfig.extend,
+          },
+        });
+
+      return twMergeFunction(classes);
+    } catch {
+      // If require fails, load asynchronously and return unmerged classes for now
+      loadTwMerge();
+
+      return classes;
+    }
+  };
+};
