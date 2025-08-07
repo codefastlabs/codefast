@@ -1,4 +1,4 @@
-import { createTwMerge } from "./cn.js";
+import { createTwMerge } from "./cn";
 import {
   isEqual,
   isEmptyObject,
@@ -6,7 +6,7 @@ import {
   mergeObjects,
   removeExtraSpaces,
   flatMergeArrays,
-} from "./utils.js";
+} from "./utils";
 
 export const defaultConfig = {
   responsiveVariants: false,
@@ -33,7 +33,6 @@ export const cnBase = (...classes) => {
 
 function flat(array, target) {
   for (const element of array) {
-
     if (Array.isArray(element)) flat(element, target);
     else if (element) target.push(element);
   }
@@ -147,29 +146,33 @@ export const tv = (options, configProperty) => {
         for (const element of screenVariantValue) {
           result.push(`${screen}:${element}`);
         }
-      } else if (typeof screenVariantValue === "object" && typeof slotKey === "string" && slotKey in screenVariantValue) {
-          const value = screenVariantValue[slotKey];
+      } else if (
+        typeof screenVariantValue === "object" &&
+        typeof slotKey === "string" &&
+        slotKey in screenVariantValue
+      ) {
+        const value = screenVariantValue[slotKey];
 
-          if (value && typeof value === "string") {
-            const fixedValue = removeExtraSpaces(value);
-            const parts = fixedValue.split(" ");
-            const array = [];
+        if (value && typeof value === "string") {
+          const fixedValue = removeExtraSpaces(value);
+          const parts = fixedValue.split(" ");
+          const array = [];
 
-            for (const part of parts) {
-              array.push(`${screen}:${part}`);
-            }
-
-            result[slotKey] = result[slotKey] ? [...result[slotKey], ...array] : array;
-          } else if (Array.isArray(value) && value.length > 0) {
-            const array = [];
-
-            for (const element of value) {
-              array.push(`${screen}:${element}`);
-            }
-
-            result[slotKey] = array;
+          for (const part of parts) {
+            array.push(`${screen}:${part}`);
           }
+
+          result[slotKey] = result[slotKey] ? [...result[slotKey], ...array] : array;
+        } else if (Array.isArray(value) && value.length > 0) {
+          const array = [];
+
+          for (const element of value) {
+            array.push(`${screen}:${element}`);
+          }
+
+          result[slotKey] = array;
         }
+      }
 
       return result;
     };
@@ -355,7 +358,6 @@ export const tv = (options, configProperty) => {
       const cnFunction = cn;
 
       for (const className of compoundClassNames) {
-
         if (typeof className === "string") {
           result.base = cnFunction(result.base, className)(config);
         } else if (typeof className === "object") {
@@ -375,13 +377,11 @@ export const tv = (options, configProperty) => {
       const completeProps = getCompleteProps(null, slotProps);
 
       for (const {
-          class: slotClass,
-          className: slotClassName,
-          slots = [],
-          ...slotVariants
-        } of compoundSlots) {
-
-
+        class: slotClass,
+        className: slotClassName,
+        slots = [],
+        ...slotVariants
+      } of compoundSlots) {
         if (!isEmptyObject(slotVariants)) {
           let isValid = true;
 
@@ -404,7 +404,6 @@ export const tv = (options, configProperty) => {
         }
 
         for (const slotName of slots) {
-
           if (!result[slotName]) result[slotName] = [];
 
           result[slotName].push([slotClass, slotClassName]);
@@ -470,5 +469,6 @@ export const tv = (options, configProperty) => {
 };
 
 export const createTV = (configProperty) => {
-  return (options, config) => tv(options, config ? mergeObjects(configProperty, config) : configProperty);
+  return (options, config) =>
+    tv(options, config ? mergeObjects(configProperty, config) : configProperty);
 };

@@ -1,4 +1,4 @@
-import {isEmptyObject} from "./utils.js";
+import { isEmptyObject } from "./utils";
 
 let twMergeModule = null;
 let loadingPromise = null;
@@ -9,15 +9,15 @@ const loadTwMerge = async () => {
   if (loadingPromise) return loadingPromise;
 
   loadingPromise = import("tailwind-merge")
-  .then((module) => {
-    twMergeModule = module;
+    .then((module) => {
+      twMergeModule = module;
 
-    return module;
-  })
-  .catch(() => {
-    // If tailwind-merge is not installed, return null
-    return null;
-  });
+      return module;
+    })
+    .catch(() => {
+      // If tailwind-merge is not installed, return null
+      return null;
+    });
 
   return loadingPromise;
 };
@@ -32,40 +32,39 @@ export const createTwMerge = (cachedTwMergeConfig) => {
 
     // Try to load synchronously if already loaded
     if (twMergeModule) {
-      const {extendTailwindMerge, twMerge: twMergeBase} = twMergeModule;
+      const { extendTailwindMerge, twMerge: twMergeBase } = twMergeModule;
       const twMergeFunction = isEmptyObject(cachedTwMergeConfig)
         ? twMergeBase
         : extendTailwindMerge({
-          ...cachedTwMergeConfig,
-          extend: {
-            classGroups: cachedTwMergeConfig.classGroups,
-            conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
-            conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
-            theme: cachedTwMergeConfig.theme,
-            ...cachedTwMergeConfig.extend,
-          },
-        });
+            ...cachedTwMergeConfig,
+            extend: {
+              classGroups: cachedTwMergeConfig.classGroups,
+              conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
+              conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
+              theme: cachedTwMergeConfig.theme,
+              ...cachedTwMergeConfig.extend,
+            },
+          });
 
       return twMergeFunction(classes);
     }
 
-    // Try to require synchronously for CommonJS environments
     try {
-      const {extendTailwindMerge, twMerge: twMergeBase} = require("tailwind-merge");
+      const { extendTailwindMerge, twMerge: twMergeBase } = require("tailwind-merge");
 
-      twMergeModule = {extendTailwindMerge, twMerge: twMergeBase};
+      twMergeModule = { extendTailwindMerge, twMerge: twMergeBase };
       const twMergeFunction = isEmptyObject(cachedTwMergeConfig)
         ? twMergeBase
         : extendTailwindMerge({
-          ...cachedTwMergeConfig,
-          extend: {
-            classGroups: cachedTwMergeConfig.classGroups,
-            conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
-            conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
-            theme: cachedTwMergeConfig.theme,
-            ...cachedTwMergeConfig.extend,
-          },
-        });
+            ...cachedTwMergeConfig,
+            extend: {
+              classGroups: cachedTwMergeConfig.classGroups,
+              conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
+              conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
+              theme: cachedTwMergeConfig.theme,
+              ...cachedTwMergeConfig.extend,
+            },
+          });
 
       return twMergeFunction(classes);
     } catch {
