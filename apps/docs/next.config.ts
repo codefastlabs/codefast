@@ -16,9 +16,6 @@ const nextConfig: NextConfig = {
       "@codefast/eslint-config",
       "@codefast/typescript-config",
     ],
-
-    /** Enable Partial Pre-rendering (PPR) - combines static and dynamic content */
-    ppr: true,
   },
   images: {
     loader: "custom",
