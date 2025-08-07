@@ -20,7 +20,6 @@ export const isEqual = (object1, object2) => {
   if (keys1.length !== keys2.length) return false;
 
   for (const key of keys1) {
-
     if (!keys2.includes(key)) return false;
 
     if (object1[key] !== object2[key]) return false;
@@ -33,7 +32,6 @@ export const isBoolean = (value) => value === true || value === false;
 
 function flat(array, target) {
   for (const element of array) {
-
     if (Array.isArray(element)) flat(element, target);
     else target.push(element);
   }
