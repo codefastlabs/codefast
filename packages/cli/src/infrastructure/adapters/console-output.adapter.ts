@@ -57,26 +57,62 @@ export class ConsoleOutputAdapter implements OutputFormatterPort {
 
   formatErrors(result: ValidationResult): string {
     const invalidComponents = result.invalidComponents;
+    const componentsWithWarnings = result.componentsWithWarnings;
 
-    if (invalidComponents.length === 0) {
-      return chalk.green("\n✅ All components are valid!\n");
+    // If no errors and no warnings, show success message
+    if (invalidComponents.length === 0 && componentsWithWarnings.length === 0) {
+      return chalk.green("\n✅ All components are valid with no issues!\n");
     }
 
-    let output = "\n" + chalk.bold.red("Components with issues:") + "\n\n";
+    let output = "";
 
-    for (const componentResult of invalidComponents) {
-      const relativePath = this.getRelativePath(componentResult.component.path.value);
+    // Show components with errors first
+    if (invalidComponents.length > 0) {
+      output += "\n" + chalk.bold.red("Components with errors:") + "\n\n";
 
-      output += chalk.bold(`📁 ${relativePath}`) + "\n";
+      for (const componentResult of invalidComponents) {
+        const relativePath = this.getRelativePath(componentResult.component.path.value);
+        const errors = componentResult.errors.filter(e => e.severity === "error");
+        const warnings = componentResult.errors.filter(e => e.severity === "warning");
 
-      for (const error of componentResult.errors) {
-        const icon = error.severity === "error" ? "❌" : "⚠️";
-        const color = error.severity === "error" ? chalk.red : chalk.yellow;
+        output += chalk.bold(`📁 ${relativePath}`) + "\n";
 
-        output += `  ${icon} ${color(error.message)} ${chalk.gray(`(${error.code})`)}\n`;
+        // Show errors first
+        for (const error of errors) {
+          output += `  ❌ ${chalk.red(error.message)} ${chalk.gray(`(${error.code})`)}\n`;
+        }
+
+        // Show warnings for this component if any
+        for (const warning of warnings) {
+          output += `  ⚠️  ${chalk.yellow(warning.message)} ${chalk.gray(`(${warning.code})`)}\n`;
+        }
+
+        output += "\n";
       }
+    }
 
-      output += "\n";
+    // Show components with only warnings (valid components with warnings)
+    const validComponentsWithWarnings = componentsWithWarnings.filter(c => c.isValid);
+    if (validComponentsWithWarnings.length > 0) {
+      output += "\n" + chalk.bold.yellow("Components with warnings:") + "\n\n";
+
+      for (const componentResult of validComponentsWithWarnings) {
+        const relativePath = this.getRelativePath(componentResult.component.path.value);
+        const warnings = componentResult.errors.filter(e => e.severity === "warning");
+
+        output += chalk.bold(`📁 ${relativePath}`) + "\n";
+
+        for (const warning of warnings) {
+          output += `  ⚠️  ${chalk.yellow(warning.message)} ${chalk.gray(`(${warning.code})`)}\n`;
+        }
+
+        output += "\n";
+      }
+    }
+
+    // If only warnings exist, show a different success message
+    if (invalidComponents.length === 0 && componentsWithWarnings.length > 0) {
+      output = chalk.green("\n✅ All components are valid!") + output;
     }
 
     return output;
@@ -142,33 +178,72 @@ export class ConsoleOutputAdapter implements OutputFormatterPort {
 
   private formatAsText(result: ValidationResult): string {
     const summary = result.getSummary();
-    let output = "Component Validation Results\n";
+    const invalidComponents = result.invalidComponents;
+    const componentsWithWarnings = result.componentsWithWarnings;
 
+    let output = "Component Validation Results\n";
     output += "============================\n\n";
 
     output += `Total Components: ${summary.totalComponents}\n`;
     output += `Valid Components: ${summary.validComponents}\n`;
     output += `Invalid Components: ${summary.invalidComponents}\n`;
+    output += `Components with Warnings: ${componentsWithWarnings.length}\n`;
     output += `Total Errors: ${summary.totalErrors}\n`;
     output += `Total Warnings: ${summary.totalWarnings}\n\n`;
 
-    if (summary.invalidComponents > 0) {
-      output += "Components with issues:\n";
+    // Show components with errors
+    if (invalidComponents.length > 0) {
+      output += "Components with errors:\n";
       output += "-----------------------\n\n";
 
-      for (const componentResult of result.invalidComponents) {
+      for (const componentResult of invalidComponents) {
         const relativePath = this.getRelativePath(componentResult.component.path.value);
+        const errors = componentResult.errors.filter(e => e.severity === "error");
+        const warnings = componentResult.errors.filter(e => e.severity === "warning");
 
         output += `File: ${relativePath}\n`;
 
-        for (const error of componentResult.errors) {
-          const severity = error.severity.toUpperCase();
+        // Show errors first
+        for (const error of errors) {
+          output += `  [ERROR] ${error.message} (${error.code})\n`;
+        }
 
-          output += `  [${severity}] ${error.message} (${error.code})\n`;
+        // Show warnings for this component if any
+        for (const warning of warnings) {
+          output += `  [WARNING] ${warning.message} (${warning.code})\n`;
         }
 
         output += "\n";
       }
+    }
+
+    // Show components with only warnings (valid components with warnings)
+    const validComponentsWithWarnings = componentsWithWarnings.filter(c => c.isValid);
+    if (validComponentsWithWarnings.length > 0) {
+      output += "Components with warnings:\n";
+      output += "-------------------------\n\n";
+
+      for (const componentResult of validComponentsWithWarnings) {
+        const relativePath = this.getRelativePath(componentResult.component.path.value);
+        const warnings = componentResult.errors.filter(e => e.severity === "warning");
+
+        output += `File: ${relativePath}\n`;
+
+        for (const warning of warnings) {
+          output += `  [WARNING] ${warning.message} (${warning.code})\n`;
+        }
+
+        output += "\n";
+      }
+    }
+
+    // Add final status message
+    if (invalidComponents.length === 0 && componentsWithWarnings.length === 0) {
+      output += "Status: All components are valid with no issues!\n";
+    } else if (invalidComponents.length === 0) {
+      output += "Status: All components are valid (with warnings)\n";
+    } else {
+      output += "Status: Some components have errors that need to be fixed\n";
     }
 
     return output;
