@@ -13,7 +13,6 @@
     "clean:modules": "pnpm -r exec rm -rf node_modules",
     "postclean:modules": "rm -rf node_modules pnpm-lock.yaml",
     "clean:next": "pnpm -r exec rm -rf .next",
-    "codefast": "codefast",
     "deploy:preview": "vercel deploy --archive=tgz",
     "deps:audit": "pnpm audit",
     "deps:audit:fix": "pnpm audit --fix",
@@ -48,7 +47,6 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.5",
-    "@codefast/cli": "workspace:*",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^19.8.1",
