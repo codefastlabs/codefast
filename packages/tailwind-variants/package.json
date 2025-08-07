@@ -1,0 +1,90 @@
+{
+  "name": "@codefast/tailwind-variants",
+  "version": "0.3.7-canary.0",
+  "description": "Tailwind CSS variants utilities with enhanced functionality",
+  "keywords": [
+    "tailwind",
+    "tailwindcss",
+    "variants",
+    "css",
+    "utilities",
+    "typescript",
+    "monorepo",
+    "styling"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/tailwind-variants#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "packages/tailwind-variants"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/esm/index.js",
+        "types": "./dist/esm/index.d.ts"
+      },
+      "require": {
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/cjs/index.d.cts"
+      }
+    }
+  },
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rslib build",
+    "clean": "rm -rf dist",
+    "dev": "rslib build --watch",
+    "lint": "TIMING=1 eslint --max-warnings 0 .",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:coverage:ci": "jest --coverage --ci",
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@rslib/core": "^0.11.2",
+    "@swc/core": "^1.13.3",
+    "@swc/jest": "^0.2.39",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.0",
+    "eslint": "^9.32.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "jiti": "^2.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "tailwind-merge": "^3.0.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwind-merge": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

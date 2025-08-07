@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo",
+    "coverage",
+    "cypress",
+    "playwright",
+    "test",
+    "tests",
+    "__tests__",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.e2e.*",
+    "**/*.stories.*",
+    "**/*.story.*"
+  ]
+}
