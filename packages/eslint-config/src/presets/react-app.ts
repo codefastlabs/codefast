@@ -8,14 +8,14 @@ import { typescriptRules } from "@/core/typescript";
 import { unicornRules } from "@/core/unicorn";
 import { browserEnvironment } from "@/environments/browser";
 import { testEnvironment } from "@/environments/test";
-import { jsxA11yRules } from "@/frameworks/jsx-a11y";
-import { reactRules } from "@/frameworks/react";
 import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
-import { jestRules } from "@/testing/jest";
-import { composeConfig } from "@/utils/composer";
-import { prettierRules } from "@/utils/prettier";
-import { tsdocRules } from "@/utils/tsdoc";
+import { jsxA11yRules } from "@/plugins/accessibility/jsx-a11y";
+import { reactRules } from "@/plugins/frameworks/react";
+import { jestRules } from "@/plugins/testing/jest";
+import { prettierRules } from "@/plugins/tooling/prettier";
+import { tsdocRules } from "@/plugins/tooling/tsdoc";
+import { composeConfig } from "@/shared/composer";
 
 const reactAppPresetCore: Linter.Config[] = composeConfig(
   baseJavaScriptRules,

@@ -1,6 +1,6 @@
 import type { Linter } from "eslint";
 
-import { composeConfig } from "@/utils/composer";
+import { composeConfig } from "./composer";
 
 describe("composeConfig", () => {
   it("should flatten multiple config arrays into a single array", () => {

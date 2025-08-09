@@ -1,6 +1,6 @@
 import type { Linter } from "eslint";
 
-import { disabledReactRules } from "@/frameworks/react";
+import { disabledReactRules } from "@/plugins/frameworks/react";
 import pluginNext from "@next/eslint-plugin-next";
 
 /**

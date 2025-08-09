@@ -1,4 +1,4 @@
-import type { Linter, ESLint } from "eslint";
+import type { ESLint, Linter } from "eslint";
 
 import pluginImport from "eslint-plugin-import-x";
 

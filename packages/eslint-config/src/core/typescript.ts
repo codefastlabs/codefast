@@ -1,6 +1,7 @@
 import type { Linter } from "eslint";
 import type { ConfigArray } from "typescript-eslint";
-import { configs as tseslintConfigs } from "typescript-eslint";
+
+import { configs as tsEslintConfigs } from "typescript-eslint";
 
 /**
  * Rules that are set to "warn" for TypeScript plugin
@@ -209,9 +210,9 @@ const mapConfigWithFiles = (config: ConfigArray[number]): Linter.Config =>
  * ```
  */
 export const typescriptRules: Linter.Config[] = [
-  ...tseslintConfigs.strictTypeChecked.map((config) => mapConfigWithFiles(config)),
+  ...tsEslintConfigs.strictTypeChecked.map((config) => mapConfigWithFiles(config)),
 
-  ...tseslintConfigs.stylisticTypeChecked.map((config) => mapConfigWithFiles(config)),
+  ...tsEslintConfigs.stylisticTypeChecked.map((config) => mapConfigWithFiles(config)),
 
   {
     files: ["**/*.{ts,tsx}"],
