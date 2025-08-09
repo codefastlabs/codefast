@@ -1,5 +1,6 @@
 "use client";
 
+import type { LucideIcon } from "lucide-react";
 import type { ComponentProps, ComponentType, JSX } from "react";
 
 import {
@@ -9,7 +10,6 @@ import {
   CommandIcon,
   FrameIcon,
   GalleryVerticalEndIcon,
-  type LucideIcon,
   MapIcon,
   PieChartIcon,
   Settings2Icon,

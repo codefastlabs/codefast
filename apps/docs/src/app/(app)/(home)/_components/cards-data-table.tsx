@@ -226,7 +226,7 @@ export function CardsDataTable(): JSX.Element {
                       checked={column.getIsVisible()}
                       className="capitalize"
                       onCheckedChange={(value) => {
-                        column.toggleVisibility(Boolean(value));
+                        column.toggleVisibility(value);
                       }}
                     >
                       {column.id}
