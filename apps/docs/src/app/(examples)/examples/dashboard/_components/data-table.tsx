@@ -7,6 +7,7 @@ import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { z } from "zod";
 
 import type { ChartConfig } from "@codefast/ui";
+import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -60,11 +61,9 @@ import {
 import {
   closestCenter,
   DndContext,
-  type DragEndEvent,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  type UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -453,7 +452,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                       checked={column.getIsVisible()}
                       className="capitalize"
                       onCheckedChange={(value) => {
-                        column.toggleVisibility(Boolean(value));
+                        column.toggleVisibility(value);
                       }}
                     >
                       {column.id}
