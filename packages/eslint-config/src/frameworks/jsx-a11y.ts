@@ -2,6 +2,18 @@ import type { Linter } from "eslint";
 
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
+/**
+ * Rules that are disabled (set to "off") for jsx-a11y plugin
+ * These rules are grouped together for better organization and maintainability
+ */
+const disabledJsxA11yRules = {
+  /**
+   * Disable autocomplete validation
+   * Often disabled when using custom form components or complex form libraries
+   */
+  "jsx-a11y/autocomplete-valid": "off",
+} as const;
+
 export const jsxA11yRules: Linter.Config[] = [
   {
     files: ["**/*.{jsx,tsx}"],
@@ -11,7 +23,8 @@ export const jsxA11yRules: Linter.Config[] = [
     rules: {
       ...pluginJsxA11y.configs.recommended.rules,
 
-      "jsx-a11y/autocomplete-valid": "off",
+      // Apply all disabled rules
+      ...disabledJsxA11yRules,
 
       "jsx-a11y/accessible-emoji": "error",
       "jsx-a11y/alt-text": [

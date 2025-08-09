@@ -1,6 +1,19 @@
 import type { Linter } from "eslint";
 
+import { disabledReactRules } from "@/frameworks/react";
 import pluginNext from "@next/eslint-plugin-next";
+
+/**
+ * Rules that are disabled (set to "off") for Next.js plugin
+ * These rules are grouped together for better organization and maintainability
+ */
+const disabledNextRules = {
+  /**
+   * Disable Next.js specific HTML link validation for pages
+   * Often disabled when using custom routing or link components
+   */
+  "@next/next/no-html-link-for-pages": "off",
+} as const;
 
 export const nextRules: Linter.Config[] = [
   {
@@ -12,9 +25,9 @@ export const nextRules: Linter.Config[] = [
       ...pluginNext.configs.recommended.rules,
       ...pluginNext.configs["core-web-vitals"].rules,
 
-      "@next/next/no-html-link-for-pages": "off",
-      "react/prop-types": "off",
-      "react/react-in-jsx-scope": "off",
+      // Apply all disabled rules
+      ...disabledNextRules,
+      ...disabledReactRules,
     },
   },
 ];

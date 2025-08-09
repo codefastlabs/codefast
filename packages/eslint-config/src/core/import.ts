@@ -2,6 +2,70 @@ import type { Linter, ESLint } from "eslint";
 
 import pluginImport from "eslint-plugin-import-x";
 
+/**
+ * Rules that are disabled (set to "off") for import-x plugin
+ * These rules are grouped together for better organization and maintainability
+ */
+const disabledImportRules = {
+  /**
+   * Ensures all default imports from a module actually exist
+   * Disabled because it can cause issues with TypeScript and module bundlers
+   */
+  "import-x/default": "off",
+
+  /**
+   * Ensures all namespace imports from a module actually exist
+   * Disabled because this feature is better handled by TypeScript
+   */
+  "import-x/namespace": "off",
+
+  /**
+   * Prevents importing the default export of a module with a named export
+   * Disabled because it causes too many false positives and restricts coding freedom
+   */
+  "import-x/no-named-as-default": "off",
+
+  /**
+   * Prevents importing a member of a default export
+   * Disabled because it causes too many false positives and restricts coding freedom
+   */
+  "import-x/no-named-as-default-member": "off",
+
+  /**
+   * Ensures all imports can be resolved to a module
+   * Disabled because TypeScript handles this better and it can cause issues
+   * with module resolution in monorepos and complex build setups
+   */
+  "import-x/no-unresolved": "off",
+
+  /**
+   * Enforces a specific order for import statements
+   * Disabled because we use the perfectionist plugin to handle import ordering
+   */
+  "import-x/order": "off",
+
+  /**
+   * Prevents importing from parent directories beyond a certain depth
+   * Disabled because it's too restrictive for monorepo internal structure
+   * where cross-directory imports are legitimate and necessary
+   */
+  "import-x/no-relative-parent-imports": "off",
+
+  /**
+   * Detects modules that are imported but never used
+   * Disabled by default as it can be expensive to compute
+   * Enable in specific projects where unused module detection is needed
+   */
+  "import-x/no-unused-modules": "off",
+
+  /**
+   * Prevents importing from internal/private modules
+   * Disabled because it's too restrictive for monorepo structures
+   * where internal imports between packages are legitimate
+   */
+  "import-x/no-internal-modules": "off",
+} as const;
+
 export const importRules: Linter.Config[] = [
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
@@ -12,42 +76,8 @@ export const importRules: Linter.Config[] = [
       ...pluginImport.configs["flat/recommended"].rules,
       ...pluginImport.configs["flat/typescript"].rules,
 
-      /**
-       * Ensures all default imports from a module actually exist
-       * Disabled because it can cause issues with TypeScript and module bundlers
-       */
-      "import-x/default": "off",
-
-      /**
-       * Ensures all namespace imports from a module actually exist
-       * Disabled because this feature is better handled by TypeScript
-       */
-      "import-x/namespace": "off",
-
-      /**
-       * Prevents importing the default export of a module with a named export
-       * Disabled because it causes too many false positives and restricts coding freedom
-       */
-      "import-x/no-named-as-default": "off",
-
-      /**
-       * Prevents importing a member of a default export
-       * Disabled because it causes too many false positives and restricts coding freedom
-       */
-      "import-x/no-named-as-default-member": "off",
-
-      /**
-       * Ensures all imports can be resolved to a module
-       * Disabled because TypeScript handles this better and it can cause issues
-       * with module resolution in monorepos and complex build setups
-       */
-      "import-x/no-unresolved": "off",
-
-      /**
-       * Enforces a specific order for import statements
-       * Disabled because we use the perfectionist plugin to handle import ordering
-       */
-      "import-x/order": "off",
+      // Apply all disabled rules
+      ...disabledImportRules,
 
       /**
        * Prevents usage of dynamic require()
@@ -188,13 +218,6 @@ export const importRules: Linter.Config[] = [
       ],
 
       /**
-       * Prevents importing from parent directories beyond a certain depth
-       * Disabled because it's too restrictive for monorepo internal structure
-       * where cross-directory imports are legitimate and necessary
-       */
-      "import-x/no-relative-parent-imports": "off",
-
-      /**
        * Prevents importing deprecated modules or functions
        * Helps maintain code quality by avoiding deprecated APIs
        */
@@ -226,20 +249,6 @@ export const importRules: Linter.Config[] = [
        * Helps keep imports clean and meaningful
        */
       "import-x/no-empty-named-blocks": "error",
-
-      /**
-       * Detects modules that are imported but never used
-       * Disabled by default as it can be expensive to compute
-       * Enable in specific projects where unused module detection is needed
-       */
-      "import-x/no-unused-modules": "off",
-
-      /**
-       * Prevents importing from internal/private modules
-       * Disabled because it's too restrictive for monorepo structures
-       * where internal imports between packages are legitimate
-       */
-      "import-x/no-internal-modules": "off",
     },
 
     /**
