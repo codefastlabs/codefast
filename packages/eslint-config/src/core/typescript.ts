@@ -168,6 +168,13 @@ export const errorTypescriptRules: Linter.RulesRecord = {
       selector: ["typeAlias", "typeParameter", "enum", "enumMember"],
     },
   ],
+
+  /**
+   * Disables the rule that reports unnecessary type parameters.
+   * This rule is turned off to allow more flexible use of type parameters
+   * in generic functions and types without strict necessity checks.
+   */
+  "@typescript-eslint/no-unnecessary-type-parameters": "off",
 };
 
 /**
