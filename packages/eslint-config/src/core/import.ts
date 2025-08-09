@@ -38,7 +38,8 @@ export const importRules: Linter.Config[] = [
 
       /**
        * Ensures all imports can be resolved to a module
-       * Disabled because TypeScript handles this better
+       * Disabled because TypeScript handles this better and it can cause issues
+       * with module resolution in monorepos and complex build setups
        */
       "import-x/no-unresolved": "off",
 
@@ -81,10 +82,12 @@ export const importRules: Linter.Config[] = [
 
       /**
        * Prevents duplicate imports from the same module
+       * Enhanced to consider query strings for better duplicate detection
        */
       "import-x/no-duplicates": [
         "error",
         {
+          considerQueryString: true,
           "prefer-inline": false,
         },
       ],
@@ -151,11 +154,13 @@ export const importRules: Linter.Config[] = [
       /**
        * Prevents unnecessary path segments in import statements
        * Example: import foo from './foo/../bar' should be import foo from './bar'
+       * Enhanced to prevent importing from index files when importing from directory
        */
       "import-x/no-useless-path-segments": [
         "error",
         {
           commonjs: true,
+          noUselessIndex: true,
         },
       ],
 
@@ -164,6 +169,77 @@ export const importRules: Linter.Config[] = [
        * Example: import foo from 'style-loader!css-loader!foo.css'
        */
       "import-x/no-webpack-loader-syntax": "error",
+
+      /**
+       * Ensures consistent use of file extensions in import statements
+       * Configured to never require extensions for common JS/TS files
+       * but require them for other file types for clarity
+       */
+      "import-x/extensions": [
+        "error",
+        "ignorePackages",
+        {
+          js: "never",
+          jsx: "never",
+          mjs: "never",
+          ts: "never",
+          tsx: "never",
+        },
+      ],
+
+      /**
+       * Prevents importing from parent directories beyond a certain depth
+       * Disabled because it's too restrictive for monorepo internal structure
+       * where cross-directory imports are legitimate and necessary
+       */
+      "import-x/no-relative-parent-imports": "off",
+
+      /**
+       * Prevents importing deprecated modules or functions
+       * Helps maintain code quality by avoiding deprecated APIs
+       */
+      "import-x/no-deprecated": "warn",
+
+      /**
+       * Prevents circular dependencies between modules
+       * Critical for avoiding infinite loops and maintaining clean architecture
+       * Configured with maxDepth to balance performance and thoroughness
+       */
+      "import-x/no-cycle": [
+        "error",
+        {
+          ignoreExternal: true,
+          maxDepth: 10,
+        },
+      ],
+
+      /**
+       * Ensures consistent style for type imports
+       * Enforces using 'import type' for type-only imports in TypeScript
+       * Helps with tree-shaking and build optimization
+       */
+      "import-x/consistent-type-specifier-style": ["error", "prefer-top-level"],
+
+      /**
+       * Prevents empty named import blocks
+       * Example: import \{\} from 'module' should be avoided
+       * Helps keep imports clean and meaningful
+       */
+      "import-x/no-empty-named-blocks": "error",
+
+      /**
+       * Detects modules that are imported but never used
+       * Disabled by default as it can be expensive to compute
+       * Enable in specific projects where unused module detection is needed
+       */
+      "import-x/no-unused-modules": "off",
+
+      /**
+       * Prevents importing from internal/private modules
+       * Disabled because it's too restrictive for monorepo structures
+       * where internal imports between packages are legitimate
+       */
+      "import-x/no-internal-modules": "off",
     },
 
     /**
