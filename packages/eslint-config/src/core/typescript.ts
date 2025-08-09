@@ -1,6 +1,5 @@
 import type { Linter } from "eslint";
 import type { ConfigArray } from "typescript-eslint";
-
 import { configs as tseslintConfigs } from "typescript-eslint";
 
 /**
@@ -62,9 +61,9 @@ export const errorTypescriptRules: Linter.RulesRecord = {
   "@typescript-eslint/prefer-readonly": "error",
 
   /**
-   * Prefers \@ts-expect-error over \@ts-ignore comments.
-   * \@ts-expect-error will cause an error if the expected error doesn't occur,
-   * making it safer than \@ts-ignore which silently ignores all errors.
+   * Prefers `@ts-expect-error` over `@ts-ignore` comments.
+   * `@ts-expect-error` will cause an error if the expected error doesn't occur,
+   * making it safer than `@ts-ignore` which silently ignores all errors.
    */
   "@typescript-eslint/prefer-ts-expect-error": "error",
 
