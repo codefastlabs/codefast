@@ -1,5 +1,4 @@
 import type { Linter } from "eslint";
-
 import pluginPerfectionist from "eslint-plugin-perfectionist";
 
 export const perfectionistRules: Linter.Config[] = [
@@ -25,22 +24,23 @@ export const perfectionistRules: Linter.Config[] = [
       ],
 
       /**
-       * Sorts import statements based on defined groups and ordering.
-       * This rule organizes imports into logical groups (side-effects, built-ins, external, internal, etc.)
-       * and sorts them alphabetically within each group, improving code readability and maintenance.
-       * It takes precedence over the import/order rule.
+       * Sorts import statements based on defined groups and ordering to match WebStorm's "Optimize imports" behavior.
+       * This rule organizes imports into logical groups similar to WebStorm's default import sorting:
+       * 1. Built-in/standard library imports
+       * 2. External package imports
+       * 3. Internal imports (with path aliases like `@/`, `~/`)
+       * 4. Relative imports (./,../)
+       * Each group is separated by blank lines and sorted alphabetically within the group.
        */
       "perfectionist/sort-imports": [
         "error",
         {
           groups: [
             "side-effect",
-            "type",
-            ["builtin", "external"],
-            "internal-type",
-            "internal",
-            ["parent-type", "sibling-type", "index-type"],
-            ["parent", "sibling", "index"],
+            ["builtin", "builtin-type"],
+            ["external", "external-type"],
+            ["internal", "internal-type"],
+            ["parent", "parent-type", "sibling", "sibling-type", "index", "index-type"],
             "object",
             "unknown",
           ],
