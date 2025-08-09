@@ -1,9 +1,9 @@
 import type { Linter } from "eslint";
 
 import { warningTypescriptRules } from "@/core/typescript";
+import { prettierRules } from "@/plugins/tooling/prettier";
 import { basePreset } from "@/presets/base";
-import { composeConfig } from "@/utils/composer";
-import { prettierRules } from "@/utils/prettier";
+import { composeConfig } from "@/shared/composer";
 
 const libraryStrictRules: Linter.Config[] = [
   {

@@ -75,8 +75,11 @@ Tailored for Next.js applications:
 #### Framework Rules
 
 - `reactRules` - React component and JSX rules
-- `jsxA11yRules` - Accessibility rules for JSX
 - `nextRules` - Next.js specific linting rules
+
+#### Accessibility Rules
+
+- `jsxA11yRules` - Accessibility rules for JSX components
 
 #### Language Support
 
@@ -211,7 +214,12 @@ import {
   composeConfig,
 } from "@codefast/eslint-config";
 
-export default composeConfig(baseJavaScriptRules, typescriptRules, browserEnvironment, testEnvironment);
+export default composeConfig(
+  baseJavaScriptRules,
+  typescriptRules,
+  browserEnvironment,
+  testEnvironment,
+);
 ```
 
 ## Configuration Details

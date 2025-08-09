@@ -1,10 +1,10 @@
 import type { Linter } from "eslint";
 
 import { nodeEnvironment } from "@/environments/node";
-import { nextRules } from "@/frameworks/next";
+import { nextRules } from "@/plugins/frameworks/next";
+import { prettierRules } from "@/plugins/tooling/prettier";
 import { reactAppPresetCore } from "@/presets/react-app";
-import { composeConfig } from "@/utils/composer";
-import { prettierRules } from "@/utils/prettier";
+import { composeConfig } from "@/shared/composer";
 
 export const nextAppPreset: Linter.Config[] = composeConfig(
   reactAppPresetCore,

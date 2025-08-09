@@ -10,8 +10,8 @@ import { nodeEnvironment } from "@/environments/node";
 import { testEnvironment } from "@/environments/test";
 import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
-import { composeConfig } from "@/utils/composer";
-import { tsdocRules } from "@/utils/tsdoc";
+import { tsdocRules } from "@/plugins/tooling/tsdoc";
+import { composeConfig } from "@/shared/composer";
 
 export const basePreset: Linter.Config[] = composeConfig(
   baseJavaScriptRules,
