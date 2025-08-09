@@ -1,7 +1,6 @@
 ---
 "@codefast/ui": patch
 "@codefast-ui/checkbox-group": patch
-"@codefast/cli": patch
 "@codefast/eslint-config": patch
 "@codefast/hooks": patch
 "@codefast/image-loader": patch

@@ -11,8 +11,7 @@
     "@codefast-ui/input-number": "0.3.6",
     "@codefast-ui/progress-circle": "0.3.6",
     "@codefast/typescript-config": "0.3.6",
-    "@codefast/ui": "0.3.6",
-    "@codefast/cli": "0.3.6"
+    "@codefast/ui": "0.3.6"
   },
   "changesets": [
     "cruel-beans-behave",

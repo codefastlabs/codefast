@@ -1,5 +1,4 @@
 ---
-"@codefast/cli": patch
 "@codefast-ui/checkbox-group": patch
 "@codefast/eslint-config": patch
 "@codefast/hooks": patch
