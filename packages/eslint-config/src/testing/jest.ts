@@ -2,6 +2,31 @@ import type { Linter } from "eslint";
 
 import pluginJest from "eslint-plugin-jest";
 
+/**
+ * Rules that are set to "warn" for Jest plugin
+ * These rules are grouped together for better organization and maintainability
+ * These rules highlight testing issues that should be addressed but don't break functionality
+ */
+const warningJestRules: Linter.RulesRecord = {
+  /**
+   * Reports commented-out test cases
+   * Should be warned about but not fail the build
+   */
+  "jest/no-commented-out-tests": "warn",
+
+  /**
+   * Reports disabled test cases (skipped with .skip or x prefix)
+   * Should be warned about but not fail the build
+   */
+  "jest/no-disabled-tests": "warn",
+
+  /**
+   * Reports large snapshots that might be hard to review
+   * Configured to warn when snapshots exceed 300 lines
+   */
+  "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
+};
+
 export const jestRules: Linter.Config[] = [
   {
     files: [
@@ -17,10 +42,8 @@ export const jestRules: Linter.Config[] = [
     rules: {
       ...pluginJest.configs.recommended.rules,
 
-      // Warning rules
-      "jest/no-commented-out-tests": "warn",
-      "jest/no-disabled-tests": "warn",
-      "jest/no-large-snapshots": ["warn", { maxSize: 300 }],
+      // Apply all warning rules
+      ...warningJestRules,
 
       "jest/consistent-test-it": ["error", { fn: "test" }],
       "jest/expect-expect": [

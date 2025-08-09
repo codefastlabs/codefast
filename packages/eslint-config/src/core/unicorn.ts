@@ -6,7 +6,7 @@ import pluginUnicorn from "eslint-plugin-unicorn";
  * Rules that are disabled (set to "off") for unicorn plugin
  * These rules are grouped together for better organization and maintainability
  */
-const disabledUnicornRules = {
+const disabledUnicornRules: Linter.RulesRecord = {
   /**
    * Disallow Array#reduce() and Array#reduceRight().
    *
@@ -46,7 +46,7 @@ const disabledUnicornRules = {
    * and may cause compatibility issues.
    */
   "unicorn/prefer-top-level-await": "off",
-} as const;
+};
 
 /**
  * ESLint configuration for unicorn plugin rules.

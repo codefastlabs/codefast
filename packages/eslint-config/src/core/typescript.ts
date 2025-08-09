@@ -4,6 +4,32 @@ import type { ConfigArray } from "typescript-eslint";
 import { configs as tseslintConfigs } from "typescript-eslint";
 
 /**
+ * Rules that are set to "warn" for TypeScript plugin
+ * These rules are grouped together for better organization and maintainability
+ * These rules highlight issues that should be addressed but don't break functionality
+ */
+export const warningTypescriptRules: Linter.RulesRecord = {
+  /**
+   * Requires explicit return types on functions and class methods.
+   * Helps improve code readability and catches potential type issues early.
+   * Set to "warn" to encourage good practices without blocking development.
+   */
+  "@typescript-eslint/explicit-function-return-type": "warn",
+
+  /**
+   * Disallows unused variables, parameters, and imports.
+   * Helps keep code clean by removing dead code and unused imports.
+   * Allows parameters starting with underscore to be unused (common pattern for ignored parameters).
+   */
+  "@typescript-eslint/no-unused-vars": [
+    "warn",
+    {
+      argsIgnorePattern: "^_",
+    },
+  ],
+};
+
+/**
  * Helper function to map typescript-eslint configs with default file patterns.
  *
  * This function ensures that TypeScript ESLint configurations have appropriate
@@ -56,26 +82,8 @@ export const typescriptRules: Linter.Config[] = [
       },
     },
     rules: {
-      // Warning rules - Issues that should be addressed but don't break functionality
-
-      /**
-       * Requires explicit return types on functions and class methods.
-       * Helps improve code readability and catches potential type issues early.
-       * Set to "warn" to encourage good practices without blocking development.
-       */
-      "@typescript-eslint/explicit-function-return-type": "warn",
-
-      /**
-       * Disallows unused variables, parameters, and imports.
-       * Helps keep code clean by removing dead code and unused imports.
-       * Allows parameters starting with underscore to be unused (common pattern for ignored parameters).
-       */
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-        },
-      ],
+      // Apply all warning rules
+      ...warningTypescriptRules,
 
       /**
        * Prevents misuse of promises in contexts where they shouldn't be used.
