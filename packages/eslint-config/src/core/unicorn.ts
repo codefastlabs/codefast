@@ -3,6 +3,52 @@ import type { Linter } from "eslint";
 import pluginUnicorn from "eslint-plugin-unicorn";
 
 /**
+ * Rules that are disabled (set to "off") for unicorn plugin
+ * These rules are grouped together for better organization and maintainability
+ */
+const disabledUnicornRules = {
+  /**
+   * Disallow Array#reduce() and Array#reduceRight().
+   *
+   * Disabled because reduce() is a useful and commonly used array method
+   * that can make code more concise and functional in many cases.
+   */
+  "unicorn/no-array-reduce": "off",
+
+  /**
+   * Disallow the use of the null literal.
+   *
+   * Disabled because null is a valid JavaScript value that has specific
+   * use cases and semantic meaning different from undefined.
+   */
+  "unicorn/no-null": "off",
+
+  /**
+   * Disallow process.exit().
+   *
+   * Disabled because process.exit() is sometimes necessary in Node.js
+   * applications for proper error handling and cleanup.
+   */
+  "unicorn/no-process-exit": "off",
+
+  /**
+   * Prefer JavaScript modules (ESM) over CommonJS.
+   *
+   * Disabled because the project may need to support both module systems
+   * for compatibility reasons.
+   */
+  "unicorn/prefer-module": "off",
+
+  /**
+   * Prefer top-level await over immediately invoked async function expressions.
+   *
+   * Disabled because top-level await is not supported in all environments
+   * and may cause compatibility issues.
+   */
+  "unicorn/prefer-top-level-await": "off",
+} as const;
+
+/**
  * ESLint configuration for unicorn plugin rules.
  *
  * This configuration includes various code quality and modern JavaScript/TypeScript
@@ -17,45 +63,8 @@ export const unicornRules: Linter.Config[] = [
     rules: {
       ...pluginUnicorn.configs.recommended.rules,
 
-      /**
-       * Disallow Array#reduce() and Array#reduceRight().
-       *
-       * Disabled because reduce() is a useful and commonly used array method
-       * that can make code more concise and functional in many cases.
-       */
-      "unicorn/no-array-reduce": "off",
-
-      /**
-       * Disallow the use of the null literal.
-       *
-       * Disabled because null is a valid JavaScript value that has specific
-       * use cases and semantic meaning different from undefined.
-       */
-      "unicorn/no-null": "off",
-
-      /**
-       * Disallow process.exit().
-       *
-       * Disabled because process.exit() is sometimes necessary in Node.js
-       * applications for proper error handling and cleanup.
-       */
-      "unicorn/no-process-exit": "off",
-
-      /**
-       * Prefer JavaScript modules (ESM) over CommonJS.
-       *
-       * Disabled because the project may need to support both module systems
-       * for compatibility reasons.
-       */
-      "unicorn/prefer-module": "off",
-
-      /**
-       * Prefer top-level await over immediately invoked async function expressions.
-       *
-       * Disabled because top-level await is not supported in all environments
-       * and may cause compatibility issues.
-       */
-      "unicorn/prefer-top-level-await": "off",
+      // Apply all disabled rules
+      ...disabledUnicornRules,
 
       /**
        * Enforce a case style for filenames.
