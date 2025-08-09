@@ -2,6 +2,35 @@ import type { Linter } from "eslint";
 
 import js from "@eslint/js";
 
+/**
+ * Rules that are set to "warn" for JavaScript
+ * These rules are grouped together for better organization and maintainability
+ * These rules highlight issues that should be addressed but don't break functionality
+ */
+const warningJavaScriptRules: Linter.RulesRecord = {
+  /**
+   * Disallows magic numbers (numbers with no clear meaning in the code)
+   * @see https://eslint.org/docs/rules/no-magic-numbers
+   */
+  "no-magic-numbers": [
+    "warn",
+    {
+      ignore: [0, 1, -1],
+    },
+  ],
+
+  /**
+   * Disallows unused variables, with an exception for variables starting with underscore
+   * @see https://eslint.org/docs/rules/no-unused-vars
+   */
+  "no-unused-vars": [
+    "warn",
+    {
+      argsIgnorePattern: "^_",
+    },
+  ],
+};
+
 export const baseJavaScriptRules: Linter.Config[] = [
   {
     ignores: ["**/dist/**", "**/build/**", "**/.next/**", "**/node_modules/**", "**/coverage/**"],
@@ -14,27 +43,8 @@ export const baseJavaScriptRules: Linter.Config[] = [
     rules: {
       ...js.configs.recommended.rules,
 
-      /**
-       * Disallows magic numbers (numbers with no clear meaning in the code)
-       * @see https://eslint.org/docs/rules/no-magic-numbers
-       */
-      "no-magic-numbers": [
-        "warn",
-        {
-          ignore: [0, 1, -1],
-        },
-      ],
-
-      /**
-       * Disallows unused variables, with an exception for variables starting with underscore
-       * @see https://eslint.org/docs/rules/no-unused-vars
-       */
-      "no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-        },
-      ],
+      // Apply all warning rules
+      ...warningJavaScriptRules,
 
       /**
        * Requires returning statements to either always or never specify values

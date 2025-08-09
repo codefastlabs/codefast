@@ -6,13 +6,13 @@ import pluginJsxA11y from "eslint-plugin-jsx-a11y";
  * Rules that are disabled (set to "off") for jsx-a11y plugin
  * These rules are grouped together for better organization and maintainability
  */
-const disabledJsxA11yRules = {
+const disabledJsxA11yRules: Linter.RulesRecord = {
   /**
    * Disable autocomplete validation
    * Often disabled when using custom form components or complex form libraries
    */
   "jsx-a11y/autocomplete-valid": "off",
-} as const;
+};
 
 export const jsxA11yRules: Linter.Config[] = [
   {

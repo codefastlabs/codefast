@@ -3,10 +3,29 @@ import type { Linter, ESLint } from "eslint";
 import pluginImport from "eslint-plugin-import-x";
 
 /**
+ * Rules that are set to "warn" for import-x plugin
+ * These rules are grouped together for better organization and maintainability
+ * These rules highlight issues that should be addressed but don't break functionality
+ */
+const warningImportRules: Linter.RulesRecord = {
+  /**
+   * Prevents usage of dynamic require()
+   * Warning because some cases need dynamic require() but it should be avoided
+   */
+  "import-x/no-dynamic-require": "warn",
+
+  /**
+   * Reports usage of deprecated APIs
+   * Warning to encourage updating to newer APIs without breaking builds
+   */
+  "import-x/no-deprecated": "warn",
+};
+
+/**
  * Rules that are disabled (set to "off") for import-x plugin
  * These rules are grouped together for better organization and maintainability
  */
-const disabledImportRules = {
+const disabledImportRules: Linter.RulesRecord = {
   /**
    * Ensures all default imports from a module actually exist
    * Disabled because it can cause issues with TypeScript and module bundlers
@@ -64,7 +83,7 @@ const disabledImportRules = {
    * where internal imports between packages are legitimate
    */
   "import-x/no-internal-modules": "off",
-} as const;
+};
 
 export const importRules: Linter.Config[] = [
   {
@@ -79,11 +98,8 @@ export const importRules: Linter.Config[] = [
       // Apply all disabled rules
       ...disabledImportRules,
 
-      /**
-       * Prevents usage of dynamic require()
-       * Warning because some cases need dynamic require() but it should be avoided
-       */
-      "import-x/no-dynamic-require": "warn",
+      // Apply all warning rules
+      ...warningImportRules,
 
       /**
        * Reports errors with exports, such as duplicate exports
@@ -216,12 +232,6 @@ export const importRules: Linter.Config[] = [
           tsx: "never",
         },
       ],
-
-      /**
-       * Prevents importing deprecated modules or functions
-       * Helps maintain code quality by avoiding deprecated APIs
-       */
-      "import-x/no-deprecated": "warn",
 
       /**
        * Prevents circular dependencies between modules

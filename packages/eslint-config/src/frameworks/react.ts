@@ -8,7 +8,7 @@ import * as pluginReactHooks from "eslint-plugin-react-hooks";
  * These rules are grouped together for better organization and maintainability
  * These rules are commonly disabled in modern React applications
  */
-export const disabledReactRules = {
+export const disabledReactRules: Linter.RulesRecord = {
   /**
    * Disable prop-types validation
    * is Not needed when using TypeScript for type checking
@@ -20,7 +20,7 @@ export const disabledReactRules = {
    * is Not needed in React 17+ with the new JSX transform
    */
   "react/react-in-jsx-scope": "off",
-} as const;
+};
 
 export const reactRules: Linter.Config[] = [
   {
