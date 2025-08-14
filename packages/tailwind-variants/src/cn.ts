@@ -1,18 +1,23 @@
 import { isEmptyObject } from "./utils";
 
-let twMergeModule = null;
-let loadingPromise = null;
+interface TwMergeModule {
+  extendTailwindMerge: (config: any) => (classes: string) => string;
+  twMerge: (classes: string) => string;
+}
 
-const loadTwMerge = async () => {
+let twMergeModule: null | TwMergeModule = null;
+let loadingPromise: null | Promise<null | TwMergeModule> = null;
+
+const loadTwMerge = async (): Promise<null | TwMergeModule> => {
   if (twMergeModule) return twMergeModule;
 
   if (loadingPromise) return loadingPromise;
 
   loadingPromise = import("tailwind-merge")
     .then((module) => {
-      twMergeModule = module;
+      twMergeModule = module as TwMergeModule;
 
-      return module;
+      return module as TwMergeModule;
     })
     .catch(() => {
       // If tailwind-merge is not installed, return null
@@ -22,9 +27,9 @@ const loadTwMerge = async () => {
   return loadingPromise;
 };
 
-export const createTwMerge = (cachedTwMergeConfig) => {
+export const createTwMerge = (cachedTwMergeConfig: any) => {
   // Return a function that will lazily load and use twMerge
-  return (classes) => {
+  return (classes: string): string => {
     // If tailwind-merge was already loaded and failed, just return the classes
     if (loadingPromise && !twMergeModule) {
       return classes;
