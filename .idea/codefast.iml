@@ -60,6 +60,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/eslint-config/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/packages/image-loader/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/tailwind-variants/.turbo" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
