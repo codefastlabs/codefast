@@ -11,6 +11,7 @@
     "test",
     "tests",
     "__tests__",
+    "__mocks__",
     "**/*.test.*",
     "**/*.spec.*",
     "**/*.e2e.*",
