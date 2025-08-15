@@ -41,6 +41,9 @@ export default defineConfig({
     minify: !isWatchMode,
     target: "web",
   },
+  performance: {
+    printFileSize: !isWatchMode,
+  },
   plugins: [pluginReact()],
   source: {
     entry: {
