@@ -136,23 +136,13 @@ const errorImportRules: Linter.RulesRecord = {
     "error",
     {
       devDependencies: [
-        "**/__tests__/**",
-        "**/*.test.*",
-        "**/*.spec.*",
-        "**/*.e2e.*",
-        "**/*.setup.{js,mjs,cjs,ts}",
-        "**/*.config.{js,mjs,cjs,ts}",
-        "**/jest.setup.{js,mjs,cjs,ts}",
-        "**/vitest.setup.{js,mjs,cjs,ts}",
-        "**/cypress/**",
-        "**/playwright/**",
-        "**/test/**",
-        "**/tests/**",
-        "**/*.stories.{ts,tsx}",
-        "**/*.story.{ts,tsx}",
+        "**/{test,tests,__tests__,__mocks__}/**/*.{js,mjs,cjs,ts,jsx,tsx}",
+        "**/*.{test,spec,e2e}.{js,mjs,cjs,ts,tsx}",
+        "**/*.{setup,config}.{js,mjs,cjs,ts}",
+        "**/{cypress,playwright}/**",
+        "**/*.{story,stories}.{ts,tsx}",
+        "**/{scripts,config}/**",
         "**/*.mdx",
-        "scripts/**",
-        "config/**",
       ],
     },
   ],
@@ -278,7 +268,7 @@ export const importRules: Linter.Config[] = [
       /**
        * Supported file extensions for import rules
        */
-      "import-x/extensions": [".js", ".cjs", ".mjs", ".jsx", ".ts", ".tsx"],
+      "import-x/extensions": [".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx"],
 
       /**
        * Parser configuration to handle different file types
@@ -294,7 +284,7 @@ export const importRules: Linter.Config[] = [
        */
       "import-x/resolver": {
         node: {
-          extensions: [".js", ".cjs", ".mjs", ".jsx", ".ts", ".tsx"],
+          extensions: [".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx"],
         },
         typescript: {
           alwaysTryTypes: true,

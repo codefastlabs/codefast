@@ -236,11 +236,8 @@ const errorJestRules: Linter.RulesRecord = {
 export const jestRules: Linter.Config[] = [
   {
     files: [
-      "**/*.test.{js,ts,tsx}",
-      "**/*.spec.{js,ts,tsx}",
-      "**/test/**/*.{js,ts,tsx}",
-      "**/tests/**/*.{js,ts,tsx}",
-      "**/__tests__/**/*.{js,ts,tsx}",
+      "**/*.{test,spec,e2e}.{js,mjs,cjs,ts,jsx,tsx}",
+      "**/{test,tests,__tests__,__mocks__}/**/*.{js,mjs,cjs,ts,jsx,tsx}",
     ],
     plugins: {
       jest: pluginJest,
