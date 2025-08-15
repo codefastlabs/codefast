@@ -1,6 +1,6 @@
-import { composeConfig, reactAppPreset } from "@codefast/eslint-config";
+import { composeConfig, libraryPreset } from "@codefast/eslint-config";
 
-export default composeConfig(reactAppPreset, [
+export default composeConfig(libraryPreset, [
   {
     rules: {
       "@typescript-eslint/no-unnecessary-type-constraint": "off",
