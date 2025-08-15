@@ -2555,7 +2555,7 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
     expect(result).toHaveClass(["text-medium", "text-blue-500", "w-unit-4"]);
   });
 
-  test("should support legacy custom config", () => {
+  test("should support custom config", () => {
     const styles = tv(
       {
         base: "text-small text-yellow-400 w-unit",
@@ -2573,21 +2573,23 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       },
       {
         twMergeConfig: {
-          classGroups: {
-            "bg-image": ["bg-stripe-gradient"],
-            "font-size": [{ text: ["tiny", ...COMMON_UNITS] }],
-            "min-w": [
-              {
-                "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
-              },
-            ],
-            shadow: [{ shadow: COMMON_UNITS }],
-          },
-          theme: {
-            borderRadius: COMMON_UNITS,
-            borderWidth: COMMON_UNITS,
-            opacity: ["disabled"],
-            spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+          extend: {
+            classGroups: {
+              "bg-image": ["bg-stripe-gradient"],
+              "font-size": [{ text: ["tiny", ...COMMON_UNITS] }],
+              "min-w": [
+                {
+                  "min-w": ["unit", "unit-2", "unit-4", "unit-6"],
+                },
+              ],
+              shadow: [{ shadow: COMMON_UNITS }],
+            },
+            theme: {
+              borderRadius: COMMON_UNITS,
+              borderWidth: COMMON_UNITS,
+              opacity: ["disabled"],
+              spacing: ["divider", "unit", "unit-2", "unit-4", "unit-6"],
+            },
           },
         },
       },

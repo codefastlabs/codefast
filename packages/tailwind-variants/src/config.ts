@@ -1,7 +1,6 @@
-import type { extendTailwindMerge } from "tailwind-merge";
+import type { ConfigExtension } from "tailwind-merge";
 
-type MergeConfig = Parameters<typeof extendTailwindMerge>[0];
-type LegacyMergeConfig = Extract<MergeConfig, { extend?: unknown }>["extend"];
+export type MergeConfig = ConfigExtension<string, string>;
 
 export interface TWMConfig {
   /**
@@ -15,7 +14,7 @@ export interface TWMConfig {
    * The config object for `tailwind-merge` library.
    * @see https://github.com/dcastil/tailwind-merge/blob/v2.2.0/docs/configuration.md
    */
-  twMergeConfig?: MergeConfig & LegacyMergeConfig;
+  twMergeConfig?: MergeConfig;
 }
 
 export type TVConfig = TWMConfig;
