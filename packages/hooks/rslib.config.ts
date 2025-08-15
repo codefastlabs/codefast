@@ -30,6 +30,9 @@ export default defineConfig({
     minify: !isWatchMode,
     target: "web",
   },
+  performance: {
+    printFileSize: !isWatchMode,
+  },
   source: {
     entry: {
       index: ["./src/**/*.{ts,tsx}", "!**/*.{test,spec,e2e,story,stories}.{ts,tsx}"],
