@@ -5,7 +5,7 @@ function parseClasses(result: string | string[]): string[] {
 }
 
 expect.extend({
-  toHaveClass(received: string | string[], expected: string | string[]) {
+  toHaveClassName(received: string | string[], expected: string | string[]) {
     const parsedExpected = parseClasses(expected);
     const parsedReceived = parseClasses(received);
 
@@ -13,7 +13,7 @@ expect.extend({
       message: (): string => {
         return (
           this.utils.matcherHint(
-            `${this.isNot ? ".not" : ""}.toHaveClass`,
+            `${this.isNot ? ".not" : ""}.toHaveClassName`,
             "element",
             this.utils.printExpected(parsedExpected.join(" ")),
           ) +
@@ -36,6 +36,6 @@ expect.extend({
 
 declare module "expect" {
   interface Matchers<R> {
-    toHaveClass: (expected: string | string[]) => R;
+    toHaveClassName: (expected: string | string[]) => R;
   }
 }
