@@ -1,24 +1,24 @@
 export const falsyToString = <T>(value: T): string | T =>
   value === false ? "false" : value === true ? "true" : value === 0 ? "0" : value;
 
-export const isEmptyObject = (obj: unknown): boolean => {
-  if (!obj || typeof obj !== "object") return true;
+export const isEmptyObject = (object: unknown): boolean => {
+  if (!object || typeof object !== "object") return true;
 
-  for (const _ in obj) return false;
+  for (const _ in object) return false;
 
   return true;
 };
 
-// Type guard to check if value is a record
+// Type guard to check if the value is a record
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 };
 
-export const isEqual = (obj1: object, obj2: object): boolean => {
-  if (obj1 === obj2) return true;
+export const isEqual = (object1: object, object2: object): boolean => {
+  if (object1 === object2) return true;
 
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
 
   if (keys1.length !== keys2.length) return false;
 
@@ -26,7 +26,7 @@ export const isEqual = (obj1: object, obj2: object): boolean => {
     if (!keys2.includes(key)) return false;
 
     // Use type guard for safer access
-    if (isRecord(obj1) && isRecord(obj2) && obj1[key] !== obj2[key]) {
+    if (isRecord(object1) && isRecord(object2) && object1[key] !== object2[key]) {
       return false;
     }
   }
@@ -36,21 +36,21 @@ export const isEqual = (obj1: object, obj2: object): boolean => {
 
 export const isBoolean = (value: unknown): value is boolean => value === true || value === false;
 
-export function flatArray<T extends readonly unknown[]>(arr: T): unknown[] {
+export function flatArray<T extends readonly unknown[]>(array: T): unknown[] {
   const flattened: unknown[] = [];
 
   // Use proper typing for nested arrays
   const processArray = (input: readonly unknown[]): void => {
-    for (const el of input) {
-      if (Array.isArray(el)) {
-        processArray(el);
+    for (const element of input) {
+      if (Array.isArray(element)) {
+        processArray(element);
       } else {
-        flattened.push(el);
+        flattened.push(element);
       }
     }
   };
 
-  processArray(arr);
+  processArray(array);
 
   return flattened;
 }
@@ -59,21 +59,21 @@ export const flatMergeArrays = <T extends readonly unknown[]>(...arrays: T[]): u
   const result: unknown[] = [];
 
   // Process each array without type assertions
-  for (const arr of arrays) {
-    if (Array.isArray(arr)) {
+  for (const array of arrays) {
+    if (Array.isArray(array)) {
       const processArray = (input: readonly unknown[]): void => {
-        for (const el of input) {
-          if (Array.isArray(el)) {
-            processArray(el);
+        for (const element of input) {
+          if (Array.isArray(element)) {
+            processArray(element);
           } else {
-            result.push(el);
+            result.push(element);
           }
         }
       };
 
-      processArray(arr);
+      processArray(array);
     } else {
-      result.push(arr);
+      result.push(array);
     }
   }
 
@@ -86,46 +86,46 @@ export const flatMergeArrays = <T extends readonly unknown[]>(...arrays: T[]): u
   return filtered;
 };
 
-export const mergeObjects = (obj1: unknown, obj2: unknown): unknown => {
-  if (!obj1 || typeof obj1 !== "object" || !obj2 || typeof obj2 !== "object") {
-    return obj2;
+export const mergeObjects = (object1: unknown, object2: unknown): unknown => {
+  if (!object1 || typeof object1 !== "object" || !object2 || typeof object2 !== "object") {
+    return object2;
   }
 
   const result: Record<string, unknown> = {};
 
   // Use type guards instead of type assertions
-  if (!isRecord(obj1) || !isRecord(obj2)) {
-    return obj2;
+  if (!isRecord(object1) || !isRecord(object2)) {
+    return object2;
   }
 
-  for (const key in obj1) {
-    const val1 = obj1[key];
+  for (const key in object1) {
+    const value1 = object1[key];
 
-    if (key in obj2) {
-      const val2 = obj2[key];
+    if (key in object2) {
+      const value2 = object2[key];
 
-      if (Array.isArray(val1) || Array.isArray(val2)) {
+      if (Array.isArray(value1) || Array.isArray(value2)) {
         result[key] = flatMergeArrays(
-          Array.isArray(val2) ? val2 : [val2],
-          Array.isArray(val1) ? val1 : [val1]
+          Array.isArray(value2) ? value2 : [value2],
+          Array.isArray(value1) ? value1 : [value1],
         );
-      } else if (typeof val1 === "object" && typeof val2 === "object" && val1 && val2) {
-        result[key] = mergeObjects(val1, val2);
+      } else if (typeof value1 === "object" && typeof value2 === "object" && value1 && value2) {
+        result[key] = mergeObjects(value1, value2);
       } else {
         // Ensure values are strings for template literal
-        const strVal1 = String(val1);
-        const strVal2 = String(val2);
+        const stringValue1 = String(value1);
+        const stringValue2 = String(value2);
 
-        result[key] = `${strVal2} ${strVal1}`;
+        result[key] = `${stringValue2} ${stringValue1}`;
       }
     } else {
-      result[key] = val1;
+      result[key] = value1;
     }
   }
 
-  for (const key in obj2) {
-    if (!(key in obj1)) {
-      result[key] = obj2[key];
+  for (const key in object2) {
+    if (!(key in object1)) {
+      result[key] = object2[key];
     }
   }
 
@@ -134,8 +134,8 @@ export const mergeObjects = (obj1: unknown, obj2: unknown): unknown => {
 
 const SPACE_REGEX = /\s+/g;
 
-export const removeExtraSpaces = (str: string): string => {
-  if (!str || typeof str !== "string") return str;
+export const removeExtraSpaces = (string_: string): string => {
+  if (!string_ || typeof string_ !== "string") return string_;
 
-  return str.replaceAll(SPACE_REGEX, " ").trim();
+  return string_.replaceAll(SPACE_REGEX, " ").trim();
 };
