@@ -10,7 +10,7 @@
     "playwright",
     "test",
     "tests",
-    "__tests__",
+    "src/__tests__",
     "__mocks__",
     "**/*.test.*",
     "**/*.spec.*",
