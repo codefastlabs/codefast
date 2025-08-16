@@ -53,8 +53,8 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     const { base, item } = menu({ color: "primary" });
 
-    expect(base()).toHaveClass(["base--styles-1", "base--styles-2", "base--styles-3"]);
-    expect(item()).toHaveClass([
+    expect(base()).toHaveClassName(["base--styles-1", "base--styles-2", "base--styles-3"]);
+    expect(item()).toHaveClassName([
       "slots--item-1",
       "slots--item-2",
       "slots--item-3",
@@ -62,12 +62,12 @@ describe("Tailwind Variants (TV) - Default", () => {
       "item--color--primary-2",
       "item--color--primary-3",
     ]);
-    expect(popover({ isOpen: true })).toHaveClass([
+    expect(popover({ isOpen: true })).toHaveClassName([
       "isOpen--true-1",
       "isOpen--true-2",
       "isOpen--true-3",
     ]);
-    expect(popover({ isOpen: false })).toHaveClass([
+    expect(popover({ isOpen: false })).toHaveClassName([
       "isOpen--false-1",
       "isOpen--false-2",
       "isOpen--false-3",
@@ -107,7 +107,7 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     const expectedResult = ["text-5xl", "font-bold", "text-blue-500"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should work with variantKeys", () => {
@@ -127,7 +127,7 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     const expectedResult = ["isBig", "color"];
 
-    expect(h1.variantKeys).toHaveClass(expectedResult);
+    expect(h1.variantKeys).toHaveClassName(expectedResult);
   });
 
   test("should work with compoundVariants", () => {
@@ -162,20 +162,20 @@ describe("Tailwind Variants (TV) - Default", () => {
         color: "red",
         isBig: true,
       }),
-    ).toHaveClass(["text-5xl", "font-bold", "text-red-500", "bg-red-500"]);
+    ).toHaveClassName(["text-5xl", "font-bold", "text-red-500", "bg-red-500"]);
 
     expect(
       h1({
         color: "red",
         isBig: false,
       }),
-    ).toHaveClass(["text-2xl", "font-bold", "text-red-500", "underline"]);
+    ).toHaveClassName(["text-2xl", "font-bold", "text-red-500", "underline"]);
 
     expect(
       h1({
         color: "red",
       }),
-    ).toHaveClass(["text-2xl", "font-bold", "text-red-500", "underline"]);
+    ).toHaveClassName(["text-2xl", "font-bold", "text-red-500", "underline"]);
   });
 
   test("should throw error if the compoundVariants is not an array", () => {
@@ -213,8 +213,8 @@ describe("Tailwind Variants (TV) - Default", () => {
       class: "text-xl",
     });
 
-    expect(result1).toHaveClass(expectedResult);
-    expect(result2).toHaveClass(expectedResult);
+    expect(result1).toHaveClassName(expectedResult);
+    expect(result2).toHaveClassName(expectedResult);
   });
 
   test("should work without anything", () => {
@@ -231,7 +231,7 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     const expectedResult = ["font-bold", "text-xl", "text-blue-200"];
 
-    expect(h1()).toHaveClass(expectedResult);
+    expect(h1()).toHaveClassName(expectedResult);
   });
 
   test("should work correctly without twMerge", () => {
@@ -246,7 +246,7 @@ describe("Tailwind Variants (TV) - Default", () => {
 
     const expectedResult = ["text-3xl", "font-bold", "text-blue-400", "text-xl", "text-blue-200"];
 
-    expect(h1()).toHaveClass(expectedResult);
+    expect(h1()).toHaveClassName(expectedResult);
   });
 
   test("should work without defaultsVariants", () => {
@@ -305,7 +305,7 @@ describe("Tailwind Variants (TV) - Default", () => {
       "button--secondary-small",
     ];
 
-    expect(button({ isDisabled: false, size: "small", variant: "secondary" })).toHaveClass(
+    expect(button({ isDisabled: false, size: "small", variant: "secondary" })).toHaveClassName(
       expectedResult,
     );
   });
@@ -342,10 +342,10 @@ describe("Tailwind Variants (TV) - Default", () => {
       },
     });
 
-    expect(h1()).toHaveClass(["text-3xl", "truncate"]);
-    expect(h1({ bool: true })).toHaveClass(["text-3xl", "underline"]);
-    expect(h1({ bool: false })).toHaveClass(["text-3xl", "truncate"]);
-    expect(h1({ bool: undefined })).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1()).toHaveClassName(["text-3xl", "truncate"]);
+    expect(h1({ bool: true })).toHaveClassName(["text-3xl", "underline"]);
+    expect(h1({ bool: false })).toHaveClassName(["text-3xl", "truncate"]);
+    expect(h1({ bool: undefined })).toHaveClassName(["text-3xl", "truncate"]);
   });
 
   test("should support false only variant", () => {
@@ -358,10 +358,10 @@ describe("Tailwind Variants (TV) - Default", () => {
       },
     });
 
-    expect(h1()).toHaveClass(["text-3xl", "truncate"]);
-    expect(h1({ bool: true })).toHaveClass(["text-3xl"]);
-    expect(h1({ bool: false })).toHaveClass(["text-3xl", "truncate"]);
-    expect(h1({ bool: undefined })).toHaveClass(["text-3xl", "truncate"]);
+    expect(h1()).toHaveClassName(["text-3xl", "truncate"]);
+    expect(h1({ bool: true })).toHaveClassName(["text-3xl"]);
+    expect(h1({ bool: false })).toHaveClassName(["text-3xl", "truncate"]);
+    expect(h1({ bool: undefined })).toHaveClassName(["text-3xl", "truncate"]);
   });
 
   test("should support false only variant -- default variant", () => {
@@ -377,10 +377,10 @@ describe("Tailwind Variants (TV) - Default", () => {
       },
     });
 
-    expect(h1()).toHaveClass(["text-3xl"]);
-    expect(h1({ bool: true })).toHaveClass(["text-3xl"]);
-    expect(h1({ bool: false })).toHaveClass(["text-3xl", "truncate"]);
-    expect(h1({ bool: undefined })).toHaveClass(["text-3xl"]);
+    expect(h1()).toHaveClassName(["text-3xl"]);
+    expect(h1({ bool: true })).toHaveClassName(["text-3xl"]);
+    expect(h1({ bool: false })).toHaveClassName(["text-3xl", "truncate"]);
+    expect(h1({ bool: undefined })).toHaveClassName(["text-3xl"]);
   });
 
   test("should support boolean variants -- default variants", () => {
@@ -397,10 +397,10 @@ describe("Tailwind Variants (TV) - Default", () => {
       },
     });
 
-    expect(h1()).toHaveClass(["text-3xl", "underline"]);
-    expect(h1({ bool: true })).toHaveClass(["text-3xl", "underline"]);
-    expect(h1({ bool: false })).toHaveClass(["text-3xl", "truncate"]);
-    expect(h1({ bool: undefined })).toHaveClass(["text-3xl", "underline"]);
+    expect(h1()).toHaveClassName(["text-3xl", "underline"]);
+    expect(h1({ bool: true })).toHaveClassName(["text-3xl", "underline"]);
+    expect(h1({ bool: false })).toHaveClassName(["text-3xl", "truncate"]);
+    expect(h1({ bool: undefined })).toHaveClassName(["text-3xl", "underline"]);
   });
 
   test("should support boolean variants -- missing false variant", () => {
@@ -413,10 +413,10 @@ describe("Tailwind Variants (TV) - Default", () => {
       },
     });
 
-    expect(h1()).toHaveClass(["text-3xl"]);
-    expect(h1({ bool: true })).toHaveClass(["text-3xl", "underline"]);
-    expect(h1({ bool: false })).toHaveClass(["text-3xl"]);
-    expect(h1({ bool: undefined })).toHaveClass(["text-3xl"]);
+    expect(h1()).toHaveClassName(["text-3xl"]);
+    expect(h1({ bool: true })).toHaveClassName(["text-3xl", "underline"]);
+    expect(h1({ bool: false })).toHaveClassName(["text-3xl"]);
+    expect(h1({ bool: undefined })).toHaveClassName(["text-3xl"]);
   });
 
   test("should support boolean variants -- missing false variant -- default variants", () => {
@@ -432,10 +432,10 @@ describe("Tailwind Variants (TV) - Default", () => {
       },
     });
 
-    expect(h1()).toHaveClass(["text-3xl", "underline"]);
-    expect(h1({ bool: true })).toHaveClass(["text-3xl", "underline"]);
-    expect(h1({ bool: false })).toHaveClass(["text-3xl"]);
-    expect(h1({ bool: undefined })).toHaveClass(["text-3xl", "underline"]);
+    expect(h1()).toHaveClassName(["text-3xl", "underline"]);
+    expect(h1({ bool: true })).toHaveClassName(["text-3xl", "underline"]);
+    expect(h1({ bool: false })).toHaveClassName(["text-3xl"]);
+    expect(h1({ bool: undefined })).toHaveClassName(["text-3xl", "underline"]);
   });
 });
 
@@ -485,17 +485,17 @@ describe("Tailwind Variants (TV) - Slots", () => {
     // with default values
     const { base, item, list, title, wrapper } = menu();
 
-    expect(base()).toHaveClass([
+    expect(base()).toHaveClassName([
       "text-3xl",
       "font-bold",
       "underline",
       "color--primary",
       "size--sm",
     ]);
-    expect(title()).toHaveClass(["text-2xl"]);
-    expect(item()).toHaveClass(["text-xl", "enabled--item"]);
-    expect(list()).toHaveClass(["list-none"]);
-    expect(wrapper()).toHaveClass(["flex", "flex-col"]);
+    expect(title()).toHaveClassName(["text-2xl"]);
+    expect(item()).toHaveClassName(["text-xl", "enabled--item"]);
+    expect(list()).toHaveClassName(["list-none"]);
+    expect(wrapper()).toHaveClassName(["flex", "flex-col"]);
   });
 
   test("should work with empty slots", () => {
@@ -570,27 +570,27 @@ describe("Tailwind Variants (TV) - Slots", () => {
     const { base, item, list, title, wrapper } = menu();
 
     // base
-    expect(base({ class: "text-lg" })).toHaveClass([
+    expect(base({ class: "text-lg" })).toHaveClassName([
       "font-bold",
       "underline",
       "bg-blue-500",
       "text-lg",
     ]);
-    expect(base({ className: "text-lg" })).toHaveClass([
+    expect(base({ className: "text-lg" })).toHaveClassName([
       "font-bold",
       "underline",
       "bg-blue-500",
       "text-lg",
     ]);
     // title
-    expect(title({ class: "text-2xl" })).toHaveClass(["text-2xl"]);
-    expect(title({ className: "text-2xl" })).toHaveClass(["text-2xl"]);
+    expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
+    expect(title({ className: "text-2xl" })).toHaveClassName(["text-2xl"]);
     // item
-    expect(item({ class: "text-sm" })).toHaveClass(["text-sm", "opacity-100"]);
-    expect(list({ className: "bg-blue-50" })).toHaveClass(["list-none", "bg-blue-50"]);
+    expect(item({ class: "text-sm" })).toHaveClassName(["text-sm", "opacity-100"]);
+    expect(list({ className: "bg-blue-50" })).toHaveClassName(["list-none", "bg-blue-50"]);
     // list
-    expect(wrapper({ class: "flex-row" })).toHaveClass(["flex", "flex-row"]);
-    expect(wrapper({ className: "flex-row" })).toHaveClass(["flex", "flex-row"]);
+    expect(wrapper({ class: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
+    expect(wrapper({ className: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
   });
 
   test("should work with slots -- custom variants", () => {
@@ -642,11 +642,11 @@ describe("Tailwind Variants (TV) - Slots", () => {
       size: "md",
     });
 
-    expect(base()).toHaveClass(["text-3xl", "font-bold", "underline", "color--secondary-base"]);
-    expect(title()).toHaveClass(["text-2xl", "size--md-title", "color--secondary-title"]);
-    expect(item()).toHaveClass(["text-xl", "color--secondary-item", "enabled--item"]);
-    expect(list()).toHaveClass(["list-none", "color--secondary-list"]);
-    expect(wrapper()).toHaveClass(["flex", "flex-col", "color--secondary-wrapper"]);
+    expect(base()).toHaveClassName(["text-3xl", "font-bold", "underline", "color--secondary-base"]);
+    expect(title()).toHaveClassName(["text-2xl", "size--md-title", "color--secondary-title"]);
+    expect(item()).toHaveClassName(["text-xl", "color--secondary-item", "enabled--item"]);
+    expect(list()).toHaveClassName(["list-none", "color--secondary-list"]);
+    expect(wrapper()).toHaveClassName(["flex", "flex-col", "color--secondary-wrapper"]);
   });
 
   test("should work with slots -- custom variants -- custom class & className", () => {
@@ -705,28 +705,28 @@ describe("Tailwind Variants (TV) - Slots", () => {
     });
 
     // base
-    expect(base({ class: "text-xl" })).toHaveClass(["text-xl", "font-bold", "underline"]);
-    expect(base({ className: "text-xl" })).toHaveClass(["text-xl", "font-bold", "underline"]);
+    expect(base({ class: "text-xl" })).toHaveClassName(["text-xl", "font-bold", "underline"]);
+    expect(base({ className: "text-xl" })).toHaveClassName(["text-xl", "font-bold", "underline"]);
     // title
-    expect(title({ class: "text-2xl" })).toHaveClass(["text-2xl", "text-white"]);
-    expect(title({ className: "text-2xl" })).toHaveClass(["text-2xl", "text-white"]);
+    expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl", "text-white"]);
+    expect(title({ className: "text-2xl" })).toHaveClassName(["text-2xl", "text-white"]);
     // item
-    expect(item({ class: "bg-purple-50" })).toHaveClass(["text-xl", "bg-purple-50", "opacity-100"]);
-    expect(item({ className: "bg-purple-50" })).toHaveClass([
+    expect(item({ class: "bg-purple-50" })).toHaveClassName(["text-xl", "bg-purple-50", "opacity-100"]);
+    expect(item({ className: "bg-purple-50" })).toHaveClassName([
       "text-xl",
       "bg-purple-50",
       "opacity-100",
     ]);
     // list
-    expect(list({ class: "bg-purple-100" })).toHaveClass(["list-none", "bg-purple-100"]);
-    expect(list({ className: "bg-purple-100" })).toHaveClass(["list-none", "bg-purple-100"]);
+    expect(list({ class: "bg-purple-100" })).toHaveClassName(["list-none", "bg-purple-100"]);
+    expect(list({ className: "bg-purple-100" })).toHaveClassName(["list-none", "bg-purple-100"]);
     // wrapper
-    expect(wrapper({ class: "bg-purple-900 flex-row" })).toHaveClass([
+    expect(wrapper({ class: "bg-purple-900 flex-row" })).toHaveClassName([
       "flex",
       "bg-purple-900",
       "flex-row",
     ]);
-    expect(wrapper({ className: "bg-purple-900 flex-row" })).toHaveClass([
+    expect(wrapper({ className: "bg-purple-900 flex-row" })).toHaveClassName([
       "flex",
       "bg-purple-900",
       "flex-row",
@@ -795,27 +795,27 @@ describe("Tailwind Variants (TV) - Slots", () => {
       size: "md",
     });
 
-    expect(base()).toHaveClass([
+    expect(base()).toHaveClassName([
       "text-3xl",
       "font-bold",
       "underline",
       "color--secondary-base",
       "compound--base",
     ]);
-    expect(title()).toHaveClass([
+    expect(title()).toHaveClassName([
       "text-2xl",
       "size--md-title",
       "color--secondary-title",
       "compound--title",
     ]);
-    expect(item()).toHaveClass([
+    expect(item()).toHaveClassName([
       "text-xl",
       "color--secondary-item",
       "enabled--item",
       "compound--item",
     ]);
-    expect(list()).toHaveClass(["list-none", "color--secondary-list", "compound--list"]);
-    expect(wrapper()).toHaveClass([
+    expect(list()).toHaveClassName(["list-none", "color--secondary-list", "compound--list"]);
+    expect(wrapper()).toHaveClassName([
       "flex",
       "flex-col",
       "color--secondary-wrapper",
@@ -848,10 +848,10 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { base, title } = menu();
 
-    expect(base()).toHaveClass(["text-3xl", "color--primary-base"]);
-    expect(title()).toHaveClass(["text-2xl", "color--primary-title"]);
-    expect(base({ color: "secondary" })).toHaveClass(["text-3xl", "color--secondary-base"]);
-    expect(title({ color: "secondary" })).toHaveClass(["text-2xl", "color--secondary-title"]);
+    expect(base()).toHaveClassName(["text-3xl", "color--primary-base"]);
+    expect(title()).toHaveClassName(["text-2xl", "color--primary-title"]);
+    expect(base({ color: "secondary" })).toHaveClassName(["text-3xl", "color--secondary-base"]);
+    expect(title({ color: "secondary" })).toHaveClassName(["text-2xl", "color--secondary-title"]);
   });
 
   test("should support slot level variant overrides - compoundSlots", () => {
@@ -889,16 +889,16 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { base, subtitle, title } = menu();
 
-    expect(base()).toHaveClass(["text-3xl", "color--primary-base"]);
-    expect(title()).toHaveClass(["text-2xl", "color--primary-title"]);
-    expect(subtitle()).toHaveClass(["text-xl", "color--primary-subtitle"]);
-    expect(base({ color: "secondary" })).toHaveClass(["text-3xl", "color--secondary-base"]);
-    expect(title({ color: "secondary" })).toHaveClass([
+    expect(base()).toHaveClassName(["text-3xl", "color--primary-base"]);
+    expect(title()).toHaveClassName(["text-2xl", "color--primary-title"]);
+    expect(subtitle()).toHaveClassName(["text-xl", "color--primary-subtitle"]);
+    expect(base({ color: "secondary" })).toHaveClassName(["text-3xl", "color--secondary-base"]);
+    expect(title({ color: "secondary" })).toHaveClassName([
       "text-2xl",
       "color--secondary-title",
       "truncate",
     ]);
-    expect(subtitle({ color: "secondary" })).toHaveClass([
+    expect(subtitle({ color: "secondary" })).toHaveClassName([
       "text-xl",
       "color--secondary-subtitle",
       "truncate",
@@ -1020,7 +1020,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { cursor, tab, tabList } = tabs();
 
-    expect(tab()).toHaveClass([
+    expect(tab()).toHaveClassName([
       "z-0",
       "w-full",
       "px-3",
@@ -1032,8 +1032,8 @@ describe("Tailwind Variants (TV) - Slots", () => {
       "text-sm",
       "rounded-sm",
     ]);
-    expect(tabList()).toHaveClass(["flex", "rounded-md"]);
-    expect(cursor()).toHaveClass(["absolute", "z-0", "bg-white", "rounded-sm"]);
+    expect(tabList()).toHaveClassName(["flex", "rounded-md"]);
+    expect(cursor()).toHaveClassName(["absolute", "z-0", "bg-white", "rounded-sm"]);
   });
 
   test("should override the default classes when the variant matches - compoundSlots", () => {
@@ -1122,7 +1122,7 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { cursor, tab, tabList } = tabs({ variant: "underlined" });
 
-    expect(tab()).toHaveClass([
+    expect(tab()).toHaveClassName([
       "z-0",
       "w-full",
       "px-3",
@@ -1134,8 +1134,8 @@ describe("Tailwind Variants (TV) - Slots", () => {
       "text-sm",
       "rounded-none",
     ]);
-    expect(tabList()).toHaveClass(["flex", "rounded-none"]);
-    expect(cursor()).toHaveClass(["absolute", "z-0", "bg-white", "rounded-none"]);
+    expect(tabList()).toHaveClassName(["flex", "rounded-none"]);
+    expect(cursor()).toHaveClassName(["absolute", "z-0", "bg-white", "rounded-none"]);
   });
 
   test("should support slot level variant overrides - compoundVariants", () => {
@@ -1171,10 +1171,10 @@ describe("Tailwind Variants (TV) - Slots", () => {
 
     const { base, title } = menu();
 
-    expect(base()).toHaveClass(["text-3xl", "color--primary-base"]);
-    expect(title()).toHaveClass(["text-2xl", "color--primary-title"]);
-    expect(base({ color: "secondary" })).toHaveClass(["text-3xl", "color--secondary-base"]);
-    expect(title({ color: "secondary" })).toHaveClass([
+    expect(base()).toHaveClassName(["text-3xl", "color--primary-base"]);
+    expect(title()).toHaveClassName(["text-2xl", "color--primary-title"]);
+    expect(base({ color: "secondary" })).toHaveClassName(["text-3xl", "color--secondary-base"]);
+    expect(title({ color: "secondary" })).toHaveClassName([
       "text-2xl",
       "color--secondary-title",
       "truncate",
@@ -1202,11 +1202,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     // with default values
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClass(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClass(["flex", "flex-wrap", "truncate"]);
-    expect(prev()).toHaveClass(["flex", "flex-wrap", "truncate"]);
-    expect(next()).toHaveClass(["flex", "flex-wrap", "truncate"]);
-    expect(cursor()).toHaveClass(["absolute", "flex", "overflow-visible"]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate"]);
+    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate"]);
+    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate"]);
+    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
   test("should work with compound slots -- with a single variant -- defaultVariants", () => {
@@ -1245,11 +1245,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     // with default values
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClass(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(cursor()).toHaveClass(["absolute", "flex", "overflow-visible"]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
   test("should work with compound slots -- with a single variant -- prop variant", () => {
@@ -1290,11 +1290,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       size: "xs",
     });
 
-    expect(base()).toHaveClass(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(cursor()).toHaveClass(["absolute", "flex", "overflow-visible"]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
   test("should work with compound slots -- with a single variant -- boolean variant", () => {
@@ -1324,19 +1324,19 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
 
     let styles = nav({ isActive: false });
 
-    expect(styles.base()).toHaveClass(["base"]);
-    expect(styles.toggle()).toHaveClass(["slot--toggle", "compound--item-toggle"]);
-    expect(styles.item()).toHaveClass(["slot--item", "compound--item-toggle"]);
+    expect(styles.base()).toHaveClassName(["base"]);
+    expect(styles.toggle()).toHaveClassName(["slot--toggle", "compound--item-toggle"]);
+    expect(styles.item()).toHaveClassName(["slot--item", "compound--item-toggle"]);
 
     styles = nav({ isActive: true });
 
-    expect(styles.base()).toHaveClass(["base"]);
-    expect(styles.toggle()).toHaveClass([
+    expect(styles.base()).toHaveClassName(["base"]);
+    expect(styles.toggle()).toHaveClassName([
       "slot--toggle",
       "compound--item-toggle",
       "compound--item-toggle--active",
     ]);
-    expect(styles.item()).toHaveClass([
+    expect(styles.item()).toHaveClassName([
       "slot--item",
       "compound--item-toggle",
       "compound--item-toggle--active",
@@ -1390,11 +1390,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     // with default values
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClass(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(cursor()).toHaveClass(["absolute", "flex", "overflow-visible"]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
   test("should work with compound slots -- with multiple variants -- prop variants", () => {
@@ -1448,11 +1448,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       size: "xs",
     });
 
-    expect(base()).toHaveClass(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClass(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(cursor()).toHaveClass(["absolute", "flex", "overflow-visible"]);
+    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
+    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 });
 
@@ -1470,7 +1470,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
     const result = h1();
     const expectedResult = ["text-3xl", "font-bold", "text-green-500"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should include the extended classes with variants", () => {
@@ -1506,7 +1506,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "text-red-500", "text-5xl", "p--base"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should include nested the extended classes", () => {
@@ -1547,7 +1547,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["text-3xl", "font-bold", "text-green-500", "color--red"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
 
     const result2 = h1({
       color: "blue",
@@ -1555,7 +1555,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult2 = ["text-3xl", "font-bold", "text-green-500", "color--blue"];
 
-    expect(result2).toHaveClass(expectedResult2);
+    expect(result2).toHaveClassName(expectedResult2);
 
     const result3 = h1({
       color: "green",
@@ -1563,7 +1563,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult3 = ["text-3xl", "font-bold", "text-green-500", "color--green"];
 
-    expect(result3).toHaveClass(expectedResult3);
+    expect(result3).toHaveClassName(expectedResult3);
   });
 
   test("should override the extended classes with variants", () => {
@@ -1605,7 +1605,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       "text-5xl",
     ];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should include the extended classes with defaultVariants - parent", () => {
@@ -1642,7 +1642,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should include the extended classes with defaultVariants - children", () => {
@@ -1679,7 +1679,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "text-red-500", "text-5xl"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should override the extended defaultVariants - children", () => {
@@ -1720,7 +1720,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "text-red-500", "text-2xl"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should include the extended classes with compoundVariants - parent", () => {
@@ -1764,7 +1764,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "text-red-500", "bg-red-500", "text-5xl"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should include the extended classes with compoundVariants - children", () => {
@@ -1811,7 +1811,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "bg-green-500", "text-green-500", "text-5xl"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should override the extended classes with compoundVariants - children", () => {
@@ -1862,7 +1862,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const expectedResult = ["font-bold", "bg-red-600", "text-red-500", "text-5xl"];
 
-    expect(result).toHaveClass(expectedResult);
+    expect(result).toHaveClassName(expectedResult);
   });
 
   test("should override the extended classes with variants and compoundVariants, using array", () => {
@@ -1943,7 +1943,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       },
     });
 
-    expect(h1({ color: "red", isBig: true })).toHaveClass([
+    expect(h1({ color: "red", isBig: true })).toHaveClassName([
       "font-bold",
       "text-red-200",
       "bg-red-600",
@@ -1951,14 +1951,14 @@ describe("Tailwind Variants (TV) - Extends", () => {
       "text-7xl",
     ]);
 
-    expect(h1({ color: "blue", isBig: true })).toHaveClass([
+    expect(h1({ color: "blue", isBig: true })).toHaveClassName([
       "font-bold",
       "text-blue-500",
       "bg-blue-600",
       "text-7xl",
     ]);
 
-    expect(h1({ color: "red", isBig: false })).toHaveClass([
+    expect(h1({ color: "red", isBig: false })).toHaveClassName([
       "font-bold",
       "text-red-200",
       "bg-red-600",
@@ -1966,7 +1966,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       "text-3xl",
     ]);
 
-    expect(h1({ color: "blue", isBig: false })).toHaveClass([
+    expect(h1({ color: "blue", isBig: false })).toHaveClassName([
       "font-bold",
       "text-blue-500",
       "bg-blue-600",
@@ -1993,11 +1993,11 @@ describe("Tailwind Variants (TV) - Extends", () => {
     // with default values
     const { base, item, list, title, wrapper } = menu();
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass(["title--menuBase"]);
-    expect(item()).toHaveClass(["item--menuBase"]);
-    expect(list()).toHaveClass(["list--menuBase"]);
-    expect(wrapper()).toHaveClass(["wrapper--menuBase"]);
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName(["title--menuBase"]);
+    expect(item()).toHaveClassName(["item--menuBase"]);
+    expect(list()).toHaveClassName(["list--menuBase"]);
+    expect(wrapper()).toHaveClassName(["wrapper--menuBase"]);
   });
 
   test("should include the extended slots w/ variants -- parent", () => {
@@ -2031,11 +2031,11 @@ describe("Tailwind Variants (TV) - Extends", () => {
       isBig: true,
     });
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass(["title--menuBase", "title--isBig--menu"]);
-    expect(item()).toHaveClass(["item--menuBase", "item--isBig--menu"]);
-    expect(list()).toHaveClass(["list--menuBase", "list--isBig--menu"]);
-    expect(wrapper()).toHaveClass(["wrapper--menuBase", "wrapper--isBig--menu"]);
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName(["title--menuBase", "title--isBig--menu"]);
+    expect(item()).toHaveClassName(["item--menuBase", "item--isBig--menu"]);
+    expect(list()).toHaveClassName(["list--menuBase", "list--isBig--menu"]);
+    expect(wrapper()).toHaveClassName(["wrapper--menuBase", "wrapper--isBig--menu"]);
   });
 
   test("should include the extended slots w/ variants -- children", () => {
@@ -2069,11 +2069,11 @@ describe("Tailwind Variants (TV) - Extends", () => {
       isBig: true,
     });
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass(["title--menuBase", "title--isBig--menu"]);
-    expect(item()).toHaveClass(["item--menuBase", "item--isBig--menu"]);
-    expect(list()).toHaveClass(["list--menuBase", "list--isBig--menu"]);
-    expect(wrapper()).toHaveClass(["wrapper--menuBase", "wrapper--isBig--menu"]);
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName(["title--menuBase", "title--isBig--menu"]);
+    expect(item()).toHaveClassName(["item--menuBase", "item--isBig--menu"]);
+    expect(list()).toHaveClassName(["list--menuBase", "list--isBig--menu"]);
+    expect(wrapper()).toHaveClassName(["wrapper--menuBase", "wrapper--isBig--menu"]);
   });
 
   test("should include the extended slots w/ children slots (same names)", () => {
@@ -2101,11 +2101,11 @@ describe("Tailwind Variants (TV) - Extends", () => {
     // with default values
     let res = menu();
 
-    expect(res.base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(res.title()).toHaveClass(["title--menuBase", "title--menu"]);
-    expect(res.item()).toHaveClass(["item--menuBase", "item--menu"]);
-    expect(res.list()).toHaveClass(["list--menuBase", "list--menu"]);
-    expect(res.wrapper()).toHaveClass(["wrapper--menuBase", "wrapper--menu"]);
+    expect(res.base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(res.title()).toHaveClassName(["title--menuBase", "title--menu"]);
+    expect(res.item()).toHaveClassName(["item--menuBase", "item--menu"]);
+    expect(res.list()).toHaveClassName(["list--menuBase", "list--menu"]);
+    expect(res.wrapper()).toHaveClassName(["wrapper--menuBase", "wrapper--menu"]);
 
     res = menuBase();
 
@@ -2142,12 +2142,12 @@ describe("Tailwind Variants (TV) - Extends", () => {
     // with default values
     const { base, extra, item, list, title, wrapper } = menu();
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass(["title--menuBase", "title--menu"]);
-    expect(item()).toHaveClass(["item--menuBase", "item--menu"]);
-    expect(list()).toHaveClass(["list--menuBase", "list--menu"]);
-    expect(wrapper()).toHaveClass(["wrapper--menuBase", "wrapper--menu"]);
-    expect(extra()).toHaveClass(["extra--menu"]);
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName(["title--menuBase", "title--menu"]);
+    expect(item()).toHaveClassName(["item--menuBase", "item--menu"]);
+    expect(list()).toHaveClassName(["list--menuBase", "list--menu"]);
+    expect(wrapper()).toHaveClassName(["wrapper--menuBase", "wrapper--menu"]);
+    expect(extra()).toHaveClassName(["extra--menu"]);
   });
 
   test("should include the extended variants w/slots and defaultVariants -- parent", () => {
@@ -2188,11 +2188,11 @@ describe("Tailwind Variants (TV) - Extends", () => {
     // with default values
     const { base, item, list, title, wrapper } = menu();
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass(["title--menuBase", "title--menu", "isBig--title--menuBase"]);
-    expect(item()).toHaveClass(["item--menuBase", "item--menu", "isBig--item--menuBase"]);
-    expect(list()).toHaveClass(["list--menuBase", "list--menu", "isBig--list--menuBase"]);
-    expect(wrapper()).toHaveClass([
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName(["title--menuBase", "title--menu", "isBig--title--menuBase"]);
+    expect(item()).toHaveClassName(["item--menuBase", "item--menu", "isBig--item--menuBase"]);
+    expect(list()).toHaveClassName(["list--menuBase", "list--menu", "isBig--list--menuBase"]);
+    expect(wrapper()).toHaveClassName([
       "wrapper--menuBase",
       "wrapper--menu",
       "isBig--wrapper--menuBase",
@@ -2237,11 +2237,11 @@ describe("Tailwind Variants (TV) - Extends", () => {
     // with default values
     const { base, item, list, title, wrapper } = menu();
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass(["title--menuBase", "title--menu", "isBig--title--menuBase"]);
-    expect(item()).toHaveClass(["item--menuBase", "item--menu", "isBig--item--menuBase"]);
-    expect(list()).toHaveClass(["list--menuBase", "list--menu", "isBig--list--menuBase"]);
-    expect(wrapper()).toHaveClass([
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName(["title--menuBase", "title--menu", "isBig--title--menuBase"]);
+    expect(item()).toHaveClassName(["item--menuBase", "item--menu", "isBig--item--menuBase"]);
+    expect(list()).toHaveClassName(["list--menuBase", "list--menu", "isBig--list--menuBase"]);
+    expect(wrapper()).toHaveClassName([
       "wrapper--menuBase",
       "wrapper--menu",
       "isBig--wrapper--menuBase",
@@ -2315,29 +2315,29 @@ describe("Tailwind Variants (TV) - Extends", () => {
       color: "red",
     });
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass([
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName([
       "title--menuBase",
       "title--menu",
       "isBig--title--menuBase",
       "color--red--title--menuBase",
       "color--red--isBig--title--menuBase",
     ]);
-    expect(item()).toHaveClass([
+    expect(item()).toHaveClassName([
       "item--menuBase",
       "item--menu",
       "isBig--item--menuBase",
       "color--red--item--menuBase",
       "color--red--isBig--item--menuBase",
     ]);
-    expect(list()).toHaveClass([
+    expect(list()).toHaveClassName([
       "list--menuBase",
       "list--menu",
       "isBig--list--menuBase",
       "color--red--list--menuBase",
       "color--red--isBig--list--menuBase",
     ]);
-    expect(wrapper()).toHaveClass([
+    expect(wrapper()).toHaveClassName([
       "wrapper--menuBase",
       "wrapper--menu",
       "isBig--wrapper--menuBase",
@@ -2413,29 +2413,29 @@ describe("Tailwind Variants (TV) - Extends", () => {
       color: "red",
     });
 
-    expect(base()).toHaveClass(["base--menuBase", "base--menu"]);
-    expect(title()).toHaveClass([
+    expect(base()).toHaveClassName(["base--menuBase", "base--menu"]);
+    expect(title()).toHaveClassName([
       "title--menuBase",
       "title--menu",
       "isBig--title--menuBase",
       "color--red--title--menuBase",
       "color--red--isBig--title--menuBase",
     ]);
-    expect(item()).toHaveClass([
+    expect(item()).toHaveClassName([
       "item--menuBase",
       "item--menu",
       "isBig--item--menuBase",
       "color--red--item--menuBase",
       "color--red--isBig--item--menuBase",
     ]);
-    expect(list()).toHaveClass([
+    expect(list()).toHaveClassName([
       "list--menuBase",
       "list--menu",
       "isBig--list--menuBase",
       "color--red--list--menuBase",
       "color--red--isBig--list--menuBase",
     ]);
-    expect(wrapper()).toHaveClass([
+    expect(wrapper()).toHaveClassName([
       "wrapper--menuBase",
       "wrapper--menu",
       "isBig--wrapper--menuBase",
@@ -2471,8 +2471,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
 
     const { base, title } = menu();
 
-    expect(base()).toHaveClass(["menuBase", "menu"]);
-    expect(title()).toHaveClass(["title"]);
+    expect(base()).toHaveClassName(["menuBase", "menu"]);
+    expect(title()).toHaveClassName(["title"]);
   });
 
   test("should support multi-level extends", () => {
@@ -2502,8 +2502,8 @@ describe("Tailwind Variants (TV) - Extends", () => {
     const appButton = tv({ extend: themeButton });
     const button = tv({ extend: appButton });
 
-    expect(appButton()).toHaveClass("font-medium text-blue-500 opacity-50 bg-black");
-    expect(button()).toHaveClass("font-medium text-blue-500 opacity-50 bg-black");
+    expect(appButton()).toHaveClassName("font-medium text-blue-500 opacity-50 bg-black");
+    expect(button()).toHaveClassName("font-medium text-blue-500 opacity-50 bg-black");
   });
 });
 
@@ -2523,7 +2523,7 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       color: "red",
     });
 
-    expect(result).toHaveClass(["text-base", "text-red-500"]);
+    expect(result).toHaveClassName(["text-base", "text-red-500"]);
   });
 
   test("should support custom config", () => {
@@ -2552,7 +2552,7 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       size: "medium",
     });
 
-    expect(result).toHaveClass(["text-medium", "text-blue-500", "w-unit-4"]);
+    expect(result).toHaveClassName(["text-medium", "text-blue-500", "w-unit-4"]);
   });
 
   test("should support custom config", () => {
@@ -2600,6 +2600,6 @@ describe("Tailwind Variants (TV) - Tailwind Merge", () => {
       size: "medium",
     });
 
-    expect(result).toHaveClass(["text-medium", "text-blue-500", "w-unit-4"]);
+    expect(result).toHaveClassName(["text-medium", "text-blue-500", "w-unit-4"]);
   });
 });
