@@ -26,7 +26,7 @@ const config: Config = {
   /**
    * The glob patterns Jest uses to detect test files
    */
-  testMatch: ["**/?(*.)+(test|spec|e2e).[jt]s?(x)"],
+  testMatch: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
 
   /**
    * Configuration for transforming source files before testing
