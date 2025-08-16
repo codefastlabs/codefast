@@ -1,5 +1,3 @@
-import "@testing-library/jest-dom";
-
 function parseClasses(result: string | string[]): string[] {
   return [...(typeof result === "string" ? result.split(" ") : result)].sort();
 }
@@ -34,8 +32,10 @@ expect.extend({
   },
 });
 
-declare module "expect" {
-  interface Matchers<R> {
-    toHaveClassName: (expected: string | string[]) => R;
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toHaveClassName: (expected: string | string[]) => R;
+    }
   }
 }
