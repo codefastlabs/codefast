@@ -1,6 +1,6 @@
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import type { MergeConfig } from "@/config";
+import type { MergeConfig } from "./index";
 
 import { isEmptyObject } from "@/utils";
 
