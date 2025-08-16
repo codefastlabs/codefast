@@ -4,16 +4,11 @@ import globals from "globals";
 
 export const testEnvironment: Linter.Config[] = [
   {
-    files: [
-      "**/{*.{test,spec,e2e},test/**,tests/**,__tests__/**,__mocks__/**}.{js,mjs,cjs,ts,jsx,tsx}",
-    ],
+    files: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
     languageOptions: {
       globals: {
         ...globals.node,
         ...globals.jest,
-
-        suite: "readonly",
-        vi: "readonly",
       },
     },
   },
