@@ -186,23 +186,10 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
     expect(button({ size: "sm" })).toBe("px-4 py-2 rounded bg-blue-500 text-sm px-2 py-1");
   });
 
-  test("should not require tailwind-merge in bundle when twMerge is false", () => {
-    // This test verifies that the createTwMerge function is not called
-    // when twMerge is false. In a real bundle, this would mean
-    // tailwind-merge is not included.
-    const mockCreateTwMerge = jest.fn();
-
-    // Override require for this test
-    const originalRequire = require;
-
-    (globalThis as any).require = (module: string) => {
-      if (module === "./cn.js") {
-        return { createTwMerge: mockCreateTwMerge };
-      }
-
-      return originalRequire(module);
-    };
-
+  test("should work correctly when twMerge is false without executing merge logic", () => {
+    // This test verifies that when twMerge is false, the function works correctly
+    // and doesn't execute the tailwind-merge logic, even though the module
+    // may still be imported for type definitions.
     const button = tv(
       {
         base: "px-4 py-2",
@@ -212,12 +199,41 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    button();
+    // When twMerge is false, the function should work without executing merge logic
+    // The function should return the base classes as-is
+    expect(button()).toBe("px-4 py-2");
 
-    // createTwMerge should not be called when twMerge is false
-    expect(mockCreateTwMerge).not.toHaveBeenCalled();
+    // Test with additional classes to ensure they're appended without merging
+    expect(button({ class: "bg-blue-500" })).toBe("px-4 py-2 bg-blue-500");
+    expect(button({ className: "text-white" })).toBe("px-4 py-2 text-white");
+  });
 
-    // Restore original require
-    (globalThis as any).require = originalRequire;
+  test("should preserve conflicting classes when twMerge is false", () => {
+    // This test verifies that conflicting Tailwind classes are preserved
+    // when twMerge is false, demonstrating that no merging occurs
+    const button = tv(
+      {
+        base: "px-4 py-2",
+        variants: {
+          size: {
+            lg: "px-6 py-3",
+            sm: "px-2 py-1",
+          },
+        },
+      },
+      {
+        twMerge: false,
+      },
+    );
+
+    // Base should work normally
+    expect(button()).toBe("px-4 py-2");
+
+    // Variants should append classes without resolving conflicts
+    expect(button({ size: "sm" })).toBe("px-4 py-2 px-2 py-1");
+    expect(button({ size: "lg" })).toBe("px-4 py-2 px-6 py-3");
+
+    // Additional classes should be appended
+    expect(button({ class: "px-8 py-4", size: "sm" })).toBe("px-4 py-2 px-2 py-1 px-8 py-4");
   });
 });
