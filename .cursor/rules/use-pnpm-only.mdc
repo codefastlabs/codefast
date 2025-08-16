@@ -1,0 +1,30 @@
+# Use pnpm Only
+
+This project uses **pnpm** as the package manager. Always use `pnpm` commands instead of `npm`:
+
+## Package Management
+- ✅ Use `pnpm install` instead of `npm install`
+- ✅ Use `pnpm add <package>` instead of `npm install <package>`
+- ✅ Use `pnpm remove <package>` instead of `npm uninstall <package>`
+- ✅ Use `pnpm update` instead of `npm update`
+- ✅ Use `pnpm run <script>` instead of `npm run <script>`
+- ✅ Use `pnpm exec <command>` instead of `npm exec <command>`
+
+## Scripts
+- ✅ Use `pnpm dev` instead of `npm run dev`
+- ✅ Use `pnpm build` instead of `npm run build`
+- ✅ Use `pnpm test` instead of `npm test`
+- ✅ Use `pnpm lint` instead of `npm run lint`
+
+## Examples
+```bash
+# ❌ Don't use npm
+npm install
+npm run dev
+npm run build
+
+# ✅ Use pnpm instead
+pnpm install
+pnpm dev
+pnpm build
+```
