@@ -1,3 +1,5 @@
+import "@testing-library/jest-dom";
+
 function parseClasses(result: string | string[]): string[] {
   return [...(typeof result === "string" ? result.split(" ") : result)].sort();
 }
