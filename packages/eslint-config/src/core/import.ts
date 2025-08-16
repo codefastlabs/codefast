@@ -136,13 +136,22 @@ const errorImportRules: Linter.RulesRecord = {
     "error",
     {
       devDependencies: [
-        "**/{test,tests,__tests__,__mocks__}/**/*.{js,mjs,cjs,ts,jsx,tsx}",
-        "**/*.{test,spec,e2e}.{js,mjs,cjs,ts,tsx}",
-        "**/*.{setup,config}.{js,mjs,cjs,ts}",
+        // Tests (unit, integration)
+        "**/__tests__/**/*.?([mc])[jt]s?(x)",
+        "**/?(*.)+(spec|test).?([mc])[jt]s?(x)",
+
+        // Config & setup
+        "**/*.{setup,config}.?([mc])[jt]s",
+        "**/{config}/**/*.?([mc])[jt]s",
+
+        // E2E frameworks
         "**/{cypress,playwright}/**",
-        "**/*.{story,stories}.{ts,tsx}",
-        "**/{scripts,config}/**",
-        "**/*.mdx",
+
+        // Storybook
+        "**/*.{story,stories}.?([mc])[jt]s?(x)",
+
+        // Tooling scripts
+        "**/scripts/**/*.?([mc])[jt]s",
       ],
     },
   ],
