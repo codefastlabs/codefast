@@ -1,7 +1,23 @@
 import type { ClassNameValue as ClassValue } from "tailwind-merge";
+import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import { createTwMerge } from "@/cn";
 import { falsyToString, flatMergeArrays, isEmptyObject, isEqual, mergeObjects } from "@/utils";
+
+/**
+ * ----------------------------------------
+ * Utility Functions
+ * ----------------------------------------
+ */
+
+export const createTwMerge = (cachedTwMergeConfig: MergeConfig) => {
+  return (classes: string): string => {
+    const twMergeFn = isEmptyObject(cachedTwMergeConfig)
+      ? twMerge
+      : extendTailwindMerge(cachedTwMergeConfig);
+
+    return twMergeFn(classes);
+  };
+};
 
 /**
  * ----------------------------------------
