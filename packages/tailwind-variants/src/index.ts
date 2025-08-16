@@ -1,15 +1,9 @@
 import type { ClassNameValue as ClassValue } from "tailwind-merge";
 
-import type { TVConfig, TWMConfig } from "./config";
+import type { TVConfig, TWMConfig } from "@/config";
 
-import { createTwMerge } from "./cn";
-import {
-  falsyToString,
-  flatMergeArrays,
-  isEmptyObject,
-  isEqual,
-  mergeObjects,
-} from "./utils";
+import { createTwMerge } from "@/cn";
+import { falsyToString, flatMergeArrays, isEmptyObject, isEqual, mergeObjects } from "@/utils";
 
 /**
  * ----------------------------------------
@@ -22,7 +16,6 @@ export type ClassProp<V extends unknown = ClassValue> =
   | { class?: V; className?: never };
 
 type TVBaseName = "base";
-
 
 type TVSlots = Record<string, ClassValue> | undefined;
 
@@ -42,7 +35,6 @@ export type CnReturn = string | undefined;
 
 // compare if the value is true or array of values
 export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
-
 
 /**
  * ----------------------------------------------------------------------
@@ -119,7 +111,6 @@ export type TVDefaultVariants<
     | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
     | (K extends keyof V ? StringToBoolean<keyof V[K]> : never);
 };
-
 
 export type TVProps<
   V extends TVVariants<S>,
@@ -390,7 +381,12 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       : defaultVariantsProps;
 
   // save twMergeConfig to the cache
-  if (!isEmptyObject(config.twMergeConfig) && config.twMergeConfig && cachedTwMergeConfig && !isEqual(config.twMergeConfig as object, cachedTwMergeConfig as object)) {
+  if (
+    !isEmptyObject(config.twMergeConfig) &&
+    config.twMergeConfig &&
+    cachedTwMergeConfig &&
+    !isEqual(config.twMergeConfig as object, cachedTwMergeConfig as object)
+  ) {
     didTwMergeConfigChange = true;
     cachedTwMergeConfig = config.twMergeConfig;
   }
@@ -433,7 +429,6 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
         `The "compoundSlots" prop must be an array. Received: ${typeof compoundSlots}`,
       );
     }
-
 
     const getVariantValue = (variant: string, vrs = variants, slotProps: any = null): any => {
       const variantObj = vrs[variant];
@@ -676,7 +671,8 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
 };
 
 export function createTV(configProp: TVConfig): CreateTV {
-  return (options: any, config?: TVConfig) => tv(options, config ? mergeObjects(configProp, config) as TVConfig : configProp);
+  return (options: any, config?: TVConfig) =>
+    tv(options, config ? (mergeObjects(configProp, config) as TVConfig) : configProp);
 }
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
@@ -687,4 +683,13 @@ export type VariantProps<Component extends (...args: any) => any> = Omit<
 export { type ClassNameValue as ClassValue } from "tailwind-merge";
 
 // Re-export utility functions for testing
-export { falsyToString, flatArray, flatMergeArrays, isBoolean, isEmptyObject, isEqual, mergeObjects, removeExtraSpaces } from "./utils";
+export {
+  falsyToString,
+  flatArray,
+  flatMergeArrays,
+  isBoolean,
+  isEmptyObject,
+  isEqual,
+  mergeObjects,
+  removeExtraSpaces,
+} from "@/utils";

@@ -1,8 +1,8 @@
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import type { MergeConfig } from "./config";
+import type { MergeConfig } from "@/config";
 
-import { isEmptyObject } from "./utils";
+import { isEmptyObject } from "@/utils";
 
 export const createTwMerge = (cachedTwMergeConfig: MergeConfig) => {
   return (classes: string): string => {
