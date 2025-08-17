@@ -1,397 +1,182 @@
-import type { ClassNameValue as ClassValue } from "tailwind-merge";
+import type { ClassNameValue, ConfigExtension, DefaultClassGroupIds, DefaultThemeGroupIds } from "tailwind-merge";
+
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import { falsyToString, flatMergeArrays, isEmptyObject, isEqual, mergeObjects } from "@/utils";
-
-/**
- * ----------------------------------------
- * Utility Functions
- * ----------------------------------------
- */
-
-export const createTwMerge = (cachedTwMergeConfig: MergeConfig) => {
-  return (classes: string): string => {
-    const twMergeFn = isEmptyObject(cachedTwMergeConfig)
-      ? twMerge
-      : extendTailwindMerge(cachedTwMergeConfig);
-
-    return twMergeFn(classes);
-  };
-};
-
-/**
- * ----------------------------------------
- * Config Types
- * ----------------------------------------
- */
-
-import type { ConfigExtension } from "tailwind-merge";
-
-export type MergeConfig = ConfigExtension<string, string>;
-
-export interface TWMConfig {
-  /**
-   * Whether to merge the class names with `tailwind-merge` library.
-   * It's avoid to have duplicate tailwind classes. (Recommended)
-   * @see https://github.com/dcastil/tailwind-merge/blob/v2.2.0/README.md
-   * @default true
-   */
+// Types
+export interface TVConfig {
   twMerge?: boolean;
-  /**
-   * The config object for `tailwind-merge` library.
-   * @see https://github.com/dcastil/tailwind-merge/blob/v2.2.0/docs/configuration.md
-   */
-  twMergeConfig?: MergeConfig;
+  twMergeConfig?: ConfigExtension<DefaultClassGroupIds, DefaultThemeGroupIds>;
 }
 
-export type TVConfig = TWMConfig;
+export interface TVOptions {
+  base?: ClassNameValue;
+  compoundSlots?: {
+    class?: ClassNameValue;
+    className?: ClassNameValue;
+    slots: string[];
+    [key: string]: any;
+  }[];
+  compoundVariants?: {
+    class?: ClassNameValue;
+    className?: ClassNameValue;
+    [key: string]: any;
+  }[];
+  defaultVariants?: Record<string, any>;
+  extend?: {
+    base?: ClassNameValue;
+    variants?: Record<string, Record<string, any>>;
+    defaultVariants?: Record<string, any>;
+    compoundVariants?: {
+      class?: ClassNameValue;
+      className?: ClassNameValue;
+      [key: string]: any;
+    }[];
+    compoundSlots?: {
+      class?: ClassNameValue;
+      className?: ClassNameValue;
+      slots: string[];
+      [key: string]: any;
+    }[];
+    slots?: Record<string, ClassNameValue>;
+  };
+  slots?: Record<string, ClassNameValue>;
+  variants?: Record<string, Record<string, any>>;
+}
 
-/**
- * ----------------------------------------
- * Base Types
- * ----------------------------------------
- */
+// Utility functions
+export const falsyToString = (value: any): string => {
+  if (value === false) return "false";
 
-export type ClassProp<V extends unknown = ClassValue> =
-  | { class?: never; className?: V }
-  | { class?: V; className?: never };
+  if (value === true) return "true";
 
-type TVBaseName = "base";
+  if (value === 0) return "0";
 
-type TVSlots = Record<string, ClassValue> | undefined;
-
-/**
- * ----------------------------------------------------------------------
- * Utils
- * ----------------------------------------------------------------------
- */
-
-export type OmitUndefined<T> = T extends undefined ? never : T;
-
-export type StringToBoolean<T> = T extends "false" | "true" ? boolean : T;
-
-export type CnOptions = ClassValue[];
-
-export type CnReturn = string | undefined;
-
-// compare if the value is true or array of values
-export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
-
-/**
- * ----------------------------------------------------------------------
- * TV Types
- * ----------------------------------------------------------------------
- */
-
-type TVSlotsWithBase<S extends TVSlots, B extends ClassValue> = B extends undefined
-  ? keyof S
-  : keyof S | TVBaseName;
-
-type SlotsClassValue<S extends TVSlots, B extends ClassValue> = Partial<
-  Record<TVSlotsWithBase<S, B>, ClassValue>
->;
-
-type TVVariantsDefault<S extends TVSlots, B extends ClassValue> = S extends undefined
-  ? {}
-  : Record<
-      string,
-      Record<string, S extends TVSlots ? ClassValue | SlotsClassValue<S, B> : ClassValue>
-    >;
-
-export type TVVariants<
-  S extends TVSlots | undefined,
-  B extends ClassValue | undefined = undefined,
-  EV extends TVVariants<ES> | undefined = undefined,
-  ES extends TVSlots | undefined = undefined,
-> = EV extends undefined
-  ? TVVariantsDefault<S, B>
-  :
-      | {
-          [K in keyof EV]: {
-            [K2 in keyof EV[K]]: S extends TVSlots
-              ? ClassValue | SlotsClassValue<S, B>
-              : ClassValue;
-          };
-        }
-      | TVVariantsDefault<S, B>;
-
-export type TVCompoundVariants<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  B extends ClassValue,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
-> = ({
-  [K in keyof EV | keyof V]?:
-    | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
-    | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
-    | (K extends keyof V ? StringToBoolean<keyof V[K]>[] : never);
-} & ClassProp<ClassValue | SlotsClassValue<S, B>>)[];
-
-export type TVCompoundSlots<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  B extends ClassValue,
-> = (V extends undefined
-  ? {
-      slots: TVSlotsWithBase<S, B>[];
-    } & ClassProp
-  : {
-      slots: TVSlotsWithBase<S, B>[];
-    } & {
-      [K in keyof V]?: StringToBoolean<keyof V[K]> | StringToBoolean<keyof V[K]>[];
-    } & ClassProp)[];
-
-export type TVDefaultVariants<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
-> = {
-  [K in keyof EV | keyof V]?:
-    | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
-    | (K extends keyof V ? StringToBoolean<keyof V[K]> : never);
+  return value;
 };
 
-export type TVProps<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
-> = EV extends undefined
-  ? V extends undefined
-    ? ClassProp
-    : {
-        [K in keyof V]?: StringToBoolean<keyof V[K]> | undefined;
-      } & ClassProp
-  : V extends undefined
-    ? {
-        [K in keyof EV]?: StringToBoolean<keyof EV[K]> | undefined;
-      } & ClassProp
-    : {
-        [K in keyof EV | keyof V]?:
-          | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
-          | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
-          | undefined;
-      } & ClassProp;
+export const isEmptyObject = (obj: any): boolean => {
+  if (!obj || typeof obj !== "object") return true;
 
-export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extends object
-  ? (keyof V)[]
-  : undefined;
+  return Object.keys(obj).length === 0;
+};
 
-export interface TVReturnProps<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  B extends ClassValue,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
-  // @ts-expect-error
-  E extends TVReturnType = undefined,
-> {
-  base: B;
-  compoundSlots: TVCompoundSlots<V, S, B>;
-  compoundVariants: TVCompoundVariants<V, S, B, EV, ES>;
-  defaultVariants: TVDefaultVariants<V, S, EV, ES>;
-  extend: E;
-  slots: S;
-  variantKeys: TVVariantKeys<V, S>;
-  variants: V;
-}
+export const isEqual = (obj1: any, obj2: any): boolean => {
+  if (obj1 === obj2) return true;
 
-type HasSlots<S extends TVSlots, ES extends TVSlots> = S extends undefined
-  ? ES extends undefined
-    ? false
-    : true
-  : true;
+  if (!obj1 || !obj2) return false;
 
-export type TVReturnType<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  B extends ClassValue,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
-  // @ts-expect-error
-  E extends TVReturnType = undefined,
-> = ((props?: TVProps<V, S, EV, ES>) => HasSlots<S, ES> extends true
-  ? {
-      [K in keyof (ES extends undefined ? {} : ES)]: (slotProps?: TVProps<V, S, EV, ES>) => string;
-    } & {
-      [K in keyof (S extends undefined ? {} : S)]: (slotProps?: TVProps<V, S, EV, ES>) => string;
-    } & Record<TVSlotsWithBase<{}, B>, (slotProps?: TVProps<V, S, EV, ES>) => string>
-  : string) &
-  TVReturnProps<V, S, B, EV, ES, E>;
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
 
-export type TV = <
-  V extends TVVariants<S, B, EV>,
-  CV extends TVCompoundVariants<V, S, B, EV, ES>,
-  DV extends TVDefaultVariants<V, S, EV, ES>,
-  B extends ClassValue = undefined,
-  S extends TVSlots = undefined,
-  // @ts-expect-error
-  E extends TVReturnType = TVReturnType<
-    V,
-    S,
-    B,
-    // @ts-expect-error
-    EV extends undefined ? {} : EV,
-    // @ts-expect-error
-    ES extends undefined ? {} : ES
-  >,
-  EV extends TVVariants<ES, B, E["variants"], ES> = E["variants"],
-  ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
->(
-  options: {
-    /**
-     * Extend allows for easy composition of components.
-     * @see https://www.tailwind-variants.org/docs/composing-components
-     */
-    extend?: E;
-    /**
-     * Base allows you to set a base class for a component.
-     */
-    base?: B;
-    /**
-     * Slots allow you to separate a component into multiple parts.
-     * @see https://www.tailwind-variants.org/docs/slots
-     */
-    slots?: S;
-    /**
-     * Variants allow you to create multiple versions of the same component.
-     * @see https://www.tailwind-variants.org/docs/variants#adding-variants
-     */
-    variants?: V;
-    /**
-     * Compound variants allow you to apply classes to multiple variants at once.
-     * @see https://www.tailwind-variants.org/docs/variants#compound-variants
-     */
-    compoundVariants?: CV;
-    /**
-     * Compound slots allow you to apply classes to multiple slots at once.
-     */
-    compoundSlots?: TVCompoundSlots<V, S, B>;
-    /**
-     * Default variants allow you to set default variants for a component.
-     * @see https://www.tailwind-variants.org/docs/variants#default-variants
-     */
-    defaultVariants?: DV;
-  },
-  /**
-   * The config object allows you to modify the default configuration.
-   * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
-   */
-  config?: TVConfig,
-) => TVReturnType<V, S, B, EV, ES, E>;
+  if (keys1.length !== keys2.length) return false;
 
-export type CreateTV = <
-  V extends TVVariants<S, B, EV>,
-  CV extends TVCompoundVariants<V, S, B, EV, ES>,
-  DV extends TVDefaultVariants<V, S, EV, ES>,
-  B extends ClassValue = undefined,
-  S extends TVSlots = undefined,
-  // @ts-expect-error
-  E extends TVReturnType = TVReturnType<
-    V,
-    S,
-    B,
-    // @ts-expect-error
-    EV extends undefined ? {} : EV,
-    // @ts-expect-error
-    ES extends undefined ? {} : ES
-  >,
-  EV extends TVVariants<ES, B, E["variants"], ES> = E["variants"],
-  ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
->(
-  options: {
-    /**
-     * Extend allows for easy composition of components.
-     * @see https://www.tailwind-variants.org/docs/composing-components
-     */
-    extend?: E;
-    /**
-     * Base allows you to set a base class for a component.
-     */
-    base?: B;
-    /**
-     * Slots allow you to separate a component into multiple parts.
-     * @see https://www.tailwind-variants.org/docs/slots
-     */
-    slots?: S;
-    /**
-     * Variants allow you to create multiple versions of the same component.
-     * @see https://www.tailwind-variants.org/docs/variants#adding-variants
-     */
-    variants?: V;
-    /**
-     * Compound variants allow you to apply classes to multiple variants at once.
-     * @see https://www.tailwind-variants.org/docs/variants#compound-variants
-     */
-    compoundVariants?: CV;
-    /**
-     * Compound slots allow you to apply classes to multiple slots at once.
-     */
-    compoundSlots?: TVCompoundSlots<V, S, B>;
-    /**
-     * Default variants allow you to set default variants for a component.
-     * @see https://www.tailwind-variants.org/docs/variants#default-variants
-     */
-    defaultVariants?: DV;
-  },
-  /**
-   * The config object allows you to modify the default configuration.
-   * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
-   */
-  config?: TVConfig,
-) => TVReturnType<V, S, B, EV, ES, E>;
+  return keys1.every((key) => obj1[key] === obj2[key]);
+};
 
+export const flat = (arr: any[], target: any[]): void => {
+  for (const el of arr) {
+    if (Array.isArray(el)) {
+      flat(el, target);
+    } else if (el) {
+      target.push(el);
+    }
+  }
+};
+
+export const flatMergeArrays = (...arrays: any[]): any[] => {
+  const result: any[] = [];
+
+  flat(arrays, result);
+
+  return result.filter(Boolean);
+};
+
+export const mergeObjects = (obj1: any, obj2: any): any => {
+  const result: any = {};
+
+  for (const key in obj1) {
+    const val1 = obj1[key];
+
+    if (key in obj2) {
+      const val2 = obj2[key];
+
+      if (Array.isArray(val1) || Array.isArray(val2)) {
+        result[key] = flatMergeArrays(val2, val1);
+      } else if (typeof val1 === "object" && typeof val2 === "object" && val1 && val2) {
+        result[key] = mergeObjects(val1, val2);
+      } else {
+        result[key] = `${val2} ${val1}`;
+      }
+    } else {
+      result[key] = val1;
+    }
+  }
+
+  for (const key in obj2) {
+    if (!(key in obj1)) {
+      result[key] = obj2[key];
+    }
+  }
+
+  return result;
+};
+
+export const SPACE_REGEX = /\s+/g;
+
+export const removeExtraSpaces = (str: string): string => {
+  if (!str || typeof str !== "string") return str;
+
+  return str.replace(SPACE_REGEX, " ").trim();
+};
+
+// Default config
 export const defaultConfig: TVConfig = {
   twMerge: true,
   twMergeConfig: {},
 };
 
-export const cnBase = <T extends CnOptions>(...classes: T): CnReturn => {
-  const result: (string | undefined)[] = [];
-
-  flat(classes, result);
-  let str = "";
-
-  for (const element of result) {
-    if (element) {
-      if (str) str += " ";
-
-      str += element;
-    }
+// Simple twMerge factory
+export const createTwMerge = (config: ConfigExtension<DefaultClassGroupIds, DefaultThemeGroupIds> = {}) => {
+  if (Object.keys(config).length === 0) {
+    return twMerge;
   }
 
-  return str || undefined;
+  return extendTailwindMerge(config);
 };
 
-function flat(arr: any[], target: any[]): void {
-  for (const el of arr) {
-    if (Array.isArray(el)) flat(el, target);
-    else if (el) target.push(el);
-  }
-}
+// Base class name concatenation
+export const cnBase = (...classes: ClassNameValue[]): string | undefined => {
+  const result: any[] = [];
 
-let cachedTwMerge: ((classes: string) => string) | null = null;
-let cachedTwMergeConfig: any = {};
-let didTwMergeConfigChange = false;
+  flat(classes, result);
+
+  const filtered = result.filter(Boolean);
+
+  return filtered.length > 0 ? filtered.join(" ") : undefined;
+};
+
+// Memoized twMerge with config
+let memoizedTwMerge: null | ReturnType<typeof createTwMerge> = null;
+let lastConfig: ConfigExtension<DefaultClassGroupIds, DefaultThemeGroupIds> = {};
 
 export const cn =
-  <T extends CnOptions>(...classes: T) =>
-  (config?: TWMConfig): CnReturn => {
-    const base = cnBase(...classes);
+  (...classes: ClassNameValue[]) =>
+  (config: TVConfig) => {
+    const base = cnBase(classes);
 
-    if (!base || !config?.twMerge) return base;
+    if (!base || !config.twMerge) return base;
 
-    if (!cachedTwMerge || didTwMergeConfigChange) {
-      didTwMergeConfigChange = false;
-      cachedTwMerge = createTwMerge(cachedTwMergeConfig);
+    // Create new twMerge function only when config changes
+    if (!memoizedTwMerge || !isEqual(config.twMergeConfig, lastConfig)) {
+      memoizedTwMerge = createTwMerge(config.twMergeConfig);
+      lastConfig = config.twMergeConfig || {};
     }
 
-    return cachedTwMerge(base) || undefined;
+    return memoizedTwMerge(base) || undefined;
   };
 
-const joinObjects = (obj1: any, obj2: any): any => {
+// Join objects utility
+export const joinObjects = (obj1: any, obj2: any): any => {
   for (const key in obj2) {
     obj1[key] = key in obj1 ? cnBase(obj1[key], obj2[key]) : obj2[key];
   }
@@ -399,7 +184,8 @@ const joinObjects = (obj1: any, obj2: any): any => {
   return obj1;
 };
 
-export const tv: TV = (options: any, configProp?: TVConfig): any => {
+// Main TV function
+export const tv = (options: TVOptions, configProp?: TVConfig) => {
   const {
     compoundSlots = [],
     compoundVariants: compoundVariantsProps = [],
@@ -421,27 +207,14 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       ? { ...extend.defaultVariants, ...defaultVariantsProps }
       : defaultVariantsProps;
 
-  // save twMergeConfig to the cache
-  if (
-    !isEmptyObject(config.twMergeConfig) &&
-    config.twMergeConfig &&
-    cachedTwMergeConfig &&
-    !isEqual(config.twMergeConfig as object, cachedTwMergeConfig as object)
-  ) {
-    didTwMergeConfigChange = true;
-    cachedTwMergeConfig = config.twMergeConfig;
-  }
-
   const isExtendedSlotsEmpty = isEmptyObject(extend?.slots);
   const componentSlots = isEmptyObject(slotProps)
     ? {}
     : {
-        // add "base" to the slots object
         base: cnBase(options?.base, isExtendedSlotsEmpty && extend?.base),
         ...slotProps,
       };
 
-  // merge slots with the "extended" slots
   const slots = isExtendedSlotsEmpty
     ? componentSlots
     : joinObjects(
@@ -449,12 +222,11 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
         isEmptyObject(componentSlots) ? { base: options?.base } : componentSlots,
       );
 
-  // merge compoundVariants with the "extended" compoundVariants
   const compoundVariants = isEmptyObject(extend?.compoundVariants)
     ? compoundVariantsProps
     : flatMergeArrays(extend?.compoundVariants, compoundVariantsProps);
 
-  const component = (props?: any): any => {
+  const component = (props: any) => {
     if (isEmptyObject(variants) && isEmptyObject(slotProps) && isExtendedSlotsEmpty) {
       return cn(base, props?.class, props?.className)(config);
     }
@@ -471,7 +243,11 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       );
     }
 
-    const getVariantValue = (variant: string, vrs = variants, slotProps: any = null): any => {
+    const getVariantValue = (
+      variant: string,
+      vrs: any = variants,
+      slotProps: any = null,
+    ) => {
       const variantObj = vrs[variant];
 
       if (!variantObj || isEmptyObject(variantObj)) {
@@ -484,16 +260,14 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
 
       const variantKey = falsyToString(variantProp);
 
-      const defaultVariantProp = defaultVariants?.[variant];
+      const key = variantKey != null ? variantKey : falsyToString(defaultVariants?.[variant]);
+      const value = variantObj[key || "false"];
 
-      // Use the variant key, or fall back to the default variant
-      const key = variantKey == null ? falsyToString(defaultVariantProp) : variantKey;
-
-      return variantObj[key || "false"];
+      return value;
     };
 
-    const getVariantClassNames = (): any[] => {
-      if (!variants) return [];
+    const getVariantClassNames = () => {
+      if (!variants) return null;
 
       const keys = Object.keys(variants);
       const result: any[] = [];
@@ -507,8 +281,8 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       return result;
     };
 
-    const getVariantClassNamesBySlotKey = (slotKey: string, slotProps: any): any[] => {
-      if (!variants || typeof variants !== "object") return [];
+    const getVariantClassNamesBySlotKey = (slotKey: string, slotProps: any) => {
+      if (!variants || typeof variants !== "object") return null;
 
       const result: any[] = [];
 
@@ -518,7 +292,9 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
         const value =
           slotKey === "base" && typeof variantValue === "string"
             ? variantValue
-            : variantValue?.[slotKey];
+            : variantValue && typeof variantValue === "object" && slotKey in variantValue
+              ? variantValue[slotKey]
+              : undefined;
 
         if (value) result.push(value);
       }
@@ -534,30 +310,22 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       if (value !== undefined) propsWithoutUndefined[prop] = value;
     }
 
-    const getCompleteProps = (key: null | string, slotProps: any): any => {
-      const initialProp =
-        typeof props?.[key!] === "object"
-          ? {
-              [key!]: props[key!]?.initial,
-            }
-          : {};
-
+    const getCompleteProps = (slotProps: any) => {
       return {
         ...defaultVariants,
         ...propsWithoutUndefined,
-        ...initialProp,
         ...slotProps,
       };
     };
 
-    const getCompoundVariantsValue = (cv: any[] = [], slotProps: any): any[] => {
+    const getCompoundVariantsValue = (cv: any[] = [], slotProps: any) => {
       const result: any[] = [];
       const cvLength = cv.length;
 
       for (let i = 0; i < cvLength; i++) {
         const { class: tvClass, className: tvClassName, ...compoundVariantOptions } = cv[i];
         let isValid = true;
-        const completeProps = getCompleteProps(null, slotProps);
+        const completeProps = getCompleteProps(slotProps);
 
         for (const key in compoundVariantOptions) {
           const value = compoundVariantOptions[key];
@@ -592,7 +360,7 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       return result;
     };
 
-    const getCompoundVariantClassNamesBySlot = (slotProps: any): any => {
+    const getCompoundVariantClassNamesBySlot = (slotProps: any) => {
       const compoundClassNames = getCompoundVariantsValue(compoundVariants, slotProps);
 
       if (!Array.isArray(compoundClassNames)) return compoundClassNames;
@@ -613,11 +381,11 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       return result;
     };
 
-    const getCompoundSlotClassNameBySlot = (slotProps: any): any => {
+    const getCompoundSlotClassNameBySlot = (slotProps: any) => {
       if (compoundSlots.length === 0) return null;
 
       const result: any = {};
-      const completeProps = getCompleteProps(null, slotProps);
+      const completeProps = getCompleteProps(slotProps);
 
       for (const {
         class: slotClass,
@@ -656,7 +424,6 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       return result;
     };
 
-    // with slots
     if (!isEmptyObject(slotProps) || !isExtendedSlotsEmpty) {
       const slotsFns: any = {};
 
@@ -683,54 +450,35 @@ export const tv: TV = (options: any, configProp?: TVConfig): any => {
       return slotsFns;
     }
 
-    // normal variants
     return cn(
       base,
       getVariantClassNames(),
-      getCompoundVariantsValue(compoundVariants, props),
+      getCompoundVariantsValue(compoundVariants, null),
       props?.class,
       props?.className,
     )(config);
   };
 
-  const getVariantKeys = (): string[] | undefined => {
+  const getVariantKeys = () => {
     if (!variants || typeof variants !== "object") return;
 
     return Object.keys(variants);
   };
 
-  (component as any).variantKeys = getVariantKeys();
-  (component as any).extend = extend;
-  (component as any).base = base;
-  (component as any).slots = slots;
-  (component as any).variants = variants;
-  (component as any).defaultVariants = defaultVariants;
-  (component as any).compoundSlots = compoundSlots;
-  (component as any).compoundVariants = compoundVariants;
+  component.variantKeys = getVariantKeys();
+  component.extend = extend;
+  component.base = base;
+  component.slots = slots;
+  component.variants = variants;
+  component.defaultVariants = defaultVariants;
+  component.compoundSlots = compoundSlots;
+  component.compoundVariants = compoundVariants;
 
   return component;
 };
 
-export function createTV(configProp: TVConfig): CreateTV {
-  return (options: any, config?: TVConfig) =>
-    tv(options, config ? (mergeObjects(configProp, config) as TVConfig) : configProp);
-}
-
-export type VariantProps<Component extends (...args: any) => any> = Omit<
-  OmitUndefined<Parameters<Component>[0]>,
-  "class" | "className"
->;
-
-export { type ClassNameValue as ClassValue } from "tailwind-merge";
-
-// Re-export utility functions for testing
-export {
-  falsyToString,
-  flatArray,
-  flatMergeArrays,
-  isBoolean,
-  isEmptyObject,
-  isEqual,
-  mergeObjects,
-  removeExtraSpaces,
-} from "@/utils";
+// Factory function for creating TV with default config
+export const createTV = (configProp: TVConfig) => {
+  return (options: TVOptions, config?: TVConfig) =>
+    tv(options, config ? mergeObjects(configProp, config) : configProp);
+};

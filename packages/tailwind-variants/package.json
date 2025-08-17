@@ -1,7 +1,7 @@
 {
   "name": "@codefast/tailwind-variants",
   "version": "0.3.7-canary.0",
-  "description": "Tailwind CSS variants utilities with enhanced functionality",
+  "description": "Tailwind CSS variants utilities with enhanced functionality and advanced type safety",
   "keywords": [
     "tailwind",
     "tailwindcss",
@@ -10,7 +10,10 @@
     "utilities",
     "typescript",
     "monorepo",
-    "styling"
+    "styling",
+    "type-safe",
+    "variants",
+    "composition"
   ],
   "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/tailwind-variants#readme",
   "bugs": {
