@@ -29,6 +29,11 @@ const config: Config = {
   testMatch: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
 
   /**
+   * The glob patterns Jest uses to ignore test files
+   */
+  testPathIgnorePatterns: ["<rootDir>/dist/"],
+
+  /**
    * An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
    */
   testPathIgnorePatterns: ["/node_modules/", "/dist/", "<rootDir>/src/environments/test.ts"],

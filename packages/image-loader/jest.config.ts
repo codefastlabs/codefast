@@ -29,6 +29,11 @@ const config: Config = {
   testMatch: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
 
   /**
+   * The glob patterns Jest uses to ignore test files
+   */
+  testPathIgnorePatterns: ["<rootDir>/dist/"],
+
+  /**
    * Configuration for transforming source files before testing
    * Uses `@swc/jest` to quickly transform JavaScript/TypeScript files
    */
