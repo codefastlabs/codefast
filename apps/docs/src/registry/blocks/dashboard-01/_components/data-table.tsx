@@ -453,7 +453,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
                       checked={column.getIsVisible()}
                       className="capitalize"
                       onCheckedChange={(value) => {
-                        column.toggleVisibility(Boolean(value));
+                        column.toggleVisibility(value);
                       }}
                     >
                       {column.id}
