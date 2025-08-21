@@ -22,8 +22,8 @@ import { isEmptyObject } from "./utils";
  * @returns A function that accepts class name inputs and resolves conflicts based on the extended or default configurations.
  */
 export const createTwMerge = <
-  AdditionalClassGroupIds extends string = never,
-  AdditionalThemeGroupIds extends string = never,
+  AdditionalClassGroupIds extends string = string,
+  AdditionalThemeGroupIds extends string = string,
 >(
   config: ConfigExtension<
     AdditionalClassGroupIds | DefaultClassGroupIds,

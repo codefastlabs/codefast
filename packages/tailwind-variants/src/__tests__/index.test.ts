@@ -2639,8 +2639,7 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    // When twMerge is false, all classes should be preserved
-    // including conflicting ones like px-4 and px-2
+    // When twMerge is false, all classes should be preserved, including conflicting ones like px-4 and px-2
     expect(button()).toBe("px-4 px-2 py-2 py-4 bg-blue-500 bg-red-500");
   });
 
