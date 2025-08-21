@@ -29,14 +29,6 @@ export type OmitUndefined<T> = T extends undefined ? never : T;
 
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
-export type CnOptions = ClassNameValue[];
-
-export type CnReturn = string | undefined;
-
-export declare const cnBase: <T extends CnOptions>(...classes: T) => CnReturn;
-
-export declare const cn: <T extends CnOptions>(...classes: T) => (config?: TVConfig) => CnReturn;
-
 // compare if the value is true or array of values
 export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
 
@@ -326,6 +318,14 @@ export type CreateTV = {
   ): TVReturnType<V, S, B, EV, ES, E>;
 };
 
+export type TWMergeConfig<
+  AdditionalClassGroupIds extends string = string,
+  AdditionalThemeGroupIds extends string = string,
+> = ConfigExtension<
+  AdditionalClassGroupIds | DefaultClassGroupIds,
+  AdditionalThemeGroupIds | DefaultThemeGroupIds
+>;
+
 /**
  * Represents the configuration options for a utility that merges Tailwind CSS classes
  * and optionally extends its functionality with additional groups or themes.
@@ -338,10 +338,7 @@ export type TVConfig<
   AdditionalThemeGroupIds extends string = string,
 > = {
   twMerge?: boolean;
-  twMergeConfig?: ConfigExtension<
-    AdditionalClassGroupIds | DefaultClassGroupIds,
-    AdditionalThemeGroupIds | DefaultThemeGroupIds
-  >;
+  twMergeConfig?: TWMergeConfig<AdditionalClassGroupIds, AdditionalThemeGroupIds>;
   responsiveVariants?: boolean | string[];
 };
 

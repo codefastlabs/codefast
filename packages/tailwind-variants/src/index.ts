@@ -1,4 +1,4 @@
-import type { ClassNameValue, TVConfig, TV, CnOptions, CnReturn } from "./types";
+import { ClassNameValue, TVConfig, TV, CreateTV, TWMergeConfig } from "@/types";
 import {
   isEqual,
   isEmptyObject,
@@ -6,8 +6,9 @@ import {
   mergeObjects,
   removeExtraSpaces,
   flatMergeArrays,
-} from "./utils";
-import { createTwMerge } from "./cn";
+  flat,
+} from "@/utils";
+import { createTwMerge } from "@/cn";
 
 export const defaultConfig: TVConfig = {
   twMerge: true,
@@ -15,7 +16,7 @@ export const defaultConfig: TVConfig = {
   responsiveVariants: false,
 };
 
-export const cnBase = (...classes: CnOptions): CnReturn => {
+export const cnBase = (...classes: ClassNameValue[]): string | undefined => {
   const result: string[] = [];
 
   flat(classes, result);
@@ -31,25 +32,18 @@ export const cnBase = (...classes: CnOptions): CnReturn => {
   return str || undefined;
 };
 
-function flat(arr: unknown[], target: string[]): void {
-  for (let i = 0; i < arr.length; i++) {
-    const el = arr[i];
-
-    if (Array.isArray(el)) flat(el, target);
-    else if (el) target.push(String(el));
-  }
-}
-
 let cachedTwMerge: ((...classes: ClassNameValue[]) => string) | null = null;
-let cachedTwMergeConfig: any = {};
+let cachedTwMergeConfig: TWMergeConfig = {};
 let didTwMergeConfigChange = false;
 
 export const cn =
-  (...classes: CnOptions) =>
-  (config?: TVConfig): CnReturn => {
+  (...classes: ClassNameValue[]) =>
+  (config?: TVConfig): string | undefined => {
     const base = cnBase(classes);
 
-    if (!base || !config?.twMerge) return base;
+    if (!base || !config?.twMerge) {
+      return base;
+    }
 
     if (!cachedTwMerge || didTwMergeConfigChange) {
       didTwMergeConfigChange = false;
@@ -102,7 +96,7 @@ export const tv: TV = (options, configProp) => {
   const isExtendedSlotsEmpty = isEmptyObject(extend?.slots);
   const componentSlots = !isEmptyObject(slotProps)
     ? {
-        // add "base" to the slots object
+        // add "base" to the "slots" object
         base: cnBase(options?.base, isExtendedSlotsEmpty && extend?.base),
         ...slotProps,
       }
@@ -490,9 +484,8 @@ export const tv: TV = (options, configProp) => {
   return component as any;
 };
 
-export const createTV = (configProp: any) => {
-  return (options: any, config?: any) =>
-    tv(options, config ? mergeObjects(configProp, config) : configProp);
+export const createTV = (configProp: TVConfig): CreateTV => {
+  return (options, config) => tv(options, config ? mergeObjects(configProp, config) : configProp);
 };
 
 // Export types
@@ -501,8 +494,6 @@ export type {
   ClassProp,
   OmitUndefined,
   StringToBoolean,
-  CnOptions,
-  CnReturn,
   isTrueOrArray,
   WithInitialScreen,
   TVVariants,
@@ -518,4 +509,4 @@ export type {
   CreateTV,
   TVConfig,
   VariantProps,
-} from "./types";
+} from "@/types";
