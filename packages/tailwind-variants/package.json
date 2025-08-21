@@ -53,7 +53,7 @@
     "build": "rslib build",
     "clean": "rm -rf dist",
     "dev": "rslib build --watch",
-    "lint": "TIMING=1 eslint --max-warnings 0 .",
+    "lint": "TIMING=1 eslint . --max-warnings 0",
     "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
     "test": "jest",
     "test:coverage": "jest --coverage",

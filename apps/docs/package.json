@@ -7,7 +7,7 @@
     "check-types": "tsc --noEmit",
     "clean": "rm -rf .next",
     "dev": "next dev --turbopack",
-    "lint": "TIMING=1 eslint --max-warnings 0 .",
+    "lint": "TIMING=1 eslint . --max-warnings 0",
     "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
     "start": "next start"
   },
