@@ -1,4 +1,4 @@
-import { ClassNameValue, TVConfig, TV, CreateTV, TWMergeConfig } from "@/types";
+import { ClassNameValue, Config, TV, TWMergeConfig } from "@/types";
 import {
   isEqual,
   isEmptyObject,
@@ -10,7 +10,7 @@ import {
 } from "@/utils";
 import { createTwMerge } from "@/cn";
 
-export const defaultConfig: TVConfig = {
+export const defaultConfig: Config = {
   twMerge: true,
   twMergeConfig: {},
   responsiveVariants: false,
@@ -38,7 +38,7 @@ let didTwMergeConfigChange = false;
 
 export const cn =
   (...classes: ClassNameValue[]) =>
-  (config?: TVConfig): string | undefined => {
+  (config?: Config): string | undefined => {
     const base = cnBase(classes);
 
     if (!base || !config?.twMerge) {
@@ -472,41 +472,40 @@ export const tv: TV = (options, configProp) => {
     return Object.keys(variants);
   };
 
-  (component as any).variantKeys = getVariantKeys();
   (component as any).extend = extend;
   (component as any).base = base;
   (component as any).slots = slots;
   (component as any).variants = variants;
   (component as any).defaultVariants = defaultVariants;
-  (component as any).compoundSlots = compoundSlots;
   (component as any).compoundVariants = compoundVariants;
+  (component as any).compoundSlots = compoundSlots;
+  (component as any).variantKeys = getVariantKeys();
 
   return component as any;
 };
 
-export const createTV = (configProp: TVConfig): CreateTV => {
+export const createTV = (configProp: Config): TV => {
   return (options, config) => tv(options, config ? mergeObjects(configProp, config) : configProp);
 };
 
 // Export types
 export type {
   ClassNameValue,
-  ClassProp,
+  ClassNameProp,
   OmitUndefined,
   StringToBoolean,
   isTrueOrArray,
   WithInitialScreen,
-  TVVariants,
-  TVCompoundVariants,
-  TVCompoundSlots,
-  TVDefaultVariants,
-  TVScreenPropsValue,
-  TVProps,
-  TVVariantKeys,
-  TVReturnProps,
-  TVReturnType,
+  Variants,
+  CompoundVariants,
+  CompoundSlots,
+  DefaultVariants,
+  ScreenPropsValue,
+  Props,
+  VariantKeys,
+  ReturnProps,
+  ReturnType,
   TV,
-  CreateTV,
-  TVConfig,
+  Config,
   VariantProps,
 } from "@/types";
