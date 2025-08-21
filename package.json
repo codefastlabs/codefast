@@ -18,7 +18,7 @@
     "deps:licenses": "pnpm licenses list",
     "deps:outdated": "pnpm outdated --recursive",
     "deps:reinstall": "pnpm clean && pnpm deps:install && pnpm build:packages",
-    "deps:update": "pnpm update --latest --interactive --recursive",
+    "deps:upgrade": "pnpm up --latest --interactive --recursive",
     "dev": "pnpm clean:next && turbo run dev --concurrency 20",
     "dev:docs": "pnpm clean:next && turbo run dev --concurrency 20 --filter=@app/docs...",
     "format": "prettier --write .",
