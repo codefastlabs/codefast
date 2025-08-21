@@ -1,77 +1,42 @@
+import type {
+  ClassNameValue,
+  ConfigExtension,
+  DefaultClassGroupIds,
+  DefaultThemeGroupIds,
+} from "tailwind-merge";
+
+import { extendTailwindMerge, twMerge } from "tailwind-merge";
+
 import { isEmptyObject } from "./utils";
 
-let twMergeModule = null;
-let loadingPromise = null;
+/**
+ * Creates a tailored class name merging function based on the provided configuration.
+ *
+ * This utility allows you to extend or override the default Tailwind class group and theme group configurations
+ * to produce a customized merging function. Depending on whether the configuration is empty, it uses either
+ * the default merging logic or an extended one based on the provided configuration.
+ *
+ * @typeParam AdditionalClassGroupIds - An optional type parameter to define additional class group identifiers that extend the default ones.
+ * @typeParam AdditionalThemeGroupIds - An optional type parameter to define additional theme group identifiers that extend the default ones.
+ * @param config - An object that extends the default class and theme group configurations, determining how class name conflicts are resolved.
+ * @returns A function that accepts class name inputs and resolves conflicts based on the extended or default configurations.
+ */
+export const createTwMerge = <
+  AdditionalClassGroupIds extends string = never,
+  AdditionalThemeGroupIds extends string = never,
+>(
+  config: ConfigExtension<
+    AdditionalClassGroupIds | DefaultClassGroupIds,
+    AdditionalThemeGroupIds | DefaultThemeGroupIds
+  >,
+): ((...classes: ClassNameValue[]) => string) => {
+  // Determine which merge function to use based on config
+  const mergeFunction = isEmptyObject(config) ? twMerge : extendTailwindMerge(config);
 
-const loadTwMerge = async () => {
-  if (twMergeModule) return twMergeModule;
-  if (loadingPromise) return loadingPromise;
-
-  loadingPromise = import("tailwind-merge")
-    .then((module) => {
-      twMergeModule = module;
-
-      return module;
-    })
-    .catch(() => {
-      // If tailwind-merge is not installed, return null
-      return null;
-    });
-
-  return loadingPromise;
-};
-
-export const createTwMerge = (cachedTwMergeConfig) => {
-  // Return a function that will lazily load and use twMerge
-  return (classes) => {
-    // If tailwind-merge was already loaded and failed, just return the classes
-    if (loadingPromise && !twMergeModule) {
-      return classes;
-    }
-
-    // Try to load synchronously if already loaded
-    if (twMergeModule) {
-      const { twMerge: twMergeBase, extendTailwindMerge } = twMergeModule;
-      const twMergeFn = isEmptyObject(cachedTwMergeConfig)
-        ? twMergeBase
-        : extendTailwindMerge({
-            ...cachedTwMergeConfig,
-            extend: {
-              theme: cachedTwMergeConfig.theme,
-              classGroups: cachedTwMergeConfig.classGroups,
-              conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
-              conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
-              ...cachedTwMergeConfig.extend,
-            },
-          });
-
-      return twMergeFn(classes);
-    }
-
-    // Try to require synchronously for CommonJS environments
-    try {
-      const { twMerge: twMergeBase, extendTailwindMerge } = require("tailwind-merge");
-
-      twMergeModule = { twMerge: twMergeBase, extendTailwindMerge };
-      const twMergeFn = isEmptyObject(cachedTwMergeConfig)
-        ? twMergeBase
-        : extendTailwindMerge({
-            ...cachedTwMergeConfig,
-            extend: {
-              theme: cachedTwMergeConfig.theme,
-              classGroups: cachedTwMergeConfig.classGroups,
-              conflictingClassGroupModifiers: cachedTwMergeConfig.conflictingClassGroupModifiers,
-              conflictingClassGroups: cachedTwMergeConfig.conflictingClassGroups,
-              ...cachedTwMergeConfig.extend,
-            },
-          });
-
-      return twMergeFn(classes);
-    } catch {
-      // If require fails, load asynchronously and return unmerged classes for now
-      loadTwMerge();
-
-      return classes;
-    }
+  // Create the class name merger function
+  const classNameMerger = (...classes: ClassNameValue[]): string => {
+    return mergeFunction(...classes);
   };
+
+  return classNameMerger;
 };
