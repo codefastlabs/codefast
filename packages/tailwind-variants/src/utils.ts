@@ -24,7 +24,8 @@ export const isEqual = (obj1: unknown, obj2: unknown): boolean => {
     const key = keys1[i];
 
     if (!keys2.includes(key)) return false;
-    if ((obj1 as Record<string, unknown>)[key] !== (obj2 as Record<string, unknown>)[key]) return false;
+    if ((obj1 as Record<string, unknown>)[key] !== (obj2 as Record<string, unknown>)[key])
+      return false;
   }
 
   return true;
@@ -32,7 +33,7 @@ export const isEqual = (obj1: unknown, obj2: unknown): boolean => {
 
 export const isBoolean = (value: unknown): boolean => value === true || value === false;
 
-function flat(arr: unknown[], target: unknown[]): void {
+export function flat(arr: unknown[], target: unknown[]): void {
   for (let i = 0; i < arr.length; i++) {
     const el = arr[i];
 
@@ -62,7 +63,10 @@ export const flatMergeArrays = (...arrays: unknown[][]): unknown[] => {
   return filtered;
 };
 
-export const mergeObjects = (obj1: Record<string, unknown>, obj2: Record<string, unknown>): Record<string, unknown> => {
+export const mergeObjects = (
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>,
+): Record<string, unknown> => {
   const result: Record<string, unknown> = {};
 
   for (const key in obj1) {
@@ -74,7 +78,10 @@ export const mergeObjects = (obj1: Record<string, unknown>, obj2: Record<string,
       if (Array.isArray(val1) || Array.isArray(val2)) {
         result[key] = flatMergeArrays(val2 as unknown[], val1 as unknown[]);
       } else if (typeof val1 === "object" && typeof val2 === "object" && val1 && val2) {
-        result[key] = mergeObjects(val1 as Record<string, unknown>, val2 as Record<string, unknown>);
+        result[key] = mergeObjects(
+          val1 as Record<string, unknown>,
+          val2 as Record<string, unknown>,
+        );
       } else {
         result[key] = String(val2) + " " + String(val1);
       }
