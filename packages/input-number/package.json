@@ -51,6 +51,7 @@
   ],
   "scripts": {
     "build": "rslib build",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "dev": "rslib build --watch",
     "lint": "TIMING=1 eslint --max-warnings 0 .",
@@ -58,8 +59,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch",
-    "type-check": "tsc --noEmit"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@codefast-ui/input": "workspace:*",

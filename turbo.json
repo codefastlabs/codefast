@@ -6,6 +6,9 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
+    "check-types": {
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
+    },
     "clean": {
       "cache": false
     },
@@ -38,9 +41,6 @@
     "test:watch": {
       "cache": false,
       "persistent": true
-    },
-    "type-check": {
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
     }
   }
 }
