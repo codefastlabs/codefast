@@ -9,15 +9,15 @@ import type { ConfigExtension, DefaultClassGroupIds, DefaultThemeGroupIds } from
 
 export type { ClassNameValue };
 
-export type ClassProp<V extends unknown = ClassNameValue> =
+export type ClassNameProp<V extends unknown = ClassNameValue> =
   | { class?: V; className?: never }
   | { class?: never; className?: V };
 
-type TVBaseName = "base";
+type BaseName = "base";
 
-type TVScreens = "initial";
+type Screens = "initial";
 
-type TVSlots = Record<string, ClassNameValue> | undefined;
+type Slots = Record<string, ClassNameValue> | undefined;
 
 /**
  * ----------------------------------------------------------------------
@@ -29,7 +29,7 @@ export type OmitUndefined<T> = T extends undefined ? never : T;
 
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
-// compare if the value is true or array of values
+// Compare if the value is true or array of values
 export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
 
 export type WithInitialScreen<T extends Array<string>> = ["initial", ...T];
@@ -40,167 +40,161 @@ export type WithInitialScreen<T extends Array<string>> = ["initial", ...T];
  * ----------------------------------------------------------------------
  */
 
-type TVSlotsWithBase<S extends TVSlots, B extends ClassNameValue> = B extends undefined
+type SlotsWithBase<S extends Slots, B extends ClassNameValue> = B extends undefined
   ? keyof S
-  : keyof S | TVBaseName;
+  : keyof S | BaseName;
 
-type SlotsClassValue<S extends TVSlots, B extends ClassNameValue> = {
-  [K in TVSlotsWithBase<S, B>]?: ClassNameValue;
+type SlotsClassValue<S extends Slots, B extends ClassNameValue> = {
+  [K in SlotsWithBase<S, B>]?: ClassNameValue;
 };
 
-type TVVariantsDefault<S extends TVSlots, B extends ClassNameValue> = S extends undefined
+type VariantsDefault<S extends Slots, B extends ClassNameValue> = S extends undefined
   ? {}
   : {
       [key: string]: {
-        [key: string]: S extends TVSlots ? SlotsClassValue<S, B> | ClassNameValue : ClassNameValue;
+        [key: string]: S extends Slots ? SlotsClassValue<S, B> | ClassNameValue : ClassNameValue;
       };
     };
 
-export type TVVariants<
-  S extends TVSlots | undefined,
+export type Variants<
+  S extends Slots | undefined,
   B extends ClassNameValue | undefined = undefined,
-  EV extends TVVariants<ES> | undefined = undefined,
-  ES extends TVSlots | undefined = undefined,
+  EV extends Variants<ES> | undefined = undefined,
+  ES extends Slots | undefined = undefined,
 > = EV extends undefined
-  ? TVVariantsDefault<S, B>
+  ? VariantsDefault<S, B>
   :
       | {
           [K in keyof EV]: {
-            [K2 in keyof EV[K]]: S extends TVSlots
+            [K2 in keyof EV[K]]: S extends Slots
               ? SlotsClassValue<S, B> | ClassNameValue
               : ClassNameValue;
           };
         }
-      | TVVariantsDefault<S, B>;
+      | VariantsDefault<S, B>;
 
-export type TVCompoundVariants<
-  V extends TVVariants<S>,
-  S extends TVSlots,
+export type CompoundVariants<
+  V extends Variants<S>,
+  S extends Slots,
   B extends ClassNameValue,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
+  EV extends Variants<ES>,
+  ES extends Slots,
 > = Array<
   {
     [K in keyof V | keyof EV]?:
       | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
       | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
       | (K extends keyof V ? StringToBoolean<keyof V[K]>[] : never);
-  } & ClassProp<SlotsClassValue<S, B> | ClassNameValue>
+  } & ClassNameProp<SlotsClassValue<S, B> | ClassNameValue>
 >;
 
-export type TVCompoundSlots<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  B extends ClassNameValue,
-> = Array<
+export type CompoundSlots<V extends Variants<S>, S extends Slots, B extends ClassNameValue> = Array<
   V extends undefined
     ? {
-        slots: Array<TVSlotsWithBase<S, B>>;
-      } & ClassProp
+        slots: Array<SlotsWithBase<S, B>>;
+      } & ClassNameProp
     : {
-        slots: Array<TVSlotsWithBase<S, B>>;
+        slots: Array<SlotsWithBase<S, B>>;
       } & {
         [K in keyof V]?: StringToBoolean<keyof V[K]> | StringToBoolean<keyof V[K]>[];
-      } & ClassProp
+      } & ClassNameProp
 >;
 
-export type TVDefaultVariants<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
+export type DefaultVariants<
+  V extends Variants<S>,
+  S extends Slots,
+  EV extends Variants<ES>,
+  ES extends Slots,
 > = {
   [K in keyof V | keyof EV]?:
     | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
     | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never);
 };
 
-export type TVScreenPropsValue<V extends TVVariants<S>, S extends TVSlots, K extends keyof V> = {
-  [Screen in TVScreens]?: StringToBoolean<keyof V[K]>;
+export type ScreenPropsValue<V extends Variants<S>, S extends Slots, K extends keyof V> = {
+  [Screen in Screens]?: StringToBoolean<keyof V[K]>;
 };
 
-export type TVProps<
-  V extends TVVariants<S>,
-  S extends TVSlots,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
+export type Props<
+  V extends Variants<S>,
+  S extends Slots,
+  EV extends Variants<ES>,
+  ES extends Slots,
 > = EV extends undefined
   ? V extends undefined
-    ? ClassProp<ClassNameValue>
+    ? ClassNameProp
     : {
         [K in keyof V]?: StringToBoolean<keyof V[K]> | undefined;
-      } & ClassProp<ClassNameValue>
+      } & ClassNameProp
   : V extends undefined
     ? {
         [K in keyof EV]?: StringToBoolean<keyof EV[K]> | undefined;
-      } & ClassProp<ClassNameValue>
+      } & ClassNameProp
     : {
         [K in keyof V | keyof EV]?:
           | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
           | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never)
           | undefined;
-      } & ClassProp<ClassNameValue>;
+      } & ClassNameProp;
 
-export type TVVariantKeys<V extends TVVariants<S>, S extends TVSlots> = V extends Object
+export type VariantKeys<V extends Variants<S>, S extends Slots> = V extends Object
   ? Array<keyof V>
   : undefined;
 
-export type TVReturnProps<
-  V extends TVVariants<S>,
-  S extends TVSlots,
+export type ReturnProps<
+  V extends Variants<S>,
+  S extends Slots,
   B extends ClassNameValue,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
+  EV extends Variants<ES>,
+  ES extends Slots,
   // @ts-expect-error
-  E extends TVReturnType = undefined,
+  E extends ReturnType = undefined,
 > = {
   extend: E;
   base: B;
   slots: S;
   variants: V;
-  defaultVariants: TVDefaultVariants<V, S, EV, ES>;
-  compoundVariants: TVCompoundVariants<V, S, B, EV, ES>;
-  compoundSlots: TVCompoundSlots<V, S, B>;
-  variantKeys: TVVariantKeys<V, S>;
+  defaultVariants: DefaultVariants<V, S, EV, ES>;
+  compoundVariants: CompoundVariants<V, S, B, EV, ES>;
+  compoundSlots: CompoundSlots<V, S, B>;
+  variantKeys: VariantKeys<V, S>;
 };
 
-type HasSlots<S extends TVSlots, ES extends TVSlots> = S extends undefined
+type HasSlots<S extends Slots, ES extends Slots> = S extends undefined
   ? ES extends undefined
     ? false
     : true
   : true;
 
-export type TVReturnType<
-  V extends TVVariants<S>,
-  S extends TVSlots,
+export type ReturnType<
+  V extends Variants<S>,
+  S extends Slots,
   B extends ClassNameValue,
-  EV extends TVVariants<ES>,
-  ES extends TVSlots,
+  EV extends Variants<ES>,
+  ES extends Slots,
   // @ts-expect-error
-  E extends TVReturnType = undefined,
+  E extends ReturnType = undefined,
 > = {
-  (props?: TVProps<V, S, EV, ES>): HasSlots<S, ES> extends true
+  (props?: Props<V, S, EV, ES>): HasSlots<S, ES> extends true
     ? {
-        [K in keyof (ES extends undefined ? {} : ES)]: (
-          slotProps?: TVProps<V, S, EV, ES>,
-        ) => string;
+        [K in keyof (ES extends undefined ? {} : ES)]: (slotProps?: Props<V, S, EV, ES>) => string;
       } & {
-        [K in keyof (S extends undefined ? {} : S)]: (slotProps?: TVProps<V, S, EV, ES>) => string;
+        [K in keyof (S extends undefined ? {} : S)]: (slotProps?: Props<V, S, EV, ES>) => string;
       } & {
-        [K in TVSlotsWithBase<{}, B>]: (slotProps?: TVProps<V, S, EV, ES>) => string;
+        [K in SlotsWithBase<{}, B>]: (slotProps?: Props<V, S, EV, ES>) => string;
       }
     : string;
-} & TVReturnProps<V, S, B, EV, ES, E>;
+} & ReturnProps<V, S, B, EV, ES, E>;
 
 export type TV = {
   <
-    V extends TVVariants<S, B, EV>,
-    CV extends TVCompoundVariants<V, S, B, EV, ES>,
-    DV extends TVDefaultVariants<V, S, EV, ES>,
+    V extends Variants<S, B, EV>,
+    CV extends CompoundVariants<V, S, B, EV, ES>,
+    DV extends DefaultVariants<V, S, EV, ES>,
     B extends ClassNameValue = undefined,
-    S extends TVSlots = undefined,
+    S extends Slots = undefined,
     // @ts-expect-error
-    E extends TVReturnType = TVReturnType<
+    E extends ReturnType = ReturnType<
       V,
       S,
       B,
@@ -209,13 +203,12 @@ export type TV = {
       // @ts-expect-error
       ES extends undefined ? {} : ES
     >,
-    EV extends TVVariants<ES, B, E["variants"], ES> = E["variants"],
-    ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
+    EV extends Variants<ES, B, E["variants"], ES> = E["variants"],
+    ES extends Slots = E["slots"] extends Slots ? E["slots"] : undefined,
   >(
     options: {
       /**
        * Extend allows for easy composition of components.
-       * @see https://www.tailwind-variants.org/docs/composing-components
        */
       extend?: E;
       /**
@@ -224,98 +217,30 @@ export type TV = {
       base?: B;
       /**
        * Slots allow you to separate a component into multiple parts.
-       * @see https://www.tailwind-variants.org/docs/slots
        */
       slots?: S;
       /**
        * Variants allow you to create multiple versions of the same component.
-       * @see https://www.tailwind-variants.org/docs/variants#adding-variants
        */
       variants?: V;
       /**
        * Compound variants allow you to apply classes to multiple variants at once.
-       * @see https://www.tailwind-variants.org/docs/variants#compound-variants
        */
       compoundVariants?: CV;
       /**
        * Compound slots allow you to apply classes to multiple slots at once.
        */
-      compoundSlots?: TVCompoundSlots<V, S, B>;
+      compoundSlots?: CompoundSlots<V, S, B>;
       /**
        * Default variants allow you to set default variants for a component.
-       * @see https://www.tailwind-variants.org/docs/variants#default-variants
        */
       defaultVariants?: DV;
     },
     /**
      * The config object allows you to modify the default configuration.
-     * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
      */
-    config?: TVConfig,
-  ): TVReturnType<V, S, B, EV, ES, E>;
-};
-
-export type CreateTV = {
-  <
-    V extends TVVariants<S, B, EV>,
-    CV extends TVCompoundVariants<V, S, B, EV, ES>,
-    DV extends TVDefaultVariants<V, S, EV, ES>,
-    B extends ClassNameValue = undefined,
-    S extends TVSlots = undefined,
-    // @ts-expect-error
-    E extends TVReturnType = TVReturnType<
-      V,
-      S,
-      B,
-      // @ts-expect-error
-      EV extends undefined ? {} : EV,
-      // @ts-expect-error
-      ES extends undefined ? {} : ES
-    >,
-    EV extends TVVariants<ES, B, E["variants"], ES> = E["variants"],
-    ES extends TVSlots = E["slots"] extends TVSlots ? E["slots"] : undefined,
-  >(
-    options: {
-      /**
-       * Extend allows for easy composition of components.
-       * @see https://www.tailwind-variants.org/docs/composing-components
-       */
-      extend?: E;
-      /**
-       * Base allows you to set a base class for a component.
-       */
-      base?: B;
-      /**
-       * Slots allow you to separate a component into multiple parts.
-       * @see https://www.tailwind-variants.org/docs/slots
-       */
-      slots?: S;
-      /**
-       * Variants allow you to create multiple versions of the same component.
-       * @see https://www.tailwind-variants.org/docs/variants#adding-variants
-       */
-      variants?: V;
-      /**
-       * Compound variants allow you to apply classes to multiple variants at once.
-       * @see https://www.tailwind-variants.org/docs/variants#compound-variants
-       */
-      compoundVariants?: CV;
-      /**
-       * Compound slots allow you to apply classes to multiple slots at once.
-       */
-      compoundSlots?: TVCompoundSlots<V, S, B>;
-      /**
-       * Default variants allow you to set default variants for a component.
-       * @see https://www.tailwind-variants.org/docs/variants#default-variants
-       */
-      defaultVariants?: DV;
-    },
-    /**
-     * The config object allows you to modify the default configuration.
-     * @see https://www.tailwind-variants.org/docs/api-reference#config-optional
-     */
-    config?: TVConfig,
-  ): TVReturnType<V, S, B, EV, ES, E>;
+    config?: Config,
+  ): ReturnType<V, S, B, EV, ES, E>;
 };
 
 export type TWMergeConfig<
@@ -333,7 +258,7 @@ export type TWMergeConfig<
  * @typeParam AdditionalClassGroupIds - Custom class group identifiers that extend the default class groups.
  * @typeParam AdditionalThemeGroupIds - Custom theme group identifiers that extend the default theme groups.
  */
-export type TVConfig<
+export type Config<
   AdditionalClassGroupIds extends string = string,
   AdditionalThemeGroupIds extends string = string,
 > = {
