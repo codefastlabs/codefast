@@ -59,7 +59,7 @@
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch",
-    "type-check": "tsc --noEmit"
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
