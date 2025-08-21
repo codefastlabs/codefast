@@ -80,11 +80,6 @@
     "tailwind-merge": "^3.0.0",
     "tailwindcss": "^4.0.0"
   },
-  "peerDependenciesMeta": {
-    "tailwind-merge": {
-      "optional": true
-    }
-  },
   "publishConfig": {
     "access": "public"
   }
