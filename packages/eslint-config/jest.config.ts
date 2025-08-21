@@ -34,11 +34,6 @@ const config: Config = {
   testPathIgnorePatterns: ["<rootDir>/dist/"],
 
   /**
-   * An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-   */
-  testPathIgnorePatterns: ["/node_modules/", "/dist/", "<rootDir>/src/environments/test.ts"],
-
-  /**
    * Configuration for transforming source files before testing
    * Uses `@swc/jest` to quickly transform JavaScript/TypeScript files
    */
