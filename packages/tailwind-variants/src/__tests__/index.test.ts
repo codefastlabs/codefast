@@ -1,4 +1,5 @@
-import { cn, createTV, falsyToString, tv } from "@/index";
+import { cn, createTV, tv } from "@/index";
+import { falsyToString } from "@/utils";
 
 const COMMON_UNITS = ["small", "medium", "large"];
 
@@ -711,7 +712,11 @@ describe("Tailwind Variants (TV) - Slots", () => {
     expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl", "text-white"]);
     expect(title({ className: "text-2xl" })).toHaveClassName(["text-2xl", "text-white"]);
     // item
-    expect(item({ class: "bg-purple-50" })).toHaveClassName(["text-xl", "bg-purple-50", "opacity-100"]);
+    expect(item({ class: "bg-purple-50" })).toHaveClassName([
+      "text-xl",
+      "bg-purple-50",
+      "opacity-100",
+    ]);
     expect(item({ className: "bg-purple-50" })).toHaveClassName([
       "text-xl",
       "bg-purple-50",
