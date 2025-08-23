@@ -103,8 +103,9 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     // Execute multiple calls
     for (let i = 0; i < 200; i++) {
       const result = deepSlots({ theme: `theme-${i % 5}` });
+
       // Access all slots to ensure they're computed
-      Object.keys(slots).forEach((key) => result[key]());
+      for (const key of Object.keys(slots)) result[key]();
     }
 
     const endTime = performance.now();
@@ -133,8 +134,8 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
         extend: current,
         variants: {
           color: {
-            primary: `primary-${i}`,
             [`secondary-${i}`]: `secondary-class-${i}`,
+            primary: `primary-${i}`,
           },
         },
       });
@@ -160,9 +161,9 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
       base: largeClassString,
       variants: {
         size: {
-          sm: Array.from({ length: 50 }, (_, i) => `sm-${i}`).join(" "),
-          md: Array.from({ length: 50 }, (_, i) => `md-${i}`).join(" "),
           lg: Array.from({ length: 50 }, (_, i) => `lg-${i}`).join(" "),
+          md: Array.from({ length: 50 }, (_, i) => `md-${i}`).join(" "),
+          sm: Array.from({ length: 50 }, (_, i) => `sm-${i}`).join(" "),
         },
       },
     });
@@ -170,8 +171,8 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     // Execute multiple calls
     for (let i = 0; i < 300; i++) {
       largeTv({
-        size: ["sm", "md", "lg"][i % 3] as "sm" | "md" | "lg",
         className: `additional-${i}`,
+        size: ["sm", "md", "lg"][i % 3] as "lg" | "md" | "sm",
       });
     }
 
