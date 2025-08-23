@@ -8,11 +8,7 @@ export default defineConfig({
       bundle: false,
       dts: true,
       format: "esm",
-      output: {
-        distPath: {
-          root: "./dist",
-        },
-      },
+
     },
   ],
   output: {
