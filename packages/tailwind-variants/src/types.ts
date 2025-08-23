@@ -29,7 +29,6 @@ export type OmitUndefined<T> = T extends undefined ? never : T;
 
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
-// Compare if the value is true or array of values
 export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
 
 export type WithInitialScreen<T extends Array<string>> = ["initial", ...T];
