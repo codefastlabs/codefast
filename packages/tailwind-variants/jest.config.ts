@@ -31,12 +31,12 @@ const config: Config = {
   /**
    * The glob patterns Jest uses to detect test files
    */
-  testMatch: ["**/__tests__/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
+  testMatch: ["<rootDir>/tests/unit/**/*.?([mc])[jt]s?(x)", "**/?(*.)+(spec|test).?([mc])[jt]s?(x)"],
 
   /**
    * The glob patterns Jest uses to ignore test files
    */
-  testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/src/__tests__/test-utils.ts"],
+  testPathIgnorePatterns: ["<rootDir>/dist/"],
 
   /**
    * Configuration for transforming source files before testing

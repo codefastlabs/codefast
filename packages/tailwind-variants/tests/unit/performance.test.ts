@@ -32,7 +32,7 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    // Should complete within reasonable time (adjust threshold as needed)
+    // Should complete within a reasonable time (adjust a threshold as needed)
     expect(executionTime).toBeLessThan(1000); // 1 second
   });
 
@@ -117,7 +117,7 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     const startTime = performance.now();
 
     // Create a chain of extends
-    let current = tv({
+    let current: any = tv({
       base: "level-0",
       variants: {
         color: {

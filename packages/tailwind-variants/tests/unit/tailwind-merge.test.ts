@@ -1,5 +1,5 @@
 import { tv } from "@/index";
-import { COMMON_UNITS, twMergeConfig } from "@/__tests__/test-utils";
+import { COMMON_UNITS, twMergeConfig } from "../fixtures/tailwind-merge-config";
 
 describe("Tailwind Variants (TV) - Tailwind Merge", () => {
   test("should merge the tailwind classes correctly", () => {
