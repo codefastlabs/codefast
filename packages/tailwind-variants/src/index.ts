@@ -4,7 +4,6 @@ import {
   isEmptyObject,
   falsyToString,
   mergeObjects,
-  removeExtraSpaces,
   flatMergeArrays,
   flat,
 } from "@/utils";
@@ -13,7 +12,6 @@ import { createTwMerge } from "@/cn";
 export const defaultConfig: Config = {
   twMerge: true,
   twMergeConfig: {},
-  responsiveVariants: false,
 };
 
 export const cnBase = (...classes: ClassNameValue[]): string | undefined => {
@@ -132,62 +130,7 @@ export const tv: TV = (options, configProp) => {
       );
     }
 
-    const getScreenVariantValues = (
-      screen: string,
-      screenVariantValue: any,
-      acc: any = [],
-      slotKey?: string,
-    ) => {
-      let result = acc;
-
-      if (typeof screenVariantValue === "string") {
-        const cleaned = removeExtraSpaces(screenVariantValue) as string;
-        const parts = cleaned.split(" ");
-
-        for (let i = 0; i < parts.length; i++) {
-          result.push(`${screen}:${parts[i]}`);
-        }
-      } else if (Array.isArray(screenVariantValue)) {
-        for (let i = 0; i < screenVariantValue.length; i++) {
-          result.push(`${screen}:${screenVariantValue[i]}`);
-        }
-      } else if (typeof screenVariantValue === "object" && typeof slotKey === "string") {
-        if (slotKey in screenVariantValue) {
-          const value = screenVariantValue[slotKey];
-
-          if (value && typeof value === "string") {
-            const fixedValue = removeExtraSpaces(value) as string;
-            const parts = fixedValue.split(" ");
-            const arr: string[] = [];
-
-            for (let i = 0; i < parts.length; i++) {
-              arr.push(`${screen}:${parts[i]}`);
-            }
-            if (typeof result === "object" && result !== null) {
-              result[slotKey] = result[slotKey] ? result[slotKey].concat(arr) : arr;
-            }
-          } else if (Array.isArray(value) && value.length > 0) {
-            const arr: string[] = [];
-
-            for (let i = 0; i < value.length; i++) {
-              arr.push(`${screen}:${value[i]}`);
-            }
-            if (typeof result === "object" && result !== null) {
-              result[slotKey] = arr;
-            }
-          }
-        }
-      }
-
-      return result;
-    };
-
-    const getVariantValue = (
-      variant: string,
-      vrs: any = variants,
-      slotKey?: string,
-      slotProps?: any,
-    ) => {
+    const getVariantValue = (variant: string, vrs: any = variants, slotProps?: any) => {
       const variantObj = vrs[variant];
 
       if (!variantObj || isEmptyObject(variantObj)) {
@@ -199,64 +142,16 @@ export const tv: TV = (options, configProp) => {
       if (variantProp === null) return null;
 
       const variantKey = falsyToString(variantProp);
-
-      // responsive variants
-      const responsiveVarsEnabled =
-        (Array.isArray(config.responsiveVariants) && config.responsiveVariants.length > 0) ||
-        config.responsiveVariants === true;
-
       let defaultVariantProp = defaultVariants?.[variant];
-      let screenValues: any = [];
 
-      if (typeof variantKey === "object" && responsiveVarsEnabled) {
-        for (const [screen, screenVariantKey] of Object.entries(variantKey)) {
-          const screenVariantValue = variantObj[screenVariantKey as string];
-
-          if (screen === "initial") {
-            defaultVariantProp = screenVariantKey;
-            continue;
-          }
-
-          // if the screen is not in the responsiveVariants array, skip it
-          if (
-            Array.isArray(config.responsiveVariants) &&
-            !config.responsiveVariants.includes(screen)
-          ) {
-            continue;
-          }
-
-          screenValues = getScreenVariantValues(screen, screenVariantValue, screenValues, slotKey);
-        }
+      if (typeof variantKey === "object") {
+        // Use default variant if object is provided
+        const key = falsyToString(defaultVariantProp);
+        return variantObj[String(key || "false")];
       }
 
-      // If there is a variant key and it's not an object (screen variants),
-      // we use the variant key and ignore the default variant.
-      const key =
-        variantKey != null && typeof variantKey != "object"
-          ? variantKey
-          : falsyToString(defaultVariantProp);
-
-      const value = variantObj[String(key || "false")];
-
-      if (
-        typeof screenValues === "object" &&
-        typeof slotKey === "string" &&
-        screenValues[slotKey]
-      ) {
-        return joinObjects(screenValues, value);
-      }
-
-      if (screenValues.length > 0) {
-        screenValues.push(value);
-
-        if (slotKey === "base") {
-          return screenValues.join(" ");
-        }
-
-        return screenValues;
-      }
-
-      return value;
+      const key = variantKey != null ? variantKey : falsyToString(defaultVariantProp);
+      return variantObj[String(key || "false")];
     };
 
     const getVariantClassNames = () => {
@@ -280,7 +175,7 @@ export const tv: TV = (options, configProp) => {
       const result: any[] = [];
 
       for (const variant in variants) {
-        const variantValue = getVariantValue(variant, variants, slotKey, slotProps);
+        const variantValue = getVariantValue(variant, variants, slotProps);
 
         const value =
           slotKey === "base" && typeof variantValue === "string"
@@ -495,12 +390,10 @@ export type {
   OmitUndefined,
   StringToBoolean,
   isTrueOrArray,
-  WithInitialScreen,
   Variants,
   CompoundVariants,
   CompoundSlots,
   DefaultVariants,
-  ScreenPropsValue,
   Props,
   VariantKeys,
   ReturnProps,
