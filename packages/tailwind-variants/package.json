@@ -12,7 +12,6 @@
     "monorepo",
     "styling",
     "type-safe",
-    "variants",
     "composition"
   ],
   "homepage": "https://github.com/codefastlabs/codefast/tree/main/packages/tailwind-variants#readme",
@@ -26,17 +25,13 @@
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
-  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
-      "import": {
-        "default": "./dist/index.js",
-        "types": "./dist/index.d.ts"
-      }
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
-  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -47,6 +42,7 @@
   ],
   "scripts": {
     "build": "rslib build",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf dist",
     "dev": "rslib build --watch",
     "lint": "TIMING=1 eslint . --max-warnings 0",
@@ -54,8 +50,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:watch": "jest --watch",
-    "check-types": "tsc --noEmit"
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",

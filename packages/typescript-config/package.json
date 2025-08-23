@@ -24,7 +24,6 @@
   },
   "license": "MIT",
   "author": "Vuong Phan <mr.thevuong@gmail.com>",
-  "sideEffects": false,
   "exports": {
     "./base.json": "./base.json",
     "./library.json": "./library.json",
