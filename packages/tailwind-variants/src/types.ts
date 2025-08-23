@@ -10,11 +10,10 @@ import type { ConfigExtension, DefaultClassGroupIds, DefaultThemeGroupIds } from
 export type { ClassNameValue };
 
 export type ClassNameProp<V extends unknown = ClassNameValue> =
-  | { class?: V; className?: never }
-  | { class?: never; className?: V };
+  | { class?: never; className?: V }
+  | { class?: V; className?: never };
 
 type BaseName = "base";
-
 
 type Slots = Record<string, ClassNameValue> | undefined;
 
@@ -29,7 +28,6 @@ export type OmitUndefined<T> = T extends undefined ? never : T;
 export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
 export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
-
 
 /**
  * ----------------------------------------------------------------------
@@ -107,7 +105,6 @@ export type DefaultVariants<
     | (K extends keyof V ? StringToBoolean<keyof V[K]> : never)
     | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never);
 };
-
 
 export type Props<
   V extends Variants<S>,
@@ -260,7 +257,7 @@ export type Config<
   twMergeConfig?: TWMergeConfig<AdditionalClassGroupIds, AdditionalThemeGroupIds>;
 };
 
-export type VariantProps<Component extends (...args: any) => any> = Omit<
+export type VariantProps<Component extends (...args: unknown[]) => unknown> = Omit<
   OmitUndefined<Parameters<Component>[0]>,
   "class" | "className"
 >;

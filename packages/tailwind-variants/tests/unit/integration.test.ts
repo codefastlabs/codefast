@@ -96,7 +96,9 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
     expect(base()).toContain("border-destructive/50");
     expect(header()).toContain("p-4");
     expect(title()).toContain("text-destructive");
+    expect(description()).toContain("text-sm");
     expect(content()).toContain("p-4");
+    expect(footer()).toContain("p-4");
   });
 
   test("should work with realistic navigation menu with compound variants", () => {
