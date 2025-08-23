@@ -15,17 +15,7 @@ export default defineConfig({
       format: "esm",
       output: {
         distPath: {
-          root: "./dist/esm",
-        },
-      },
-    },
-    {
-      bundle: false,
-      dts: true,
-      format: "cjs",
-      output: {
-        distPath: {
-          root: "./dist/cjs",
+          root: "./dist",
         },
       },
     },
