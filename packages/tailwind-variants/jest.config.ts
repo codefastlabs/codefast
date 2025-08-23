@@ -36,7 +36,7 @@ const config: Config = {
   /**
    * The glob patterns Jest uses to ignore test files
    */
-  testPathIgnorePatterns: ["<rootDir>/dist/"],
+  testPathIgnorePatterns: ["<rootDir>/dist/", "<rootDir>/src/__tests__/test-utils.ts"],
 
   /**
    * Configuration for transforming source files before testing
