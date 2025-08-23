@@ -1,354 +1,341 @@
-# @codefast/eslint-config
+# ESLint Config
 
-Shared ESLint configuration for the CodeFast monorepo, providing comprehensive linting rules and presets for JavaScript, TypeScript, React.js, Next.js, and various other technologies with modern best practices.
+Comprehensive ESLint configuration for TypeScript, React, and Next.js projects with modern linting rules, accessibility checks, and code formatting standards for monorepo development.
 
-## Features
-
-- 🎯 **Multiple Presets** - Ready-to-use configurations for different project types
-- 🔧 **Modular Architecture** - Composable rules and environments for custom configurations
-- ⚡ **Modern Standards** - Latest ESLint 9.x with flat config support
-- 🚀 **Framework Support** - Specialized rules for React.js, Next.js, and Node.js
-- 📝 **Multi-Language** - Support for TypeScript, JavaScript, JSON, CSS, and Markdown
-- 🧪 **Testing Ready** - Jest and testing-specific configurations
-- 🎨 **Code Quality** - Perfectionist sorting, import organization, and accessibility rules
-- 🔒 **Type Safety** - TypeScript-specific rules and TSDoc support
-- 🌐 **Universal** - Works in browser, Node.js, and test environments
-
-## Available Configurations
-
-### Presets (Ready-to-Use)
-
-#### Base Preset (`basePreset`)
-
-Foundational configuration for any JavaScript/TypeScript project:
-
-- Core JavaScript and TypeScript rules
-- Import organization and perfectionist sorting
-- JSON and Markdown support
-- Node.js and test environments
-- TSDoc documentation rules
-
-#### Library Preset (`libraryPreset`)
-
-Optimized for library development:
-
-- Extends base preset
-- Additional rules for library-specific patterns
-- Optimized for package publishing
-
-#### React App Preset (`reactAppPreset`)
-
-Complete configuration for React applications:
-
-- All base rules plus React-specific linting
-- JSX accessibility (a11y) rules
-- React Hooks rules
-- Browser environment support
-- Includes Prettier integration
-
-#### React App Core Preset (`reactAppPresetCore`)
-
-Core React configuration without Prettier integration:
-
-- Same as React App Preset but without Prettier rules
-- Useful when you want to handle Prettier separately
-- Can be extended with custom formatting rules
-
-#### Next.js App Preset (`nextAppPreset`)
-
-Tailored for Next.js applications:
-
-- Extends React app preset
-- Next.js specific rules and optimizations
-- SSR/SSG considerations
-
-### Individual Rule Sets
-
-#### Core Rules
-
-- `baseJavaScriptRules` - Essential JavaScript linting rules
-- `typescriptRules` - TypeScript-specific rules and type checking
-- `importRules` - Import/export organization and validation
-- `perfectionistRules` - Code sorting and organization
-- `unicornRules` - Additional code quality rules
-
-#### Framework Rules
-
-- `reactRules` - React component and JSX rules
-- `nextRules` - Next.js specific linting rules
-
-#### Accessibility Rules
-
-- `jsxA11yRules` - Accessibility rules for JSX components
-
-#### Language Support
-
-- `cssRules` - CSS and styling rules
-- `jsonRules` - JSON file validation
-- `markdownRules` - Markdown file linting
-
-#### Environment Configurations
-
-- `nodeEnvironment` - Node.js globals and settings
-- `browserEnvironment` - Browser globals and settings
-- `testEnvironment` - Testing framework globals
-
-#### Testing & Utilities
-
-- `jestRules` - Jest testing framework rules
-- `tsdocRules` - TSDoc documentation rules
-- `turboRules` - Turborepo monorepo rules
-- `prettierRules` - Prettier integration
-- `onlyWarnRules` - Convert errors to warnings
+[![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
+[![NPM Version](https://img.shields.io/npm/v/@codefast/eslint-config.svg)](https://www.npmjs.com/package/@codefast/eslint-config)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-10%2B-blue.svg)](https://pnpm.io/)
 
 ## Installation
 
+Install the configuration via pnpm (recommended):
+
 ```bash
-# Using pnpm (recommended)
 pnpm add -D @codefast/eslint-config
+```
 
-# Using npm
+Or using npm:
+
+```bash
 npm install --save-dev @codefast/eslint-config
+```
 
-# Using yarn
-yarn add -D @codefast/eslint-config
+**Peer Dependencies**:
+
+Make sure you have installed ESLint:
+
+```bash
+pnpm add -D eslint
+```
+
+**Requirements**:
+
+- Node.js version 20.0.0 or higher
+- ESLint version 9.0.0 or higher
+- TypeScript version 5.0.0 or higher (for TypeScript projects)
+
+## Quick Start
+
+```typescript
+import { basePreset } from "@codefast/eslint-config";
+
+export default [...basePreset];
+```
+
+For React applications:
+
+```typescript
+import { reactAppPreset } from "@codefast/eslint-config";
+
+export default [...reactAppPreset];
 ```
 
 ## Usage
 
-### Quick Start with Presets
+### Base Configuration
 
-#### For Libraries
+For basic JavaScript/TypeScript projects:
 
-Create an `eslint.config.js` in your library package:
-
-```javascript
-import { libraryPreset } from "@codefast/eslint-config";
-
-export default libraryPreset;
-```
-
-#### For React Applications
-
-```javascript
-import { reactAppPreset } from "@codefast/eslint-config";
-
-export default reactAppPreset;
-```
-
-#### For React Applications (without Prettier)
-
-```javascript
-import { reactAppPresetCore } from "@codefast/eslint-config";
-
-export default reactAppPresetCore;
-```
-
-#### For Next.js Applications
-
-```javascript
-import { nextAppPreset } from "@codefast/eslint-config";
-
-export default nextAppPreset;
-```
-
-#### For Basic Projects
-
-```javascript
+```typescript
 import { basePreset } from "@codefast/eslint-config";
 
-export default basePreset;
-```
-
-### Custom Configurations
-
-You can compose your own configuration using individual rule sets:
-
-```javascript
-import {
-  baseJavaScriptRules,
-  typescriptRules,
-  reactRules,
-  nodeEnvironment,
-  composeConfig,
-} from "@codefast/eslint-config";
-
-export default composeConfig(baseJavaScriptRules, typescriptRules, reactRules, nodeEnvironment);
-```
-
-### Advanced Customization
-
-Override specific rules or add custom configurations:
-
-```javascript
-import { reactAppPreset } from "@codefast/eslint-config";
-
 export default [
-  ...reactAppPreset,
+  ...basePreset,
   {
-    files: ["**/*.ts", "**/*.tsx"],
-    rules: {
-      // Override specific rules
-      "@typescript-eslint/no-unused-vars": "warn",
-      "react/prop-types": "off",
-    },
-  },
-  {
-    files: ["**/*.test.ts", "**/*.spec.ts"],
-    rules: {
-      // Test-specific overrides
-      "@typescript-eslint/no-explicit-any": "off",
-    },
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    // Add your custom rules here
   },
 ];
 ```
 
-### Environment-Specific Configurations
+### React Application Configuration
 
-```javascript
-import {
-  baseJavaScriptRules,
-  typescriptRules,
-  browserEnvironment,
-  testEnvironment,
-  composeConfig,
-} from "@codefast/eslint-config";
+For React applications with comprehensive rules:
 
-export default composeConfig(
-  baseJavaScriptRules,
-  typescriptRules,
-  browserEnvironment,
-  testEnvironment,
-);
-```
-
-## Configuration Details
-
-### Included Plugins
-
-This configuration includes and configures the following ESLint plugins:
-
-- **@eslint/js** - Core JavaScript rules
-- **typescript-eslint** - TypeScript support and rules
-- **eslint-plugin-react** - React component rules
-- **eslint-plugin-react-hooks** - React Hooks rules
-- **@next/eslint-plugin-next** - Next.js specific rules
-- **eslint-plugin-jsx-a11y** - JSX accessibility rules
-- **eslint-plugin-import** - Import/export validation
-- **eslint-plugin-perfectionist** - Code sorting and organization
-- **eslint-plugin-unicorn** - Additional code quality rules
-- **eslint-plugin-jest** - Jest testing rules
-- **eslint-plugin-tsdoc** - TSDoc documentation rules
-- **eslint-plugin-turbo** - Turborepo monorepo rules
-- **@eslint/json** - JSON file support
-- **@eslint/css** - CSS file support
-- **@eslint/markdown** - Markdown file support
-
-### File Type Support
-
-- **JavaScript** (`.js`, `.mjs`, `.cjs`)
-- **TypeScript** (`.ts`, `.tsx`, `.mts`, `.cts`)
-- **React/JSX** (`.jsx`, `.tsx`)
-- **JSON** (`.json`, `.jsonc`)
-- **CSS** (`.css`)
-- **Markdown** (`.md`, `.mdx`)
-
-## Migration from Legacy ESLint
-
-If you're migrating from ESLint 8.x or older configurations:
-
-1. **Update ESLint**: Ensure you're using ESLint 9.x
-2. **Use Flat Config**: Replace `.eslintrc.*` files with `eslint.config.js`
-3. **Update Imports**: Use the new import syntax shown in examples above
-4. **Remove Extends**: Flat config doesn't use `extends`, use array spreading instead
-
-### Before (Legacy)
-
-```json
-{
-  "extends": ["@codefast/eslint-config/react"],
-  "rules": {
-    "no-magic-numbers": "error"
-  }
-}
-```
-
-### After (Flat Config)
-
-```javascript
+```typescript
 import { reactAppPreset } from "@codefast/eslint-config";
 
 export default [
   ...reactAppPreset,
   {
-    rules: {
-      "no-magic-numbers": "error",
-    },
-  },
-];
-```
-
-## Troubleshooting
-
-### Common Issues
-
-#### TypeScript Path Resolution
-
-If you encounter import resolution issues, ensure your `tsconfig.json` includes proper path mapping:
-
-```json
-{
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
-
-#### React Version Detection
-
-For React rules to work properly, ensure React is installed or configure the version manually:
-
-```javascript
-import { reactAppPreset } from "@codefast/eslint-config";
-
-export default [
-  ...reactAppPreset,
-  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
     settings: {
       react: {
-        version: "18.0",
+        version: "detect",
       },
     },
   },
 ];
 ```
 
-#### Performance Issues
+### Next.js Application Configuration
 
-For large projects, consider using ESLint's cache:
+For Next.js applications with framework-specific rules:
 
-```bash
-eslint --cache --cache-location .eslintcache .
+```typescript
+import { nextAppPreset } from "@codefast/eslint-config";
+
+export default [
+  ...nextAppPreset,
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    settings: {
+      next: {
+        rootDir: true,
+      },
+    },
+  },
+];
 ```
+
+### Library Configuration
+
+For library packages with optimized rules:
+
+```typescript
+import { libraryPreset } from "@codefast/eslint-config";
+
+export default [
+  ...libraryPreset,
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    // Library-specific configurations
+  },
+];
+```
+
+### Custom Configuration with Individual Rules
+
+For advanced customization, you can compose your own configuration:
+
+```typescript
+import {
+  baseJavaScriptRules,
+  typescriptRules,
+  reactRules,
+  importRules,
+  composeConfig,
+} from "@codefast/eslint-config";
+
+export default composeConfig([
+  baseJavaScriptRules,
+  typescriptRules,
+  reactRules,
+  importRules,
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      // Your custom rules
+    },
+  },
+]);
+```
+
+## Configuration Options
+
+### Available Presets
+
+| Preset           | Description                          | Use Case                        |
+| ---------------- | ------------------------------------ | ------------------------------- |
+| `basePreset`     | Core JavaScript/TypeScript rules     | Basic projects, utilities       |
+| `reactAppPreset` | React application with accessibility | React SPAs, component libraries |
+| `nextAppPreset`  | Next.js with SSR/SSG optimizations   | Next.js applications            |
+| `libraryPreset`  | Library-focused rules                | NPM packages, shared libraries  |
+
+### Rule Categories
+
+| Category              | Description               | Key Features                            |
+| --------------------- | ------------------------- | --------------------------------------- |
+| `baseJavaScriptRules` | Core JavaScript linting   | ES6+, best practices, error prevention  |
+| `typescriptRules`     | TypeScript-specific rules | Type safety, strict checks              |
+| `reactRules`          | React component rules     | Hooks, JSX, component patterns          |
+| `importRules`         | Import/export management  | Module organization, dependency sorting |
+| `stylisticRules`      | Code formatting rules     | Consistent style, readable code         |
+| `perfectionistRules`  | Code organization rules   | Sorting, grouping, structure            |
+
+### Environment Configurations
+
+| Environment          | Description              | Globals                              |
+| -------------------- | ------------------------ | ------------------------------------ |
+| `browserEnvironment` | Browser-specific globals | `window`, `document`, `localStorage` |
+| `nodeEnvironment`    | Node.js environment      | `process`, `global`, `Buffer`        |
+| `testEnvironment`    | Testing environment      | Jest, testing utilities              |
+
+## API Reference
+
+### `basePreset`
+
+Base configuration for JavaScript/TypeScript projects.
+
+```typescript
+const basePreset: ESLint.Config[];
+```
+
+Includes:
+
+- Core JavaScript rules
+- TypeScript support
+- Import management
+- Code style formatting
+- Perfectionist sorting
+
+### `reactAppPreset`
+
+Complete configuration for React applications.
+
+```typescript
+const reactAppPreset: ESLint.Config[];
+```
+
+Includes:
+
+- All base preset rules
+- React-specific rules
+- JSX accessibility checks
+- React Hooks rules
+- Browser environment
+
+### `nextAppPreset`
+
+Optimized configuration for Next.js applications.
+
+```typescript
+const nextAppPreset: ESLint.Config[];
+```
+
+Includes:
+
+- All React preset rules
+- Next.js specific rules
+- SSR/SSG optimizations
+- Image optimization rules
+
+### `libraryPreset`
+
+Configuration optimized for library development.
+
+```typescript
+const libraryPreset: ESLint.Config[];
+```
+
+Includes:
+
+- Base preset rules
+- Library-specific optimizations
+- Node.js environment
+- TSDoc documentation rules
+
+### `composeConfig`
+
+Utility function for composing custom configurations.
+
+```typescript
+type composeConfig = (configs: ESLint.Config[]) => ESLint.Config[];
+```
+
+**Parameters**:
+
+- `configs` - Array of ESLint configuration objects
+
+**Returns**: Composed ESLint configuration array
+
+### Language Support
+
+- **JavaScript**: ES2022+ syntax support
+- **TypeScript**: Full type checking and strict rules
+- **JSX/TSX**: React component syntax
+- **JSON**: JSON file linting
+- **Markdown**: Code blocks in documentation
+- **CSS**: Basic CSS file linting
 
 ## Contributing
 
-This package is part of the CodeFast monorepo. To contribute:
+We welcome all contributions! To get started with development:
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes in `packages/eslint-config/`
-4. Add tests for new rules or presets
-5. Run `pnpm test` to ensure all tests pass
-6. Submit a pull request
+### Environment Setup
+
+1. Fork this repository.
+2. Clone to your machine: `git clone <your-fork-url>`
+3. Install dependencies: `pnpm install`
+4. Create a new branch: `git checkout -b feature/feature-name`
+
+### Development Workflow
+
+```bash
+# Build the package
+pnpm build
+
+# Development mode with watch
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Lint and format
+pnpm lint:fix
+```
+
+### Testing Your Changes
+
+Create a test ESLint configuration to verify your changes:
+
+```bash
+# Test the configuration
+pnpm lint
+
+# Test with timing information
+TIMING=1 pnpm lint
+```
+
+5. Commit and submit a pull request.
+
+See details at [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## License
 
-MIT © [Vuong Phan](https://github.com/codefastlabs)
+Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
 
-## Related Packages
+## Contact
 
-- [`@codefast/typescript-config`](../typescript-config) - TypeScript configuration presets
-- [`@codefast-ui/*`](../ui) - UI component library with consistent linting
+- npm: [@codefast/eslint-config](https://www.npmjs.com/package/@codefast/eslint-config)
+- GitHub: [codefastlabs/codefast](https://github.com/codefastlabs/codefast)
+- Issues: [GitHub Issues](https://github.com/codefastlabs/codefast/issues)
+- Documentation: [ESLint Config Docs](https://github.com/codefastlabs/codefast/tree/main/packages/eslint-config)
+
+## Features
+
+This ESLint configuration provides:
+
+- **Modern JavaScript/TypeScript Support**: Latest ECMAScript features and TypeScript strict checking
+- **React & Next.js Optimized**: Comprehensive rules for React applications and Next.js frameworks
+- **Accessibility First**: Built-in JSX accessibility rules for inclusive web development
+- **Import Management**: Automatic import sorting and organization
+- **Code Quality**: Perfectionist rules for consistent code structure
+- **Testing Support**: Jest-specific rules for test files
+- **Monorepo Ready**: Turbo and workspace-optimized configurations
+- **Customizable**: Modular design allows mixing and matching rule sets

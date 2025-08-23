@@ -1,206 +1,202 @@
-# @codefast/hooks
+# React Hooks Collection
 
-Collection of reusable React hooks for common functionality, providing robust solutions for animation, clipboard operations, responsive design, DOM observation, and pagination with TypeScript support.
+Collection of reusable React hooks for common functionality, built with TypeScript and comprehensive testing support.
 
-## Features
-
-- 🎯 **Animation** - Smooth value animations with easing functions
-- 📋 **Clipboard** - Copy text to clipboard with feedback state
-- 📱 **Responsive** - Media query and mobile detection utilities
-- 👀 **DOM Observation** - Monitor DOM mutations with MutationObserver
-- 📄 **Pagination** - Smart pagination logic with ellipsis handling
-- 🔒 **Type Safe** - Full TypeScript support with comprehensive type definitions
-- ⚡ **Performance** - Optimized with proper cleanup and memoization
-- 🧪 **Well Tested** - Comprehensive test coverage for reliability
-- 🌐 **SSR Ready** - Safe for server-side rendering environments
+[![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
+[![NPM Version](https://img.shields.io/npm/v/@codefast/hooks.svg)](https://www.npmjs.com/package/@codefast/hooks)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-10%2B-blue.svg)](https://pnpm.io/)
 
 ## Installation
 
+Install the hooks collection via pnpm (recommended):
+
 ```bash
-# Using pnpm (recommended)
 pnpm add @codefast/hooks
-
-# Using npm
-npm install @codefast/hooks
-
-# Using yarn
-yarn add @codefast/hooks
 ```
 
-## Available Hooks
+Or using npm:
 
-### useAnimatedValue
+```bash
+npm install @codefast/hooks
+```
 
-Smoothly animates numeric values with customizable duration and easing.
+**Peer Dependencies**:
+
+Make sure you have installed the peer dependencies:
+
+```bash
+pnpm add react react-dom
+pnpm add -D @types/react @types/react-dom
+```
+
+**Requirements**:
+
+- Node.js version 20.0.0 or higher
+- React version 19.0.0 or higher
+- TypeScript version 5.9.2 or higher (recommended)
+
+## Quick Start
 
 ```tsx
-import { useAnimatedValue } from "@codefast/hooks";
+import { useMediaQuery, useCopyToClipboard, useIsMobile } from "@codefast/hooks";
 
-function ProgressBar({ progress }: { progress: number }) {
-  const animatedProgress = useAnimatedValue(progress, 1000, true);
+function App() {
+  const isMobile = useIsMobile();
+  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
+  const { copyToClipboard, isCopied } = useCopyToClipboard();
+
+  const handleCopy = () => {
+    copyToClipboard("Hello World!");
+  };
 
   return (
-    <div className="progress-bar">
-      <div className="progress-fill" style={{ width: `${animatedProgress}%` }} />
-      <span>{animatedProgress}%</span>
+    <div>
+      <p>Device: {isMobile ? "Mobile" : "Desktop"}</p>
+      <p>Large screen: {isLargeScreen ? "Yes" : "No"}</p>
+      <button onClick={handleCopy}>{isCopied ? "Copied!" : "Copy Text"}</button>
     </div>
   );
 }
 ```
 
-**Parameters:**
+## Usage
 
-- `targetValue: number | null` - The target value to animate to
-- `duration: number` - Animation duration in milliseconds
-- `animate?: boolean` - Whether to animate (defaults to true)
+### Media Query Hook
 
-**Returns:** `number` - The current animated value (rounded)
-
-### useCopyToClipboard
-
-Provides clipboard functionality with temporary feedback state.
-
-```tsx
-import { useCopyToClipboard } from "@codefast/hooks";
-
-function CopyButton({ text }: { text: string }) {
-  const { copyToClipboard, isCopied } = useCopyToClipboard({
-    onCopy: () => console.log("Copied!"),
-    timeout: 2000,
-  });
-
-  return <button onClick={() => copyToClipboard(text)}>{isCopied ? "Copied!" : "Copy"}</button>;
-}
-```
-
-**Parameters:**
-
-- `options.onCopy?: () => void` - Callback fired after successful copy
-- `options.timeout?: number` - Duration to show copied state (default: 2000ms)
-
-**Returns:**
-
-- `copyToClipboard: (value: string) => Promise<void>` - Function to copy text
-- `isCopied: boolean` - Whether a text was recently copied
-
-### useIsMobile
-
-Detects if the current viewport is mobile-sized (< 768px).
-
-```tsx
-import { useIsMobile } from "@codefast/hooks";
-
-function ResponsiveComponent() {
-  const isMobile = useIsMobile();
-
-  return <div>{isMobile ? <MobileLayout /> : <DesktopLayout />}</div>;
-}
-```
-
-**Returns:** `boolean` - True if viewport width is less than 768px
-
-### useMediaQuery
-
-Listens to CSS media queries and returns match status.
+Listen to CSS media queries and get real-time updates:
 
 ```tsx
 import { useMediaQuery } from "@codefast/hooks";
 
-function ThemeToggle() {
-  const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");
-  const isLargeScreen = useMediaQuery("(min-width: 1024px)");
+function ResponsiveComponent() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const isLandscape = useMediaQuery("(orientation: landscape)");
 
   return (
-    <div className={prefersDark ? "dark-theme" : "light-theme"}>
-      <h1>Current theme: {prefersDark ? "Dark" : "Light"}</h1>
-      <p>Screen size: {isLargeScreen ? "Large" : "Small"}</p>
+    <div>
+      <p>Mobile: {isMobile ? "Yes" : "No"}</p>
+      <p>Dark mode: {isDarkMode ? "Yes" : "No"}</p>
+      <p>Landscape: {isLandscape ? "Yes" : "No"}</p>
     </div>
   );
 }
 ```
 
-**Parameters:**
+### Copy to Clipboard Hook
 
-- `query: string` - CSS media query string
-
-**Returns:** `boolean` - Whether the media query matches
-
-### useMutationObserver
-
-Observes DOM mutations using the MutationObserver API.
+Copy text to clipboard with state feedback:
 
 ```tsx
-import { useMutationObserver } from "@codefast/hooks";
-import { useRef } from "react";
+import { useCopyToClipboard } from "@codefast/hooks";
 
-function DynamicContent() {
-  const containerRef = useRef<HTMLDivElement>(null);
+function CopyExample() {
+  const { copyToClipboard, isCopied } = useCopyToClipboard({
+    timeout: 3000, // Reset after 3 seconds
+    onCopy: () => console.log("Text copied!"),
+  });
+
+  return (
+    <div>
+      <button onClick={() => copyToClipboard("Hello World!")}>
+        {isCopied ? "Copied!" : "Copy Text"}
+      </button>
+    </div>
+  );
+}
+```
+
+### Mobile Detection Hook
+
+Detect mobile devices using media queries:
+
+```tsx
+import { useIsMobile } from "@codefast/hooks";
+
+function MobileAwareComponent() {
+  const isMobile = useIsMobile();
+
+  return <div>{isMobile ? <MobileNavigation /> : <DesktopNavigation />}</div>;
+}
+```
+
+### Animated Value Hook
+
+Create smooth animations between values:
+
+```tsx
+import { useAnimatedValue } from "@codefast/hooks";
+
+function AnimatedCounter() {
+  const [target, setTarget] = useState(0);
+  const animatedValue = useAnimatedValue(target, {
+    duration: 1000,
+    easing: "easeOut",
+  });
+
+  return (
+    <div>
+      <p>Value: {Math.round(animatedValue)}</p>
+      <button onClick={() => setTarget(target + 10)}>Increment</button>
+    </div>
+  );
+}
+```
+
+### Mutation Observer Hook
+
+Observe DOM mutations with ease:
+
+```tsx
+import { useRef } from "react";
+import { useMutationObserver } from "@codefast/hooks";
+
+function MutationExample() {
+  const ref = useRef<HTMLDivElement>(null);
 
   useMutationObserver(
-    containerRef,
+    ref,
     (mutations) => {
       mutations.forEach((mutation) => {
-        console.log("DOM changed:", mutation.type);
+        console.log("Mutation detected:", mutation.type);
       });
     },
     {
       childList: true,
-      subtree: true,
       attributes: true,
     },
   );
 
-  return (
-    <div ref={containerRef}>
-      <p>This content is being observed for changes</p>
-    </div>
-  );
+  return <div ref={ref}>Watch me for changes</div>;
 }
 ```
 
-**Parameters:**
+### Pagination Hook
 
-- `ref: RefObject<HTMLElement | null>` - Reference to element to observe
-- `callback: MutationCallback` - Function called when mutations occur
-- `options?: MutationObserverInit` - Observer configuration options
-
-### usePagination
-
-Calculates pagination logic with smart ellipsis handling.
+Handle pagination logic with ease:
 
 ```tsx
 import { usePagination, ELLIPSIS } from "@codefast/hooks";
 
-function Pagination({
-  currentPage,
-  totalResults,
-  onPageChange,
-}: {
-  currentPage: number;
-  totalResults: number;
-  onPageChange: (page: number) => void;
-}) {
-  const paginationRange = usePagination({
-    currentPage,
-    totalResults,
-    resultsPerPage: 10,
-    siblingPagesCount: 1,
+function PaginationComponent() {
+  const pagination = usePagination({
+    total: 100,
+    page: 1,
+    siblings: 1,
+    boundaries: 1,
   });
 
   return (
-    <div className="pagination">
-      {paginationRange.map((pageNumber, index) => (
+    <div>
+      {pagination.range.map((page, index) => (
         <button
           key={index}
-          disabled={pageNumber === ELLIPSIS}
-          className={pageNumber === currentPage ? "active" : ""}
-          onClick={() => {
-            if (typeof pageNumber === "number") {
-              onPageChange(pageNumber);
-            }
-          }}
+          disabled={page === ELLIPSIS}
+          onClick={() => page !== ELLIPSIS && pagination.setPage(page)}
         >
-          {pageNumber}
+          {page}
         </button>
       ))}
     </div>
@@ -208,43 +204,126 @@ function Pagination({
 }
 ```
 
+## API Reference
+
+### `useMediaQuery(query: string): boolean`
+
+Listen to CSS media query changes.
+
 **Parameters:**
 
-- `currentPage: number` - Current active page number
-- `totalResults: number` - Total number of results
-- `resultsPerPage: number` - Number of results per page
-- `siblingPagesCount?: number` - Number of sibling pages to show (default: 1)
+- `query`: CSS media query string
 
-**Returns:** Array of page numbers and ellipsis indicators
+**Returns:** Boolean indicating if the media query matches
 
-**Exports:**
+### `useCopyToClipboard(options?): { copyToClipboard, isCopied }`
 
-- `ELLIPSIS: string` - Constant for ellipsis indicator ("•••")
-- `UsePaginationProps` - TypeScript interface for hook parameters
+Copy text to clipboard with state management.
 
-## TypeScript Support
+**Options:**
 
-All hooks are written in TypeScript and provide comprehensive type definitions. Import types as needed:
+- `onCopy?: () => void`: Callback when text is copied
+- `timeout?: number`: Time in milliseconds before resetting copied state (default: 2000)
 
-```tsx
-import type { UsePaginationProps } from "@codefast/hooks";
+**Returns:**
 
-const paginationConfig: UsePaginationProps = {
-  currentPage: 1,
-  totalResults: 100,
-  resultsPerPage: 10,
-  siblingPagesCount: 2,
-};
-```
+- `copyToClipboard: (value: string) => Promise<void>`: Function to copy text
+- `isCopied: boolean`: Whether text was recently copied
 
-## Browser Compatibility
+### `useIsMobile(): boolean`
 
-These hooks are designed to work in modern browsers and include proper fallbacks for server-side rendering. The hooks gracefully handle environments where certain APIs (like `navigator.clipboard` or `matchMedia`) are not available.
+Detect if the current device is mobile.
+
+**Returns:** Boolean indicating if device is mobile (max-width: 768px)
+
+### `useAnimatedValue(target, options?): number`
+
+Animate between numeric values smoothly.
+
+**Parameters:**
+
+- `target: number`: Target value to animate to
+- `options?: { duration?: number; easing?: string }`: Animation options
+
+**Returns:** Current animated value
+
+### `useMutationObserver(target, callback, options?): void`
+
+Observe DOM mutations on a target element.
+
+**Parameters:**
+
+- `target: RefObject<Element>`: React ref to the target element
+- `callback: (mutations: MutationRecord[]) => void`: Callback for mutations
+- `options?: MutationObserverInit`: MutationObserver options
+
+### `usePagination(props): PaginationResult`
+
+Handle pagination logic and generate page ranges.
+
+**Props:**
+
+- `total: number`: Total number of items
+- `page: number`: Current page number
+- `siblings?: number`: Number of siblings around current page
+- `boundaries?: number`: Number of boundary pages
+
+**Returns:**
+
+- `range: (number | typeof ELLIPSIS)[]`: Array of page numbers and ellipsis
+- `active: number`: Current active page
+- `setPage: (page: number) => void`: Function to change page
+- `next: () => void`: Go to next page
+- `previous: () => void`: Go to previous page
+- `first: () => void`: Go to first page
+- `last: () => void`: Go to last page
 
 ## Contributing
 
-This package is part of the CodeFast monorepo. Please refer to the main repository for contribution guidelines.
+We welcome all contributions! To get started with development:
+
+### Environment Setup
+
+1. Fork this repository.
+2. Clone to your machine: `git clone <your-fork-url>`
+3. Install dependencies: `pnpm install`
+4. Create a new branch: `git checkout -b feature/feature-name`
+
+### Development Workflow
+
+```bash
+# Build all packages
+pnpm build:packages
+
+# Development mode for hooks
+pnpm dev --filter=@codefast/hooks
+
+# Run tests
+pnpm test --filter=@codefast/hooks
+
+# Run tests with coverage
+pnpm test:coverage --filter=@codefast/hooks
+
+# Lint and format
+pnpm lint:fix
+pnpm format
+```
+
+5. Commit and submit a pull request.
+
+See details at [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## License
 
-MIT © [Vuong Phan](https://github.com/codefastlabs/codefast)
+Distributed under the MIT License. See [LICENSE](../../LICENSE) for more details.
+
+## Contact
+
+- npm: [@codefast/hooks](https://www.npmjs.com/package/@codefast/hooks)
+- GitHub: [codefastlabs/codefast](https://github.com/codefastlabs/codefast)
+- Issues: [GitHub Issues](https://github.com/codefastlabs/codefast/issues)
+- Homepage: [Package Homepage](https://github.com/codefastlabs/codefast/tree/main/packages/hooks#readme)
+
+## Accessibility
+
+All hooks are designed to work seamlessly with React's accessibility features and provide no interference with screen readers or keyboard navigation. The hooks handle SSR (Server-Side Rendering) gracefully and include proper error handling for browser compatibility.
