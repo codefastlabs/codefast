@@ -4,16 +4,13 @@
     "allowJs": true,
     "incremental": true,
     "jsx": "preserve",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "resolveJsonModule": true
+    ]
   },
   "display": "Next.js application configuration",
   "extends": "./base.json"

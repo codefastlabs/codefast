@@ -1,13 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "allowImportingTsExtensions": false,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": false,
     "isolatedModules": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
@@ -22,9 +19,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2022",
-    "useDefineForClassFields": true,
-    "verbatimModuleSyntax": false
+    "target": "ESNext",
+    "useDefineForClassFields": true
   },
   "display": "Base configuration for monorepo packages"
 }
