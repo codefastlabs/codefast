@@ -93,8 +93,14 @@ export function ChartPieLabelCustom(): JSX.Element {
 }
 
 const label: ComponentProps<typeof Pie>["label"] = ({ cx, cy, payload, textAnchor, x, y }) => {
+  // Ensure textAnchor is a valid SVG textAnchor value
+  const validTextAnchor =
+    textAnchor === "start" || textAnchor === "middle" || textAnchor === "end"
+      ? textAnchor
+      : "middle";
+
   return (
-    <text cx={cx} cy={cy} fill="var(--foreground)" textAnchor={textAnchor} x={x} y={y}>
+    <text cx={cx} cy={cy} fill="var(--foreground)" textAnchor={validTextAnchor} x={x} y={y}>
       {(payload as DataItem).visitors}
     </text>
   );
