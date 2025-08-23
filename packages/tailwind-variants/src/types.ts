@@ -15,7 +15,6 @@ export type ClassNameProp<V extends unknown = ClassNameValue> =
 
 type BaseName = "base";
 
-type Screens = "initial";
 
 type Slots = Record<string, ClassNameValue> | undefined;
 
@@ -31,7 +30,6 @@ export type StringToBoolean<T> = T extends "true" | "false" ? boolean : T;
 
 export type isTrueOrArray<T> = T extends true | unknown[] ? true : false;
 
-export type WithInitialScreen<T extends Array<string>> = ["initial", ...T];
 
 /**
  * ----------------------------------------------------------------------
@@ -110,9 +108,6 @@ export type DefaultVariants<
     | (K extends keyof EV ? StringToBoolean<keyof EV[K]> : never);
 };
 
-export type ScreenPropsValue<V extends Variants<S>, S extends Slots, K extends keyof V> = {
-  [Screen in Screens]?: StringToBoolean<keyof V[K]>;
-};
 
 export type Props<
   V extends Variants<S>,
@@ -263,7 +258,6 @@ export type Config<
 > = {
   twMerge?: boolean;
   twMergeConfig?: TWMergeConfig<AdditionalClassGroupIds, AdditionalThemeGroupIds>;
-  responsiveVariants?: boolean | string[];
 };
 
 export type VariantProps<Component extends (...args: any) => any> = Omit<
