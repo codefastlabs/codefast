@@ -7,7 +7,7 @@ import type {
 
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import { isEmptyObject } from "./utils";
+import { isEmptyObject } from "@/utils";
 
 /**
  * Creates a tailored class name merging function based on the provided configuration.
