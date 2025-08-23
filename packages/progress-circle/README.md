@@ -1,119 +1,134 @@
-# @codefast-ui/progress-circle
+# Progress Circle
 
-Accessible circular progress component built with React and Radix UI, providing a robust solution for displaying progress with advanced features like threshold-based styling, indeterminate state, custom formatting, and comprehensive accessibility support.
+Accessible circular progress component built with React and Radix UI for creating interactive progress indicators with full keyboard navigation support, threshold-based color changes, configurable styling, and both determinate and indeterminate states.
 
-## Features
-
-- 🎯 **Accessible by Default** - Built with Radix UI primitives for WCAG compliance
-- 🔄 **Determinate & Indeterminate** - Supports both progress tracking and loading states
-- 🎨 **Threshold-Based Styling** - Dynamic color changes based on progress values
-- 📏 **Customizable Size** - Configurable circle size and stroke width
-- 🔢 **Flexible Value Range** - Support for custom min/max values beyond 0-100
-- 📐 **Rotation Control** - Configurable start angle for progress direction
-- 🎛️ **Composable Components** - Separate components for maximum customization flexibility
-- 🔒 **Context-Based** - Uses Radix UI context for seamless component communication
-- 📱 **Touch Friendly** - Optimized for both desktop and mobile interactions
-- 🌍 **Custom Formatting** - Support for custom value formatting functions
-- 📐 **TypeScript First** - Full TypeScript support with comprehensive type definitions
-- 🧪 **Well Tested** - Comprehensive test coverage including accessibility tests
+[![CI](https://github.com/codefastlabs/codefast/actions/workflows/release.yml/badge.svg)](https://github.com/codefastlabs/codefast/actions/workflows/release.yml)
+[![NPM Version](https://img.shields.io/npm/v/@codefast-ui/progress-circle.svg)](https://www.npmjs.com/package/@codefast-ui/progress-circle)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-10%2B-blue.svg)](https://pnpm.io/)
 
 ## Installation
 
+Install the component via pnpm (recommended):
+
 ```bash
-# Using pnpm (recommended)
 pnpm add @codefast-ui/progress-circle
-
-# Using npm
-npm install @codefast-ui/progress-circle
-
-# Using yarn
-yarn add @codefast-ui/progress-circle
 ```
 
-### Peer Dependencies
-
-This package requires React 19+ and its types:
+Or using npm:
 
 ```bash
-pnpm add react@^19.0 react-dom@^19.0
-pnpm add -D @types/react@^19.0 @types/react-dom@^19.0
+npm install @codefast-ui/progress-circle
+```
+
+**Peer Dependencies**:
+
+Make sure you have installed the peer dependencies:
+
+```bash
+pnpm add react react-dom
+pnpm add -D @types/react @types/react-dom
+```
+
+**Requirements**:
+
+- Node.js version 20.0.0 or higher
+- React version 19.0.0 or higher
+- TypeScript version 5.9.2 or higher (recommended)
+
+## Quick Start
+
+```tsx
+import {
+  ProgressCircleProvider,
+  ProgressCircleSVG,
+  ProgressCircleIndicator,
+  ProgressCircleTrack,
+  ProgressCircleValue,
+} from "@codefast-ui/progress-circle";
+
+function App() {
+  return (
+    <ProgressCircleProvider value={75}>
+      <ProgressCircleSVG>
+        <ProgressCircleTrack />
+        <ProgressCircleIndicator />
+      </ProgressCircleSVG>
+      <ProgressCircleValue />
+    </ProgressCircleProvider>
+  );
+}
 ```
 
 ## Usage
 
-### Basic Example
+### Basic Progress Circle
 
 ```tsx
 import {
-  ProgressCircle,
   ProgressCircleProvider,
   ProgressCircleSVG,
-  ProgressCircleTrack,
   ProgressCircleIndicator,
+  ProgressCircleTrack,
   ProgressCircleValue,
 } from "@codefast-ui/progress-circle";
 
 function BasicExample() {
   return (
-    <ProgressCircleProvider value={75}>
-      <ProgressCircle>
-        <ProgressCircleSVG>
-          <ProgressCircleTrack />
-          <ProgressCircleIndicator />
-        </ProgressCircleSVG>
-        <ProgressCircleValue />
-      </ProgressCircle>
+    <ProgressCircleProvider value={60} size={64}>
+      <ProgressCircleSVG>
+        <ProgressCircleTrack />
+        <ProgressCircleIndicator />
+      </ProgressCircleSVG>
+      <ProgressCircleValue />
     </ProgressCircleProvider>
   );
 }
 ```
 
-### Custom Size and Styling
+### Custom Size and Stroke Width
 
 ```tsx
 import {
   ProgressCircleProvider,
   ProgressCircleSVG,
-  ProgressCircleTrack,
   ProgressCircleIndicator,
-  ProgressCircleValue,
+  ProgressCircleTrack,
 } from "@codefast-ui/progress-circle";
 
 function CustomSizeExample() {
   return (
-    <ProgressCircleProvider value={60} size={120} strokeWidth={8}>
-      <div className="relative">
-        <ProgressCircleSVG>
-          <ProgressCircleTrack className="text-gray-200" />
-          <ProgressCircleIndicator className="text-blue-600" />
-        </ProgressCircleSVG>
-        <ProgressCircleValue className="absolute inset-0 flex items-center justify-center text-lg font-semibold" />
-      </div>
+    <ProgressCircleProvider value={45} size={120} strokeWidth={8}>
+      <ProgressCircleSVG>
+        <ProgressCircleTrack />
+        <ProgressCircleIndicator />
+      </ProgressCircleSVG>
     </ProgressCircleProvider>
   );
 }
 ```
 
-### Threshold-Based Colors
+### With Thresholds and Color Changes
 
 ```tsx
 import {
   ProgressCircleProvider,
   ProgressCircleSVG,
-  ProgressCircleTrack,
   ProgressCircleIndicator,
+  ProgressCircleTrack,
   ProgressCircleValue,
 } from "@codefast-ui/progress-circle";
 
 function ThresholdExample() {
   const thresholds = [
-    { value: 30, color: "#ef4444", background: "#fecaca" }, // Red for low values
-    { value: 70, color: "#f59e0b", background: "#fed7aa" }, // Orange for medium values
-    { value: 100, color: "#10b981", background: "#bbf7d0" }, // Green for high values
+    { value: 30, color: "#ef4444", background: "#fef2f2" },
+    { value: 70, color: "#f59e0b", background: "#fffbeb" },
+    { value: 100, color: "#10b981", background: "#f0fdf4" },
   ];
 
   return (
-    <ProgressCircleProvider value={85} thresholds={thresholds}>
+    <ProgressCircleProvider value={85} thresholds={thresholds} size={80}>
       <ProgressCircleSVG>
         <ProgressCircleTrack />
         <ProgressCircleIndicator />
@@ -130,8 +145,8 @@ function ThresholdExample() {
 import {
   ProgressCircleProvider,
   ProgressCircleSVG,
-  ProgressCircleTrack,
   ProgressCircleIndicator,
+  ProgressCircleTrack,
 } from "@codefast-ui/progress-circle";
 
 function IndeterminateExample() {
@@ -139,32 +154,8 @@ function IndeterminateExample() {
     <ProgressCircleProvider value={null}>
       <ProgressCircleSVG>
         <ProgressCircleTrack />
-        <ProgressCircleIndicator className="animate-spin" />
-      </ProgressCircleSVG>
-    </ProgressCircleProvider>
-  );
-}
-```
-
-### Custom Value Range
-
-```tsx
-import {
-  ProgressCircleProvider,
-  ProgressCircleSVG,
-  ProgressCircleTrack,
-  ProgressCircleIndicator,
-  ProgressCircleValue,
-} from "@codefast-ui/progress-circle";
-
-function CustomRangeExample() {
-  return (
-    <ProgressCircleProvider value={7} min={0} max={10}>
-      <ProgressCircleSVG>
-        <ProgressCircleTrack />
         <ProgressCircleIndicator />
       </ProgressCircleSVG>
-      <ProgressCircleValue />
     </ProgressCircleProvider>
   );
 }
@@ -176,16 +167,16 @@ function CustomRangeExample() {
 import {
   ProgressCircleProvider,
   ProgressCircleSVG,
-  ProgressCircleTrack,
   ProgressCircleIndicator,
+  ProgressCircleTrack,
   ProgressCircleValue,
 } from "@codefast-ui/progress-circle";
 
-function CustomFormattingExample() {
-  const formatValue = (value: number) => `${value}/100 tasks`;
+function CustomFormatExample() {
+  const formatValue = (value: number) => `${value} points`;
 
   return (
-    <ProgressCircleProvider value={42} formatValue={formatValue}>
+    <ProgressCircleProvider value={750} min={0} max={1000} formatValue={formatValue}>
       <ProgressCircleSVG>
         <ProgressCircleTrack />
         <ProgressCircleIndicator />
@@ -196,43 +187,12 @@ function CustomFormattingExample() {
 }
 ```
 
-### Custom Value Rendering
+### Using Aliased Components
 
 ```tsx
-import {
-  ProgressCircleProvider,
-  ProgressCircleSVG,
-  ProgressCircleTrack,
-  ProgressCircleIndicator,
-  ProgressCircleValue,
-} from "@codefast-ui/progress-circle";
+import { Provider, SVG, Indicator, Track, Value } from "@codefast-ui/progress-circle";
 
-function CustomValueRenderingExample() {
-  return (
-    <ProgressCircleProvider value={75}>
-      <ProgressCircleSVG>
-        <ProgressCircleTrack />
-        <ProgressCircleIndicator />
-      </ProgressCircleSVG>
-      <ProgressCircleValue>
-        {({ value, valueText }) => (
-          <div className="text-center">
-            <div className="text-2xl font-bold">{valueText}</div>
-            <div className="text-sm text-gray-500">Complete</div>
-          </div>
-        )}
-      </ProgressCircleValue>
-    </ProgressCircleProvider>
-  );
-}
-```
-
-### Using Short Aliases
-
-```tsx
-import { Provider, SVG, Track, Indicator, Value } from "@codefast-ui/progress-circle";
-
-function AliasExample() {
+function AliasedExample() {
   return (
     <Provider value={50}>
       <SVG>
@@ -245,134 +205,159 @@ function AliasExample() {
 }
 ```
 
+## Props
+
+### ProgressCircleProvider Props
+
+| Prop          | Type                          | Default     | Description                                                |
+| ------------- | ----------------------------- | ----------- | ---------------------------------------------------------- |
+| `value`       | `number \| null \| undefined` | `undefined` | Current progress value (null/undefined for indeterminate)  |
+| `min`         | `number`                      | `0`         | Minimum progress value                                     |
+| `max`         | `number`                      | `100`       | Maximum progress value                                     |
+| `size`        | `number`                      | `48`        | Size of the progress circle in pixels                      |
+| `strokeWidth` | `number`                      | `4`         | Width of the progress circle's stroke in pixels            |
+| `startAngle`  | `number`                      | `-90`       | Starting angle of the progress circle in degrees (0 = top) |
+| `thresholds`  | `Threshold[]`                 | `undefined` | Array of threshold configurations for color changes        |
+| `formatValue` | `(value: number) => string`   | `undefined` | Custom function to format the numeric value for display    |
+| `id`          | `string`                      | `undefined` | Unique identifier for the progress circle component        |
+| `children`    | `ReactNode`                   | -           | React children to be rendered inside the progress circle   |
+
+### ProgressCircle Props
+
+Extends all standard HTML `div` element props.
+
+### ProgressCircleSVG Props
+
+Extends all standard HTML `svg` element props.
+
+### ProgressCircleIndicator Props
+
+Extends all standard HTML `circle` element props.
+
+### ProgressCircleTrack Props
+
+Extends all standard HTML `circle` element props.
+
+### ProgressCircleValue Props
+
+Extends all standard HTML `span` element props.
+
 ## API Reference
 
-### ProgressCircleProvider
+### `Threshold`
 
-The root provider component that manages the progress circle state and calculations.
+Interface for defining color thresholds based on progress values.
 
-#### Props
-
-| Prop          | Type                        | Default | Description                                                  |
-| ------------- | --------------------------- | ------- | ------------------------------------------------------------ |
-| `children`    | `ReactNode`                 | -       | React children to be rendered inside the progress circle     |
-| `value`       | `number \| null`            | -       | Current progress value (null for indeterminate state)        |
-| `min`         | `number`                    | `0`     | Minimum value of the progress                                |
-| `max`         | `number`                    | `100`   | Maximum value of the progress                                |
-| `size`        | `number`                    | `48`    | Size of the progress circle in pixels                        |
-| `strokeWidth` | `number`                    | `4`     | Width of the progress circle's stroke in pixels              |
-| `startAngle`  | `number`                    | `-90`   | Starting angle of the progress circle in degrees (0 = top)   |
-| `thresholds`  | `Threshold[]`               | -       | Array of threshold configurations for different value ranges |
-| `formatValue` | `(value: number) => string` | -       | Custom function to format the numeric value for display      |
-| `id`          | `string`                    | -       | Unique identifier for the progress circle component          |
-
-#### Threshold Interface
-
-```tsx
+```typescript
 interface Threshold {
-  value: number; // The value at which this threshold becomes active
-  color: string; // Foreground color to be applied
-  background: string; // Background color to be applied
+  /** The value at which this threshold becomes active */
+  value: number;
+  /** Foreground color to be applied */
+  color: string;
+  /** Background color to be applied */
+  background: string;
 }
 ```
 
-### ProgressCircle
+### `ProgressCircleProviderProps`
 
-Root wrapper component for the progress circle.
+Main interface for ProgressCircleProvider component.
 
-#### Props
-
-Extends all standard `div` element props.
-
-### ProgressCircleSVG
-
-SVG container component that renders the progress circle with accessibility attributes.
-
-#### Props
-
-Extends all standard `svg` element props.
-
-### ProgressCircleTrack
-
-Background circle component that renders the static track of the progress circle.
-
-#### Props
-
-Extends all standard `circle` element props.
-
-### ProgressCircleIndicator
-
-Foreground circle component that shows the actual progress with stroke dash properties.
-
-#### Props
-
-Extends all standard `circle` element props.
-
-### ProgressCircleValue
-
-Component that displays the current progress value with support for custom rendering.
-
-#### Props
-
-| Prop       | Type                                                                                       | Description                       |
-| ---------- | ------------------------------------------------------------------------------------------ | --------------------------------- |
-| `children` | `ReactNode \| ((context: { value: number \| undefined; valueText: string }) => ReactNode)` | Custom content or render function |
-
-Extends all standard `div` element props except `children`.
-
-## Accessibility
-
-The progress circle component is built with accessibility in mind:
-
-- Uses proper ARIA attributes (`role="progressbar"`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, `aria-valuetext`)
-- Supports screen readers with descriptive labels
-- Handles indeterminate state correctly for accessibility
-- Provides semantic HTML structure
-
-## Examples
-
-### Loading Spinner
-
-```tsx
-function LoadingSpinner() {
-  return (
-    <ProgressCircleProvider value={null} size={32} strokeWidth={3}>
-      <ProgressCircleSVG>
-        <ProgressCircleTrack className="text-gray-200" />
-        <ProgressCircleIndicator className="text-blue-500 animate-spin" />
-      </ProgressCircleSVG>
-    </ProgressCircleProvider>
-  );
+```typescript
+interface ProgressCircleProviderProps {
+  children: ReactNode;
+  formatValue?: (value: number) => string;
+  id?: string;
+  max?: number;
+  min?: number;
+  size?: number;
+  startAngle?: number;
+  strokeWidth?: number;
+  thresholds?: Threshold[];
+  value?: null | number;
 }
 ```
 
-### File Upload Progress
+### Component Exports
 
-```tsx
-function FileUploadProgress({ uploadProgress }: { uploadProgress: number }) {
-  const thresholds = [{ value: 100, color: "#10b981", background: "#dcfce7" }];
+The package exports both full component names and convenient aliases:
 
-  return (
-    <ProgressCircleProvider value={uploadProgress} thresholds={thresholds} size={80}>
-      <div className="relative">
-        <ProgressCircleSVG>
-          <ProgressCircleTrack />
-          <ProgressCircleIndicator />
-        </ProgressCircleSVG>
-        <ProgressCircleValue className="absolute inset-0 flex items-center justify-center">
-          {({ valueText }) => (
-            <div className="text-center">
-              <div className="text-lg font-semibold">{valueText}</div>
-              <div className="text-xs text-gray-500">uploaded</div>
-            </div>
-          )}
-        </ProgressCircleValue>
-      </div>
-    </ProgressCircleProvider>
-  );
-}
+```typescript
+// Full component names
+export {
+  ProgressCircle,
+  ProgressCircleProvider,
+  ProgressCircleSVG,
+  ProgressCircleIndicator,
+  ProgressCircleTrack,
+  ProgressCircleValue,
+};
+
+// Convenient aliases
+export {
+  Root, // ProgressCircle
+  Provider, // ProgressCircleProvider
+  SVG, // ProgressCircleSVG
+  Indicator, // ProgressCircleIndicator
+  Track, // ProgressCircleTrack
+  Value, // ProgressCircleValue
+};
 ```
+
+### Accessibility Features
+
+- **ARIA Support**: Proper `role="progressbar"` and ARIA attributes
+- **Value Announcements**: Screen readers announce current progress values
+- **Indeterminate State**: Proper handling for loading states
+- **Keyboard Navigation**: Full keyboard accessibility support
+- **Custom Labels**: Support for custom value formatting and announcements
+
+## Contributing
+
+We welcome all contributions! To get started with development:
+
+### Environment Setup
+
+1. Fork this repository.
+2. Clone to your machine: `git clone <your-fork-url>`
+3. Install dependencies: `pnpm install`
+4. Create a new branch: `git checkout -b feature/feature-name`
+
+### Development Workflow
+
+```bash
+# Build all packages
+pnpm build:packages
+
+# Development mode for specific component
+pnpm dev --filter=@codefast-ui/progress-circle
+
+# Run tests
+pnpm test --filter=@codefast-ui/progress-circle
+
+# Run tests with coverage
+pnpm test:coverage --filter=@codefast-ui/progress-circle
+
+# Lint and format
+pnpm lint:fix
+pnpm format
+```
+
+5. Commit and submit a pull request.
+
+See details at [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT © [CodeFast](https://github.com/codefastlabs/codefast)
+Distributed under the MIT License. See [LICENSE](LICENSE) for more details.
+
+## Contact
+
+- npm: [@codefast-ui/progress-circle](https://www.npmjs.com/package/@codefast-ui/progress-circle)
+- GitHub: [codefastlabs/codefast](https://github.com/codefastlabs/codefast)
+- Issues: [GitHub Issues](https://github.com/codefastlabs/codefast/issues)
+- Documentation: [Component Docs](https://codefast.dev/docs/components/progress-circle)
+
+## Accessibility
+
+This component follows WAI-ARIA standards and provides full keyboard navigation support. It includes proper `progressbar` role and value announcements for screen readers, with support for both determinate and indeterminate states.
