@@ -1,13 +1,14 @@
-import { ClassNameValue, Config, TV, TWMergeConfig } from "@/types";
-import {
-  isEqual,
-  isEmptyObject,
-  falsyToString,
-  mergeObjects,
-  flatMergeArrays,
-  flat,
-} from "@/utils";
+import type { ClassNameValue, Config, TV, TWMergeConfig } from "@/types";
+
 import { createTwMerge } from "@/cn";
+import {
+  falsyToString,
+  flat,
+  flatMergeArrays,
+  isEmptyObject,
+  isEqual,
+  mergeObjects,
+} from "@/utils";
 
 export const defaultConfig: Config = {
   twMerge: true,
@@ -20,10 +21,11 @@ export const cnBase = (...classes: ClassNameValue[]): string | undefined => {
   flat(classes, result);
   let str = "";
 
-  for (let i = 0; i < result.length; i++) {
-    if (result[i]) {
+  for (const element of result) {
+    if (element) {
       if (str) str += " ";
-      str += result[i];
+
+      str += element;
     }
   }
 
@@ -53,11 +55,7 @@ export const cn =
 
 const joinObjects = (obj1: any, obj2: any): any => {
   for (const key in obj2) {
-    if (key in obj1) {
-      obj1[key] = cnBase(obj1[key], obj2[key]);
-    } else {
-      obj1[key] = obj2[key];
-    }
+    obj1[key] = key in obj1 ? cnBase(obj1[key], obj2[key]) : obj2[key];
   }
 
   return obj1;
@@ -65,12 +63,12 @@ const joinObjects = (obj1: any, obj2: any): any => {
 
 export const tv: TV = (options, configProp) => {
   const {
+    compoundSlots = [],
+    compoundVariants: compoundVariantsProps = [],
+    defaultVariants: defaultVariantsProps = {},
     extend = null,
     slots: slotProps = {},
     variants: variantsProps = {},
-    compoundVariants: compoundVariantsProps = [],
-    compoundSlots = [],
-    defaultVariants: defaultVariantsProps = {},
   } = options;
 
   const config = { ...defaultConfig, ...configProp };
@@ -92,13 +90,13 @@ export const tv: TV = (options, configProp) => {
   }
 
   const isExtendedSlotsEmpty = isEmptyObject(extend?.slots);
-  const componentSlots = !isEmptyObject(slotProps)
-    ? {
+  const componentSlots = isEmptyObject(slotProps)
+    ? {}
+    : {
         // add "base" to the "slots" object
         base: cnBase(options?.base, isExtendedSlotsEmpty && extend?.base),
         ...slotProps,
-      }
-    : {};
+      };
 
   // merge slots with the "extended" slots
   const slots = isExtendedSlotsEmpty
@@ -142,15 +140,17 @@ export const tv: TV = (options, configProp) => {
       if (variantProp === null) return null;
 
       const variantKey = falsyToString(variantProp);
-      let defaultVariantProp = defaultVariants?.[variant];
+      const defaultVariantProp = defaultVariants?.[variant];
 
       if (typeof variantKey === "object") {
         // Use default variant if object is provided
         const key = falsyToString(defaultVariantProp);
+
         return variantObj[String(key || "false")];
       }
 
-      const key = variantKey != null ? variantKey : falsyToString(defaultVariantProp);
+      const key = variantKey == null ? falsyToString(defaultVariantProp) : variantKey;
+
       return variantObj[String(key || "false")];
     };
 
@@ -160,8 +160,8 @@ export const tv: TV = (options, configProp) => {
       const keys = Object.keys(variants);
       const result: any[] = [];
 
-      for (let i = 0; i < keys.length; i++) {
-        const value = getVariantValue(keys[i], variants);
+      for (const key of keys) {
+        const value = getVariantValue(key, variants);
 
         if (value) result.push(value);
       }
@@ -180,7 +180,7 @@ export const tv: TV = (options, configProp) => {
         const value =
           slotKey === "base" && typeof variantValue === "string"
             ? variantValue
-            : variantValue && variantValue[slotKey];
+            : variantValue?.[slotKey];
 
         if (value) result.push(value);
       }
@@ -196,11 +196,11 @@ export const tv: TV = (options, configProp) => {
       if (value !== undefined) propsWithoutUndefined[prop] = value;
     }
 
-    const getCompleteProps = (key: string | null, slotProps: any) => {
+    const getCompleteProps = (key: null | string, slotProps: any) => {
       const initialProp =
-        typeof props?.[key as string] === "object"
+        typeof props?.[key!] === "object"
           ? {
-              [key as string]: props[key as string]?.initial,
+              [key!]: props[key!]?.initial,
             }
           : {};
 
@@ -247,6 +247,7 @@ export const tv: TV = (options, configProp) => {
 
         if (isValid) {
           if (tvClass) result.push(tvClass);
+
           if (tvClassName) result.push(tvClassName);
         }
       }
@@ -262,9 +263,7 @@ export const tv: TV = (options, configProp) => {
       const result: any = {};
       const cnFn = cn;
 
-      for (let i = 0; i < compoundClassNames.length; i++) {
-        const className = compoundClassNames[i];
-
+      for (const className of compoundClassNames) {
         if (typeof className === "string") {
           result.base = cnFn(result.base, className)(config);
         } else if (typeof className === "object") {
@@ -278,17 +277,16 @@ export const tv: TV = (options, configProp) => {
     };
 
     const getCompoundSlotClassNameBySlot = (slotProps: any) => {
-      if (compoundSlots.length < 1) return null;
+      if (compoundSlots.length === 0) return null;
 
       const result: any = {};
       const completeProps = getCompleteProps(null, slotProps);
 
-      for (let i = 0; i < compoundSlots.length; i++) {
-        const compoundSlot = compoundSlots[i];
+      for (const compoundSlot of compoundSlots) {
         const {
-          slots = [],
           class: slotClass,
           className: slotClassName,
+          slots = [],
           ...slotVariants
         } = compoundSlot;
 
@@ -313,10 +311,9 @@ export const tv: TV = (options, configProp) => {
           if (!isValid) continue;
         }
 
-        for (let j = 0; j < slots.length; j++) {
-          const slotName = slots[j];
-
+        for (const slotName of slots) {
           if (!result[slotName]) result[slotName] = [];
+
           result[slotName].push([slotClass, slotClassName]);
         }
       }
@@ -362,7 +359,7 @@ export const tv: TV = (options, configProp) => {
   };
 
   const getVariantKeys = () => {
-    if (!variants || typeof variants !== "object") return undefined;
+    if (!variants || typeof variants !== "object") return;
 
     return Object.keys(variants);
   };
@@ -385,20 +382,20 @@ export const createTV = (configProp: Config): TV => {
 
 // Export types
 export type {
-  ClassNameValue,
   ClassNameProp,
-  OmitUndefined,
-  StringToBoolean,
-  isTrueOrArray,
-  Variants,
-  CompoundVariants,
+  ClassNameValue,
   CompoundSlots,
+  CompoundVariants,
+  Config,
   DefaultVariants,
+  IsTrueOrArray,
+  OmitUndefined,
   Props,
-  VariantKeys,
   ReturnProps,
   ReturnType,
+  StringToBoolean,
   TV,
-  Config,
+  VariantKeys,
   VariantProps,
+  Variants,
 } from "@/types";
