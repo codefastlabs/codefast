@@ -100,7 +100,7 @@ importers:
         version: 0.541.0(react@19.1.1)
       next:
         specifier: ^15.5.0
-        version: 15.5.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        version: 15.5.0(@babel/core@7.28.3)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -715,6 +715,12 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      inversify:
+        specifier: ^7.9.0
+        version: 7.9.0(reflect-metadata@0.2.2)
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       tailwind-merge:
         specifier: ^3.0.0
         version: 3.3.1
@@ -1838,6 +1844,28 @@ packages:
     peerDependenciesMeta:
       '@types/node':
         optional: true
+
+  '@inversifyjs/common@1.5.2':
+    resolution: {integrity: sha512-WlzR9xGadABS9gtgZQ+luoZ8V6qm4Ii6RQfcfC9Ho2SOlE6ZuemFo7PKJvKI0ikm8cmKbU8hw5UK6E4qovH21w==}
+
+  '@inversifyjs/container@1.12.6':
+    resolution: {integrity: sha512-P0RWN5tkLPZG6HMa4zQCpiMfyzjI5JHJc/ZlHPcyXLO9FIrmB0sXi6Oa4ic3+GEO/L/mz+a5k8RRCsa7mQ94eg==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
+  '@inversifyjs/core@7.2.0':
+    resolution: {integrity: sha512-rOmtf31TGTeO5BNZhobV0hoV5F0yGwVJFm8mWyoLJbemOH1ugZRMYlVyKXvSDZfMCi/MSU4EEasSi/NFaq4qeA==}
+
+  '@inversifyjs/plugin@0.2.0':
+    resolution: {integrity: sha512-R/JAdkTSD819pV1zi0HP54mWHyX+H2m8SxldXRgPQarS3ySV4KPyRdosWcfB8Se0JJZWZLHYiUNiS6JvMWSPjw==}
+
+  '@inversifyjs/prototype-utils@0.1.2':
+    resolution: {integrity: sha512-WZAEycwVd8zVCPCQ7GRzuQmjYF7X5zbjI9cGigDbBoTHJ8y5US9om00IAp0RYislO+fYkMzgcB2SnlIVIzyESA==}
+
+  '@inversifyjs/reflect-metadata-utils@1.3.0':
+    resolution: {integrity: sha512-JJVnIRq75+nF8FP4WwFPdVQ4sgqf09acXbODi3B7vVtJo+0Mo0YQOOdSWw/cHmbP8+5MAKi4PBYOK3yqn4tGNg==}
+    peerDependencies:
+      reflect-metadata: 0.2.2
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -4682,6 +4710,11 @@ packages:
     resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
     engines: {node: '>=12'}
 
+  inversify@7.9.0:
+    resolution: {integrity: sha512-bq5om1H9i5wXUoWfoubnNnSpD8Aw+uci6sH751M4RZHPKdccuniRNFO6pQf5AsPdO/Tcy4WPFx8FxaETsaQlhw==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
   is-array-buffer@3.0.5:
     resolution: {integrity: sha512-DDfANUiiG2wC1qawP66qlTugJeL5HyzMpfr8lLK+jMQirGzNod0B12cFB/9q838Ru27sBwfw78/rdoU7RERz6A==}
     engines: {node: '>= 0.4'}
@@ -5982,6 +6015,9 @@ packages:
 
   redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
+
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
@@ -7645,6 +7681,34 @@ snapshots:
       iconv-lite: 0.6.3
     optionalDependencies:
       '@types/node': 24.3.0
+
+  '@inversifyjs/common@1.5.2': {}
+
+  '@inversifyjs/container@1.12.6(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/core': 7.2.0(reflect-metadata@0.2.2)
+      '@inversifyjs/plugin': 0.2.0
+      '@inversifyjs/reflect-metadata-utils': 1.3.0(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/core@7.2.0(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/prototype-utils': 0.1.2
+      '@inversifyjs/reflect-metadata-utils': 1.3.0(reflect-metadata@0.2.2)
+    transitivePeerDependencies:
+      - reflect-metadata
+
+  '@inversifyjs/plugin@0.2.0': {}
+
+  '@inversifyjs/prototype-utils@0.1.2':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+
+  '@inversifyjs/reflect-metadata-utils@1.3.0(reflect-metadata@0.2.2)':
+    dependencies:
+      reflect-metadata: 0.2.2
 
   '@isaacs/balanced-match@4.0.1': {}
 
@@ -10832,6 +10896,13 @@ snapshots:
 
   internmap@2.0.3: {}
 
+  inversify@7.9.0(reflect-metadata@0.2.2):
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/container': 1.12.6(reflect-metadata@0.2.2)
+      '@inversifyjs/core': 7.2.0(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
   is-array-buffer@3.0.5:
     dependencies:
       call-bind: 1.0.8
@@ -12036,29 +12107,6 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@15.5.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
-    dependencies:
-      '@next/env': 15.5.0
-      '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001736
-      postcss: 8.4.31
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-      styled-jsx: 5.1.6(react@19.1.1)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 15.5.0
-      '@next/swc-darwin-x64': 15.5.0
-      '@next/swc-linux-arm64-gnu': 15.5.0
-      '@next/swc-linux-arm64-musl': 15.5.0
-      '@next/swc-linux-x64-gnu': 15.5.0
-      '@next/swc-linux-x64-musl': 15.5.0
-      '@next/swc-win32-arm64-msvc': 15.5.0
-      '@next/swc-win32-x64-msvc': 15.5.0
-      sharp: 0.34.3
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
@@ -12429,6 +12477,8 @@ snapshots:
       redux: 5.0.1
 
   redux@5.0.1: {}
+
+  reflect-metadata@0.2.2: {}
 
   reflect.getprototypeof@1.0.10:
     dependencies:
@@ -12840,11 +12890,6 @@ snapshots:
       react: 19.1.1
     optionalDependencies:
       '@babel/core': 7.28.3
-
-  styled-jsx@5.1.6(react@19.1.1):
-    dependencies:
-      client-only: 0.0.1
-      react: 19.1.1
 
   supports-color@7.2.0:
     dependencies:

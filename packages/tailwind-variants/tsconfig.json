@@ -2,6 +2,8 @@
   "extends": "@codefast/typescript-config/react.json",
   "compilerOptions": {
     "outDir": "dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@/*": ["./src/*"]
     },
