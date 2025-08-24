@@ -1,14 +1,15 @@
-import { flat } from '@/utils/flat';
-
 export const flatMergeArrays = (...arrays: unknown[][]): unknown[] => {
   const result: unknown[] = [];
 
-  flat(arrays, result);
-  const filtered: unknown[] = [];
-
-  for (const element of result) {
-    if (element) filtered.push(element);
+  for (const array of arrays) {
+    if (Array.isArray(array)) {
+      for (const item of array) {
+        if (item !== null && item !== undefined) {
+          result.push(item);
+        }
+      }
+    }
   }
 
-  return filtered;
+  return result;
 };
