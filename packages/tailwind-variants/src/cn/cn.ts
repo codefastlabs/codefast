@@ -4,18 +4,13 @@ import { createTwMerge } from "@/cn/create-tw-merge";
 import { isEqual } from "@/utils";
 import clsx from "clsx";
 
-export const cnBase = (...classes: ClassNameValue[]): string | undefined => {
-  const result = clsx(classes);
-  return result || undefined;
-};
-
 let cachedTwMerge: ((...classes: ClassNameValue[]) => string) | null = null;
 let cachedTwMergeConfig: TWMergeConfig = {};
 
 export const cn =
   (...classes: ClassNameValue[]) =>
   (config?: Config): string | undefined => {
-    const base = cnBase(classes);
+    const base = clsx(classes) || undefined;
 
     if (!base || !config?.twMerge) {
       return base;
