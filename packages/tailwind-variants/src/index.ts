@@ -3,7 +3,7 @@ export { tv, createTV, defaultConfig } from '@/core';
 export type { TV, Config } from '@/types';
 
 // CN exports
-export { cn, cnBase, createTwMerge } from '@/cn';
+export { cn, createTwMerge } from '@/cn';
 
 // Utility exports
 export {
