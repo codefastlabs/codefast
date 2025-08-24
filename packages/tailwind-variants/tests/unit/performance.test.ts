@@ -105,7 +105,13 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
       const result = deepSlots({ theme: `theme-${i % 5}` });
 
       // Access all slots to ensure they're computed
-      for (const key of Object.keys(slots)) result[key]();
+      for (const key of Object.keys(slots)) {
+        const slotFn = result[key];
+
+        if (slotFn && typeof slotFn === "function") {
+          slotFn();
+        }
+      }
     }
 
     const endTime = performance.now();
