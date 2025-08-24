@@ -15,49 +15,49 @@ export const tv: TV = (options, configProp) => {
     variants: variantsProps = {},
   } = options;
 
-  const config = { ...defaultConfig, ...configProp };
+  const mergedConfig = { ...defaultConfig, ...configProp };
 
-  const base = extend?.base ? clsx(extend.base, options?.base) : options?.base;
-  const variants =
+  const baseClasses = extend?.base ? clsx(extend.base, options?.base) : options?.base;
+  const mergedVariants =
     extend?.variants && !isEmptyObject(extend.variants)
       ? mergeObjects(variantsProps, extend.variants)
       : variantsProps;
-  const defaultVariants =
+  const mergedDefaultVariants =
     extend?.defaultVariants && !isEmptyObject(extend.defaultVariants)
       ? { ...extend.defaultVariants, ...defaultVariantsProps }
       : defaultVariantsProps;
 
-  const isExtendedSlotsEmpty = isEmptyObject(extend?.slots);
+  const hasExtendedSlots = !isEmptyObject(extend?.slots);
   const componentSlots = isEmptyObject(slotProps)
     ? {}
     : {
         // add "base" to the "slots" object
-        base: clsx(options?.base, isExtendedSlotsEmpty && extend?.base),
+        base: clsx(options?.base, !hasExtendedSlots && extend?.base),
         ...slotProps,
       };
 
   // merge slots with the "extended" slots
-  const slots = isExtendedSlotsEmpty
-    ? componentSlots
-    : joinObjects(
+  const mergedSlots = hasExtendedSlots
+    ? joinObjects(
         { ...extend?.slots },
         isEmptyObject(componentSlots) ? { base: options?.base } : componentSlots,
-      );
+      )
+    : componentSlots;
 
   // merge compoundVariants with the "extended" compoundVariants
-  const compoundVariants = isEmptyObject(extend?.compoundVariants)
+  const mergedCompoundVariants = isEmptyObject(extend?.compoundVariants)
     ? compoundVariantsProps
     : flatMergeArrays(extend?.compoundVariants, compoundVariantsProps);
 
   const component = (props: any = {}) => {
-    if (isEmptyObject(variants) && isEmptyObject(slotProps) && isExtendedSlotsEmpty) {
-      const simpleClasses = clsx(base, props?.class, props?.className);
-      return cn(simpleClasses)(config);
+    if (isEmptyObject(mergedVariants) && isEmptyObject(slotProps) && !hasExtendedSlots) {
+      const simpleClasses = clsx(baseClasses, props?.class, props?.className);
+      return cn(simpleClasses)(mergedConfig);
     }
 
-    if (compoundVariants && !Array.isArray(compoundVariants)) {
+    if (mergedCompoundVariants && !Array.isArray(mergedCompoundVariants)) {
       throw new TypeError(
-        `The "compoundVariants" prop must be an array. Received: ${typeof compoundVariants}`,
+        `The "compoundVariants" prop must be an array. Received: ${typeof mergedCompoundVariants}`,
       );
     }
 
@@ -67,75 +67,75 @@ export const tv: TV = (options, configProp) => {
       );
     }
 
-    const getVariantValue = (variant: string, vrs: any = variants, slotProps?: any) => {
-      const variantObj = vrs[variant];
+    const getVariantValue = (variantKey: string, variantDefinitions: any = mergedVariants, slotProps?: any) => {
+      const variantDefinition = variantDefinitions[variantKey];
 
-      if (!variantObj || isEmptyObject(variantObj)) {
+      if (!variantDefinition || isEmptyObject(variantDefinition)) {
         return null;
       }
 
-      const variantProp = slotProps?.[variant] ?? props?.[variant];
+      const variantPropValue = slotProps?.[variantKey] ?? props?.[variantKey];
 
-      if (variantProp === null) return null;
+      if (variantPropValue === null) return null;
 
-      const variantKey = falsyToString(variantProp);
-      const defaultVariantProp = defaultVariants?.[variant];
+      const variantStringValue = falsyToString(variantPropValue);
+      const defaultVariantValue = mergedDefaultVariants?.[variantKey];
 
-      if (typeof variantKey === "object") {
+      if (typeof variantStringValue === "object") {
         // Use default variant if object is provided
-        const key = falsyToString(defaultVariantProp);
+        const defaultKey = falsyToString(defaultVariantValue);
 
-        return variantObj[String(key || "false")];
+        return variantDefinition[String(defaultKey || "false")];
       }
 
-      const key = variantKey == null ? falsyToString(defaultVariantProp) : variantKey;
+      const finalVariantKey = variantStringValue == null ? falsyToString(defaultVariantValue) : variantStringValue;
 
-      return variantObj[String(key || "false")];
+      return variantDefinition[String(finalVariantKey || "false")];
     };
 
     const getVariantClassNames = () => {
-      if (!variants) return [];
+      if (!mergedVariants) return [];
 
-      const keys = Object.keys(variants);
-      const classNames: any[] = [];
+      const variantKeys = Object.keys(mergedVariants);
+      const variantClassNames: any[] = [];
 
-      for (const key of keys) {
-        const value = getVariantValue(key, variants);
-        if (value) classNames.push(value);
+      for (const variantKey of variantKeys) {
+        const variantValue = getVariantValue(variantKey, mergedVariants);
+        if (variantValue) variantClassNames.push(variantValue);
       }
 
-      return classNames;
+      return variantClassNames;
     };
 
     const getVariantClassNamesBySlotKey = (slotKey: string, slotProps: any) => {
-      if (!variants || typeof variants !== "object") return [];
+      if (!mergedVariants || typeof mergedVariants !== "object") return [];
 
-      const classNames: any[] = [];
+      const slotVariantClassNames: any[] = [];
 
-      for (const variant in variants) {
-        const variantValue = getVariantValue(variant, variants, slotProps);
+      for (const variantKey in mergedVariants) {
+        const variantValue = getVariantValue(variantKey, mergedVariants, slotProps);
 
-        const value =
+        const slotVariantValue =
           slotKey === "base" && typeof variantValue === "string"
             ? variantValue
             : variantValue?.[slotKey];
 
-        if (value) classNames.push(value);
+        if (slotVariantValue) slotVariantClassNames.push(slotVariantValue);
       }
 
-      return classNames;
+      return slotVariantClassNames;
     };
 
     const propsWithoutUndefined: any = {};
 
-    for (const prop in props) {
-      const value = props[prop];
+    for (const propKey in props) {
+      const propValue = props[propKey];
 
-      if (value !== undefined) propsWithoutUndefined[prop] = value;
+      if (propValue !== undefined) propsWithoutUndefined[propKey] = propValue;
     }
 
     const getCompleteProps = (key: null | string, slotProps: any) => {
-      const initialProp =
+      const initialPropValue =
         typeof props?.[key!] === "object"
           ? {
               [key!]: props[key!]?.initial,
@@ -143,96 +143,96 @@ export const tv: TV = (options, configProp) => {
           : {};
 
       return {
-        ...defaultVariants,
+        ...mergedDefaultVariants,
         ...propsWithoutUndefined,
-        ...initialProp,
+        ...initialPropValue,
         ...slotProps,
       };
     };
 
-    const getCompoundVariantsValue = (cv: any[] = [], slotProps: any) => {
-      const classNames: any[] = [];
-      const cvLength = cv.length;
+    const getCompoundVariantsValue = (compoundVariantsArray: any[] = [], slotProps: any) => {
+      const compoundVariantClassNames: any[] = [];
+      const compoundVariantsCount = compoundVariantsArray.length;
 
-      for (let i = 0; i < cvLength; i++) {
-        const cvItem = cv[i];
-        const { class: tvClass, className: tvClassName, ...compoundVariantOptions } = cvItem;
-        let isValid = true;
+      for (let i = 0; i < compoundVariantsCount; i++) {
+        const compoundVariantItem = compoundVariantsArray[i];
+        const { class: tvClass, className: tvClassName, ...compoundVariantOptions } = compoundVariantItem;
+        let isCompoundVariantValid = true;
         const completeProps = getCompleteProps(null, slotProps);
 
-        for (const key in compoundVariantOptions) {
-          const value = compoundVariantOptions[key];
-          const completePropsValue = completeProps[key];
+        for (const optionKey in compoundVariantOptions) {
+          const optionValue = compoundVariantOptions[optionKey];
+          const completePropsValue = completeProps[optionKey];
 
-          if (Array.isArray(value)) {
-            if (!value.includes(completePropsValue)) {
-              isValid = false;
+          if (Array.isArray(optionValue)) {
+            if (!optionValue.includes(completePropsValue)) {
+              isCompoundVariantValid = false;
               break;
             }
           } else {
             if (
-              (value == null || value === false) &&
+              (optionValue == null || optionValue === false) &&
               (completePropsValue == null || completePropsValue === false)
             )
               continue;
 
-            if (completePropsValue !== value) {
-              isValid = false;
+            if (completePropsValue !== optionValue) {
+              isCompoundVariantValid = false;
               break;
             }
           }
         }
 
-        if (isValid) {
-          if (tvClass) classNames.push(tvClass);
-          if (tvClassName) classNames.push(tvClassName);
+        if (isCompoundVariantValid) {
+          if (tvClass) compoundVariantClassNames.push(tvClass);
+          if (tvClassName) compoundVariantClassNames.push(tvClassName);
         }
       }
 
-      return classNames;
+      return compoundVariantClassNames;
     };
 
     const getCompoundVariantClassNamesBySlot = (slotProps: any) => {
-      const compoundClassNames = getCompoundVariantsValue(compoundVariants, slotProps);
+      const compoundVariantClassNames = getCompoundVariantsValue(mergedCompoundVariants, slotProps);
 
-      if (!Array.isArray(compoundClassNames)) return compoundClassNames;
+      if (!Array.isArray(compoundVariantClassNames)) return compoundVariantClassNames;
 
-      const result: any = {};
-      const cnFn = cn;
+      const slotCompoundResult: any = {};
+      const cnFunction = cn;
 
-      for (const className of compoundClassNames) {
+      for (const className of compoundVariantClassNames) {
         if (typeof className === "string") {
-          result.base = cnFn(result.base, className)(config);
+          slotCompoundResult.base = cnFunction(slotCompoundResult.base, className)(mergedConfig);
         } else if (typeof className === "object") {
-          for (const slot in className) {
-            result[slot] = cnFn(result[slot], className[slot])(config);
+          for (const slotKey in className) {
+            slotCompoundResult[slotKey] = cnFunction(slotCompoundResult[slotKey], className[slotKey])(mergedConfig);
           }
         }
       }
 
-      return result;
+      return slotCompoundResult;
     };
 
     const getCompoundSlotClassNameBySlot = (slotProps: any) => {
       if (compoundSlots.length === 0) return null;
 
-      const result: any = {};
+      const compoundSlotResult: any = {};
       const completeProps = getCompleteProps(null, slotProps);
 
-      for (const compoundSlot of compoundSlots) {
+      for (const compoundSlotItem of compoundSlots) {
         const {
           class: slotClass,
           className: slotClassName,
           slots = [],
           ...slotVariants
-        } = compoundSlot;
+        } = compoundSlotItem;
 
         if (!isEmptyObject(slotVariants)) {
-          let isValid = true;
+          let isSlotVariantValid = true;
 
-          for (const key in slotVariants) {
-            const completePropsValue = completeProps[key];
-            const slotVariantValue = slotVariants[key];
+          for (const variantKey in slotVariants) {
+            const completePropsValue = completeProps[variantKey];
+            const slotVariantValue = slotVariants[variantKey];
 
             if (
               completePropsValue === undefined ||
@@ -240,43 +240,43 @@ export const tv: TV = (options, configProp) => {
                 ? !slotVariantValue.includes(completePropsValue)
                 : slotVariantValue !== completePropsValue)
             ) {
-              isValid = false;
+              isSlotVariantValid = false;
               break;
             }
           }
 
-          if (!isValid) continue;
+          if (!isSlotVariantValid) continue;
         }
 
         for (const slotName of slots) {
-          if (!result[slotName]) result[slotName] = [];
+          if (!compoundSlotResult[slotName]) compoundSlotResult[slotName] = [];
           
           // Use clsx to handle class and className arrays efficiently
           const slotClasses = clsx(slotClass, slotClassName);
           if (slotClasses) {
-            result[slotName].push(slotClasses);
+            compoundSlotResult[slotName].push(slotClasses);
           }
         }
       }
 
-      return result;
+      return compoundSlotResult;
     };
 
     // with slots
-    if (!isEmptyObject(slotProps) || !isExtendedSlotsEmpty) {
-      const slotsFns: any = {};
+    if (!isEmptyObject(slotProps) || hasExtendedSlots) {
+      const slotFunctions: any = {};
 
-      if (typeof slots === "object" && !isEmptyObject(slots)) {
-        const cnFn = cn;
+      if (typeof mergedSlots === "object" && !isEmptyObject(mergedSlots)) {
+        const cnFunction = cn;
 
-        for (const slotKey in slots) {
-          slotsFns[slotKey] = (slotProps: any = {}) => {
+        for (const slotKey in mergedSlots) {
+          slotFunctions[slotKey] = (slotProps: any = {}) => {
             const compoundVariantClasses = getCompoundVariantClassNamesBySlot(slotProps);
             const compoundSlotClasses = getCompoundSlotClassNameBySlot(slotProps);
 
             // Use clsx to efficiently combine all class sources
-            const allClasses = clsx(
-              slots[slotKey],
+            const allSlotClasses = clsx(
+              mergedSlots[slotKey],
               getVariantClassNamesBySlotKey(slotKey, slotProps),
               compoundVariantClasses ? compoundVariantClasses[slotKey] : undefined,
               compoundSlotClasses ? compoundSlotClasses[slotKey] : undefined,
@@ -284,38 +284,38 @@ export const tv: TV = (options, configProp) => {
               slotProps?.className,
             );
 
-            return cnFn(allClasses)(config);
+            return cnFunction(allSlotClasses)(mergedConfig);
           };
         }
       }
 
-      return slotsFns;
+      return slotFunctions;
     }
 
     // normal variants
-    const allClasses = clsx(
-      base,
+    const allVariantClasses = clsx(
+      baseClasses,
       getVariantClassNames(),
-      getCompoundVariantsValue(compoundVariants, {}),
+      getCompoundVariantsValue(mergedCompoundVariants, {}),
       props?.class,
       props?.className,
     );
     
-    return cn(allClasses)(config);
+    return cn(allVariantClasses)(mergedConfig);
   };
 
   const getVariantKeys = () => {
-    if (!variants || typeof variants !== "object") return;
+    if (!mergedVariants || typeof mergedVariants !== "object") return;
 
-    return Object.keys(variants);
+    return Object.keys(mergedVariants);
   };
 
   (component as any).extend = extend;
-  (component as any).base = base;
-  (component as any).slots = slots;
-  (component as any).variants = variants;
-  (component as any).defaultVariants = defaultVariants;
-  (component as any).compoundVariants = compoundVariants;
+  (component as any).base = baseClasses;
+  (component as any).slots = mergedSlots;
+  (component as any).variants = mergedVariants;
+  (component as any).defaultVariants = mergedDefaultVariants;
+  (component as any).compoundVariants = mergedCompoundVariants;
   (component as any).compoundSlots = compoundSlots;
   (component as any).variantKeys = getVariantKeys();
 
