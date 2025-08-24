@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 export function flat(arr: unknown[], target: unknown[]): void {
   for (const el of arr) {
     if (Array.isArray(el)) flat(el, target);
@@ -6,9 +8,11 @@ export function flat(arr: unknown[], target: unknown[]): void {
 }
 
 export function flatArray(arr: unknown[]): unknown[] {
-  const flattened: unknown[] = [];
-
-  flat(arr, flattened);
-
-  return flattened;
+  // Use clsx to flatten arrays efficiently
+  const flattened = clsx(arr);
+  
+  if (!flattened) return [];
+  
+  // Split the result back into an array for consistency with existing logic
+  return flattened.split(' ').filter(Boolean);
 }

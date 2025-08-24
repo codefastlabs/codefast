@@ -1,8 +1,9 @@
 import type { TV } from "@/types";
 import { defaultConfig } from "@/core/config";
-import { cn, cnBase } from "@/cn";
+import { cn } from "@/cn";
 import { falsyToString, isEmptyObject, flatMergeArrays, mergeObjects } from "@/utils";
 import { joinObjects } from "@/cn";
+import clsx from "clsx";
 
 export const tv: TV = (options, configProp) => {
   const {
@@ -16,7 +17,7 @@ export const tv: TV = (options, configProp) => {
 
   const config = { ...defaultConfig, ...configProp };
 
-  const base = extend?.base ? cnBase(extend.base, options?.base) : options?.base;
+  const base = extend?.base ? clsx(extend.base, options?.base) : options?.base;
   const variants =
     extend?.variants && !isEmptyObject(extend.variants)
       ? mergeObjects(variantsProps, extend.variants)
@@ -31,7 +32,7 @@ export const tv: TV = (options, configProp) => {
     ? {}
     : {
         // add "base" to the "slots" object
-        base: cnBase(options?.base, isExtendedSlotsEmpty && extend?.base),
+        base: clsx(options?.base, isExtendedSlotsEmpty && extend?.base),
         ...slotProps,
       };
 
@@ -50,7 +51,8 @@ export const tv: TV = (options, configProp) => {
 
   const component = (props: any = {}) => {
     if (isEmptyObject(variants) && isEmptyObject(slotProps) && isExtendedSlotsEmpty) {
-      return cn(base, props?.class, props?.className)(config);
+      const simpleClasses = clsx(base, props?.class, props?.className);
+      return cn(simpleClasses)(config);
     }
 
     if (compoundVariants && !Array.isArray(compoundVariants)) {
@@ -95,21 +97,20 @@ export const tv: TV = (options, configProp) => {
       if (!variants) return [];
 
       const keys = Object.keys(variants);
-      const result: any[] = [];
+      const classNames: any[] = [];
 
       for (const key of keys) {
         const value = getVariantValue(key, variants);
-
-        if (value) result.push(value);
+        if (value) classNames.push(value);
       }
 
-      return result;
+      return classNames;
     };
 
     const getVariantClassNamesBySlotKey = (slotKey: string, slotProps: any) => {
       if (!variants || typeof variants !== "object") return [];
 
-      const result: any[] = [];
+      const classNames: any[] = [];
 
       for (const variant in variants) {
         const variantValue = getVariantValue(variant, variants, slotProps);
@@ -119,10 +120,10 @@ export const tv: TV = (options, configProp) => {
             ? variantValue
             : variantValue?.[slotKey];
 
-        if (value) result.push(value);
+        if (value) classNames.push(value);
       }
 
-      return result;
+      return classNames;
     };
 
     const propsWithoutUndefined: any = {};
@@ -150,7 +151,7 @@ export const tv: TV = (options, configProp) => {
     };
 
     const getCompoundVariantsValue = (cv: any[] = [], slotProps: any) => {
-      const result: any[] = [];
+      const classNames: any[] = [];
       const cvLength = cv.length;
 
       for (let i = 0; i < cvLength; i++) {
@@ -183,13 +184,12 @@ export const tv: TV = (options, configProp) => {
         }
 
         if (isValid) {
-          if (tvClass) result.push(tvClass);
-
-          if (tvClassName) result.push(tvClassName);
+          if (tvClass) classNames.push(tvClass);
+          if (tvClassName) classNames.push(tvClassName);
         }
       }
 
-      return result;
+      return classNames;
     };
 
     const getCompoundVariantClassNamesBySlot = (slotProps: any) => {
@@ -250,8 +250,12 @@ export const tv: TV = (options, configProp) => {
 
         for (const slotName of slots) {
           if (!result[slotName]) result[slotName] = [];
-
-          result[slotName].push([slotClass, slotClassName]);
+          
+          // Use clsx to handle class and className arrays efficiently
+          const slotClasses = clsx(slotClass, slotClassName);
+          if (slotClasses) {
+            result[slotName].push(slotClasses);
+          }
         }
       }
 
@@ -270,14 +274,17 @@ export const tv: TV = (options, configProp) => {
             const compoundVariantClasses = getCompoundVariantClassNamesBySlot(slotProps);
             const compoundSlotClasses = getCompoundSlotClassNameBySlot(slotProps);
 
-            return cnFn(
+            // Use clsx to efficiently combine all class sources
+            const allClasses = clsx(
               slots[slotKey],
               getVariantClassNamesBySlotKey(slotKey, slotProps),
               compoundVariantClasses ? compoundVariantClasses[slotKey] : undefined,
               compoundSlotClasses ? compoundSlotClasses[slotKey] : undefined,
               slotProps?.class,
               slotProps?.className,
-            )(config);
+            );
+
+            return cnFn(allClasses)(config);
           };
         }
       }
@@ -286,13 +293,15 @@ export const tv: TV = (options, configProp) => {
     }
 
     // normal variants
-    return cn(
+    const allClasses = clsx(
       base,
       getVariantClassNames(),
       getCompoundVariantsValue(compoundVariants, {}),
       props?.class,
       props?.className,
-    )(config);
+    );
+    
+    return cn(allClasses)(config);
   };
 
   const getVariantKeys = () => {

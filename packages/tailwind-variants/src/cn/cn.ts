@@ -1,23 +1,12 @@
 import type { ClassNameValue, Config, TWMergeConfig } from "@/types";
 
 import { createTwMerge } from "@/cn/create-tw-merge";
-import { flat, isEqual } from "@/utils";
+import { isEqual } from "@/utils";
+import clsx from "clsx";
 
 export const cnBase = (...classes: ClassNameValue[]): string | undefined => {
-  const result: string[] = [];
-
-  flat(classes, result);
-  let str = "";
-
-  for (const element of result) {
-    if (element) {
-      if (str) str += " ";
-
-      str += element;
-    }
-  }
-
-  return str || undefined;
+  const result = clsx(classes);
+  return result || undefined;
 };
 
 let cachedTwMerge: ((...classes: ClassNameValue[]) => string) | null = null;
