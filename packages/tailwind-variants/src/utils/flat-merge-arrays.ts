@@ -1,11 +1,14 @@
+import type { MergeableArray, MergedArray } from "@/utils/types";
+
 /**
  * Merges multiple arrays into a single flattened array, filtering out null and undefined values
+ * Enhanced with generic types and better type safety
  *
  * @param inputArrays - Variable number of arrays to merge
  * @returns A new array containing all non-null, non-undefined elements from all input arrays
  */
-export const flatMergeArrays = (...inputArrays: unknown[][]): unknown[] => {
-  const mergedResult: unknown[] = [];
+export const flatMergeArrays = <T>(...inputArrays: MergeableArray<T>[]): MergedArray<T> => {
+  const mergedResult: T[] = [];
 
   // Process each input array
   for (const currentArray of inputArrays) {

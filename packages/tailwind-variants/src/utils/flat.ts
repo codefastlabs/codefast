@@ -1,14 +1,26 @@
-import clsx from "clsx";
+import type { NestedArray } from "@/utils/types";
+
+/**
+ * Type guard to check if a value is an array
+ */
+const isArray = <T>(value: unknown): value is T[] => Array.isArray(value);
+
+/**
+ * Type guard to check if a value is a nested array
+ */
+const isNestedArray = <T>(value: unknown): value is NestedArray<T> =>
+  isArray<NestedArray<T> | T>(value);
 
 /**
  * Recursively flattens a nested array into the target array
+ * Uses generic types for better type safety
  *
  * @param sourceArray - The source array to flatten
  * @param targetArray - The target array to append flattened elements to
  */
-export function flat(sourceArray: unknown[], targetArray: unknown[]): void {
+export function flat<T>(sourceArray: NestedArray<T>, targetArray: T[]): void {
   for (const currentElement of sourceArray) {
-    if (Array.isArray(currentElement)) {
+    if (isNestedArray<T>(currentElement)) {
       // Recursively flatten nested arrays
       flat(currentElement, targetArray);
     } else {
@@ -16,22 +28,4 @@ export function flat(sourceArray: unknown[], targetArray: unknown[]): void {
       targetArray.push(currentElement);
     }
   }
-}
-
-/**
- * Flattens a nested array and returns a new flattened array
- *
- * @param sourceArray - The array to flatten
- * @returns A new array with all nested elements flattened
- */
-export function flatArray(sourceArray: unknown[]): unknown[] {
-  // Use clsx to efficiently flatten arrays and handle class name merging
-  const flattenedClasses = clsx(sourceArray);
-
-  // Return empty array if clsx returns falsy value
-  if (!flattenedClasses) return [];
-
-  // Split the result back into an array for consistency with existing logic
-  // Filter out empty strings to ensure clean output
-  return flattenedClasses.split(" ").filter(Boolean);
 }
