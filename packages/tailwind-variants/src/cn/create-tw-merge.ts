@@ -1,11 +1,11 @@
-import {
-  extendTailwindMerge,
-  twMerge,
-  type ClassNameValue,
-  type ConfigExtension,
-  type DefaultClassGroupIds,
-  type DefaultThemeGroupIds,
+import type {
+  ClassNameValue,
+  ConfigExtension,
+  DefaultClassGroupIds,
+  DefaultThemeGroupIds,
 } from "tailwind-merge";
+
+import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 import { isEmptyObject } from "@/utils";
 

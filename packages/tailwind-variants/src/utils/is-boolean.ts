@@ -1,6 +1,6 @@
 /**
  * Checks if a value is a boolean (true or false)
- * 
+ *
  * @param value - The value to check
  * @returns true if the value is boolean, false otherwise
  */

@@ -1,8 +1,9 @@
+import clsx from "clsx";
+
 import type { ClassNameValue, Config, TWMergeConfig } from "@/types";
 
 import { createTwMerge } from "@/cn/create-tw-merge";
 import { isEqual } from "@/utils";
-import clsx from "clsx";
 
 // Cache for the twMerge function to avoid recreating it on every call
 let cachedTwMergeFunction: ((...classes: ClassNameValue[]) => string) | null = null;
@@ -11,7 +12,7 @@ let cachedTwMergeConfiguration: TWMergeConfig = {};
 
 /**
  * A class name utility that combines clsx for class merging and tailwind-merge for conflict resolution
- * 
+ *
  * @param classNames - Variable number of class name values to combine
  * @returns A function that accepts a config and returns the processed class names
  */

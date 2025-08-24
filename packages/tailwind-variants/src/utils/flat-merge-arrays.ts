@@ -1,6 +1,6 @@
 /**
  * Merges multiple arrays into a single flattened array, filtering out null and undefined values
- * 
+ *
  * @param inputArrays - Variable number of arrays to merge
  * @returns A new array containing all non-null, non-undefined elements from all input arrays
  */
