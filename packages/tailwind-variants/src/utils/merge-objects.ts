@@ -1,8 +1,8 @@
-import { flatMergeArrays } from '@/utils/flat-merge-arrays';
+import { flatMergeArrays } from "@/utils/flat-merge-arrays";
 
 /**
  * Deep merges two objects, handling arrays, nested objects, and primitive values
- * 
+ *
  * @param baseObject - The base object to merge into
  * @param overrideObject - The object to merge from (takes precedence)
  * @returns A new merged object
@@ -21,10 +21,15 @@ export const mergeObjects = <T extends object>(baseObject: T, overrideObject: T)
         // Handle arrays by merging them using flatMergeArrays
         // Override value takes precedence and comes first
         mergedResult[propertyKey] = flatMergeArrays(
-          overrideValue as unknown[], 
-          baseValue as unknown[]
+          overrideValue as unknown[],
+          baseValue as unknown[],
         ) as T[typeof propertyKey];
-      } else if (typeof baseValue === "object" && typeof overrideValue === "object" && baseValue && overrideValue) {
+      } else if (
+        typeof baseValue === "object" &&
+        typeof overrideValue === "object" &&
+        baseValue &&
+        overrideValue
+      ) {
         // Recursively merge nested objects
         mergedResult[propertyKey] = mergeObjects(
           baseValue as Record<string, unknown>,
@@ -33,7 +38,9 @@ export const mergeObjects = <T extends object>(baseObject: T, overrideObject: T)
       } else {
         // For primitive values, concatenate them as strings with space separator
         // Override value takes precedence and comes first
-        mergedResult[propertyKey] = (String(overrideValue) + " " + String(baseValue)) as T[typeof propertyKey];
+        mergedResult[propertyKey] = (String(overrideValue) +
+          " " +
+          String(baseValue)) as T[typeof propertyKey];
       }
     } else {
       // Key only exists in base object, copy it directly

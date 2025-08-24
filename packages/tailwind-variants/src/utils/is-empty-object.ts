@@ -1,6 +1,6 @@
 /**
  * Checks if a value is an empty object or not an object at all
- * 
+ *
  * @param obj - The value to check
  * @returns true if the value is null, undefined, not an object, or an empty object
  */

@@ -1,6 +1,6 @@
 /**
  * Converts falsy values to their string representations while preserving other values
- * 
+ *
  * @param value - The value to convert
  * @returns The converted value: boolean values become strings, 0 becomes "0", other values remain unchanged
  */

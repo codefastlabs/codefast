@@ -1,9 +1,10 @@
-import type { TV } from "@/types";
-import { defaultConfig } from "@/core/config";
-import { cn } from "@/cn";
-import { falsyToString, isEmptyObject, flatMergeArrays, mergeObjects } from "@/utils";
-import { joinObjects } from "@/cn";
 import clsx from "clsx";
+
+import type { TV } from "@/types";
+
+import { cn, joinObjects } from "@/cn";
+import { defaultConfig } from "@/core/config";
+import { falsyToString, flatMergeArrays, isEmptyObject, mergeObjects } from "@/utils";
 
 export const tv: TV = (options, configProp) => {
   const {
@@ -52,6 +53,7 @@ export const tv: TV = (options, configProp) => {
   const component = (props: any = {}) => {
     if (isEmptyObject(mergedVariants) && isEmptyObject(slotProps) && !hasExtendedSlots) {
       const simpleClasses = clsx(baseClasses, props?.class, props?.className);
+
       return cn(simpleClasses)(mergedConfig);
     }
 
@@ -67,7 +69,11 @@ export const tv: TV = (options, configProp) => {
       );
     }
 
-    const getVariantValue = (variantKey: string, variantDefinitions: any = mergedVariants, slotProps?: any) => {
+    const getVariantValue = (
+      variantKey: string,
+      variantDefinitions: any = mergedVariants,
+      slotProps?: any,
+    ) => {
       const variantDefinition = variantDefinitions[variantKey];
 
       if (!variantDefinition || isEmptyObject(variantDefinition)) {
@@ -88,7 +94,8 @@ export const tv: TV = (options, configProp) => {
         return variantDefinition[String(defaultKey || "false")];
       }
 
-      const finalVariantKey = variantStringValue == null ? falsyToString(defaultVariantValue) : variantStringValue;
+      const finalVariantKey =
+        variantStringValue == null ? falsyToString(defaultVariantValue) : variantStringValue;
 
       return variantDefinition[String(finalVariantKey || "false")];
     };
@@ -101,6 +108,7 @@ export const tv: TV = (options, configProp) => {
 
       for (const variantKey of variantKeys) {
         const variantValue = getVariantValue(variantKey, mergedVariants);
+
         if (variantValue) variantClassNames.push(variantValue);
       }
 
@@ -156,7 +164,11 @@ export const tv: TV = (options, configProp) => {
 
       for (let i = 0; i < compoundVariantsCount; i++) {
         const compoundVariantItem = compoundVariantsArray[i];
-        const { class: tvClass, className: tvClassName, ...compoundVariantOptions } = compoundVariantItem;
+        const {
+          class: tvClass,
+          className: tvClassName,
+          ...compoundVariantOptions
+        } = compoundVariantItem;
         let isCompoundVariantValid = true;
         const completeProps = getCompleteProps(null, slotProps);
 
@@ -185,6 +197,7 @@ export const tv: TV = (options, configProp) => {
 
         if (isCompoundVariantValid) {
           if (tvClass) compoundVariantClassNames.push(tvClass);
+
           if (tvClassName) compoundVariantClassNames.push(tvClassName);
         }
       }
@@ -205,7 +218,10 @@ export const tv: TV = (options, configProp) => {
           slotCompoundResult.base = cnFunction(slotCompoundResult.base, className)(mergedConfig);
         } else if (typeof className === "object") {
           for (const slotKey in className) {
-            slotCompoundResult[slotKey] = cnFunction(slotCompoundResult[slotKey], className[slotKey])(mergedConfig);
+            slotCompoundResult[slotKey] = cnFunction(
+              slotCompoundResult[slotKey],
+              className[slotKey],
+            )(mergedConfig);
           }
         }
       }
@@ -250,9 +266,10 @@ export const tv: TV = (options, configProp) => {
 
         for (const slotName of slots) {
           if (!compoundSlotResult[slotName]) compoundSlotResult[slotName] = [];
-          
+
           // Use clsx to handle class and className arrays efficiently
           const slotClasses = clsx(slotClass, slotClassName);
+
           if (slotClasses) {
             compoundSlotResult[slotName].push(slotClasses);
           }
@@ -300,7 +317,7 @@ export const tv: TV = (options, configProp) => {
       props?.class,
       props?.className,
     );
-    
+
     return cn(allVariantClasses)(mergedConfig);
   };
 

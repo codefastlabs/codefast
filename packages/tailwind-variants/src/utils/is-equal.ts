@@ -1,6 +1,6 @@
 /**
  * Performs a shallow equality check between two objects
- * 
+ *
  * @param firstObject - First object to compare
  * @param secondObject - Second object to compare
  * @returns true if objects are equal, false otherwise
@@ -27,6 +27,7 @@ export const isEqual = (firstObject: unknown, secondObject: unknown): boolean =>
     // Check if values are equal
     const firstObjectValue = (firstObject as Record<string, unknown>)[propertyKey];
     const secondObjectValue = (secondObject as Record<string, unknown>)[propertyKey];
+
     if (firstObjectValue !== secondObjectValue) return false;
   }
 
