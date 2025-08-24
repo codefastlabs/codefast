@@ -3,17 +3,17 @@ import clsx from 'clsx';
 /**
  * Recursively flattens a nested array into the target array
  * 
- * @param arr - The source array to flatten
- * @param target - The target array to append flattened elements to
+ * @param sourceArray - The source array to flatten
+ * @param targetArray - The target array to append flattened elements to
  */
-export function flat(arr: unknown[], target: unknown[]): void {
-  for (const element of arr) {
-    if (Array.isArray(element)) {
+export function flat(sourceArray: unknown[], targetArray: unknown[]): void {
+  for (const currentElement of sourceArray) {
+    if (Array.isArray(currentElement)) {
       // Recursively flatten nested arrays
-      flat(element, target);
+      flat(currentElement, targetArray);
     } else {
       // Add non-array elements directly to target
-      target.push(element);
+      targetArray.push(currentElement);
     }
   }
 }
@@ -21,17 +21,17 @@ export function flat(arr: unknown[], target: unknown[]): void {
 /**
  * Flattens a nested array and returns a new flattened array
  * 
- * @param arr - The array to flatten
+ * @param sourceArray - The array to flatten
  * @returns A new array with all nested elements flattened
  */
-export function flatArray(arr: unknown[]): unknown[] {
+export function flatArray(sourceArray: unknown[]): unknown[] {
   // Use clsx to efficiently flatten arrays and handle class name merging
-  const flattened = clsx(arr);
+  const flattenedClasses = clsx(sourceArray);
   
   // Return empty array if clsx returns falsy value
-  if (!flattened) return [];
+  if (!flattenedClasses) return [];
   
   // Split the result back into an array for consistency with existing logic
   // Filter out empty strings to ensure clean output
-  return flattened.split(' ').filter(Boolean);
+  return flattenedClasses.split(' ').filter(Boolean);
 }
