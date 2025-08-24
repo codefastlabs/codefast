@@ -31,9 +31,10 @@ export const createTwMerge = <
   >,
 ): ((...classes: ClassNameValue[]) => string) => {
   // Determine which merge function to use based on config
+  // If config is empty, use default twMerge; otherwise, use extended version
   const mergeFunction = isEmptyObject(config) ? twMerge : extendTailwindMerge(config);
 
-  // Create the class name merger function
+  // Create and return the class name merger function
   const classNameMerger = (...classes: ClassNameValue[]): string => {
     return mergeFunction(...classes);
   };
