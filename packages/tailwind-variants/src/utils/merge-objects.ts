@@ -1,29 +1,43 @@
 import { flatMergeArrays } from '@/utils/flat-merge-arrays';
 
+/**
+ * Deep merges two objects, handling arrays, nested objects, and primitive values
+ * 
+ * @param obj1 - The base object to merge into
+ * @param obj2 - The object to merge from
+ * @returns A new merged object
+ */
 export const mergeObjects = <T extends object>(obj1: T, obj2: T): T => {
   const result = {} as T;
 
+  // Process all keys from the first object
   for (const key in obj1) {
-    const val1 = obj1[key];
+    const value1 = obj1[key];
 
     if (key in obj2) {
-      const val2 = obj2[key];
+      const value2 = obj2[key];
 
-      if (Array.isArray(val1) || Array.isArray(val2)) {
-        result[key] = flatMergeArrays(val2 as unknown[], val1 as unknown[]) as T[typeof key];
-      } else if (typeof val1 === "object" && typeof val2 === "object" && val1 && val2) {
+      if (Array.isArray(value1) || Array.isArray(value2)) {
+        // Handle arrays by merging them using flatMergeArrays
+        result[key] = flatMergeArrays(value2 as unknown[], value1 as unknown[]) as T[typeof key];
+      } else if (typeof value1 === "object" && typeof value2 === "object" && value1 && value2) {
+        // Recursively merge nested objects
         result[key] = mergeObjects(
-          val1 as Record<string, unknown>,
-          val2 as Record<string, unknown>,
+          value1 as Record<string, unknown>,
+          value2 as Record<string, unknown>,
         ) as T[typeof key];
       } else {
-        result[key] = (String(val2) + " " + String(val1)) as T[typeof key];
+        // For primitive values, concatenate them as strings with space separator
+        // obj2 value takes precedence and comes first
+        result[key] = (String(value2) + " " + String(value1)) as T[typeof key];
       }
     } else {
-      result[key] = val1;
+      // Key only exists in obj1, copy it directly
+      result[key] = value1;
     }
   }
 
+  // Add keys that only exist in obj2
   for (const key in obj2) {
     if (!(key in obj1)) {
       result[key] = obj2[key];
