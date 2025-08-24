@@ -9,9 +9,7 @@ export { cn, createTwMerge } from "@/cn";
 export {
   falsyToString,
   flat,
-  flatArray,
   flatMergeArrays,
-  isBoolean,
   isEmptyObject,
   isEqual,
   mergeObjects,
