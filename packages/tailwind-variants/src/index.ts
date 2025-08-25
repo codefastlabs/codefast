@@ -2,11 +2,12 @@
 export { createTV, defaultConfig, tv } from "@/core";
 export type { Config, TV } from "@/types";
 
-// CN exports
-export { cn, createTwMerge } from "@/cn";
-
-// Utility exports
+// All utilities and CN functions (consolidated in utils)
 export {
+  cn,
+  createTwMerge,
+  joinObjects,
+  joinObjectsImmutable,
   falsyToString,
   flat,
   flatMergeArrays,
@@ -14,9 +15,6 @@ export {
   isEqual,
   mergeObjects,
 } from "@/utils";
-
-// Join objects utility
-export { joinObjects } from "@/cn";
 
 // Type exports
 export type {
