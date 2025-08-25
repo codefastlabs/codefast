@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 import type { TV } from "@/types";
 
-import { cn, joinObjects } from "@/cn";
+import { cn, joinObjects } from "@/utils";
 import { defaultConfig } from "@/core/config";
 import { falsyToString, flatMergeArrays, isEmptyObject, mergeObjects } from "@/utils";
 
@@ -293,7 +293,7 @@ export const tv: TV = (options, configProp) => {
 
             // Use clsx to efficiently combine all class sources
             const allSlotClasses = clsx(
-              mergedSlots[slotKey],
+              (mergedSlots as Record<string, any>)[slotKey],
               getVariantClassNamesBySlotKey(slotKey, slotProps),
               compoundVariantClasses ? compoundVariantClasses[slotKey] : undefined,
               compoundSlotClasses ? compoundSlotClasses[slotKey] : undefined,
