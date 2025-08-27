@@ -28,7 +28,7 @@ const config: Config = {
    */
   testMatch: [
     "**/__tests__/**/?(*.)+(spec|test).?([mc])[jt]s?(x)",
-    "**/?(*.)+(spec|test).?([mc])[jt]s?(x)",
+    "**/*.(spec|test).?([mc])[jt]s?(x)",
   ],
 
   /**
