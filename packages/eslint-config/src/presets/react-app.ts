@@ -7,7 +7,7 @@ import { stylisticRules } from "@/core/stylistic";
 import { typescriptRules } from "@/core/typescript";
 import { unicornRules } from "@/core/unicorn";
 import { browserEnvironment } from "@/environments/browser";
-import { jestEnvironment } from "@/environments/jest";
+import { testEnvironment } from "@/environments/test";
 import { jsonRules } from "@/languages/json";
 import { markdownRules } from "@/languages/markdown";
 import { jsxA11yRules } from "@/plugins/accessibility/jsx-a11y";
@@ -35,7 +35,7 @@ const reactAppPresetCore: Linter.Config[] = composeConfig(
   perfectionistRules,
 
   browserEnvironment,
-  jestEnvironment,
+  testEnvironment,
 );
 
 export const reactAppPreset: Linter.Config[] = composeConfig(reactAppPresetCore, prettierRules);
