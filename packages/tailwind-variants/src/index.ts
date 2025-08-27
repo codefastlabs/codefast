@@ -1,8 +1,5 @@
-// Core exports
-export { createTV, defaultConfig, tv } from "@/core";
-export type { Config, TV } from "@/types";
+export { createTV, tv } from "@/core";
 
-// All utilities and CN functions (consolidated in utils)
 export {
   cn,
   createTwMerge,
@@ -16,12 +13,12 @@ export {
   mergeObjects,
 } from "@/utils";
 
-// Type exports
 export type {
   ClassNameProp,
   ClassNameValue,
   CompoundSlots,
   CompoundVariants,
+  Config,
   DefaultVariants,
   IsTrueOrArray,
   OmitUndefined,
@@ -29,6 +26,8 @@ export type {
   ReturnProps,
   ReturnType,
   StringToBoolean,
+  TV,
+  TWMergeConfig,
   VariantKeys,
   VariantProps,
   Variants,
