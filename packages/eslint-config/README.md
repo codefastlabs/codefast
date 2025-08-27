@@ -181,7 +181,7 @@ export default composeConfig([
 | -------------------- | ------------------------ | ------------------------------------ |
 | `browserEnvironment` | Browser-specific globals | `window`, `document`, `localStorage` |
 | `nodeEnvironment`    | Node.js environment      | `process`, `global`, `Buffer`        |
-| `jestEnvironment`    | Testing environment      | Jest, testing utilities              |
+| `testEnvironment`    | Testing environment      | Jest, testing utilities              |
 
 ## API Reference
 
