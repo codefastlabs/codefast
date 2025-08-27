@@ -29,10 +29,12 @@
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
+        "require": "./dist/index.cjs",
         "default": "./dist/index.js"
       }
     }
   },
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
