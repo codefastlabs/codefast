@@ -54,8 +54,8 @@
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
-    "@rslib/core": "^0.12.2",
-    "@swc/core": "^1.13.4",
+    "@rslib/core": "^0.12.3",
+    "@swc/core": "^1.13.5",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -63,8 +63,8 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
     "eslint": "^9.34.0",
-    "jest": "^30.0.5",
-    "jest-environment-jsdom": "^30.0.5",
+    "jest": "^30.1.1",
+    "jest-environment-jsdom": "^30.1.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
