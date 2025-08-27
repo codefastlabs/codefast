@@ -6,13 +6,13 @@ export type { Config, TV } from "@/types";
 export {
   cn,
   createTwMerge,
-  joinObjects,
-  joinObjectsImmutable,
   falsyToString,
   flat,
   flatMergeArrays,
   isEmptyObject,
   isEqual,
+  joinObjects,
+  joinObjectsImmutable,
   mergeObjects,
 } from "@/utils";
 

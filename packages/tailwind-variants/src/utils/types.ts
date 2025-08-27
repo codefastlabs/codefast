@@ -1,7 +1,4 @@
-import type { ClassNameValue } from "tailwind-merge";
-
 // Re-export ClassNameValue for use in other modules
-export type { ClassNameValue };
 
 /**
  * Type representing values that can be converted to strings
@@ -72,12 +69,12 @@ export type IsFunction<T> = T extends (...args: unknown[]) => unknown ? true : f
 /**
  * Conditional type that determines if a type is an object
  */
-export type IsObject<T> = T extends object ? (T extends Array<unknown> ? false : true) : false;
+export type IsObject<T> = T extends object ? (T extends unknown[] ? false : true) : false;
 
 /**
  * Conditional type that determines if a type is a primitive
  */
-export type IsPrimitive<T> = T extends string | number | boolean | null | undefined ? true : false;
+export type IsPrimitive<T> = T extends boolean | null | number | string | undefined ? true : false;
 
 /**
  * Mapped type that makes all properties readonly
@@ -93,7 +90,7 @@ export type ReadonlyObject<T extends Record<string, unknown>> = {
 /**
  * Template literal type for class name patterns
  */
-export type ClassNamePattern = `${string}-${string}` | `${string}`;
+export type ClassNamePattern = `${string}-${string}` | string;
 
 // ============================================================================
 // UTILITY TYPES NÂNG CAO
@@ -108,8 +105,8 @@ export type FunctionReturnType<T> = T extends (...args: unknown[]) => infer R ? 
  * Utility type that makes a type deeply readonly
  */
 export type DeepReadonly<T> = T extends object
-  ? T extends Array<infer U>
-    ? ReadonlyArray<DeepReadonly<U>>
+  ? T extends (infer U)[]
+    ? readonly DeepReadonly<U>[]
     : { readonly [K in keyof T]: DeepReadonly<T[K]> }
   : T;
 
@@ -181,7 +178,7 @@ export function isArray(value: unknown): value is unknown[] {
 /**
  * Type predicate that checks if a value is a primitive
  */
-export function isPrimitive(value: unknown): value is string | number | boolean | null | undefined {
+export function isPrimitive(value: unknown): value is boolean | null | number | string | undefined {
   return (
     typeof value === "string" ||
     typeof value === "number" ||
@@ -222,13 +219,13 @@ export type MergeResult<BaseType, OverrideType> = {
  */
 export type AdvancedMergeResult<
   BaseType extends Record<string, unknown>,
-  OverrideType extends Record<string, unknown>
+  OverrideType extends Record<string, unknown>,
 > = {
   [PropertyKey in keyof BaseType | keyof OverrideType]: PropertyKey extends keyof OverrideType
     ? PropertyKey extends keyof BaseType
       ? OverrideType[PropertyKey] extends unknown[]
         ? BaseType[PropertyKey] extends unknown[]
-          ? ReadonlyArray<unknown>
+          ? readonly unknown[]
           : OverrideType[PropertyKey]
         : OverrideType[PropertyKey] extends Record<string, unknown>
           ? BaseType[PropertyKey] extends Record<string, unknown>
@@ -244,6 +241,8 @@ export type AdvancedMergeResult<
 /**
  * Type for object merging configuration
  */
-export type ObjectMergeConfig = {
+export interface ObjectMergeConfig {
   readonly immutable?: boolean;
-};
+}
+
+export { type ClassNameValue } from "tailwind-merge";

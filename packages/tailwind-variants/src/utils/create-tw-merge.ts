@@ -7,10 +7,9 @@ import type {
 
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import type {
-  FunctionReturnType,
-} from "@/utils/types";
-import { isEmptyObject } from "@/utils";
+import type { FunctionReturnType } from "@/utils/types";
+
+import { isEmptyObject } from "@/utils/is-empty-object";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -41,13 +40,10 @@ export type ExtendedMergeFunction = (...classes: ClassNameValue[]) => string;
  * @returns A function that accepts class name inputs and resolves conflicts based on the extended or default configurations.
  */
 export const createTwMerge = (
-  config: ConfigExtension<
-    DefaultClassGroupIds,
-    DefaultThemeGroupIds
-  >
+  config: ConfigExtension<DefaultClassGroupIds, DefaultThemeGroupIds>,
 ): ExtendedMergeFunction => {
   // Determine which merge function to use based on config
-  // If config is empty, use default twMerge; otherwise, use extended version
+  // If config is empty, use default twMerge; otherwise, use an extended version
   const mergeFunction = isEmptyObject(config) ? twMerge : extendTailwindMerge(config);
 
   // Create and return the class name merger function

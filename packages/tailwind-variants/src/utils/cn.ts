@@ -1,17 +1,12 @@
+import type { ConfigExtension, DefaultClassGroupIds, DefaultThemeGroupIds } from "tailwind-merge";
+
 import clsx from "clsx";
 
 import type { ClassNameValue, Config } from "@/types";
-import type {
-  ConfigExtension,
-  DefaultClassGroupIds,
-  DefaultThemeGroupIds,
-} from "tailwind-merge";
+import type { DeepReadonly } from "@/utils/types";
 
 import { createTwMerge } from "@/utils/create-tw-merge";
-import { isEqual } from "@/utils";
-import type {
-  DeepReadonly,
-} from "@/utils/types";
+import { isEqual } from "@/utils/is-equal";
 import { isObject } from "@/utils/types";
 
 // ============================================================================
@@ -26,10 +21,9 @@ type CachedTwMergeFunction = (...classes: ClassNameValue[]) => string;
 /**
  * Type for the cached twMerge configuration
  */
-type CachedTwMergeConfiguration = DeepReadonly<ConfigExtension<
-  DefaultClassGroupIds,
-  DefaultThemeGroupIds
->>;
+type CachedTwMergeConfiguration = DeepReadonly<
+  ConfigExtension<DefaultClassGroupIds, DefaultThemeGroupIds>
+>;
 
 /**
  * Type for the configuration processor function
@@ -71,7 +65,7 @@ const hasTwMergeEnabled = (config: unknown): config is Config & { twMerge: true 
  */
 const hasConfigurationChanged = (
   currentConfig: ConfigExtension<DefaultClassGroupIds, DefaultThemeGroupIds>,
-  cachedConfig: CachedTwMergeConfiguration
+  cachedConfig: CachedTwMergeConfiguration,
 ): boolean => {
   return !isEqual(currentConfig, cachedConfig);
 };
@@ -84,14 +78,18 @@ const getOrCreateTwMergeFunction = (config: Config): CachedTwMergeFunction => {
     DefaultClassGroupIds,
     DefaultThemeGroupIds
   >;
-  
-  // Check if configuration has changed or if no cached function exists
-  if (!cachedTwMergeFunction || hasConfigurationChanged(currentTwMergeConfig, cachedTwMergeConfiguration)) {
+
+  // Check if the configuration has changed or if no cached function exists
+  if (
+    !cachedTwMergeFunction ||
+    hasConfigurationChanged(currentTwMergeConfig, cachedTwMergeConfiguration)
+  ) {
     const newFunction = createTwMerge(currentTwMergeConfig);
+
     cachedTwMergeConfiguration = currentTwMergeConfig as CachedTwMergeConfiguration;
     cachedTwMergeFunction = newFunction;
   }
-  
+
   return cachedTwMergeFunction;
 };
 
@@ -104,6 +102,7 @@ const getOrCreateTwMergeFunction = (config: Config): CachedTwMergeFunction => {
  */
 const processClassNamesWithClsx = (...classNames: ClassNameValue[]): string | undefined => {
   const mergedClassNames = clsx(classNames);
+
   return mergedClassNames || undefined;
 };
 
@@ -112,9 +111,10 @@ const processClassNamesWithClsx = (...classNames: ClassNameValue[]): string | un
  */
 const processClassNamesWithTwMerge = (
   mergedClassNames: string,
-  config: Config
+  config: Config,
 ): string | undefined => {
   const twMergeFunction = getOrCreateTwMergeFunction(config);
+
   return twMergeFunction(mergedClassNames) || undefined;
 };
 
@@ -124,7 +124,7 @@ const processClassNamesWithTwMerge = (
 
 /**
  * A class name utility that combines clsx for class merging and tailwind-merge for conflict resolution
- * 
+ *
  * This function uses advanced TypeScript techniques including:
  * - Generic types with constraints
  * - Conditional types and mapped types
@@ -139,13 +139,13 @@ export const cn: CompleteCnFunction = (...classNames: ClassNameValue[]) => {
   return (config?: Config): string | undefined => {
     // Process class names with clsx first
     const mergedClassNames = processClassNamesWithClsx(...classNames);
-    
+
     // Early return if no classes or twMerge is disabled
     if (!mergedClassNames || !hasTwMergeEnabled(config)) {
       return mergedClassNames;
     }
-    
+
     // Apply tailwind-merge to resolve class conflicts
-    return processClassNamesWithTwMerge(mergedClassNames, config!);
+    return processClassNamesWithTwMerge(mergedClassNames, config);
   };
 };

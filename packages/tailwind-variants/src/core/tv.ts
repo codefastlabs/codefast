@@ -2,9 +2,15 @@ import clsx from "clsx";
 
 import type { TV } from "@/types";
 
-import { cn, joinObjects } from "@/utils";
 import { defaultConfig } from "@/core/config";
-import { falsyToString, flatMergeArrays, isEmptyObject, mergeObjects } from "@/utils";
+import {
+  cn,
+  falsyToString,
+  flatMergeArrays,
+  isEmptyObject,
+  joinObjects,
+  mergeObjects,
+} from "@/utils";
 
 export const tv: TV = (options, configProp) => {
   const {
