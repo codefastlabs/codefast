@@ -12,6 +12,11 @@ export default defineConfig({
       dts: true,
       format: "esm",
     },
+    {
+      bundle: false,
+      dts: false,
+      format: "cjs",
+    },
   ],
   output: {
     cleanDistPath: !isWatchMode,
