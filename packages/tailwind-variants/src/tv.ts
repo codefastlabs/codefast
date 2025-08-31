@@ -25,16 +25,17 @@ const defaultConfig: TVConfig = {
 };
 
 // Lazy-loaded tailwind-merge functions
-let tailwindMergeModule: typeof import("tailwind-merge") | null = null;
+let tailwindMergeModule: null | typeof import("tailwind-merge") = null;
 
 /**
  * Lazily loads tailwind-merge module
  */
-const getTailwindMerge = (): typeof import("tailwind-merge") | null => {
+const getTailwindMerge = (): null | typeof import("tailwind-merge") => {
   if (tailwindMergeModule) return tailwindMergeModule;
 
   try {
     tailwindMergeModule = require("tailwind-merge") as typeof import("tailwind-merge");
+
     return tailwindMergeModule;
   } catch {
     return null;
