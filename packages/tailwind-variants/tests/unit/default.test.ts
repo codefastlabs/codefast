@@ -159,7 +159,7 @@ describe("Tailwind Variants (TV) - Default", () => {
     expect(() =>
       tv({
         base: "text-3xl font-bold",
-        // @ts-expect-error
+        // @ts-expect-error - Testing invalid compoundVariants type to ensure type safety
         compoundVariants: {},
         variants: {
           color: {

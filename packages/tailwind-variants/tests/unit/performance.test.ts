@@ -9,23 +9,23 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
       base: "base-class",
       variants: {
         color: Object.fromEntries(
-          Array.from({ length: 50 }, (_, i) => [`color-${i}`, `text-color-${i}`]),
+          Array.from({ length: 50 }, (_, index) => [`color-${index}`, `text-color-${index}`]),
         ),
         size: Object.fromEntries(
-          Array.from({ length: 20 }, (_, i) => [`size-${i}`, `text-size-${i}`]),
+          Array.from({ length: 20 }, (_, index) => [`size-${index}`, `text-size-${index}`]),
         ),
         spacing: Object.fromEntries(
-          Array.from({ length: 30 }, (_, i) => [`spacing-${i}`, `p-${i}`]),
+          Array.from({ length: 30 }, (_, index) => [`spacing-${index}`, `p-${index}`]),
         ),
       },
     });
 
     // Execute multiple calls
-    for (let i = 0; i < 1000; i++) {
+    for (let index = 0; index < 1000; index++) {
       manyVariants({
-        color: `color-${i % 50}`,
-        size: `size-${i % 20}`,
-        spacing: `spacing-${i % 30}`,
+        color: `color-${index % 50}`,
+        size: `size-${index % 20}`,
+        spacing: `spacing-${index % 30}`,
       });
     }
 
@@ -39,11 +39,11 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
   test("should handle large compound variants efficiently", () => {
     const startTime = performance.now();
 
-    const compoundVariants = Array.from({ length: 100 }, (_, i) => ({
-      class: `compound-${i}`,
-      color: `color-${i % 10}`,
-      size: `size-${i % 5}`,
-      variant: `variant-${i % 3}`,
+    const compoundVariants = Array.from({ length: 100 }, (_, index) => ({
+      class: `compound-${index}`,
+      color: `color-${index % 10}`,
+      size: `size-${index % 5}`,
+      variant: `variant-${index % 3}`,
     }));
 
     const largeCompound = tv({
@@ -51,23 +51,23 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
       compoundVariants,
       variants: {
         color: Object.fromEntries(
-          Array.from({ length: 10 }, (_, i) => [`color-${i}`, `text-color-${i}`]),
+          Array.from({ length: 10 }, (_, index) => [`color-${index}`, `text-color-${index}`]),
         ),
         size: Object.fromEntries(
-          Array.from({ length: 5 }, (_, i) => [`size-${i}`, `text-size-${i}`]),
+          Array.from({ length: 5 }, (_, index) => [`size-${index}`, `text-size-${index}`]),
         ),
         variant: Object.fromEntries(
-          Array.from({ length: 3 }, (_, i) => [`variant-${i}`, `variant-class-${i}`]),
+          Array.from({ length: 3 }, (_, index) => [`variant-${index}`, `variant-class-${index}`]),
         ),
       },
     });
 
     // Execute multiple calls
-    for (let i = 0; i < 500; i++) {
+    for (let index = 0; index < 500; index++) {
       largeCompound({
-        color: `color-${i % 10}`,
-        size: `size-${i % 5}`,
-        variant: `variant-${i % 3}`,
+        color: `color-${index % 10}`,
+        size: `size-${index % 5}`,
+        variant: `variant-${index % 3}`,
       });
     }
 
@@ -81,15 +81,18 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     const startTime = performance.now();
 
     const slots = Object.fromEntries(
-      Array.from({ length: 50 }, (_, i) => [`slot-${i}`, `slot-class-${i}`]),
+      Array.from({ length: 50 }, (_, index) => [`slot-${index}`, `slot-class-${index}`]),
     );
 
     const variants = {
       theme: Object.fromEntries(
-        Array.from({ length: 5 }, (_, i) => [
-          `theme-${i}`,
+        Array.from({ length: 5 }, (_, index) => [
+          `theme-${index}`,
           Object.fromEntries(
-            Array.from({ length: 50 }, (_, j) => [`slot-${j}`, `theme-${i}-slot-${j}`]),
+            Array.from({ length: 50 }, (_, index_) => [
+              `slot-${index_}`,
+              `theme-${index}-slot-${index_}`,
+            ]),
           ),
         ]),
       ),
@@ -101,15 +104,15 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     });
 
     // Execute multiple calls
-    for (let i = 0; i < 200; i++) {
-      const result = deepSlots({ theme: `theme-${i % 5}` });
+    for (let index = 0; index < 200; index++) {
+      const result = deepSlots({ theme: `theme-${index % 5}` });
 
       // Access all slots to ensure they're computed
       for (const key of Object.keys(slots)) {
-        const slotFn = result[key];
+        const slotFunction = result[key];
 
-        if (slotFn && typeof slotFn === "function") {
-          slotFn();
+        if (typeof slotFunction === "function") {
+          slotFunction();
         }
       }
     }
@@ -124,7 +127,7 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     const startTime = performance.now();
 
     // Create a chain of extends
-    let current: any = tv({
+    let current = tv({
       base: "level-0",
       variants: {
         color: {
@@ -134,21 +137,21 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     });
 
     // Create 10 levels of extends
-    for (let i = 1; i < 10; i++) {
+    for (let index = 1; index < 10; index++) {
       current = tv({
-        base: `level-${i}`,
+        base: `level-${index}`,
         extend: current,
         variants: {
           color: {
-            [`secondary-${i}`]: `secondary-class-${i}`,
-            primary: `primary-${i}`,
+            [`secondary-${index}`]: `secondary-class-${index}`,
+            primary: `primary-${index}`,
           },
         },
       });
     }
 
     // Execute multiple calls
-    for (let i = 0; i < 500; i++) {
+    for (let index = 0; index < 500; index++) {
       current({ color: "primary" });
     }
 
@@ -161,24 +164,24 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
   test("should handle large class strings with twMerge efficiently", () => {
     const startTime = performance.now();
 
-    const largeClassString = Array.from({ length: 100 }, (_, i) => `class-${i}`).join(" ");
+    const largeClassString = Array.from({ length: 100 }, (_, index) => `class-${index}`).join(" ");
 
     const largeTv = tv({
       base: largeClassString,
       variants: {
         size: {
-          lg: Array.from({ length: 50 }, (_, i) => `lg-${i}`).join(" "),
-          md: Array.from({ length: 50 }, (_, i) => `md-${i}`).join(" "),
-          sm: Array.from({ length: 50 }, (_, i) => `sm-${i}`).join(" "),
+          lg: Array.from({ length: 50 }, (_, index) => `lg-${index}`).join(" "),
+          md: Array.from({ length: 50 }, (_, index) => `md-${index}`).join(" "),
+          sm: Array.from({ length: 50 }, (_, index) => `sm-${index}`).join(" "),
         },
       },
     });
 
     // Execute multiple calls
-    for (let i = 0; i < 300; i++) {
+    for (let index = 0; index < 300; index++) {
       largeTv({
-        className: `additional-${i}`,
-        size: ["sm", "md", "lg"][i % 3] as "lg" | "md" | "sm",
+        className: `additional-${index}`,
+        size: ["sm", "md", "lg"][index % 3] as "lg" | "md" | "sm",
       });
     }
 

@@ -67,6 +67,7 @@ describe("isEmptyObject", () => {
     expect(isEmptyObject({})).toBe(true);
     expect(isEmptyObject({ key: "value" })).toBe(false);
     expect(isEmptyObject(null)).toBe(true);
+    // eslint-disable-next-line unicorn/no-useless-undefined
     expect(isEmptyObject(undefined)).toBe(true);
   });
 
@@ -87,10 +88,10 @@ describe("isEqual", () => {
   });
 
   test("should work with generic types", () => {
-    const obj1 = { x: "test", y: 123 };
-    const obj2 = { x: "test", y: 123 };
+    const object1 = { x: "test", y: 123 };
+    const object2 = { x: "test", y: 123 };
 
-    expect(isEqual(obj1, obj2)).toBe(true);
+    expect(isEqual(object1, object2)).toBe(true);
   });
 });
 
