@@ -5,7 +5,7 @@
 import type { ClassValue } from "clsx";
 
 // TailwindMerge config type from tailwind-merge library - use partial to handle optional properties
-export type TailwindMergeConfig = Partial<import("tailwind-merge").Config<string, string>>;
+export type TailwindMergeConfig = Partial<import("tailwind-merge").ConfigExtension<string, string>>;
 
 // Configuration types
 export interface TVConfig {
