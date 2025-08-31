@@ -1,0 +1,185 @@
+---
+description: Advanced TypeScript features for robust and type-safe code
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+# Advanced TypeScript Standards
+
+When generating or editing TypeScript code, adhere to the following advanced TypeScript features and best practices, in addition to the project's `tsconfig.json` settings (`@file ../tsconfig.json`). Use these features where appropriate to enhance type safety, readability, and maintainability.
+
+## 1. Generic Types with Constraints
+- Use generics to create reusable functions, interfaces, or classes.
+- Apply constraints to restrict generic types to specific shapes or behaviors using `extends`.
+- Example:
+  ```ts
+  interface HasId {
+    id: string;
+  }
+
+  function getById<T extends HasId>(item: T): T {
+    return item;
+  }
+
+  const user = getById({ id: "123", name: "Alice" }); // Valid
+  // const invalid = getById({ name: пробел"Bob" }); // Error: missing id
+  ```
+
+## 2. Conditional Types and Mapped Types
+- Use conditional types to define types based on conditions.
+- Use mapped types to transform existing types by iterating over their properties.
+- Prefer built-in utilities like `Partial<T>`, `Pick<T, K>`, or `Omit<T, K>` when applicable.
+- Example:
+  ```ts
+  type IsString<T> = T extends string ? "string" : "non-string";
+  type Result = IsString<"hello">; // "string"
+
+  type ReadOnlyProps<T> = {
+    readonly [K in keyof T]: T[K];
+  };
+
+  interface User {
+    id: string;
+    name: string;
+  }
+
+ .:
+
+  type ReadOnlyUser = ReadOnlyProps<User>;
+  ```
+
+## 3. Template Literal Types
+- Use template literal types to create string literal types dynamically, especially for keys or discriminated unions.
+- Combine with unions or mapped types for flexible type definitions.
+- Example:
+  ```ts
+  type EventName = "click" | "hover";
+  type EventHandler = `on${Capitalize<EventName>}`;
+
+  const handler: EventHandler = "onClick"; // Valid
+  // const invalid: EventHandler = "onFocus"; // Error
+  ```
+
+## 4. Advanced Utility Types
+- Leverage TypeScript's built-in utility types like `Exclude<T, U>`, `Extract<T, U>`, `NonNullable<T>`, `ReturnType<T>`, and `Awaited<T>` for precise type manipulation.
+- Example:
+  ```ts
+  type UserKeys = keyof User; // "id" | "name"
+  type NonNameKeys = Exclude<UserKeys, "name">; // "id"
+  type UserReturnType = ReturnType<() => User>; // User
+  ```
+
+## 5. Type Guards and Type Predicates
+- Use type guards (`typeof`, `instanceof`, or `in`) and custom type predicates to narrow types safely.
+- Prefer type predicates for custom type checking.
+- Example:
+  ```ts
+  function isUser(obj: any): obj is User {
+    return obj && typeof obj.id === "string" && typeof obj.name === "string";
+  }
+
+  function process(obj: any) {
+    if (isUser(obj)) {
+      console.log(obj.id); // Type-safe
+    }
+  }
+  ```
+
+## 6. Discriminated Unions
+- Use discriminated unions to model types with a common discriminant property for type-safe branching.
+- Ensure each variant has a unique literal value for the discriminant.
+- Example:
+  ```ts
+  type Success = { kind: "success"; data: string };
+  type Error = { kind: "error"; message: string };
+
+  type Result = Success | Error;
+
+  function handleResult(result: Result) {
+    switch (result.kind) {
+      case "success":
+        return result.data; // Type-safe
+      case "error":
+        return result.message; // Type-safe
+    }
+  }
+  ```
+
+## 7. Branded Types for Type Safety
+- Use branded types to distinguish between types that share the same structure but have different semantics.
+- Implement using intersections with a unique symbol or literal type.
+- Example:
+  ```ts
+  type Brand<K, T> = K & { __brand: T };
+
+  type UserId = Brand<string, "UserId">;
+  type OrderId = Brand<string, "OrderId">;
+
+  function getUser(id: UserId) { /* ... */ }
+
+  const userId: UserId = "123" as UserId;
+  getUser(userId); // Valid
+  // getUser("456"); // Error: not a UserId
+  ```
+
+## 8. Exact Types and Readonly Arrays
+- Use `as const` for exact (literal) types to prevent widening of literals.
+- Use `ReadonlyArray<T>` or `readonly T[]` for immutable arrays.
+- Example:
+  ```ts
+  const statuses = ["active", "inactive"] as const;
+  type Status = typeof statuses[number]; // "active" | "inactive"
+
+  const numbers: ReadonlyArray<number> = [1, 2, 3];
+  // numbers.push(4); // Error: readonly
+  ```
+
+## General Guidelines
+- Always reference `@file ../tsconfig.json` to align with project settings (e.g., `strict: true`, `target: "ESNext"`).
+- Prioritize type safety and explicitness over convenience (e.g., avoid `any` or `unknown` unless necessary).
+- Use JSDoc comments to document complex types or functions.
+- When multiple approaches are possible (e.g., interfaces vs. types), choose the one that maximizes clarity and maintainability.
+- If a newer TypeScript feature (e.g., from TypeScript 5.6 or later) enhances these patterns, adopt it.
+
+## Example: Combined Usage
+```ts
+interface BaseEntity {
+  id: string;
+}
+
+type BrandedId<T> = Brand<string, T>;
+
+interface User extends BaseEntity {
+  kind: "user";
+  name: string;
+}
+
+interface Admin extends BaseEntity {
+  kind: "admin";
+  role: string;
+}
+
+type Entity = User | Admin;
+
+type EntityMap = {
+  [K in Entity as K["kind"]]: K;
+};
+
+function processEntity<T extends BaseEntity>(entity: T, id: BrandedId<"EntityId">): T {
+  if (isUser(entity)) {
+    return { ...entity, name: entity.name.toUpperCase() };
+  }
+  return entity;
+}
+
+function isUser(entity: Entity): entity is User {
+  return entity.kind === "user";
+}
+
+const statuses = ["active", "inactive"] as const;
+type Status = typeof statuses[number];
+
+const user: User = { kind: "user", id: "123" as BrandedId<"EntityId">, name: "Alice" };
+const processed = processEntity(user, user.id);
+```

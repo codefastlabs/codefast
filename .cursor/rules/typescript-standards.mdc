@@ -1,0 +1,34 @@
+---
+description: TypeScript Best Practices for Latest Version
+globs: 
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+# TypeScript Best Practices
+
+- Always use the latest TypeScript version as specified in `package.json`.
+- Reference `@file ../tsconfig.json` for project-specific TypeScript settings.
+- Use `ESNext` for `target` and `module` in `tsconfig.json`.
+- Enable strict mode (`strict: true`) and enforce `noImplicitAny`, `strictNullChecks`, and `strictFunctionTypes`.
+- Prefer interfaces over type aliases for object types.
+- Explicitly define return types for all functions.
+- Avoid `any` or `unknown` types; use precise types whenever possible.
+- Use JSDoc comments for public APIs and complex types.
+
+## Example
+```ts
+interface ResponseData {
+  id: string;
+  value: number;
+}
+
+/**
+ * Processes data with the given ID
+ * @param id - The identifier for the data
+ * @returns Processed data object
+ */
+function processData(id: string): ResponseData {
+  return { id, value: 42 };
+}
+```
