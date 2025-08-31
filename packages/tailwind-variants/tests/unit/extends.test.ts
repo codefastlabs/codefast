@@ -85,7 +85,6 @@ describe("Tailwind Variants (TV) - Extends", () => {
     });
 
     const result = h1({
-      // @ts-expect-error TODO: should have the grand parent variants
       color: "red",
     });
 
