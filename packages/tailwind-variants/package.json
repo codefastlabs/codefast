@@ -54,6 +54,10 @@
     "test:coverage:ci": "jest --coverage --ci",
     "test:watch": "jest --watch"
   },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1"
+  },
   "devDependencies": {
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
@@ -63,21 +67,17 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
     "eslint": "^9.34.0",
+    "expect-type": "^1.2.2",
     "jest": "^30.1.1",
     "jest-environment-jsdom": "^30.1.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
-    "clsx": "^2.0.0",
-    "tailwind-merge": "^3.0.0",
     "tailwindcss": "^4.0.0"
   },
   "peerDependenciesMeta": {
-    "clsx": {
-      "optional": true
-    },
-    "tailwind-merge": {
+    "tailwindcss": {
       "optional": true
     }
   },

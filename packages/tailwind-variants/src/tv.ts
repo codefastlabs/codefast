@@ -2,6 +2,8 @@
  * Core tailwind-variants implementation with advanced TypeScript support
  */
 
+import { extendTailwindMerge, twMerge } from "tailwind-merge";
+
 import type {
   ClassValue,
   CompoundSlots,
@@ -24,24 +26,6 @@ const defaultConfig: TVConfig = {
   twMergeConfig: undefined,
 };
 
-// Lazy-loaded tailwind-merge functions
-let tailwindMergeModule: null | typeof import("tailwind-merge") = null;
-
-/**
- * Lazily loads tailwind-merge module
- */
-const getTailwindMerge = (): null | typeof import("tailwind-merge") => {
-  if (tailwindMergeModule) return tailwindMergeModule;
-
-  try {
-    tailwindMergeModule = require("tailwind-merge") as typeof import("tailwind-merge");
-
-    return tailwindMergeModule;
-  } catch {
-    return null;
-  }
-};
-
 /**
  * Resolves class names using tailwind-merge if available and enabled
  */
@@ -53,14 +37,6 @@ const resolveClasses = (classes: string[], config: TVConfig): string | undefined
   }
 
   try {
-    const tailwindMerge = getTailwindMerge();
-    
-    if (!tailwindMerge) {
-      return classes.join(" ");
-    }
-
-    const { extendTailwindMerge, twMerge } = tailwindMerge;
-
     if (config.twMergeConfig && !isEmptyObject(config.twMergeConfig)) {
       const customTwMerge = extendTailwindMerge(config.twMergeConfig);
 
@@ -122,7 +98,7 @@ const evaluateCompoundVariants = <V extends VariantSchema>(
         if (propertyValue === undefined && allVariants) {
           const variantOptions = allVariants[key as keyof V];
 
-          if (variantOptions && typeof variantOptions === "object") {
+          if (typeof variantOptions === "object") {
             const hasTrue = "true" in variantOptions;
             const hasFalse = "false" in variantOptions;
 
@@ -228,11 +204,7 @@ const createSlotFunction = <V extends VariantSchema, S extends SlotsSchema>(
           const variantClass = variantOptions[normalizedValue as keyof typeof variantOptions];
 
           if (variantClass) {
-            if (
-              typeof variantClass === "object" &&
-              variantClass !== null &&
-              !Array.isArray(variantClass)
-            ) {
+            if (typeof variantClass === "object" && !Array.isArray(variantClass)) {
               const slotVariantClass = (variantClass as Record<string, ClassValue>)[
                 slotName as string
               ];
@@ -308,7 +280,9 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
 ): TVReturnType<V, S> => {
   // Handle extends by merging with parent component
   if (component.extend) {
-    const parentFunction = component.extend as TVReturnType<VariantSchema, SlotsSchema> & { __tvConfig?: TVComponent<V, S> };
+    const parentFunction = component.extend as TVReturnType<VariantSchema, SlotsSchema> & {
+      __tvConfig?: TVComponent<V, S>;
+    };
     const parentComponent = parentFunction.__tvConfig;
 
     if (parentComponent) {
@@ -360,8 +334,10 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
       slots.base = createSlotFunction(component, "base" as keyof S, mergedProps, config);
 
       // Create slot functions for each defined slot
-      for (const slotName of Object.keys(component.slots!)) {
-        slots[slotName] = createSlotFunction(component, slotName as keyof S, mergedProps, config);
+      if (component.slots) {
+        for (const slotName of Object.keys(component.slots)) {
+          slots[slotName] = createSlotFunction(component, slotName as keyof S, mergedProps, config);
+        }
       }
 
       return slots as SlotsReturnType<S> & { base: SlotFunction };
@@ -369,7 +345,8 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
 
     slotsComponent.variantKeys = variantKeys;
 
-    (slotsComponent as TVReturnType<V, S> & { __tvConfig: TVComponent<V, S> }).__tvConfig = component;
+    (slotsComponent as TVReturnType<V, S> & { __tvConfig: TVComponent<V, S> }).__tvConfig =
+      component;
 
     return slotsComponent as TVReturnType<V, S>;
   }
@@ -441,7 +418,8 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
 
   simpleComponent.variantKeys = variantKeys;
 
-  (simpleComponent as TVReturnType<V, S> & { __tvConfig: TVComponent<V, S> }).__tvConfig = component;
+  (simpleComponent as TVReturnType<V, S> & { __tvConfig: TVComponent<V, S> }).__tvConfig =
+    component;
 
   return simpleComponent as TVReturnType<V, S>;
 };

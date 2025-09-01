@@ -3,9 +3,10 @@
  */
 
 import type { ClassValue } from "clsx";
+import type { ConfigExtension } from "tailwind-merge";
 
 // TailwindMerge config type from tailwind-merge library - use partial to handle optional properties
-export type TailwindMergeConfig = Partial<import("tailwind-merge").ConfigExtension<string, string>>;
+export type TailwindMergeConfig = Partial<ConfigExtension<string, string>>;
 
 // Configuration types
 export interface TVConfig {
@@ -29,9 +30,7 @@ export interface CompoundVariantBase {
 
 // Mapped compound variant with proper typing
 export type CompoundVariant<V extends VariantSchema> = CompoundVariantBase & {
-  [K in keyof V]?: HasBooleanKeys<V[K]> extends true 
-    ? boolean | keyof V[K]
-    : keyof V[K];
+  [K in keyof V]?: HasBooleanKeys<V[K]> extends true ? boolean | keyof V[K] : keyof V[K];
 };
 
 // Compound slots structure
@@ -44,25 +43,22 @@ export type CompoundSlots<V extends VariantSchema, S extends SlotsSchema> = {
   class: ClassValue | Partial<Record<keyof S, ClassValue>>;
   slots: (keyof S)[];
 } & {
-  [K in keyof V]?: HasBooleanKeys<V[K]> extends true 
-    ? boolean | keyof V[K]
-    : keyof V[K];
+  [K in keyof V]?: HasBooleanKeys<V[K]> extends true ? boolean | keyof V[K] : keyof V[K];
 };
 
-// Helper type to check if a variant has boolean keys
-type HasBooleanKeys<T> = T extends Record<string, unknown>
-  ? "true" extends keyof T
-    ? true
-    : "false" extends keyof T
-    ? true
-    : false
-  : false;
+// Helper types to check if a variant has boolean keys
+type HasBooleanKeys<T> =
+  T extends Record<string, unknown>
+    ? "true" extends keyof T
+      ? true
+      : "false" extends keyof T
+        ? true
+        : false
+    : false;
 
 // TV Props for basic variant selection with precise boolean type support
 export type TVProps<V extends VariantSchema> = {
-  [K in keyof V]?: HasBooleanKeys<V[K]> extends true 
-    ? boolean | keyof V[K]
-    : keyof V[K];
+  [K in keyof V]?: HasBooleanKeys<V[K]> extends true ? boolean | keyof V[K] : keyof V[K];
 } & {
   class?: ClassValue;
   className?: ClassValue;
