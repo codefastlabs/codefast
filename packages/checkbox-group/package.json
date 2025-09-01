@@ -76,7 +76,7 @@
     "@types/jest-axe": "^3.5.9",
     "@types/node": "^24.3.0",
     "eslint": "^9.34.0",
-    "jest": "^30.1.1",
+    "jest": "^30.1.2",
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.1.1",
     "ts-node": "^10.9.2",
