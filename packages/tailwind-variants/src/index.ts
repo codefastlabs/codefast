@@ -39,5 +39,4 @@ export type {
   TVReturnType,
   VariantKeys,
   VariantSchema,
-  VariantValue,
 } from "./types";

@@ -14,9 +14,6 @@ export interface TVConfig {
   twMergeConfig?: TailwindMergeConfig;
 }
 
-// Variant value types
-export type VariantValue = boolean | null | number | string | undefined;
-
 // Generic variant schema
 export type VariantSchema = Record<string, Record<string, ClassValue>>;
 
@@ -25,7 +22,8 @@ export type SlotsSchema = Record<string, ClassValue>;
 
 // Compound variant base structure
 export interface CompoundVariantBase {
-  class: ClassValue;
+  class?: ClassValue;
+  className?: ClassValue;
 }
 
 // Mapped compound variant with proper typing
@@ -34,13 +32,9 @@ export type CompoundVariant<V extends VariantSchema> = CompoundVariantBase & {
 };
 
 // Compound slots structure
-export interface CompoundSlot<S extends SlotsSchema> {
-  class: ClassValue | Partial<Record<keyof S, ClassValue>>;
-  slots: (keyof S)[];
-}
-
 export type CompoundSlots<V extends VariantSchema, S extends SlotsSchema> = {
-  class: ClassValue | Partial<Record<keyof S, ClassValue>>;
+  class?: ClassValue | Partial<Record<keyof S, ClassValue>>;
+  className?: ClassValue | Partial<Record<keyof S, ClassValue>>;
   slots: (keyof S)[];
 } & {
   [K in keyof V]?: HasBooleanKeys<V[K]> extends true ? boolean | keyof V[K] : keyof V[K];
@@ -103,7 +97,7 @@ export type Brand<K, T> = K & { __brand: T };
 // Enhanced variant keys type
 export type VariantKeys<V extends VariantSchema> = (keyof V)[];
 
-// Utility type to extract variant props from TV component
+// Utility type to extract variant props from a TV component
 export type ExtractVariantProps<T> =
   T extends TVReturnType<infer V, SlotsSchema> ? TVProps<V> : never;
 

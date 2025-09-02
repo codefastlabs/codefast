@@ -10,10 +10,7 @@ import { tv } from "./tv";
  * Creates a TV function with custom default configuration
  */
 export const createTV = (defaultConfig: TVConfig = {}) => {
-  return <
-    V extends VariantSchema = Record<string, never>,
-    S extends SlotsSchema = Record<string, never>,
-  >(
+  return <V extends VariantSchema, S extends SlotsSchema>(
     component: TVComponent<V, S>,
     config: TVConfig = {},
   ): TVReturnType<V, S> => {

@@ -85,7 +85,7 @@ const evaluateCompoundVariants = <V extends VariantSchema>(
   return compoundVariants
     .filter((compound) => {
       return Object.entries(compound).every(([key, value]) => {
-        if (key === "class") return true;
+        if (key === "class" || key === "className") return true;
 
         let propertyValue = props[key as keyof V];
 
@@ -114,7 +114,7 @@ const evaluateCompoundVariants = <V extends VariantSchema>(
         return normalizedPropertyValue === normalizedCompoundValue;
       });
     })
-    .map((compound) => compound.class);
+    .map((compound) => compound.class ?? compound.className);
 };
 
 /**
@@ -134,7 +134,7 @@ const evaluateCompoundSlots = <V extends VariantSchema, S extends SlotsSchema>(
 
       // Check if variant conditions match
       return Object.entries(compound).every(([key, value]) => {
-        if (key === "class" || key === "slots") return true;
+        if (key === "class" || key === "className" || key === "slots") return true;
 
         const propertyValue = props[key as keyof V];
         const normalizedPropertyValue = falsyToString(propertyValue);
@@ -144,7 +144,7 @@ const evaluateCompoundSlots = <V extends VariantSchema, S extends SlotsSchema>(
       });
     })
     .map((compound) => {
-      const classValue = compound.class;
+      const classValue = compound.class ?? compound.className;
 
       if (typeof classValue === "object" && classValue !== null && !Array.isArray(classValue)) {
         return (classValue as Record<string, ClassValue>)[slotName as string];
@@ -278,7 +278,7 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
   component: TVComponent<V, S>,
   config: TVConfig,
 ): TVReturnType<V, S> => {
-  // Handle extends by merging with parent component
+  // Handle extends by merging with a parent component
   if (component.extend) {
     const parentFunction = component.extend as TVReturnType<VariantSchema, SlotsSchema> & {
       __tvConfig?: TVComponent<V, S>;
@@ -320,7 +320,7 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
 
   const variantKeys = component.variants ? (Object.keys(component.variants) as (keyof V)[]) : [];
 
-  // If component has slots, return slots-based component
+  // If a component has slots, return a slots-based component
   if (component.slots && Object.keys(component.slots).length > 0) {
     const slotsComponent = (
       props: TVProps<V> = {},
@@ -330,7 +330,7 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
 
       const slots = {} as Record<string, SlotFunction>;
 
-      // Create base slot function
+      // Create a base slot function
       slots.base = createSlotFunction(component, "base" as keyof S, mergedProps, config);
 
       // Create slot functions for each defined slot
@@ -427,10 +427,7 @@ export const createTVComponent = <V extends VariantSchema, S extends SlotsSchema
 /**
  * Main TV function for creating tailwind variants
  */
-export const tv = <
-  V extends VariantSchema = Record<string, never>,
-  S extends SlotsSchema = Record<string, never>,
->(
+export const tv = <V extends VariantSchema, S extends SlotsSchema>(
   component: TVComponent<V, S>,
   config: Partial<TVConfig> = {},
 ): TVReturnType<V, S> => {
