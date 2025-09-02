@@ -28,7 +28,6 @@ export type {
   ClassValue,
   CompoundSlots,
   CompoundVariant,
-  ExtractVariantProps,
   SlotFunction,
   SlotsReturnType,
   SlotsSchema,
@@ -38,5 +37,6 @@ export type {
   TVProps,
   TVReturnType,
   VariantKeys,
+  VariantProps,
   VariantSchema,
 } from "./types";

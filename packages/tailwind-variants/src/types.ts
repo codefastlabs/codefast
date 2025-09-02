@@ -98,8 +98,7 @@ export type Brand<K, T> = K & { __brand: T };
 export type VariantKeys<V extends VariantSchema> = (keyof V)[];
 
 // Utility type to extract variant props from a TV component
-export type ExtractVariantProps<T> =
-  T extends TVReturnType<infer V, SlotsSchema> ? TVProps<V> : never;
+export type VariantProps<T> = T extends TVReturnType<infer V, SlotsSchema> ? TVProps<V> : never;
 
 // Configuration options for TV function
 export interface TVOptions extends TVConfig {
