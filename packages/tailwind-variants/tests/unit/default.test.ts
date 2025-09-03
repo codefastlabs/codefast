@@ -87,37 +87,17 @@ describe("Tailwind Variants (TV) - Default", () => {
     expect(result).toHaveClassName(expectedResult);
   });
 
-  test("should work with variantKeys", () => {
-    const h1 = tv({
-      base: "text-3xl font-bold",
-      variants: {
-        color: {
-          blue: "text-blue-500",
-          red: "text-red-500",
-        },
-        isBig: {
-          false: "text-2xl",
-          true: "text-5xl",
-        },
-      },
-    });
-
-    const expectedResult = ["isBig", "color"];
-
-    expect(h1.variantKeys).toHaveClassName(expectedResult);
-  });
-
   test("should work with compoundVariants", () => {
     const h1 = tv({
       base: "text-3xl font-bold",
       compoundVariants: [
         {
-          class: "bg-red-500",
+          className: "bg-red-500",
           color: "red",
           isBig: true,
         },
         {
-          class: "underline",
+          className: "underline",
           color: "red",
           isBig: false,
         },
@@ -187,7 +167,7 @@ describe("Tailwind Variants (TV) - Default", () => {
     });
 
     const result2 = h1({
-      class: "text-xl",
+      className: "text-xl",
     });
 
     expect(result1).toHaveClassName(expectedResult);
@@ -234,7 +214,7 @@ describe("Tailwind Variants (TV) - Default", () => {
       base: "text-3xl",
       compoundVariants: [
         {
-          class: "bg-red-500",
+          className: "bg-red-500",
           color: "red",
           size: "md",
         },

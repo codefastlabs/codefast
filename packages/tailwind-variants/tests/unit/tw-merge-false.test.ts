@@ -48,7 +48,7 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
         base: "font-semibold",
         compoundVariants: [
           {
-            class: "bg-blue-600 bg-blue-700 px-3 px-4",
+            className: "bg-blue-600 bg-blue-700 px-3 px-4",
             size: "sm",
             variant: "primary",
           },
@@ -192,6 +192,6 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
     expect(button({ size: "lg" })).toBe("px-4 py-2 px-6 py-3");
 
     // Additional classes should be appended
-    expect(button({ class: "px-8 py-4", size: "sm" })).toBe("px-4 py-2 px-2 py-1 px-8 py-4");
+    expect(button({ className: "px-8 py-4", size: "sm" })).toBe("px-4 py-2 px-2 py-1 px-8 py-4");
   });
 });

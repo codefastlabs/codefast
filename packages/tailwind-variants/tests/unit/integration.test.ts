@@ -107,7 +107,7 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
     const navigationMenuVariants = tv({
       compoundVariants: [
         {
-          class: {
+          className: {
             list: "space-y-2",
           },
           orientation: "vertical",

@@ -5,7 +5,7 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          className: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
       ],
@@ -31,11 +31,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          className: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "w-7 h-7 text-xs",
+          className: "w-7 h-7 text-xs",
           size: "xs",
           slots: ["item", "prev", "next"],
         },
@@ -74,11 +74,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          className: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "w-7 h-7 text-xs",
+          className: "w-7 h-7 text-xs",
           size: "xs",
           slots: ["item", "prev", "next"],
         },
@@ -119,11 +119,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          className: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "w-7 h-7 text-xs",
+          className: "w-7 h-7 text-xs",
           color: "primary",
           isBig: true,
           size: "xs",
@@ -173,11 +173,11 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
     const pagination = tv({
       compoundSlots: [
         {
-          class: ["flex", "flex-wrap", "truncate"],
+          className: ["flex", "flex-wrap", "truncate"],
           slots: ["item", "prev", "next"],
         },
         {
-          class: "w-7 h-7 text-xs",
+          className: "w-7 h-7 text-xs",
           color: "primary",
           isBig: true,
           size: "xs",

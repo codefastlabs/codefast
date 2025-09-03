@@ -114,7 +114,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       base: "text-base",
       compoundVariants: [
         {
-          class: "underline",
+          className: "underline",
           color: "primary",
           size: "sm",
         },
@@ -135,7 +135,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       base: "font-bold",
       compoundVariants: [
         {
-          class: "italic",
+          className: "italic",
           color: "primary",
           size: "lg",
         },
@@ -236,7 +236,7 @@ describe("Tailwind Variants (TV) - Extends", () => {
       base: "font-medium",
       compoundVariants: [
         {
-          class: "bg-black",
+          className: "bg-black",
           color: "primary",
           disabled: true,
         },

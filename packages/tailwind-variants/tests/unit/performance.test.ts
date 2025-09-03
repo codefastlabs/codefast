@@ -40,7 +40,7 @@ describe("Tailwind Variants (TV) - Performance Tests", () => {
     const startTime = performance.now();
 
     const compoundVariants = Array.from({ length: 100 }, (_, index) => ({
-      class: `compound-${index}`,
+      className: `compound-${index}`,
       color: `color-${index % 10}`,
       size: `size-${index % 5}`,
       variant: `variant-${index % 3}`,
