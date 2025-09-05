@@ -31,8 +31,8 @@ export interface BenchmarkResults {
  * Analyze and display benchmark results
  */
 export const analyzeResults = (results: BenchmarkResults): void => {
-  console.log("\nPerformance Summary");
-  console.log("=".repeat(50));
+  console.log("\n📈 Performance Summary");
+  console.log("═".repeat(60));
 
   // Find the fastest library for each benchmark
   const fastest = {
@@ -49,40 +49,40 @@ export const analyzeResults = (results: BenchmarkResults): void => {
   };
 
   console.log(
-    `Fastest Basic Variants:        ${fastest.basic[0]} (${fastest.basic[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Basic Variants:        ${fastest.basic[0]} (${fastest.basic[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Compound Variants:     ${fastest.compound[0]} (${fastest.compound[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Compound Variants:     ${fastest.compound[0]} (${fastest.compound[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Slots:                 ${fastest.slots[0]} (${fastest.slots[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Slots:                 ${fastest.slots[0]} (${fastest.slots[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Large Dataset:         ${fastest.large[0]} (${fastest.large[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Large Dataset:         ${fastest.large[0]} (${fastest.large[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Complex Button:        ${fastest.complexButton[0]} (${fastest.complexButton[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Complex Button:        ${fastest.complexButton[0]} (${fastest.complexButton[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Advanced Card:         ${fastest.advancedCard[0]} (${fastest.advancedCard[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Advanced Card:         ${fastest.advancedCard[0]} (${fastest.advancedCard[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Responsive Layout:     ${fastest.responsiveLayout[0]} (${fastest.responsiveLayout[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Responsive Layout:     ${fastest.responsiveLayout[0]} (${fastest.responsiveLayout[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Form Components:       ${fastest.formComponents[0]} (${fastest.formComponents[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Form Components:       ${fastest.formComponents[0]} (${fastest.formComponents[1].avg.toFixed(2)}ms)`,
   );
   console.log(
-    `Fastest Data Table:            ${fastest.dataTable[0]} (${fastest.dataTable[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Data Table:            ${fastest.dataTable[0]} (${fastest.dataTable[1].avg.toFixed(2)}ms)`,
   );
 
   console.log(
-    `Fastest Real-world Components: ${fastest.realWorldComponents[0]} (${fastest.realWorldComponents[1].avg.toFixed(2)}ms)`,
+    `🏆 Fastest Real-world Components: ${fastest.realWorldComponents[0]} (${fastest.realWorldComponents[1].avg.toFixed(2)}ms)`,
   );
 
   // TV performance relative to competitors
-  console.log(`\n${LIBRARY_NAMES.TV} Performance Analysis`);
-  console.log("=".repeat(50));
+  console.log(`\n🔍 ${LIBRARY_NAMES.TV} Performance Analysis`);
+  console.log("═".repeat(60));
 
   // Format comparison results with clear messaging
   console.log(
@@ -104,8 +104,8 @@ export const analyzeResults = (results: BenchmarkResults): void => {
   );
 
   // Advanced performance analysis
-  console.log("\nAdvanced Performance Analysis");
-  console.log("=".repeat(50));
+  console.log("\n⚡ Advanced Performance Analysis");
+  console.log("═".repeat(60));
 
   // Compare complex scenarios
   console.log(
@@ -127,8 +127,8 @@ export const analyzeResults = (results: BenchmarkResults): void => {
   );
 
   // Memory usage analysis
-  console.log("\nMemory Usage Analysis");
-  console.log("=".repeat(50));
+  console.log("\n💾 Memory Usage Analysis");
+  console.log("═".repeat(60));
 
   const memoryIncrease = measureMemoryUsage(() => {
     // Create many instances

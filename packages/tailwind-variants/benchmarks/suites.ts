@@ -3,114 +3,65 @@
  */
 
 // eslint-disable-next-line import-x/no-extraneous-dependencies
-import { cva } from "class-variance-authority";
-// eslint-disable-next-line import-x/no-extraneous-dependencies
 import { tv as tailwindVariants } from "tailwind-variants";
 
-import type { BenchmarkResult } from "./utils";
+import type { BenchmarkResult, BenchmarkResults } from "./utils";
 
 import { tv } from "../dist";
 import { benchmarkConfigs, testCases } from "./configs";
-import { LIBRARY_KEYS, LIBRARY_NAMES, runBenchmark } from "./utils";
+import {
+  createLibraryInstances,
+  createTableHeader,
+  createTableRow,
+  displayBenchmarkTable,
+  findFastest,
+  LIBRARY_KEYS,
+  LIBRARY_NAMES,
+  runAllBenchmarks,
+  runBenchmark,
+} from "./utils";
+
+/**
+ * Benchmark suite result type
+ */
+type BenchmarkSuiteResult = BenchmarkResults;
 
 /**
  * Basic variants benchmark suite
  */
-export const runBasicVariantsBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("Basic Variants Benchmark");
-  console.log("=".repeat(50));
+export const runBasicVariantsBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n🚀 Basic Variants Benchmark");
+  console.log("═".repeat(60));
 
-  const tvInstance = tv(benchmarkConfigs.basic);
-  const tvLibInstance = tailwindVariants(benchmarkConfigs.basic);
-  const cvaInstance = cva(benchmarkConfigs.basic.base, {
-    defaultVariants: benchmarkConfigs.basic.defaultVariants,
-    variants: benchmarkConfigs.basic.variants,
-  });
+  const instances = createLibraryInstances(benchmarkConfigs.basic);
+  const results = runAllBenchmarks(instances, testCases.basic);
 
-  const tvResult = runBenchmark(LIBRARY_NAMES.TV, () => {
-    for (const props of testCases.basic) tvInstance(props);
-  });
+  displayBenchmarkTable(results);
 
-  const tvLibResult = runBenchmark(LIBRARY_NAMES.TV_NPM, () => {
-    for (const props of testCases.basic) tvLibInstance(props);
-  });
-
-  const cvaResult = runBenchmark(LIBRARY_NAMES.CVA, () => {
-    for (const props of testCases.basic) cvaInstance(props);
-  });
-
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.CVA}:    ${cvaResult.avg.toFixed(2)}ms avg (${cvaResult.min.toFixed(2)}-${cvaResult.max.toFixed(2)}ms)`,
-  );
-
-  return {
-    [LIBRARY_KEYS.CVA]: cvaResult,
-    [LIBRARY_KEYS.TV]: tvResult,
-    [LIBRARY_KEYS.TV_NPM]: tvLibResult,
-  };
+  return results;
 };
 
 /**
  * Compound variants benchmark suite
  */
-export const runCompoundVariantsBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nCompound Variants Benchmark");
-  console.log("=".repeat(50));
+export const runCompoundVariantsBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n🔗 Compound Variants Benchmark");
+  console.log("═".repeat(60));
 
-  const compoundConfig = {
-    ...benchmarkConfigs.compound,
-    compoundVariants: [...benchmarkConfigs.compound.compoundVariants],
-  };
+  const instances = createLibraryInstances(benchmarkConfigs.compound);
+  const results = runAllBenchmarks(instances, testCases.compound);
 
-  const tvInstance = tv(compoundConfig);
-  const tvLibInstance = tailwindVariants(compoundConfig);
-  const cvaInstance = cva(compoundConfig.base, {
-    compoundVariants: compoundConfig.compoundVariants,
-    defaultVariants: compoundConfig.defaultVariants,
-    variants: compoundConfig.variants,
-  });
+  displayBenchmarkTable(results);
 
-  const tvResult = runBenchmark(LIBRARY_NAMES.TV, () => {
-    for (const props of testCases.compound) tvInstance(props);
-  });
-
-  const tvLibResult = runBenchmark(LIBRARY_NAMES.TV_NPM, () => {
-    for (const props of testCases.compound) tvLibInstance(props);
-  });
-
-  const cvaResult = runBenchmark(LIBRARY_NAMES.CVA, () => {
-    for (const props of testCases.compound) cvaInstance(props);
-  });
-
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.CVA}:    ${cvaResult.avg.toFixed(2)}ms avg (${cvaResult.min.toFixed(2)}-${cvaResult.max.toFixed(2)}ms)`,
-  );
-
-  return {
-    [LIBRARY_KEYS.CVA]: cvaResult,
-    [LIBRARY_KEYS.TV]: tvResult,
-    [LIBRARY_KEYS.TV_NPM]: tvLibResult,
-  };
+  return results;
 };
 
 /**
  * Slots benchmark suite
  */
 export const runSlotsBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nSlots Benchmark");
-  console.log("=".repeat(50));
+  console.log("\n🎯 Slots Benchmark");
+  console.log("═".repeat(60));
 
   const tvInstance = tv(benchmarkConfigs.slots);
   const tvLibInstance = tailwindVariants(benchmarkConfigs.slots);
@@ -135,132 +86,60 @@ export const runSlotsBenchmark = (): Record<string, BenchmarkResult> => {
     }
   });
 
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(`${LIBRARY_NAMES.CVA}:    N/A (no slots support)`);
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
 
-  return { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
 };
 
 /**
  * Large dataset benchmark suite
  */
-export const runLargeDatasetBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nLarge Dataset Benchmark");
-  console.log("=".repeat(50));
+export const runLargeDatasetBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n📊 Large Dataset Benchmark");
+  console.log("═".repeat(60));
 
-  const largeConfig = {
-    ...benchmarkConfigs.large,
-    compoundVariants: [...benchmarkConfigs.large.compoundVariants],
-  };
+  const instances = createLibraryInstances(benchmarkConfigs.large);
+  const results = runAllBenchmarks(instances, testCases.large, 500);
 
-  const tvInstance = tv(largeConfig);
-  const tvLibInstance = tailwindVariants(largeConfig);
-  const cvaInstance = cva(largeConfig.base, {
-    compoundVariants: largeConfig.compoundVariants,
-    variants: largeConfig.variants,
-  });
+  displayBenchmarkTable(results);
 
-  const tvResult = runBenchmark(
-    LIBRARY_NAMES.TV,
-    () => {
-      for (const props of testCases.large) tvInstance(props);
-    },
-    500,
-  );
-
-  const tvLibResult = runBenchmark(
-    LIBRARY_NAMES.TV_NPM,
-    () => {
-      for (const props of testCases.large) tvLibInstance(props);
-    },
-    500,
-  );
-
-  const cvaResult = runBenchmark(
-    LIBRARY_NAMES.CVA,
-    () => {
-      for (const props of testCases.large) cvaInstance(props);
-    },
-    500,
-  );
-
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.CVA}:    ${cvaResult.avg.toFixed(2)}ms avg (${cvaResult.min.toFixed(2)}-${cvaResult.max.toFixed(2)}ms)`,
-  );
-
-  return {
-    [LIBRARY_KEYS.CVA]: cvaResult,
-    [LIBRARY_KEYS.TV]: tvResult,
-    [LIBRARY_KEYS.TV_NPM]: tvLibResult,
-  };
+  return results;
 };
 
 /**
  * Complex button benchmark suite
  */
-export const runComplexButtonBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nComplex Button Benchmark");
-  console.log("=".repeat(50));
+export const runComplexButtonBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n🔘 Complex Button Benchmark");
+  console.log("═".repeat(60));
 
-  const complexButtonConfig = {
-    ...benchmarkConfigs.complexButton,
-    compoundVariants: [...benchmarkConfigs.complexButton.compoundVariants],
-  };
+  const instances = createLibraryInstances(benchmarkConfigs.complexButton);
+  const results = runAllBenchmarks(instances, testCases.complexButton);
 
-  const tvInstance = tv(complexButtonConfig);
-  const tvLibInstance = tailwindVariants(complexButtonConfig);
-  const cvaInstance = cva(complexButtonConfig.base, {
-    compoundVariants: complexButtonConfig.compoundVariants,
-    defaultVariants: complexButtonConfig.defaultVariants,
-    variants: complexButtonConfig.variants,
-  });
+  displayBenchmarkTable(results);
 
-  const tvResult = runBenchmark(LIBRARY_NAMES.TV, () => {
-    for (const props of testCases.complexButton) tvInstance(props);
-  });
-
-  const tvLibResult = runBenchmark(LIBRARY_NAMES.TV_NPM, () => {
-    for (const props of testCases.complexButton) tvLibInstance(props);
-  });
-
-  const cvaResult = runBenchmark(LIBRARY_NAMES.CVA, () => {
-    for (const props of testCases.complexButton) cvaInstance(props);
-  });
-
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.CVA}:    ${cvaResult.avg.toFixed(2)}ms avg (${cvaResult.min.toFixed(2)}-${cvaResult.max.toFixed(2)}ms)`,
-  );
-
-  return {
-    [LIBRARY_KEYS.CVA]: cvaResult,
-    [LIBRARY_KEYS.TV]: tvResult,
-    [LIBRARY_KEYS.TV_NPM]: tvLibResult,
-  };
+  return results;
 };
 
 /**
  * Advanced card benchmark suite
  */
 export const runAdvancedCardBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nAdvanced Card Benchmark");
-  console.log("=".repeat(50));
+  console.log("\n🃏 Advanced Card Benchmark");
+  console.log("═".repeat(60));
 
   const advancedCardConfig = {
     ...benchmarkConfigs.advancedCard,
@@ -294,23 +173,30 @@ export const runAdvancedCardBenchmark = (): Record<string, BenchmarkResult> => {
     }
   });
 
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(`${LIBRARY_NAMES.CVA}:    N/A (no slots support)`);
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
 
-  return { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
 };
 
 /**
  * Responsive layout benchmark suite
  */
 export const runResponsiveLayoutBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nResponsive Layout Benchmark");
-  console.log("=".repeat(50));
+  console.log("\n📱 Responsive Layout Benchmark");
+  console.log("═".repeat(60));
 
   const responsiveLayoutConfig = {
     ...benchmarkConfigs.responsiveLayout,
@@ -350,23 +236,30 @@ export const runResponsiveLayoutBenchmark = (): Record<string, BenchmarkResult> 
     }
   });
 
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(`${LIBRARY_NAMES.CVA}:    N/A (no slots support)`);
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
 
-  return { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
 };
 
 /**
  * Form components benchmark suite
  */
 export const runFormComponentsBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nForm Components Benchmark");
-  console.log("=".repeat(50));
+  console.log("\n📝 Form Components Benchmark");
+  console.log("═".repeat(60));
 
   const formComponentsConfig = {
     ...benchmarkConfigs.formComponents,
@@ -410,23 +303,30 @@ export const runFormComponentsBenchmark = (): Record<string, BenchmarkResult> =>
     }
   });
 
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(`${LIBRARY_NAMES.CVA}:    N/A (no slots support)`);
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
 
-  return { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
 };
 
 /**
  * Data table benchmark suite
  */
 export const runDataTableBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nData Table Benchmark");
-  console.log("=".repeat(50));
+  console.log("\n📋 Data Table Benchmark");
+  console.log("═".repeat(60));
 
   const dataTableConfig = {
     ...benchmarkConfigs.dataTable,
@@ -476,23 +376,30 @@ export const runDataTableBenchmark = (): Record<string, BenchmarkResult> => {
     }
   });
 
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(`${LIBRARY_NAMES.CVA}:    N/A (no slots support)`);
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
 
-  return { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
 };
 
 /**
  * Real-world components benchmark suite
  */
 export const runRealWorldComponentsBenchmark = (): Record<string, BenchmarkResult> => {
-  console.log("\nReal-world Components Benchmark");
-  console.log("=".repeat(50));
+  console.log("\n🌍 Real-world Components Benchmark");
+  console.log("═".repeat(60));
 
   const realWorldComponentsConfig = {
     ...benchmarkConfigs.realWorldComponents,
@@ -552,13 +459,20 @@ export const runRealWorldComponentsBenchmark = (): Record<string, BenchmarkResul
     }
   });
 
-  console.log(
-    `${LIBRARY_NAMES.TV}: ${tvResult.avg.toFixed(2)}ms avg (${tvResult.min.toFixed(2)}-${tvResult.max.toFixed(2)}ms)`,
-  );
-  console.log(
-    `${LIBRARY_NAMES.TV_NPM}:     ${tvLibResult.avg.toFixed(2)}ms avg (${tvLibResult.min.toFixed(2)}-${tvLibResult.max.toFixed(2)}ms)`,
-  );
-  console.log(`${LIBRARY_NAMES.CVA}:    N/A (no slots support)`);
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
 
-  return { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
 };

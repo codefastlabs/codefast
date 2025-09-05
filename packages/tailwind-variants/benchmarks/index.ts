@@ -26,9 +26,12 @@ import { LIBRARY_NAMES } from "./utils";
  * Main benchmark runner
  */
 const runBenchmarks = (): BenchmarkResults => {
+  console.log("🚀 Starting Benchmark Comparison");
+  console.log("═".repeat(60));
   console.log(
-    `Starting Benchmark Comparison: ${LIBRARY_NAMES.TV} vs ${LIBRARY_NAMES.TV_NPM} vs ${LIBRARY_NAMES.CVA}\n`,
+    `📊 Comparing: ${LIBRARY_NAMES.TV} vs ${LIBRARY_NAMES.TV_NPM} vs ${LIBRARY_NAMES.CVA} vs ${LIBRARY_NAMES.CVA_MERGE}`,
   );
+  console.log("═".repeat(60));
 
   // Run all benchmark suites
   const basicResults = runBasicVariantsBenchmark();
@@ -58,7 +61,7 @@ const runBenchmarks = (): BenchmarkResults => {
 
   analyzeResults(results);
 
-  console.log("\n✓ Benchmark completed!");
+  console.log("\n✓ Benchmark completed successfully!");
 
   return results;
 };
