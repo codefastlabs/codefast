@@ -27,11 +27,20 @@ type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof 
  * Enhanced VariantProps with better type inference and boolean handling
  * Provides strict typing for variant component props extraction
  * Uses generic constraints instead of any for maximum type safety
+ * Supports both direct VariantFunction and functions returned from createTV factory
  */
 type VariantProps<
   Component extends (props?: Record<string, unknown>) => unknown,
   OmitKeys extends string = never
-> = Component extends VariantFunction<infer T, SlotSchema> ? Omit<ConfigVariants<T>, OmitKeys> : never;
+> = Component extends VariantFunction<infer T, SlotSchema> 
+    ? Omit<ConfigVariants<T>, OmitKeys>
+    : Component extends (props?: infer P) => unknown
+    ? P extends ConfigVariants<infer T>
+      ? Omit<ConfigVariants<T>, OmitKeys>
+      : P extends Record<string, unknown>
+      ? Omit<P & { className?: ClassValue }, OmitKeys>
+      : { className?: ClassValue }
+    : never;
 
 // =============================================================================
 // Schema Types
@@ -894,10 +903,36 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
 // =============================================================================
 
 function createTV(globalConfig: TVConfig = {}) {
-  return function <T extends ConfigSchema, S extends SlotSchema = Record<string, never>>(
+  // Function overloads to ensure proper type inference
+  function tvFactory<T extends ConfigSchema>(
+    config: Config<T>,
+    localConfig?: TVConfig,
+  ): VariantFunction<T, Record<string, never>>;
+  
+  function tvFactory<S extends SlotSchema>(
+    config: ConfigWithSlots<Record<string, never>, S>,
+    localConfig?: TVConfig,
+  ): VariantFunction<Record<string, never>, S>;
+  
+  function tvFactory<T extends ConfigSchema, S extends SlotSchema>(
+    config: ConfigWithSlots<T, S>,
+    localConfig?: TVConfig,
+  ): VariantFunction<T, S>;
+  
+  function tvFactory<
+    TBase extends ConfigSchema,
+    TExtension extends ConfigSchema,
+    SBase extends SlotSchema,
+    SExtension extends SlotSchema,
+  >(
+    config: ExtendedConfig<TBase, TExtension, SBase, SExtension>,
+    localConfig?: TVConfig,
+  ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
+
+  function tvFactory<T extends ConfigSchema, S extends SlotSchema>(
     config: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
     localConfig?: TVConfig,
-  ) {
+  ): VariantFunction<T, S> {
     const mergedConfig = { ...globalConfig, ...localConfig };
 
     return tv(
@@ -906,8 +941,10 @@ function createTV(globalConfig: TVConfig = {}) {
         | ConfigWithSlots<T, S>
         | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
       mergedConfig,
-    );
-  };
+    ) as VariantFunction<T, S>;
+  }
+
+  return tvFactory;
 }
 
 // =============================================================================
