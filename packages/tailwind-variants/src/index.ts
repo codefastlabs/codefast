@@ -26,11 +26,10 @@ type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof 
 /**
  * Enhanced VariantProps with better type inference and boolean handling
  * Provides strict typing for variant component props extraction
- * Uses generic constraints instead of any for maximum type safety
- * Supports both direct VariantFunction and functions returned from createTV factory
+ * Uses overloaded types to handle different function signatures precisely
  */
 type VariantProps<
-  Component extends (props?: Record<string, unknown>) => unknown,
+  Component,
   OmitKeys extends string = never
 > = Component extends VariantFunction<infer T, SlotSchema> 
     ? Omit<ConfigVariants<T>, OmitKeys>
