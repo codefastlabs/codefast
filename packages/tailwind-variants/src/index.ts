@@ -27,21 +27,18 @@ type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof 
  * Enhanced VariantProps with better type inference and boolean handling
  * Provides strict typing for variant component props extraction
  */
-type VariantProps<
-  Component extends (...args: readonly [Record<string, unknown>]) => unknown,
-  OmitKeys extends keyof Parameters<Component>[0] = never,
-> = Omit<
-  {
-    readonly [VariantKey in keyof Parameters<Component>[0]]?: StringToBoolean<
-      Parameters<Component>[0][VariantKey]
-    >;
-  } & {
-    readonly className?: ClassValue;
-  },
-  "className" | OmitKeys
-> & {
-  readonly className?: ClassValue;
-};
+type VariantProps<Component extends (...args: readonly unknown[]) => unknown, OmitKeys extends string = never> =
+  // First, try strict VariantFunction matching
+  Component extends VariantFunction<infer T, SlotSchema>
+    ? Omit<ConfigVariants<T>, OmitKeys>
+    // Fallback for backwards compatibility with broader function types
+    : Component extends (...args: readonly unknown[]) => unknown
+      ? Component extends (props?: infer Props) => unknown
+        ? Props extends Record<string, unknown>
+          ? Omit<Props & { className?: ClassValue }, OmitKeys>
+          : { className?: ClassValue }
+        : { className?: ClassValue }
+      : never;
 
 // =============================================================================
 // Schema Types
@@ -104,14 +101,20 @@ type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchema> = Pa
 /**
  * Enhanced compound slots with strict type checking
  */
-type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> = Partial<{
-  readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
-    ? boolean | StringToBoolean<keyof T[Variant]>
-    : StringToBoolean<keyof T[Variant]>;
-}> & {
-  readonly slots: readonly (keyof S)[];
-  readonly className: ClassValue;
-};
+type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> =
+  T extends Record<string, never>
+    ? {
+        readonly slots: readonly (keyof S)[];
+        readonly className: ClassValue;
+      }
+    : {
+        readonly slots: readonly (keyof S)[];
+        readonly className: ClassValue;
+      } & {
+        readonly [K in keyof T]?: IsBooleanVariant<T[K]> extends true
+          ? boolean | StringToBoolean<keyof T[K]>
+          : StringToBoolean<keyof T[K]>;
+      };
 
 // =============================================================================
 // Configuration Types
@@ -186,7 +189,7 @@ type TVReturnType<T extends ConfigSchema, S extends SlotSchema> =
  * Enhanced VariantFunction with stricter typing and better inference
  */
 interface VariantFunction<T extends ConfigSchema, S extends SlotSchema> {
-  readonly config: Config<T> | ConfigWithSlots<T, S>;
+  config: Config<T> | ConfigWithSlots<T, S>;
 
   (props?: ConfigVariants<T>): TVReturnType<T, S>;
 }
@@ -368,15 +371,23 @@ const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
   for (const compound of compoundSlots) {
     let matches = true;
 
-    // Cache compound keys to avoid repeated Object.entries calls
-    const compoundKeys = Object.keys(compound) as (keyof typeof compound)[];
+    // Get all variant keys from compound, excluding special keys
+    const compoundEntries = Object.entries(compound).filter(
+      ([key]) => key !== "className" && key !== "slots",
+    ) as [keyof T, T[keyof T][keyof T[keyof T]]][];
 
-    for (const key of compoundKeys) {
-      if (key === "className" || key === "slots") {
-        continue;
-      }
+    for (const [key, compoundValue] of compoundEntries) {
+      const propertyValue = resolvedProps[key];
 
-      if (resolvedProps[key] !== compound[key]) {
+      // Enhanced boolean variant handling with proper type checking
+      if (isBooleanValue(compoundValue)) {
+        const resolvedPropertyValue = propertyValue === undefined ? false : propertyValue;
+
+        if (resolvedPropertyValue !== compoundValue) {
+          matches = false;
+          break;
+        }
+      } else if (propertyValue !== compoundValue) {
         matches = false;
         break;
       }
@@ -779,6 +790,11 @@ function tv<T extends ConfigSchema>(
   tvConfig?: TVConfig,
 ): VariantFunction<T, Record<string, never>>;
 
+function tv<S extends SlotSchema>(
+  config: ConfigWithSlots<Record<string, never>, S>,
+  tvConfig?: TVConfig,
+): VariantFunction<Record<string, never>, S>;
+
 function tv<T extends ConfigSchema, S extends SlotSchema>(
   config: ConfigWithSlots<T, S>,
   tvConfig?: TVConfig,
@@ -869,7 +885,13 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
   // Store config for extending with proper typing
   const tvFunctionWithConfig = tvFunction as VariantFunction<T, S>;
 
-  (tvFunctionWithConfig as any).config = mergedConfig;
+  // Use Object.defineProperty for type-safe config assignment
+  Object.defineProperty(tvFunctionWithConfig, "config", {
+    configurable: false,
+    enumerable: false,
+    value: mergedConfig,
+    writable: false,
+  });
 
   return tvFunctionWithConfig;
 }
@@ -911,3 +933,5 @@ export {
   type TVConfig,
   type VariantProps,
 };
+
+export { type ClassValue } from "clsx";
