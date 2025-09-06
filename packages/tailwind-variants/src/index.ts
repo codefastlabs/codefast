@@ -10,11 +10,22 @@ import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 /**
  * Converts string "true"/"false" to boolean, leaves other types unchanged
+ * Enhanced to handle actual booleans and provide better type inference
  */
-type StringToBoolean<T> = T extends "false" | "true" ? boolean : T;
+type StringToBoolean<T> = T extends "false" | "true" ? boolean : T extends boolean ? T : T;
 
 /**
- * Extract variant props from a component function with proper type inference
+ * Helper types to determine if a variant key accepts boolean values
+ */
+type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof T
+  ? true
+  : "false" extends keyof T
+    ? true
+    : false;
+
+/**
+ * Enhanced VariantProps with better type inference and boolean handling
+ * Provides strict typing for variant component props extraction
  */
 type VariantProps<
   Component extends (...args: readonly [Record<string, unknown>]) => unknown,
@@ -24,9 +35,13 @@ type VariantProps<
     readonly [VariantKey in keyof Parameters<Component>[0]]?: StringToBoolean<
       Parameters<Component>[0][VariantKey]
     >;
+  } & {
+    readonly className?: ClassValue;
   },
-  OmitKeys
->;
+  "className" | OmitKeys
+> & {
+  readonly className?: ClassValue;
+};
 
 // =============================================================================
 // Schema Types
@@ -43,10 +58,14 @@ type ConfigSchema = Record<string, Record<string, ClassValue>>;
 type SlotSchema = Record<string, ClassValue>;
 
 /**
- * Extract variant keys and their possible values with proper type constraints
+ * Enhanced ConfigVariants with better boolean handling and strict typing
  */
 type ConfigVariants<T extends ConfigSchema> = {
-  readonly [Variant in keyof T]?: StringToBoolean<keyof T[Variant]> | undefined;
+  readonly [Variant in keyof T]?: IsBooleanVariant<T[Variant]> extends true
+    ? boolean | StringToBoolean<keyof T[Variant]>
+    : StringToBoolean<keyof T[Variant]>;
+} & {
+  readonly className?: ClassValue;
 };
 
 /**
@@ -61,29 +80,35 @@ type SlotProps<S extends SlotSchema> = {
 // =============================================================================
 
 /**
- * Type-safe compound variant definition
+ * Enhanced compound variant with strict type checking and boolean support
  */
-type CompoundVariant<T extends ConfigSchema> = {
-  readonly [Variant in keyof T]?: StringToBoolean<keyof T[Variant]>;
-} & {
+type CompoundVariant<T extends ConfigSchema> = Partial<{
+  readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
+    ? boolean | StringToBoolean<keyof T[Variant]>
+    : StringToBoolean<keyof T[Variant]>;
+}> & {
   readonly className: ClassValue;
 };
 
 /**
- * Type-safe compound variant with slot support
+ * Enhanced compound variant with slots and strict type checking
  */
-type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchema> = {
-  readonly [Variant in keyof T]?: StringToBoolean<keyof T[Variant]>;
-} & {
+type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchema> = Partial<{
+  readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
+    ? boolean | StringToBoolean<keyof T[Variant]>
+    : StringToBoolean<keyof T[Variant]>;
+}> & {
   readonly className: ClassValue | SlotProps<S>;
 };
 
 /**
- * Type-safe compound slots definition
+ * Enhanced compound slots with strict type checking
  */
-type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> = {
-  readonly [Variant in keyof T]?: StringToBoolean<keyof T[Variant]>;
-} & {
+type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> = Partial<{
+  readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
+    ? boolean | StringToBoolean<keyof T[Variant]>
+    : StringToBoolean<keyof T[Variant]>;
+}> & {
   readonly slots: readonly (keyof S)[];
   readonly className: ClassValue;
 };
@@ -127,42 +152,43 @@ interface TVConfig {
 // =============================================================================
 
 /**
- * Slot function signature - takes optional props and returns className
+ * Enhanced slot function with strict typing and optional props
  */
-type SlotFunction<T extends ConfigSchema> = (
-  props?: { className?: ClassValue } & ConfigVariants<T>,
-) => string | undefined;
+type SlotFunction<T extends ConfigSchema> = (props?: ConfigVariants<T>) => string | undefined;
 
 /**
- * Return type for a TV function with proper conditional typing
+ * Utility type to ensure proper prop passing to slot functions
  */
-type TVReturnType<T extends ConfigSchema, S extends SlotSchema, C> =
-  // If we have slots, return slot functions
-  S extends Record<string, ClassValue>
-    ? {
+type SlotFunctionProps<T extends ConfigSchema> = {
+  readonly [K in keyof ConfigVariants<T>]?: ConfigVariants<T>[K];
+} & {
+  readonly className?: ClassValue;
+};
+
+/**
+ * Enhanced TVReturnType with better conditional typing and slot handling
+ */
+type TVReturnType<T extends ConfigSchema, S extends SlotSchema> =
+  // Check if we have slots (non-empty slot schema)
+  keyof S extends never
+    ? SlotFunction<T> // No slots - return single function
+    : {
         readonly [K in keyof S]: SlotFunction<T>;
       } & {
         readonly base: SlotFunction<T>;
-      }
-    : // If we have a base config, return a single function
-      C extends { base: ClassValue }
-      ? SlotFunction<T>
-      : // Otherwise return a function that may return undefined
-        SlotFunction<T>;
+      };
 
 // =============================================================================
 // Variant Function Interface
 // =============================================================================
 
 /**
- * Core variant function interface with proper generic constraints
+ * Enhanced VariantFunction with stricter typing and better inference
  */
 interface VariantFunction<T extends ConfigSchema, S extends SlotSchema> {
   readonly config: Config<T> | ConfigWithSlots<T, S>;
 
-  (
-    props?: ConfigVariants<T> & { className?: ClassValue },
-  ): TVReturnType<T, S, Config<T> | ConfigWithSlots<T, S>>;
+  (props?: ConfigVariants<T>): TVReturnType<T, S>;
 }
 
 // =============================================================================
@@ -217,15 +243,40 @@ const cx = (...classes: ClassValue[]): string => {
 /**
  * Creates a tailwind merge function with optional configuration
  */
-const createTailwindMerge = (config?: ConfigExtension<string, string>) => {
+const createTailwindMerge = (
+  config?: ConfigExtension<string, string>,
+): ((classes: string) => string) => {
   return config ? extendTailwindMerge(config) : twMerge;
 };
 
 /**
- * Type guard to check if a value is a slot-specific object
+ * Enhanced type guard for slot-specific objects with better type inference
  */
 const isSlotObject = (value: ClassValue): value is Record<string, ClassValue> => {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    typeof value !== "string" &&
+    typeof value !== "number" &&
+    typeof value !== "boolean"
+  );
+};
+
+/**
+ * Type guard to check if a variant value is a boolean variant
+ */
+const isBooleanVariant = <T extends Record<string, unknown>>(
+  variantGroup: T,
+): variantGroup is T & (Record<"false", unknown> | Record<"true", unknown>) => {
+  return "true" in variantGroup || "false" in variantGroup;
+};
+
+/**
+ * Enhanced type guard for boolean values with proper type narrowing
+ */
+const isBooleanValue = (value: unknown): value is boolean => {
+  return typeof value === "boolean";
 };
 
 /**
@@ -276,9 +327,11 @@ const applyCompoundVariants = <T extends ConfigSchema>(
       const propertyValue = resolvedProps[key];
       const compoundValue = compound[key];
 
-      // Handle boolean variants with optimized comparison
-      if (typeof compoundValue === "boolean") {
-        if (propertyValue !== compoundValue && !(propertyValue === undefined && !compoundValue)) {
+      // Enhanced boolean variant handling with proper type checking
+      if (isBooleanValue(compoundValue)) {
+        const resolvedPropertyValue = propertyValue === undefined ? false : propertyValue;
+
+        if (resolvedPropertyValue !== compoundValue) {
           matches = false;
           break;
         }
@@ -371,14 +424,17 @@ const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
       const variantGroup = variants[variantKey];
       const variantValue = resolvedProps[variantKey];
 
-      // Determine the value to use with optimized logic
+      // Enhanced value resolution with proper boolean handling
       let valueToUse: string | undefined;
 
       if (variantValue !== undefined) {
-        valueToUse = String(variantValue);
+        valueToUse = isBooleanValue(variantValue) ? String(variantValue) : String(variantValue);
       } else if (defaultVariants[variantKey] !== undefined) {
-        valueToUse = String(defaultVariants[variantKey]);
-      } else if ("false" in variantGroup) {
+        const defaultValue = defaultVariants[variantKey];
+
+        valueToUse = isBooleanValue(defaultValue) ? String(defaultValue) : String(defaultValue);
+      } else if (isBooleanVariant(variantGroup)) {
+        // For boolean variants without explicit value, default to false
         valueToUse = "false";
       }
 
@@ -589,8 +645,8 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
 ): Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> } => {
   const slotFunctions = {} as Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> };
 
-  // Create base slot function
-  slotFunctions.base = (slotProps: ConfigVariants<T> & { className?: ClassValue } = {}) => {
+  // Create base slot function with proper typing
+  slotFunctions.base = (slotProps: SlotFunctionProps<T> = {}) => {
     const baseSlotClass = mergedSlots?.base ?? mergedBase;
     const baseClasses = resolveSlotClasses(
       "base",
@@ -616,8 +672,9 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
 
   for (const slotKey of slotKeys) {
     if (slotKey !== "base") {
-      (slotFunctions as any)[slotKey] = (
-        slotProps: ConfigVariants<T> & { className?: ClassValue } = {},
+      // Type assertion for dynamic slot assignment
+      (slotFunctions as Record<keyof S, SlotFunction<T>>)[slotKey] = (
+        slotProps: SlotFunctionProps<T> = {},
       ) => {
         const slotClasses = resolveSlotClasses(
           slotKey,
@@ -670,15 +727,17 @@ const handleRegularVariants = <T extends ConfigSchema>(
     const variantGroup = mergedVariants[variantKey];
     const variantValue = variantProps[variantKey];
 
-    // Get the value to use
+    // Enhanced value resolution with proper boolean handling
     let valueToUse: string | undefined;
 
     if (variantValue !== undefined) {
-      valueToUse = String(variantValue);
+      valueToUse = isBooleanValue(variantValue) ? String(variantValue) : String(variantValue);
     } else if (mergedDefaultVariants[variantKey] !== undefined) {
-      valueToUse = String(mergedDefaultVariants[variantKey]);
-    } else if ("false" in variantGroup) {
-      // For boolean variants, default to false if no default is specified
+      const defaultValue = mergedDefaultVariants[variantKey];
+
+      valueToUse = isBooleanValue(defaultValue) ? String(defaultValue) : String(defaultValue);
+    } else if (isBooleanVariant(variantGroup)) {
+      // For boolean variants without explicit default, use false
       valueToUse = "false";
     }
 
@@ -749,11 +808,12 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
   const tailwindMerge = createTailwindMerge(twMergeConfig);
 
   // Merge with extended config if present
-  let mergedConfig: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>;
-
-  mergedConfig =
+  const mergedConfig: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema> =
     hasExtend(configWithType) && configWithType.extend
-      ? mergeConfigs(configWithType.extend.config, configWithType as any)
+      ? mergeConfigs(
+          configWithType.extend.config,
+          configWithType as Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
+        )
       : (configWithType as Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>);
 
   const mergedBase = mergedConfig.base;
@@ -771,32 +831,34 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
     }
 
     if (mergedSlots) {
-      // Handle slots
+      // Handle slots with proper typing
       const compoundSlotClasses = applyCompoundSlots(
         hasSlots(mergedConfig) ? mergedConfig.compoundSlots : undefined,
-        variantProps as any,
-        mergedDefaultVariants as any,
+        variantProps as ConfigVariants<ConfigSchema>,
+        mergedDefaultVariants as ConfigVariants<ConfigSchema>,
       );
 
       return createSlotFunctions(
         mergedSlots,
         mergedBase,
         mergedVariants,
-        mergedDefaultVariants as any,
-        mergedCompoundVariants as any,
+        mergedDefaultVariants as ConfigVariants<ConfigSchema>,
+        mergedCompoundVariants as
+          | readonly CompoundVariantWithSlots<ConfigSchema, SlotSchema>[]
+          | undefined,
         compoundSlotClasses,
-        variantProps as any,
+        variantProps as ConfigVariants<ConfigSchema>,
         shouldMerge,
         tailwindMerge,
       );
     } else {
-      // Handle regular variants
+      // Handle regular variants with proper typing
       return handleRegularVariants(
         mergedBase,
         mergedVariants,
-        mergedDefaultVariants as any,
-        mergedCompoundVariants as any,
-        variantProps as any,
+        mergedDefaultVariants as ConfigVariants<ConfigSchema>,
+        mergedCompoundVariants as readonly CompoundVariant<ConfigSchema>[] | undefined,
+        variantProps as ConfigVariants<ConfigSchema>,
         className,
         shouldMerge,
         tailwindMerge,
