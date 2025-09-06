@@ -212,71 +212,131 @@ interface ExtendedConfig<
 // Utility Functions
 // =============================================================================
 
+/**
+ * Optimized class concatenation using clsx
+ */
 const cx = (...classes: ClassValue[]): string => {
   return clsx(classes);
 };
 
+/**
+ * Creates a tailwind merge function with optional configuration
+ */
 const createTailwindMerge = (config?: ConfigExtension<string, string>) => {
-  if (config) {
-    return extendTailwindMerge(config);
-  }
+  return config ? extendTailwindMerge(config) : twMerge;
+};
 
-  return twMerge;
+/**
+ * Type guard to check if a value is a slot-specific object
+ */
+const isSlotObject = (value: ClassProperty): value is Record<string, ClassProperty> => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value)
+  );
+};
+
+/**
+ * Type guard to check if a config has slots
+ */
+const hasSlots = <T extends ConfigSchema, S extends SlotSchema>(
+  config: Config<T> | ConfigWithSlots<T, S>
+): config is ConfigWithSlots<T, S> => {
+  return "slots" in config && config.slots !== undefined;
+};
+
+/**
+ * Type guard to check if a config has extend
+ */
+const hasExtend = <T extends ConfigSchema, S extends SlotSchema>(
+  config: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>
+): config is ExtendedConfig<ConfigSchema, T, SlotSchema, S> => {
+  return "extend" in config && config.extend !== undefined;
 };
 
 // =============================================================================
 // Compound Variants Logic
 // =============================================================================
 
+/**
+ * Applies compound variants based on resolved props
+ * Optimized with early returns and reduced object iterations
+ */
 const applyCompoundVariants = <T extends ConfigSchema>(
   compoundVariants: readonly CompoundVariant<T>[],
   variantProps: ConfigVariants<T>,
   defaultVariants: ConfigVariants<T>,
 ): ClassProperty[] => {
   const resolvedProps = { ...defaultVariants, ...variantProps };
+  const result: ClassProperty[] = [];
 
-  return compoundVariants
-    .filter((compound) => {
-      return Object.entries(compound).every(([key, value]) => {
-        if (key === "className") return true;
+  for (const compound of compoundVariants) {
+    let matches = true;
+    
+    for (const [key, value] of Object.entries(compound)) {
+      if (key === "className") {
+        continue;
+      }
 
-        const propertyValue = resolvedProps[key as keyof T];
-        const compoundValue = value;
+      const propertyValue = resolvedProps[key as keyof T];
+      const compoundValue = value;
 
-        // Handle boolean variants
-        if (typeof compoundValue === "boolean") {
-          return propertyValue === compoundValue || (propertyValue === undefined && !compoundValue);
+      // Handle boolean variants with optimized comparison
+      if (typeof compoundValue === "boolean") {
+        if (propertyValue !== compoundValue && !(propertyValue === undefined && !compoundValue)) {
+          matches = false;
+          break;
         }
+      } else if (propertyValue !== compoundValue) {
+        matches = false;
+        break;
+      }
+    }
 
-        return propertyValue === compoundValue;
-      });
-    })
-    .map((compound) => compound.className);
+    if (matches) {
+      result.push(compound.className);
+    }
+  }
+
+  return result;
 };
 
+/**
+ * Applies compound slots based on resolved props
+ * Optimized with early returns and pre-allocated result object
+ */
 const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
   compoundSlots: readonly CompoundSlot<T, S>[] | undefined,
   variantProps: ConfigVariants<T>,
   defaultVariants: ConfigVariants<T>,
 ): Record<keyof S, ClassProperty[]> => {
-  if (!compoundSlots) return {} as Record<keyof S, ClassProperty[]>;
+  if (!compoundSlots?.length) {
+    return {} as Record<keyof S, ClassProperty[]>;
+  }
 
   const resolvedProps = { ...defaultVariants, ...variantProps };
   const result = {} as Record<keyof S, ClassProperty[]>;
 
   for (const compound of compoundSlots) {
-    const matches = Object.entries(compound).every(([key, value]) => {
-      if (key === "className" || key === "slots") return true;
+    let matches = true;
+    
+    for (const [key, value] of Object.entries(compound)) {
+      if (key === "className" || key === "slots") {
+        continue;
+      }
 
-      const propertyValue = resolvedProps[key as keyof T];
-
-      return propertyValue === value;
-    });
+      if (resolvedProps[key as keyof T] !== value) {
+        matches = false;
+        break;
+      }
+    }
 
     if (matches) {
       for (const slot of compound.slots) {
-        if (!result[slot]) result[slot] = [];
-
+        if (!result[slot]) {
+          result[slot] = [];
+        }
         result[slot].push(compound.className);
       }
     }
@@ -289,6 +349,9 @@ const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
 // Slot Resolution Logic
 // =============================================================================
 
+/**
+ * Resolves classes for a specific slot with optimized variant processing
+ */
 const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
   slotKey: keyof S,
   baseSlotClasses: ClassProperty,
@@ -300,36 +363,31 @@ const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
 ): ClassProperty[] => {
   const classes: ClassProperty[] = [baseSlotClasses];
 
-  // Apply variant classes
+  // Apply variant classes with optimized iteration
   if (variants) {
-    for (const variantKey of Object.keys(variants) as (keyof T)[]) {
-      const variantGroup = variants[variantKey];
-      const variantValue = variantProps[variantKey];
+    const resolvedProps = { ...defaultVariants, ...variantProps };
+    
+    for (const [variantKey, variantGroup] of Object.entries(variants)) {
+      const variantValue = resolvedProps[variantKey as keyof T];
 
-      // Get the value to use
+      // Determine the value to use with optimized logic
       let valueToUse: string | undefined;
 
       if (variantValue !== undefined) {
         valueToUse = String(variantValue);
-      } else if (defaultVariants[variantKey] !== undefined) {
-        valueToUse = String(defaultVariants[variantKey]);
+      } else if (defaultVariants[variantKey as keyof T] !== undefined) {
+        valueToUse = String(defaultVariants[variantKey as keyof T]);
       } else if ("false" in variantGroup) {
-        // For boolean variants, default to false if no default is specified
         valueToUse = "false";
       }
 
-      if (valueToUse !== undefined && valueToUse in variantGroup) {
+      if (valueToUse && valueToUse in variantGroup) {
         const variantConfig = variantGroup[valueToUse];
 
         if (variantConfig) {
-          if (
-            typeof variantConfig === "object" &&
-            !Array.isArray(variantConfig) &&
-            variantConfig !== null
-          ) {
+          if (isSlotObject(variantConfig)) {
             // Handle slot-specific variant
-            const slotVariant = (variantConfig as Record<string, ClassProperty>)[slotKey as string];
-
+            const slotVariant = variantConfig[slotKey as string];
             if (slotVariant !== undefined) {
               classes.push(slotVariant);
             }
@@ -342,26 +400,30 @@ const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
     }
   }
 
-  // Apply compound variants
-  if (compoundVariants) {
+  // Apply compound variants with optimized matching
+  if (compoundVariants?.length) {
     const resolvedProps = { ...defaultVariants, ...variantProps };
 
     for (const compound of compoundVariants) {
-      const matches = Object.entries(compound).every(([key, value]) => {
-        if (key === "className") return true;
+      let matches = true;
+      
+      for (const [key, value] of Object.entries(compound)) {
+        if (key === "className") {
+        continue;
+      }
 
-        const propertyValue = resolvedProps[key as keyof T];
-
-        return propertyValue === value;
-      });
+        if (resolvedProps[key as keyof T] !== value) {
+          matches = false;
+          break;
+        }
+      }
 
       if (matches) {
         const className = compound.className;
 
-        if (typeof className === "object" && className !== null && !Array.isArray(className)) {
+        if (isSlotObject(className)) {
           // Slot-specific compound variant
-          const slotClass = (className as Record<string, ClassProperty>)[slotKey as string];
-
+          const slotClass = className[slotKey as string];
           if (slotClass !== undefined) {
             classes.push(slotClass);
           }
@@ -383,6 +445,42 @@ const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
 // Configuration Merging
 // =============================================================================
 
+/**
+ * Deep merges variant groups with optimized object handling
+ */
+const mergeVariantGroups = (
+  baseGroup: Record<string, ClassProperty>,
+  extensionGroup: Record<string, ClassProperty>,
+): Record<string, ClassProperty> => {
+  const mergedGroup = { ...baseGroup };
+
+  for (const [variantValue, extensionValue] of Object.entries(extensionGroup)) {
+    const baseValue = mergedGroup[variantValue];
+
+    if (baseValue !== undefined) {
+      // Merge individual variant value
+      if (isSlotObject(baseValue) && isSlotObject(extensionValue)) {
+        // Both are slot-specific objects, merge them
+        mergedGroup[variantValue] = {
+          ...baseValue,
+          ...extensionValue,
+        };
+      } else {
+        // One or both are primitive, extension overrides
+        mergedGroup[variantValue] = extensionValue;
+      }
+    } else {
+      // New variant value
+      mergedGroup[variantValue] = extensionValue;
+    }
+  }
+
+  return mergedGroup;
+};
+
+/**
+ * Merges configurations with optimized deep merging and reduced object allocations
+ */
 const mergeConfigs = (
   baseConfig: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
   extensionConfig:
@@ -390,99 +488,57 @@ const mergeConfigs = (
     | ConfigWithSlots<ConfigSchema, SlotSchema>
     | ExtendedConfig<ConfigSchema, ConfigSchema, SlotSchema, SlotSchema>,
 ): Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema> => {
-  const base = baseConfig;
-  const extension = extensionConfig;
-
   // Recursively merge if base has extend
-  const resolvedBase =
-    "extend" in base && (base as any).extend
-      ? mergeConfigs((base as any).extend.config, base)
-      : base;
+  const resolvedBase = hasExtend(baseConfig) && baseConfig.extend
+    ? mergeConfigs(baseConfig.extend.config, baseConfig)
+    : baseConfig;
 
-  // Merge base classes properly
-  const mergedBase = extension.base
-    ? resolvedBase.base
-      ? cx(resolvedBase.base, extension.base)
-      : extension.base
+  // Merge base classes efficiently
+  const mergedBase = extensionConfig.base
+    ? (resolvedBase.base ? cx(resolvedBase.base, extensionConfig.base) : extensionConfig.base)
     : resolvedBase.base;
 
-  // Deep merge variants
+  // Deep merge variants with optimized iteration
   const mergedVariants = { ...resolvedBase.variants } as ConfigSchema;
 
-  if (extension.variants) {
-    const extensionVariants = extension.variants;
-
-    for (const variantKey of Object.keys(extensionVariants)) {
+  if (extensionConfig.variants) {
+    for (const [variantKey, extensionVariantGroup] of Object.entries(extensionConfig.variants)) {
       if (variantKey in mergedVariants) {
         // Deep merge variant values
-        const baseVariantGroup = mergedVariants[variantKey];
-        const extensionVariantGroup = extensionVariants[variantKey];
-        const mergedVariantGroup: Record<string, ClassProperty> = { ...baseVariantGroup };
-
-        for (const variantValue of Object.keys(extensionVariantGroup)) {
-          if (variantValue in mergedVariantGroup) {
-            // Merge individual variant value (e.g., primary: { base: ..., content: ... })
-            const baseValue = mergedVariantGroup[variantValue];
-            const extensionValue = extensionVariantGroup[variantValue];
-
-            if (
-              typeof baseValue === "object" &&
-              typeof extensionValue === "object" &&
-              baseValue !== null &&
-              extensionValue !== null &&
-              !Array.isArray(baseValue) &&
-              !Array.isArray(extensionValue)
-            ) {
-              // Both are slot-specific objects, merge them
-              mergedVariantGroup[variantValue] = {
-                ...(baseValue as Record<string, ClassProperty>),
-                ...(extensionValue as Record<string, ClassProperty>),
-              };
-            } else {
-              // One or both are primitive, extension overrides
-              mergedVariantGroup[variantValue] = extensionValue;
-            }
-          } else {
-            // New variant value
-            mergedVariantGroup[variantValue] = extensionVariantGroup[variantValue];
-          }
-        }
-
-        mergedVariants[variantKey] = mergedVariantGroup;
+        mergedVariants[variantKey] = mergeVariantGroups(
+          mergedVariants[variantKey],
+          extensionVariantGroup,
+        );
       } else {
         // New variant key
-        mergedVariants[variantKey] = extensionVariants[variantKey];
+        mergedVariants[variantKey] = extensionVariantGroup;
       }
     }
   }
 
-  // Merge slots
-  const resolvedSlots = "slots" in resolvedBase && resolvedBase.slots ? resolvedBase.slots : {};
-  const extensionSlots = "slots" in extension && extension.slots ? extension.slots : {};
+  // Merge slots efficiently
+  const resolvedSlots = hasSlots(resolvedBase) ? resolvedBase.slots : {};
+  const extensionSlots = hasSlots(extensionConfig) ? extensionConfig.slots : {};
+  const mergedSlots = { ...resolvedSlots, ...extensionSlots };
 
-  const mergedSlots = {
-    ...resolvedSlots,
-    ...extensionSlots,
-  };
+  const hasSlotsResult = Object.keys(mergedSlots).length > 0;
 
-  const hasSlots = Object.keys(mergedSlots).length > 0;
-
-  if (hasSlots) {
+  if (hasSlotsResult) {
     return {
       base: mergedBase,
       compoundSlots: [
-        ...("compoundSlots" in resolvedBase && Array.isArray(resolvedBase.compoundSlots)
+        ...(hasSlots(resolvedBase) && Array.isArray(resolvedBase.compoundSlots)
           ? resolvedBase.compoundSlots
           : []),
-        ...("compoundSlots" in extension && Array.isArray(extension.compoundSlots)
-          ? extension.compoundSlots
+        ...(hasSlots(extensionConfig) && Array.isArray(extensionConfig.compoundSlots)
+          ? extensionConfig.compoundSlots
           : []),
       ],
       compoundVariants: [
-        ...(resolvedBase.compoundVariants || []),
-        ...(extension.compoundVariants || []),
+        ...(resolvedBase.compoundVariants ?? []),
+        ...(extensionConfig.compoundVariants ?? []),
       ],
-      defaultVariants: { ...resolvedBase.defaultVariants, ...extension.defaultVariants },
+      defaultVariants: { ...resolvedBase.defaultVariants, ...extensionConfig.defaultVariants },
       slots: mergedSlots,
       variants: mergedVariants,
     };
@@ -491,10 +547,10 @@ const mergeConfigs = (
   return {
     base: mergedBase,
     compoundVariants: [
-      ...(resolvedBase.compoundVariants || []),
-      ...(extension.compoundVariants || []),
+      ...(resolvedBase.compoundVariants ?? []),
+      ...(extensionConfig.compoundVariants ?? []),
     ],
-    defaultVariants: { ...resolvedBase.defaultVariants, ...extension.defaultVariants },
+    defaultVariants: { ...resolvedBase.defaultVariants, ...extensionConfig.defaultVariants },
     variants: mergedVariants,
   };
 };
@@ -541,12 +597,17 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
 
   const mergedBase = mergedConfig.base;
   const mergedSlots = "slots" in mergedConfig ? mergedConfig.slots : undefined;
-  const mergedVariants = mergedConfig.variants || {};
-  const mergedDefaultVariants = mergedConfig.defaultVariants || {};
+  const mergedVariants = mergedConfig.variants ?? {};
+  const mergedDefaultVariants = mergedConfig.defaultVariants ?? {};
   const mergedCompoundVariants = mergedConfig.compoundVariants;
 
   const tvFunction = (props: any = {}) => {
     const { className, ...variantProps } = props;
+
+    // Validate compoundVariants is an array
+    if (mergedConfig.compoundVariants && !Array.isArray(mergedConfig.compoundVariants)) {
+      throw new Error("compoundVariants must be an array");
+    }
 
     if (mergedSlots) {
       // Handle slots
@@ -560,7 +621,7 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
 
       // Create base slot function
       slotFunctions.base = (slotProps: any = {}) => {
-        const baseSlotClass = mergedSlots?.base || mergedBase;
+        const baseSlotClass = mergedSlots?.base ?? mergedBase;
         const baseClasses = resolveSlotClasses(
           "base",
           baseSlotClass,
@@ -568,7 +629,7 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
           { ...variantProps, ...slotProps },
           mergedDefaultVariants,
           mergedCompoundVariants as any,
-          compoundSlotClasses?.base || [],
+          compoundSlotClasses?.base ?? [],
         );
 
         const allClasses = [...baseClasses, slotProps.className].filter(Boolean);
@@ -592,7 +653,7 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
                 { ...variantProps, ...slotProps },
                 mergedDefaultVariants,
                 mergedCompoundVariants as any,
-                compoundSlotClasses?.[slotKey] || [],
+                compoundSlotClasses?.[slotKey] ?? [],
               );
 
               const allClasses = [...slotClasses, slotProps.className].filter(Boolean);
