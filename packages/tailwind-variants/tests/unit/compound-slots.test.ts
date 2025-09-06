@@ -12,18 +12,18 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       slots: {
         base: "flex flex-wrap relative gap-1 max-w-fit",
         cursor: ["absolute", "flex", "overflow-visible"],
-        item: "",
-        next: "",
-        prev: "",
+        item: "px-2 py-1 rounded",
+        next: "px-2 py-1 rounded",
+        prev: "px-2 py-1 rounded",
       },
     });
     // with default values
     const { base, cursor, item, next, prev } = pagination();
 
     expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate"]);
-    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate"]);
-    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate"]);
+    expect(item()).toHaveClassName(["px-2", "py-1", "rounded", "flex", "flex-wrap", "truncate"]);
+    expect(prev()).toHaveClassName(["px-2", "py-1", "rounded", "flex", "flex-wrap", "truncate"]);
+    expect(next()).toHaveClassName(["px-2", "py-1", "rounded", "flex", "flex-wrap", "truncate"]);
     expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
@@ -46,27 +46,64 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       slots: {
         base: "flex flex-wrap relative gap-1 max-w-fit",
         cursor: ["absolute", "flex", "overflow-visible"],
-        item: "",
-        next: "",
-        prev: "",
+        item: "px-2 py-1 rounded",
+        next: "px-2 py-1 rounded",
+        prev: "px-2 py-1 rounded",
       },
       variants: {
         size: {
-          lg: {},
-          md: {},
-          sm: {},
-          xl: {},
-          xs: {},
+          lg: "text-lg",
+          md: "text-md",
+          sm: "text-sm",
+          xl: "text-xl",
+          xs: "text-xs",
         },
       },
     });
     // with default values
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(base()).toHaveClassName([
+      "flex",
+      "flex-wrap",
+      "relative",
+      "gap-1",
+      "max-w-fit",
+      "text-xs",
+    ]);
+    expect(item()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(prev()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(next()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
     expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
@@ -89,17 +126,17 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       slots: {
         base: "flex flex-wrap relative gap-1 max-w-fit",
         cursor: ["absolute", "flex", "overflow-visible"],
-        item: "",
-        next: "",
-        prev: "",
+        item: "px-2 py-1 rounded",
+        next: "px-2 py-1 rounded",
+        prev: "px-2 py-1 rounded",
       },
       variants: {
         size: {
-          lg: {},
-          md: {},
-          sm: {},
-          xl: {},
-          xs: {},
+          lg: "text-lg",
+          md: "text-md",
+          sm: "text-sm",
+          xl: "text-xl",
+          xs: "text-xs",
         },
       },
     });
@@ -108,10 +145,47 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       size: "xs",
     });
 
-    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(base()).toHaveClassName([
+      "flex",
+      "flex-wrap",
+      "relative",
+      "gap-1",
+      "max-w-fit",
+      "text-xs",
+    ]);
+    expect(item()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(prev()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(next()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
     expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
@@ -138,34 +212,73 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       slots: {
         base: "flex flex-wrap relative gap-1 max-w-fit",
         cursor: ["absolute", "flex", "overflow-visible"],
-        item: "",
-        next: "",
-        prev: "",
+        item: "px-2 py-1 rounded",
+        next: "px-2 py-1 rounded",
+        prev: "px-2 py-1 rounded",
       },
       variants: {
         color: {
-          primary: {},
-          secondary: {},
+          primary: "text-blue-500",
+          secondary: "text-gray-500",
         },
         isBig: {
-          true: {},
+          true: "font-bold",
         },
         size: {
-          lg: {},
-          md: {},
-          sm: {},
-          xl: {},
-          xs: {},
+          lg: "text-lg",
+          md: "text-md",
+          sm: "text-sm",
+          xl: "text-xl",
+          xs: "text-xs",
         },
       },
     });
     // with default values
     const { base, cursor, item, next, prev } = pagination();
 
-    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(base()).toHaveClassName([
+      "flex",
+      "flex-wrap",
+      "relative",
+      "gap-1",
+      "max-w-fit",
+      "text-blue-500",
+      "font-bold",
+      "text-xs",
+    ]);
+    expect(item()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(prev()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(next()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
     expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 
@@ -192,24 +305,24 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       slots: {
         base: "flex flex-wrap relative gap-1 max-w-fit",
         cursor: ["absolute", "flex", "overflow-visible"],
-        item: "",
-        next: "",
-        prev: "",
+        item: "px-2 py-1 rounded",
+        next: "px-2 py-1 rounded",
+        prev: "px-2 py-1 rounded",
       },
       variants: {
         color: {
-          primary: {},
-          secondary: {},
+          primary: "text-blue-500",
+          secondary: "text-gray-500",
         },
         isBig: {
-          true: {},
+          true: "font-bold",
         },
         size: {
-          lg: {},
-          md: {},
-          sm: {},
-          xl: {},
-          xs: {},
+          lg: "text-lg",
+          md: "text-md",
+          sm: "text-sm",
+          xl: "text-xl",
+          xs: "text-xs",
         },
       },
     });
@@ -220,10 +333,49 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
       size: "xs",
     });
 
-    expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
-    expect(item()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(prev()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
-    expect(next()).toHaveClassName(["flex", "flex-wrap", "truncate", "w-7", "h-7", "text-xs"]);
+    expect(base()).toHaveClassName([
+      "flex",
+      "flex-wrap",
+      "relative",
+      "gap-1",
+      "max-w-fit",
+      "text-blue-500",
+      "font-bold",
+      "text-xs",
+    ]);
+    expect(item()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(prev()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
+    expect(next()).toHaveClassName([
+      "px-2",
+      "py-1",
+      "rounded",
+      "flex",
+      "flex-wrap",
+      "truncate",
+      "w-7",
+      "h-7",
+      "text-xs",
+    ]);
     expect(cursor()).toHaveClassName(["absolute", "flex", "overflow-visible"]);
   });
 });
