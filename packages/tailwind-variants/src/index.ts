@@ -344,7 +344,7 @@ const applyCompoundVariants = <T extends ConfigSchema>(
 
       // Enhanced boolean variant handling with proper type checking
       if (isBooleanValue(compoundValue)) {
-        const resolvedPropertyValue = propertyValue === undefined ? false : propertyValue;
+        const resolvedPropertyValue = propertyValue ?? false;
 
         if (resolvedPropertyValue !== compoundValue) {
           matches = false;
@@ -372,13 +372,13 @@ const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
   compoundSlots: readonly CompoundSlot<T, S>[] | undefined,
   variantProps: ConfigVariants<T>,
   defaultVariants: ConfigVariants<T>,
-): Record<keyof S, ClassValue[]> => {
+): Partial<Record<keyof S, ClassValue[]>> => {
   if (!compoundSlots?.length) {
-    return {} as Record<keyof S, ClassValue[]>;
+    return {} as Partial<Record<keyof S, ClassValue[]>>;
   }
 
   const resolvedProps = { ...defaultVariants, ...variantProps };
-  const result = {} as Record<keyof S, ClassValue[]>;
+  const result = {} as Partial<Record<keyof S, ClassValue[]>>;
 
   for (const compound of compoundSlots) {
     let matches = true;
@@ -393,7 +393,7 @@ const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
 
       // Enhanced boolean variant handling with proper type checking
       if (isBooleanValue(compoundValue)) {
-        const resolvedPropertyValue = propertyValue === undefined ? false : propertyValue;
+        const resolvedPropertyValue = propertyValue ?? false;
 
         if (resolvedPropertyValue !== compoundValue) {
           matches = false;
@@ -407,11 +407,7 @@ const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
 
     if (matches) {
       for (const slot of compound.slots) {
-        if (!result[slot]) {
-          result[slot] = [];
-        }
-
-        result[slot].push(compound.className);
+        (result[slot] ??= []).push(compound.className);
       }
     }
   }
@@ -548,16 +544,10 @@ const mergeVariantGroups = (
       mergedGroup[variantValue] = extensionValue;
     } else {
       // Merge individual variant value
-      if (isSlotObject(baseValue) && isSlotObject(extensionValue)) {
-        // Both are slot-specific objects, merge them
-        mergedGroup[variantValue] = {
-          ...baseValue,
-          ...extensionValue,
-        };
-      } else {
-        // One or both are primitive, extension overrides
-        mergedGroup[variantValue] = extensionValue;
-      }
+      mergedGroup[variantValue] =
+        isSlotObject(baseValue) && isSlotObject(extensionValue)
+          ? { ...baseValue, ...extensionValue }
+          : extensionValue;
     }
   }
 
@@ -596,16 +586,10 @@ const mergeConfigs = (
     for (const variantKey of extensionVariantKeys) {
       const extensionVariantGroup = extensionConfig.variants[variantKey];
 
-      if (variantKey in mergedVariants) {
-        // Deep merge variant values
-        mergedVariants[variantKey] = mergeVariantGroups(
-          mergedVariants[variantKey],
-          extensionVariantGroup,
-        );
-      } else {
-        // New variant key
-        mergedVariants[variantKey] = extensionVariantGroup;
-      }
+      mergedVariants[variantKey] =
+        variantKey in mergedVariants
+          ? mergeVariantGroups(mergedVariants[variantKey], extensionVariantGroup)
+          : extensionVariantGroup;
     }
   }
 
@@ -617,16 +601,20 @@ const mergeConfigs = (
   const hasSlotsResult = Object.keys(mergedSlots).length > 0;
 
   if (hasSlotsResult) {
+    // Prepare compoundSlots arrays with safe, explicit typing
+    const baseCompoundSlots: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
+      hasSlots(resolvedBase) && Array.isArray(resolvedBase.compoundSlots)
+        ? (resolvedBase.compoundSlots as readonly CompoundSlot<ConfigSchema, SlotSchema>[])
+        : [];
+
+    const extensionCompoundSlots: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
+      hasSlots(extensionConfig) && Array.isArray(extensionConfig.compoundSlots)
+        ? (extensionConfig.compoundSlots as readonly CompoundSlot<ConfigSchema, SlotSchema>[])
+        : [];
+
     return {
       base: mergedBase,
-      compoundSlots: [
-        ...(hasSlots(resolvedBase) && Array.isArray(resolvedBase.compoundSlots)
-          ? resolvedBase.compoundSlots
-          : []),
-        ...(hasSlots(extensionConfig) && Array.isArray(extensionConfig.compoundSlots)
-          ? extensionConfig.compoundSlots
-          : []),
-      ],
+      compoundSlots: [...baseCompoundSlots, ...extensionCompoundSlots],
       compoundVariants: [
         ...(resolvedBase.compoundVariants ?? []),
         ...(extensionConfig.compoundVariants ?? []),
@@ -661,7 +649,7 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
   mergedVariants: T,
   mergedDefaultVariants: ConfigVariants<T>,
   mergedCompoundVariants: readonly CompoundVariantWithSlots<T, S>[] | undefined,
-  compoundSlotClasses: Record<keyof S, ClassValue[]>,
+  compoundSlotClasses: Partial<Record<keyof S, ClassValue[]>>,
   variantProps: ConfigVariants<T>,
   shouldMerge: boolean,
   tailwindMerge: (classes: string) => string,
@@ -670,7 +658,7 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
 
   // Create a base slot function with proper typing
   slotFunctions.base = (slotProps: SlotFunctionProps<T> = {}): string | undefined => {
-    const baseSlotClass = mergedSlots?.base ?? mergedBase;
+    const baseSlotClass = mergedSlots.base ?? mergedBase;
     const baseClasses = resolveSlotClasses(
       "base",
       baseSlotClass,
@@ -678,7 +666,7 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
       { ...variantProps, ...slotProps },
       mergedDefaultVariants,
       mergedCompoundVariants,
-      compoundSlotClasses?.base ?? [],
+      compoundSlotClasses.base ?? [],
     );
 
     const allClasses = [...baseClasses, slotProps.className].filter(Boolean);
@@ -706,7 +694,7 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
           { ...variantProps, ...slotProps },
           mergedDefaultVariants,
           mergedCompoundVariants,
-          compoundSlotClasses?.[slotKey] ?? [],
+          compoundSlotClasses[slotKey] ?? [],
         );
 
         const allClasses = [...slotClasses, slotProps.className].filter(Boolean);
