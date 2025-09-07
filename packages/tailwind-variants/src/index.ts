@@ -192,7 +192,13 @@ type TVReturnType<T extends ConfigSchema, S extends SlotSchema> =
 interface VariantFunction<T extends ConfigSchema, S extends SlotSchema> {
   config: Config<T> | ConfigWithSlots<T, S>;
 
-  (props?: ConfigVariants<T>): TVReturnType<T, S>;
+  // When called with parameters, return the actual result
+  (props: ConfigVariants<T>): S extends Record<string, never> 
+    ? string | undefined 
+    : TVReturnType<T, S>;
+  
+  // When called without parameters, return the function for extending
+  (): TVReturnType<T, S>;
 }
 
 // =============================================================================
