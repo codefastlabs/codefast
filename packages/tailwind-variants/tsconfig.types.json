@@ -1,12 +1,12 @@
 {
   "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
-    "outDir": "dist",
+    "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
     },
     "types": ["jest", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", ".turbo", "coverage"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tests/types/**/*.ts"],
+  "exclude": ["node_modules", "dist", ".turbo", "coverage", "benchmarks"]
 }

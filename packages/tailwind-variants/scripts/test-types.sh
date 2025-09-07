@@ -3,8 +3,8 @@
 # Test script that runs both TypeScript type checking and Jest tests
 # This ensures that both type inference and runtime tests pass
 
-echo "🔍 Running TypeScript type checking..."
-npx tsc --noEmit --project .
+echo "🔍 Running TypeScript type checking (types suite only)..."
+npx tsc --noEmit --project tsconfig.types.json
 
 if [ $? -eq 0 ]; then
     echo "✅ TypeScript type checking passed"
@@ -15,8 +15,8 @@ else
 fi
 
 echo ""
-echo "🧪 Running Jest tests..."
-pnpm test tests/types/type-inference.test.ts
+echo "🧪 Running Jest tests (types)..."
+pnpm -s test tests/types/type-inference.test.ts
 
 if [ $? -eq 0 ]; then
     echo "✅ Jest tests passed"
