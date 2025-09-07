@@ -15,6 +15,11 @@ import { extendTailwindMerge, twMerge } from "tailwind-merge";
 type StringToBoolean<T> = T extends "false" | "true" ? boolean : T extends boolean ? T : T;
 
 /**
+ * Utility to normalize inferred never types to an empty object
+ */
+type IfNever<T, Then, Else> = [T] extends [never] ? Then : Else;
+
+/**
  * Helper types to determine if a variant key accepts boolean values
  */
 type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof T
@@ -28,17 +33,20 @@ type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof 
  * Provides strict typing for variant component props extraction
  * Uses overloaded types to handle different function signatures precisely
  */
-type VariantProps<
-  Component,
-  OmitKeys extends string = never
-> = Component extends VariantFunction<infer T, SlotSchema> 
-    ? Omit<ConfigVariants<T>, OmitKeys>
-    : Component extends (props?: infer P) => unknown
-    ? P extends ConfigVariants<infer T>
-      ? Omit<ConfigVariants<T>, OmitKeys>
-      : P extends Record<string, unknown>
-      ? Omit<P & { className?: ClassValue }, OmitKeys>
-      : { className?: ClassValue }
+type VariantProps<Component, OmitKeys extends string = never> = Component extends (
+  props?: infer P,
+) => unknown
+  ? P extends ConfigVariants<infer T>
+    ? Omit<ConfigVariants<IfNever<T, Record<string, never>, T>>, OmitKeys> & {
+        readonly className: ClassValue;
+      }
+    : P extends Record<string, unknown>
+      ? Omit<P & { className?: ClassValue }, OmitKeys> & { readonly className: ClassValue }
+      : { readonly className: ClassValue }
+  : Component extends VariantFunction<infer T>
+    ? Omit<ConfigVariants<IfNever<T, Record<string, never>, T>>, OmitKeys> & {
+        readonly className: ClassValue;
+      }
     : never;
 
 // =============================================================================
@@ -189,13 +197,13 @@ type TVReturnType<T extends ConfigSchema, S extends SlotSchema> =
 /**
  * Enhanced VariantFunction with stricter typing and better inference
  */
-interface VariantFunction<T extends ConfigSchema, S extends SlotSchema> {
+interface VariantFunction<T extends ConfigSchema, S extends SlotSchema = SlotSchema> {
   config: Config<T> | ConfigWithSlots<T, S>;
 
   // Function can be called with or without parameters
-  (props?: ConfigVariants<T>): S extends Record<string, never> 
-    ? string | undefined 
-    : TVReturnType<T, S>;
+  (
+    props?: ConfigVariants<T>,
+  ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
 }
 
 // =============================================================================
@@ -910,17 +918,17 @@ function createTV(globalConfig: TVConfig = {}) {
     config: Config<T>,
     localConfig?: TVConfig,
   ): VariantFunction<T, Record<string, never>>;
-  
+
   function tvFactory<S extends SlotSchema>(
     config: ConfigWithSlots<Record<string, never>, S>,
     localConfig?: TVConfig,
   ): VariantFunction<Record<string, never>, S>;
-  
+
   function tvFactory<T extends ConfigSchema, S extends SlotSchema>(
     config: ConfigWithSlots<T, S>,
     localConfig?: TVConfig,
   ): VariantFunction<T, S>;
-  
+
   function tvFactory<
     TBase extends ConfigSchema,
     TExtension extends ConfigSchema,
