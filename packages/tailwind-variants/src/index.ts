@@ -668,8 +668,8 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
 ): Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> } => {
   const slotFunctions = {} as Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> };
 
-  // Create base slot function with proper typing
-  slotFunctions.base = (slotProps: SlotFunctionProps<T> = {}) => {
+  // Create a base slot function with proper typing
+  slotFunctions.base = (slotProps: SlotFunctionProps<T> = {}): string | undefined => {
     const baseSlotClass = mergedSlots?.base ?? mergedBase;
     const baseClasses = resolveSlotClasses(
       "base",
@@ -698,7 +698,7 @@ const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
       // Type assertion for dynamic slot assignment
       (slotFunctions as Record<keyof S, SlotFunction<T>>)[slotKey] = (
         slotProps: SlotFunctionProps<T> = {},
-      ) => {
+      ): string | undefined => {
         const slotClasses = resolveSlotClasses(
           slotKey,
           mergedSlots[slotKey],
@@ -780,7 +780,7 @@ const handleRegularVariants = <T extends ConfigSchema>(
     classes.push(...compoundClasses);
   }
 
-  // Add custom className
+  // Add a custom className
   if (className) {
     classes.push(className);
   }
@@ -850,7 +850,9 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
   const mergedDefaultVariants = mergedConfig.defaultVariants ?? ({} as ConfigVariants<T>);
   const mergedCompoundVariants = mergedConfig.compoundVariants;
 
-  const tvFunction = (props: ConfigVariants<T> & { className?: ClassValue } = {}) => {
+  const tvFunction = (
+    props: ConfigVariants<T> & { className?: ClassValue } = {},
+  ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S> => {
     const { className, ...variantProps } = props;
 
     // Validate compoundVariants is an array
@@ -878,7 +880,7 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
         variantProps as ConfigVariants<ConfigSchema>,
         shouldMerge,
         tailwindMerge,
-      );
+      ) as unknown as S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
     } else {
       // Handle regular variants with proper typing
       return handleRegularVariants(
@@ -890,7 +892,7 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
         className,
         shouldMerge,
         tailwindMerge,
-      );
+      ) as unknown as S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
     }
   };
 
@@ -912,7 +914,7 @@ function tv<T extends ConfigSchema, S extends SlotSchema>(
 // CreateTV Factory Function
 // =============================================================================
 
-function createTV(globalConfig: TVConfig = {}) {
+function createTV(globalConfig: TVConfig = {}): typeof tv {
   // Function overloads to ensure proper type inference
   function tvFactory<T extends ConfigSchema>(
     config: Config<T>,
@@ -961,17 +963,16 @@ function createTV(globalConfig: TVConfig = {}) {
 // Exports
 // =============================================================================
 
-export {
-  type Config,
-  type ConfigVariants,
-  type ConfigWithSlots,
-  createTV,
-  cx,
-  type SlotProps,
-  type SlotSchema,
-  tv,
-  type TVConfig,
-  type VariantProps,
+export { createTV, cx, tv };
+
+export type {
+  Config,
+  ConfigVariants,
+  ConfigWithSlots,
+  SlotProps,
+  SlotSchema,
+  TVConfig,
+  VariantProps,
 };
 
-export { type ClassValue } from "clsx";
+export type { ClassValue } from "clsx";
