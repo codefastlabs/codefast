@@ -103,6 +103,15 @@ export const analyzeResults = (results: BenchmarkResults): void => {
     ),
   );
 
+  console.log(
+    formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.CVA_MERGE,
+      results.basic[LIBRARY_KEYS.TV].avg,
+      results.basic[LIBRARY_KEYS.CVA_MERGE].avg,
+    ),
+  );
+
   // Advanced performance analysis
   console.log("\n⚡ Advanced Performance Analysis");
   console.log("═".repeat(60));

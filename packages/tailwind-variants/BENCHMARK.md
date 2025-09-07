@@ -154,6 +154,7 @@ The benchmarks compare:
 1. **TV** (our library) - Full-featured with slots, compound variants, and type safety
 2. **tailwind-variants** - Popular alternative with similar feature set
 3. **class-variance-authority** - Simpler alternative without slots support
+4. **CVA + tailwind-merge** - CVA with `tailwind-merge` applied to deduplicate classes
 
 ## Interpreting Results
 
@@ -165,13 +166,13 @@ The benchmarks compare:
 
 ### Feature Comparison
 
-| Feature           | TV  | tailwind-variants | class-variance-authority |
-| ----------------- | --- | ----------------- | ------------------------ |
-| Basic Variants    | ✅  | ✅                | ✅                       |
-| Compound Variants | ✅  | ✅                | ✅                       |
-| Slots             | ✅  | ✅                | ❌                       |
-| Type Safety       | ✅  | ✅                | ✅                       |
-| Extends           | ✅  | ✅                | ❌                       |
+| Feature           | TV  | tailwind-variants | class-variance-authority | CVA + tailwind-merge |
+| ----------------- | --- | ----------------- | ------------------------ | -------------------- |
+| Basic Variants    | ✅  | ✅                | ✅                       | ✅                   |
+| Compound Variants | ✅  | ✅                | ✅                       | ✅                   |
+| Slots             | ✅  | ✅                | ❌                       | ❌                   |
+| Type Safety       | ✅  | ✅                | ✅                       | ✅                   |
+| Extends           | ✅  | ✅                | ❌                       | ❌                   |
 
 ## Running in CI/CD
 
