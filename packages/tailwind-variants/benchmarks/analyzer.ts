@@ -116,13 +116,85 @@ export const analyzeResults = (results: BenchmarkResults): void => {
   console.log("\n⚡ Advanced Performance Analysis");
   console.log("═".repeat(60));
 
-  // Compare complex scenarios
+  // Compare all benchmark categories
+  console.log(
+    `Basic Variants: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.basic[LIBRARY_KEYS.TV].avg,
+      results.basic[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Compound Variants: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.compound[LIBRARY_KEYS.TV].avg,
+      results.compound[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Slots: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.slots[LIBRARY_KEYS.TV].avg,
+      results.slots[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Large Dataset: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.large[LIBRARY_KEYS.TV].avg,
+      results.large[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
   console.log(
     `Complex Button: ${formatSpeedupComparison(
       LIBRARY_NAMES.TV,
       LIBRARY_NAMES.TV_NPM,
       results.complexButton[LIBRARY_KEYS.TV].avg,
       results.complexButton[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Advanced Card: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.advancedCard[LIBRARY_KEYS.TV].avg,
+      results.advancedCard[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Responsive Layout: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.responsiveLayout[LIBRARY_KEYS.TV].avg,
+      results.responsiveLayout[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Form Components: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.formComponents[LIBRARY_KEYS.TV].avg,
+      results.formComponents[LIBRARY_KEYS.TV_NPM].avg,
+    )}`,
+  );
+
+  console.log(
+    `Data Table: ${formatSpeedupComparison(
+      LIBRARY_NAMES.TV,
+      LIBRARY_NAMES.TV_NPM,
+      results.dataTable[LIBRARY_KEYS.TV].avg,
+      results.dataTable[LIBRARY_KEYS.TV_NPM].avg,
     )}`,
   );
 
