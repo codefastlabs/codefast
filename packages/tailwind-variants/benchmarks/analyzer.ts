@@ -121,7 +121,7 @@ const addSummaryStatistics = (results: BenchmarkResults): void => {
  */
 const createComprehensiveTable = (results: BenchmarkResults): void => {
   console.log("\n📊 Comprehensive Benchmark Results Table");
-  console.log("═".repeat(120));
+  console.log("═".repeat(133));
 
   // Define all benchmarks with their metadata
   const benchmarks = [
@@ -139,14 +139,14 @@ const createComprehensiveTable = (results: BenchmarkResults): void => {
 
   // Create a table header with proper spacing
   const header =
-    "Benchmark".padEnd(20) +
+    "Benchmark".padEnd(22) +
     LIBRARY_NAMES.TV.padEnd(30) +
     LIBRARY_NAMES.TV_NPM.padEnd(30) +
     LIBRARY_NAMES.CVA.padEnd(30) +
     LIBRARY_NAMES.CVA_MERGE.padEnd(30);
 
   console.log(header);
-  console.log("─".repeat(140));
+  console.log("─".repeat(133));
 
   // Create table rows
   for (const { key, name } of benchmarks) {
@@ -178,7 +178,7 @@ const createComprehensiveTable = (results: BenchmarkResults): void => {
         : "N/A".padStart(8);
 
     const row =
-      name.padEnd(20) +
+      name.padEnd(22) +
       tvTime.padEnd(30) +
       tvNpmTime.padEnd(30) +
       cvaTime.padEnd(30) +
@@ -187,7 +187,7 @@ const createComprehensiveTable = (results: BenchmarkResults): void => {
     console.log(row);
   }
 
-  console.log("─".repeat(140));
+  console.log("─".repeat(133));
   console.log("* = Fastest in that benchmark");
   console.log(
     "\n💡 Note: CVA (class-variance-authority) doesn't support slots or advanced features,",
