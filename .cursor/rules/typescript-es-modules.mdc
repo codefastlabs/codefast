@@ -1,0 +1,213 @@
+---
+description: Enterprise TypeScript & Modern Web Development Rules (TypeScript 5.9+)
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+alwaysApply: true
+---
+
+# Enterprise TypeScript & Modern Web Development Rules (TypeScript 5.9+)
+
+## Core TypeScript Excellence
+
+### Advanced Type Safety
+- **NEVER use `any` type** - Utilize union types, discriminated unions, or `unknown` with proper type guards
+- **Implement branded types** for domain-specific identifiers and validation
+- **Use const assertions** with `as const` for immutable configurations and enums
+- **Leverage conditional types** for complex type transformations and API responses
+- **Implement proper type narrowing** using type predicates and assertion functions
+- **Use template literal types** for string manipulation and validation
+- **Apply mapped types** for object transformations and utility type creation
+
+### Type System Architecture
+- **Define domain types** in dedicated `.types.ts` files using kebab-case naming
+- **Create type utilities** in `type-utils.ts` for reusable type operations
+- **Implement generic constraints** with proper bounds and default parameters
+- **Use discriminated unions** for state management and API response handling
+- **Apply intersection types** judiciously for composition patterns
+- **Leverage recursive types** for tree structures and nested data models
+
+## Modern Framework Integration
+
+### Next.js 15 Server Actions
+- **Implement type-safe server actions** with proper input validation using Zod 4
+- **Use proper error handling** in server actions with typed error responses
+- **Apply progressive enhancement** patterns for form submissions
+- **Implement proper caching strategies** with Next.js cache APIs
+- **Use middleware pattern** for authentication and authorization checks
+- **Apply proper data serialization** for server-client communication
+
+### React 19 Advanced Patterns
+- **Utilize React Server Components** for optimal performance
+- **Implement proper Suspense boundaries** with error fallbacks
+- **Use concurrent features** (useTransition, useDeferredValue) appropriately
+- **Apply proper memo strategies** with React.memo and useMemo
+- **Implement custom hooks** following proper dependency management
+- **Use proper ref patterns** with useRef, forwardRef, and useImperativeHandle
+
+## Enterprise Architecture Standards
+
+### Explicit Architecture Implementation
+- **Domain Layer**: Pure business logic with no framework dependencies
+- **Application Layer**: Use cases and application services with dependency injection
+- **Infrastructure Layer**: External services, databases, and third-party integrations
+- **Presentation Layer**: UI components and controllers
+- **Apply Dependency Inversion Principle** throughout all layers
+- **Implement proper boundaries** between architectural layers
+
+### File Naming Conventions
+- **Services**: `user-profile.service.ts`, `payment-gateway.service.ts`
+- **Repositories**: `user.repository.ts`, `order.repository.ts`
+- **Types**: `user-profile.types.ts`, `api-response.types.ts`
+- **Utilities**: `validation.utils.ts`, `date-format.utils.ts`
+- **Components**: `UserProfile.tsx`, `PaymentForm.tsx`
+- **Hooks**: `use-authentication.hook.ts`, `use-form-validation.hook.ts`
+
+### Type Definition Standards
+- **Avoid "I" or "T" prefixes** - Use descriptive names: `UserProfile`, not `IUserProfile`
+- **Use domain-specific naming** - `PaymentMethod`, not `Method`
+- **Apply consistent casing** - PascalCase for types, camelCase for properties
+- **Implement proper namespace organization** for complex domains
+
+## Technology Stack Integration
+
+### Database Layer (Drizzle ORM)
+- **Define schema files** with proper TypeScript integration
+- **Implement repository patterns** with type-safe queries
+- **Use proper migration strategies** with version control
+- **Apply connection pooling** and transaction management
+- **Implement proper error handling** for database operations
+
+### Validation Layer (Zod 4)
+- **Create schema definitions** in dedicated schema files
+- **Implement proper error handling** with custom error messages
+- **Use transform methods** for data normalization
+- **Apply refinements** for complex validation logic
+- **Implement proper type inference** from Zod schemas
+
+### Authentication & Authorization (Auth.js + Lucia-inspired)
+- **Implement credential-based authentication** with proper password hashing
+- **Support social login providers** (OAuth 2.0, OpenID Connect)
+- **Integrate WebAuthn** for passwordless authentication
+- **Implement SSO capabilities** with proper token management
+- **Apply proper session management** with secure cookie handling
+- **Use proper CSRF protection** and security headers
+
+### Form Management (React Hook Form)
+- **Implement type-safe form schemas** with Zod integration
+- **Use proper error handling** and validation messaging
+- **Apply conditional field rendering** based on form state
+- **Implement proper form submission** with loading states
+- **Use proper field arrays** for dynamic form sections
+
+### Dependency Injection (Inversify v7)
+- **Define service containers** with proper type binding
+- **Implement interface segregation** for service definitions
+- **Use proper lifecycle management** for singleton and transient services
+- **Apply decorator patterns** for service registration
+- **Implement proper factory patterns** for complex object creation
+
+### Queue Management (BullMQ + Redis)
+- **Define job types** with proper TypeScript interfaces
+- **Implement proper error handling** and retry mechanisms
+- **Use proper job scheduling** and priority management
+- **Apply monitoring patterns** for queue health
+- **Implement proper graceful shutdown** procedures
+
+### Email Services (Nodemailer + React Email)
+- **Create type-safe email templates** with React Email
+- **Implement proper SMTP configuration** with error handling
+- **Use template patterns** for consistent email styling
+- **Apply proper sanitization** for dynamic content
+- **Implement delivery tracking** and bounce handling
+
+## Testing Excellence (TDD)
+
+### Test-Driven Development Practices
+- **Write tests first** before implementation (Red-Green-Refactor)
+- **Use proper test structure** (Arrange-Act-Assert pattern)
+- **Implement integration tests** for critical business flows
+- **Create proper test utilities** and factory functions
+- **Use proper mocking strategies** for external dependencies
+- **Apply contract testing** for API boundaries
+
+### Testing Standards
+- **Unit tests**: 95%+ coverage for business logic
+- **Integration tests**: Critical user journeys and API endpoints
+- **E2E tests**: Core business workflows
+- **Component tests**: UI component behavior and accessibility
+- **Performance tests**: Load testing for critical endpoints
+
+## User Experience Optimization
+
+### Notification System (Sonner)
+- **Implement consistent toast messaging** across the application
+- **Use proper notification types** (success, error, warning, info)
+- **Apply proper timing** and positioning strategies
+- **Implement accessibility** features for screen readers
+- **Use proper state management** for notification queues
+
+### UI/UX Standards (TailwindCSS)
+- **Use design system tokens** for consistent spacing and colors
+- **Implement responsive design** with mobile-first approach
+- **Apply proper accessibility** patterns and ARIA attributes
+- **Use proper loading states** and skeleton components
+- **Implement proper focus management** for keyboard navigation
+
+## Performance & Security
+
+### Bundle Optimization
+- **Implement code splitting** at route and component levels
+- **Use proper lazy loading** for non-critical resources
+- **Apply tree shaking** optimization for unused code elimination
+- **Use proper asset optimization** (images, fonts, icons)
+- **Implement proper caching strategies** (CDN, browser cache, service workers)
+
+### Security Implementation
+- **Input validation** at all boundary layers
+- **Proper sanitization** of user-generated content
+- **CSRF protection** for state-changing operations
+- **Rate limiting** for API endpoints
+- **Proper error handling** without information leakage
+- **Security headers** implementation (CSP, HSTS, etc.)
+
+### Scalability Patterns
+- **Database optimization** with proper indexing and query optimization
+- **Caching strategies** at multiple layers (Redis, CDN, application)
+- **Horizontal scaling** patterns with stateless services
+- **Monitoring and observability** with proper logging and metrics
+- **Circuit breaker patterns** for external service calls
+
+## Code Quality Enforcement
+
+### Build Pipeline Requirements
+- **Type checking**: 100% success with strict TypeScript configuration
+- **Linting**: ESLint with TypeScript-aware rules
+- **Testing**: Comprehensive test suite with coverage requirements
+- **Security scanning**: Automated vulnerability detection
+- **Performance testing**: Lighthouse CI for performance regression
+
+### Development Standards
+- **No console.log statements** in production code - use proper logging framework
+- **No magic numbers** - use named constants or configuration
+- **Proper error messages** with context and actionable information
+- **Consistent code formatting** with Prettier and ESLint integration
+- **Documentation requirements** for public APIs and complex business logic
+
+## Monitoring & Observability
+
+### Application Monitoring
+- **Structured logging** with proper context and correlation IDs
+- **Performance metrics** for critical business operations
+- **Error tracking** with proper error boundaries and reporting
+- **User analytics** for feature usage and performance insights
+- **Security monitoring** for suspicious activities and attacks
+
+### Development Workflow
+- **Feature flags** for progressive feature rollout
+- **A/B testing** infrastructure for data-driven decisions
+- **Deployment automation** with proper CI/CD pipelines
+- **Environment configuration** management with proper secrets handling
+- **Database migration** strategies with rollback capabilities
