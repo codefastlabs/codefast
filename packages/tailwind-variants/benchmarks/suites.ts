@@ -22,6 +22,17 @@ import {
 } from "./utils";
 
 /**
+ * Type-safe result handler for TV instances
+ */
+const handleTVResult = (result: unknown, slots: string[]): void => {
+  const typedResult = result as Record<string, () => string>;
+
+  for (const slot of slots) {
+    typedResult[slot]();
+  }
+};
+
+/**
  * Benchmark suite result type
  */
 type BenchmarkSuiteResult = BenchmarkResults;
@@ -70,9 +81,7 @@ export const runSlotsBenchmark = (): Record<string, BenchmarkResult> => {
     for (const props of testCases.slots) {
       const result = tvInstance(props);
 
-      result.base();
-      result.icon();
-      result.label();
+      handleTVResult(result, ["base", "icon", "label"]);
     }
   });
 
@@ -80,9 +89,7 @@ export const runSlotsBenchmark = (): Record<string, BenchmarkResult> => {
     for (const props of testCases.slots) {
       const result = tvLibInstance(props);
 
-      result.base();
-      result.icon();
-      result.label();
+      handleTVResult(result, ["base", "icon", "label"]);
     }
   });
 
@@ -153,11 +160,7 @@ export const runAdvancedCardBenchmark = (): Record<string, BenchmarkResult> => {
     for (const props of testCases.advancedCard) {
       const result = tvInstance(props);
 
-      result.base();
-      result.header();
-      result.content();
-      result.footer();
-      result.actions();
+      handleTVResult(result, ["base", "header", "content", "footer", "actions"]);
     }
   });
 
@@ -165,11 +168,7 @@ export const runAdvancedCardBenchmark = (): Record<string, BenchmarkResult> => {
     for (const props of testCases.advancedCard) {
       const result = tvLibInstance(props);
 
-      result.base();
-      result.header();
-      result.content();
-      result.footer();
-      result.actions();
+      handleTVResult(result, ["base", "header", "content", "footer", "actions"]);
     }
   });
 
@@ -210,14 +209,16 @@ export const runResponsiveLayoutBenchmark = (): Record<string, BenchmarkResult> 
     for (const props of testCases.responsiveLayout) {
       const result = tvInstance(props);
 
-      result.base();
-      result.header();
-      result.sidebar();
-      result.main();
-      result.content();
-      result.footer();
-      result.navigation();
-      result.mobileMenu();
+      handleTVResult(result, [
+        "base",
+        "header",
+        "sidebar",
+        "main",
+        "content",
+        "footer",
+        "navigation",
+        "mobileMenu",
+      ]);
     }
   });
 
@@ -225,14 +226,16 @@ export const runResponsiveLayoutBenchmark = (): Record<string, BenchmarkResult> 
     for (const props of testCases.responsiveLayout) {
       const result = tvLibInstance(props);
 
-      result.base();
-      result.header();
-      result.sidebar();
-      result.main();
-      result.content();
-      result.footer();
-      result.navigation();
-      result.mobileMenu();
+      handleTVResult(result, [
+        "base",
+        "header",
+        "sidebar",
+        "main",
+        "content",
+        "footer",
+        "navigation",
+        "mobileMenu",
+      ]);
     }
   });
 
@@ -273,16 +276,18 @@ export const runFormComponentsBenchmark = (): Record<string, BenchmarkResult> =>
     for (const props of testCases.formComponents) {
       const result = tvInstance(props);
 
-      result.base();
-      result.field();
-      result.label();
-      result.input();
-      result.textarea();
-      result.select();
-      result.checkbox();
-      result.radio();
-      result.error();
-      result.help();
+      handleTVResult(result, [
+        "base",
+        "field",
+        "label",
+        "input",
+        "textarea",
+        "select",
+        "checkbox",
+        "radio",
+        "error",
+        "help",
+      ]);
     }
   });
 
@@ -290,16 +295,18 @@ export const runFormComponentsBenchmark = (): Record<string, BenchmarkResult> =>
     for (const props of testCases.formComponents) {
       const result = tvLibInstance(props);
 
-      result.base();
-      result.field();
-      result.label();
-      result.input();
-      result.textarea();
-      result.select();
-      result.checkbox();
-      result.radio();
-      result.error();
-      result.help();
+      handleTVResult(result, [
+        "base",
+        "field",
+        "label",
+        "input",
+        "textarea",
+        "select",
+        "checkbox",
+        "radio",
+        "error",
+        "help",
+      ]);
     }
   });
 
@@ -340,19 +347,21 @@ export const runDataTableBenchmark = (): Record<string, BenchmarkResult> => {
     for (const props of testCases.dataTable) {
       const result = tvInstance(props);
 
-      result.base();
-      result.container();
-      result.header();
-      result.table();
-      result.thead();
-      result.tbody();
-      result.tr();
-      result.th();
-      result.td();
-      result.footer();
-      result.pagination();
-      result.search();
-      result.filters();
+      handleTVResult(result, [
+        "base",
+        "container",
+        "header",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+        "footer",
+        "pagination",
+        "search",
+        "filters",
+      ]);
     }
   });
 
@@ -360,19 +369,21 @@ export const runDataTableBenchmark = (): Record<string, BenchmarkResult> => {
     for (const props of testCases.dataTable) {
       const result = tvLibInstance(props);
 
-      result.base();
-      result.container();
-      result.header();
-      result.table();
-      result.thead();
-      result.tbody();
-      result.tr();
-      result.th();
-      result.td();
-      result.footer();
-      result.pagination();
-      result.search();
-      result.filters();
+      handleTVResult(result, [
+        "base",
+        "container",
+        "header",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+        "footer",
+        "pagination",
+        "search",
+        "filters",
+      ]);
     }
   });
 
@@ -413,24 +424,25 @@ export const runRealWorldComponentsBenchmark = (): Record<string, BenchmarkResul
     for (const props of testCases.realWorldComponents) {
       const result = tvInstance(props);
 
-      // Test all slots
-      result.base();
-      result.container();
-      result.header();
-      result.content();
-      result.footer();
-      result.actions();
-      result.icon();
-      result.label();
-      result.description();
-      result.badge();
-      result.avatar();
-      result.menu();
-      result.dropdown();
-      result.modal();
-      result.drawer();
-      result.tooltip();
-      result.popover();
+      handleTVResult(result, [
+        "base",
+        "container",
+        "header",
+        "content",
+        "footer",
+        "actions",
+        "icon",
+        "label",
+        "description",
+        "badge",
+        "avatar",
+        "menu",
+        "dropdown",
+        "modal",
+        "drawer",
+        "tooltip",
+        "popover",
+      ]);
     }
   });
 
@@ -438,24 +450,25 @@ export const runRealWorldComponentsBenchmark = (): Record<string, BenchmarkResul
     for (const props of testCases.realWorldComponents) {
       const result = tvLibInstance(props);
 
-      // Test all slots
-      result.base();
-      result.container();
-      result.header();
-      result.content();
-      result.footer();
-      result.actions();
-      result.icon();
-      result.label();
-      result.description();
-      result.badge();
-      result.avatar();
-      result.menu();
-      result.dropdown();
-      result.modal();
-      result.drawer();
-      result.tooltip();
-      result.popover();
+      handleTVResult(result, [
+        "base",
+        "container",
+        "header",
+        "content",
+        "footer",
+        "actions",
+        "icon",
+        "label",
+        "description",
+        "badge",
+        "avatar",
+        "menu",
+        "dropdown",
+        "modal",
+        "drawer",
+        "tooltip",
+        "popover",
+      ]);
     }
   });
 
