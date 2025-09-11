@@ -5,9 +5,10 @@
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import { tv as tailwindVariants } from "tailwind-variants";
 
+import { tv } from "@/index";
+
 import type { BenchmarkResult, BenchmarkResults } from "./utils";
 
-import { tv } from "../dist";
 import { benchmarkConfigs, testCases } from "./configs";
 import {
   createLibraryInstances,

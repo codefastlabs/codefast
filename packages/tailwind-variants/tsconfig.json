@@ -3,10 +3,11 @@
   "compilerOptions": {
     "outDir": "dist",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./tests/*"]
     },
     "types": ["jest", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "benchmarks/**/*.ts"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
 }

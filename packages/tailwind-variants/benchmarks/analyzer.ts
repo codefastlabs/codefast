@@ -2,9 +2,10 @@
  * Benchmark result analyzer and reporter
  */
 
+import { tv } from "@/index";
+
 import type { BenchmarkResult } from "./utils";
 
-import { tv } from "../dist";
 import {
   findFastest,
   formatMemoryUsage,

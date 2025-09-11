@@ -16,6 +16,7 @@ const config: Config = {
    */
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^~/(.*)$": "<rootDir>/tests/$1",
   },
 
   /**
@@ -34,7 +35,7 @@ const config: Config = {
   testMatch: [
     "<rootDir>/tests/unit/**/*.?([mc])[jt]s?(x)",
     "<rootDir>/tests/types/**/*.?([mc])[jt]s?(x)",
-    "**/*.(spec|test).?([mc])[jt]s?(x)"
+    "**/*.(spec|test).?([mc])[jt]s?(x)",
   ],
 
   /**

@@ -8,7 +8,7 @@ import { twMerge } from "tailwind-merge";
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import { tv as tailwindVariants } from "tailwind-variants";
 
-import { tv } from "../dist";
+import { tv } from "@/index";
 
 // Library name constants for consistent naming
 export const LIBRARY_NAMES = {
