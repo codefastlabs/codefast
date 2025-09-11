@@ -82,7 +82,7 @@ export const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>
       const compoundKeys = Object.keys(compound) as (keyof typeof compound)[];
 
       for (const key of compoundKeys) {
-        if (key === "className") {
+        if (key === "className" || key === "class") {
           continue;
         }
 
@@ -93,7 +93,7 @@ export const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>
       }
 
       if (matches) {
-        const className = compound.className;
+        const className = compound.className ?? compound.class;
 
         if (isSlotObject(className)) {
           // Slot-specific compound variant
@@ -149,7 +149,7 @@ export const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema
       compoundSlotClasses.base ?? [],
     );
 
-    const allClasses = [...baseClasses, slotProps.className].filter(Boolean);
+    const allClasses = [...baseClasses, slotProps.className, slotProps.class].filter(Boolean);
 
     if (allClasses.length === 0) return;
 
@@ -177,7 +177,7 @@ export const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema
           compoundSlotClasses[slotKey] ?? [],
         );
 
-        const allClasses = [...slotClasses, slotProps.className].filter(Boolean);
+        const allClasses = [...slotClasses, slotProps.className, slotProps.class].filter(Boolean);
 
         if (allClasses.length === 0) return;
 

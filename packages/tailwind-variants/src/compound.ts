@@ -33,7 +33,7 @@ export const applyCompoundVariants = <T extends ConfigSchema>(
     const compoundKeys = Object.keys(compound) as (keyof typeof compound)[];
 
     for (const key of compoundKeys) {
-      if (key === "className") {
+      if (key === "className" || key === "class") {
         continue;
       }
 
@@ -55,7 +55,7 @@ export const applyCompoundVariants = <T extends ConfigSchema>(
     }
 
     if (matches) {
-      result.push(compound.className);
+      result.push(compound.className ?? compound.class);
     }
   }
 
@@ -83,7 +83,7 @@ export const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>
 
     // Get all variant keys from the compound, excluding special keys
     const compoundEntries = Object.entries(compound).filter(
-      ([key]) => key !== "className" && key !== "slots",
+      ([key]) => key !== "className" && key !== "class" && key !== "slots",
     ) as [keyof T, T[keyof T][keyof T[keyof T]]][];
 
     for (const [key, compoundValue] of compoundEntries) {
@@ -105,7 +105,7 @@ export const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>
 
     if (matches) {
       for (const slot of compound.slots) {
-        (result[slot] ??= []).push(compound.className);
+        (result[slot] ??= []).push(compound.className ?? compound.class);
       }
     }
   }

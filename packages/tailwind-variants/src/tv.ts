@@ -160,9 +160,9 @@ export function tv<T extends ConfigSchema, S extends SlotSchema>(
   const mergedCompoundVariants = mergedConfig.compoundVariants;
 
   const tvFunction = (
-    props: ConfigVariants<T> & { className?: ClassValue } = {},
+    props: ConfigVariants<T> & { class?: ClassValue; className?: ClassValue } = {},
   ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S> => {
-    const { className, ...variantProps } = props;
+    const { class: classProperty, className, ...variantProps } = props;
 
     // Validate compoundVariants is an array
     if (mergedConfig.compoundVariants && !Array.isArray(mergedConfig.compoundVariants)) {
@@ -198,7 +198,7 @@ export function tv<T extends ConfigSchema, S extends SlotSchema>(
         mergedDefaultVariants as ConfigVariants<ConfigSchema>,
         mergedCompoundVariants as readonly CompoundVariant<ConfigSchema>[] | undefined,
         variantProps as ConfigVariants<ConfigSchema>,
-        className,
+        className ?? classProperty,
         shouldMerge,
         tailwindMerge,
       ) as unknown as S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
