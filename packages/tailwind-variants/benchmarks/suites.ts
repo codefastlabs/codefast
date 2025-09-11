@@ -490,3 +490,92 @@ export const runRealWorldComponentsBenchmark = (): Record<string, BenchmarkResul
 
   return results;
 };
+
+/**
+ * Class property benchmark suite (Vue/Svelte style)
+ */
+export const runClassPropertyBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n🎨 Class Property Benchmark (Vue/Svelte Style)");
+  console.log("═".repeat(60));
+
+  const instances = createLibraryInstances(benchmarkConfigs.basicClass);
+  const results = runAllBenchmarks(instances, testCases.basicClass);
+
+  displayBenchmarkTable(results);
+
+  return results;
+};
+
+/**
+ * Class compound variants benchmark suite
+ */
+export const runClassCompoundVariantsBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n🔗 Class Compound Variants Benchmark");
+  console.log("═".repeat(60));
+
+  const instances = createLibraryInstances(benchmarkConfigs.compoundClass);
+  const results = runAllBenchmarks(instances, testCases.compoundClass);
+
+  displayBenchmarkTable(results);
+
+  return results;
+};
+
+/**
+ * Class slots benchmark suite
+ */
+export const runClassSlotsBenchmark = (): Record<string, BenchmarkResult> => {
+  console.log("\n🎯 Class Slots Benchmark");
+  console.log("═".repeat(60));
+
+  const tvInstance = tv(benchmarkConfigs.slotsClass);
+  const tvLibInstance = tailwindVariants(benchmarkConfigs.slotsClass);
+
+  const tvResult = runBenchmark(LIBRARY_NAMES.TV, () => {
+    for (const props of testCases.slotsClass) {
+      const result = tvInstance(props);
+
+      handleTVResult(result, ["base", "icon", "label"]);
+    }
+  });
+
+  const tvLibResult = runBenchmark(LIBRARY_NAMES.TV_NPM, () => {
+    for (const props of testCases.slotsClass) {
+      const result = tvLibInstance(props);
+
+      handleTVResult(result, ["base", "icon", "label"]);
+    }
+  });
+
+  const results = { [LIBRARY_KEYS.TV]: tvResult, [LIBRARY_KEYS.TV_NPM]: tvLibResult };
+
+  // Display results in a formatted table
+  console.log(createTableHeader());
+  console.log(createTableRow(LIBRARY_NAMES.TV, tvResult.avg, tvResult.min, tvResult.max));
+  console.log(
+    createTableRow(LIBRARY_NAMES.TV_NPM, tvLibResult.avg, tvLibResult.min, tvLibResult.max),
+  );
+  console.log(`${LIBRARY_NAMES.CVA}:`.padEnd(32) + " N/A".padStart(27));
+
+  // Show fastest
+  const [fastestName, fastestResult] = findFastest(results);
+
+  console.log(`\n🏆 Fastest: ${fastestName} (${fastestResult.avg.toFixed(2)}ms)`);
+
+  return results;
+};
+
+/**
+ * Mixed properties benchmark suite (className + class)
+ */
+export const runMixedPropertiesBenchmark = (): BenchmarkSuiteResult => {
+  console.log("\n🔄 Mixed Properties Benchmark (className + class)");
+  console.log("═".repeat(60));
+
+  const instances = createLibraryInstances(benchmarkConfigs.mixedProperties);
+  const results = runAllBenchmarks(instances, testCases.mixedProperties);
+
+  displayBenchmarkTable(results);
+
+  return results;
+};

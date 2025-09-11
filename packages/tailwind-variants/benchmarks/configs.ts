@@ -832,6 +832,141 @@ export const benchmarkConfigs = {
       },
     },
   },
+
+  // Class property configurations (Vue/Svelte style)
+  basicClass: {
+    base: "base-class",
+    defaultVariants: {
+      color: "primary",
+      size: "md",
+    },
+    variants: {
+      color: {
+        danger: "text-red-500",
+        primary: "text-blue-500",
+        secondary: "text-gray-500",
+      },
+      size: {
+        lg: "text-lg",
+        md: "text-base",
+        sm: "text-sm",
+      },
+      variant: {
+        ghost: "hover:bg-blue-100",
+        outline: "border border-blue-500",
+        solid: "bg-blue-500",
+      },
+    },
+  },
+
+  compoundClass: {
+    base: "base-class",
+    compoundVariants: [
+      {
+        class: "text-blue-600 font-bold",
+        color: "primary",
+        size: "lg",
+      },
+      {
+        class: "text-red-600 font-semibold",
+        color: "danger",
+        size: "sm",
+      },
+    ],
+    defaultVariants: {
+      color: "primary",
+      size: "md",
+    },
+    variants: {
+      color: {
+        danger: "text-red-500",
+        primary: "text-blue-500",
+        secondary: "text-gray-500",
+      },
+      size: {
+        lg: "text-lg",
+        md: "text-base",
+        sm: "text-sm",
+      },
+    },
+  },
+
+  slotsClass: {
+    base: "flex items-center gap-2",
+    defaultVariants: {
+      color: "primary",
+      size: "sm",
+    },
+    slots: {
+      base: "flex-1",
+      icon: "w-4 h-4",
+      label: "font-medium",
+    },
+    variants: {
+      color: {
+        primary: {
+          base: "text-blue-500",
+          icon: "text-blue-500",
+          label: "text-blue-700",
+        },
+        secondary: {
+          base: "text-gray-500",
+          icon: "text-gray-500",
+          label: "text-gray-700",
+        },
+      },
+      size: {
+        lg: {
+          base: "text-lg",
+          icon: "w-5 h-5",
+          label: "text-base",
+        },
+        sm: {
+          base: "text-sm",
+          icon: "w-3 h-3",
+          label: "text-xs",
+        },
+      },
+    },
+  },
+
+  // Mixed properties configuration
+  mixedProperties: {
+    base: "base-class",
+    compoundVariants: [
+      {
+        class: "text-blue-600 font-bold",
+        color: "primary",
+        size: "lg",
+      },
+      {
+        className: "text-red-600 font-semibold",
+        color: "danger",
+        size: "sm",
+      },
+    ],
+    defaultVariants: {
+      color: "primary",
+      size: "md",
+    },
+    variants: {
+      color: {
+        danger: "text-red-500",
+        primary: "text-blue-500",
+        secondary: "text-gray-500",
+      },
+      size: {
+        lg: "text-lg",
+        md: "text-base",
+        sm: "text-sm",
+      },
+      variant: {
+        ghost: "hover:bg-blue-100",
+        outline: "border border-blue-500",
+        solid: "bg-blue-500",
+      },
+    },
+  },
 } as const;
 
 export const testCases = {
@@ -906,5 +1041,36 @@ export const testCases = {
     { color: "warning", size: "sm", theme: "dark", variant: "outlined" },
     { color: "secondary", interactive: true, size: "lg", variant: "filled" },
     { color: "primary", loading: false, size: "default", variant: "ghost" },
+  ],
+
+  // Class property test cases (Vue/Svelte style)
+  basicClass: [
+    { color: "primary", size: "md" },
+    { color: "secondary", size: "lg", variant: "outline" },
+    { color: "danger", size: "sm", variant: "solid" },
+  ],
+
+  compoundClass: [
+    { color: "primary", size: "lg" },
+    { color: "danger", size: "sm" },
+    { color: "secondary", size: "md" },
+  ],
+
+  slotsClass: [
+    { color: "primary", size: "sm" },
+    { color: "secondary", size: "lg" },
+  ],
+
+  // Mixed className and class test cases
+  mixedProperties: [
+    { className: "custom-class-1", color: "primary", size: "md" },
+    { class: "custom-class-2", color: "secondary", size: "lg", variant: "outline" },
+    {
+      class: "custom-class-4",
+      className: "custom-class-3",
+      color: "danger",
+      size: "sm",
+      variant: "solid",
+    },
   ],
 } as const;

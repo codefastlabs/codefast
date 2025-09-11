@@ -18,11 +18,15 @@ import {
 export interface BenchmarkResults {
   advancedCard: Record<string, BenchmarkResult>;
   basic: Record<string, BenchmarkResult>;
+  classCompound: Record<string, BenchmarkResult>;
+  classProperty: Record<string, BenchmarkResult>;
+  classSlots: Record<string, BenchmarkResult>;
   complexButton: Record<string, BenchmarkResult>;
   compound: Record<string, BenchmarkResult>;
   dataTable: Record<string, BenchmarkResult>;
   formComponents: Record<string, BenchmarkResult>;
   large: Record<string, BenchmarkResult>;
+  mixedProperties: Record<string, BenchmarkResult>;
   realWorldComponents: Record<string, BenchmarkResult>;
   responsiveLayout: Record<string, BenchmarkResult>;
   slots: Record<string, BenchmarkResult>;
@@ -87,7 +91,15 @@ const addSummaryStatistics = (results: BenchmarkResults): void => {
   console.log(`${LIBRARY_NAMES.CVA_MERGE}: ${wins[LIBRARY_KEYS.CVA_MERGE]} wins`);
 
   // Calculate average performance for comparable benchmarks
-  const comparableBenchmarks = ["basic", "compound", "large", "complexButton"];
+  const comparableBenchmarks = [
+    "basic",
+    "compound",
+    "large",
+    "complexButton",
+    "classProperty",
+    "classCompound",
+    "mixedProperties",
+  ];
   const avgPerformance = {
     [LIBRARY_KEYS.CVA]: 0,
     [LIBRARY_KEYS.CVA_MERGE]: 0,
@@ -136,6 +148,11 @@ const createComprehensiveTable = (results: BenchmarkResults): void => {
     { hasAllLibraries: false, key: "formComponents", name: "Form Components" },
     { hasAllLibraries: false, key: "dataTable", name: "Data Table" },
     { hasAllLibraries: false, key: "realWorldComponents", name: "Real-world Components" },
+    // Class property benchmarks
+    { hasAllLibraries: true, key: "classProperty", name: "Class Property" },
+    { hasAllLibraries: true, key: "classCompound", name: "Class Compound" },
+    { hasAllLibraries: false, key: "classSlots", name: "Class Slots" },
+    { hasAllLibraries: true, key: "mixedProperties", name: "Mixed Properties" },
   ];
 
   // Create a table header with proper spacing

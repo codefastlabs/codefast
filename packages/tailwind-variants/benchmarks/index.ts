@@ -11,11 +11,15 @@ import { analyzeResults } from "./analyzer";
 import {
   runAdvancedCardBenchmark,
   runBasicVariantsBenchmark,
+  runClassCompoundVariantsBenchmark,
+  runClassPropertyBenchmark,
+  runClassSlotsBenchmark,
   runComplexButtonBenchmark,
   runCompoundVariantsBenchmark,
   runDataTableBenchmark,
   runFormComponentsBenchmark,
   runLargeDatasetBenchmark,
+  runMixedPropertiesBenchmark,
   runRealWorldComponentsBenchmark,
   runResponsiveLayoutBenchmark,
   runSlotsBenchmark,
@@ -45,15 +49,25 @@ const runBenchmarks = (): BenchmarkResults => {
   const dataTableResults = runDataTableBenchmark();
   const realWorldComponentsResults = runRealWorldComponentsBenchmark();
 
+  // Run class property benchmarks
+  const classPropertyResults = runClassPropertyBenchmark();
+  const classCompoundResults = runClassCompoundVariantsBenchmark();
+  const classSlotsResults = runClassSlotsBenchmark();
+  const mixedPropertiesResults = runMixedPropertiesBenchmark();
+
   // Analyze and display results
   const results: BenchmarkResults = {
     advancedCard: advancedCardResults,
     basic: basicResults,
+    classCompound: classCompoundResults,
+    classProperty: classPropertyResults,
+    classSlots: classSlotsResults,
     complexButton: complexButtonResults,
     compound: compoundResults,
     dataTable: dataTableResults,
     formComponents: formComponentsResults,
     large: largeResults,
+    mixedProperties: mixedPropertiesResults,
     realWorldComponents: realWorldComponentsResults,
     responsiveLayout: responsiveLayoutResults,
     slots: slotsResults,
@@ -120,6 +134,26 @@ export const runSpecificBenchmark = (suite: keyof BenchmarkResults): void => {
 
     case "realWorldComponents": {
       runRealWorldComponentsBenchmark();
+      break;
+    }
+
+    case "classProperty": {
+      runClassPropertyBenchmark();
+      break;
+    }
+
+    case "classCompound": {
+      runClassCompoundVariantsBenchmark();
+      break;
+    }
+
+    case "classSlots": {
+      runClassSlotsBenchmark();
+      break;
+    }
+
+    case "mixedProperties": {
+      runMixedPropertiesBenchmark();
       break;
     }
 

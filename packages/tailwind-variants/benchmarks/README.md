@@ -34,8 +34,14 @@ Contains all benchmark configurations and test cases:
 7. **Responsive Layout** - Layout system with responsive variants
 8. **Form Components** - Form elements with validation states
 9. **Data Table** - Table component with sorting and selection
-
 10. **Real-world Components** - Complex component system with 16+ slots
+
+**Class Property Benchmarks (Vue/Svelte Style):**
+
+11. **Class Property** - Basic variants using `class` property instead of `className`
+12. **Class Compound** - Compound variants using `class` property
+13. **Class Slots** - Slots using `class` property
+14. **Mixed Properties** - Mixed usage of both `className` and `class` properties
 
 ### `utils.ts`
 
@@ -61,6 +67,10 @@ Individual benchmark suites:
 - `runDataTableBenchmark()` - Data table performance
 
 - `runRealWorldComponentsBenchmark()` - Real-world components performance
+- `runClassPropertyBenchmark()` - Class property performance (Vue/Svelte style)
+- `runClassCompoundVariantsBenchmark()` - Class compound variants performance
+- `runClassSlotsBenchmark()` - Class slots performance
+- `runMixedPropertiesBenchmark()` - Mixed className/class properties performance
 
 ### `analyzer.ts`
 
@@ -99,6 +109,10 @@ pnpm benchmark:formComponents
 pnpm benchmark:dataTable
 
 pnpm benchmark:realWorldComponents
+pnpm benchmark:classProperty
+pnpm benchmark:classCompound
+pnpm benchmark:classSlots
+pnpm benchmark:mixedProperties
 ```
 
 ### Run Individual Suite
@@ -115,6 +129,10 @@ tsx benchmarks/index.ts formComponents
 tsx benchmarks/index.ts dataTable
 
 tsx benchmarks/index.ts realWorldComponents
+tsx benchmarks/index.ts classProperty
+tsx benchmarks/index.ts classCompound
+tsx benchmarks/index.ts classSlots
+tsx benchmarks/index.ts mixedProperties
 ```
 
 ## Benchmark Scenarios
@@ -205,6 +223,40 @@ Complex component system:
 - 3 boolean states (interactive, disabled, loading)
 - 16 slots (container, header, content, footer, actions, icon, label, description, badge, avatar, menu, dropdown, modal, drawer, tooltip, popover)
 - 6 compound variants
+
+### 11. Class Property
+
+Basic variants using `class` property (Vue/Svelte style):
+
+- 3 variants (default, outline, solid)
+- 3 colors (primary, secondary, danger)
+- 3 sizes (sm, md, lg)
+
+### 12. Class Compound
+
+Compound variants using `class` property:
+
+- 3 colors (primary, secondary, danger)
+- 3 sizes (sm, md, lg)
+- 2 compound variants with `class` property
+
+### 13. Class Slots
+
+Slots using `class` property:
+
+- 2 colors (primary, secondary)
+- 2 sizes (sm, lg)
+- 3 slots (base, icon, label)
+
+### 14. Mixed Properties
+
+Mixed usage of both `className` and `class` properties:
+
+- 3 colors (primary, secondary, danger)
+- 3 sizes (sm, md, lg)
+- 3 variants (default, outline, solid)
+- 2 compound variants (one with `className`, one with `class`)
+- Test cases mixing both properties
 
 ## Adding New Benchmarks
 
