@@ -216,6 +216,44 @@ export interface VariantFunction<T extends ConfigSchema, S extends SlotSchema = 
   ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
 }
 
+/**
+ * TV Factory function with cn utility
+ */
+export interface TVFactory {
+  <T extends ConfigSchema>(
+    config: Config<T>,
+    localConfig?: TVConfig,
+  ): VariantFunction<T, Record<string, never>>;
+
+  <S extends SlotSchema>(
+    config: ConfigWithSlots<Record<string, never>, S>,
+    localConfig?: TVConfig,
+  ): VariantFunction<Record<string, never>, S>;
+
+  <T extends ConfigSchema, S extends SlotSchema>(
+    config: ConfigWithSlots<T, S>,
+    localConfig?: TVConfig,
+  ): VariantFunction<T, S>;
+
+  <
+    TBase extends ConfigSchema,
+    TExtension extends ConfigSchema,
+    SBase extends SlotSchema,
+    SExtension extends SlotSchema,
+  >(
+    config: ExtendedConfig<TBase, TExtension, SBase, SExtension>,
+    localConfig?: TVConfig,
+  ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
+}
+
+/**
+ * TV Factory return type with both tv and cn functions
+ */
+export interface TVFactoryResult {
+  cn: (...classes: ClassValue[]) => string;
+  tv: TVFactory;
+}
+
 // =============================================================================
 // Extended Configuration Types
 // =============================================================================

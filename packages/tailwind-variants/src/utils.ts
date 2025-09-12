@@ -18,6 +18,14 @@ export const cx = (...classes: ClassValue[]): string => {
 };
 
 /**
+ * Class name utility that combines clsx and tailwind-merge
+ * Similar to cn function but with tailwind-merge integration
+ */
+export const cn = (...classes: ClassValue[]): string => {
+  return twMerge(clsx(classes));
+};
+
+/**
  * Creates a tailwind merge function with optional configuration
  */
 export const createTailwindMerge = (

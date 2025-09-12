@@ -4,7 +4,7 @@
 
 // Core functions
 export { createTV, tv } from "./tv";
-export { cx } from "./utils";
+export { cn, cx } from "./utils";
 
 // Type definitions
 export type {
@@ -15,5 +15,7 @@ export type {
   SlotProps,
   SlotSchema,
   TVConfig,
+  TVFactory,
+  TVFactoryResult,
   VariantProps,
 } from "./types";

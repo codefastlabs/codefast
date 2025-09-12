@@ -12,6 +12,7 @@ import type {
   MergeSlotSchemas,
   SlotSchema,
   TVConfig,
+  TVFactoryResult,
   TVReturnType,
   VariantFunction,
 } from "./types";
@@ -223,7 +224,10 @@ export function tv<T extends ConfigSchema, S extends SlotSchema>(
 // CreateTV Factory Function
 // =============================================================================
 
-export function createTV(globalConfig: TVConfig = {}): typeof tv {
+export function createTV(globalConfig: TVConfig = {}): TVFactoryResult {
+  const { twMerge: shouldMerge = true, twMergeConfig } = globalConfig;
+  const tailwindMerge = createTailwindMerge(twMergeConfig);
+
   // Function overloads to ensure proper type inference
   function tvFactory<T extends ConfigSchema>(
     config: Config<T>,
@@ -265,5 +269,13 @@ export function createTV(globalConfig: TVConfig = {}): typeof tv {
     ) as VariantFunction<T, S>;
   }
 
-  return tvFactory;
+  // Create cn function with global config
+  const cnFunction = (...classes: ClassValue[]): string => {
+    return shouldMerge ? tailwindMerge(cx(...classes)) : cx(...classes);
+  };
+
+  return {
+    cn: cnFunction,
+    tv: tvFactory,
+  };
 }
