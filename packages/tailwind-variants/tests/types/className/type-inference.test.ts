@@ -347,7 +347,7 @@ describe("Real-World Type Inference Tests", () => {
 
   test("should infer types for alert component with createTV factory in real usage", () => {
     // Real-world theme configuration
-    const createThemeTV = createTV({
+    const { tv: createThemeTV } = createTV({
       twMergeConfig: {
         extend: {
           classGroups: {

@@ -306,7 +306,7 @@ const component = tv(
 #### 6.1 Theme Configuration
 
 ```typescript
-const createThemeTV = createTV({
+const { tv: createThemeTV } = createTV({
   twMergeConfig: {
     extend: {
       classGroups: {
@@ -326,7 +326,7 @@ const alert = createThemeTV({
 #### 6.2 Config Override
 
 ```typescript
-const tv = createTV({ twMerge: false });
+const { tv } = createTV({ twMerge: false });
 const component = tv(
   { base: "conflicting classes" },
   { twMerge: true }, // Override factory config

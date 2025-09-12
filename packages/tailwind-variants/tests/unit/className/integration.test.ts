@@ -163,7 +163,7 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
   });
 
   test("should work with theme system using createTV", () => {
-    const createThemeTV = createTV({
+    const { tv: createThemeTV } = createTV({
       twMergeConfig: {
         extend: {
           classGroups: {
