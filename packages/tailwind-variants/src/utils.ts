@@ -4,7 +4,7 @@ import type { ConfigExtension } from "tailwind-merge";
 import { clsx } from "clsx";
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import type { Config, ConfigSchema, ConfigWithSlots, ExtendedConfig, SlotSchema } from "./types";
+import type { Config, ConfigSchema, ConfigWithSlots, ExtendedConfig, SlotSchema } from "@/types";
 
 // =============================================================================
 // Utility Functions

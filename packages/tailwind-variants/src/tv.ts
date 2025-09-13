@@ -15,11 +15,11 @@ import type {
   TVFactoryResult,
   TVReturnType,
   VariantFunction,
-} from "./types";
+} from "@/types";
 
-import { applyCompoundSlots, applyCompoundVariants } from "./compound";
-import { mergeConfigs } from "./config";
-import { createSlotFunctions } from "./slots";
+import { applyCompoundSlots, applyCompoundVariants } from "@/compound";
+import { mergeConfigs } from "@/config";
+import { createSlotFunctions } from "@/slots";
 import {
   createTailwindMerge,
   cx,
@@ -27,7 +27,7 @@ import {
   hasSlots,
   isBooleanValue,
   isBooleanVariant,
-} from "./utils";
+} from "@/utils";
 
 // =============================================================================
 // Helper Functions for TV

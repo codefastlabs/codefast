@@ -7,9 +7,9 @@ import type {
   ConfigWithSlots,
   ExtendedConfig,
   SlotSchema,
-} from "./types";
+} from "@/types";
 
-import { cx, hasExtend, hasSlots, isSlotObject } from "./utils";
+import { cx, hasExtend, hasSlots, isSlotObject } from "@/utils";
 
 // =============================================================================
 // Configuration Merging

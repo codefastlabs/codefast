@@ -52,7 +52,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:ci": "jest --coverage --ci",
-    "test:types": "./scripts/test-types.sh",
     "test:watch": "jest --watch"
   },
   "dependencies": {

@@ -8,6 +8,6 @@
     },
     "types": ["jest", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "benchmarks/**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", ".turbo", "coverage"]
 }

@@ -53,7 +53,7 @@
     "tsx": "^4.20.5",
     "turbo": "^2.5.6"
   },
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.16.1",
   "engines": {
     "node": ">=20.0.0"
   }

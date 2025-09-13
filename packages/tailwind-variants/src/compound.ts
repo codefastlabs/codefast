@@ -6,9 +6,9 @@ import type {
   ConfigSchema,
   ConfigVariants,
   SlotSchema,
-} from "./types";
+} from "@/types";
 
-import { isBooleanValue } from "./utils";
+import { isBooleanValue } from "@/utils";
 
 // =============================================================================
 // Compound Variants Logic

@@ -3,13 +3,15 @@
 // =============================================================================
 
 // Core functions
-export { createTV, tv } from "./tv";
-export { cn, cx } from "./utils";
+export { createTV, tv } from "@/tv";
+export { cn, cx } from "@/utils";
 
 // Type definitions
 export type {
   ClassValue,
+  CompoundVariant,
   Config,
+  ConfigSchema,
   ConfigVariants,
   ConfigWithSlots,
   SlotProps,
@@ -17,5 +19,6 @@ export type {
   TVConfig,
   TVFactory,
   TVFactoryResult,
+  VariantFunction,
   VariantProps,
-} from "./types";
+} from "@/types";

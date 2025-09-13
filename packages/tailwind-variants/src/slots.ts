@@ -7,9 +7,9 @@ import type {
   SlotFunction,
   SlotFunctionProps,
   SlotSchema,
-} from "./types";
+} from "@/types";
 
-import { cx, isBooleanValue, isBooleanVariant, isSlotObject } from "./utils";
+import { cx, isBooleanValue, isBooleanVariant, isSlotObject } from "@/utils";
 
 // =============================================================================
 // Slot Resolution Logic
