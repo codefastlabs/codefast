@@ -1,22 +1,26 @@
-# Benchmarks
+# Tailwind Variants Benchmarks
 
-This directory contains the comprehensive benchmark suite for comparing TV library performance with other similar libraries across various real-world scenarios.
+This directory contains comprehensive performance benchmarks for the `@codefast/tailwind-variants` package, comparing it against other similar libraries across various real-world scenarios.
 
 ## Structure
 
 ```text
-benchmarks/
+benchmarks/tailwind-variants/
 ├── README.md       # This file
-├── configs.ts      # Benchmark configurations and test cases
-├── utils.ts        # Performance measurement utilities
-├── suites.ts       # Individual benchmark suites
-├── analyzer.ts     # Result analysis and reporting
-└── index.ts        # Main benchmark runner
+├── package.json    # Benchmark package configuration
+├── tsconfig.json   # TypeScript configuration
+├── eslint.config.js # ESLint configuration
+└── src/
+    ├── configs.ts      # Benchmark configurations and test cases
+    ├── utils.ts        # Performance measurement utilities
+    ├── suites.ts       # Individual benchmark suites
+    ├── analyzer.ts     # Result analysis and reporting
+    └── index.ts        # Main benchmark runner
 ```
 
 ## Files Overview
 
-### `configs.ts`
+### `src/configs.ts`
 
 Contains all benchmark configurations and test cases:
 
@@ -43,7 +47,7 @@ Contains all benchmark configurations and test cases:
 13. **Class Slots** - Slots using `class` property
 14. **Mixed Properties** - Mixed usage of both `className` and `class` properties
 
-### `utils.ts`
+### `src/utils.ts`
 
 Performance measurement utilities:
 
@@ -52,7 +56,7 @@ Performance measurement utilities:
 - `calculateSpeedup()` - Calculate relative performance
 - `measureMemoryUsage()` - Measure memory consumption
 
-### `suites.ts`
+### `src/suites.ts`
 
 Individual benchmark suites:
 
@@ -65,14 +69,13 @@ Individual benchmark suites:
 - `runResponsiveLayoutBenchmark()` - Responsive layout performance
 - `runFormComponentsBenchmark()` - Form components performance
 - `runDataTableBenchmark()` - Data table performance
-
 - `runRealWorldComponentsBenchmark()` - Real-world components performance
 - `runClassPropertyBenchmark()` - Class property performance (Vue/Svelte style)
 - `runClassCompoundVariantsBenchmark()` - Class compound variants performance
 - `runClassSlotsBenchmark()` - Class slots performance
 - `runMixedPropertiesBenchmark()` - Mixed className/class properties performance
 
-### `analyzer.ts`
+### `src/analyzer.ts`
 
 Result analysis and reporting:
 
@@ -80,7 +83,7 @@ Result analysis and reporting:
 - `generateReport()` - Generate detailed markdown report
 - `exportResults()` - Export results to JSON
 
-### `index.ts`
+### `src/index.ts`
 
 Main benchmark runner:
 
@@ -107,7 +110,6 @@ pnpm benchmark:advancedCard
 pnpm benchmark:responsiveLayout
 pnpm benchmark:formComponents
 pnpm benchmark:dataTable
-
 pnpm benchmark:realWorldComponents
 pnpm benchmark:classProperty
 pnpm benchmark:classCompound
@@ -118,21 +120,20 @@ pnpm benchmark:mixedProperties
 ### Run Individual Suite
 
 ```bash
-tsx benchmarks/index.ts basic
-tsx benchmarks/index.ts compound
-tsx benchmarks/index.ts slots
-tsx benchmarks/index.ts large
-tsx benchmarks/index.ts complexButton
-tsx benchmarks/index.ts advancedCard
-tsx benchmarks/index.ts responsiveLayout
-tsx benchmarks/index.ts formComponents
-tsx benchmarks/index.ts dataTable
-
-tsx benchmarks/index.ts realWorldComponents
-tsx benchmarks/index.ts classProperty
-tsx benchmarks/index.ts classCompound
-tsx benchmarks/index.ts classSlots
-tsx benchmarks/index.ts mixedProperties
+tsx src/index.ts basic
+tsx src/index.ts compound
+tsx src/index.ts slots
+tsx src/index.ts large
+tsx src/index.ts complexButton
+tsx src/index.ts advancedCard
+tsx src/index.ts responsiveLayout
+tsx src/index.ts formComponents
+tsx src/index.ts dataTable
+tsx src/index.ts realWorldComponents
+tsx src/index.ts classProperty
+tsx src/index.ts classCompound
+tsx src/index.ts classSlots
+tsx src/index.ts mixedProperties
 ```
 
 ## Benchmark Scenarios
@@ -262,7 +263,7 @@ Mixed usage of both `className` and `class` properties:
 
 ### 1. Add Configuration
 
-In `configs.ts`, add new configuration:
+In `src/configs.ts`, add new configuration:
 
 ```typescript
 export const benchmarkConfigs = {
@@ -278,7 +279,7 @@ export const benchmarkConfigs = {
 
 ### 2. Add Test Cases
 
-In `configs.ts`, add test cases:
+In `src/configs.ts`, add test cases:
 
 ```typescript
 export const testCases = {
@@ -291,7 +292,7 @@ export const testCases = {
 
 ### 3. Create Suite
 
-In `suites.ts`, add new suite function:
+In `src/suites.ts`, add new suite function:
 
 ```typescript
 export const runNewScenarioBenchmark = (): Record<string, BenchmarkResult> => {
@@ -301,7 +302,7 @@ export const runNewScenarioBenchmark = (): Record<string, BenchmarkResult> => {
 
 ### 4. Add to Runner
 
-In `index.ts`, add to main runner and specific runner:
+In `src/index.ts`, add to main runner and specific runner:
 
 ```typescript
 // In runBenchmarks()
@@ -315,7 +316,7 @@ case "newScenario":
 
 ### 5. Update Analyzer
 
-In `analyzer.ts`, update interfaces and analysis:
+In `src/analyzer.ts`, update interfaces and analysis:
 
 ```typescript
 export interface BenchmarkResults {

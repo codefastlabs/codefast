@@ -2,7 +2,7 @@
  * Benchmark result analyzer and reporter
  */
 
-import { tv } from "@/index";
+import { tv } from "@codefast/tailwind-variants";
 
 import type { BenchmarkResult } from "./utils";
 

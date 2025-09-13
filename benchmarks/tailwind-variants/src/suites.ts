@@ -5,7 +5,7 @@
 // eslint-disable-next-line import-x/no-extraneous-dependencies
 import { tv as tailwindVariants } from "tailwind-variants";
 
-import { tv } from "@/index";
+import { tv } from "@codefast/tailwind-variants";
 
 import type { BenchmarkResult, BenchmarkResults } from "./utils";
 

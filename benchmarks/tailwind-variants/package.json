@@ -1,0 +1,76 @@
+{
+  "name": "@codefast/benchmarks-tailwind-variants",
+  "version": "0.3.7-canary.0",
+  "description": "Performance benchmarks for @codefast/tailwind-variants package",
+  "keywords": [
+    "benchmark",
+    "performance",
+    "tailwind",
+    "tailwindcss",
+    "variants",
+    "css",
+    "utilities",
+    "typescript",
+    "monorepo",
+    "styling",
+    "type-safe",
+    "composition"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/benchmarks/tailwind-variants#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "benchmarks/tailwind-variants"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "type": "module",
+  "main": "./index.js",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "benchmark": "tsx src/index.ts",
+    "benchmark:basic": "tsx src/index.ts basic",
+    "benchmark:compound": "tsx src/index.ts compound",
+    "benchmark:slots": "tsx src/index.ts slots",
+    "benchmark:large": "tsx src/index.ts large",
+    "benchmark:complexButton": "tsx src/index.ts complexButton",
+    "benchmark:advancedCard": "tsx src/index.ts advancedCard",
+    "benchmark:responsiveLayout": "tsx src/index.ts responsiveLayout",
+    "benchmark:formComponents": "tsx src/index.ts formComponents",
+    "benchmark:dataTable": "tsx src/index.ts dataTable",
+    "benchmark:realWorldComponents": "tsx src/index.ts realWorldComponents",
+    "benchmark:classProperty": "tsx src/index.ts classProperty",
+    "benchmark:classCompound": "tsx src/index.ts classCompound",
+    "benchmark:classSlots": "tsx src/index.ts classSlots",
+    "benchmark:mixedProperties": "tsx src/index.ts mixedProperties",
+    "check-types": "tsc --noEmit",
+    "lint": "TIMING=1 eslint . --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix ."
+  },
+  "dependencies": {
+    "@codefast/tailwind-variants": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^3.1.0"
+  },
+  "devDependencies": {
+    "@codefast/eslint-config": "workspace:*",
+    "@codefast/typescript-config": "workspace:*",
+    "@types/node": "^24.3.1",
+    "eslint": "^9.34.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
