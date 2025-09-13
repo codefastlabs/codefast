@@ -2,10 +2,8 @@
  * Benchmark utilities for performance measurement
  */
 
-// eslint-disable-next-line import-x/no-extraneous-dependencies
 import { cva } from "class-variance-authority";
 import { twMerge } from "tailwind-merge";
-// eslint-disable-next-line import-x/no-extraneous-dependencies
 import { tv as tailwindVariants } from "tailwind-variants";
 
 import { tv } from "@codefast/tailwind-variants";

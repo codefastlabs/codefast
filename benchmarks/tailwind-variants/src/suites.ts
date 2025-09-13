@@ -2,7 +2,6 @@
  * Benchmark suites for different scenarios
  */
 
-// eslint-disable-next-line import-x/no-extraneous-dependencies
 import { tv as tailwindVariants } from "tailwind-variants";
 
 import { tv } from "@codefast/tailwind-variants";
