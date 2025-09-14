@@ -1,5 +1,5 @@
 const ERROR_LEVEL = 2;
-const MAX_SUBJECT_LENGTH = 150;
+const MAX_SUBJECT_LENGTH = 250;
 const MAX_BODY_LINE_LENGTH = 500;
 
 /** @type {import("@commitlint/types").UserConfig} */

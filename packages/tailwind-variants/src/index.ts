@@ -1,35 +1,29 @@
-// Core exports
-export { createTV, defaultConfig, tv } from "@/core";
-export type { Config, TV } from "@/types";
+/**
+ * Tailwind Variants - Main Entry Point
+ *
+ * This module serves as the main entry point for the Tailwind Variants library,
+ * providing a clean API for creating type-safe variant systems with Tailwind CSS.
+ */
 
-// All utilities and CN functions (consolidated in utils)
-export {
-  cn,
-  createTwMerge,
-  joinObjects,
-  joinObjectsImmutable,
-  falsyToString,
-  flat,
-  flatMergeArrays,
-  isEmptyObject,
-  isEqual,
-  mergeObjects,
-} from "@/utils";
+// Core variant functions
+export { createTV, tv } from "@/tv";
 
-// Type exports
+// Utility functions for class manipulation
+export { cn, cx } from "@/utils";
+
+// Type definitions for TypeScript support
 export type {
-  ClassNameProp,
-  ClassNameValue,
-  CompoundSlots,
-  CompoundVariants,
-  DefaultVariants,
-  IsTrueOrArray,
-  OmitUndefined,
-  Props,
-  ReturnProps,
-  ReturnType,
-  StringToBoolean,
-  VariantKeys,
+  ClassValue,
+  CompoundVariant,
+  Config,
+  ConfigSchema,
+  ConfigVariants,
+  ConfigWithSlots,
+  SlotProps,
+  SlotSchema,
+  TVConfig,
+  TVFactory,
+  TVFactoryResult,
+  VariantFunction,
   VariantProps,
-  Variants,
 } from "@/types";
