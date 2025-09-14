@@ -489,7 +489,7 @@ const className = button({ variant: "primary" });
 
 ```typescript
 import React from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+ import { tv, type VariantProps } from '@codefast/tailwind-variants';
 
 const button = tv({...});
 
@@ -510,9 +510,9 @@ const Button: React.FC<ButtonProps> = ({ children, ...variants }) => {
 
 ```vue
 <script setup lang="ts">
-import { tv } from 'tailwind-variants';
+import { tv } from "@codefast/tailwind-variants";
 const button = tv({...});
-const props = defineProps<{variant?: 'primary' | 'secondary'}>();
+const props = defineProps<{variant?: "primary" | "secondary"}>();
 </script>
 
 <template>
