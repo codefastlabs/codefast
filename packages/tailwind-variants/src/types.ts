@@ -1,23 +1,58 @@
+/**
+ * Type Definitions
+ *
+ * This module contains all TypeScript type definitions for the Tailwind Variants
+ * library. It includes utility types, configuration types, and function signatures
+ * that provide type safety throughout the library.
+ *
+ */
+
 import type { ClassValue } from "clsx";
 import type { ConfigExtension } from "tailwind-merge";
 
-// =============================================================================
-// Core Utility Types
-// =============================================================================
-
 /**
- * Converts string "true"/"false" to boolean, leaves other types unchanged
- * Enhanced to handle actual booleans and provide better type inference
+ * Converts string "true"/"false" to boolean, leaves other types unchanged.
+ *
+ * This utility type is used to handle boolean variants that can be passed
+ * as either boolean values or string representations.
+ *
+ * @example
+ * ```typescript
+ * type Result = StringToBoolean<"true">; // boolean
+ * type Result2 = StringToBoolean<"false">; // boolean
+ * type Result3 = StringToBoolean<"sm">; // "sm"
+ * ```
  */
 export type StringToBoolean<T> = T extends "false" | "true" ? boolean : T extends boolean ? T : T;
 
 /**
- * Utility to normalize inferred never types to an empty object
+ * Utility to normalize inferred never types to an empty object.
+ *
+ * This type helps handle cases where TypeScript infers `never` types
+ * and we want to provide a fallback empty object type instead.
+ *
+ * @example
+ * ```typescript
+ * type Result = IfNever<never, {}, string>; // {}
+ * type Result2 = IfNever<string, {}, number>; // string
+ * ```
  */
 export type IfNever<T, Then, Else> = [T] extends [never] ? Then : Else;
 
 /**
- * Helper types to determine if a variant key accepts boolean values
+ * Helper types to determine if a variant key accepts boolean values.
+ *
+ * This type checks if a variant group is designed to work with boolean
+ * values by looking for "true" or "false" keys in the variant definition.
+ *
+ * @example
+ * ```typescript
+ * type BooleanVariant = { true: 'block', false: 'hidden' };
+ * type StringVariant = { sm: 'text-sm', lg: 'text-lg' };
+ *
+ * type IsBoolean1 = IsBooleanVariant<BooleanVariant>; // true
+ * type IsBoolean2 = IsBooleanVariant<StringVariant>; // false
+ * ```
  */
 export type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof T
   ? true
@@ -26,9 +61,17 @@ export type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends
     : false;
 
 /**
- * Enhanced VariantProps with better type inference and boolean handling
- * Provides strict typing for variant component props extraction
- * Uses overloaded types to handle different function signatures precisely
+ * Enhanced VariantProps with better type inference and boolean handling.
+ *
+ * This type extracts variant properties from a component, providing strict
+ * typing for variant component props extraction. It uses overloaded types
+ * to handle different function signatures precisely.
+ *
+ * @example
+ * ```typescript
+ * const Button = tv({ variants: { size: { sm: 'text-sm', lg: 'text-lg' } } });
+ * type ButtonProps = VariantProps<typeof Button>; // { size?: 'sm' | 'lg', className?: ClassValue }
+ * ```
  */
 export type VariantProps<Component, OmitKeys extends string = never> = Component extends (
   props?: infer P,
@@ -51,22 +94,53 @@ export type VariantProps<Component, OmitKeys extends string = never> = Component
       }
     : never;
 
-// =============================================================================
-// Schema Types
-// =============================================================================
-
 /**
- * Base configuration schema for variants
+ * Base configuration schema for variants.
+ *
+ * This type defines the structure of variant definitions, where each
+ * variant key maps to a group of variant values and their corresponding classes.
+ *
+ * @example
+ * ```typescript
+ * const variants: ConfigSchema = {
+ *   size: { sm: 'text-sm', lg: 'text-lg' },
+ *   color: { primary: 'bg-blue-500', secondary: 'bg-gray-500' }
+ * };
+ * ```
  */
 export type ConfigSchema = Record<string, Record<string, ClassValue>>;
 
 /**
- * Base slot schema
+ * Base slot schema.
+ *
+ * This type defines the structure of slot definitions, where each
+ * slot name maps to its default class value.
+ *
+ * @example
+ * ```typescript
+ * const slots: SlotSchema = {
+ *   base: 'px-4 py-2',
+ *   header: 'font-bold',
+ *   content: 'text-gray-600'
+ * };
+ * ```
  */
 export type SlotSchema = Record<string, ClassValue>;
 
 /**
- * Enhanced ConfigVariants with better boolean handling and strict typing
+ * Enhanced ConfigVariants with better boolean handling and strict typing.
+ *
+ * This type represents the variant properties that can be passed to a
+ * variant function, with proper boolean variant support and type safety.
+ *
+ * @example
+ * ```typescript
+ * type ButtonVariants = ConfigVariants<{
+ *   size: { sm: 'text-sm', lg: 'text-lg' },
+ *   disabled: { true: 'opacity-50', false: 'opacity-100' }
+ * }>;
+ * // Result: { size?: 'sm' | 'lg', disabled?: boolean, className?: ClassValue }
+ * ```
  */
 export type ConfigVariants<T extends ConfigSchema> = {
   readonly [Variant in keyof T]?: IsBooleanVariant<T[Variant]> extends true
@@ -78,19 +152,21 @@ export type ConfigVariants<T extends ConfigSchema> = {
 };
 
 /**
- * Extract slot properties with type safety
+ * Extract slot properties with type safety.
+ *
+ * This type represents the properties that can be passed to slot functions,
+ * allowing users to override default slot classes.
+ *
+ * @example
+ * ```typescript
+ * type CardSlotProps = SlotProps<{ header: 'font-bold', content: 'text-gray-600' }>;
+ * // Result: { header?: ClassValue, content?: ClassValue }
+ * ```
  */
 export type SlotProps<S extends SlotSchema> = {
   readonly [Slot in keyof S]?: ClassValue;
 };
 
-// =============================================================================
-// Compound Variants Types
-// =============================================================================
-
-/**
- * Enhanced compound variant with strict type checking and boolean support
- */
 export type CompoundVariant<T extends ConfigSchema> = Partial<{
   readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
     ? boolean | StringToBoolean<keyof T[Variant]>
@@ -100,9 +176,6 @@ export type CompoundVariant<T extends ConfigSchema> = Partial<{
   readonly class?: ClassValue;
 };
 
-/**
- * Enhanced compound variant with slots and strict type checking
- */
 export type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchema> = Partial<{
   readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
     ? boolean | StringToBoolean<keyof T[Variant]>
@@ -112,9 +185,6 @@ export type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchem
   readonly class?: ClassValue | SlotProps<S>;
 };
 
-/**
- * Enhanced compound slots with strict type checking
- */
 export type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> =
   T extends Record<string, never>
     ? {
@@ -132,13 +202,6 @@ export type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> =
           : StringToBoolean<keyof T[K]>;
       };
 
-// =============================================================================
-// Configuration Types
-// =============================================================================
-
-/**
- * Configuration without slots - type-safe variant definition
- */
 export interface Config<T extends ConfigSchema> {
   readonly base?: ClassValue;
   readonly compoundVariants?: readonly CompoundVariant<T>[];
@@ -146,9 +209,6 @@ export interface Config<T extends ConfigSchema> {
   readonly variants?: T;
 }
 
-/**
- * Configuration with slots - extended type-safe definition
- */
 export interface ConfigWithSlots<T extends ConfigSchema, S extends SlotSchema> {
   readonly base?: ClassValue;
   readonly compoundSlots?: readonly CompoundSlot<T, S>[];
@@ -158,28 +218,15 @@ export interface ConfigWithSlots<T extends ConfigSchema, S extends SlotSchema> {
   readonly variants?: T;
 }
 
-/**
- * TV configuration options
- */
 export interface TVConfig {
   readonly twMerge?: boolean;
   readonly twMergeConfig?: ConfigExtension<string, string>;
 }
 
-// =============================================================================
-// Return Types
-// =============================================================================
-
-/**
- * Enhanced slot function with strict typing and optional props
- */
 export type SlotFunction<T extends ConfigSchema> = (
   props?: ConfigVariants<T>,
 ) => string | undefined;
 
-/**
- * Utility type to ensure proper prop passing to slot functions
- */
 export type SlotFunctionProps<T extends ConfigSchema> = {
   readonly [K in keyof ConfigVariants<T>]?: ConfigVariants<T>[K];
 } & {
@@ -187,38 +234,22 @@ export type SlotFunctionProps<T extends ConfigSchema> = {
   readonly class?: ClassValue;
 };
 
-/**
- * Enhanced TVReturnType with better conditional typing and slot handling
- */
-export type TVReturnType<T extends ConfigSchema, S extends SlotSchema> =
-  // Check if we have slots (non-empty slot schema)
-  keyof S extends never
-    ? SlotFunction<T> // No slots - return single function
-    : {
-        readonly [K in keyof S]: SlotFunction<T>;
-      } & {
-        readonly base: SlotFunction<T>;
-      };
+export type TVReturnType<T extends ConfigSchema, S extends SlotSchema> = keyof S extends never
+  ? SlotFunction<T>
+  : {
+      readonly [K in keyof S]: SlotFunction<T>;
+    } & {
+      readonly base: SlotFunction<T>;
+    };
 
-// =============================================================================
-// Variant Function Interface
-// =============================================================================
-
-/**
- * Enhanced VariantFunction with stricter typing and better inference
- */
 export interface VariantFunction<T extends ConfigSchema, S extends SlotSchema = SlotSchema> {
   config: Config<T> | ConfigWithSlots<T, S>;
 
-  // Function can be called with or without parameters
   (
     props?: ConfigVariants<T>,
   ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
 }
 
-/**
- * TV Factory function with cn utility
- */
 export interface TVFactory {
   <T extends ConfigSchema>(
     config: Config<T>,
@@ -246,32 +277,61 @@ export interface TVFactory {
   ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
 }
 
-/**
- * TV Factory return type with both tv and cn functions
- */
 export interface TVFactoryResult {
   cn: (...classes: ClassValue[]) => string;
   tv: TVFactory;
 }
 
-// =============================================================================
-// Extended Configuration Types
-// =============================================================================
-
 /**
- * Merge two schemas recursively with type safety
+ * Merge two schemas recursively with type safety.
+ *
+ * This type combines two configuration schemas, ensuring that all
+ * variant definitions are properly merged and type-safe.
+ *
+ * @example
+ * ```typescript
+ * type BaseSchema = { size: { sm: 'text-sm' } };
+ * type ExtensionSchema = { color: { primary: 'bg-blue-500' } };
+ * type MergedSchema = MergeSchemas<BaseSchema, ExtensionSchema>;
+ * // Result: { size: { sm: 'text-sm' }, color: { primary: 'bg-blue-500' } }
+ * ```
  */
 export type MergeSchemas<TBase extends ConfigSchema, TExtension extends ConfigSchema> = TBase &
   TExtension;
 
 /**
- * Merge slot schemas with type safety
+ * Merge slot schemas with type safety.
+ *
+ * This type combines two slot schemas, ensuring that all slot
+ * definitions are properly merged and type-safe.
+ *
+ * @example
+ * ```typescript
+ * type BaseSlots = { base: 'px-4' };
+ * type ExtensionSlots = { header: 'font-bold' };
+ * type MergedSlots = MergeSlotSchemas<BaseSlots, ExtensionSlots>;
+ * // Result: { base: 'px-4', header: 'font-bold' }
+ * ```
  */
 export type MergeSlotSchemas<SBase extends SlotSchema, SExtension extends SlotSchema> = SBase &
   SExtension;
 
 /**
- * Extended configuration for inheritance with proper type merging
+ * Extended configuration for inheritance with proper type merging.
+ *
+ * This interface defines the structure for configurations that extend
+ * other configurations, providing inheritance capabilities with proper
+ * type merging and validation.
+ *
+ * @example
+ * ```typescript
+ * const baseConfig = tv({ variants: { size: { sm: 'text-sm' } } });
+ * const extendedConfig: ExtendedConfig<BaseSchema, ExtensionSchema, BaseSlots, ExtensionSlots> = {
+ *   extend: baseConfig,
+ *   variants: { color: { primary: 'bg-blue-500' } },
+ *   slots: { header: 'font-bold' }
+ * };
+ * ```
  */
 export interface ExtendedConfig<
   TBase extends ConfigSchema,
@@ -294,8 +354,5 @@ export interface ExtendedConfig<
   readonly variants?: TExtension;
 }
 
-// =============================================================================
 // Re-export external types
-// =============================================================================
-
 export type { ClassValue } from "clsx";

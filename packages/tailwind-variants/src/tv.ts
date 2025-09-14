@@ -1,3 +1,12 @@
+/**
+ * Main TV Function and Factory
+ *
+ * This module contains the core TV (Tailwind Variants) function and the createTV
+ * factory function. It handles the main variant resolution logic, configuration
+ * merging, and provides the primary API for creating variant systems.
+ *
+ */
+
 import type { ClassValue } from "clsx";
 
 import type {
@@ -29,12 +38,37 @@ import {
   isBooleanVariant,
 } from "@/utils";
 
-// =============================================================================
-// Helper Functions for TV
-// =============================================================================
-
 /**
- * Handles regular variants without slots
+ * Handles regular variants without slots.
+ *
+ * This function processes variants for components that don't use slots,
+ * applying base classes, variant classes, compound variants, and custom
+ * className props in the correct order.
+ *
+ * @param mergedBase - Merged base classes
+ * @param mergedVariants - Merged variant definitions
+ * @param mergedDefaultVariants - Merged default variant values
+ * @param mergedCompoundVariants - Merged compound variant definitions
+ * @param variantProps - Current variant properties
+ * @param className - Custom className to apply
+ * @param shouldMerge - Whether to use tailwind-merge
+ * @param tailwindMerge - Tailwind merge function
+ * @returns Resolved class string or undefined
+ *
+ * @example
+ * ```typescript
+ * const classes = handleRegularVariants(
+ *   'px-4 py-2',
+ *   { size: { sm: 'text-sm', lg: 'text-lg' }, color: { primary: 'bg-blue-500' } },
+ *   { size: 'sm', color: 'primary' },
+ *   [{ size: 'lg', color: 'primary', className: 'font-bold' }],
+ *   { size: 'lg' },
+ *   'custom-class',
+ *   true,
+ *   twMerge
+ * );
+ * // Returns: 'px-4 py-2 text-lg bg-blue-500 font-bold custom-class'
+ * ```
  */
 const handleRegularVariants = <T extends ConfigSchema>(
   mergedBase: ClassValue | undefined,
@@ -53,29 +87,30 @@ const handleRegularVariants = <T extends ConfigSchema>(
     classes.push(mergedBase);
   }
 
-  // Add variant classes with optimized iteration
-  const variantKeys = Object.keys(mergedVariants) as (keyof T)[];
+  const keys = Object.keys(mergedVariants) as (keyof T)[];
 
-  for (const variantKey of variantKeys) {
-    const variantGroup = mergedVariants[variantKey];
-    const variantValue = variantProps[variantKey];
+  // Process each variant
+  for (const key of keys) {
+    const group = mergedVariants[key];
+    const value = variantProps[key];
 
-    // Enhanced value resolution with proper boolean handling
     let valueToUse: string | undefined;
 
-    if (variantValue !== undefined) {
-      valueToUse = isBooleanValue(variantValue) ? String(variantValue) : String(variantValue);
-    } else if (mergedDefaultVariants[variantKey] !== undefined) {
-      const defaultValue = mergedDefaultVariants[variantKey];
+    // Determine the value to use for this variant
+    if (value !== undefined) {
+      valueToUse = isBooleanValue(value) ? String(value) : String(value);
+    } else if (mergedDefaultVariants[key] !== undefined) {
+      const defaultValue = mergedDefaultVariants[key];
 
       valueToUse = isBooleanValue(defaultValue) ? String(defaultValue) : String(defaultValue);
-    } else if (isBooleanVariant(variantGroup)) {
+    } else if (isBooleanVariant(group)) {
       // For boolean variants without an explicit default, use false
       valueToUse = "false";
     }
 
-    if (valueToUse !== undefined && valueToUse in variantGroup) {
-      classes.push(variantGroup[valueToUse]);
+    // Apply the variant if it exists
+    if (valueToUse !== undefined && valueToUse in group) {
+      classes.push(group[valueToUse]);
     }
   }
 
@@ -102,26 +137,51 @@ const handleRegularVariants = <T extends ConfigSchema>(
   return shouldMerge ? tailwindMerge(classString) : classString || undefined;
 };
 
-// =============================================================================
-// Main TV Function
-// =============================================================================
-
 // Function overloads for type-safe return values
+
+/**
+ * Creates a variant function for a configuration without slots.
+ *
+ * @param config - Configuration object without slots
+ * @param tvConfig - Optional TV configuration
+ * @returns Variant function that returns a string
+ */
 export function tv<T extends ConfigSchema>(
   config: Config<T>,
   tvConfig?: TVConfig,
 ): VariantFunction<T, Record<string, never>>;
 
+/**
+ * Creates a variant function for a configuration with slots but no variants.
+ *
+ * @param config - Configuration object with slots but no variants
+ * @param tvConfig - Optional TV configuration
+ * @returns Variant function that returns slot functions
+ */
 export function tv<S extends SlotSchema>(
   config: ConfigWithSlots<Record<string, never>, S>,
   tvConfig?: TVConfig,
 ): VariantFunction<Record<string, never>, S>;
 
+/**
+ * Creates a variant function for a configuration with both variants and slots.
+ *
+ * @param config - Configuration object with variants and slots
+ * @param tvConfig - Optional TV configuration
+ * @returns Variant function that returns slot functions
+ */
 export function tv<T extends ConfigSchema, S extends SlotSchema>(
   config: ConfigWithSlots<T, S>,
   tvConfig?: TVConfig,
 ): VariantFunction<T, S>;
 
+/**
+ * Creates a variant function for an extended configuration.
+ *
+ * @param config - Extended configuration object
+ * @param tvConfig - Optional TV configuration
+ * @returns Variant function with merged types
+ */
 export function tv<
   TBase extends ConfigSchema,
   TExtension extends ConfigSchema,
@@ -132,6 +192,32 @@ export function tv<
   tvConfig?: TVConfig,
 ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
 
+/**
+ * Main TV function implementation.
+ *
+ * This is the core function that creates variant systems. It handles configuration
+ * merging, variant resolution, and returns either a string (for non-slot configs)
+ * or slot functions (for slot configs).
+ *
+ * @param config - Configuration object
+ * @param tvConfig - TV configuration options
+ * @returns Variant function
+ *
+ * @example
+ * ```typescript
+ * const button = tv({
+ *   base: 'px-4 py-2 rounded',
+ *   variants: {
+ *     size: { sm: 'text-sm', lg: 'text-lg' },
+ *     color: { primary: 'bg-blue-500', secondary: 'bg-gray-500' }
+ *   },
+ *   defaultVariants: { size: 'sm', color: 'primary' }
+ * });
+ *
+ * const classes = button({ size: 'lg', color: 'secondary' });
+ * // Returns: 'px-4 py-2 rounded text-lg bg-gray-500'
+ * ```
+ */
 export function tv<T extends ConfigSchema, S extends SlotSchema>(
   config: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
   tvConfig: TVConfig = {},
@@ -220,10 +306,37 @@ export function tv<T extends ConfigSchema, S extends SlotSchema>(
   return tvFunctionWithConfig;
 }
 
-// =============================================================================
-// CreateTV Factory Function
-// =============================================================================
-
+/**
+ * CreateTV Factory Function
+ *
+ * This function creates a TV factory with global configuration that can be
+ * reused across multiple components. It provides both a configured tv function
+ * and a cn utility function.
+ *
+ * @param globalConfig - Global TV configuration
+ * @returns Object containing tv factory and cn function
+ *
+ * @example
+ * ```typescript
+ * const { tv, cn } = createTV({
+ *   twMerge: true,
+ *   twMergeConfig: {
+ *     extend: {
+ *       classGroups: {
+ *         'font-size': ['text-custom']
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * const button = tv({
+ *   base: 'px-4 py-2',
+ *   variants: { size: { sm: 'text-sm', lg: 'text-lg' } }
+ * });
+ *
+ * const classes = cn(button({ size: 'lg' }), 'custom-class');
+ * ```
+ */
 export function createTV(globalConfig: TVConfig = {}): TVFactoryResult {
   const { twMerge: shouldMerge = true, twMergeConfig } = globalConfig;
   const tailwindMerge = createTailwindMerge(twMergeConfig);
