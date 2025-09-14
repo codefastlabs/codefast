@@ -5,9 +5,8 @@
  * that are applied when multiple conditions are met simultaneously.
  */
 
-import type { ClassValue } from "clsx";
-
 import type {
+  ClassValue,
   CompoundSlot,
   CompoundVariant,
   ConfigSchema,

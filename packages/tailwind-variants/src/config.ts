@@ -5,9 +5,8 @@
  * inheritance through the extend mechanism and deep merging of variant groups.
  */
 
-import type { ClassValue } from "clsx";
-
 import type {
+  ClassValue,
   CompoundSlot,
   Config,
   ConfigSchema,

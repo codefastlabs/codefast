@@ -7,9 +7,8 @@
  *
  */
 
-import type { ClassValue } from "clsx";
-
 import type {
+  ClassValue,
   CompoundVariant,
   CompoundVariantWithSlots,
   Config,

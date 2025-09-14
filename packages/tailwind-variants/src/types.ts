@@ -78,19 +78,19 @@ export type VariantProps<Component, OmitKeys extends string = never> = Component
 ) => unknown
   ? P extends ConfigVariants<infer T>
     ? Omit<ConfigVariants<IfNever<T, Record<string, never>, T>>, OmitKeys> & {
-        readonly className?: ClassValue;
-        readonly class?: ClassValue;
+        className?: ClassValue;
+        class?: ClassValue;
       }
     : P extends Record<string, unknown>
       ? Omit<P & { className?: ClassValue; class?: ClassValue }, OmitKeys> & {
-          readonly className?: ClassValue;
-          readonly class?: ClassValue;
+          className?: ClassValue;
+          class?: ClassValue;
         }
-      : { readonly className?: ClassValue; readonly class?: ClassValue }
+      : { className?: ClassValue; class?: ClassValue }
   : Component extends VariantFunction<infer T>
     ? Omit<ConfigVariants<IfNever<T, Record<string, never>, T>>, OmitKeys> & {
-        readonly className?: ClassValue;
-        readonly class?: ClassValue;
+        className?: ClassValue;
+        class?: ClassValue;
       }
     : never;
 
@@ -147,8 +147,8 @@ export type ConfigVariants<T extends ConfigSchema> = {
     ? boolean | StringToBoolean<keyof T[Variant]>
     : StringToBoolean<keyof T[Variant]>;
 } & {
-  readonly className?: ClassValue;
-  readonly class?: ClassValue;
+  className?: ClassValue;
+  class?: ClassValue;
 };
 
 /**
@@ -172,8 +172,8 @@ export type CompoundVariant<T extends ConfigSchema> = Partial<{
     ? boolean | StringToBoolean<keyof T[Variant]>
     : StringToBoolean<keyof T[Variant]>;
 }> & {
-  readonly className?: ClassValue;
-  readonly class?: ClassValue;
+  className?: ClassValue;
+  class?: ClassValue;
 };
 
 export type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchema> = Partial<{
@@ -181,21 +181,21 @@ export type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchem
     ? boolean | StringToBoolean<keyof T[Variant]>
     : StringToBoolean<keyof T[Variant]>;
 }> & {
-  readonly className?: ClassValue | SlotProps<S>;
-  readonly class?: ClassValue | SlotProps<S>;
+  className?: ClassValue | SlotProps<S>;
+  class?: ClassValue | SlotProps<S>;
 };
 
 export type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> =
   T extends Record<string, never>
     ? {
         readonly slots: readonly (keyof S)[];
-        readonly className?: ClassValue;
-        readonly class?: ClassValue;
+        className?: ClassValue;
+        class?: ClassValue;
       }
     : {
         readonly slots: readonly (keyof S)[];
-        readonly className?: ClassValue;
-        readonly class?: ClassValue;
+        className?: ClassValue;
+        class?: ClassValue;
       } & {
         readonly [K in keyof T]?: IsBooleanVariant<T[K]> extends true
           ? boolean | StringToBoolean<keyof T[K]>
@@ -230,8 +230,8 @@ export type SlotFunction<T extends ConfigSchema> = (
 export type SlotFunctionProps<T extends ConfigSchema> = {
   readonly [K in keyof ConfigVariants<T>]?: ConfigVariants<T>[K];
 } & {
-  readonly className?: ClassValue;
-  readonly class?: ClassValue;
+  className?: ClassValue;
+  class?: ClassValue;
 };
 
 export type TVReturnType<T extends ConfigSchema, S extends SlotSchema> = keyof S extends never

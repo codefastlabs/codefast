@@ -7,13 +7,19 @@
  *
  */
 
-import type { ClassValue } from "clsx";
 import type { ConfigExtension } from "tailwind-merge";
 
 import { clsx } from "clsx";
 import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
-import type { Config, ConfigSchema, ConfigWithSlots, ExtendedConfig, SlotSchema } from "@/types";
+import type {
+  ClassValue,
+  Config,
+  ConfigSchema,
+  ConfigWithSlots,
+  ExtendedConfig,
+  SlotSchema,
+} from "@/types";
 
 /**
  * Optimized class concatenation using clsx.
