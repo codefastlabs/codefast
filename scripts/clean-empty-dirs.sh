@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Script to clean empty directories in packages folder
+# Script to recursively clean empty directories in the entire project
+# This version can handle nested empty directories in a single run
 # Usage: ./scripts/clean-empty-dirs.sh [--dry-run] [--include-node-modules] [--force]
 
 set -e
@@ -16,14 +17,15 @@ NC='\033[0m' # No Color
 DRY_RUN=false
 EXCLUDE_NODE_MODULES=true
 FORCE=false
-PACKAGES_DIR="packages"
+PROJECT_ROOT="."
 
 # Function to display usage
 usage() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
-    echo "Clean empty directories in the packages folder"
-    echo "Note: node_modules directories are excluded by default"
+    echo "Recursively clean empty directories in the entire project"
+    echo "This version can handle nested empty directories in a single run"
+    echo "Note: node_modules, .git, dist, coverage, and other build directories are excluded by default"
     echo ""
     echo "OPTIONS:"
     echo "  --dry-run              Show what would be deleted without actually deleting"
@@ -32,9 +34,9 @@ usage() {
     echo "  --help                 Show this help message"
     echo ""
     echo "Examples:"
-    echo "  $0                     Interactive mode with confirmation (excludes node_modules)"
-    echo "  $0 --dry-run           Preview what would be deleted (excludes node_modules)"
-    echo "  $0 --force             Delete without confirmation (excludes node_modules)"
+    echo "  $0                     Interactive mode with confirmation (excludes build dirs)"
+    echo "  $0 --dry-run           Preview what would be deleted (excludes build dirs)"
+    echo "  $0 --force             Delete without confirmation (excludes build dirs)"
     echo "  $0 --include-node-modules --dry-run  Preview including node_modules"
 }
 
@@ -65,89 +67,163 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Check if packages directory exists
-if [[ ! -d "$PACKAGES_DIR" ]]; then
-    echo -e "${RED}✗ $PACKAGES_DIR directory not found!${NC}"
+# Check if we're in a project root (look for package.json)
+if [[ ! -f "package.json" ]]; then
+    echo -e "${RED}✗ package.json not found!${NC}"
     echo "Make sure you're running this script from the project root."
     exit 1
 fi
 
-echo -e "${BLUE}🧹 Cleaning empty directories in $PACKAGES_DIR${NC}"
+echo -e "${BLUE}🧹 Recursively cleaning empty directories in the entire project${NC}"
 echo ""
 
-# Build find command
-FIND_CMD="find $PACKAGES_DIR -type d -empty"
+# Function to recursively find and delete empty directories
+clean_empty_dirs_recursive() {
+    local deleted_count=0
+    local iteration=1
+    local found_any=false
+    local confirmed=false
+    
+    while true; do
+        # Build find command with exclusions for common build/cache directories
+        FIND_CMD="find $PROJECT_ROOT -type d -empty"
+        
+        # Always exclude common directories that should not be deleted
+        EXCLUDED_PATHS=(
+            ".git"
+            "dist"
+            "coverage"
+            ".next"
+            ".turbo"
+            "build"
+            ".cache"
+            ".parcel-cache"
+            ".eslintcache"
+        )
+        
+        # Add exclusions for common directories
+        for path in "${EXCLUDED_PATHS[@]}"; do
+            FIND_CMD="$FIND_CMD -not -path '*/$path/*' -not -name '$path'"
+        done
+        
+        # Handle node_modules inclusion/exclusion
+        if [[ "$EXCLUDE_NODE_MODULES" == true ]]; then
+            FIND_CMD="$FIND_CMD -not -path '*/node_modules/*'"
+        fi
+        
+        # Find empty directories
+        EMPTY_DIRS=$(eval $FIND_CMD)
+        
+        if [[ -z "$EMPTY_DIRS" ]]; then
+            break
+        fi
+        
+        found_any=true
+        
+        # Count empty directories
+        DIR_COUNT=$(echo "$EMPTY_DIRS" | wc -l | tr -d ' ')
+        
+        if [[ "$iteration" == 1 ]]; then
+            echo -e "${YELLOW}Iteration $iteration: Found $DIR_COUNT empty directories${NC}"
+        else
+            echo -e "${YELLOW}Iteration $iteration: Found $DIR_COUNT more empty directories${NC}"
+        fi
+        
+        # Display the directories that will be deleted
+        echo "$EMPTY_DIRS" | while read -r dir; do
+            echo -e "  ${RED}⌫ $dir${NC}"
+        done
+        
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "${BLUE}⌕ Dry run mode - no directories were deleted${NC}"
+            echo -e "${BLUE}Run without --dry-run to actually delete these directories${NC}"
+            return 0
+        fi
+        
+        # Confirmation prompt (only once, unless --force is used)
+        if [[ "$FORCE" != true && "$confirmed" == false ]]; then
+            echo ""
+            echo -e "${YELLOW}! This will permanently delete empty directories recursively.${NC}"
+            read -p "Do you want to continue? (y/N): " -n 1 -r
+            echo ""
+            
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                echo -e "${BLUE}Operation cancelled.${NC}"
+                return 0
+            fi
+            confirmed=true
+        fi
+        
+        # Delete empty directories
+        echo -e "${BLUE}⌫ Deleting empty directories...${NC}"
+        
+        echo "$EMPTY_DIRS" | while read -r dir; do
+            if [[ -d "$dir" ]]; then
+                if rmdir "$dir" 2>/dev/null; then
+                    echo -e "  ${GREEN}✓ Deleted: $dir${NC}"
+                    ((deleted_count++))
+                else
+                    echo -e "  ${RED}✗ Failed to delete: $dir${NC}"
+                fi
+            fi
+        done
+        
+        ((iteration++))
+        echo ""
+    done
+    
+    if [[ "$found_any" == false ]]; then
+        echo -e "${GREEN}✓ No empty directories found in the project${NC}"
+        return 0
+    fi
+    
+    return 1
+}
 
-# Handle node_modules inclusion/exclusion
+# Handle node_modules inclusion/exclusion message
 if [[ "$EXCLUDE_NODE_MODULES" == true ]]; then
-    FIND_CMD="$FIND_CMD -not -path '*/node_modules/*'"
-    echo -e "${YELLOW}i Excluding node_modules directories (default behavior)${NC}"
+    echo -e "${YELLOW}i Excluding node_modules and build directories (default behavior)${NC}"
 else
     echo -e "${YELLOW}i Including node_modules directories${NC}"
 fi
 
-# Find empty directories
-EMPTY_DIRS=$(eval $FIND_CMD)
+# Run the recursive cleanup
+clean_empty_dirs_recursive
+RESULT=$?
 
-if [[ -z "$EMPTY_DIRS" ]]; then
-    echo -e "${GREEN}✓ No empty directories found in $PACKAGES_DIR${NC}"
+if [[ "$RESULT" == 0 ]]; then
     exit 0
 fi
 
-# Count empty directories
-DIR_COUNT=$(echo "$EMPTY_DIRS" | wc -l | tr -d ' ')
-
-echo -e "${YELLOW}Found $DIR_COUNT empty directories:${NC}"
+# If we reach here, cleanup was successful
 echo ""
+echo -e "${GREEN}★ Recursive cleanup completed!${NC}"
 
-# Display the directories that will be deleted
-echo "$EMPTY_DIRS" | while read -r dir; do
-    echo -e "  ${RED}⌫ $dir${NC}"
+# Final check for any remaining empty directories
+FIND_CMD="find $PROJECT_ROOT -type d -empty"
+EXCLUDED_PATHS=(
+    ".git"
+    "dist"
+    "coverage"
+    ".next"
+    ".turbo"
+    "build"
+    ".cache"
+    ".parcel-cache"
+    ".eslintcache"
+)
+
+for path in "${EXCLUDED_PATHS[@]}"; do
+    FIND_CMD="$FIND_CMD -not -path '*/$path/*' -not -name '$path'"
 done
 
-echo ""
-
-if [[ "$DRY_RUN" == true ]]; then
-    echo -e "${BLUE}⌕ Dry run mode - no directories were deleted${NC}"
-    echo -e "${BLUE}Run without --dry-run to actually delete these directories${NC}"
-    exit 0
+if [[ "$EXCLUDE_NODE_MODULES" == true ]]; then
+    FIND_CMD="$FIND_CMD -not -path '*/node_modules/*'"
 fi
 
-# Confirmation prompt (unless --force is used)
-if [[ "$FORCE" != true ]]; then
-    echo -e "${YELLOW}! This will permanently delete $DIR_COUNT empty directories.${NC}"
-    read -p "Do you want to continue? (y/N): " -n 1 -r
-    echo ""
-
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "${BLUE}Operation cancelled.${NC}"
-        exit 0
-    fi
-fi
-
-# Delete empty directories
-echo -e "${BLUE}⌫ Deleting empty directories...${NC}"
-DELETED_COUNT=0
-
-echo "$EMPTY_DIRS" | while read -r dir; do
-    if [[ -d "$dir" ]]; then
-        if rmdir "$dir" 2>/dev/null; then
-            echo -e "  ${GREEN}✓ Deleted: $dir${NC}"
-            ((DELETED_COUNT++))
-        else
-            echo -e "  ${RED}✗ Failed to delete: $dir${NC}"
-        fi
-    fi
-done
-
-# Final summary
-echo ""
-echo -e "${GREEN}★ Cleanup completed!${NC}"
-
-# Re-check for any remaining empty directories
 REMAINING_DIRS=$(eval $FIND_CMD)
 if [[ -z "$REMAINING_DIRS" ]]; then
-    echo -e "${GREEN}✓ All empty directories have been removed from $PACKAGES_DIR${NC}"
+    echo -e "${GREEN}✓ All empty directories have been removed from the project${NC}"
 else
     REMAINING_COUNT=$(echo "$REMAINING_DIRS" | wc -l | tr -d ' ')
     echo -e "${YELLOW}i $REMAINING_COUNT directories could not be deleted (may contain hidden files)${NC}"

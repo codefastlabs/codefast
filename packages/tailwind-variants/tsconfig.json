@@ -1,11 +1,10 @@
 {
-  "extends": "@codefast/typescript-config/react.json",
+  "extends": "@codefast/typescript-config/library.json",
   "compilerOptions": {
     "outDir": "dist",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "~/*": ["./tests/*"]
     },
     "types": ["jest", "node"]
   },
