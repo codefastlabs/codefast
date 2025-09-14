@@ -29,14 +29,7 @@ import type {
 import { applyCompoundSlots, applyCompoundVariants } from "@/compound";
 import { mergeConfigs } from "@/config";
 import { createSlotFunctions } from "@/slots";
-import {
-  createTailwindMerge,
-  cx,
-  hasExtend,
-  hasSlots,
-  isBooleanValue,
-  isBooleanVariant,
-} from "@/utils";
+import { createTailwindMerge, cx, hasExtend, hasSlots, isBooleanVariant } from "@/utils";
 
 /**
  * Handles regular variants without slots.
@@ -98,11 +91,11 @@ const handleRegularVariants = <T extends ConfigSchema>(
 
     // Determine the value to use for this variant
     if (value !== undefined) {
-      valueToUse = isBooleanValue(value) ? String(value) : String(value);
+      valueToUse = String(value);
     } else if (mergedDefaultVariants[key] !== undefined) {
       const defaultValue = mergedDefaultVariants[key];
 
-      valueToUse = isBooleanValue(defaultValue) ? String(defaultValue) : String(defaultValue);
+      valueToUse = String(defaultValue);
     } else if (isBooleanVariant(group)) {
       // For boolean variants without an explicit default, use false
       valueToUse = "false";

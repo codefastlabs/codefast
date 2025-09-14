@@ -17,7 +17,7 @@ import type {
   SlotSchema,
 } from "@/types";
 
-import { cx, isBooleanValue, isBooleanVariant, isSlotObject } from "@/utils";
+import { cx, isBooleanVariant, isSlotObject } from "@/utils";
 
 /**
  * Resolves classes for a specific slot with optimized variant processing.
@@ -73,11 +73,11 @@ export const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>
 
       // Determine the value to use for this variant
       if (value !== undefined) {
-        valueToUse = isBooleanValue(value) ? String(value) : String(value);
+        valueToUse = String(value);
       } else if (defaultVariants[key] !== undefined) {
         const defaultValue = defaultVariants[key];
 
-        valueToUse = isBooleanValue(defaultValue) ? String(defaultValue) : String(defaultValue);
+        valueToUse = String(defaultValue);
       } else if (isBooleanVariant(group)) {
         // For boolean variants without explicit value, default to false
         valueToUse = "false";
