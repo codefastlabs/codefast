@@ -44,7 +44,6 @@ describe("Tailwind Variants (TV) - Slots", () => {
       },
     });
 
-    // with default values
     const { base, item, list, title, wrapper } = menu();
 
     expect(base()).toHaveClassName([
@@ -128,10 +127,8 @@ describe("Tailwind Variants (TV) - Slots", () => {
       },
     });
 
-    // with default values
     const { base, item, list, title, wrapper } = menu();
 
-    // base
     expect(base({ class: "text-lg" })).toHaveClassName([
       "font-bold",
       "underline",
@@ -144,13 +141,10 @@ describe("Tailwind Variants (TV) - Slots", () => {
       "bg-blue-500",
       "text-lg",
     ]);
-    // title
     expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
     expect(title({ class: "text-2xl" })).toHaveClassName(["text-2xl"]);
-    // item
     expect(item({ class: "text-sm" })).toHaveClassName(["text-sm", "opacity-100"]);
     expect(list({ class: "bg-blue-50" })).toHaveClassName(["list-none", "bg-blue-50"]);
-    // list
     expect(wrapper({ class: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
     expect(wrapper({ class: "flex-row" })).toHaveClassName(["flex", "flex-row"]);
   });

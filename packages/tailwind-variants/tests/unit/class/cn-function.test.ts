@@ -92,7 +92,6 @@ describe("cn function from createTV", () => {
 
   test("should handle mixed conditional and static classes", () => {
     const { cn: cnWithMerge } = createTV({ twMerge: true });
-    // Use fixed values to make test deterministic
     const isLarge = true;
     const isBlue = false;
 
@@ -106,7 +105,6 @@ describe("cn function from createTV", () => {
       "text-xl",
     );
 
-    // text-lg and text-xl conflict, so text-lg should be overridden
     expect(result).toBe("base-class text-red-500 text-xl");
   });
 });
