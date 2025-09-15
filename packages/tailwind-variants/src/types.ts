@@ -1,11 +1,15 @@
 import type { ClassValue } from "clsx";
 import type { ConfigExtension } from "tailwind-merge";
 
-export type StringToBoolean<T> = T extends "false" | "true" ? boolean : T extends boolean ? T : T;
+export type StringToBooleanType<T> = T extends "false" | "true"
+  ? boolean
+  : T extends boolean
+    ? T
+    : T;
 
-export type IfNever<T, Then, Else> = [T] extends [never] ? Then : Else;
+export type ConditionalType<T, Then, Else> = [T] extends [never] ? Then : Else;
 
-export type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends keyof T
+export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" extends keyof T
   ? true
   : "false" extends keyof T
     ? true
@@ -14,8 +18,8 @@ export type IsBooleanVariant<T extends Record<string, unknown>> = "true" extends
 export type VariantProps<Component, OmitKeys extends string = never> = Component extends (
   props?: infer P,
 ) => unknown
-  ? P extends ConfigVariants<infer T>
-    ? Omit<ConfigVariants<IfNever<T, Record<string, never>, T>>, OmitKeys> & {
+  ? P extends ConfigurationVariants<infer T>
+    ? Omit<ConfigurationVariants<ConditionalType<T, Record<string, never>, T>>, OmitKeys> & {
         className?: ClassValue;
         class?: ClassValue;
       }
@@ -25,49 +29,52 @@ export type VariantProps<Component, OmitKeys extends string = never> = Component
           class?: ClassValue;
         }
       : { className?: ClassValue; class?: ClassValue }
-  : Component extends VariantFunction<infer T>
-    ? Omit<ConfigVariants<IfNever<T, Record<string, never>, T>>, OmitKeys> & {
+  : Component extends VariantFunctionType<infer T>
+    ? Omit<ConfigurationVariants<ConditionalType<T, Record<string, never>, T>>, OmitKeys> & {
         className?: ClassValue;
         class?: ClassValue;
       }
     : never;
 
-export type ConfigSchema = Record<string, Record<string, ClassValue>>;
+export type ConfigurationSchema = Record<string, Record<string, ClassValue>>;
 
-export type SlotSchema = Record<string, ClassValue>;
+export type SlotConfigurationSchema = Record<string, ClassValue>;
 
-export type ConfigVariants<T extends ConfigSchema> = {
-  readonly [Variant in keyof T]?: IsBooleanVariant<T[Variant]> extends true
-    ? boolean | StringToBoolean<keyof T[Variant]>
-    : StringToBoolean<keyof T[Variant]>;
+export type ConfigurationVariants<T extends ConfigurationSchema> = {
+  readonly [Variant in keyof T]?: BooleanVariantChecker<T[Variant]> extends true
+    ? boolean | StringToBooleanType<keyof T[Variant]>
+    : StringToBooleanType<keyof T[Variant]>;
 } & {
   className?: ClassValue;
   class?: ClassValue;
 };
 
-export type SlotProps<S extends SlotSchema> = {
+export type SlotProperties<S extends SlotConfigurationSchema> = {
   readonly [Slot in keyof S]?: ClassValue;
 };
 
-export type CompoundVariant<T extends ConfigSchema> = Partial<{
-  readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
-    ? boolean | StringToBoolean<keyof T[Variant]>
-    : StringToBoolean<keyof T[Variant]>;
+export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
+  readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
+    ? boolean | StringToBooleanType<keyof T[Variant]>
+    : StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue;
   class?: ClassValue;
 };
 
-export type CompoundVariantWithSlots<T extends ConfigSchema, S extends SlotSchema> = Partial<{
-  readonly [Variant in keyof T]: IsBooleanVariant<T[Variant]> extends true
-    ? boolean | StringToBoolean<keyof T[Variant]>
-    : StringToBoolean<keyof T[Variant]>;
+export type CompoundVariantWithSlotsType<
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+> = Partial<{
+  readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
+    ? boolean | StringToBooleanType<keyof T[Variant]>
+    : StringToBooleanType<keyof T[Variant]>;
 }> & {
-  className?: ClassValue | SlotProps<S>;
-  class?: ClassValue | SlotProps<S>;
+  className?: ClassValue | SlotProperties<S>;
+  class?: ClassValue | SlotProperties<S>;
 };
 
-export type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> =
+export type CompoundSlotType<T extends ConfigurationSchema, S extends SlotConfigurationSchema> =
   T extends Record<string, never>
     ? {
         readonly slots: readonly (keyof S)[];
@@ -79,114 +86,127 @@ export type CompoundSlot<T extends ConfigSchema, S extends SlotSchema> =
         className?: ClassValue;
         class?: ClassValue;
       } & {
-        readonly [K in keyof T]?: IsBooleanVariant<T[K]> extends true
-          ? boolean | StringToBoolean<keyof T[K]>
-          : StringToBoolean<keyof T[K]>;
+        readonly [K in keyof T]?: BooleanVariantChecker<T[K]> extends true
+          ? boolean | StringToBooleanType<keyof T[K]>
+          : StringToBooleanType<keyof T[K]>;
       };
 
-export interface Config<T extends ConfigSchema> {
+export interface Configuration<T extends ConfigurationSchema> {
   readonly base?: ClassValue;
-  readonly compoundVariants?: readonly CompoundVariant<T>[];
-  readonly defaultVariants?: ConfigVariants<T>;
+  readonly compoundVariants?: readonly CompoundVariantType<T>[];
+  readonly defaultVariants?: ConfigurationVariants<T>;
   readonly variants?: T;
 }
 
-export interface ConfigWithSlots<T extends ConfigSchema, S extends SlotSchema> {
+export interface ConfigurationWithSlots<
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+> {
   readonly base?: ClassValue;
-  readonly compoundSlots?: readonly CompoundSlot<T, S>[];
-  readonly compoundVariants?: readonly CompoundVariantWithSlots<T, S>[];
-  readonly defaultVariants?: ConfigVariants<T>;
+  readonly compoundSlots?: readonly CompoundSlotType<T, S>[];
+  readonly compoundVariants?: readonly CompoundVariantWithSlotsType<T, S>[];
+  readonly defaultVariants?: ConfigurationVariants<T>;
   readonly slots?: S;
   readonly variants?: T;
 }
 
-export interface TVConfig {
+export interface TailwindVariantsConfiguration {
   readonly twMerge?: boolean;
   readonly twMergeConfig?: ConfigExtension<string, string>;
 }
 
-export type SlotFunction<T extends ConfigSchema> = (
-  props?: ConfigVariants<T>,
+export type SlotFunctionType<T extends ConfigurationSchema> = (
+  props?: ConfigurationVariants<T>,
 ) => string | undefined;
 
-export type SlotFunctionProps<T extends ConfigSchema> = {
-  readonly [K in keyof ConfigVariants<T>]?: ConfigVariants<T>[K];
+export type SlotFunctionProperties<T extends ConfigurationSchema> = {
+  readonly [K in keyof ConfigurationVariants<T>]?: ConfigurationVariants<T>[K];
 } & {
   className?: ClassValue;
   class?: ClassValue;
 };
 
-export type TVReturnType<T extends ConfigSchema, S extends SlotSchema> = keyof S extends never
-  ? SlotFunction<T>
+export type TailwindVariantsReturnType<
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+> = keyof S extends never
+  ? SlotFunctionType<T>
   : {
-      readonly [K in keyof S]: SlotFunction<T>;
+      readonly [K in keyof S]: SlotFunctionType<T>;
     } & {
-      readonly base: SlotFunction<T>;
+      readonly base: SlotFunctionType<T>;
     };
 
-export interface VariantFunction<T extends ConfigSchema, S extends SlotSchema = SlotSchema> {
-  config: Config<T> | ConfigWithSlots<T, S>;
+export interface VariantFunctionType<
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema = SlotConfigurationSchema,
+> {
+  config: Configuration<T> | ConfigurationWithSlots<T, S>;
 
   (
-    props?: ConfigVariants<T>,
-  ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
+    props?: ConfigurationVariants<T>,
+  ): S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S>;
 }
 
-export interface TVFactory {
-  <T extends ConfigSchema>(
-    config: Config<T>,
-    localConfig?: TVConfig,
-  ): VariantFunction<T, Record<string, never>>;
+export interface TailwindVariantsFactory {
+  <T extends ConfigurationSchema>(
+    config: Configuration<T>,
+    localConfig?: TailwindVariantsConfiguration,
+  ): VariantFunctionType<T, Record<string, never>>;
 
-  <S extends SlotSchema>(
-    config: ConfigWithSlots<Record<string, never>, S>,
-    localConfig?: TVConfig,
-  ): VariantFunction<Record<string, never>, S>;
+  <S extends SlotConfigurationSchema>(
+    config: ConfigurationWithSlots<Record<string, never>, S>,
+    localConfig?: TailwindVariantsConfiguration,
+  ): VariantFunctionType<Record<string, never>, S>;
 
-  <T extends ConfigSchema, S extends SlotSchema>(
-    config: ConfigWithSlots<T, S>,
-    localConfig?: TVConfig,
-  ): VariantFunction<T, S>;
+  <T extends ConfigurationSchema, S extends SlotConfigurationSchema>(
+    config: ConfigurationWithSlots<T, S>,
+    localConfig?: TailwindVariantsConfiguration,
+  ): VariantFunctionType<T, S>;
 
   <
-    TBase extends ConfigSchema,
-    TExtension extends ConfigSchema,
-    SBase extends SlotSchema,
-    SExtension extends SlotSchema,
+    TBase extends ConfigurationSchema,
+    TExtension extends ConfigurationSchema,
+    SBase extends SlotConfigurationSchema,
+    SExtension extends SlotConfigurationSchema,
   >(
-    config: ExtendedConfig<TBase, TExtension, SBase, SExtension>,
-    localConfig?: TVConfig,
-  ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
+    config: ExtendedConfiguration<TBase, TExtension, SBase, SExtension>,
+    localConfig?: TailwindVariantsConfiguration,
+  ): VariantFunctionType<MergedSchemas<TBase, TExtension>, MergedSlotSchemas<SBase, SExtension>>;
 }
 
-export interface TVFactoryResult {
+export interface TailwindVariantsFactoryResult {
   cn: (...classes: ClassValue[]) => string;
-  tv: TVFactory;
+  tv: TailwindVariantsFactory;
 }
 
-export type MergeSchemas<TBase extends ConfigSchema, TExtension extends ConfigSchema> = TBase &
-  TExtension;
+export type MergedSchemas<
+  TBase extends ConfigurationSchema,
+  TExtension extends ConfigurationSchema,
+> = TBase & TExtension;
 
-export type MergeSlotSchemas<SBase extends SlotSchema, SExtension extends SlotSchema> = SBase &
-  SExtension;
+export type MergedSlotSchemas<
+  SBase extends SlotConfigurationSchema,
+  SExtension extends SlotConfigurationSchema,
+> = SBase & SExtension;
 
-export interface ExtendedConfig<
-  TBase extends ConfigSchema,
-  TExtension extends ConfigSchema,
-  SBase extends SlotSchema,
-  SExtension extends SlotSchema,
+export interface ExtendedConfiguration<
+  TBase extends ConfigurationSchema,
+  TExtension extends ConfigurationSchema,
+  SBase extends SlotConfigurationSchema,
+  SExtension extends SlotConfigurationSchema,
 > {
   readonly base?: ClassValue;
-  readonly compoundSlots?: readonly CompoundSlot<
-    MergeSchemas<TBase, TExtension>,
-    MergeSlotSchemas<SBase, SExtension>
+  readonly compoundSlots?: readonly CompoundSlotType<
+    MergedSchemas<TBase, TExtension>,
+    MergedSlotSchemas<SBase, SExtension>
   >[];
-  readonly compoundVariants?: readonly CompoundVariantWithSlots<
-    MergeSchemas<TBase, TExtension>,
-    MergeSlotSchemas<SBase, SExtension>
+  readonly compoundVariants?: readonly CompoundVariantWithSlotsType<
+    MergedSchemas<TBase, TExtension>,
+    MergedSlotSchemas<SBase, SExtension>
   >[];
-  readonly defaultVariants?: ConfigVariants<MergeSchemas<TBase, TExtension>>;
-  readonly extend?: VariantFunction<TBase, SBase>;
+  readonly defaultVariants?: ConfigurationVariants<MergedSchemas<TBase, TExtension>>;
+  readonly extend?: VariantFunctionType<TBase, SBase>;
   readonly slots?: SExtension;
   readonly variants?: TExtension;
 }

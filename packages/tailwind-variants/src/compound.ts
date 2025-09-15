@@ -1,18 +1,18 @@
 import type {
   ClassValue,
-  CompoundSlot,
-  CompoundVariant,
-  ConfigSchema,
-  ConfigVariants,
-  SlotSchema,
+  CompoundSlotType,
+  CompoundVariantType,
+  ConfigurationSchema,
+  ConfigurationVariants,
+  SlotConfigurationSchema,
 } from "@/types";
 
 import { isBooleanValueType } from "@/utils";
 
-export const applyCompoundVariantClasses = <T extends ConfigSchema>(
-  compoundVariantGroups: readonly CompoundVariant<T>[],
-  variantProps: ConfigVariants<T>,
-  defaultVariantProps: ConfigVariants<T>,
+export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
+  compoundVariantGroups: readonly CompoundVariantType<T>[],
+  variantProps: ConfigurationVariants<T>,
+  defaultVariantProps: ConfigurationVariants<T>,
 ): ClassValue[] => {
   const mergedProps = { ...defaultVariantProps, ...variantProps };
   const resolvedClasses: ClassValue[] = [];
@@ -51,10 +51,13 @@ export const applyCompoundVariantClasses = <T extends ConfigSchema>(
   return resolvedClasses;
 };
 
-export const applyCompoundSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
-  compoundSlotDefinitions: readonly CompoundSlot<T, S>[] | undefined,
-  variantProps: ConfigVariants<T>,
-  defaultVariantProps: ConfigVariants<T>,
+export const applyCompoundSlotClasses = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
+  compoundSlotDefinitions: readonly CompoundSlotType<T, S>[] | undefined,
+  variantProps: ConfigurationVariants<T>,
+  defaultVariantProps: ConfigurationVariants<T>,
 ): Partial<Record<keyof S, ClassValue[]>> => {
   if (!compoundSlotDefinitions?.length) {
     return {} as Partial<Record<keyof S, ClassValue[]>>;
@@ -68,7 +71,7 @@ export const applyCompoundSlotClasses = <T extends ConfigSchema, S extends SlotS
 
     const compoundEntries = Object.entries(compoundSlot).filter(
       ([key]) => key !== "className" && key !== "class" && key !== "slots",
-    ) as [keyof T, T[keyof T][keyof T[keyof T]]][];
+    );
 
     for (const [compoundKey, compoundValue] of compoundEntries) {
       const propertyValue = mergedProps[compoundKey];

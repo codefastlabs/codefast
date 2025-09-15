@@ -1,11 +1,11 @@
 import type {
   ClassValue,
-  CompoundSlot,
-  Config,
-  ConfigSchema,
-  ConfigWithSlots,
-  ExtendedConfig,
-  SlotSchema,
+  CompoundSlotType,
+  Configuration,
+  ConfigurationSchema,
+  ConfigurationWithSlots,
+  ExtendedConfiguration,
+  SlotConfigurationSchema,
 } from "@/types";
 
 import { cx, hasExtensionConfiguration, hasSlotConfiguration, isSlotObjectType } from "@/utils";
@@ -35,12 +35,21 @@ export const mergeVariantGroups = (
 };
 
 export const mergeConfigurationSchemas = (
-  baseConfiguration: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
+  baseConfiguration:
+    | Configuration<ConfigurationSchema>
+    | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>,
   extensionConfiguration:
-    | Config<ConfigSchema>
-    | ConfigWithSlots<ConfigSchema, SlotSchema>
-    | ExtendedConfig<ConfigSchema, ConfigSchema, SlotSchema, SlotSchema>,
-): Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema> => {
+    | Configuration<ConfigurationSchema>
+    | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>
+    | ExtendedConfiguration<
+        ConfigurationSchema,
+        ConfigurationSchema,
+        SlotConfigurationSchema,
+        SlotConfigurationSchema
+      >,
+):
+  | Configuration<ConfigurationSchema>
+  | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> => {
   const resolvedBaseConfiguration =
     hasExtensionConfiguration(baseConfiguration) && baseConfiguration.extend
       ? mergeConfigurationSchemas(baseConfiguration.extend.config, baseConfiguration)
@@ -52,7 +61,7 @@ export const mergeConfigurationSchemas = (
       : extensionConfiguration.base
     : resolvedBaseConfiguration.base;
 
-  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants } as ConfigSchema;
+  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants } as ConfigurationSchema;
 
   if (extensionConfiguration.variants) {
     const extensionKeys = Object.keys(extensionConfiguration.variants);
@@ -78,21 +87,27 @@ export const mergeConfigurationSchemas = (
   const hasSlotConfigurationResult = Object.keys(mergedSlotDefinitions).length > 0;
 
   if (hasSlotConfigurationResult) {
-    const baseCompoundSlotDefinitions: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
+    const baseCompoundSlotDefinitions: readonly CompoundSlotType<
+      ConfigurationSchema,
+      SlotConfigurationSchema
+    >[] =
       hasSlotConfiguration(resolvedBaseConfiguration) &&
       Array.isArray(resolvedBaseConfiguration.compoundSlots)
-        ? (resolvedBaseConfiguration.compoundSlots as readonly CompoundSlot<
-            ConfigSchema,
-            SlotSchema
+        ? (resolvedBaseConfiguration.compoundSlots as readonly CompoundSlotType<
+            ConfigurationSchema,
+            SlotConfigurationSchema
           >[])
         : [];
 
-    const extensionCompoundSlotDefinitions: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
+    const extensionCompoundSlotDefinitions: readonly CompoundSlotType<
+      ConfigurationSchema,
+      SlotConfigurationSchema
+    >[] =
       hasSlotConfiguration(extensionConfiguration) &&
       Array.isArray(extensionConfiguration.compoundSlots)
-        ? (extensionConfiguration.compoundSlots as readonly CompoundSlot<
-            ConfigSchema,
-            SlotSchema
+        ? (extensionConfiguration.compoundSlots as readonly CompoundSlotType<
+            ConfigurationSchema,
+            SlotConfigurationSchema
           >[])
         : [];
 

@@ -5,11 +5,11 @@ import { extendTailwindMerge, twMerge } from "tailwind-merge";
 
 import type {
   ClassValue,
-  Config,
-  ConfigSchema,
-  ConfigWithSlots,
-  ExtendedConfig,
-  SlotSchema,
+  Configuration,
+  ConfigurationSchema,
+  ConfigurationWithSlots,
+  ExtendedConfiguration,
+  SlotConfigurationSchema,
 } from "@/types";
 
 export const cx = (...classes: ClassValue[]): string => {
@@ -40,14 +40,23 @@ export const isBooleanValueType = (value: unknown): value is boolean => {
   return typeof value === "boolean";
 };
 
-export const hasSlotConfiguration = <T extends ConfigSchema, S extends SlotSchema>(
-  configuration: Config<T> | ConfigWithSlots<T, S>,
-): configuration is ConfigWithSlots<T, S> => {
+export const hasSlotConfiguration = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
+  configuration: Configuration<T> | ConfigurationWithSlots<T, S>,
+): configuration is ConfigurationWithSlots<T, S> => {
   return "slots" in configuration && configuration.slots !== undefined;
 };
 
-export const hasExtensionConfiguration = <T extends ConfigSchema, S extends SlotSchema>(
-  configuration: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
-): configuration is ExtendedConfig<ConfigSchema, T, SlotSchema, S> => {
+export const hasExtensionConfiguration = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
+  configuration:
+    | Configuration<T>
+    | ConfigurationWithSlots<T, S>
+    | ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S>,
+): configuration is ExtendedConfiguration<ConfigurationSchema, T, SlotConfigurationSchema, S> => {
   return "extend" in configuration && configuration.extend !== undefined;
 };

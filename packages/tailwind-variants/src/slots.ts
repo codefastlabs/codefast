@@ -1,22 +1,25 @@
 import type {
   ClassValue,
-  CompoundVariantWithSlots,
-  ConfigSchema,
-  ConfigVariants,
-  SlotFunction,
-  SlotFunctionProps,
-  SlotSchema,
+  CompoundVariantWithSlotsType,
+  ConfigurationSchema,
+  ConfigurationVariants,
+  SlotConfigurationSchema,
+  SlotFunctionProperties,
+  SlotFunctionType,
 } from "@/types";
 
 import { cx, isBooleanVariantType, isSlotObjectType } from "@/utils";
 
-export const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
+export const resolveSlotClasses = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
   targetSlotKey: keyof S,
   baseSlotClasses: ClassValue,
   variantGroups: T | undefined,
-  variantProps: ConfigVariants<T>,
-  defaultVariantProps: ConfigVariants<T>,
-  compoundVariantGroups: readonly CompoundVariantWithSlots<T, S>[] | undefined,
+  variantProps: ConfigurationVariants<T>,
+  defaultVariantProps: ConfigurationVariants<T>,
+  compoundVariantGroups: readonly CompoundVariantWithSlotsType<T, S>[] | undefined,
   compoundSlotClasses: ClassValue[],
 ): ClassValue[] => {
   const resolvedClasses: ClassValue[] = [baseSlotClasses];
@@ -97,20 +100,23 @@ export const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>
   return resolvedClasses;
 };
 
-export const createSlotFunctionFactory = <T extends ConfigSchema, S extends SlotSchema>(
+export const createSlotFunctionFactory = <
+  T extends ConfigurationSchema,
+  S extends SlotConfigurationSchema,
+>(
   mergedSlotDefinitions: S,
   mergedBaseClasses: ClassValue | undefined,
   mergedVariantGroups: T,
-  mergedDefaultVariantProps: ConfigVariants<T>,
-  mergedCompoundVariantGroups: readonly CompoundVariantWithSlots<T, S>[] | undefined,
+  mergedDefaultVariantProps: ConfigurationVariants<T>,
+  mergedCompoundVariantGroups: readonly CompoundVariantWithSlotsType<T, S>[] | undefined,
   compoundSlotClasses: Partial<Record<keyof S, ClassValue[]>>,
-  variantProps: ConfigVariants<T>,
+  variantProps: ConfigurationVariants<T>,
   shouldMergeClasses: boolean,
   tailwindMergeService: (classes: string) => string,
-): Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> } => {
-  const slotFunctions = {} as Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> };
+): Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> } => {
+  const slotFunctions = {} as Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> };
 
-  slotFunctions.base = (slotProps: SlotFunctionProps<T> = {}): string | undefined => {
+  slotFunctions.base = (slotProps: SlotFunctionProperties<T> = {}): string | undefined => {
     const baseSlotClass = mergedSlotDefinitions.base ?? mergedBaseClasses;
     const baseClasses = resolveSlotClasses(
       "base",
@@ -135,8 +141,8 @@ export const createSlotFunctionFactory = <T extends ConfigSchema, S extends Slot
 
   for (const slotKey of slotKeys) {
     if (slotKey !== "base") {
-      (slotFunctions as Record<keyof S, SlotFunction<T>>)[slotKey] = (
-        slotProps: SlotFunctionProps<T> = {},
+      (slotFunctions as Record<keyof S, SlotFunctionType<T>>)[slotKey] = (
+        slotProps: SlotFunctionProperties<T> = {},
       ): string | undefined => {
         const slotClasses = resolveSlotClasses(
           slotKey,
