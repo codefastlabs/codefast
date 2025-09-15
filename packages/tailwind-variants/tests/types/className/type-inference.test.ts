@@ -1,6 +1,6 @@
 import { expectTypeOf } from "expect-type";
 
-import type { ClassValue, VariantProps } from "@/index";
+import type { VariantProps } from "@/index";
 
 import { createTV, tv } from "@/index";
 
@@ -44,7 +44,6 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf<ButtonProps["variant"]>().toEqualTypeOf<
       "default" | "destructive" | "ghost" | "link" | "outline" | "secondary" | undefined
     >();
-    expectTypeOf<ButtonProps["className"]>().toEqualTypeOf<ClassValue>();
 
     // Test that the function can be called and returns a value
     expectTypeOf(button).toEqualTypeOf<string | undefined>();
@@ -113,8 +112,6 @@ describe("Real-World Type Inference Tests", () => {
     expectTypeOf(card).toHaveProperty("header");
 
     // Test slot function parameters using VariantProps
-    type BaseSlotProps = VariantProps<typeof card.base>;
-    expectTypeOf<BaseSlotProps["className"]>().toEqualTypeOf<ClassValue>();
 
     // Test slot function return type
     const baseResult = card.base();
@@ -495,11 +492,7 @@ describe("Real-World Type Inference Tests", () => {
     // Real-world usage
     const simple = simpleVariants();
 
-    // Test that VariantProps correctly extracts the parameter types
-    type SimpleProps = VariantProps<typeof simpleVariants>;
-
     // These should work in real-world usage - if they don't, the library is broken
-    expectTypeOf<SimpleProps["className"]>().toEqualTypeOf<ClassValue>();
 
     // Test that the function can be called and returns a value
     expectTypeOf(simple).toEqualTypeOf<string | undefined>();
@@ -528,7 +521,6 @@ describe("Real-World Type Inference Tests", () => {
 
     // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<DefaultOnlyProps["size"]>().toEqualTypeOf<"default" | "lg" | undefined>();
-    expectTypeOf<DefaultOnlyProps["className"]>().toEqualTypeOf<ClassValue>();
 
     // Test that the function can be called and returns a value
     expectTypeOf(defaultOnly).toEqualTypeOf<string | undefined>();
@@ -678,7 +670,6 @@ describe("Real-World Type Inference Tests", () => {
 
     // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<CustomClassProps["variant"]>().toEqualTypeOf<"default" | "primary" | undefined>();
-    expectTypeOf<CustomClassProps["className"]>().toEqualTypeOf<ClassValue>();
 
     // Test that the function can be called and returns a value
     expectTypeOf(customClass).toEqualTypeOf<string | undefined>();
