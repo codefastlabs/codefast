@@ -8,117 +8,117 @@ import type {
   SlotSchema,
 } from "@/types";
 
-import { cx, isBooleanVariant, isSlotObject } from "@/utils";
+import { cx, isBooleanVariantType, isSlotObjectType } from "@/utils";
 
 export const resolveSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
-  slotKey: keyof S,
+  targetSlotKey: keyof S,
   baseSlotClasses: ClassValue,
-  variants: T | undefined,
+  variantGroups: T | undefined,
   variantProps: ConfigVariants<T>,
-  defaultVariants: ConfigVariants<T>,
-  compoundVariants: readonly CompoundVariantWithSlots<T, S>[] | undefined,
+  defaultVariantProps: ConfigVariants<T>,
+  compoundVariantGroups: readonly CompoundVariantWithSlots<T, S>[] | undefined,
   compoundSlotClasses: ClassValue[],
 ): ClassValue[] => {
-  const classes: ClassValue[] = [baseSlotClasses];
-  const props = { ...defaultVariants, ...variantProps };
+  const resolvedClasses: ClassValue[] = [baseSlotClasses];
+  const mergedProps = { ...defaultVariantProps, ...variantProps };
 
-  if (variants) {
-    const keys = Object.keys(variants) as (keyof T)[];
+  if (variantGroups) {
+    const variantKeys = Object.keys(variantGroups) as (keyof T)[];
 
-    for (const key of keys) {
-      const group = variants[key];
-      const value = props[key];
+    for (const variantKey of variantKeys) {
+      const variantGroup = variantGroups[variantKey];
+      const variantValue = mergedProps[variantKey];
 
-      let valueToUse: string | undefined;
+      let resolvedValue: string | undefined;
 
-      if (value !== undefined) {
-        valueToUse = String(value);
-      } else if (defaultVariants[key] !== undefined) {
-        const defaultValue = defaultVariants[key];
+      if (variantValue !== undefined) {
+        resolvedValue = String(variantValue);
+      } else if (defaultVariantProps[variantKey] !== undefined) {
+        const defaultValue = defaultVariantProps[variantKey];
 
-        valueToUse = String(defaultValue);
-      } else if (isBooleanVariant(group)) {
-        valueToUse = "false";
+        resolvedValue = String(defaultValue);
+      } else if (isBooleanVariantType(variantGroup)) {
+        resolvedValue = "false";
       }
 
-      if (valueToUse && valueToUse in group) {
-        const config = group[valueToUse];
+      if (resolvedValue && resolvedValue in variantGroup) {
+        const variantConfiguration = variantGroup[resolvedValue];
 
-        if (config) {
-          if (isSlotObject(config)) {
-            const slotVariant = config[slotKey as string];
+        if (variantConfiguration) {
+          if (isSlotObjectType(variantConfiguration)) {
+            const slotVariantClass = variantConfiguration[targetSlotKey as string];
 
-            if (slotVariant !== undefined) {
-              classes.push(slotVariant);
+            if (slotVariantClass !== undefined) {
+              resolvedClasses.push(slotVariantClass);
             }
-          } else if (slotKey === "base") {
-            classes.push(config);
+          } else if (targetSlotKey === "base") {
+            resolvedClasses.push(variantConfiguration);
           }
         }
       }
     }
   }
 
-  if (compoundVariants?.length) {
-    for (const compound of compoundVariants) {
-      let matches = true;
+  if (compoundVariantGroups?.length) {
+    for (const compoundVariant of compoundVariantGroups) {
+      let isMatching = true;
 
-      const keys = Object.keys(compound) as (keyof typeof compound)[];
+      const compoundKeys = Object.keys(compoundVariant) as (keyof typeof compoundVariant)[];
 
-      for (const key of keys) {
-        if (key === "className" || key === "class") {
+      for (const compoundKey of compoundKeys) {
+        if (compoundKey === "className" || compoundKey === "class") {
           continue;
         }
 
-        if (props[key] !== compound[key]) {
-          matches = false;
+        if (mergedProps[compoundKey] !== compoundVariant[compoundKey]) {
+          isMatching = false;
           break;
         }
       }
 
-      if (matches) {
-        const className = compound.className ?? compound.class;
+      if (isMatching) {
+        const compoundClassName = compoundVariant.className ?? compoundVariant.class;
 
-        if (isSlotObject(className)) {
-          const slotClass = className[slotKey as string];
+        if (isSlotObjectType(compoundClassName)) {
+          const slotClass = compoundClassName[targetSlotKey as string];
 
           if (slotClass !== undefined) {
-            classes.push(slotClass);
+            resolvedClasses.push(slotClass);
           }
-        } else if (slotKey === "base") {
-          classes.push(className);
+        } else if (targetSlotKey === "base") {
+          resolvedClasses.push(compoundClassName);
         }
       }
     }
   }
 
-  classes.push(...compoundSlotClasses);
+  resolvedClasses.push(...compoundSlotClasses);
 
-  return classes;
+  return resolvedClasses;
 };
 
-export const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema>(
-  mergedSlots: S,
-  mergedBase: ClassValue | undefined,
-  mergedVariants: T,
-  mergedDefaultVariants: ConfigVariants<T>,
-  mergedCompoundVariants: readonly CompoundVariantWithSlots<T, S>[] | undefined,
+export const createSlotFunctionFactory = <T extends ConfigSchema, S extends SlotSchema>(
+  mergedSlotDefinitions: S,
+  mergedBaseClasses: ClassValue | undefined,
+  mergedVariantGroups: T,
+  mergedDefaultVariantProps: ConfigVariants<T>,
+  mergedCompoundVariantGroups: readonly CompoundVariantWithSlots<T, S>[] | undefined,
   compoundSlotClasses: Partial<Record<keyof S, ClassValue[]>>,
   variantProps: ConfigVariants<T>,
-  shouldMerge: boolean,
-  tailwindMerge: (classes: string) => string,
+  shouldMergeClasses: boolean,
+  tailwindMergeService: (classes: string) => string,
 ): Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> } => {
-  const functions = {} as Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> };
+  const slotFunctions = {} as Record<keyof S, SlotFunction<T>> & { base: SlotFunction<T> };
 
-  functions.base = (slotProps: SlotFunctionProps<T> = {}): string | undefined => {
-    const baseSlotClass = mergedSlots.base ?? mergedBase;
+  slotFunctions.base = (slotProps: SlotFunctionProps<T> = {}): string | undefined => {
+    const baseSlotClass = mergedSlotDefinitions.base ?? mergedBaseClasses;
     const baseClasses = resolveSlotClasses(
       "base",
       baseSlotClass,
-      mergedVariants,
+      mergedVariantGroups,
       { ...variantProps, ...slotProps },
-      mergedDefaultVariants,
-      mergedCompoundVariants,
+      mergedDefaultVariantProps,
+      mergedCompoundVariantGroups,
       compoundSlotClasses.base ?? [],
     );
 
@@ -128,23 +128,23 @@ export const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema
 
     const classString = cx(...allClasses);
 
-    return shouldMerge ? tailwindMerge(classString) : classString || undefined;
+    return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
   };
 
-  const slotKeys = Object.keys(mergedSlots) as (keyof S)[];
+  const slotKeys = Object.keys(mergedSlotDefinitions) as (keyof S)[];
 
   for (const slotKey of slotKeys) {
     if (slotKey !== "base") {
-      (functions as Record<keyof S, SlotFunction<T>>)[slotKey] = (
+      (slotFunctions as Record<keyof S, SlotFunction<T>>)[slotKey] = (
         slotProps: SlotFunctionProps<T> = {},
       ): string | undefined => {
         const slotClasses = resolveSlotClasses(
           slotKey,
-          mergedSlots[slotKey],
-          mergedVariants,
+          mergedSlotDefinitions[slotKey],
+          mergedVariantGroups,
           { ...variantProps, ...slotProps },
-          mergedDefaultVariants,
-          mergedCompoundVariants,
+          mergedDefaultVariantProps,
+          mergedCompoundVariantGroups,
           compoundSlotClasses[slotKey] ?? [],
         );
 
@@ -154,10 +154,10 @@ export const createSlotFunctions = <T extends ConfigSchema, S extends SlotSchema
 
         const classString = cx(...allClasses);
 
-        return shouldMerge ? tailwindMerge(classString) : classString || undefined;
+        return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
       };
     }
   }
 
-  return functions;
+  return slotFunctions;
 };

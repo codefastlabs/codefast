@@ -7,91 +7,91 @@ import type {
   SlotSchema,
 } from "@/types";
 
-import { isBooleanValue } from "@/utils";
+import { isBooleanValueType } from "@/utils";
 
-export const applyCompoundVariants = <T extends ConfigSchema>(
-  compoundVariants: readonly CompoundVariant<T>[],
+export const applyCompoundVariantClasses = <T extends ConfigSchema>(
+  compoundVariantGroups: readonly CompoundVariant<T>[],
   variantProps: ConfigVariants<T>,
-  defaultVariants: ConfigVariants<T>,
+  defaultVariantProps: ConfigVariants<T>,
 ): ClassValue[] => {
-  const props = { ...defaultVariants, ...variantProps };
-  const classes: ClassValue[] = [];
+  const mergedProps = { ...defaultVariantProps, ...variantProps };
+  const resolvedClasses: ClassValue[] = [];
 
-  for (const compound of compoundVariants) {
-    let matches = true;
+  for (const compoundVariant of compoundVariantGroups) {
+    let isMatching = true;
 
-    const keys = Object.keys(compound) as (keyof typeof compound)[];
+    const compoundKeys = Object.keys(compoundVariant) as (keyof typeof compoundVariant)[];
 
-    for (const key of keys) {
-      if (key === "className" || key === "class") {
+    for (const compoundKey of compoundKeys) {
+      if (compoundKey === "className" || compoundKey === "class") {
         continue;
       }
 
-      const propertyValue = props[key];
-      const compoundValue = compound[key];
+      const propertyValue = mergedProps[compoundKey];
+      const compoundValue = compoundVariant[compoundKey];
 
-      if (isBooleanValue(compoundValue)) {
+      if (isBooleanValueType(compoundValue)) {
         const resolvedValue = propertyValue ?? false;
 
         if (resolvedValue !== compoundValue) {
-          matches = false;
+          isMatching = false;
           break;
         }
       } else if (propertyValue !== compoundValue) {
-        matches = false;
+        isMatching = false;
         break;
       }
     }
 
-    if (matches) {
-      classes.push(compound.className ?? compound.class);
+    if (isMatching) {
+      resolvedClasses.push(compoundVariant.className ?? compoundVariant.class);
     }
   }
 
-  return classes;
+  return resolvedClasses;
 };
 
-export const applyCompoundSlots = <T extends ConfigSchema, S extends SlotSchema>(
-  compoundSlots: readonly CompoundSlot<T, S>[] | undefined,
+export const applyCompoundSlotClasses = <T extends ConfigSchema, S extends SlotSchema>(
+  compoundSlotDefinitions: readonly CompoundSlot<T, S>[] | undefined,
   variantProps: ConfigVariants<T>,
-  defaultVariants: ConfigVariants<T>,
+  defaultVariantProps: ConfigVariants<T>,
 ): Partial<Record<keyof S, ClassValue[]>> => {
-  if (!compoundSlots?.length) {
+  if (!compoundSlotDefinitions?.length) {
     return {} as Partial<Record<keyof S, ClassValue[]>>;
   }
 
-  const props = { ...defaultVariants, ...variantProps };
-  const result = {} as Partial<Record<keyof S, ClassValue[]>>;
+  const mergedProps = { ...defaultVariantProps, ...variantProps };
+  const resolvedSlotClasses = {} as Partial<Record<keyof S, ClassValue[]>>;
 
-  for (const compound of compoundSlots) {
-    let matches = true;
+  for (const compoundSlot of compoundSlotDefinitions) {
+    let isMatching = true;
 
-    const entries = Object.entries(compound).filter(
+    const compoundEntries = Object.entries(compoundSlot).filter(
       ([key]) => key !== "className" && key !== "class" && key !== "slots",
     ) as [keyof T, T[keyof T][keyof T[keyof T]]][];
 
-    for (const [key, compoundValue] of entries) {
-      const propertyValue = props[key];
+    for (const [compoundKey, compoundValue] of compoundEntries) {
+      const propertyValue = mergedProps[compoundKey];
 
-      if (isBooleanValue(compoundValue)) {
+      if (isBooleanValueType(compoundValue)) {
         const resolvedValue = propertyValue ?? false;
 
         if (resolvedValue !== compoundValue) {
-          matches = false;
+          isMatching = false;
           break;
         }
       } else if (propertyValue !== compoundValue) {
-        matches = false;
+        isMatching = false;
         break;
       }
     }
 
-    if (matches) {
-      for (const slot of compound.slots) {
-        (result[slot] ??= []).push(compound.className ?? compound.class);
+    if (isMatching) {
+      for (const slotKey of compoundSlot.slots) {
+        (resolvedSlotClasses[slotKey] ??= []).push(compoundSlot.className ?? compoundSlot.class);
       }
     }
   }
 
-  return result;
+  return resolvedSlotClasses;
 };

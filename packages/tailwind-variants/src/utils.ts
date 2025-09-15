@@ -20,34 +20,34 @@ export const cn = (...classes: ClassValue[]): string => {
   return twMerge(clsx(classes));
 };
 
-export const createTailwindMerge = (
-  config?: ConfigExtension<string, string>,
+export const createTailwindMergeService = (
+  configuration?: ConfigExtension<string, string>,
 ): ((classes: string) => string) => {
-  return config ? extendTailwindMerge(config) : twMerge;
+  return configuration ? extendTailwindMerge(configuration) : twMerge;
 };
 
-export const isSlotObject = (value: ClassValue): value is Record<string, ClassValue> => {
+export const isSlotObjectType = (value: ClassValue): value is Record<string, ClassValue> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 };
 
-export const isBooleanVariant = <T extends Record<string, unknown>>(
+export const isBooleanVariantType = <T extends Record<string, unknown>>(
   variantGroup: T,
 ): variantGroup is T & (Record<"false", unknown> | Record<"true", unknown>) => {
   return "true" in variantGroup || "false" in variantGroup;
 };
 
-export const isBooleanValue = (value: unknown): value is boolean => {
+export const isBooleanValueType = (value: unknown): value is boolean => {
   return typeof value === "boolean";
 };
 
-export const hasSlots = <T extends ConfigSchema, S extends SlotSchema>(
-  config: Config<T> | ConfigWithSlots<T, S>,
-): config is ConfigWithSlots<T, S> => {
-  return "slots" in config && config.slots !== undefined;
+export const hasSlotConfiguration = <T extends ConfigSchema, S extends SlotSchema>(
+  configuration: Config<T> | ConfigWithSlots<T, S>,
+): configuration is ConfigWithSlots<T, S> => {
+  return "slots" in configuration && configuration.slots !== undefined;
 };
 
-export const hasExtend = <T extends ConfigSchema, S extends SlotSchema>(
-  config: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
-): config is ExtendedConfig<ConfigSchema, T, SlotSchema, S> => {
-  return "extend" in config && config.extend !== undefined;
+export const hasExtensionConfiguration = <T extends ConfigSchema, S extends SlotSchema>(
+  configuration: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
+): configuration is ExtendedConfig<ConfigSchema, T, SlotSchema, S> => {
+  return "extend" in configuration && configuration.extend !== undefined;
 };

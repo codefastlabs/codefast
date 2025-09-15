@@ -16,69 +16,75 @@ import type {
   VariantFunction,
 } from "@/types";
 
-import { applyCompoundSlots, applyCompoundVariants } from "@/compound";
-import { mergeConfigs } from "@/config";
-import { createSlotFunctions } from "@/slots";
-import { createTailwindMerge, cx, hasExtend, hasSlots, isBooleanVariant } from "@/utils";
+import { applyCompoundSlotClasses, applyCompoundVariantClasses } from "@/compound";
+import { mergeConfigurationSchemas } from "@/config";
+import { createSlotFunctionFactory } from "@/slots";
+import {
+  createTailwindMergeService,
+  cx,
+  hasExtensionConfiguration,
+  hasSlotConfiguration,
+  isBooleanVariantType,
+} from "@/utils";
 
-const handleRegularVariants = <T extends ConfigSchema>(
-  mergedBase: ClassValue | undefined,
-  mergedVariants: T,
-  mergedDefaultVariants: ConfigVariants<T>,
-  mergedCompoundVariants: readonly CompoundVariant<T>[] | undefined,
+const handleRegularVariantResolution = <T extends ConfigSchema>(
+  mergedBaseClasses: ClassValue | undefined,
+  mergedVariantGroups: T,
+  mergedDefaultVariantProps: ConfigVariants<T>,
+  mergedCompoundVariantGroups: readonly CompoundVariant<T>[] | undefined,
   variantProps: ConfigVariants<T>,
-  className: ClassValue | undefined,
-  shouldMerge: boolean,
-  tailwindMerge: (classes: string) => string,
+  customClassName: ClassValue | undefined,
+  shouldMergeClasses: boolean,
+  tailwindMergeService: (classes: string) => string,
 ): string | undefined => {
-  const classes: ClassValue[] = [];
+  const resolvedClasses: ClassValue[] = [];
 
-  if (mergedBase) {
-    classes.push(mergedBase);
+  if (mergedBaseClasses) {
+    resolvedClasses.push(mergedBaseClasses);
   }
 
-  const keys = Object.keys(mergedVariants) as (keyof T)[];
+  const variantKeys = Object.keys(mergedVariantGroups) as (keyof T)[];
 
-  for (const key of keys) {
-    const group = mergedVariants[key];
-    const value = variantProps[key];
+  for (const variantKey of variantKeys) {
+    const variantGroup = mergedVariantGroups[variantKey];
+    const variantValue = variantProps[variantKey];
 
-    let valueToUse: string | undefined;
+    let resolvedValue: string | undefined;
 
-    if (value !== undefined) {
-      valueToUse = String(value);
-    } else if (mergedDefaultVariants[key] !== undefined) {
-      const defaultValue = mergedDefaultVariants[key];
+    if (variantValue !== undefined) {
+      resolvedValue = String(variantValue);
+    } else if (mergedDefaultVariantProps[variantKey] !== undefined) {
+      const defaultValue = mergedDefaultVariantProps[variantKey];
 
-      valueToUse = String(defaultValue);
-    } else if (isBooleanVariant(group)) {
-      valueToUse = "false";
+      resolvedValue = String(defaultValue);
+    } else if (isBooleanVariantType(variantGroup)) {
+      resolvedValue = "false";
     }
 
-    if (valueToUse !== undefined && valueToUse in group) {
-      classes.push(group[valueToUse]);
+    if (resolvedValue !== undefined && resolvedValue in variantGroup) {
+      resolvedClasses.push(variantGroup[resolvedValue]);
     }
   }
 
-  if (mergedCompoundVariants) {
-    const compoundClasses = applyCompoundVariants(
-      mergedCompoundVariants,
+  if (mergedCompoundVariantGroups) {
+    const compoundVariantClasses = applyCompoundVariantClasses(
+      mergedCompoundVariantGroups,
       variantProps,
-      mergedDefaultVariants,
+      mergedDefaultVariantProps,
     );
 
-    classes.push(...compoundClasses);
+    resolvedClasses.push(...compoundVariantClasses);
   }
 
-  if (className) {
-    classes.push(className);
+  if (customClassName) {
+    resolvedClasses.push(customClassName);
   }
 
-  if (classes.length === 0) return;
+  if (resolvedClasses.length === 0) return;
 
-  const classString = cx(...classes);
+  const classString = cx(...resolvedClasses);
 
-  return shouldMerge ? tailwindMerge(classString) : classString || undefined;
+  return shouldMergeClasses ? tailwindMergeService(classString) : classString || undefined;
 };
 
 export function tv<T extends ConfigSchema>(
@@ -107,103 +113,109 @@ export function tv<
 ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
 
 export function tv<T extends ConfigSchema, S extends SlotSchema>(
-  config: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
-  tvConfig: TVConfig = {},
+  configuration: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
+  tvConfiguration: TVConfig = {},
 ): VariantFunction<T, S> {
-  const configWithType = config satisfies
+  const configurationWithType = configuration satisfies
     | Config<T>
     | ConfigWithSlots<T, S>
     | ExtendedConfig<ConfigSchema, T, SlotSchema, S>;
 
-  const { twMerge: shouldMerge = true, twMergeConfig } = tvConfig;
-  const tailwindMerge = createTailwindMerge(twMergeConfig);
+  const { twMerge: shouldMergeClasses = true, twMergeConfig } = tvConfiguration;
+  const tailwindMergeService = createTailwindMergeService(twMergeConfig);
 
-  const mergedConfig: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema> =
-    hasExtend(configWithType) && configWithType.extend
-      ? mergeConfigs(
-          configWithType.extend.config,
-          configWithType as Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
+  const mergedConfiguration: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema> =
+    hasExtensionConfiguration(configurationWithType) && configurationWithType.extend
+      ? mergeConfigurationSchemas(
+          configurationWithType.extend.config,
+          configurationWithType as Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
         )
-      : (configWithType as Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>);
+      : (configurationWithType as Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>);
 
-  const mergedBase = mergedConfig.base;
-  const mergedSlots = hasSlots(mergedConfig) ? mergedConfig.slots : undefined;
-  const mergedVariants = mergedConfig.variants ?? ({} as T);
-  const mergedDefaultVariants = mergedConfig.defaultVariants ?? ({} as ConfigVariants<T>);
-  const mergedCompoundVariants = mergedConfig.compoundVariants;
+  const mergedBaseClasses = mergedConfiguration.base;
+  const mergedSlotDefinitions = hasSlotConfiguration(mergedConfiguration)
+    ? mergedConfiguration.slots
+    : undefined;
+  const mergedVariantGroups = mergedConfiguration.variants ?? ({} as T);
+  const mergedDefaultVariantProps =
+    mergedConfiguration.defaultVariants ?? ({} as ConfigVariants<T>);
+  const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
 
-  const tvFunction = (
-    props: ConfigVariants<T> & { class?: ClassValue; className?: ClassValue } = {},
+  const variantResolverFunction = (
+    variantProps: ConfigVariants<T> & { class?: ClassValue; className?: ClassValue } = {},
   ): S extends Record<string, never> ? string | undefined : TVReturnType<T, S> => {
-    const { class: classProperty, className, ...variantProps } = props;
+    const { class: classProperty, className, ...resolvedVariantProps } = variantProps;
 
-    if (mergedConfig.compoundVariants && !Array.isArray(mergedConfig.compoundVariants)) {
+    if (
+      mergedConfiguration.compoundVariants &&
+      !Array.isArray(mergedConfiguration.compoundVariants)
+    ) {
       throw new Error("compoundVariants must be an array");
     }
 
-    if (mergedSlots) {
-      const compoundSlotClasses = applyCompoundSlots(
-        hasSlots(mergedConfig) ? mergedConfig.compoundSlots : undefined,
-        variantProps as ConfigVariants<ConfigSchema>,
-        mergedDefaultVariants as ConfigVariants<ConfigSchema>,
+    if (mergedSlotDefinitions) {
+      const compoundSlotClasses = applyCompoundSlotClasses(
+        hasSlotConfiguration(mergedConfiguration) ? mergedConfiguration.compoundSlots : undefined,
+        resolvedVariantProps as ConfigVariants<ConfigSchema>,
+        mergedDefaultVariantProps as ConfigVariants<ConfigSchema>,
       );
 
-      return createSlotFunctions(
-        mergedSlots,
-        mergedBase,
-        mergedVariants,
-        mergedDefaultVariants as ConfigVariants<ConfigSchema>,
-        mergedCompoundVariants as
+      return createSlotFunctionFactory(
+        mergedSlotDefinitions,
+        mergedBaseClasses,
+        mergedVariantGroups,
+        mergedDefaultVariantProps as ConfigVariants<ConfigSchema>,
+        mergedCompoundVariantGroups as
           | readonly CompoundVariantWithSlots<ConfigSchema, SlotSchema>[]
           | undefined,
         compoundSlotClasses,
-        variantProps as ConfigVariants<ConfigSchema>,
-        shouldMerge,
-        tailwindMerge,
+        resolvedVariantProps as ConfigVariants<ConfigSchema>,
+        shouldMergeClasses,
+        tailwindMergeService,
       ) as unknown as S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
     } else {
-      return handleRegularVariants(
-        mergedBase,
-        mergedVariants,
-        mergedDefaultVariants as ConfigVariants<ConfigSchema>,
-        mergedCompoundVariants as readonly CompoundVariant<ConfigSchema>[] | undefined,
-        variantProps as ConfigVariants<ConfigSchema>,
+      return handleRegularVariantResolution(
+        mergedBaseClasses,
+        mergedVariantGroups,
+        mergedDefaultVariantProps as ConfigVariants<ConfigSchema>,
+        mergedCompoundVariantGroups as readonly CompoundVariant<ConfigSchema>[] | undefined,
+        resolvedVariantProps as ConfigVariants<ConfigSchema>,
         className ?? classProperty,
-        shouldMerge,
-        tailwindMerge,
+        shouldMergeClasses,
+        tailwindMergeService,
       ) as unknown as S extends Record<string, never> ? string | undefined : TVReturnType<T, S>;
     }
   };
 
-  const tvFunctionWithConfig = tvFunction as VariantFunction<T, S>;
+  const configuredVariantResolver = variantResolverFunction as VariantFunction<T, S>;
 
-  Object.defineProperty(tvFunctionWithConfig, "config", {
+  Object.defineProperty(configuredVariantResolver, "config", {
     configurable: false,
     enumerable: false,
-    value: mergedConfig,
+    value: mergedConfiguration,
     writable: false,
   });
 
-  return tvFunctionWithConfig;
+  return configuredVariantResolver;
 }
 
-export function createTV(globalConfig: TVConfig = {}): TVFactoryResult {
-  const { twMerge: shouldMerge = true, twMergeConfig } = globalConfig;
-  const tailwindMerge = createTailwindMerge(twMergeConfig);
+export function createTV(globalConfiguration: TVConfig = {}): TVFactoryResult {
+  const { twMerge: shouldMergeClasses = true, twMergeConfig } = globalConfiguration;
+  const tailwindMergeService = createTailwindMergeService(twMergeConfig);
 
   function tvFactory<T extends ConfigSchema>(
-    config: Config<T>,
-    localConfig?: TVConfig,
+    configuration: Config<T>,
+    localConfiguration?: TVConfig,
   ): VariantFunction<T, Record<string, never>>;
 
   function tvFactory<S extends SlotSchema>(
-    config: ConfigWithSlots<Record<string, never>, S>,
-    localConfig?: TVConfig,
+    configuration: ConfigWithSlots<Record<string, never>, S>,
+    localConfiguration?: TVConfig,
   ): VariantFunction<Record<string, never>, S>;
 
   function tvFactory<T extends ConfigSchema, S extends SlotSchema>(
-    config: ConfigWithSlots<T, S>,
-    localConfig?: TVConfig,
+    configuration: ConfigWithSlots<T, S>,
+    localConfiguration?: TVConfig,
   ): VariantFunction<T, S>;
 
   function tvFactory<
@@ -212,27 +224,30 @@ export function createTV(globalConfig: TVConfig = {}): TVFactoryResult {
     SBase extends SlotSchema,
     SExtension extends SlotSchema,
   >(
-    config: ExtendedConfig<TBase, TExtension, SBase, SExtension>,
-    localConfig?: TVConfig,
+    configuration: ExtendedConfig<TBase, TExtension, SBase, SExtension>,
+    localConfiguration?: TVConfig,
   ): VariantFunction<MergeSchemas<TBase, TExtension>, MergeSlotSchemas<SBase, SExtension>>;
 
   function tvFactory<T extends ConfigSchema, S extends SlotSchema>(
-    config: Config<T> | ConfigWithSlots<T, S> | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
-    localConfig?: TVConfig,
+    configuration:
+      | Config<T>
+      | ConfigWithSlots<T, S>
+      | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
+    localConfiguration?: TVConfig,
   ): VariantFunction<T, S> {
-    const mergedConfig = { ...globalConfig, ...localConfig };
+    const mergedConfiguration = { ...globalConfiguration, ...localConfiguration };
 
     return tv(
-      config satisfies
+      configuration satisfies
         | Config<T>
         | ConfigWithSlots<T, S>
         | ExtendedConfig<ConfigSchema, T, SlotSchema, S>,
-      mergedConfig,
+      mergedConfiguration,
     ) as VariantFunction<T, S>;
   }
 
   const cnFunction = (...classes: ClassValue[]): string => {
-    return shouldMerge ? tailwindMerge(cx(...classes)) : cx(...classes);
+    return shouldMergeClasses ? tailwindMergeService(cx(...classes)) : cx(...classes);
   };
 
   return {

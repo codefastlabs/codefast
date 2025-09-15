@@ -8,108 +8,120 @@ import type {
   SlotSchema,
 } from "@/types";
 
-import { cx, hasExtend, hasSlots, isSlotObject } from "@/utils";
+import { cx, hasExtensionConfiguration, hasSlotConfiguration, isSlotObjectType } from "@/utils";
 
 export const mergeVariantGroups = (
-  baseGroup: Record<string, ClassValue>,
-  extensionGroup: Record<string, ClassValue>,
+  baseVariantGroup: Record<string, ClassValue>,
+  extensionVariantGroup: Record<string, ClassValue>,
 ): Record<string, ClassValue> => {
-  const merged = { ...baseGroup };
-  const keys = Object.keys(extensionGroup);
+  const mergedVariantGroup = { ...baseVariantGroup };
+  const extensionKeys = Object.keys(extensionVariantGroup);
 
-  for (const key of keys) {
-    const extensionValue = extensionGroup[key];
-    const baseValue = merged[key];
+  for (const extensionKey of extensionKeys) {
+    const extensionValue = extensionVariantGroup[extensionKey];
+    const baseValue = mergedVariantGroup[extensionKey];
 
     if (baseValue === undefined) {
-      merged[key] = extensionValue;
+      mergedVariantGroup[extensionKey] = extensionValue;
     } else {
-      merged[key] =
-        isSlotObject(baseValue) && isSlotObject(extensionValue)
+      mergedVariantGroup[extensionKey] =
+        isSlotObjectType(baseValue) && isSlotObjectType(extensionValue)
           ? { ...baseValue, ...extensionValue }
           : extensionValue;
     }
   }
 
-  return merged;
+  return mergedVariantGroup;
 };
 
-export const mergeConfigs = (
-  baseConfig: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
-  extensionConfig:
+export const mergeConfigurationSchemas = (
+  baseConfiguration: Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema>,
+  extensionConfiguration:
     | Config<ConfigSchema>
     | ConfigWithSlots<ConfigSchema, SlotSchema>
     | ExtendedConfig<ConfigSchema, ConfigSchema, SlotSchema, SlotSchema>,
 ): Config<ConfigSchema> | ConfigWithSlots<ConfigSchema, SlotSchema> => {
-  const resolvedBase =
-    hasExtend(baseConfig) && baseConfig.extend
-      ? mergeConfigs(baseConfig.extend.config, baseConfig)
-      : baseConfig;
+  const resolvedBaseConfiguration =
+    hasExtensionConfiguration(baseConfiguration) && baseConfiguration.extend
+      ? mergeConfigurationSchemas(baseConfiguration.extend.config, baseConfiguration)
+      : baseConfiguration;
 
-  const mergedBase = extensionConfig.base
-    ? resolvedBase.base
-      ? cx(resolvedBase.base, extensionConfig.base)
-      : extensionConfig.base
-    : resolvedBase.base;
+  const mergedBaseClasses = extensionConfiguration.base
+    ? resolvedBaseConfiguration.base
+      ? cx(resolvedBaseConfiguration.base, extensionConfiguration.base)
+      : extensionConfiguration.base
+    : resolvedBaseConfiguration.base;
 
-  const mergedVariants = { ...resolvedBase.variants } as ConfigSchema;
+  const mergedVariantGroups = { ...resolvedBaseConfiguration.variants } as ConfigSchema;
 
-  if (extensionConfig.variants) {
-    const keys = Object.keys(extensionConfig.variants);
+  if (extensionConfiguration.variants) {
+    const extensionKeys = Object.keys(extensionConfiguration.variants);
 
-    for (const key of keys) {
-      const extensionGroup = extensionConfig.variants[key];
+    for (const extensionKey of extensionKeys) {
+      const extensionVariantGroup = extensionConfiguration.variants[extensionKey];
 
-      mergedVariants[key] =
-        key in mergedVariants
-          ? mergeVariantGroups(mergedVariants[key], extensionGroup)
-          : extensionGroup;
+      mergedVariantGroups[extensionKey] =
+        extensionKey in mergedVariantGroups
+          ? mergeVariantGroups(mergedVariantGroups[extensionKey], extensionVariantGroup)
+          : extensionVariantGroup;
     }
   }
 
-  const resolvedSlots = hasSlots(resolvedBase) ? resolvedBase.slots : {};
-  const extensionSlots = hasSlots(extensionConfig) ? extensionConfig.slots : {};
-  const mergedSlots = { ...resolvedSlots, ...extensionSlots };
+  const resolvedSlotDefinitions = hasSlotConfiguration(resolvedBaseConfiguration)
+    ? resolvedBaseConfiguration.slots
+    : {};
+  const extensionSlotDefinitions = hasSlotConfiguration(extensionConfiguration)
+    ? extensionConfiguration.slots
+    : {};
+  const mergedSlotDefinitions = { ...resolvedSlotDefinitions, ...extensionSlotDefinitions };
 
-  const hasSlotsResult = Object.keys(mergedSlots).length > 0;
+  const hasSlotConfigurationResult = Object.keys(mergedSlotDefinitions).length > 0;
 
-  if (hasSlotsResult) {
-    const baseCompoundSlots: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
-      hasSlots(resolvedBase) && Array.isArray(resolvedBase.compoundSlots)
-        ? (resolvedBase.compoundSlots as readonly CompoundSlot<ConfigSchema, SlotSchema>[])
+  if (hasSlotConfigurationResult) {
+    const baseCompoundSlotDefinitions: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
+      hasSlotConfiguration(resolvedBaseConfiguration) &&
+      Array.isArray(resolvedBaseConfiguration.compoundSlots)
+        ? (resolvedBaseConfiguration.compoundSlots as readonly CompoundSlot<
+            ConfigSchema,
+            SlotSchema
+          >[])
         : [];
 
-    const extensionCompoundSlots: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
-      hasSlots(extensionConfig) && Array.isArray(extensionConfig.compoundSlots)
-        ? (extensionConfig.compoundSlots as readonly CompoundSlot<ConfigSchema, SlotSchema>[])
+    const extensionCompoundSlotDefinitions: readonly CompoundSlot<ConfigSchema, SlotSchema>[] =
+      hasSlotConfiguration(extensionConfiguration) &&
+      Array.isArray(extensionConfiguration.compoundSlots)
+        ? (extensionConfiguration.compoundSlots as readonly CompoundSlot<
+            ConfigSchema,
+            SlotSchema
+          >[])
         : [];
 
     return {
-      base: mergedBase,
-      compoundSlots: [...baseCompoundSlots, ...extensionCompoundSlots],
+      base: mergedBaseClasses,
+      compoundSlots: [...baseCompoundSlotDefinitions, ...extensionCompoundSlotDefinitions],
       compoundVariants: [
-        ...(resolvedBase.compoundVariants ?? []),
-        ...(extensionConfig.compoundVariants ?? []),
+        ...(resolvedBaseConfiguration.compoundVariants ?? []),
+        ...(extensionConfiguration.compoundVariants ?? []),
       ],
       defaultVariants: {
-        ...resolvedBase.defaultVariants,
-        ...extensionConfig.defaultVariants,
+        ...resolvedBaseConfiguration.defaultVariants,
+        ...extensionConfiguration.defaultVariants,
       },
-      slots: mergedSlots,
-      variants: mergedVariants,
+      slots: mergedSlotDefinitions,
+      variants: mergedVariantGroups,
     };
   }
 
   return {
-    base: mergedBase,
+    base: mergedBaseClasses,
     compoundVariants: [
-      ...(resolvedBase.compoundVariants ?? []),
-      ...(extensionConfig.compoundVariants ?? []),
+      ...(resolvedBaseConfiguration.compoundVariants ?? []),
+      ...(extensionConfiguration.compoundVariants ?? []),
     ],
     defaultVariants: {
-      ...resolvedBase.defaultVariants,
-      ...extensionConfig.defaultVariants,
+      ...resolvedBaseConfiguration.defaultVariants,
+      ...extensionConfiguration.defaultVariants,
     },
-    variants: mergedVariants,
+    variants: mergedVariantGroups,
   };
 };
