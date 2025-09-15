@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/input-number",
-  "version": "0.3.7-canary.0",
+  "version": "0.3.7-canary.1",
   "description": "Accessible number input component built with React and Radix UI",
   "keywords": [
     "input",

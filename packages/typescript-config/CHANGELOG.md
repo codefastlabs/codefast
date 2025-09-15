@@ -1,5 +1,15 @@
 # @codefast/typescript-config
 
+## 0.3.7-canary.1
+
+### Patch Changes
+
+- [`345eb36`](https://github.com/codefastlabs/codefast/commit/345eb368a1e44051e215c0e74a255bb8bf7cca76) Thanks [@thevuong](https://github.com/thevuong)! - chore(cli): implement CLI framework with initial commands and adapters
+
+- [`d5d8343`](https://github.com/codefastlabs/codefast/commit/d5d83431d97f433f9dd5d1c745bd35f163573ad2) Thanks [@thevuong](https://github.com/thevuong)! - chore(ui): replace `tw-animate-css` with `@tailwindcss/typography` for improved styling capabilities
+
+- [`0c0ae47`](https://github.com/codefastlabs/codefast/commit/0c0ae47e822ca82609d5e2dfe55629387ec88df1) Thanks [@thevuong](https://github.com/thevuong)! - chore(ui): update animations and dependencies for improved consistency
+
 ## 0.3.7-canary.0
 
 ### Patch Changes
