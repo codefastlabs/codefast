@@ -11,14 +11,18 @@
     "@codefast-ui/input-number": "0.3.6",
     "@codefast-ui/progress-circle": "0.3.6",
     "@codefast/typescript-config": "0.3.6",
-    "@codefast/ui": "0.3.6"
+    "@codefast/ui": "0.3.6",
+    "@codefast/tailwind-variants": "0.3.7-canary.0"
   },
   "changesets": [
     "cruel-beans-behave",
     "eager-apes-wear",
     "open-bags-look",
     "proud-lemons-lead",
+    "six-queens-shop",
+    "soft-frogs-cheer",
     "stale-months-hope",
+    "tidy-coins-laugh",
     "tiny-pigs-stop"
   ]
 }
