@@ -48,26 +48,14 @@ export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" ex
  * variant function, including className and class properties, while
  * allowing for specific keys to be omitted.
  */
-export type VariantProps<Component, OmitKeys extends string = never> = Component extends (
-  props?: infer P,
-) => unknown
-  ? P extends ConfigurationVariants<infer T>
-    ? Omit<ConfigurationVariants<ConditionalType<T, Record<string, never>, T>>, OmitKeys> & {
-        className?: ClassValue;
-        class?: ClassValue;
-      }
-    : P extends Record<string, unknown>
-      ? Omit<P & { className?: ClassValue; class?: ClassValue }, OmitKeys> & {
-          className?: ClassValue;
-          class?: ClassValue;
-        }
-      : { className?: ClassValue; class?: ClassValue }
-  : Component extends VariantFunctionType<infer T>
-    ? Omit<ConfigurationVariants<ConditionalType<T, Record<string, never>, T>>, OmitKeys> & {
-        className?: ClassValue;
-        class?: ClassValue;
-      }
-    : never;
+export type VariantProps<Component> = Omit<
+  Component extends VariantFunctionType<infer T>
+    ? T extends Record<string, never>
+      ? object
+      : ConfigurationVariants<T>
+    : never,
+  "class" | "className"
+>;
 
 /**
  * Base configuration schema for variant groups.
