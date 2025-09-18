@@ -48,14 +48,12 @@ export type BooleanVariantChecker<T extends Record<string, unknown>> = "true" ex
  * variant function, including className and class properties, while
  * allowing for specific keys to be omitted.
  */
-export type VariantProps<Component> = Omit<
+export type VariantProps<Component> =
   Component extends VariantFunctionType<infer T>
     ? T extends Record<string, never>
       ? object
-      : ConfigurationVariants<T>
-    : never,
-  "class" | "className"
->;
+      : Omit<ConfigurationVariants<T>, "class" | "className">
+    : never;
 
 /**
  * Base configuration schema for variant groups.
@@ -203,7 +201,7 @@ export interface TailwindVariantsConfiguration {
  * for individual component slots.
  */
 export type SlotFunctionType<T extends ConfigurationSchema> = (
-  props?: ConfigurationVariants<T>,
+  props?: SlotFunctionProperties<T>,
 ) => string | undefined;
 
 /**
@@ -212,12 +210,18 @@ export type SlotFunctionType<T extends ConfigurationSchema> = (
  * This type defines the properties that can be passed to individual
  * slot functions, including variant props and class properties.
  */
-export type SlotFunctionProperties<T extends ConfigurationSchema> = {
-  readonly [K in keyof ConfigurationVariants<T>]?: ConfigurationVariants<T>[K];
-} & {
-  className?: ClassValue;
-  class?: ClassValue;
-};
+export type SlotFunctionProperties<T extends ConfigurationSchema> =
+  T extends Record<string, never>
+    ? {
+        className?: ClassValue;
+        class?: ClassValue;
+      }
+    : {
+        readonly [K in keyof ConfigurationVariants<T>]?: ConfigurationVariants<T>[K];
+      } & {
+        className?: ClassValue;
+        class?: ClassValue;
+      };
 
 /**
  * Return type for variant functions.

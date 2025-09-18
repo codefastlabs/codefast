@@ -176,7 +176,9 @@ export const createSlotFunctionFactory = <
   const slotFunctions = {} as Record<keyof S, SlotFunctionType<T>> & { base: SlotFunctionType<T> };
 
   // Create the base slot function
-  slotFunctions.base = (slotProps: SlotFunctionProperties<T> = {}): string | undefined => {
+  slotFunctions.base = (
+    slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
+  ): string | undefined => {
     const baseSlotClass = mergedSlotDefinitions.base ?? mergedBaseClasses;
     const baseClasses = resolveSlotClasses(
       "base",
@@ -204,7 +206,7 @@ export const createSlotFunctionFactory = <
   for (const slotKey of slotKeys) {
     if (slotKey !== "base") {
       (slotFunctions as Record<keyof S, SlotFunctionType<T>>)[slotKey] = (
-        slotProps: SlotFunctionProperties<T> = {},
+        slotProps: SlotFunctionProperties<T> = {} as SlotFunctionProperties<T>,
       ): string | undefined => {
         const slotClasses = resolveSlotClasses(
           slotKey,
