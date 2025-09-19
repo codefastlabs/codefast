@@ -22,14 +22,6 @@ export type StringToBooleanType<T> = T extends "false" | "true"
     : T;
 
 /**
- * Conditional type utility for type-level branching.
- *
- * This utility type provides conditional logic at the type level,
- * allowing for complex type transformations based on type conditions.
- */
-export type ConditionalType<T, Then, Else> = [T] extends [never] ? Then : Else;
-
-/**
  * Check if a variant group supports boolean values.
  *
  * This utility type determines whether a variant group has boolean keys

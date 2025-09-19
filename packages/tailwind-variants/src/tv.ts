@@ -219,7 +219,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
   const { twMerge: shouldMergeClasses = true, twMergeConfig } = tvConfiguration;
   const tailwindMergeService = createTailwindMergeService(twMergeConfig);
 
-  // Merge configurations if extension is present
+  // Merge configurations if the extension is present
   const mergedConfiguration:
     | Configuration<ConfigurationSchema>
     | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> =
@@ -323,7 +323,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
  * behavior across multiple components.
  *
  * @param globalConfiguration - The global configuration to apply
- * @returns A factory object with tv and cn functions
+ * @returns A factory object with `tv` and `cn` functions
  */
 export function createTV(
   globalConfiguration: TailwindVariantsConfiguration = {},
@@ -389,7 +389,7 @@ export function createTV(
    * Main factory implementation.
    *
    * This function merges global and local configurations and creates
-   * the appropriate variant function using the main tv function.
+   * the appropriate variant function using the main `tv` function.
    *
    * @param configuration - The variant configuration
    * @param localConfiguration - Optional local configuration override
@@ -424,7 +424,7 @@ export function createTV(
     return shouldMergeClasses ? tailwindMergeService(cx(...classes)) : cx(...classes);
   };
 
-  // Return the factory object with tv and cn functions
+  // Return the factory object with `tv` and `cn` functions
   return {
     cn: cnFunction,
     tv: tvFactory,

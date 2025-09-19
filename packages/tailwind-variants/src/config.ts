@@ -19,7 +19,7 @@ import type {
 import { cx, hasExtensionConfiguration, hasSlotConfiguration, isSlotObjectType } from "@/utils";
 
 /**
- * Merge two variant groups together.
+ * Merge two variant groups.
  *
  * This function combines variant groups from base and extension configurations.
  * It handles slot object merging for complex variant definitions.
@@ -42,10 +42,10 @@ export const mergeVariantGroups = (
     const baseValue = mergedVariantGroup[extensionKey];
 
     if (baseValue === undefined) {
-      // Add new variant if it doesn't exist in base
+      // Add a new variant if it doesn't exist in base
       mergedVariantGroup[extensionKey] = extensionValue;
     } else {
-      // Merge slot objects or replace with extension value
+      // Merge slot objects or replace with an extension value
       mergedVariantGroup[extensionKey] =
         isSlotObjectType(baseValue) && isSlotObjectType(extensionValue)
           ? { ...baseValue, ...extensionValue }
@@ -57,7 +57,7 @@ export const mergeVariantGroups = (
 };
 
 /**
- * Merge configuration schemas together.
+ * Merge configuration schemas.
  *
  * This function combines base and extension configurations, handling
  * recursive extension resolution, variant merging, slot merging,
@@ -83,7 +83,7 @@ export const mergeConfigurationSchemas = (
 ):
   | Configuration<ConfigurationSchema>
   | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema> => {
-  // Resolve recursive extensions in base configuration
+  // Resolve recursive extensions in the base configuration
   const resolvedBaseConfiguration =
     hasExtensionConfiguration(baseConfiguration) && baseConfiguration.extend
       ? mergeConfigurationSchemas(baseConfiguration.extend.config, baseConfiguration)
@@ -140,7 +140,7 @@ export const mergeConfigurationSchemas = (
           >[])
         : [];
 
-    // Extract compound slot definitions from extension configuration
+    // Extract compound slot definitions from the extension configuration
     const extensionCompoundSlotDefinitions: readonly CompoundSlotType<
       ConfigurationSchema,
       SlotConfigurationSchema

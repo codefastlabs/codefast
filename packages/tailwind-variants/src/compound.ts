@@ -21,7 +21,7 @@ import { isBooleanValueType } from "@/utils";
  * Apply compound variant classes based on variant conditions.
  *
  * This function processes compound variants and applies their classes when
- * all specified variant conditions are met. It merges default and provided
+ * all specified variant conditions are met. It merges by default and provides
  * variant props to determine which compound variants should be applied.
  *
  * @param compoundVariantGroups - Array of compound variant definitions
@@ -98,7 +98,7 @@ export const applyCompoundSlotClasses = <
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
 ): Partial<Record<keyof S, ClassValue[]>> => {
-  // Return empty object if no compound slot definitions
+  // Return an empty object if no compound slot definitions
   if (!compoundSlotDefinitions?.length) {
     return {} as Partial<Record<keyof S, ClassValue[]>>;
   }
