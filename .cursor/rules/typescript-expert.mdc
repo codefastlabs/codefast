@@ -1,0 +1,399 @@
+---
+description: Advanced TypeScript patterns, techniques, and expert-level practices
+globs: *.ts,*.tsx
+---
+
+# TypeScript Expert Patterns and Advanced Techniques
+
+## Advanced Type System Mastery
+
+### Utility Types and Type Manipulations
+```typescript
+// Advanced utility type patterns
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+type NonNullable<T> = T extends null | undefined ? never : T;
+
+type RequiredKeys<T> = {
+  [K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+}[keyof T];
+
+// Extract function parameters and return types
+type ExtractFnParams<T> = T extends (...args: infer P) => any ? P : never;
+type ExtractFnReturn<T> = T extends (...args: any[]) => infer R ? R : never;
+```
+
+### Conditional Types and Template Literals
+```typescript
+// Advanced conditional type patterns
+type IsArray<T> = T extends (infer U)[] ? U : never;
+type IsPromise<T> = T extends Promise<infer U> ? U : never;
+
+// Template literal types for type-safe string manipulation
+type EventName<T extends string> = `on${Capitalize<T>}`;
+type CSSProperty = `--${string}`;
+type APIEndpoint<T extends string> = `/api/${T}`;
+
+// Recursive types for nested structures
+type DeepKeyOf<T> = {
+  [K in keyof T]: T[K] extends object 
+    ? K | `${K & string}.${DeepKeyOf<T[K]> & string}`
+    : K;
+}[keyof T];
+```
+
+### Advanced Generic Patterns
+```typescript
+// Constrained generics with multiple bounds
+interface Serializable {
+  serialize(): string;
+}
+
+interface Identifiable {
+  id: string;
+}
+
+function processEntity<T extends Serializable & Identifiable>(
+  entity: T
+): T & { processed: true } {
+  return { ...entity, processed: true };
+}
+
+// Generic factories with proper inference
+function createFactory<T>() {
+  return <U extends T>(config: U): U => config;
+}
+
+// Higher-kinded types simulation
+type HKT<F, A> = F extends 'Array' 
+  ? A[] 
+  : F extends 'Promise' 
+    ? Promise<A> 
+    : never;
+```
+
+## Advanced React TypeScript Patterns
+
+### Component Composition Patterns
+```typescript
+// Advanced prop patterns with generics
+interface RenderProps<T> {
+  children: (data: T) => React.ReactNode;
+}
+
+interface DataFetcherProps<T> extends RenderProps<T> {
+  url: string;
+  transform?: (raw: unknown) => T;
+}
+
+// Polymorphic component patterns
+type PolymorphicComponentProp<
+  C extends React.ElementType,
+  Props = {}
+> = React.PropsWithChildren<Props & AsProp<C>> &
+  Omit<React.ComponentPropsWithoutRef<C>, PropsToOmit<C, Props>>;
+
+type AsProp<C extends React.ElementType> = {
+  as?: C;
+};
+
+type PropsToOmit<C extends React.ElementType, P> = keyof (AsProp<C> & P);
+```
+
+### Advanced Hook Patterns
+```typescript
+// Generic hook with proper type inference
+function useResource<T>(
+  fetcher: () => Promise<T>,
+  deps: React.DependencyList = []
+): {
+  data: T | null;
+  error: Error | null;
+  loading: boolean;
+  refetch: () => Promise<void>;
+} {
+  // Implementation
+}
+
+// Advanced custom hook with overloads
+function useLocalStorage<T>(key: string): [T | undefined, (value: T) => void];
+function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void];
+function useLocalStorage<T>(
+  key: string, 
+  defaultValue?: T
+): [T | undefined, (value: T) => void] {
+  // Implementation
+}
+```
+
+## Advanced Error Handling and Validation
+
+### Type-Safe Error Handling
+```typescript
+// Result pattern for type-safe error handling
+type Result<T, E = Error> = Success<T> | Failure<E>;
+
+interface Success<T> {
+  readonly success: true;
+  readonly data: T;
+}
+
+interface Failure<E> {
+  readonly success: false;
+  readonly error: E;
+}
+
+// Error boundary with proper typing
+class TypedErrorBoundary<T extends Error = Error> extends React.Component<
+  { children: React.ReactNode; onError?: (error: T) => void },
+  { hasError: boolean; error?: T }
+> {
+  // Implementation
+}
+
+// Exhaustive error handling
+type AppError = 
+  | { type: 'NETWORK_ERROR'; message: string; status: number }
+  | { type: 'VALIDATION_ERROR'; field: string; rule: string }
+  | { type: 'AUTH_ERROR'; reason: 'expired' | 'invalid' };
+
+function handleError(error: AppError): string {
+  switch (error.type) {
+    case 'NETWORK_ERROR':
+      return `Network error: ${error.message} (${error.status})`;
+    case 'VALIDATION_ERROR':
+      return `Validation failed for ${error.field}: ${error.rule}`;
+    case 'AUTH_ERROR':
+      return `Authentication error: ${error.reason}`;
+    default:
+      // TypeScript ensures exhaustiveness
+      const _exhaustive: never = error;
+      return _exhaustive;
+  }
+}
+```
+
+### Schema Validation with Type Guards
+```typescript
+// Advanced type guards with proper narrowing
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function isObjectWithKey<K extends string>(
+  obj: unknown,
+  key: K
+): obj is Record<K, unknown> {
+  return typeof obj === 'object' && obj !== null && key in obj;
+}
+
+// Runtime validation that maintains type safety
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  age?: number;
+}
+
+function validateUser(data: unknown): data is User {
+  return (
+    isObjectWithKey(data, 'id') &&
+    isString(data.id) &&
+    isObjectWithKey(data, 'name') &&
+    isString(data.name) &&
+    isObjectWithKey(data, 'email') &&
+    isString(data.email) &&
+    (!('age' in data) || typeof data.age === 'number')
+  );
+}
+```
+
+## Performance Optimization Patterns
+
+### Type-Level Optimizations
+```typescript
+// Lazy evaluation with conditional types
+type Lazy<T> = () => T;
+type Evaluate<T> = T extends Lazy<infer U> ? U : T;
+
+// Branded types for performance and type safety
+type UserId = string & { readonly brand: unique symbol };
+type Email = string & { readonly brand: unique symbol };
+
+function createUserId(id: string): UserId {
+  // Validation logic here
+  return id as UserId;
+}
+
+// Nominal typing for better performance
+interface NominalType<T, Brand> {
+  readonly value: T;
+  readonly brand: Brand;
+}
+
+type Meters = NominalType<number, 'Meters'>;
+type Feet = NominalType<number, 'Feet'>;
+```
+
+### Advanced Module Patterns
+```typescript
+// Module augmentation for extending third-party types
+declare module 'react' {
+  interface CSSProperties {
+    [key: `--${string}`]: string | number;
+  }
+}
+
+// Namespace merging for organized APIs
+namespace API {
+  export namespace Users {
+    export interface CreateRequest {
+      name: string;
+      email: string;
+    }
+    
+    export interface UpdateRequest extends Partial<CreateRequest> {
+      id: string;
+    }
+  }
+  
+  export namespace Posts {
+    export interface CreateRequest {
+      title: string;
+      content: string;
+      authorId: string;
+    }
+  }
+}
+
+// Advanced barrel exports with re-exports
+export type { ComponentProps } from './types';
+export { default as Component, type SpecificProps } from './Component';
+export * as Utils from './utils';
+```
+
+## Testing Patterns with TypeScript
+
+### Type-Safe Testing Utilities
+```typescript
+// Generic test utilities with proper typing
+function createMockFunction<T extends (...args: any[]) => any>(): jest.MockedFunction<T> {
+  return jest.fn() as jest.MockedFunction<T>;
+}
+
+// Factory pattern for test data
+interface TestDataFactory<T> {
+  create(overrides?: Partial<T>): T;
+  createMany(count: number, overrides?: Partial<T>): T[];
+}
+
+function createFactory<T>(defaults: T): TestDataFactory<T> {
+  return {
+    create: (overrides) => ({ ...defaults, ...overrides }),
+    createMany: (count, overrides) =>
+      Array.from({ length: count }, () => ({ ...defaults, ...overrides }))
+  };
+}
+
+// Type-safe component testing
+type ComponentTestUtils<P = {}> = {
+  render: (props?: P) => RenderResult;
+  rerender: (props: P) => void;
+  getByTestId: (testId: string) => HTMLElement;
+};
+
+function createComponentTest<P>(
+  Component: React.ComponentType<P>,
+  defaultProps: P
+): ComponentTestUtils<P> {
+  // Implementation
+}
+```
+
+## Advanced Configuration and Tooling
+
+### TypeScript Configuration Strategies
+```typescript
+// Advanced tsconfig inheritance patterns
+// packages/typescript-config/strict.json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true
+  }
+}
+
+// Project-specific configuration with path mapping
+{
+  "extends": "@codefast/typescript-config/react",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/types": ["./src/types"],
+      "@/utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts"]
+}
+```
+
+### Advanced Build Optimization
+```typescript
+// Tree-shaking friendly exports
+// Instead of default exports, use named exports
+export const MyComponent: React.FC<Props> = (props) => {
+  // Implementation
+};
+
+export const MyUtils = {
+  formatDate: (date: Date): string => date.toISOString(),
+  parseDate: (str: string): Date => new Date(str)
+} as const;
+
+// Type-only imports for better bundle optimization
+import type { ComponentProps } from 'react';
+import type { User } from '@/types';
+
+// Runtime imports only when needed
+const { lazy } = await import('react');
+const Component = lazy(() => import('./Component'));
+```
+
+## Expert Best Practices
+
+### Code Organization
+- Use **discriminated unions** for state management and complex data modeling
+- Leverage **mapped types** for transforming interfaces systematically  
+- Implement **branded types** for domain-specific values (IDs, measurements)
+- Apply **conditional types** for API response handling and generic constraints
+- Utilize **template literal types** for type-safe string operations
+
+### Performance Considerations
+- Use **type-only imports** to reduce bundle size
+- Implement **lazy evaluation** patterns for expensive type computations
+- Apply **nominal typing** for better type checking performance
+- Leverage **const assertions** for better type inference
+- Use **branded types** instead of type aliases for better performance
+
+### Error Prevention
+- Implement **exhaustive pattern matching** with `never` type
+- Use **strict type guards** for runtime validation
+- Apply **Result types** for error handling without exceptions
+- Leverage **branded types** to prevent value mix-ups
+- Use **readonly modifiers** to prevent accidental mutations
+
+### Testing and Maintainability
+- Create **type-safe test utilities** with proper generics
+- Use **factory patterns** for consistent test data creation
+- Implement **mock types** that match real interfaces exactly
+- Apply **dependency injection** patterns with proper typing
+- Leverage **type assertions** only when absolutely necessary
+
+This expert-level TypeScript usage will ensure maximum type safety, performance, and maintainability in the codebase.
