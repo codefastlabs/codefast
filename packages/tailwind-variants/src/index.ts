@@ -28,4 +28,12 @@ export { cn, cx } from "@/utils";
  * These types provide full type safety for variant configurations,
  * component props, and class value handling.
  */
-export type { ClassValue, VariantProps } from "@/types";
+export type {
+  ClassValue,
+  Configuration,
+  ConfigurationSchema,
+  ConfigurationVariants,
+  TailwindVariantsConfiguration,
+  VariantFunctionType,
+  VariantProps,
+} from "@/types";
