@@ -1,0 +1,178 @@
+---
+globs: packages/*/package.json,packages/*/rslib.config.ts,packages/*/README.md
+description: Package development and build process guidelines
+---
+
+# Package Development and Build Process
+
+## Package Structure Standards
+
+Each package in this monorepo follows a consistent structure:
+
+```
+packages/package-name/
+├── package.json          # Package configuration
+├── README.md            # Package documentation
+├── CHANGELOG.md         # Version history
+├── tsconfig.json        # TypeScript config (extends base)
+├── tsconfig.build.json  # Build-specific TypeScript config
+├── jest.config.ts       # Jest test configuration
+├── jest.setup.ts        # Test environment setup (if needed)
+├── eslint.config.js     # ESLint configuration
+├── rslib.config.ts      # Build configuration
+├── src/                 # Source code
+│   ├── index.ts        # Main entry point
+│   └── __tests__/      # Test files
+├── dist/               # Built output (generated)
+└── coverage/           # Test coverage (generated)
+```
+
+## Build Configuration
+
+### RSLib Setup
+All packages use **rslib** for building. Standard configuration:
+
+```typescript
+// rslib.config.ts
+import { defineConfig } from '@rslib/core';
+
+export default defineConfig({
+  lib: [
+    {
+      format: 'esm',
+      dts: true,
+      output: {
+        distPath: './dist',
+      },
+    },
+    {
+      format: 'cjs',
+      dts: false,
+      output: {
+        distPath: './dist',
+      },
+    },
+  ],
+  source: {
+    entry: {
+      index: './src/index.ts',
+    },
+  },
+});
+```
+
+### Package.json Configuration
+Required fields for all packages:
+
+```json
+{
+  "name": "@codefast/package-name",
+  "version": "0.x.x",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "CHANGELOG.md"],
+  "scripts": {
+    "build": "rslib build",
+    "dev": "rslib build --watch",
+    "clean": "rm -rf dist",
+    "check-types": "tsc --noEmit",
+    "lint": "TIMING=1 eslint . --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix .",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  }
+}
+```
+
+## Development Workflow
+
+### Creating New Packages
+1. **Create directory** in `packages/`
+2. **Initialize package.json** with proper naming and configuration
+3. **Add TypeScript config** extending from `@codefast/typescript-config`
+4. **Configure rslib** for dual ESM/CJS output
+5. **Set up testing** with Jest configuration
+6. **Add to workspace** - pnpm will automatically detect it
+
+### Build Commands
+```bash
+# Build specific package
+pnpm build --filter=@codefast/package-name
+
+# Build package and dependencies
+pnpm build --filter=@codefast/package-name...
+
+# Build all packages
+pnpm build:packages
+
+# Watch mode for development
+pnpm dev --filter=@codefast/package-name
+```
+
+### Development Dependencies
+Standard dev dependencies across packages:
+- `@codefast/eslint-config` - Shared linting
+- `@codefast/typescript-config` - Shared TS config
+- `@rslib/core` - Build system
+- `eslint` - Linting
+- `typescript` - Type checking
+- `jest` - Testing framework
+
+## Export Patterns
+
+### Main Entry Point
+```typescript
+// src/index.ts - Main package entry
+export { ComponentName } from './components/ComponentName';
+export type { ComponentProps } from './components/ComponentName';
+export { utilityFunction } from './utils/utility';
+```
+
+### Component Exports
+```typescript
+// For UI components
+export interface ButtonProps {
+  variant?: 'primary' | 'secondary';
+  children: React.ReactNode;
+}
+
+export const Button: React.FC<ButtonProps> = ({ variant = 'primary', children }) => {
+  // Component implementation
+};
+```
+
+### Utility Exports
+```typescript
+// For utility functions
+export const formatCurrency = (amount: number, currency = 'USD'): string => {
+  return new Intl.NumberFormat('en-US', { 
+    style: 'currency', 
+    currency 
+  }).format(amount);
+};
+```
+
+## Quality Gates
+
+### Build Requirements
+- **Clean builds**: No TypeScript errors
+- **Dual format**: Both ESM and CJS outputs
+- **Type definitions**: Generated .d.ts files
+- **File optimization**: Tree-shakeable exports
+
+### Publishing Checklist
+- [ ] All tests pass (`pnpm test`)
+- [ ] Types check (`pnpm check-types`)
+- [ ] Linting passes (`pnpm lint`)
+- [ ] Build succeeds (`pnpm build`)
+- [ ] Documentation updated
+- [ ] CHANGELOG.md updated
