@@ -87,10 +87,10 @@ const complexVariants = {
 } as const;
 
 // Initialize benchmark functions
-const originalTVFunction = originalTV(buttonVariants);
-const codefastTVFunction = codefastTV(buttonVariants);
+const originalTVSimple = originalTV(buttonVariants);
+const codefastTVSimple = codefastTV(buttonVariants);
 
-const cvaFunction = cva(buttonVariants.base, {
+const cvaSimple = cva(buttonVariants.base, {
   defaultVariants: buttonVariants.defaultVariants,
   variants: buttonVariants.variants,
 });
@@ -141,25 +141,25 @@ export async function runBenchmark(): Promise<void> {
 
   bench.add("[simple] tailwind-variants (original)", () => {
     for (const props of testProps) {
-      originalTVFunction(props);
+      originalTVSimple(props);
     }
   });
 
   bench.add("[simple] class-variance-authority", () => {
     for (const props of testProps) {
-      cvaFunction(props);
+      cvaSimple(props);
     }
   });
 
   bench.add("[simple] class-variance-authority + tailwind-merge", () => {
     for (const props of testProps) {
-      twMerge(cvaFunction(props));
+      twMerge(cvaSimple(props));
     }
   });
 
   bench.add("[simple] @codefast/tailwind-variants", () => {
     for (const props of testProps) {
-      codefastTVFunction(props);
+      codefastTVSimple(props);
     }
   });
 
