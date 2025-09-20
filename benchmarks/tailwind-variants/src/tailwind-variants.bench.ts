@@ -87,20 +87,55 @@ const complexVariants = {
 } as const;
 
 // Initialize benchmark functions
-const originalTVSimple = originalTV(buttonVariants);
-const codefastTVSimple = codefastTV(buttonVariants);
+const originalTVSimpleWithoutTailwindMerge = originalTV(buttonVariants, { twMerge: false });
+const codefastTVSimpleWithoutTailwindMerge = codefastTV(buttonVariants, { twMerge: false });
 
-const cvaSimple = cva(buttonVariants.base, {
+// With twMerge enabled for fair comparison
+const originalTVSimpleWithTailwindMerge = originalTV(buttonVariants);
+const codefastTVSimpleWithTailwindMerge = codefastTV(buttonVariants);
+
+const cvaSimpleWithoutTailwindMerge = cva(buttonVariants.base, {
+  defaultVariants: buttonVariants.defaultVariants,
+  variants: buttonVariants.variants,
+});
+
+// Create a CVA function that includes twMerge for fair comparison
+const cvaSimpleWithTailwindMerge = cva(buttonVariants.base, {
   defaultVariants: buttonVariants.defaultVariants,
   variants: buttonVariants.variants,
 });
 
 // Complex variants for advanced testing
-const originalTVComplex = originalTV(complexVariants);
-const codefastTVComplex = codefastTV(complexVariants);
+// Create mutable copy to avoid readonly type issues
+const mutableComplexVariants = {
+  ...complexVariants,
+  compoundVariants: [...complexVariants.compoundVariants],
+};
 
-const cvaComplex = cva(complexVariants.base, {
-  compoundVariants: complexVariants.compoundVariants,
+const originalTVComplexWithoutTailwindMerge = originalTV(mutableComplexVariants, {
+  twMerge: false,
+});
+const codefastTVComplexWithoutTailwindMerge = codefastTV(mutableComplexVariants, {
+  twMerge: false,
+});
+
+// With twMerge enabled for fair comparison
+const originalTVComplexWithTailwindMerge = originalTV(mutableComplexVariants, {
+  twMerge: true,
+});
+const codefastTVComplexWithTailwindMerge = codefastTV(mutableComplexVariants, {
+  twMerge: true,
+});
+
+const cvaComplexWithoutTailwindMerge = cva(complexVariants.base, {
+  compoundVariants: [...complexVariants.compoundVariants],
+  defaultVariants: complexVariants.defaultVariants,
+  variants: complexVariants.variants,
+});
+
+// Create a CVA function that includes twMerge for fair comparison
+const cvaComplexWithTailwindMerge = cva(complexVariants.base, {
+  compoundVariants: [...complexVariants.compoundVariants],
   defaultVariants: complexVariants.defaultVariants,
   variants: complexVariants.variants,
 });
@@ -141,25 +176,37 @@ export async function runBenchmark(): Promise<void> {
 
   bench.add("[simple] tailwind-variants (original)", () => {
     for (const props of testProps) {
-      originalTVSimple(props);
+      originalTVSimpleWithoutTailwindMerge(props);
+    }
+  });
+
+  bench.add("[simple] tailwind-variants (original) + tailwind-merge", () => {
+    for (const props of testProps) {
+      originalTVSimpleWithTailwindMerge(props);
     }
   });
 
   bench.add("[simple] class-variance-authority", () => {
     for (const props of testProps) {
-      cvaSimple(props);
+      cvaSimpleWithoutTailwindMerge(props);
     }
   });
 
   bench.add("[simple] class-variance-authority + tailwind-merge", () => {
     for (const props of testProps) {
-      twMerge(cvaSimple(props));
+      twMerge(cvaSimpleWithTailwindMerge(props));
     }
   });
 
   bench.add("[simple] @codefast/tailwind-variants", () => {
     for (const props of testProps) {
-      codefastTVSimple(props);
+      codefastTVSimpleWithoutTailwindMerge(props);
+    }
+  });
+
+  bench.add("[simple] @codefast/tailwind-variants + tailwind-merge", () => {
+    for (const props of testProps) {
+      codefastTVSimpleWithTailwindMerge(props);
     }
   });
 
@@ -168,25 +215,37 @@ export async function runBenchmark(): Promise<void> {
 
   bench.add("[complex] tailwind-variants (original)", () => {
     for (const props of complexTestProps) {
-      originalTVComplex(props);
+      originalTVComplexWithoutTailwindMerge(props);
+    }
+  });
+
+  bench.add("[complex] tailwind-variants (original) + tailwind-merge", () => {
+    for (const props of complexTestProps) {
+      originalTVComplexWithTailwindMerge(props);
     }
   });
 
   bench.add("[complex] class-variance-authority", () => {
     for (const props of complexTestProps) {
-      cvaComplex(props);
+      cvaComplexWithoutTailwindMerge(props);
     }
   });
 
   bench.add("[complex] class-variance-authority + tailwind-merge", () => {
     for (const props of complexTestProps) {
-      twMerge(cvaComplex(props));
+      twMerge(cvaComplexWithTailwindMerge(props));
     }
   });
 
   bench.add("[complex] @codefast/tailwind-variants", () => {
     for (const props of complexTestProps) {
-      codefastTVComplex(props);
+      codefastTVComplexWithoutTailwindMerge(props);
+    }
+  });
+
+  bench.add("[complex] @codefast/tailwind-variants + tailwind-merge", () => {
+    for (const props of complexTestProps) {
+      codefastTVComplexWithTailwindMerge(props);
     }
   });
 
@@ -200,40 +259,60 @@ export async function runBenchmark(): Promise<void> {
   // Display summary
   console.log("\n=== Performance Summary ===");
   const results = bench.results;
+  const table = bench.table();
 
-  if (results.length > 0) {
-    const fastest = results.reduce((previous, current) => {
-      if (!previous) {
-        return current;
+  if (results.length > 0 && table.length > 0) {
+    // Create a mapping of results to task names using the table data
+    const resultWithNames = results
+      .filter((result): result is NonNullable<typeof result> => result != null)
+      .map((result, index) => ({
+        name: (table[index]?.["Task Name"] as string) || `Task ${index}`,
+        opsPerSec: result.hz,
+        result,
+      }));
+
+    // Find baseline (@codefast/tailwind-variants) for comparison
+    const baselineEntry = resultWithNames.find((entry) =>
+      entry.name.includes("@codefast/tailwind-variants"),
+    );
+
+    if (baselineEntry) {
+      const baselineOpsPerSec = baselineEntry.opsPerSec;
+
+      console.log(
+        `\nBaseline: @codefast/tailwind-variants (${baselineOpsPerSec.toFixed(2)} ops/sec)`,
+      );
+      console.log("\nPerformance comparison vs baseline:");
+
+      for (const entry of resultWithNames) {
+        if (entry !== baselineEntry) {
+          const relativePerformance = entry.opsPerSec / baselineOpsPerSec;
+          const libraryName = entry.name.replace(/\[(simple|complex)\] /, "").trim();
+          const performanceText =
+            relativePerformance > 1
+              ? `${relativePerformance.toFixed(2)}x faster`
+              : `${(1 / relativePerformance).toFixed(2)}x slower`;
+
+          console.log(
+            `  ${libraryName}: ${performanceText} (${entry.opsPerSec.toFixed(2)} ops/sec)`,
+          );
+        }
       }
-
-      if (!current) {
-        return previous;
-      }
-
-      return previous.hz > current.hz ? previous : current;
-    });
-
-    const slowest = results.reduce((previous, current) => {
-      if (!previous) {
-        return current;
-      }
-
-      if (!current) {
-        return previous;
-      }
-
-      return previous.hz < current.hz ? previous : current;
-    });
-
-    if (fastest && slowest) {
-      const fastestName = (fastest as { name?: string }).name ?? "Unknown";
-      const slowestName = (slowest as { name?: string }).name ?? "Unknown";
-
-      console.log(`Fastest: ${fastestName} (${fastest.hz.toFixed(2)} ops/sec)`);
-      console.log(`Slowest: ${slowestName} (${slowest.hz.toFixed(2)} ops/sec)`);
-      console.log(`Performance ratio: ${(fastest.hz / slowest.hz).toFixed(2)}x`);
     }
+
+    // Overall fastest and slowest
+    const fastest = resultWithNames.reduce((previous, current) => {
+      return previous.opsPerSec > current.opsPerSec ? previous : current;
+    }, resultWithNames[0]);
+
+    const slowest = resultWithNames.reduce((previous, current) => {
+      return previous.opsPerSec < current.opsPerSec ? previous : current;
+    }, resultWithNames[0]);
+
+    console.log(`\nOverall performance range:`);
+    console.log(`  Fastest: ${fastest.name} (${fastest.opsPerSec.toFixed(2)} ops/sec)`);
+    console.log(`  Slowest: ${slowest.name} (${slowest.opsPerSec.toFixed(2)} ops/sec)`);
+    console.log(`  Performance ratio: ${(fastest.opsPerSec / slowest.opsPerSec).toFixed(2)}x`);
   }
 
   console.log("\nBenchmark completed!");
