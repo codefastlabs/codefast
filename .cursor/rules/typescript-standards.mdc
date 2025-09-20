@@ -1,6 +1,9 @@
 ---
-globs: *.ts,*.tsx
 description: TypeScript coding standards and best practices
+globs:
+  - "*.ts"
+  - "*.tsx"
+alwaysApply: true
 ---
 
 # TypeScript Standards and Best Practices
@@ -10,20 +13,24 @@ description: TypeScript coding standards and best practices
 This project uses **strict TypeScript** with ES Modules only. All code must adhere to these standards:
 
 ### Type Safety Requirements
+
 - **NEVER use `any` type** - Always provide explicit types or use proper type inference
 - **Avoid excessive use of `unknown`** - Leverage TypeScript's type inference and explicit typing for clarity
 - **Strict mode enabled** - All strict TypeScript options are enforced via [packages/typescript-config/base.json](mdc:packages/typescript-config/base.json)
 
 ### Module System
+
 - **ES Modules only** - Use `import`/`export` syntax exclusively
 - **No CommonJS** - The project is configured as `"type": "module"`
 - **Explicit file extensions** - Use `.js` for imports in TypeScript files when required
 
 ### Configuration Standards
-```typescript
+
+```json5
 // Use the project's base TypeScript config
 {
-  "extends": "@codefast/typescript-config/base", // or /react, /next, /library
+  "extends": "@codefast/typescript-config/base",
+  // or /react, /next, /library
   "compilerOptions": {
     // Project-specific overrides only
   }
@@ -31,13 +38,15 @@ This project uses **strict TypeScript** with ES Modules only. All code must adhe
 ```
 
 ### Type Definitions
+
 - **Explicit return types** for functions and methods
 - **Interface over type aliases** for object shapes when possible
 - **Proper generic constraints** and default values
 - **Strict null checks** - Handle undefined/null explicitly
 
 ### Import/Export Patterns
-```typescript
+
+```tsx
 // Preferred: Named exports with explicit types
 export interface ComponentProps {
   title: string;
@@ -55,6 +64,7 @@ export const formatDate = (date: Date): string => {
 ```
 
 ### Quality Gates
+
 - **Type checking must pass**: `pnpm check-types` with zero errors
 - **Strict linting**: ESLint configuration requires zero warnings
 - **Build success**: All TypeScript compilation must succeed

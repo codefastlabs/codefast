@@ -1,6 +1,13 @@
 ---
-globs: **/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx,jest.config.*,jest.setup.*
 description: Testing standards and quality assurance requirements
+globs:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "jest.config.*"
+  - "jest.setup.*"
+alwaysApply: true
 ---
 
 # Testing Standards and Quality Assurance
@@ -10,6 +17,7 @@ description: Testing standards and quality assurance requirements
 **CRITICAL**: All tests must achieve **100% success rate**. The command `pnpm test` must complete without any failures.
 
 ### Test Framework Stack
+
 - **Jest** - Main testing framework
 - **React Testing Library** - For React component testing
 - **Jest-DOM** - For DOM assertions
@@ -17,6 +25,7 @@ description: Testing standards and quality assurance requirements
 - **User Event** - For user interaction simulation
 
 ### Test File Organization
+
 ```
 src/
 ├── components/
@@ -36,7 +45,8 @@ src/
 ## Testing Standards
 
 ### React Component Tests
-```typescript
+
+```tsx
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
@@ -47,31 +57,35 @@ expect.extend(toHaveNoViolations);
 
 describe('Button', () => {
   it('renders with correct text', () => {
-    render(<Button>Click me</Button>);
+    render(<Button> Click
+      me < /Button>);
     expect(screen.getByRole('button', { name: /click me/i })).toBeInTheDocument();
   });
 
   it('handles click events', async () => {
     const user = userEvent.setup();
     const handleClick = jest.fn();
-    
-    render(<Button onClick={handleClick}>Click me</Button>);
+
+    render(<Button onClick={ handleClick }> Click
+      me < /Button>);
     await user.click(screen.getByRole('button'));
-    
+
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
   it('has no accessibility violations', async () => {
-    const { container } = render(<Button>Accessible button</Button>);
+    const { container } = render(<Button> Accessible
+      button < /Button>);
     const results = await axe(container);
-    
+
     expect(results).toHaveNoViolations();
   });
 });
 ```
 
 ### Hook Testing
-```typescript
+
+```tsx
 import { renderHook, act } from '@testing-library/react';
 
 import { useCounter } from './useCounter';
@@ -84,11 +98,11 @@ describe('useCounter', () => {
 
   it('increments count', () => {
     const { result } = renderHook(() => useCounter());
-    
+
     act(() => {
       result.current.increment();
     });
-    
+
     expect(result.current.count).toBe(1);
   });
 });
@@ -97,17 +111,21 @@ describe('useCounter', () => {
 ## Test Configuration
 
 ### Jest Setup
+
 Each package includes:
+
 - [jest.config.ts](mdc:packages/ui/jest.config.ts) - Jest configuration
 - [jest.setup.ts](mdc:packages/ui/jest.setup.ts) - Test environment setup
 
 ### Test Commands
+
 - `pnpm test` - Run all tests (must pass 100%)
 - `pnpm test:watch` - Run tests in watch mode
 - `pnpm test:coverage` - Generate coverage reports
 - `pnpm test:coverage:ci` - CI-specific coverage with reporting
 
 ### Coverage Requirements
+
 - Maintain high test coverage (aim for >90%)
 - Coverage reports generated in `coverage/` directory
 - Critical paths must be 100% covered
@@ -115,17 +133,22 @@ Each package includes:
 ## Quality Gates
 
 ### Pre-commit Verification
+
 Tests are run automatically via:
+
 1. **Pre-commit hooks** - Fast test execution
 2. **CI/CD pipeline** - Full test suite with coverage
 3. **Manual testing** - `pnpm test` before any release
 
 ### Test File Modification Policy
+
 **IMPORTANT**: Test files should not be modified arbitrarily without explicit permission. When updating tests:
+
 1. Ensure existing test behavior is preserved
 2. Add new tests for new functionality
 3. Update tests only when requirements change
 4. Maintain 100% test success rate
 
 ### Accessibility Testing
+
 All interactive components must include accessibility tests using jest-axe to ensure compliance with WCAG guidelines.

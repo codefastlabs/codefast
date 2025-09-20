@@ -1,6 +1,6 @@
 ---
-alwaysApply: true
 description: Project overview and monorepo structure guide
+alwaysApply: true
 ---
 
 # CodeFast Monorepo Project Overview
@@ -10,12 +10,14 @@ description: Project overview and monorepo structure guide
 This is a **pnpm-based monorepo** using **Turbo** for build orchestration and task execution. The project is structured as follows:
 
 ### Project Structure
+
 - **Root**: Main workspace configuration with [package.json](mdc:package.json), [turbo.json](mdc:turbo.json), [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml)
 - **Apps** (`apps/`): Applications like the documentation site at [apps/docs/](mdc:apps/docs/)
 - **Packages** (`packages/`): Reusable libraries and components
 - **Scripts** (`scripts/`): Utility scripts for project management
 
 ### Key Packages
+
 - **@codefast/ui**: Core UI components library built with React and Tailwind CSS
 - **@codefast-ui/**: Specialized UI components (checkbox-group, input, input-number, progress-circle)
 - **@codefast/hooks**: Shared React hooks
@@ -24,6 +26,7 @@ This is a **pnpm-based monorepo** using **Turbo** for build orchestration and ta
 - **@codefast/eslint-config**: Shared ESLint configurations
 
 ### Technology Stack
+
 - **Language**: TypeScript (ES Modules only)
 - **Package Manager**: pnpm v10.16.1 (required)
 - **Build System**: Turbo v2+ with rslib for package building
@@ -33,6 +36,7 @@ This is a **pnpm-based monorepo** using **Turbo** for build orchestration and ta
 - **Linting**: ESLint v9+ with custom configurations
 
 ### Key Commands
+
 - `pnpm build`: Build all packages and apps
 - `pnpm test`: Run all tests (must pass 100%)
 - `pnpm dev`: Start development servers
@@ -40,6 +44,7 @@ This is a **pnpm-based monorepo** using **Turbo** for build orchestration and ta
 - `pnpm check-types`: Verify TypeScript compilation
 
 ### Development Workflow
+
 1. Always use **pnpm** for package management
 2. Run tasks through **Turbo** for optimal caching and parallelization
 3. All builds, tests, linting, and type checking must pass 100%

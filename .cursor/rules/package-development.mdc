@@ -1,6 +1,10 @@
 ---
-globs: packages/*/package.json,packages/*/rslib.config.ts,packages/*/README.md
 description: Package development and build process guidelines
+globs:
+  - "packages/*/package.json"
+  - "packages/*/rslib.config.ts"
+  - "packages/*/README.md"
+alwaysApply: true
 ---
 
 # Package Development and Build Process
@@ -30,9 +34,10 @@ packages/package-name/
 ## Build Configuration
 
 ### RSLib Setup
+
 All packages use **rslib** for building. Standard configuration:
 
-```typescript
+```tsx
 // rslib.config.ts
 import { defineConfig } from '@rslib/core';
 
@@ -62,6 +67,7 @@ export default defineConfig({
 ```
 
 ### Package.json Configuration
+
 Required fields for all packages:
 
 ```json
@@ -79,7 +85,11 @@ Required fields for all packages:
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist", "README.md", "CHANGELOG.md"],
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "rslib build",
     "dev": "rslib build --watch",
@@ -96,6 +106,7 @@ Required fields for all packages:
 ## Development Workflow
 
 ### Creating New Packages
+
 1. **Create directory** in `packages/`
 2. **Initialize package.json** with proper naming and configuration
 3. **Add TypeScript config** extending from `@codefast/typescript-config`
@@ -104,6 +115,7 @@ Required fields for all packages:
 6. **Add to workspace** - pnpm will automatically detect it
 
 ### Build Commands
+
 ```bash
 # Build specific package
 pnpm build --filter=@codefast/package-name
@@ -119,7 +131,9 @@ pnpm dev --filter=@codefast/package-name
 ```
 
 ### Development Dependencies
+
 Standard dev dependencies across packages:
+
 - `@codefast/eslint-config` - Shared linting
 - `@codefast/typescript-config` - Shared TS config
 - `@rslib/core` - Build system
@@ -130,7 +144,8 @@ Standard dev dependencies across packages:
 ## Export Patterns
 
 ### Main Entry Point
-```typescript
+
+```tsx
 // src/index.ts - Main package entry
 export { ComponentName } from './components/ComponentName';
 export type { ComponentProps } from './components/ComponentName';
@@ -138,7 +153,8 @@ export { utilityFunction } from './utils/utility';
 ```
 
 ### Component Exports
-```typescript
+
+```tsx
 // For UI components
 export interface ButtonProps {
   variant?: 'primary' | 'secondary';
@@ -151,12 +167,13 @@ export const Button: React.FC<ButtonProps> = ({ variant = 'primary', children })
 ```
 
 ### Utility Exports
-```typescript
+
+```tsx
 // For utility functions
 export const formatCurrency = (amount: number, currency = 'USD'): string => {
-  return new Intl.NumberFormat('en-US', { 
-    style: 'currency', 
-    currency 
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency
   }).format(amount);
 };
 ```
@@ -164,12 +181,14 @@ export const formatCurrency = (amount: number, currency = 'USD'): string => {
 ## Quality Gates
 
 ### Build Requirements
+
 - **Clean builds**: No TypeScript errors
 - **Dual format**: Both ESM and CJS outputs
 - **Type definitions**: Generated .d.ts files
 - **File optimization**: Tree-shakeable exports
 
 ### Publishing Checklist
+
 - [ ] All tests pass (`pnpm test`)
 - [ ] Types check (`pnpm check-types`)
 - [ ] Linting passes (`pnpm lint`)

@@ -1,6 +1,6 @@
 ---
-alwaysApply: true
 description: Code quality standards and style guidelines
+alwaysApply: true
 ---
 
 # Code Quality Standards and Style Guidelines
@@ -10,6 +10,7 @@ description: Code quality standards and style guidelines
 This project maintains **zero-tolerance** policies for quality issues:
 
 ### Absolute Requirements
+
 - **Zero ESLint warnings** - `pnpm lint` must pass completely
 - **Zero TypeScript errors** - `pnpm check-types` must succeed
 - **100% test success** - `pnpm test` must pass all tests
@@ -18,13 +19,15 @@ This project maintains **zero-tolerance** policies for quality issues:
 ## Style Guidelines
 
 ### Code Formatting
+
 - **Prettier** handles all formatting automatically
 - Configuration in [prettier.config.js](mdc:prettier.config.js)
 - Includes plugins for package.json and Tailwind CSS
 - Run `pnpm format` to auto-format, `pnpm format:check` to verify
 
 ### Naming Conventions
-```typescript
+
+```tsx
 // Components: PascalCase
 export const UserProfile: React.FC<UserProfileProps> = () => {};
 
@@ -44,6 +47,7 @@ export interface UserPreferences {
 ```
 
 ### File Naming
+
 - **Components**: `ComponentName.tsx`
 - **Hooks**: `useHookName.ts`
 - **Utilities**: `descriptive-name.ts`
@@ -53,7 +57,9 @@ export interface UserPreferences {
 ## Content Guidelines
 
 ### Emoji Policy
+
 **CRITICAL**: **No emojis** are allowed in:
+
 - Source code files
 - Console logs
 - Comments
@@ -65,33 +71,35 @@ export interface UserPreferences {
 Use descriptive text instead of emojis for better accessibility and professionalism.
 
 ### Comments and Documentation
-```typescript
+
+```tsx
 /**
  * Formats a date string according to the specified locale and options.
- * 
+ *
  * @param date - The date to format
  * @param locale - The locale to use for formatting (default: 'en-US')
  * @param options - Intl.DateTimeFormat options
  * @returns The formatted date string
  */
 export const formatDate = (
-  date: Date,
-  locale = 'en-US',
-  options: Intl.DateTimeFormatOptions = {}
-): string => {
-  return new Intl.DateTimeFormat(locale, options).format(date);
-};
+    date: Date,
+    locale = 'en-US',
+    options: Intl.DateTimeFormatOptions = {}
+  ): string => {
+    return new Intl.DateTimeFormat(locale, options).format(date);
+  };
 ```
 
 ## TypeScript Quality Standards
 
 ### Type Safety
+
 - **Never use `any`** - Always provide explicit types
 - **Minimize `unknown` usage** - Prefer explicit typing and type inference
 - **Strict null checks** - Handle undefined/null cases explicitly
 - **Generic constraints** - Use proper type bounds
 
-```typescript
+```tsx
 // Good: Explicit typing
 interface ApiResponse<T> {
   data: T;
@@ -111,7 +119,8 @@ function processData(data: any): any { // ❌ Never do this
 ```
 
 ### Import Organization
-```typescript
+
+```tsx
 // 1. Node modules
 import React from 'react';
 import { clsx } from 'clsx';
@@ -128,22 +137,24 @@ import type { ComponentProps } from './types';
 ## Performance Standards
 
 ### Bundle Optimization
+
 - **Tree-shakeable exports** - Use named exports
 - **Minimal dependencies** - Avoid unnecessary packages
 - **Dynamic imports** - Use for code splitting when appropriate
 - **TypeScript strict mode** - Enables better optimization
 
 ### React Best Practices
-```typescript
+
+```tsx
 // Good: Proper memo usage
 export const ExpensiveComponent = React.memo<Props>(({ data }) => {
   const processedData = useMemo(() => processData(data), [data]);
-  
+
   const handleClick = useCallback((id: string) => {
     onItemClick(id);
   }, [onItemClick]);
-  
-  return <div>{/* Component JSX */}</div>;
+
+  return <div>{/* Component JSX */ }</div>;
 });
 
 // Good: Proper prop types
@@ -157,16 +168,17 @@ interface ComponentProps {
 ## Error Handling
 
 ### Consistent Error Patterns
-```typescript
+
+```tsx
 // Good: Explicit error handling
 export const fetchUserData = async (id: string): Promise<User | null> => {
   try {
-    const response = await fetch(`/api/users/${id}`);
-    
+    const response = await fetch(`/api/users/${ id }`);
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch user: ${response.status}`);
+      throw new Error(`Failed to fetch user: ${ response.status }`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error('Error fetching user data:', error);
