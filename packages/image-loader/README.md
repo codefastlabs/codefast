@@ -39,7 +39,7 @@ pnpm add next
 ## Quick Start
 
 ```tsx
-import { createDefaultImageLoaderFactory } from '@codefast/image-loader';
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 // Create a factory with default CDN loaders
 const imageLoaderFactory = createDefaultImageLoaderFactory();
@@ -65,7 +65,7 @@ function MyComponent() {
 The easiest way to get started is with the default factory that includes all built-in CDN loaders:
 
 ```tsx
-import { createDefaultImageLoaderFactory } from '@codefast/image-loader';
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = createDefaultImageLoaderFactory({
   defaultQuality: 80,
@@ -129,7 +129,7 @@ function CloudinaryImage() {
 Map specific domains to preferred loaders:
 
 ```tsx
-import { createDefaultImageLoaderFactory } from '@codefast/image-loader';
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = createDefaultImageLoaderFactory({
   defaultQuality: 85,
@@ -280,7 +280,7 @@ declare const defaultImageLoaderFactory: ImageLoaderFactory;
 Configure the image loader in your Next.js configuration:
 
 ```javascript
-import { createDefaultImageLoaderFactory } from '@codefast/image-loader';
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = createDefaultImageLoaderFactory();
 
@@ -300,7 +300,7 @@ export default nextConfig;
 Create a loader file in your project root:
 
 ```javascript
-import { createDefaultImageLoaderFactory } from '@codefast/image-loader';
+import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = createDefaultImageLoaderFactory({
   defaultQuality: 80,

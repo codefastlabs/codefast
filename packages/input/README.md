@@ -164,14 +164,14 @@ function AlternativeExample() {
 | `disabled`       | `boolean`              | `false`     | Whether the input is disabled            |
 | `readOnly`       | `boolean`              | `false`     | Whether the input is in read-only mode   |
 | `loading`        | `boolean`              | `false`     | Whether the input is in loading state    |
-| `loaderPosition` | `'prefix' \| 'suffix'` | `'prefix'`  | Position of the loading spinner          |
+| `loaderPosition` | `"prefix" \| "suffix"` | `"prefix"`  | Position of the loading spinner          |
 | `children`       | `ReactNode`            | `undefined` | Child elements (typically InputField)    |
 
 ### InputField Props
 
 | Prop           | Type                                             | Default     | Description                  |
 | -------------- | ------------------------------------------------ | ----------- | ---------------------------- |
-| `type`         | `string`                                         | `'text'`    | HTML input type              |
+| `type`         | `string`                                         | `"text"`    | HTML input type              |
 | `placeholder`  | `string`                                         | `undefined` | Placeholder text             |
 | `value`        | `string`                                         | `undefined` | Input value (controlled)     |
 | `defaultValue` | `string`                                         | `undefined` | Default value (uncontrolled) |

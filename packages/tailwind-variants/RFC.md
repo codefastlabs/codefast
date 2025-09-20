@@ -488,8 +488,8 @@ const className = button({ variant: "primary" });
 ### 1. React Integration
 
 ```typescript
-import React from 'react';
- import { tv, type VariantProps } from '@codefast/tailwind-variants';
+import React from "react";
+ import { tv, type VariantProps } from "@codefast/tailwind-variants";
 
 const button = tv({...});
 
