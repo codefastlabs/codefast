@@ -1322,4 +1322,4 @@
 
 ### Patch Changes
 
-- Add useMediaQuery and useMutationObserver hooks in new 'hooks' package
+- Add useMediaQuery and useMutationObserver hooks in new "hooks" package

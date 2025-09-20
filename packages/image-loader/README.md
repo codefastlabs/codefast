@@ -70,7 +70,7 @@ import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 const factory = createDefaultImageLoaderFactory({
   defaultQuality: 80,
   domainMappings: {
-    'my-domain.com': 'cloudinary'
+    "my-domain.com": "cloudinary"
   }
 });
 
@@ -86,7 +86,7 @@ import {
   ImageLoaderFactory, 
   CloudinaryLoader, 
   ImgixLoader 
-} from '@codefast/image-loader';
+} from "@codefast/image-loader";
 
 const factory = new ImageLoaderFactory({
   defaultQuality: 75
@@ -106,7 +106,7 @@ export default factory.load;
 You can also use individual CDN loaders directly:
 
 ```tsx
-import { CloudinaryLoader } from '@codefast/image-loader';
+import { CloudinaryLoader } from "@codefast/image-loader";
 
 const cloudinaryLoader = new CloudinaryLoader();
 
@@ -134,9 +134,9 @@ import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 const factory = createDefaultImageLoaderFactory({
   defaultQuality: 85,
   domainMappings: {
-    'images.unsplash.com': 'unsplash',
-    'cdn.example.com': 'aws-cloudfront',
-    'res.cloudinary.com': 'cloudinary'
+    "images.unsplash.com": "unsplash",
+    "cdn.example.com": "aws-cloudfront",
+    "res.cloudinary.com": "cloudinary"
   }
 });
 ```
@@ -146,22 +146,22 @@ const factory = createDefaultImageLoaderFactory({
 Create your own custom loader by implementing the ImageLoader interface:
 
 ```tsx
-import { BaseImageLoader } from '@codefast/image-loader';
-import type { ImageLoaderProps } from 'next/image';
+import { BaseImageLoader } from "@codefast/image-loader";
+import type { ImageLoaderProps } from "next/image";
 
 class CustomCDNLoader extends BaseImageLoader {
   getName(): string {
-    return 'custom-cdn';
+    return "custom-cdn";
   }
 
   canHandle(src: string): boolean {
-    return src.includes('custom-cdn.com');
+    return src.includes("custom-cdn.com");
   }
 
   load({ src, width, quality }: ImageLoaderProps): string {
     const url = new URL(src);
-    url.searchParams.set('w', width.toString());
-    url.searchParams.set('q', (quality || 75).toString());
+    url.searchParams.set("w", width.toString());
+    url.searchParams.set("q", (quality || 75).toString());
     return url.toString();
   }
 }
@@ -284,11 +284,11 @@ import { createDefaultImageLoaderFactory } from "@codefast/image-loader";
 
 const factory = createDefaultImageLoaderFactory();
 
-/** @type {import('next').NextConfig} */
+/** @type {import("next").NextConfig} */
 const nextConfig = {
   images: {
-    loader: 'custom',
-    loaderFile: './image-loader.js',
+    loader: "custom",
+    loaderFile: "./image-loader.js",
   },
 };
 
@@ -318,7 +318,7 @@ import type {
   ImageLoader, 
   ImageLoaderFactoryConfig, 
   CDNProvider 
-} from '@codefast/image-loader';
+} from "@codefast/image-loader";
 ```
 
 ## Contributing
