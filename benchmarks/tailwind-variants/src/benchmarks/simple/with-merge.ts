@@ -33,7 +33,7 @@ export function createSimpleWithMergeBenchmark(): Bench {
   });
 
   bench
-    .add("[simple] tailwind-variants (original)", () => {
+    .add("[simple] tailwind-variants", () => {
       for (const props of simpleTestProps) {
         originalTVSimple(props);
       }

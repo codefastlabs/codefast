@@ -34,7 +34,7 @@ export function createComplexWithMergeBenchmark(): Bench {
   });
 
   bench
-    .add("[complex] tailwind-variants (original)", () => {
+    .add("[complex] tailwind-variants", () => {
       for (const props of complexTestProps) {
         originalTVComplex(props);
       }
