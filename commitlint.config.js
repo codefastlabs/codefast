@@ -1,6 +1,6 @@
 const ERROR_LEVEL = 2;
 const MAX_HEADER_LENGTH = 250;
-const MAX_BODY_LINE_LENGTH = 500;
+const MAX_BODY_LINE_LENGTH = 1000;
 
 /** @type {import("@commitlint/types").UserConfig} */
 const config = {
