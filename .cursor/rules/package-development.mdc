@@ -147,8 +147,8 @@ Standard dev dependencies across packages:
 
 ```tsx
 // src/index.ts - Main package entry
-export { ComponentName } from './components/ComponentName';
-export type { ComponentProps } from './components/ComponentName';
+export { ComponentName } from './components/component-name';
+export type { ComponentProps } from './components/component-name';
 export { utilityFunction } from './utils/utility';
 ```
 

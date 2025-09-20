@@ -282,7 +282,7 @@ namespace API {
 
 // Advanced barrel exports with re-exports
 export type { ComponentProps } from './types';
-export { default as Component, type SpecificProps } from './Component';
+export { default as Component, type SpecificProps } from './component';
 export * as Utils from './utils';
 ```
 
@@ -410,7 +410,7 @@ import type { User } from '@/types';
 
 // Runtime imports only when needed
 const { lazy } = await import('react');
-const Component = lazy(() => import('./Component'));
+const Component = lazy(() => import('./component'));
 ```
 
 ## Expert Best Practices

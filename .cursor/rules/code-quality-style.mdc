@@ -130,7 +130,7 @@ import { Button } from '@codefast/ui';
 import { useLocalStorage } from '@codefast/hooks';
 
 // 3. Relative imports (same package)
-import { formatDate } from '../utils/date';
+import { formatDate } from '../utils/format-date';
 import type { ComponentProps } from './types';
 ```
 

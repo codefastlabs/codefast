@@ -51,7 +51,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
-import { Button } from './Button';
+import { Button } from './button';
 
 expect.extend(toHaveNoViolations);
 
@@ -88,7 +88,7 @@ describe('Button', () => {
 ```tsx
 import { renderHook, act } from '@testing-library/react';
 
-import { useCounter } from './useCounter';
+import { useCounter } from './use-counter';
 
 describe('useCounter', () => {
   it('initializes with default value', () => {

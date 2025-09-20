@@ -131,7 +131,7 @@ TIMING=1 eslint --max-warnings 0 --fix src/components/Button.tsx
 ```bash
 # After modifying multiple files in packages/hooks
 cd packages/hooks
-TIMING=1 eslint --max-warnings 0 --fix src/useLocalStorage.ts src/useCounter.ts
+TIMING=1 eslint --max-warnings 0 --fix src/use-local-storage.ts src/use-counter.ts
 ```
 
 #### Cross-Package Changes
@@ -139,7 +139,7 @@ TIMING=1 eslint --max-warnings 0 --fix src/useLocalStorage.ts src/useCounter.ts
 ```bash
 # After modifying files in multiple packages
 pnpm --filter=@codefast/ui exec TIMING=1 eslint --max-warnings 0 --fix src/components/Button.tsx
-pnpm --filter=@codefast/hooks exec TIMING=1 eslint --max-warnings 0 --fix src/useLocalStorage.ts
+pnpm --filter=@codefast/hooks exec TIMING=1 eslint --max-warnings 0 --fix src/use-local-storage.ts
 ```
 
 ### Benefits

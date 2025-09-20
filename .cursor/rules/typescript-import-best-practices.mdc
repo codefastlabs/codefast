@@ -1,0 +1,268 @@
+---
+description: TypeScript import statement best practices and validation guidelines
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+
+# TypeScript Import Best Practices
+
+## Overview
+
+This rule defines best practices for handling import statements in TypeScript projects to avoid common mistakes and ensure consistency across the codebase.
+
+## Core Principles
+
+### 1. Import Statement Validation Checklist
+
+Before writing any import statements, always verify:
+
+- [ ] **Project Structure**: Check `package.json` for module system (`"type": "module"`)
+- [ ] **TypeScript Config**: Verify `tsconfig.json` moduleResolution settings
+- [ ] **Existing Patterns**: Examine current import patterns in the codebase
+- [ ] **File Extensions**: Confirm actual file extensions (`.ts`, `.tsx`, `.js`)
+- [ ] **Workspace Dependencies**: Use `workspace:*` protocol for internal packages
+
+### 2. Import Statement Patterns
+
+#### ✅ Correct Patterns
+
+```typescript
+// Internal relative imports (no extension for .ts files)
+import { Component } from "./component";
+import { utils } from "../utils/helpers";
+
+// Workspace dependencies (monorepo internal packages)
+import { Button } from "@codefast/ui";
+import { useLocalStorage } from "@codefast/hooks";
+
+// External dependencies
+import { useState } from "react";
+import { clsx } from "clsx";
+```
+
+#### ❌ Avoid These Patterns
+
+```typescript
+// Don't use .js extensions when all files are .ts
+import { Component } from "./component.js"; // ❌ Confusing
+
+// Don't use .ts extensions (unnecessary)
+import { Component } from "./component.ts"; // ❌ Redundant
+
+// Don't use relative paths for workspace packages
+import { Button } from "../../packages/ui/src/button"; // ❌ Use workspace protocol
+```
+
+### 3. Import Organization
+
+```typescript
+// 1. Node modules (external dependencies)
+import React from 'react';
+import { clsx } from 'clsx';
+
+// 2. Workspace packages (internal monorepo)
+import { Button } from '@codefast/ui';
+import { useLocalStorage } from '@codefast/hooks';
+
+// 3. Relative imports (same package)
+import { formatDate } from '../utils/format-date';
+import type { ComponentProps } from './types';
+```
+
+### 4. Type-Only Imports
+
+```typescript
+// Use type-only imports for types
+import type { ComponentProps } from './types';
+import type { User } from '@codefast/types';
+
+// Regular imports for runtime values
+import { formatDate } from '../utils/format-date';
+```
+
+## Validation Process
+
+### Before Making Changes
+
+1. **Read Project Configuration**:
+   ```bash
+   # Check package.json
+   cat package.json | grep -E '"type"|"module"'
+
+   # Check TypeScript config
+   cat tsconfig.json | grep -A 5 "compilerOptions"
+   ```
+
+2. **Examine Existing Patterns**:
+   ```bash
+   # Find existing import patterns
+   grep -r "import.*from" src/ | head -10
+   ```
+
+3. **Verify File Structure**:
+   ```bash
+   # Check actual file extensions
+   find src/ -name "*.ts" -o -name "*.tsx" -o -name "*.js" | head -10
+   ```
+
+### After Making Changes
+
+Always run validation sequence:
+
+```bash
+# 1. Type checking
+npx tsc --noEmit
+
+# 2. Linting (must pass with 0 warnings)
+pnpm lint
+
+# 3. Testing (if applicable)
+pnpm test
+
+# 4. Build verification
+pnpm build
+```
+
+## Common Scenarios
+
+### Scenario 1: Adding New File with Imports
+
+```typescript
+// ✅ Correct approach
+import { useState } from 'react';                    // External
+import { Button } from '@codefast/ui';              // Workspace
+import { formatDate } from '../utils/format-date';         // Relative
+import type { UserProps } from './types';           // Type-only
+```
+
+### Scenario 2: Refactoring Existing Imports
+
+1. Check current import patterns in the file
+2. Verify if imports are still valid after refactoring
+3. Update import paths if files moved
+4. Ensure workspace dependencies use `workspace:*` protocol
+
+### Scenario 3: Working with Monorepo Packages
+
+```typescript
+// ✅ Always use workspace protocol
+import { Component } from '@codefast/ui';           // Correct
+import { hook } from '@codefast/hooks';             // Correct
+
+// ❌ Never use relative paths across packages
+import { Component } from '../../packages/ui/src';  // Wrong
+```
+
+## Error Prevention
+
+### Mental Model for Import Decisions
+
+```typescript
+interface ImportDecision {
+  source: 'external' | 'workspace' | 'relative';
+  extension: string | null;
+  path: string;
+}
+
+function decideImportPath(modulePath: string): ImportDecision {
+  if (modulePath.startsWith('@codefast/')) {
+    return { source: 'workspace', extension: null, path: modulePath };
+  }
+
+  if (modulePath.startsWith('./') || modulePath.startsWith('../')) {
+    return { source: 'relative', extension: null, path: modulePath };
+  }
+
+  return { source: 'external', extension: null, path: modulePath };
+}
+```
+
+### Defensive Programming
+
+```typescript
+// Always verify imports work before proceeding
+async function validateImports(filePath: string) {
+  try {
+    await runCommand(`npx tsc --noEmit ${ filePath }`);
+    return true;
+  } catch (error) {
+    console.error('Import validation failed:', error);
+    return false;
+  }
+}
+```
+
+## Quality Gates
+
+### Absolute Requirements
+
+- **Zero TypeScript errors**: `npx tsc --noEmit` must pass
+- **Zero ESLint warnings**: `pnpm lint` must pass with 0 warnings
+- **Consistent patterns**: All imports follow the same organizational structure
+- **Workspace protocol**: Internal dependencies use `workspace:*`
+
+### Red Flags to Watch For
+
+- Using `.js` extensions when all files are `.ts`
+- Using relative paths for workspace packages
+- Mixing import patterns within the same file
+- Importing from non-existent files
+- Using `any` type in import statements
+
+## Examples
+
+### ✅ Good Example
+
+```typescript
+// src/components/UserProfile.tsx
+import React, { useState } from 'react';
+import { clsx } from 'clsx';
+
+import { Button } from '@codefast/ui';
+import { useLocalStorage } from '@codefast/hooks';
+
+import { formatDate } from '../utils/format-date';
+import { validateEmail } from '../utils/validate-email';
+import type { User, UserProfileProps } from './types';
+
+export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+  // Component implementation
+};
+```
+
+### ❌ Bad Example
+
+```typescript
+// src/components/UserProfile.tsx
+import React, { useState } from 'react';
+import { clsx } from 'clsx';
+import { Button } from '../../packages/ui/src/button.js';  // ❌ Wrong path + extension
+import { useLocalStorage } from '@codefast/hooks';
+import { formatDate } from '../utils/format-date.ts';            // ❌ Unnecessary extension
+import type { User, UserProfileProps } from './types';
+
+export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+  // Component implementation
+};
+```
+
+## Integration with Existing Rules
+
+This rule complements:
+
+- **Code Quality Standards**: Ensures import statements meet quality requirements
+- **Monorepo Development**: Enforces proper workspace dependency usage
+- **Package Development**: Maintains consistent import patterns across packages
+
+## Enforcement
+
+This rule is enforced through:
+
+1. **ESLint configuration**: Import ordering and validation rules
+2. **TypeScript compiler**: Type checking and module resolution
+3. **Pre-commit hooks**: Automated validation before commits
+4. **CI/CD pipeline**: Automated checks in pull requests
+
+Remember: **Always verify before assuming**. When in doubt, check existing patterns in the codebase first.
