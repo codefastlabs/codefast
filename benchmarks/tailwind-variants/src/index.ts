@@ -7,11 +7,13 @@
  * It orchestrates all benchmark scenarios and outputs results to the console.
  */
 
-import { runComplexWithTailwindMergeBenchmark } from "./complex-with-tailwind-merge.bench";
-import { runComplexWithoutTailwindMergeBenchmark } from "./complex-without-tailwind-merge.bench";
-import { generatePerformanceSummary } from "./performance-summary";
-import { runSimpleWithTailwindMergeBenchmark } from "./simple-with-tailwind-merge.bench";
-import { runSimpleWithoutTailwindMergeBenchmark } from "./simple-without-tailwind-merge.bench";
+import {
+  createComplexWithMergeBenchmark,
+  createComplexWithoutMergeBenchmark,
+  createSimpleWithMergeBenchmark,
+  createSimpleWithoutMergeBenchmark,
+} from "./benchmarks";
+import { generatePerformanceSummary } from "./utils";
 
 /**
  * Main function to run all benchmarks
@@ -23,11 +25,11 @@ async function main(): Promise<void> {
 
     console.log("Starting Tailwind Variants Performance Benchmark...\n");
 
-    // Run all benchmark scenarios
-    const simpleWithoutMergeBench = runSimpleWithoutTailwindMergeBenchmark();
-    const simpleWithMergeBench = runSimpleWithTailwindMergeBenchmark();
-    const complexWithoutMergeBench = runComplexWithoutTailwindMergeBenchmark();
-    const complexWithMergeBench = runComplexWithTailwindMergeBenchmark();
+    // Create all benchmark scenarios
+    const simpleWithoutMergeBench = createSimpleWithoutMergeBenchmark();
+    const simpleWithMergeBench = createSimpleWithMergeBenchmark();
+    const complexWithoutMergeBench = createComplexWithoutMergeBenchmark();
+    const complexWithMergeBench = createComplexWithMergeBenchmark();
 
     // Run all benchmarks
     await simpleWithoutMergeBench.run();

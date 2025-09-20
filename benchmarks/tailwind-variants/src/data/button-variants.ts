@@ -1,11 +1,9 @@
 /**
- * Shared Data for Tailwind Variants Benchmark
+ * Button Variant Configurations
  *
- * This file contains shared sample configurations and test cases
- * used across different benchmark scenarios.
+ * Shared button variant configurations used across benchmark scenarios
  */
 
-// Sample variant configurations for testing
 export const buttonVariants = {
   base: "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
   defaultVariants: {
@@ -81,23 +79,3 @@ export const mutableComplexVariants = {
   ...complexVariants,
   compoundVariants: [...complexVariants.compoundVariants],
 };
-
-// Test data for simple variants
-export const simpleTestProps = [
-  {} as const,
-  { variant: "destructive" } as const,
-  { size: "lg" } as const,
-  { className: "custom-class", size: "sm", variant: "outline" } as const,
-  { size: "icon", variant: "ghost" } as const,
-  { className: "custom-class", variant: "link" } as const,
-];
-
-// Test data for complex variants
-export const complexTestProps = [
-  {} as const,
-  { size: "lg", variant: "destructive" } as const,
-  { disabled: true, loading: true } as const,
-  { disabled: false, size: "sm", variant: "outline" } as const,
-  { loading: true, size: "icon", variant: "ghost" } as const,
-  { className: "custom-class", disabled: true, variant: "link" } as const,
-];
