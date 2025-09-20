@@ -1,7 +1,8 @@
 /**
  * Utils Module Exports
  *
- * Centralized exports for all utility functions
+ * Explicit named exports for all utility functions
+ * This provides better tree-shaking, IDE support, and maintainability
  */
 
-export * from "./performance-summary";
+export { generatePerformanceSummary } from "./performance-summary";

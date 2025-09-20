@@ -1,10 +1,11 @@
 /**
  * Benchmarks Module Exports
  *
- * Centralized exports for all benchmark scenarios
+ * Explicit named exports for all benchmark scenarios
+ * This provides better tree-shaking, IDE support, and maintainability
  */
 
-export * from "./complex/with-merge";
-export * from "./complex/without-merge";
-export * from "./simple/with-merge";
-export * from "./simple/without-merge";
+export { createComplexWithMergeBenchmark } from "./complex/with-merge";
+export { createComplexWithoutMergeBenchmark } from "./complex/without-merge";
+export { createSimpleWithMergeBenchmark } from "./simple/with-merge";
+export { createSimpleWithoutMergeBenchmark } from "./simple/without-merge";

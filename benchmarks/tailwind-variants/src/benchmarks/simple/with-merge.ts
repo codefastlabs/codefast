@@ -38,7 +38,7 @@ export function createSimpleWithMergeBenchmark(): Bench {
         originalTVSimple(props);
       }
     })
-    .add("[simple] class-variance-authority + tailwind-merge", () => {
+    .add("[simple] class-variance-authority", () => {
       for (const props of simpleTestProps) {
         twMerge(cvaSimple(props));
       }

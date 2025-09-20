@@ -39,7 +39,7 @@ export function createComplexWithMergeBenchmark(): Bench {
         originalTVComplex(props);
       }
     })
-    .add("[complex] class-variance-authority + tailwind-merge", () => {
+    .add("[complex] class-variance-authority", () => {
       for (const props of complexTestProps) {
         twMerge(cvaComplex(props));
       }
