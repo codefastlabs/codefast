@@ -1,8 +1,8 @@
 ---
 description: Advanced TypeScript patterns, techniques, and expert-level practices
 globs:
-  - "*.ts"
-  - "*.tsx"
+  - "**/*.ts"
+  - "**/*.tsx"
 alwaysApply: true
 ---
 

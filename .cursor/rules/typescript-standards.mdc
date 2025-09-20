@@ -1,8 +1,8 @@
 ---
 description: TypeScript coding standards and best practices
 globs:
-  - "*.ts"
-  - "*.tsx"
+  - "**/*.ts"
+  - "**/*.tsx"
 alwaysApply: true
 ---
 
