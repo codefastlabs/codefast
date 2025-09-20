@@ -25,8 +25,8 @@ type RequiredKeys<T> = {
 }[keyof T];
 
 // Extract function parameters and return types
-type ExtractFnParams<T> = T extends (...args: infer P) => any ? P : never;
-type ExtractFnReturn<T> = T extends (...args: any[]) => infer R ? R : never;
+type ExtractFnParams<T> = T extends (...args: infer P) => unknown ? P : never;
+type ExtractFnReturn<T> = T extends (...args: unknown[]) => infer R ? R : never;
 ```
 
 ### Conditional Types and Template Literals
@@ -292,7 +292,7 @@ export * as Utils from './utils';
 
 ```tsx
 // Generic test utilities with proper typing
-function createMockFunction<T extends (...args: any[]) => any>(): jest.MockedFunction<T> {
+function createMockFunction<T extends (...args: unknown[]) => unknown>(): jest.MockedFunction<T> {
   return jest.fn() as jest.MockedFunction<T>;
 }
 
@@ -330,63 +330,32 @@ function createComponentTest<P>(
 
 ### TypeScript Configuration Strategies
 
-```tsx
+```json5
 // Advanced tsconfig inheritance patterns
 // packages/typescript-config/strict.json
 {
-  "extends"
-:
-  "./base.json",
-    "compilerOptions"
-:
-  {
-    "strict"
-  :
-    true,
-      "exactOptionalPropertyTypes"
-  :
-    true,
-      "noUncheckedIndexedAccess"
-  :
-    true,
-      "noImplicitOverride"
-  :
-    true
+  extends: "./base.json",
+  compilerOptions: {
+    strict: true,
+    exactOptionalPropertyTypes: true,
+    noUncheckedIndexedAccess: true,
+    noImplicitOverride: true
   }
 }
 
 // Project-specific configuration with path mapping
 {
-  "extends"
-:
-  "@codefast/typescript-config/react",
-    "compilerOptions"
-:
-  {
-    "baseUrl"
-  :
-    ".",
-      "paths"
-  :
-    {
-      "@/*"
-    :
-      ["./src/*"],
-        "@/types"
-    :
-      ["./src/types"],
-        "@/utils/*"
-    :
-      ["./src/utils/*"]
+  extends: "@codefast/typescript-config/react",
+  compilerOptions: {
+    baseUrl: ".",
+    paths: {
+      "@/*": ["./src/*"],
+      "@/types": ["./src/types"],
+      "@/utils/*": ["./src/utils/*"]
     }
-  }
-,
-  "include"
-:
-  ["src/**/*", "tests/**/*"],
-    "exclude"
-:
-  ["dist", "node_modules", "**/*.test.ts"]
+  },
+  include: ["src/**/*", "tests/**/*"],
+  exclude: ["dist", "node_modules", "**/*.test.ts"]
 }
 ```
 

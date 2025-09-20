@@ -29,13 +29,30 @@ This project maintains **zero-tolerance** policies for quality issues:
 
 ```tsx
 // Components: PascalCase
-export const UserProfile: React.FC<UserProfileProps> = () => {};
+interface UserProfileProps {
+  user: {
+    name: string;
+    email: string;
+  };
+}
+
+export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+  return <div>{user.name}</div>;
+};
 
 // Hooks: camelCase with 'use' prefix
-export const useLocalStorage = () => {};
+export const useLocalStorage = <T>(key: string, defaultValue?: T): [T | undefined, (value: T) => void] => {
+  // Implementation
+  return [defaultValue, () => {}];
+};
 
 // Utilities: camelCase
-export const formatCurrency = (amount: number) => {};
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount);
+};
 
 // Constants: SCREAMING_SNAKE_CASE
 export const API_BASE_URL = 'https://api.example.com';

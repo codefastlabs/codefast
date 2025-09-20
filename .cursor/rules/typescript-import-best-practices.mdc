@@ -183,11 +183,11 @@ function decideImportPath(modulePath: string): ImportDecision {
 
 ```typescript
 // Always verify imports work before proceeding
-async function validateImports(filePath: string) {
+async function validateImports(filePath: string): Promise<boolean> {
   try {
     await runCommand(`npx tsc --noEmit ${ filePath }`);
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Import validation failed:', error);
     return false;
   }
