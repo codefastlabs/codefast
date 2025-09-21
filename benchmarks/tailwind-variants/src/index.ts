@@ -20,8 +20,8 @@ import {
   createSimpleWithoutMergeBenchmark,
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
-} from "./benchmarks";
-import { generatePerformanceSummary } from "./utils";
+} from "@/benchmarks";
+import { generatePerformanceSummary } from "@/utils";
 
 /**
  * Main function to run all benchmarks

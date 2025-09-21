@@ -17,7 +17,7 @@ export {
   mutableExtendsExtensionVariants,
   mutableSlotsVariants,
   slotsVariants,
-} from "./variants";
+} from "@/data/variants";
 
 // All test data sets
 export {
@@ -29,4 +29,4 @@ export {
   mixedSlotsCompoundTestProps,
   simpleTestProps,
   slotsTestProps,
-} from "./test-props";
+} from "@/data/test-props";

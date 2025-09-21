@@ -6,23 +6,23 @@
  */
 
 // Simple and complex variant benchmarks
-export { createComplexWithMergeBenchmark } from "./complex/with-merge";
-export { createComplexWithoutMergeBenchmark } from "./complex/without-merge";
-export { createSimpleWithMergeBenchmark } from "./simple/with-merge";
-export { createSimpleWithoutMergeBenchmark } from "./simple/without-merge";
+export { createComplexWithMergeBenchmark } from "@/benchmarks/complex/with-merge";
+export { createComplexWithoutMergeBenchmark } from "@/benchmarks/complex/without-merge";
+export { createSimpleWithMergeBenchmark } from "@/benchmarks/simple/with-merge";
+export { createSimpleWithoutMergeBenchmark } from "@/benchmarks/simple/without-merge";
 
 // Slots benchmarks
-export { createSlotsWithMergeBenchmark } from "./slots/with-merge";
-export { createSlotsWithoutMergeBenchmark } from "./slots/without-merge";
+export { createSlotsWithMergeBenchmark } from "@/benchmarks/slots/with-merge";
+export { createSlotsWithoutMergeBenchmark } from "@/benchmarks/slots/without-merge";
 
 // Compound slots benchmarks
-export { createCompoundSlotsWithMergeBenchmark } from "./compound-slots/with-merge";
-export { createCompoundSlotsWithoutMergeBenchmark } from "./compound-slots/without-merge";
+export { createCompoundSlotsWithMergeBenchmark } from "@/benchmarks/compound-slots/with-merge";
+export { createCompoundSlotsWithoutMergeBenchmark } from "@/benchmarks/compound-slots/without-merge";
 
 // Configuration extension benchmarks
-export { createExtendsWithMergeBenchmark } from "./extends/with-merge";
-export { createExtendsWithoutMergeBenchmark } from "./extends/without-merge";
+export { createExtendsWithMergeBenchmark } from "@/benchmarks/extends/with-merge";
+export { createExtendsWithoutMergeBenchmark } from "@/benchmarks/extends/without-merge";
 
 // Global factory benchmarks
-export { createCreateTVWithMergeBenchmark } from "./create-tv/with-merge";
-export { createCreateTVWithoutMergeBenchmark } from "./create-tv/without-merge";
+export { createCreateTVWithMergeBenchmark } from "@/benchmarks/create-tv/with-merge";
+export { createCreateTVWithoutMergeBenchmark } from "@/benchmarks/create-tv/without-merge";
