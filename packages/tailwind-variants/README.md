@@ -799,7 +799,7 @@ const responsiveCard = tv({
 Optimize for performance:
 
 ```typescript
-// ✅ Good: Define variants outside component
+// ✓ Good: Define variants outside component
 const buttonVariants = tv({
   base: "px-4 py-2 rounded",
   variants: {
@@ -819,7 +819,7 @@ const Button = ({ variant, className, ...props }) => {
   );
 };
 
-// ❌ Bad: Define variants inside component (recreated on every render)
+// ✗ Bad: Define variants inside component (recreated on every render)
 const Button = ({ variant, className, ...props }) => {
   const buttonVariants = tv({
     base: "px-4 py-2 rounded",

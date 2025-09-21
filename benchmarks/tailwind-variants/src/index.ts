@@ -34,19 +34,19 @@ async function main(): Promise<void> {
     // Run all benchmarks with progress logging
     console.log("Running Simple Variants (Without Tailwind Merge) benchmark...");
     await simpleWithoutMergeBench.run();
-    console.log("✅ Simple Variants (Without Tailwind Merge) completed");
+    console.log("✓ Simple Variants (Without Tailwind Merge) completed");
 
     console.log("Running Simple Variants (With Tailwind Merge) benchmark...");
     await simpleWithMergeBench.run();
-    console.log("✅ Simple Variants (With Tailwind Merge) completed");
+    console.log("✓ Simple Variants (With Tailwind Merge) completed");
 
     console.log("Running Complex Variants (Without Tailwind Merge) benchmark...");
     await complexWithoutMergeBench.run();
-    console.log("✅ Complex Variants (Without Tailwind Merge) completed");
+    console.log("✓ Complex Variants (Without Tailwind Merge) completed");
 
     console.log("Running Complex Variants (With Tailwind Merge) benchmark...");
     await complexWithMergeBench.run();
-    console.log("✅ Complex Variants (With Tailwind Merge) completed");
+    console.log("✓ Complex Variants (With Tailwind Merge) completed");
 
     // Display results for each scenario
     console.log("\n=== Simple Variants (Without Tailwind Merge) Results ===");
@@ -66,10 +66,10 @@ async function main(): Promise<void> {
     generatePerformanceSummary(complexWithMergeBench);
 
     console.log("\nBenchmark completed!");
-    console.log("\n✅ Benchmark completed successfully!");
+    console.log("\n✓ Benchmark completed successfully!");
     process.exit(0);
   } catch (error: unknown) {
-    console.error("❌ Benchmark failed:", error);
+    console.error("✗ Benchmark failed:", error);
     process.exit(1);
   }
 }

@@ -107,5 +107,5 @@ The benchmark uses the following configuration:
 
 This benchmark package follows project quality standards:
 
-- ✅ Zero ESLint warnings
-- ✅ Successful benchmark execution
+- ✓ Zero ESLint warnings
+- ✓ Successful benchmark execution

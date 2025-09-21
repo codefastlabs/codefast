@@ -35,7 +35,7 @@ const data = {
     { emoji: "🏠", name: "Home Renovation Ideas & Budget Tracker", url: "#" },
     { emoji: "💰", name: "Personal Finance & Investment Portfolio", url: "#" },
     { emoji: "🎬", name: "Movie & TV Show Watchlist with Reviews", url: "#" },
-    { emoji: "✅", name: "Daily Habit Tracker & Goal Setting", url: "#" },
+    { emoji: "✓", name: "Daily Habit Tracker & Goal Setting", url: "#" },
   ],
   navMain: [
     { icon: SearchIcon, title: "Search", url: "#" },

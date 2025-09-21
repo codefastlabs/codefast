@@ -90,14 +90,14 @@ Tài liệu nghiên cứu và experiments
 - Tránh viết tắt không rõ ràng
 
 **Ví dụ tốt:**
-- `testing/` ✅
-- `ui-components/` ✅
-- `performance/` ✅
+- `testing/` ✓
+- `ui-components/` ✓
+- `performance/` ✓
 
 **Ví dụ tránh:**
-- `test/` ❌ (quá ngắn)
-- `UI_Components/` ❌ (snake_case và uppercase)
-- `perf/` ❌ (viết tắt không rõ)
+- `test/` ✗ (quá ngắn)
+- `UI_Components/` ✗ (snake_case và uppercase)
+- `perf/` ✗ (viết tắt không rõ)
 
 ### 2. **Tên file**
 - Sử dụng **kebab-case**
@@ -105,14 +105,14 @@ Tài liệu nghiên cứu và experiments
 - Bao gồm loại tài liệu nếu cần
 
 **Ví dụ tốt:**
-- `jest-testing-best-practices.md` ✅
-- `component-guidelines.md` ✅
-- `api-design.md` ✅
+- `jest-testing-best-practices.md` ✓
+- `component-guidelines.md` ✓
+- `api-design.md` ✓
 
 **Ví dụ tránh:**
-- `JestTesting.md` ❌ (PascalCase)
-- `component_guidelines.md` ❌ (snake_case)
-- `api.md` ❌ (quá chung chung)
+- `JestTesting.md` ✗ (PascalCase)
+- `component_guidelines.md` ✗ (snake_case)
+- `api.md` ✗ (quá chung chung)
 
 ### 3. **Cấu trúc phân cấp**
 ```

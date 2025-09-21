@@ -436,26 +436,26 @@ Sử dụng section headers phù hợp với file type để organize code:
 ### Ví dụ fix ESLint errors
 
 ```typescript
-// ❌ Sẽ gây ESLint error - sử dụng /* thay vì /**
+// ✗ Sẽ gây ESLint error - sử dụng /* thay vì /**
 /* =============================================================================
    Component Implementation
    =============================================================================
 */
 
-// ✅ ESLint compatible - sử dụng /** cho JSDoc format
+// ✓ ESLint compatible - sử dụng /** cho JSDoc format
 /**
  * =============================================================================
  * Component Implementation
  * =============================================================================
  */
 
-// ❌ TSDoc undefined tags
+// ✗ TSDoc undefined tags
 /**
  * @package @codefast/ui
  * @author CodeFast Labs
  */
 
-// ✅ ESLint compatible
+// ✓ ESLint compatible
 /**
  * Package: `@codefast/ui`
  * Author: CodeFast Labs
@@ -463,7 +463,7 @@ Sử dụng section headers phù hợp với file type để organize code:
 ```
 
 ```css
-/* ✅ CSS - Laravel traditional style với | characters */
+/* ✓ CSS - Laravel traditional style với | characters */
 /*
 |--------------------------------------------------------------------------
 | Component Styles
@@ -473,7 +473,7 @@ Sử dụng section headers phù hợp với file type để organize code:
 |
 */
 
-/* ❌ CSS - Không nên dùng JSDoc style trong CSS */
+/* ✗ CSS - Không nên dùng JSDoc style trong CSS */
 /**
  * Component Styles
  * Base styling cho component.
