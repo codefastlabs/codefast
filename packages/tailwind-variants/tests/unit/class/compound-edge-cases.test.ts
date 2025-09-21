@@ -212,7 +212,7 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
       },
     });
 
-    // No variants provided - should not match compound
+    // No variants provided - should not match the compound
     const { item: item1 } = component();
 
     expect(item1()).toHaveClassName("px-2");
@@ -222,7 +222,7 @@ describe("Tailwind Variants (TV) - Compound Edge Cases", () => {
 
     expect(item2()).toHaveClassName("px-2");
 
-    // Different values - should not match compound
+    // Different values should not match compound
     const { item: item3 } = component({ color: "secondary", size: "small" });
 
     expect(item3()).toHaveClassName("px-2");

@@ -19,7 +19,7 @@ describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
           blue: "text-blue-500",
           red: "text-red-500",
         },
-        // Adding new variant that doesn't exist in base
+        // Adding a new variant that doesn't exist in base
         newVariant: {
           option1: "bg-gray-100",
           option2: "bg-gray-200",
@@ -62,13 +62,13 @@ describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
           },
         },
         size: {
-          // Add new size variant
+          // Add a new size variant
           lg: {
             base: "p-6",
             item: "text-lg",
           },
           sm: {
-            // Should merge with existing slot object
+            // Should merge with an existing slot object
             base: "p-1",
             // item should remain from base
           },
@@ -238,7 +238,7 @@ describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
             base: "text-blue-700",
             item: "text-blue-800",
           },
-          // red variant should remain from base
+          // the red variant should remain from the base
         },
       },
     });
@@ -279,7 +279,7 @@ describe("Tailwind Variants (TV) - Configuration Edge Cases", () => {
       defaultVariants: {
         color: "blue", // Override
         size: "lg", // Override
-        // Add new default
+        // Adds new default
       },
       extend: baseComponent,
       variants: {

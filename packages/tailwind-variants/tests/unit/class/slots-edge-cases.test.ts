@@ -15,7 +15,7 @@ describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
           },
           red: {
             base: "bg-red-500",
-            // item slot is undefined for red color
+            // the item slot is undefined for red color
           },
         },
       },
@@ -24,7 +24,7 @@ describe("Tailwind Variants (TV) - Slots Edge Cases", () => {
     const { base, item } = component({ color: "red" });
 
     expect(base()).toHaveClassName(["flex", "bg-red-500"]);
-    expect(item()).toHaveClassName("px-2"); // Should only have base slot class
+    expect(item()).toHaveClassName("px-2"); // Should only have a base slot class
   });
 
   test("should handle boolean variant defaults for slots", () => {
