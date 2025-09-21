@@ -88,7 +88,7 @@ function displayPerformanceSummary(analysis: PerformanceAnalysis): void {
     console.log(`\n🏆 Fastest Performer:`);
     console.log(`   • ${(fastestRanking?.name ?? "Unknown") satisfies string}`);
     console.log(`   • ${formatNumber(analysis.fastest.hz || 0)} ops/sec`);
-    console.log(`   • ${formatTime(analysis.fastest.mean || 0)} avg time`);
+    console.log(`   • ${formatTime((analysis.fastest.period || 0) * 1_000_000_000)} avg time`);
   }
 
   // Performance ranking
