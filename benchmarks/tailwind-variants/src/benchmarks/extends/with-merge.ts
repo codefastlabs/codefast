@@ -9,11 +9,11 @@ import { Bench } from "tinybench";
 
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
-import { extendsTestProps, mutableExtendsExtensionVariants } from "./data";
+import { extendsExtensionVariants, extendsTestProps } from "./data";
 
 // Initialize benchmark functions
-const originalTVExtends = originalTV(mutableExtendsExtensionVariants);
-const codefastTVExtends = codefastTV(mutableExtendsExtensionVariants);
+const originalTVExtends = originalTV(extendsExtensionVariants);
+const codefastTVExtends = codefastTV(extendsExtensionVariants);
 
 /**
  * Create extends benchmark with tailwind-merge

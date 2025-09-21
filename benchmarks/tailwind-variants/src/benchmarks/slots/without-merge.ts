@@ -9,11 +9,11 @@ import { Bench } from "tinybench";
 
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
-import { mutableSlotsVariants, slotsTestProps } from "./data";
+import { slotsTestProps, slotsVariants } from "./data";
 
 // Initialize benchmark functions
-const originalTVSlots = originalTV(mutableSlotsVariants, { twMerge: false });
-const codefastTVSlots = codefastTV(mutableSlotsVariants, { twMerge: false });
+const originalTVSlots = originalTV(slotsVariants, { twMerge: false });
+const codefastTVSlots = codefastTV(slotsVariants, { twMerge: false });
 
 /**
  * Create slots benchmark without tailwind-merge
