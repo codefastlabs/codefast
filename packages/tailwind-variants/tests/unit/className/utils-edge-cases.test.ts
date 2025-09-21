@@ -71,7 +71,8 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
       expect(isBooleanValueType(1)).toBe(false);
       expect(isBooleanValueType(0)).toBe(false);
       expect(isBooleanValueType(null)).toBe(false);
-      expect(isBooleanValueType()).toBe(false);
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      expect(isBooleanValueType(undefined)).toBe(false);
       expect(isBooleanValueType({})).toBe(false);
       expect(isBooleanValueType([])).toBe(false);
     });
@@ -90,7 +91,8 @@ describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
       expect(isSlotObjectType(true)).toBe(false);
       expect(isSlotObjectType(false)).toBe(false);
       expect(isSlotObjectType(null)).toBe(false);
-      expect(isSlotObjectType()).toBe(false);
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      expect(isSlotObjectType(undefined)).toBe(false);
       expect(isSlotObjectType([])).toBe(false);
       expect(
         isSlotObjectType(() => {
