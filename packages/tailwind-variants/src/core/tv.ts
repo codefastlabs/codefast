@@ -22,18 +22,18 @@ import type {
   TailwindVariantsFactoryResult,
   TailwindVariantsReturnType,
   VariantFunctionType,
-} from "@/types";
+} from "@/types/types";
 
-import { applyCompoundSlotClasses, applyCompoundVariantClasses } from "@/compound";
-import { mergeConfigurationSchemas } from "@/config";
-import { createSlotFunctionFactory } from "@/slots";
+import { mergeConfigurationSchemas } from "@/core/config";
+import { applyCompoundSlotClasses, applyCompoundVariantClasses } from "@/processing/compound";
+import { createSlotFunctionFactory } from "@/processing/slots";
 import {
   createTailwindMergeService,
   cx,
   hasExtensionConfiguration,
   hasSlotConfiguration,
   isBooleanVariantType,
-} from "@/utils";
+} from "@/utilities/utils";
 
 /**
  * Handle regular variant resolution for components without slots.

@@ -14,9 +14,14 @@ import type {
   ConfigurationWithSlots,
   ExtendedConfiguration,
   SlotConfigurationSchema,
-} from "@/types";
+} from "@/types/types";
 
-import { cx, hasExtensionConfiguration, hasSlotConfiguration, isSlotObjectType } from "@/utils";
+import {
+  cx,
+  hasExtensionConfiguration,
+  hasSlotConfiguration,
+  isSlotObjectType,
+} from "@/utilities/utils";
 
 /**
  * Merge two variant groups.

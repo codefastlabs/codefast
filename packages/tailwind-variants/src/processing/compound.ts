@@ -13,9 +13,9 @@ import type {
   ConfigurationSchema,
   ConfigurationVariants,
   SlotConfigurationSchema,
-} from "@/types";
+} from "@/types/types";
 
-import { isBooleanValueType } from "@/utils";
+import { isBooleanValueType } from "@/utilities/utils";
 
 /**
  * Apply compound variant classes based on variant conditions.

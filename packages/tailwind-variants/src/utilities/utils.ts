@@ -18,7 +18,7 @@ import type {
   ConfigurationWithSlots,
   ExtendedConfiguration,
   SlotConfigurationSchema,
-} from "@/types";
+} from "@/types/types";
 
 /**
  * Combine CSS classes using clsx.

@@ -1,4 +1,4 @@
-import { cn, cx, isBooleanValueType, isSlotObjectType } from "@/utils";
+import { cn, cx, isBooleanValueType, isSlotObjectType } from "@/utilities/utils";
 
 describe("Tailwind Variants (TV) - Utils Edge Cases", () => {
   describe("cx function edge cases", () => {
