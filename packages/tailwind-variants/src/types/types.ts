@@ -96,8 +96,11 @@ export type SlotProperties<S extends SlotConfigurationSchema> = {
  */
 export type CompoundVariantType<T extends ConfigurationSchema> = Partial<{
   readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
-    ? boolean | StringToBooleanType<keyof T[Variant]>
-    : StringToBooleanType<keyof T[Variant]>;
+    ?
+        | boolean
+        | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[]
+        | StringToBooleanType<keyof T[Variant]>
+    : readonly StringToBooleanType<keyof T[Variant]>[] | StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue;
   class?: ClassValue;
@@ -114,8 +117,11 @@ export type CompoundVariantWithSlotsType<
   S extends SlotConfigurationSchema,
 > = Partial<{
   readonly [Variant in keyof T]: BooleanVariantChecker<T[Variant]> extends true
-    ? boolean | StringToBooleanType<keyof T[Variant]>
-    : StringToBooleanType<keyof T[Variant]>;
+    ?
+        | boolean
+        | readonly (boolean | StringToBooleanType<keyof T[Variant]>)[]
+        | StringToBooleanType<keyof T[Variant]>
+    : readonly StringToBooleanType<keyof T[Variant]>[] | StringToBooleanType<keyof T[Variant]>;
 }> & {
   className?: ClassValue | SlotProperties<S>;
   class?: ClassValue | SlotProperties<S>;

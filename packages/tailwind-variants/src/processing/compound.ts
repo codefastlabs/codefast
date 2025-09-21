@@ -74,6 +74,12 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
           isMatching = false;
           break;
         }
+      } else if (Array.isArray(compoundValue)) {
+        // Handle array variant values - check if propertyValue is included in the array
+        if (!compoundValue.includes(propertyValue as string)) {
+          isMatching = false;
+          break;
+        }
       } else if (propertyValue !== compoundValue) {
         // Handle string/number variant values
         isMatching = false;
@@ -137,6 +143,12 @@ export const applyCompoundSlotClasses = <
         const resolvedValue = propertyValue ?? false;
 
         if (resolvedValue !== compoundValue) {
+          isMatching = false;
+          break;
+        }
+      } else if (Array.isArray(compoundValue)) {
+        // Handle array variant values - check if propertyValue is included in the array
+        if (!compoundValue.includes(propertyValue as string)) {
           isMatching = false;
           break;
         }
