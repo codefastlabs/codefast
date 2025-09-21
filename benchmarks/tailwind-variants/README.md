@@ -14,7 +14,9 @@ This benchmark evaluates the runtime performance of CSS-in-JS variant libraries 
 
 ## Benchmark Scenarios
 
-### 1. Simple Variants (Without Tailwind Merge)
+### Core Variant Testing
+
+#### 1. Simple Variants (Without Tailwind Merge)
 
 Tests basic variant functionality with standard button configurations:
 
@@ -22,14 +24,14 @@ Tests basic variant functionality with standard button configurations:
 - **Sizes**: `default`, `sm`, `lg`, `icon`
 - **Configuration**: `twMerge: false` for maximum performance
 
-### 2. Simple Variants (With Tailwind Merge)
+#### 2. Simple Variants (With Tailwind Merge)
 
 Same as above but with Tailwind merge enabled:
 
 - Tests class conflict resolution and merging
 - **Configuration**: `twMerge: true` (default behavior)
 
-### 3. Complex Variants (Without Tailwind Merge)
+#### 3. Complex Variants (Without Tailwind Merge)
 
 Advanced functionality testing:
 
@@ -38,12 +40,50 @@ Advanced functionality testing:
 - **Complex class combinations**
 - **Configuration**: `twMerge: false`
 
-### 4. Complex Variants (With Tailwind Merge)
+#### 4. Complex Variants (With Tailwind Merge)
 
 Complex variants with merge functionality:
 
 - Full feature set with class conflict resolution
 - **Configuration**: `twMerge: true`
+
+### Advanced Feature Testing
+
+#### 5. Slots (Without/With Tailwind Merge)
+
+Multi-part component styling performance:
+
+- **Slots**: `base`, `header`, `content`, `footer`, `title`, `description`
+- **Slot-specific variants**: Different styling per slot
+- **Use case**: Card, Dialog, Modal components
+- **Configurations**: Both `twMerge: false` and `twMerge: true`
+
+#### 6. Compound Slots (Without/With Tailwind Merge)
+
+Advanced slot functionality with conditional styling:
+
+- **Compound slot conditions**: Apply styles to specific slots based on variants
+- **Multiple slots**: `base`, `item`, `prev`, `next`, `cursor`
+- **Complex conditions**: Size, color, and disabled state combinations
+- **Use case**: Pagination, Navigation components
+
+#### 7. Configuration Extension (Without/With Tailwind Merge)
+
+Configuration inheritance and extension performance:
+
+- **Base configuration**: Shared button foundation
+- **Extended configuration**: Additional variants and features
+- **Inheritance chain**: Base → Extended configuration
+- **Use case**: Component library patterns
+
+#### 8. Global Factory (Without/With Tailwind Merge)
+
+Global configuration factory performance:
+
+- **Factory pattern**: `createTV` with global settings
+- **Shared configuration**: Applied across multiple components
+- **Configuration isolation**: Global vs local settings
+- **Use case**: Theme systems, design systems
 
 ## Running the Benchmark
 
@@ -199,10 +239,22 @@ benchmarks/tailwind-variants/
 │   │   ├── complex/
 │   │   │   ├── with-merge.ts      # Complex variants with Tailwind merge
 │   │   │   └── without-merge.ts   # Complex variants without merge
+│   │   ├── slots/
+│   │   │   ├── with-merge.ts      # Slots functionality with merge
+│   │   │   └── without-merge.ts   # Slots functionality without merge
+│   │   ├── compound-slots/
+│   │   │   ├── with-merge.ts      # Compound slots with merge
+│   │   │   └── without-merge.ts   # Compound slots without merge
+│   │   ├── extends/
+│   │   │   ├── with-merge.ts      # Configuration extension with merge
+│   │   │   └── without-merge.ts   # Configuration extension without merge
+│   │   ├── create-tv/
+│   │   │   ├── with-merge.ts      # Global factory with merge
+│   │   │   └── without-merge.ts   # Global factory without merge
 │   │   └── index.ts               # Benchmark exports
 │   ├── data/
-│   │   ├── button-variants.ts     # Variant configurations
-│   │   ├── test-props.ts          # Test data sets
+│   │   ├── variants.ts            # All variant configurations
+│   │   ├── test-props.ts          # All test data sets
 │   │   └── index.ts               # Data exports
 │   ├── utils/
 │   │   ├── performance-summary.ts # Performance analysis utilities

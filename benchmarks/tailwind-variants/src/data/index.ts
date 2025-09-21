@@ -5,8 +5,28 @@
  * This provides better tree-shaking, IDE support, and maintainability
  */
 
-// Button variant configurations
-export { buttonVariants, complexVariants, mutableComplexVariants } from "./button-variants";
+// All variant configurations
+export {
+  buttonVariants,
+  complexVariants,
+  compoundSlotsVariants,
+  extendsBaseVariants,
+  extendsExtensionVariants,
+  mutableComplexVariants,
+  mutableCompoundSlotsVariants,
+  mutableExtendsExtensionVariants,
+  mutableSlotsVariants,
+  slotsVariants,
+} from "./variants";
 
-// Test data sets
-export { complexTestProps, simpleTestProps } from "./test-props";
+// All test data sets
+export {
+  complexTestProps,
+  compoundSlotsTestProps,
+  extendsTestProps,
+  fullFeaturesTestProps,
+  mixedExtendsSlotsTestProps,
+  mixedSlotsCompoundTestProps,
+  simpleTestProps,
+  slotsTestProps,
+} from "./test-props";
