@@ -139,7 +139,7 @@ function processItems<T extends { id: string }>(items: T[]): T[] {
 }
 
 // Bad: Using any
-function processData(data: any): any { // ❌ Never do this
+function processData(data: any): any { // ✗ Never do this
   return data;
 }
 ```

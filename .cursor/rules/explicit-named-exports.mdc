@@ -29,44 +29,44 @@ This rule enforces the use of **explicit named exports** instead of `export *` (
 
 Always use explicit, named re-exports that clearly specify what is being exported:
 
-#### ✅ Correct Patterns
+#### ✓ Correct Patterns
 
 ```typescript
-// ✅ Explicit named exports - Clear and tree-shakeable
+// ✓ Explicit named exports - Clear and tree-shakeable
 export { createUserService } from "./services/user-service";
 export { validateEmail, validatePassword } from "./utils/validation";
 export { UserRepository } from "./repositories/user-repository";
 export type { User, UserPreferences } from "./types/user";
 
-// ✅ Grouped exports with clear organization
+// ✓ Grouped exports with clear organization
 // Button variant configurations
-export { 
-  buttonVariants, 
-  complexVariants, 
-  mutableComplexVariants 
+export {
+  buttonVariants,
+  complexVariants,
+  mutableComplexVariants
 } from "./button-variants";
 
 // Test data sets
-export { 
-  simpleTestProps, 
-  complexTestProps 
+export {
+  simpleTestProps,
+  complexTestProps
 } from "./test-props";
 ```
 
-#### ❌ Anti-patterns to Avoid
+#### ✗ Anti-patterns to Avoid
 
 ```typescript
-// ❌ Export star - Tree-shaking unfriendly
+// ✗ Export star - Tree-shaking unfriendly
 export * from "./services/user-service";
 export * from "./utils/validation";
 export * from "./repositories/user-repository";
 export * from "./types/user";
 
-// ❌ Mixed patterns - Inconsistent and confusing
+// ✗ Mixed patterns - Inconsistent and confusing
 export * from "./services";
 export { specificFunction } from "./utils";
 
-// ❌ Deep export stars - Cascading performance issues
+// ✗ Deep export stars - Cascading performance issues
 export * from "./complex/with-merge";
 export * from "./complex/without-merge";
 export * from "./simple/with-merge";
@@ -80,7 +80,7 @@ export * from "./simple/without-merge";
 #### Barrel Export Files (index.ts)
 
 ```typescript
-// ✅ Good: Explicit barrel exports
+// ✓ Good: Explicit barrel exports
 /**
  * Authentication Module Exports
  *
@@ -98,11 +98,11 @@ export { hashPassword, verifyPassword } from "./auth-utils";
 export { generateToken, validateToken } from "./token-utils";
 
 // Type definitions
-export type { 
-  AuthUser, 
-  AuthSession, 
+export type {
+  AuthUser,
+  AuthSession,
   LoginCredentials,
-  AuthConfig 
+  AuthConfig
 } from "./types";
 
 // Authentication hooks (if React)
@@ -112,7 +112,7 @@ export { useAuth, useSession } from "./hooks";
 ### 2. Component Library Exports
 
 ```typescript
-// ✅ UI Components explicit exports
+// ✓ UI Components explicit exports
 /**
  * UI Components Library Exports
  *
@@ -139,7 +139,7 @@ export type { CheckboxProps } from "./components/checkbox";
 ### 3. Utility Library Exports
 
 ```typescript
-// ✅ Utilities explicit exports
+// ✓ Utilities explicit exports
 /**
  * Utility Functions Library
  *
@@ -147,35 +147,35 @@ export type { CheckboxProps } from "./components/checkbox";
  */
 
 // Date utilities
-export { 
-  formatDate, 
-  parseDate, 
-  addDays, 
-  subtractDays 
+export {
+  formatDate,
+  parseDate,
+  addDays,
+  subtractDays
 } from "./date-utils";
 
 // String utilities
-export { 
-  capitalize, 
-  slugify, 
-  truncate, 
-  sanitizeHtml 
+export {
+  capitalize,
+  slugify,
+  truncate,
+  sanitizeHtml
 } from "./string-utils";
 
 // Number utilities
-export { 
-  formatCurrency, 
-  formatPercentage, 
-  clamp, 
-  roundToPrecision 
+export {
+  formatCurrency,
+  formatPercentage,
+  clamp,
+  roundToPrecision
 } from "./number-utils";
 
 // Validation utilities
-export { 
-  isEmail, 
-  isPhoneNumber, 
-  isValidUrl, 
-  isStrongPassword 
+export {
+  isEmail,
+  isPhoneNumber,
+  isValidUrl,
+  isStrongPassword
 } from "./validation-utils";
 ```
 
@@ -203,35 +203,35 @@ find src/ -name "index.ts" -o -name "index.tsx" | xargs grep "export \*"
 ### 3. Refactoring Example
 
 ```typescript
-// ❌ Before: Using export *
+// ✗ Before: Using export *
 export * from "./user-service";
 export * from "./user-repository";
 export * from "./user-types";
 
-// ✅ After: Explicit named exports
+// ✓ After: Explicit named exports
 // User service functionality
-export { 
+export {
   UserService,
   createUser,
   updateUser,
   deleteUser,
-  getUserById 
+  getUserById
 } from "./user-service";
 
 // User data access
-export { 
+export {
   UserRepository,
   findUserByEmail,
-  findUserById 
+  findUserById
 } from "./user-repository";
 
 // User type definitions
-export type { 
+export type {
   User,
   UserProfile,
   UserPreferences,
   CreateUserRequest,
-  UpdateUserRequest 
+  UpdateUserRequest
 } from "./user-types";
 ```
 
@@ -267,9 +267,15 @@ Create ESLint rules or custom scripts to prevent `export *` usage:
 ```typescript
 // Custom ESLint rule concept
 {
-  "rules": {
-    "no-export-star": "error", // Prevent new export * usage
-    "explicit-exports-only": "warn" // Encourage explicit exports
+  "rules"
+:
+  {
+    "no-export-star"
+  :
+    "error", // Prevent new export * usage
+      "explicit-exports-only"
+  :
+    "warn" // Encourage explicit exports
   }
 }
 ```
@@ -328,72 +334,72 @@ This rule complements existing practices:
 ### 1. Large API Surface
 
 ```typescript
-// ✅ Group by functionality instead of export *
+// ✓ Group by functionality instead of export *
 // Core API functions
-export { 
-  createResource, 
-  updateResource, 
-  deleteResource 
+export {
+  createResource,
+  updateResource,
+  deleteResource
 } from "./api/resources";
 
 // Query functions
-export { 
-  findById, 
-  findByName, 
-  findAll, 
-  searchResources 
+export {
+  findById,
+  findByName,
+  findAll,
+  searchResources
 } from "./api/queries";
 
 // Type definitions
-export type { 
-  Resource, 
-  ResourceQuery, 
-  ResourceResponse 
+export type {
+  Resource,
+  ResourceQuery,
+  ResourceResponse
 } from "./api/types";
 ```
 
 ### 2. Plugin Architecture
 
 ```typescript
-// ✅ Explicit plugin exports
+// ✓ Explicit plugin exports
 // Core plugins
 export { ValidationPlugin } from "./plugins/validation";
 export { CachePlugin } from "./plugins/cache";
 export { LoggingPlugin } from "./plugins/logging";
 
 // Plugin utilities
-export { 
-  createPlugin, 
-  registerPlugin, 
-  unregisterPlugin 
+export {
+  createPlugin,
+  registerPlugin,
+  unregisterPlugin
 } from "./plugin-utils";
 
 // Plugin interfaces
-export type { 
-  Plugin, 
-  PluginConfig, 
-  PluginContext 
+export type {
+  Plugin,
+  PluginConfig,
+  PluginContext
 } from "./plugin-types";
 ```
 
 ### 3. Component Variants
 
 ```typescript
-// ✅ Explicit component variant exports
+// ✓ Explicit component variant exports
 // Button variants
-export { 
-  PrimaryButton, 
-  SecondaryButton, 
-  DangerButton, 
-  GhostButton 
+export {
+  PrimaryButton,
+  SecondaryButton,
+  DangerButton,
+  GhostButton
 } from "./button-variants";
 
 // Input variants
-export { 
-  TextInput, 
-  PasswordInput, 
-  EmailInput, 
-  NumberInput 
+export {
+  TextInput,
+  PasswordInput,
+  EmailInput,
+  NumberInput
 } from "./input-variants";
 ```
 

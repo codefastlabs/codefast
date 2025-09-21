@@ -172,7 +172,7 @@ pnpm --filter=@codefast/hooks exec TIMING=1 eslint --max-warnings 0 --fix src/us
 
 ### Common Mistakes and How to Avoid Them
 
-#### ❌ WRONG Commands (Will Fail)
+#### ✗ WRONG Commands (Will Fail)
 
 ```bash
 # Missing pnpm exec - ESLint not found in monorepo context
@@ -185,7 +185,7 @@ cd packages/tailwind-variants && TIMING=1 eslint --max-warnings 0 --fix tests/un
 eslint --max-warnings 0 --fix packages/tailwind-variants/tests/unit/file.test.ts
 ```
 
-#### ✅ CORRECT Commands (Will Work)
+#### ✓ CORRECT Commands (Will Work)
 
 ```bash
 # Method 1: cd to package + pnpm exec

@@ -26,7 +26,7 @@ Before writing any import statements, always verify:
 
 ### 2. Import Statement Patterns
 
-#### ✅ Correct Patterns
+#### ✓ Correct Patterns
 
 ```typescript
 // Internal relative imports (no extension for .ts files)
@@ -42,17 +42,17 @@ import { useState } from "react";
 import { clsx } from "clsx";
 ```
 
-#### ❌ Avoid These Patterns
+#### ✗ Avoid These Patterns
 
 ```typescript
 // Don't use .js extensions when all files are .ts
-import { Component } from "./component.js"; // ❌ Confusing
+import { Component } from "./component.js"; // ✗ Confusing
 
 // Don't use .ts extensions (unnecessary)
-import { Component } from "./component.ts"; // ❌ Redundant
+import { Component } from "./component.ts"; // ✗ Redundant
 
 // Don't use relative paths for workspace packages
-import { Button } from "../../packages/ui/src/button"; // ❌ Use workspace protocol
+import { Button } from "../../packages/ui/src/button"; // ✗ Use workspace protocol
 ```
 
 ### 3. Import Organization
@@ -130,7 +130,7 @@ pnpm build
 ### Scenario 1: Adding New File with Imports
 
 ```typescript
-// ✅ Correct approach
+// ✓ Correct approach
 import { useState } from 'react';                    // External
 import { Button } from '@codefast/ui';              // Workspace
 import { formatDate } from '../utils/format-date';         // Relative
@@ -147,11 +147,11 @@ import type { UserProps } from './types';           // Type-only
 ### Scenario 3: Working with Monorepo Packages
 
 ```typescript
-// ✅ Always use workspace protocol
+// ✓ Always use workspace protocol
 import { Component } from '@codefast/ui';           // Correct
 import { hook } from '@codefast/hooks';             // Correct
 
-// ❌ Never use relative paths across packages
+// ✗ Never use relative paths across packages
 import { Component } from '../../packages/ui/src';  // Wrong
 ```
 
@@ -213,7 +213,7 @@ async function validateImports(filePath: string): Promise<boolean> {
 
 ## Examples
 
-### ✅ Good Example
+### ✓ Good Example
 
 ```typescript
 // src/components/UserProfile.tsx
@@ -232,15 +232,15 @@ export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 };
 ```
 
-### ❌ Bad Example
+### ✗ Bad Example
 
 ```typescript
 // src/components/UserProfile.tsx
 import React, { useState } from 'react';
 import { clsx } from 'clsx';
-import { Button } from '../../packages/ui/src/button.js';  // ❌ Wrong path + extension
+import { Button } from '../../packages/ui/src/button.js';  // ✗ Wrong path + extension
 import { useLocalStorage } from '@codefast/hooks';
-import { formatDate } from '../utils/format-date.ts';            // ❌ Unnecessary extension
+import { formatDate } from '../utils/format-date.ts';            // ✗ Unnecessary extension
 import type { User, UserProfileProps } from './types';
 
 export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
