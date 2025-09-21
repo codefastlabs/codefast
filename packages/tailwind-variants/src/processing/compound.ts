@@ -53,7 +53,7 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
         continue;
       }
 
-      // Get property value with an efficient lookup
+      // Get property value
       let propertyValue: unknown;
 
       if (hasVariantProps && variantProps[compoundKey] !== undefined) {

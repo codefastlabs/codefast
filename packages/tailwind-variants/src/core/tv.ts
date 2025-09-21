@@ -236,7 +236,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
           | Configuration<ConfigurationSchema>
           | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>);
 
-  // Extract merged configuration properties with optimized access
+  // Extract merged configuration properties
   const mergedBaseClasses = mergedConfiguration.base;
   const mergedSlotDefinitions = hasSlotConfiguration(mergedConfiguration)
     ? mergedConfiguration.slots
