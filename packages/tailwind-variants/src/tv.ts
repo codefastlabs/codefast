@@ -82,14 +82,16 @@ const handleRegularVariantResolution = <T extends ConfigurationSchema>(
     // 1. Explicit variant props
     // 2. Default variant props
     // 3. Boolean variant defaults
-    if (variantValue !== undefined) {
-      resolvedValue = String(variantValue);
-    } else if (mergedDefaultVariantProps[variantKey] !== undefined) {
+    if (variantValue === undefined) {
       const defaultValue = mergedDefaultVariantProps[variantKey];
 
-      resolvedValue = String(defaultValue);
-    } else if (isBooleanVariantType(variantGroup)) {
-      resolvedValue = "false";
+      if (defaultValue !== undefined) {
+        resolvedValue = typeof defaultValue === "string" ? defaultValue : String(defaultValue);
+      } else if (isBooleanVariantType(variantGroup)) {
+        resolvedValue = "false";
+      }
+    } else {
+      resolvedValue = typeof variantValue === "string" ? variantValue : String(variantValue);
     }
 
     // Add the resolved variant class if it exists
@@ -234,7 +236,7 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
           | Configuration<ConfigurationSchema>
           | ConfigurationWithSlots<ConfigurationSchema, SlotConfigurationSchema>);
 
-  // Extract merged configuration properties
+  // Extract merged configuration properties with optimized access
   const mergedBaseClasses = mergedConfiguration.base;
   const mergedSlotDefinitions = hasSlotConfiguration(mergedConfiguration)
     ? mergedConfiguration.slots
@@ -244,12 +246,16 @@ export function tv<T extends ConfigurationSchema, S extends SlotConfigurationSch
     mergedConfiguration.defaultVariants ?? ({} as ConfigurationVariants<T>);
   const mergedCompoundVariantGroups = mergedConfiguration.compoundVariants;
 
+  // Configuration properties are ready for processing
+
   // Create the main variant resolver function
   const variantResolverFunction = (
     variantProps: ConfigurationVariants<T> & { class?: ClassValue; className?: ClassValue } = {},
   ): S extends Record<string, never> ? string | undefined : TailwindVariantsReturnType<T, S> => {
     // Extract class properties and variant props
-    const { class: classProperty, className, ...resolvedVariantProps } = variantProps;
+    const classProperty = variantProps.class;
+    const className = variantProps.className;
+    const resolvedVariantProps = variantProps;
 
     // Validate compound variants configuration
     if (

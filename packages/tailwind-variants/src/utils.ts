@@ -30,6 +30,16 @@ import type {
  * @returns Combined CSS class string
  */
 export const cx = (...classes: ClassValue[]): string => {
+  if (classes.length === 0) return "";
+
+  if (classes.length === 1) {
+    const single = classes[0];
+
+    if (typeof single === "string") return single;
+
+    if (!single) return "";
+  }
+
   return clsx(classes);
 };
 
@@ -43,6 +53,16 @@ export const cx = (...classes: ClassValue[]): string => {
  * @returns Merged CSS class string
  */
 export const cn = (...classes: ClassValue[]): string => {
+  if (classes.length === 0) return "";
+
+  if (classes.length === 1) {
+    const single = classes[0];
+
+    if (typeof single === "string") return twMerge(single);
+
+    if (!single) return "";
+  }
+
   return twMerge(clsx(classes));
 };
 

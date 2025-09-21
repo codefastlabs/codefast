@@ -34,8 +34,10 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
   variantProps: ConfigurationVariants<T>,
   defaultVariantProps: ConfigurationVariants<T>,
 ): ClassValue[] => {
-  // Merge default and provided variant props
-  const mergedProps = { ...defaultVariantProps, ...variantProps };
+  // Check if we have default or variant props to avoid unnecessary object operations
+  const hasDefaultProps = Object.keys(defaultVariantProps).length > 0;
+  const hasVariantProps = Object.keys(variantProps).length > 0;
+
   const resolvedClasses: ClassValue[] = [];
 
   // Process each compound variant
@@ -51,7 +53,17 @@ export const applyCompoundVariantClasses = <T extends ConfigurationSchema>(
         continue;
       }
 
-      const propertyValue = mergedProps[compoundKey];
+      // Get property value with an efficient lookup
+      let propertyValue: unknown;
+
+      if (hasVariantProps && variantProps[compoundKey] !== undefined) {
+        propertyValue = variantProps[compoundKey];
+      } else if (hasDefaultProps && defaultVariantProps[compoundKey] !== undefined) {
+        propertyValue = defaultVariantProps[compoundKey];
+      } else {
+        propertyValue = undefined;
+      }
+
       const compoundValue = compoundVariant[compoundKey];
 
       // Handle boolean variant values
