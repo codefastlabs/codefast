@@ -9,8 +9,9 @@ import { twMerge } from "tailwind-merge";
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { buttonVariants, simpleTestProps } from "@/data";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
+
+import { buttonVariants, simpleTestProps } from "./data";
 
 // Initialize benchmark functions
 const originalTVSimple = originalTV(buttonVariants);

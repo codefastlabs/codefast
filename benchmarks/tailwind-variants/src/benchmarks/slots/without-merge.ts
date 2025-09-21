@@ -7,8 +7,9 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { mutableSlotsVariants, slotsTestProps } from "@/data";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
+
+import { mutableSlotsVariants, slotsTestProps } from "./data";
 
 // Initialize benchmark functions
 const originalTVSlots = originalTV(mutableSlotsVariants, { twMerge: false });
@@ -50,18 +51,16 @@ export function createSlotsWithoutMergeBenchmark(): Bench {
         const slots = codefastTVSlots(props);
 
         // Access all slot functions to trigger full resolution
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        slots.base();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        slots.header();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        slots.content();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        slots.footer();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        slots.title();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        slots.description();
+        if (slots && typeof slots === "object") {
+          const slotsObject = slots as Record<string, () => string>;
+
+          slotsObject.base();
+          slotsObject.header();
+          slotsObject.content();
+          slotsObject.footer();
+          slotsObject.title();
+          slotsObject.description();
+        }
       }
     });
 

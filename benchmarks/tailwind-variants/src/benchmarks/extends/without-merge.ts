@@ -7,8 +7,9 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { extendsTestProps, mutableExtendsExtensionVariants } from "@/data";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
+
+import { extendsTestProps, mutableExtendsExtensionVariants } from "./data";
 
 // Initialize benchmark functions
 const originalTVExtends = originalTV(mutableExtendsExtensionVariants, { twMerge: false });
