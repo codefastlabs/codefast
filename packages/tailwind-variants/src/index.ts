@@ -29,11 +29,27 @@ export { cn, cx } from "@/utils";
  * component props, and class value handling.
  */
 export type {
+  BooleanVariantChecker,
   ClassValue,
+  CompoundSlotType,
+  CompoundVariantType,
+  CompoundVariantWithSlotsType,
   Configuration,
   ConfigurationSchema,
   ConfigurationVariants,
+  ConfigurationWithSlots,
+  ExtendedConfiguration,
+  MergedSchemas,
+  MergedSlotSchemas,
+  SlotConfigurationSchema,
+  SlotFunctionProperties,
+  SlotFunctionType,
+  SlotProperties,
+  StringToBooleanType,
   TailwindVariantsConfiguration,
+  TailwindVariantsFactory,
+  TailwindVariantsFactoryResult,
+  TailwindVariantsReturnType,
   VariantFunctionType,
   VariantProps,
 } from "@/types";
