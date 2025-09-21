@@ -29,38 +29,26 @@ export function createSlotsWithMergeBenchmark(): Bench {
   bench
     .add("[slots] tailwind-variants", () => {
       for (const props of slotsTestProps) {
-        const slots = originalTVSlots(props);
+        const { base, content, description, footer, header, title } = originalTVSlots(props);
 
-        // Access all slot functions to trigger full resolution
-
-        slots.base();
-
-        slots.header();
-
-        slots.content();
-
-        slots.footer();
-
-        slots.title();
-
-        slots.description();
+        base();
+        header();
+        content();
+        footer();
+        title();
+        description();
       }
     })
     .add("[slots] @codefast/tailwind-variants", () => {
       for (const props of slotsTestProps) {
-        const slots = codefastTVSlots(props);
+        const { base, content, description, footer, header, title } = codefastTVSlots(props);
 
-        // Access all slot functions to trigger full resolution
-        if (slots && typeof slots === "object") {
-          const slotsObject = slots as Record<string, () => string>;
-
-          slotsObject.base();
-          slotsObject.header();
-          slotsObject.content();
-          slotsObject.footer();
-          slotsObject.title();
-          slotsObject.description();
-        }
+        base();
+        header();
+        content();
+        footer();
+        title();
+        description();
       }
     });
 

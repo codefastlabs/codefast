@@ -10,14 +10,14 @@ import { Bench } from "tinybench";
 
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
-import { complexTestProps, complexVariants, mutableComplexVariants } from "./data";
+import { complexTestProps, complexVariants } from "./data";
 
 // Initialize benchmark functions
-const originalTVComplex = originalTV(mutableComplexVariants, { twMerge: false });
-const codefastTVComplex = codefastTV(mutableComplexVariants, { twMerge: false });
+const originalTVComplex = originalTV(complexVariants, { twMerge: false });
+const codefastTVComplex = codefastTV(complexVariants, { twMerge: false });
 
 const cvaComplex = cva(complexVariants.base, {
-  compoundVariants: [...complexVariants.compoundVariants],
+  compoundVariants: complexVariants.compoundVariants,
   defaultVariants: complexVariants.defaultVariants,
   variants: complexVariants.variants,
 });

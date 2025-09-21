@@ -16,7 +16,7 @@ export const extendsBaseVariants = {
       sm: "h-9 px-3",
     },
   },
-} as const;
+};
 
 export const extendsExtensionVariants = {
   base: "transition-colors focus-visible:outline-none focus-visible:ring-2",
@@ -39,7 +39,7 @@ export const extendsExtensionVariants = {
       secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     },
   },
-} as const;
+};
 
 // Create mutable copy to avoid readonly type issues
 export const mutableExtendsExtensionVariants = {
@@ -48,10 +48,10 @@ export const mutableExtendsExtensionVariants = {
 };
 
 export const extendsTestProps = [
-  {} as const,
-  { variant: "destructive" } as const,
-  { size: "lg", variant: "outline" } as const,
-  { size: "sm", variant: "secondary" } as const,
-  { disabled: true, variant: "ghost" } as const,
-  { disabled: false, size: "lg", variant: "link" } as const,
-] as const;
+  {},
+  { variant: "destructive" },
+  { size: "lg", variant: "outline" },
+  { size: "sm", variant: "secondary" },
+  { disabled: true, variant: "ghost" },
+  { disabled: false, size: "lg", variant: "link" },
+];

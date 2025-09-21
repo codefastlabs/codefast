@@ -9,11 +9,11 @@ import { Bench } from "tinybench";
 
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
-import { compoundSlotsTestProps, mutableCompoundSlotsVariants } from "./data";
+import { compoundSlotsTestProps, compoundSlotsVariants } from "./data";
 
 // Initialize benchmark functions
-const originalTVCompoundSlots = originalTV(mutableCompoundSlotsVariants, { twMerge: false });
-const codefastTVCompoundSlots = codefastTV(mutableCompoundSlotsVariants, { twMerge: false });
+const originalTVCompoundSlots = originalTV(compoundSlotsVariants, { twMerge: false });
+const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants, { twMerge: false });
 
 /**
  * Create compound slots benchmark without tailwind-merge
@@ -29,35 +29,24 @@ export function createCompoundSlotsWithoutMergeBenchmark(): Bench {
   bench
     .add("[compound-slots] tailwind-variants", () => {
       for (const props of compoundSlotsTestProps) {
-        const slots = originalTVCompoundSlots(props);
+        const { base, cursor, item, next, prev } = originalTVCompoundSlots(props);
 
-        // Access all slot functions to trigger full resolution
-
-        slots.base();
-
-        slots.item();
-
-        slots.prev();
-
-        slots.next();
-
-        slots.cursor();
+        base();
+        item();
+        prev();
+        next();
+        cursor();
       }
     })
     .add("[compound-slots] @codefast/tailwind-variants", () => {
       for (const props of compoundSlotsTestProps) {
-        const slots = codefastTVCompoundSlots(props);
+        const { base, cursor, item, next, prev } = codefastTVCompoundSlots(props);
 
-        // Access all slot functions to trigger full resolution
-        if (slots && typeof slots === "object") {
-          const slotsObject = slots as Record<string, () => string>;
-
-          slotsObject.base();
-          slotsObject.item();
-          slotsObject.prev();
-          slotsObject.next();
-          slotsObject.cursor();
-        }
+        base();
+        item();
+        prev();
+        next();
+        cursor();
       }
     });
 

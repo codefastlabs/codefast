@@ -47,7 +47,7 @@ export const slotsVariants = {
       },
     },
   },
-} as const;
+};
 
 // Create mutable copy to avoid readonly type issues
 export const mutableSlotsVariants = {
@@ -55,10 +55,10 @@ export const mutableSlotsVariants = {
 };
 
 export const slotsTestProps = [
-  {} as const,
-  { variant: "destructive" } as const,
-  { size: "lg", variant: "success" } as const,
-  { size: "sm" } as const,
-  { size: "sm", variant: "destructive" } as const,
-  { size: "lg", variant: "success" } as const,
-] as const;
+  {},
+  { variant: "destructive" },
+  { size: "lg", variant: "success" },
+  { size: "sm" },
+  { size: "sm", variant: "destructive" },
+  { size: "lg", variant: "success" },
+];

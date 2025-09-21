@@ -26,13 +26,13 @@ export const buttonVariants = {
       secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     },
   },
-} as const;
+};
 
 export const simpleTestProps = [
-  {} as const,
-  { variant: "destructive" } as const,
-  { size: "lg" } as const,
-  { className: "custom-class", size: "sm", variant: "outline" } as const,
-  { size: "icon", variant: "ghost" } as const,
-  { className: "custom-class", variant: "link" } as const,
-] as const;
+  {},
+  { variant: "destructive" },
+  { size: "lg" },
+  { className: "custom-class", size: "sm", variant: "outline" },
+  { size: "icon", variant: "ghost" },
+  { className: "custom-class", variant: "link" },
+];

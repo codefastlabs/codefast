@@ -154,10 +154,7 @@ async function main(): Promise<void> {
   }
 }
 
-// Run the benchmark if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((error: unknown) => {
-    console.error("Fatal error:", error);
-    process.exit(1);
-  });
-}
+main().catch((error: unknown) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});

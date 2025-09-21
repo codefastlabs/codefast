@@ -48,19 +48,13 @@ export const complexVariants = {
       secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     },
   },
-} as const;
-
-// Create mutable copy to avoid readonly type issues
-export const mutableComplexVariants = {
-  ...complexVariants,
-  compoundVariants: [...complexVariants.compoundVariants],
 };
 
 export const complexTestProps = [
-  {} as const,
-  { size: "lg", variant: "destructive" } as const,
-  { disabled: true, loading: true } as const,
-  { disabled: false, size: "sm", variant: "outline" } as const,
-  { loading: true, size: "icon", variant: "ghost" } as const,
-  { className: "custom-class", disabled: true, variant: "link" } as const,
-] as const;
+  {},
+  { size: "lg", variant: "destructive" },
+  { disabled: true, loading: true },
+  { disabled: false, size: "sm", variant: "outline" },
+  { loading: true, size: "icon", variant: "ghost" },
+  { className: "custom-class", disabled: true, variant: "link" },
+];
