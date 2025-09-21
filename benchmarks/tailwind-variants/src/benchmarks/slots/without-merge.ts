@@ -7,9 +7,8 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
+import { slotsTestProps, slotsVariants } from "@/benchmarks/slots/data";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
-
-import { slotsTestProps, slotsVariants } from "./data";
 
 // Initialize benchmark functions
 const originalTVSlots = originalTV(slotsVariants, { twMerge: false });

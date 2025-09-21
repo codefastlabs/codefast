@@ -7,9 +7,8 @@
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
+import { compoundSlotsTestProps, compoundSlotsVariants } from "@/benchmarks/compound-slots/data";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
-
-import { compoundSlotsTestProps, compoundSlotsVariants } from "./data";
 
 // Initialize benchmark functions
 const originalTVCompoundSlots = originalTV(compoundSlotsVariants, { twMerge: false });

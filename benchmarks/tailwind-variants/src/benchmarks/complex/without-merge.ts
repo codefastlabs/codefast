@@ -8,14 +8,12 @@ import { cva } from "class-variance-authority";
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
+import { complexTestProps, complexVariants } from "@/benchmarks/complex/data";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
-
-import { complexTestProps, complexVariants } from "./data";
 
 // Initialize benchmark functions
 const originalTVComplex = originalTV(complexVariants, { twMerge: false });
 const codefastTVComplex = codefastTV(complexVariants, { twMerge: false });
-
 const cvaComplex = cva(complexVariants.base, {
   compoundVariants: complexVariants.compoundVariants,
   defaultVariants: complexVariants.defaultVariants,

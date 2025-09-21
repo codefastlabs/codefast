@@ -7,9 +7,8 @@
 import { createTV as originalCreateTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
+import { buttonVariants, simpleTestProps } from "@/benchmarks/create-tv/data";
 import { createTV as codefastCreateTV } from "@codefast/tailwind-variants";
-
-import { buttonVariants, simpleTestProps } from "./data";
 
 // Initialize global factories
 const originalTVFactory = originalCreateTV({ twMerge: true });
