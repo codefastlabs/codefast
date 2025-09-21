@@ -37,14 +37,23 @@ interface UserProfileProps {
 }
 
 export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
-  return <div>{user.name}</div>;
+  return <div>{ user.name }</div>;
 };
 
 // Hooks: camelCase with 'use' prefix
-export const useLocalStorage = <T>(key: string, defaultValue?: T): [T | undefined, (value: T) => void] => {
+export const useLocalStorage =
+<
+T > (key
+:
+string, defaultValue ? : T
+):
+[T | undefined, (value: T) => void]
+=>
+{
   // Implementation
   return [defaultValue, () => {}];
-};
+}
+;
 
 // Utilities: camelCase
 export const formatCurrency = (amount: number): string => {
@@ -65,11 +74,11 @@ export interface UserPreferences {
 
 ### File Naming
 
-- **Components**: `ComponentName.tsx`
-- **Hooks**: `useHookName.ts`
+- **Components**: `component-name.tsx`
+- **Hooks**: `use-hook-name.ts`
 - **Utilities**: `descriptive-name.ts`
-- **Tests**: `ComponentName.test.tsx` or `utility.test.ts`
-- **Types**: `types.ts` or `ComponentName.types.ts`
+- **Tests**: `component-name.test.tsx` or `utility.test.ts`
+- **Types**: `types.ts` or `component-name.types.ts`
 
 ## Content Guidelines
 
