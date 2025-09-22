@@ -5,20 +5,10 @@
  * and comparing results across different benchmark scenarios.
  */
 
-import type { Bench, TaskResult } from "tinybench";
-
-interface PerformanceAnalysis {
-  averageOpsPerSec: number;
-  fastest: null | TaskResult;
-  performanceRanking: (TaskResult & { name: string; rank: number; relativePerformance: number })[];
-  slowest: null | TaskResult;
-  totalTests: number;
-}
-
 /**
  * Generate performance summary for benchmark results
  */
-export function generatePerformanceSummary(bench: Bench): void {
+export function generatePerformanceSummary(bench) {
   const results = bench.results;
 
   if (results.length === 0) {
@@ -28,7 +18,7 @@ export function generatePerformanceSummary(bench: Bench): void {
   }
 
   const analysis = analyzePerformance(
-    results.filter((r): r is TaskResult => r !== undefined),
+    results.filter((r) => r !== undefined),
     bench.tasks,
   );
 
@@ -38,7 +28,7 @@ export function generatePerformanceSummary(bench: Bench): void {
 /**
  * Analyze benchmark results and extract key performance metrics
  */
-function analyzePerformance(results: TaskResult[], tasks: { name: string }[]): PerformanceAnalysis {
+function analyzePerformance(results, tasks) {
   // Sort results by operations per second (descending - fastest first)
   const sortedResults = [...results].toSorted((a, b) => (b.hz || 0) - (a.hz || 0));
 
@@ -72,12 +62,12 @@ function analyzePerformance(results: TaskResult[], tasks: { name: string }[]): P
 /**
  * Display formatted performance summary
  */
-function displayPerformanceSummary(analysis: PerformanceAnalysis): void {
-  console.log("\n📊 Performance Analysis Summary");
-  console.log("═══════════════════════════════════════");
+function displayPerformanceSummary(analysis) {
+  console.log("\nPerformance Analysis Summary");
+  console.log("══════════════════════════════");
 
   // Overall statistics
-  console.log(`\n📈 Overall Statistics:`);
+  console.log(`\nOverall Statistics:`);
   console.log(`   • Total tests: ${analysis.totalTests}`);
   console.log(`   • Average ops/sec: ${formatNumber(analysis.averageOpsPerSec)}`);
 
@@ -85,23 +75,23 @@ function displayPerformanceSummary(analysis: PerformanceAnalysis): void {
   if (analysis.fastest) {
     const fastestRanking = analysis.performanceRanking.find((r) => r.rank === 1);
 
-    console.log(`\n🏆 Fastest Performer:`);
-    console.log(`   • ${(fastestRanking?.name ?? "Unknown") satisfies string}`);
+    console.log(`\nFastest Performer:`);
+    console.log(`   • ${fastestRanking?.name ?? "Unknown"}`);
     console.log(`   • ${formatNumber(analysis.fastest.hz || 0)} ops/sec`);
     console.log(`   • ${formatTime((analysis.fastest.period || 0) * 1_000_000_000)} avg time`);
   }
 
   // Performance ranking
-  console.log(`\n🥇 Performance Ranking:`);
+  console.log(`\nPerformance Ranking:`);
 
   for (const [index, result] of analysis.performanceRanking.entries()) {
-    const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "  ";
+    const medal = index === 0 ? "1st" : index === 1 ? "2nd" : index === 2 ? "3rd" : "  ";
     const performance = result.relativePerformance;
     const performanceBar = generatePerformanceBar(performance);
 
     console.log(`   ${medal} ${result.name}`);
     console.log(
-      `      ${formatNumber(result.hz || 0)} ops/sec (${(performance * 100).toFixed(1) satisfies string}% of fastest)`,
+      `      ${formatNumber(result.hz || 0)} ops/sec (${(performance * 100).toFixed(1)}% of fastest)`,
     );
     console.log(`      ${performanceBar}`);
   }
@@ -110,7 +100,7 @@ function displayPerformanceSummary(analysis: PerformanceAnalysis): void {
 /**
  * Format large numbers with appropriate suffixes
  */
-function formatNumber(number_: number): string {
+function formatNumber(number_) {
   if (number_ >= 1_000_000) {
     return `${(number_ / 1_000_000).toFixed(1)}M`;
   } else if (number_ >= 1000) {
@@ -123,7 +113,7 @@ function formatNumber(number_: number): string {
 /**
  * Format time in nanoseconds to readable format
  */
-function formatTime(nanoseconds: number): string {
+function formatTime(nanoseconds) {
   if (nanoseconds >= 1_000_000) {
     return `${(nanoseconds / 1_000_000).toFixed(2)}ms`;
   } else if (nanoseconds >= 1000) {
@@ -136,7 +126,7 @@ function formatTime(nanoseconds: number): string {
 /**
  * Generate a visual performance bar
  */
-function generatePerformanceBar(performance: number): string {
+function generatePerformanceBar(performance) {
   const barLength = 20;
   const filledLength = Math.round(performance * barLength);
   const bar = "█".repeat(filledLength) + "░".repeat(barLength - filledLength);

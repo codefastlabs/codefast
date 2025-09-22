@@ -1,23 +1,23 @@
 /**
- * Compound Slots Without Tailwind Merge Benchmark
+ * Compound Slots With Tailwind Merge Benchmark
  *
- * Benchmarks compound slots functionality without tailwind-merge
+ * Benchmarks compound slots functionality with tailwind-merge
  */
 
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { compoundSlotsTestProps, compoundSlotsVariants } from "@/benchmarks/compound-slots/data";
+import { compoundSlotsTestProps, compoundSlotsVariants } from "./data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions
-const originalTVCompoundSlots = originalTV(compoundSlotsVariants, { twMerge: false });
-const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants, { twMerge: false });
+const originalTVCompoundSlots = originalTV(compoundSlotsVariants);
+const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants);
 
 /**
- * Create compound slots benchmark without tailwind-merge
+ * Create compound slots benchmark with tailwind-merge
  */
-export function createCompoundSlotsWithoutMergeBenchmark(): Bench {
+export function createCompoundSlotsWithMergeBenchmark() {
   const bench = new Bench({
     iterations: 1000,
     time: 1000,

@@ -8,7 +8,7 @@ import { cva } from "class-variance-authority";
 import { tv as originalTV } from "tailwind-variants";
 import { Bench } from "tinybench";
 
-import { buttonVariants, simpleTestProps } from "@/benchmarks/simple/data";
+import { buttonVariants, simpleTestProps } from "./data.js";
 import { tv as codefastTV } from "@codefast/tailwind-variants";
 
 // Initialize benchmark functions
@@ -22,7 +22,7 @@ const cvaSimple = cva(buttonVariants.base, {
 /**
  * Create simple variants benchmark without tailwind-merge
  */
-export function createSimpleWithoutMergeBenchmark(): Bench {
+export function createSimpleWithoutMergeBenchmark() {
   const bench = new Bench({
     iterations: 1000,
     time: 1000,

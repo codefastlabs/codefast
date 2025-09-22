@@ -5,4 +5,4 @@
  * This provides better tree-shaking, IDE support, and maintainability
  */
 
-export { generatePerformanceSummary } from "@/utils/performance-summary";
+export { generatePerformanceSummary } from "./performance-summary.js";
