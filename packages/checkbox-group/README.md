@@ -184,8 +184,8 @@ function OrientationExample() {
 | `disabled`      | `boolean`                    | `false`     | Disable the entire group                       |
 | `required`      | `boolean`                    | `false`     | Whether at least one checkbox must be selected |
 | `name`          | `string`                     | `undefined` | Name attribute for form field                  |
-| `orientation`   | `'horizontal' \| 'vertical'` | `undefined` | Orientation of the group                       |
-| `dir`           | `'ltr' \| 'rtl'`             | `undefined` | Direction for layout                           |
+| `orientation`   | `"horizontal" \| "vertical"` | `undefined` | Orientation of the group                       |
+| `dir`           | `"ltr" \| "rtl"`             | `undefined` | Direction for layout                           |
 | `loop`          | `boolean`                    | `true`      | Whether focus should loop at boundaries        |
 
 ### CheckboxGroup.Item Props

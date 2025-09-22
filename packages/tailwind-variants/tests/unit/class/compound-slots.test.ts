@@ -17,7 +17,6 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
         prev: "px-2 py-1 rounded",
       },
     });
-    // with default values
     const { base, cursor, item, next, prev } = pagination();
 
     expect(base()).toHaveClassName(["flex", "flex-wrap", "relative", "gap-1", "max-w-fit"]);
@@ -60,7 +59,6 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
         },
       },
     });
-    // with default values
     const { base, cursor, item, next, prev } = pagination();
 
     expect(base()).toHaveClassName([
@@ -140,7 +138,6 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
         },
       },
     });
-    // with default values
     const { base, cursor, item, next, prev } = pagination({
       size: "xs",
     });
@@ -233,7 +230,6 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
         },
       },
     });
-    // with default values
     const { base, cursor, item, next, prev } = pagination();
 
     expect(base()).toHaveClassName([
@@ -326,7 +322,6 @@ describe("Tailwind Variants (TV) - Compound Slots", () => {
         },
       },
     });
-    // with default values
     const { base, cursor, item, next, prev } = pagination({
       color: "primary",
       isBig: true,

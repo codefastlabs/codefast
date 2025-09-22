@@ -1,5 +1,5 @@
 function parseClasses(result: string | string[]): string[] {
-  return [...(typeof result === "string" ? result.split(" ") : result)].sort();
+  return [...(typeof result === "string" ? result.split(" ") : result)].toSorted();
 }
 
 expect.extend({

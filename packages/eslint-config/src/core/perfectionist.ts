@@ -104,6 +104,12 @@ const errorPerfectionistRules: Linter.RulesRecord = {
   "perfectionist/sort-objects": [
     "error",
     {
+      type: "unsorted",
+      useConfigurationIf: {
+        callingFunctionNamePattern: "^(cn|cx|clsx|tv|cva|classNames)$",
+      },
+    },
+    {
       ignoreCase: true,
       order: "asc",
       partitionByNewLine: true,

@@ -1,0 +1,410 @@
+---
+description: Explicit named exports best practices to avoid export star anti-patterns
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+
+# Explicit Named Exports Best Practices
+
+## Overview
+
+This rule enforces the use of **explicit named exports** instead of `export *` (export star) patterns. This approach provides better tree-shaking, IDE support, maintainability, and performance while avoiding the numerous pitfalls of barrel exports with wildcard re-exports.
+
+## Core Principles
+
+### 1. The Problems with `export *`
+
+`export *` is an anti-pattern that causes:
+
+- **Poor Tree-shaking**: Bundlers cannot eliminate unused code effectively
+- **IDE Support Issues**: IntelliSense and Go-to-Definition work poorly
+- **Name Collision Risk**: Multiple modules can export conflicting names
+- **Debugging Difficulties**: Hard to trace functions back to source files
+- **Performance Impact**: Larger bundle sizes and slower compilation
+- **Maintainability Problems**: Unclear what is exported from where
+
+### 2. Explicit Named Exports Solution
+
+Always use explicit, named re-exports that clearly specify what is being exported:
+
+#### ✓ Correct Patterns
+
+```typescript
+// ✓ Explicit named exports - Clear and tree-shakeable
+export { createUserService } from "./services/user-service";
+export { validateEmail, validatePassword } from "./utils/validation";
+export { UserRepository } from "./repositories/user-repository";
+export type { User, UserPreferences } from "./types/user";
+
+// ✓ Grouped exports with clear organization
+// Button variant configurations
+export {
+  buttonVariants,
+  complexVariants,
+  mutableComplexVariants
+} from "./button-variants";
+
+// Test data sets
+export {
+  simpleTestProps,
+  complexTestProps
+} from "./test-props";
+```
+
+#### ✗ Anti-patterns to Avoid
+
+```typescript
+// ✗ Export star - Tree-shaking unfriendly
+export * from "./services/user-service";
+export * from "./utils/validation";
+export * from "./repositories/user-repository";
+export * from "./types/user";
+
+// ✗ Mixed patterns - Inconsistent and confusing
+export * from "./services";
+export { specificFunction } from "./utils";
+
+// ✗ Deep export stars - Cascading performance issues
+export * from "./complex/with-merge";
+export * from "./complex/without-merge";
+export * from "./simple/with-merge";
+export * from "./simple/without-merge";
+```
+
+## Implementation Guidelines
+
+### 1. Index File Patterns
+
+#### Barrel Export Files (index.ts)
+
+```typescript
+// ✓ Good: Explicit barrel exports
+/**
+ * Authentication Module Exports
+ *
+ * Explicit named exports for all authentication-related functionality
+ * This provides better tree-shaking, IDE support, and maintainability
+ */
+
+// Core authentication services
+export { AuthService } from "./auth-service";
+export { TokenManager } from "./token-manager";
+export { SessionStore } from "./session-store";
+
+// Authentication utilities
+export { hashPassword, verifyPassword } from "./auth-utils";
+export { generateToken, validateToken } from "./token-utils";
+
+// Type definitions
+export type {
+  AuthUser,
+  AuthSession,
+  LoginCredentials,
+  AuthConfig
+} from "./types";
+
+// Authentication hooks (if React)
+export { useAuth, useSession } from "./hooks";
+```
+
+### 2. Component Library Exports
+
+```typescript
+// ✓ UI Components explicit exports
+/**
+ * UI Components Library Exports
+ *
+ * Explicit exports organized by component category
+ */
+
+// Form components
+export { Button } from "./components/button";
+export { Input } from "./components/input";
+export { Checkbox } from "./components/checkbox";
+export { Select } from "./components/select";
+
+// Layout components
+export { Container } from "./components/container";
+export { Grid } from "./components/grid";
+export { Flex } from "./components/flex";
+
+// Component types
+export type { ButtonProps } from "./components/button";
+export type { InputProps } from "./components/input";
+export type { CheckboxProps } from "./components/checkbox";
+```
+
+### 3. Utility Library Exports
+
+```typescript
+// ✓ Utilities explicit exports
+/**
+ * Utility Functions Library
+ *
+ * Explicit named exports organized by functionality
+ */
+
+// Date utilities
+export {
+  formatDate,
+  parseDate,
+  addDays,
+  subtractDays
+} from "./date-utils";
+
+// String utilities
+export {
+  capitalize,
+  slugify,
+  truncate,
+  sanitizeHtml
+} from "./string-utils";
+
+// Number utilities
+export {
+  formatCurrency,
+  formatPercentage,
+  clamp,
+  roundToPrecision
+} from "./number-utils";
+
+// Validation utilities
+export {
+  isEmail,
+  isPhoneNumber,
+  isValidUrl,
+  isStrongPassword
+} from "./validation-utils";
+```
+
+## Migration Strategy
+
+### 1. Identify Export Star Usage
+
+```bash
+# Find all export * patterns
+grep -r "export \*" src/ --include="*.ts" --include="*.tsx"
+
+# Find index files that might use export *
+find src/ -name "index.ts" -o -name "index.tsx" | xargs grep "export \*"
+```
+
+### 2. Refactoring Process
+
+1. **Analyze Current Exports**: Identify what each `export *` actually exports
+2. **Create Explicit List**: List all functions, types, and components being exported
+3. **Group Logically**: Organize exports by functionality or purpose
+4. **Replace Gradually**: Replace one `export *` at a time
+5. **Verify Imports**: Ensure all imports still work after changes
+6. **Run Quality Gates**: TypeScript, ESLint, and build verification
+
+### 3. Refactoring Example
+
+```typescript
+// ✗ Before: Using export *
+export * from "./user-service";
+export * from "./user-repository";
+export * from "./user-types";
+
+// ✓ After: Explicit named exports
+// User service functionality
+export {
+  UserService,
+  createUser,
+  updateUser,
+  deleteUser,
+  getUserById
+} from "./user-service";
+
+// User data access
+export {
+  UserRepository,
+  findUserByEmail,
+  findUserById
+} from "./user-repository";
+
+// User type definitions
+export type {
+  User,
+  UserProfile,
+  UserPreferences,
+  CreateUserRequest,
+  UpdateUserRequest
+} from "./user-types";
+```
+
+## Quality Gates and Validation
+
+### 1. Pre-refactoring Checklist
+
+- [ ] **Identify all current exports**: Know exactly what is being exported
+- [ ] **Map import usage**: Understand how exports are being imported elsewhere
+- [ ] **Plan grouping strategy**: Decide how to organize explicit exports
+- [ ] **Prepare test strategy**: Ensure functionality isn't broken
+
+### 2. Post-refactoring Validation
+
+```bash
+# 1. TypeScript compilation
+npx tsc --noEmit
+
+# 2. Linting (must pass with 0 warnings)
+pnpm lint
+
+# 3. Build verification
+pnpm build
+
+# 4. Test execution
+pnpm test
+```
+
+### 3. Automated Checks
+
+Create ESLint rules or custom scripts to prevent `export *` usage:
+
+```typescript
+// Custom ESLint rule concept
+{
+  "rules"
+:
+  {
+    "no-export-star"
+  :
+    "error", // Prevent new export * usage
+      "explicit-exports-only"
+  :
+    "warn" // Encourage explicit exports
+  }
+}
+```
+
+## Performance Benefits
+
+### 1. Bundle Size Optimization
+
+- **Tree-shaking**: Only used code is included in final bundle
+- **Dead code elimination**: Unused exports are automatically removed
+- **Dependency analysis**: Clearer dependency graphs for optimization
+
+### 2. Development Experience
+
+- **IDE Performance**: Faster IntelliSense and auto-completion
+- **Go-to-Definition**: Direct navigation to source files
+- **Refactoring Safety**: Better rename and move file operations
+
+### 3. Build Performance
+
+- **Faster compilation**: TypeScript processes explicit exports more efficiently
+- **Better caching**: Build tools can cache explicit dependencies more effectively
+- **Reduced memory usage**: Less memory overhead during compilation
+
+## Integration with Existing Rules
+
+This rule complements existing practices:
+
+- **TypeScript Standards**: Enforces explicit typing with explicit exports
+- **Code Quality**: Improves maintainability and reduces technical debt
+- **Import Best Practices**: Works with import organization rules
+- **Bundle Optimization**: Supports tree-shaking requirements
+
+## Enforcement Strategy
+
+### 1. Code Review Guidelines
+
+- **Flag export * usage**: Always question new `export *` patterns
+- **Require justification**: If `export *` is needed, document why
+- **Suggest alternatives**: Propose explicit export solutions
+
+### 2. Automated Tooling
+
+- **ESLint rules**: Configure rules to warn/error on `export *`
+- **Pre-commit hooks**: Check for export star patterns
+- **CI/CD validation**: Automated checks in pull requests
+
+### 3. Documentation Requirements
+
+- **Export documentation**: Document what each explicit export provides
+- **Migration guides**: Provide clear migration paths from `export *`
+- **Best practice examples**: Show real-world explicit export patterns
+
+## Common Scenarios and Solutions
+
+### 1. Large API Surface
+
+```typescript
+// ✓ Group by functionality instead of export *
+// Core API functions
+export {
+  createResource,
+  updateResource,
+  deleteResource
+} from "./api/resources";
+
+// Query functions
+export {
+  findById,
+  findByName,
+  findAll,
+  searchResources
+} from "./api/queries";
+
+// Type definitions
+export type {
+  Resource,
+  ResourceQuery,
+  ResourceResponse
+} from "./api/types";
+```
+
+### 2. Plugin Architecture
+
+```typescript
+// ✓ Explicit plugin exports
+// Core plugins
+export { ValidationPlugin } from "./plugins/validation";
+export { CachePlugin } from "./plugins/cache";
+export { LoggingPlugin } from "./plugins/logging";
+
+// Plugin utilities
+export {
+  createPlugin,
+  registerPlugin,
+  unregisterPlugin
+} from "./plugin-utils";
+
+// Plugin interfaces
+export type {
+  Plugin,
+  PluginConfig,
+  PluginContext
+} from "./plugin-types";
+```
+
+### 3. Component Variants
+
+```typescript
+// ✓ Explicit component variant exports
+// Button variants
+export {
+  PrimaryButton,
+  SecondaryButton,
+  DangerButton,
+  GhostButton
+} from "./button-variants";
+
+// Input variants
+export {
+  TextInput,
+  PasswordInput,
+  EmailInput,
+  NumberInput
+} from "./input-variants";
+```
+
+## Conclusion
+
+Explicit named exports provide superior developer experience, better performance, and improved maintainability compared to `export *` patterns. By following these guidelines, code becomes more transparent, tree-shakeable, and easier to maintain.
+
+**Key Takeaway**: Always prefer explicit, named exports that clearly communicate what functionality is being exposed from each module.

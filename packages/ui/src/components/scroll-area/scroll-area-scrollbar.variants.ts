@@ -39,8 +39,8 @@ const scrollAreaScrollbarVariants = tv({
     },
   ],
   defaultVariants: {
+    orientation: "vertical",
     size: "md",
-    vertical: "vertical",
   },
   variants: {
     orientation: {

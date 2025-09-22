@@ -28,7 +28,7 @@ const data: {
     {
       groups: registryComponentGroups.map((group) => ({
         ...group,
-        components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
+        components: group.components?.toSorted((a, b) => a.title.localeCompare(b.title)),
       })),
       path: "/components",
       title: "Components",
@@ -36,7 +36,7 @@ const data: {
     {
       groups: registryBlockGroups.map((group) => ({
         ...group,
-        components: group.components?.sort((a, b) => a.title.localeCompare(b.title)),
+        components: group.components?.toSorted((a, b) => a.title.localeCompare(b.title)),
       })),
       path: "/blocks",
       title: "Blocks",

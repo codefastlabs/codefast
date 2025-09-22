@@ -26,17 +26,14 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
       },
     });
 
-    // Test default button
     expect(buttonVariants()).toContain("bg-primary");
     expect(buttonVariants()).toContain("h-10");
 
-    // Test destructive large button
     const destructiveLarge = buttonVariants({ size: "lg", variant: "destructive" });
 
     expect(destructiveLarge).toContain("bg-destructive");
     expect(destructiveLarge).toContain("h-11");
 
-    // Test with custom className
     const customButton = buttonVariants({
       className: "w-full",
       variant: "outline",
@@ -157,7 +154,7 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
 
     expect(root()).toContain("flex-col");
     expect(list()).toContain("flex-col");
-    expect(list()).toContain("space-y-2"); // compound variant
+    expect(list()).toContain("space-y-2");
     expect(trigger()).toContain("rounded-full");
     expect(link()).toContain("rounded-full");
   });
@@ -234,17 +231,16 @@ describe("Tailwind Variants (TV) - Integration Tests", () => {
       },
     });
 
-    // Test inheritance
     const input = baseInputVariants({ size: "sm" });
     const textarea = textareaVariants({ size: "sm" });
     const select = selectVariants({ size: "lg" });
 
     expect(input).toContain("h-8");
     expect(textarea).toContain("min-h-[60px]");
-    expect(textarea).toContain("border-input"); // inherited
+    expect(textarea).toContain("border-input");
     expect(select).toContain("pr-10");
     expect(select).toContain("cursor-default");
-    expect(select).toContain("ring-offset-background"); // inherited
+    expect(select).toContain("ring-offset-background");
   });
 
   test("should work with responsive design patterns", () => {

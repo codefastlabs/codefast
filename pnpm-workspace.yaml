@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/**
+  - benchmarks/*
 
 onlyBuiltDependencies:
   - "@swc/core"

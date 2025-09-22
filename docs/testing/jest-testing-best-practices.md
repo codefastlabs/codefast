@@ -90,8 +90,8 @@ moduleNameMapper: {
 
 **Sử dụng:**
 ```typescript
-import { Button } from '@/components/button'
-import { utils } from '@/lib/utils'
+import { Button } from "@/components/button"
+import { utils } from "@/lib/utils"
 ```
 
 ### 2. Tests Directory Alias (`~/`)
@@ -118,8 +118,8 @@ moduleNameMapper: {
 
 **Sử dụng:**
 ```typescript
-import { testData } from '~/fixtures/test-data'
-import { mockUtils } from '~/__mocks__/utils'
+import { testData } from "~/fixtures/test-data"
+import { mockUtils } from "~/__mocks__/utils"
 ```
 
 ## Jest Configuration
@@ -180,9 +180,9 @@ tests/
 
 **Cấu trúc mô tả test:**
 ```typescript
-describe('ComponentName', () => {
-  describe('when condition', () => {
-    it('should do something', () => {
+describe("ComponentName", () => {
+  describe("when condition", () => {
+    it("should do something", () => {
       // test implementation
     })
   })
@@ -243,10 +243,10 @@ tests/fixtures/
 3. **Cập nhật imports:**
    ```typescript
    // Từ
-   import { utils } from '../lib/utils'
+   import { utils } from "../lib/utils"
    
    // Thành
-   import { utils } from '@/lib/utils'
+   import { utils } from "@/lib/utils"
    ```
 
 4. **Cập nhật cấu hình:**

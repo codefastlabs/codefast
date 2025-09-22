@@ -1,6 +1,6 @@
 const ERROR_LEVEL = 2;
-const MAX_SUBJECT_LENGTH = 250;
-const MAX_BODY_LINE_LENGTH = 500;
+const MAX_HEADER_LENGTH = 250;
+const MAX_BODY_LINE_LENGTH = 1000;
 
 /** @type {import("@commitlint/types").UserConfig} */
 const config = {
@@ -24,7 +24,7 @@ const config = {
       ],
     ],
     "subject-case": [ERROR_LEVEL, "never", ["pascal-case", "upper-case"]],
-    "subject-max-length": [ERROR_LEVEL, "always", MAX_SUBJECT_LENGTH],
+    "header-max-length": [ERROR_LEVEL, "always", MAX_HEADER_LENGTH],
     "body-max-line-length": [ERROR_LEVEL, "always", MAX_BODY_LINE_LENGTH],
   },
 };

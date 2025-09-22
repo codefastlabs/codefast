@@ -1,0 +1,43 @@
+{
+  "name": "@codefast/benchmark-tailwind-variants",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Performance benchmark for Tailwind CSS variant libraries",
+  "keywords": [
+    "benchmark",
+    "performance",
+    "tailwind",
+    "tailwindcss",
+    "variants",
+    "css",
+    "utilities"
+  ],
+  "homepage": "https://github.com/codefastlabs/codefast/tree/main/benchmarks/tailwind-variants#readme",
+  "bugs": {
+    "url": "https://github.com/codefastlabs/codefast/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codefastlabs/codefast.git",
+    "directory": "benchmarks/tailwind-variants"
+  },
+  "license": "MIT",
+  "author": "Vuong Phan <mr.thevuong@gmail.com>",
+  "type": "module",
+  "scripts": {
+    "bench": "node src/index.js",
+    "lint": "TIMING=1 eslint . --max-warnings 0",
+    "lint:fix": "TIMING=1 eslint --max-warnings 0 --fix ."
+  },
+  "dependencies": {
+    "@codefast/tailwind-variants": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^3.1.1",
+    "tinybench": "^5.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "eslint": "^9.36.0"
+  }
+}

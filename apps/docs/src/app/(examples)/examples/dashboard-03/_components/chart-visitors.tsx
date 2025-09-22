@@ -1,7 +1,7 @@
 "use client";
 
 import type { JSX, ReactNode } from "react";
-import type { ContentType } from "recharts/types/component/Label";
+import type { LabelContentType, Props as LabelProps } from "recharts/types/component/Label";
 import type { PieSectorDataItem } from "recharts/types/polar/Pie";
 import type { ActiveShape } from "recharts/types/util/types";
 
@@ -157,15 +157,17 @@ const activeShape: ActiveShape<PieSectorDataItem> = ({
   </g>
 );
 
-const content: (activeIndex: number) => ContentType = (activeIndex) =>
-  function Content({ viewBox }): ReactNode {
+const content: (activeIndex: number) => LabelContentType = (activeIndex) =>
+  function Content(props: LabelProps): ReactNode {
+    const { viewBox } = props;
+
     if (viewBox && "cx" in viewBox && "cy" in viewBox) {
       return (
         <text dominantBaseline="middle" textAnchor="middle" x={viewBox.cx} y={viewBox.cy}>
           <tspan className="fill-foreground text-3xl font-bold" x={viewBox.cx} y={viewBox.cy}>
             {desktopData[activeIndex].desktop.toLocaleString()}
           </tspan>
-          <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy ?? 0) + 24}>
+          <tspan className="fill-muted-foreground" x={viewBox.cx} y={(viewBox.cy || 0) + 24}>
             Visitors
           </tspan>
         </text>

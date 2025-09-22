@@ -181,7 +181,7 @@ Library-specific configuration extending base:
 
 ```typescript
 interface LibraryConfig extends BaseConfig {
-  compilerOptions: BaseConfig['compilerOptions'] & {
+  compilerOptions: BaseConfig["compilerOptions"] & {
     declaration: true;
     lib: ["ESNext"];
     sourceMap: true;
@@ -196,7 +196,7 @@ React-specific configuration:
 
 ```typescript
 interface ReactConfig extends BaseConfig {
-  compilerOptions: BaseConfig['compilerOptions'] & {
+  compilerOptions: BaseConfig["compilerOptions"] & {
     jsx: "react-jsx";
     jsxImportSource: "react";
   };
@@ -209,7 +209,7 @@ Next.js-specific configuration:
 
 ```typescript
 interface NextConfig extends BaseConfig {
-  compilerOptions: BaseConfig['compilerOptions'] & {
+  compilerOptions: BaseConfig["compilerOptions"] & {
     allowJs: true;
     incremental: true;
     jsx: "preserve";

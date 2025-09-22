@@ -11,7 +11,6 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    // When twMerge is false, all classes should be preserved, including conflicting ones like px-4 and px-2
     expect(button()).toBe("px-4 px-2 py-2 py-4 bg-blue-500 bg-red-500");
   });
 
@@ -35,7 +34,6 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    // All conflicting classes should be preserved
     expect(button({ size: "sm" })).toBe("font-medium text-sm text-xs px-2 px-3");
     expect(button({ color: "primary", size: "md" })).toBe(
       "font-medium bg-blue-500 bg-blue-600 text-white text-gray-100 text-base text-md px-4 px-5",
@@ -69,7 +67,6 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    // Compound variant classes should be added without resolving conflicts
     expect(button({ size: "sm", variant: "primary" })).toBe(
       "font-semibold px-2 bg-blue-500 bg-blue-600 bg-blue-700 px-3 px-4",
     );
@@ -91,7 +88,6 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
 
     const slots = card();
 
-    // All conflicting classes in slots should be preserved
     expect(slots.base()).toBe("rounded-lg rounded-xl p-4 p-6");
     expect(slots.header()).toBe("text-lg text-xl font-bold font-semibold");
     expect(slots.body()).toBe("text-gray-600 text-gray-700 mt-2 mt-4");
@@ -167,8 +163,6 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
   });
 
   test("should preserve conflicting classes when twMerge is false", () => {
-    // This test verifies that conflicting Tailwind classes are preserved
-    // when twMerge is false, demonstrating that no merging occurs
     const button = tv(
       {
         base: "px-4 py-2",
@@ -184,14 +178,11 @@ describe("Tailwind Variants (TV) - twMerge: false", () => {
       },
     );
 
-    // Base should work normally
     expect(button()).toBe("px-4 py-2");
 
-    // Variants should append classes without resolving conflicts
     expect(button({ size: "sm" })).toBe("px-4 py-2 px-2 py-1");
     expect(button({ size: "lg" })).toBe("px-4 py-2 px-6 py-3");
 
-    // Additional classes should be appended
     expect(button({ className: "px-8 py-4", size: "sm" })).toBe("px-4 py-2 px-2 py-1 px-8 py-4");
   });
 });
