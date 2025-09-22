@@ -224,7 +224,9 @@ function ProgressCircleProvider({
   // Sort thresholds by value
   const sortedThresholds = useMemo(
     () =>
-      thresholds && thresholds.length > 0 ? [...thresholds].sort((a, b) => a.value - b.value) : [],
+      thresholds && thresholds.length > 0
+        ? [...thresholds].toSorted((a, b) => a.value - b.value)
+        : [],
     [thresholds],
   );
 

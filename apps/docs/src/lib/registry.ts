@@ -241,7 +241,7 @@ function findOrCreateNode(
  * @returns New sorted array of file tree nodes
  */
 function sortFileTreeByName(fileTree: FileTree[]): FileTree[] {
-  const sorted = [...fileTree].sort((a, b) => a.name.localeCompare(b.name));
+  const sorted = [...fileTree].toSorted((a, b) => a.name.localeCompare(b.name));
 
   for (const node of sorted) {
     if (node.children && node.children.length > 0) {

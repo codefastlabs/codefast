@@ -6,6 +6,7 @@
       <w>commitlint</w>
       <w>offcanvas</w>
       <w>packagejson</w>
+      <w>rslib</w>
       <w>tsdoc</w>
       <w>turbopack</w>
     </words>

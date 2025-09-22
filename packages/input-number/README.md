@@ -175,7 +175,7 @@ function DisabledExample() {
 | `max`                | `number`                   | `undefined`                                      | Maximum allowed value                 |
 | `step`               | `number`                   | `1`                                              | Step size for increments/decrements   |
 | `locale`             | `string`                   | `undefined`                                      | Locale for number formatting          |
-| `formatOptions`      | `Intl.NumberFormatOptions` | `{ minimumFractionDigits: 0, style: 'decimal' }` | Number formatting options             |
+| `formatOptions`      | `Intl.NumberFormatOptions` | `{ minimumFractionDigits: 0, style: "decimal" }` | Number formatting options             |
 | `id`                 | `string`                   | `undefined`                                      | Unique identifier for the input       |
 | `ariaIncrementLabel` | `string`                   | `undefined`                                      | Accessible label for increment button |
 | `ariaDecrementLabel` | `string`                   | `undefined`                                      | Accessible label for decrement button |

@@ -36,14 +36,14 @@ A terminal script to clean empty directories in the `packages` folder.
 
 ### Features
 
-- ✅ Safe operation with confirmation prompts
-- ✅ Dry-run mode for preview
-- ✅ Colored output with emojis for better readability
-- ✅ Excludes node_modules directories by default for safety
-- ✅ Option to include node_modules directories when needed
-- ✅ Error handling and validation
-- ✅ Progress feedback during deletion
-- ✅ Summary of results
+- ✓ Safe operation with confirmation prompts
+- ✓ Dry-run mode for preview
+- ✓ Colored output with emojis for better readability
+- ✓ Excludes node_modules directories by default for safety
+- ✓ Option to include node_modules directories when needed
+- ✓ Error handling and validation
+- ✓ Progress feedback during deletion
+- ✓ Summary of results
 
 ### Examples
 

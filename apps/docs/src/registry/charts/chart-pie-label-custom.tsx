@@ -23,6 +23,8 @@ interface DataItem {
   browser: string;
   fill: string;
   visitors: number;
+
+  [key: string]: number | string;
 }
 
 const chartData: DataItem[] = [

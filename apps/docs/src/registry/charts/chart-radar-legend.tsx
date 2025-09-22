@@ -54,6 +54,8 @@ export function ChartRadarLegend(): JSX.Element {
             data={chartData}
             margin={{
               bottom: -10,
+              left: 0,
+              right: 0,
               top: -40,
             }}
           >

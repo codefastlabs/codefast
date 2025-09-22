@@ -163,7 +163,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>): JSX.El
                       tooltip={{ children: item.title, hidden: false }}
                       onClick={() => {
                         setActiveItem(item);
-                        const mail = data.mails.sort(() => Math.random() - 0.5);
+                        const mail = data.mails.toSorted(() => Math.random() - 0.5);
 
                         setMails(mail.slice(0, Math.max(5, Math.floor(Math.random() * 10) + 1)));
                         setOpen(true);

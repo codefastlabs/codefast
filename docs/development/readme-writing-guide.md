@@ -80,7 +80,7 @@ pnpm add -D @types/react @types/react-dom
 ## Quick Start
 
 ```tsx
-import { CheckboxGroup } from '@codefast-ui/checkbox-group';
+import { CheckboxGroup } from "@codefast-ui/checkbox-group";
 
 function App() {
   return (
@@ -112,8 +112,8 @@ function App() {
 
 ### Controlled Usage
 ```tsx
-import { useState } from 'react';
-import { CheckboxGroup } from '@codefast-ui/checkbox-group';
+import { useState } from "react";
+import { CheckboxGroup } from "@codefast-ui/checkbox-group";
 
 function ControlledExample() {
   const [value, setValue] = useState<string[]>([]);
@@ -130,7 +130,7 @@ function ControlledExample() {
 ### Usage with Variants
 
 ```tsx
-import { CheckboxGroup } from '@codefast-ui/checkbox-group';
+import { CheckboxGroup } from "@codefast-ui/checkbox-group";
 
 function VariantExample() {
   return (
@@ -165,8 +165,8 @@ function VariantExample() {
 | `defaultValue` | `string[]` | `[]` | Default values (uncontrolled) |
 | `onValueChange` | `(value: string[]) => void` | `undefined` | Callback when value changes |
 | `disabled` | `boolean` | `false` | Disable the entire group |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Size of the checkbox |
-| `variant` | `'default' \| 'outline'` | `'default'` | Display variant |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the checkbox |
+| `variant` | `"default" \| "outline"` | `"default"` | Display variant |
 ```
 
 ## 6. API Reference
@@ -192,8 +192,8 @@ interface CheckboxGroupProps {
   defaultValue?: string[];
   onValueChange?: (value: string[]) => void;
   disabled?: boolean;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'outline';
+  size?: "sm" | "md" | "lg";
+  variant?: "default" | "outline";
   children: React.ReactNode;
 }
 ```

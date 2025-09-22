@@ -862,7 +862,7 @@
 
 - [#37](https://github.com/codefastlabs/codefast/pull/37) [`76aa08d`](https://github.com/codefastlabs/codefast/commit/76aa08dd12f143223d88d30c72e7b8677e9808fc) Thanks [@thevuong](https://github.com/thevuong)! - feat(day-picker): support start and end month constraints
 
-- [#37](https://github.com/codefastlabs/codefast/pull/37) [`abde741`](https://github.com/codefastlabs/codefast/commit/abde741acf18523884da7fd98ed3e8a6379bcac4) Thanks [@thevuong](https://github.com/thevuong)! - fix(day-picker): update role query from 'cell' to 'gridcell'
+- [#37](https://github.com/codefastlabs/codefast/pull/37) [`abde741`](https://github.com/codefastlabs/codefast/commit/abde741acf18523884da7fd98ed3e8a6379bcac4) Thanks [@thevuong](https://github.com/thevuong)! - fix(day-picker): update role query from "cell" to "gridcell"
 
 - [#37](https://github.com/codefastlabs/codefast/pull/37) [`00167ec`](https://github.com/codefastlabs/codefast/commit/00167ec8ca7c04911d3c8844c5172f1765aede9f) Thanks [@thevuong](https://github.com/thevuong)! - refactor(style): improve CSS variable formatting
 
@@ -1176,7 +1176,7 @@
 
 ### Patch Changes
 
-- Remove 'use client' directive from components
+- Remove "use client" directive from components
 
 ## 0.1.15
 
@@ -1322,4 +1322,4 @@
 
 ### Patch Changes
 
-- Add useMediaQuery and useMutationObserver hooks in new 'hooks' package
+- Add useMediaQuery and useMutationObserver hooks in new "hooks" package

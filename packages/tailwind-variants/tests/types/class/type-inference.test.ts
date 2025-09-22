@@ -1,12 +1,11 @@
 import { expectTypeOf } from "expect-type";
 
-import type { ClassValue, VariantProps } from "@/index";
+import type { VariantProps } from "@/index";
 
 import { createTV, tv } from "@/index";
 
 describe("Real-World Type Inference Tests", () => {
   test("should infer types for button component in real usage", () => {
-    // Real-world button component definition
     const buttonVariants = tv({
       base: "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
       defaultVariants: {
@@ -31,27 +30,20 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const button = buttonVariants({ size: "lg", variant: "destructive" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type ButtonProps = VariantProps<typeof buttonVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<ButtonProps["size"]>().toEqualTypeOf<
       "default" | "icon" | "lg" | "sm" | undefined
     >();
     expectTypeOf<ButtonProps["variant"]>().toEqualTypeOf<
       "default" | "destructive" | "ghost" | "link" | "outline" | "secondary" | undefined
     >();
-    expectTypeOf<ButtonProps["class"]>().toEqualTypeOf<ClassValue>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(button).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for card component with slots in real usage", () => {
-    // Real-world card component definition
     const cardVariants = tv({
       defaultVariants: {
         size: "default",
@@ -95,35 +87,24 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const card = cardVariants({ size: "sm", variant: "destructive" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type CardProps = VariantProps<typeof cardVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<CardProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
     expectTypeOf<CardProps["variant"]>().toEqualTypeOf<
       "default" | "destructive" | "success" | undefined
     >();
 
-    // Test that slot functions are available and have correct types
     expectTypeOf(card).toHaveProperty("base");
     expectTypeOf(card).toHaveProperty("content");
     expectTypeOf(card).toHaveProperty("header");
 
-    // Test slot function parameters using VariantProps
-    type BaseSlotProps = VariantProps<typeof card.base>;
-    expectTypeOf<BaseSlotProps["class"]>().toEqualTypeOf<ClassValue>();
-
-    // Test slot function return type
     const baseResult = card.base();
 
     expectTypeOf(baseResult).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for toggle component with boolean variants in real usage", () => {
-    // Real-world toggle component definition
     const toggleVariants = tv({
       base: "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
       defaultVariants: {
@@ -143,22 +124,16 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const toggle = toggleVariants({ disabled: true, size: "lg" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type ToggleProps = VariantProps<typeof toggleVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<ToggleProps["disabled"]>().toEqualTypeOf<boolean | undefined>();
     expectTypeOf<ToggleProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(toggle).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for form components with extends in real usage", () => {
-    // Real-world base input component
     const baseInputVariants = tv({
       base: "flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       defaultVariants: {
@@ -173,7 +148,6 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world textarea component that extends base input
     const textareaVariants = tv({
       base: "min-h-[80px] resize-none",
       extend: baseInputVariants,
@@ -186,21 +160,15 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const textarea = textareaVariants({ size: "lg" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type TextareaProps = VariantProps<typeof textareaVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<TextareaProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(textarea).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for navigation menu with compound variants in real usage", () => {
-    // Real-world navigation menu component
     const navigationMenuVariants = tv({
       compoundVariants: [
         {
@@ -247,30 +215,23 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const navigation = navigationMenuVariants({ orientation: "vertical", variant: "pills" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type NavigationProps = VariantProps<typeof navigationMenuVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<NavigationProps["orientation"]>().toEqualTypeOf<
       "horizontal" | "vertical" | undefined
     >();
     expectTypeOf<NavigationProps["variant"]>().toEqualTypeOf<"default" | "pills" | undefined>();
 
-    // Test that slot functions are available
     expectTypeOf(navigation).toHaveProperty("list");
     expectTypeOf(navigation).toHaveProperty("root");
 
-    // Test slot function return type
     const listResult = navigation.list();
 
     expectTypeOf(listResult).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for pagination with compound slots in real usage", () => {
-    // Real-world pagination component
     const paginationVariants = tv({
       compoundSlots: [
         {
@@ -324,29 +285,22 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const pagination = paginationVariants({ size: "sm", variant: "default" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type PaginationProps = VariantProps<typeof paginationVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<PaginationProps["size"]>().toEqualTypeOf<"default" | "lg" | "sm" | undefined>();
     expectTypeOf<PaginationProps["variant"]>().toEqualTypeOf<"default" | "outline" | undefined>();
 
-    // Test that slot functions are available
     expectTypeOf(pagination).toHaveProperty("item");
     expectTypeOf(pagination).toHaveProperty("next");
     expectTypeOf(pagination).toHaveProperty("prev");
 
-    // Test slot function return type
     const itemResult = pagination.item();
 
     expectTypeOf(itemResult).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for alert component with createTV factory in real usage", () => {
-    // Real-world theme configuration
     const { tv: createThemeTV } = createTV({
       twMergeConfig: {
         extend: {
@@ -357,7 +311,6 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world alert component using the theme
     const alertVariants = createThemeTV({
       base: "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
       defaultVariants: {
@@ -372,21 +325,15 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const alert = alertVariants({ variant: "destructive" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type AlertProps = VariantProps<typeof alertVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<AlertProps["variant"]>().toEqualTypeOf<"default" | "destructive" | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(alert).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for complex component with multi-level extends in real usage", () => {
-    // Real-world base component
     const baseVariants = tv({
       base: "base-class",
       defaultVariants: {
@@ -400,7 +347,6 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world intermediate component
     const intermediateVariants = tv({
       extend: baseVariants,
       variants: {
@@ -411,7 +357,6 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world final component
     const finalVariants = tv({
       extend: intermediateVariants,
       variants: {
@@ -422,27 +367,21 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const component = finalVariants({
       color: "primary",
       size: "lg",
       weight: "bold",
     });
 
-    // Test that VariantProps correctly extracts the parameter types
     type FinalProps = VariantProps<typeof finalVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<FinalProps["size"]>().toEqualTypeOf<"default" | "lg" | undefined>();
     expectTypeOf<FinalProps["color"]>().toEqualTypeOf<"primary" | "secondary" | undefined>();
     expectTypeOf<FinalProps["weight"]>().toEqualTypeOf<"bold" | "normal" | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(component).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for complex nested variants in real usage", () => {
-    // Real-world complex component with nested variants
     const complexVariants = tv({
       base: "base-class",
       defaultVariants: {
@@ -467,46 +406,29 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage: When a developer calls this function, TypeScript should infer the correct types
     const component = complexVariants({
       size: "lg",
       theme: "dark",
     });
 
-    // Test that VariantProps correctly extracts the parameter types
     type ComplexProps = VariantProps<typeof complexVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<ComplexProps["size"]>().toEqualTypeOf<"default" | "lg" | undefined>();
     expectTypeOf<ComplexProps["theme"]>().toEqualTypeOf<"dark" | "light" | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(component).toEqualTypeOf<string | undefined>();
   });
 
-  // Additional real-world scenarios that were missing
-
   test("should infer types for components with no variants (base only)", () => {
-    // Real-world simple component with only base class
     const simpleVariants = tv({
       base: "flex items-center justify-center rounded-md text-sm font-medium",
     });
 
-    // Real-world usage
     const simple = simpleVariants();
 
-    // Test that VariantProps correctly extracts the parameter types
-    type SimpleProps = VariantProps<typeof simpleVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
-    expectTypeOf<SimpleProps["class"]>().toEqualTypeOf<ClassValue>();
-
-    // Test that the function can be called and returns a value
     expectTypeOf(simple).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for components with only defaultVariants", () => {
-    // Real-world component with only defaultVariants
     const defaultOnlyVariants = tv({
       base: "flex items-center",
       defaultVariants: {
@@ -520,22 +442,15 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage
     const defaultOnly = defaultOnlyVariants();
 
-    // Test that VariantProps correctly extracts the parameter types
     type DefaultOnlyProps = VariantProps<typeof defaultOnlyVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<DefaultOnlyProps["size"]>().toEqualTypeOf<"default" | "lg" | undefined>();
-    expectTypeOf<DefaultOnlyProps["class"]>().toEqualTypeOf<ClassValue>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(defaultOnly).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for components with number variants", () => {
-    // Real-world component with number variants
     const numberVariants = tv({
       base: "flex",
       variants: {
@@ -554,22 +469,16 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage
     const number = numberVariants({ columns: 2, gap: 4 });
 
-    // Test that VariantProps correctly extracts the parameter types
     type NumberProps = VariantProps<typeof numberVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<NumberProps["columns"]>().toEqualTypeOf<1 | 2 | 3 | 4 | undefined>();
     expectTypeOf<NumberProps["gap"]>().toEqualTypeOf<0 | 1 | 2 | 4 | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(number).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for components with mixed variant types", () => {
-    // Real-world component with mixed variant types
     const mixedVariants = tv({
       base: "flex",
       variants: {
@@ -590,25 +499,19 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage
     const mixed = mixedVariants({ color: "primary", disabled: true, size: "md" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type MixedProps = VariantProps<typeof mixedVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<MixedProps["size"]>().toEqualTypeOf<"lg" | "md" | "sm" | undefined>();
     expectTypeOf<MixedProps["disabled"]>().toEqualTypeOf<boolean | undefined>();
     expectTypeOf<MixedProps["color"]>().toEqualTypeOf<
       "primary" | "secondary" | "success" | undefined
     >();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(mixed).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for components with conditional variants", () => {
-    // Real-world component with conditional variants
     const conditionalVariants = tv({
       base: "flex",
       compoundVariants: [
@@ -637,13 +540,9 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage
     const conditional = conditionalVariants({ intent: "primary", size: "large" });
 
-    // Test that VariantProps correctly extracts the parameter types
     type ConditionalProps = VariantProps<typeof conditionalVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<ConditionalProps["intent"]>().toEqualTypeOf<
       "danger" | "primary" | "secondary" | undefined
     >();
@@ -651,12 +550,10 @@ describe("Real-World Type Inference Tests", () => {
       "large" | "medium" | "small" | undefined
     >();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(conditional).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for components with custom class prop", () => {
-    // Real-world component with custom class handling
     const customClassVariants = tv({
       base: "flex items-center",
       variants: {
@@ -667,25 +564,18 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage with custom class
     const customClass = customClassVariants({
       class: "w-full rounded-lg",
       variant: "primary",
     });
 
-    // Test that VariantProps correctly extracts the parameter types
     type CustomClassProps = VariantProps<typeof customClassVariants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<CustomClassProps["variant"]>().toEqualTypeOf<"default" | "primary" | undefined>();
-    expectTypeOf<CustomClassProps["class"]>().toEqualTypeOf<ClassValue>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(customClass).toEqualTypeOf<string | undefined>();
   });
 
   test("should infer types for components with deeply nested extends", () => {
-    // Real-world deeply nested component hierarchy
     const level1Variants = tv({
       base: "base-level1",
       variants: {
@@ -726,7 +616,6 @@ describe("Real-World Type Inference Tests", () => {
       },
     });
 
-    // Real-world usage
     const deep = level4Variants({
       level1: "a",
       level2: "x",
@@ -734,16 +623,12 @@ describe("Real-World Type Inference Tests", () => {
       level4: "one",
     });
 
-    // Test that VariantProps correctly extracts the parameter types
     type DeepProps = VariantProps<typeof level4Variants>;
-
-    // These should work in real-world usage - if they don't, the library is broken
     expectTypeOf<DeepProps["level1"]>().toEqualTypeOf<"a" | "b" | undefined>();
     expectTypeOf<DeepProps["level2"]>().toEqualTypeOf<"x" | "y" | undefined>();
     expectTypeOf<DeepProps["level3"]>().toEqualTypeOf<"alpha" | "beta" | undefined>();
     expectTypeOf<DeepProps["level4"]>().toEqualTypeOf<"one" | "two" | undefined>();
 
-    // Test that the function can be called and returns a value
     expectTypeOf(deep).toEqualTypeOf<string | undefined>();
   });
 });

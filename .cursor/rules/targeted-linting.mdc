@@ -1,0 +1,219 @@
+---
+description: Targeted linting guidelines - run ESLint only on changed files instead of entire packages
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.mjs"
+  - "**/*.cjs"
+alwaysApply: true
+---
+
+# Targeted Linting for Changed Files
+
+## Overview
+
+After generating or modifying code, run linting only on the specific files that were changed, rather than running lint on the entire package. This approach is more efficient and provides faster feedback.
+
+## Implementation Strategy
+
+### Understanding Current Linting Setup
+
+The project uses:
+
+- **Turbo** for orchestrating lint tasks across the monorepo (`turbo lint`)
+- **ESLint** with custom configurations in each package
+- **lint-staged** for pre-commit linting on changed files
+- **Individual package scripts**: `"lint": "TIMING=1 eslint . --max-warnings 0"`
+
+### Targeted Linting Rules
+
+When code is generated or modified:
+
+1. **Identify Changed Files**: Determine which specific files were modified during code generation
+2. **Run Targeted Linting**: Use ESLint directly on those specific files instead of package-wide linting
+3. **Use Appropriate Working Directory**: Run lint commands from the correct package directory
+
+### Command Patterns
+
+#### For Single Files
+
+```bash
+# Run ESLint on specific file(s) - MUST use pnpm exec in monorepo
+cd packages/package-name && pnpm exec eslint --max-warnings 0 --fix path/to/modified/file.ts
+
+# With timing (matching project convention)
+cd packages/package-name && TIMING=1 pnpm exec eslint --max-warnings 0 --fix path/to/modified/file.ts
+
+# Alternative: Use absolute path from repo root
+pnpm --filter=@codefast/package-name exec eslint --max-warnings 0 --fix path/to/modified/file.ts
+```
+
+#### For Multiple Files in Same Package
+
+```bash
+# Run ESLint on multiple specific files - MUST cd to package directory first
+cd packages/package-name && pnpm exec eslint --max-warnings 0 --fix src/components/button.tsx src/components/input.tsx
+
+# With timing (matching project convention)
+cd packages/package-name && TIMING=1 pnpm exec eslint --max-warnings 0 --fix src/components/button.tsx src/components/input.tsx
+
+# Using glob pattern for related files
+cd packages/package-name && pnpm exec eslint --max-warnings 0 --fix "src/components/{Button,Input}*"
+```
+
+#### For Cross-Package Changes
+
+```bash
+# Run lint in specific packages only
+turbo lint --filter=@codefast/ui --filter=@codefast/hooks
+
+# Or use pnpm to run in specific workspaces
+pnpm --filter=@codefast/ui lint
+pnpm --filter=@codefast/hooks lint
+```
+
+### Implementation Guidelines
+
+#### When to Use Targeted Linting
+
+- **After code generation**: Always lint the generated/modified files
+- **After file edits**: Lint only the files that were actually changed
+- **After refactoring**: Lint affected files, not entire packages
+- **Before committing changes**: Use lint-staged pattern (already implemented)
+
+#### File Path Resolution
+
+```bash
+# CORRECT: Resolve relative paths correctly
+# If modifying packages/ui/src/components/button.tsx:
+cd packages/ui && pnpm exec eslint --max-warnings 0 --fix src/components/button.tsx
+
+# CORRECT: With timing (matching project convention)
+cd packages/ui && TIMING=1 pnpm exec eslint --max-warnings 0 --fix src/components/button.tsx
+
+# ALTERNATIVE: Use pnpm filter from repo root
+pnpm --filter=@codefast/ui exec eslint --max-warnings 0 --fix src/components/button.tsx
+
+# WRONG: Direct eslint call without pnpm exec (will fail in monorepo)
+# TIMING=1 eslint --max-warnings 0 --fix packages/ui/src/components/button.tsx
+```
+
+#### Error Handling
+
+- **Zero tolerance**: Maintain `--max-warnings 0` requirement
+- **Fix automatically**: Use `--fix` flag when possible
+- **Report failures**: If linting fails, report specific files and errors
+- **Stop on failure**: Don't proceed with further operations if linting fails
+
+### Integration with Existing Workflow
+
+#### Respect Project Standards
+
+- Use `TIMING=1` prefix to match project conventions
+- Maintain `--max-warnings 0` requirement
+- Use same ESLint configurations as package scripts
+- Follow monorepo workspace structure
+
+#### Leverage Existing Tools
+
+```bash
+# Use lint-staged pattern for changed files detection
+# This is already implemented and working well:
+npx lint-staged
+
+# Or manually specify files like lint-staged does:
+prettier --write modified-file.ts
+eslint --max-warnings 0 --fix modified-file.ts
+```
+
+### Examples
+
+#### Single File Modification
+
+```bash
+# CORRECT: After modifying packages/ui/src/components/button.tsx
+cd packages/ui && pnpm exec eslint --max-warnings 0 --fix src/components/button.tsx
+
+# CORRECT: With timing
+cd packages/ui && TIMING=1 pnpm exec eslint --max-warnings 0 --fix src/components/button.tsx
+```
+
+#### Multiple Files in Same Package
+
+```bash
+# CORRECT: After modifying multiple files in packages/hooks
+cd packages/hooks && pnpm exec eslint --max-warnings 0 --fix src/use-local-storage.ts src/use-counter.ts
+
+# CORRECT: With timing
+cd packages/hooks && TIMING=1 pnpm exec eslint --max-warnings 0 --fix src/use-local-storage.ts src/use-counter.ts
+```
+
+#### Cross-Package Changes
+
+```bash
+# CORRECT: After modifying files in multiple packages
+pnpm --filter=@codefast/ui exec eslint --max-warnings 0 --fix src/components/button.tsx
+pnpm --filter=@codefast/hooks exec eslint --max-warnings 0 --fix src/use-local-storage.ts
+
+# CORRECT: With timing
+pnpm --filter=@codefast/ui exec TIMING=1 eslint --max-warnings 0 --fix src/components/button.tsx
+pnpm --filter=@codefast/hooks exec TIMING=1 eslint --max-warnings 0 --fix src/use-local-storage.ts
+```
+
+### Benefits
+
+- **Faster feedback**: Only lint what changed
+- **Reduced noise**: Focus on actual modifications
+- **Efficient CI/CD**: Less processing time
+- **Better developer experience**: Quicker iterations
+- **Maintains quality**: Same strict standards, applied efficiently
+
+### Common Mistakes and How to Avoid Them
+
+#### ✗ WRONG Commands (Will Fail)
+
+```bash
+# Missing pnpm exec - ESLint not found in monorepo context
+cd packages/tailwind-variants && eslint --max-warnings 0 --fix tests/unit/file.test.ts
+
+# Missing pnpm exec with TIMING
+cd packages/tailwind-variants && TIMING=1 eslint --max-warnings 0 --fix tests/unit/file.test.ts
+
+# Direct eslint call from repo root
+eslint --max-warnings 0 --fix packages/tailwind-variants/tests/unit/file.test.ts
+```
+
+#### ✓ CORRECT Commands (Will Work)
+
+```bash
+# Method 1: cd to package + pnpm exec
+cd packages/tailwind-variants && pnpm exec eslint --max-warnings 0 --fix tests/unit/file.test.ts
+
+# Method 1 with timing
+cd packages/tailwind-variants && TIMING=1 pnpm exec eslint --max-warnings 0 --fix tests/unit/file.test.ts
+
+# Method 2: Use pnpm filter from repo root
+pnpm --filter=@codefast/tailwind-variants exec eslint --max-warnings 0 --fix tests/unit/file.test.ts
+
+# Method 2 with timing
+pnpm --filter=@codefast/tailwind-variants exec TIMING=1 eslint --max-warnings 0 --fix tests/unit/file.test.ts
+```
+
+#### Key Rules to Remember
+
+1. **Always use `pnpm exec`** when running ESLint in a monorepo package
+2. **Either `cd` to package directory OR use `pnpm --filter`** - never mix approaches
+3. **TIMING=1 goes BEFORE eslint command**, not before pnpm
+4. **Test your command** - if you get "command not found: eslint", you're missing `pnpm exec`
+
+### Fallback Strategy
+
+If targeted linting is not feasible (e.g., extensive refactoring, configuration changes):
+
+- Fall back to package-level linting: `pnpm --filter=package-name lint`
+- Or full monorepo linting: `pnpm lint`
+- Always prefer the most targeted approach possible
+
+This targeted linting approach aligns with the project's existing lint-staged configuration while providing more granular control for code generation workflows.
