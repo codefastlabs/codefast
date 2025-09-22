@@ -48,56 +48,56 @@ async function main() {
     const createTVWithMergeBench = createCreateTVWithMergeBenchmark();
 
     // Run all benchmarks with progress logging
-    console.log("Running Simple Variants (Without Tailwind Merge) benchmark...");
+    console.log("Running Simple Variants benchmark...");
     await simpleWithoutMergeBench.run();
-    console.log("✓ Simple Variants (Without Tailwind Merge) completed\n");
+    console.log("✓ Simple Variants completed\n");
 
     console.log("Running Simple Variants (With Tailwind Merge) benchmark...");
     await simpleWithMergeBench.run();
     console.log("✓ Simple Variants (With Tailwind Merge) completed\n");
 
-    console.log("Running Complex Variants (Without Tailwind Merge) benchmark...");
+    console.log("Running Complex Variants benchmark...");
     await complexWithoutMergeBench.run();
-    console.log("✓ Complex Variants (Without Tailwind Merge) completed\n");
+    console.log("✓ Complex Variants completed\n");
 
     console.log("Running Complex Variants (With Tailwind Merge) benchmark...");
     await complexWithMergeBench.run();
     console.log("✓ Complex Variants (With Tailwind Merge) completed\n");
 
-    console.log("Running Slots (Without Tailwind Merge) benchmark...");
+    console.log("Running Slots benchmark...");
     await slotsWithoutMergeBench.run();
-    console.log("✓ Slots (Without Tailwind Merge) completed\n");
+    console.log("✓ Slots completed\n");
 
     console.log("Running Slots (With Tailwind Merge) benchmark...");
     await slotsWithMergeBench.run();
     console.log("✓ Slots (With Tailwind Merge) completed\n");
 
-    console.log("Running Compound Slots (Without Tailwind Merge) benchmark...");
+    console.log("Running Compound Slots benchmark...");
     await compoundSlotsWithoutMergeBench.run();
-    console.log("✓ Compound Slots (Without Tailwind Merge) completed\n");
+    console.log("✓ Compound Slots completed\n");
 
     console.log("Running Compound Slots (With Tailwind Merge) benchmark...");
     await compoundSlotsWithMergeBench.run();
     console.log("✓ Compound Slots (With Tailwind Merge) completed\n");
 
-    console.log("Running Extends (Without Tailwind Merge) benchmark...");
+    console.log("Running Extends benchmark...");
     await extendsWithoutMergeBench.run();
-    console.log("✓ Extends (Without Tailwind Merge) completed\n");
+    console.log("✓ Extends completed\n");
 
     console.log("Running Extends (With Tailwind Merge) benchmark...");
     await extendsWithMergeBench.run();
     console.log("✓ Extends (With Tailwind Merge) completed\n");
 
-    console.log("Running CreateTV (Without Tailwind Merge) benchmark...");
+    console.log("Running CreateTV benchmark...");
     await createTVWithoutMergeBench.run();
-    console.log("✓ CreateTV (Without Tailwind Merge) completed\n");
+    console.log("✓ CreateTV completed\n");
 
     console.log("Running CreateTV (With Tailwind Merge) benchmark...");
     await createTVWithMergeBench.run();
     console.log("✓ CreateTV (With Tailwind Merge) completed\n");
 
     // Display results for each scenario
-    console.log("\n═══ Simple Variants (Without Tailwind Merge) Results ═══");
+    console.log("\n═══ Simple Variants Results ═══");
     console.table(simpleWithoutMergeBench.table());
     generatePerformanceSummary(simpleWithoutMergeBench);
 
@@ -105,7 +105,7 @@ async function main() {
     console.table(simpleWithMergeBench.table());
     generatePerformanceSummary(simpleWithMergeBench);
 
-    console.log("\n═══ Complex Variants (Without Tailwind Merge) Results ═══");
+    console.log("\n═══ Complex Variants Results ═══");
     console.table(complexWithoutMergeBench.table());
     generatePerformanceSummary(complexWithoutMergeBench);
 
@@ -113,7 +113,7 @@ async function main() {
     console.table(complexWithMergeBench.table());
     generatePerformanceSummary(complexWithMergeBench);
 
-    console.log("\n═══ Slots (Without Tailwind Merge) Results ═══");
+    console.log("\n═══ Slots Results ═══");
     console.table(slotsWithoutMergeBench.table());
     generatePerformanceSummary(slotsWithoutMergeBench);
 
@@ -121,7 +121,7 @@ async function main() {
     console.table(slotsWithMergeBench.table());
     generatePerformanceSummary(slotsWithMergeBench);
 
-    console.log("\n═══ Compound Slots (Without Tailwind Merge) Results ═══");
+    console.log("\n═══ Compound Slots Results ═══");
     console.table(compoundSlotsWithoutMergeBench.table());
     generatePerformanceSummary(compoundSlotsWithoutMergeBench);
 
@@ -129,7 +129,7 @@ async function main() {
     console.table(compoundSlotsWithMergeBench.table());
     generatePerformanceSummary(compoundSlotsWithMergeBench);
 
-    console.log("\n═══ Extends (Without Tailwind Merge) Results ═══");
+    console.log("\n═══ Extends Results ═══");
     console.table(extendsWithoutMergeBench.table());
     generatePerformanceSummary(extendsWithoutMergeBench);
 
@@ -137,7 +137,7 @@ async function main() {
     console.table(extendsWithMergeBench.table());
     generatePerformanceSummary(extendsWithMergeBench);
 
-    console.log("\n═══ CreateTV (Without Tailwind Merge) Results ═══");
+    console.log("\n═══ CreateTV Results ═══");
     console.table(createTVWithoutMergeBench.table());
     generatePerformanceSummary(createTVWithoutMergeBench);
 
@@ -147,17 +147,17 @@ async function main() {
 
     // Generate overall summary
     const allBenchmarks = new Map([
-      ["Simple Variants (Without Tailwind Merge)", simpleWithoutMergeBench],
+      ["Simple Variants", simpleWithoutMergeBench],
       ["Simple Variants (With Tailwind Merge)", simpleWithMergeBench],
-      ["Complex Variants (Without Tailwind Merge)", complexWithoutMergeBench],
+      ["Complex Variants", complexWithoutMergeBench],
       ["Complex Variants (With Tailwind Merge)", complexWithMergeBench],
-      ["Slots (Without Tailwind Merge)", slotsWithoutMergeBench],
+      ["Slots", slotsWithoutMergeBench],
       ["Slots (With Tailwind Merge)", slotsWithMergeBench],
-      ["Compound Slots (Without Tailwind Merge)", compoundSlotsWithoutMergeBench],
+      ["Compound Slots", compoundSlotsWithoutMergeBench],
       ["Compound Slots (With Tailwind Merge)", compoundSlotsWithMergeBench],
-      ["Extends (Without Tailwind Merge)", extendsWithoutMergeBench],
+      ["Extends", extendsWithoutMergeBench],
       ["Extends (With Tailwind Merge)", extendsWithMergeBench],
-      ["CreateTV (Without Tailwind Merge)", createTVWithoutMergeBench],
+      ["CreateTV", createTVWithoutMergeBench],
       ["CreateTV (With Tailwind Merge)", createTVWithMergeBench],
     ]);
 

@@ -46,7 +46,6 @@ export const extendsExtensionVariants = {
     loading: false,
     variant: "default",
   },
-  extend: { config: extendsBaseVariants },
   variants: {
     animation: {
       bounce: "hover:animate-bounce",

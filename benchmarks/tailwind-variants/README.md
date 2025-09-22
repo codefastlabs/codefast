@@ -16,7 +16,7 @@ This benchmark evaluates the runtime performance of CSS-in-JS variant libraries 
 
 ### Core Variant Testing
 
-#### 1. Simple Variants (Without Tailwind Merge)
+#### 1. Simple Variants
 
 Tests basic variant functionality with standard button configurations:
 
@@ -31,7 +31,7 @@ Same as above but with Tailwind merge enabled:
 - Tests class conflict resolution and merging
 - **Configuration**: `twMerge: true` (default behavior)
 
-#### 3. Complex Variants (Without Tailwind Merge)
+#### 3. Complex Variants
 
 Advanced functionality testing:
 
@@ -119,10 +119,10 @@ npx tsx src/index.ts
 
 Starting Tailwind Variants Performance Benchmark...
 
-Running Simple Variants (Without Tailwind Merge) benchmark...
-✓ Simple Variants (Without Tailwind Merge) completed
+Running Simple Variants benchmark...
+✓ Simple Variants completed
 
-=== Simple Variants (Without Tailwind Merge) Results ===
+=== Simple Variants Results ===
 ┌─────────┬────────────────────────────────────────┬─────────────┬───────────────────┬──────────┬─────────┐
 │ (index) │ Task Name                              │ ops/sec     │ Average Time (ns) │ Margin   │ Samples │
 ├─────────┼────────────────────────────────────────┼─────────────┼───────────────────┼──────────┼─────────┤
