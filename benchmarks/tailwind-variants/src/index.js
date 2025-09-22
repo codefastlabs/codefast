@@ -21,7 +21,7 @@ import {
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
 } from "./benchmarks/index.js";
-import { generatePerformanceSummary } from "./utils/index.js";
+import { generatePerformanceSummary, generateOverallSummary } from "./utils/index.js";
 
 /**
  * Main function to run all benchmarks
@@ -144,6 +144,24 @@ async function main() {
     console.log("\n═══ CreateTV (With Tailwind Merge) Results ═══");
     console.table(createTVWithMergeBench.table());
     generatePerformanceSummary(createTVWithMergeBench);
+
+    // Generate overall summary
+    const allBenchmarks = new Map([
+      ["Simple Variants (Without Tailwind Merge)", simpleWithoutMergeBench],
+      ["Simple Variants (With Tailwind Merge)", simpleWithMergeBench],
+      ["Complex Variants (Without Tailwind Merge)", complexWithoutMergeBench],
+      ["Complex Variants (With Tailwind Merge)", complexWithMergeBench],
+      ["Slots (Without Tailwind Merge)", slotsWithoutMergeBench],
+      ["Slots (With Tailwind Merge)", slotsWithMergeBench],
+      ["Compound Slots (Without Tailwind Merge)", compoundSlotsWithoutMergeBench],
+      ["Compound Slots (With Tailwind Merge)", compoundSlotsWithMergeBench],
+      ["Extends (Without Tailwind Merge)", extendsWithoutMergeBench],
+      ["Extends (With Tailwind Merge)", extendsWithMergeBench],
+      ["CreateTV (Without Tailwind Merge)", createTVWithoutMergeBench],
+      ["CreateTV (With Tailwind Merge)", createTVWithMergeBench],
+    ]);
+
+    generateOverallSummary(allBenchmarks);
 
     console.log("\nBenchmark completed!");
     console.log("\n✓ Benchmark completed successfully!");
