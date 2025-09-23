@@ -12,7 +12,8 @@
     "@codefast-ui/progress-circle": "0.3.6",
     "@codefast/typescript-config": "0.3.6",
     "@codefast/ui": "0.3.6",
-    "@codefast/tailwind-variants": "0.3.7-canary.0"
+    "@codefast/tailwind-variants": "0.3.7-canary.0",
+    "@codefast/benchmark-tailwind-variants": "1.0.0"
   },
   "changesets": [
     "cruel-beans-behave",
@@ -23,6 +24,7 @@
     "soft-frogs-cheer",
     "stale-months-hope",
     "tidy-coins-laugh",
-    "tiny-pigs-stop"
+    "tiny-pigs-stop",
+    "yummy-pets-write"
   ]
 }

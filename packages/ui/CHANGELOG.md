@@ -1,5 +1,19 @@
 # @codefast/ui
 
+## 1.0.1-canary.2
+
+### Patch Changes
+
+- [`288ce19`](https://github.com/codefastlabs/codefast/commit/288ce19a5ab93a2e926579b5404395b050eadc36) Thanks [@thevuong](https://github.com/thevuong)! - chore(deps): update @rslib/core and eslint-plugin-turbo to version 0.14.0 and 2.5.7 respectively
+
+- Updated dependencies [[`288ce19`](https://github.com/codefastlabs/codefast/commit/288ce19a5ab93a2e926579b5404395b050eadc36)]:
+  - @codefast/tailwind-variants@1.0.1-canary.2
+  - @codefast-ui/progress-circle@0.3.7-canary.2
+  - @codefast-ui/checkbox-group@0.3.7-canary.2
+  - @codefast-ui/input-number@0.3.7-canary.2
+  - @codefast/hooks@1.0.1-canary.2
+  - @codefast-ui/input@0.3.7-canary.2
+
 ## 0.3.7-canary.1
 
 ### Patch Changes
