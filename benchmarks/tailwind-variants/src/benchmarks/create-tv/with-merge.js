@@ -30,12 +30,12 @@ export function createCreateTVWithMergeBenchmark() {
   });
 
   bench
-    .add("[create-tv] tailwind-variants", () => {
+    .add("tailwind-variants", () => {
       for (const props of simpleTestProps) {
         originalTVButton(props);
       }
     })
-    .add("[create-tv] @codefast/tailwind-variants", () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of simpleTestProps) {
         codefastTVButton(props);
       }

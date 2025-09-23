@@ -33,17 +33,17 @@ export function createComplexWithMergeBenchmark() {
   });
 
   bench
-    .add("[complex] tailwind-variants", () => {
+    .add("tailwind-variants", () => {
       for (const props of complexTestProps) {
         originalTVComplex(props);
       }
     })
-    .add("[complex] class-variance-authority", () => {
+    .add("class-variance-authority", () => {
       for (const props of complexTestProps) {
         twMerge(cvaComplex(props));
       }
     })
-    .add("[complex] @codefast/tailwind-variants", () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of complexTestProps) {
         codefastTVComplex(props);
       }
