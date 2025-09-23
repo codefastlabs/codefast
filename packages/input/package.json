@@ -1,6 +1,6 @@
 {
   "name": "@codefast-ui/input",
-  "version": "0.3.7-canary.1",
+  "version": "0.3.7-canary.2",
   "description": "Accessible input component built with React and Radix UI",
   "keywords": [
     "input",
