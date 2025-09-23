@@ -6,4 +6,3 @@
  */
 
 export { generatePerformanceSummary } from "./performance-summary.js";
-export { generateOverallSummary } from "./overall-summary.js";
