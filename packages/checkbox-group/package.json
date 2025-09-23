@@ -65,7 +65,7 @@
     "@codefast/eslint-config": "workspace:*",
     "@codefast/typescript-config": "workspace:*",
     "@rsbuild/plugin-react": "^1.4.0",
-    "@rslib/core": "^0.13.3",
+    "@rslib/core": "^0.14.0",
     "@swc/core": "^1.13.5",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.1",
