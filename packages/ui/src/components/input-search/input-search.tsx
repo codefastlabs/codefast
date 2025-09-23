@@ -91,26 +91,8 @@ function InputSearch({
 }
 
 /* -----------------------------------------------------------------------------
- * Deprecated
- * -------------------------------------------------------------------------- */
-
-/**
- * @deprecated
- * This type is an alias of InputSearchProps.
- * Please use InputSearchProps instead to ensure consistency.
- */
-type SearchInputProps = InputSearchProps;
-
-/**
- * @deprecated
- * This component is an alias of the Input component.
- * Please use the Input component instead to ensure consistency.
- */
-const SearchInput = InputSearch;
-
-/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { InputSearch, SearchInput };
-export type { InputSearchProps, SearchInputProps };
+export { InputSearch };
+export type { InputSearchProps };

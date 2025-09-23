@@ -345,11 +345,11 @@ export type {
 export { Inline } from "@/components/inline";
 export type { InlineProps } from "@/components/inline";
 
-export { Input, inputVariants, TextInput } from "@/components/input";
-export type { InputProps, TextInputProps } from "@/components/input";
+export { Input, inputVariants } from "@/components/input";
+export type { InputProps } from "@/components/input";
 
-export { InputNumber, NumberInput } from "@/components/input-number";
-export type { InputNumberProps, NumberInputProps } from "@/components/input-number";
+export { InputNumber } from "@/components/input-number";
+export type { InputNumberProps } from "@/components/input-number";
 
 export {
   InputOTP,
@@ -367,11 +367,11 @@ export type {
   InputOTPSlotProps,
 } from "@/components/input-otp";
 
-export { InputPassword, PasswordInput } from "@/components/input-password";
-export type { InputPasswordProps, PasswordInputProps } from "@/components/input-password";
+export { InputPassword } from "@/components/input-password";
+export type { InputPasswordProps } from "@/components/input-password";
 
-export { InputSearch, SearchInput } from "@/components/input-search";
-export type { InputSearchProps, SearchInputProps } from "@/components/input-search";
+export { InputSearch } from "@/components/input-search";
+export type { InputSearchProps } from "@/components/input-search";
 
 export { Kbd } from "@/components/kbd";
 export type { KbdProps } from "@/components/kbd";
