@@ -22,8 +22,9 @@ const cvaSimple = cva(buttonVariants.base, {
 /**
  * Create simple variants benchmark without tailwind-merge
  */
-export function createSimpleWithoutMergeBenchmark() {
+export function createSimpleWithoutMergeBenchmark(name = "Simple Variants") {
   const bench = new Bench({
+    name,
     iterations: 1000,
     time: 1000,
     warmupIterations: 100,

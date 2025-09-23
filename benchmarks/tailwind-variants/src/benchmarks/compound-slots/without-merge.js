@@ -17,8 +17,9 @@ const codefastTVCompoundSlots = codefastTV(compoundSlotsVariants, { twMerge: fal
 /**
  * Create compound slots benchmark without tailwind-merge
  */
-export function createCompoundSlotsWithoutMergeBenchmark() {
+export function createCompoundSlotsWithoutMergeBenchmark(name = "Compound Slots") {
   const bench = new Bench({
+    name,
     iterations: 1000,
     time: 1000,
     warmupIterations: 100,

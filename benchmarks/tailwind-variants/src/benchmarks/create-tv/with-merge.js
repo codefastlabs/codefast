@@ -21,8 +21,9 @@ const codefastTVButton = codefastTVFactory(buttonVariants);
 /**
  * Create createTV benchmark with tailwind-merge
  */
-export function createCreateTVWithMergeBenchmark() {
+export function createCreateTVWithMergeBenchmark(name = "CreateTV (With Tailwind Merge)") {
   const bench = new Bench({
+    name,
     iterations: 1000,
     time: 1000,
     warmupIterations: 100,
