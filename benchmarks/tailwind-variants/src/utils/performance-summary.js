@@ -25,6 +25,33 @@ const colors = {
   bgCyan: "\x1b[46m",
 };
 
+// Constants for consistent formatting
+const BOX_WIDTH = 62;
+// Inner content width accounts for one leading space and one trailing space
+const INNER_WIDTH = BOX_WIDTH - 2;
+const BOX_CHARS = {
+  topLeft: "┌",
+  topRight: "┐",
+  bottomLeft: "└",
+  bottomRight: "┘",
+  horizontal: "─",
+  vertical: "│",
+};
+const PERFORMANCE_THRESHOLDS = {
+  excellent: 0.9,
+  good: 0.7,
+  fair: 0.5,
+  poor: 0.25,
+};
+const TIME_UNITS = {
+  millisecond: 1_000_000,
+  microsecond: 1_000,
+};
+const NUMBER_UNITS = {
+  million: 1_000_000,
+  thousand: 1_000,
+};
+
 /**
  * Generate performance summary for benchmark results
  */
@@ -50,12 +77,14 @@ export function generatePerformanceSummary(bench) {
  */
 function analyzePerformance(results, tasks) {
   // Sort results by operations per second (descending - fastest first)
-  const sortedResults = [...results].toSorted((a, b) => (b.hz || 0) - (a.hz || 0));
+  const sortedResults = [...results].toSorted(
+    (a, b) => (b.throughput.mean || 0) - (a.throughput.mean || 0),
+  );
 
   const fastest = sortedResults[0] ?? null;
   const slowest = sortedResults.at(-1) ?? null;
 
-  const totalOpsPerSec = results.reduce((sum, result) => sum + (result.hz || 0), 0);
+  const totalOpsPerSec = results.reduce((sum, result) => sum + (result.throughput.mean || 0), 0);
   const averageOpsPerSec = totalOpsPerSec / results.length;
 
   const performanceRanking = sortedResults.map((result, index) => {
@@ -66,7 +95,9 @@ function analyzePerformance(results, tasks) {
       ...result,
       name: taskName,
       rank: index + 1,
-      relativePerformance: fastest.hz ? (result.hz || 0) / fastest.hz : 0,
+      relativePerformance: fastest.throughput.mean
+        ? (result.throughput.mean || 0) / fastest.throughput.mean
+        : 0,
     };
   });
 
@@ -83,138 +114,144 @@ function analyzePerformance(results, tasks) {
  * Display formatted performance summary
  */
 function displayPerformanceSummary(analysis) {
-  console.log(
-    `\n${colors.cyan}${colors.bright}┌─────────────────────────────────────────────────────────────┐${colors.reset}`,
-  );
-  console.log(
-    `${colors.cyan}${colors.bright}│                 ${colors.yellow}🚀 PERFORMANCE ANALYSIS 🚀${colors.cyan}${colors.bright}                  │${colors.reset}`,
-  );
-  console.log(
-    `${colors.cyan}${colors.bright}└─────────────────────────────────────────────────────────────┘${colors.reset}`,
-  );
+  displayFastestPerformer(analysis);
+  displayPerformanceRanking(analysis);
+}
 
-  // Overall statistics with enhanced styling
-  console.log(`\n${colors.magenta}${colors.bright}📊 Overall Statistics${colors.reset}`);
-  console.log(
-    `${colors.cyan}┌─────────────────────────────────────────────────────────────┐${colors.reset}`,
-  );
+/**
+ * Create a horizontal line with a specified character
+ */
+function createHorizontalLine(char = BOX_CHARS.horizontal, width = BOX_WIDTH) {
+  return char.repeat(width);
+}
 
-  const totalTestsLine = `${colors.cyan}•${colors.reset} Total tests: ${colors.bright}${colors.white}${analysis.totalTests}${colors.reset}`;
-  const avgOpsLine = `${colors.cyan}•${colors.reset} Average ops/sec: ${colors.bright}${colors.yellow}${formatNumber(analysis.averageOpsPerSec)}${colors.reset}`;
-
-  const maxWidth = 59;
-  const totalTestsPadding = Math.max(0, maxWidth - getVisibleLength(totalTestsLine));
-  const avgOpsPadding = Math.max(0, maxWidth - getVisibleLength(avgOpsLine));
-
+/**
+ * Display a section with title and box border
+ */
+function displaySection(title, borderColor, contentLines = []) {
+  console.log(`\n${borderColor}${colors.bright}${title}${colors.reset}`);
   console.log(
-    `${colors.cyan}│${colors.reset} ${totalTestsLine}${" ".repeat(totalTestsPadding)} ${colors.cyan}│${colors.reset}`,
-  );
-  console.log(
-    `${colors.cyan}│${colors.reset} ${avgOpsLine}${" ".repeat(avgOpsPadding)} ${colors.cyan}│${colors.reset}`,
-  );
-  console.log(
-    `${colors.cyan}└─────────────────────────────────────────────────────────────┘${colors.reset}`,
+    `${borderColor}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`,
   );
 
-  // Fastest performer with special styling
-  if (analysis.fastest) {
-    const fastestRanking = analysis.performanceRanking.find((r) => r.rank === 1);
-
-    console.log(`\n${colors.yellow}${colors.bright}🏆 Fastest Performer${colors.reset}`);
-    console.log(
-      `${colors.yellow}┌─────────────────────────────────────────────────────────────┐${colors.reset}`,
-    );
-
-    const nameLine = `${colors.yellow}•${colors.reset} ${colors.bright}${colors.yellow}${fastestRanking?.name ?? "Unknown"}${colors.reset}`;
-    const opsLine = `${colors.yellow}•${colors.reset} ${colors.bright}${colors.green}${formatNumber(analysis.fastest.hz || 0)} ops/sec${colors.reset}`;
-    const timeLine = `${colors.yellow}•${colors.reset} ${colors.bright}${colors.cyan}${formatTime((analysis.fastest.period || 0) * 1_000_000_000)} avg time${colors.reset}`;
-
-    const namePadding = Math.max(0, maxWidth - getVisibleLength(nameLine));
-    const opsPadding = Math.max(0, maxWidth - getVisibleLength(opsLine));
-    const timePadding = Math.max(0, maxWidth - getVisibleLength(timeLine));
+  contentLines.forEach((line) => {
+    const visibleLineLength = getVisibleLength(line);
+    const paddingNeeded = Math.max(0, INNER_WIDTH - visibleLineLength);
+    const paddedLine = line + " ".repeat(paddingNeeded);
 
     console.log(
-      `${colors.yellow}│${colors.reset} ${nameLine}${" ".repeat(namePadding)} ${colors.yellow}│${colors.reset}`,
+      `${borderColor}${BOX_CHARS.vertical}${colors.reset} ${paddedLine}${colors.reset} ${borderColor}${BOX_CHARS.vertical}${colors.reset}`,
     );
-    console.log(
-      `${colors.yellow}│${colors.reset} ${opsLine}${" ".repeat(opsPadding)} ${colors.yellow}│${colors.reset}`,
-    );
-    console.log(
-      `${colors.yellow}│${colors.reset} ${timeLine}${" ".repeat(timePadding)} ${colors.yellow}│${colors.reset}`,
-    );
-    console.log(
-      `${colors.yellow}└─────────────────────────────────────────────────────────────┘${colors.reset}`,
-    );
-  }
+  });
 
-  // Performance ranking with enhanced visuals
+  console.log(
+    `${borderColor}${BOX_CHARS.bottomLeft}${createHorizontalLine()}${BOX_CHARS.bottomRight}${colors.reset}`,
+  );
+}
+
+/**
+ * Create a formatted line with a bullet point
+ */
+function createBulletLine(bulletColor, label, value, valueColor = colors.white) {
+  return `${bulletColor}•${colors.reset} ${label} ${colors.bright}${valueColor}${value}${colors.reset}`;
+}
+
+/**
+ * Display the fastest performer section
+ */
+function displayFastestPerformer(analysis) {
+  if (!analysis.fastest) return;
+
+  const fastestRanking = analysis.performanceRanking.find((r) => r.rank === 1);
+  const name = fastestRanking?.name ?? "Unknown";
+  const opsPerSec = formatNumber(analysis.fastest.throughput.mean || 0);
+  const avgTime = formatTime((analysis.fastest.period || 0) * 1_000_000_000);
+
+  const nameLine = createBulletLine(colors.yellow, "", name, colors.yellow);
+  const opsLine = createBulletLine(colors.yellow, "", `${opsPerSec} ops/sec`, colors.green);
+  const timeLine = createBulletLine(colors.yellow, "", `${avgTime} avg time`, colors.cyan);
+
+  displaySection("🏆 Fastest Performer", colors.yellow, [nameLine, opsLine, timeLine]);
+}
+
+/**
+ * Display performance ranking section
+ */
+function displayPerformanceRanking(analysis) {
   console.log(`\n${colors.blue}${colors.bright}🏁 Performance Ranking${colors.reset}`);
   console.log(
-    `${colors.blue}┌─────────────────────────────────────────────────────────────┐${colors.reset}`,
+    `${colors.blue}${BOX_CHARS.topLeft}${createHorizontalLine()}${BOX_CHARS.topRight}${colors.reset}`,
   );
 
   for (const [index, result] of analysis.performanceRanking.entries()) {
-    const medal = getMedalEmoji(index);
-    const performance = result.relativePerformance;
-    const performanceBar = generatePerformanceBar(performance);
-    const performanceColor = getPerformanceColor(performance);
-
-    // Calculate padding to align the right border
-    const nameLine = `${medal} ${colors.bright}${index === 0 ? colors.yellow : colors.white}${result.name}${colors.reset}`;
-    const statsLine = `    ${colors.dim}${formatNumber(result.hz || 0)} ops/sec${colors.reset} ${colors.dim}(${(performance * 100).toFixed(1)}% of fastest)${colors.reset}`;
-    const barLine = `    ${performanceColor}${performanceBar}${colors.reset}`;
-
-    const maxWidth = 59; // Total box width minus borders
-    const namePadding = Math.max(0, maxWidth - getVisibleLength(nameLine));
-    const statsPadding = Math.max(0, maxWidth - getVisibleLength(statsLine));
-    const barPadding = Math.max(0, maxWidth - getVisibleLength(barLine));
-
-    console.log(
-      `${colors.blue}│${colors.reset} ${nameLine}${" ".repeat(namePadding)} ${colors.blue}│${colors.reset}`,
-    );
-    console.log(
-      `${colors.blue}│${colors.reset} ${statsLine}${" ".repeat(statsPadding)} ${colors.blue}│${colors.reset}`,
-    );
-    console.log(
-      `${colors.blue}│${colors.reset} ${barLine}${" ".repeat(barPadding)} ${colors.blue}│${colors.reset}`,
-    );
-
-    if (index < analysis.performanceRanking.length - 1) {
-      console.log(
-        `${colors.blue}│${colors.reset} ${" ".repeat(maxWidth)} ${colors.blue}│${colors.reset}`,
-      );
-    }
+    displayRankingEntry(result, index, analysis.performanceRanking.length);
   }
 
   console.log(
-    `${colors.blue}└─────────────────────────────────────────────────────────────┘${colors.reset}`,
+    `${colors.blue}${BOX_CHARS.bottomLeft}${createHorizontalLine()}${BOX_CHARS.bottomRight}${colors.reset}`,
+  );
+}
+
+/**
+ * Display a single ranking entry
+ */
+function displayRankingEntry(result, index, totalLength) {
+  const medal = getMedalEmoji(index);
+  const performance = result.relativePerformance;
+  const performanceBar = generatePerformanceBar(performance);
+  const performanceColor = getPerformanceColor(performance);
+
+  const nameLine = `${medal} ${colors.bright}${index === 0 ? colors.yellow : colors.white}${result.name}${colors.reset}`;
+  const statsLine = `    ${colors.dim}${formatNumber(result.throughput.mean || 0)} ops/sec${colors.reset} ${colors.dim}(${(performance * 100).toFixed(1)}% of fastest)${colors.reset}`;
+  const barLine = `    ${performanceColor}${performanceBar}${colors.reset}`;
+
+  // Pad each line to ensure proper alignment with INNER_WIDTH
+  const nameLineVisibleLength = getVisibleLength(nameLine);
+  const statsLineVisibleLength = getVisibleLength(statsLine);
+  const barLineVisibleLength = getVisibleLength(barLine);
+
+  const paddedNameLine = nameLine + " ".repeat(Math.max(0, INNER_WIDTH - nameLineVisibleLength));
+  const paddedStatsLine = statsLine + " ".repeat(Math.max(0, INNER_WIDTH - statsLineVisibleLength));
+  const paddedBarLine = barLine + " ".repeat(Math.max(0, INNER_WIDTH - barLineVisibleLength));
+
+  console.log(
+    `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${paddedNameLine}${colors.reset} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
   );
   console.log(
-    `\n${colors.green}${colors.bright}✨ Analysis complete! Happy benchmarking! ✨${colors.reset}\n`,
+    `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${paddedStatsLine}${colors.reset} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
   );
+  console.log(
+    `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${paddedBarLine}${colors.reset} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
+  );
+
+  if (index < totalLength - 1) {
+    console.log(
+      `${colors.blue}${BOX_CHARS.vertical}${colors.reset} ${" ".repeat(INNER_WIDTH)} ${colors.blue}${BOX_CHARS.vertical}${colors.reset}`,
+    );
+  }
 }
 
 /**
  * Format large numbers with appropriate suffixes and visual enhancements
  */
-function formatNumber(number_) {
-  if (number_ >= 1_000_000) {
-    return `${(number_ / 1_000_000).toFixed(1)}M`;
-  } else if (number_ >= 1000) {
-    return `${(number_ / 1000).toFixed(1)}K`;
+function formatNumber(number) {
+  if (number >= NUMBER_UNITS.million) {
+    return `${(number / NUMBER_UNITS.million).toFixed(1)}M`;
+  } else if (number >= NUMBER_UNITS.thousand) {
+    return `${(number / NUMBER_UNITS.thousand).toFixed(1)}K`;
   }
 
-  return number_.toFixed(0);
+  return number.toFixed(0);
 }
 
 /**
  * Format time in nanoseconds to readable format
  */
 function formatTime(nanoseconds) {
-  if (nanoseconds >= 1_000_000) {
-    return `${(nanoseconds / 1_000_000).toFixed(2)}ms`;
-  } else if (nanoseconds >= 1000) {
-    return `${(nanoseconds / 1000).toFixed(2)}μs`;
+  if (nanoseconds >= TIME_UNITS.millisecond) {
+    return `${(nanoseconds / TIME_UNITS.millisecond).toFixed(2)}ms`;
+  } else if (nanoseconds >= TIME_UNITS.microsecond) {
+    return `${(nanoseconds / TIME_UNITS.microsecond).toFixed(2)}μs`;
   }
 
   return `${nanoseconds.toFixed(2)}ns`;
@@ -240,10 +277,10 @@ function getMedalEmoji(index) {
  * Get color based on performance percentage
  */
 function getPerformanceColor(performance) {
-  if (performance >= 0.9) return colors.green; // Excellent (90-100%)
-  if (performance >= 0.7) return colors.yellow; // Good (70-89%)
-  if (performance >= 0.5) return `${colors.bright}${colors.red}`; // Fair (50-69%)
-  if (performance >= 0.25) return colors.red; // Poor (25-49%)
+  if (performance >= PERFORMANCE_THRESHOLDS.excellent) return colors.green; // Excellent (90-100%)
+  if (performance >= PERFORMANCE_THRESHOLDS.good) return colors.yellow; // Good (70-89%)
+  if (performance >= PERFORMANCE_THRESHOLDS.fair) return `${colors.bright}${colors.red}`; // Fair (50-69%)
+  if (performance >= PERFORMANCE_THRESHOLDS.poor) return colors.red; // Poor (25-49%)
   return `${colors.red}${colors.bright}`; // Very Poor (0-24%)
 }
 
@@ -260,7 +297,7 @@ function getVisibleLength(text) {
  * Generate a visual performance bar with enhanced styling
  */
 function generatePerformanceBar(performance) {
-  const barLength = 20;
+  const barLength = 50;
   const filledLength = Math.round(performance * barLength);
   const emptyLength = barLength - filledLength;
 
