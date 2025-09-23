@@ -78,26 +78,8 @@ function InputPassword({
 }
 
 /* -----------------------------------------------------------------------------
- * Deprecated
- * -------------------------------------------------------------------------- */
-
-/**
- * @deprecated
- * This type is an alias of InputPasswordProps.
- * Please use InputPasswordProps instead to ensure consistency.
- */
-type PasswordInputProps = InputPasswordProps;
-
-/**
- * @deprecated
- * This component is an alias of the Input component.
- * Please use the Input component instead to ensure consistency.
- */
-const PasswordInput = InputPassword;
-
-/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { InputPassword, PasswordInput };
-export type { InputPasswordProps, PasswordInputProps };
+export { InputPassword };
+export type { InputPasswordProps };

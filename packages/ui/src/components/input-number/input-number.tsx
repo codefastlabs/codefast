@@ -107,26 +107,8 @@ function InputNumber({
 }
 
 /* -----------------------------------------------------------------------------
- * Deprecated
- * -------------------------------------------------------------------------- */
-
-/**
- * @deprecated
- * This component is an alias of the InputNumber component.
- * Please use the InputNumber component instead to ensure consistency.
- */
-type NumberInputProps = InputNumberProps;
-
-/**
- * @deprecated
- * This component is an alias of the InputNumber component.
- * Please use the InputNumber component instead to ensure consistency.
- */
-const NumberInput = InputNumber;
-
-/* -----------------------------------------------------------------------------
  * Exports
  * -------------------------------------------------------------------------- */
 
-export { InputNumber, NumberInput };
-export type { InputNumberProps, NumberInputProps };
+export { InputNumber };
+export type { InputNumberProps };
