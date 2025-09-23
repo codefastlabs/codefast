@@ -58,7 +58,7 @@ async function main() {
       await benchmark.run();
       console.table(benchmark.table());
       generatePerformanceSummary(benchmark);
-      console.log("\n");
+      console.log("\n\n");
     };
 
     // Run all benchmarks with progress logging and immediate results
