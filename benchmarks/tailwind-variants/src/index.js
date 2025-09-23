@@ -21,7 +21,7 @@ import {
   createSlotsWithMergeBenchmark,
   createSlotsWithoutMergeBenchmark,
 } from "./benchmarks/index.js";
-import { generatePerformanceSummary, generateOverallSummary } from "./utils/index.js";
+import { generatePerformanceSummary } from "./utils/index.js";
 
 /**
  * Main function to run all benchmarks
@@ -47,108 +47,32 @@ async function main() {
     const createTVWithoutMergeBench = createCreateTVWithoutMergeBenchmark();
     const createTVWithMergeBench = createCreateTVWithMergeBenchmark();
 
+    // Define benchmark suites with progress tracking
+    const totalSuites = 12;
+    let currentSuite = 0;
+
+    const runBenchmark = async (benchmark, name) => {
+      currentSuite++;
+      console.log(`▶ [${currentSuite}/${totalSuites}] Running ${name} benchmark...`);
+      await benchmark.run();
+      console.table(benchmark.table());
+      generatePerformanceSummary(benchmark);
+      console.log("\n");
+    };
+
     // Run all benchmarks with progress logging and immediate results
-    console.log("▶ Running Simple Variants benchmark...");
-    await simpleWithoutMergeBench.run();
-    console.log("✓ Simple Variants completed");
-    console.table(simpleWithoutMergeBench.table());
-    generatePerformanceSummary(simpleWithoutMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Simple Variants (With Tailwind Merge) benchmark...");
-    await simpleWithMergeBench.run();
-    console.log("✓ Simple Variants (With Tailwind Merge) completed");
-    console.table(simpleWithMergeBench.table());
-    generatePerformanceSummary(simpleWithMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Complex Variants benchmark...");
-    await complexWithoutMergeBench.run();
-    console.log("✓ Complex Variants completed");
-    console.table(complexWithoutMergeBench.table());
-    generatePerformanceSummary(complexWithoutMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Complex Variants (With Tailwind Merge) benchmark...");
-    await complexWithMergeBench.run();
-    console.log("✓ Complex Variants (With Tailwind Merge) completed");
-    console.table(complexWithMergeBench.table());
-    generatePerformanceSummary(complexWithMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Slots benchmark...");
-    await slotsWithoutMergeBench.run();
-    console.log("✓ Slots completed");
-    console.table(slotsWithoutMergeBench.table());
-    generatePerformanceSummary(slotsWithoutMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Slots (With Tailwind Merge) benchmark...");
-    await slotsWithMergeBench.run();
-    console.log("✓ Slots (With Tailwind Merge) completed");
-    console.table(slotsWithMergeBench.table());
-    generatePerformanceSummary(slotsWithMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Compound Slots benchmark...");
-    await compoundSlotsWithoutMergeBench.run();
-    console.log("✓ Compound Slots completed");
-    console.table(compoundSlotsWithoutMergeBench.table());
-    generatePerformanceSummary(compoundSlotsWithoutMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Compound Slots (With Tailwind Merge) benchmark...");
-    await compoundSlotsWithMergeBench.run();
-    console.log("✓ Compound Slots (With Tailwind Merge) completed");
-    console.table(compoundSlotsWithMergeBench.table());
-    generatePerformanceSummary(compoundSlotsWithMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Extends benchmark...");
-    await extendsWithoutMergeBench.run();
-    console.log("✓ Extends completed");
-    console.table(extendsWithoutMergeBench.table());
-    generatePerformanceSummary(extendsWithoutMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running Extends (With Tailwind Merge) benchmark...");
-    await extendsWithMergeBench.run();
-    console.log("✓ Extends (With Tailwind Merge) completed");
-    console.table(extendsWithMergeBench.table());
-    generatePerformanceSummary(extendsWithMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running CreateTV benchmark...");
-    await createTVWithoutMergeBench.run();
-    console.log("✓ CreateTV completed");
-    console.table(createTVWithoutMergeBench.table());
-    generatePerformanceSummary(createTVWithoutMergeBench);
-    console.log("\n");
-
-    console.log("▶ Running CreateTV (With Tailwind Merge) benchmark...");
-    await createTVWithMergeBench.run();
-    console.log("✓ CreateTV (With Tailwind Merge) completed");
-    console.table(createTVWithMergeBench.table());
-    generatePerformanceSummary(createTVWithMergeBench);
-    console.log("\n");
-
-    // Generate overall summary
-    const allBenchmarks = new Map([
-      ["Simple Variants", simpleWithoutMergeBench],
-      ["Simple Variants (With Tailwind Merge)", simpleWithMergeBench],
-      ["Complex Variants", complexWithoutMergeBench],
-      ["Complex Variants (With Tailwind Merge)", complexWithMergeBench],
-      ["Slots", slotsWithoutMergeBench],
-      ["Slots (With Tailwind Merge)", slotsWithMergeBench],
-      ["Compound Slots", compoundSlotsWithoutMergeBench],
-      ["Compound Slots (With Tailwind Merge)", compoundSlotsWithMergeBench],
-      ["Extends", extendsWithoutMergeBench],
-      ["Extends (With Tailwind Merge)", extendsWithMergeBench],
-      ["CreateTV", createTVWithoutMergeBench],
-      ["CreateTV (With Tailwind Merge)", createTVWithMergeBench],
-    ]);
-
-    generateOverallSummary(allBenchmarks);
+    await runBenchmark(simpleWithoutMergeBench, "Simple Variants");
+    await runBenchmark(simpleWithMergeBench, "Simple Variants (With Tailwind Merge)");
+    await runBenchmark(complexWithoutMergeBench, "Complex Variants");
+    await runBenchmark(complexWithMergeBench, "Complex Variants (With Tailwind Merge)");
+    await runBenchmark(slotsWithoutMergeBench, "Slots");
+    await runBenchmark(slotsWithMergeBench, "Slots (With Tailwind Merge)");
+    await runBenchmark(compoundSlotsWithoutMergeBench, "Compound Slots");
+    await runBenchmark(compoundSlotsWithMergeBench, "Compound Slots (With Tailwind Merge)");
+    await runBenchmark(extendsWithoutMergeBench, "Extends");
+    await runBenchmark(extendsWithMergeBench, "Extends (With Tailwind Merge)");
+    await runBenchmark(createTVWithoutMergeBench, "CreateTV");
+    await runBenchmark(createTVWithMergeBench, "CreateTV (With Tailwind Merge)");
 
     console.log("\nBenchmark completed!");
     console.log("\n✓ Benchmark completed successfully!");
