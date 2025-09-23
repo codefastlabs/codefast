@@ -51,9 +51,10 @@ async function main() {
     const totalSuites = 12;
     let currentSuite = 0;
 
-    const runBenchmark = async (benchmark, name) => {
+    const runBenchmark = async (benchmark) => {
       currentSuite++;
-      console.log(`▶ [${currentSuite}/${totalSuites}] Running ${name} benchmark...`);
+      const benchmarkName = benchmark.name || "Unknown Benchmark";
+      console.log(`▶ [${currentSuite}/${totalSuites}] Running "${benchmarkName}" benchmark...`);
       await benchmark.run();
       console.table(benchmark.table());
       generatePerformanceSummary(benchmark);
@@ -61,21 +62,21 @@ async function main() {
     };
 
     // Run all benchmarks with progress logging and immediate results
-    await runBenchmark(simpleWithoutMergeBench, "Simple Variants");
-    await runBenchmark(simpleWithMergeBench, "Simple Variants (With Tailwind Merge)");
-    await runBenchmark(complexWithoutMergeBench, "Complex Variants");
-    await runBenchmark(complexWithMergeBench, "Complex Variants (With Tailwind Merge)");
-    await runBenchmark(slotsWithoutMergeBench, "Slots");
-    await runBenchmark(slotsWithMergeBench, "Slots (With Tailwind Merge)");
-    await runBenchmark(compoundSlotsWithoutMergeBench, "Compound Slots");
-    await runBenchmark(compoundSlotsWithMergeBench, "Compound Slots (With Tailwind Merge)");
-    await runBenchmark(extendsWithoutMergeBench, "Extends");
-    await runBenchmark(extendsWithMergeBench, "Extends (With Tailwind Merge)");
-    await runBenchmark(createTVWithoutMergeBench, "CreateTV");
-    await runBenchmark(createTVWithMergeBench, "CreateTV (With Tailwind Merge)");
+    await runBenchmark(simpleWithoutMergeBench);
+    await runBenchmark(simpleWithMergeBench);
+    await runBenchmark(complexWithoutMergeBench);
+    await runBenchmark(complexWithMergeBench);
+    await runBenchmark(slotsWithoutMergeBench);
+    await runBenchmark(slotsWithMergeBench);
+    await runBenchmark(compoundSlotsWithoutMergeBench);
+    await runBenchmark(compoundSlotsWithMergeBench);
+    await runBenchmark(extendsWithoutMergeBench);
+    await runBenchmark(extendsWithMergeBench);
+    await runBenchmark(createTVWithoutMergeBench);
+    await runBenchmark(createTVWithMergeBench);
 
-    console.log("\nBenchmark completed!");
-    console.log("\n✓ Benchmark completed successfully!");
+    console.log("Benchmark completed!\n");
+    console.log("✓ Benchmark completed successfully!");
     process.exit(0);
   } catch (error) {
     console.error("✗ Benchmark failed:", error);
