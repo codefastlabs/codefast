@@ -31,17 +31,17 @@ export function createSimpleWithoutMergeBenchmark() {
   });
 
   bench
-    .add("[simple] tailwind-variants", () => {
+    .add("tailwind-variants", () => {
       for (const props of simpleTestProps) {
         originalTVSimple(props);
       }
     })
-    .add("[simple] class-variance-authority", () => {
+    .add("class-variance-authority", () => {
       for (const props of simpleTestProps) {
         cvaSimple(props);
       }
     })
-    .add("[simple] @codefast/tailwind-variants", () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of simpleTestProps) {
         codefastTVSimple(props);
       }

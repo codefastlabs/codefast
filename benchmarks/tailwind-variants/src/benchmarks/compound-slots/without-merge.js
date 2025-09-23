@@ -26,7 +26,7 @@ export function createCompoundSlotsWithoutMergeBenchmark() {
   });
 
   bench
-    .add("[compound-slots] tailwind-variants", () => {
+    .add("tailwind-variants", () => {
       for (const props of compoundSlotsTestProps) {
         const { base, cursor, item, next, prev } = originalTVCompoundSlots(props);
 
@@ -37,7 +37,7 @@ export function createCompoundSlotsWithoutMergeBenchmark() {
         cursor();
       }
     })
-    .add("[compound-slots] @codefast/tailwind-variants", () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of compoundSlotsTestProps) {
         const { base, cursor, item, next, prev } = codefastTVCompoundSlots(props);
 

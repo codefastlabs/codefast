@@ -29,12 +29,12 @@ export function createExtendsWithMergeBenchmark() {
   });
 
   bench
-    .add("[extends] tailwind-variants", () => {
+    .add("tailwind-variants", () => {
       for (const props of extendsTestProps) {
         originalTVExtends(props);
       }
     })
-    .add("[extends] @codefast/tailwind-variants", () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of extendsTestProps) {
         codefastTVExtends(props);
       }

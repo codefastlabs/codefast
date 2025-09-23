@@ -26,7 +26,7 @@ export function createSlotsWithoutMergeBenchmark() {
   });
 
   bench
-    .add("[slots] tailwind-variants", () => {
+    .add("tailwind-variants", () => {
       for (const props of slotsTestProps) {
         const { base, content, description, footer, header, title } = originalTVSlots(props);
 
@@ -38,7 +38,7 @@ export function createSlotsWithoutMergeBenchmark() {
         description();
       }
     })
-    .add("[slots] @codefast/tailwind-variants", () => {
+    .add("@codefast/tailwind-variants", () => {
       for (const props of slotsTestProps) {
         const { base, content, description, footer, header, title } = codefastTVSlots(props);
 
