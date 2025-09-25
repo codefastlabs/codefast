@@ -2,10 +2,9 @@ import type { ImageLoaderProps } from "next/image";
 
 import queryString from "query-string";
 
-import type { ImageLoaderFunction, LoaderDefinition } from "./types";
+import type { ImageLoaderFunction, LoaderDefinition } from "@/types";
 
-import { LoaderDefinitionBuilder } from "./core/loader-builder";
-// Import extended loaders
+import { LoaderDefinitionBuilder } from "@/core/loader-builder";
 import {
   cloudflareLoader,
   contentfulLoader,
@@ -17,8 +16,8 @@ import {
   sanityLoader,
   sirvLoader,
   thumborLoader,
-} from "./loaders/extended-loaders";
-import { normalizeConfig, validateConfig } from "./utils";
+} from "@/loaders/extended-loaders";
+import { normalizeConfig, validateConfig } from "@/utils";
 
 /**
  * Cloudinary image loader
@@ -27,35 +26,30 @@ import { normalizeConfig, validateConfig } from "./utils";
 export const cloudinaryLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
   validateConfig(config);
   const { quality = 75, src, width } = normalizeConfig(config);
-  
+
   try {
     const url = new URL(src);
     const pathParts = url.pathname.split("/");
-    
+
     // Find the upload segment to insert transformations
     const uploadIndex = pathParts.indexOf("upload");
-    
+
     if (uploadIndex === -1) {
       console.warn(`Invalid Cloudinary URL structure: ${src}`);
 
       return src;
     }
-    
+
     // Build transformation parameters
-    const transformations = [
-      `w_${width}`,
-      `q_${quality}`,
-      "f_auto",
-      "c_fill"
-    ];
-    
+    const transformations = [`w_${width}`, `q_${quality}`, "f_auto", "c_fill"];
+
     // Insert transformations after upload
     const newPathParts = [
       ...pathParts.slice(0, uploadIndex + 1),
       transformations.join(","),
       ...pathParts.slice(uploadIndex + 1),
     ];
-    
+
     url.pathname = newPathParts.join("/");
 
     return url.toString();
@@ -73,15 +67,15 @@ export const cloudinaryLoader: ImageLoaderFunction = (config: ImageLoaderProps):
 export const unsplashLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
   validateConfig(config);
   const { quality = 75, src, width } = normalizeConfig(config);
-  
+
   try {
     const params = {
       fit: "crop",
       fm: "auto",
       q: quality,
-      w: width
+      w: width,
     };
-    
+
     return queryString.stringifyUrl({ query: params, url: src });
   } catch (error) {
     console.warn(`Failed to transform Unsplash URL: ${src}`, error);
@@ -97,14 +91,14 @@ export const unsplashLoader: ImageLoaderFunction = (config: ImageLoaderProps): s
 export const imgixLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
   validateConfig(config);
   const { quality = 75, src, width } = normalizeConfig(config);
-  
+
   try {
     const params = {
       auto: "format",
       q: quality,
-      w: width
+      w: width,
     };
-    
+
     return queryString.stringifyUrl({ query: params, url: src });
   } catch (error) {
     console.warn(`Failed to transform Imgix URL: ${src}`, error);
@@ -120,14 +114,14 @@ export const imgixLoader: ImageLoaderFunction = (config: ImageLoaderProps): stri
 export const awsCloudFrontLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
   validateConfig(config);
   const { quality = 75, src, width } = normalizeConfig(config);
-  
+
   try {
     const params = {
       f: "auto",
       q: quality,
-      w: width
+      w: width,
     };
-    
+
     return queryString.stringifyUrl({ query: params, url: src });
   } catch (error) {
     console.warn(`Failed to transform AWS CloudFront URL: ${src}`, error);
@@ -143,14 +137,14 @@ export const awsCloudFrontLoader: ImageLoaderFunction = (config: ImageLoaderProp
 export const supabaseLoader: ImageLoaderFunction = (config: ImageLoaderProps): string => {
   validateConfig(config);
   const { quality = 75, src, width } = normalizeConfig(config);
-  
+
   try {
     const params = {
       format: "auto",
       quality: quality,
-      width: width
+      width: width,
     };
-    
+
     return queryString.stringifyUrl({ query: params, url: src });
   } catch (error) {
     console.warn(`Failed to transform Supabase URL: ${src}`, error);
@@ -188,7 +182,7 @@ export const extendedLoaders: LoaderDefinition[] = [
         return false;
       }
     },
-    cloudflareLoader
+    cloudflareLoader,
   ),
   LoaderDefinitionBuilder.forSubdomain("contentful", "ctfassets.net", contentfulLoader),
   LoaderDefinitionBuilder.withCustomMatcher(
@@ -202,7 +196,7 @@ export const extendedLoaders: LoaderDefinition[] = [
         return false;
       }
     },
-    fastlyLoader
+    fastlyLoader,
   ),
   LoaderDefinitionBuilder.withCustomMatcher(
     "gumlet",
@@ -215,7 +209,7 @@ export const extendedLoaders: LoaderDefinition[] = [
         return false;
       }
     },
-    gumletLoader
+    gumletLoader,
   ),
   LoaderDefinitionBuilder.withCustomMatcher(
     "imageengine",
@@ -228,7 +222,7 @@ export const extendedLoaders: LoaderDefinition[] = [
         return false;
       }
     },
-    imageEngineLoader
+    imageEngineLoader,
   ),
   LoaderDefinitionBuilder.forSubdomain("pixelbin", "pixelbin.io", pixelBinLoader),
   LoaderDefinitionBuilder.forSubdomain("sanity", "sanity.io", sanityLoader),
@@ -243,7 +237,7 @@ export const extendedLoaders: LoaderDefinition[] = [
         return false;
       }
     },
-    sirvLoader
+    sirvLoader,
   ),
   LoaderDefinitionBuilder.withCustomMatcher(
     "thumbor",
@@ -256,7 +250,7 @@ export const extendedLoaders: LoaderDefinition[] = [
         return false;
       }
     },
-    thumborLoader
+    thumborLoader,
   ),
   LoaderDefinitionBuilder.forSubdomain("imagekit", "imagekit.io", imageKitLoader),
 ];
